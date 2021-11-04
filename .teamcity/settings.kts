@@ -111,20 +111,6 @@ object BuildBaseImages : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 		dockerCommand {
-			name = "Build CI Desktop image"
-			commandType = build {
-				source = file {
-					path = "Dockerfile.base"
-				}
-				namesAndTags = """
-					registry.a8c.com/calypso/ci-desktop:%image_tag%
-					registry.a8c.com/calypso/ci-desktop:%build.number%
-				""".trimIndent()
-				commandArgs = "--target ci-desktop"
-			}
-			param("dockerImage.platform", "linux")
-		}
-		dockerCommand {
 			name = "Build CI e2e image"
 			commandType = build {
 				source = file {
@@ -158,8 +144,6 @@ object BuildBaseImages : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/base:%image_tag%
 					registry.a8c.com/calypso/base:%build.number%
-					registry.a8c.com/calypso/ci-desktop:%image_tag%
-					registry.a8c.com/calypso/ci-desktop:%build.number%
 					registry.a8c.com/calypso/ci-e2e:%image_tag%
 					registry.a8c.com/calypso/ci-e2e:%build.number%
 					registry.a8c.com/calypso/ci-wpcom:%image_tag%
