@@ -227,9 +227,10 @@ class PluginSections extends Component {
 		const contentClasses = classNames( 'plugin-sections__content', {
 			trimmed: ! this.props.removeReadMore && ! this.props.isWpcom && ! this.state.readMore,
 		} );
+		const banner = this.props.plugin.banners.high || this.props.plugin.banners.low;
 
 		/*eslint-disable react/no-danger*/
-		if ( ! this.props.addBanner || this.getSelected() !== 'description' ) {
+		if ( ! this.props.addBanner || ! banner || this.getSelected() !== 'description' ) {
 			return (
 				<div
 					ref={ this.descriptionContent }
@@ -248,7 +249,7 @@ class PluginSections extends Component {
 					<img
 						className="plugin-sections__banner-image"
 						alt={ this.props.plugin.name }
-						src={ this.props.plugin.banners.high || this.props.plugin.banners.low }
+						src={ banner }
 					/>
 				</div>
 				<div
