@@ -16,7 +16,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
-			videoSlug,
+			video: videoSlug,
 		} );
 
 		setCurrentVideo( videoInfo );
