@@ -1,13 +1,32 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .domains__step-section-wrapper {
 	margin: 0 auto;
-	max-width: 720px;
+	width: 100%;
 }
 
 .is-section-signup .domains__step-content {
 	margin-bottom: 50px;
+
+	& .use-my-domain__page-heading {
+		padding-left: 24px;
+		padding-right: 24px;
+		text-align: center;
+	}
+
+	& .use-my-domain,
+	& .connect-domain-step,
+	& .domain-transfer-or-connect__content {
+		background: transparent;
+		box-shadow: none;
+
+		@include break-mobile {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
 
 	&.domains__step-content-domain-step {
 		margin-bottom: 20px;
@@ -173,6 +192,10 @@ body.is-section-signup.is-white-signup {
 		.search-component .search-component__icon-navigation {
 			padding: 0 7px;
 		}
+
+		.use-my-domain__page-heading {
+			text-align: left;
+		}
 	}
 
 	.search-filters__dropdown-filters {
@@ -204,4 +227,63 @@ body.is-section-signup.is-white-signup {
 			display: none;
 		}
 	}
+
+	.signup__step.is-domains {
+		padding: 0 20px;
+	}
+}
+
+// blue signup flow-specific styles
+body.is-section-signup:not( .is-white-signup ) {
+	
+    .domains__step-content {
+	
+		a {
+			text-decoration: underline;
+			color: var( --color-text-inverted );
+		}
+
+        .domain-transfer-or-connect {
+
+			&__content {
+				
+				.option-content {
+		
+					&__illustration, &__main, &__action, &__header, &__top-text, &__pricing-text {
+						color: var( --color-text-inverted );
+					}
+
+					&__benefits-item-text, &__pricing-cost {
+						filter: brightness( 0.9 );
+					}
+
+					&__benefits-item .gridicon {
+						fill: var( --studio-green-20 );
+					}
+
+					& + .option-content {
+						border-color: var( --studio-gray-40 );
+					}
+		
+				}
+
+			}
+
+			&__support-link {
+				color: var( --color-text-inverted );
+				filter: brightness( 0.9 );
+			}
+
+		}
+
+		.use-my-domain {
+
+			.form-input-validation.is-error {
+				color: var( --color-error-30 );
+			}
+
+		}
+
+	}
+
 }
