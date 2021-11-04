@@ -3,7 +3,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { urlData, GoToStep } from '../types';
+import { UrlData, GoToStep } from '../types';
 import { convertPlatformName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
@@ -12,7 +12,7 @@ import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface ReadyPreviewProps {
-	urlData: urlData;
+	urlData: UrlData;
 	siteSlug: string;
 	goToImporterPage: ( platform: string ) => void;
 }

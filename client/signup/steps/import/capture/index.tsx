@@ -4,7 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
-import { GoToStep, urlData } from '../types';
+import { GoToStep, UrlData } from '../types';
 import './style.scss';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
@@ -35,7 +35,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 
 	const runProcess = (): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
-		analyzeUrl( urlValue ).then( ( response: urlData ) => {
+		analyzeUrl( urlValue ).then( ( response: UrlData ) => {
 			const stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
 			goToStep( 'ready', stepSectionName );
 		} );

@@ -8,7 +8,7 @@ import { getUrlData, isAnalyzing } from '../../../state/imports/url-analyzer/sel
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
-import { GoToNextStep, GoToStep, urlData } from './types';
+import { GoToNextStep, GoToStep, UrlData } from './types';
 import { getImporterUrl } from './util';
 import './style.scss';
 
@@ -20,7 +20,7 @@ type Props = ConnectedProps< typeof connector > & {
 	signupDependencies: {
 		siteSlug: string;
 	};
-	urlData: urlData;
+	urlData: UrlData;
 };
 
 const MOCK_DATA = {
