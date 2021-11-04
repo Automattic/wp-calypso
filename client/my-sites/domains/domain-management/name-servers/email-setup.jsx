@@ -75,9 +75,7 @@ class EmailSetup extends Component {
 	renderProviderTabs = () => {
 		return (
 			<SectionNav selectedText={ this.state.selectedTab }>
-				<NavTabs label="Email providers">
-					{ this.state.templates.map( this.renderProviderTab ) }
-				</NavTabs>
+				<NavTabs>{ this.state.templates.map( this.renderProviderTab ) }</NavTabs>
 			</SectionNav>
 		);
 	};
@@ -112,11 +110,13 @@ class EmailSetup extends Component {
 	};
 
 	render = () => {
+		const { translate } = this.props;
+
 		const header = (
 			<span>
-				<strong>Email setup</strong>
+				<strong>{ translate( 'Email setup' ) }</strong>
 				<br />
-				<span>Set up an existing email service for this domain</span>
+				<span>{ translate( 'Set up an existing email service for this domain' ) }</span>
 			</span>
 		);
 		return (
