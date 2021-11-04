@@ -114,7 +114,7 @@ class EmailSetup extends Component {
 		);
 	};
 
-	renderMain = () => {
+	render = () => {
 		const header = (
 			<span>
 				<strong>Email setup</strong>
@@ -128,10 +128,6 @@ class EmailSetup extends Component {
 				{ this.renderConfiguration() }
 			</FoldableCard>
 		);
-	};
-
-	render = () => {
-		return this.renderMain();
 	};
 }
 
