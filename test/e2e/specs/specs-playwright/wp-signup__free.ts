@@ -11,7 +11,6 @@ import {
 	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
-	BrowserHelper,
 	CloseAccountFlow,
 	GutenboardingFlow,
 } from '@automattic/calypso-e2e';
@@ -73,13 +72,9 @@ describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), func
 		it( 'Return to Home dashboard', async function () {
 			// Temporary workaround due to https://github.com/Automattic/wp-calypso/issues/51162.
 			// Conditional can be removed once fixed.
-			if ( BrowserHelper.getTargetDeviceName() === 'mobile' ) {
-				await page.goBack();
-			} else {
-				gutenbergEditorPage = new GutenbergEditorPage( page );
-				await gutenbergEditorPage.openNavSidebar();
-				await gutenbergEditorPage.returnToDashboard();
-			}
+			gutenbergEditorPage = new GutenbergEditorPage( page );
+			await gutenbergEditorPage.openNavSidebar();
+			await gutenbergEditorPage.returnToHomeDashboard();
 		} );
 	} );
 
