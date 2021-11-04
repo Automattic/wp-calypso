@@ -33,7 +33,7 @@
 		"test:e2e": "jest -c test/e2e/config/jest.config.js"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-build": "^10.0.0",
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"copy-webpack-plugin": "^6.2.1",
 		"electron": "^12.0.12",
