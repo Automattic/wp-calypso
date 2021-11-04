@@ -20,7 +20,9 @@ import {
 	domainManagementNameServers,
 	domainManagementList,
 } from 'calypso/my-sites/domains/paths';
+import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -42,6 +44,27 @@ class Dns extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.onRestoreSuccess = this.onRestoreSuccess.bind( this );
+		this.onRestoreError = this.onRestoreError.bind( this );
+	}
+
+	onRestoreSuccess() {
+		const { translate, selectedDomainName } = this.props;
+		this.props.fetchDns( selectedDomainName, true );
+		this.props.successNotice( translate( 'Default DNS records restored successfully.' ) );
+	}
+
+	onRestoreError() {
+		const { translate } = this.props;
+		this.props.errorNotice(
+			translate(
+				'There was an error trying to restore the default DNS records for your domain. Please try again later.'
+			)
+		);
+	}
 
 	renderDnsTemplates() {
 		const selectedDomain = getSelectedDomain( this.props );
@@ -87,7 +110,11 @@ class Dns extends Component {
 
 		const buttons = [
 			<DnsAddNewRecordButton />,
-			<DnsMenuOptionsButton domain={ selectedDomainName } />,
+			<DnsMenuOptionsButton
+				domain={ selectedDomainName }
+				onSuccess={ this.onRestoreSuccess }
+				onError={ this.onRestoreError }
+			/>,
 		];
 
 		return (
@@ -163,18 +190,21 @@ class Dns extends Component {
 	};
 }
 
-export default connect( ( state, { selectedDomainName } ) => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySiteId( state, selectedSite.ID );
-	const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
-	const dns = getDomainDns( state, selectedDomainName );
-	const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
+export default connect(
+	( state, { selectedDomainName } ) => {
+		const selectedSite = getSelectedSite( state );
+		const domains = getDomainsBySiteId( state, selectedSite.ID );
+		const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
+		const dns = getDomainDns( state, selectedDomainName );
+		const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
 
-	return {
-		selectedSite,
-		domains,
-		dns,
-		showPlaceholder,
-		currentRoute: getCurrentRoute( state ),
-	};
-} )( localize( Dns ) );
+		return {
+			selectedSite,
+			domains,
+			dns,
+			showPlaceholder,
+			currentRoute: getCurrentRoute( state ),
+		};
+	},
+	{ successNotice, errorNotice, fetchDns }
+)( localize( Dns ) );
