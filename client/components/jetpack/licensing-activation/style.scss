@@ -1,0 +1,127 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+@mixin jetpack-primary-button() {
+	// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
+	background-color: var( --studio-jetpack-green-50 );
+	border-color: var( --studio-jetpack-green-50 );
+	color: var( --color-text-inverted );
+
+	&:hover,
+	&:focus {
+		background-color: var( --studio-jetpack-green-60 );
+		border-color: var( --studio-jetpack-green-60 );
+		color: var( --color-text-inverted );
+	}
+
+	&[disabled],
+	&:disabled,
+	&.disabled {
+		color: var( --color-neutral-20 );
+		background-color: var( --color-surface );
+		border-color: var( --color-neutral-5 );
+	}
+}
+
+.licensing-activation button.is-primary,
+.licensing-activation button.is-primary:visited {
+	border-radius: 2px;
+	@include jetpack-primary-button;
+}
+
+.licensing-activation p {
+	font-size: $font-body;
+}
+
+.licensing-activation__card {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	border-radius: 4px; /* stylelint-disable-line */
+	box-shadow: 0 0 40px 0 #00000014;
+
+	width: 100%;
+	max-width: none;
+
+	@include break-large {
+		flex-direction: row;
+		width: auto;
+		max-width: 1200px;
+	}
+}
+
+.licensing-activation__card a {
+	text-decoration: underline;
+	color: var( --color-studio-black );
+	&:hover {
+		text-decoration: none;
+	}
+}
+
+.licensing-activation__card-main {
+	@include break-large {
+		flex: 1 1 648px;
+	}
+}
+
+.licensing-activation__card-main,
+.licensing-activation__card-footer {
+	box-sizing: border-box;
+	padding: 26px;
+	@include break-mobile {
+		padding: 76px;
+	}
+}
+
+.licensing-activation__card-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	margin-bottom: 45px;
+}
+
+.licensing-activation__progress-bar.progress-bar {
+	width: 60px;
+
+	.progress-bar__progress {
+		background-color: var( --studio-jetpack-green-40 );
+	}
+}
+
+.licensing-activation__title {
+	font-style: normal;
+	font-weight: bold;
+	font-size: $font-headline-small;
+	line-height: 44px;
+
+	margin-bottom: 24px;
+}
+
+.licensing-activation__card-footer {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	// background image is applied inline in the html
+	background-repeat: no-repeat;
+	background-position: top left;
+	background-size: cover;
+	@include break-large {
+		flex: 1 1 552px;
+	}
+}
+
+.licensing-activation__card-footer-text {
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	left: 0;
+	bottom: 7%;
+	color: var( --color-neutral-60 );
+	> a {
+		color: var( --color-neutral-60 );
+		text-decoration: underline;
+	}
+}
