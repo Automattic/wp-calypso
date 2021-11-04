@@ -4,13 +4,17 @@ import { ReactElement } from 'react';
 import './style.scss';
 
 export default function LicenseProductCard( props: any ): ReactElement {
-	const { cost, label } = props.product;
+	const { cost, label, orderIndex } = props.product;
 	const costPerMonth = Math.round( ( cost / 12 + Number.EPSILON ) * 100 ) / 100;
 	const productTitle = label.replace( 'Jetpack ', '' ).replace( '(', '' ).replace( ')', '' );
 
 	return (
 		<div
 			onClick={ () => props.onSelectProduct( props.product ) }
+			onKeyDown={ () => props.onSelectProduct( props.product ) }
+			role="radio"
+			tabIndex={ orderIndex }
+			aria-checked={ props.isSelected }
 			className={ classNames( {
 				'license-product-card': true,
 				selected: props.isSelected,

@@ -63,12 +63,13 @@ export default function IssueLicenseForm(): ReactElement {
 
 	const productCards =
 		products.data &&
-		products.data.map( ( prod ) => (
+		products.data.map( ( prod, i ) => (
 			<LicenseProductCard
 				key={ prod.value }
 				product={ prod }
 				onSelectProduct={ onSelectProduct }
 				isSelected={ prod.value === product }
+				orderIndex={ i }
 			/>
 		) );
 
