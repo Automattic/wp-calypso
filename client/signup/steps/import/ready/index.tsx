@@ -92,7 +92,9 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) 
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton>{ __( 'Start building' ) }</NextButton>
+						<NextButton onClick={ () => goToStep( 'design-setup-site', '', 'setup-site' ) }>
+							{ __( 'Start building' ) }
+						</NextButton>
 						<div>
 							<BackButton onClick={ () => goToStep( 'capture' ) }>
 								{ __( 'Back to the start' ) }
