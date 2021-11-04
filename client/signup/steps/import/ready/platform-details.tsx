@@ -14,6 +14,7 @@ interface DetailsProps {
 const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) => {
 	const { __ } = useI18n();
 	const { platform, onClose } = data;
+	const learnMoreHref = 'https://wordpress.com/support/import';
 
 	const getTitle = ( _platform: string ): string => {
 		switch ( _platform ) {
@@ -24,7 +25,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 			case 'Blogger':
 				return __( 'Importing content from Blogger' );
 			case 'Wordpress':
-				return __( 'Importing content from self-hosted WordPress to Wordpress.com' );
+				return __( 'Importing content from self-hosted WordPress to WordPress.com' );
 			case 'Medium':
 				return __( 'Importing content from Medium' );
 			default:
@@ -52,7 +53,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 				);
 			case 'Medium':
 				return __(
-					"Our Mediun content importer is the quickest way to move your content. Simply export the contents from Medium as a .ZIP file, then click 'Import your content' and upload it to our importer."
+					"Our Medium content importer is the quickest way to move your content. Simply export the contents from Medium as a .ZIP file, then click 'Import your content' and upload it to our importer."
 				);
 			default:
 				return '';
@@ -68,7 +69,12 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 			<div className="import__details-modal-content">
 				<p>{ getInfo( platform ) }</p>
 
-				<a className="import__details-learn-more" href="#link-to-doc">
+				<a
+					className="import__details-learn-more"
+					href={ learnMoreHref }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					{ __( 'Learn more' ) }
 				</a>
 

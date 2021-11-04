@@ -411,10 +411,15 @@ $plan-features-sidebar-width: 272px;
 body.is-section-signup.is-white-signup {
 	.plan-features-comparison__table-item {
 		border-left: none;
+		background-color: transparent;
 
 		&:last-of-type {
 			border-right: none;
 		}
+	}
+
+	.plan-features-comparison__header {
+		background-color: transparent;
 	}
 
 	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {

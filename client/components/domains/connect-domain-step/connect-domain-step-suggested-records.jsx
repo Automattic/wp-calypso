@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import ConnectDomainStepClipboardButton from './connect-domain-step-clipboard-button';
 import ConnectDomainStepVerificationNotice from './connect-domain-step-verification-error-notice';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { modeType, stepSlug, stepsHeadingSuggested } from './constants';
+import { modeType, stepSlug, stepsHeading } from './constants';
 
 import './style.scss';
 
@@ -66,7 +66,7 @@ export default function ConnectDomainStepSuggestedRecords( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
-			heading={ stepsHeadingSuggested }
+			heading={ stepsHeading.SUGGESTED }
 			mode={ mode }
 			progressStepList={ progressStepList }
 			pageSlug={ pageSlug }

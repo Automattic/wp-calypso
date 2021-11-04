@@ -77,12 +77,7 @@ class PluginSiteUpdateIndicator extends Component {
 		}
 		return (
 			<div className="plugin-site-update-indicator__button">
-				<button
-					className="button"
-					ref="updatePlugin"
-					onClick={ this.updatePlugin }
-					disabled={ isUpdating }
-				>
+				<button className="button" onClick={ this.updatePlugin } disabled={ isUpdating }>
 					{ message }
 				</button>
 			</div>

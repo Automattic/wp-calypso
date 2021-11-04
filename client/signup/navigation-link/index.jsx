@@ -110,7 +110,9 @@ export class NavigationLink extends Component {
 			this.props.goToNextStep();
 		}
 
-		this.recordClick();
+		if ( ! this.props.disabledTracks ) {
+			this.recordClick();
+		}
 	};
 
 	recordClick() {

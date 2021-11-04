@@ -20,7 +20,7 @@ object DesktopApp : Project({
 	buildType(E2ETests)
 
 	params {
-		text("docker_image_desktop", "registry.a8c.com/calypso/ci-desktop:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+		text("docker_image_desktop", "registry.a8c.com/calypso/ci-e2e:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
 		password("CALYPSO_SECRETS_ENCRYPTION_KEY", "credentialsJSON:ff451a7d-df79-4635-b6e8-cbd6ec18ddd8", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
 		password("E2EGUTENBERGUSER", "credentialsJSON:27ca9d7b-c6b5-4e84-94d5-ea43879d8184", display = ParameterDisplay.HIDDEN)
 		password("E2EPASSWORD", "credentialsJSON:2c4425c4-07d2-414c-9f18-b64da307bdf2", display = ParameterDisplay.HIDDEN)
@@ -39,9 +39,8 @@ object E2ETests : BuildType({
 	}
 
 	artifactRules = """
-		desktop/release => release
-		desktop/e2e/logs => logs
-		desktop/e2e/screenshots => screenshots
+		desktop/release/wordpress.com-* => release
+		desktop/test/e2e/results => results
 	""".trimIndent()
 
 	vcs {
@@ -101,24 +100,12 @@ object E2ETests : BuildType({
 
 				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 				# Run tests
-				cd desktop && node ./e2e/run.js
+				cd desktop && yarn run test:e2e --reporters=jest-teamcity --reporters=default
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
 			// TDLR: Chrome needs access to some kernel level operations to create a sandbox, this option unblocks them.
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
-		}
-
-		bashNodeScript {
-			name = "Clean up artifacts"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-			scriptContent = """
-				# Delete artifacts if branch is not trunk
-				if [ "%teamcity.build.branch.is_default%" != "true" ]; then
-					rm -fr desktop/release/*
-				fi
-			"""
-			dockerImage = "%docker_image_desktop%"
 		}
 	}
 
@@ -127,11 +114,6 @@ object E2ETests : BuildType({
 	}
 
 	features {
-		feature {
-			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "desktop/e2e/result.xml")
-		}
 		perfmon {
 		}
 		pullRequests {

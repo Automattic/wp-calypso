@@ -105,6 +105,10 @@ export type SupportedSlugs =
 	| 'jetpack_backup_daily_monthly_v2_dark'
 	| 'jetpack_backup_realtime_v2_dark'
 	| 'jetpack_backup_realtime_monthly_v2_dark'
+	| 'jetpack_backup_t1_yearly'
+	| 'jetpack_backup_t1_monthly'
+	| 'jetpack_backup_t2_yearly'
+	| 'jetpack_backup_t2_monthly'
 	| 'jetpack_scan'
 	| 'jetpack_scan_monthly'
 	| 'jetpack_scan_v2'
@@ -143,6 +147,10 @@ export type SupportedSlugs =
 	| 'jetpack_security_daily_monthly'
 	| 'jetpack_security_realtime'
 	| 'jetpack_security_realtime_monthly'
+	| 'jetpack_security_t1_yearly'
+	| 'jetpack_security_t1_monthly'
+	| 'jetpack_security_t2_yearly'
+	| 'jetpack_security_t2_monthly'
 	| 'jetpack_videopress'
 	| 'jetpack_videopress_monthly'
 	| 'jetpack_videopress_dark'
@@ -180,6 +188,10 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'jetpack_backup_daily_monthly_v2',
 		'jetpack_backup_realtime_v2',
 		'jetpack_backup_realtime_monthly_v2',
+		'jetpack_backup_t1_yearly',
+		'jetpack_backup_t1_monthly',
+		'jetpack_backup_t2_yearly',
+		'jetpack_backup_t2_monthly',
 	],
 	'jetpack-backup-v2-dark': [
 		'jetpack_backup_v2_dark',
@@ -229,5 +241,9 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'jetpack_security_daily_monthly',
 		'jetpack_security_realtime',
 		'jetpack_security_realtime_monthly',
+		'jetpack_security_t1_yearly',
+		'jetpack_security_t1_monthly',
+		'jetpack_security_t2_yearly',
+		'jetpack_security_t2_monthly',
 	],
 } as const;

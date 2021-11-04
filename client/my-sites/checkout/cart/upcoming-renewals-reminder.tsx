@@ -144,7 +144,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	return (
 		<>
-			<QueryUserPurchases userId={ userId } />
+			<QueryUserPurchases />
 			{ shouldRender && (
 				<div className="cart__upsell-wrapper">
 					<UpcomingRenewalsDialog

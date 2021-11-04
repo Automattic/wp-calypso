@@ -3,6 +3,7 @@ import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { isAnalyzing } from '../../../state/imports/url-analyzer/selectors';
+import { getStepUrl } from 'calypso/signup/utils';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
@@ -13,6 +14,9 @@ type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;
+	queryObject: {
+		siteSlug?: string;
+	};
 };
 
 const MOCK_DATA = {
@@ -46,12 +50,13 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( {
 			hideNext={ shouldHideNextBtn( stepName ) }
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
+			backUrl={ stepName === 'capture' ? getStepUrl( 'setup-site', 'intent' ) : undefined }
 			hideFormattedHeader={ true }
 			stepName={ stepName }
 			stepContent={
 				<div className="import__onboarding-page">
 					{ stepName === 'capture' && <CaptureStep goToStep={ goToStep } /> }
-					{ stepName === 'list' && <ListStep /> }
+					{ stepName === 'list' && <ListStep goToStep={ goToStep } /> }
 
 					{ stepName === 'ready' && ! stepSectionName && (
 						<ReadyStep platform={ MOCK_DATA.platform } />

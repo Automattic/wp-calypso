@@ -35,7 +35,8 @@
 	],
 	"types": "./typings/calypso-assets/index.d.ts",
 	"dependencies": {
-		"@automattic/webpack-rtl-plugin": "^5.0.0",
+		"@automattic/babel-plugin-preserve-i18n": "^1.0.0",
+		"@automattic/webpack-rtl-plugin": "^5.1.0",
 		"@babel/cli": "^7.14.8",
 		"@babel/compat-data": "^7.15.0",
 		"@babel/core": "^7.15.0",
@@ -47,7 +48,7 @@
 		"@babel/preset-react": "^7.14.5",
 		"@babel/preset-typescript": "^7.15.0",
 		"@emotion/babel-plugin": "^11.3.0",
-		"@types/webpack-env": "^1.16.2",
+		"@types/webpack-env": "^1.16.3",
 		"@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
 		"@wordpress/babel-plugin-import-jsx-pragma": "^3.1.0",
 		"@wordpress/browserslist-config": "^4.1.0",

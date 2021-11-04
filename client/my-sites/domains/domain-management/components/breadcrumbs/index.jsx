@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { Icon, chevronLeft } from '@wordpress/icons';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -32,9 +33,16 @@ import './style.scss';
 const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } ) => {
 	const renderItemLabel = ( item ) => {
 		if ( item.href ) {
-			return <a href={ item.href }>{ item.label }</a>;
+			return (
+				<a
+					className="breadcrumbs__item-label breadcrumbs__item-label--clickable"
+					href={ item.href }
+				>
+					{ item.label }
+				</a>
+			);
 		}
-		return item.label || item;
+		return <span className="breadcrumbs__item-label">{ item.label || item }</span>;
 	};
 
 	const renderHelpBubble = ( item ) => {
@@ -64,7 +72,7 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 
 	const renderItem = ( item, index ) => (
 		<React.Fragment key={ `breadcrumb${ index }` }>
-			<span>{ renderItemLabel( item ) }</span>
+			<span className="breadcrumbs__item">{ renderItemLabel( item ) }</span>
 			{ renderHelpBubble( item ) }
 			{ renderSeparator( index ) }
 		</React.Fragment>
@@ -74,8 +82,8 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 		if ( mobileItem.showBackArrow && mobileItem.href ) {
 			/* eslint-disable wpcalypso/jsx-gridicon-size */
 			return (
-				<a href={ mobileItem.href }>
-					<Gridicon className="breadcrumbs__back-arrow" icon="chevron-left" size={ 14 } />
+				<a className="breadcrumbs__item" href={ mobileItem.href }>
+					<Icon className="breadcrumbs__back-arrow" icon={ chevronLeft } size={ 20 } />
 				</a>
 			);
 			/* eslint-enable wpcalypso/jsx-gridicon-size */
@@ -87,7 +95,9 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 		return (
 			<>
 				{ renderBackArrow() }
-				<span>{ renderItemLabel( mobileItem ) }</span>
+				<span className="breadcrumbs__item breadcrumbs__item--mobile">
+					{ renderItemLabel( mobileItem ) }
+				</span>
 				{ renderHelpBubble( mobileItem ) }
 			</>
 		);

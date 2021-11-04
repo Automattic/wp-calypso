@@ -55,6 +55,7 @@ describe( 'selectors', () => {
 			const tourState = getGuidedTourState( {
 				route: {
 					query: {
+						current: {},
 						initial: {},
 					},
 				},
@@ -80,11 +81,14 @@ describe( 'selectors', () => {
 			toursHistory = [],
 			queryArguments = {},
 			userData = {},
+			timestamp = null,
 		} ) => ( {
 			route: {
 				query: {
+					current: queryArguments,
 					initial: queryArguments,
 				},
+				timestamp,
 			},
 			ui: {
 				actionLog,
@@ -199,7 +203,8 @@ describe( 'selectors', () => {
 			const state = makeState( {
 				actionLog: [ navigateToThemes ],
 				toursHistory: [ themesTourSeen, mainTourJustSeen ],
-				queryArguments: { tour: 'main', _timestamp: 0 },
+				queryArguments: { tour: 'main' },
+				timestamp: 0,
 			} );
 			const tour = findEligibleTour( state );
 
@@ -227,7 +232,8 @@ describe( 'selectors', () => {
 			const state = makeState( {
 				actionLog: times( 50, () => navigateToTest ),
 				toursHistory: [ testTourSeen, themesTourSeen ],
-				queryArguments: { tour: 'themes', _timestamp: 0 },
+				queryArguments: { tour: 'themes' },
+				timestamp: 0,
 			} );
 			const tour = findEligibleTour( state );
 

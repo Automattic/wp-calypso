@@ -36,6 +36,8 @@ object WPComTests : Project({
 	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
 	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c"));
 	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada"));
+	buildType(coblocksPlaywrightBuildType("desktop", ""));
+	buildType(coblocksPlaywrightBuildType("mobile", ""));
 	buildType(jetpackBuildType("desktop"));
 	buildType(jetpackBuildType("mobile"));
 	buildType(VisualRegressionTests);
@@ -357,6 +359,141 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 				withPendingChangesOnly = false
 			}
 		}
+	}
+}
+
+fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
+    return BuildType {
+		id("WPComTests_coblocks_Playwright_$targetDevice")
+		// uuid=buildUuid TODO: Set for real post merge when it is created
+		name = "Playwright CoBlocks E2E Tests ($targetDevice)"
+		description = "Runs CoBlocks E2E tests as $targetDevice using Playwright"
+
+
+		artifactRules = """
+			reports => reports
+			logs.tgz => logs.tgz
+			screenshots => screenshots
+		""".trimIndent()
+
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
+		params {
+			text(
+				name = "URL",
+				value = "https://wordpress.com",
+				label = "Test URL",
+				description = "URL to test against",
+				allowEmpty = false
+			)
+			checkbox(
+				name = "COBLOCKS_EDGE",
+				value = "false",
+				label = "Use coblocks-edge",
+				description = "Use a blog with coblocks-edge sticker",
+				checked = "true",
+				unchecked = "false"
+			)
+		}
+
+		steps {
+			prepareEnvironment()
+			bashNodeScript {
+				name = "Run e2e tests ($targetDevice)"
+				scriptContent = """
+					shopt -s globstar
+					set -x
+
+					cd test/e2e
+					mkdir temp
+
+					export NODE_CONFIG_ENV=test
+					export PLAYWRIGHT_BROWSERS_PATH=0
+					export TEAMCITY_VERSION=2021
+					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
+					export URL=%URL%
+					export TARGET_DEVICE=$targetDevice
+					export LOCALE=en
+					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+					export DEBUG=pw:api
+					export HEADLESS=true
+
+					# Decrypt config
+					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+					# Run the test
+					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=coblocks
+				""".trimIndent()
+			}
+			bashNodeScript {
+				name = "Collect results"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					set -x
+
+					mkdir -p screenshots
+					find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+					mkdir -p logs
+					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+					mkdir -p trace
+					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+				""".trimIndent()
+			}
+		}
+
+		features {
+			perfmon {
+			}
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#gutenberg-e2e"
+					messageFormat = verboseMessageFormat {
+						addBranch = true
+						addStatusText = true
+						maximumNumberOfChanges = 10
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailed = true
+				buildFinishedSuccessfully = true
+			}
+			commitStatusPublisher {
+				vcsRootExtId = "${Settings.WpCalypso.id}"
+				publisher = github {
+					githubUrl = "https://api.github.com"
+					authType = personalToken {
+						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+					}
+				}
+			}
+		}
+
+		failureConditions {
+			executionTimeoutMin = 20
+			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
+			// been muted previously.
+			nonZeroExitCode = false
+
+			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
+			// crashes and no tests are run.
+			failOnMetricChange {
+				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+				threshold = 50
+				units = BuildFailureOnMetric.MetricUnit.PERCENTS
+				comparison = BuildFailureOnMetric.MetricComparison.LESS
+				compareTo = build {
+					buildRule = lastSuccessful()
+				}
+			}
+		}
+
+		triggers {}
 	}
 }
 

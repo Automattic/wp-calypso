@@ -1,5 +1,6 @@
 /**
  * @group gutenberg
+ * @group coblocks
  */
 
 import {
@@ -15,6 +16,7 @@ import {
 	ClicktoTweetBlock,
 	LogosBlock,
 	TestFile,
+	BrowserHelper,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
@@ -24,6 +26,15 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	let pricingTableBlock: PricingTableBlock;
 	let page: Page;
 	let logoImage: TestFile;
+
+	let user: string;
+	if ( BrowserHelper.targetCoBlocksEdge() ) {
+		user = 'coBlocksSimpleSiteEdgeUser';
+	} else if ( BrowserHelper.targetGutenbergEdge() ) {
+		user = 'gutenbergSimpleSiteEdgeUser';
+	} else {
+		user = 'gutenbergSimpleSiteUser';
+	}
 
 	// Test data
 	const pricingTableBlockPrice = 888;
@@ -41,7 +52,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'gutenbergSimpleSiteUser' } );
+		await loginPage.login( { account: user } );
 	} );
 
 	it( 'Start new post', async function () {

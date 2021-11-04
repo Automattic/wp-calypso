@@ -21,7 +21,6 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"scripts": {},
 	"peerDependencies": {
 		"webpack": "^5.54.0"
 	},

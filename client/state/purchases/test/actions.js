@@ -87,7 +87,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#removePurchase success', () => {
-		const response = { status: 'completed', purchases };
+		const response = { purchases };
 
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )

@@ -2,10 +2,31 @@
 @import '@wordpress/base-styles/mixins';
 
 .breadcrumbs {
+	position: relative;
 	margin: 0;
 
 	@include break-mobile {
+		position: sticky;
+		top: 0;
+		margin-top: 0;
+	}
+
+	@include breakpoint-deprecated( '480px-660px' ) {
+		position: sticky;
+		top: 0;
+		margin-top: -22px;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		position: sticky;
 		/* hack to make the breadcrumbs closer to the top of the content area */
+		top: -22px;
+		margin-top: -22px;
+	}
+
+	@include break-medium {
+		position: sticky;
+		top: -44px;
 		margin-top: -44px;
 	}
 }
@@ -15,6 +36,14 @@
 	align-items: center;
 	justify-content: space-between;
 	padding: 16px;
+
+	@include break-mobile {
+		padding: 16px 0;
+	}
+
+	@include breakpoint-deprecated( '480px-660px' ) {
+		padding: 16px;
+	}
 }
 
 .breadcrumbs__bottom-border {
@@ -32,15 +61,27 @@
 		align-items: center;
 		font-size: 13px; /* stylelint-disable-line */
 		font-weight: 500; /* stylelint-disable-line */
-		color: var( --color-neutral-50 );
-
-		& a {
-			color: var( --color-neutral-50 );
-		}
-		& span:first-child {
-			font-size: $font-body;
-			font-weight: 600;
+		color: var( --color-neutral-80 );
+		
+		& .breadcrumbs__item {
 			color: var( --color-neutral-80 );
+			
+			& .breadcrumbs__item-label {
+				color: var( --color-neutral-80 );
+			}
+			
+			&:first-child {
+				.breadcrumbs__item-label {
+					font-size: $font-body;
+					font-weight: 600;
+				}
+			}
+
+			&:last-child {
+				.breadcrumbs__item-label {
+					color: var( --color-neutral-50 );
+				}
+			}
 		}
 	}
 }
@@ -49,8 +90,29 @@
 	display: flex;
 	align-items: center;
 
-	& a {
+	& .breadcrumbs__item {
+		display: flex;
+		align-items: center;
+	}
+
+	& .breadcrumbs__item-label {
+		color: var( --color-neutral-80 );
+		font-size: 13px; /* stylelint-disable-line */
+	}
+
+	& .breadcrumbs__item:first-child {
+		font-size: $font-body;
+		font-weight: 600;
 		color: var( --color-neutral-50 );
+
+		& .breadcrumbs__item-label {
+			font-size: $font-body;
+		}
+	}
+	& span:first-child {
+		font-size: $font-body;
+		font-weight: 600;
+		color: var( --color-neutral-80 );
 	}
 
 	@include break-mobile {

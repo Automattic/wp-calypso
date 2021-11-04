@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, { isBlankCanvasDesign, getDesignUrl } from '@automattic/design-picker';
+import { shuffle } from '@automattic/js-utils';
 import { compose } from '@wordpress/compose';
 import { withViewportMatch } from '@wordpress/viewport';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -15,6 +16,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
 import { getRecommendedThemes } from 'calypso/state/themes/selectors';
+import DIFMThemes from '../difm-design-picker/themes';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
@@ -79,7 +81,7 @@ class DesignPickerStep extends Component {
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		return this.props.themes
+		const allThemes = this.props.themes
 			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
 			.map( ( { id, name, taxonomies } ) => ( {
 				categories: taxonomies?.theme_subject ?? [
@@ -93,6 +95,12 @@ class DesignPickerStep extends Component {
 				title: name,
 				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
 			} ) );
+
+		if ( allThemes.length === 0 ) {
+			return [];
+		}
+
+		return [ allThemes[ 0 ], ...shuffle( allThemes.slice( 1 ) ) ];
 	}
 
 	updateSelectedDesign() {
@@ -119,13 +127,22 @@ class DesignPickerStep extends Component {
 	};
 
 	previewDesign = ( selectedDesign ) => {
-		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme ) );
+		const locale = ! this.props.userLoggedIn ? getLocaleSlug() : '';
+
+		recordTracksEvent( 'calypso_signup_design_preview_select', {
+			theme: `pub/${ selectedDesign.theme }`,
+			template: selectedDesign.template,
+			flow: this.props.flowName,
+		} );
+
+		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme, locale ) );
 	};
 
 	submitDesign = ( selectedDesign = this.state.selectedDesign ) => {
 		recordTracksEvent( 'calypso_signup_select_design', {
 			theme: `pub/${ selectedDesign?.theme }`,
 			template: selectedDesign?.template,
+			flow: this.props.flowName,
 		} );
 
 		this.props.goToNextStep();
@@ -152,6 +169,7 @@ class DesignPickerStep extends Component {
 			signupDependencies: { siteSlug },
 			locale,
 			translate,
+			hideExternalPreview,
 		} = this.props;
 
 		const { selectedDesign } = this.state;
@@ -165,6 +183,7 @@ class DesignPickerStep extends Component {
 				showClose={ false }
 				showEdit={ false }
 				externalUrl={ siteSlug }
+				showExternal={ ! hideExternalPreview }
 				previewUrl={ previewUrl }
 				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 					components: { strong: <strong /> },
@@ -183,6 +202,17 @@ class DesignPickerStep extends Component {
 		const { translate } = this.props;
 
 		return translate( 'Pick your favorite homepage layout. You can customize or change it later.' );
+	}
+
+	skipLabelText() {
+		const { signupDependencies, translate } = this.props;
+
+		if ( signupDependencies?.intent === 'write' ) {
+			return translate( 'Skip and draft first post' );
+		}
+
+		// Fall back to the default skip label used by <StepWrapper>
+		return undefined;
 	}
 
 	render() {
@@ -215,6 +245,7 @@ class DesignPickerStep extends Component {
 					defaultDependencies={ defaultDependencies }
 					backUrl={ getStepUrl( flowName, stepName, '', locale ) }
 					goToNextStep={ this.submitDesign }
+					stepSectionName={ designTitle }
 				/>
 			);
 		}
@@ -229,6 +260,7 @@ class DesignPickerStep extends Component {
 				stepContent={ this.renderDesignPicker() }
 				align={ isReskinned ? 'left' : 'center' }
 				skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
+				skipLabelText={ this.skipLabelText() }
 			/>
 		);
 	}
@@ -236,9 +268,11 @@ class DesignPickerStep extends Component {
 
 export default compose(
 	connect(
-		( state ) => {
+		( state, ownProps ) => {
 			return {
-				themes: getRecommendedThemes( state, 'auto-loading-homepage' ),
+				themes: ownProps.useDIFMThemes
+					? DIFMThemes
+					: getRecommendedThemes( state, 'auto-loading-homepage' ),
 				userLoggedIn: isUserLoggedIn( state ),
 			};
 		},
