@@ -72,9 +72,6 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ) {
-	// Make the response JSON because it's easier for wpcom-xhr-request to parse; see https://github.com/Automattic/wp-calypso/pull/57575
-	payload.as_json = true;
-
 	const isJetpackUserLessCheckout =
 		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
 
@@ -138,5 +135,7 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		country,
 		postalCode: postalCode ? tryToGuessPostalCodeFormat( postalCode.toUpperCase(), country ) : '',
 		domainDetails,
+		// Make the response JSON because it's easier for wpcom-xhr-request to parse; see https://github.com/Automattic/wp-calypso/pull/57575
+		as_json: true,
 	};
 }
