@@ -17,6 +17,8 @@ import { flow, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import announcementImage from 'calypso/assets/images/marketplace/plugins-revamp.png';
+import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
@@ -473,11 +475,25 @@ export class PluginsBrowser extends Component {
 		return navigationItems;
 	}
 
+	getAnnoncementPages() {
+		const { translate } = this.props;
+		return [
+			{
+				headline: translate( 'ITS NEW!' ),
+				heading: translate( 'All the plugins and more' ),
+				content: translate(
+					'This page may look different as we’ve made some changes to improve the experience for you. Stay tuned for even more exciting updates to come!'
+				),
+				featureImage: announcementImage,
+			},
+		];
+	}
+
 	render() {
-		const { category, search } = this.props;
+		const { category, search, translate } = this.props;
 
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
-			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
+			return <NoPermissionsError title={ translate( 'Plugins', { textOnly: true } ) } />;
 		}
 
 		return (
@@ -491,13 +507,19 @@ export class PluginsBrowser extends Component {
 						<QueryWporgPlugins category="featured" />
 					</Fragment>
 				) }
-
 				{ this.isRecommendedPluginsEnabled() && (
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				<DocumentHead title={ this.props.translate( 'Plugins' ) } />
+				<DocumentHead title={ translate( 'Plugins' ) } />
 				<SidebarNavigation />
+				{ isEnabled( 'marketplace' ) && (
+					<AnnouncementModal
+						announcementId="plugins-page-revamp"
+						pages={ this.getAnnoncementPages() }
+						finishButtonText={ translate( "Let's explore!" ) }
+					/>
+				) }
 				{ ! this.props.hideHeader && (
 					<FixedNavigationHeader
 						className="plugins-browser__header"
