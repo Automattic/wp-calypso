@@ -1,10 +1,10 @@
-.usage-warning-upsell__title {
+.usage-warning__storage-full {
 	font-size: 1rem;
 	font-weight: bold;
 	margin-bottom: 16px;
 }
 
-.usage-warning-upsell__call-to-action.components-button {
+.usage-warning__action-button {
 	width: 100%;
 	height: 100%;
 
@@ -19,33 +19,43 @@
 	color: var( --color-text );
 	font-size: $font-body;
 
-	&:hover,
-	&:focus {
-		background: none;
+	&:visited {
+		color: var( --color-text );
+	}
 
-		.usage-warning-upsell__action-text {
+	&:focus,
+	&:hover {
+		cursor: initial;
+		background: none;
+	}
+
+	&.has-clickable-action:focus,
+	&.has-clickable-action:hover {
+		cursor: pointer;
+
+		.action-button__action-text {
 			text-decoration: underline;
 			text-decoration-thickness: 2px;
 		}
 
-		.usage-warning-upsell__arrow {
+		.action-button__arrow {
 			transform: translateX( 8px );
 		}
 	}
-}
 
-.usage-warning-upsell__status {
-	margin-bottom: 0.25rem;
-}
+	.action-button__status {
+		margin-bottom: 0.5rem;
+	}
 
-.usage-warning-upsell__action-text {
-	font-weight: bold;
-}
+	.action-button__action-text {
+		font-weight: bold;
+	}
 
-.usage-warning-upsell__arrow {
-	transition: transform 0.15s ease-out;
+	.action-button__arrow {
+		transition: transform 0.15s ease-out;
 
-	color: var( --studio-jetpack-green );
-	font-size: $font-title-medium;
-	font-weight: 600;
+		color: var( --studio-jetpack-green );
+		font-size: $font-title-medium;
+		font-weight: 600;
+	}
 }

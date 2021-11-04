@@ -9,7 +9,7 @@ import {
 	isRequestingRewindPolicies,
 	isRequestingRewindSize,
 } from 'calypso/state/rewind/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { getUsageLevel, StorageUsageLevels } from './storage-usage-levels';
 import UsageDisplay from './usage-display';
 import UsageWarning from './usage-warning';
@@ -26,7 +26,6 @@ const BackupStorageSpace: React.FC = () => {
 	const usageLevel = getUsageLevel( bytesUsed, bytesAvailable ) ?? StorageUsageLevels.Normal;
 
 	const showWarning = usageLevel > StorageUsageLevels.Normal;
-	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 
 	const requestingPolicies = useSelector( ( state ) =>
 		isRequestingRewindPolicies( state, siteId )
@@ -50,7 +49,7 @@ const BackupStorageSpace: React.FC = () => {
 				<>
 					<div className="backup-storage-space__divider"></div>
 					<UsageWarning
-						siteSlug={ siteSlug }
+						siteId={ siteId }
 						usageLevel={ usageLevel }
 						bytesUsed={ bytesUsed as number }
 					/>

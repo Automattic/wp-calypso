@@ -1,40 +1,22 @@
 import { useJetpack1TbStorageAmountText } from '@automattic/calypso-products';
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { StorageUsageLevels } from '../storage-usage-levels';
+import ActionButton from './action-button';
 
 import './style.scss';
 
-const useStatusText = ( usageLevel: StorageUsageLevels ) => {
-	const translate = useTranslate();
-
-	// TODO: For StorageUsageLevels.Warning, estimate how many days until
-	// all storage is used, and show that in the status text.
-	return useMemo( () => {
-		switch ( usageLevel ) {
-			case StorageUsageLevels.Warning:
-				return translate( 'You will reach your storage limit soon.' );
-			case StorageUsageLevels.Critical:
-				return translate( "You're running out of storage space." );
-			case StorageUsageLevels.Full:
-				return translate( 'You ran out of storage space.' );
-		}
-
-		return null;
-	}, [ translate, usageLevel ] );
-};
-
 type OwnProps = {
-	href: string;
+	siteSlug: string;
 	bytesUsed: number;
 	usageLevel: StorageUsageLevels;
 };
 
-const UsageWarningUpsell: React.FC< OwnProps > = ( { href, bytesUsed, usageLevel } ) => {
+const UsageWarningUpsell: React.FC< OwnProps > = ( { siteSlug, bytesUsed, usageLevel } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -43,22 +25,18 @@ const UsageWarningUpsell: React.FC< OwnProps > = ( { href, bytesUsed, usageLevel
 			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_display', {
 				type: StorageUsageLevels[ usageLevel ],
 				bytes_used: bytesUsed,
-				path: '/backup/:site',
 			} )
 		);
 	}, [ dispatch, usageLevel, bytesUsed ] );
 
-	const onUpsellClick = useCallback( () => {
+	const onClick = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', {
 				type: StorageUsageLevels[ usageLevel ],
 				bytes_used: bytesUsed,
-				path: '/backup/:site',
 			} )
 		);
 	}, [ dispatch, usageLevel, bytesUsed ] );
-
-	const statusText = preventWidows( useStatusText( usageLevel ) );
 
 	const upgradeStorageAmount = useJetpack1TbStorageAmountText();
 	const actionText = preventWidows(
@@ -69,24 +47,13 @@ const UsageWarningUpsell: React.FC< OwnProps > = ( { href, bytesUsed, usageLevel
 	);
 
 	return (
-		<>
-			{ usageLevel === StorageUsageLevels.Full && (
-				<div className="usage-warning-upsell__title">
-					{ translate( 'Your Backup storage is full and new backups have been paused' ) }
-				</div>
-			) }
-			<Button
-				className="usage-warning-upsell__call-to-action"
-				href={ href }
-				onClick={ onUpsellClick }
-			>
-				<div className="usage-warning-upsell__copy">
-					<div className="usage-warning-upsell__status">{ statusText }</div>
-					<div className="usage-warning-upsell__action-text">{ actionText }</div>
-				</div>
-				<span className="usage-warning-upsell__arrow">&#8594;</span>
-			</Button>
-		</>
+		<ActionButton
+			className="usage-warning__upsell"
+			usageLevel={ usageLevel }
+			actionText={ actionText }
+			href={ isJetpackCloud() ? `/pricing/backup/${ siteSlug }` : `/plans/${ siteSlug }` }
+			onClick={ onClick }
+		/>
 	);
 };
 
