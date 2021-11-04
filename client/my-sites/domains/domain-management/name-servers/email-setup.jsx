@@ -82,7 +82,7 @@ class EmailSetup extends Component {
 
 	renderProviders = () => {
 		return (
-			<SectionNav>
+			<SectionNav selectedText={ this.state.selectedTab }>
 				<NavTabs label="Email providers">
 					{ this.state.templates.map( this.renderProvider ) }
 				</NavTabs>
@@ -93,6 +93,7 @@ class EmailSetup extends Component {
 	renderProvider = ( template ) => {
 		return (
 			<NavItem
+				key={ `email-provider-${ template.dnsTemplateProvider }` }
 				selected={ this.isSelected( template.name ) }
 				onClick={ () => this.setState( { selectedTab: template.name } ) }
 			>
@@ -105,13 +106,7 @@ class EmailSetup extends Component {
 		const template = this.state.templates.find( ( t ) => this.state.selectedTab === t.name );
 		if ( ! template ) return null;
 
-		return (
-			<EmailProvider
-				key={ `dns-templates-email-provider-${ template.dnsTemplate }` }
-				template={ template }
-				domain={ this.props.selectedDomainName }
-			/>
-		);
+		return <EmailProvider template={ template } domain={ this.props.selectedDomainName } />;
 	};
 
 	render = () => {
