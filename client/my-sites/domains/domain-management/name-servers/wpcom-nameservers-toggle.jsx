@@ -11,6 +11,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+const NAMESERVERS_TOGGLE_TITLE = 'Use WordPress.com Name Servers';
 
 class NameserversToggle extends PureComponent {
 	static propTypes = {
@@ -21,8 +22,8 @@ class NameserversToggle extends PureComponent {
 	render() {
 		return (
 			<Card compact className="name-servers__dns">
-				<span className="name-servers__title">
-					{ this.props.translate( 'Use WordPress.com Name Servers' ) }
+				<span className="name-servers__title" onClick={ this.handleToggle }>
+					{ NAMESERVERS_TOGGLE_TITLE }
 				</span>
 
 				<form className="name-servers__toggle">
@@ -34,9 +35,7 @@ class NameserversToggle extends PureComponent {
 							checked={ this.props.enabled }
 							value="active"
 						/>
-						<ScreenReaderText>
-							{ this.props.translate( 'Use WordPress.com Name Servers' ) }
-						</ScreenReaderText>
+						<ScreenReaderText>{ NAMESERVERS_TOGGLE_TITLE }</ScreenReaderText>
 					</FormLabel>
 				</form>
 				{ this.renderExplanation() }
