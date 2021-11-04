@@ -1,6 +1,9 @@
+import { readFile, access } from 'fs/promises';
+import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
 import { getHeadless, getLaunchConfiguration } from './browser-helper';
+import { COOKIES_PATH } from './environment';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
@@ -176,4 +179,23 @@ export async function setStoreCookie(
 			},
 		] );
 	}
+}
+
+/**
+ *
+ * @param page
+ * @param accountType
+ */
+export async function setLoginCookie( page: Page, accountType: string ): Promise< void > {
+	const browserContext = page.context();
+	const cookiePath = path.join( COOKIES_PATH, `${ accountType }.json` );
+	try {
+		await access( cookiePath );
+	} catch {
+		throw new Error( `Cookie file ${ cookiePath } not found on disk.` );
+	}
+
+	const cookie = JSON.parse( await readFile( cookiePath, 'utf8' ) );
+
+	await browserContext.addCookies( cookie.cookies );
 }
