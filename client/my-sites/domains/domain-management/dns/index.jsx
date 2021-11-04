@@ -85,10 +85,7 @@ class Dns extends Component {
 			showBackArrow: true,
 		};
 
-		const buttons = [
-			<DnsAddNewRecordButton label={ translate( 'Add a new record' ) } />,
-			<DnsMenuOptionsButton />,
-		];
+		const buttons = [ <DnsAddNewRecordButton />, <DnsMenuOptionsButton /> ];
 
 		return (
 			<Breadcrumbs
