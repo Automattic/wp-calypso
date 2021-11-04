@@ -85,7 +85,10 @@ class Dns extends Component {
 			showBackArrow: true,
 		};
 
-		const buttons = [ <DnsAddNewRecordButton />, <DnsMenuOptionsButton /> ];
+		const buttons = [
+			<DnsAddNewRecordButton />,
+			<DnsMenuOptionsButton domain={ selectedDomainName } />,
+		];
 
 		return (
 			<Breadcrumbs

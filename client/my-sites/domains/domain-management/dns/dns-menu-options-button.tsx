@@ -5,17 +5,42 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import wpcom from 'calypso/lib/wp';
 import './dns-breadcrumb-button.scss';
+import { DnsMenuOptionsButtonProps } from './types';
 
-function DnsMenuOptionsButton(): JSX.Element {
+function DnsMenuOptionsButton( {
+	domain,
+	onSuccess,
+	onError,
+}: DnsMenuOptionsButtonProps ): JSX.Element {
 	const { __ } = useI18n();
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const optionsButtonRef = useRef( null );
+	const restoreRecordsErrorMessage = __(
+		'An unexpected error occurred when trying to restore your DNS records. Please try again later.'
+	);
 
 	const toggleMenu = useCallback( () => {
 		setMenuVisible( ! isMenuVisible );
 	}, [ isMenuVisible ] );
+
+	const restoreDefaultRecords = useCallback( async () => {
+		const wpcomDomain = wpcom.domain( domain );
+
+		try {
+			const restoreResult = await wpcomDomain.dns().restoreDefaultRecords();
+
+			if ( restoreResult.success ) {
+				onSuccess( restoreResult.records );
+			} else {
+				onError( restoreRecordsErrorMessage );
+			}
+		} catch {
+			onError( restoreRecordsErrorMessage );
+		}
+	}, [ domain, onError, onSuccess, restoreRecordsErrorMessage ] );
 
 	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
 	return (
@@ -34,7 +59,7 @@ function DnsMenuOptionsButton(): JSX.Element {
 				context={ optionsButtonRef.current }
 				position="bottom"
 			>
-				<PopoverMenuItem onClick={ () => null }>
+				<PopoverMenuItem onClick={ restoreDefaultRecords }>
 					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
 					{ __( 'Restore default records' ) }
 				</PopoverMenuItem>
