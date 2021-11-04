@@ -47,6 +47,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( {
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
 			hideFormattedHeader={ true }
+			stepName={ stepName }
 			stepContent={
 				<div className="import__onboarding-page">
 					{ stepName === 'capture' && <CaptureStep goToStep={ goToStep } /> }
