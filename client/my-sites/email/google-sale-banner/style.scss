@@ -20,5 +20,9 @@
 
 	.banner__action {
 		margin-right: 0;
+
+		.button.is-compact {
+			line-height: 1.25;
+		}
 	}
 }

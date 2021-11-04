@@ -82,8 +82,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 					args: {
 						domainName: domainForSale.name,
 					},
-					comment:
-						'%(domainName)s is a domain name, e.g. example.com; %(price)s is a formatted price, e.g. $3, £2.50',
+					comment: '%(domainName)s is a domain name, e.g. example.com',
 					components: {
 						em: <em />,
 					},
@@ -98,7 +97,9 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 				'google-sale'
 			) }
 			title={ translate( 'Get %(discount)d% off Google Workspace for a limited time!', {
-				args: { discount: googleWorkspaceProduct?.sale_coupon?.discount },
+				args: {
+					discount: googleWorkspaceProduct.sale_coupon.discount,
+				},
 				comment: '%(discount)d is a percentage discount, e.g. 50',
 			} ) }
 		/>
