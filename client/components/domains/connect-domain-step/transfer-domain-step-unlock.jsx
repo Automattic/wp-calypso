@@ -38,8 +38,9 @@ const TransferDomainStepUnlock = ( {
 
 		try {
 			const isDomainUnlocked = await getDomainLockStatus();
-			if ( isDomainUnlocked ) onNextStep();
-			else {
+			if ( isDomainUnlocked || null === isDomainUnlocked ) {
+				onNextStep();
+			} else {
 				setDomainStatusError( 'Your domain is locked' );
 			}
 		} catch {
