@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -109,6 +110,18 @@ function SinglePlugin( props ) {
 		return false;
 	}, [ isFetching, isFetched, fullPlugin, requestingPluginsForSites ] );
 
+	const getNavigationItems = () => {
+		// ToDo:
+		// - add "Search Results" breadcrumb if prev page was search results
+		// - change the first breadcrumb if prev page wasn't plugins page (eg activity log)
+		const navigationItems = [
+			{ label: translate( 'Plugins' ), href: `/plugins/${ selectedSite.slug || '' }` },
+			{ label: fullPlugin.name },
+		];
+
+		return navigationItems;
+	};
+
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
 			args: { pluginName: fullPlugin.name },
@@ -135,6 +148,7 @@ function SinglePlugin( props ) {
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<SidebarNavigation />
+			<FixedNavigationHeader navigationItems={ getNavigationItems() } />
 			<PluginNotices pluginId={ fullPlugin.id } sites={ sites } plugins={ [ fullPlugin ] } />
 
 			<div className="single-plugin__page">
