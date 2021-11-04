@@ -4,7 +4,7 @@ import { find, get } from 'lodash';
 const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
-			theme: 'pub/hever',
+			theme: 'pub/zoologist',
 			// General copy
 			siteMockupHelpTipCopy: i18n.translate(
 				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
