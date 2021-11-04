@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
@@ -13,6 +14,7 @@ class DomainsTableFilterButton extends Component {
 				count: PropTypes.number,
 			} )
 		),
+		compact: PropTypes.bool.isRequired,
 	};
 
 	getFilterOptions() {
@@ -55,9 +57,13 @@ class DomainsTableFilterButton extends Component {
 	}
 
 	render() {
+		const { compact } = this.props;
 		return (
 			<SelectDropdown
-				compact
+				className={ classnames( 'domains-table-filter-button', {
+					'is-mobile-version': ! compact,
+				} ) }
+				compact={ compact }
 				initialSelected="site-domains"
 				selectedText={ this.getSelectedText() }
 				selectedCount={ this.getSelectedCount() }

@@ -305,6 +305,20 @@
 	margin-top: 24px;
 }
 
+.domain-management-list__filter {
+	padding: 0 16px;
+	> .domains-table-filter-button.is-mobile-version {
+		width: 100%;
+		.select-dropdown__container {
+			width: 100%;
+		}
+
+		@include break-mobile {
+			display: none;
+		}
+	}
+}
+
 .empty-domains-list-card__wrapper {
 	display: flex;
 	flex-direction: column;

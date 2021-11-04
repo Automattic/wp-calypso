@@ -182,6 +182,9 @@ export class SiteDomains extends Component {
 				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
 				<div className="domain-management-list__items">
+					<div className="domain-management-list__filter">
+						{ this.renderDomainTableFilterButton( false ) }
+					</div>
 					<DomainsTable
 						isLoading={ this.isLoading() }
 						currentRoute={ currentRoute }
@@ -224,9 +227,56 @@ export class SiteDomains extends Component {
 		);
 	}
 
-	renderBreadcrumbs() {
-		const { selectedSite, domains, context, translate } = this.props;
+	renderDomainTableFilterButton( compact ) {
+		const { selectedSite, domains, context } = this.props;
+
 		const selectedFilter = context?.query?.filter;
+		const nonWpcomDomains = filterOutWpcomDomains( domains );
+
+		const filterOptions = [
+			{
+				label: 'Site domains',
+				value: '',
+				path: domainManagementList( selectedSite?.slug ),
+				count: nonWpcomDomains?.length,
+			},
+			{
+				label: 'Owned by me',
+				value: 'owned-by-me',
+				path:
+					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
+				count: this.filterDomains( nonWpcomDomains, 'owned-by-me' )?.length,
+			},
+			{
+				label: 'Owned by others',
+				value: 'owned-by-others',
+				path:
+					domainManagementList( selectedSite?.slug ) +
+					'?' +
+					stringify( { filter: 'owned-by-others' } ),
+				count: this.filterDomains( nonWpcomDomains, 'owned-by-others' )?.length,
+			},
+			null,
+			{
+				label: 'All my domains',
+				value: 'all-my-domains',
+				path: domainManagementRoot(),
+				count: null,
+			},
+		];
+
+		return (
+			<DomainsTableFilterButton
+				key="breadcrumb_button_2"
+				selectedFilter={ selectedFilter || '' }
+				filterOptions={ filterOptions }
+				compact={ compact }
+			/>
+		);
+	}
+
+	renderBreadcrumbs() {
+		const { translate } = this.props;
 
 		const item = {
 			label: translate( 'Domains' ),
@@ -240,45 +290,9 @@ export class SiteDomains extends Component {
 			),
 		};
 
-		const filterOptions = [
-			{
-				label: 'Site domains',
-				value: '',
-				path: domainManagementList( selectedSite?.slug ),
-				count: filterOutWpcomDomains( domains )?.length,
-			},
-			{
-				label: 'Owned by me',
-				value: 'owned-by-me',
-				path:
-					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
-				count: this.filterDomains( filterOutWpcomDomains( domains ), 'owned-by-me' )?.length,
-			},
-			{
-				label: 'Owned by others',
-				value: 'owned-by-others',
-				path:
-					domainManagementList( selectedSite?.slug ) +
-					'?' +
-					stringify( { filter: 'owned-by-others' } ),
-				count: this.filterDomains( filterOutWpcomDomains( domains ), 'owned-by-others' )?.length,
-			},
-			null,
-			{
-				label: 'All my domains',
-				value: 'all-my-domains',
-				path: domainManagementRoot(),
-				count: null,
-			},
-		];
-
 		const buttons = [
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<DomainsTableFilterButton
-				key="breadcrumb_button_2"
-				selectedFilter={ selectedFilter || '' }
-				filterOptions={ filterOptions }
-			/>,
+			this.renderDomainTableFilterButton( true ),
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
 		];
 
