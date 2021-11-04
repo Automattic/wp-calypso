@@ -371,7 +371,7 @@ class EmailProvidersComparison extends Component {
 		const discount = productIsDiscounted ? (
 			<span className="email-providers-comparison__discount-with-renewal">
 				{ translate(
-					'%(discount)d% Off{{span}}, %(discountedPrice)s billed today, renews annually at %(standardPrice)s{{/span}}',
+					'%(discount)d% Off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
 					{
 						args: {
 							discount: gSuiteProduct.sale_coupon.discount,

@@ -173,8 +173,13 @@
 				text-decoration: line-through;
 			}
 
-			&.price__discounted span.email-providers-comparison__discounted-price {
-				text-decoration: none;
+			&.price__discounted span {
+				color: var( --color-text-subtle );
+
+				&.email-providers-comparison__discounted-price {
+					color: var( --studio-gray-100 );
+					text-decoration: none;
+				}
 			}
 		}
 
