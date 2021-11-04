@@ -4,9 +4,11 @@
 @import '@automattic/onboarding/styles/variables';
 
 .design-picker {
-	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
+	@include break-small {
+		display: flex;
+		align-items: flex-start;
+		flex-direction: row;
+	}
 
 	.design-picker__header {
 		@include onboarding-heading-padding;
