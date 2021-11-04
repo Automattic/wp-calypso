@@ -59,7 +59,12 @@ export default async function payPalProcessor(
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	return wpcomPayPalExpress( formattedTransactionData, transactionOptions )
-		.then( makeRedirectResponse )
+		.then( ( response ) => {
+			if ( ! response?.redirect_url ) {
+				throw new Error( 'There was an error redirecting to PayPal' );
+			}
+			return makeRedirectResponse( response.redirect_url );
+		} )
 		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
@@ -67,6 +72,9 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ) {
+	// Make the response JSON because it's easier for wpcom-xhr-request to parse; see https://github.com/Automattic/wp-calypso/pull/57575
+	payload.as_json = true;
+
 	const isJetpackUserLessCheckout =
 		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
 
