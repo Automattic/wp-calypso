@@ -220,9 +220,8 @@ export class SiteAddressChanger extends Component {
 	 */
 	isUnsyncedAtomicSite() {
 		const { validationError } = this.props;
-		const serverValidationErrorStatus = get( validationError, 'errorStatus' );
 
-		return serverValidationErrorStatus === 404;
+		return 404 === validationError?.errorStatus;
 	}
 
 	getValidationMessage() {
@@ -231,7 +230,7 @@ export class SiteAddressChanger extends Component {
 		const serverValidationMessage = get( validationError, 'message' );
 
 		if ( this.isUnsyncedAtomicSite() ) {
-			return translate( 'wpcomstaging.com addresses cannot be changed.' );
+			return translate( "This site's address cannot be changed" );
 		}
 
 		return isAvailable
