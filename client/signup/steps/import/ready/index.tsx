@@ -49,7 +49,7 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 
 					<div className="import__buttons-group">
 						<NextButton>{ __( 'Import your content' ) }</NextButton>
-						{ coveredPlatforms.includes( platform ) && (
+						{ coveredPlatforms.includes( urlData.platform ) && (
 							<div>
 								<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
 									{ __( 'What can be imported?' ) }
@@ -106,7 +106,6 @@ interface PropsWithoutUrl {
 const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
-	const platformName = convertPlatformName( platform );
 
 	return (
 		<div className="import-layout__center">
