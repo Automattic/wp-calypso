@@ -171,7 +171,7 @@ class EmailForwardingAddNewCompact extends Component {
 				return translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' );
 			}
 
-			if ( errorMessage.filter( ( t ) => t === 'Repeated' ).length === 1 ) {
+			if ( errorMessage.filter( ( t ) => t === 'Duplicated' ).length === 1 ) {
 				return translate( 'Invalid mailbox - Duplicated' );
 			}
 		}
