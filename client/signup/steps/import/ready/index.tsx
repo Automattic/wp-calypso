@@ -3,8 +3,6 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { urlData, GoToStep } from '../types';
 import { convertPlatformName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
@@ -13,11 +11,16 @@ import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-interface Props {
+interface ReadyPreviewProps {
 	urlData: urlData;
+	siteSlug: string;
+	goToImporterPage: ( platform: string ) => void;
 }
 
-const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
+const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
+	urlData,
+	goToImporterPage,
+} ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
@@ -48,7 +51,9 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton>{ __( 'Import your content' ) }</NextButton>
+						<NextButton onClick={ () => goToImporterPage( urlData.platform ) }>
+							{ __( 'Import your content' ) }
+						</NextButton>
 						{ coveredPlatforms.includes( urlData.platform ) && (
 							<div>
 								<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
@@ -107,11 +112,13 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) 
 	);
 };
 
-interface PropsWithoutUrl {
+interface ReadyProps {
 	platform: string;
+	goToImporterPage: ( platform: string ) => void;
 }
 
-const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) => {
+const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
+	const { platform, goToImporterPage } = props;
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
@@ -133,7 +140,9 @@ const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) =
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton>{ __( 'Import your content' ) }</NextButton>
+						<NextButton onClick={ () => goToImporterPage( platform ) }>
+							{ __( 'Import your content' ) }
+						</NextButton>
 						{ coveredPlatforms.includes( platform ) && (
 							<div>
 								<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
@@ -153,9 +162,5 @@ const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) =
 		</div>
 	);
 };
-
-const ReadyPreviewStep = connect( ( state ) => ( {
-	urlData: getUrlData( state ),
-} ) )( ReadyPreview );
 
 export { ReadyPreviewStep, ReadyNotStep, ReadyStep };

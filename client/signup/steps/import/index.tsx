@@ -1,13 +1,15 @@
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
-import { isAnalyzing } from '../../../state/imports/url-analyzer/selectors';
+import { getUrlData, isAnalyzing } from '../../../state/imports/url-analyzer/selectors';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
-import { GoToNextStep, GoToStep } from './types';
+import { GoToNextStep, GoToStep, urlData } from './types';
+import { getImporterUrl } from './util';
 import './style.scss';
 
 type Props = ConnectedProps< typeof connector > & {
@@ -15,24 +17,27 @@ type Props = ConnectedProps< typeof connector > & {
 	goToNextStep: GoToNextStep;
 	stepName: string;
 	stepSectionName: string;
-	queryObject: {
-		siteSlug?: string;
+	signupDependencies: {
+		siteSlug: string;
 	};
+	urlData: urlData;
 };
 
 const MOCK_DATA = {
-	website: 'https://openweb.com',
 	platform: 'wix',
 };
 
-const ImportOnboarding: React.FunctionComponent< Props > = ( {
-	goToStep,
-	goToNextStep,
-	stepName,
-	stepSectionName,
-	isAnalyzing,
-} ) => {
+const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
+	const {
+		goToStep,
+		goToNextStep,
+		stepName,
+		stepSectionName,
+		isAnalyzing,
+		signupDependencies,
+		urlData,
+	} = props;
 
 	const shouldHideBackBtn = ( stepName: string ): boolean => {
 		const STEPS_WITHOUT_BACK = [ 'scanning' ];
@@ -42,6 +47,14 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( {
 	const shouldHideNextBtn = ( stepName: string ): boolean => {
 		const STEPS_WITH_NEXT = [ 'capture' ];
 		return ! STEPS_WITH_NEXT.includes( stepName ) || isAnalyzing;
+	};
+
+	const goToImporterPage = ( platform: string ): void => {
+		const importerUrl = getImporterUrl( signupDependencies.siteSlug, platform );
+
+		importerUrl.includes( 'wp-admin' )
+			? ( window.location.href = importerUrl )
+			: page.redirect( importerUrl );
 	};
 
 	return (
@@ -62,12 +75,18 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( {
 					{ stepName === 'list' && <ListStep goToStep={ goToStep } /> }
 
 					{ stepName === 'ready' && ! stepSectionName && (
-						<ReadyStep platform={ MOCK_DATA.platform } />
+						<ReadyStep goToImporterPage={ goToImporterPage } platform={ MOCK_DATA.platform } />
 					) }
 					{ stepName === 'ready' && stepSectionName === 'not' && (
 						<ReadyNotStep goToStep={ goToStep } />
 					) }
-					{ stepName === 'ready' && stepSectionName === 'preview' && <ReadyPreviewStep /> }
+					{ stepName === 'ready' && stepSectionName === 'preview' && (
+						<ReadyPreviewStep
+							urlData={ urlData }
+							goToImporterPage={ goToImporterPage }
+							siteSlug={ signupDependencies.siteSlug }
+						/>
+					) }
 				</div>
 			}
 		/>
@@ -76,6 +95,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( {
 
 const connector = connect(
 	( state ) => ( {
+		urlData: getUrlData( state ),
 		isAnalyzing: isAnalyzing( state ),
 	} ),
 	{}
