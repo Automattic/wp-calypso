@@ -23,6 +23,7 @@ const TransferDomainStepUnlock = ( {
 
 	const [ checkInProgress, setCheckInProgress ] = useState( false );
 	const [ domainStatusError, setDomainStatusError ] = useState( null );
+	const [ lockStatusUnknown, setLockStatusUnknown ] = useState( false );
 
 	const getDomainLockStatus = useCallback( async () => {
 		setCheckInProgress( true );
@@ -32,19 +33,19 @@ const TransferDomainStepUnlock = ( {
 	}, [ domain, setCheckInProgress ] );
 
 	const checkDomainLockStatus = async () => {
-		if ( initialDomainLockStatus === domainLockStatusType.UNKNOWN ) {
-			onNextStep();
-		}
-
 		try {
 			const isDomainUnlocked = await getDomainLockStatus();
-			if ( isDomainUnlocked || null === isDomainUnlocked ) {
+			if ( isDomainUnlocked || lockStatusUnknown ) {
 				onNextStep();
+			} else if ( isDomainUnlocked === null ) {
+				setDomainStatusError( 'Can’t get the domain’s lock status' );
+				setLockStatusUnknown( true );
 			} else {
 				setDomainStatusError( 'Your domain is locked' );
 			}
 		} catch {
 			setDomainStatusError( 'Can’t get the domain’s lock status' );
+			setLockStatusUnknown( true );
 		}
 	};
 
@@ -52,7 +53,7 @@ const TransferDomainStepUnlock = ( {
 		initialDomainLockStatus === domainLockStatusType.UNLOCKED ? null : (
 			<CardHeading tagName="h2" className={ className + '__sub-heading' }>
 				<MaterialIcon className={ className + '__sub-heading-icon' } size={ 24 } icon="lock" />
-				{ initialDomainLockStatus === domainLockStatusType.LOCKED
+				{ initialDomainLockStatus === domainLockStatusType.LOCKED && ! lockStatusUnknown
 					? __( 'Your domain is locked' )
 					: __( "Can't get the domain's lock status" ) }
 			</CardHeading>
@@ -66,20 +67,24 @@ const TransferDomainStepUnlock = ( {
 		<>{ __( 'Please check that your domain is unlocked.' ) + ' ' }</>
 	);
 
+	const getErrorMessage = () => {
+		return lockStatusUnknown
+			? __(
+					'Can’t get the domain’s lock status. If you’ve already unlocked it, wait a few minutes and try again.'
+			  )
+			: __(
+					'Your domain is still locked. If you’ve already unlocked it, wait a few minutes and try again.'
+			  );
+	};
+
 	const stepContent = (
 		<div className={ className + '__domain-unlock' }>
 			{ domainStatusError && ! checkInProgress && (
-				<Notice
-					status="is-error"
-					showDismiss={ false }
-					text={ __(
-						'Your domain is still locked. If you’ve already unlocked it, wait a few minutes and try again.'
-					) }
-				></Notice>
+				<Notice status="is-error" showDismiss={ false } text={ getErrorMessage() }></Notice>
 			) }
 			{ lockedDomainContent }
 			<p className={ className + '__text' }>
-				{ initialDomainLockStatus === domainLockStatusType.UNKNOWN &&
+				{ ( initialDomainLockStatus === domainLockStatusType.UNKNOWN || lockStatusUnknown ) &&
 					unkownLockStatusAdditionalDescription }
 				{ lockedDomainDescription }
 			</p>
@@ -90,7 +95,7 @@ const TransferDomainStepUnlock = ( {
 			</p>
 			<div className={ className + '__actions' }>
 				<Button primary onClick={ checkDomainLockStatus } busy={ checkInProgress }>
-					{ domainLockStatusType.UNKNOWN === initialDomainLockStatus
+					{ domainLockStatusType.UNKNOWN === initialDomainLockStatus || lockStatusUnknown
 						? __( 'Skip domain lock verificaiton' )
 						: __( "I've unlocked my domain" ) }
 				</Button>
