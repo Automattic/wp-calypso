@@ -17,14 +17,17 @@ import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
+import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import {
-	getPluginOnSites,
-	isRequestingForSites,
 	getPluginOnSite,
+	getPluginOnSites,
+	getSiteObjectsWithPlugin,
+	getSitesWithoutPlugin,
+	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
@@ -225,6 +228,14 @@ function SinglePlugin( props ) {
 					</div>
 				</div>
 
+				<div className="single-plugin__sites-list">
+					<SitesList
+						fullPlugin={ fullPlugin }
+						isPluginInstalledOnsite={ isPluginInstalledOnsite }
+						{ ...props }
+					/>
+				</div>
+
 				<div className="single-plugin__layout single-plugin__body">
 					<div className="single-plugin__layout-col single-plugin__layout-col-left">
 						{ fullPlugin.wporg ? (
@@ -240,23 +251,28 @@ function SinglePlugin( props ) {
 						) }
 					</div>
 					<div className="single-plugin__layout-col single-plugin__layout-col-right">
-						<div className="single-plugin__downloads-text body-right-text">
-							{ translate( 'Downloads' ) }
+						<div className="single-plugin__plugin-details-title">
+							{ translate( 'Plugin details' ) }
 						</div>
-						<div className="single-plugin__downloads-value body-right-value">
-							{ formatNumberCompact( fullPlugin.downloaded, 'en' ) }
-						</div>
-						<div className="single-plugin__version-text body-right-text">
-							{ translate( 'Version' ) }
-						</div>
-						<div className="single-plugin__version-value body-right-value">
-							{ fullPlugin.version }
-						</div>
-						<div className="single-plugin__tested-text body-right-text">
-							{ translate( 'Tested up to' ) }
-						</div>
-						<div className="single-plugin__tested-value body-right-value">
-							{ fullPlugin.version }
+						<div className="single-plugin__plugin-details-content">
+							<div className="single-plugin__downloads">
+								<div className="single-plugin__downloads-text title">
+									{ translate( 'Downloads' ) }
+								</div>
+								<div className="single-plugin__downloads-value value">
+									{ formatNumberCompact( fullPlugin.downloaded, 'en' ) }
+								</div>
+							</div>
+							<div className="single-plugin__version">
+								<div className="single-plugin__version-text title">{ translate( 'Version' ) }</div>
+								<div className="single-plugin__version-value value">{ fullPlugin.version }</div>
+							</div>
+							<div className="single-plugin__tested">
+								<div className="single-plugin__tested-text title">
+									{ translate( 'Tested up to' ) }
+								</div>
+								<div className="single-plugin__tested-value value">{ fullPlugin.version }</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -326,6 +342,63 @@ function Rating( { rating } ) {
 	// const noFillOutlineCount = Math.floor( inverseRating / 20 ); // (5 - noFillOutlineCount) gives the number of stars to add
 
 	return rating / 20;
+}
+
+function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) {
+	const translate = useTranslate();
+
+	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+
+	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
+	const sitesWithPlugin = useSelector( ( state ) =>
+		getSiteObjectsWithPlugin( state, siteIds, props.pluginSlug )
+	);
+	const sitesWithoutPlugin = useSelector( ( state ) =>
+		getSitesWithoutPlugin( state, siteIds, props.pluginSlug )
+	);
+
+	if ( isFetching || ( props.siteUrl && ! isPluginInstalledOnsite ) ) {
+		return null;
+	}
+
+	if ( props.siteUrl && isPluginInstalledOnsite ) {
+		<PluginSiteList
+			className="single-plugin__installed-on"
+			title={ translate( 'Installed on', {
+				comment: 'header for list of sites a plugin is installed on',
+			} ) }
+			sites={ sites }
+			plugin={ plugin }
+		/>;
+	}
+
+	const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
+		sites.find( ( site ) => site.ID === siteId )
+	);
+
+	return (
+		<div>
+			<PluginSiteList
+				className="single-plugin__installed-on"
+				title={ translate( 'Installed on', {
+					comment: 'header for list of sites a plugin is installed on',
+				} ) }
+				sites={ sitesWithPlugin }
+				plugin={ plugin }
+			/>
+			{ plugin.wporg && (
+				<PluginSiteList
+					className="single-plugin__not-installed-on"
+					title={ translate( 'Available sites', {
+						comment: 'header for list of sites a plugin can be installed on',
+					} ) }
+					sites={ notInstalledSites }
+					plugin={ plugin }
+				/>
+			) }
+		</div>
+	);
 }
 
 function PluginDoesNotExistView() {
