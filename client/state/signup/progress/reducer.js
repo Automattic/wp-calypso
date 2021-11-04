@@ -98,7 +98,7 @@ const saveStep = ( state, { step } ) => {
 				...step,
 				// The pending status means this step needs to delay api request and the user goes back to this step
 				// So we can mark status as in-progress
-				status: status === 'pending' ? 'in-progress' : status,
+				status: status === 'pending' && step.stepName !== 'p2-site' ? 'in-progress' : status,
 		  } )
 		: addStep( state, { ...step, status: 'in-progress' } );
 };
