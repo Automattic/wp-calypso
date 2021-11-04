@@ -67,16 +67,11 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	.components-guide__footer {
 		display: none;
 	}
-
 	.components-guide__container {
 		margin-top: 0;
 	}
 
 	.components-guide__page {
-		position: absolute;
-		width: 100%;
-		justify-content: start;
-
 		@media ( min-width: $modal-breakpoint ) {
 			height: $modal-content-min-height;
 		}
@@ -109,6 +104,12 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	}
 }
 
+.announcement-modal__headline {
+	font-size: 10px;
+	font-weight: 700;
+	color: var( --studio-blue-40 );
+}
+
 .announcement-modal__text,
 .announcement-modal__visual {
 	@media ( min-width: $modal-breakpoint ) {
@@ -132,17 +133,13 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 }
 .announcement-modal__visual {
 	height: 95%;
-	align-items: flex-end;
+	align-items: center;
+	justify-content: center;
 	background: var( --studio-blue-5 );
 	display: flex;
 	text-align: center;
 	overflow: hidden;
 	position: relative;
-
-	@include break-mobile {
-		// For smaller screens, ensure the top of the images are displayed.
-		align-items: flex-start;
-	}
 
 	@media ( min-width: $modal-breakpoint ) {
 		height: auto;
@@ -154,18 +151,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 	@media ( min-width: $modal-breakpoint ) {
 		margin-top: 0;
-	}
-
-	&--bottom-left {
-		align-self: flex-start;
-		margin-bottom: -10px;
-
-		@media ( min-width: $modal-breakpoint ) {
-			position: absolute;
-			bottom: 0;
-			align-self: auto;
-			width: 90%;
-		}
+		width: 90%;
 	}
 }
 
@@ -183,7 +169,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		font-size: 24px;
 
 		h2 {
-			margin: 26px 0;
+			margin: 12px 0;
 		}
 	}
 }
