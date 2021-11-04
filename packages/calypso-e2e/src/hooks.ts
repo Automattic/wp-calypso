@@ -1,6 +1,5 @@
 import { mkdir } from 'fs/promises';
 import path from 'path';
-import { beforeAll, afterAll } from '@jest/globals';
 import { BrowserContext, chromium, Page, Video } from 'playwright';
 import { getDefaultLoggerConfiguration } from './browser-helper';
 import { closeBrowser, startBrowser, newBrowserContext, browser } from './browser-manager';
@@ -24,19 +23,19 @@ function getFileName( testName: string ): string {
 }
 
 /**
- * Set up hoooks used for Jest tests.
+ * Creates handlers that can be used in test setup/tear-down hooks to set up and tear down the Playwright environment.
+ * It will set up browser screenshot and video-recording capabilities.
  *
- * This method must be called once on the top `describe` block. It will set up a browser
- * screenshot and video-recording capabilities. It will call the provided callback with an instance
- * of the browser, so tests can use it to run actions and make assertions.
- *
- * @param callback Function to be called with the browser instance.
+ * @returns setup and tear-down handlers that can be used in test hooks (e.g. Jest's 'beforeAll' and 'afterAll')
  */
-export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): void => {
+export function createTestHookHandlers(): {
+	setup: () => Promise< Page >;
+	tearDown: () => Promise< void >;
+} {
 	let page: Page;
 	let context: BrowserContext;
 
-	beforeAll( async () => {
+	const setup = async () => {
 		// Obtain the default logger configuration.
 		const loggingConfiguration = await getDefaultLoggerConfiguration( artifactPath );
 
@@ -51,10 +50,11 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 
 		// Launch a new page within the context.
 		page = await context.newPage();
-		callback( { page } );
-	} );
 
-	afterAll( async () => {
+		return page;
+	};
+
+	const tearDown = async () => {
 		if ( ! browser ) {
 			throw new Error( 'No browser instance found.' );
 		}
@@ -101,5 +101,10 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		// In all cases, clean up the directory after itself.
 		await ( page.video() as Video ).delete();
 		await closeBrowser();
-	} );
-};
+	};
+
+	return {
+		setup,
+		tearDown,
+	};
+}

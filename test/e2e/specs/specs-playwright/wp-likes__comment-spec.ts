@@ -9,23 +9,24 @@ import {
 	CommentsComponent,
 	GutenbergEditorPage,
 	NewPostFlow,
-	setupHooks,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
 describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
-	let page;
-	let publishedURL;
+	let page: Page;
+	let publishedURL: string;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe( 'Comment and like on a new post', function () {
-		let commentsComponent;
-		let gutenbergEditorPage;
+		let commentsComponent: CommentsComponent;
+		let gutenbergEditorPage: GutenbergEditorPage;
 		const comment = DataHelper.getRandomPhrase();
 
 		it( 'Log in', async function () {

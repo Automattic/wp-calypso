@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	DomainSearchComponent,
-	setupHooks,
 	BrowserManager,
 	CloseAccountFlow,
 	UserSignupPage,
@@ -14,6 +13,7 @@ import {
 	IndividualPurchasePage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), function () {
 	const inboxId = DataHelper.config.get( 'signupInboxId' ) as string;
@@ -29,8 +29,8 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe( 'Signup via /start/domain', function () {

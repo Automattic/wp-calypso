@@ -9,13 +9,13 @@ import {
 	InvitePeoplePage,
 	PeoplePage,
 	LoginPage,
-	setupHooks,
 	UserSignupPage,
 	Roles,
 	BrowserManager,
 	CloseAccountFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
@@ -31,8 +31,8 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	let adjustedInviteLink: string;
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe( 'Invite user', function () {

@@ -8,7 +8,6 @@ export type { PaymentDetails } from './data-helper';
 
 export { BrowserHelper, BrowserManager, MediaHelper, DataHelper, ElementHelper };
 
-export * from './jest-conditionals';
 export * from './lib';
 export * from './hooks';
 export * from './email-client';

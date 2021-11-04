@@ -5,12 +5,12 @@
 import {
 	DataHelper,
 	LoginPage,
-	setupHooks,
 	ReaderPage,
 	NotificationsComponent,
 	NavbarComponent,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function () {
 	let page: Page;
@@ -18,8 +18,8 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	let notificationsComponent: NotificationsComponent;
 	const comment = DataHelper.getRandomPhrase();
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	it( 'Log in', async function () {

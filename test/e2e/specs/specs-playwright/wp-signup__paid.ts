@@ -6,7 +6,6 @@ import {
 	DataHelper,
 	DomainSearchComponent,
 	LoginPage,
-	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
 	BrowserManager,
@@ -21,6 +20,7 @@ import {
 	IndividualPurchasePage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 // Skipping while new onboarding flows are in transition and we map the new tests
 describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function () {
@@ -35,8 +35,8 @@ describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), func
 
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe( 'Signup via /start', function () {

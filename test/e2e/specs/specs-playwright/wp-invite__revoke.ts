@@ -10,9 +10,9 @@ import {
 	InvitePeoplePage,
 	PeoplePage,
 	BrowserManager,
-	setupHooks,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	const newUsername = `e2eflowtestingviewer${ DataHelper.getTimestamp() }`;
@@ -28,8 +28,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	let peoplePage: PeoplePage;
 	let page: Page;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	it( 'Log in', async function () {

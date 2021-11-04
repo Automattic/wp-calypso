@@ -2,13 +2,9 @@
  * @group calypso-release
  */
 
-import {
-	setupHooks,
-	DataHelper,
-	CloseAccountFlow,
-	GutenboardingFlow,
-} from '@automattic/calypso-e2e';
+import { DataHelper, CloseAccountFlow, GutenboardingFlow } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 	const siteTitle = DataHelper.getBlogName();
@@ -21,8 +17,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 	let gutenboardingFlow: GutenboardingFlow;
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe( 'Signup via /new', function () {

@@ -2,8 +2,9 @@
  * @group calypso-release
  */
 
-import { setupHooks, DataHelper, EmailClient, LoginPage } from '@automattic/calypso-e2e';
+import { DataHelper, EmailClient, LoginPage } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 import type { Message } from 'mailosaur/lib/models';
 
 describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function () {
@@ -20,8 +21,8 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	let message: Message;
 	let emailClient: EmailClient;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	it( 'Navigate to Login page', async function () {

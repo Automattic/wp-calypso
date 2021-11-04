@@ -5,13 +5,13 @@
 import {
 	DataHelper,
 	LoginPage,
-	setupHooks,
 	SidebarComponent,
 	PlansPage,
 	IndividualPurchasePage,
 	CartCheckoutPage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 const userOnPremiumPlan = 'defaultUser';
 
@@ -21,8 +21,8 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	let purchasesPage: IndividualPurchasePage;
 	let cartCheckoutPage: CartCheckoutPage;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe( 'Initial navigation', function () {

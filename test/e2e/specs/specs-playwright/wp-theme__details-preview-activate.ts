@@ -3,7 +3,6 @@
  */
 
 import {
-	setupHooks,
 	DataHelper,
 	LoginPage,
 	SidebarComponent,
@@ -12,21 +11,23 @@ import {
 	ThemesDetailPage,
 	SiteSelectComponent,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
-	let sidebarComponent;
-	let themesPage;
-	let themesDetailPage;
-	let previewComponent;
-	let popupTab;
-	let page;
+	let sidebarComponent: SidebarComponent;
+	let themesPage: ThemesPage;
+	let themesDetailPage: ThemesDetailPage;
+	let previewComponent: PreviewComponent;
+	let popupTab: Page;
+	let page: Page;
 	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
 	const user = 'defaultUser';
 	const siteURL = DataHelper.getAccountSiteURL( user, { protocol: false } );
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	it( 'Log in', async function () {

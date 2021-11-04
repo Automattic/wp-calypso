@@ -2,20 +2,16 @@
  * @group calypso-pr
  */
 
-import {
-	DataHelper,
-	LoginPage,
-	SidebarComponent,
-	MarketingPage,
-	setupHooks,
-} from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage, SidebarComponent, MarketingPage } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
-	let marketingPage;
-	let page;
+	let marketingPage: MarketingPage;
+	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	it( 'Log in', async function () {

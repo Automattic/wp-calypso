@@ -2,20 +2,15 @@
  * @group calypso-pr
  */
 
-import {
-	DataHelper,
-	LoginPage,
-	SidebarComponent,
-	SupportComponent,
-	setupHooks,
-} from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage, SidebarComponent, SupportComponent } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 	let page: Page;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe.each( [

@@ -4,7 +4,6 @@
  */
 
 import {
-	setupHooks,
 	DataHelper,
 	LoginPage,
 	NewPostFlow,
@@ -13,6 +12,7 @@ import {
 	BrowserHelper,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () => {
 	let gutenbergEditorPage: GutenbergEditorPage;
@@ -28,8 +28,8 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 		user = 'gutenbergSimpleSiteUser';
 	}
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	it( 'Log in', async function () {

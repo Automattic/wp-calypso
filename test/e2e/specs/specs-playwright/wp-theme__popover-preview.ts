@@ -8,22 +8,23 @@ import {
 	SidebarComponent,
 	ThemesPage,
 	PreviewComponent,
-	setupHooks,
 	SiteSelectComponent,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
-	let sidebarComponent;
-	let themesPage;
-	let previewComponent;
-	let page;
+	let sidebarComponent: SidebarComponent;
+	let themesPage: ThemesPage;
+	let previewComponent: PreviewComponent;
+	let page: Page;
 	// This test will use this specific theme as it will never be active.
 	const themeName = 'Twenty Seventeen';
 	const user = 'defaultUser';
 	const siteURL = DataHelper.getAccountSiteURL( user, { protocol: false } );
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	it( 'Log in', async function () {

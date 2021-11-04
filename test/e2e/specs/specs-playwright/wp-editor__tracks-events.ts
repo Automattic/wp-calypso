@@ -2,22 +2,17 @@
  * @group gutenberg
  */
 
-import {
-	DataHelper,
-	LoginPage,
-	NewPostFlow,
-	GutenbergEditorPage,
-	setupHooks,
-} from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage, NewPostFlow, GutenbergEditorPage } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { getLatestEvent } from '../../lib/gutenberg/tracking/playwright-utils';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( `Tracks Events for Post Editor` ), function () {
 	let page: Page;
 	const mainUser = 'gutenbergSimpleSiteUser';
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	it( 'Log in', async function () {

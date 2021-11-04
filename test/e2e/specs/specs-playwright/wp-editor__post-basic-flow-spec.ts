@@ -11,11 +11,11 @@ import {
 	EditorSettingsSidebarComponent,
 	LoginPage,
 	NewPostFlow,
-	setupHooks,
 	PublishedPostPage,
-	itif,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { itif } from '../../lib/jest/jest-conditionals';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 const quote =
 	'The problem with quotes on the Internet is that it is hard to verify their authenticity. \n— Abraham Lincoln';
@@ -32,8 +32,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'gutenbergSimpleSiteUser';
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe( 'Starting and populating post data', function () {

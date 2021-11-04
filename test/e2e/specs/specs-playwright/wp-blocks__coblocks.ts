@@ -4,7 +4,6 @@
  */
 
 import {
-	setupHooks,
 	DataHelper,
 	MediaHelper,
 	LoginPage,
@@ -19,6 +18,7 @@ import {
 	BrowserHelper,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 import { TEST_IMAGE_PATH } from '../constants';
 
 describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
@@ -42,8 +42,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	const clicktoTweetBlockTweet =
 		'The foolish man seeks happiness in the distance. The wise grows it under his feet. — James Oppenheim';
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	beforeAll( async () => {

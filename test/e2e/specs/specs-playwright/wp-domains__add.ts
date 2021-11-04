@@ -9,18 +9,18 @@ import {
 	DomainsPage,
 	SidebarComponent,
 	DomainSearchComponent,
-	setupHooks,
 	CartCheckoutPage,
 	IndividualPurchasePage,
 	NavbarComponent,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	const blogName = DataHelper.getBlogName();

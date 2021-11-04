@@ -6,16 +6,16 @@ import {
 	DataHelper,
 	LoginPage,
 	SupportComponent,
-	setupHooks,
 	GutenboardingFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 	let page: Page;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe.each( [

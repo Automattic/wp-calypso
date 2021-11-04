@@ -3,7 +3,6 @@
  */
 
 import {
-	setupHooks,
 	BrowserManager,
 	DataHelper,
 	LoginPage,
@@ -13,6 +12,7 @@ import {
 	NotificationsComponent,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	let page: Page;
@@ -23,8 +23,8 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	const notificationsUser = 'notificationsUser';
 	const comment = DataHelper.getRandomPhrase() + ' notifications-trash-spec';
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {

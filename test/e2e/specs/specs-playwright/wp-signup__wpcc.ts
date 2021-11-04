@@ -5,12 +5,12 @@
 import {
 	DataHelper,
 	LoginPage,
-	setupHooks,
 	UserSignupPage,
 	CloseAccountFlow,
 	EmailClient,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function () {
 	const inboxId = DataHelper.config.get( 'signupInboxId' ) as string;
@@ -23,8 +23,8 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe( 'Signup via /start/wpcc', function () {

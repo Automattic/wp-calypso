@@ -1,7 +1,6 @@
 import {
 	DataHelper,
 	BlockFlow,
-	setupHooks,
 	GutenbergEditorPage,
 	LoginPage,
 	NewPostFlow,
@@ -9,6 +8,7 @@ import {
 	PublishedPostContext,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../../lib/jest/setup-hooks';
 
 /**
  * Creates a suite of block smoke tests for a set of block flows.
@@ -23,8 +23,8 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		let editorContext: EditorContext;
 		let publishedPostContext: PublishedPostContext;
 
-		setupHooks( ( args ) => {
-			page = args.page;
+		setupHooks( ( createdPage ) => {
+			page = createdPage;
 		} );
 
 		describe( 'Editor set up', function () {

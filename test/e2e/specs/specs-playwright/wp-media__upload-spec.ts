@@ -4,7 +4,6 @@
 
 import assert from 'assert';
 import {
-	setupHooks,
 	DataHelper,
 	LoginPage,
 	MediaPage,
@@ -13,14 +12,15 @@ import {
 	TestFile,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, UNSUPPORTED_FILE_PATH } from '../constants';
 
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	beforeAll( async () => {

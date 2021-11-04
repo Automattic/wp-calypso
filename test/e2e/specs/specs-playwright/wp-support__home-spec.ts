@@ -2,14 +2,15 @@
  * @group calypso-pr
  */
 
-import { DataHelper, LoginPage, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage, SupportComponent } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 
 describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	describe.each( [

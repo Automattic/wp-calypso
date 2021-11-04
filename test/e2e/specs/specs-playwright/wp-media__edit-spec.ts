@@ -8,18 +8,18 @@ import {
 	LoginPage,
 	MediaPage,
 	SidebarComponent,
-	setupHooks,
 	TestFile,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { setupHooks } from '../../lib/jest/setup-hooks';
 import { TEST_IMAGE_PATH } from '../constants';
 
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	let testImage: TestFile;
 	let page: Page;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 
 	beforeAll( async () => {
