@@ -4,6 +4,7 @@
 .breadcrumbs {
 	position: relative;
 	margin: 0;
+	z-index: 10;
 
 	@include break-mobile {
 		position: sticky;
@@ -62,14 +63,14 @@
 		font-size: 13px; /* stylelint-disable-line */
 		font-weight: 500; /* stylelint-disable-line */
 		color: var( --color-neutral-80 );
-		
+
 		& .breadcrumbs__item {
 			color: var( --color-neutral-80 );
-			
+
 			& .breadcrumbs__item-label {
 				color: var( --color-neutral-80 );
 			}
-			
+
 			&:first-child {
 				.breadcrumbs__item-label {
 					font-size: $font-body;
@@ -140,9 +141,10 @@
 	display: none;
 
 	@include break-mobile {
-		display: block;
+		display: flex;
 
-		& .button {
+		& button,
+		& .select-dropdown {
 			margin-right: 16px;
 		}
 		& .button:last-child {
