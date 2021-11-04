@@ -62,7 +62,7 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	addNewEmailForwardsClick = ( event ) => {
-		const { selectedSiteSlug } = this.props;
+		const { selectedSiteSlug, selectedDomainName } = this.props;
 
 		event.preventDefault();
 
@@ -71,7 +71,7 @@ class EmailForwardingAddNewCompactList extends Component {
 		}
 
 		this.state.emailForwards.map( ( forward ) => {
-			const { mailbox, destination, selectedDomainName } = forward;
+			const { mailbox, destination } = forward;
 
 			this.addNewEmailForwardWithAnalytics(
 				selectedDomainName,
