@@ -148,11 +148,12 @@ export default function useCreatePaymentCompleteCallback( {
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
 				console.error( err );
-				recordCompositeCheckoutErrorDuringAnalytics( {
-					reduxDispatch,
-					errorObject: err,
-					failureDescription: 'useCreatePaymentCompleteCallback',
-				} );
+				reduxDispatch(
+					recordCompositeCheckoutErrorDuringAnalytics( {
+						errorObject: err,
+						failureDescription: 'useCreatePaymentCompleteCallback',
+					} )
+				);
 			}
 
 			const receiptId = transactionResult?.receipt_id;

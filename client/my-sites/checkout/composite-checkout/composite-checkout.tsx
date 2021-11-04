@@ -54,7 +54,7 @@ import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
 import useStoredCards from './hooks/use-stored-cards';
 import { useWpcomStore } from './hooks/wpcom-store';
-import { logStashLoadErrorEventAction, logStashEventAction } from './lib/analytics';
+import { logStashLoadErrorEvent, logStashEvent } from './lib/analytics';
 import existingCardProcessor from './lib/existing-card-processor';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from './lib/free-purchase-processor';
@@ -276,11 +276,9 @@ export default function CompositeCheckout( {
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
-			reduxDispatch(
-				logStashEventAction( 'calypso_composite_checkout_products_load_error', {
-					error_message: String( message ),
-				} )
-			);
+			logStashEvent( 'calypso_composite_checkout_products_load_error', {
+				error_message: String( message ),
+			} );
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_products_load_error', {
 					error_message: String( message ),
@@ -530,7 +528,7 @@ export default function CompositeCheckout( {
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
 		( errorType, errorMessage, errorData ) => {
-			reduxDispatch( logStashLoadErrorEventAction( errorType, errorMessage, errorData ) );
+			logStashLoadErrorEvent( errorType, errorMessage, errorData );
 			function errorTypeToTracksEventName( type: string ): string {
 				switch ( type ) {
 					case 'page_load':

@@ -490,6 +490,7 @@ describe( 'CompositeCheckout', () => {
 						success: email === 'passes',
 					};
 				} );
+			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 
 			render(
 				<MyCheckout

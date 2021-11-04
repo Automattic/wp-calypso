@@ -1,10 +1,10 @@
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import {
 	HAPPYCHAT_ELIGIBILITY_SET,
 	PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
 } from 'calypso/state/action-types';
 import { setSupportLevel } from 'calypso/state/help/actions';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/happychat/init';
@@ -34,18 +34,16 @@ export const requestHappychatEligibility = () => ( dispatch ) => {
 				dispatch( errorNotice( error.message ) );
 				// Log this failure to logstash. This is debug info for https://github.com/Automattic/wp-calypso/issues/51517
 				// and can probably be removed once that's closed.
-				dispatch(
-					logToLogstash( {
-						feature: 'calypso_client',
-						message: 'Olark configuration request failed',
-						severity: 'error',
-						extra: {
-							error: error.name,
-							status: error.status,
-							message: error.message,
-						},
-					} )
-				);
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Olark configuration request failed',
+					severity: 'error',
+					extra: {
+						error: error.name,
+						status: error.status,
+						message: error.message,
+					},
+				} );
 			}
 		} );
 };

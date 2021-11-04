@@ -13,8 +13,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getStoredPaymentAgreements } from 'calypso/state/stored-cards/selectors';
 import {
@@ -35,24 +35,21 @@ import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 function useLogError( message: string ): CheckoutPageErrorCallback {
-	const reduxDispatch = useDispatch();
 	return useCallback(
 		( errorType, errorMessage ) => {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message,
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						env: config( 'env_id' ),
-						type: 'payment_method_selector',
-						message: String( errorMessage ),
-						errorType,
-					},
-				} )
-			);
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'payment_method_selector',
+					message: String( errorMessage ),
+					errorType,
+				},
+			} );
 		},
-		[ reduxDispatch, message ]
+		[ message ]
 	);
 }
 
