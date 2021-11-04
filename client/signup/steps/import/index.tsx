@@ -2,8 +2,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { isAnalyzing } from '../../../state/imports/url-analyzer/selectors';
 import { getStepUrl } from 'calypso/signup/utils';
+import { isAnalyzing } from '../../../state/imports/url-analyzer/selectors';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
@@ -21,7 +21,7 @@ type Props = ConnectedProps< typeof connector > & {
 
 const MOCK_DATA = {
 	website: 'https://openweb.com',
-	platform: 'Wix',
+	platform: 'wix',
 };
 
 const ImportOnboarding: React.FunctionComponent< Props > = ( {

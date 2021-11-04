@@ -6,6 +6,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { urlData } from '../types';
+import { convertPlatformName } from '../util';
 import ImportPlatformDetails from './platform-details';
 import ImportPreview from './preview';
 import './style.scss';
@@ -15,19 +16,6 @@ import './style.scss';
 interface Props {
 	urlData: urlData;
 }
-
-const platformMap: { [ key: string ]: string } = {
-	wordpress: 'WordPress',
-	wix: 'Wix',
-	blogger: 'Blogger',
-	medium: 'Medium',
-	'godaddy-central': 'GoDaddy Central',
-	tumblr: 'Tumblr',
-};
-
-const convertPlatformName = ( platform: string ): string => {
-	return platformMap[ platform ] !== undefined ? platformMap[ platform ] : 'Unknown';
-};
 
 const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 	const { __ } = useI18n();
