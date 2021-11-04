@@ -8,7 +8,6 @@ import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
-import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
@@ -104,6 +103,7 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 
 	const customize = {
 		icon: 'customize',
+		getUrl: ( state, themeId, siteId ) => getCustomizeUrl( state, themeId, siteId, isFSEActive ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 			! isThemeActive( state, themeId, siteId ),
@@ -115,14 +115,12 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 		customize.header = translate( 'Edit design on:', {
 			comment: "label in the dialog for selecting a site for which to edit a theme's design",
 		} );
-		customize.getUrl = ( state, _themeId, siteId ) => getSiteEditorUrl( state, siteId );
 	} else {
 		customize.label = translate( 'Customize' );
 		customize.extendedLabel = translate( 'Customize this design' );
 		customize.header = translate( 'Customize on:', {
 			comment: 'label in the dialog for selecting a site for which to customize a theme',
 		} );
-		customize.getUrl = getCustomizeUrl;
 	}
 
 	const tryandcustomize = {
