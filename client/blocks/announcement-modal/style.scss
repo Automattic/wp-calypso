@@ -157,8 +157,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 .announcement-modal__heading {
 	@include onboarding-font-recoleta;
-	/* Gray / Gray 90 */
-	color: #1d2327;
+	color: var( --studio-gray-90 );
 	font-size: 24px;
 
 	h2 {
@@ -177,9 +176,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .announcement-modal__description p {
 	font-size: 15px;
 	line-height: 22px;
-
-	/* Gray / Gray 60 */
-	color: #50575e;
+	color: var( --studio-gray-60 );
 
 	@media ( min-width: $modal-breakpoint ) {
 		font-size: 17px;
