@@ -1,7 +1,10 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
+import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
-import { GoToStep } from '../types';
+import { GoToStep, urlData } from '../types';
 import './style.scss';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
@@ -13,16 +16,16 @@ const validateUrl = ( url: string ): boolean => {
 	return urlRgx.test( url );
 };
 
-interface Props {
+type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
-	isScanning: boolean;
-	setIsScanning: ( inProgress: boolean ) => void;
-}
+};
 
 const CaptureStep: React.FunctionComponent< Props > = ( {
 	goToStep,
-	isScanning,
-	setIsScanning,
+	analyzeUrl,
+	resetError,
+	isAnalyzing,
+	analyzerError,
 } ) => {
 	const { __ } = useI18n();
 
@@ -31,24 +34,15 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	const [ showError, setShowError ] = React.useState( false );
 
 	const runProcess = (): void => {
-		setIsScanning( true );
-
-		/**
-		 * Temp piece of code
-		 * goToStep is a function for redirecting users to
-		 * the next step depending on the scanning result
-		 *
-		 * It can be:
-		 * - goToStep( 'ready' );
-		 * - goToStep( 'ready', 'not' );
-		 * - goToStep( 'ready', 'preview' );
-		 */
-		setTimeout( () => {
-			goToStep( 'ready', 'preview' );
-		}, 3000 );
+		// Analyze the URL and when we receive the urlData, decide where to go next.
+		analyzeUrl( urlValue ).then( ( response: urlData ) => {
+			const stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
+			goToStep( 'ready', stepSectionName );
+		} );
 	};
 
 	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {
+		resetError();
 		setUrlValue( e.target.value );
 		setIsValid( validateUrl( e.target.value ) );
 	};
@@ -62,7 +56,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			{ ! isScanning && (
+			{ ! isAnalyzing && (
 				<div className="import-layout__center">
 					<div className="capture__content">
 						<input
@@ -75,18 +69,30 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 							onChange={ onInputChange }
 							value={ urlValue }
 						/>
-						{ ! isValid && showError && (
-							<div className="capture__input-error-msg">
-								{ __( 'The address you entered is not valid. Please try again.' ) }
-							</div>
-						) }
+						{ ( ! isValid && showError ) ||
+							( analyzerError && (
+								<div className="capture__input-error-msg">
+									{ __( 'The address you entered is not valid. Please try again.' ) }
+								</div>
+							) ) }
 					</div>
 				</div>
 			) }
 
-			{ isScanning && <ScanningStep /> }
+			{ isAnalyzing && <ScanningStep /> }
 		</>
 	);
 };
 
-export default CaptureStep;
+const connector = connect(
+	( state ) => ( {
+		isAnalyzing: isAnalyzing( state ),
+		analyzerError: getAnalyzerError( state ),
+	} ),
+	{
+		analyzeUrl,
+		resetError,
+	}
+);
+
+export default connector( CaptureStep );
