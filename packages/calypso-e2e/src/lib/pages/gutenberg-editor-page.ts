@@ -24,7 +24,7 @@ const selectors = {
 
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
-	settingsToggle: '[aria-label="Settings"]',
+	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
 	saveDraftButton: '.editor-post-save-draft',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
@@ -266,16 +266,16 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async openSettings( toggleSelector = selectors.settingsToggle ): Promise< void > {
+	async openSettings(): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		const isSidebarOpen = await frame.$eval( toggleSelector, ( element ) =>
+		const isSidebarOpen = await frame.$eval( selectors.settingsToggle, ( element ) =>
 			element.classList.contains( 'is-pressed' )
 		);
 		if ( ! isSidebarOpen ) {
-			await frame.click( toggleSelector );
+			await frame.click( selectors.settingsToggle );
 		}
-		const settingsToggle = await frame.waitForSelector( toggleSelector );
+		const settingsToggle = await frame.waitForSelector( selectors.settingsToggle );
 		await frame.waitForFunction(
 			( element ) => element.getAttribute( 'aria-pressed' ) === 'true',
 			settingsToggle

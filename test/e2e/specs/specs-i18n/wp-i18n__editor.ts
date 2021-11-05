@@ -265,8 +265,7 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
 				} );
 
 				// Open block settings.
-				const settingsToggleLabel = await frame.evaluate( 'wp?.i18n?.__( "Settings" )' );
-				await gutenbergEditorPage.openSettings( `[aria-label="${ settingsToggleLabel }"]` );
+				await gutenbergEditorPage.openSettings();
 				await frame.click( block.blockEditorSelector );
 				if ( await frame.isVisible( '.block-editor-block-parent-selector__button' ) ) {
 					await frame.click( '.block-editor-block-parent-selector__button' );
