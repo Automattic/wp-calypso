@@ -132,7 +132,7 @@
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "^1.2.0",
 		"@automattic/babel-plugin-transform-wpcalypso-async": "^1.0.1",
-		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-build": "^10.0.0",
 		"@automattic/calypso-color-schemes": "^2.1.1",
 		"@automattic/calypso-doctor": "^0.1.0",
 		"@automattic/color-studio": "2.5.0",
@@ -271,7 +271,7 @@
 		"readline-sync": "^1.4.10",
 		"reakit-utils": "^0.15.1",
 		"recursive-copy": "^2.0.10",
-		"redux": "^4.0.5",
+		"redux": "^4.1.2",
 		"regenerator-runtime": "^0.13.9",
 		"replace": "^1.1.5",
 		"request": "^2.88.2",
@@ -316,7 +316,8 @@
 	"resolutions": {
 		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
 		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.2.1-beta-1",
-		"@types/react": "^17.0.33"
+		"@types/react": "^17.0.33",
+		"keytar@npm:7.7.0/node-addon-api": "3.1.0"
 	},
 	"packageManager": "yarn@3.1.0"
 }

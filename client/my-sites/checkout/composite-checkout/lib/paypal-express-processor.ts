@@ -1,5 +1,9 @@
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import {
+	mapRecordKeysRecursively,
+	camelToSnakeCase,
+	tryToGuessPostalCodeFormat,
+} from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import wp from 'calypso/lib/wp';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
@@ -55,7 +59,12 @@ export default async function payPalProcessor(
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	return wpcomPayPalExpress( formattedTransactionData, transactionOptions )
-		.then( makeRedirectResponse )
+		.then( ( response ) => {
+			if ( ! response?.redirect_url ) {
+				throw new Error( 'There was an error redirecting to PayPal' );
+			}
+			return makeRedirectResponse( response.redirect_url );
+		} )
 		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
@@ -63,6 +72,9 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ) {
+	const path = '/me/paypal-express-url';
+	const apiVersion = '1.2';
+
 	const isJetpackUserLessCheckout =
 		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
 
@@ -87,11 +99,13 @@ async function wpcomPayPalExpress(
 				},
 			};
 
-			return wp.undocumented().paypalExpressUrl( newPayload );
+			const body = mapRecordKeysRecursively( newPayload, camelToSnakeCase );
+			return wp.req.post( { path }, { apiVersion }, body );
 		} );
 	}
 
-	return wp.undocumented().paypalExpressUrl( payload );
+	const body = mapRecordKeysRecursively( payload, camelToSnakeCase );
+	return wp.req.post( { path }, { apiVersion }, body );
 }
 
 function createPayPalExpressEndpointRequestPayloadFromLineItems( {
