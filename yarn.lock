@@ -9290,7 +9290,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "WordPressDesktop@workspace:desktop"
   dependencies:
-    "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-build": ^10.0.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     archiver: ^3.1.1
     copy-webpack-plugin: ^6.2.1
