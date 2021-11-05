@@ -158,6 +158,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
 					</>
 				}
+				isLoading={ false }
 				footerImage={ footerCardImg }
 				showProgressIndicator={ false }
 				showContactUs
