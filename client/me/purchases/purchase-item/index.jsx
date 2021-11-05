@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -66,9 +67,11 @@ class PurchaseItem extends Component {
 
 		if ( isDisconnectedSite ) {
 			if ( isJetpackTemporarySite ) {
-				return (
-					<span className="purchase-item__is-error">{ translate( 'Awaiting site URL' ) }</span>
-				);
+				const isJetpackUserLicensingEnabled = isEnabled( 'jetpack/user-licensing' );
+				const errorMessage = isJetpackUserLicensingEnabled
+					? translate( 'Pending activation' )
+					: translate( 'Awaiting site URL' );
+				return <span className="purchase-item__is-error">{ errorMessage }</span>;
 			}
 
 			if ( isJetpack ) {
