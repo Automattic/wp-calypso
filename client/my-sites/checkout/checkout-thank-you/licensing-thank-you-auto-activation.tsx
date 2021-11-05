@@ -104,7 +104,7 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 					siteId: jetpackTemporarySiteId,
 					receiptId,
 				},
-				`/checkout/jetpack/thank-you-completed/no-site/${ productSlug }`
+				`/checkout/jetpack/thank-you/licensing-auto-activate-completed/${ productSlug }`
 			);
 			page( thankYouCompletedUrl );
 		} else if ( supportTicketStatus === 'failed' ) {
