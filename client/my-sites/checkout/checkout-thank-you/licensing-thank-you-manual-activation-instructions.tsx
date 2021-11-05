@@ -7,13 +7,15 @@ import licensingActivationPluginInstall from 'calypso/assets/images/jetpack/lice
 import ExternalLink from 'calypso/components/external-link';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface Props {
 	productSlug: string | 'no_product';
+	receiptId: number;
 }
 
-const LicensingActivationInstructions: FC< Props > = ( { productSlug } ) => {
+const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -24,9 +26,14 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug } ) => {
 			} )
 		);
 		return page(
-			`/checkout/jetpack/thank-you/licensing-manual-activate-license-key/${ productSlug }`
+			addQueryArgs(
+				{
+					receiptId,
+				},
+				`/checkout/jetpack/thank-you/licensing-manual-activate-license-key/${ productSlug }`
+			)
 		);
-	}, [ dispatch, productSlug ] );
+	}, [ dispatch, productSlug, receiptId ] );
 
 	return (
 		<>
