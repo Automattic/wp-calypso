@@ -1,0 +1,28 @@
+.google-sale-banner {
+
+	@include breakpoint-deprecated( '>480px' ) {
+		&.banner.card {
+			padding-right: 24px;
+		}
+	}
+
+	.banner__icons {
+		.banner__icon {
+			display: none;
+		}
+
+		.banner__icon-no-circle {
+			align-self: center;
+			height: 36px;
+			width: 36px;
+		}
+	}
+
+	.banner__action {
+		margin-right: 0;
+
+		.button.is-compact {
+			line-height: 1.25;
+		}
+	}
+}
