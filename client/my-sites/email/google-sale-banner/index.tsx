@@ -80,7 +80,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 
 	return (
 		<Banner
-			callToAction={ translate( 'Get Google Workspace' ) }
+			callToAction={ translate( 'Claim Now' ) }
 			className="google-sale-banner"
 			description={ translate(
 				'Set up your custom mailbox @%(domainName)s and enable all the productivity tools Google Workspace offers.',
@@ -95,7 +95,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 				}
 			) }
 			disableCircle
-			event="get-google-workspace"
+			event="claim-now"
 			iconPath={ googleWorkspaceIcon }
 			href={ emailManagementPurchaseNewEmailAccount(
 				siteForSale?.slug,
