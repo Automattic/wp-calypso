@@ -982,7 +982,7 @@
 	@include jetpack-primary-button;
 }
 
-.licensing-thank-you-auto-activation__button {
+.button.licensing-thank-you-auto-activation__button {
 	&.is-primary {
 		&.is-busy {
 			background-image: linear-gradient(
@@ -995,8 +995,8 @@
 		}
 		&[disabled] {
 			color: white;
-			background-color: var( --color-neutral-20 );
-			border-color: var( --color-neutral-20 );
+			background-color: var( --color-neutral-10 );
+			border-color: var( --color-neutral-10 );
 		}
 	}
 }
