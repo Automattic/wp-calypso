@@ -56,6 +56,7 @@ class DnsRecordsList extends Component {
 			/>
 		),
 		title: this.props.translate( "What's this?" ),
+		// TODO: Add the correct callback to show the info about Domain Connect record
 		callback: () => {},
 	};
 

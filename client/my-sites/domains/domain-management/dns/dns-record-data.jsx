@@ -1,11 +1,7 @@
-import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { Icon, edit, redo, backup, trash, disable, info } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import MaterialIcon from 'calypso/components/material-icon';
-import DnsRecordListItem from '../dns-records/item';
 import DnsRecordsListItem from './dns-records-list-item';
 
 class DnsRecordData extends Component {
@@ -27,6 +23,7 @@ class DnsRecordData extends Component {
 		const data = this.trimDot( dnsRecord.data );
 		const target = this.trimDot( dnsRecord.target );
 
+		// TODO: Remove this once we stop displaying the protected records
 		if ( dnsRecord.protected_field ) {
 			if ( 'MX' === type ) {
 				return translate( 'Mail handled by WordPress.com email forwarding' );
@@ -36,23 +33,8 @@ class DnsRecordData extends Component {
 		}
 
 		switch ( type ) {
-			case 'A':
-			case 'AAAA':
-				return translate( 'Points to %(data)s', {
-					args: {
-						data,
-					},
-				} );
-
-			case 'CNAME':
-				return translate( 'Alias of %(data)s', {
-					args: {
-						data,
-					},
-				} );
-
 			case 'MX':
-				return translate( 'Mail handled by %(data)s with priority %(aux)s', {
+				return translate( '%(data)s with priority %(aux)s', {
 					args: {
 						data,
 						aux,
@@ -61,7 +43,7 @@ class DnsRecordData extends Component {
 
 			case 'SRV':
 				return translate(
-					'Service %(service)s (%(protocol)s) on target %(target)s:%(port)s, ' +
+					'%(service)s (%(protocol)s) on target %(target)s:%(port)s, ' +
 						'with priority %(aux)s and weight %(weight)s',
 					{
 						args: {
@@ -115,7 +97,7 @@ class DnsRecordData extends Component {
 	}
 
 	render() {
-		const { actions, dnsRecord, enabled, translate } = this.props;
+		const { actions, dnsRecord, enabled } = this.props;
 		const disabled = dnsRecord.isBeingDeleted || dnsRecord.isBeingAdded || ! enabled;
 
 		return (

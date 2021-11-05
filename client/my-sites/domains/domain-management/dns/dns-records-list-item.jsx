@@ -36,13 +36,7 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 				{ 'is-header': isHeader }
 			) }
 		>
-			<div
-				className={ classNames(
-					'dns-records-list-item'
-					// { 'is-disabled': disabled },
-					// { 'is-header': isHeader }
-				) }
-			>
+			<div className="dns-records-list-item">
 				<div className="dns-records-list-item__data dns-records-list-item__type">
 					<strong>{ type }</strong>
 				</div>

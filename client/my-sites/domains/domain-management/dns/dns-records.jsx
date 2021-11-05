@@ -39,7 +39,9 @@ class DnsRecords extends Component {
 	};
 
 	renderBreadcrumbs() {
-		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+		const { domains, translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
+		const pointsToWpcom = selectedDomain?.pointsToWpcom ?? false;
 
 		const items = [
 			{
@@ -62,8 +64,9 @@ class DnsRecords extends Component {
 		const buttons = [
 			<DnsAddNewRecordButton key="add-new-record-button" />,
 			<DnsMenuOptionsButton
-				key="menbu-options-button"
+				key="menu-options-button"
 				domain={ selectedDomainName }
+				pointsToWpcom={ pointsToWpcom }
 				onSuccess={ this.onRestoreSuccess }
 				onError={ this.onRestoreError }
 			/>,

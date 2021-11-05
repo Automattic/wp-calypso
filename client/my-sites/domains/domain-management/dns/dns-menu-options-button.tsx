@@ -10,8 +10,13 @@ import './dns-breadcrumb-button.scss';
 import RestoreDefaultARecordsDialog from './restore-default-a-records-dialog';
 import { DnsMenuOptionsButtonProps } from './types';
 
+type restoreDialogResult = {
+	shouldRestoreDefaultRecords: boolean;
+};
+
 function DnsMenuOptionsButton( {
 	domain,
+	pointsToWpcom,
 	onSuccess,
 	onError,
 }: DnsMenuOptionsButtonProps ): JSX.Element {
@@ -28,13 +33,7 @@ function DnsMenuOptionsButton( {
 		setMenuVisible( ! isMenuVisible );
 	}, [ isMenuVisible ] );
 
-	const closeRestoreDialog = useCallback( () => {
-		setRestoreDialogVisible( false );
-	}, [] );
-
-	const showRestoreDialog = useCallback( () => {
-		setRestoreDialogVisible( true );
-	}, [] );
+	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
 
 	const restoreDefaultRecords = useCallback( async () => {
 		const wpcomDomain = wpcom.domain( domain );
@@ -52,12 +51,21 @@ function DnsMenuOptionsButton( {
 		}
 	}, [ domain, onError, onSuccess, restoreRecordsErrorMessage ] );
 
-	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
+	const closeRestoreDialog = ( result: restoreDialogResult ) => {
+		setRestoreDialogVisible( false );
+		if ( result?.shouldRestoreDefaultRecords ?? false ) {
+			restoreDefaultRecords();
+		}
+	};
+
+	const showRestoreDialog = useCallback( () => setRestoreDialogVisible( true ), [] );
+
 	return (
 		<>
 			<RestoreDefaultARecordsDialog
 				visible={ isRestoreDialogVisible }
 				onClose={ closeRestoreDialog }
+				defaultRecords={ null }
 			/>
 			<Button
 				className="dns__breadcrumb-button ellipsis"
@@ -73,7 +81,7 @@ function DnsMenuOptionsButton( {
 				context={ optionsButtonRef.current }
 				position="bottom"
 			>
-				<PopoverMenuItem onClick={ showRestoreDialog }>
+				<PopoverMenuItem onClick={ showRestoreDialog } disabled={ pointsToWpcom }>
 					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
 					{ __( 'Restore default A records' ) }
 				</PopoverMenuItem>
