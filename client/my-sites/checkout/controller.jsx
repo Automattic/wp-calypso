@@ -8,6 +8,7 @@ import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
+import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
 import LicensingThankYouManualActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation';
 import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
 import LicensingThankYouManualActivationLicenseKey from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-license-key';
@@ -363,6 +364,20 @@ export function licensingThankYouAutoActivation( context, next ) {
 			receiptId={ receiptId }
 			source={ source }
 			jetpackTemporarySiteId={ siteId }
+		/>
+	);
+
+	next();
+}
+
+export function licensingThankYouAutoActivationCompleted( context, next ) {
+	const { siteId, receiptId } = context.query;
+
+	context.primary = (
+		<LicensingThankYouAutoActivationCompleted
+			productSlug={ context.params.product }
+			jetpackTemporarySiteId={ siteId }
+			receiptId={ receiptId }
 		/>
 	);
 
