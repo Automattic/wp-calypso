@@ -330,7 +330,10 @@ function CTA( { slug, isPluginInstalledOnsite, fullPlugin } ) {
 	}
 
 	return (
-		<Button className="single-plugin__install-button">
+		<Button
+			className="single-plugin__install-button"
+			href={ `/checkout/${ selectedSite.slug }/business?redirect_to=/marketplace/${ slug }/install/${ selectedSite.slug }#step2` }
+		>
 			{ translate( 'Upgrade and install' ) }
 		</Button>
 	);

@@ -22,7 +22,11 @@ import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-com
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-const MarketplacePluginUpload = (): JSX.Element => {
+const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
+	console.log( productSlug );
+	// If `productSlug` is not provided then this should proceed as plugin upload flow
+	// If `productSlug` is provided, we need to install the plugin like is handled here
+	// https://github.com/Automattic/wp-calypso/blob/192bf6b66de62a84b8c70a622de70f218f516610/client/my-sites/plugins/plugin-install-button/index.jsx#L25-L55
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -104,4 +108,4 @@ const MarketplacePluginUpload = (): JSX.Element => {
 	);
 };
 
-export default MarketplacePluginUpload;
+export default MarketplacePluginInstall;
