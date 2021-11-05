@@ -1,6 +1,6 @@
 import { CompactCard, Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -81,6 +81,24 @@ function VatForm(): JSX.Element {
 
 	const isVatAlreadySet = !! vatDetails.id;
 
+	const setCurrentVatDetailsByValue = useCallback(
+		( value: string ) => {
+			if ( value?.length > 1 ) {
+				const first2UppercasedChars = value.substr( 0, 2 ).toUpperCase();
+
+				if (
+					isNaN( Number( first2UppercasedChars ) ) &&
+					first2UppercasedChars === currentVatDetails.country
+				) {
+					return setCurrentVatDetails( { ...currentVatDetails, id: value.substr( 2 ) } );
+				}
+			}
+
+			return setCurrentVatDetails( { ...currentVatDetails, id: value } );
+		},
+		[ currentVatDetails.id, currentVatDetails.country ]
+	);
+
 	return (
 		<>
 			<FormFieldset className="vat-info__country-field">
@@ -101,7 +119,7 @@ function VatForm(): JSX.Element {
 					disabled={ isUpdating || isVatAlreadySet }
 					value={ currentVatDetails.id ?? vatDetails.id ?? '' }
 					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-						setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
+						setCurrentVatDetailsByValue( event.target.value )
 					}
 				/>
 				{ isVatAlreadySet && (
