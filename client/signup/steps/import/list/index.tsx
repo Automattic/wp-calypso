@@ -83,7 +83,7 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 					</div>
 
 					<div className={ 'list__importers list__importers-secondary' }>
-						<h3>Other platforms</h3>
+						<h3>{ __( 'Other platforms' ) }</h3>
 						<ul>
 							<li>
 								<Button borderless={ true } onClick={ () => onButtonClick( 'blogroll' ) }>
