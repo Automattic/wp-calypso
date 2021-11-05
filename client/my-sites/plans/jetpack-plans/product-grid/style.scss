@@ -110,3 +110,14 @@
 .product-grid__more.is-detached {
 	margin-top: 48px;
 }
+
+.jetpack-plans__iteration--only-realtime-products {
+	.product-grid__free {
+		margin-top: 16px;
+		flex-direction: column;
+	}
+
+	.jetpack-product-card.jetpack-free-card {
+		margin: initial;
+	}
+}
