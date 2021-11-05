@@ -73,7 +73,7 @@ describe( 'WPorg Data Actions', () => {
 
 	test( 'FetchPluginList action should dispatch two actions and make a request', async () => {
 		await store.dispatch( fetchPluginsList( 'new', 1, undefined ) );
-		expect( store.dispatch ).toHaveBeenCalledTimes( 2 );
+		expect( store.dispatch ).toHaveBeenCalledTimes( 3 );
 		expect( wporg.fetchPluginsList ).toHaveBeenCalledTimes( 1 );
 	} );
 
