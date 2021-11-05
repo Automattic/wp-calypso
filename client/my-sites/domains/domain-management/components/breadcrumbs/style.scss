@@ -142,10 +142,10 @@
 	@include break-mobile {
 		display: block;
 
-		& button {
+		& .button {
 			margin-right: 16px;
 		}
-		& button:last-child {
+		& .button:last-child {
 			margin-right: 0;
 		}
 	}
@@ -154,10 +154,10 @@
 .breadcrumbs__buttons-mobile {
 	display: block;
 
-	& button {
+	& .button {
 		margin-right: 16px;
 	}
-	& button:last-child {
+	& .button:last-child {
 		margin-right: 0;
 	}
 
