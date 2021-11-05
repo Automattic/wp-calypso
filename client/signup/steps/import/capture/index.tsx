@@ -61,6 +61,8 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 					<div className="capture__content">
 						<input
 							className="capture__input"
+							// eslint-disable-next-line jsx-a11y/no-autofocus
+							autoFocus
 							autoComplete="off"
 							autoCorrect="off"
 							spellCheck="false"
