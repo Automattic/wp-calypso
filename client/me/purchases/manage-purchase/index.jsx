@@ -44,7 +44,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
 	getDisplayName,
 	getPartnerName,
@@ -57,10 +56,8 @@ import {
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
-	isPaidWithCreditCard,
 	isPartnerPurchase,
 	isRenewable,
-	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
 	purchaseType,
@@ -348,15 +345,6 @@ class ManagePurchase extends Component {
 
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
-			const renewing = isRenewing( purchase );
-
-			if (
-				renewing &&
-				isPaidWithCreditCard( purchase ) &&
-				! cardProcessorSupportsUpdates( purchase )
-			) {
-				return null;
-			}
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>

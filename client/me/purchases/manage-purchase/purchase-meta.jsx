@@ -32,7 +32,6 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-	cardProcessorSupportsUpdates,
 	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
@@ -299,12 +298,7 @@ function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, s
 
 	const paymentDetails = <PaymentInfoBlock purchase={ purchase } />;
 
-	if (
-		! canEditPaymentDetails( purchase ) ||
-		! isPaidWithCreditCard( purchase ) ||
-		! cardProcessorSupportsUpdates( purchase ) ||
-		! site
-	) {
+	if ( ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) || ! site ) {
 		return <li>{ paymentDetails }</li>;
 	}
 

@@ -394,21 +394,6 @@ function isCloseToExpiration( purchase ) {
 }
 
 /**
- * Checks if a purchase credit card number can be updated
- * Payments done via CC & Paygate can have their CC updated, but this
- * is not currently true for other providers such as EBANX.
- *
- * @param {object} purchase - the purchase with which we are concerned
- * @returns {boolean} if the purchase card can be updated
- */
-function cardProcessorSupportsUpdates( purchase ) {
-	return (
-		isPaidWithCreditCard( purchase ) &&
-		purchase.payment.creditCard.processor !== 'WPCOM_Billing_Ebanx'
-	);
-}
-
-/**
  * Checks if a purchase might be in the refund period, whether refundable or not.
  *
  * If you need to determine whether a purchase can be programmatically refunded
@@ -804,7 +789,6 @@ export {
 	needsToRenewSoon,
 	paymentLogoType,
 	purchaseType,
-	cardProcessorSupportsUpdates,
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
