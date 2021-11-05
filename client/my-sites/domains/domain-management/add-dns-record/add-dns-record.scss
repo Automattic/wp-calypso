@@ -1,0 +1,63 @@
+@import '../../../customer-home/grid-mixins.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+@import '@wordpress/base-styles/_breakpoints.scss';
+
+.add-dns-record {
+	.add-dns-record__sidebar {
+		margin-top: 20px;
+
+		div {
+			padding: 24px 16px;
+			background-color: var( --studio-gray-0 );
+
+			strong {
+				margin-bottom: 8px;
+			}
+			p {
+				margin: 0;
+			}
+		}
+	}
+
+	@include break-xlarge {
+		@include grid-row( 1, 1 );
+		@include grid-column( 1, 12 );
+		@include display-grid;
+		@include grid-template-columns( 12, 24px, 1fr );
+		grid-gap: 24px;
+		.add-dns-record__main {
+			@include grid-column( 1, 8 );
+		}
+		.add-dns-record__sidebar {
+			@include grid-column( 9, 4 );
+
+			margin-top: 0;
+
+			div {
+				padding: 24px;
+			}
+		}
+		.add-dns-record__fullwidth {
+			@include grid-column( 1, 12 );
+		}
+	}
+
+	.dns__form {
+		border-top: none;
+		padding-top: 0;
+
+		.is-hidden {
+			display: none;
+		}
+	}
+
+	// make the DNS record type `select` expand to full width of the form
+	.dns__add-new-select-type {
+		width: 100%;
+	}
+
+	.dns__list-remove {
+		text-align: right;
+		width: 100px;
+	}
+}

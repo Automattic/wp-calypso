@@ -126,6 +126,10 @@ export function domainManagementDns( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'dns', relativeTo );
 }
 
+export function domainManagementDnsAddRecord( siteName, domainName, relativeTo = null ) {
+	return domainManagementEditBase( siteName, domainName, 'add-dns-record', relativeTo );
+}
+
 export function domainManagementRedirectSettings( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'redirect-settings', relativeTo );
 }
