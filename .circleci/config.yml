@@ -222,6 +222,7 @@ jobs:
     working_directory: /Users/distiller/wp-calypso
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -295,6 +296,7 @@ jobs:
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
