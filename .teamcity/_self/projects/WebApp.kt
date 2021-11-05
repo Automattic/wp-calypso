@@ -173,6 +173,22 @@ object RunAllUnitTests : BuildType({
 
 				# Install modules
 				${_self.yarn_install_cmd}
+
+				# Fail when we encounter these yarn warnings. We want to take
+				# action on them before merging the PR.
+				declare -A fail_yarn
+				fail_yarn[YN0002]="There are unmet peer dependencies."
+				fail_yarn[YN0068]="An entry in yarnrc.yml is out of date."
+
+				for yarn_err_code in "${'$'}{!fail_yarn[@]}"
+				do
+					if echo "${'$'}yarn_output" | grep -q "${'$'}yarn_err_code" ; then
+						err_msg="Yarn error ${'$'}yarn_err_code: ${'$'}{fail_yarn[${'$'}yarn_err_code]}"
+						echo "${'$'}err_msg"
+						echo "##teamcity[buildProblem description='${'$'}err_msg' identity='yarn_problem']]"
+						exit 1
+					fi
+				done
 			"""
 		}
 		bashNodeScript {
