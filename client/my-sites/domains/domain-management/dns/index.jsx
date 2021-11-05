@@ -47,8 +47,10 @@ class Dns extends Component {
 
 	constructor( props ) {
 		super( props );
+
 		this.onRestoreSuccess = this.onRestoreSuccess.bind( this );
 		this.onRestoreError = this.onRestoreError.bind( this );
+		this.renderBreadcrumbs = this.renderBreadcrumbs.bind( this );
 	}
 
 	onRestoreSuccess() {
@@ -124,6 +126,14 @@ class Dns extends Component {
 		);
 	}
 
+	renderPlaceholder() {
+		return config.isEnabled( 'domains/dns-records-redesign' ) ? (
+			<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+		) : (
+			<DomainMainPlaceholder goBack={ this.goBack } />
+		);
+	}
+
 	renderMain() {
 		const { dns, selectedDomainName, selectedSite } = this.props;
 		const domain = getSelectedDomain( this.props );
@@ -168,7 +178,7 @@ class Dns extends Component {
 			<Fragment>
 				<QuerySiteDomains siteId={ selectedSite.ID } />
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? <DomainMainPlaceholder goBack={ this.goBack } /> : this.renderMain() }
+				{ showPlaceholder ? this.renderPlaceholder() : this.renderMain() }
 			</Fragment>
 		);
 	}
