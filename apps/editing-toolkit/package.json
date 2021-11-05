@@ -112,8 +112,8 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"@babel/preset-typescript": "^7.15.0",
-		"@testing-library/jest-dom": "^5.14.1",
-		"@testing-library/react": "^12.1.1",
+		"@testing-library/jest-dom": "^5.15.0",
+		"@testing-library/react": "^12.1.2",
 		"@types/node": "^15.0.2",
 		"@types/wordpress__plugins": "^3.0.0",
 		"@wordpress/eslint-plugin": "^9.1.2",
