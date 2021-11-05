@@ -558,6 +558,7 @@ class Signup extends Component {
 		const completedSteps = getCompletedSteps(
 			this.props.flowName,
 			progress,
+			{},
 			this.props.isLoggedIn
 		);
 		return flowSteps.length === completedSteps.length;

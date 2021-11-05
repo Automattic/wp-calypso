@@ -1020,6 +1020,28 @@
 	height: 28px;
 }
 
+.licensing-thank-you-manual-activation-license-key__key {
+	margin-top: 40px;
+}
+
+.licensing-thank-you-manual-activation-license-key__clipboard {
+	display: flex;
+
+	margin-top: 8px;
+
+	.licensing-thank-you-manual-activation-license-key__input.form-text-input {
+		margin-right: 16px;
+
+		background-color: var( --studio-gray-0 );
+
+		border: none;
+	}
+}
+
+.licensing-thank-you-manual-activation-license-key__button {
+	min-width: 70px;
+}
+
 .jetpack-checkout-thank-you {
 	.jetpack-checkout-thank-you__card,
 	.jetpack-checkout-thank-you__card-loading {

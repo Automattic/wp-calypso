@@ -20,14 +20,18 @@ import {
 	domainManagementNameServers,
 	domainManagementList,
 } from 'calypso/my-sites/domains/paths';
+import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DnsTemplates from '../name-servers/dns-templates';
 import DnsAddNew from './dns-add-new';
+import DnsAddNewRecordButton from './dns-add-new-record-button';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
+import DnsMenuOptionsButton from './dns-menu-options-button';
 import DomainConnectRecord from './domain-connect-record';
 
 import './style.scss';
@@ -40,6 +44,24 @@ class Dns extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.onRestoreSuccess = this.onRestoreSuccess.bind( this );
+		this.onRestoreError = this.onRestoreError.bind( this );
+	}
+
+	onRestoreSuccess() {
+		const { translate, selectedDomainName } = this.props;
+		this.props.fetchDns( selectedDomainName, true );
+		this.props.successNotice(
+			translate( 'Yay, the name servers have been successfully updated!' )
+		);
+	}
+
+	onRestoreError( errorMessage ) {
+		this.props.errorNotice( errorMessage );
+	}
 
 	renderDnsTemplates() {
 		const selectedDomain = getSelectedDomain( this.props );
@@ -83,7 +105,23 @@ class Dns extends Component {
 			showBackArrow: true,
 		};
 
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+		const buttons = [
+			<DnsAddNewRecordButton />,
+			<DnsMenuOptionsButton
+				domain={ selectedDomainName }
+				onSuccess={ this.onRestoreSuccess }
+				onError={ this.onRestoreError }
+			/>,
+		];
+
+		return (
+			<Breadcrumbs
+				items={ items }
+				mobileItem={ mobileItem }
+				buttons={ buttons }
+				mobileButtons={ buttons }
+			/>
+		);
 	}
 
 	renderMain() {
@@ -149,18 +187,21 @@ class Dns extends Component {
 	};
 }
 
-export default connect( ( state, { selectedDomainName } ) => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySiteId( state, selectedSite.ID );
-	const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
-	const dns = getDomainDns( state, selectedDomainName );
-	const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
+export default connect(
+	( state, { selectedDomainName } ) => {
+		const selectedSite = getSelectedSite( state );
+		const domains = getDomainsBySiteId( state, selectedSite.ID );
+		const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
+		const dns = getDomainDns( state, selectedDomainName );
+		const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
 
-	return {
-		selectedSite,
-		domains,
-		dns,
-		showPlaceholder,
-		currentRoute: getCurrentRoute( state ),
-	};
-} )( localize( Dns ) );
+		return {
+			selectedSite,
+			domains,
+			dns,
+			showPlaceholder,
+			currentRoute: getCurrentRoute( state ),
+		};
+	},
+	{ successNotice, errorNotice, fetchDns }
+)( localize( Dns ) );

@@ -12,6 +12,7 @@ interface Props {
 	className?: string;
 	title: TranslateResult;
 	footerImage?: string;
+	isLoading?: boolean;
 	showContactUs?: boolean;
 	showJetpackLogo?: boolean;
 	showProgressIndicator?: boolean;
@@ -24,6 +25,7 @@ const LicensingActivation: FC< Props > = ( {
 	className,
 	title,
 	footerImage,
+	isLoading = false,
 	showContactUs = false,
 	showJetpackLogo = true,
 	showProgressIndicator = false,
@@ -52,7 +54,11 @@ const LicensingActivation: FC< Props > = ( {
 							/>
 						) }
 					</div>
-					<h1 className="licensing-activation__title">{ title }</h1>
+					<h1
+						className={ classnames( 'licensing-activation__title', { 'is-loading': isLoading } ) }
+					>
+						{ title }
+					</h1>
 					{ children }
 				</div>
 				<div

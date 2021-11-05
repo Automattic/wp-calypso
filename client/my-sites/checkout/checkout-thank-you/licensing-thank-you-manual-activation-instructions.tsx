@@ -24,7 +24,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug } ) => {
 			} )
 		);
 		return page(
-			`/checkout/jetpack/thank-you/licensing-manual-activate-instructions/${ productSlug }`
+			`/checkout/jetpack/thank-you/licensing-manual-activate-license-key/${ productSlug }`
 		);
 	}, [ dispatch, productSlug ] );
 
