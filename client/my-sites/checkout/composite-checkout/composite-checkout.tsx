@@ -363,10 +363,10 @@ export default function CompositeCheckout( {
 		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
 
 	const contactDetails: ManagedContactDetails | undefined = useSelect( ( select ) =>
-		select( 'wpcom' )?.getContactInfo()
+		select( 'wpcom-checkout' )?.getContactInfo()
 	);
 	const recaptchaClientId: number | undefined = useSelect( ( select ) =>
-		select( 'wpcom' )?.getRecaptchaClientId()
+		select( 'wpcom-checkout' )?.getRecaptchaClientId()
 	);
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
 

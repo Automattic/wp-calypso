@@ -58,10 +58,10 @@ export default function ContactDetailsContainer( {
 		updatePostalCode,
 		updateRequiredDomainFields,
 		updateEmail,
-	} = useDispatch( 'wpcom' );
+	} = useDispatch( 'wpcom-checkout' );
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
-	const { email } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
+	const { email } = useSelect( ( select ) => select( 'wpcom-checkout' ).getContactInfo() );
 
 	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
 		updateDomainContactFields( details );

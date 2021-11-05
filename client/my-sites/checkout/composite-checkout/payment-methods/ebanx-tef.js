@@ -278,7 +278,7 @@ function EbanxTefPayButton( { disabled, onClick, store } ) {
 		{}
 	);
 	const contactCountryCode = useSelect(
-		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
+		( select ) => select( 'wpcom-checkout' )?.getContactInfo().countryCode?.value
 	);
 	const reduxDispatch = useReduxDispatch();
 

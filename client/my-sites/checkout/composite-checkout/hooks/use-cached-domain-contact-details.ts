@@ -31,7 +31,7 @@ export default function useCachedDomainContactDetails(
 		? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode ?? '' )
 		: false;
 
-	const { loadDomainContactDetailsFromCache } = useDispatch( 'wpcom' );
+	const { loadDomainContactDetailsFromCache } = useDispatch( 'wpcom-checkout' );
 
 	useEffect( () => {
 		if ( cachedContactDetails ) {

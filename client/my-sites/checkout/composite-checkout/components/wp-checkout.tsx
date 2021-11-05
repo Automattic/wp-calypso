@@ -156,13 +156,13 @@ export default function WPCheckout( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
-		sel( 'wpcom' ).getContactInfo()
+		sel( 'wpcom-checkout' ).getContactInfo()
 	);
 	const {
 		touchContactFields,
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
-	} = useDispatch( 'wpcom' );
+	} = useDispatch( 'wpcom-checkout' );
 
 	const [
 		shouldShowContactDetailsValidationErrors,

@@ -40,7 +40,7 @@ export default function WPContactForm( {
 	isLoggedOutCart: boolean;
 } ): JSX.Element {
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
-		select( 'wpcom' ).getContactInfo()
+		select( 'wpcom-checkout' ).getContactInfo()
 	);
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();

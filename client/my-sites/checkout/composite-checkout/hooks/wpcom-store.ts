@@ -93,7 +93,7 @@ export function useWpcomStore(
 		}
 	}
 
-	registerStore( 'wpcom', {
+	registerStore( 'wpcom-checkout', {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState =
 				state === undefined ? getInitialWpcomStoreState( managedContactDetails ) : state;

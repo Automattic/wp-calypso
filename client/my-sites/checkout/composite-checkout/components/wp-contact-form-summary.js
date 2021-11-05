@@ -10,7 +10,7 @@ export default function WPContactFormSummary( {
 	isGSuiteInCart,
 	isLoggedOutCart,
 } ) {
-	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
+	const contactInfo = useSelect( ( select ) => select( 'wpcom-checkout' ).getContactInfo() );
 	const cartKey = useCartKey();
 	const { responseCart: cart } = useShoppingCart( cartKey );
 	const isRenewal = cart && hasOnlyRenewalItems( cart );

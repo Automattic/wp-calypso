@@ -6,7 +6,7 @@ import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
 import './style.scss';
 
 function Recaptcha( { badgePosition } ) {
-	const { setRecaptchaClientId } = useDispatch( 'wpcom' );
+	const { setRecaptchaClientId } = useDispatch( 'wpcom-checkout' );
 	useEffect( () => {
 		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
 			( clientId ) => {
