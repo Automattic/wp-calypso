@@ -721,7 +721,7 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	transactionsEndpoint.mockReturnValue( true );
 
 	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.2/me/transactions', ( body ) => {
+		.post( '/rest/v1.1/me/transactions', ( body ) => {
 			return transactionsEndpoint( body );
 		} )
 		.reply( transactionsEndpointResponse );
