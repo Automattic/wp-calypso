@@ -645,27 +645,6 @@ Undocumented.prototype.updateConnection = function ( siteId, connectionId, data,
 	);
 };
 
-/**
- * GET paypal_express_url
- *
- * @param {object} [data] The GET data
- * @param {Function} fn The callback function
- * @returns {string} Url
- *
- * The data format is: {
- *		country: {string} The billing country,
- *		postal_code: {string} The billing postal code,
- *		cart: {Array} An JSON serialization of the cart,
- * }
- */
-Undocumented.prototype.paypalExpressUrl = function ( data, fn ) {
-	debug( '/me/paypal-express-url query' );
-
-	data = mapKeysRecursively( data, snakeCase );
-
-	return this.wpcom.req.post( '/me/paypal-express-url', data, fn );
-};
-
 function addReaderContentWidth( params ) {
 	if ( params.content_width ) {
 		return;
