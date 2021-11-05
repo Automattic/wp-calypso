@@ -14,7 +14,6 @@ import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/l
 import { domainConnect } from 'calypso/lib/domains/constants';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import NewDomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/new-main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import {
 	domainManagementEdit,
@@ -129,7 +128,7 @@ class Dns extends Component {
 
 	renderPlaceholder() {
 		return config.isEnabled( 'domains/dns-records-redesign' ) ? (
-			<NewDomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+			<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
 		) : (
 			<DomainMainPlaceholder goBack={ this.goBack } />
 		);
