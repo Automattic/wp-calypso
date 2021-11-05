@@ -24,8 +24,8 @@
 	}
 }
 
-.licensing-activation button.is-primary,
-.licensing-activation button.is-primary:visited {
+.licensing-activation .button.is-primary,
+.licensing-activation .button.is-primary:visited {
 	border-radius: 2px;
 	@include jetpack-primary-button;
 }
