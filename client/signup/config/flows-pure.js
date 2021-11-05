@@ -351,7 +351,7 @@ export function generateFlows( {
 			lastModified: '2021-10-18',
 			disallowResume: true,
 			hideFlowProgress: true,
-			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'siteSlug' ],
 		},
 		{
 			name: 'reader',

@@ -23,10 +23,6 @@ type Props = ConnectedProps< typeof connector > & {
 	urlData: UrlData;
 };
 
-const MOCK_DATA = {
-	platform: 'wix',
-};
-
 const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const {
@@ -75,7 +71,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 					{ stepName === 'list' && <ListStep goToStep={ goToStep } /> }
 
 					{ stepName === 'ready' && ! stepSectionName && (
-						<ReadyStep goToImporterPage={ goToImporterPage } platform={ MOCK_DATA.platform } />
+						<ReadyStep goToImporterPage={ goToImporterPage } platform={ urlData.platform } />
 					) }
 					{ stepName === 'ready' && stepSectionName === 'not' && (
 						<ReadyNotStep goToStep={ goToStep } />
