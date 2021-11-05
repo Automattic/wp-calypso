@@ -22,7 +22,7 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"peerDependencies": {
-		"webpack": "^5.54.0"
+		"webpack": "^5.61.0"
 	},
 	"dependencies": {
 		"semver": "^7.0.0"

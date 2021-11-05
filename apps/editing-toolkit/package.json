@@ -119,6 +119,6 @@
 		"@wordpress/eslint-plugin": "^9.1.2",
 		"babel-jest": "^26.6.3",
 		"wait-for-expect": "^3.0.2",
-		"webpack": "^5.54.0"
+		"webpack": "^5.61.0"
 	}
 }
