@@ -15,6 +15,7 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 					className="dns-records-list-item__action-menu gridicon"
 				/>
 			}
+			popoverClassName="dns-records-list-item__action-menu-popover"
 		>
 			{ actions.map( ( action ) => {
 				return (
@@ -28,32 +29,47 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 	);
 
 	return (
-		<li
+		<div
 			className={ classNames(
-				'dns-records__list-item',
+				'dns-records-list-item__wrapper',
 				{ 'is-disabled': disabled },
 				{ 'is-header': isHeader }
 			) }
 		>
-			<div className="dns-records-list-item dns-records-list-item__type">
-				<strong>{ type }</strong>
+			<div
+				className={ classNames(
+					'dns-records-list-item'
+					// { 'is-disabled': disabled },
+					// { 'is-header': isHeader }
+				) }
+			>
+				<div className="dns-records-list-item__data dns-records-list-item__type">
+					<strong>{ type }</strong>
+				</div>
+				<div className="dns-records-list-item__data dns-records-list-item__name">
+					<span>{ name }</span>
+				</div>
+				<div className="dns-records-list-item__data dns-records-list-item__value">
+					<span>{ value ?? 'example-value' }</span>
+				</div>
+				<div className="dns-records-list-item__data dns-records-list-item__menu">
+					{ ! isHeader && menu }
+				</div>
 			</div>
-			<div className="dns-records-list-item dns-records-list-item__name">
-				<span>{ name }</span>
+			<div>
+				{ /*<em>*/ }
+				{ /*	'Enabling this special DNS record allows you to automatically configure some third party*/ }
+				{ /*	services.'*/ }
+				{ /*</em>*/ }
 			</div>
-			<div className="dns-records-list-item dns-records-list-item__value">
-				<span>{ value ?? 'example-value' }</span>
-			</div>
-			<div className="dns-records-list-item dns-records-list-item__menu">
-				{ ! isHeader && menu }
-			</div>
-		</li>
+		</div>
 	);
 }
 
 DnsRecordsListItem.defaultProps = {
 	isHeader: false,
 	disabled: false,
+	showSupportInfo: true,
 };
 
 export default DnsRecordsListItem;

@@ -63,19 +63,28 @@ body.dns__body-white {
 		margin-top: 24px;
 	}
 
-	ul.dns-records-list {
+	.dns-records-list {
 		margin: 24px 0 0;
 
-		li.dns-records__list-item {
+		.dns-records-list-item__wrapper {
+			color: $gray-50;
 			border-top: none;
 			border-bottom: 1px solid $gray-5;
 			font-size: $font-body-small;
-			color: $gray-50;
 			font-weight: 400;
+			padding: 10px 0;
 
 			&.is-header {
 				border-bottom: 1px solid $gray-20;
 				font-weight: 500; /* stylelint-disable-line */
+			}
+
+			&.is-disabled {
+				color: $gray-20;
+
+				& .dns-records-list-item .dns-records-list-item__data.dns-records-list-item__type {
+					color: $gray-20;
+				}
 			}
 
 			.dns-records-list-item {
@@ -83,33 +92,41 @@ body.dns__body-white {
 					margin-left: 16px;
 				}
 
-				align-self: center;
+				display: flex;
+				justify-content: space-between;
 				overflow-wrap: anywhere;
 
-				&.dns-records-list-item__type {
-					color: $gray-900;
+				.dns-records-list-item__data {
+					align-self: center;
 
-					@include break-mobile {
-						flex-basis: 120px;
+					&.dns-records-list-item__type {
+						color: $gray-900;
+
+						@include break-mobile {
+							flex-basis: 120px;
+							flex-grow: 1;
+						}
 					}
-				}
 
-				&.dns-records-list-item__name {
-					@include break-mobile {
-						flex-basis: 240px;
+					&.dns-records-list-item__name {
+						@include break-mobile {
+							flex-basis: 240px;
+							flex-grow: 1;
+						}
 					}
-				}
 
-				&.dns-records-list-item__value {
-					@include break-mobile {
-						flex-basis: 440px;
+					&.dns-records-list-item__value {
+						@include break-mobile {
+							flex-basis: 440px;
+							flex-grow: 1;
+						}
 					}
-				}
 
-				&.dns-records-list-item__menu {
-					@include break-mobile {
-						min-width: 24px;
-						flex: 0;
+					&.dns-records-list-item__menu {
+						@include break-mobile {
+							min-width: 24px;
+							flex-grow: 0;
+						}
 					}
 				}
 			}
@@ -120,4 +137,22 @@ body.dns__body-white {
 .dns-records-list__action-menu-item.gridicon {
 	height: 18px;
 	width: 18px;
+}
+
+.dns-records-list-item__action-menu-popover {
+	.popover__menu-item {
+		color: var( --studio-gray-90 );
+
+		svg {
+			fill: var( --studio-gray-90 );
+		}
+	}
+
+	.popover__menu-item.is-selected,
+	.popover__menu-item:hover,
+	.popover__menu-item:focus {
+		svg {
+			fill: var( --studio-white );
+		}
+	}
 }

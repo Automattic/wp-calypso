@@ -1,6 +1,4 @@
-import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -13,7 +11,6 @@ import Main from 'calypso/components/main';
 import VerticalNav from 'calypso/components/vertical-nav';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/lib/domains';
-import { domainConnect } from 'calypso/lib/domains/constants';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
 import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
@@ -22,9 +19,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DnsTemplates from '../name-servers/dns-templates';
-import DnsAddNew from './dns-add-new';
 import DnsDetails from './dns-details';
-import DomainConnectRecord from './domain-connect-record';
 import './style.scss';
 
 class DnsRecords extends Component {
@@ -36,30 +31,9 @@ class DnsRecords extends Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
-	renderDnsTemplates() {
-		const { domains } = this.props;
-		const selectedDomain = getSelectedDomain( domains );
-
-		if ( ! selectedDomain || ! isMappedDomain( selectedDomain ) ) {
-			return null;
-		}
-
-		return (
-			<VerticalNav>
-				<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
-			</VerticalNav>
-		);
-	}
-
 	renderMain() {
 		const { dns, domains, selectedDomainName, selectedSite, translate } = this.props;
 		const domain = getSelectedDomain( domains );
-		const hasWpcomNameservers = domain?.hasWpcomNameservers ?? false;
-		const domainConnectEnabled = some( dns.records, {
-			name: domainConnect.DISCOVERY_TXT_RECORD_NAME,
-			data: domainConnect.API_URL,
-			type: 'TXT',
-		} );
 		const headerText = translate( 'DNS Records' );
 
 		return (
@@ -73,16 +47,6 @@ class DnsRecords extends Component {
 					selectedSite={ selectedSite }
 					selectedDomainName={ selectedDomainName }
 				/>
-				{ /*<DomainConnectRecord*/ }
-				{ /*	enabled={ domainConnectEnabled }*/ }
-				{ /*	selectedDomainName={ selectedDomainName }*/ }
-				{ /*	hasWpcomNameservers={ hasWpcomNameservers }*/ }
-				{ /*/>*/ }
-				{ /*<DnsAddNew*/ }
-				{ /*	isSubmittingForm={ dns.isSubmittingForm }*/ }
-				{ /*	selectedDomainName={ selectedDomainName }*/ }
-				{ /*/>*/ }
-				{ this.renderDnsTemplates() }
 			</Main>
 		);
 	}

@@ -1,5 +1,4 @@
-import { Icon, info, redo } from '@wordpress/icons';
-import classNames from 'classnames';
+import { edit, Icon, info, redo, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -10,9 +9,6 @@ import DnsRecordsListHeader from 'calypso/my-sites/domains/domain-management/dns
 import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
 import { isDeletingLastMXRecord } from 'calypso/state/domains/dns/utils';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import DnsRecordList from '../dns-records/list';
-import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
-import DnsRecord from './dns-record';
 import DnsRecordData from './dns-record-data';
 
 class DnsRecordsList extends Component {
@@ -20,10 +16,6 @@ class DnsRecordsList extends Component {
 		dns: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-	};
-
-	state = {
-		dialog: this.noDialog(),
 	};
 
 	disableRecordAction = {
@@ -35,7 +27,7 @@ class DnsRecordsList extends Component {
 			/>
 		),
 		title: this.props.translate( 'Disable' ),
-		callback: ( record ) => this.deleteDns( record ),
+		callback: ( record ) => this.deleteDns( record, 'disable' ),
 	};
 
 	enableRecordAction = {
@@ -62,45 +54,60 @@ class DnsRecordsList extends Component {
 		callback: () => {},
 	};
 
-	noDialog() {
-		return {
-			type: null,
-			onClose: null,
-		};
-	}
-
-	openDialog( type, onClose ) {
-		this.setState( {
-			dialog: {
-				type,
-				onClose,
-			},
-		} );
-	}
-
-	handleDialogClose = ( result ) => {
-		this.state.dialog.onClose( result );
-		this.setState( { dialog: this.noDialog() } );
+	editRecordAction = {
+		icon: (
+			<Icon
+				icon={ edit }
+				size={ 18 }
+				className="gridicon dns-records-list__action-menu-item"
+				viewBox="2 2 20 20"
+			/>
+		),
+		title: this.props.translate( 'Edit' ),
+		callback: () => {}, // TODO: Add this once the DNS add page is complete
 	};
 
-	deleteDns = ( record, confirmed = false ) => {
+	deleteRecordAction = {
+		icon: (
+			<Icon
+				icon={ trash }
+				size={ 18 }
+				className="gridicon dns-records-list__action-menu-item"
+				viewBox="2 2 20 20"
+			/>
+		),
+		title: this.props.translate( 'Delete' ),
+		callback: ( record ) => this.deleteDns( record ),
+	};
+
+	deleteDns = ( record, action = 'delete', confirmed = false ) => {
 		const { selectedDomainName, translate } = this.props;
 		const { records } = this.props.dns;
 
 		if ( ! confirmed && isDeletingLastMXRecord( record, records ) ) {
 			this.openDialog( 'deleteEmailForwards', ( result ) => {
 				if ( result.shouldDeleteEmailForwards ) {
-					this.deleteDns( record, true );
+					this.deleteDns( record, action, true );
 				}
 			} );
 
 			return;
 		}
 
+		const successMessage =
+			'delete' === action
+				? translate( 'The DNS record has been deleted.' )
+				: translate( 'The DNS record has been disabled.' );
+
+		const errorMessage =
+			'delete' === action
+				? translate( 'The DNS record has not been deleted.' )
+				: translate( 'The DNS record has not been disabled.' );
+
 		this.props.deleteDns( selectedDomainName, record ).then(
 			() => {
 				const successNoticeId = 'dns-list-success-notice';
-				this.props.successNotice( translate( 'The DNS record has been deleted.' ), {
+				this.props.successNotice( successMessage, {
 					id: successNoticeId,
 					showDismiss: false,
 					duration: 5000,
@@ -112,9 +119,7 @@ class DnsRecordsList extends Component {
 				} );
 			},
 			( error ) => {
-				this.props.errorNotice(
-					error.message || translate( 'The DNS record has not been deleted.' )
-				);
+				this.props.errorNotice( error.message || errorMessage );
 			}
 		);
 	};
@@ -151,6 +156,8 @@ class DnsRecordsList extends Component {
 				this.recordInfoAction,
 			];
 		}
+
+		return [ this.editRecordAction, this.deleteRecordAction ];
 	}
 
 	getDomainConnectDnsRecord( enabled ) {
@@ -176,10 +183,7 @@ class DnsRecordsList extends Component {
 	}
 
 	render() {
-		const { dialog } = this.state;
 		const { dns, selectedDomainName, selectedSite } = this.props;
-
-		console.log( dns );
 
 		let domainConnectRecordIsEnabled = false;
 		const dnsRecordsList = dns.records.map( ( dnsRecord, index ) => {
@@ -199,26 +203,21 @@ class DnsRecordsList extends Component {
 					onDeleteDns={ this.deleteDns }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
-					actions={ [] }
+					enabled={ true }
+					actions={ this.getActionsForDnsRecord( dnsRecord ) }
 				/>
 			);
 		} );
 
 		return (
 			<Fragment>
-				<ul className="dns-records-list">
+				<div className="dns-records-list">
 					{ [
 						<DnsRecordsListHeader key="header" />,
 						...dnsRecordsList,
 						this.getDomainConnectDnsRecord( domainConnectRecordIsEnabled ),
 					] }
-				</ul>
-				<DeleteEmailForwardsDialog
-					visible={ dialog.type === 'deleteEmailForwards' }
-					onClose={ this.handleDialogClose }
-					selectedDomainName={ selectedDomainName }
-					selectedSite={ selectedSite }
-				/>
+				</div>
 			</Fragment>
 		);
 	}

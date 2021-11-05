@@ -40,8 +40,6 @@ function removeDuplicateWpcomRecords( domain, records ) {
 function addMissingWpcomRecords( domain, records ) {
 	let newRecords = records;
 
-	console.log( records );
-
 	if ( ! some( records, isRootARecord( domain ) ) ) {
 		const defaultRootARecord = {
 			domain,
@@ -65,8 +63,6 @@ function addMissingWpcomRecords( domain, records ) {
 
 		newRecords = newRecords.concat( [ defaultNsRecord ] );
 	}
-
-	console.log( newRecords );
 
 	return newRecords;
 }

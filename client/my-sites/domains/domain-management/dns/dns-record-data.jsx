@@ -115,9 +115,8 @@ class DnsRecordData extends Component {
 	}
 
 	render() {
-		const { actions, dnsRecord, translate } = this.props;
-		const disabled = dnsRecord.isBeingDeleted || dnsRecord.isBeingAdded;
-		const isAllowedToBeRemoved = ! dnsRecord.protected_field || 'MX' === dnsRecord.type;
+		const { actions, dnsRecord, enabled, translate } = this.props;
+		const disabled = dnsRecord.isBeingDeleted || dnsRecord.isBeingAdded || ! enabled;
 
 		return (
 			<DnsRecordsListItem
@@ -126,86 +125,7 @@ class DnsRecordData extends Component {
 				name={ this.getName() }
 				value={ this.handledBy() }
 				record={ dnsRecord }
-				actions={
-					actions || [
-						{
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							icon: (
-								<Icon
-									icon={ edit }
-									size={ 18 }
-									className="gridicon dns-record__action-menu-item"
-									viewBox="2 2 20 20"
-								/>
-							),
-							title: translate( 'Edit' ),
-							callback: () => {},
-						},
-						{
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							icon: (
-								<Icon
-									icon={ redo }
-									size={ 18 }
-									className="gridicon dns-record__action-menu-item"
-									viewBox="2 2 20 20"
-								/>
-							),
-							title: translate( 'Restore default' ),
-							callback: () => {},
-						},
-						{
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							icon: (
-								<Icon
-									icon={ backup }
-									size={ 18 }
-									className="gridicon dns-record__action-menu-item"
-									viewBox="2 2 20 20"
-								/>
-							),
-							title: translate( 'Revision history' ),
-							callback: () => {},
-						},
-						{
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							icon: (
-								<Icon
-									icon={ trash }
-									size={ 18 }
-									className="gridicon dns-record__action-menu-item"
-									viewBox="2 2 20 20"
-								/>
-							),
-							title: translate( 'Delete' ),
-							callback: () => {},
-						},
-						{
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							icon: (
-								<MaterialIcon
-									icon="do_not_disturb"
-									className="gridicon dns-record__action-menu-item"
-								/>
-							),
-							title: translate( 'Disable' ),
-							callback: () => {},
-						},
-						{
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							icon: (
-								<Icon
-									icon={ info }
-									size={ 18 }
-									className="gridicon dns-record__action-menu-item"
-									viewBox="2 2 20 20"
-								/>
-							),
-							title: translate( "What's this?" ),
-							callback: () => {},
-						},
-					]
-				}
+				actions={ actions }
 			/>
 		);
 	}
