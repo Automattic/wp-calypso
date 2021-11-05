@@ -316,7 +316,8 @@
 	"resolutions": {
 		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
 		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.2.1-beta-1",
-		"@types/react": "^17.0.33"
+		"@types/react": "^17.0.33",
+		"keytar@npm:7.7.0/node-addon-api": "3.1.0"
 	},
 	"packageManager": "yarn@3.1.0"
 }

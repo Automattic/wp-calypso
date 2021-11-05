@@ -77,8 +77,8 @@ references:
   restore-yarn-cache: &restore-yarn-cache
     name: 'Restore yarn cache'
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-yarn-cache-{{ checksum ".yarnrc.yml" }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-yarn-cache
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-yarn-cache-{{ arch }}-{{ checksum ".yarnrc.yml" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-yarn-cache-{{ arch }}
 
   yarn-install: &yarn-install
     name: Install dependencies
@@ -103,7 +103,7 @@ references:
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-yarn-cache-{{ checksum ".yarnrc.yml" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-yarn-cache-{{ arch }}-{{ checksum ".yarnrc.yml" }}
     paths:
       # This is the default path when using enableGlobalCache:true
       - ~/.yarn/berry/cache
@@ -222,12 +222,16 @@ jobs:
     working_directory: /Users/distiller/wp-calypso
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
           at: /Users/distiller/wp-calypso
       - run: *update-node
+      - restore_cache: *restore-yarn-cache
       - run: *yarn-install
+      - save_cache: *save-yarn-cache
       - run:
           name: Build Desktop Mac
           no_output_timeout: 45m
@@ -242,7 +246,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
             # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
             # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
@@ -295,6 +299,8 @@ jobs:
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -305,7 +311,9 @@ jobs:
           command: |
             sudo apt update
             sudo apt-get install -y libsecret-1-dev
+      - restore_cache: *restore-yarn-cache
       - run: *yarn-install
+      - save_cache: *save-yarn-cache
       - run:
           name: Build Desktop Linux
           environment:
@@ -362,6 +370,8 @@ jobs:
     working_directory: C:\Users\circleci\wp-calypso
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
