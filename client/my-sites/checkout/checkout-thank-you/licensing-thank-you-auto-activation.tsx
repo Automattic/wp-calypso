@@ -208,7 +208,6 @@ const LicensingActivationThankYou: FC< Props > = ( {
 							</div>
 						</SelectDropdown.Item>
 					) ) }
-					<SelectDropdown.Separator />
 				</SelectDropdown>
 				{ error && <FormInputValidation isError={ !! error } text={ error }></FormInputValidation> }
 				<Button
