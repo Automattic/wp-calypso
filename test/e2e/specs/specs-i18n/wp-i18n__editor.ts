@@ -237,12 +237,18 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
 
 	describe.each( locales )( 'Editor translations (%s)', ( locale ) => {
 		it( 'Change UI language', async function () {
-			await page.goto( DataHelper.getCalypsoURL( '/' ) );
+			await Promise.all( [
+				page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
+				page.goto( DataHelper.getCalypsoURL( '/' ) ),
+			] );
 
 			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
 			await changeUILanguageFlow.changeUILanguage( locale );
 
-			await page.goto( DataHelper.getCalypsoURL( '/' ) );
+			await Promise.all( [
+				page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
+				page.goto( DataHelper.getCalypsoURL( '/' ) ),
+			] );
 		} );
 
 		it( 'Start new post', async function () {
@@ -256,7 +262,6 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
 			'Translations for block: $blockName',
 			async ( block ) => {
 				const frame = await gutenbergEditorPage.getEditorFrame();
-				await frame.waitForTimeout( 2000 );
 
 				await gutenbergEditorPage.addBlock( block.blockName, block.blockEditorSelector );
 
