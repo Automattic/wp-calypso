@@ -28,7 +28,6 @@ describe( 'payPalExpressProcessor', () => {
 	};
 
 	const basicExpectedRequest = {
-		as_json: true,
 		cancel_url: 'https://example.com/',
 		cart: {
 			blog_id: '0',
