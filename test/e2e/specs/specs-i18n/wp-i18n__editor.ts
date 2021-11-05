@@ -279,9 +279,10 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), () => {
 				it( 'Render block title translations', async () => {
 					await gutenbergEditorPage.openSettings();
 					await frame.click( block.blockEditorSelector );
-					if ( await frame.isVisible( '.block-editor-block-parent-selector__button' ) ) {
-						await frame.click( '.block-editor-block-parent-selector__button' );
-					}
+					await Promise.race( [
+						frame.waitForSelector( `${ block.blockEditorSelector }.is-selected` ),
+						frame.click( '.block-editor-block-parent-selector__button' ),
+					] );
 
 					await frame.waitForSelector(
 						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`
