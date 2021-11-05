@@ -739,6 +739,9 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
+			props: {
+				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
+			},
 		},
 		'difm-design-setup-site': {
 			stepName: 'difm-design-setup-site',
@@ -751,6 +754,7 @@ export function generateSteps( {
 				hideSkip: true,
 				hideExternalPreview: true,
 				useDIFMThemes: true,
+				showDesignPickerCategories: true,
 			},
 		},
 		'difm-design': {

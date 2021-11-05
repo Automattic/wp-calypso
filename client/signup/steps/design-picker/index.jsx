@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, { isBlankCanvasDesign, getDesignUrl } from '@automattic/design-picker';
 import { shuffle } from '@automattic/js-utils';
 import { compose } from '@wordpress/compose';
@@ -159,7 +158,7 @@ class DesignPickerStep extends Component {
 				onSelect={ this.pickDesign }
 				onPreview={ this.previewDesign }
 				highResThumbnails
-				showCategoryFilter={ isEnabled( 'signup/design-picker-categories' ) }
+				showCategoryFilter={ this.props.showDesignPickerCategories }
 			/>
 		);
 	}
