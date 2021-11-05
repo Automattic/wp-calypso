@@ -1,3 +1,4 @@
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { normalizePluginData, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -128,6 +129,15 @@ export function fetchPluginsList(
 		} )
 			.then( ( { info, plugins } ) => {
 				dispatch( receivePluginsList( category, page, searchTerm, plugins, null, info ) );
+				// Do not trigger a new tracks event for subsequent pages.
+				if ( searchTerm && info.page === 1 ) {
+					dispatch(
+						recordTracksEvent( 'calypso_plugins_search', {
+							search_term: searchTerm,
+							results: info?.results,
+						} )
+					);
+				}
 			} )
 			.catch( ( error ) => {
 				dispatch( receivePluginsList( category, page, searchTerm, [], error ) );
