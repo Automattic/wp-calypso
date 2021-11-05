@@ -1,16 +1,11 @@
 import languages from '@automattic/languages';
-import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import { stringify as stringifyQs } from 'qs';
-import jsonp from './jsonp';
-
-const debug = debugFactory( 'wporg' );
 
 /**
  * Constants
  */
-const WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.2/?action=query_plugins';
+const WPORG_PLUGINS_ENDPOINT = 'https://api.wordpress.org/plugins/info/1.2/';
 const DEFAULT_PAGE_SIZE = 24;
 const DEFAULT_CATEGORY = 'all';
 const DEFAULT_FIRST_PAGE = 1;
@@ -18,32 +13,14 @@ const DEFAULT_FIRST_PAGE = 1;
 const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
 const WPORG_CORE_TRANSLATIONS_ENDPOINT = 'https://api.wordpress.org/translations/core/1.0/';
 
-function getWporgLocaleCode() {
-	const currentLocaleCode = i18n.getLocaleSlug();
-	let wpOrgLocaleCode = find( languages, { langSlug: currentLocaleCode } ).wpLocale;
+function getWporgLocaleCode( currentUserLocale ) {
+	let wpOrgLocaleCode = find( languages, { langSlug: currentUserLocale } ).wpLocale;
 
 	if ( wpOrgLocaleCode === '' ) {
-		wpOrgLocaleCode = currentLocaleCode;
+		wpOrgLocaleCode = currentUserLocale;
 	}
 
 	return wpOrgLocaleCode;
-}
-
-async function pluginRequest( url, body ) {
-	try {
-		const response = await fetch( url, {
-			method: 'POST',
-			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-			body,
-		} );
-
-		if ( response.ok ) {
-			return [ null, await response.json() ];
-		}
-		return [ new Error( await response.body ), null ];
-	} catch ( error ) {
-		return [ error, null ];
-	}
 }
 
 async function getRequest( url, query ) {
@@ -64,64 +41,43 @@ async function getRequest( url, query ) {
  * @param {string} pluginSlug The plugin identifier.
  * @returns {Promise} Promise with the plugins details.
  */
-export function fetchPluginInformation( pluginSlug ) {
+export function fetchPluginInformation( pluginSlug, locale ) {
 	const query = {
-		fields: 'icons,banners,compatibility,ratings,-contributors',
-		locale: getWporgLocaleCode(),
+		action: 'plugin_information',
+		'request[slug]': pluginSlug.replace( new RegExp( '.php$' ), '' ),
+		'request[locale]': getWporgLocaleCode( locale ),
 	};
 
-	pluginSlug = pluginSlug.replace( new RegExp( '.php$' ), '' );
-
-	const baseUrl = 'https://api.wordpress.org/plugins/info/1.2/' + pluginSlug + '.jsonp';
-
-	return new Promise( ( resolve, reject ) => {
-		jsonp( baseUrl, query, function ( error, data ) {
-			if ( error ) {
-				debug( 'error downloading plugin details from .org: %s', error );
-				reject( error );
-				return;
-			}
-
-			if ( ! data || ! data.slug ) {
-				debug( 'unrecognized format fetching plugin details from .org: %s', data );
-				reject( new Error( 'Unrecognized response format' ) );
-				return;
-			}
-
-			resolve( data );
-		} );
-	} );
+	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
 }
 
-export function fetchPluginsList( options, callback ) {
-	let payload;
+export function fetchPluginsList( options ) {
 	// default variables;
 	const page = options.page || DEFAULT_FIRST_PAGE;
 	const pageSize = options.pageSize || DEFAULT_PAGE_SIZE;
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.search;
-	const locale = options.locale;
 
-	payload =
-		'request[page]=' +
-		page +
-		'&request[per_page]=' +
-		pageSize +
-		'&request[fields][icons]=1&request[fields][banners]=1' +
-		'&request[fields][compatibility]=1&request[fields][tested]=0' +
-		'&request[fields][requires]=0&request[fields][sections]=0' +
-		'&request[locale]=' +
-		locale;
+	const query = {
+		action: 'query_plugins',
+		'request[page]': page,
+		'request[per_page]': pageSize,
+		'request[fields][icons]': 1,
+		'request[fields][banners]': 1,
+		'request[fields][compatibility]': 1,
+		'request[fields][tested]': 0,
+		'request[fields][requires]': 0,
+		'request[fields][sections]': 0,
+		'request[locale]': getWporgLocaleCode( options.locale ),
+	};
 
 	if ( search ) {
-		payload += '&request[search]=' + search;
+		query[ 'request[search]' ] = search;
 	} else {
-		payload += '&request[browse]=' + category;
+		query[ 'request[browse]' ] = category;
 	}
 
-	pluginRequest( WPORG_PLUGINS_LIST, encodeURI( payload ) ).then( ( [ err, data ] ) => {
-		callback( err, data );
-	} );
+	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
 }
 
 /**

@@ -33,7 +33,7 @@ export function fetchPluginData( pluginSlug ) {
 		} );
 
 		try {
-			const data = await fetchPluginInformation( pluginSlug );
+			const data = await fetchPluginInformation( pluginSlug, getCurrentUserLocale( getState() ) );
 
 			dispatch( {
 				type: PLUGINS_WPORG_PLUGIN_RECEIVE,
@@ -119,20 +119,19 @@ export function fetchPluginsList(
 			return;
 		}
 
-		fetchWporgPluginsList(
-			{
-				pageSize,
-				page,
-				category,
-				search: searchTerm,
-				locale: getCurrentUserLocale( getState() ),
-			},
-			function ( error, data ) {
-				dispatch(
-					receivePluginsList( category, page, searchTerm, data?.plugins ?? [], error, data?.info )
-				);
-			}
-		);
+		return fetchWporgPluginsList( {
+			pageSize,
+			page,
+			category,
+			search: searchTerm,
+			locale: getCurrentUserLocale( getState() ),
+		} )
+			.then( ( { info, plugins } ) => {
+				dispatch( receivePluginsList( category, page, searchTerm, plugins, null, info ) );
+			} )
+			.catch( ( error ) => {
+				dispatch( receivePluginsList( category, page, searchTerm, [], error ) );
+			} );
 	};
 }
 
