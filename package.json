@@ -271,7 +271,7 @@
 		"readline-sync": "^1.4.10",
 		"reakit-utils": "^0.15.1",
 		"recursive-copy": "^2.0.10",
-		"redux": "^4.0.5",
+		"redux": "^4.1.2",
 		"regenerator-runtime": "^0.13.9",
 		"replace": "^1.1.5",
 		"request": "^2.88.2",

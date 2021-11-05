@@ -172,7 +172,7 @@
 		"react-transition-group": "^4.3.0",
 		"reakit": "^1.2.3",
 		"reakit-utils": "^0.15.1",
-		"redux": "^4.1.1",
+		"redux": "^4.1.2",
 		"redux-dynamic-middlewares": "^2.0.0",
 		"redux-thunk": "^2.3.0",
 		"regenerator-runtime": "^0.13.9",
