@@ -60,7 +60,6 @@ object E2ETests : BuildType({
 
 				# Install modules
 				${_self.yarn_install_cmd}
-				cd desktop && yarn install --frozen-lockfile
 			"""
 			dockerImage = "%docker_image_desktop%"
 		}

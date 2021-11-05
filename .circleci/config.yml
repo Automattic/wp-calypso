@@ -108,15 +108,6 @@ references:
       # This is the default path when using enableGlobalCache:true
       - ~/.yarn/berry/cache
 
-  desktop-install-app-deps: &desktop-install-app-deps
-    name: Install Desktop Dependencies
-    command: |
-      source "$HOME/.nvm/nvm.sh"
-      nvm use
-      npm install -g yarn@1.22.10
-      yarn
-      cd desktop
-      yarn
   desktop-cache-paths: &desktop-cache-paths
     - desktop/resource/certificates/win.p12
     - desktop/resource/certificates/mac.p12
@@ -236,7 +227,7 @@ jobs:
       - attach_workspace:
           at: /Users/distiller/wp-calypso
       - run: *update-node
-      - run: *desktop-install-app-deps
+      - run: *yarn-install
       - run:
           name: Build Desktop Mac
           no_output_timeout: 45m
@@ -314,7 +305,7 @@ jobs:
           command: |
             sudo apt update
             sudo apt-get install -y libsecret-1-dev
-      - run: *desktop-install-app-deps
+      - run: *yarn-install
       - run:
           name: Build Desktop Linux
           environment:
@@ -389,10 +380,7 @@ jobs:
           command: cinst make
       - run:
           name: Install Desktop Dependencies
-          command: |
-            yarn
-            cd desktop
-            yarn
+          command: yarn
       - when:
           condition: << pipeline.git.tag >>
           steps:

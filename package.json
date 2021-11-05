@@ -7,6 +7,7 @@
 	"workspaces": {
 		"packages": [
 			"client",
+			"desktop",
 			"apps/*",
 			"packages/*",
 			"test/e2e",
@@ -64,12 +65,10 @@
 		"build-css:reader-mobile": "node bin/render-stylesheet.js --in client/assets/stylesheets/reader-mobile.scss --out public/reader-mobile.css && yarn run postcss public/reader-mobile.css",
 		"build-devdocs:search-index": "node bin/generate-devdocs-search-index.js",
 		"build-devdocs:selectors-index": "node bin/generate-devdocs-selectors-index.js",
-		"build-desktop": "cd desktop && yarn install --frozen-lockfile && yarn run build",
-		"build-desktop:source": "node -e \"console.log( 'Deprecated (legacy). Remove on TeamCity configuration update.')\"",
+		"build-desktop": "cd desktop && yarn run build",
 		"build-desktop:app": "cd desktop && yarn run build",
 		"build-desktop:config": "cd desktop && yarn run build:config",
 		"build-desktop:secrets": "cd desktop && yarn run build:secrets",
-		"build-desktop:install-app-deps": "cd desktop && yarn install --frozen-lockfile",
 		"test-desktop:e2e": "echo 'Deprecated, run `cd desktop && yarn run test:e2e` instead'",
 		"build-docker": "node bin/build-docker.js",
 		"build-static": "npx ncp static public && npx ncp client/lib/service-worker public --filter='service-worker(/service-worker\\.js)?$'",
