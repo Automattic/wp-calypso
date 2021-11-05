@@ -1,6 +1,7 @@
 import {
 	retrieveExperimentAssignment,
 	storeExperimentAssignment,
+	removeExpiredExperimentAssignments,
 } from './internal/experiment-assignment-store';
 import * as ExperimentAssignments from './internal/experiment-assignments';
 import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
@@ -92,6 +93,16 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 			config.logError( ...args );
 		} catch ( e ) {}
 	};
+
+	// Clean up LocalStorage on start up
+	try {
+		removeExpiredExperimentAssignments();
+	} catch ( error ) {
+		safeLogError( {
+			message: ( error as Error ).message,
+			source: 'removeExpiredExperimentAssignments-error',
+		} );
+	}
 
 	return {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
