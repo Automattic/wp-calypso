@@ -106,16 +106,6 @@
 	.product-grid__free {
 		margin-top: 16px;
 		flex-direction: column;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			.jetpack-free-card {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				grid-gap: 32px;
-				align-items: center;
-				margin-block-start: 16px;
-			}
-		}
 	}
 
 	.jetpack-product-card.jetpack-free-card {
