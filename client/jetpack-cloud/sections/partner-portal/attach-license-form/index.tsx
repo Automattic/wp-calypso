@@ -10,6 +10,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
+import SearchCard from 'calypso/components/search-card';
 import './style.scss';
 
 interface ProductOption {
@@ -30,7 +31,7 @@ function selectProductOptions( families: APIProductFamily[] ): ProductOption[] {
 	);
 }
 
-export default function IssueLicenseForm(): ReactElement {
+export default function AttachLicenseForm(): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const products = useProductsQuery( {
@@ -82,15 +83,25 @@ export default function IssueLicenseForm(): ReactElement {
 		<div className="issue-license-form">
 			<div className="issue-license-form__top">
 				<p className="issue-license-form__description">
-					{ translate( 'Select the Jetpack product you would like to issue a new license for' ) }
+					{ translate(
+						'Select the website that you would like to apply the license to. You can also attach it later.'
+					) }
 				</p>
 				<div className="issue-license-form__controls">
-					<Button primary onClick={ onIssueLicense }>
-						{ translate( 'Select License' ) }
+					<Button
+						primary
+						onClick={
+							() => {
+								console.log( 'attach to website' );
+							} /*onAttachLicense*/
+						}
+					>
+						{ translate( 'Attach to website' ) }
 					</Button>
 				</div>
 			</div>
-			<div className="issue-license-form__bottom">{ productCards }</div>
+
+			<SearchCard />
 		</div>
 	);
 }

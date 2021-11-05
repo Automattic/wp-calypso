@@ -1,6 +1,7 @@
 import page from 'page';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
+import AttachLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/attach-license';
 import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
@@ -89,6 +90,14 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <IssueLicense />;
+	context.footer = <JetpackComFooter />;
+	next();
+}
+
+export function attachLicenseContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <AttachLicense />;
 	context.footer = <JetpackComFooter />;
 	next();
 }
