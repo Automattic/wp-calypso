@@ -43,8 +43,8 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "^1.0.0",
-		"@testing-library/jest-dom": "^5.14.1",
-		"@testing-library/react": "^12.1.1",
+		"@testing-library/jest-dom": "^5.15.0",
+		"@testing-library/react": "^12.1.2",
 		"jest-canvas-mock": "^2.3.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
