@@ -6,13 +6,15 @@ import { useDispatch } from 'react-redux';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface Props {
 	productSlug: string | 'no_product';
+	receiptId: number;
 }
 
-const LicensingActivationThankYou: FC< Props > = ( { productSlug } ) => {
+const LicensingActivationThankYou: FC< Props > = ( { productSlug, receiptId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -23,9 +25,14 @@ const LicensingActivationThankYou: FC< Props > = ( { productSlug } ) => {
 			} )
 		);
 		return page(
-			`/checkout/jetpack/thank-you/licensing-manual-activate-instructions/${ productSlug }`
+			addQueryArgs(
+				{
+					receiptId,
+				},
+				`/checkout/jetpack/thank-you/licensing-manual-activate-instructions/${ productSlug }`
+			)
 		);
-	}, [ dispatch, productSlug ] );
+	}, [ dispatch, productSlug, receiptId ] );
 
 	return (
 		<>

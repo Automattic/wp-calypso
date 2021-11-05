@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +7,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
+import useUserLicenseByReceiptQuery from 'calypso/data/jetpack-licensing/use-user-license-by-receipt-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -14,14 +16,11 @@ import {
 } from 'calypso/state/products-list/selectors';
 
 interface Props {
-	licenseKey: string;
 	productSlug: string | 'no_product';
+	receiptId: number;
 }
 
-const LicensingActivationInstructions: FC< Props > = ( {
-	licenseKey = 'jp-Backup42931234123765',
-	productSlug,
-} ) => {
+const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -35,7 +34,18 @@ const LicensingActivationInstructions: FC< Props > = ( {
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
-	const onContinue = useCallback( () => {
+	const {
+		data: dataLicense,
+		isError: isErrorFetchingLicense,
+		isLoading: isLoadingLicense,
+	} = useUserLicenseByReceiptQuery( receiptId );
+
+	const licenseKey =
+		! isErrorFetchingLicense && ! isLoadingLicense && dataLicense
+			? dataLicense[ 0 ].licenseKey
+			: '';
+
+	const onCopy = useCallback( () => {
 		setCopied( true );
 		dispatch(
 			recordTracksEvent( 'calypso_siteless_checkout_manual_activation_license_key_copy', {
@@ -86,18 +96,21 @@ const LicensingActivationInstructions: FC< Props > = ( {
 					<label>
 						<strong>{ translate( 'Your license key' ) }</strong>
 					</label>
-					<div className="licensing-thank-you-manual-activation-license-key__clipboard">
+					<div className={ 'licensing-thank-you-manual-activation-license-key__clipboard' }>
 						<FormTextInput
-							className="licensing-thank-you-manual-activation-license-key__input"
+							className={ classnames( 'licensing-thank-you-manual-activation-license-key__input', {
+								'is-loading': isLoadingLicense,
+							} ) }
 							value={ licenseKey }
 							readOnly
 						/>
 						<ClipboardButton
 							className="licensing-thank-you-manual-activation-license-key__button"
 							text={ licenseKey }
-							onCopy={ onContinue }
+							onCopy={ onCopy }
 							compact
 							primary
+							disabled={ isErrorFetchingLicense || isLoadingLicense }
 						>
 							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
