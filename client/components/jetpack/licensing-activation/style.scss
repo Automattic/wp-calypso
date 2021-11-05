@@ -99,6 +99,10 @@
 	margin-bottom: 24px;
 }
 
+.licensing-activation__title.is-loading {
+	@include placeholder( --color-neutral-20 );
+}
+
 .licensing-activation__card-footer {
 	position: relative;
 	display: flex;
