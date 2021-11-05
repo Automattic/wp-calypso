@@ -9,6 +9,7 @@ import DnsRecordsListHeader from 'calypso/my-sites/domains/domain-management/dns
 import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
 import { isDeletingLastMXRecord } from 'calypso/state/domains/dns/utils';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecordData from './dns-record-data';
 
 class DnsRecordsList extends Component {
@@ -16,6 +17,10 @@ class DnsRecordsList extends Component {
 		dns: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	};
+
+	state = {
+		dialog: this.noDialog(),
 	};
 
 	disableRecordAction = {
@@ -64,7 +69,8 @@ class DnsRecordsList extends Component {
 			/>
 		),
 		title: this.props.translate( 'Edit' ),
-		callback: () => {}, // TODO: Add this once the DNS add page is complete
+		// TODO: Add the correct callback function once the DNS add page is complete
+		callback: () => {},
 	};
 
 	deleteRecordAction = {
@@ -78,6 +84,27 @@ class DnsRecordsList extends Component {
 		),
 		title: this.props.translate( 'Delete' ),
 		callback: ( record ) => this.deleteDns( record ),
+	};
+
+	noDialog() {
+		return {
+			type: null,
+			onClose: null,
+		};
+	}
+
+	openDialog( type, onClose ) {
+		this.setState( {
+			dialog: {
+				type,
+				onClose,
+			},
+		} );
+	}
+
+	handleDialogClose = ( result ) => {
+		this.state.dialog.onClose( result );
+		this.setState( { dialog: this.noDialog() } );
 	};
 
 	deleteDns = ( record, action = 'delete', confirmed = false ) => {
@@ -184,6 +211,7 @@ class DnsRecordsList extends Component {
 
 	render() {
 		const { dns, selectedDomainName, selectedSite } = this.props;
+		const { dialog } = this.state;
 
 		let domainConnectRecordIsEnabled = false;
 		const dnsRecordsList = dns.records.map( ( dnsRecord, index ) => {
@@ -211,6 +239,12 @@ class DnsRecordsList extends Component {
 
 		return (
 			<Fragment>
+				<DeleteEmailForwardsDialog
+					visible={ dialog.type === 'deleteEmailForwards' }
+					onClose={ this.handleDialogClose }
+					selectedDomainName={ selectedDomainName }
+					selectedSite={ selectedSite }
+				/>
 				<div className="dns-records-list">
 					{ [
 						<DnsRecordsListHeader key="header" />,

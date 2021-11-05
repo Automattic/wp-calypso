@@ -8,18 +8,25 @@ import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import VerticalNav from 'calypso/components/vertical-nav';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, isRegisteredDomain } from 'calypso/lib/domains';
+import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
-import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementNameServers,
+	domainManagementList,
+} from 'calypso/my-sites/domains/paths';
+import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import DnsTemplates from '../name-servers/dns-templates';
+import DnsAddNewRecordButton from './dns-add-new-record-button';
 import DnsDetails from './dns-details';
+import DnsMenuOptionsButton from './dns-menu-options-button';
 import './style.scss';
 
 class DnsRecords extends Component {
@@ -31,15 +38,56 @@ class DnsRecords extends Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
+	renderBreadcrumbs() {
+		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+
+		const items = [
+			{
+				label: translate( 'Domains' ),
+				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+			},
+			{
+				label: selectedDomainName,
+				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+			},
+			{ label: translate( 'DNS records' ) },
+		];
+
+		const mobileItem = {
+			label: translate( 'Back' ),
+			href: domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute ),
+			showBackArrow: true,
+		};
+
+		const buttons = [
+			<DnsAddNewRecordButton key="add-new-record-button" />,
+			<DnsMenuOptionsButton
+				key="menbu-options-button"
+				domain={ selectedDomainName }
+				onSuccess={ this.onRestoreSuccess }
+				onError={ this.onRestoreError }
+			/>,
+		];
+
+		return (
+			<Breadcrumbs
+				items={ items }
+				mobileItem={ mobileItem }
+				buttons={ buttons }
+				mobileButtons={ buttons }
+			/>
+		);
+	}
+
 	renderMain() {
-		const { dns, domains, selectedDomainName, selectedSite, translate } = this.props;
-		const domain = getSelectedDomain( domains );
+		const { dns, selectedDomainName, selectedSite, translate } = this.props;
 		const headerText = translate( 'DNS Records' );
 
 		return (
 			<Main wideLayout className="dns-records">
 				<BodySectionCssClass bodyClass={ [ 'dns__body-white' ] } />
 				<DocumentHead title={ headerText } />
+				{ this.renderBreadcrumbs() }
 				<FormattedHeader brandFont headerText={ headerText } align="left" />
 				<DnsDetails />
 				<DnsRecordsList
@@ -77,18 +125,21 @@ class DnsRecords extends Component {
 	};
 }
 
-export default connect( ( state, { selectedDomainName } ) => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySiteId( state, selectedSite.ID );
-	const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
-	const dns = getDomainDns( state, selectedDomainName );
-	const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
+export default connect(
+	( state, { selectedDomainName } ) => {
+		const selectedSite = getSelectedSite( state );
+		const domains = getDomainsBySiteId( state, selectedSite.ID );
+		const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
+		const dns = getDomainDns( state, selectedDomainName );
+		const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
 
-	return {
-		selectedSite,
-		domains,
-		dns,
-		showPlaceholder,
-		currentRoute: getCurrentRoute( state ),
-	};
-} )( localize( DnsRecords ) );
+		return {
+			selectedSite,
+			domains,
+			dns,
+			showPlaceholder,
+			currentRoute: getCurrentRoute( state ),
+		};
+	},
+	{ successNotice, errorNotice, fetchDns }
+)( localize( DnsRecords ) );
