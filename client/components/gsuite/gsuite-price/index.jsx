@@ -24,8 +24,8 @@ export const hasDiscount = ( product ) => {
 	}
 
 	const currentTime = Date.now();
-	const startDate = new Date( product.sale_coupon.start_date + ' GMT' );
-	const endDate = new Date( product.sale_coupon.expires + ' GMT' );
+	const startDate = new Date( product.sale_coupon.start_date.replace( ' ', 'T' ) + 'Z' );
+	const endDate = new Date( product.sale_coupon.expires.replace( ' ', 'T' ) + 'Z' );
 
 	return currentTime >= startDate && currentTime <= endDate;
 };
