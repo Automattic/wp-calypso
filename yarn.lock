@@ -26916,6 +26916,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"node-addon-api@npm:3.1.0":
+  version: 3.1.0
+  resolution: "node-addon-api@npm:3.1.0"
+  dependencies:
+    node-gyp: latest
+  checksum: 991b65f3bac4934f0fe8aa72b3fd4df4be5cc1483fe7d5c4b80c7091a3e4bcf50756444363c33723ec449ced349d6d677daab4ea63cfd91c198c24a0208a0960
+  languageName: node
+  linkType: hard
+
 "node-addon-api@npm:^1.6.0, node-addon-api@npm:^1.6.3":
   version: 1.7.2
   resolution: "node-addon-api@npm:1.7.2"
@@ -26925,7 +26934,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"node-addon-api@npm:^3.0.0, node-addon-api@npm:^3.2.0":
+"node-addon-api@npm:^3.2.0":
   version: 3.2.1
   resolution: "node-addon-api@npm:3.2.1"
   dependencies:
