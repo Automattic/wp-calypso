@@ -1,66 +1,61 @@
-import config from 'config';
-import LanguagePickerComponent from '../../lib/components/gutenboarding-language-picker';
-import * as dataHelper from '../../lib/data-helper.js';
-import * as driverHelper from '../../lib/driver-helper.js';
-import * as driverManager from '../../lib/driver-manager.js';
-import AcquireIntentPage from '../../lib/pages/gutenboarding/acquire-intent-page.js';
-import DesignsPage from '../../lib/pages/gutenboarding/designs-page.js';
-import DomainsPage from '../../lib/pages/gutenboarding/domains-page.js';
-import FeaturesPage from '../../lib/pages/gutenboarding/features-page.js';
-import NewPage from '../../lib/pages/gutenboarding/new-page.js';
-import PlansPage from '../../lib/pages/gutenboarding/plans-page.js';
-import StylePreviewPage from '../../lib/pages/gutenboarding/style-preview-page.js';
+/**
+ * @group i18n
+ */
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
+import {
+	setupHooks,
+	DataHelper,
+	GutenboardingFlow,
+	validatePageTranslations,
+} from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
 
-const locale = driverManager.currentLocale();
+const locale = process.env.BROWSERLOCALE || 'en';
 
 describe( `Gutenboarding translations @i18n (${ locale })`, function () {
-	this.timeout( mochaTimeOut );
+	let gutenboardingFlow: GutenboardingFlow;
+	let page: Page;
+
+	setupHooks( ( args ) => {
+		page = args.page;
+	} );
+
+	it( 'should navigate to /new', async function () {
+		await page.goto( DataHelper.getCalypsoURL( 'new' ) );
+		gutenboardingFlow = new GutenboardingFlow( page );
+	} );
 
 	it( `should change the locale (${ locale })`, async function () {
-		await NewPage.Visit( this.driver, NewPage.getGutenboardingURL() );
-		const languagePicker = await LanguagePickerComponent.Expect( this.driver );
-		await languagePicker.switchLanguage( locale );
+		await gutenboardingFlow.switchLanguage( locale );
 	} );
 
 	it( `should display translations on aquire intent page (${ locale })`, async function () {
-		const acquireIntentPage = await AcquireIntentPage.Expect( this.driver );
-		await driverHelper.verifyTranslationsPresent( this.driver, locale );
-		await acquireIntentPage.skipStep();
+		await validatePageTranslations( page );
+		await gutenboardingFlow.clickSkipButton();
 	} );
 
 	it( `should display translations on design selector page (${ locale })`, async function () {
-		const designsPage = await DesignsPage.Expect( this.driver );
-		await driverHelper.verifyTranslationsPresent( this.driver, locale );
-		await designsPage.selectFreeDesign();
+		await validatePageTranslations( page );
+		await gutenboardingFlow.selectDesign( 'Stratford' );
 	} );
 
 	it( `should display translations on style preview page (${ locale })`, async function () {
-		const stylePreviewPage = await StylePreviewPage.Expect( this.driver );
-		await stylePreviewPage.selectFontPairing();
-		await driverHelper.verifyTranslationsPresent( this.driver, locale );
-		await stylePreviewPage.continue();
+		await gutenboardingFlow.selectFont( 'Raleway' );
+		await gutenboardingFlow.clickNextButton();
 	} );
 
 	it( `should display translations on domains page (${ locale })`, async function () {
-		const domainsPage = await DomainsPage.Expect( this.driver );
-		await domainsPage.enterDomainQuery( dataHelper.randomPhrase() );
-		await domainsPage.selectFreeDomain();
-		await driverHelper.verifyTranslationsPresent( this.driver, locale );
-		await domainsPage.continueToNextStep();
+		await gutenboardingFlow.searchDomain( DataHelper.getRandomPhrase() );
+		await gutenboardingFlow.selectDomain( '.wordpress.com' );
+		await gutenboardingFlow.clickNextButton();
 	} );
 
 	it( `should display translations on features page (${ locale })`, async function () {
-		const featuresPage = await FeaturesPage.Expect( this.driver );
-		await featuresPage.selectPluginsFeature();
-		await driverHelper.verifyTranslationsPresent( this.driver, locale );
-		await featuresPage.goToNextStep();
+		await gutenboardingFlow.selectFeatures( [] );
+		await gutenboardingFlow.clickSkipButton();
 	} );
 
 	it( `should display translations on plans page (${ locale })`, async function () {
-		const plansPage = await PlansPage.Expect( this.driver );
-		await plansPage.expandAllPlans();
-		await driverHelper.verifyTranslationsPresent( this.driver, locale );
+		await gutenboardingFlow.expandAllPlans();
 	} );
 } );

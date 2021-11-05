@@ -195,10 +195,12 @@ __metadata:
     "@types/config": ^0.0.40
     "@types/jest": ^27.0.2
     "@types/node": ^16.11.6
+    "@types/request-promise": ^4.1.48
     asana-phrase: ^0.0.8
     config: ^3.3.6
     mailosaur: ^7.3.1
     playwright: 1.14.0
+    request-promise: ^4.2.6
     typescript: ^4.4.4
   languageName: unknown
   linkType: soft
@@ -6023,6 +6025,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/bluebird@npm:*":
+  version: 3.5.36
+  resolution: "@types/bluebird@npm:3.5.36"
+  checksum: e198df4483b3d351c0a5368c3197926842133e29328b808be483497a17aed5ba6a261d6d56695d57099326dbd125db38c6d2bc3d2a8ed91c130913a9f52fb1de
+  languageName: node
+  linkType: hard
+
 "@types/braces@npm:*":
   version: 3.0.0
   resolution: "@types/braces@npm:3.0.0"
@@ -6048,6 +6057,13 @@ __metadata:
     "@types/node": "*"
     "@types/responselike": "*"
   checksum: 6f92bd099c65adf36a27022e6f7a4fd6d237d930fed29ddd03fdcbf821957b68663ea5b31a607b3e15d6a9ca7d0b57d5f18d3ef4766c8947e27ba6ccd2aa7854
+  languageName: node
+  linkType: hard
+
+"@types/caseless@npm:*":
+  version: 0.12.2
+  resolution: "@types/caseless@npm:0.12.2"
+  checksum: 9d35e36439266b1d2593469fcb67cead3be1bba541bf71661063cd5751a6d497375dcda063f818dda8433041193c1d74e2c868e96c4fe0e344b5beaba487348e
   languageName: node
   linkType: hard
 
@@ -6631,6 +6647,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/request-promise@npm:^4.1.48":
+  version: 4.1.48
+  resolution: "@types/request-promise@npm:4.1.48"
+  dependencies:
+    "@types/bluebird": "*"
+    "@types/request": "*"
+  checksum: 25353a483a3d025ae0148830ae3909669a475331019cb12af00a6cde93c99bb32b67e9784e1c23a311fa5b7bbf33861e3559993e623a712bc6bf15ae6dccd83a
+  languageName: node
+  linkType: hard
+
+"@types/request@npm:*":
+  version: 2.48.7
+  resolution: "@types/request@npm:2.48.7"
+  dependencies:
+    "@types/caseless": "*"
+    "@types/node": "*"
+    "@types/tough-cookie": "*"
+    form-data: ^2.5.0
+  checksum: f1c80ff5c071a677253595c05dd5616809ff1ae80e30173dae40a2ca5b0022afc40691d89d8ee67721ee40d093c49643d57541c6eed01284dd019ca3556d91f9
+  languageName: node
+  linkType: hard
+
 "@types/resolve@npm:0.0.8":
   version: 0.0.8
   resolution: "@types/resolve@npm:0.0.8"
@@ -6718,6 +6756,13 @@ __metadata:
   version: 1.4.2
   resolution: "@types/tinycolor2@npm:1.4.2"
   checksum: e4116cf95e6f7c4d024f5250ac13d357f1a5f1f9d2a3ee9cf1ff85c11012f611fa1aa4d75880cc7620ba61436b945f556e9d779b9c221f7f03d7219fe87417c9
+  languageName: node
+  linkType: hard
+
+"@types/tough-cookie@npm:*":
+  version: 4.0.1
+  resolution: "@types/tough-cookie@npm:4.0.1"
+  checksum: 3cd60402ea7b647a759f5c468e00d9125e2f668999c8dbe6d7f91c435b105e5b6a3a9ed55f352417914f6485642264897b9a0986bfad5ed48ea2e5fc7c5d3666
   languageName: node
   linkType: hard
 
@@ -18435,7 +18480,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^2.3.1":
+"form-data@npm:^2.3.1, form-data@npm:^2.5.0":
   version: 2.5.1
   resolution: "form-data@npm:2.5.1"
   dependencies:
@@ -33122,6 +33167,20 @@ fsevents@~2.1.2:
   peerDependencies:
     request: ^2.34
   checksum: 194fefc316acbe4cb5a534b5d659fcafded5ebda48dc819ed5f8948c0a3d06f08d3eb56a4ce064e71934d05e35a02d09f203d600aa97c8facc34f84780dca53e
+  languageName: node
+  linkType: hard
+
+"request-promise@npm:^4.2.6":
+  version: 4.2.6
+  resolution: "request-promise@npm:4.2.6"
+  dependencies:
+    bluebird: ^3.5.0
+    request-promise-core: 1.1.4
+    stealthy-require: ^1.1.1
+    tough-cookie: ^2.3.3
+  peerDependencies:
+    request: ^2.34
+  checksum: 17ddb9eb558b2a86b5b448292123e889985be2f52d67ed9ed67834bd380b95449f50b820dadc7c555e10c57a88bca00663c2b3abe2bfcb114beb442d34743073
   languageName: node
   linkType: hard
 
