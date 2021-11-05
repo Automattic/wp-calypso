@@ -3,6 +3,8 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryRewindPolicies } from 'calypso/components/data/query-rewind-policies';
 import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import {
 	getRewindBytesAvailable,
 	getRewindBytesUsed,
@@ -20,6 +22,7 @@ const BackupStorageSpace: React.FC = () => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	useQueryRewindSize( siteId );
 	useQueryRewindPolicies( siteId );
+	useQuerySitePurchases( siteId );
 
 	const bytesUsed = useSelector( ( state ) => getRewindBytesUsed( state, siteId ) );
 	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) );
@@ -27,12 +30,13 @@ const BackupStorageSpace: React.FC = () => {
 
 	const showWarning = usageLevel > StorageUsageLevels.Normal;
 
+	const requestingPurchases = useSelector( isFetchingSitePurchases );
 	const requestingPolicies = useSelector( ( state ) =>
 		isRequestingRewindPolicies( state, siteId )
 	);
 	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
 
-	if ( requestingPolicies ) {
+	if ( requestingPolicies || requestingPurchases ) {
 		return <Card className="backup-storage-space__loading" />;
 	}
 
