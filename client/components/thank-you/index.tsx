@@ -36,7 +36,7 @@ const ThankYouBody = styled.div`
 	margin-top: 50px;
 	> div {
 		width: 600px;
-		padding: 0 35px;
+		padding: 0 20px;
 	}
 	div {
 		min-width: 144px;
