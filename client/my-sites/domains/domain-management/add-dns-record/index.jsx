@@ -1,8 +1,10 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import QueryDomainDns from 'calypso/components/data/query-domain-dns';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -11,6 +13,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import {
 	domainManagementDns,
 	domainManagementEdit,
@@ -103,7 +106,7 @@ class Dns extends Component {
 		page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
 	};
 
-	render() {
+	renderMain() {
 		const { dns, selectedDomainName, translate } = this.props;
 		const explanationText = translate(
 			'Custom DNS records allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider. {{supportLink}}Learn more{{/supportLink}}.',
@@ -141,6 +144,18 @@ class Dns extends Component {
 					</div>
 				</div>
 			</Main>
+		);
+	}
+
+	render() {
+		const { showPlaceholder, selectedDomainName, selectedSite } = this.props;
+
+		return (
+			<Fragment>
+				<QuerySiteDomains siteId={ selectedSite.ID } />
+				<QueryDomainDns domain={ selectedDomainName } />
+				{ showPlaceholder ? <DomainMainPlaceholder goBack={ this.goBack } /> : this.renderMain() }
+			</Fragment>
 		);
 	}
 }
