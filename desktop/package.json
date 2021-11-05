@@ -40,9 +40,13 @@
 		"electron-builder": "^22.11.7",
 		"electron-notarize": "^0.1.1",
 		"electron-rebuild": "^2.3.5",
+		"enzyme": "^3.11.0",
 		"jest": "^27.2.4",
 		"lodash": "^4.17.21",
 		"playwright": "1.14.0",
+		"postcss": "^8.3.11",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
 		"webpack": "^5.61.0",
 		"webpack-cli": "^4.8.0"
 	},

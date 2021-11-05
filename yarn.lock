@@ -9301,12 +9301,16 @@ __metadata:
     electron-notarize: ^0.1.1
     electron-rebuild: ^2.3.5
     electron-updater: ^4.2.5
+    enzyme: ^3.11.0
     jest: ^27.2.4
     js-yaml: ^4.0.0
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
     playwright: 1.14.0
+    postcss: ^8.3.11
+    react: ^17.0.2
+    react-dom: ^17.0.2
     semver: ^7.3.2
     superagent: ^3.8.3
     webpack: ^5.61.0
