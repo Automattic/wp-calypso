@@ -85,6 +85,7 @@ class Document extends Component {
 
 		const LoadingLogo = chooseLoadingLogo( this.props );
 
+		const unsupportedBrowser = true;
 		return (
 			<html
 				lang={ lang }
@@ -155,6 +156,74 @@ class Document extends Component {
 						</EnvironmentBadge>
 					) }
 
+					{ unsupportedBrowser && (
+						<script
+							nonce={ inlineScriptNonce }
+							dangerouslySetInnerHTML={ {
+								__html: `
+							(function() {
+								/* Main Banner Element */
+								var banner = document.createElement( 'div' )
+								banner.appendChild( document.createTextNode( 'This browser is unsupported.' ) );
+
+								banner.style = " \
+									position: absolute; \
+									top: 0; \
+									left: 0;\
+									height: 50px;\
+									background-color: red;\
+									width: 100%;\
+									z-index: 999;\
+									transform: translateY(-50px);\
+									line-height: 50px;\
+									font-size: 30px;\
+									color: white;\
+									padding-left: 10px;\
+								"
+
+								/* More Info Link */
+								var info = document.createElement( 'a' )
+								info.appendChild( document.createTextNode( 'More information' ) )
+									info.style = "\
+									font-size: 15px;\
+									color: blue; \
+									margin-left: 10px; \
+								"
+								info.href='https://browsehappy.com'
+								banner.appendChild( info )
+
+								/* The Close Button */
+								var closeButton = document.createElement( 'button' )
+
+								closeButton.appendChild( document.createTextNode( 'Close' ) )
+								
+								closeButton.style = "\
+									position: absolute;\
+									right: 0;\
+									margin: 10px;\
+									height: 30px;\
+								"
+
+								closeButton.onclick = function () {
+									document.querySelector( 'body' ).style.transform = null
+									// We will still have a reference to this element.
+									if ( banner ) {
+										// .remove() is unsupported in IE
+										banner.parentNode.removeChild( banner )
+									}
+								}
+								banner.appendChild( closeButton )
+
+								document.querySelector( 'body' ).insertAdjacentElement( 'afterbegin', banner )
+								document.querySelector( 'body' ).style.transform = 'translateY(50px)'
+								
+								// Move focus to the "modal". Perhaps a different element?
+								closeButton.focus()
+							})();
+							`,
+							} }
+						/>
+					) }
 					<script
 						type="text/javascript"
 						nonce={ inlineScriptNonce }
