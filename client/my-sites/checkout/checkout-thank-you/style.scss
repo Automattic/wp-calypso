@@ -976,31 +976,6 @@
 	}
 }
 
-.licensing-thank-you-auto-activation__button,
-.licensing-thank-you-auto-activation__button:visited {
-	border-radius: 2px;
-	@include jetpack-primary-button;
-}
-
-.button.licensing-thank-you-auto-activation__button {
-	&.is-primary {
-		&.is-busy {
-			background-image: linear-gradient(
-				-45deg,
-				var( --studio-jetpack-green-40 ) 28%,
-				var( --studio-jetpack-green-50 ) 28%,
-				var( --studio-jetpack-green-50 ) 72%,
-				var( --studio-jetpack-green-40 ) 72%
-			);
-		}
-		&[disabled] {
-			color: white;
-			background-color: var( --color-neutral-10 );
-			border-color: var( --color-neutral-10 );
-		}
-	}
-}
-
 .licensing-thank-you-manual-activation-instructions__step-number {
 	display: inline-flex;
 	justify-content: center;
