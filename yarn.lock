@@ -90,7 +90,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-build@^9.0.0, @automattic/calypso-build@workspace:packages/calypso-build":
+"@automattic/calypso-build@^10.0.0, @automattic/calypso-build@workspace:packages/calypso-build":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-build@workspace:packages/calypso-build"
   dependencies:
@@ -303,7 +303,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/composite-checkout@workspace:packages/composite-checkout"
   dependencies:
-    "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-build": ^10.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
@@ -749,7 +749,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/notifications@workspace:apps/notifications"
   dependencies:
-    "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-build": ^10.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-polyfills": ^2.0.0
@@ -781,7 +781,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/o2-blocks@workspace:apps/o2-blocks"
   dependencies:
-    "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-build": ^10.0.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@wordpress/api-fetch": ^5.2.2
     "@wordpress/base-styles": ^4.0.0
@@ -1191,7 +1191,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-block-editor@workspace:apps/wpcom-block-editor"
   dependencies:
-    "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-build": ^10.0.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@wordpress/block-editor": ^7.0.2
     "@wordpress/blocks": ^11.1.0
@@ -1259,7 +1259,7 @@ __metadata:
   resolution: "@automattic/wpcom-editing-toolkit@workspace:apps/editing-toolkit"
   dependencies:
     "@automattic/calypso-analytics": ^1.0.0-alpha.1
-    "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-build": ^10.0.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/composite-checkout": ^1.0.0
     "@automattic/data-stores": ^2.0.0
@@ -11851,7 +11851,7 @@ __metadata:
     "@automattic/accessible-focus": ^1.0.0-alpha.0
     "@automattic/browser-data-collector": ^3.0.0
     "@automattic/calypso-analytics": ^1.0.0-alpha.1
-    "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-build": ^10.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
     "@automattic/calypso-config": ^1.0.0-alpha.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
@@ -38845,7 +38845,7 @@ testarmada-magellan@11.0.10:
   dependencies:
     "@automattic/babel-plugin-i18n-calypso": ^1.2.0
     "@automattic/babel-plugin-transform-wpcalypso-async": ^1.0.1
-    "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-build": ^10.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
     "@automattic/calypso-doctor": ^0.1.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
@@ -39025,7 +39025,7 @@ testarmada-magellan@11.0.10:
   version: 0.0.0-use.local
   resolution: "wp-e2e-tests@workspace:test/e2e"
   dependencies:
-    "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-build": ^10.0.0
     "@automattic/calypso-e2e": ^0.1.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
