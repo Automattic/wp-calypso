@@ -34,6 +34,13 @@ export default function () {
 			clientRender
 		);
 		page(
+			'/marketplace/product/install/:site?',
+			siteSelection,
+			renderPluginsInstallPage,
+			makeLayout,
+			clientRender
+		);
+		page(
 			'/marketplace/:productSlug?/install/:site?',
 			siteSelection,
 			renderPluginsInstallPage,

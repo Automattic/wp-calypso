@@ -20,8 +20,6 @@ import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custo
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -29,7 +27,6 @@ import {
 	getSitesWithoutPlugin,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
-import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
 	isFetching as isWporgPluginFetching,
@@ -216,7 +213,6 @@ function SinglePlugin( props ) {
 								<CTA
 									slug={ props.pluginSlug }
 									isPluginInstalledOnsite={ isPluginInstalledOnsite }
-									fullPlugin={ fullPlugin }
 								/>
 							</div>
 							<div className="single-plugin__t-and-c">
@@ -290,25 +286,9 @@ function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) {
 	);
 }
 
-function onClickInstallPlugin( { dispatch, selectedSiteId, fullPlugin, slug } ) {
-	dispatch( removePluginStatuses( 'completed', 'error' ) );
-	dispatch( installPlugin( selectedSiteId, fullPlugin ) );
-
-	dispatch( recordGoogleEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', slug ) );
-	dispatch(
-		recordGoogleEvent( 'calypso_plugin_install_click_from_plugin_info', {
-			site: selectedSiteId,
-			plugin: slug,
-		} )
-	);
-}
-
-function CTA( { slug, isPluginInstalledOnsite, fullPlugin } ) {
+function CTA( { slug, isPluginInstalledOnsite } ) {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
-
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const dispatch = useDispatch();
 
 	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) ) {
 		return null;
@@ -322,7 +302,7 @@ function CTA( { slug, isPluginInstalledOnsite, fullPlugin } ) {
 		return (
 			<Button
 				className="single-plugin__install-button"
-				onClick={ () => onClickInstallPlugin( { dispatch, selectedSiteId, fullPlugin, slug } ) }
+				href={ `/marketplace/${ slug }/install/${ selectedSite.slug }` }
 			>
 				{ translate( 'Install and activate' ) }
 			</Button>

@@ -12,8 +12,9 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
-import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import { installPluginSimple, activatePlugin } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import { getPlugin } from 'calypso/state/plugins/wporg/selectors';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
@@ -23,10 +24,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import './style.scss';
 
 const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
-	console.log( productSlug );
-	// If `productSlug` is not provided then this should proceed as plugin upload flow
-	// If `productSlug` is provided, we need to install the plugin like is handled here
-	// https://github.com/Automattic/wp-calypso/blob/192bf6b66de62a84b8c70a622de70f218f516610/client/my-sites/plugins/plugin-install-button/index.jsx#L25-L55
+	const isUploadFlow = ! productSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -34,18 +32,23 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const pluginUploadProgress = useSelector( ( state ) => getPluginUploadProgress( state, siteId ) );
 	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
+	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const uploadedPluginSlug = useSelector( ( state ) =>
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
-	const uploadedPlugin = useSelector( ( state ) =>
-		getPluginOnSite( state, siteId, uploadedPluginSlug )
+	const installedPlugin = useSelector( ( state ) =>
+		getPluginOnSite( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
 	);
 	const pluginActive = useSelector( ( state ) =>
-		isPluginActive( state, siteId, uploadedPluginSlug )
+		isPluginActive( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
 	);
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
+	);
+
+	const pluginInstallStatus = useSelector( ( state ) =>
+		getStatusForPlugin( state, siteId, productSlug )
 	);
 
 	useEffect( () => {
@@ -58,29 +61,41 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	}, [ pluginUploadProgress, setCurrentStep ] );
 
 	useEffect( () => {
-		if ( pluginUploadComplete && uploadedPlugin ) {
+		if ( ! isUploadFlow && currentStep === 0 && wporgPlugin ) {
+			// initialize plugin installing
+			dispatch( installPluginSimple( siteId, wporgPlugin ) );
+			setCurrentStep( 1 );
+		}
+	}, [ isUploadFlow, currentStep, siteId, wporgPlugin, productSlug ] );
+
+	useEffect( () => {
+		if (
+			installedPlugin &&
+			currentStep === 1 &&
+			( ! isUploadFlow || ( isUploadFlow && pluginUploadComplete ) )
+		) {
 			dispatch(
-				togglePluginActivation( siteId, {
-					slug: uploadedPlugin?.slug,
-					id: uploadedPlugin?.id,
+				activatePlugin( siteId, {
+					slug: installedPlugin?.slug,
+					id: installedPlugin?.id,
 				} )
 			);
 			setCurrentStep( 2 );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginUploadComplete, uploadedPlugin, setCurrentStep ] );
+	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
 
 	useEffect( () => {
 		if ( pluginActive ) {
 			waitFor( 1 ).then( () =>
-				page( `/marketplace/thank-you/${ uploadedPlugin?.slug }/${ selectedSiteSlug }` )
+				page( `/marketplace/thank-you/${ installedPlugin?.slug }/${ selectedSiteSlug }` )
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginActive, automatedTransferStatus ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	const steps = [
-		translate( 'Uploading plugin' ),
+		isUploadFlow ? translate( 'Uploading plugin' ) : translate( 'Setting up plugin installation' ),
 		translate( 'Installing plugin' ),
 		translate( 'Activating plugin' ),
 	];
@@ -93,12 +108,16 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-upload-status__root">
-				{ pluginUploadError ? (
+				{ pluginUploadError || pluginInstallStatus.error ? (
 					<EmptyContent
 						illustration="/calypso/images/illustrations/error.svg"
 						title={ translate( 'An error occurred while installing the plugin.' ) }
 						action={ translate( 'Back' ) }
-						actionURL={ `/plugins/upload/${ selectedSiteSlug }` }
+						actionURL={
+							isUploadFlow
+								? `/plugins/upload/${ selectedSiteSlug }`
+								: `/plugins/${ productSlug }/${ selectedSiteSlug }`
+						}
 					/>
 				) : (
 					<MarketplaceProgressBar steps={ steps } currentStep={ currentStep } />
