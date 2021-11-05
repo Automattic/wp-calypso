@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { ReactElement, useCallback, useState } from 'react';
@@ -7,101 +7,83 @@ import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/li
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
+import useAttachLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-attach-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import SearchCard from 'calypso/components/search-card';
+import FormRadio from 'calypso/components/forms/form-radio';
+import { getQueryArg } from '@wordpress/url';
 import './style.scss';
 
-interface ProductOption {
-	value: string;
-	label: string;
-	cost: number;
-	currency: string;
-}
-
-function selectProductOptions( families: APIProductFamily[] ): ProductOption[] {
-	return families.flatMap( ( family ) =>
-		family.products.map( ( product ) => ( {
-			value: product.slug,
-			label: product.name,
-			cost: product.cost,
-			currency: product.currency,
-		} ) )
-	);
-}
-
-export default function AttachLicenseForm(): ReactElement {
+export default function AttachLicenseForm( { sites } ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const products = useProductsQuery( {
-		select: selectProductOptions,
+	const [ filter, setFilter ] = useState( false );
+	const [ selectedSite, setSelectedSite ] = useState( false );
+	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
+
+	const siteCards = sites.map( ( site: any ) => {
+		if ( -1 !== site.domain.search( filter ) || false === filter ) {
+			return (
+				<Card key={ site.ID } className="attach-license-form__site-card">
+					<FormRadio
+						className="attach-license-form__site-card-radio"
+						label=""
+						name="site_select"
+						onClick={ () => onSelectSite( site.ID ) }
+					/>
+					{ site.domain }
+				</Card>
+			);
+		}
 	} );
 
-	const issueLicense = useIssueLicenseMutation( {
-		onSuccess: ( license ) => {
-			page.redirect(
-				addQueryArgs( { key: license.license_key }, '/partner-portal/attach-license' )
-			);
+	const onSelectSite = ( site: any ) => setSelectedSite( site );
+
+	const onSearch = ( query: any ) => setFilter( query );
+
+	const attachLicense = useAttachLicenseMutation( {
+		onSuccess: ( licenseKey: any ) => {
+			page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
 		},
 		onError: ( error: Error ) => {
 			dispatch( errorNotice( error.message ) );
 		},
 	} );
-	const [ product, setProduct ] = useState( '' );
 
-	const onSelectProduct = useCallback(
-		( option ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select', {
-					product: option.value,
-				} )
-			);
-			setProduct( option.value );
-		},
-		[ setProduct ]
-	);
-
-	const productCards =
-		products.data &&
-		products.data.map( ( prod, i ) => (
-			<LicenseProductCard
-				key={ prod.value }
-				product={ prod }
-				onSelectProduct={ onSelectProduct }
-				isSelected={ prod.value === product }
-				orderIndex={ i }
-			/>
-		) );
-
-	const onIssueLicense = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_submit', { product } ) );
-		issueLicense.mutate( { product } );
-	}, [ dispatch, product, issueLicense.mutate ] );
+	const onAttachLicense = useCallback( () => {
+		console.log( 'attach ' + licenseKey + ' to ' + selectedSite );
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_attach_license_submit', {
+				licenseKey,
+				selectedSite,
+			} )
+		);
+		attachLicense.mutate( { licenseKey, selectedSite } );
+	}, [ dispatch, licenseKey, selectedSite, attachLicense.mutate ] );
 
 	return (
-		<div className="issue-license-form">
-			<div className="issue-license-form__top">
-				<p className="issue-license-form__description">
+		<div className="attach-license-form">
+			<div className="attach-license-form__top">
+				<p className="attach-license-form__description">
 					{ translate(
 						'Select the website that you would like to apply the license to. You can also attach it later.'
 					) }
 				</p>
-				<div className="issue-license-form__controls">
-					<Button
-						primary
-						onClick={
-							() => {
-								console.log( 'attach to website' );
-							} /*onAttachLicense*/
-						}
-					>
+				<div className="attach-license-form__controls">
+					<Button primary onClick={ onAttachLicense }>
 						{ translate( 'Attach to website' ) }
 					</Button>
 				</div>
 			</div>
 
-			<SearchCard />
+			<SearchCard
+				className="attach-license-form__search-field"
+				placeHolder={ translate( 'Search for website URL right here' ) }
+				onSearch={ onSearch }
+			/>
+
+			{ siteCards }
 		</div>
 	);
 }

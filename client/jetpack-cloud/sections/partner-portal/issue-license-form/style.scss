@@ -28,6 +28,16 @@
 }
 
 .issue-license-form__top {
+	display: flex;
+	justify-content: space-between;
+}
+
+.issue-license-form__top > div {
+	align-self: flex-end;
+	margin-bottom: 0;
+}
+
+.issue-license-form__top {
 	margin-bottom: 1rem;
 	margin-top: -1.5rem;
 }

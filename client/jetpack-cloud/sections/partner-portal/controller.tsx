@@ -27,6 +27,7 @@ import {
 	getCurrentPartner,
 	hasActivePartnerKey,
 } from 'calypso/state/partner-portal/partner/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import Header from './header';
 import type PageJS from 'page';
@@ -95,9 +96,12 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 }
 
 export function attachLicenseContext( context: PageJS.Context, next: () => void ): void {
+	const state = context.store.getState();
+	const sites = getSites( state );
+
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <AttachLicense />;
+	context.primary = <AttachLicense sites={ sites } />;
 	context.footer = <JetpackComFooter />;
 	next();
 }

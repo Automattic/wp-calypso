@@ -6,7 +6,7 @@ import Main from 'calypso/components/main';
 import AttachLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/attach-license-form';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 
-export default function AttachLicense(): ReactElement {
+export default function AttachLicense( { sites } ): ReactElement {
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -26,7 +26,7 @@ export default function AttachLicense(): ReactElement {
 			<SidebarNavigation />
 			<CardHeading size={ 36 }>{ translate( 'Attach your new License' ) }</CardHeading>
 
-			<AttachLicenseForm />
+			<AttachLicenseForm sites={ sites } />
 		</Main>
 	);
 }
