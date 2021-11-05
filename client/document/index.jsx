@@ -201,9 +201,10 @@ class Document extends Component {
 								
 								closeButton.style = "\
 									position: absolute;\
-									right: 6px\
+									right: 6px;\
 									margin: 10px;\
 									height: 30px;\
+									color: white;\
 								"
 
 								closeButton.onclick = function () {
