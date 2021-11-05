@@ -44,7 +44,7 @@
 		"@wordpress/react-i18n": "^3.0.1",
 		"debug": "^4.1.1",
 		"prop-types": "^15.7.2",
-		"redux": "^4.0.5"
+		"redux": "^4.1.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^10.0.0",

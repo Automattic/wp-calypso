@@ -322,7 +322,7 @@ __metadata:
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    redux: ^4.0.5
+    redux: ^4.1.2
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
     typescript: ^4.4.4
@@ -360,7 +360,7 @@ __metadata:
     jest-fetch-mock: ^3.0.3
     nock: ^12.0.3
     qs: ^6.9.1
-    redux: ^4.1.1
+    redux: ^4.1.2
     tslib: ^2.3.0
     typescript: ^4.4.4
     utility-types: ^3.10.0
@@ -403,7 +403,7 @@ __metadata:
     react-dom: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
   languageName: unknown
   linkType: soft
 
@@ -438,7 +438,7 @@ __metadata:
     react: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
   languageName: unknown
   linkType: soft
 
@@ -619,7 +619,7 @@ __metadata:
     react-dom: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
   languageName: unknown
   linkType: soft
 
@@ -677,7 +677,7 @@ __metadata:
     "@wordpress/i18n": ^4.2.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
   languageName: unknown
   linkType: soft
 
@@ -767,7 +767,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-redux: ^7.2.4
-    redux: ^4.1.1
+    redux: ^4.1.2
     redux-thunk: ^2.3.0
     webpack: ^5.61.0
     webpack-dev-server: ^3.11.2
@@ -806,7 +806,7 @@ __metadata:
     react-dom: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
     webpack: ^5.61.0
   languageName: unknown
   linkType: soft
@@ -830,7 +830,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^5.1.2
-    redux: ^4.1.1
+    redux: ^4.1.2
     tslib: ^2.3.0
     typescript: ^4.4.4
   peerDependencies:
@@ -867,7 +867,7 @@ __metadata:
     react: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
   languageName: unknown
   linkType: soft
 
@@ -901,7 +901,7 @@ __metadata:
     react-dom: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
   languageName: unknown
   linkType: soft
 
@@ -966,7 +966,7 @@ __metadata:
     react-dom: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
     tslib: ^2.3.0
@@ -1013,7 +1013,7 @@ __metadata:
     react: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
   languageName: unknown
   linkType: soft
 
@@ -1025,7 +1025,7 @@ __metadata:
     "@wordpress/is-shallow-equal": ^4.2.0
     "@wordpress/warning": ^2.2.1
     lodash: ^4.17.21
-    redux: ^4.1.1
+    redux: ^4.1.2
     redux-thunk: ^2.3.0
     tslib: ^2.3.0
     typescript: ^4.4.4
@@ -1157,7 +1157,7 @@ __metadata:
     react-dom: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
   languageName: unknown
   linkType: soft
 
@@ -1222,7 +1222,7 @@ __metadata:
     react-dom: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.2
     tinymce: ^4.9.6
     webpack: ^5.61.0
   languageName: unknown
@@ -1325,7 +1325,7 @@ __metadata:
     react-dom: ^17.0.2
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
-    redux: ^4.1.1
+    redux: ^4.1.2
     utility-types: ^3.10.0
     wait-for-expect: ^3.0.2
     webpack: ^5.61.0
@@ -12018,7 +12018,7 @@ __metadata:
     react-transition-group: ^4.3.0
     reakit: ^1.2.3
     reakit-utils: ^0.15.1
-    redux: ^4.1.1
+    redux: ^4.1.2
     redux-dynamic-middlewares: ^2.0.0
     redux-mock-store: ^1.5.4
     redux-thunk: ^2.3.0
@@ -32005,12 +32005,12 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.0, redux@npm:^4.0.1, redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.0, redux@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "redux@npm:4.1.1"
+"redux@npm:^4.0.0, redux@npm:^4.0.1, redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.0, redux@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "redux@npm:4.1.2"
   dependencies:
     "@babel/runtime": ^7.9.2
-  checksum: e46d986dd9a1b515078b3f2e05e165e8664694e96f36588e9bbd54ac60759e4d0699252599c5a00ca411e9946b223ab89b95829551f75058f5573aedaa32eb97
+  checksum: 3c6af9724bb39ead9d6a7e2bd422f898136d44e0ff3abe8ccafd6be8a6e219ae4f8bea0b154173e42da829979394944ec47a91eea961997eb95d31af60597ebe
   languageName: node
   linkType: hard
 
@@ -38998,7 +38998,7 @@ testarmada-magellan@11.0.10:
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.10
-    redux: ^4.0.5
+    redux: ^4.1.2
     regenerator-runtime: ^0.13.9
     replace: ^1.1.5
     request: ^2.88.2
