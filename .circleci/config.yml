@@ -229,7 +229,9 @@ jobs:
       - attach_workspace:
           at: /Users/distiller/wp-calypso
       - run: *update-node
+      - restore_cache: *restore-yarn-cache
       - run: *yarn-install
+      - save_cache: *save-yarn-cache
       - run:
           name: Build Desktop Mac
           no_output_timeout: 45m
@@ -244,7 +246,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
             # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
             # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
@@ -309,7 +311,9 @@ jobs:
           command: |
             sudo apt update
             sudo apt-get install -y libsecret-1-dev
+      - restore_cache: *restore-yarn-cache
       - run: *yarn-install
+      - save_cache: *save-yarn-cache
       - run:
           name: Build Desktop Linux
           environment:
