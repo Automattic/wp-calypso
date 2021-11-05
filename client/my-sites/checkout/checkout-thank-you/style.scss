@@ -1082,6 +1082,10 @@
 
 		border: none;
 	}
+
+	.licensing-thank-you-manual-activation-license-key__input.form-text-input.is-loading {
+		@include placeholder( --color-neutral-20 );
+	}
 }
 
 .licensing-thank-you-manual-activation-license-key__button {
