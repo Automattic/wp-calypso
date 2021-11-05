@@ -14,6 +14,7 @@ import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/l
 import { domainConnect } from 'calypso/lib/domains/constants';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import NewDomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/new-main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import {
 	domainManagementEdit,
@@ -47,8 +48,10 @@ class Dns extends Component {
 
 	constructor( props ) {
 		super( props );
+
 		this.onRestoreSuccess = this.onRestoreSuccess.bind( this );
 		this.onRestoreError = this.onRestoreError.bind( this );
+		this.renderBreadcrumbs = this.renderBreadcrumbs.bind( this );
 	}
 
 	onRestoreSuccess() {
@@ -124,6 +127,14 @@ class Dns extends Component {
 		);
 	}
 
+	renderPlaceholder() {
+		return config.isEnabled( 'domains/dns-records-redesign' ) ? (
+			<NewDomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+		) : (
+			<DomainMainPlaceholder goBack={ this.goBack } />
+		);
+	}
+
 	renderMain() {
 		const { dns, selectedDomainName, selectedSite } = this.props;
 		const domain = getSelectedDomain( this.props );
@@ -168,7 +179,7 @@ class Dns extends Component {
 			<Fragment>
 				<QuerySiteDomains siteId={ selectedSite.ID } />
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? <DomainMainPlaceholder goBack={ this.goBack } /> : this.renderMain() }
+				{ showPlaceholder ? this.renderPlaceholder() : this.renderMain() }
 			</Fragment>
 		);
 	}
