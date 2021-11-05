@@ -10,7 +10,7 @@ import {
 	GutenbergEditorPage,
 	setupHooks,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Frame } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
 type Translations = {
@@ -215,7 +215,7 @@ const translations: Translations = {
 };
 const locales = Object.keys( translations ) as LanguageSlug[];
 
-describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
+describe( DataHelper.createSuiteTitle( 'Editor Translations' ), () => {
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let page: Page;
 
@@ -230,13 +230,13 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
 		} );
 	} );
 
-	it( 'Log in', async function () {
+	it( 'Log in', async () => {
 		const loginPage = new LoginPage( page );
 		await loginPage.login( { account: 'i18nUser' } );
 	} );
 
 	describe.each( locales )( 'Editor translations (%s)', ( locale ) => {
-		it( 'Change UI language', async function () {
+		it( 'Change UI language', async () => {
 			await Promise.all( [
 				page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
 				page.goto( DataHelper.getCalypsoURL( '/' ) ),
@@ -251,34 +251,42 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
 			] );
 		} );
 
-		it( 'Start new post', async function () {
+		it( 'Start new post', async () => {
 			const newPostFlow = new NewPostFlow( page );
 			await newPostFlow.newPostFromNavbar();
 
 			gutenbergEditorPage = new GutenbergEditorPage( page );
 		} );
 
-		it.each( translations[ locale ].blocks )(
+		describe.each( translations[ locale ].blocks )(
 			'Translations for block: $blockName',
-			async ( block ) => {
-				const frame = await gutenbergEditorPage.getEditorFrame();
+			( block ) => {
+				let frame: Frame;
 
-				await gutenbergEditorPage.addBlock( block.blockName, block.blockEditorSelector );
-
-				block.blockEditorContent.forEach( async ( content ) => {
-					await frame.waitForSelector( `${ block.blockEditorSelector } ${ content }` );
+				beforeAll( async () => {
+					frame = await gutenbergEditorPage.getEditorFrame();
+					await gutenbergEditorPage.addBlock( block.blockName, block.blockEditorSelector );
 				} );
 
-				// Open block settings.
-				await gutenbergEditorPage.openSettings();
-				await frame.click( block.blockEditorSelector );
-				if ( await frame.isVisible( '.block-editor-block-parent-selector__button' ) ) {
-					await frame.click( '.block-editor-block-parent-selector__button' );
-				}
+				it( 'Render block content translations', async () => {
+					await Promise.all(
+						block.blockEditorContent.map( ( content ) =>
+							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }` )
+						)
+					);
+				} );
 
-				await frame.waitForSelector(
-					`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`
-				);
+				it( 'Render block title translations', async () => {
+					await gutenbergEditorPage.openSettings();
+					await frame.click( block.blockEditorSelector );
+					if ( await frame.isVisible( '.block-editor-block-parent-selector__button' ) ) {
+						await frame.click( '.block-editor-block-parent-selector__button' );
+					}
+
+					await frame.waitForSelector(
+						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`
+					);
+				} );
 			}
 		);
 	} );
