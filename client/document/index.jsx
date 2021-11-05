@@ -170,15 +170,15 @@ class Document extends Component {
 									position: absolute; \
 									top: 0; \
 									left: 0;\
+									right: 0;\
 									height: 50px;\
-									background-color: red;\
-									width: 100%;\
+									background-color: #d63638;\
 									z-index: 999;\
 									transform: translateY(-50px);\
 									line-height: 50px;\
 									font-size: 30px;\
 									color: white;\
-									padding-left: 10px;\
+									padding: 0 16px;\
 								"
 
 								/* More Info Link */
@@ -186,8 +186,10 @@ class Document extends Component {
 								info.appendChild( document.createTextNode( 'More information' ) )
 									info.style = "\
 									font-size: 15px;\
-									color: blue; \
+									color: white; \
 									margin-left: 10px; \
+									font-weight: bold;\
+									font-size; 15px;\
 								"
 								info.href='https://browsehappy.com'
 								banner.appendChild( info )
@@ -199,7 +201,7 @@ class Document extends Component {
 								
 								closeButton.style = "\
 									position: absolute;\
-									right: 0;\
+									right: 6px\
 									margin: 10px;\
 									height: 30px;\
 								"
@@ -218,7 +220,7 @@ class Document extends Component {
 								document.querySelector( 'body' ).style.transform = 'translateY(50px)'
 								
 								// Move focus to the "modal". Perhaps a different element?
-								closeButton.focus()
+								info.focus()
 							})();
 							`,
 							} }
