@@ -9293,7 +9293,7 @@ __metadata:
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     archiver: ^3.1.1
-    copy-webpack-plugin: ^6.2.1
+    copy-webpack-plugin: ^6.4.1
     cross-env: ^7.0.3
     electron: 12.0.13
     electron-builder: ^22.11.7
@@ -13614,7 +13614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copy-webpack-plugin@npm:^6.2.1":
+"copy-webpack-plugin@npm:^6.4.1":
   version: 6.4.1
   resolution: "copy-webpack-plugin@npm:6.4.1"
   dependencies:
