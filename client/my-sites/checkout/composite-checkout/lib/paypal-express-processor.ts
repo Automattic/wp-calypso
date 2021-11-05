@@ -72,6 +72,9 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ) {
+	const path = '/me/paypal-express-url';
+	const apiVersion = '1.2';
+
 	const isJetpackUserLessCheckout =
 		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
 
@@ -96,17 +99,13 @@ async function wpcomPayPalExpress(
 				},
 			};
 
-			return wp.req.post(
-				'/me/paypal-express-url',
-				mapRecordKeysRecursively( newPayload, camelToSnakeCase )
-			);
+			const body = mapRecordKeysRecursively( newPayload, camelToSnakeCase );
+			return wp.req.post( { path }, { apiVersion }, body );
 		} );
 	}
 
-	return wp.req.post(
-		'/me/paypal-express-url',
-		mapRecordKeysRecursively( payload, camelToSnakeCase )
-	);
+	const body = mapRecordKeysRecursively( payload, camelToSnakeCase );
+	return wp.req.post( { path }, { apiVersion }, body );
 }
 
 function createPayPalExpressEndpointRequestPayloadFromLineItems( {
@@ -135,7 +134,5 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		country,
 		postalCode: postalCode ? tryToGuessPostalCodeFormat( postalCode.toUpperCase(), country ) : '',
 		domainDetails,
-		// Make the response JSON because it's easier for wpcom-xhr-request to parse; see https://github.com/Automattic/wp-calypso/pull/57575
-		as_json: true,
 	};
 }
