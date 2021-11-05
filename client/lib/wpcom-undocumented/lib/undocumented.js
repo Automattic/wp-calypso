@@ -45,32 +45,6 @@ Undocumented.prototype.me = function () {
 };
 
 /**
- * Fetches settings for the Monitor module.
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.fetchMonitorSettings = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id: query' );
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId }, fn );
-};
-
-Undocumented.prototype.updateMonitorSettings = function (
-	siteId,
-	emailNotifications,
-	wpNoteNotifications,
-	fn
-) {
-	debug( '/jetpack-blogs/:site_id: query' );
-	return this.wpcom.req.post(
-		{ path: '/jetpack-blogs/' + siteId },
-		{},
-		{ email_notifications: emailNotifications, wp_note_notifications: wpNoteNotifications },
-		fn
-	);
-};
-
-/**
  * Disconnects a Jetpack site with id siteId from WP.com
  *
  * @param {number} [siteId] The site ID
