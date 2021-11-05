@@ -2,6 +2,8 @@
 
 ## trunk
 
+## 10.0.0
+
 - Dropped `cache-loader`, as it is not compatible with Webpack 5.
 - Dropped `cacheDirectory` option in Sass loader
 - Updated dependencies:

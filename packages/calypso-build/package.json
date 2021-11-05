@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-build",
-	"version": "9.0.0",
+	"version": "10.0.0",
 	"description": "Shared Calypso build configuration files",
 	"keywords": [
 		"babel",

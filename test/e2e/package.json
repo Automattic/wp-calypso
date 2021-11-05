@@ -23,7 +23,7 @@
 		"@automattic/calypso-typescript-config": "^1.0.0"
 	},
 	"dependencies": {
-		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-build": "^10.0.0",
 		"@automattic/calypso-e2e": "^0.1.0",
 		"@automattic/mocha-debug-reporter": "^0.1.0",
 		"@automattic/testarmada-magellan-mocha-plugin": "^10.0.0",
