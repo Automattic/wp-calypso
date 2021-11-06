@@ -11,6 +11,7 @@ import { isDeletingLastMXRecord } from 'calypso/state/domains/dns/utils';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecordData from './dns-record-data';
+import DomainConnectInfoDialog from './domain-connect-info-dialog';
 
 class DnsRecordsList extends Component {
 	static propTypes = {
@@ -57,7 +58,7 @@ class DnsRecordsList extends Component {
 		),
 		title: this.props.translate( "What's this?" ),
 		// TODO: Add the correct callback to show the info about Domain Connect record
-		callback: () => {},
+		callback: () => this.openDialog( 'domainConenctInfo', () => {} ),
 	};
 
 	editRecordAction = {
@@ -245,6 +246,10 @@ class DnsRecordsList extends Component {
 					onClose={ this.handleDialogClose }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
+				/>
+				<DomainConnectInfoDialog
+					visible={ dialog.type === 'domainConenctInfo' }
+					onClose={ this.handleDialogClose }
 				/>
 				<div className="dns-records-list">
 					{ [
