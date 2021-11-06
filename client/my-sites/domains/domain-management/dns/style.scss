@@ -68,15 +68,30 @@ body.dns__body-white {
 
 		.dns-records-list-item__wrapper {
 			color: $gray-50;
-			border-top: none;
-			border-bottom: 1px solid $gray-5;
+			border-top: 1px solid $gray-5;
+			border-bottom: none;
 			font-size: $font-body-small;
 			font-weight: 400;
-			padding: 10px 0;
+			padding: 16px 0;
+
+			&:last-of-type {
+				border-bottom: 1px solid $gray-5;
+			}
+
+			@include break-mobile {
+				padding: 10px 0;
+				border-top: none;
+				border-bottom: 1px solid $gray-5;
+			}
 
 			&.is-header {
 				border-bottom: 1px solid $gray-20;
 				font-weight: 500; /* stylelint-disable-line */
+				display: none;
+
+				@include break-mobile {
+					display: block;
+				}
 			}
 
 			&.is-disabled {
@@ -88,19 +103,36 @@ body.dns__body-white {
 			}
 
 			.dns-records-list-item {
-				& + .dns-records-list-item {
-					margin-left: 16px;
+				margin: 0 16px;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				position: relative;
+
+				@include break-mobile {
+					margin: 0;
+					position: initial;
+					justify-content: space-between;
+					flex-wrap: nowrap;
 				}
 
-				display: flex;
-				justify-content: space-between;
-				overflow-wrap: anywhere;
-
 				.dns-records-list-item__data {
-					align-self: center;
+					align-self: flex-start;
+					overflow-wrap: anywhere;
+
+					@include break-mobile {
+						align-self: center;
+					}
+
+					& + .dns-records-list-item__data {
+						@include break-mobile {
+							margin-left: 16px;
+						}
+					}
 
 					&.dns-records-list-item__type {
 						color: $gray-900;
+						overflow-wrap: break-word;
 
 						@include break-mobile {
 							flex-basis: 120px;
@@ -109,6 +141,8 @@ body.dns__body-white {
 					}
 
 					&.dns-records-list-item__name {
+						margin-left: 16px;
+
 						@include break-mobile {
 							flex-basis: 240px;
 							flex-grow: 1;
@@ -116,14 +150,23 @@ body.dns__body-white {
 					}
 
 					&.dns-records-list-item__value {
+						flex-basis: 100%;
+						padding-right: 24px;
+
 						@include break-mobile {
 							flex-basis: 440px;
 							flex-grow: 1;
+							padding-right: 0;
 						}
 					}
 
 					&.dns-records-list-item__menu {
+						position: absolute;
+						top: 0;
+						right: 0;
+
 						@include break-mobile {
+							position: initial;
 							min-width: 24px;
 							flex-grow: 0;
 						}

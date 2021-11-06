@@ -157,13 +157,13 @@ class DnsRecordsList extends Component {
 
 		this.props.addDns( this.props.selectedDomainName, record ).then(
 			() => {
-				this.props.successNotice( translate( 'The DNS record has been restored.' ), {
+				this.props.successNotice( translate( 'The DNS record has been enabled.' ), {
 					duration: 5000,
 				} );
 			},
 			( error ) => {
 				this.props.errorNotice(
-					error.message || translate( 'The DNS record could not be restored.' )
+					error.message || translate( 'The DNS record could not be enabled.' )
 				);
 			}
 		);
