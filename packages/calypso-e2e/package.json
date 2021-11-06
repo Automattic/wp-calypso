@@ -18,8 +18,7 @@
 	"dependencies": {
 		"config": "^3.3.6",
 		"mailosaur": "^7.3.1",
-		"playwright": "1.14.0",
-		"request-promise": "^4.2.6"
+		"playwright": "1.14.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
@@ -27,7 +26,6 @@
 		"@types/config": "^0.0.40",
 		"@types/jest": "^27.0.2",
 		"@types/node": "^16.11.6",
-		"@types/request-promise": "^4.1.48",
 		"asana-phrase": "^0.0.8",
 		"typescript": "^4.4.4"
 	},

@@ -1,6 +1,5 @@
 import { sprintf } from '@wordpress/i18n';
 import { Page, ElementHandle } from 'playwright';
-import request from 'request-promise';
 
 const GLOTPRESS_ORIGINALS_ENDPOINT =
 	'https://translate.wordpress.com/api/translations/-query-by-originals';
@@ -10,40 +9,62 @@ const selectors = {
 	translatableElement: '[data-e2e-string]',
 };
 
-type OriginalString = { singular: string };
+type OriginalString = { singular: string; plural?: string; context?: string };
+type Translation = {
+	original: OriginalString;
+	translations: {
+		translation_0: string;
+	}[];
+};
 
 /**
  * Fetch translations for originals.
  */
 async function fetchTranslations(
+	page: Page,
 	originals: OriginalString[],
 	locale: string
-): Promise< string[] > {
-	return request
-		.post( GLOTPRESS_ORIGINALS_ENDPOINT, {
-			form: {
-				project: GLOTPRESS_PROJECT,
-				locale_slug: locale,
-				original_strings: JSON.stringify( originals ),
-			},
-		} )
-		.then( ( response: any ) => {
-			let translations = JSON.parse( response );
-			delete translations.originals_not_found;
-			translations = Object.values( translations );
+): Promise< Translation[] | null > {
+	const params = {
+		url: GLOTPRESS_ORIGINALS_ENDPOINT,
+		data: {
+			project: GLOTPRESS_PROJECT,
+			locale_slug: locale,
+			original_strings: JSON.stringify( originals ),
+		},
+	};
 
-			return translations;
-		} )
-		.catch( () => null );
+	return page.evaluate( async ( { url, data } ) => {
+		const body = new URLSearchParams();
+		for ( const key in data ) {
+			body.append( key, data[ key as 'project' | 'locale_slug' | 'original_strings' ] );
+		}
+
+		return window
+			.fetch( url, {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/x-www-form-urlencoded',
+				},
+				body: body.toString(),
+			} )
+			.then( ( res ) => res.json() )
+			.then( ( res ) => {
+				delete res.originals_not_found;
+				return res;
+			} )
+			.catch( () => null );
+	}, params );
 }
 
 /**
  * Get elements translations.
  */
 async function getElementsTranslations(
+	page: Page,
 	elements: ElementHandle[],
 	locale: string
-): Promise< any > {
+): Promise< Translation[] | null > {
 	// Default locale doesn't have translations
 	if ( locale === 'en' ) {
 		return null;
@@ -56,7 +77,7 @@ async function getElementsTranslations(
 		} )
 	);
 
-	return fetchTranslations( originals, locale );
+	return fetchTranslations( page, originals, locale );
 }
 
 /**
@@ -66,7 +87,7 @@ async function getElementsTranslations(
  */
 export async function validatePageTranslations( page: Page, locale: string ): Promise< void > {
 	const translatableElements = await page.$$( selectors.translatableElement );
-	const translations = await getElementsTranslations( translatableElements, locale );
+	const translations = await getElementsTranslations( page, translatableElements, locale );
 
 	for ( const element of translatableElements ) {
 		const singular = await element.getAttribute( 'data-e2e-string' );
@@ -78,20 +99,23 @@ export async function validatePageTranslations( page: Page, locale: string ): Pr
 
 		// Translation for default locale should match the original.
 		if ( locale !== 'en' ) {
-			const translationEntry =
-				translations && translations.find( ( entry: any ) => entry.original.singular === singular );
 			translation =
-				translationEntry &&
-				translationEntry.translations &&
-				translationEntry.translations[ 0 ] &&
-				translationEntry.translations[ 0 ].translation_0;
+				translations?.find( ( entry: Translation ) => entry.original.singular === singular )
+					?.translations?.[ 0 ]?.translation_0 || null;
+		}
+
+		if ( ! translation ) {
+			translation = '';
 		}
 
 		if ( params ) {
-			// @ts-ignore
 			translation = sprintf( translation, ...JSON.parse( params ) );
 		}
 
-		await element.waitForSelector( `:has-text("${ translation }")` );
+		await page.waitForFunction(
+			( { element, translation } ) =>
+				( element as HTMLElement )?.innerText?.trim()?.includes( translation?.trim() || '' ),
+			{ element, translation }
+		);
 	}
 }
