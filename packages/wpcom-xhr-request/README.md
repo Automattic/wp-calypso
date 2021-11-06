@@ -7,7 +7,7 @@ instead of using this module directly.
 
 Works in both the browser and Node.js via [`superagent`][superagent].
 
-### Installation
+## Installation
 
 Install `wpcom-xhr-request` using `npm`:
 
@@ -15,7 +15,7 @@ Install `wpcom-xhr-request` using `npm`:
 $ npm install wpcom-xhr-request
 ```
 
-### Example
+## Example
 
 ```html
 <html>
@@ -102,7 +102,7 @@ handler(
 );
 ```
 
-### Authentication
+## Authentication
 
 For API requests that require authentication to WordPress.com, you must pass in an
 OAuth token as the `authToken` parameter in the `params` object for the API call.
@@ -111,7 +111,7 @@ You can get an OAuth token server-side through
 [`node-wpcom-oauth`][node-wpcom-oauth], or any other OAuth2 interaction
 mechanism.
 
-### License
+## License
 
 MIT – Copyright Automattic 2014
 
