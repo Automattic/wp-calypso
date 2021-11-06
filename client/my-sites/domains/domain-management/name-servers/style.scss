@@ -5,12 +5,24 @@
 }
 
 .name-servers__dns {
-	.name-servers__toggle {
-		display: inline-block;
-		float: right;
+	display: flex;
+	flex-direction: column;
 
-		.components-toggle-control .components-base-control__field .components-form-toggle {
-			margin-right: 0;
+	.name-servers__toggle {
+		display: block;
+		.components-toggle-control .components-base-control__field {
+			display: flex;
+			justify-content: space-between;
+			.components-form-toggle {
+				order: 1;
+			}
+			.components-toggle-control__label {
+				order: 0;
+				border: 0;
+				font-size: 16px;
+				font-style: inherit;
+				font-weight: 400;
+			}
 		}
 	}
 

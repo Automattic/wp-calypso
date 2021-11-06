@@ -22,21 +22,18 @@ class NameserversToggle extends PureComponent {
 	render() {
 		return (
 			<Card compact className="name-servers__dns">
-				<span className="name-servers__title" onClick={ this.handleToggle }>
-					{ NAMESERVERS_TOGGLE_TITLE }
-				</span>
-
 				<form className="name-servers__toggle">
-					<FormLabel>
-						<ToggleControl
-							id="wp-nameservers"
-							name="wp-nameservers"
-							onChange={ this.handleToggle }
-							checked={ this.props.enabled }
-							value="active"
-						/>
-						<ScreenReaderText>{ NAMESERVERS_TOGGLE_TITLE }</ScreenReaderText>
-					</FormLabel>
+					<ToggleControl
+						id="wp-nameservers"
+						name="wp-nameservers"
+						onChange={ this.handleToggle }
+						checked={ this.props.enabled }
+						value="active"
+						label={ this.props.translate( NAMESERVERS_TOGGLE_TITLE ) }
+						className="name-servers__title"
+						onClick={ this.handleToggle }
+					/>
+					<ScreenReaderText>{ this.props.translate( NAMESERVERS_TOGGLE_TITLE ) }</ScreenReaderText>
 				</form>
 				{ this.renderExplanation() }
 			</Card>
