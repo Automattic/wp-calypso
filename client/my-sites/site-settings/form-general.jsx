@@ -149,7 +149,7 @@ export class SiteSettingsFormGeneral extends Component {
 							onClick={ this.trackFiverrLogoMakerClick }
 						>
 							<Gridicon icon="external" />
-							{ translate( ' Try Fiverr Logo Maker' ) }
+							{ translate( 'Try Fiverr Logo Maker' ) }
 						</Button>
 					</div>
 				</div>
