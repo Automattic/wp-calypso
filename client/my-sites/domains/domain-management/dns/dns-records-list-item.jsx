@@ -50,12 +50,6 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 					{ ! isHeader && menu }
 				</div>
 			</div>
-			<div>
-				{ /*<em>*/ }
-				{ /*	'Enabling this special DNS record allows you to automatically configure some third party*/ }
-				{ /*	services.'*/ }
-				{ /*</em>*/ }
-			</div>
 		</div>
 	);
 }
