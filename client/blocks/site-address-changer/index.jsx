@@ -1,12 +1,12 @@
-import { Card } from '@automattic/components';
-import { withShoppingCart } from '@automattic/shopping-cart';
 import { Card, Gridicon } from '@automattic/components';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -14,15 +14,16 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { siteRedirect } from 'calypso/lib/cart-values/cart-items';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getProductsList, getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	requestSiteAddressChange,
 	requestSiteAddressAvailability,
 	clearValidationError,
 } from 'calypso/state/site-address-change/actions';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
 import { getSiteAddressAvailabilityPending } from 'calypso/state/site-address-change/selectors/get-site-address-availability-pending';
 import { getSiteAddressValidationError } from 'calypso/state/site-address-change/selectors/get-site-address-validation-error';
 import { isRequestingSiteAddressChange } from 'calypso/state/site-address-change/selectors/is-requesting-site-address-change';
@@ -30,8 +31,6 @@ import { isSiteAddressValidationAvailable } from 'calypso/state/site-address-cha
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ConfirmationDialog from './dialog';
-import { getProductsList, getProductDisplayCost } from 'calypso/state/products-list/selectors';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 
 import './style.scss';
 
@@ -86,7 +85,7 @@ export class SiteAddressChanger extends Component {
 			this.props.shoppingCartManager
 				.addProductsToCart( [
 					fillInSingleCartItemAttributes(
-						siteRedirect( { domainFieldValue } ),
+						siteRedirect( { domain: domainFieldValue } ),
 						this.props.products
 					),
 				] )
