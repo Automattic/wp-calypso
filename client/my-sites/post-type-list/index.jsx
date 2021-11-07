@@ -4,9 +4,9 @@ import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import PostItem from 'calypso/blocks/post-item';
+import SitePreview from 'calypso/blocks/site-preview';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QueryRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
@@ -27,6 +27,7 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
+import PostItem from './post-item';
 
 import './style.scss';
 
@@ -272,6 +273,7 @@ class PostTypeList extends Component {
 				{ isSingleSite && recentViewIds.length > 0 && (
 					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
+				<SitePreview />
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
 					<UpsellNudge

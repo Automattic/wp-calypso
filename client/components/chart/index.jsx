@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Notice from 'calypso/components/notice';
 import Tooltip from 'calypso/components/tooltip';
 import { hasTouch } from 'calypso/lib/touch-detect';

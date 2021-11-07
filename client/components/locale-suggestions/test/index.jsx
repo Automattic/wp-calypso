@@ -4,7 +4,6 @@
 
 import { shallow } from 'enzyme';
 import { getLocaleSlug } from 'i18n-calypso';
-import React from 'react';
 import { LocaleSuggestions } from '../';
 
 jest.mock( 'calypso/lib/i18n-utils', () => ( { addLocaleToPath: ( locale ) => locale } ) );

@@ -1,7 +1,8 @@
 import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { useState, useCallback, ReactElement } from 'react';
+import { useState, useCallback, ReactElement } from 'react';
+import * as React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 

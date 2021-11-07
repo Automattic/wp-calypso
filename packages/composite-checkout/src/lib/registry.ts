@@ -16,7 +16,10 @@ export { createRegistry, RegistryProvider, useRegistry, useDispatch, useSelect }
 
 export const defaultRegistry = createRegistry();
 
-export function registerStore< T = {} >( key: string, storeConfig: StoreConfig< T > ) {
+export function registerStore< T = Record< string, unknown > >(
+	key: string,
+	storeConfig: StoreConfig< T >
+) {
 	return defaultRegistry.registerStore( key, storeConfig );
 }
 

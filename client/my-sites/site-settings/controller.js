@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
-import React from 'react';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';

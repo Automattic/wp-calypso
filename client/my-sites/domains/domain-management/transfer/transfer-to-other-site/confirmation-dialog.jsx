@@ -2,13 +2,13 @@ import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 
-class TransferConfirmationDialog extends React.PureComponent {
+class TransferConfirmationDialog extends PureComponent {
 	static propTypes = {
 		isMapping: PropTypes.bool.isRequired,
 		isVisible: PropTypes.bool.isRequired,

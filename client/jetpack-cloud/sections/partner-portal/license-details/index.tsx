@@ -1,6 +1,6 @@
 import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import LicenseDetailsActions from 'calypso/jetpack-cloud/sections/partner-portal/license-details/actions';

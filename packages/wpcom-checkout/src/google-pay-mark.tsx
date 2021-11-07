@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function GooglePayMark( { fill }: { fill: string } ): JSX.Element {
 	return (
 		<svg viewBox="0 0 524 206" fill="none" xmlns="http://www.w3.org/2000/svg">

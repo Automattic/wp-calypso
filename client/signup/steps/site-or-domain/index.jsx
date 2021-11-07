@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -51,7 +51,7 @@ class SiteOrDomain extends Component {
 				label: translate( 'Existing WordPress.com site' ),
 				image: <ExistingSiteImage />,
 				description: translate(
-					'Use with a site you already started. A free domain for one year is included with all plans.'
+					'Use with a site you already started. A free domain for one year is included with all annual plans.'
 				),
 			} );
 		}

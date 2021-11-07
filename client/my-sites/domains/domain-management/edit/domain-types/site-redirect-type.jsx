@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -19,7 +19,7 @@ import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 
-class SiteRedirectType extends React.Component {
+class SiteRedirectType extends Component {
 	renderDefaultRenewButton() {
 		const { domain, purchase, isLoadingPurchase } = this.props;
 

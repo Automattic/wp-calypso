@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

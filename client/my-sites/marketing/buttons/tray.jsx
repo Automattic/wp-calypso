@@ -4,12 +4,12 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { filter, find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import SortableList from 'calypso/components/forms/sortable-list';
 import ButtonsPreviewButton from './preview-button';
 import ButtonsPreviewButtons from './preview-buttons';
 
-class SharingButtonsTray extends React.Component {
+class SharingButtonsTray extends Component {
 	static displayName = 'SharingButtonsTray';
 
 	static propTypes = {

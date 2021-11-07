@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCreateTitanMailboxMutation } from 'calypso/data/emails/use-create-titan-mailbox-mutation';
 import { useGetTitanMailboxAvailability } from 'calypso/data/emails/use-get-titan-mailbox-availability';
@@ -166,7 +166,7 @@ const TitanSetUpMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) =
 	return (
 		<Card>
 			<TitanNewMailboxList
-				domain={ selectedDomainName }
+				selectedDomainName={ selectedDomainName }
 				mailboxes={ mailboxes }
 				onMailboxesChange={ onMailboxesChange }
 				showAddAnotherMailboxButton={ false }

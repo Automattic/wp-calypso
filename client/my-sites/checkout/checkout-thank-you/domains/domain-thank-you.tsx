@@ -1,24 +1,40 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import * as React from 'react';
 import { ThankYou } from 'calypso/components/thank-you';
-import domainThankYouContent from './thank-you-content';
-import { DomainThankYouProps, DomainThankYouType } from './types';
+import domainThankYouContent from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content';
+import {
+	DomainThankYouProps,
+	DomainThankYouType,
+} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
+
 import './style.scss';
+
 interface DomainThankYouContainerProps {
-	type: DomainThankYouType;
 	domain: string;
 	email: string;
+	hasProfessionalEmail: boolean;
+	hideProfessionalEmailStep: boolean;
 	selectedSiteSlug: string;
+	type: DomainThankYouType;
 }
 
 const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
-	type,
 	domain,
 	email,
+	hasProfessionalEmail,
 	selectedSiteSlug,
+	hideProfessionalEmailStep,
+	type,
 } ) => {
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
-		return propsGetter( { selectedSiteSlug, domain, email } );
+		return propsGetter( {
+			selectedSiteSlug,
+			domain,
+			email,
+			hasProfessionalEmail,
+			hideProfessionalEmailStep,
+		} );
 	}, [ type, domain, selectedSiteSlug, email ] );
 
 	return (

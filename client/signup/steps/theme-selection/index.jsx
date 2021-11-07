@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { themes } from 'calypso/lib/signup/themes-data';
@@ -80,37 +80,24 @@ class ThemeSelectionStep extends Component {
 	}
 
 	headerText() {
-		const { flowName, translate } = this.props;
+		const { translate } = this.props;
 
 		if ( this.isStoreSignup() ) {
 			return translate( 'Choose a store theme.' );
-		} else if ( flowName === 'test-fse' ) {
-			return translate( 'Pick your site design' );
 		}
+
 		return translate( 'Choose a theme.' );
 	}
 
-	headerTextIfFirstStep() {
-		const { flowName, translate } = this.props;
-
-		if ( flowName === 'test-fse' ) {
-			return translate( "Let's get started by picking your site design" );
-		}
-
-		// Use the default header text
-		return undefined;
-	}
-
 	subHeaderText() {
-		const { flowName, translate } = this.props;
+		const { translate } = this.props;
 
 		if ( this.isStoreSignup() ) {
 			return translate( 'Pick one of our store themes to start with. You can change this later.', {
 				context: 'Themes step subheader in Signup',
 			} );
-		} else if ( flowName === 'test-fse' ) {
-			return translate( "You'll be able to customize your new site in hundreds of ways." );
 		}
+
 		return translate(
 			'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
 			{ context: 'Themes step subheader in Signup' }
@@ -120,20 +107,18 @@ class ThemeSelectionStep extends Component {
 	render() {
 		const { useHeadstart, flowName } = this.props;
 
-		// If a user skips the step in `design-first` or `test-fse` let segment and vertical determine content.
+		// If a user skips the step in `design-first`, let segment and vertical determine content.
 		const defaultDependencies =
-			'design-first' === flowName || 'test-fse' === flowName
+			'design-first' === flowName
 				? { themeSlugWithRepo: 'pub/maywood', useThemeHeadstart: false }
 				: { themeSlugWithRepo: 'pub/twentysixteen', useThemeHeadstart: useHeadstart };
 
 		const headerText = this.headerText();
-		const headerTextIfFirstStep = this.headerTextIfFirstStep();
 		const subHeaderText = this.subHeaderText();
 
 		return (
 			<StepWrapper
 				fallbackHeaderText={ headerText }
-				headerText={ headerTextIfFirstStep }
 				fallbackSubHeaderText={ subHeaderText }
 				subHeaderText={ subHeaderText }
 				stepContent={ this.renderThemesList() }

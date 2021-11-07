@@ -1,7 +1,7 @@
-import React from 'react';
+import { Component } from 'react';
 import Gridicon from './gridicons';
 
-export class StatusBar extends React.Component {
+export class StatusBar extends Component {
 	static defaultProps = {
 		statusTimeout: 4000,
 	};

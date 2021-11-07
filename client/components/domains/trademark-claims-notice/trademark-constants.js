@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 // Note: Please don't change the text in this file as it is specified in the RPM-Requirements of the
 // ICANN TMCH functional specifications: https://tools.ietf.org/html/draft-ietf-eppext-tmch-func-spec-01#ref-RPM-Requirements

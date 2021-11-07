@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -21,7 +21,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-class ResumeEditing extends React.Component {
+class ResumeEditing extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,

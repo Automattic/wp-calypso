@@ -4,7 +4,7 @@
 import debugFactory from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import ReactDom from 'react-dom';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import smartSetState from 'calypso/lib/react-smart-set-state';
@@ -17,7 +17,7 @@ import './style.scss';
 const noop = () => {};
 const debug = debugFactory( 'calypso:infinite-list' );
 
-export default class InfiniteList extends React.Component {
+export default class InfiniteList extends Component {
 	static propTypes = {
 		items: PropTypes.array.isRequired,
 		fetchingNextPage: PropTypes.bool.isRequired,
@@ -43,8 +43,8 @@ export default class InfiniteList extends React.Component {
 	isScrolling = false;
 	_isMounted = false;
 	smartSetState = smartSetState;
-	topPlaceholderRef = React.createRef();
-	bottomPlaceholderRef = React.createRef();
+	topPlaceholderRef = createRef();
+	bottomPlaceholderRef = createRef();
 
 	UNSAFE_componentWillMount() {
 		const url = page.current;

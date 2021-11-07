@@ -1,5 +1,4 @@
 import page from 'page';
-import React from 'react';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import SectionImport from 'calypso/my-sites/importer/section-import';
 

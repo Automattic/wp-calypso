@@ -1,4 +1,5 @@
-import React, { ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';

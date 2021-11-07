@@ -39,12 +39,27 @@ export class PeoplePage {
 	}
 
 	/**
+	 * Wait until the page is loaded.
+	 */
+	async waitUntilLoaded(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
+	/**
 	 * Clicks on the navigation tab (desktop) or dropdown (mobile).
 	 *
 	 * @param {string} name Name of the tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: PeoplePageTabs ): Promise< void > {
+		// For Invites tab, wait for the full request to be completed.
+		if ( name === 'Invites' ) {
+			await Promise.all( [
+				this.page.waitForNavigation( { url: '**/people/invites/**', waitUntil: 'networkidle' } ),
+				clickNavTab( this.page, name ),
+			] );
+			return;
+		}
 		await clickNavTab( this.page, name );
 	}
 
@@ -66,6 +81,8 @@ export class PeoplePage {
 	 * Delete the user from site.
 	 */
 	async deleteUser(): Promise< void > {
+		await this.page.waitForLoadState( 'networkidle' );
+
 		const elementHandle = await this.page.waitForSelector(
 			selectors.deletedUserContentAction( 'delete' )
 		);
@@ -78,7 +95,13 @@ export class PeoplePage {
 			elementHandle
 		);
 
-		await this.page.check( selectors.deletedUserContentAction( 'delete' ) );
+		// Native `page.check` sometimes fails here. Instead, click on the radio and wait for the
+		// Delete user button to become enabled.
+		await this.page.click( selectors.deletedUserContentAction( 'delete' ) );
+		await this.page.waitForSelector(
+			`${ selectors.deletedUserContentAction( 'delete' ) }:checked`
+		);
+
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.deleteUserButton ),
@@ -92,6 +115,8 @@ export class PeoplePage {
 	 * Click on the `Invite` button to navigate to the invite user page.
 	 */
 	async clickInviteUser(): Promise< void > {
+		await this.waitUntilLoaded();
+
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.invitePeopleButton ),
@@ -104,13 +129,18 @@ export class PeoplePage {
 	 * @param {string} emailAddress Email address of the pending user.
 	 */
 	async selectInvitedUser( emailAddress: string ): Promise< void > {
-		await this.page.click( selectors.invitedUser( emailAddress ) );
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.invitedUser( emailAddress ) ),
+		] );
 	}
 
 	/**
 	 * Revokes the pending invite.
 	 */
 	async revokeInvite(): Promise< void > {
+		await this.waitUntilLoaded();
+
 		await this.page.click( selectors.revokeInviteButton );
 		await this.page.waitForSelector( selectors.inviteRevokedMessage );
 	}

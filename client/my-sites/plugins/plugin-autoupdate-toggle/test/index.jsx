@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import React from 'react';
 import { spy } from 'sinon';
 import { PluginAutoUpdateToggle } from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import fixtures from './fixtures';

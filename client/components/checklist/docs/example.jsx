@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import accept from 'calypso/lib/accept';
 import { Checklist, Task } from '../';
 

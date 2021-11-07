@@ -1,10 +1,10 @@
 import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 
 import './style.scss';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'NoticeAction';
 
 	static propTypes = {

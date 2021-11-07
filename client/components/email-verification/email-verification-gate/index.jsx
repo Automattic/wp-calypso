@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import {
 	getCurrentUserEmail,
@@ -11,7 +11,7 @@ import EmailUnverifiedNotice from './email-unverified-notice.jsx';
 
 import './style.scss';
 
-export class EmailVerificationGate extends React.Component {
+export class EmailVerificationGate extends Component {
 	static propTypes = {
 		allowUnlaunched: PropTypes.bool,
 		noticeText: PropTypes.node,

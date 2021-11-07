@@ -1,7 +1,7 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import React from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';

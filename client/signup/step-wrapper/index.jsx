@@ -2,9 +2,10 @@ import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationLink from 'calypso/signup/navigation-link';
+import { isReskinnedFlow } from '../utils';
 import './style.scss';
 
 class StepWrapper extends Component {
@@ -12,23 +13,29 @@ class StepWrapper extends Component {
 		shouldHideNavButtons: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		hideFormattedHeader: PropTypes.bool,
+		headerImageUrl: PropTypes.string,
 		hideBack: PropTypes.bool,
 		hideSkip: PropTypes.bool,
+		hideNext: PropTypes.bool,
 		// Allows to force a back button in the first step for example.
 		// You should only force this when you're passing a backUrl.
 		allowBackFirstStep: PropTypes.bool,
 		skipLabelText: PropTypes.string,
 		skipHeadingText: PropTypes.string,
-		skipButtonAlign: PropTypes.oneOf( [ 'top', 'bottom', 'top-right' ] ),
+		skipButtonAlign: PropTypes.oneOf( [ 'top', 'bottom' ] ),
+		nextLabelText: PropTypes.string,
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
 		headerButton: PropTypes.node,
+		isHorizontalLayout: PropTypes.bool,
+		queryParams: PropTypes.object,
 	};
 
 	static defaultProps = {
 		allowBackFirstStep: false,
 		skipButtonAlign: 'bottom',
+		hideNext: true,
 	};
 
 	renderBack() {
@@ -46,30 +53,77 @@ class StepWrapper extends Component {
 				rel={ this.props.isExternalBackUrl ? 'external' : '' }
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
+				backIcon={ isReskinnedFlow( this.props.flowName ) ? 'chevron-left' : undefined }
+				queryParams={ this.props.queryParams }
 			/>
 		);
 	}
 
-	renderSkip( { borderless } ) {
-		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
-			return (
-				<div className="step-wrapper__skip-wrapper">
-					{ this.props.skipHeadingText && (
-						<div className="step-wrapper__skip-heading">{ this.props.skipHeadingText }</div>
-					) }
-					<NavigationLink
-						direction="forward"
-						goToNextStep={ this.props.goToNextStep }
-						defaultDependencies={ this.props.defaultDependencies }
-						flowName={ this.props.flowName }
-						stepName={ this.props.stepName }
-						labelText={ this.props.skipLabelText }
-						cssClass={ this.props.skipHeadingText && 'navigation-link--has-skip-heading' }
-						borderless={ borderless }
-					/>
-				</div>
-			);
+	renderSkip( { borderless, forwardIcon } ) {
+		const {
+			shouldHideNavButtons,
+			skipHeadingText,
+			skipLabelText,
+			defaultDependencies,
+			flowName,
+			stepName,
+			goToNextStep,
+		} = this.props;
+
+		if ( shouldHideNavButtons || ! goToNextStep ) {
+			return null;
 		}
+
+		return (
+			<div className="step-wrapper__skip-wrapper">
+				{ skipHeadingText && <div className="step-wrapper__skip-heading">{ skipHeadingText }</div> }
+				<NavigationLink
+					direction="forward"
+					goToNextStep={ goToNextStep }
+					defaultDependencies={ defaultDependencies }
+					flowName={ flowName }
+					stepName={ stepName }
+					labelText={ skipLabelText }
+					cssClass={ classNames( 'step-wrapper__navigation-link', 'has-underline', {
+						'has-skip-heading': skipHeadingText,
+					} ) }
+					borderless={ borderless }
+					forwardIcon={ forwardIcon }
+				/>
+			</div>
+		);
+	}
+
+	renderNext() {
+		const {
+			shouldHideNavButtons,
+			nextLabelText,
+			defaultDependencies,
+			flowName,
+			stepName,
+			goToNextStep,
+			translate,
+		} = this.props;
+
+		if ( shouldHideNavButtons || ! goToNextStep ) {
+			return null;
+		}
+
+		return (
+			<NavigationLink
+				direction="forward"
+				goToNextStep={ goToNextStep }
+				defaultDependencies={ defaultDependencies }
+				flowName={ flowName }
+				stepName={ stepName }
+				labelText={ nextLabelText || translate( 'Continue' ) }
+				cssClass="step-wrapper__navigation-link"
+				borderless={ false }
+				primary
+				forwardIcon={ null }
+				disabledTracks
+			/>
+		);
 	}
 
 	headerText() {
@@ -102,29 +156,46 @@ class StepWrapper extends Component {
 
 	render() {
 		const {
+			flowName,
 			stepContent,
 			headerButton,
 			hideFormattedHeader,
 			hideBack,
 			hideSkip,
+			hideNext,
 			isLargeSkipLayout,
 			isWideLayout,
 			skipButtonAlign,
 			align,
+			headerImageUrl,
+			isHorizontalLayout,
 		} = this.props;
 
-		const hasHeaderButtons = headerButton || ( ! hideSkip && skipButtonAlign === 'top-right' );
+		const backButton = ! hideBack && this.renderBack();
+		const skipButton =
+			! hideSkip &&
+			skipButtonAlign === 'top' &&
+			this.renderSkip( { borderless: true, forwardIcon: null } );
+		const nextButton = ! hideNext && this.renderNext();
+		const hasNavigation = backButton || skipButton || nextButton;
 		const classes = classNames( 'step-wrapper', this.props.className, {
+			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
-			'has-header-buttons': hasHeaderButtons,
+			'has-navigation': hasNavigation,
 		} );
 
 		return (
 			<>
 				<div className={ classes }>
-					{ ! hideBack && this.renderBack() }
-
+					<ActionButtons
+						className="step-wrapper__navigation"
+						sticky={ isReskinnedFlow( flowName ) ? null : false }
+					>
+						{ backButton }
+						{ skipButton }
+						{ nextButton }
+					</ActionButtons>
 					{ ! hideFormattedHeader && (
 						<div className="step-wrapper__header">
 							<FormattedHeader
@@ -133,22 +204,14 @@ class StepWrapper extends Component {
 								subHeaderText={ this.subHeaderText() }
 								align={ align }
 							/>
-							{ hasHeaderButtons && (
-								<ActionButtons>
-									{ headerButton }
-									{ ! hideSkip && skipButtonAlign === 'top-right' && (
-										<div className="step-wrapper__buttons is-top-right-buttons">
-											{ this.renderSkip( { borderless: false } ) }
-										</div>
-									) }
-								</ActionButtons>
+							{ headerImageUrl && (
+								<div className="step-wrapper__header-image">
+									<img src={ headerImageUrl } alt="" />
+								</div>
 							) }
-						</div>
-					) }
-
-					{ ! hideSkip && skipButtonAlign === 'top' && (
-						<div className="step-wrapper__buttons is-top-buttons">
-							{ this.renderSkip( { borderless: true } ) }
+							{ headerButton && (
+								<div className="step-wrapper__header-button">{ headerButton }</div>
+							) }
 						</div>
 					) }
 

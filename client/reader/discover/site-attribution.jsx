@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
@@ -13,7 +13,7 @@ import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
 import './site-attribution.scss';
 
-class DiscoverSiteAttribution extends React.Component {
+class DiscoverSiteAttribution extends Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 	};

@@ -33,7 +33,6 @@ export { default as DateRange } from 'calypso/components/date-range';
 export { default as DiffViewer } from 'calypso/components/diff-viewer';
 export { default as DropZones } from 'calypso/components/drop-zone';
 export { default as EllipsisMenu } from 'calypso/components/ellipsis-menu';
-export { default as Emojify } from 'calypso/components/emojify';
 export { default as EmptyContent } from 'calypso/components/empty-content';
 export { default as ExternalLink } from 'calypso/components/external-link';
 export { default as FAQ } from 'calypso/components/faq';

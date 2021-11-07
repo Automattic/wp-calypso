@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConnectedListItem from 'calypso/blocks/reader-list-item/connected';
 import {
@@ -14,7 +14,7 @@ import { dismissSite } from 'calypso/state/reader/site-dismissals/actions';
 
 import './style.scss';
 
-export class RecommendedSites extends React.PureComponent {
+export class RecommendedSites extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		sites: PropTypes.array,

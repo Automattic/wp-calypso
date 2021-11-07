@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -18,7 +18,7 @@ import EmptyContent from './empty';
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
 const getReaderSiteId = ( feed ) => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );
 
-class FeedStream extends React.Component {
+class FeedStream extends Component {
 	static propTypes = {
 		feedId: PropTypes.number.isRequired,
 		className: PropTypes.string,

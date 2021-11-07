@@ -1,12 +1,12 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import PostCommentsList from './post-comment-list';
 
-class PostComments extends React.Component {
+class PostComments extends Component {
 	static propTypes = {
 		shouldHighlightNew: PropTypes.bool,
 		post: PropTypes.shape( {

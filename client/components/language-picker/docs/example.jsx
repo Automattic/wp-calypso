@@ -1,6 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import languages from '@automattic/languages';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import LanguagePicker from 'calypso/components/language-picker';
 
 class LanguagePickerExample extends PureComponent {

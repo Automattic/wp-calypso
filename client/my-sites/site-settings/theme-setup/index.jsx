@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryTheme from 'calypso/components/data/query-theme';

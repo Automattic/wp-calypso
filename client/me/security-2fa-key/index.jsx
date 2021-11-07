@@ -1,7 +1,7 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
@@ -11,7 +11,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import Security2faKeyAdd from './add';
 import Security2faKeyList from './list';
 
-class Security2faKey extends React.Component {
+class Security2faKey extends Component {
 	state = {
 		isEnabled: false,
 		addingKey: false,

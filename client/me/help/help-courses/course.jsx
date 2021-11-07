@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';

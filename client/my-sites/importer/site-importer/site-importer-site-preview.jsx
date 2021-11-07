@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Spinner from 'calypso/components/spinner';
@@ -14,7 +14,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './site-importer-site-preview.scss';
 
-class SiteImporterSitePreview extends React.Component {
+class SiteImporterSitePreview extends Component {
 	static propTypes = {
 		siteURL: PropTypes.string.isRequired,
 		importData: PropTypes.object,
@@ -83,9 +83,9 @@ class SiteImporterSitePreview extends React.Component {
 		return (
 			<div>
 				{ ! isError ? (
-					<React.Fragment>
+					<Fragment>
 						{ ! isLoading && (
-							<React.Fragment>
+							<Fragment>
 								<div className="site-importer__site-importer-confirm-site-pane-container">
 									<div className="site-importer__site-importer-confirm-site-label">
 										{ this.props.translate( 'Is this your site?' ) }
@@ -119,16 +119,16 @@ class SiteImporterSitePreview extends React.Component {
 										{ this.props.translate( 'Yes! Start import' ) }
 									</ImporterActionButton>
 								</ImporterActionButtonContainer>
-							</React.Fragment>
+							</Fragment>
 						) }
 						{ isLoading && (
 							<div className="site-importer__site-preview-loading-overlay">
 								<Spinner />
 							</div>
 						) }
-					</React.Fragment>
+					</Fragment>
 				) : (
-					<React.Fragment>
+					<Fragment>
 						<div className="site-importer__site-preview-error">
 							<ErrorPane
 								type="importError"
@@ -142,7 +142,7 @@ class SiteImporterSitePreview extends React.Component {
 								{ this.props.translate( 'Cancel' ) }
 							</ImporterActionButton>
 						</ImporterActionButtonContainer>
-					</React.Fragment>
+					</Fragment>
 				) }
 			</div>
 		);

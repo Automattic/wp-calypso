@@ -677,14 +677,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	text-align: center;
 }
 
-.layout.has-chat.is-section-jetpack-connect:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader )
-	.layout__content {
-	@include breakpoint-deprecated( '>1040px' ) {
-		padding-left: 32px;
-		padding-right: 319px;
-	}
-}
-
 .jetpack-connect__plan-info {
 	text-align: center;
 	max-width: 500px;

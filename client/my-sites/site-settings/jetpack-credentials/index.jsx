@@ -2,7 +2,7 @@ import { CompactCard } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import Notice from 'calypso/components/notice';

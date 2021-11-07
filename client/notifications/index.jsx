@@ -18,7 +18,7 @@ import NotificationsPanel, {
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import page from 'page';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';

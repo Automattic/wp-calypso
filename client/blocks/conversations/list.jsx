@@ -1,6 +1,6 @@
 import { map, zipObject, size, filter, get, compact, partition } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
 import PostComment from 'calypso/blocks/comments/post-comment';
@@ -49,7 +49,7 @@ import './list.scss';
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
 const noop = () => {};
 
-export class ConversationCommentList extends React.Component {
+export class ConversationCommentList extends Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment
 		commentIds: PropTypes.array.isRequired,
@@ -64,11 +64,9 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	state = {
-		activeEditCommentId: null,
+		commentText: null,
 	};
 
-	onEditCommentClick = ( commentId ) => this.setState( { activeEditCommentId: commentId } );
-	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 	onUpdateCommentText = ( commentText ) => this.setState( { commentText: commentText } );
 
 	onReplyClick = ( commentId ) => {
@@ -250,9 +248,6 @@ export class ConversationCommentList extends React.Component {
 								onReplyClick={ this.onReplyClick }
 								onReplyCancel={ this.onReplyCancel }
 								activeReplyCommentId={ this.props.activeReplyCommentId }
-								onEditCommentClick={ this.onEditCommentClick }
-								onEditCommentCancel={ this.onEditCommentCancel }
-								activeEditCommentId={ this.state.activeEditCommentId }
 								onUpdateCommentText={ this.onUpdateCommentText }
 								onCommentSubmit={ this.resetActiveReplyComment }
 								commentText={ this.state.commentText }

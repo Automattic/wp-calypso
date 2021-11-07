@@ -3,7 +3,7 @@ import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -79,7 +79,7 @@ class CancelAutoRenewalForm extends Component {
 			response,
 		};
 
-		submitSurvey(
+		this.props.submitSurvey(
 			'calypso-cancel-auto-renewal',
 			selectedSite.ID,
 			enrichedSurveyData( surveyData, purchase )
@@ -168,4 +168,4 @@ class CancelAutoRenewalForm extends Component {
 	}
 }
 
-export default connect()( localize( CancelAutoRenewalForm ) );
+export default connect( null, { submitSurvey } )( localize( CancelAutoRenewalForm ) );

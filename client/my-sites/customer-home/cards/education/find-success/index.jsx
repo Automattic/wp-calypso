@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import findSuccessPrompt from 'calypso/assets/images/customer-home/illustration--secondary-find-success.svg';
 import { EDUCATION_FIND_SUCCESS } from 'calypso/my-sites/customer-home/cards/constants';
 import EducationalContent from '../educational-content';

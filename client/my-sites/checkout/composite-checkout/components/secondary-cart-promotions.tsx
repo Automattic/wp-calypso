@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
-import React, { FunctionComponent, useMemo } from 'react';
+import { FunctionComponent, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';

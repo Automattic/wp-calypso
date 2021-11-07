@@ -1,9 +1,9 @@
-import React from 'react';
+import { Component } from 'react';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 
 import './style.scss';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'ConnectedApplicationIcon';
 
 	static defaultProps = {

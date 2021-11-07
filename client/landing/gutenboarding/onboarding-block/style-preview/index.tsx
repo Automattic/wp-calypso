@@ -33,8 +33,8 @@ const StylePreview: React.FunctionComponent = () => {
 			<div className="gutenboarding-page style-preview">
 				<div className="style-preview__header">
 					<div className="style-preview__titles">
-						<Title>{ __( 'Pick a font pairing' ) }</Title>
-						<SubTitle>
+						<Title data-e2e-string="Pick a font pairing">{ __( 'Pick a font pairing' ) }</Title>
+						<SubTitle data-e2e-string="Customize your design with typography. You can always fine-tune it later.">
 							{ isAnchorFmSignup
 								? __(
 										'Customize your design with typography that best suits your podcast. You can always fine-tune it later.'

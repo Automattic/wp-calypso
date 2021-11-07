@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { Fragment, FunctionComponent, ReactNode } from 'react';
+import { Fragment, FunctionComponent, ReactNode } from 'react';
 import {
 	newUser,
 	GSuiteNewUser as NewUser,
@@ -23,14 +23,14 @@ interface Props {
 }
 
 const GSuiteNewUserList: FunctionComponent< Props > = ( {
+	autoFocus = false,
 	children,
 	domains,
 	extraValidation,
-	selectedDomainName,
 	onUsersChange,
-	users,
 	onReturnKeyPress,
-	autoFocus = false,
+	selectedDomainName,
+	users,
 } ) => {
 	const translate = useTranslate();
 
@@ -77,6 +77,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 						onUserValueChange={ onUserValueChange( user.uuid ) }
 						onUserRemove={ onUserRemove( user.uuid ) }
 						onReturnKeyPress={ onReturnKeyPress }
+						selectedDomainName={ selectedDomainName }
 						showTrashButton={ index > 0 }
 					/>
 

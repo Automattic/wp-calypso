@@ -1,5 +1,4 @@
 import classnames from 'classnames';
-import React from 'react';
 
 const ActionPanelLink = ( { children, href, className } ) => {
 	return (

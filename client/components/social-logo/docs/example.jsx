@@ -1,4 +1,3 @@
-import React from 'react';
 import SocialLogo from '../index';
 
 const logos = [

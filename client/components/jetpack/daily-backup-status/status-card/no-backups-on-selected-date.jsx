@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';

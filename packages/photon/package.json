@@ -37,6 +37,9 @@
 		"debug": "^4.0.0",
 		"seed-random": "^2.2.0"
 	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
+	},
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"build": "transpile",

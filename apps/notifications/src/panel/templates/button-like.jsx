@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { connect } from 'react-redux';
 import { RestClientContext } from '../Notifications';
 import { keys } from '../helpers/input';
@@ -10,6 +10,20 @@ import ActionButton from './action-button';
 
 const LikeButton = ( { commentId, isLiked, note, translate, setLikeStatus } ) => {
 	const restClient = useContext( RestClientContext );
+
+	let title;
+
+	if ( isLiked ) {
+		if ( commentId ) {
+			title = translate( 'Remove like from comment' );
+		} else {
+			title = translate( 'Remove like from post' );
+		}
+	} else if ( commentId ) {
+		title = translate( 'Like comment', { context: 'verb: imperative' } );
+	} else {
+		title = translate( 'Like post', { context: 'verb: imperative' } );
+	}
 
 	return (
 		<ActionButton
@@ -31,15 +45,7 @@ const LikeButton = ( { commentId, isLiked, note, translate, setLikeStatus } ) =>
 					? translate( 'Liked', { context: 'verb: past-tense' } )
 					: translate( 'Like', { context: 'verb: imperative' } )
 			}
-			title={
-				isLiked
-					? commentId
-						? translate( 'Remove like from comment' )
-						: translate( 'Remove like from post' )
-					: commentId
-					? translate( 'Like comment', { context: 'verb: imperative' } )
-					: translate( 'Like post', { context: 'verb: imperative' } )
-			}
+			title={ title }
 		/>
 	);
 };

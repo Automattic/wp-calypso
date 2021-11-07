@@ -1,6 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { Fragment, PureComponent } from 'react';
+import { Fragment, PureComponent } from 'react';
 import conversationsImage from 'calypso/assets/images/reader/reader-conversations.png';
 import discoverImage from 'calypso/assets/images/reader/reader-discover.png';
 import mobileImage from 'calypso/assets/images/reader/reader-mobile.png';

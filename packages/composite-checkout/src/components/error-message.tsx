@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import * as React from 'react';
 
 const Error = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	display: block;

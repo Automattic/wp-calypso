@@ -1,5 +1,3 @@
-import React from 'react';
-
 import './placeholder.scss';
 
 export default function FeaturedDomainSuggestionsPlaceholder() {

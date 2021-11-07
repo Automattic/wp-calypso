@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';

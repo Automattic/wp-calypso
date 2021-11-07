@@ -2,31 +2,48 @@
 @import '@wordpress/base-styles/mixins';
 
 .jpcom-masterbar {
+	position: relative;
+	z-index: z-index( 'root', '.jpcom-masterbar' );
+
+	display: flex;
+	align-items: center;
+
+	width: calc( 100% - 4rem );
+	max-width: 1200px;
+	margin: -32px auto 0; // Undo the padding-top set by .layout__content
+	padding: 0 2rem;
+
 	background-color: var( --color-surface );
 
-	padding: 1em 16px;
-
-	// Undo the padding-top set by .layout__content for each
-	// screen size.
-	margin-top: -47px;
-
-	// We need to use this deprecated breakpoint because we need
-	// to match Calypso's layout breakpoint also.
-	@include breakpoint-deprecated( '>660px' ) {
-		padding: 20px 0 22px;
-
-		margin-top: -71px;
+	// Breakpoint taken from jetpack.com, not standard in Calypso
+	@media ( min-width: 661px ) {
+		width: 100%;
+		margin-top: -52px; // Undo the padding-top set by .layout__content
+		padding: 0;
 	}
 
-	@include break-large {
-		padding-bottom: 40px;
+	@media ( min-width: 783px ) {
+		width: 95vw;
+	}
 
-		margin-top: -79px;
+	@media ( min-width: 960px ) {
+		height: 102px;
+		margin-top: -79px; // Undo the padding-top set by .layout__content
+	}
+
+	@media ( min-width: 1101px ) {
+		width: 90vw;
+	}
+
+	@media ( min-width: 1301px ) {
+		width: 85vw;
 	}
 }
 
 .jpcom-masterbar__inner {
 	position: relative;
+
+	width: 100%;
 
 	// Breakpoint taken from jetpack.com, not standard in Calypso
 	@media ( min-width: 375px ) {
@@ -40,14 +57,12 @@
 	@include break-large {
 		flex-wrap: nowrap;
 
-		max-width: 1040px;
-
 		margin: 0 auto;
-		padding: 0 32px;
 	}
 }
 
 .jpcom-masterbar__logo {
+	margin-right: 1rem;
 	padding-top: 0.25em;
 
 	svg {
@@ -80,7 +95,7 @@
 	@include break-large {
 		display: flex;
 		flex-direction: row;
-		justify-content: flex-end;
+		justify-content: flex-start;
 
 		padding: 0;
 		margin: 0.5em 0;
@@ -107,7 +122,7 @@
 		border-radius: 0;
 		color: var( --studio-gray-60 );
 
-		font-size: 1.1rem;
+		font-size: 1.1rem; /* stylelint-disable scales/font-sizes */
 
 		transition: all 0.2s ease-in-out;
 
@@ -189,7 +204,7 @@
 		height: 3px;
 		background-color: black;
 
-		border-radius: 4px;
+		border-radius: 4px; /* stylelint-disable scales/radii */
 		position: absolute;
 		transition-property: transform;
 		transition-duration: 0.15s;
@@ -295,8 +310,8 @@
 				content: '';
 
 				position: absolute;
-				right: 22rem;
-				top: calc( 100% + 22px ); // nav bottom padding
+				left: 3rem;
+				top: calc( 100% + 12px ); // nav bottom padding
 
 				display: block;
 
@@ -337,8 +352,8 @@
 
 	@include break-large {
 		position: absolute;
-		top: calc( 100% - 2px );
-		right: 0;
+		top: calc( 100% - 12px );
+		left: 8px;
 
 		padding-top: 1.5rem;
 	}

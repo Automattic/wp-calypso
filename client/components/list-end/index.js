@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import React from 'react';
 
 import './style.scss';
 

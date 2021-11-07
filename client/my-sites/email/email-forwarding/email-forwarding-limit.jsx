@@ -1,8 +1,8 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 
-class EmailForwardingLimit extends React.Component {
+class EmailForwardingLimit extends Component {
 	static propTypes = {
 		emailForwardingCount: PropTypes.number.isRequired,
 		emailForwardingLimit: PropTypes.number.isRequired,

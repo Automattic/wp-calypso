@@ -1,12 +1,12 @@
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import { requestWhois } from 'calypso/state/domains/management/actions';
 import { getWhoisData } from 'calypso/state/domains/management/selectors';
 
-class ContactDisplay extends React.PureComponent {
+class ContactDisplay extends PureComponent {
 	static propTypes = {
 		selectedDomainName: PropTypes.string.isRequired,
 	};

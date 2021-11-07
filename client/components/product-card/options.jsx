@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import InfoPopover from 'calypso/components/info-popover';

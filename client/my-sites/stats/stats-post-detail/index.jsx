@@ -3,12 +3,11 @@ import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
-import Emojify from 'calypso/components/emojify';
 import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -95,7 +94,7 @@ class StatsPostDetail extends Component {
 		let title;
 		if ( postOnRecord ) {
 			if ( typeof post.title === 'string' && post.title.length ) {
-				title = <Emojify>{ decodeEntities( stripHTML( post.title ) ) }</Emojify>;
+				title = decodeEntities( stripHTML( post.title ) );
 			}
 		}
 

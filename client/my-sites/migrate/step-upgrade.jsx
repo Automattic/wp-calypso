@@ -3,7 +3,7 @@ import { CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryPlans from 'calypso/components/data/query-plans';

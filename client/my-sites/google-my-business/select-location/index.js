@@ -2,7 +2,7 @@ import { Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
 import DocumentHead from 'calypso/components/data/document-head';

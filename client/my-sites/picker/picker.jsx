@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import CloseOnEscape from 'calypso/components/close-on-escape';
@@ -10,7 +10,7 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 
 const noop = () => {};
 
-class SitePicker extends React.Component {
+class SitePicker extends Component {
 	static displayName = 'SitePicker';
 
 	static propTypes = {

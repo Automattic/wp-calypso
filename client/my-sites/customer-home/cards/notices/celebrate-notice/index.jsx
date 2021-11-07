@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import fireworksIllustration from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
 import Spinner from 'calypso/components/spinner';

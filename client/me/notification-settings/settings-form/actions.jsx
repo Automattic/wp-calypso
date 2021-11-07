@@ -1,11 +1,11 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 
 import './actions.scss';
 
-class NotificationSettingsFormActions extends React.PureComponent {
+class NotificationSettingsFormActions extends PureComponent {
 	static propTypes = {
 		onSave: PropTypes.func.isRequired,
 		onSaveToAll: PropTypes.func,

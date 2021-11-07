@@ -11,7 +11,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import day from 'calypso/assets/images/quick-start/day.svg';
 import night from 'calypso/assets/images/quick-start/night.svg';
 import FoldableCard from 'calypso/components/foldable-card';

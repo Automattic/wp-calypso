@@ -2,7 +2,7 @@ import { Button, Card, ProgressBar } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, map } from 'lodash';
 import moment from 'moment';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -130,9 +130,19 @@ const WebServerLogsCard = ( props ) => {
 		let isError = false;
 
 		do {
-			await wpcom
-				.undocumented()
-				.getAtomicSiteLogs( siteId, startTime, endTime, scrollId )
+			await wpcom.req
+				.post(
+					{
+						path: `/sites/${ siteId }/hosting/logs`,
+						apiNamespace: 'wpcom/v2',
+					},
+					{
+						start: startTime,
+						end: endTime,
+						page_size: 10000,
+						scroll_id: scrollId,
+					}
+				)
 				.then( ( response ) => {
 					const newLogData = get( response, 'data.logs', [] );
 					scrollId = get( response, 'data.scroll_id', null );

@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import React from 'react';
 import ReactDOM from 'react-dom';
 import { act, Simulate } from 'react-dom/test-utils';
 import MultiCheckbox from '../';

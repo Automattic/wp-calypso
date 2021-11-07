@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { useRtl } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, useState, useEffect, Component } from 'react';
 import ReactDom from 'react-dom';
 import RootChild from '../root-child';
 import {
@@ -47,8 +47,8 @@ class PopoverInner extends Component {
 	 */
 	scheduledFocus = null;
 
-	popoverNodeRef = React.createRef();
-	popoverInnerNodeRef = React.createRef();
+	popoverNodeRef = createRef();
+	popoverInnerNodeRef = createRef();
 
 	state = {
 		left: -99999,
@@ -357,11 +357,11 @@ class PopoverInner extends Component {
 // also the last DOM element inside `document.body`, ensuring that it has a higher z-index.
 function Popover( { isVisible = false, showDelay = 0, ...props } ) {
 	const isRtl = useRtl();
-	const [ show, setShow ] = React.useState( isVisible );
+	const [ show, setShow ] = useState( isVisible );
 
 	// If `showDelay` is non-zero, the hide -> show transition will be delayed and will not
 	// happen immediately after the new value of `isVisible` is received.
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( showDelay > 0 && show !== isVisible && isVisible ) {
 			const showDelayTimer = setTimeout( () => {
 				setShow( true );

@@ -1,6 +1,6 @@
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import connectSite from 'calypso/lib/reader-connect-site';
 import { isFollowing as isFollowingSelector } from 'calypso/state/reader/follows/selectors';
@@ -8,7 +8,7 @@ import SubscriptionListItem from '.';
 
 const noop = () => {};
 
-class ConnectedSubscriptionListItem extends React.Component {
+class ConnectedSubscriptionListItem extends Component {
 	static propTypes = {
 		feed: PropTypes.object,
 		site: PropTypes.object,

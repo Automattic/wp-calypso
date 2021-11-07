@@ -55,10 +55,6 @@ export function selectedAdvancedSettings( state = {}, action ) {
 
 /**
  * Tracks the state of the exporter for each site ID
- *
- * @param {object} state  The current state
- * @param {object} action Action object
- * @returns {object}        Updated state
  */
 export function exportingState( state = {}, { type, siteId } ) {
 	switch ( type ) {

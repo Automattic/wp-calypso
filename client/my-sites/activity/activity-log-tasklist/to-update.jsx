@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { requestSiteAlerts } from 'calypso/state/data-getters';
 import { getPluginsWithUpdates } from 'calypso/state/plugins/installed/selectors';

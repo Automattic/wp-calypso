@@ -29,12 +29,14 @@ function parseNote( note ) {
 	const siteId = note.meta.ids.site;
 	const postId = note.meta.ids.post;
 	const commentId = note.meta.ids.comment;
+	const fallbackUrl = note.url ? note.url : null;
 
 	const isApproved = getApprovedStatus( note );
 
 	let navigate = null;
 
 	switch ( type ) {
+		case 'automattcher':
 		case 'post':
 			navigate = `/read/blogs/${ siteId }/posts/${ postId }`;
 			break;
@@ -54,6 +56,10 @@ function parseNote( note ) {
 			break;
 		default:
 			navigate = null;
+	}
+
+	if ( ! navigate ) {
+		navigate = fallbackUrl;
 	}
 
 	return {

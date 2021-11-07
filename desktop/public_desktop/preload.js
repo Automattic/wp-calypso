@@ -3,6 +3,7 @@ const { ipcRenderer, contextBridge } = require( 'electron' );
 // Outgoing IPC message channels from Renderer to Main process.
 // Maintain this list in alphabetical order.
 const sendChannels = [
+	'copy-text-to-clipboard',
 	'get-config',
 	'get-settings',
 	'log',

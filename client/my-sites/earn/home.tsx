@@ -16,7 +16,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact, overSome } from 'lodash';
 import page from 'page';
-import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
+import { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
@@ -538,7 +538,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect< ConnectedProps, {}, {} >(
+export default connect< ConnectedProps, unknown, unknown >(
 	( state ) => {
 		// Default value of 0 to appease TypeScript for selectors that don't allow a null site ID value.
 		const siteId = getSelectedSiteId( state ) ?? 0;

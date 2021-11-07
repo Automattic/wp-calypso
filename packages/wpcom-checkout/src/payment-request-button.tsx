@@ -2,9 +2,9 @@ import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkou
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React, { MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import { GooglePayMark } from './google-pay-mark';
-import type { StripePaymentRequest } from '@automattic/calypso-stripe';
+import type { PaymentRequest } from '@stripe/stripe-js';
 
 // Disabling this rule to make migrating this to calypso easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -77,7 +77,7 @@ PaymentRequestButton.propTypes = {
 };
 
 interface PaymentRequestButtonProps {
-	paymentRequest?: StripePaymentRequest;
+	paymentRequest?: PaymentRequest | null;
 	paymentType: string;
 	disabled?: boolean;
 	disabledReason?: string;

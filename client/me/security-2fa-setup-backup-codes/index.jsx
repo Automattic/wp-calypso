@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
@@ -9,7 +9,7 @@ import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-lis
 import Security2faProgress from 'calypso/me/security-2fa-progress';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-class Security2faSetupBackupCodes extends React.Component {
+class Security2faSetupBackupCodes extends Component {
 	state = {
 		backupCodes: [],
 		lastError: false,
@@ -83,7 +83,7 @@ class Security2faSetupBackupCodes extends React.Component {
 	render() {
 		return (
 			<div>
-				<Security2faProgress step={ 3 } />
+				<Security2faProgress step={ 3 } isSmsFlow={ this.props.isSmsFlow } />
 				<p>
 					{ this.props.translate(
 						'Backup codes let you access your account if your phone is ' +

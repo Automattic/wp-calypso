@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 import { appStates } from 'calypso/state/imports/constants';
@@ -15,7 +15,7 @@ import './style.scss';
  */
 const startStates = [ appStates.DISABLED, appStates.INACTIVE ];
 
-class ImporterHeader extends React.PureComponent {
+class ImporterHeader extends PureComponent {
 	static displayName = 'ImporterHeader';
 
 	static propTypes = {

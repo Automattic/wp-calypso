@@ -19,10 +19,10 @@ import {
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled } from '@automattic/wpcom-checkout';
+import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -31,6 +31,7 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -46,9 +47,8 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
-import type { CountryListItem } from '../types/country-list-item';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -59,7 +59,8 @@ const ContactFormTitle = (): JSX.Element => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	if ( contactDetailsType === 'domain' ) {
@@ -135,12 +136,13 @@ export default function WPCheckout( {
 	infoMessage?: JSX.Element;
 	createUserAndSiteBeforeTransaction: boolean;
 } ): JSX.Element {
+	const cartKey = useCartKey();
 	const {
 		responseCart,
 		applyCoupon,
 		updateLocation,
 		isPendingUpdate: isCartPendingUpdate,
-	} = useShoppingCart();
+	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
@@ -202,6 +204,11 @@ export default function WPCheckout( {
 		setSiteId( siteId );
 	}, [ siteId, setSiteId ] );
 
+	const arePostalCodesSupported = getCountryPostalCodeSupport(
+		countriesList,
+		contactInfo.countryCode?.value ?? ''
+	);
+
 	const updateCartContactDetails = useCallback( () => {
 		// Update tax location in cart
 		const nonTaxPaymentMethods = [ 'free-purchase' ];
@@ -216,13 +223,23 @@ export default function WPCheckout( {
 				subdivisionCode: '',
 			} );
 		} else {
+			// The tax form does not include a subdivisionCode field but the server
+			// will sometimes fill in the value on the cart itself so we should not
+			// try to update it when the field does not exist.
+			const subdivisionCode = contactDetailsType === 'tax' ? undefined : contactInfo.state?.value;
 			updateLocation( {
-				countryCode: contactInfo.countryCode?.value ?? '',
-				postalCode: contactInfo.postalCode?.value ?? '',
-				subdivisionCode: contactInfo.state?.value ?? '',
+				countryCode: contactInfo.countryCode?.value,
+				postalCode: arePostalCodesSupported ? contactInfo.postalCode?.value : '',
+				subdivisionCode,
 			} );
 		}
-	}, [ activePaymentMethod, updateLocation, contactInfo ] );
+	}, [
+		activePaymentMethod,
+		updateLocation,
+		contactInfo,
+		contactDetailsType,
+		arePostalCodesSupported,
+	] );
 
 	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 
@@ -525,7 +542,8 @@ function SubmitButtonHeader() {
 }
 
 const SubmitButtonFooter = () => {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 
 	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>

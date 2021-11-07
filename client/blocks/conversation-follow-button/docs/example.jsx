@@ -2,10 +2,10 @@
  */
 
 import { CompactCard as Card } from '@automattic/components';
-import React from 'react';
+import { PureComponent } from 'react';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/button';
 
-export default class ConversationFollowButtonExample extends React.PureComponent {
+export default class ConversationFollowButtonExample extends PureComponent {
 	static displayName = 'ConversationFollowButton';
 
 	render() {

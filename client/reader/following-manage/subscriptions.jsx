@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { sortBy, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'calypso/blocks/reader-export-button/constants';

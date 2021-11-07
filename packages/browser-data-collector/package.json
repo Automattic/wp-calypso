@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/browser-data-collector",
-	"version": "0.0.1",
+	"version": "3.0.0",
 	"description": "A tool to collect data from different browser APIs",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -28,6 +28,7 @@
 		"wpcom-proxy-request": "^6.0.0"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.2"
+		"@automattic/calypso-typescript-config": "^1.0.0",
+		"typescript": "^4.4.4"
 	}
 }

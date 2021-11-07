@@ -2,7 +2,6 @@ import { isBusiness, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic
 import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect, useSelector } from 'react-redux';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';

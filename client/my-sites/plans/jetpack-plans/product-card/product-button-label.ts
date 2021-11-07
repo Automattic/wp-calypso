@@ -9,6 +9,7 @@ interface productButtonLabelProps {
 	product: SelectorProduct;
 	isOwned: boolean;
 	isUpgradeableToYearly: boolean;
+	isSuperseded: boolean;
 	isDeprecated: boolean;
 	currentPlan?: SitePlan | null;
 }
@@ -18,6 +19,7 @@ export default function productButtonLabel( {
 	isOwned,
 	isUpgradeableToYearly,
 	isDeprecated,
+	isSuperseded,
 	currentPlan,
 }: productButtonLabelProps ): TranslateResult {
 	if ( isDeprecated ) {
@@ -30,6 +32,7 @@ export default function productButtonLabel( {
 
 	if (
 		isOwned ||
+		isSuperseded ||
 		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
 	) {
 		return product.type !== ITEM_TYPE_PRODUCT

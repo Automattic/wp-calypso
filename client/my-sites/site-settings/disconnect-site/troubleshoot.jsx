@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';

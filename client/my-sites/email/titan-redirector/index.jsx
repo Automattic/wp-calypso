@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
 import EmptyContent from 'calypso/components/empty-content';
@@ -34,8 +34,14 @@ class TitanRedirector extends Component {
 			return;
 		}
 
-		wp.undocumented()
-			.getTitanDetailsForIncomingRedirect( mode, jwt )
+		wp.req
+			.get(
+				{
+					path: `/titan/redirect-info/${ encodeURIComponent( mode ) }`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{ jwt }
+			)
 			.then(
 				( data ) => {
 					this.setState( {

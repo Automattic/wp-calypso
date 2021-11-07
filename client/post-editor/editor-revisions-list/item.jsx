@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import TimeSince from 'calypso/components/time-since';
 import { selectPostRevision } from 'calypso/state/posts/revisions/actions';

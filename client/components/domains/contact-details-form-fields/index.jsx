@@ -1,9 +1,12 @@
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import {
+	tryToGuessPostalCodeFormat,
+	getCountryPostalCodeSupport,
+} from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component, createElement } from 'react';
+import { Component, createElement } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormButton from 'calypso/components/forms/form-button';
@@ -28,7 +31,6 @@ import {
 } from './custom-form-fieldsets/constants';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { getCountryPostalCodeSupport } from './helper';
 
 import './style.scss';
 

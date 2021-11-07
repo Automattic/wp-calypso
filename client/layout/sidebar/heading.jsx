@@ -1,5 +1,3 @@
-import React from 'react';
-
 const SidebarHeading = ( { children, onClick, ...props } ) => {
 	const tabIndex = onClick ? 0 : -1;
 

@@ -15,10 +15,10 @@ import { getDomainDns } from './selectors';
 
 import 'calypso/state/domains/init';
 
-export const fetchDns = ( domainName ) => ( dispatch, getState ) => {
+export const fetchDns = ( domainName, forceReload = false ) => ( dispatch, getState ) => {
 	const dns = getDomainDns( getState(), domainName );
 
-	if ( dns.isFetching || dns.hasLoadedFromServer ) {
+	if ( ! forceReload && ( dns.isFetching || dns.hasLoadedFromServer ) ) {
 		return;
 	}
 

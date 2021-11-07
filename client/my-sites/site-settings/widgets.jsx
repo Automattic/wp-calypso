@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SupportInfo from 'calypso/components/support-info';

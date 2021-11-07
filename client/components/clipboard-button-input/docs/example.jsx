@@ -1,7 +1,7 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import ClipboardButtonInput from '../';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'ClipboardButtonInput';
 
 	render() {

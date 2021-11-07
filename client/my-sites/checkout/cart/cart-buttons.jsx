@@ -2,11 +2,11 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-export class CartButtons extends React.Component {
+export class CartButtons extends Component {
 	static propTypes = {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		translate: PropTypes.func.isRequired,

@@ -3,7 +3,6 @@ import { Button as OriginalButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import React from 'react';
 import { STORE_KEY } from '../../constants';
 import SiteIcon from '../site-icon';
 

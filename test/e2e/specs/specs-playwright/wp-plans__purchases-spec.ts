@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	setupHooks,
 	SidebarComponent,
 	PlansPage,
@@ -21,17 +21,17 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	let purchasesPage: IndividualPurchasePage;
 	let cartCheckoutPage: CartCheckoutPage;
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
 	describe( 'Initial navigation', function () {
-		it( 'Log In', async function () {
-			const loginFlow = new LoginFlow( page, userOnPremiumPlan );
-			await loginFlow.logIn();
+		it( 'Log in', async function () {
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: userOnPremiumPlan } );
 		} );
 
-		it( 'Navigate to Plans from sidebar', async function () {
+		it( 'Navigate to Upgrades > Plans', async function () {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Upgrades', 'Plans' );
 		} );
@@ -50,64 +50,56 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 		} );
 	} );
 
-	describe( 'Manage current plan (Premium)', function () {
+	describe( 'Manage current plan (WordPress.com Premium)', function () {
 		const cartItemForPremiumPlan = 'WordPress.com Premium';
-		it( 'Click on "Manage Plan" button for the active Premium plan', async function () {
+
+		it( 'Click on "Manage Plan" button for WordPress.com Premium plan', async function () {
 			// This navigation also validates that we correctly identify the active plan in the Plans table.
 			// The button text won't be correct if Premium isn't the active plan.
 			await plansPage.clickPlanActionButton( { plan: 'Premium', buttonText: 'Manage plan' } );
 		} );
 
-		it( 'Land on a purchases page for the Premium plan', async function () {
+		it( 'Land on a purchases page', async function () {
 			purchasesPage = new IndividualPurchasePage( page );
 			await purchasesPage.validatePurchaseTitle( cartItemForPremiumPlan );
 		} );
 
-		it( 'Click on "Renew Now" card to renew plan', async function () {
+		it( 'Click on "Renew Now"', async function () {
 			await purchasesPage.clickRenewNowCardButton();
 		} );
 
-		it( 'Land on cart page with Premium plan in cart', async function () {
+		it( 'WordPress.com Premium is added to cart', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			await cartCheckoutPage.validateCartItem( cartItemForPremiumPlan );
 		} );
 
-		it( 'Remove plan from cart', async function () {
-			// This removal is going to trigger an automatic asynchronous navigation back to the Plans page. Let's make sure we're ready for it!
-			await Promise.all( [
-				page.waitForNavigation(),
-				cartCheckoutPage.removeCartItem( cartItemForPremiumPlan ),
-			] );
+		it( 'Remove WordPress.com Premium from cart', async function () {
+			await cartCheckoutPage.removeCartItem( cartItemForPremiumPlan );
 		} );
 
-		it( 'Automatically land back on "Plans" tab of Plans page', async function () {
-			await page.waitForLoadState( 'load' );
+		it( 'Automatically return to Plans page', async function () {
 			plansPage = new PlansPage( page );
 			await plansPage.validateActiveNavigationTab( 'Plans' );
 		} );
 	} );
 
-	describe( 'Plan upgrade (to Business)', function () {
+	describe( 'Manage current plan (WordPress.com Business)', function () {
 		const cartItemForBusinessPlan = 'WordPress.com Business';
-		it( 'Click on "Upgrade" button for a Business plan', async function () {
+
+		it( 'Click on "Upgrade" button for WordPress.com Business plan', async function () {
 			await plansPage.clickPlanActionButton( { plan: 'Business', buttonText: 'Upgrade' } );
 		} );
 
-		it( 'Land on cart page with Premium plan in cart', async function () {
+		it( 'WordPress.com Business is added to cart', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			await cartCheckoutPage.validateCartItem( cartItemForBusinessPlan );
 		} );
 
-		it( 'Remove Business plan from cart', async function () {
-			// This removal is going to trigger an automatic asynchronous navigation back to the Plans page. Let's make sure we're ready for it!
-			await Promise.all( [
-				page.waitForNavigation(),
-				cartCheckoutPage.removeCartItem( cartItemForBusinessPlan ),
-			] );
+		it( 'Remove WordPress.com Business from cart', async function () {
+			await cartCheckoutPage.removeCartItem( cartItemForBusinessPlan );
 		} );
 
-		it( 'Automatically land back on "Plans" tab of Plans page', async function () {
-			await page.waitForLoadState( 'load' );
+		it( 'Automatically return to Plans page', async function () {
 			plansPage = new PlansPage( page );
 			await plansPage.validateActiveNavigationTab( 'Plans' );
 		} );

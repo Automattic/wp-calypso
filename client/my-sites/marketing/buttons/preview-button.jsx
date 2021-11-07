@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import photon from 'photon';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SocialLogo from 'calypso/components/social-logo';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -9,7 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class SharingButtonsPreviewButton extends React.Component {
+class SharingButtonsPreviewButton extends Component {
 	static propTypes = {
 		button: PropTypes.object.isRequired,
 		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),

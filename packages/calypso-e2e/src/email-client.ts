@@ -21,20 +21,27 @@ export class EmailClient {
 	 * @param param0 Keyed parameter object.
 	 * @param {string} param0.inboxId ID of the inbox to look into. Also known as serverId in Mailosaur parlance.
 	 * @param {string} param0.emailAddress Email address of the recipient.
+	 * @param {string} param0.subject Subject of the email.
 	 * @returns {Message} Message object returned by Mailosaur client.
 	 */
 	async getLastEmail( {
 		inboxId,
 		emailAddress,
+		subject,
 	}: {
 		inboxId: string;
 		emailAddress: string;
+		subject?: string;
 	} ): Promise< Message > {
 		const searchCriteria = {
 			sentTo: emailAddress,
+			subject: subject !== undefined ? subject : '',
 		};
 
-		const message = await this.client.messages.get( inboxId, searchCriteria );
+		// Get messages sent within the last 30 seconds.
+		const message = await this.client.messages.get( inboxId, searchCriteria, {
+			receivedAfter: new Date( Date.now() - 30 * 1000 ),
+		} );
 		return message;
 	}
 
@@ -62,5 +69,17 @@ export class EmailClient {
 			}
 		}
 		return Array.from( results );
+	}
+
+	/**
+	 * Given a Message object, permanently deletes the message from the server.
+	 *
+	 * @param {Message} message E-mail message to delete.
+	 */
+	async deleteMessage( message: Message ): Promise< void > {
+		if ( ! message.id ) {
+			throw new Error( 'Message ID not found.' );
+		}
+		return await this.client.messages.del( message.id );
 	}
 }

@@ -1,6 +1,6 @@
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 
 import 'calypso/me/purchases/payment-methods/style.scss';

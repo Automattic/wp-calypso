@@ -2,13 +2,13 @@ import config from '@automattic/calypso-config';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import KEY_BINDINGS from 'calypso/lib/keyboard-shortcuts/key-bindings';
 
 import './menu.scss';
 
-class KeyboardShortcutsMenu extends React.Component {
+class KeyboardShortcutsMenu extends Component {
 	state = {
 		showDialog: false,
 	};

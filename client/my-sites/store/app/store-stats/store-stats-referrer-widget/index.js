@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import TableItem from '../../../components/table/table-item';
 import TableRow from '../../../components/table/table-row';
 import StoreStatsReferrerWidgetBase from '../store-stats-referrer-widget-base';

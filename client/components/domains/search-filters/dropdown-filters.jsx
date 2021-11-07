@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual, pick } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import Count from 'calypso/components/count';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -50,7 +50,7 @@ export class DropdownFilters extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.button = React.createRef();
+		this.button = createRef();
 	}
 
 	togglePopover = ( { discardChanges = true } = {} ) => {

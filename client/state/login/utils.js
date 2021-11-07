@@ -1,6 +1,5 @@
 import { translate } from 'i18n-calypso';
 import { get, omit } from 'lodash';
-import React from 'react';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { lostPassword } from 'calypso/lib/paths';
 

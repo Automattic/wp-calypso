@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
-import * as React from 'react';
+import { useEffect } from 'react';
 import { useNewQueryParam, useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
@@ -22,7 +22,7 @@ export default function useOnLogin(): void {
 	const visibility = useNewSiteVisibility();
 	const isAnchorFmSignup = useIsAnchorFm();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if (
 			! isCreatingSite &&
 			! newSite &&

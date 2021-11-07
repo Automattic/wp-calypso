@@ -11,9 +11,10 @@ import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Banner from 'calypso/components/banner';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -25,7 +26,7 @@ import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchas
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getJetpackSearchCustomizeUrl } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -54,6 +55,16 @@ class Search extends Component {
 		submitForm: PropTypes.func.isRequired,
 		updateFields: PropTypes.func.isRequired,
 	};
+
+	renderLoadingPlaceholder() {
+		return (
+			<Banner
+				jetpack={ this.props.siteIsJetpack }
+				disableHref
+				description={ this.props.translate( 'Loading your purchases…' ) }
+			/>
+		);
+	}
 
 	renderInfoLink( link ) {
 		return (
@@ -286,7 +297,7 @@ class Search extends Component {
 				</CompactCard>
 				{ hasSearchProduct && fields.instant_search_enabled && (
 					<CompactCard
-						href={ this.props.customizerUrl }
+						href={ this.props.jetpackSearchCustomizeUrl }
 						target={ siteIsJetpack ? 'external' : null }
 					>
 						{ translate( 'Customize Search' ) }
@@ -308,9 +319,15 @@ class Search extends Component {
 							: this.props.upgradeLink
 					) }
 				</SettingsSectionHeader>
-				{ ( this.props.hasSearchProduct || this.props.isSearchEligible ) &&
-					this.renderSettingsCard() }
-				{ ! this.props.hasSearchProduct && this.renderUpgradeNotice() }
+				{ this.props.isLoading ? (
+					this.renderLoadingPlaceholder()
+				) : (
+					<>
+						{ ( this.props.hasSearchProduct || this.props.isSearchEligible ) &&
+							this.renderSettingsCard() }
+						{ ! this.props.hasSearchProduct && this.renderUpgradeNotice() }
+					</>
+				) }
 			</div>
 		);
 	}
@@ -337,10 +354,10 @@ export default connect( ( state, { isRequestingSettings } ) => {
 
 	return {
 		activatingSearchModule: activating || deactivating,
-		customizerUrl: getCustomizerUrl( state, siteId, 'jetpack_search' ),
 		hasSearchProduct,
 		isSearchEligible,
 		isLoading: isRequestingSettings || isFetchingSitePurchases( state ),
+		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, siteId ),
 		site: getSelectedSite( state ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),

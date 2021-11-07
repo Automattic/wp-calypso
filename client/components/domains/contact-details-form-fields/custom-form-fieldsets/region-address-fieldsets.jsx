@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,

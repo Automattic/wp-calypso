@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
@@ -13,6 +13,7 @@ import Notice from 'calypso/components/notice';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import wp from 'calypso/lib/wp';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -253,4 +254,4 @@ export default connect(
 	{
 		successNotice,
 	}
-)( withShoppingCart( localize( MapDomain ) ) );
+)( withCartKey( withShoppingCart( localize( MapDomain ) ) ) );

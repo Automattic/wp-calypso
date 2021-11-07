@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import Notice, { RewindFlowNoticeLevel } from './index';
 
 interface Props {

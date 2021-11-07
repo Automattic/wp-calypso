@@ -1,5 +1,6 @@
 import { localize, LocalizeProps } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 import { url } from 'calypso/lib/media/utils';
 import MediaFile from 'calypso/my-sites/media-library/media-file';
 

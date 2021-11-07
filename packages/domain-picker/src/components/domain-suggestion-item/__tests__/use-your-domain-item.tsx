@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import * as React from 'react';
 import UseYourDomainItem from '../use-your-domain-item';
 
 describe( '<UseYourDomainItem />', () => {

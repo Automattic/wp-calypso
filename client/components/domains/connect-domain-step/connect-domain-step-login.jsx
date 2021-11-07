@@ -3,15 +3,12 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import Notice from 'calypso/components/notice';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import wpcom from 'calypso/lib/wp';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import {
-	modeType,
-	stepsHeadingAdvanced,
-	stepsHeadingOwnershipVerification,
-	stepsHeadingSuggested,
-	stepSlug,
-} from './constants';
+import { modeType, stepsHeading, stepSlug } from './constants';
 
 import './style.scss';
 
@@ -26,20 +23,50 @@ export default function ConnectDomainStepLogin( {
 } ) {
 	const { __ } = useI18n();
 	const [ heading, setHeading ] = useState();
+	const [ isFetching, setIsFetching ] = useState( false );
+	const [ isConnectSupported, setIsConnectSupported ] = useState( true );
+
+	const initialValidation = useRef( false );
 
 	useEffect( () => {
 		switch ( mode ) {
+			case modeType.TRANSFER:
+				setHeading( stepsHeading.TRANSFER );
+				return;
 			case modeType.SUGGESTED:
-				setHeading( stepsHeadingSuggested );
+				setHeading( stepsHeading.SUGGESTED );
 				return;
 			case modeType.ADVANCED:
-				setHeading( stepsHeadingAdvanced );
+				setHeading( stepsHeading.ADVANCED );
 				return;
 			case modeType.OWNERSHIP_VERIFICATION:
-				setHeading( stepsHeadingOwnershipVerification );
+				setHeading( stepsHeading.OWNERSHIP_VERIFICATION );
 				return;
 		}
 	}, [ mode ] );
+
+	useEffect( () => {
+		( async () => {
+			if ( ! isOwnershipVerificationFlow || initialValidation.current ) return;
+
+			setIsFetching( true );
+
+			try {
+				const availability = await wpcom
+					.domain( domain )
+					.isAvailable( { apiVersion: '1.3', is_cart_pre_check: false } );
+
+				if ( domainAvailability.MAPPABLE !== availability.mappable ) {
+					setIsConnectSupported( false );
+				}
+			} catch {
+				setIsConnectSupported( false );
+			} finally {
+				setIsFetching( false );
+				initialValidation.current = true;
+			}
+		} )();
+	} );
 
 	const stepContent = (
 		<div className={ className + '__login' }>
@@ -47,6 +74,13 @@ export default function ConnectDomainStepLogin( {
 				<p className={ className + '__text' }>
 					{ __( 'We need to confirm that you are authorized to connect this domain.' ) }
 				</p>
+			) }
+			{ ! isFetching && ! isConnectSupported && (
+				<Notice
+					status="is-error"
+					showDismiss={ false }
+					text={ __( 'This domain cannot be connected.' ) }
+				></Notice>
 			) }
 			<p className={ className + '__text' }>
 				{ createInterpolateElement(
@@ -68,7 +102,12 @@ export default function ConnectDomainStepLogin( {
 					domain
 				) }
 			</p>
-			<Button primary onClick={ onNextStep }>
+			<Button
+				primary
+				onClick={ onNextStep }
+				busy={ isFetching }
+				disabled={ isFetching || ! isConnectSupported }
+			>
 				{ __( "I found the domain's settings page" ) }
 			</Button>
 		</div>

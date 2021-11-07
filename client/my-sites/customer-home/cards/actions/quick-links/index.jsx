@@ -1,5 +1,5 @@
 import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';

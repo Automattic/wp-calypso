@@ -1,5 +1,5 @@
 import { Draggable } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const Box = ( props ) => {
 	return (

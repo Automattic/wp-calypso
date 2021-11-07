@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import happinessIllustration from 'calypso/assets/images/customer-home/happiness.png';
 import CardHeading from 'calypso/components/card-heading';

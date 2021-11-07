@@ -3,7 +3,6 @@
  */
 
 import flows from 'calypso/signup/config/flows';
-import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { useNock } from 'calypso/test-helpers/use-nock';
 import {
 	createSiteWithCart,
@@ -34,10 +33,6 @@ describe( 'createSiteWithCart()', () => {
 					requestBody,
 				};
 			} );
-	} );
-
-	beforeEach( () => {
-		isDomainStepSkippable.mockReset();
 	} );
 
 	test( 'should use the vertical field in the survey tree if the site topic one is empty.', () => {
@@ -94,11 +89,11 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( 'should find available url if siteUrl is empty (and in test group)', () => {
-		isDomainStepSkippable.mockReturnValue( true );
-
+	test( 'should find available url if siteUrl is empty and enable auto generated blog name', () => {
 		const fakeStore = {
-			getState: () => ( {} ),
+			getState: () => ( {
+				signup: { dependencyStore: { shouldHideFreePlan: true } },
+			} ),
 		};
 
 		createSiteWithCart(
@@ -111,9 +106,7 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( "don't automatically find available url if siteUrl is defined (and in test group)", () => {
-		isDomainStepSkippable.mockReturnValue( true );
-
+	test( "don't automatically find available url if siteUrl is defined", () => {
 		const fakeStore = {
 			getState: () => ( {} ),
 		};
@@ -128,9 +121,7 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( 'use username for blog_name if user data available', () => {
-		isDomainStepSkippable.mockReturnValue( true );
-
+	test( 'use username for blog_name if user data available and enable auto generated blog name', () => {
 		const fakeStore = {
 			getState: () => ( {
 				currentUser: {
@@ -138,6 +129,7 @@ describe( 'createSiteWithCart()', () => {
 						username: 'alex',
 					},
 				},
+				signup: { dependencyStore: { shouldHideFreePlan: true } },
 			} ),
 		};
 
@@ -151,12 +143,10 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( "use username from dependency store for blog_name if user data isn't available", () => {
-		isDomainStepSkippable.mockReturnValue( true );
-
+	test( "use username from dependency store for blog_name if user data isn't available and enable auto generated blog name", () => {
 		const fakeStore = {
 			getState: () => ( {
-				signup: { dependencyStore: { username: 'alex' } },
+				signup: { dependencyStore: { username: 'alex', shouldHideFreePlan: true } },
 			} ),
 		};
 
@@ -170,12 +160,10 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( "use site title for blog_name if username isn't available", () => {
-		isDomainStepSkippable.mockReturnValue( true );
-
+	test( "use site title for blog_name if username isn't available and enable auto generated blog name", () => {
 		const fakeStore = {
 			getState: () => ( {
-				signup: { steps: { siteTitle: 'mytitle' } },
+				signup: { steps: { siteTitle: 'mytitle' }, dependencyStore: { shouldHideFreePlan: true } },
 			} ),
 		};
 
@@ -189,12 +177,10 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( "use site type for blog_name if username and title aren't available", () => {
-		isDomainStepSkippable.mockReturnValue( true );
-
+	test( "use site type for blog_name if username and title aren't available and enable auto generated blog name", () => {
 		const fakeStore = {
 			getState: () => ( {
-				signup: { steps: { siteType: 'blog' } },
+				signup: { steps: { siteType: 'blog' }, dependencyStore: { shouldHideFreePlan: true } },
 			} ),
 		};
 
@@ -208,12 +194,13 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( "use site vertical for blog_name if username, title, and site type isn't available", () => {
-		isDomainStepSkippable.mockReturnValue( true );
-
+	test( "use site vertical for blog_name if username, title, and site type isn't available and enable auto generated blog name", () => {
 		const fakeStore = {
 			getState: () => ( {
-				signup: { steps: { siteVertical: { name: 'art' } } },
+				signup: {
+					steps: { siteVertical: { name: 'art' } },
+					dependencyStore: { shouldHideFreePlan: true },
+				},
 			} ),
 		};
 

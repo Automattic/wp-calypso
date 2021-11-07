@@ -1,6 +1,6 @@
 import Search from '@automattic/search';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useTyper from 'calypso/landing/gutenboarding/hooks/use-typer';
 import { getAvailableTlds } from 'calypso/lib/domains';
 

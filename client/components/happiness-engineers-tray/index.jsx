@@ -1,5 +1,4 @@
 import { shuffle } from 'lodash';
-import React from 'react';
 import Gravatar from 'calypso/components/gravatar';
 import useHappinessEngineersQuery from 'calypso/data/happiness-engineers/use-happiness-engineers-query';
 

@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import UsAddressFieldset from '../us-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {

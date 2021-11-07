@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -16,7 +16,7 @@ import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import verticals from './verticals';
 import './style.scss';
 
-class SurveyStep extends React.Component {
+class SurveyStep extends Component {
 	static propTypes = {
 		surveySiteType: PropTypes.string,
 		setSurvey: PropTypes.func.isRequired,

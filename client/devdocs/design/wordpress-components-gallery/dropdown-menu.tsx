@@ -1,7 +1,7 @@
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { more, arrowUp, arrowDown, trash } from '@wordpress/icons';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const DropdownMenuExample = () => {
 	const [ mode, setMode ] = useState( 'visual' );

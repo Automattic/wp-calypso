@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Image from 'calypso/components/image';

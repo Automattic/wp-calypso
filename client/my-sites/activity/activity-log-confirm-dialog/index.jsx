@@ -1,6 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';

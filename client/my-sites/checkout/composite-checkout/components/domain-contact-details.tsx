@@ -1,6 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { Fragment } from 'react';
 import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';
 import {
@@ -9,6 +9,7 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type {
 	DomainContactDetailsErrors,
@@ -45,7 +46,8 @@ export default function DomainContactDetails( {
 	emailOnly?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const needsOnlyGoogleAppsDetails =
 		hasGoogleApps( responseCart ) &&
 		! hasDomainRegistration( responseCart ) &&
@@ -55,7 +57,7 @@ export default function DomainContactDetails( {
 	const tlds = getAllTopLevelTlds( domainNames );
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<ManagedContactDetailsFormFields
 				needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
 				needsAlternateEmailForGSuite={ needsAlternateEmailForGSuite }
@@ -112,7 +114,7 @@ export default function DomainContactDetails( {
 					isManaged={ true }
 				/>
 			) }
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

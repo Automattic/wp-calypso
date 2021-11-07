@@ -1,7 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, wordpress } from '@wordpress/icons';
-import React from 'react';
 
 export default function SiteIcon(): JSX.Element {
 	// The site icon url should be available from /wp/v2/settings or similar in the future,

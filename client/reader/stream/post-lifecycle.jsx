@@ -1,6 +1,6 @@
 import { omit, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import CombinedCard from 'calypso/blocks/reader-combined-card';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
@@ -17,7 +17,7 @@ import PostUnavailable from './post-unavailable';
 import RecommendedPosts from './recommended-posts';
 import CrossPost from './x-post';
 
-class PostLifecycle extends React.Component {
+class PostLifecycle extends Component {
 	static propTypes = {
 		postKey: PropTypes.object.isRequired,
 		isDiscoverStream: PropTypes.bool,

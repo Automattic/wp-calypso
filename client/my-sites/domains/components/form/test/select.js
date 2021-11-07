@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import Select from '../select';
 
 describe( '<Select />', () => {

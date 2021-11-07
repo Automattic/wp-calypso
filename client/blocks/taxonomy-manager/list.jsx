@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, filter, map, reduce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryTerms from 'calypso/components/data/query-terms';

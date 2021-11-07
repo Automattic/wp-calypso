@@ -1,9 +1,7 @@
 import { map, take, filter } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
@@ -51,7 +49,7 @@ const PostGallery = ( { post, children, isDiscover } ) => {
 				<AutoDirection>
 					<h2 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
-							<Emojify>{ post.title }</Emojify>
+							{ post.title }
 						</a>
 					</h2>
 				</AutoDirection>

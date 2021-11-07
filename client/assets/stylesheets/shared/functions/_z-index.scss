@@ -50,7 +50,7 @@ $z-layers: (
 		'.reader-related-card.card': 0,
 		'.reader-full-post__sidebar-comment-like': 1,
 		'.list-stream__header-follow': 0,
-		'.following__intro-close-icon-bg' : 0,
+		'.following__intro-close-icon-bg': 0,
 		'.form-text-input-with-affixes .form-text-input': 1,
 		'.is-section-signup': 1,
 		'.media-library .search.is-expanded-to-container': 1,
@@ -96,12 +96,14 @@ $z-layers: (
 		'.site-indicator__button': 3,
 		'ul.module-content-list-item-actions.collapsed': 3,
 		'.jetpack-connect__password-form .gridicon': 3,
-		'.jetpack-connect__creds-form-footer .jetpack-connect__creds-form-spinner':3,
+		'.jetpack-connect__creds-form-footer .jetpack-connect__creds-form-spinner': 3,
 		'.site-selector': 10,
 		'.layout__secondary .site-selector': 10,
 		'.range__label': 10,
 		'.sticky-panel.is-sticky .sticky-panel__content': 20,
-		'.main': 20, //TODO: this doesn't always have a stacking context
+		//TODO: this doesn't always have a stacking context
+		'.main': 20,
+		'.jpcom-masterbar': 21,
 		'.main.calypsoify.is-iframe': 20,
 		'.search': 22,
 		'.reader-update-notice': 22,
@@ -113,7 +115,7 @@ $z-layers: (
 		'.feature-example__gradient': 170,
 		'.select-dropdown.is-open .select-dropdown__container': 170,
 		'.accessible-focus .select-dropdown.is-open .select-dropdown__container': 170,
-		'.sites-dropdown.is-open .sites-dropdown__wrapper' : 170,
+		'.sites-dropdown.is-open .sites-dropdown__wrapper': 170,
 		'.inline-help__mobile-overlay': 175,
 		'.floating-help': 176,
 		'.directly-rtm.is-minimized': 176,
@@ -160,8 +162,10 @@ $z-layers: (
 		'.guided-tours__overlay': 200050,
 		'.guided-tours__step': 201000,
 		'.support-article-dialog__base.dialog__backdrop': 201001,
-		'.wpcom-site__global-noscript': 300000, // JS off always visible
-		'.is-section-woocommerce .global-notices': 999999, //render notices on top of dialogs
+		// JS off always visible
+		'.wpcom-site__global-noscript': 300000,
+		//render notices on top of dialogs
+		'.is-section-woocommerce .global-notices': 999999,
 		'.webpack-build-monitor': 99999999,
 		'.people-list-item.card.is-compact:focus': 1,
 	),
@@ -171,20 +175,20 @@ $z-layers: (
 	),
 	'.ribbon': (
 		'.ribbon__title::before': -1,
-		'.ribbon__title::after': -1
+		'.ribbon__title::after': -1,
 	),
 	'.environment-badge': (
 		'.environment-badge .environment::before': -1,
-		'.environment-badge .bug-report': 1000
+		'.environment-badge .bug-report': 1000,
 	),
 	'.masterbar': (
 		'.masterbar__notifications-bubble': 99999,
 		'.reader-back': 99999,
 		'.reader-visit-site': 99999,
-		'.reader-profile': 100000
+		'.reader-profile': 100000,
 	),
 	'.detail-page__backdrop': (
-		'.detail-page__action-buttons': 200
+		'.detail-page__action-buttons': 200,
 	),
 	'.popover': (
 		'.input-chrono__input': 1,
@@ -197,11 +201,11 @@ $z-layers: (
 		'.search__input': 10,
 		'.search.is-searching .spinner': 20,
 		'.search .search__open-icon': 20,
-		'.search .search__close-icon': 20
+		'.search .search__close-icon': 20,
 	),
 	'.profile-gravatar__edit-label-wrap': (
 		'.profile-gravatar__edit-label-wrap:after': 0,
-		'.profile-gravatar__edit-label': 1000
+		'.profile-gravatar__edit-label': 1000,
 	),
 	'.media-library__list-item': (
 		'.media-library__list-item.is-selected::after': 10,
@@ -216,77 +220,77 @@ $z-layers: (
 		'.memberships__dialog-section.is-visible': 1,
 	),
 	'.site-settings__taxonomies': (
-		'.card__link-indicator': 1
+		'.card__link-indicator': 1,
 	),
 	'.reader-feed-header': (
 		'.reader-feed-header__site': 0,
-		'.reader-feed-header__follow': 1
+		'.reader-feed-header__follow': 1,
 	),
 	'.reader-feed-header__back-and-follow': (
 		'.card.header-cake': 1,
-		'.reader-feed-header__follow': 1
+		'.reader-feed-header__follow': 1,
 	),
 	'.reader-full-post__sidebar-comment-like': (
 		'.reader-full-post .back-button': 2,
 		'.author-compact-profile__follow .follow-button': 2,
-		'.reader-full-post__visit-site-container': 2
+		'.reader-full-post__visit-site-container': 2,
 	),
 	'.reader-related-card.card': (
-		'.reader-related-card__meta': 1
+		'.reader-related-card__meta': 1,
 	),
 	'.reader-related-card__meta': (
-		'.follow-button': 1
+		'.follow-button': 1,
 	),
 	'.list-stream__header-follow': (
-		'.follow-button': 1
+		'.follow-button': 1,
 	),
 	'.stats-post-summary': (
-		'.section-nav': 1
+		'.section-nav': 1,
 	),
-	'.thank-you-card__header' : (
+	'.thank-you-card__header': (
 		'.thank-you-card__background-icons .gridicon': 1,
 		'.thank-you-card__main-icon': 2,
-		'.thank-you-card__header-detail': 2
+		'.thank-you-card__header-detail': 2,
 	),
 	'.upwork-banner': (
 		'.button.upwork-banner__cta': 2,
-		'.button.upwork-banner__close': 4
+		'.button.upwork-banner__close': 4,
 	),
 	'.checklist__task': (
 		'.checklist__task::before': 10,
-		'.checklist__task-icon': 20
+		'.checklist__task-icon': 20,
 	),
-
 	// The following may be inserted into different areas.
 	// The parent stacking context may be root, or something else depending on where it is inserted.
-	'icon-parent': (
-		'.sidebar__menu .gridicon.gridicons-external': 1
-	),
+	'icon-parent':
+		(
+			'.sidebar__menu .gridicon.gridicons-external': 1,
+		),
 	'screen-reader-text-parent': (
-		'.screen-reader-text:focus': 100000
+		'.screen-reader-text:focus': 100000,
 	),
 	'button-group-parent': (
-		'.button-group .button:focus': 1
+		'.button-group .button:focus': 1,
 	),
 	'progress-indicator-parent': (
-		'.progress-indicator .is-success': 2
+		'.progress-indicator .is-success': 2,
 	),
 	'section-nav-tabs__dropdown-parent': (
 		'.section-nav-tabs__dropdown': 3,
-		'.section-nav-tabs__dropdown.is-open': 4
+		'.section-nav-tabs__dropdown.is-open': 4,
 	),
 	'reader-card-follow-button-parent': (
-		'.reader__card.card .follow-button': 1
+		'.reader__card.card .follow-button': 1,
 	),
 	'.tag-stream__header-follow': (
-		'.follow-button': 1
-	)
+		'.follow-button': 1,
+	),
 );
 
 // allows us to do a nested fetch
 @function map-deep-get( $map, $keys... ) {
 	@each $key in $keys {
-		@if not map-has-key( $map, $key) {
+		@if not map-has-key( $map, $key ) {
 			@warn 'No layer found for `#{$key}` of `[#{ $keys }]` in $z-layers map. Property omitted.';
 			@return map-get( $map, $key );
 		}

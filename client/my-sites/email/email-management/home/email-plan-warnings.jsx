@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import {
 	hasUnusedMailboxWarning,
@@ -13,7 +13,7 @@ import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-class EmailPlanWarnings extends React.Component {
+class EmailPlanWarnings extends Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
 		emailAccount: PropTypes.object.isRequired,

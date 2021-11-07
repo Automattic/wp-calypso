@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, ReactElement } from 'react';
+import { useCallback, ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';

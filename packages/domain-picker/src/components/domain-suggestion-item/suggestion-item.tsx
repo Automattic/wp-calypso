@@ -11,8 +11,6 @@ import classnames from 'classnames';
 import * as React from 'react';
 import InfoTooltip from '../info-tooltip';
 import WrappingComponent from './suggestion-item-wrapper';
-// TODO: remove when all needed core types are available
-/*#__PURE__*/ import '../../types-patch';
 
 export const SUGGESTION_ITEM_TYPE_RADIO = 'radio';
 export const SUGGESTION_ITEM_TYPE_BUTTON = 'button';

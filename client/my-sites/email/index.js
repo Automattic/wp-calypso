@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
@@ -11,8 +12,37 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 
 const commonHandlers = [ siteSelection, navigation ];
 
+const emailInboxSiteSelectionHeader = ( context, next ) => {
+	context.getSiteSelectionHeaderText = () => {
+		return translate( 'Select a site to open {{strong}}My Inbox{{/strong}}', {
+			components: {
+				strong: <strong />,
+			},
+		} );
+	};
+
+	next();
+};
+
 export default function () {
 	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
+
+	page(
+		paths.emailManagementInbox(),
+		siteSelection,
+		emailInboxSiteSelectionHeader,
+		sites,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.emailManagementInbox( ':site' ),
+		...commonHandlers,
+		controller.emailManagementInbox,
+		makeLayout,
+		clientRender
+	);
 
 	registerMultiPage( {
 		paths: [

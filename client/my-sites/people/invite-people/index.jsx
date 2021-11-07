@@ -3,7 +3,7 @@ import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { filter, get, groupBy, includes, pickBy, some } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
@@ -32,6 +32,7 @@ import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import { userCan } from 'calypso/lib/site/utils';
 import wpcom from 'calypso/lib/wp';
 import ContractorSelect from 'calypso/my-sites/people/contractor-select';
+import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import RoleSelect from 'calypso/my-sites/people/role-select';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -54,7 +55,7 @@ import './style.scss';
  */
 const debug = debugModule( 'calypso:my-sites:people:invite' );
 
-class InvitePeople extends React.Component {
+class InvitePeople extends Component {
 	static displayName = 'InvitePeople';
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -606,10 +607,10 @@ class InvitePeople extends React.Component {
 				}
 			} );
 
-		const inviteUrlRef = React.createRef();
+		const inviteUrlRef = createRef();
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<div className="invite-people__link-selector">
 					<FormSelect
 						id="invite-people__link-selector-role"
@@ -644,7 +645,7 @@ class InvitePeople extends React.Component {
 						)
 					</span>
 				</div>
-			</React.Fragment>
+			</Fragment>
 		);
 	};
 
@@ -722,12 +723,13 @@ class InvitePeople extends React.Component {
 						},
 					} ) }
 				</HeaderCake>
+				{ isWPForTeamsSite && <P2TeamBanner context="invite" site={ site } /> }
 				{ this.renderInviteForm() }
 				{ isWPForTeamsSite && (
-					<React.Fragment>
+					<Fragment>
 						<SectionHeader label={ translate( 'Invite Link' ) } />
 						{ this.renderInviteLinkForm() }
-					</React.Fragment>
+					</Fragment>
 				) }
 			</Main>
 		);

@@ -4,6 +4,15 @@ import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sit
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
 
+/**
+ * Builds a URL query string from an object. Handles null values.
+ *
+ * @param {Object} parameters - optional path prefix
+ * @returns {string} the corresponding query string
+ */
+const buildQueryString = ( parameters = {} ) =>
+	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
+
 function resolveRootPath( relativeTo ) {
 	if ( relativeTo === emailManagementAllSitesPrefix || relativeTo === domainManagementRoot() ) {
 		return emailManagementAllSitesPrefix;
@@ -28,16 +37,20 @@ function resolveRootPath( relativeTo ) {
  * @param {string} domainName - domain name of the account to add users to
  * @param {string} productType - type of account
  * @param {string} relativeTo - optional path prefix
+ * @param {string} source - optional source
  * @returns {string} the corresponding url
  */
 export function emailManagementAddGSuiteUsers(
 	siteName,
 	domainName,
 	productType,
-	relativeTo = null
+	relativeTo = null,
+	source = null
 ) {
 	if ( domainName ) {
-		return emailManagementEdit( siteName, domainName, productType + '/add-users', relativeTo );
+		return emailManagementEdit( siteName, domainName, productType + '/add-users', relativeTo, {
+			source,
+		} );
 	}
 
 	return '/email/' + productType + '/add-users/' + siteName;
@@ -67,12 +80,24 @@ export function emailManagementManageTitanMailboxes(
 	);
 }
 
-export function emailManagementNewTitanAccount( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
+export function emailManagementNewTitanAccount(
+	siteName,
+	domainName,
+	relativeTo = null,
+	source = null
+) {
+	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo, { source } );
 }
 
-export function emailManagementTitanSetUpMailbox( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'titan/set-up-mailbox', relativeTo );
+export function emailManagementTitanSetUpMailbox(
+	siteName,
+	domainName,
+	relativeTo = null,
+	source = null
+) {
+	return emailManagementEdit( siteName, domainName, 'titan/set-up-mailbox', relativeTo, {
+		source,
+	} );
 }
 
 export function emailManagementTitanSetUpThankYou(
@@ -105,13 +130,13 @@ export function emailManagementTitanControlPanelRedirect(
 	);
 }
 
-export function emailManagement( siteName, domainName, relativeTo = null ) {
+export function emailManagement( siteName, domainName, relativeTo = null, urlParameters = {} ) {
 	let path;
 
 	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, 'manage', relativeTo );
+		path = emailManagementEdit( siteName, domainName, 'manage', relativeTo, urlParameters );
 	} else if ( siteName ) {
-		path = '/email/' + siteName;
+		path = '/email/' + siteName + buildQueryString( urlParameters );
 	} else {
 		path = '/email';
 	}
@@ -131,10 +156,16 @@ export function emailManagementForwarding( siteName, domainName, relativeTo = nu
  * @param {string} siteName - slug of the current site
  * @param {string} domainName - domain name of the account to add users to
  * @param {string} relativeTo - optional path prefix
+ * @param {string} source - optional source
  * @returns {string} the corresponding url
  */
-export function emailManagementPurchaseNewEmailAccount( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo );
+export function emailManagementPurchaseNewEmailAccount(
+	siteName,
+	domainName,
+	relativeTo = null,
+	source = null
+) {
+	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo, { source } );
 }
 
 export function emailManagementEdit(
@@ -153,10 +184,6 @@ export function emailManagementEdit(
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	const urlParameterString = urlParameters
-		? stringify( urlParameters, { addQueryPrefix: true } )
-		: '';
-
 	return (
 		resolveRootPath( relativeTo ) +
 		'/' +
@@ -165,8 +192,15 @@ export function emailManagementEdit(
 		slug +
 		'/' +
 		siteName +
-		urlParameterString
+		buildQueryString( urlParameters )
 	);
+}
+
+export function emailManagementInbox( siteName = null ) {
+	if ( siteName ) {
+		return `/inbox/${ siteName }`;
+	}
+	return `/inbox`;
 }
 
 export function isUnderEmailManagementAll( path ) {

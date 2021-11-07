@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -18,7 +18,7 @@ import {
 
 import './style.scss';
 
-class PluginSiteJetpack extends React.Component {
+class PluginSiteJetpack extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		plugin: PropTypes.object,

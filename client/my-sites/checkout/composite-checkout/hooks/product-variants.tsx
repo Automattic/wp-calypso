@@ -1,10 +1,13 @@
 import {
-	getTermDuration,
-	getPlan,
-	getBillingMonthsForTerm,
 	findPlansKeys,
-	GROUP_WPCOM,
+	findProductKeys,
+	getBillingMonthsForTerm,
+	getPlan,
+	getProductFromSlug,
+	getTermDuration,
 	GROUP_JETPACK,
+	GROUP_WPCOM,
+	objectIsProduct,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
@@ -13,20 +16,20 @@ import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
 import { styled } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { Fragment, useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { requestPlans } from 'calypso/state/plans/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
-import type { Plan } from '@automattic/calypso-products';
+import type { Plan, Product } from '@automattic/calypso-products';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
 export interface AvailableProductVariant {
 	planSlug: string;
-	plan: Plan;
+	plan: Plan | Product;
 	product: {
 		product_id: number;
 		currency_code: string;
@@ -196,7 +199,7 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 	const currentPrice = variant.priceFinal || variant.priceFull;
 	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
 	return (
-		<React.Fragment>
+		<Fragment>
 			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
 			{ isDiscounted && (
 				<DoNotPayThis>
@@ -204,7 +207,7 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 				</DoNotPayThis>
 			) }
 			{ myFormatCurrency( currentPrice, variant.product.currency_code ) }
-		</React.Fragment>
+		</Fragment>
 	);
 }
 
@@ -225,22 +228,31 @@ function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAn
 }
 
 function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const chosenPlan = getPlan( productSlug );
+	const chosenPlan = getPlan( productSlug )
+		? getPlan( productSlug )
+		: getProductFromSlug( productSlug );
 
 	if ( ! chosenPlan ) {
 		return [];
 	}
 
 	// Only construct variants for WP.com and Jetpack plans
-	if ( chosenPlan.group !== GROUP_WPCOM && chosenPlan.group !== GROUP_JETPACK ) {
+	if (
+		! objectIsProduct( chosenPlan ) &&
+		chosenPlan.group !== GROUP_WPCOM &&
+		chosenPlan.group !== GROUP_JETPACK
+	) {
 		return [];
 	}
 
-	// : WPCOMProductSlug[]
-	return findPlansKeys( {
-		group: chosenPlan.group,
-		type: chosenPlan.type,
-	} );
+	return objectIsProduct( chosenPlan )
+		? findProductKeys( {
+				type: chosenPlan.type,
+		  } )
+		: findPlansKeys( {
+				group: chosenPlan.group,
+				type: chosenPlan.type,
+		  } );
 }
 
 function isVariantOfActivePlan(

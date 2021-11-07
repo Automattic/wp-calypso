@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .step-wrapper__header {
 	display: flex;
 	justify-content: space-between;
@@ -5,6 +8,10 @@
 
 	.formatted-header {
 		flex-grow: 1;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-wrap: wrap;
 	}
 }
 
@@ -31,50 +38,137 @@
 	}
 }
 
-.step-wrapper__buttons.is-top-buttons {
-	text-align: center;
-	padding: 5px 0;
-	margin-bottom: 32px;
+.step-wrapper__header-button {
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-basis: 100%;
+	}
 }
 
-.step-wrapper__buttons.is-top-buttons .step-wrapper__skip-wrapper {
-	display: inline-block;
-	background: var( --color-surface );
-	border-radius: 2px;
-	padding: 2px 12px;
-	@include elevation( 2dp );
-}
-
-.step-wrapper__buttons.is-top-buttons .step-wrapper__skip-heading {
-	display: inline;
-	color: var( --color-text );
-}
-
-.step-wrapper__buttons.is-top-buttons .navigation-link {
-	color: var( --color-accent );
-	text-decoration: underline;
-	transform: none;
-	vertical-align: baseline;
-	margin-left: 0.5em;
-	padding: 7px 0 9px !important;
-}
-
-.step-wrapper__buttons.is-top-buttons .navigation-link svg {
-	display: none;
-}
-
-.step-wrapper__buttons.is-top-right-buttons {
-	margin-left: auto;
-	margin-bottom: 0;
+.step-wrapper__navigation.action-buttons {
+	display: flex;
+	align-items: center;
 	font-size: 0.875rem;
 
-	.navigation-link {
-		height: 42px;
-		min-width: 160px;
-		color: #2c3338;
+	&:empty {
+		display: none;
+	}
 
-		svg {
-			display: none;
+	@mixin unstick {
+		position: absolute;
+		top: 2px;
+		left: 11px;
+		right: 16px;
+		padding: 0;
+		border: none;
+		margin: 0;
+		background-color: transparent;
+	}
+
+	&.no-sticky {
+		@include unstick;
+		height: 36px;
+	}
+
+	&:not( .is-sticky ) {
+		@include break-small {
+			@include unstick;
+		}
+	}
+
+	.step-wrapper__navigation-link {
+		font-size: 0.875rem;
+		font-weight: 500; /* stylelint-disable-line */
+
+		&.button.is-primary {
+			border-radius: 4px; /* stylelint-disable-line scales/radii */
+			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+		}
+
+		&.has-underline {
+			text-decoration: underline;
+		}
+
+		&.has-skip-heading {
+			transform: translateY( -3px );
+			// override unessecary super specificity added by another class
+			padding-top: 0 !important;
+		}
+	}
+
+	.step-wrapper__navigation-link.forward,
+	.step-wrapper__skip-wrapper {
+		margin-left: auto;
+	}
+}
+
+.step-wrapper__header-image {
+	margin-top: 40px;
+	display: none;
+
+	@include break-small {
+		display: block;
+	}
+}
+
+.layout:not( .dops ) .step-wrapper {
+	max-width: 960px;
+	margin: 0 auto;
+
+	// Some steps (like plans) need a larger
+	// width column.
+	&.is-wide-layout {
+		max-width: 1040px;
+	}
+
+	// Some steps (intent gathering) use a horizontal layout
+	&.is-horizontal-layout {
+		align-items: flex-start;
+		justify-content: space-between;
+		max-width: 1024px;
+		padding: 0 20px;
+		margin-top: 44px;
+
+		@include break-small {
+			display: flex;
+			margin-top: 25vh;
+		}
+
+		.step-wrapper__header {
+			display: block;
+			margin-top: 0;
+		}
+	}
+
+	// Skip button
+	.step-wrapper__buttons {
+		text-align: center;
+		margin-bottom: 20px;
+	}
+
+	.step-wrapper__header {
+		margin-top: 48px;
+		margin-bottom: 40px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			margin-top: 24px;
+		}
+	}
+
+	// pressable-nux has no title or subtitle so
+	// needs to not hide the (W) logo
+	.is-pressable-nux & {
+		margin-top: 30px;
+	}
+
+	// On small screens remove the margin from the
+	// bottom of the cards.
+	@include breakpoint-deprecated( '<660px' ) {
+		.card {
+			margin-bottom: 0;
+		}
+
+		&.has-navigation {
+			padding-bottom: 60px;
 		}
 	}
 }

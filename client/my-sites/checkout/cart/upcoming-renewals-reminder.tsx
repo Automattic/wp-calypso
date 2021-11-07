@@ -2,7 +2,7 @@ import { isPlan, isDomainRegistration } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useMemo, useCallback, useState } from 'react';
+import { FunctionComponent, useMemo, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -144,7 +144,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	return (
 		<>
-			<QueryUserPurchases userId={ userId } />
+			<QueryUserPurchases />
 			{ shouldRender && (
 				<div className="cart__upsell-wrapper">
 					<UpcomingRenewalsDialog

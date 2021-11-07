@@ -1,7 +1,6 @@
 import { shallow } from 'enzyme';
 import i18n from 'i18n-calypso';
 import moment from 'moment';
-import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import PurchaseItem from '../';

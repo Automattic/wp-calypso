@@ -1,4 +1,3 @@
-import React from 'react';
 import { tourBranching } from '../tour-branching';
 
 describe( 'Guided Tours Branching', () => {

@@ -2,25 +2,25 @@ import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import Clipboard from 'clipboard';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { useRef, useEffect } from 'react';
 import ReactDom from 'react-dom';
 
 const noop = () => {};
 
 function ClipboardButton( { className, text, onCopy = noop, ...rest } ) {
-	const buttonRef = React.useRef();
+	const buttonRef = useRef();
 
-	const textCallback = React.useRef();
-	const successCallback = React.useRef();
+	const textCallback = useRef();
+	const successCallback = useRef();
 
 	// update the callbacks on rerenders that change `text` or `onCopy`
-	React.useEffect( () => {
+	useEffect( () => {
 		textCallback.current = () => text;
 		successCallback.current = onCopy;
 	}, [ text, onCopy ] );
 
 	// create the `Clipboard` object on mount and destroy on unmount
-	React.useEffect( () => {
+	useEffect( () => {
 		const buttonEl = ReactDom.findDOMNode( buttonRef.current );
 		const clipboard = new Clipboard( buttonEl, { text: () => textCallback.current() } );
 		clipboard.on( 'success', () => successCallback.current() );

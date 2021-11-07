@@ -1,12 +1,13 @@
 /**
  * @group gutenberg
+ * @group coblocks
  */
 
 import {
 	setupHooks,
 	DataHelper,
 	MediaHelper,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	GutenbergEditorPage,
 	PricingTableBlock,
@@ -15,6 +16,7 @@ import {
 	ClicktoTweetBlock,
 	LogosBlock,
 	TestFile,
+	BrowserHelper,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
@@ -24,6 +26,15 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	let pricingTableBlock: PricingTableBlock;
 	let page: Page;
 	let logoImage: TestFile;
+
+	let user: string;
+	if ( BrowserHelper.targetCoBlocksEdge() ) {
+		user = 'coBlocksSimpleSiteEdgeUser';
+	} else if ( BrowserHelper.targetGutenbergEdge() ) {
+		user = 'gutenbergSimpleSiteEdgeUser';
+	} else {
+		user = 'gutenbergSimpleSiteUser';
+	}
 
 	// Test data
 	const pricingTableBlockPrice = 888;
@@ -40,8 +51,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: user } );
 	} );
 
 	it( 'Start new post', async function () {
@@ -55,29 +66,44 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter price to left table`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( PricingTableBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			PricingTableBlock.blockName,
+			PricingTableBlock.blockEditorSelector
+		);
 		pricingTableBlock = new PricingTableBlock( blockHandle );
 		await pricingTableBlock.enterPrice( 1, pricingTableBlockPrice );
 	} );
 
 	it( `Insert ${ DynamicHRBlock.blockName } block`, async function () {
-		await gutenbergEditorPage.addBlock( DynamicHRBlock.blockName );
+		await gutenbergEditorPage.addBlock(
+			DynamicHRBlock.blockName,
+			DynamicHRBlock.blockEditorSelector
+		);
 	} );
 
 	it( `Insert ${ HeroBlock.blockName } block and enter heading`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( HeroBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			HeroBlock.blockName,
+			HeroBlock.blockEditorSelector
+		);
 		const heroBlock = new HeroBlock( blockHandle );
 		await heroBlock.enterHeading( heroBlockHeading );
 	} );
 
 	it( `Insert ${ ClicktoTweetBlock.blockName } block and enter tweet content`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( ClicktoTweetBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			ClicktoTweetBlock.blockName,
+			ClicktoTweetBlock.blockEditorSelector
+		);
 		const clickToTweetBlock = new ClicktoTweetBlock( blockHandle );
 		await clickToTweetBlock.enterTweetContent( clicktoTweetBlockTweet );
 	} );
 
 	it( `Insert ${ LogosBlock.blockName } block and set image`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( LogosBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			LogosBlock.blockName,
+			LogosBlock.blockEditorSelector
+		);
 		const logosBlock = new LogosBlock( blockHandle );
 		await logosBlock.upload( logoImage.fullpath );
 	} );

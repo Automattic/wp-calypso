@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { firstValid, hardTruncation, shortEnough, stripHtmlTags } from '../helpers';
 
 import './style.scss';

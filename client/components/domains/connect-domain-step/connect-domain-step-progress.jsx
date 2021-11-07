@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 
 import './style.scss';

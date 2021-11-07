@@ -7,7 +7,7 @@ import { get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -36,6 +36,7 @@ import {
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import {
 	composeAnalytics,
@@ -54,7 +55,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class TransferDomainStep extends React.Component {
+class TransferDomainStep extends Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
 		basePath: PropTypes.string,
@@ -720,4 +721,4 @@ export default connect(
 		recordGoButtonClickInTransferDomain,
 		recordMapDomainButtonClick,
 	}
-)( withShoppingCart( localize( TransferDomainStep ) ) );
+)( withCartKey( withShoppingCart( localize( TransferDomainStep ) ) ) );

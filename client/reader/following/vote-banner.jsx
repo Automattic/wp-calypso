@@ -1,6 +1,5 @@
 import { localize } from 'i18n-calypso';
 import { sample } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';

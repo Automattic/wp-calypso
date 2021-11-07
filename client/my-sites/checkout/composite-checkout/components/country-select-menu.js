@@ -1,4 +1,3 @@
-import React from 'react';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormFieldAnnotation from 'calypso/my-sites/checkout/composite-checkout/components/form-field-annotation';
 

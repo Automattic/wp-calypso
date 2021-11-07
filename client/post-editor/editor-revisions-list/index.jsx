@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { get, isEmpty, last, map } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';

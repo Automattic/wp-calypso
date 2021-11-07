@@ -2,9 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { render as rtlRender, screen } from 'config/testing-library';
-import React from 'react';
 import { reducer as purchases } from 'calypso/state/purchases/reducer';
+import { render as rtlRender, screen } from 'calypso/test-helpers/config/testing-library';
 import HasSitePurchasesSwitch from '../index';
 
 import '@testing-library/jest-dom/extend-expect';

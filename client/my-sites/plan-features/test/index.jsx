@@ -26,7 +26,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import ReactDOM from 'react-dom';
 import {
 	getPlanDiscountedRawPrice,

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, isEmpty, includes, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createElement, Component } from 'react';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { paymentMethodName } from 'calypso/lib/cart-values';
@@ -67,7 +67,7 @@ export class CountrySpecificPaymentFields extends Component {
 		);
 
 		return includes( this.state.fields, fieldName )
-			? React.createElement( componentClass, fieldProps )
+			? createElement( componentClass, fieldProps )
 			: null;
 	};
 

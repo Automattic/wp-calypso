@@ -1,6 +1,5 @@
 import { some } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import PostCommentForm from './form';
 
 const noop = () => {};

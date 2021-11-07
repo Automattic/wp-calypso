@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { map, find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormButton from 'calypso/components/forms/form-button';
@@ -21,7 +21,6 @@ import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
@@ -40,7 +39,7 @@ import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 
 import './style.scss';
 
-class ConfirmCancelDomain extends React.Component {
+class ConfirmCancelDomain extends Component {
 	static propTypes = {
 		purchaseListUrl: PropTypes.string,
 		getCancelPurchaseUrlFor: PropTypes.func,
@@ -52,7 +51,6 @@ class ConfirmCancelDomain extends React.Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
-		userId: PropTypes.number,
 	};
 
 	state = {
@@ -114,7 +112,7 @@ class ConfirmCancelDomain extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		cancelAndRefundPurchase( purchase.id, data, ( error, response ) => {
+		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
 			this.setState( { submitting: false } );
 
 			const { isDomainOnlySite, translate, selectedSite } = this.props;
@@ -135,24 +133,19 @@ class ConfirmCancelDomain extends React.Component {
 				return;
 			}
 
-			if ( response.status === 'completed' ) {
-				this.props.successNotice(
-					translate( '%(purchaseName)s was successfully cancelled and refunded.', {
-						args: { purchaseName },
-					} ),
-					{ displayOnNextPage: true }
-				);
+			this.props.refreshSitePlans( purchase.siteId );
+			this.props.clearPurchases();
 
-				this.props.refreshSitePlans( purchase.siteId );
+			recordTracksEvent( 'calypso_domain_cancel_form_submit', {
+				product_slug: purchase.productSlug,
+			} );
 
-				this.props.clearPurchases();
-
-				recordTracksEvent( 'calypso_domain_cancel_form_submit', {
-					product_slug: purchase.productSlug,
-				} );
-
-				page.redirect( this.props.purchaseListUrl );
-			}
+			const successMessage = translate(
+				'%(purchaseName)s was successfully cancelled and refunded.',
+				{ args: { purchaseName } }
+			);
+			this.props.successNotice( successMessage, { displayOnNextPage: true } );
+			page.redirect( this.props.purchaseListUrl );
 		} );
 	};
 
@@ -252,7 +245,7 @@ class ConfirmCancelDomain extends React.Component {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<div>
-					<QueryUserPurchases userId={ this.props.userId } />
+					<QueryUserPurchases />
 					<ConfirmCancelDomainLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
 						selectedSite={ this.props.selectedSite }
@@ -265,7 +258,7 @@ class ConfirmCancelDomain extends React.Component {
 		const domain = getDomainName( purchase );
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<TrackPurchasePageView
 					eventName="calypso_confirm_cancel_domain_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -311,7 +304,7 @@ class ConfirmCancelDomain extends React.Component {
 					{ this.renderConfirmationCheckbox() }
 					{ this.renderSubmitButton() }
 				</Card>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }
@@ -326,7 +319,6 @@ export default connect(
 			isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
 			purchase: getByPurchaseId( state, props.purchaseId ),
 			selectedSite,
-			userId: getCurrentUserId( state ),
 		};
 	},
 	{

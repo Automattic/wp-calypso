@@ -19,7 +19,7 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { isWordadsInstantActivationEligible } from 'calypso/lib/ads/utils';

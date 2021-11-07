@@ -1,0 +1,112 @@
+.tabbed-plans__grid-container {
+	margin-left: 50px;
+	display: grid;
+	grid-template-columns: 0.8fr 1fr 1fr 1fr;
+	grid-template-rows: auto;
+	grid-template-areas:
+		'terms	plan-header-1		plan-header-2	plan-header-3'
+		'terms 	price-1 			price-2 		price-3'
+		'. 		term-desc-1 		term-desc-2 	term-desc-3'
+		'. 		top-button-1 		top-button-2 	top-button-3'
+		'ft-1 	feature-1-1 		feature-2-1 	feature-3-1'
+		'ft-2	feature-1-2 		feature-2-2		feature-3-2'
+		'ft-3	feature-1-3 		feature-2-3		feature-3-3'
+		'ft-4	feature-1-4 		feature-2-4		feature-3-4'
+		'ft-5	feature-1-5 		feature-2-5		feature-3-5'
+		'ft-6	feature-1-6 		feature-2-6		feature-3-6'
+		'ft-7	feature-1-7 		feature-2-7		feature-3-7'
+		'. 		button-1 			button-2 		button-3'
+		'. 		free-banner 		free-banner 	free-banner'
+		'. 		shared-features 	shared-features shared-features';
+}
+
+.tabbed-plans__shared-features-grid {
+	grid-area: shared-features;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: auto;
+	place-items: start;
+}
+
+.tabbed-plans__shared-features-mobile {
+	display: none;
+}
+
+@media ( max-width: 660px ) {
+	.tabbed-plans__grid-container {
+		margin-left: 0;
+		grid-template-columns: 1fr;
+		grid-template-areas:
+			'terms'
+			'plan-header-1'
+			'price-1'
+			'term-desc-1'
+			'feature-1-1'
+			'feature-1-2'
+			'feature-1-3'
+			'feature-1-4'
+			'feature-1-5'
+			'feature-1-6'
+			'feature-1-7'
+			'button-1'
+			'shared-features-1'
+			'plan-header-2'
+			'price-2'
+			'term-desc-2'
+			'feature-2-1'
+			'feature-2-2'
+			'feature-2-3'
+			'feature-2-4'
+			'feature-2-5'
+			'feature-2-6'
+			'feature-2-7'
+			'button-2'
+			'shared-features-2'
+			'plan-header-3'
+			'price-3'
+			'term-desc-3'
+			'feature-3-1'
+			'feature-3-2'
+			'feature-3-3'
+			'feature-3-4'
+			'feature-3-5'
+			'feature-3-6'
+			'feature-3-7'
+			'button-3'
+			'shared-features-3'
+			'free-banner';
+	}
+
+	.tabbed-plans__shared-features-grid {
+		display: none;
+	}
+
+	.tabbed-plans__shared-features-mobile {
+		margin: 0 56px 24px;
+		padding: 24px 24px 0 0;
+		border-top: 1px solid rgba( 220, 220, 222, 0.5 );
+		display: flex;
+		flex-flow: column wrap;
+
+		span {
+			margin-left: 10px;
+			vertical-align: middle;
+		}
+	}
+}
+
+.tabbed-plans__shared-features-1 {
+	grid-area: shared-features-1;
+}
+
+.tabbed-plans__shared-features-2 {
+	grid-area: shared-features-2;
+}
+
+.tabbed-plans__shared-features-3 {
+	grid-area: shared-features-3;
+}
+
+.tabbed-plans__feature-tip-info {
+	color: #a7aaad;
+}

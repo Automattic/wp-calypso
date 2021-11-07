@@ -3,7 +3,7 @@ import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map, pick, flowRight } from 'lodash';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';

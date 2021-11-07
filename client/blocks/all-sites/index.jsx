@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';

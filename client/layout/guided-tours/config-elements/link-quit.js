@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { contextTypes } from '../context-types';
 
 export default class LinkQuit extends Component {

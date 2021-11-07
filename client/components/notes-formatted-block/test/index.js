@@ -1,5 +1,4 @@
 import { render, shallow } from 'enzyme';
-import React from 'react';
 import FormattedBlock, { FormattedBlockRenderer } from '..';
 
 describe( 'FormattedBlock', () => {

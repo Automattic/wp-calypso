@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import TitanRedirector from 'calypso/my-sites/email/titan-redirector';
 

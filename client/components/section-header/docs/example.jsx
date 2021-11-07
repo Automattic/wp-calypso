@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 
 class SectionHeaderExample extends PureComponent {

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

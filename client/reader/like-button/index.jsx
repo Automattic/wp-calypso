@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
@@ -10,13 +10,13 @@ import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import './style.scss';
 
-class ReaderLikeButton extends React.Component {
+class ReaderLikeButton extends Component {
 	state = {
 		showLikesPopover: false,
 	};
 
 	hidePopoverTimeout = null;
-	likeButtonRef = React.createRef();
+	likeButtonRef = createRef();
 
 	componentWillUnmount() {
 		clearTimeout( this.hidePopoverTimeout );

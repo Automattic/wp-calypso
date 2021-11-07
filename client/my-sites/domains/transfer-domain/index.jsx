@@ -2,7 +2,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
@@ -14,6 +14,7 @@ import {
 	domainTransfer,
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -192,4 +193,4 @@ export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
-} ) )( withShoppingCart( TransferDomain ) );
+} ) )( withCartKey( withShoppingCart( TransferDomain ) ) );

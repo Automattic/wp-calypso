@@ -1,6 +1,5 @@
 import { get, maxBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { LegendItemPlaceholder } from 'calypso/components/legend-item';
 
 function getLongestName( dataSeriesInfo ) {

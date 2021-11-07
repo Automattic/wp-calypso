@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import QueryMailchimpLists from 'calypso/components/data/query-mailchimp-lists';

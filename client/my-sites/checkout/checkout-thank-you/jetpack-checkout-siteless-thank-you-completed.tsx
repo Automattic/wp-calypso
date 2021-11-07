@@ -1,13 +1,12 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySites from 'calypso/components/data/query-sites';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isProductsListFetching as getIsProductListFetching,
@@ -16,7 +15,6 @@ import {
 import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
-import { useSetCalendlyListenerEffect } from './hooks';
 import { getActivationCompletedLink } from './utils';
 
 import './style.scss';
@@ -29,7 +27,6 @@ interface Props {
 
 const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 	productSlug,
-	receiptId = 0,
 	jetpackTemporarySiteId = 0,
 } ) => {
 	const translate = useTranslate();
@@ -43,20 +40,6 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
-	const happinessAppointmentLink = addQueryArgs(
-		{
-			receiptId,
-			siteId: jetpackTemporarySiteId,
-		},
-		'/checkout/jetpack/schedule-happiness-appointment'
-	);
-
-	useSetCalendlyListenerEffect( {
-		productSlug,
-		receiptId,
-		jetpackTemporarySiteId,
-	} );
-
 	const destinationSiteId = useSelector( ( state ) =>
 		getJetpackCheckoutSupportTicketDestinationSiteId( state, jetpackTemporarySiteId )
 	);
@@ -68,17 +51,9 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 
 	const title = useMemo( () => {
 		return automaticTransferSucceeded
-			? translate( 'Your %(productName)s subscription has been activated and is ready to go!', {
-					args: {
-						productName,
-					},
-			  } )
-			: translate( 'Your %(productName)s subscription will be activated soon', {
-					args: {
-						productName,
-					},
-			  } );
-	}, [ automaticTransferSucceeded, productName, translate ] );
+			? translate( 'Your subscription has been activated and is ready to go!' )
+			: translate( 'Your subscription will be activated soon' );
+	}, [ automaticTransferSucceeded, translate ] );
 
 	return (
 		<Main wideLayout className="jetpack-checkout-siteless-thank-you-completed">
@@ -103,38 +78,19 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 						{ title }
 					</h1>
 					{ ! automaticTransferSucceeded && (
-						<>
-							<p>
-								{ translate(
-									'As soon as your subscription is activated you will receive a confirmation email from our Happiness Engineers.'
-								) }
-							</p>
-							<p>
-								{ translate(
-									'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 minute call now{{/a}}.',
+						<p>
+							{ productName &&
+								translate(
+									'As soon as your %(productName)s subscription is activated you will receive a confirmation email from our Happiness Engineers.',
 									{
-										components: {
-											a: (
-												<a
-													className="jetpack-checkout-siteless-thank-you-completed__link"
-													onClick={ () =>
-														dispatch(
-															recordTracksEvent(
-																'calypso_siteless_checkout_happiness_link_clicked',
-																{
-																	product_slug: productSlug,
-																}
-															)
-														)
-													}
-													href={ happinessAppointmentLink }
-												/>
-											),
-										},
+										args: { productName },
 									}
 								) }
-							</p>
-						</>
+							{ ! productName &&
+								translate(
+									'As soon as your subscription is activated you will receive a confirmation email from our Happiness Engineers.'
+								) }
+						</p>
 					) }
 					{ automaticTransferSucceeded && (
 						<>

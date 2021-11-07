@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
 import { getCurrentNonDefaultLocale } from 'calypso/components/translator-invite/utils';

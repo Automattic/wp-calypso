@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 

@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -18,7 +18,7 @@ import {
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-class DomainManagementData extends React.Component {
+class DomainManagementData extends Component {
 	static propTypes = {
 		analyticsPath: PropTypes.string,
 		analyticsTitle: PropTypes.string,
@@ -54,7 +54,7 @@ class DomainManagementData extends React.Component {
 				{ needsProductsList && <QueryProductsList /> }
 
 				<CalypsoShoppingCartProvider>
-					{ React.createElement( this.props.component, {
+					{ createElement( this.props.component, {
 						context: this.props.context,
 						domains: selectedSite ? this.props.domains : null,
 						hasSiteDomainsLoaded: this.props.hasSiteDomainsLoaded,

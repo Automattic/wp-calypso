@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';

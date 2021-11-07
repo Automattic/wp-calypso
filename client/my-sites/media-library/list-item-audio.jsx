@@ -1,7 +1,7 @@
-import React from 'react';
+import { Component } from 'react';
 import ListItemFileDetails from './list-item-file-details';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'MediaLibraryListItemDocument';
 
 	render() {

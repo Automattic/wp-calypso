@@ -1,5 +1,4 @@
 import { startsWith } from 'lodash';
-import React from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 export const Strong = ( { children } ) => <strong>{ children }</strong>;

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, isEmpty } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -23,7 +23,7 @@ import {
 
 import './style.scss';
 
-class AccountPassword extends React.Component {
+class AccountPassword extends Component {
 	state = {
 		password: '',
 		validation: null,

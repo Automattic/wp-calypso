@@ -1,5 +1,5 @@
 import { RadioControl } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const options = [
 	{ label: 'Public', value: 'public' },

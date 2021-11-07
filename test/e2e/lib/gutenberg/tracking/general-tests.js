@@ -220,8 +220,15 @@ export function createGeneralTests( { it, editorType, postType, baseContext = un
 	it( `Block editor sidebar toggle should not trigger the "wpcom_block_editor_close_click" event`, async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
-		// The button that triggers the block editor sidebar is not available on mobile
-		if ( editor.screenSize === 'mobile' && editorType === 'post' ) {
+		const shouldSkipThisTest =
+			// The button that triggers the block editor sidebar is not available on mobile
+			( editor.screenSize === 'mobile' && editorType === 'post' ) ||
+			// Site editor's nav sidebar is temporarily disabled on dotcom.
+			// Related Issue - https://github.com/Automattic/wp-calypso/issues/54460
+			// Related PR - https://github.com/Automattic/wp-calypso/pull/55471
+			editorType === 'site';
+
+		if ( shouldSkipThisTest ) {
 			return this.skip();
 		}
 

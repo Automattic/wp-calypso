@@ -1,7 +1,9 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -9,12 +11,10 @@ import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { managePurchase } from 'calypso/me/purchases/paths';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import buildCheckoutURL from './build-checkout-url';
+import { getPurchaseURLCallback } from './get-purchase-url-callback';
 import getViewTrackerPath from './get-view-tracker-path';
 import { getForCurrentCROIteration, Iterations } from './iterations';
 import ProductGrid from './product-grid';
@@ -24,7 +24,6 @@ import type {
 	SelectorPageProps,
 	SelectorProduct,
 	PurchaseCallback,
-	PurchaseURLCallback,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 import './style.scss';
@@ -34,6 +33,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	siteSlug: siteSlugProp,
 	rootUrl,
 	urlQueryArgs,
+	nav,
 	header,
 	footer,
 	planRecommendation,
@@ -103,26 +103,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		[ highlightedProducts ]
 	);
 
-	const createProductURL: PurchaseURLCallback = (
-		product: SelectorProduct,
-		isUpgradeableToYearly = false,
-		purchase
-	) => {
-		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
-			return product.externalUrl || '';
-		}
-		if ( purchase && isUpgradeableToYearly ) {
-			const { productSlug: slug } = product;
-			const yearlySlug = getYearlySlugFromMonthly( slug );
-			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
-		}
-		if ( purchase ) {
-			const relativePath = managePurchase( siteSlug, purchase.id );
-			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
-		}
-
-		return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
-	};
+	const createProductURL = getPurchaseURLCallback( siteSlug, urlQueryArgs );
 
 	// Sends a user to a page based on whether there are subtypes.
 	const selectProduct: PurchaseCallback = (
@@ -183,32 +164,38 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	);
 
 	return (
-		<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
-			<PageViewTracker
-				path={ viewTrackerPath }
-				properties={ viewTrackerProps }
-				title="Plans"
-				options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
-			/>
+		<>
+			<QueryJetpackSaleCoupon />
+			{ nav }
 
-			{ header }
+			<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
+				<PageViewTracker
+					path={ viewTrackerPath }
+					properties={ viewTrackerProps }
+					title="Plans"
+					options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
+				/>
 
-			<ProductGrid
-				duration={ currentDuration }
-				urlQueryArgs={ urlQueryArgs }
-				planRecommendation={ planRecommendation }
-				onSelectProduct={ selectProduct }
-				onDurationChange={ trackDurationChange }
-				scrollCardIntoView={ scrollCardIntoView }
-				createButtonURL={ createProductURL }
-			/>
+				{ header }
 
-			{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
-			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-			{ siteId && <QuerySites siteId={ siteId } /> }
+				<ProductGrid
+					duration={ currentDuration }
+					urlQueryArgs={ urlQueryArgs }
+					planRecommendation={ planRecommendation }
+					onSelectProduct={ selectProduct }
+					onDurationChange={ trackDurationChange }
+					scrollCardIntoView={ scrollCardIntoView }
+					createButtonURL={ createProductURL }
+				/>
 
-			{ footer }
-		</Main>
+				<QueryProductsList type="jetpack" />
+				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
+				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+				{ siteId && <QuerySites siteId={ siteId } /> }
+
+				{ footer }
+			</Main>
+		</>
 	);
 };
 

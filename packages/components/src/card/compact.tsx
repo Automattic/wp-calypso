@@ -1,4 +1,3 @@
-import React from 'react';
 import Card from '.';
 import type { Props, TagName } from '.';
 

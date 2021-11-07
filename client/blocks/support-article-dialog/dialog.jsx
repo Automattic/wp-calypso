@@ -2,14 +2,13 @@ import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { memoize } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import EmbedContainer from 'calypso/components/embed-container';
-import Emojify from 'calypso/components/emojify';
 import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 import { closeSupportArticleDialog as closeDialog } from 'calypso/state/inline-support-article/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
@@ -84,28 +83,26 @@ export const SupportArticleDialog = ( {
 			onCancel={ closeSupportArticleDialog }
 			onClose={ closeSupportArticleDialog }
 		>
-			<Emojify>
-				{ siteId && <QueryReaderSite siteId={ +siteId } /> }
-				{ shouldQueryReaderPost && <QueryReaderPost postKey={ postKey } /> }
-				{ shouldRequestAlternates && (
-					<QuerySupportArticleAlternates postId={ postId } blogId={ SUPPORT_BLOG_ID } />
+			{ siteId && <QueryReaderSite siteId={ +siteId } /> }
+			{ shouldQueryReaderPost && <QueryReaderPost postKey={ postKey } /> }
+			{ shouldRequestAlternates && (
+				<QuerySupportArticleAlternates postId={ postId } blogId={ SUPPORT_BLOG_ID } />
+			) }
+			<article className="support-article-dialog__story">
+				<SupportArticleHeader post={ post } isLoading={ isLoading } />
+				{ isLoading ? (
+					<Placeholders />
+				) : (
+					/*eslint-disable react/no-danger */
+					<EmbedContainer>
+						<div
+							className="support-article-dialog__story-content"
+							dangerouslySetInnerHTML={ { __html: post?.content } }
+						/>
+					</EmbedContainer>
+					/*eslint-enable react/no-danger */
 				) }
-				<article className="support-article-dialog__story">
-					<SupportArticleHeader post={ post } isLoading={ isLoading } />
-					{ isLoading ? (
-						<Placeholders />
-					) : (
-						/*eslint-disable react/no-danger */
-						<EmbedContainer>
-							<div
-								className="support-article-dialog__story-content"
-								dangerouslySetInnerHTML={ { __html: post?.content } }
-							/>
-						</EmbedContainer>
-						/*eslint-enable react/no-danger */
-					) }
-				</article>
-			</Emojify>
+			</article>
 		</Dialog>
 	);
 };

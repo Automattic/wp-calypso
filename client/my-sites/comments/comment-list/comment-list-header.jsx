@@ -1,6 +1,5 @@
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import HeaderCake from 'calypso/components/header-cake';

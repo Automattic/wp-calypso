@@ -1,4 +1,4 @@
-import React from 'react';
+import { isValidElement, cloneElement } from 'react';
 
 /**
  * Prevent widows by replacing spaces between the last `wordsToKeep` words in the text with non-breaking spaces
@@ -69,11 +69,13 @@ function preventWidowsInPart( part, spacesToSubstitute ) {
 	 * Then return a cloned component with the possibly modified
 	 * children, along with the tally of substituted spaces.
 	 */
-	if ( React.isValidElement( part ) && part.props.children ) {
+	if ( isValidElement( part ) && part.props.children ) {
 		const result = preventWidowsInPart( part.props.children, spacesToSubstitute );
 		if ( result.substituted > 0 ) {
+			// pass children as spread arguments to prevent missing array key warnings
+			const partArray = Array.isArray( result.part ) ? result.part : [ result.part ];
 			return {
-				part: React.cloneElement( part, part.props, result.part ),
+				part: cloneElement( part, part.props, ...partArray ),
 				substituted: result.substituted,
 			};
 		}

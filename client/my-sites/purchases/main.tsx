@@ -1,21 +1,21 @@
 import config from '@automattic/calypso-config';
-import i18nCalypso, { useTranslate } from 'i18n-calypso';
-import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { logToLogstash } from 'calypso/lib/logstash';
 import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
 import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getPurchaseListUrlFor,
@@ -28,24 +28,20 @@ import Subscriptions from './subscriptions';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 
 function useLogPurchasesError( message: string ) {
-	const reduxDispatch = useDispatch();
-
 	return useCallback(
 		( error ) => {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message,
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						env: config( 'env_id' ),
-						type: 'site_level_purchases',
-						message: String( error ),
-					},
-				} )
-			);
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'site_level_purchases',
+					message: String( error ),
+				},
+			} );
 		},
-		[ reduxDispatch, message ]
+		[ message ]
 	);
 }
 
@@ -62,32 +58,24 @@ export function Purchases(): JSX.Element {
 				brandFont
 				className="purchases__page-heading"
 				headerText={ titles.sectionTitle }
-				subHeaderText={
-					i18nCalypso.hasTranslation(
-						'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
-					)
-						? translate(
-								'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									components: {
-										learnMoreLink: (
-											<InlineSupportLink supportContext="purchases" showIcon={ false } />
-										),
-									},
-								}
-						  )
-						: translate( 'View, manage, or cancel your plan and other purchases for this site.' )
-				}
+				subHeaderText={ translate(
+					'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
+						},
+					}
+				) }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Active Upgrades' } siteSlug={ siteSlug } />
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
 				<Subscriptions />
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -116,7 +104,7 @@ export function PurchaseDetails( {
 				title="Purchases > Manage Purchase"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
@@ -132,7 +120,7 @@ export function PurchaseDetails( {
 					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -157,7 +145,7 @@ export function PurchaseCancel( {
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
@@ -168,7 +156,7 @@ export function PurchaseCancel( {
 					getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -176,11 +164,9 @@ export function PurchaseCancel( {
 export function PurchaseChangePaymentMethod( {
 	purchaseId,
 	siteSlug,
-	cardId,
 }: {
 	purchaseId: number;
 	siteSlug: string;
-	cardId: string;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError(
@@ -197,19 +183,17 @@ export function PurchaseChangePaymentMethod( {
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
 				<ChangePaymentMethod
-					cardId={ cardId }
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					isFullWidth={ true }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -234,7 +218,7 @@ export function PurchaseCancelDomain( {
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
@@ -244,7 +228,7 @@ export function PurchaseCancelDomain( {
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }

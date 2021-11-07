@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { findIndex } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';

@@ -1,6 +1,6 @@
 import i18n from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import ConnectedAppsComponent from 'calypso/me/connected-applications';
 import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
@@ -20,7 +20,7 @@ export function password( context, next ) {
 		page.replace( window.location.pathname );
 	}
 
-	context.primary = React.createElement( PasswordComponent, {
+	context.primary = createElement( PasswordComponent, {
 		path: context.path,
 	} );
 	next();
@@ -29,28 +29,28 @@ export function password( context, next ) {
 export function twoStep( context, next ) {
 	const TwoStepComponent = require( 'calypso/me/two-step' ).default;
 
-	context.primary = React.createElement( TwoStepComponent, {
+	context.primary = createElement( TwoStepComponent, {
 		path: context.path,
 	} );
 	next();
 }
 
 export function connectedApplications( context, next ) {
-	context.primary = React.createElement( ConnectedAppsComponent, {
+	context.primary = createElement( ConnectedAppsComponent, {
 		path: context.path,
 	} );
 	next();
 }
 
 export function accountRecovery( context, next ) {
-	context.primary = React.createElement( AccountRecoveryComponent, {
+	context.primary = createElement( AccountRecoveryComponent, {
 		path: context.path,
 	} );
 	next();
 }
 
 export function securityCheckup( context, next ) {
-	context.primary = React.createElement( SecurityCheckupComponent, {
+	context.primary = createElement( SecurityCheckupComponent, {
 		path: context.path,
 	} );
 	next();
@@ -70,7 +70,7 @@ export function socialLogin( context, next ) {
 		: null;
 	const socialService = getSocialServiceFromClientId( client_id );
 
-	context.primary = React.createElement( SocialLoginComponent, {
+	context.primary = createElement( SocialLoginComponent, {
 		path: context.path,
 		socialService,
 		socialServiceResponse,

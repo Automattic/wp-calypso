@@ -1,7 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import DiffViewer from 'calypso/components/diff-viewer';
 import FoldableCard from 'calypso/components/foldable-card';

@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import Badge from 'calypso/components/badge';
 import { getAnnualPrice, getMonthlyPrice } from 'calypso/lib/gsuite';
 

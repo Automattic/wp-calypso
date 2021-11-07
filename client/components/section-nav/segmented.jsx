@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Children, Component } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 
 import './segmented.scss';
@@ -32,7 +32,7 @@ class NavSegmented extends Component {
 	}
 
 	getControlItems() {
-		return React.Children.map( this.props.children, ( child, index ) => (
+		return Children.map( this.props.children, ( child, index ) => (
 			<SegmentedControl.Item { ...child.props } key={ index } />
 		) );
 	}

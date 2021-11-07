@@ -1,8 +1,8 @@
 import { Card } from '@automattic/components';
-import React from 'react';
+import { Component } from 'react';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 
-export default class ReaderSiteStreamLinkExample extends React.Component {
+export default class ReaderSiteStreamLinkExample extends Component {
 	static displayName = 'ReaderSiteStreamLinkExample';
 
 	render() {

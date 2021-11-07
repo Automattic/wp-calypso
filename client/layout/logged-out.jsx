@@ -1,8 +1,6 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
-import { get, startsWith, flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
 import AsyncLoad from 'calypso/components/async-load';
@@ -16,7 +14,6 @@ import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
 } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
@@ -28,6 +25,7 @@ const LayoutLoggedOut = ( {
 	isPopup,
 	isJetpackWooCommerceFlow,
 	isJetpackWooDnaFlow,
+	isP2Login,
 	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
@@ -60,6 +58,7 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
+		'is-p2-login': isP2Login,
 	};
 
 	let masterbar = null;
@@ -125,29 +124,28 @@ LayoutLoggedOut.propTypes = {
 	showOAuth2Layout: PropTypes.bool,
 };
 
-export default compose(
-	withCurrentRoute,
-	connect( ( state, { currentSection, currentRoute } ) => {
+export default withCurrentRoute(
+	connect( ( state, { currentSection, currentRoute, currentQuery } ) => {
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 		const sectionTitle = currentSection?.title ?? '';
-		const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
-		const isWhiteLogin = startsWith( currentRoute, '/log-in/new' );
+		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+		const isWhiteLogin = currentRoute.startsWith( '/log-in/new' );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow;
-		const isPopup = '1' === get( getCurrentQueryArguments( state ), 'is_popup' );
+		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow || isP2Login;
+		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
-		const isJetpackWooCommerceFlow =
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
-		const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
+		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
+		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 
 		return {
-			currentRoute,
 			isJetpackLogin,
 			isWhiteLogin,
 			isPopup,
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
+			isP2Login,
 			wccomFrom,
 			masterbarIsHidden:
 				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
@@ -157,5 +155,5 @@ export default compose(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			useOAuth2Layout: showOAuth2Layout( state ),
 		};
-	} )
-)( LayoutLoggedOut );
+	} )( LayoutLoggedOut )
+);

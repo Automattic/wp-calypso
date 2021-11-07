@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, isEqual, keys, omit, pick } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';

@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';

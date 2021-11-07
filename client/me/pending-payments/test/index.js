@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import { PendingPayments, requestId } from '../index';
 
 jest.mock( 'calypso/state/data-layer/http-data', () => ( {

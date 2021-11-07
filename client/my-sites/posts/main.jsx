@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,7 +15,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class PostsMain extends React.Component {
+class PostsMain extends Component {
 	getAnalyticsPath() {
 		const { siteId, statusSlug, author } = this.props;
 		let analyticsPath = '/posts';

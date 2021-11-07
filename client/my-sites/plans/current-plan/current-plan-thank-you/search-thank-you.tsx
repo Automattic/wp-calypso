@@ -1,32 +1,22 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import versionCompare from 'calypso/lib/version-compare';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { ReactElement } from 'react';
 import ThankYou, { ThankYouCtaType } from './thank-you';
 
 const ThankYouCta: ThankYouCtaType = ( {
 	dismissUrl,
-	jetpackVersion,
+	jetpackSearchCustomizeUrl,
 	recordThankYouClick,
-	siteAdminUrl,
 } ) => {
 	const translate = useTranslate();
 	return (
 		<>
 			<Button
 				primary
-				href={
-					jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
-						? siteAdminUrl + 'plugins.php'
-						: siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search'
-				}
+				href={ jetpackSearchCustomizeUrl }
 				onClick={ () => recordThankYouClick( 'search', 'customizer' ) }
 			>
-				{ jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
-					? translate( 'Update Jetpack' )
-					: translate( 'Try Search and customize it now' ) }
+				{ translate( 'Customize Search' ) }
 			</Button>
 			<Button href={ dismissUrl }>{ translate( 'Skip for now' ) }</Button>
 		</>
@@ -35,10 +25,6 @@ const ThankYouCta: ThankYouCtaType = ( {
 
 const SearchProductThankYou = (): ReactElement => {
 	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const jetpackVersion = useMemo( () => selectedSite?.options?.jetpack_version || 0, [
-		selectedSite,
-	] );
 	return (
 		<ThankYou
 			illustration="/calypso/images/illustrations/thankYou.svg"
@@ -48,16 +34,10 @@ const SearchProductThankYou = (): ReactElement => {
 			<>
 				<p>{ translate( 'We are currently indexing your site.' ) }</p>
 				<p>
-					{ jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
-						? translate(
-								"In the meantime you'll need to update Jetpack to version 8.4 or higher in order " +
-									"to get the most out of Jetpack Search. Once you've updated Jetpack, " +
-									"we'll configure Search for you. You can try search and customize it to your liking."
-						  )
-						: translate(
-								'In the meantime, we have configured Jetpack Search on your site — ' +
-									'you should try customizing it in your traditional WordPress dashboard.'
-						  ) }
+					{ translate(
+						'In the meantime, we have configured Jetpack Search on your site — ' +
+							'you should try customizing it in your traditional WordPress dashboard.'
+					) }
 				</p>
 			</>
 		</ThankYou>

@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */

@@ -1,9 +1,3 @@
-import React from 'react';
-
-/**
- * Module variables
- */
-
 const darkColorSchemeLogo = (
 	<g transform="translate(360.000000, 0.000000) scale(6.5)" fillRule="nonzero">
 		<g fill="#FFF">

@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';

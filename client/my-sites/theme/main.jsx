@@ -7,11 +7,12 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import photon from 'photon';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { cloneElement, Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -25,16 +26,18 @@ import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -61,7 +64,7 @@ import ThemeNotFoundError from './theme-not-found-error';
 
 import './style.scss';
 
-class ThemeSheet extends React.Component {
+class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
 
 	static propTypes = {
@@ -99,6 +102,9 @@ class ThemeSheet extends React.Component {
 			label: PropTypes.string,
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
+		} ),
+		blockEditorSettings: PropTypes.shape( {
+			is_fse_eligible: PropTypes.bool,
 		} ),
 	};
 
@@ -176,15 +182,24 @@ class ThemeSheet extends React.Component {
 	};
 
 	renderBar = () => {
+		const { author, blockEditorSettings, name, taxonomies, translate } = this.props;
+
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
-		const title = this.props.name || placeholder;
-		const tag = this.props.author
-			? this.props.translate( 'by %(author)s', { args: { author: this.props.author } } )
-			: placeholder;
+		const title = name || placeholder;
+		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
+		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+		const showBetaBadge = isFullSiteEditingTheme( { taxonomies } ) && isFSEEligible;
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">{ title }</span>
+				<span className="theme__sheet-bar-title">
+					{ title }
+					{ showBetaBadge && (
+						<Badge type="warning-clear" className="theme__sheet-badge-beta">
+							{ translate( 'Beta' ) }
+						</Badge>
+					) }
+				</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -501,13 +516,7 @@ class ThemeSheet extends React.Component {
 								{
 									components: {
 										InlineSupportLink: (
-											<InlineSupportLink
-												showIcon={ false }
-												supportPostId={ 174865 }
-												supportLink={ localizeUrl(
-													'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/'
-												) }
-											/>
+											<InlineSupportLink supportContext="themes-unsupported" showIcon={ false } />
 										),
 									},
 								}
@@ -605,6 +614,7 @@ class ThemeSheet extends React.Component {
 	renderButton = () => {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
+		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const { isActive } = this.props;
 
@@ -613,11 +623,15 @@ class ThemeSheet extends React.Component {
 				className="theme__sheet-primary-button"
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
-				primary={ isActive }
+				primary
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
-				{ this.props.isWpcomTheme && this.renderPrice() }
+				{ price && this.props.isWpcomTheme && (
+					<Badge type="info" className="theme__sheet-badge-beta">
+						{ price }
+					</Badge>
+				) }
 			</Button>
 		);
 	};
@@ -656,7 +670,7 @@ class ThemeSheet extends React.Component {
 
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
-		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
+		const { canonicalUrl, description, name: themeName } = this.props;
 		const title =
 			themeName &&
 			translate( '%(themeName)s Theme', {
@@ -733,7 +747,7 @@ class ThemeSheet extends React.Component {
 		}
 
 		if ( hasUpsellBanner ) {
-			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
+			previewUpsellBanner = cloneElement( pageUpsellBanner, {
 				className: 'theme__preview-upsell-banner',
 			} );
 		}
@@ -743,7 +757,7 @@ class ThemeSheet extends React.Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
-				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				<QueryUserPurchases />
 				{
 					siteId && (
 						<QuerySitePurchases siteId={ siteId } />
@@ -786,6 +800,7 @@ class ThemeSheet extends React.Component {
 }
 
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
+const ThemeSheetWithEditorSettings = withBlockEditorSettings( ConnectedThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
 	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack, demoUrl } = props;
@@ -812,7 +827,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	}
 
 	return (
-		<ConnectedThemeSheet
+		<ThemeSheetWithEditorSettings
 			{ ...props }
 			demo_uri={ demoUrl }
 			siteId={ siteId }
@@ -829,8 +844,7 @@ export default connect(
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, id );
 		const backPath = getBackPath( state );
-		const currentUserId = getCurrentUserId( state );
-		const isCurrentUserPaid = isUserPaid( state, currentUserId );
+		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, id );
 		const siteIdOrWpcom = siteId || 'wpcom';
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
@@ -844,10 +858,9 @@ export default connect(
 			siteId,
 			siteSlug,
 			backPath,
-			currentUserId,
 			isCurrentUserPaid,
 			isWpcomTheme,
-			isLoggedIn: !! currentUserId,
+			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, id, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isVip: isVipSite( state, siteId ),

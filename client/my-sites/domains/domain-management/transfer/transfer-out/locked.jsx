@@ -1,6 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { registrar as registrarNames } from 'calypso/lib/domains/constants';
@@ -8,7 +8,7 @@ import { requestDomainTransferCode } from 'calypso/state/domains/transfer/action
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import TransferOutWarning from './warning.jsx';
 
-class Locked extends React.Component {
+class Locked extends Component {
 	unlockAndRequestTransferCode = () => {
 		const { privateDomain } = getSelectedDomain( this.props );
 

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import HeaderControl from './header-controls';
 
@@ -9,7 +9,7 @@ import HeaderControl from './header-controls';
  */
 const noop = () => {};
 
-class PostScheduleHeader extends React.Component {
+class PostScheduleHeader extends Component {
 	static propTypes = {
 		date: PropTypes.object,
 		inputChronoDisplayed: PropTypes.bool,

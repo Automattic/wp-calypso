@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import accept from 'calypso/lib/accept';
 import EditEmail from './edit-email';
 import ManageContact from './manage-contact';

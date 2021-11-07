@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';

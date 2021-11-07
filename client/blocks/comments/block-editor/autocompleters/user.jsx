@@ -1,7 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import React from 'react';
-
 export default ( suggestions ) => ( {
 	name: 'users',
 	className: 'editor-autocompleters__user',

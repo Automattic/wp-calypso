@@ -69,5 +69,5 @@
 	"semanticCommitType": "chore",
 	"masterIssue": true,
 	"masterIssueTitle": "Renovate Dependency Updates",
-	"reviewers": [ "team:@Automattic/team-calypso-platform" ]
+	"reviewers": [ "team:team-calypso-platform" ]
 }

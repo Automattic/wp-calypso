@@ -1,9 +1,8 @@
 import '@automattic/calypso-config';
-
+import { shuffle } from '@automattic/js-utils';
 import '../../constants';
-import { getDesignUrl, getDesignImageUrl, getAvailableDesigns } from '../available-designs';
+import { getDesignUrl, getAvailableDesigns } from '../available-designs';
 import { availableDesignsConfig } from '../available-designs-config';
-import { shuffleArray } from '../shuffle';
 import type { Design } from '../../types';
 
 jest.mock( '@automattic/calypso-config', () => ( {
@@ -12,10 +11,10 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: () => false,
 } ) );
 
-jest.mock( '../shuffle', () => ( {
-	// Mock the shuffleArray function to ensure test repeatability.
+jest.mock( '@automattic/js-utils', () => ( {
+	// Mock the shuffle function to ensure test repeatability.
 	// The function itself is unit-tested separately
-	shuffleArray: jest.fn( ( array ) => array ),
+	shuffle: jest.fn( ( array ) => array ),
 } ) );
 
 jest.mock( '../available-designs-config', () => {
@@ -28,7 +27,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		features: [],
 	};
@@ -38,7 +37,7 @@ jest.mock( '../available-designs-config', () => {
 		slug: 'mock-premium-design-slug',
 		template: 'mock-premium-design-template',
 		theme: 'mock-premium-design-theme',
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		features: [],
 	};
@@ -52,7 +51,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: true,
 		features: [],
 	};
@@ -66,7 +65,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		is_fse: true,
 		features: [],
@@ -81,7 +80,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		is_alpha: true,
 		features: [],
@@ -92,7 +91,7 @@ jest.mock( '../available-designs-config', () => {
 		slug: 'mock-blank-canvas-design-slug',
 		template: 'mock-blank-canvas-design-template',
 		theme: 'mock-blank-canvas-design-theme',
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		features: [],
 	};
@@ -128,16 +127,6 @@ describe( 'Design Picker design utils', () => {
 
 			expect( getDesignUrl( mockDesignWithoutFonts, mockLocale ) ).toEqual(
 				`https://public-api.wordpress.com/rest/v1/template/demo/${ mockDesignWithoutFonts.theme }/${ mockDesignWithoutFonts.template }?site_title=${ mockDesignWithoutFonts.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
-			);
-		} );
-	} );
-
-	describe( 'getDesignImageUrl', () => {
-		it( 'should compose the correct design API URL', () => {
-			const mockDesign = availableDesignsConfig.featured[ 0 ];
-
-			expect( getDesignImageUrl( mockDesign ) ).toMatchInlineSnapshot(
-				`"/calypso/images/design-screenshots/mock-design-slug_mock-design-template_mock-design-theme.webp?v=3"`
 			);
 		} );
 	} );
@@ -198,15 +187,15 @@ describe( 'Design Picker design utils', () => {
 		} );
 
 		it( 'should randomize the results order when the randomize flag is specified', () => {
-			// Since `shuffleArray` is already unit-tested, we just need to check
+			// Since `shuffle` is already unit-tested, we just need to check
 			// that it's only called when the `randomize` flag is specified.
 			const designs = getAvailableDesigns( { randomize: false } ).featured;
-			expect( shuffleArray ).not.toHaveBeenCalled();
+			expect( shuffle ).not.toHaveBeenCalled();
 
 			getAvailableDesigns( { randomize: true } ).featured;
 
-			expect( shuffleArray ).toBeCalledTimes( 1 );
-			expect( shuffleArray ).toBeCalledWith( designs );
+			expect( shuffle ).toBeCalledTimes( 1 );
+			expect( shuffle ).toBeCalledWith( designs );
 		} );
 	} );
 } );

@@ -1,9 +1,9 @@
 import { localize } from 'i18n-calypso';
 import { startsWith } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 
-class CartEmpty extends React.Component {
+class CartEmpty extends Component {
 	render() {
 		return (
 			<div>

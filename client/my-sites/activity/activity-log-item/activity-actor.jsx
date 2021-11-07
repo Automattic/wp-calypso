@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';

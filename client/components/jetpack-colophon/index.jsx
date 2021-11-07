@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
 import './style.scss';

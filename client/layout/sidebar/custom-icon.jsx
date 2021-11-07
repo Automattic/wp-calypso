@@ -8,8 +8,6 @@
  *   source other than grid icons or material icons.
  **/
 
-import React from 'react';
-
 const SidebarCustomIcon = ( { icon, ...rest } ) => {
 	if ( ! icon ) {
 		return null;

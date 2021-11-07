@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import { SiteTitleButton } from 'calypso/layout/guided-tours/button-labels';
 import {
 	ButtonRow,

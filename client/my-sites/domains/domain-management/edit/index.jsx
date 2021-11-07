@@ -1,10 +1,14 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import { getSelectedDomain, getDomainTypeText } from 'calypso/lib/domains';
-import { registrar as registrarNames, type as domainTypes } from 'calypso/lib/domains/constants';
+import {
+	registrar as registrarNames,
+	type as domainTypes,
+	domainInfoContext,
+} from 'calypso/lib/domains/constants';
 import { getWpcomDomain } from 'calypso/lib/domains/get-wpcom-domain';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import MaintenanceCard from 'calypso/my-sites/domains/domain-management/components/domain/maintenance-card';
@@ -20,7 +24,7 @@ import WpcomDomainType from './domain-types/wpcom-domain-type';
 
 import './style.scss';
 
-class Edit extends React.Component {
+class Edit extends Component {
 	render() {
 		const domain = this.props.domains && getSelectedDomain( this.props );
 
@@ -48,7 +52,7 @@ class Edit extends React.Component {
 		if ( this.props.hasDomainOnlySite ) {
 			return this.props.translate( 'Parked Domain' );
 		}
-		return getDomainTypeText( domain, this.props.translate );
+		return getDomainTypeText( domain, this.props.translate, domainInfoContext.PAGE_TITLE );
 	}
 
 	getDetailsForType = ( type ) => {

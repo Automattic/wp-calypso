@@ -1,4 +1,3 @@
-import React from 'react';
 import GSuiteNewUserListExample from './new-user-list';
 
 const GSuiteExample = () => {

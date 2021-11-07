@@ -1,4 +1,3 @@
-import React from 'react';
 import HeaderCake from 'calypso/components/header-cake';
 
 function goBack() {

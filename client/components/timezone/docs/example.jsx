@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import Timezone from 'calypso/components/timezone';
 
 export default class TimezoneExample extends PureComponent {

@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { EditGravatar } from 'calypso/blocks/edit-gravatar';
 import ImageEditor from 'calypso/blocks/image-editor';
 import DropZone from 'calypso/components/drop-zone';

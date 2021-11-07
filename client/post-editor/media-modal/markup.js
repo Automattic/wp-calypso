@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
+import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import { deserialize } from 'calypso/lib/media-serialization';
 import * as MediaUtils from 'calypso/lib/media/utils';
@@ -42,7 +42,7 @@ const Markup = {
 	 * @returns {string}       A link markup string
 	 */
 	link: function ( media ) {
-		const element = React.createElement(
+		const element = createElement(
 			'a',
 			{
 				href: media.URL,
@@ -60,9 +60,8 @@ const Markup = {
 	 * Adapted from WordPress.
 	 *
 	 * @copyright 2015 by the WordPress contributors.
-	 * @license See CREDITS.md.
+	 * @license LGPL-2.1
 	 * @see https://github.com/WordPress/WordPress/blob/4.3/wp-includes/js/tinymce/plugins/wpeditimage/plugin.js#L97-L157
-	 *
 	 * @param  {object} site           A site object
 	 * @param  {(object|string)} media A media object or markup string
 	 * @returns {string}                A caption React element, or null if not
@@ -151,7 +150,7 @@ const Markup = {
 				urlOptions = { size: options.size };
 			}
 
-			const img = React.createElement( 'img', {
+			const img = createElement( 'img', {
 				src: MediaUtils.url( media, urlOptions ),
 				alt: media.alt || media.title,
 				width: isFinite( width ) ? width : null,

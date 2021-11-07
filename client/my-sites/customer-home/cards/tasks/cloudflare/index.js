@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import growthSummitIllustration from 'calypso/assets/images/customer-home/illustration--task-cloudflare.svg';
 import { TASK_CLOUDFLARE } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';

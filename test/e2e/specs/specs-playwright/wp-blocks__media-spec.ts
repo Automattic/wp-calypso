@@ -6,7 +6,7 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	MediaHelper,
 	NewPostFlow,
 	GutenbergEditorPage,
@@ -38,8 +38,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'gutenbergSimpleSiteUser' } );
 	} );
 
 	it( 'Start new post', async function () {
@@ -53,25 +53,37 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	} );
 
 	it( `${ ImageBlock.blockName } block: upload image file`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( ImageBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			ImageBlock.blockName,
+			ImageBlock.blockEditorSelector
+		);
 		const imageBlock = new ImageBlock( blockHandle );
 		await imageBlock.upload( testFiles.image.fullpath );
 	} );
 
 	it( `${ ImageBlock.blockName } block: upload image file with reserved URL characters`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( ImageBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			ImageBlock.blockName,
+			ImageBlock.blockEditorSelector
+		);
 		const imageBlock = new ImageBlock( blockHandle );
 		await imageBlock.upload( testFiles.image_reserved_name.fullpath );
 	} );
 
 	it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( AudioBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			AudioBlock.blockName,
+			AudioBlock.blockEditorSelector
+		);
 		const audioBlock = new AudioBlock( blockHandle );
 		await audioBlock.upload( testFiles.audio.fullpath );
 	} );
 
 	it( `${ FileBlock.blockName } block: upload audio file`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( FileBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			FileBlock.blockName,
+			FileBlock.blockEditorSelector
+		);
 		const fileBlock = new FileBlock( blockHandle );
 		await fileBlock.upload( testFiles.audio.fullpath );
 	} );

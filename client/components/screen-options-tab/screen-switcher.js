@@ -1,5 +1,4 @@
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';

@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import qs from 'qs';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

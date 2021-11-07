@@ -173,12 +173,12 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 		if (
-			! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) &&
+			! /^calypso(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
 			! includes( EVENT_NAME_EXCEPTIONS, eventName )
 		) {
-			//eslint-disable-next-line no-console
+			// eslint-disable-next-line no-console
 			console.error(
-				'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,}$/ and is ' +
+				'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z0-9]+){2,}$/ and is ' +
 					'not a listed exception. Please use a compliant event name.',
 				eventName
 			);
@@ -189,12 +189,13 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
-				console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
+				// eslint-disable-next-line no-console
+				console.error( errorMessage, eventProperties );
 				return;
 			}
 
 			if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
-				//eslint-disable-next-line no-console
+				// eslint-disable-next-line no-console
 				console.error(
 					'Tracks: Event `%s` will be rejected because property name `%s` does not match /^[a-z_][a-z0-9_]*$/. ' +
 						'Please use a compliant property name.',
@@ -204,7 +205,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 			}
 
 			if ( TRACKS_SPECIAL_PROPS_NAMES.indexOf( key ) !== -1 ) {
-				//eslint-disable-next-line no-console
+				// eslint-disable-next-line no-console
 				console.error(
 					"Tracks: Event property `%s` will be overwritten because it uses one of Tracks' internal prop name: %s. " +
 						'Please use another property name.',

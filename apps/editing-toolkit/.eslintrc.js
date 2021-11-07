@@ -1,3 +1,5 @@
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
+
 module.exports = {
 	extends: [ 'plugin:@wordpress/eslint-plugin/i18n' ],
 	rules: {
@@ -14,4 +16,10 @@ module.exports = {
 		'wpcalypso/jsx-classname-namespace': 0,
 	},
 	ignorePatterns: [ '**/dist/*', '**/synced-newspack-blocks/*' ],
+	overrides: [
+		{
+			files: [ './bin/**/*', './webpack.config.js' ],
+			...nodeConfig,
+		},
+	],
 };

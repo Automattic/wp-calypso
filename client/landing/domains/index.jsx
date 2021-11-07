@@ -1,7 +1,7 @@
 import '@automattic/calypso-polyfills';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import RenderDom from 'react-dom';
 import Main from 'calypso/components/main';
 import InvalidActionPage from './invalid-action';

@@ -2,7 +2,7 @@
  * @group calypso-pr
  */
 
-import { DataHelper, LoginFlow, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
@@ -14,20 +14,19 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 
 	describe.each( [
 		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'wooCommerceUser' },
+		{ siteType: 'Atomic', user: 'eCommerceUser' },
 	] )( 'Search from Support Card ($siteType)', function ( { user } ) {
 		let supportComponent: SupportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
-		it( 'Displays default entries on card', async function () {
+		it( 'Displays default entries', async function () {
 			supportComponent = new SupportComponent( page );
 			await supportComponent.showSupportCard();
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
+			await supportComponent.defaultStateShown();
 		} );
 
 		it( 'Enter valid search keyword', async function () {
@@ -35,12 +34,9 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 			await supportComponent.search( keyword );
 		} );
 
-		it( 'Search results are shown', async function () {
-			const supportCount = await supportComponent.getSupportResultsCount();
-			expect( supportCount ).toBe( 4 );
-
-			const adminCount = await supportComponent.getAdminResultsCount();
-			expect( adminCount ).toBe( 3 );
+		it( 'Search results are shown with a valid search keyword', async function () {
+			const results = await supportComponent.getResults( 'article' );
+			expect( results.length ).toBeGreaterThan( 0 );
 		} );
 
 		it( 'Clear keyword', async function () {
@@ -48,34 +44,27 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		} );
 
 		it( 'Default entries are shown again', async function () {
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
-
-			const supportResults = await supportComponent.getSupportResultsCount();
-			expect( supportResults ).toBe( 0 );
-
-			const adminResults = await supportComponent.getAdminResultsCount();
-			expect( adminResults ).toBe( 0 );
+			await supportComponent.defaultStateShown();
 		} );
 
-		it( 'Enter invalid search keyword', async function () {
+		// Invalid keyword search often takes more than 30s to resolve.
+		// See: https://github.com/Automattic/wp-calypso/issues/55478
+		it.skip( 'Enter invalid search keyword', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
 		} );
 
-		it( 'No search results are shown', async function () {
-			await supportComponent.noResults();
+		it.skip( 'No search results are shown', async function () {
+			await supportComponent.noResultsShown();
 		} );
 
 		it( 'Enter empty search keyword', async function () {
 			const keyword = '        ';
-			await supportComponent.clearSearch();
 			await supportComponent.search( keyword );
 		} );
 
-		it( 'Continues to display default results', async function () {
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
+		it( 'No search results are shown with an empty search keyword', async function () {
+			await supportComponent.noResultsShown();
 		} );
 	} );
 } );

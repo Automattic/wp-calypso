@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 

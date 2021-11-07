@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import * as React from 'react';
 import DesignPicker from '../components';
 import { getAvailableDesigns } from '../utils';
 import type { DesignPickerProps } from '../components';
@@ -8,10 +7,6 @@ import type { Design } from '../types';
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn().mockImplementation( ( feature: string ) => {
 		switch ( feature ) {
-			case 'gutenboarding/landscape-preview':
-				return false;
-			case 'gutenboarding/mshot-preview':
-				return false;
 			case 'gutenboarding/alpha-templates':
 				return true;
 			default:
@@ -47,7 +42,7 @@ describe( '<DesignPicker /> integration', () => {
 		render( <DesignPicker locale={ MOCK_LOCALE } onSelect={ jest.fn() } /> );
 
 		const firstDesignButton = screen.getAllByRole( 'button' )[ 0 ];
-		expect( firstDesignButton ).toHaveTextContent( /empty\spage/i );
+		expect( firstDesignButton ).toHaveTextContent( /blank\scanvas/i );
 	} );
 	( [ 'light', 'dark' ] as DesignPickerProps[ 'theme' ][] ).forEach( ( theme ) =>
 		it( `Should have design-picker--theme-${ theme } class when theme prop is set to ${ theme }`, () => {

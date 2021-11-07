@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
@@ -35,15 +36,30 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
-.wpcom-editor-welcome-tour__resume-btn {
+.wpcom-editor-welcome-tour__minimized {
 	border-radius: 2px;
 	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
 		0 1px 1px rgba( 0, 0, 0, 0.08 );
 	background-color: $white;
 	color: $black;
 
-	&.components-button {
+	.components-button {
 		height: 44px;
+
+		.wpcom-editor-welcome-tour__minimized-tour-index {
+			color: $gray-600;
+		}
+
+		svg {
+			color: #50575e;
+		}
+
+		&:hover {
+			.wpcom-editor-welcome-tour__minimized-tour-index,
+			svg {
+				color: inherit;
+			}
+		}
 	}
 }
 
@@ -114,7 +130,17 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 
 	.components-card__media {
-		min-height: 260px;
+		height: 0;
+		padding-top: math.percentage( math.div( math.ceil( math.div( 1, 1.53 ) * 100 ), 100 ) ); // img width:height ratio (1:1.53)
+		position: relative;
+		width: 100%;
+
+		img {
+			left: 0;
+			position: absolute;
+			top: 0;
+			width: 100%;
+		}
 	}
 
 	.components-guide__page-control {
@@ -143,25 +169,36 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	padding: $grid-unit-15;
 	position: absolute;
 	right: 0;
+	z-index: 1; // z-index is needed because overlay controls are written before components-card__media, and so ends up under the image
 
 	.components-button {
 		width: 32px;
 		min-width: 32px;
 		height: 32px;
 		background: $welcome-tour-button-background-color;
-		opacity: 0;
 		transition: opacity 200ms;
+		opacity: 0.7;
+
+		&:active {
+			opacity: 0.9;
+		}
 	}
 
-	.wpcom-editor-welcome-tour-frame:hover &,
-	.wpcom-editor-welcome-tour-frame:focus-within &,
-	&.welcome-tour-card__overlay-controls-visible {
+	@media ( hover: hover ) and ( pointer: fine ) {
+		// styles only applicable for hoverable viewports with precision pointing devices connected (eg: mouse)
 		.components-button {
-			opacity: 0.7;
+			opacity: 0;
+		}
 
-			&:hover,
-			&:focus {
-				opacity: 0.9;
+		.wpcom-editor-welcome-tour-frame:hover &,
+		.wpcom-editor-welcome-tour-frame:focus-within & {
+			.components-button {
+				opacity: 0.7;
+
+				&:hover,
+				&:focus {
+					opacity: 0.9;
+				}
 			}
 		}
 	}

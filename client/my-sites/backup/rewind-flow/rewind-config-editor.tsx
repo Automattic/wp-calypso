@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, ChangeEvent } from 'react';
+import { FunctionComponent, ChangeEvent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import { RewindConfig } from './types';

@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import './style.scss';
 
-class PostExcerptLink extends React.Component {
+class PostExcerptLink extends Component {
 	static propTypes = {
 		siteName: PropTypes.string,
 		postUrl: PropTypes.string,

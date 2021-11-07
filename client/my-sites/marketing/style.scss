@@ -585,6 +585,7 @@
 .sharing-buttons__fieldset label {
 	display: flex;
 	cursor: pointer;
+	font-weight: normal;
 }
 
 .sharing-buttons__fieldset .support-info {
@@ -603,7 +604,7 @@
 	margin: 5px 0;
 	font-size: $font-body-small;
 	font-style: italic;
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 }
 
 .sharing-buttons-preview {
@@ -792,7 +793,7 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	text-align: center;
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 }
 
 .sharing-buttons-preview.is-placeholder .sharing-buttons-preview__label,

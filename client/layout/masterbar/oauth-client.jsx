@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {

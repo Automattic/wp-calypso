@@ -14,6 +14,7 @@ const selectors = {
  */
 export class LogosBlock {
 	static blockName = 'Logos';
+	static blockEditorSelector = '[aria-label="Block: Logos"]';
 	block: ElementHandle;
 
 	/**

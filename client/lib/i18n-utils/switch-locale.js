@@ -14,7 +14,6 @@ const getPromises = {};
  * Once it's finished, it'll allow for the same request to be done again.
  *
  * @param {string} url The URL to fetch
- *
  * @returns {Promise} The fetch promise.
  */
 function dedupedGet( url ) {
@@ -41,11 +40,10 @@ export function getLanguageFilePathUrl() {
 /**
  * Get the base path for language related files that are served from within Calypso.
  *
- * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
  * @returns {string} The internal base file path for language files.
  */
-export function getLanguagesInternalBasePath( targetBuild = 'evergreen' ) {
-	return `/calypso/${ targetBuild }/languages`;
+export function getLanguagesInternalBasePath() {
+	return `/calypso/languages`;
 }
 
 /**
@@ -55,7 +53,6 @@ export function getLanguagesInternalBasePath( targetBuild = 'evergreen' ) {
  * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param {string} fileType The desired file type, js or json. Default to json.
  * @param {object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
- *
  * @returns {string} A language file URL.
  */
 export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevisions = {} ) {
@@ -122,18 +119,11 @@ export function getLanguageFile( targetLocaleSlug ) {
  * @param {string} options Funciton options object
  * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param {string} options.fileType The desired file type, js or json. Default to json.
- * @param {string} options.targetBuild The build target. e.g. fallback, evergreen, etc.
  * @param {string} options.hash Build hash string that will be used as cache buster.
- *
  * @returns {string} A language manifest file URL.
  */
 
-export function getLanguageManifestFileUrl( {
-	localeSlug,
-	fileType = 'json',
-	targetBuild = 'evergreen',
-	hash = null,
-} = {} ) {
+export function getLanguageManifestFileUrl( { localeSlug, fileType = 'json', hash = null } = {} ) {
 	if ( ! [ 'js', 'json' ].includes( fileType ) ) {
 		fileType = 'json';
 	}
@@ -142,32 +132,39 @@ export function getLanguageManifestFileUrl( {
 		hash = hash.toString();
 	}
 
-	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
+	const fileBasePath = getLanguagesInternalBasePath();
 	const fileUrl = `${ fileBasePath }/${ localeSlug }-language-manifest.${ fileType }`;
 
 	return typeof hash === 'string' ? fileUrl + `?v=${ hash }` : fileUrl;
 }
 
 /**
+ * Whether the language manifest is preloaded, i.e. localeSlug is matched in window.i18nLanguageManifest.
+ *
+ * @param   {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @returns {boolean}           Whether the language manifest is preloaded
+ */
+function getIsLanguageManifestPreloaded( localeSlug ) {
+	return (
+		window?.i18nLanguageManifest &&
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug
+	);
+}
+
+/**
  * Get the language manifest file for the given locale.
  *
  * @param  {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @param  {string} targetBuild The build target. e.g. fallback, evergreen, etc.
- *
- * @returns {Promise} Language manifest json content
+ * @returns {object|Promise} Language manifest json content
  */
-export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' ) {
-	if (
-		window?.i18nLanguageManifest &&
-		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug
-	) {
-		return Promise.resolve( window.i18nLanguageManifest );
+export function getLanguageManifestFile( localeSlug ) {
+	if ( getIsLanguageManifestPreloaded( localeSlug ) ) {
+		return window.i18nLanguageManifest;
 	}
 
 	const url = getLanguageManifestFileUrl( {
 		localeSlug,
 		fileType: 'json',
-		targetBuild,
 		hash: window?.languageRevisions?.hashes?.[ localeSlug ] || null,
 	} );
 
@@ -182,16 +179,13 @@ export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' )
  * @param {string} options.chunkId A chunk id. e.g. chunk-abc.min
  * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param {string} options.fileType The desired file type, js or json. Default to json.
- * @param {string} options.targetBuild The build target. e.g. fallback, evergreen, etc.
  * @param {string} options.hash Build hash string that will be used as cache buster.
- *
  * @returns {string} A translation chunk file URL.
  */
 export function getTranslationChunkFileUrl( {
 	chunkId,
 	localeSlug,
 	fileType = 'json',
-	targetBuild = 'evergreen',
 	hash = null,
 } = {} ) {
 	if ( ! [ 'js', 'json' ].includes( fileType ) ) {
@@ -202,7 +196,7 @@ export function getTranslationChunkFileUrl( {
 		hash = hash.toString();
 	}
 
-	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
+	const fileBasePath = getLanguagesInternalBasePath();
 	const fileName = `${ localeSlug }-${ chunkId }.${ fileType }`;
 	const fileUrl = `${ fileBasePath }/${ fileName }`;
 
@@ -228,11 +222,9 @@ function getIsTranslationChunkPreloaded( chunkId, localeSlug ) {
  *
  * @param {string} chunkId A chunk id. e.g. chunk-abc.min
  * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
- *
  * @returns {Promise} Translation chunk json content
  */
-export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'evergreen' ) {
+export function getTranslationChunkFile( chunkId, localeSlug ) {
 	if ( getIsTranslationChunkPreloaded( chunkId, localeSlug ) ) {
 		return Promise.resolve( window.i18nTranslationChunks[ chunkId ] );
 	}
@@ -241,7 +233,6 @@ export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'eve
 		chunkId,
 		localeSlug,
 		fileType: 'json',
-		targetBuild,
 		hash: window?.languageRevisions?.[ localeSlug ] || null,
 	} );
 
@@ -273,16 +264,11 @@ let lastRequireChunkTranslationsHandler = null;
  * Adds require chunk handler for fetching translations.
  *
  * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
  * @param {Object} options Handler additional options
  * @param {Array}  options.translatedChunks Array of chunk ids that have available translation for the given locale
  * @param {Object} options.userTranslations User translations data that will override chunk translations
  */
-function addRequireChunkTranslationsHandler(
-	localeSlug = i18n.getLocaleSlug(),
-	targetBuild = 'evergreen',
-	options = {}
-) {
+function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), options = {} ) {
 	const { translatedChunks = [], userTranslations = {} } = options;
 	const loadedTranslationChunks = {};
 
@@ -293,14 +279,12 @@ function addRequireChunkTranslationsHandler(
 			return;
 		}
 
-		const translationChunkPromise = getTranslationChunkFile(
-			chunkId,
-			localeSlug,
-			targetBuild
-		).then( ( translations ) => {
-			addTranslations( translations, userTranslations );
-			loadedTranslationChunks[ chunkId ] = true;
-		} );
+		const translationChunkPromise = getTranslationChunkFile( chunkId, localeSlug ).then(
+			( translations ) => {
+				addTranslations( translations, userTranslations );
+				loadedTranslationChunks[ chunkId ] = true;
+			}
+		);
 
 		promises.push( translationChunkPromise );
 	};
@@ -352,8 +336,9 @@ export default async function switchLocale( localeSlug ) {
 		// locale data, which consists of the locale manifest data and
 		// translations for currently installed chunks.
 		try {
+			const languageManifest = getLanguageManifestFile( localeSlug );
 			const { translatedChunks, locale } =
-				( await getLanguageManifestFile( localeSlug, window?.BUILD_TARGET ) ) ?? {};
+				( languageManifest instanceof Promise ? await languageManifest : languageManifest ) ?? {}; // Using await operator on non-Promise object would still split the execution flow which causes unnecessary delay.
 
 			if ( ! locale || ! translatedChunks ) {
 				return;
@@ -361,7 +346,7 @@ export default async function switchLocale( localeSlug ) {
 
 			i18n.setLocale( locale );
 			setLocaleInDOM();
-			addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, { translatedChunks } );
+			addRequireChunkTranslationsHandler( localeSlug, { translatedChunks } );
 
 			const translatedInstalledChunks = getInstalledChunks().filter( ( chunkId ) =>
 				translatedChunks.includes( chunkId )
@@ -376,7 +361,7 @@ export default async function switchLocale( localeSlug ) {
 			// Add preloaded translation chunks
 			Promise.all(
 				preloadedTranslatedInstalledChunks.map( ( chunkId ) =>
-					getTranslationChunkFile( chunkId, localeSlug, window?.BUILD_TARGET )
+					getTranslationChunkFile( chunkId, localeSlug )
 				)
 			).then( ( allTranslations ) =>
 				addTranslations(
@@ -386,7 +371,7 @@ export default async function switchLocale( localeSlug ) {
 
 			// Load individual translation chunks
 			translatedInstalledChunksToBeLoaded.forEach( ( chunkId ) =>
-				getTranslationChunkFile( chunkId, localeSlug, window?.BUILD_TARGET )
+				getTranslationChunkFile( chunkId, localeSlug )
 					.then( ( translations ) => addTranslations( translations ) )
 					.catch( ( error ) => {
 						debug( `Encountered an error loading translation chunk ${ chunkId }.` );
@@ -399,7 +384,7 @@ export default async function switchLocale( localeSlug ) {
 			// Re-attach require chunk translations handler if user translations are available
 			if ( userTranslations ) {
 				removeRequireChunkTranslationsHandler();
-				addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, {
+				addRequireChunkTranslationsHandler( localeSlug, {
 					translatedChunks,
 					userTranslations,
 				} );

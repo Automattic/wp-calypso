@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { savePreference } from 'calypso/state/preferences/actions';

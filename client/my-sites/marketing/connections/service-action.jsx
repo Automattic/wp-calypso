@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
@@ -71,6 +70,15 @@ const SharingServiceAction = ( {
 		return (
 			<Button compact disabled={ true }>
 				{ label }
+			</Button>
+		);
+	}
+
+	// See: https://developers.google.com/photos/library/guides/ux-guidelines
+	if ( 'google_photos' === service.ID && '/marketing/connections/:site' !== path ) {
+		return (
+			<Button primary onClick={ onClick } disabled={ isPending }>
+				{ translate( 'Connect to Google Photos' ) }
 			</Button>
 		);
 	}

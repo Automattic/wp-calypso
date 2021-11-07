@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

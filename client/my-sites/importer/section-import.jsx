@@ -2,7 +2,7 @@ import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { once } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';

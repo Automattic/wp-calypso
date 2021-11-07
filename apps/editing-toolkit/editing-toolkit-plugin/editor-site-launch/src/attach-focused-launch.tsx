@@ -2,7 +2,7 @@ import FocusedLaunchModal from '@automattic/launch';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { hasQueryArg } from '@wordpress/url';
-import React from 'react';
+import { useEffect } from 'react';
 import { inIframe } from '../../block-inserter-modifications/contextual-tips/utils';
 import { IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 import { LAUNCH_STORE, SITE_STORE } from './stores';
@@ -29,7 +29,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 		const { openFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
 		// Add a class to hide the Launch button from editor bar when site is launched
-		React.useEffect( () => {
+		useEffect( () => {
 			if ( isSiteLaunched ) {
 				document.body.classList.add( 'is-focused-launch-complete' );
 			}
@@ -39,7 +39,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 		// is redirecting to an external payment processing page (eg: Paypal)
 		const shouldLaunch = hasQueryArg( getCurrentLaunchFlowUrl(), IMMEDIATE_LAUNCH_QUERY_ARG );
 
-		React.useEffect( () => {
+		useEffect( () => {
 			if ( shouldLaunch && ! isSiteLaunched ) {
 				openFocusedLaunch();
 			}

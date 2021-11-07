@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import { CountrySpecificPaymentFields } from '../country-specific-payment-fields';
 
 const defaultProps = {

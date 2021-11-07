@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { find, groupBy, isEqual, partition, property } from 'lodash';
-import React, { Component } from 'react';
+import { Fragment, Component } from 'react';
 import ReactDOM from 'react-dom';
 import Item from './item';
 
@@ -187,7 +187,7 @@ class Suggestions extends Component< Props, State > {
 			<div className={ containerClass }>
 				{ title ? <div className="suggestions__title">{ title }</div> : null }
 				{ this.getCategories().map( ( { category, categoryKey, suggestions }, categoryIndex ) => (
-					<React.Fragment key={ categoryKey }>
+					<Fragment key={ categoryKey }>
 						{ ! categoryIndex ? null : (
 							<div className="suggestions__category-heading">{ category }</div>
 						) }
@@ -213,7 +213,7 @@ class Suggestions extends Component< Props, State > {
 								} }
 							/>
 						) ) }
-					</React.Fragment>
+					</Fragment>
 				) ) }
 			</div>
 		);

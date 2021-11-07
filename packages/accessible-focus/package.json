@@ -6,15 +6,9 @@
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"sideEffects": false,
-	"type": "module",
-	"exports": {
-		"calypso:src": "./src/index.ts",
-		"import": "./dist/esm/index.js",
-		"require": "./dist/cjs/index.js"
-	},
-	"engines": {
-		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
-	},
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -38,6 +32,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.2"
+		"@automattic/calypso-typescript-config": "^1.0.0",
+		"typescript": "^4.4.4"
 	}
 }

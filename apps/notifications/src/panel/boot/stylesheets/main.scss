@@ -700,6 +700,16 @@
 		.wpnc__paragraph {
 			word-wrap: break-word;
 			margin-top: $wpnc__padding-large;
+
+			a {
+				text-decoration: underline;
+
+				&.wpnc__button,
+				&.mention {
+					text-decoration: none;
+				}
+			}
+
 			span.list {
 				display: inline-block;
 				margin-left: 2em;
@@ -708,6 +718,7 @@
 					display: block;
 				}
 			}
+
 			.wpnc__gridicon {
 				vertical-align: text-top;
 			}

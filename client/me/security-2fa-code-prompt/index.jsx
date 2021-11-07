@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -16,7 +16,7 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 
-class Security2faCodePrompt extends React.Component {
+class Security2faCodePrompt extends Component {
 	static displayName = 'Security2faCodePrompt';
 
 	static defaultProps = {

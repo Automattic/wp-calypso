@@ -6,10 +6,10 @@ import {
 	useFormStatus,
 	useSelect,
 } from '@automattic/composite-checkout';
+import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import React from 'react';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
@@ -26,10 +26,15 @@ export default function CreditCardPayButton( {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const useForAllSubscriptions = useSelect( ( select ) =>
+		select( 'credit-card' ).useForAllSubscriptions()
+	);
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 	const paymentPartner = shouldUseEbanx ? 'ebanx' : 'stripe';
+	const elements = useElements();
+	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
 
 	return (
 		<Button
@@ -38,16 +43,19 @@ export default function CreditCardPayButton( {
 				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
-						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
+						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN', payload: { useForAllSubscriptions } } );
 						onClick( 'card', {
 							stripe,
 							name: cardholderName?.value,
 							items,
 							total,
 							stripeConfiguration,
+							cardNumberElement,
 							paymentPartner,
 							countryCode: fields?.countryCode?.value,
 							postalCode: fields?.postalCode?.value,
+							useForAllSubscriptions,
+							eventSource: 'checkout',
 						} );
 						return;
 					}

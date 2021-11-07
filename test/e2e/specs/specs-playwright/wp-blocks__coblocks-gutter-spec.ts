@@ -1,14 +1,16 @@
 /**
  * @group gutenberg
+ * @group coblocks
  */
 
 import {
 	setupHooks,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	GutenbergEditorPage,
 	PricingTableBlock,
+	BrowserHelper,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -17,13 +19,22 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 	let pricingTableBlock: PricingTableBlock;
 	let page: Page;
 
+	let user: string;
+	if ( BrowserHelper.targetCoBlocksEdge() ) {
+		user = 'coBlocksSimpleSiteEdgeUser';
+	} else if ( BrowserHelper.targetGutenbergEdge() ) {
+		user = 'gutenbergSimpleSiteEdgeUser';
+	} else {
+		user = 'gutenbergSimpleSiteUser';
+	}
+
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: user } );
 	} );
 
 	it( 'Start new post', async function () {
@@ -33,7 +44,10 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 	} );
 
 	it( 'Insert Pricing Table block', async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( 'Pricing Table' );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			PricingTableBlock.blockName,
+			PricingTableBlock.blockEditorSelector
+		);
 		pricingTableBlock = new PricingTableBlock( blockHandle );
 	} );
 

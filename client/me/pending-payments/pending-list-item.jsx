@@ -3,7 +3,7 @@ import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { paymentMethodName } from 'calypso/lib/cart-values';
@@ -36,7 +36,7 @@ export function PendingListItem( {
 	}
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<PurchaseSiteHeader siteId={ siteId } name={ siteTitle } domain={ siteDomain } />
 			<Card className={ 'pending-payments__list-item is-compact' }>
 				<span className="pending-payments__list-item-wrapper">
@@ -64,7 +64,7 @@ export function PendingListItem( {
 					</div>
 				</span>
 			</Card>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

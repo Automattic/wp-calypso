@@ -1,9 +1,9 @@
 import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { getLabelForStream } from './locales';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'NotificationSettingsFormHeader';
 
 	static propTypes = {

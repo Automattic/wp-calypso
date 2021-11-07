@@ -1,15 +1,16 @@
 import { Button, Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, includes } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Rating from 'calypso/components/rating';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
 
@@ -18,6 +19,7 @@ const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPres
 class PluginsBrowserListElement extends Component {
 	static defaultProps = {
 		iconSize: 40,
+		variant: PluginsBrowserElementVariant.Compact,
 	};
 
 	getPluginLink() {
@@ -52,8 +54,8 @@ class PluginsBrowserListElement extends Component {
 		return ! this.props.isJetpackSite && includes( PREINSTALLED_PLUGINS, this.props.plugin.name );
 	}
 
-	renderInstalledIn() {
-		const { sitesWithPlugin } = this.props;
+	renderInstalledInOrPricing() {
+		const { sitesWithPlugin, translate } = this.props;
 		if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || this.isWpcomPreinstalled() ) {
 			return (
 				<div className="plugins-browser-item__installed">
@@ -62,7 +64,8 @@ class PluginsBrowserListElement extends Component {
 				</div>
 			);
 		}
-		return null;
+
+		return <div className="plugins-browser-item__pricing">{ translate( 'Free' ) }</div>;
 	}
 
 	renderUpgradeButton() {
@@ -87,8 +90,8 @@ class PluginsBrowserListElement extends Component {
 						<PluginIcon size={ this.props.iconSize } isPlaceholder={ true } />
 						<div className="plugins-browser-item__title">…</div>
 						<div className="plugins-browser-item__author">…</div>
+						<div className="plugins-browser-item__description">…</div>
 					</div>
-					<Rating rating={ 0 } size={ 12 } />
 				</span>
 			</li>
 		);
@@ -96,27 +99,32 @@ class PluginsBrowserListElement extends Component {
 	}
 
 	render() {
-		if ( this.props.isPlaceholder ) {
+		const { isPlaceholder, plugin, iconSize, variant, translate } = this.props;
+		if ( isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
+
+		const classNames = classnames( 'plugins-browser-item', variant );
+
 		return (
-			<li className="plugins-browser-item">
+			<li className={ classNames }>
 				<a
 					href={ this.getPluginLink() }
 					className="plugins-browser-item__link"
 					onClick={ this.trackPluginLinkClick }
 				>
 					<div className="plugins-browser-item__info">
-						<PluginIcon
-							size={ this.props.iconSize }
-							image={ this.props.plugin.icon }
-							isPlaceholder={ this.props.isPlaceholder }
-						/>
-						<div className="plugins-browser-item__title">{ this.props.plugin.name }</div>
-						<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
-						{ this.renderInstalledIn() }
+						<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
+						<div className="plugins-browser-item__title">{ plugin.name }</div>
+						{ variant === PluginsBrowserElementVariant.Extended && (
+							<div className="plugins-browser-item__author">
+								{ translate( 'by ' ) }
+								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
+							</div>
+						) }
+						<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 					</div>
-					<Rating rating={ this.props.plugin.rating } size={ 12 } />
+					{ variant === PluginsBrowserElementVariant.Extended && this.renderInstalledInOrPricing() }
 				</a>
 				{ this.renderUpgradeButton() }
 			</li>

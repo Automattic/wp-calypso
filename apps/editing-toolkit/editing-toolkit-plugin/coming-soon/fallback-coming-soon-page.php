@@ -185,6 +185,9 @@ nocache_headers();
 			.wpcom-coming-soon-marketing-buttons .button:focus {
 				opacity: .85;
 			}
+			.wpcom-coming-soon-marketing-buttons p {
+				margin: 1em 0;
+			}
 			@media screen and ( min-width: 660px ) {
 				.wpcom-coming-soon-description,
 				.wpcom-coming-soon-marketing-copy-text {

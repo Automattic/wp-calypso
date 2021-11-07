@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 
 interface Props {
 	stat?: TranslateResult | string | number | null;

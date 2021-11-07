@@ -2,7 +2,7 @@ import { useTitle } from '@automattic/launch';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { TextControl, Tip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import React from 'react';
+import * as React from 'react';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 
 import './styles.scss';

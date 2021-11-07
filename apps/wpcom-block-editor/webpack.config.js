@@ -1,7 +1,6 @@
 /**
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ *WARNING: No ES6 modules here. Not transpiled! ****
  */
-/* eslint-disable import/no-nodejs-modules */
 
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
@@ -21,7 +20,6 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- *
  * @param   {object}  env                           environment options
  * @param   {object}  argv                          options map
  * @param   {object}  argv.entry                    Entry point(s)
@@ -30,7 +28,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @returns {object}                                webpack config
  */
 function getWebpackConfig(
-	env = {},
+	env = { WP: true },
 	{
 		entry = {
 			'default.editor': path.join( __dirname, 'src', 'default', 'editor' ),

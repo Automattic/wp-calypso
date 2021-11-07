@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
 
 describe( 'RenderSwitch', () => {

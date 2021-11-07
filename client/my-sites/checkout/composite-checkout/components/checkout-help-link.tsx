@@ -11,10 +11,10 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import { HappychatButton as HappychatButtonUnstyled } from 'calypso/components/happychat/button';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
@@ -128,7 +128,8 @@ const LoadingButton = styled.p< StyledProps >`
 export default function CheckoutHelpLink(): JSX.Element {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 
 	const supportVariationDetermined = useSelector( isSupportVariationDetermined );

@@ -48,6 +48,17 @@
 	}
 }
 
+.domain-notice__transfer-warning {
+	svg.material-icon {
+		fill: var( --studio-orange-50 );
+	}
+
+	svg,
+	strong {
+		color: var( --studio-orange-50 );
+	}
+}
+
 .domain-notice__alert {
 	svg.material-icon {
 		fill: var( --color-error );

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

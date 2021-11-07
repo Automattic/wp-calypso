@@ -1,4 +1,3 @@
-import React from 'react';
 import PreviewMain from './main';
 
 export function preview( context, next ) {

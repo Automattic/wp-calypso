@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Draggable from 'calypso/components/draggable';
 import {
@@ -151,7 +151,7 @@ class ImageEditorCrop extends Component {
 		let finalHeight = newHeight;
 
 		switch ( aspectRatio ) {
-			case AspectRatios.ORIGINAL:
+			case AspectRatios.ORIGINAL: {
 				//image not loaded yet
 				if ( ! this.props.originalAspectRatio ) {
 					this.setState( newValues, callback );
@@ -163,6 +163,7 @@ class ImageEditorCrop extends Component {
 				imageHeight = rotated ? width : height;
 
 				break;
+			}
 
 			case AspectRatios.ASPECT_1X1:
 				imageWidth = 1;
@@ -395,7 +396,6 @@ class ImageEditorCrop extends Component {
 					} }
 				/>
 				<Draggable
-					ref="border"
 					onDrag={ this.onBorderDrag }
 					onStop={ this.applyCrop }
 					x={ left }
@@ -422,7 +422,6 @@ class ImageEditorCrop extends Component {
 						top: topBound,
 						left: leftBound,
 					} }
-					ref="topLeft"
 					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
 				/>
 				<Draggable
@@ -437,7 +436,6 @@ class ImageEditorCrop extends Component {
 						top: topBound,
 						right: rightBound,
 					} }
-					ref="topRight"
 					className={ classNames( handleClassName, handleClassName + '-nesw' ) }
 				/>
 				<Draggable
@@ -452,7 +450,6 @@ class ImageEditorCrop extends Component {
 						bottom: bottomBound,
 						right: rightBound,
 					} }
-					ref="bottomRight"
 					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
 				/>
 				<Draggable
@@ -467,7 +464,6 @@ class ImageEditorCrop extends Component {
 						bottom: bottomBound,
 						left: leftBound,
 					} }
-					ref="bottomLeft"
 					className={ classNames( handleClassName, handleClassName + '-nesw' ) }
 				/>
 			</div>

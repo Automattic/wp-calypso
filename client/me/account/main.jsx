@@ -5,7 +5,7 @@ import debugFactory from 'debug';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, get, has, map, size } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
@@ -98,7 +98,7 @@ const INTERFACE_FIELDS = [
 	'calypso_preferences',
 ];
 
-class Account extends React.Component {
+class Account extends Component {
 	constructor( props ) {
 		super( props );
 

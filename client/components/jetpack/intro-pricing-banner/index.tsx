@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import badgeIcon from './guarantee.svg';
@@ -16,9 +16,10 @@ const Banner: React.FC = () => {
 				</p>
 				<p className="intro-pricing-banner__call-to-action">
 					{ translate(
-						'Get the perfect Jetpack for your site with %(percent)d%% off the first term. *Try it risk free with our %(days)d-day money-back guarantee.',
+						'Get the perfect Jetpack for your site with %(percent)d%% off the first term. Try it risk free with our %(days)d-day money-back guarantee.*',
 						{
 							args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE, days: 14 },
+							comment: '* clause describing the money back guarantee',
 						}
 					) }
 				</p>

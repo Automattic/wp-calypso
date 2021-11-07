@@ -3,6 +3,7 @@
 import { concat, filter, find, findIndex, map, get, sortBy } from 'lodash';
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
+	HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
@@ -73,6 +74,7 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 const timelineEvent = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC:
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
 			const { message } = action;
 			return {
@@ -82,6 +84,8 @@ const timelineEvent = ( state = {}, action ) => {
 				name: message.user.name,
 				image: message.user.avatarURL,
 				isEdited: !! message.revisions,
+				isOptimistic: message.isOptimistic,
+				files: message.files,
 				timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 				user_id: message.user.id,
 				type: get( message, 'type', 'message' ),
@@ -105,13 +109,22 @@ const sortTimeline = ( timeline ) =>
 const timelineReducer = ( state = [], action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC:
 			// if meta.forOperator is set, skip so won't show to user
 			if ( get( action, 'message.meta.forOperator', false ) ) {
 				return state;
 			}
 			const event = timelineEvent( {}, action );
-			const existing = find( state, ( { id } ) => event.id === id );
-			return existing ? state : concat( state, [ event ] );
+
+			// If the message already exists in the timeline, replace it
+			const idx = findIndex( state, ( { id } ) => event.id === id );
+			if ( idx >= 0 ) {
+				return [ ...state.slice( 0, idx ), event, ...state.slice( idx + 1 ) ];
+			}
+
+			// This is a new message — append it!
+			return concat( state, [ event ] );
+
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
 			const index = findIndex( state, ( { id } ) => action.message.id === id );
 			return index === -1
@@ -141,6 +154,7 @@ const timelineReducer = ( state = [], action ) => {
 						name: message.user.name,
 						image: message.user.picture,
 						isEdited: !! message.revisions,
+						files: message.files,
 						timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 						user_id: message.user.id,
 						type: get( message, 'type', 'message' ),

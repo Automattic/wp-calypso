@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 
 export const DomainNameExplanationImage: FunctionComponent = () => {
 	const { __, isRTL } = useI18n();

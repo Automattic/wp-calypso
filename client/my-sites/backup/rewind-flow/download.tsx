@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';

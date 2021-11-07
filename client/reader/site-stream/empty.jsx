@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { recordAction as statRecordAction, recordGaEvent } from 'calypso/reader/stats';

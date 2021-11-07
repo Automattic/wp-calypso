@@ -2,13 +2,12 @@ import { Button } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { modeType, stepSlug, stepsHeadingAdvanced } from './constants';
+import { modeType, stepSlug, stepsHeading } from './constants';
 
 import './style.scss';
 
@@ -70,7 +69,7 @@ export default function ConnectDomainStepAdvancedStart( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
-			heading={ stepsHeadingAdvanced }
+			heading={ stepsHeading.ADVANCED }
 			mode={ mode }
 			progressStepList={ progressStepList }
 			pageSlug={ pageSlug }

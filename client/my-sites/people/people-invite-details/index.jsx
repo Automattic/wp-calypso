@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
@@ -26,7 +26,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-export class PeopleInviteDetails extends React.PureComponent {
+export class PeopleInviteDetails extends PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 		inviteKey: PropTypes.string.isRequired,

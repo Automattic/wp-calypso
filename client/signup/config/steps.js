@@ -6,7 +6,10 @@ import {
 	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
+	setDesignOnSite,
 	setThemeOnSite,
+	setOptionsOnSite,
+	setIntentOnSite,
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
@@ -25,7 +28,10 @@ export default generateSteps( {
 	createSiteOrDomain,
 	createSiteWithCart,
 	currentPage,
+	setDesignOnSite,
 	setThemeOnSite,
+	setOptionsOnSite,
+	setIntentOnSite,
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
@@ -34,7 +40,3 @@ export default generateSteps( {
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 } );
-
-export function isDomainStepSkippable( flowName ) {
-	return flowName === 'test-fse';
-}

@@ -1,9 +1,9 @@
 import classNames from 'classnames';
-import React from 'react';
+import { Component } from 'react';
 
 import './style.scss';
 
-class FormSelect extends React.Component {
+class FormSelect extends Component {
 	static defaultProps = {
 		isError: false,
 	};

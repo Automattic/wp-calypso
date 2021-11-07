@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { omit, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const SharingButtonsPreviewAction = ( props ) => {
 	const { active, position, icon, children } = props;

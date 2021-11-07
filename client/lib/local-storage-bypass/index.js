@@ -74,7 +74,7 @@ export const clear = ( memoryStore ) => {
  *
  * @param {object}   [args]            An arguments object
  * @param {object}   [args.root]       Allow alternate "window" object to support tests in non-browser environments
- * @param {string[]} [arg.allowedKeys] An array of localStorage keys that are proxied to the real localStorage
+ * @param {string[]} [args.allowedKeys] An array of localStorage keys that are proxied to the real localStorage
  */
 export default function ( {
 	root = typeof window === 'undefined' ? undefined : window,

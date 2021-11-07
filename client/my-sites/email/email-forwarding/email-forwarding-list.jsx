@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import EmailForwardingItem from './email-forwarding-item';
 
-class EmailForwardingList extends React.Component {
+class EmailForwardingList extends Component {
 	static propTypes = {
 		emailForwards: PropTypes.array,
 	};

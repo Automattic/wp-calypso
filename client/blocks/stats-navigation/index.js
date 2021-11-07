@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FollowersCount from 'calypso/blocks/followers-count';
 import SectionNav from 'calypso/components/section-nav';

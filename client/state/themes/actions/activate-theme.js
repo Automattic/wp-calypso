@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';

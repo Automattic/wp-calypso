@@ -1,6 +1,5 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const EditorRevisionsListHeader = ( { numRevisions, translate } ) => {
 	return (

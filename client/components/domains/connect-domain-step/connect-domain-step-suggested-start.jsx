@@ -2,11 +2,10 @@ import { Button } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import {
 	modeType,
-	stepsHeadingSuggested,
+	stepsHeading,
 	stepSlug,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -58,7 +57,7 @@ export default function ConnectDomainStepSuggestedStart( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
-			heading={ stepsHeadingSuggested }
+			heading={ stepsHeading.SUGGESTED }
 			mode={ mode }
 			progressStepList={ progressStepList }
 			pageSlug={ pageSlug }

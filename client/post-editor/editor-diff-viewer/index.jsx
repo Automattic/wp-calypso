@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { debounce, filter, get, has, last, map, throttle } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import TextDiff from 'calypso/components/text-diff';
 import scrollTo from 'calypso/lib/scroll-to';

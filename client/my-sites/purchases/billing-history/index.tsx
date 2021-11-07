@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
-import i18nCalypso, { useTranslate } from 'i18n-calypso';
-import React, { useCallback } from 'react';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
@@ -10,6 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { BillingHistoryContent } from 'calypso/me/purchases/billing-history/main';
 import {
 	ReceiptBody,
@@ -18,10 +20,8 @@ import {
 } from 'calypso/me/purchases/billing-history/receipt';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
@@ -31,24 +31,20 @@ import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to
 import './style.scss';
 
 function useLogBillingHistoryError( message: string ) {
-	const reduxDispatch = useDispatch();
-
 	return useCallback(
 		( error ) => {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message,
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						env: config( 'env_id' ),
-						type: 'site_level_billing_history',
-						message: String( error ),
-					},
-				} )
-			);
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'site_level_billing_history',
+					message: String( error ),
+				},
+			} );
 		},
-		[ reduxDispatch ]
+		[ message ]
 	);
 }
 
@@ -72,27 +68,19 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 				brandFont
 				className="billing-history__page-heading"
 				headerText={ titles.sectionTitle }
-				subHeaderText={
-					i18nCalypso.hasTranslation(
-						'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
-					)
-						? translate(
-								'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									components: {
-										learnMoreLink: (
-											<InlineSupportLink supportContext="billing" showIcon={ false } />
-										),
-									},
-								}
-						  )
-						: translate( 'View, print, and email your receipts for this site.' )
-				}
+				subHeaderText={ translate(
+					'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="billing" showIcon={ false } />,
+						},
+					}
+				) }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logBillingHistoryError }
 			>
@@ -100,7 +88,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 					siteId={ selectedSiteId }
 					getReceiptUrlFor={ getReceiptUrlForReceiptId }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 			<CompactCard href="/me/purchases/billing">
 				{ translate( 'View all billing history and receipts' ) }
 			</CompactCard>
@@ -148,7 +136,7 @@ export function ReceiptView( {
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logBillingHistoryError }
 			>
@@ -158,7 +146,7 @@ export function ReceiptView( {
 				) : (
 					<ReceiptPlaceholder />
 				) }
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }

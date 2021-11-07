@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	setupHooks,
 	ReaderPage,
 	NotificationsComponent,
@@ -18,37 +18,33 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	let notificationsComponent: NotificationsComponent;
 	const comment = DataHelper.getRandomPhrase();
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
-	it( 'Log In', async function () {
-		const loginFlow = new LoginFlow( page, 'commentingUser' );
-		await loginFlow.logIn();
+	it( 'Log in', async function () {
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'commentingUser' }, { landingUrl: '**/read' } );
 	} );
 
 	it( 'View the Reader stream', async function () {
 		readerPage = new ReaderPage( page );
-		await readerPage.verifyReaderPage();
-	} );
-
-	it( 'The latest post is on the expected test site', async function () {
 		const testSiteForNotifications = DataHelper.config.get( 'testSiteForNotifications' );
 		const siteOfLatestPost = await readerPage.siteOfLatestPost();
 		expect( siteOfLatestPost ).toEqual( testSiteForNotifications );
 	} );
 
-	it( 'Comment on the latest post', async function () {
-		await readerPage.commentOnLatestPost( comment );
+	it( 'Visit latest post', async function () {
+		await readerPage.visitPost( { index: 1 } );
 	} );
 
-	it( 'Wait for the comment to appear', async function () {
-		await readerPage.waitForCommentToAppear( comment );
+	it( 'Comment and confirm it is shown', async function () {
+		await readerPage.comment( comment );
 	} );
 
 	it( 'Log in as test site owner', async function () {
-		const loginFlow = new LoginFlow( page, 'notificationsUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'notificationsUser' } );
 	} );
 
 	it( 'Open Notifications panel', async function () {

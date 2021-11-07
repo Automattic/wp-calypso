@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import EmptyContent from 'calypso/components/empty-content';
@@ -80,7 +80,7 @@ export class PendingPayments extends Component {
 			);
 		} else if ( pendingPayments.length > 0 ) {
 			content = (
-				<React.Fragment>
+				<Fragment>
 					<Banner
 						callToAction={ translate( 'Back to My Sites' ) }
 						description={ translate(
@@ -96,7 +96,7 @@ export class PendingPayments extends Component {
 							<PendingListItem key={ purchase.orderId } { ...purchase } />
 						) ) }
 					</div>
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 

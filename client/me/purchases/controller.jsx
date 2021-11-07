@@ -1,6 +1,8 @@
-import { localize } from 'i18n-calypso';
+import config from '@automattic/calypso-config';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -8,6 +10,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { logToLogstash } from 'calypso/lib/logstash';
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import {
@@ -25,12 +28,30 @@ import PurchasesList from './purchases-list';
 import titles from './titles';
 import VatInfoPage from './vat-info';
 
+function useLogPurchasesError( message ) {
+	return useCallback(
+		( error ) => {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'account_level_purchases',
+					message: String( error ),
+				},
+			} );
+		},
+		[ message ]
+	);
+}
+
 const PurchasesWrapper = ( { title = null, children } ) => {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<DocumentHead title={ title } />
 			{ children }
-		</React.Fragment>
+		</Fragment>
 	);
 };
 const noop = () => {};
@@ -176,22 +197,30 @@ export function changePaymentMethod( context, next ) {
 		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/change/:cardId' );
 	}
 
-	const ChangePaymentMethodWrapper = localize( () => {
+	const ChangePaymentMethodWrapper = () => {
+		const translate = useTranslate();
+		const logPurchasesError = useLogPurchasesError(
+			'account level purchases change payment method load error'
+		);
 		return (
 			<PurchasesWrapper title={ titles.changePaymentMethod }>
 				<Main wideLayout className="purchases__edit-payment-method">
 					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-					<ChangePaymentMethod
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-						siteSlug={ context.params.site }
-						getManagePurchaseUrlFor={ managePurchaseUrl }
-						purchaseListUrl={ purchasesRoot }
-						isFullWidth={ true }
-					/>
+					<CheckoutErrorBoundary
+						errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+						onError={ logPurchasesError }
+					>
+						<ChangePaymentMethod
+							purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+							siteSlug={ context.params.site }
+							getManagePurchaseUrlFor={ managePurchaseUrl }
+							purchaseListUrl={ purchasesRoot }
+						/>
+					</CheckoutErrorBoundary>
 				</Main>
 			</PurchasesWrapper>
 		);
-	} );
+	};
 
 	context.primary = <ChangePaymentMethodWrapper />;
 	next();

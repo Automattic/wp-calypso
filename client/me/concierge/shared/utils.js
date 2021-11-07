@@ -1,5 +1,4 @@
 import { CompactCard } from '@automattic/components';
-import React from 'react';
 import HeaderCake from 'calypso/components/header-cake';
 
 export const renderDisallowed = ( translate, siteSlug ) => {

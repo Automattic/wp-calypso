@@ -1,4 +1,3 @@
-import React from 'react';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
@@ -7,6 +6,7 @@ import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
+import InboxManagement from 'calypso/my-sites/email/inbox';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
@@ -16,6 +16,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<GSuiteAddUsers
+					source={ pageContext.query.source }
 					productType={ pageContext.params.productType }
 					selectedDomainName={ pageContext.params.domain }
 				/>
@@ -28,8 +29,8 @@ export default {
 	emailManagementManageTitanAccount( pageContext, next ) {
 		pageContext.primary = (
 			<TitanManagementIframe
-				domainName={ pageContext.params.domain }
 				context={ pageContext.query.context }
+				domainName={ pageContext.params.domain }
 			/>
 		);
 
@@ -52,7 +53,10 @@ export default {
 	emailManagementNewTitanAccount( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<TitanAddMailboxes selectedDomainName={ pageContext.params.domain } />
+				<TitanAddMailboxes
+					source={ pageContext.query.source }
+					selectedDomainName={ pageContext.params.domain }
+				/>
 			</CalypsoShoppingCartProvider>
 		);
 
@@ -62,7 +66,10 @@ export default {
 	emailManagementTitanSetUpMailbox( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<TitanSetUpMailbox selectedDomainName={ pageContext.params.domain } />
+				<TitanSetUpMailbox
+					source={ pageContext.query.source }
+					selectedDomainName={ pageContext.params.domain }
+				/>
 			</CalypsoShoppingCartProvider>
 		);
 
@@ -75,6 +82,7 @@ export default {
 				<EmailProvidersComparison
 					comparisonContext="email-purchase"
 					selectedDomainName={ pageContext.params.domain }
+					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -85,9 +93,9 @@ export default {
 	emailManagementTitanControlPanelRedirect( pageContext, next ) {
 		pageContext.primary = (
 			<TitanControlPanelRedirect
+				context={ pageContext.query.context }
 				domainName={ pageContext.params.domain }
 				siteSlug={ pageContext.params.site }
-				context={ pageContext.query.context }
 			/>
 		);
 
@@ -114,10 +122,18 @@ export default {
 	emailManagement( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
+				<EmailManagementHome
+					source={ pageContext.query.source }
+					selectedDomainName={ pageContext.params.domain }
+				/>
 			</CalypsoShoppingCartProvider>
 		);
 
+		next();
+	},
+
+	emailManagementInbox( pageContext, next ) {
+		pageContext.primary = <InboxManagement />;
 		next();
 	},
 };

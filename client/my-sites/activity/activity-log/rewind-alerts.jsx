@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import getSiteThreats from 'calypso/state/selectors/get-site-threats';
 import ThreatAlert from './threat-alert';

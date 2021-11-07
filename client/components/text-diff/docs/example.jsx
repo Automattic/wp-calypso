@@ -1,4 +1,3 @@
-import React from 'react';
 import TextDiff from 'calypso/components/text-diff';
 
 export default function TextDiffExample() {

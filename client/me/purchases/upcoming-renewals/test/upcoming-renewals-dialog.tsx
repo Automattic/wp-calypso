@@ -4,7 +4,6 @@
 
 import { render, fireEvent, screen } from '@testing-library/react';
 import moment from 'moment';
-import React from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import UpcomingRenewalsDialog from '../upcoming-renewals-dialog';

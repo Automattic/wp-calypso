@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import classnames from 'classnames';
-import React from 'react';
+import { forwardRef } from 'react';
 import Search from 'calypso/components/search';
 
 import './style.scss';
@@ -11,4 +11,4 @@ const SearchCard = ( { className, ...props }, ref ) => (
 	</Card>
 );
 
-export default React.forwardRef( SearchCard );
+export default forwardRef( SearchCard );

@@ -3,9 +3,10 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import withBlockEditorNuxStatus from 'calypso/data/block-editor/with-block-editor-nux-status-query';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import versionCompare from 'calypso/lib/version-compare';
@@ -20,7 +21,7 @@ import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSectionName, appBannerIsEnabled } from 'calypso/state/ui/selectors';
 import {
 	ALLOWED_SECTIONS,
 	EDITOR,
@@ -47,6 +48,9 @@ export class AppBanner extends Component {
 		translate: PropTypes.func,
 		recordAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
+		blockEditorNuxStatus: PropTypes.shape( {
+			show_welcome_guide: PropTypes.bool,
+		} ),
 		// connected
 		currentSection: PropTypes.string,
 		dismissedUntil: PropTypes.object,
@@ -77,12 +81,31 @@ export class AppBanner extends Component {
 	};
 
 	isVisible() {
-		const { dismissedUntil, currentSection, isTosBannerVisible } = this.props;
+		const {
+			dismissedUntil,
+			currentSection,
+			isTosBannerVisible,
+			isAppBannerEnabled,
+			blockEditorNuxStatus,
+		} = this.props;
 
 		// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
 		// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
 		// be displayed.
 		if ( isTosBannerVisible ) {
+			return false;
+		}
+
+		// In some cases such as error we want to hide the app banner completely.
+		if ( ! isAppBannerEnabled ) {
+			return false;
+		}
+
+		// Inside page/post editor, hide the banner until we know that welcome tour has been dimissed to avoid overlapping.
+		if (
+			[ EDITOR, GUTENBERG ].includes( currentSection ) &&
+			( ! blockEditorNuxStatus || blockEditorNuxStatus.show_welcome_guide )
+		) {
 			return false;
 		}
 
@@ -241,8 +264,8 @@ const mapStateToProps = ( state ) => {
 		currentSection: getCurrentSection( sectionName, isNotesOpen, currentRoute ),
 		currentRoute,
 		fetchingPreferences: isFetchingPreferences( state ),
-		siteId: getSelectedSiteId( state ),
 		isTosBannerVisible: shouldDisplayTosUpdateBanner( state ),
+		isAppBannerEnabled: appBannerIsEnabled( state ),
 	};
 };
 
@@ -265,4 +288,9 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );
+const AppBannerWithEditorNuxStatus = withBlockEditorNuxStatus( AppBanner );
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( AppBannerWithEditorNuxStatus ) );

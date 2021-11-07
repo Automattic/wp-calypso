@@ -21,11 +21,13 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"scripts": {},
 	"peerDependencies": {
-		"webpack": "^5.46.0"
+		"webpack": "^5.61.0"
 	},
 	"dependencies": {
 		"semver": "^7.0.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
 	}
 }

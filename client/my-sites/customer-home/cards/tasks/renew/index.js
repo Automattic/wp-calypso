@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import expiredIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
 import expiringIllustration from 'calypso/assets/images/customer-home/disconnected.svg';

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SignupSitePreviewIframe from 'calypso/components/signup-site-preview/iframe';
 import SignupSitePreviewScreenshot from 'calypso/components/signup-site-preview/screenshot';

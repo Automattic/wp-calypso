@@ -1,10 +1,10 @@
 import { Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
 import { canRedirect } from 'calypso/lib/domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
+import { PureComponent } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';

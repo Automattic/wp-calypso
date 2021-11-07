@@ -12,7 +12,7 @@ $screen-options-icon-border-y: 7px;
 .screen-options-tab {
 	position: fixed;
 	top: var( --masterbar-height );
-	right: 20px;
+	right: 32px;
 	z-index: z-index( 'root', '.screen-options-tab' );
 }
 

@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import localStorageHelper from 'store';
@@ -26,7 +26,7 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { setLocale } from 'calypso/state/ui/language/actions';
 import './style.scss';
 
-class TranslatorLauncher extends React.Component {
+class TranslatorLauncher extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 	};
@@ -56,7 +56,7 @@ class TranslatorLauncher extends React.Component {
 		scrollTop: 0,
 	};
 
-	highlightRef = React.createRef();
+	highlightRef = createRef();
 
 	componentDidMount() {
 		i18n.on( 'change', this.onI18nChange );

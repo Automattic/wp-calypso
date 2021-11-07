@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 
 import './style.scss';
@@ -18,6 +18,7 @@ class EllipsisMenu extends Component {
 		onClick: PropTypes.func,
 		onToggle: PropTypes.func,
 		popoverClassName: PropTypes.string,
+		icon: PropTypes.element,
 	};
 
 	static defaultProps = {
@@ -29,7 +30,7 @@ class EllipsisMenu extends Component {
 		isMenuVisible: false,
 	};
 
-	popoverContext = React.createRef();
+	popoverContext = createRef();
 
 	handleClick = ( event ) => {
 		const { onClick } = this.props;
@@ -62,6 +63,7 @@ class EllipsisMenu extends Component {
 			position,
 			children,
 			disabled,
+			icon,
 			className,
 			popoverClassName,
 		} = this.props;
@@ -82,7 +84,7 @@ class EllipsisMenu extends Component {
 					disabled={ disabled }
 					className="ellipsis-menu__toggle"
 				>
-					<Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" />
+					{ icon ? icon : <Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" /> }
 				</Button>
 				{ isMenuVisible && (
 					<PopoverMenu

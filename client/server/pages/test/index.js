@@ -246,8 +246,8 @@ const buildApp = ( environment ) => {
 				],
 			};
 			mockFs( {
-				'./build/assets-evergreen.json': JSON.stringify( assets ),
-				'./public/evergreen/languages/lang-revisions.json': JSON.stringify( { es: 1234 } ),
+				'./build/assets.json': JSON.stringify( assets ),
+				'./public/languages/lang-revisions.json': JSON.stringify( { es: 1234 } ),
 			} );
 			tearDown.push( () => mockFs.restore() );
 		},

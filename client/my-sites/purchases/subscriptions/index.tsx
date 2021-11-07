@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';

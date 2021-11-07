@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';

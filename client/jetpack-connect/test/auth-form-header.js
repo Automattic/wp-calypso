@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { AuthFormHeader } from '../auth-form-header';
 import wooDnaConfig from '../woo-dna-config';

@@ -16,8 +16,8 @@ function reducer( state = EMPTY, action ) {
 			return { ...state, ...action.dependencies };
 
 		case SIGNUP_DEPENDENCY_STORE_REMOVE_SITE_SLUG: {
-			const { siteSlug, ...dependenciesWithoutSiteSlug } = state;
-			return dependenciesWithoutSiteSlug;
+			const { siteId, siteSlug, ...dependenciesWithoutSiteIdentifiers } = state;
+			return dependenciesWithoutSiteIdentifiers;
 		}
 
 		case SIGNUP_PROGRESS_SUBMIT_STEP:

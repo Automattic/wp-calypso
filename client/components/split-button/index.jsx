@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { createRef, PureComponent } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 
 import './style.scss';
@@ -45,7 +45,7 @@ class SplitButton extends PureComponent {
 		isMenuVisible: false,
 	};
 
-	popoverContext = React.createRef();
+	popoverContext = createRef();
 
 	handleMainClick = ( event ) => {
 		event.stopPropagation();

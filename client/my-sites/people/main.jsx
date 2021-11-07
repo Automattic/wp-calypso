@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import EmptyContent from 'calypso/components/empty-content';
@@ -8,18 +8,21 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
 import TeamList from 'calypso/my-sites/people/team-list';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
 
-class People extends React.Component {
+class People extends Component {
 	renderPeopleList() {
 		const { site, search, filter, translate } = this.props;
 
@@ -38,7 +41,11 @@ class People extends React.Component {
 	}
 
 	renderSubheaderText() {
-		const { translate, filter } = this.props;
+		const { isWPForTeamsSite, translate, filter } = this.props;
+
+		if ( isWPForTeamsSite ) {
+			return this.getSubheaderTextForP2();
+		}
 
 		switch ( filter ) {
 			case 'followers':
@@ -48,15 +55,56 @@ class People extends React.Component {
 			case 'email-followers':
 				return translate( 'People who have subscribed to your site using their email address.' );
 			default:
-				return translate(
-					'Invite contributors to your site and manage their access settings. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="team" showIcon={ false } />,
-						},
-					}
-				);
+				return isWPForTeamsSite
+					? this.getSubheaderTextForP2()
+					: translate(
+							'Invite contributors to your site and manage their access settings. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: (
+										<InlineSupportLink key="learnMore" supportContext="team" showIcon={ false } />
+									),
+								},
+							}
+					  );
 		}
+	}
+
+	getSubheaderTextForP2() {
+		const { isP2HubSite, translate } = this.props;
+		const translateArgs = {
+			components: {
+				learnMoreLink: <InlineSupportLink supportContext="team" showIcon={ false } />,
+			},
+		};
+		if ( isP2HubSite ) {
+			return translate(
+				'Invite members to your workspace and manage their access settings.',
+				translateArgs
+			);
+		}
+		return translate(
+			'Invite members and guests to this P2 and manage their access settings.',
+			translateArgs
+		);
+	}
+
+	renderHeaderText() {
+		const { site, isWPForTeamsSite, isP2HubSite, translate } = this.props;
+
+		if ( isWPForTeamsSite ) {
+			if ( isP2HubSite ) {
+				return translate( 'People in %(sitename)s', {
+					args: {
+						sitename: site.name,
+						context: 'People page for P2 hubs.',
+					},
+				} );
+			}
+			return translate( 'People in this P2' );
+		}
+
+		return translate( 'People' );
 	}
 
 	render() {
@@ -70,6 +118,7 @@ class People extends React.Component {
 			filter,
 			isPrivate,
 			translate,
+			isWPForTeamsSite,
 		} = this.props;
 
 		if ( siteId && ! canViewPeople ) {
@@ -98,7 +147,7 @@ class People extends React.Component {
 				<FormattedHeader
 					brandFont
 					className="people__page-heading"
-					headerText={ translate( 'People' ) }
+					headerText={ this.renderHeaderText() }
 					subHeaderText={ this.renderSubheaderText() }
 					align="left"
 					hasScreenOptions
@@ -115,6 +164,7 @@ class People extends React.Component {
 							site={ site }
 						/>
 					}
+					{ isWPForTeamsSite && <P2TeamBanner context={ filter } site={ site } /> }
 					{ this.renderPeopleList() }
 				</div>
 			</Main>
@@ -131,5 +181,7 @@ export default connect( ( state ) => {
 		isPrivate: isPrivateSite( state, siteId ),
 		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
+		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+		isP2HubSite: isSiteP2Hub( state, siteId ),
 	};
 } )( localize( People ) );

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TASK_VERIFY_EMAIL } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';

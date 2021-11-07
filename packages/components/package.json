@@ -35,22 +35,23 @@
 		"i18n-calypso": "^5.0.0",
 		"lodash": "^4.17.21",
 		"prop-types": "^15.7.2",
-		"react-modal": "^3.8.1",
+		"react-modal": "^3.14.3",
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
-		"react": "^16.8",
-		"react-dom": "^16.12.0"
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
-		"@storybook/addon-actions": "^6.3.8",
+		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@storybook/addon-actions": "^6.3.11",
 		"@storybook/preset-scss": "^1.0.3",
 		"css-loader": "^3.4.2",
 		"enzyme": "^3.11.0",
 		"sass-loader": "^10.1.1",
 		"style-loader": "^1.2.1",
-		"typescript": "^4.4.2",
-		"webpack": "^5.36.2"
+		"typescript": "^4.4.4",
+		"webpack": "^5.61.0"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",

@@ -1,4 +1,3 @@
-import React from 'react';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import Pages from './main';
 

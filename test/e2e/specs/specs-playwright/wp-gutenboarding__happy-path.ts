@@ -1,22 +1,23 @@
 /**
- * @group calypso-pr
+ * @group calypso-release
  */
 
 import {
 	setupHooks,
 	DataHelper,
-	LoginFlow,
-	GutenbergEditorPage,
-	SidebarComponent,
+	CloseAccountFlow,
 	GutenboardingFlow,
-	GeneralSettingsPage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 	const siteTitle = DataHelper.getBlogName();
+	const email = DataHelper.getTestEmailAddress( {
+		inboxId: DataHelper.config.get( 'signupInboxId' ),
+		prefix: `e2eflowtestinggutenboarding${ DataHelper.getTimestamp() }`,
+	} );
+	const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
 
-	let siteURL: string;
 	let gutenboardingFlow: GutenboardingFlow;
 	let page: Page;
 
@@ -24,67 +25,63 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		page = args.page;
 	} );
 
-	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'defaultUser' );
-		await loginFlow.logIn();
+	describe( 'Signup via /new', function () {
+		it( 'Navigate to /new', async function () {
+			await page.goto( DataHelper.getCalypsoURL( 'new' ) );
+		} );
+
+		it( 'Enter new site name', async function () {
+			gutenboardingFlow = new GutenboardingFlow( page );
+			await gutenboardingFlow.enterSiteTitle( siteTitle );
+			await gutenboardingFlow.clickButton( 'Continue' );
+		} );
+
+		it( 'Search for and select a WordPress.com domain name', async function () {
+			await gutenboardingFlow.searchDomain( siteTitle );
+			await gutenboardingFlow.selectDomain( siteTitle.concat( '.wordpress.com' ) );
+			await gutenboardingFlow.clickButton( 'Continue' );
+		} );
+
+		it( 'Select Vesta as the site design', async function () {
+			await gutenboardingFlow.selectDesign( 'Vesta' );
+		} );
+
+		it( 'Pick the Playfair font pairing', async function () {
+			await gutenboardingFlow.selectFont( 'Playfair' );
+			await gutenboardingFlow.clickButton( 'Continue' );
+		} );
+
+		it( 'Select to add the Plugin feature', async function () {
+			await gutenboardingFlow.selectFeatures( [ 'Plugins' ] );
+			await gutenboardingFlow.clickButton( 'Continue' );
+		} );
+
+		it( 'WordPress.com Business plan is recommended', async function () {
+			await gutenboardingFlow.validateRecommendedPlan( 'Business' );
+		} );
+
+		it( 'Select free plan', async function () {
+			await gutenboardingFlow.selectPlan( 'Free' );
+		} );
+
+		it( 'Create account', async function () {
+			await Promise.all( [
+				page.waitForNavigation(),
+				gutenboardingFlow.signup( email, signupPassword ),
+			] );
+		} );
+
+		it( 'Land in Home dashboard', async function () {
+			await page.waitForURL( '**/home/**' );
+			const currentURL = page.url();
+			expect( currentURL ).toContain( siteTitle );
+		} );
 	} );
 
-	it( 'Click on Add Site on Sidebar', async function () {
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.switchSite();
-		await sidebarComponent.addSite();
-	} );
-
-	it( 'Enter new site name', async function () {
-		gutenboardingFlow = new GutenboardingFlow( page );
-		await gutenboardingFlow.enterSiteTitle( siteTitle );
-		await gutenboardingFlow.clickButton( 'Continue' );
-	} );
-
-	it( 'Search for and select a WordPress.comdomain name', async function () {
-		await gutenboardingFlow.searchDomain( siteTitle );
-		siteURL = await gutenboardingFlow.selectDomain( siteTitle.concat( '.wordpress.com' ) );
-		await gutenboardingFlow.clickButton( 'Continue' );
-	} );
-
-	it( 'Select Vesta as the site design', async function () {
-		await gutenboardingFlow.selectDesign( 'Vesta' );
-	} );
-
-	it( 'Pick the Playfair font pairing', async function () {
-		await gutenboardingFlow.selectFont( 'Playfair' );
-		await gutenboardingFlow.clickButton( 'Continue' );
-	} );
-
-	it( 'Select to add the Plugin feature', async function () {
-		await gutenboardingFlow.selectFeatures( [ 'Plugins' ] );
-		await gutenboardingFlow.clickButton( 'Continue' );
-	} );
-
-	it( 'WordPress.com Business plan is recommended', async function () {
-		await gutenboardingFlow.validateRecommendedPlan( 'Business' );
-	} );
-
-	it.skip( 'Select free plan', async function () {
-		await gutenboardingFlow.selectPlan( 'Free' );
-	} );
-
-	it.skip( 'See the Gutenberg editor', async function () {
-		const gutenbergEditorPage = new GutenbergEditorPage( page );
-		await gutenbergEditorPage.waitUntilLoaded();
-	} );
-
-	it.skip( `Delete created site`, async function () {
-		const settingsURL = DataHelper.getCalypsoURL( `settings/general/${ siteURL }` );
-		await page.goto( settingsURL, { waitUntil: 'load' } );
-		const generalSettingsPage = new GeneralSettingsPage( page );
-		try {
-			await generalSettingsPage.deleteSite( siteURL );
-			const currentURL = await page.url();
-			expect( currentURL ).toEqual( expect.not.stringContaining( siteURL ) );
-		} catch ( e ) {
-			console.error( `Deletion of ${ siteURL } failed.` );
-			throw e;
-		}
+	describe( 'Delete user account', function () {
+		it( 'Close account', async function () {
+			const closeAccountFlow = new CloseAccountFlow( page );
+			await closeAccountFlow.closeAccount();
+		} );
 	} );
 } );

@@ -2,7 +2,7 @@ import { Card, CompactCard, ScreenReaderText, Gridicon } from '@automattic/compo
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import './style.scss';
 
@@ -121,11 +121,13 @@ class FoldableCard extends Component {
 		} );
 		return (
 			<div className={ headerClasses } role="presentation" onClick={ headerClickAction }>
-				<span className="foldable-card__main">{ this.props.header } </span>
+				<span className="foldable-card__main">
+					{ this.props.header }
+					{ this.renderActionButton() }
+				</span>
 				<span className="foldable-card__secondary">
 					{ summary }
 					{ expandedSummary }
-					{ this.renderActionButton() }
 				</span>
 			</div>
 		);

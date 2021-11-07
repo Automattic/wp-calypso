@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import ThankYou from './thank-you';
 

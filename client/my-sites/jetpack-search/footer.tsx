@@ -1,4 +1,4 @@
-import React, { ReactElement, Fragment } from 'react';
+import { ReactElement, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

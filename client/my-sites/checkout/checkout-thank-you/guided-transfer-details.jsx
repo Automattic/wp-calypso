@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
 

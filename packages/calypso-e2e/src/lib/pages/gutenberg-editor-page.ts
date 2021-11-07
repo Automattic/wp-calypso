@@ -1,13 +1,15 @@
 import assert from 'assert';
 import { Page, Frame, ElementHandle } from 'playwright';
+import { getTargetDeviceName } from '../../browser-helper';
+import { NavbarComponent } from '../components';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
+type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 
 const selectors = {
 	// iframe and editor
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
-	editorBody: '.edit-post-visual-editor',
 
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
@@ -18,13 +20,13 @@ const selectors = {
 	// Within the editor body.
 	blockAppender: '.block-editor-default-block-appender',
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
+	blockWarning: '.block-editor-warning',
 
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
 	saveDraftButton: '.editor-post-save-draft',
-	// there's a hidden button also with the "Preview" text, so using unique class name instead of text selector
-	previewButton: '.edit-post-header .editor-post-preview',
+	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 
@@ -35,9 +37,19 @@ const selectors = {
 	publishPanel: '.editor-post-publish-panel',
 	viewButton: '.editor-post-publish-panel a:has-text("View")',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
+	closePublishPanel: 'button[aria-label="Close panel"]',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
+
+	// Block editor sidebar
+	desktopEditorSidebarButton: 'button[aria-label="Block editor sidebar"]:visible',
+	desktopDashboardLink: 'a[aria-description="Returns to the dashboard"]:visible',
+	mobileDashboardLink: 'a[aria-current="page"]:visible',
+
+	// Preview
+	previewMenuItem: ( target: PreviewOptions ) => `button[role="menuitem"] span:text("${ target }")`,
+	previewPane: ( target: PreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
 };
 
 /**
@@ -61,10 +73,27 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
+		await this.page.waitForLoadState( 'load' );
+
 		const frame = await this.getEditorFrame();
-		await this.page.waitForLoadState( 'networkidle', { timeout: 60000 } );
-		await frame.waitForSelector( selectors.editorBody );
+		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
+		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
+		await frame.waitForSelector( selectors.editorTitle );
+
+		await this.dismissWelcomeTourIfPresent();
 		return frame;
+	}
+
+	/**
+	 * Dismisses the Welcome Tour (card) if it is present.
+	 */
+	async dismissWelcomeTourIfPresent(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		try {
+			await frame.click( selectors.welcomeTourCloseButton, { timeout: 5 * 1000 } );
+		} catch ( err ) {
+			// noop - welcome tour was not found, which is great.
+		}
 	}
 
 	/**
@@ -73,7 +102,10 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		const elementHandle = await this.page.waitForSelector( selectors.editorFrame );
+		const elementHandle = await this.page.waitForSelector( selectors.editorFrame, {
+			timeout: 105 * 1000,
+			state: 'attached',
+		} );
 		return ( await elementHandle.contentFrame() ) as Frame;
 	}
 
@@ -186,17 +218,7 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Dismisses the Welcome Tour (card) if it is present.
-	 */
-	async dismissWelcomeTourIfPresent(): Promise< void > {
-		const frame = await this.getEditorFrame();
-		if ( await frame.isVisible( selectors.welcomeTourCloseButton ) ) {
-			await frame.click( selectors.welcomeTourCloseButton );
-		}
-	}
-
-	/**
-	 * Given a name, adds the Gutenberg block matching the name.
+	 * Adds a Gutenberg block from the block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
 	 * appears on the label when visible in the block inserter panel.
@@ -206,9 +228,14 @@ export class GutenbergEditorPage {
 	 * 		- Pay with Paypal
 	 * 		- SyntaxHighlighter Code
 	 *
+	 * The block editor selector should select the top level element of a block in the editor.
+	 * For reference, this element will almost always have the ".wp-block" class.
+	 * We recommend using the aria-label for the selector, e.g. '[aria-label="Block: Quote"]'.
+	 *
 	 * @param {string} blockName Name of the block to be inserted.
+	 * @param {string} blockEditorSelector Selector to find the parent block element in the editor.
 	 */
-	async addBlock( blockName: string ): Promise< ElementHandle > {
+	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
 
 		// Click on the editor title. This has the effect of dismissing the block inserter
@@ -219,7 +246,7 @@ export class GutenbergEditorPage {
 		await frame.fill( selectors.blockSearch, blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
-		return await frame.waitForSelector( `*[aria-label="Block: ${ blockName }"].is-selected` );
+		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
 	}
 
 	/**
@@ -307,13 +334,13 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Launches editor preview by clicking toolbar preview button.
+	 * Checks whether the editor has any block warnings/errors displaying.
 	 *
-	 * @returns {Promise<void} No return value.
+	 * @returns True if there are block warnings/errors, false otherwise.
 	 */
-	async preview(): Promise< void > {
+	async editorHasBlockWarnings(): Promise< boolean > {
 		const frame = await this.getEditorFrame();
-		await frame.click( selectors.previewButton );
+		return await frame.isVisible( selectors.blockWarning );
 	}
 
 	/**
@@ -326,5 +353,133 @@ export class GutenbergEditorPage {
 
 		await Promise.all( [ this.page.waitForNavigation(), frame.click( selectors.viewButton ) ] );
 		await this.page.waitForLoadState( 'networkidle' );
+	}
+
+	/**
+	 * Opens the Nav Sidebar on the left hand side.
+	 *
+	 * On desktop sized viewport, this will open the editor block sidebar listing recently edited posts and drafts.
+	 *
+	 * On mobile sized viewport, this method will pass through.
+	 *
+	 */
+	async openNavSidebar(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		if ( getTargetDeviceName() === 'desktop' ) {
+			await frame.click( selectors.desktopEditorSidebarButton );
+		}
+	}
+
+	/**
+	 * Returns to the Posts > All Posts view in Calypso.
+	 *
+	 * On desktop sized viewport, this method clicks on the `< All Posts` link in the block editor sidebar.
+	 * Note, for desktop the editor sidebar must be open. To open the sidebar, call `openNavSidebar` method.
+	 *
+	 * On mobile sized viewport, this method clicks on Navbar > My Sites.
+	 *
+	 * For both cases the esulting page will be the `My Home` page.
+	 */
+	async returnToHomeDashboard(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		const targetDevice = getTargetDeviceName();
+
+		if (
+			targetDevice !== 'mobile' &&
+			( await frame.getAttribute( selectors.desktopEditorSidebarButton, 'aria-expanded' ) ) ===
+				'false'
+		) {
+			await this.openNavSidebar();
+		}
+
+		const navbarComponent = new NavbarComponent( this.page );
+		const actions: Promise< unknown >[] = [
+			this.page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
+		];
+
+		if ( getTargetDeviceName() !== 'mobile' ) {
+			actions.push( frame.click( selectors.desktopDashboardLink ) );
+		} else {
+			actions.push( navbarComponent.clickMySites() );
+		}
+
+		await Promise.all( actions );
+	}
+
+	/* Previews */
+
+	/**
+	 * Click on the `Preview` button on the editor toolbar.
+	 *
+	 * This method interacts with the mobile implementation of the editor preview,
+	 * which:
+	 * 	1. launch a new tab.
+	 * 	2. load the preview.
+	 *
+	 * This method will throw if used in a desktop environment.
+	 *
+	 * @throws {Error} If environment is not 'mobile'.
+	 */
+	async openPreviewAsMobile(): Promise< Page > {
+		if ( getTargetDeviceName() !== 'mobile' ) {
+			throw new Error( 'This method only works in a mobile environment.' );
+		}
+		const frame = await this.getEditorFrame();
+		const [ popup ] = await Promise.all( [
+			this.page.waitForEvent( 'popup' ),
+			frame.click( selectors.previewButton ),
+		] );
+		await popup.waitForLoadState( 'load' );
+		return popup;
+	}
+
+	/**
+	 * Click on the `Preview` button on the editor toolbar, then select requested the preview option.
+	 *
+	 * This method interacts with the non-mobile implementation of the editor preview,
+	 * which applies an attribute to the editor to simulate target device.
+	 *
+	 *
+	 * @param {PreviewOptions} target Preview option to be selected.
+	 * @throws {Error} If environment is 'mobile'.
+	 */
+	async openPreviewAsDesktop( target: PreviewOptions ): Promise< void > {
+		if ( getTargetDeviceName() === 'mobile' ) {
+			throw new Error( 'This method only works in a non-mobile environment.' );
+		}
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.previewButton );
+		await frame.click( selectors.previewMenuItem( target ) );
+		await frame.waitForSelector( selectors.previewPane( target ) );
+	}
+
+	/**
+	 * Terminates the Post Preview mode.
+	 *
+	 * This method will click on the Preview button if required, then select the `Desktop` entry,
+	 * which is the default view setting when the editor is opened initially.
+	 *
+	 * @throws {Error} If environment is 'mobile'.
+	 */
+	async closePreview(): Promise< void > {
+		if ( getTargetDeviceName() === 'mobile' ) {
+			throw new Error( ' This method only works in a non-mobile environment.' );
+		}
+		const frame = await this.getEditorFrame();
+
+		const previewButtonHandle = await frame.waitForSelector( selectors.previewButton );
+		// Check if the Preview button has been clicked and that menu options are showing.
+		// If required, click and show the menu items so that 'Desktop' can be clicked.
+		if ( ( await previewButtonHandle.getAttribute( 'aria-expanded' ) ) === 'false' ) {
+			await frame.click( selectors.previewButton );
+		}
+		// Select 'Desktop'.
+		await frame.click( selectors.previewMenuItem( 'Desktop' ) );
+		// Dismiss the Preview button.
+		await previewButtonHandle.click();
+
+		// Ensure the preview menu is closed and that preview settings are back to default.
+		await frame.waitForSelector( 'button[aria-expanded=false]' );
+		await frame.waitForSelector( selectors.previewPane( 'Desktop' ) );
 	}
 }

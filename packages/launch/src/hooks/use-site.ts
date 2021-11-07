@@ -1,10 +1,10 @@
 import { useSelect } from '@wordpress/data';
-import * as React from 'react';
+import { useContext } from 'react';
 import LaunchContext from '../context';
 import { SITE_STORE } from '../stores';
 
 export function useSite() {
-	const { siteId } = React.useContext( LaunchContext );
+	const { siteId } = useContext( LaunchContext );
 
 	const [ site, isSiteLaunched, isSiteLaunching, isLoading ] = useSelect(
 		( select ) => {

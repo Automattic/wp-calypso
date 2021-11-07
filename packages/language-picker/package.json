@@ -29,20 +29,21 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
+		"@automattic/languages": "^1.0.0",
 		"@automattic/search": "^1.0.0",
 		"@babel/runtime": "^7.15.3",
-		"@wordpress/base-styles": "^3.4.3",
-		"@wordpress/components": "^13.0.3",
-		"@wordpress/i18n": "^3.20.0",
-		"@wordpress/react-i18n": "^1.0.3"
+		"@wordpress/base-styles": "^4.0.0",
+		"@wordpress/components": "^17.0.0",
+		"@wordpress/i18n": "^4.2.2",
+		"@wordpress/react-i18n": "^3.0.1"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.27.3",
-		"@wp-g2/create-styles": "^0.0.154",
-		"react": "^16.8",
-		"react-dom": "^16.12.0",
-		"react-native": "^0.63.4",
-		"reakit-utils": "^0.15.1"
+		"@wordpress/data": "^6.1.0",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-native": "^0.65.0",
+		"reakit-utils": "^0.15.1",
+		"redux": "^4.1.2"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
@@ -50,6 +51,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.2"
+		"@automattic/calypso-typescript-config": "^1.0.0",
+		"typescript": "^4.4.4"
 	}
 }

@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import HappychatButton from 'calypso/components/happychat/button';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import { clone, difference, forEach, last, map, some, take } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import isSuggestionLabel from './helpers';
 import SuggestionsList from './suggestions-list';
 import Token from './token';

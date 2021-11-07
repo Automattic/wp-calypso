@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
@@ -23,7 +23,7 @@ function isOutsideCalypso( url ) {
 class ThemeMoreButton extends Component {
 	state = { showPopover: false };
 
-	moreButtonRef = React.createRef();
+	moreButtonRef = createRef();
 
 	togglePopover = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );

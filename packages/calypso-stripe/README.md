@@ -2,7 +2,7 @@
 
 This is a library of components and functions for using Stripe for credit card processing in Calypso.
 
-This uses [Stripe elements](https://stripe.com/payments/elements), but with [an older version of the npm package](https://github.com/stripe/react-stripe-elements). We plan to migrate to [the newer version](https://github.com/stripe/react-stripe-js) eventually.
+This uses [Stripe elements](https://stripe.com/payments/elements).
 
 ## StripeHookProvider
 
@@ -21,7 +21,7 @@ A React hook that allows access to Stripe.js. This returns an object with the fo
 - `stripeConfiguration: null | StripeConfiguration` The object containing the data returned by the wpcom stripe configuration endpoint. May include a payment intent.
 - `isStripeLoading: boolean` A boolean that is true if stripe is currently being loaded.
 - `stripeLoadingError: undefined | null | Error` An optional object that will be set if there is an error loading stripe.
-- `reloadStripeConfiguration: ReloadStripeConfiguration` A function that can be called with a value to force the stripe configuration to reload.
+- `reloadStripeConfiguration: ReloadStripeConfiguration` A function that can be called to force the stripe configuration to reload.
 
 ## withStripeProps
 

@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -33,7 +33,6 @@ class TaxonomyManagerListItem extends Component {
 		translate: PropTypes.func,
 		siteUrl: PropTypes.string,
 		slug: PropTypes.string,
-		isPreviewable: PropTypes.bool,
 		recordGoogleEvent: PropTypes.func,
 		bumpStat: PropTypes.func,
 	};
@@ -41,6 +40,8 @@ class TaxonomyManagerListItem extends Component {
 	static defaultProps = {
 		onClick: () => {},
 	};
+
+	countRef = createRef();
 
 	state = {
 		showDeleteDialog: false,
@@ -158,7 +159,7 @@ class TaxonomyManagerListItem extends Component {
 				{ typeof term.post_count !== 'undefined' && (
 					<div className="taxonomy-manager__count">
 						<Count
-							ref="count"
+							ref={ this.countRef }
 							count={ term.post_count }
 							onMouseEnter={ this.showTooltip }
 							onMouseLeave={ this.hideTooltip }
@@ -166,7 +167,7 @@ class TaxonomyManagerListItem extends Component {
 					</div>
 				) }
 				<Tooltip
-					context={ this.refs && this.refs.count }
+					context={ this.countRef.current }
 					isVisible={ this.state.showTooltip }
 					position="left"
 				>
@@ -217,7 +218,6 @@ export default connect(
 		const siteSettings = getSiteSettings( state, siteId );
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
-		const isPreviewable = get( site, 'is_previewable' );
 		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
 		const isPodcastingCategory =
@@ -226,7 +226,6 @@ export default connect(
 		return {
 			canSetAsDefault,
 			isDefault,
-			isPreviewable,
 			siteId,
 			siteSlug,
 			siteUrl,

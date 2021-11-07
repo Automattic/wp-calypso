@@ -3,7 +3,7 @@ import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, omit } from 'lodash';
 import page from 'page';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';

@@ -1,6 +1,5 @@
 import page from 'page';
 import { stringify } from 'qs';
-import React from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import {
 	trackPageLoad,

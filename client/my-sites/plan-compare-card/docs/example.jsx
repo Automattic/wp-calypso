@@ -1,8 +1,8 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import PlanCompareCard from '../index';
 import PlanCompareCardItem from '../item';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'PlanCompareCard';
 
 	render() {

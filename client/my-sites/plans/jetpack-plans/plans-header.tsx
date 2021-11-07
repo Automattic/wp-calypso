@@ -4,7 +4,7 @@ import {
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import FormattedHeader from 'calypso/components/formatted-header';

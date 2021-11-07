@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -43,7 +43,7 @@ const options = {
 	jetpack_reports: 'jetpack_reports',
 };
 
-class WPCOMNotifications extends React.Component {
+class WPCOMNotifications extends Component {
 	static displayName = 'WPCOMNotifications';
 
 	// TODO: Add propTypes

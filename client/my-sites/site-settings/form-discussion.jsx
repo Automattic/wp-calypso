@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { flowRight, pick } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

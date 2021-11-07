@@ -4,8 +4,8 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import React, { Component } from 'react';
-import LazyRender from 'react-lazily-render';
+import { Fragment, Component } from 'react';
+import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -24,7 +24,6 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
@@ -53,7 +52,6 @@ class ListAll extends Component {
 		domainsList: PropTypes.array.isRequired,
 		filteredDomainsList: PropTypes.array.isRequired,
 		sites: PropTypes.object.isRequired,
-		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
@@ -122,9 +120,8 @@ class ListAll extends Component {
 	};
 
 	fetchWhoisData = ( domain ) => {
-		wpcom
-			.undocumented()
-			.fetchWhois( domain )
+		wpcom.req
+			.get( `/domains/${ domain }/whois` )
 			.then( ( whoisData ) => this.setWhoisData( domain, whoisData[ 0 ] ?? null ) )
 			.catch( () => this.setWhoisData( domain, null ) );
 	};
@@ -273,11 +270,13 @@ class ListAll extends Component {
 		const actionResult = this.getActionResult( domain.name );
 
 		return (
-			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
+			<Fragment key={ `domain-item-${ index }-${ domain.name }` }>
 				{ domain?.blogId && ! isContactEmailEditContext ? (
-					<LazyRender>
-						{ ( render ) => ( render ? this.renderQuerySiteDomainsOnce( domain.blogId ) : null ) }
-					</LazyRender>
+					<InView triggerOnce>
+						{ ( { inView, ref } ) => (
+							<div ref={ ref }>{ inView && this.renderQuerySiteDomainsOnce( domain.blogId ) }</div>
+						) }
+					</InView>
 				) : (
 					this.renderQuerySiteDomainsOnce( domain.blogId )
 				) }
@@ -305,7 +304,7 @@ class ListAll extends Component {
 						}
 					/>
 				) }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -436,9 +435,11 @@ class ListAll extends Component {
 
 		const saveWhoisPromises = selectedDomainNamesList.map( ( domainName ) => {
 			const updatedContactInfo = this.getUpdatedContactInfo( domainName, contactInfo );
-			return wpcom
-				.undocumented()
-				.updateWhois( domainName, updatedContactInfo, this.state.transferLockOptOut )
+			return wpcom.req
+				.post( `/domains/${ domainName }/whois`, {
+					whois: updatedContactInfo,
+					transfer_lock: this.state.transferLockOptOut,
+				} )
 				.then( () => {
 					this.setState( ( { contactInfoSaveResults } ) => {
 						return {
@@ -518,7 +519,7 @@ class ListAll extends Component {
 	}
 
 	renderContent() {
-		const { domainsList, translate, user } = this.props;
+		const { domainsList, translate } = this.props;
 
 		if (
 			this.props.isContactEmailEditContext &&
@@ -545,7 +546,7 @@ class ListAll extends Component {
 				<div className="list-all__form">{ this.renderActionForm() }</div>
 				<div className="list-all__container">
 					<QueryAllDomains />
-					<QueryUserPurchases userId={ user.ID } />
+					<QueryUserPurchases />
 					<Main wideLayout>
 						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
@@ -576,13 +577,11 @@ const saveContactEmailClick = () =>
 		recordTracksEvent( 'calypso_domain_management_list_all_save_contact_email_click' )
 	);
 
-const getPurchasesByCurrentUserId = ( state ) => {
-	const user = getCurrentUser( state );
-	return ( getUserPurchases( state, user?.ID ) || [] ).reduce( ( result, purchase ) => {
+const getPurchasesById = ( state ) =>
+	( getUserPurchases( state ) || [] ).reduce( ( result, purchase ) => {
 		result[ purchase.id ] = purchase;
 		return result;
 	}, {} );
-};
 
 const getSitesById = ( state ) => {
 	return ( getSites( state ) ?? [] ).reduce( ( result, site ) => {
@@ -630,8 +629,7 @@ const getFilteredDomainsList = ( state, context ) => {
 export default connect(
 	( state, { context } ) => {
 		const sites = getSitesById( state );
-		const user = getCurrentUser( state );
-		const purchases = getPurchasesByCurrentUserId( state );
+		const purchases = getPurchasesById( state );
 		const action = parse( context.querystring )?.action;
 
 		return {
@@ -647,7 +645,6 @@ export default connect(
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
-			user,
 		};
 	},
 	{

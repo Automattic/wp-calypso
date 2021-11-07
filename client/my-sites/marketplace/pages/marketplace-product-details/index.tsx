@@ -1,13 +1,14 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
 import Notice from 'calypso/components/notice';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 import { getDefaultPluginInProduct } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import { IProductGroupCollection, IProductCollection } from 'calypso/my-sites/marketplace/types';
@@ -39,7 +40,8 @@ function MarketplacePluginDetails( {
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, productSlug ) );
 
 	const translate = useTranslate();
-	const { replaceProductsInCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { replaceProductsInCart } = useShoppingCart( cartKey );
 	const products = useSelector( getProductsList );
 	const isProductListLoading = useSelector( ( state ) => isProductsListFetching( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );

@@ -14,6 +14,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
 import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
@@ -147,6 +148,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 			config.isEnabled( 'use-translation-chunks' ) ||
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
+		useLoadingEllipsis: !! request.query.loading_ellipsis,
 	} );
 
 	context.app = {
@@ -206,13 +208,7 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 
 function setUpLocalLanguageRevisions( req ) {
 	const rootPath = path.join( __dirname, '..', '..', '..' );
-	const langRevisionsPath = path.join(
-		rootPath,
-		'public',
-		'evergreen',
-		'languages',
-		'lang-revisions.json'
-	);
+	const langRevisionsPath = path.join( rootPath, 'public', 'languages', 'lang-revisions.json' );
 	const langPromise = fs.promises
 		.readFile( langRevisionsPath, 'utf8' )
 		.then( ( languageRevisions ) => {
@@ -537,19 +533,33 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-export default function pages() {
-	const app = express();
+/**
+ * Checks if the passed URL has the same origin as the request
+ *
+ * @param {express.Request} req Request
+ * @param {string} url URL
+ * @returns {boolean} True if origins are the same
+ */
+function validateRedirect( req, url ) {
+	if ( ! url ) {
+		return false;
+	}
 
-	app.set( 'views', __dirname );
+	try {
+		const serverOrigin = req.protocol + '://' + req.host;
+		return new URL( url, serverOrigin ).origin === serverOrigin;
+	} catch {
+		// if parsing the URL fails, it is not valid
+		return false;
+	}
+}
 
-	app.use( logSectionResponse );
-	app.use( cookieParser() );
-	app.use( middlewareAssets() );
-	app.use( middlewareCache() );
-	app.use( setupLoggedInContext );
-	app.use( handleLocaleSubdomains );
-	app.use( middlewareUnsupportedBrowser() );
-
+/**
+ * Defines wordpress.com (Calypso blue) routes only
+ *
+ * @param {express.Application} app Express application
+ */
+function wpcomPages( app ) {
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
 		if ( ! config.isEnabled( 'reader' ) && config.isEnabled( 'stats' ) ) {
@@ -586,44 +596,42 @@ export default function pages() {
 		res.redirect( redirectUrl );
 	} );
 
-	if ( process.env.NODE_ENV !== 'development' ) {
-		app.get( '/discover', function ( req, res, next ) {
-			if ( ! req.context.isLoggedIn ) {
-				res.redirect( config( 'discover_logged_out_redirect_url' ) );
-			} else {
-				next();
-			}
-		} );
+	app.get( '/discover', function ( req, res, next ) {
+		if ( ! req.context.isLoggedIn ) {
+			res.redirect( config( 'discover_logged_out_redirect_url' ) );
+		} else {
+			next();
+		}
+	} );
 
-		// redirect logged-out searches to en.search.wordpress.com
-		app.get( '/read/search', function ( req, res, next ) {
-			if ( ! req.context.isLoggedIn ) {
-				res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
-			} else {
-				next();
-			}
-		} );
+	// redirect logged-out searches to en.search.wordpress.com
+	app.get( '/read/search', function ( req, res, next ) {
+		if ( ! req.context.isLoggedIn ) {
+			res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
+		} else {
+			next();
+		}
+	} );
 
-		app.get( '/plans', function ( req, res, next ) {
-			if ( ! req.context.isLoggedIn ) {
-				const queryFor = req.query?.for;
-				const ref = req.query?.ref;
+	app.get( '/plans', function ( req, res, next ) {
+		if ( ! req.context.isLoggedIn ) {
+			const queryFor = req.query?.for;
+			const ref = req.query?.ref;
 
-				if ( queryFor && 'jetpack' === queryFor ) {
-					res.redirect(
-						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
-					);
-				} else {
-					const pricingPageUrl = ref
-						? `https://wordpress.com/pricing/?ref=${ ref }`
-						: 'https://wordpress.com/pricing';
-					res.redirect( pricingPageUrl );
-				}
+			if ( queryFor && 'jetpack' === queryFor ) {
+				res.redirect(
+					'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
+				);
 			} else {
-				next();
+				const pricingPageUrl = ref
+					? `https://wordpress.com/pricing/?ref=${ ref }`
+					: 'https://wordpress.com/pricing';
+				res.redirect( pricingPageUrl );
 			}
-		} );
-	}
+		} else {
+			next();
+		}
+	} );
 
 	// Redirect legacy `/menus` routes to the corresponding Customizer panel
 	// TODO: Move to `my-sites/customize` route defs once that section is isomorphic
@@ -663,6 +671,89 @@ export default function pages() {
 			res.send( pageHtml );
 		}
 	);
+
+	app.get( '/browsehappy', ( req, res ) => {
+		// We only want to allow a redirect to Calypso routes, so we check that
+		// the `from` query param has the same origin.
+		const { from } = req.query;
+		const redirectLocation = from && validateRedirect( req, from ) ? from : '/';
+
+		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
+		req.context.from = redirectLocation;
+
+		res.send( renderJsx( 'browsehappy', req.context ) );
+	} );
+
+	app.get( '/support-user', function ( req, res ) {
+		// Do not iframe
+		res.set( {
+			'X-Frame-Options': 'DENY',
+		} );
+
+		if ( calypsoEnv === 'development' ) {
+			return res.send(
+				renderJsx( 'support-user', {
+					authorized: true,
+					supportUser: req.query.support_user,
+					supportToken: req.query._support_token,
+					supportPath: req.query.support_path,
+				} )
+			);
+		}
+
+		if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) || ! req.cookies.wordpress_logged_in ) {
+			return res.send( renderJsx( 'support-user' ) );
+		}
+
+		// Maybe not logged in, note that you need docker to test this properly
+		debug( 'Issuing API call to fetch user object' );
+		getBootstrappedUser( req )
+			.then( ( data ) => {
+				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
+
+				// A8C check
+				if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+					return res.send( renderJsx( 'support-user' ) );
+				}
+
+				// Passed all checks, prepare support user session
+				res.send(
+					renderJsx( 'support-user', {
+						authorized: true,
+						supportUser: req.query.support_user,
+						supportToken: req.query._support_token,
+						supportPath: req.query.support_path,
+					} )
+				);
+			} )
+			.catch( () => {
+				res.clearCookie( 'wordpress_logged_in', {
+					path: '/',
+					httpOnly: true,
+					domain: '.wordpress.com',
+				} );
+
+				res.send( renderJsx( 'support-user' ) );
+			} );
+	} );
+}
+
+export default function pages() {
+	const app = express();
+
+	app.set( 'views', __dirname );
+
+	app.use( logSectionResponse );
+	app.use( cookieParser() );
+	app.use( middlewareAssets() );
+	app.use( middlewareCache() );
+	app.use( setupLoggedInContext );
+	app.use( handleLocaleSubdomains );
+	app.use( middlewareUnsupportedBrowser() );
+
+	if ( ! isJetpackCloud() ) {
+		wpcomPages( app );
+	}
 
 	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
@@ -738,85 +829,6 @@ export default function pages() {
 			res.status( 500 ).send( 'Bad report!' );
 		}
 	);
-
-	function validateRedirect( req, url ) {
-		if ( ! url ) {
-			return false;
-		}
-
-		try {
-			const serverOrigin = req.protocol + '://' + req.host;
-			return new URL( url, serverOrigin ).origin === serverOrigin;
-		} catch {
-			// if parsing the URL fails, it is not valid
-			return false;
-		}
-	}
-
-	app.get( '/browsehappy', ( req, res ) => {
-		// We only want to allow a redirect to Calypso routes, so we check that
-		// the `from` query param has the same origin.
-		const { from } = req.query;
-		const redirectLocation = from && validateRedirect( req, from ) ? from : '/';
-
-		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
-		req.context.from = redirectLocation;
-
-		res.send( renderJsx( 'browsehappy', req.context ) );
-	} );
-
-	app.get( '/support-user', function ( req, res ) {
-		// Do not iframe
-		res.set( {
-			'X-Frame-Options': 'DENY',
-		} );
-
-		if ( calypsoEnv === 'development' ) {
-			return res.send(
-				renderJsx( 'support-user', {
-					authorized: true,
-					supportUser: req.query.support_user,
-					supportToken: req.query._support_token,
-					supportPath: req.query.support_path,
-				} )
-			);
-		}
-
-		if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) || ! req.cookies.wordpress_logged_in ) {
-			return res.send( renderJsx( 'support-user' ) );
-		}
-
-		// Maybe not logged in, note that you need docker to test this properly
-		debug( 'Issuing API call to fetch user object' );
-		getBootstrappedUser( req )
-			.then( ( data ) => {
-				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
-
-				// A8C check
-				if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
-					return res.send( renderJsx( 'support-user' ) );
-				}
-
-				// Passed all checks, prepare support user session
-				res.send(
-					renderJsx( 'support-user', {
-						authorized: true,
-						supportUser: req.query.support_user,
-						supportToken: req.query._support_token,
-						supportPath: req.query.support_path,
-					} )
-				);
-			} )
-			.catch( () => {
-				res.clearCookie( 'wordpress_logged_in', {
-					path: '/',
-					httpOnly: true,
-					domain: '.wordpress.com',
-				} );
-
-				res.send( renderJsx( 'support-user' ) );
-			} );
-	} );
 
 	// catchall to render 404 for all routes not explicitly allowed in client/sections
 	app.use( render404() );

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import Spinner from 'calypso/components/spinner';
 import connectToWebpackServer, { BuildState } from './webpack-client';
 

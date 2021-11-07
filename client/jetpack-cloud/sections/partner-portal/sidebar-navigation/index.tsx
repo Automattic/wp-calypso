@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';

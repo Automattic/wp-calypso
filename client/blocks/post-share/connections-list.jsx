@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import Connection from './connection';
 
 class ConnectionsList extends PureComponent {

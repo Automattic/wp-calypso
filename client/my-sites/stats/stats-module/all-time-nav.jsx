@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
 import moment from 'moment';
-import React from 'react';
 import { connect } from 'react-redux';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';

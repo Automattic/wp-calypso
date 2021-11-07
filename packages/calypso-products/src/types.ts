@@ -12,6 +12,7 @@ import type {
 	TYPES_LIST,
 	PERIOD_LIST,
 } from './constants';
+import type { getJetpackStorageAmountDisplays } from './translations';
 import type { TranslateResult } from 'i18n-calypso';
 
 const featureValues = Object.values( features );
@@ -48,6 +49,7 @@ export type JetpackPlanSlug =
 export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
+export type JetpackSlugsWithStorage = keyof ReturnType< typeof getJetpackStorageAmountDisplays >;
 
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
@@ -67,6 +69,8 @@ export interface Product {
 	term: typeof TERMS_LIST[ number ];
 	bill_period: typeof PERIOD_LIST[ number ];
 	getFeatures?: () => Feature[];
+	getProductId: () => number;
+	getStoreSlug: () => ProductSlug;
 }
 
 export interface Plan {
@@ -81,6 +85,21 @@ export interface Plan {
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
 	getTagline: () => TranslateResult;
-	getHiddenFeatures?: () => Feature[];
-	getInferiorHiddenFeatures?: () => Feature[];
+
+	/**
+	 * Features that are included as part of this plan.
+	 *
+	 * NOTE: Some parts of Calypso use the result of this method
+	 * to determine what a given plan *may* be capable of doing
+	 * before verifying with an API.
+	 */
+	getIncludedFeatures?: () => Feature[];
+
+	/**
+	 * Features that are superseded by another feature included in this plan.
+	 *
+	 * Example: if a plan has 1TB of storage space,
+	 * a feature for 20GB of storage space would be inferior to it.
+	 */
+	getInferiorFeatures?: () => Feature[];
 }

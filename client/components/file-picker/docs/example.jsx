@@ -1,8 +1,8 @@
 import { Card, Button } from '@automattic/components';
-import React from 'react';
+import { Component } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 
-export default class FilePickers extends React.Component {
+export default class FilePickers extends Component {
 	constructor( props ) {
 		super( props );
 	}

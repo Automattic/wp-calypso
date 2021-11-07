@@ -1,8 +1,12 @@
-import { ElementHandle, Page } from 'playwright';
+import { Page } from 'playwright';
 
 const selectors = {
-	comment: '.wpnc__comment',
-	singleViewPanel: '.wpnc__single-view',
+	// Notifications panel (including sub-panels)
+	activeSingleViewPanel: '.wpnc__single-view.wpnc__current',
+	notification: ( text: string ) => `.wpnc__comment:has-text("${ text }")`,
+
+	// Comment actions
+	commentAction: ( action: string ) => `button.wpnc__action-link:has-text("${ action }"):visible`,
 	undoLocator: '.wpnc__undo-item',
 };
 /**
@@ -21,27 +25,13 @@ export class NotificationsComponent {
 	}
 
 	/**
-	 * Locates and returns an ElementHandle to the notification.
-	 *
-	 * @param {string} text Text by which the notification should be located.
-	 * @returns {Promise<ElementHandle} Reference to the notification element.
-	 */
-	async getNotification( text: string ): Promise< ElementHandle > {
-		// Currently, only text selector is supported, but eventually it may make sense
-		// to implement a numerical selector as well.
-		const selector = `*css=${ selectors.comment } >> text=${ text }`;
-		return await this.page.waitForSelector( selector );
-	}
-
-	/**
 	 * Given a string of text, locate and click on the notification containing the text.
 	 *
 	 * @param {string} text Text contained in the notification.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNotification( text: string ): Promise< void > {
-		const notification = await this.getNotification( text );
-		await notification.click();
+		await this.page.click( selectors.notification( text ) );
 	}
 
 	/**
@@ -53,8 +43,10 @@ export class NotificationsComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNotificationAction( action: 'Trash' ): Promise< void > {
-		const selector = `*css=button >> text=${ action }`;
-		await this.page.click( selector );
+		// we need to make sure we're in a specific notification view before proceeding with the individual action
+		const elementHandle = await this.page.waitForSelector( selectors.activeSingleViewPanel );
+		await elementHandle.waitForElementState( 'stable' );
+		await this.page.click( selectors.commentAction( action ) );
 	}
 
 	/**

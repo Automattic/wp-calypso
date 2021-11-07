@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

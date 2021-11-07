@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';

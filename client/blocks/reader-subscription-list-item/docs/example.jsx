@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { map } from 'lodash';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
 

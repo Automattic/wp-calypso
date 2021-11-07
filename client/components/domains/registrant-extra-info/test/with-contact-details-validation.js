@@ -4,7 +4,6 @@
 
 import { mount } from 'enzyme';
 import { difference, set } from 'lodash';
-import React from 'react';
 import { Provider } from 'react-redux';
 import { ValidatedRegistrantExtraInfoUkForm, RegistrantExtraInfoUkForm } from '../uk-form';
 

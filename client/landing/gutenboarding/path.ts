@@ -9,11 +9,21 @@ type PlanPath = Plans.PlanPath;
 
 const plansPaths = Plans.plansSlugs;
 
-// The first step (IntentGathering), which is found at the root route (/), is set as
-// `undefined`, as that's what matching our `path` pattern against a route with no explicit
-// step fragment will return.
+/**
+ * The first step (IntentGathering), which is found at the root route (/), is set as
+ * `undefined`, as that's what matching our `path` pattern against a route with no explicit
+ * step fragment will return.
+ *
+ * In the FSE Beta flow, the opt-in step becomes the first one,
+ * and the root route (/) is automatically redirected to it.
+ * In order to retain the IntentGathering step (which moves in second position),
+ * we add a new FseBetaIntentGathering step, identical to the regular IntentGathering,
+ * only used by the FSE Beta flow.
+ */
 export const Step = {
 	IntentGathering: undefined,
+	FseBetaOptIn: 'beta',
+	FseBetaIntentGathering: 'title',
 	DesignSelection: 'design',
 	Style: 'style',
 	Features: 'features',

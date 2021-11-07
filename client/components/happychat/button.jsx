@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { initConnection } from 'calypso/state/happychat/connection/actions';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';

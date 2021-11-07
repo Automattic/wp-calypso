@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';

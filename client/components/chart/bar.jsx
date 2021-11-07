@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import ChartBarTooltip from './bar-tooltip';
 
-export default class ChartBar extends React.PureComponent {
+export default class ChartBar extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
 		clickHandler: PropTypes.func,

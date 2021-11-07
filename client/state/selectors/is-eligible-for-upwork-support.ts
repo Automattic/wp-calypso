@@ -1,40 +1,14 @@
+import config from '@automattic/calypso-config';
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
-
-export const UPWORK_LOCALES = [
-	'de',
-	'de-at',
-	'de-li',
-	'de-lu',
-	'de-ch',
-	'es',
-	'es-cl',
-	'es-mx',
-	'fr',
-	'fr-ca',
-	'fr-be',
-	'fr-ch',
-	'it',
-	'it-ch',
-	'ja',
-	'nl',
-	'nl-be',
-	'nl-nl',
-	'pt',
-	'pt-pt',
-	'pt-br',
-	'sv',
-	'sv-fi',
-	'sv-se',
-];
 
 /**
  * @param state Global state tree
  * @returns Whether or not this customer should receive Upwork support
  */
 export default function isEligibleForUpworkSupport( state ): boolean {
-	if ( ! UPWORK_LOCALES.includes( getCurrentUserLocale( state ) ) ) {
+	if ( ! config( 'upwork_support_locales' ).includes( getCurrentUserLocale( state ) ) ) {
 		return false;
 	}
 

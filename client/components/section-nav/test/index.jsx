@@ -3,7 +3,7 @@
  */
 
 import { assert } from 'chai';
-import React from 'react';
+import { createElement, Children } from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
 import ShallowRenderer from 'react-test-renderer/shallow';
@@ -17,7 +17,7 @@ jest.mock( 'calypso/lib/analytics/ga', () => ( {
 function createComponent( component, props, children ) {
 	const renderer = new ShallowRenderer();
 
-	renderer.render( React.createElement( component, props, children ) );
+	renderer.render( createElement( component, props, children ) );
 	return renderer.getRenderOutput();
 }
 
@@ -60,7 +60,7 @@ describe( 'section-nav', () => {
 		test( 'should render children', () => {
 			return new Promise( ( done ) => {
 				//React.Children.only should work here but gives an error about not being the only child
-				React.Children.map( panelElem.props.children, function ( obj ) {
+				Children.map( panelElem.props.children, function ( obj ) {
 					if ( obj.type === 'p' ) {
 						assert.equal( obj.props.children, 'mmyellow' );
 						done();
@@ -89,7 +89,7 @@ describe( 'section-nav', () => {
 	describe( 'interaction', () => {
 		test( 'should call onMobileNavPanelOpen function passed as a prop when tapped', () => {
 			return new Promise( ( done ) => {
-				const elem = React.createElement(
+				const elem = createElement(
 					SectionNav,
 					{
 						selectedText: 'placeholder',
@@ -113,7 +113,7 @@ describe( 'section-nav', () => {
 		test( 'should call onMobileNavPanelOpen function passed as a prop twice when tapped three times', () => {
 			return new Promise( ( done ) => {
 				const spy = sinon.spy();
-				const elem = React.createElement(
+				const elem = createElement(
 					SectionNav,
 					{
 						selectedText: 'placeholder',

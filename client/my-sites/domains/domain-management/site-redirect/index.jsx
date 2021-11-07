@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -35,7 +35,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-class SiteRedirect extends React.Component {
+class SiteRedirect extends Component {
 	static propTypes = {
 		location: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -111,7 +111,7 @@ class SiteRedirect extends React.Component {
 	render() {
 		const { location, translate } = this.props;
 		const { isUpdating, notice } = location;
-		const isFetching = location.isFetching || this.state.redirectUrl.length === 0;
+		const isFetching = location.isFetching;
 
 		const classes = classNames( 'site-redirect-card', { fetching: isFetching } );
 

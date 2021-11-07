@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment, useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';

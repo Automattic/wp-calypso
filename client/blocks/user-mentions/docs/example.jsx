@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import UserMentionsExampleInput from './example-input';
 
 const exampleSuggestions = [

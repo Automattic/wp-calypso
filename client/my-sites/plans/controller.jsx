@@ -1,5 +1,4 @@
 import page from 'page';
-import React from 'react';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
@@ -9,10 +8,10 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import Plans from './plans';
 
 function showJetpackPlans( context ) {
-	const getState = context.store.getState();
-	const siteId = getSelectedSiteId( getState );
-	const isJetpackProductSite = getIsJetpackProductSite( getState, siteId );
-	const isWpcom = isSiteWpcom( getState, siteId );
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const isJetpackProductSite = getIsJetpackProductSite( state, siteId );
+	const isWpcom = isSiteWpcom( state, siteId );
 	return ! isWpcom || isJetpackProductSite;
 }
 

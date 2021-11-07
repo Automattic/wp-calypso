@@ -1,5 +1,6 @@
 import { useSelect } from '@wordpress/data';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 import { useSupportedPlans } from '../hooks';
 import { PLANS_STORE } from '../stores';
 import PlanItem from './plan-item';

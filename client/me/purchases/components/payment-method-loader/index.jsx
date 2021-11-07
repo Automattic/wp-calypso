@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
 import CreditCardFormFieldsLoadingPlaceholder from 'calypso/components/credit-card-form-fields/loading-placeholder';
 import FormButton from 'calypso/components/forms/form-button';
 import Layout from 'calypso/components/layout';

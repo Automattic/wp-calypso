@@ -1,14 +1,14 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetImport } from 'calypso/state/imports/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ImporterActionButton from './action-button';
 
-export class DoneButton extends React.PureComponent {
+export class DoneButton extends PureComponent {
 	static displayName = 'DoneButton';
 
 	static propTypes = {

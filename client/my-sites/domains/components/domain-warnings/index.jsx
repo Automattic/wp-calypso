@@ -2,7 +2,7 @@ import _debug from 'debug';
 import { localize } from 'i18n-calypso';
 import { intersection, map, find, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
@@ -51,7 +51,7 @@ const expiringDomainsCanManageWarning = 'expiring-domains-can-manage';
 const expiringDomainsCannotManageWarning = 'expiring-domains-cannot-manage';
 const newTransfersWrongNSWarning = 'new-transfer-wrong-ns';
 
-export class DomainWarnings extends React.PureComponent {
+export class DomainWarnings extends PureComponent {
 	static propTypes = {
 		domains: PropTypes.array,
 		allowedRules: PropTypes.array,

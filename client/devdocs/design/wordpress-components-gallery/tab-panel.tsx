@@ -1,5 +1,4 @@
 import { TabPanel } from '@wordpress/components';
-import React from 'react';
 
 const TabPanelExample = () => (
 	<TabPanel

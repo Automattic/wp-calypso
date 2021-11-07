@@ -1,5 +1,4 @@
 import { CustomSelectControl } from '@wordpress/components';
-import React from 'react';
 
 const defaultOptions = [
 	{

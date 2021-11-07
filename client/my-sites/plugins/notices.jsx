@@ -1,7 +1,7 @@
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { localize } from 'i18n-calypso';
 import { uniqBy } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import {
 	ACTIVATE_PLUGIN,
@@ -25,7 +25,7 @@ import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selecto
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class PluginNotices extends React.Component {
+class PluginNotices extends Component {
 	componentDidUpdate( prevProps ) {
 		const currentNotices = this.extractNoticeProps( this.props );
 		const prevNotices = this.extractNoticeProps( prevProps );

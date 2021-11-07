@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

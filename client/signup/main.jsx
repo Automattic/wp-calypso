@@ -21,7 +21,7 @@ import {
 } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -61,6 +61,7 @@ import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/act
 import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
@@ -116,7 +117,13 @@ function isWPForTeamsFlow( flowName ) {
 	return flowName === 'p2';
 }
 
-class Signup extends React.Component {
+function showProgressIndicator( flowName ) {
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site', 'importer' ];
+
+	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
+}
+
+class Signup extends Component {
 	static propTypes = {
 		store: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool,
@@ -551,6 +558,7 @@ class Signup extends React.Component {
 		const completedSteps = getCompletedSteps(
 			this.props.flowName,
 			progress,
+			{},
 			this.props.isLoggedIn
 		);
 		return flowSteps.length === completedSteps.length;
@@ -575,11 +583,13 @@ class Signup extends React.Component {
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 			const hasPaidDomain = isDomainRegistration( domainItem );
+			const destination = this.signupFlowController.getDestination();
 
 			return (
 				<ReskinnedProcessingScreen
 					flowName={ this.props.flowName }
 					hasPaidDomain={ hasPaidDomain }
+					isDestinationSetupSiteFlow={ destination.startsWith( '/start/setup-site' ) }
 				/>
 			);
 		}
@@ -693,8 +703,6 @@ class Signup extends React.Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 
 		return (
@@ -705,7 +713,7 @@ class Signup extends React.Component {
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }
 						rightComponent={
-							showProgressIndicator && (
+							showProgressIndicator( this.props.flowName ) && (
 								<FlowProgressIndicator
 									positionInFlow={ this.getPositionInFlow() }
 									flowLength={ this.getInteractiveStepsCount() }
@@ -734,7 +742,13 @@ class Signup extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
-		const siteId = getSiteId( state, signupDependencies.siteSlug );
+
+		// Use selectedSiteId which was set by setSelectedSiteForSignup of controller
+		// If we don't have selectedSiteId, then fallback to use getSiteId by siteSlug
+		// Note that siteSlug might not be updated as the value was updated when the Signup component will mount
+		// and we initialized SignupFlowController
+		// See: https://github.com/Automattic/wp-calypso/pull/57386
+		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const shouldStepShowSitePreview = get(
 			steps[ ownProps.stepName ],

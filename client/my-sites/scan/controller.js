@@ -1,5 +1,4 @@
 import { isJetpackScanSlug } from '@automattic/calypso-products';
-import React from 'react';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';

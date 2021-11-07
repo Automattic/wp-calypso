@@ -1,13 +1,12 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 
 import './post-comment-content.scss';
 
-class PostCommentContent extends React.Component {
+class PostCommentContent extends Component {
 	static propTypes = {
 		content: PropTypes.string.isRequired,
 		isPlaceholder: PropTypes.bool,
@@ -39,13 +38,11 @@ class PostCommentContent extends React.Component {
 		return (
 			<AutoDirection>
 				<div className={ classNames( 'comments__comment-content-wrapper', this.props.className ) }>
-					<Emojify>
-						<div
-							className="comments__comment-content"
-							ref={ this.props.setWithDimensionsRef }
-							dangerouslySetInnerHTML={ { __html: this.props.content } }
-						/>
-					</Emojify>
+					<div
+						className="comments__comment-content"
+						ref={ this.props.setWithDimensionsRef }
+						dangerouslySetInnerHTML={ { __html: this.props.content } }
+					/>
 				</div>
 			</AutoDirection>
 		);

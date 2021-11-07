@@ -1,4 +1,4 @@
-import React from 'react';
+import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import i18n, { numberFormat, translate } from '../src';
 import data from './data';
@@ -164,7 +164,7 @@ describe( 'I18n', function () {
 
 		describe( 'with mixed components', function () {
 			it( 'should handle sprintf and component interpolation together', function () {
-				const input = React.createElement( 'input' );
+				const input = createElement( 'input' );
 				const expectedResultString = '<span>foo <input/> bar</span>';
 				const placeholder = 'bar';
 				const translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {
@@ -175,7 +175,7 @@ describe( 'I18n', function () {
 						placeholder: placeholder,
 					},
 				} );
-				const instance = React.createElement( 'span', null, translatedComponent );
+				const instance = createElement( 'span', null, translatedComponent );
 
 				expect( stripReactAttributes( ReactDomServer.renderToStaticMarkup( instance ) ) ).toBe(
 					expectedResultString

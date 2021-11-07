@@ -1,4 +1,3 @@
-import React from 'react';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import { EMPTY_SEARCH_RECOMMENDATIONS } from 'calypso/reader/follow-sources';
 import { recordTrackForPost, recordAction } from 'calypso/reader/stats';

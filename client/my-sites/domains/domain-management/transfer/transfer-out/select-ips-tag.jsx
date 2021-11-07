@@ -2,7 +2,7 @@ import { Card, Dialog, Suggestions } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { find, isEmpty, startsWith } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
@@ -26,7 +26,6 @@ class SelectIpsTag extends Component {
 	};
 
 	componentDidMount() {
-		// eslint-disable-next-line no-undef
 		fetch( SelectIpsTag.ipsTagListUrl )
 			.then( async ( response ) => {
 				this.receiveIpsTagList( await response.json() );

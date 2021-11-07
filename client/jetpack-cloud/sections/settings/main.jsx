@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { localize, useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import connectedIcon from 'calypso/assets/images/jetpack/connected.svg';
 import disconnectedIcon from 'calypso/assets/images/jetpack/disconnected.svg';

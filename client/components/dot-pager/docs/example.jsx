@@ -1,4 +1,3 @@
-import React from 'react';
 import DotPager from '../';
 
 export default function DotPagerExample() {

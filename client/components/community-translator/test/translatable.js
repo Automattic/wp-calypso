@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import { Translatable } from '../translatable';
 
 const defaultProps = {

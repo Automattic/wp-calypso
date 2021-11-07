@@ -1,10 +1,11 @@
 import { withShoppingCart } from '@automattic/shopping-cart';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import PopoverCart from './popover-cart';
 
-class HeaderCart extends React.Component {
+class HeaderCart extends Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
@@ -42,4 +43,4 @@ class HeaderCart extends React.Component {
 	}
 }
 
-export default withShoppingCart( HeaderCart );
+export default withCartKey( withShoppingCart( HeaderCart ) );

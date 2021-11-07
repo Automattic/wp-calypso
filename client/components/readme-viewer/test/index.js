@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import ReadmeViewer from 'calypso/components/readme-viewer';
 
 ReadmeViewer.prototype.componentDidMount = jest.fn( function () {

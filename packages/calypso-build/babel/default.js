@@ -25,7 +25,10 @@ module.exports = ( api, opts ) => ( {
 				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
-		require.resolve( '@babel/preset-react' ),
+		[
+			require.resolve( '@babel/preset-react' ),
+			{ runtime: 'automatic', importSource: '@emotion/react' },
+		],
 		require.resolve( '@babel/preset-typescript' ),
 	],
 	plugins: [
@@ -42,6 +45,7 @@ module.exports = ( api, opts ) => ( {
 				version: require( '@babel/helpers/package.json' ).version,
 			},
 		],
-		require.resolve( './babel-plugin-optimize-i18n' ),
+		require.resolve( '@automattic/babel-plugin-preserve-i18n' ),
+		require.resolve( '@emotion/babel-plugin' ),
 	],
 } );

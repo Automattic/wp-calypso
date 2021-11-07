@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 
 /*
  * React component that manages `is-section-*` and `is-group-*` class names on the <body>
@@ -11,7 +11,7 @@ import React from 'react';
  * specified declaratively and the DOM diffing and patching is done by React itself.
  */
 function useBodyClass( prefix, value ) {
-	React.useEffect( () => {
+	useEffect( () => {
 		// if value is empty-ish, don't add or remove any CSS classes
 		if ( ! value ) {
 			return;
@@ -41,7 +41,7 @@ function useBodyClass( prefix, value ) {
 export default function BodySectionCssClass( { group, section, bodyClass } ) {
 	useBodyClass( 'is-group-', group );
 	useBodyClass( 'is-section-', section );
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( ! Array.isArray( bodyClass ) || bodyClass.length === 0 ) {
 			return;
 		}

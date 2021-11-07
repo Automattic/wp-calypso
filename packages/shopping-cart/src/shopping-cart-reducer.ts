@@ -271,7 +271,12 @@ function shoppingCartReducer(
 
 		case 'SET_LOCATION':
 			if ( doesCartLocationDifferFromResponseCartLocation( state.responseCart, action.location ) ) {
-				debug( 'setting location on cart', action.location );
+				debug(
+					'changing location on cart from',
+					state.responseCart.tax.location,
+					'to',
+					action.location
+				);
 				return {
 					...state,
 					responseCart: addLocationToResponseCart( state.responseCart, action.location ),

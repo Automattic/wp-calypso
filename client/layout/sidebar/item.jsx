@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Badge from 'calypso/components/badge';
 import Count from 'calypso/components/count';
 import MaterialIcon from 'calypso/components/material-icon';

@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import React from 'react';
 
 const CartItemLoadingPlaceholder = () => (
 	<div className="cart-item__loading-placeholder cart-item">

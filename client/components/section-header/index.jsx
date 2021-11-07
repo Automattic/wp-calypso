@@ -1,6 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import classNames from 'classnames';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import Count from 'calypso/components/count';
 import SupportInfo from 'calypso/components/support-info';
 

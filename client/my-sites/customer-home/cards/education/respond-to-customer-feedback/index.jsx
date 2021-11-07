@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import respondToCustomerFeedbackPrompt from 'calypso/assets/images/customer-home/illustration--secondary-respond-to-customer-feedback.svg';
 import { EDUCATION_RESPOND_TO_CUSTOMER_FEEDBACK } from 'calypso/my-sites/customer-home/cards/constants';
 import EducationalContent from '../educational-content';

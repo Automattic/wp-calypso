@@ -5,7 +5,8 @@ export {
 	availableDesignsConfig,
 	getAvailableDesigns,
 	getFontTitle,
+	getDesignUrl,
 	isBlankCanvasDesign,
 } from './utils';
-export { FONT_PAIRINGS, ANCHORFM_FONT_PAIRINGS, DESIGN_IMAGE_FOLDER } from './constants';
+export { FONT_PAIRINGS, ANCHORFM_FONT_PAIRINGS } from './constants';
 export type { FontPair, Design } from './types';

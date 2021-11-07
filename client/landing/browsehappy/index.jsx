@@ -1,5 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import React from 'react';
 import { addQueryArgs } from 'calypso/lib/url';
 import Circle from './circle';
 import illustrationURL from './illustration.svg';

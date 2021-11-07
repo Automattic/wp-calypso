@@ -1,6 +1,5 @@
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import { getPost } from 'calypso/state/posts/selectors';
 

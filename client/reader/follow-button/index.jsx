@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import {

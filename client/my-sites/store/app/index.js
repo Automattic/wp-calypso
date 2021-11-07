@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import WooCommerceColophon from '../components/woocommerce-colophon';

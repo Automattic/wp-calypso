@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';

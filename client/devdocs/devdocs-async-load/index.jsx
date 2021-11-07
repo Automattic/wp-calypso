@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import Placeholder from './placeholder';
 
-export default class DevdocsAsyncLoad extends React.PureComponent {
+export default class DevdocsAsyncLoad extends PureComponent {
 	static defaultProps = {
 		placeholderCount: 5,
 	};

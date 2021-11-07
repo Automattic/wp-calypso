@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 

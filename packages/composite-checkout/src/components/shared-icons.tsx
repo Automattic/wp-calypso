@@ -1,6 +1,4 @@
 import styled from '@emotion/styled';
-import PropTypes from 'prop-types';
-import React from 'react';
 
 const CheckIconSvg = styled.svg`
 	fill: #fff;
@@ -33,11 +31,6 @@ export function CheckIcon( { className, id }: { className?: string; id: string }
 		</CheckIconSvg>
 	);
 }
-
-CheckIcon.propTypes = {
-	className: PropTypes.string,
-	id: PropTypes.string,
-};
 
 export function ErrorIcon( { className }: { className?: string } ): JSX.Element {
 	return (

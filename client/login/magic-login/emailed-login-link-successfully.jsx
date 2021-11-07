@@ -2,7 +2,7 @@ import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import checkEmailImage from 'calypso/assets/images/illustrations/check-email.svg';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
@@ -16,7 +16,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { withEnhancers } from 'calypso/state/utils';
 
-class EmailedLoginLinkSuccessfully extends React.Component {
+class EmailedLoginLinkSuccessfully extends Component {
 	static propTypes = {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		locale: PropTypes.string.isRequired,

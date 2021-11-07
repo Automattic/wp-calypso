@@ -11,6 +11,7 @@ const selectors = {
 export class HeroBlock {
 	// Static properties.
 	static blockName = 'Hero';
+	static blockEditorSelector = '[aria-label="Block: Hero"]';
 	block: ElementHandle;
 
 	/**

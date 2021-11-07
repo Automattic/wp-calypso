@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from 'calypso/lib/url/support';
 
 import './style.scss';

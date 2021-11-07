@@ -1,16 +1,10 @@
-import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 function PodcastingSupportLink( { showText, iconSize } ) {
-	const supportLink = localizeUrl( 'https://wordpress.com/support/audio/podcasting/' );
-	const supportPostId = 38147;
-
 	return (
 		<InlineSupportLink
 			className="podcasting-details__support-link"
-			supportPostId={ supportPostId }
-			supportLink={ supportLink }
+			supportContext="podcasting"
 			showText={ showText }
 			iconSize={ iconSize }
 		/>

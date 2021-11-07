@@ -4,7 +4,7 @@ import asyncHandler from 'express-async-handler';
 import { defaults, groupBy, flatten } from 'lodash';
 
 const ASSETS_PATH = path.resolve( __dirname, '../../../build' );
-const ASSETS_FILE = path.join( ASSETS_PATH, `assets-evergreen.json` );
+const ASSETS_FILE = path.join( ASSETS_PATH, `assets.json` );
 const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
 
 const getAssetType = ( asset ) => {

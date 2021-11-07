@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { InfoNotice } from 'calypso/blocks/global-notice';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';

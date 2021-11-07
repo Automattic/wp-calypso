@@ -1,4 +1,3 @@
-import React from 'react';
 import ReaderExportButtonBlock from 'calypso/blocks/reader-export-button';
 
 const ReaderExportButton = () => (

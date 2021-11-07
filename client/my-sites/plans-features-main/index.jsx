@@ -29,7 +29,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -105,6 +105,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
+			disableMonthlyExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -144,6 +145,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					monthlyDisabled={ disableMonthlyExperiment }
 				/>
 			</div>
 		);
@@ -155,6 +157,7 @@ export class PlansFeaturesMain extends Component {
 			customerType,
 			disableBloggerPlanWithNonBlogDomain,
 			domainName,
+			intervalType,
 			isInSignup,
 			isJetpack,
 			isLandingPage,
@@ -169,6 +172,7 @@ export class PlansFeaturesMain extends Component {
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
 			redirectToAddDomainFlow,
+			disableMonthlyExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -213,6 +217,8 @@ export class PlansFeaturesMain extends Component {
 					siteId={ siteId }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
+					monthlyDisabled={ disableMonthlyExperiment }
+					intervalType={ intervalType }
 				/>
 			</div>
 		);
@@ -472,6 +478,7 @@ PlansFeaturesMain.propTypes = {
 	planTypes: PropTypes.array,
 	isReskinned: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
+	disableMonthlyExperiment: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -487,6 +494,7 @@ PlansFeaturesMain.defaultProps = {
 	plansWithScroll: false,
 	isReskinned: false,
 	planTypeSelector: 'interval',
+	disableMonthlyExperiment: false,
 };
 
 export default connect(

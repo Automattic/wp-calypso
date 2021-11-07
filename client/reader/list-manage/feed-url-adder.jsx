@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import { addSchemeIfMissing, withoutHttp } from 'calypso/lib/url';

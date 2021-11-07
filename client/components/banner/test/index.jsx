@@ -1,16 +1,17 @@
 jest.mock( 'calypso/blocks/dismissible-card', () => {
-	const React = require( 'react' );
-	return class DismissibleCard extends React.Component {};
+	return function DismissibleCard() {
+		return null;
+	};
 } );
 
 jest.mock( 'calypso/lib/analytics/track-component-view', () => {
-	const React = require( 'react' );
-	return class TrackComponentView extends React.Component {};
+	return function TrackComponentView() {
+		return null;
+	};
 } );
 
 import { Card, Button } from '@automattic/components';
 import { shallow } from 'enzyme';
-import React from 'react';
 import PlanPrice from 'calypso/my-sites/plan-price/';
 import { Banner } from '../index';
 

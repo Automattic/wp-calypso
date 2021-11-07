@@ -3,7 +3,7 @@ import { LaunchContext } from '@automattic/launch';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { doAction, hasAction } from '@wordpress/hooks';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
-import React from 'react';
+import { useEffect } from 'react';
 import { inIframe } from '../../block-inserter-modifications/contextual-tips/utils';
 import { FLOW_ID } from './constants';
 import LaunchModal from './launch-modal';
@@ -21,12 +21,12 @@ registerPlugin( 'a8c-editor-site-launch', {
 			LAUNCH_STORE
 		);
 
-		React.useEffect( () => {
+		useEffect( () => {
 			// @automattic/viewport doesn't have a breakpoint for medium (782px)
 			window.innerWidth < 782 ? setSidebarFullscreen() : unsetSidebarFullscreen();
 		}, [ isSidebarOpen, setSidebarFullscreen, unsetSidebarFullscreen ] );
 
-		React.useEffect( () => {
+		useEffect( () => {
 			const TOGGLE_INLINE_HELP_BUTTON_ACTION = 'a8c.wpcom-block-editor.toggleInlineHelpButton';
 			if ( hasAction( TOGGLE_INLINE_HELP_BUTTON_ACTION ) ) {
 				doAction( TOGGLE_INLINE_HELP_BUTTON_ACTION, { hidden: isSidebarOpen } );

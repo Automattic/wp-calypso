@@ -3,7 +3,7 @@ import { ExternalLink } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import Link from '../../components/link';
 import { SITE_STORE } from '../../stores/site';

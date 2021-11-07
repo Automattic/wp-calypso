@@ -14,7 +14,7 @@ import {
 	includes,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { cosineSimilarity } from 'calypso/lib/trigram';
 
 import './style.scss';
@@ -34,7 +34,7 @@ function SuggestionsButtonAll( props ) {
 	);
 }
 
-class KeyedSuggestions extends React.Component {
+class KeyedSuggestions extends Component {
 	static propTypes = {
 		suggest: PropTypes.func,
 		terms: PropTypes.object,

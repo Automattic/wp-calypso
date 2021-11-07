@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { size } from 'lodash';
-import React from 'react';
 import { ConversationCaterpillar } from 'calypso/blocks/conversation-caterpillar';
 import { comments, commentsTree } from 'calypso/blocks/conversation-caterpillar/docs/fixtures';
 

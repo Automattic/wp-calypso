@@ -1,8 +1,8 @@
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, useRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -20,16 +20,18 @@ const TitanNewMailbox = ( {
 	onReturnKeyPress = noop,
 	mailbox: {
 		alternativeEmail: { value: alternativeEmail, error: alternativeEmailError },
-		domain: { value: domain, error: domainError },
+		domain: { error: domainError },
 		isAdmin: { value: isAdmin, error: isAdminError },
 		mailbox: { value: mailbox, error: mailboxError },
 		name: { value: name, error: nameError },
 		password: { value: password, error: passwordError },
 	},
+	selectedDomainName,
 	showAllErrors = false,
 	showLabels = true,
 } ) => {
 	const translate = useTranslate();
+	const isRtl = useRtl();
 
 	const hasBeenValidated =
 		[ alternativeEmail, mailbox, name, password ].some( ( value ) => '' !== value ) ||
@@ -78,7 +80,6 @@ const TitanNewMailbox = ( {
 									setNameFieldTouched( hasBeenValidated );
 								} }
 								onKeyUp={ onReturnKeyPress }
-								suffix={ `@${ domain }` }
 							/>
 						</FormLabel>
 						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
@@ -98,7 +99,8 @@ const TitanNewMailbox = ( {
 								setMailboxFieldTouched( hasBeenValidated );
 							} }
 							onKeyUp={ onReturnKeyPress }
-							suffix={ `@${ domain }` }
+							prefix={ isRtl ? `\u200e@${ selectedDomainName }\u202c` : null }
+							suffix={ isRtl ? null : `\u200e@${ selectedDomainName }\u202c` }
 						/>
 					</FormLabel>
 					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
@@ -178,6 +180,7 @@ TitanNewMailbox.propTypes = {
 	mailbox: getMailboxPropTypeShape(),
 	showAllErrors: PropTypes.bool,
 	showLabels: PropTypes.bool.isRequired,
+	selectedDomainName: PropTypes.string.isRequired,
 };
 
 export default TitanNewMailbox;

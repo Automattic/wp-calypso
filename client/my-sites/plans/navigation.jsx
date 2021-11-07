@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -15,7 +15,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class PlansNavigation extends React.Component {
+class PlansNavigation extends Component {
 	static propTypes = {
 		isJetpack: PropTypes.bool,
 		path: PropTypes.string.isRequired,

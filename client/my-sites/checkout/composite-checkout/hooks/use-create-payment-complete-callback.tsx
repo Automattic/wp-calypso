@@ -3,7 +3,7 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
@@ -16,6 +16,8 @@ import {
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
+import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
@@ -72,7 +74,8 @@ export default function useCreatePaymentCompleteCallback( {
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
 } ): PaymentEventCallback {
-	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -93,6 +96,8 @@ export default function useCreatePaymentCompleteCallback( {
 	const adminPageRedirect = useSelector( ( state ) =>
 		getJetpackCheckoutRedirectUrl( state, siteId )
 	);
+
+	const domains = useSiteDomains( siteId );
 
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
@@ -124,7 +129,9 @@ export default function useCreatePaymentCompleteCallback( {
 				isJetpackCheckout,
 				jetpackTemporarySiteId,
 				adminPageRedirect,
+				domains,
 			};
+
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 			debug( 'getThankYouUrl returned', url );
@@ -139,12 +146,14 @@ export default function useCreatePaymentCompleteCallback( {
 					reduxDispatch,
 				} );
 			} catch ( err ) {
-				console.error( err ); // eslint-disable-line no-console
-				recordCompositeCheckoutErrorDuringAnalytics( {
-					reduxDispatch,
-					errorObject: err,
-					failureDescription: 'useCreatePaymentCompleteCallback',
-				} );
+				// eslint-disable-next-line no-console
+				console.error( err );
+				reduxDispatch(
+					recordCompositeCheckoutErrorDuringAnalytics( {
+						errorObject: err,
+						failureDescription: 'useCreatePaymentCompleteCallback',
+					} )
+				);
 			}
 
 			const receiptId = transactionResult?.receipt_id;
@@ -254,6 +263,7 @@ export default function useCreatePaymentCompleteCallback( {
 			isJetpackCheckout,
 			checkoutFlow,
 			adminPageRedirect,
+			domains,
 		]
 	);
 }

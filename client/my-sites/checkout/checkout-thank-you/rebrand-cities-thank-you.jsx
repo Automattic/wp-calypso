@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ThankYouCard from 'calypso/components/thank-you-card';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 

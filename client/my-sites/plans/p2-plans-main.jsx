@@ -1,6 +1,6 @@
 import { PLAN_P2_FREE, PLAN_P2_PLUS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';

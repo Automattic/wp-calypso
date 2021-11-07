@@ -1,7 +1,6 @@
 import Debug from 'debug';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

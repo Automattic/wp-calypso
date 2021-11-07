@@ -1,5 +1,5 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 
@@ -7,7 +7,7 @@ export default ( trackingTool ) =>
 	createHigherOrderComponent(
 		( EnhancedComponent ) => ( props ) => {
 			const dispatch = useDispatch();
-			React.useEffect( () => {
+			useEffect( () => {
 				dispatch( loadTrackingTool( trackingTool ) );
 			}, [ dispatch ] );
 

@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SuggestionSearch from '..';
 

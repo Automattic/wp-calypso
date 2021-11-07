@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';

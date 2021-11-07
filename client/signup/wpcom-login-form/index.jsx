@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 const debug = debugFactory( 'calypso:signup:wpcom-login' );
 

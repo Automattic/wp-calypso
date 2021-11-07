@@ -3,18 +3,18 @@
  */
 
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import wp from 'calypso/lib/wp';
 import weChatProcessor from '../lib/we-chat-processor';
-
-jest.mock( 'calypso/lib/wp' );
+import {
+	mockTransactionsEndpoint,
+	mockTransactionsRedirectResponse,
+	processorOptions,
+	basicExpectedDomainDetails,
+	countryCode,
+	postalCode,
+	contactDetailsForDomain,
+} from './util';
 
 describe( 'weChatProcessor', () => {
-	const stripeConfiguration = {
-		processor_id: 'IE',
-		js_url: 'https://stripe-js-url',
-		public_key: 'stripe-public-key',
-		setup_intent_id: null,
-	};
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
@@ -23,21 +23,9 @@ describe( 'weChatProcessor', () => {
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
 	const options = {
-		includeDomainDetails: false,
-		includeGSuiteDetails: false,
-		createUserAndSiteBeforeTransaction: false,
-		stripeConfiguration,
-		recordEvent: () => null,
-		reduxDispatch: () => null,
+		...processorOptions,
 		responseCart: cart,
-		getThankYouUrl: () => '',
-		siteSlug: undefined,
-		siteId: undefined,
-		contactDetails: undefined,
 	};
-
-	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
-	const postalCode = { isTouched: true, value: '10001', errors: [], isRequired: true };
 
 	const basicExpectedStripeRequest = {
 		cart: {
@@ -54,70 +42,40 @@ describe( 'weChatProcessor', () => {
 			},
 			temporary: false,
 		},
-		domainDetails: undefined,
+		domain_details: undefined,
 		payment: {
 			address: undefined,
-			cancelUrl: 'https://example.com/',
+			cancel_url: 'https://example.com/',
 			city: undefined,
 			country: 'US',
-			countryCode: 'US',
-			deviceId: undefined,
+			country_code: 'US',
+			device_id: undefined,
 			document: undefined,
 			email: undefined,
 			gstin: undefined,
-			idealBank: undefined,
+			ideal_bank: undefined,
 			name: 'test name',
 			nik: undefined,
 			pan: undefined,
-			paymentKey: undefined,
-			paymentMethod: 'WPCOM_Billing_Stripe_Source_Wechat',
-			paymentPartner: 'IE',
-			phoneNumber: undefined,
-			postalCode: '10001',
+			payment_key: undefined,
+			payment_method: 'WPCOM_Billing_Stripe_Source_Wechat',
+			payment_partner: 'IE',
+			phone_number: undefined,
+			postal_code: '10001',
 			state: undefined,
-			storedDetailsId: undefined,
-			streetNumber: undefined,
-			successUrl:
+			stored_details_id: undefined,
+			street_number: undefined,
+			success_url:
 				'https://example.com/checkout/thank-you/no-site/pending?redirectTo=https%3A%2F%2Fexample.com',
-			tefBank: undefined,
+			tef_bank: undefined,
 			zip: '10001',
 		},
 	};
 
-	const basicExpectedDomainDetails = {
-		address1: undefined,
-		address2: undefined,
-		alternateEmail: undefined,
-		city: undefined,
-		countryCode: 'US',
-		email: undefined,
-		extra: {
-			ca: null,
-			fr: null,
-			uk: null,
-		},
-		fax: undefined,
-		firstName: undefined,
-		lastName: undefined,
-		organization: undefined,
-		phone: undefined,
-		postalCode: '10001',
-		state: undefined,
-	};
-
-	const transactionsEndpoint = jest.fn();
-	const undocumentedFunctions = {
-		transactions: transactionsEndpoint,
-	};
-	wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
 	const redirect_url = 'https://test-redirect-url';
 
-	beforeEach( () => {
-		transactionsEndpoint.mockClear();
-		transactionsEndpoint.mockReturnValue( Promise.resolve( { redirect_url } ) );
-	} );
-
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 		};
@@ -135,10 +93,16 @@ describe( 'weChatProcessor', () => {
 	} );
 
 	it( 'returns an explicit error response if the transaction fails', async () => {
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
 		const submitData = {
 			name: 'test name',
 		};
-		transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
 			weChatProcessor( submitData, {
@@ -152,6 +116,7 @@ describe( 'weChatProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 		};
@@ -178,13 +143,14 @@ describe( 'weChatProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com',
 			},
 		} );
 	} );
 
 	it( 'sends the correct data to the endpoint with tax information', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 		};
@@ -222,13 +188,14 @@ describe( 'weChatProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com',
 			},
 		} );
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 		};
@@ -238,10 +205,7 @@ describe( 'weChatProcessor', () => {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
-				contactDetails: {
-					countryCode,
-					postalCode,
-				},
+				contactDetails: contactDetailsForDomain,
 				responseCart: { ...cart, products: [ domainProduct ] },
 				includeDomainDetails: true,
 			} )
@@ -256,10 +220,10 @@ describe( 'weChatProcessor', () => {
 				create_new_blog: false,
 				products: [ domainProduct ],
 			},
-			domainDetails: basicExpectedDomainDetails,
+			domain_details: basicExpectedDomainDetails,
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com',
 			},
 		} );

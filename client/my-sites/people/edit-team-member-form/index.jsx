@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import page from 'page';
-import React from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -42,7 +42,7 @@ export const EditTeamMemberForm = ( {
 	const { markChanged, markSaved } = useProtectForm();
 	const { data: user, error, isLoading } = useUserQuery( siteId, userLogin, { retry: false } );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		! isLoading && error && page.redirect( `/people/team/${ siteSlug }` );
 	}, [ error, isLoading, siteSlug ] );
 

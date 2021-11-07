@@ -1,9 +1,10 @@
 import { localize, LocalizeProps } from 'i18n-calypso';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -14,7 +15,6 @@ import {
 	requestJetpackProductInstallStatus,
 	startJetpackProductInstall,
 } from 'calypso/state/jetpack-product-install/actions';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
 import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
@@ -294,7 +294,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 				status_vaultpress: status ? status.vaultpress_status : '(unknown)',
 			} );
 
-			this.props.logToLogstash( {
+			logToLogstash( {
 				feature: 'calypso_client',
 				message: 'Jetpack plugin installer error',
 				...( this.props.siteId && { site_id: this.props.siteId } ),
@@ -374,7 +374,6 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	requestJetpackProductInstallStatus,
 	startJetpackProductInstall,
-	logToLogstash,
 };
 
 type ConnectedDispatchProps = typeof mapDispatchToProps;

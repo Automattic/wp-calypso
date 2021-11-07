@@ -1,10 +1,16 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './style.scss';
 
-function P2StepWrapper( { flowName, stepName, headerText, positionInFlow, children } ) {
+function P2StepWrapper( {
+	flowName,
+	stepName,
+	headerText,
+	subHeaderText,
+	positionInFlow,
+	children,
+} ) {
 	const translate = useTranslate();
 
 	return (
@@ -13,7 +19,8 @@ function P2StepWrapper( { flowName, stepName, headerText, positionInFlow, childr
 				<div className="p2-step-wrapper__header-logo">
 					<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
 				</div>
-				{ headerText && <div className="p2-step-wrapper__header-text">{ headerText }</div> }
+				{ headerText && <h1 className="p2-step-wrapper__header-text">{ headerText }</h1> }
+				{ subHeaderText && <p className="p2-step-wrapper__subheader-text">{ subHeaderText }</p> }
 			</div>
 			<StepWrapper
 				hideFormattedHeader

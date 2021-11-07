@@ -1,6 +1,6 @@
 import { PaymentLogo } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import './style.scss';
 
 export default function StoredCreditCard( props ): ReactElement {

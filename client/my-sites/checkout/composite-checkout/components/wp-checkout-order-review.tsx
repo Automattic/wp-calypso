@@ -5,15 +5,17 @@ import {
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled } from '@automattic/wpcom-checkout';
+import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
-import joinClasses from './join-classes';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -83,7 +85,8 @@ export default function WPCheckoutOrderReview( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
-	const { responseCart, removeCoupon, couponStatus } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 
 	const selectedSiteData = useSelector( getSelectedSite );
@@ -104,6 +107,10 @@ export default function WPCheckoutOrderReview( {
 	};
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
+	const isPwpoUser = useSelector(
+		( state ) =>
+			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+	);
 
 	return (
 		<div
@@ -131,6 +138,8 @@ export default function WPCheckoutOrderReview( {
 					onChangePlanLength={ onChangePlanLength }
 					isSummary={ isSummary }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					responseCart={ responseCart }
+					isPwpoUser={ isPwpoUser ?? false }
 				/>
 			</WPOrderReviewSection>
 

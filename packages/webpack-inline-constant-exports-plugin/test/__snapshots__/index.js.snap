@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`webpack-inline-constant-exports-plugin should produce expected output: Output bundle should match snapshot 1`] = `
-"(() => {
+"\\"use strict\\";
+(() => {
 var exports = {};
 exports.id = \\"main\\";
 exports.ids = [\\"main\\"];
@@ -10,7 +11,6 @@ exports.modules = {
 /***/ \\"./index.js\\":
 /***/ (() => {
 
-\\"use strict\\";
 
 ;// CONCATENATED MODULE: ./constants2.js
 /*
@@ -42,7 +42,6 @@ const PREMIUM = 'PREMIUM_PLAN';
 
 
 
-/* eslint-disable no-console */
 console.log( /* inline */ 'PLANS_REQUEST', /* inline */ 'PLANS_RECEIVE' );
 console.log( /* inline */ 'BLOGGER_PLAN', /* inline */ 'PREMIUM_PLAN', plans );
 console.log( /* inline */ 42, /* inline */ 3.14159, /* inline */ true, /* inline */ false, /* inline */ null );

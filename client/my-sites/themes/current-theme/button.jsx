@@ -1,9 +1,9 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'CurrentThemeButton';
 
 	static propTypes = {

@@ -1,48 +1,24 @@
 const crypto = require( 'crypto' );
 const fs = require( 'fs' );
-const https = require( 'https' );
+const { writeFile } = require( 'fs' ).promises;
 const path = require( 'path' );
-const readline = require( 'readline' );
 const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
-const glob = require( 'glob' );
 const _ = require( 'lodash' );
 const mkdirp = require( 'mkdirp' );
+const fetch = require( 'node-fetch' );
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
-const CALYPSO_STRINGS = './calypso-strings.pot';
-const CHUNKS_MAP_PATTERN = './chunks-map.*.json';
+const CALYPSO_STRINGS = './public/calypso-strings.pot';
+const CHUNKS_MAP_PATTERN = './public/chunks-map.json';
 const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
-
+const OUTPUT_PATH = './public/languages';
 const langSlugs = languages.default.map( ( { langSlug } ) => langSlug );
-
-const chunksMaps = glob.sync( CHUNKS_MAP_PATTERN );
-const languagesPaths = chunksMaps
-	.map( ( chunksMapPath ) => {
-		const [ , extraPath ] = path.basename( chunksMapPath ).match( /.+\.(\w+)\.json/, '' );
-
-		if ( ! extraPath ) {
-			return;
-		}
-
-		return {
-			chunksMapPath,
-			extraPath,
-			publicPath: `./public/${ extraPath }/languages`,
-		};
-	} )
-	.filter( Boolean );
-
-function logUpdate( text ) {
-	readline.clearLine( process.stdout, 0 );
-	readline.cursorTo( process.stdout, 0 );
-	process.stdout.write( text );
-}
 
 // Create languages directory
 function createLanguagesDir() {
-	return languagesPaths.forEach( ( { publicPath } ) => mkdirp.sync( publicPath ) );
+	return mkdirp.sync( OUTPUT_PATH );
 }
 
 // Get module reference
@@ -56,109 +32,61 @@ function getModuleReference( module ) {
 }
 
 // Download languages revisions
-function downloadLanguagesRevions() {
-	return new Promise( ( resolve ) => {
-		function log( status ) {
-			logUpdate(
-				`Downloading ${ LANGUAGES_REVISIONS_FILENAME }${ status ? ` ${ status }.` : '...' }`
-			);
-		}
+async function downloadLanguagesRevions() {
+	console.log( `Downloading ${ LANGUAGES_REVISIONS_FILENAME }...` );
+	const response = await fetch( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }` );
+	if ( response.status !== 200 ) {
+		throw new Error( 'Failed to download language revisions file.' );
+	}
 
-		const files = languagesPaths.map( ( { publicPath } ) =>
-			fs.createWriteStream( `${ publicPath }/${ LANGUAGES_REVISIONS_FILENAME }` )
-		);
+	const json = await response.json();
+	await writeFile(
+		`${ OUTPUT_PATH }/${ LANGUAGES_REVISIONS_FILENAME }`,
+		JSON.stringify( json, null, 2 )
+	);
 
-		https.get( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }`, ( response ) => {
-			files.forEach( ( file ) => response.pipe( file ) );
-
-			let languageRevisions = '';
-			response.on( 'data', ( chunk ) => {
-				languageRevisions += chunk;
-			} );
-			response.on( 'end', () => {
-				if ( response.statusCode !== 200 ) {
-					console.error( 'Failed to download language revisions file.' );
-					process.exit( 1 );
-				}
-
-				log( 'completed' );
-				resolve( JSON.parse( languageRevisions ) );
-			} );
-		} );
-	} );
+	console.log( `Downloading ${ LANGUAGES_REVISIONS_FILENAME } completed.` );
+	return json;
 }
 
 // Request and write language files
 async function downloadLanguages( languageRevisions ) {
-	let downloadedLanguagesCount = 0;
+	return await Promise.all(
+		langSlugs.map( async ( langSlug ) => {
+			const filename = `${ langSlug }-v1.1.json`;
 
-	function log( status ) {
-		logUpdate(
-			`Downloading languages${ status ? ` ${ status }.` : '...' } ` +
-				`(${ downloadedLanguagesCount }/${ langSlugs.length })`
-		);
-	}
+			const output = `${ OUTPUT_PATH }/${ filename }`;
+			const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
 
-	log();
+			console.log( `Downloading ${ filename }...` );
 
-	const downloadedLanguages = await Promise.all(
-		langSlugs.map(
-			( langSlug ) =>
-				new Promise( ( resolve ) => {
-					const filename = `${ langSlug }-v1.1.json`;
-					const files = languagesPaths.map( ( { publicPath } ) =>
-						fs.createWriteStream( `${ publicPath }/${ filename }` )
-					);
-					const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
+			const response = await fetch( translationUrl );
+			if ( response.status !== 200 ) {
+				// Script should exit with an error if any of the
+				// translation download jobs for a language included
+				// in language revisions file fails.
+				// Failed downloads for languages that are not
+				// included in language revisions file could be skipped
+				// without interrupting the script.
+				if ( langSlug in languageRevisions ) {
+					throw new Error( `Failed to download translations for "${ langSlug }".` );
+				}
+				return { langSlug, failed: true };
+			}
 
-					https.get( translationUrl, ( response ) => {
-						response.setEncoding( 'utf8' );
-						let body = '';
+			const json = await response.json();
+			await writeFile( output, JSON.stringify( json ) );
 
-						files.forEach( ( file ) => response.pipe( file ) );
-						response.on( 'data', ( chunk ) => ( body += chunk ) );
-						response.on( 'end', () => {
-							// Script should exit with an error if any of the
-							// translation download jobs for a language included
-							// in language revisions file fails.
-							// Failed downloads for languages that are not
-							// included in language revisions file could be skipped
-							// without interrupting the script.
-							if ( response.statusCode !== 200 && langSlug in languageRevisions ) {
-								console.error( `Failed to download translations for "${ langSlug }".` );
-								process.exit( 1 );
-							}
+			console.log( `Downloading ${ filename } complete.` );
 
-							if ( response.statusCode === 200 ) {
-								downloadedLanguagesCount++;
-								log();
-
-								resolve( {
-									langSlug,
-									languageTranslations: JSON.parse( body ),
-								} );
-
-								return;
-							}
-
-							resolve( {
-								langSlug,
-								failed: true,
-							} );
-						} );
-					} );
-				} )
-		)
+			return { langSlug, languageTranslations: json };
+		} )
 	);
-
-	log( 'completed' );
-
-	return downloadedLanguages;
 }
 
 // Split language translations into chunks
 function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
-	logUpdate( 'Building language chunks...' );
+	console.log( 'Building language chunks...' );
 
 	const successfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => ! failed );
 	const unsuccessfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => failed );
@@ -204,108 +132,103 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 		}, {} );
 
 		const languageRevisionsHashes = {};
+		// CHUNKS_MAP_PATTERN is relative to the project root, while require is relative to current dir. Hence the `../`
+		const chunksMap = require( '../' + CHUNKS_MAP_PATTERN );
 
-		languagesPaths.map( ( { chunksMapPath, extraPath, publicPath } ) => {
-			const chunksMap = require( path.join( '..', chunksMapPath ) );
+		const chunks = _.mapValues( chunksMap, ( modules ) => {
+			const strings = new Set();
 
-			const chunks = _.mapValues( chunksMap, ( modules ) => {
-				const strings = new Set();
+			modules.forEach( ( modulePath ) => {
+				modulePath = getModuleReference( modulePath );
+				const key = /\.\w+/.test( modulePath )
+					? modulePath
+					: Object.keys( translationsByRef ).find( ( ref ) => ref.indexOf( modulePath ) === 0 );
 
-				modules.forEach( ( modulePath ) => {
-					modulePath = getModuleReference( modulePath );
-					const key = /\.\w+/.test( modulePath )
-						? modulePath
-						: Object.keys( translationsByRef ).find( ( ref ) => ref.indexOf( modulePath ) === 0 );
+				if ( ! key ) {
+					return;
+				}
 
-					if ( ! key ) {
-						return;
-					}
-
-					const stringsFromModule = translationsByRef[ key ] || [];
-					stringsFromModule.forEach( ( string ) => strings.add( string ) );
-				} );
-
-				return [ ...strings ];
+				const stringsFromModule = translationsByRef[ key ] || [];
+				stringsFromModule.forEach( ( string ) => strings.add( string ) );
 			} );
 
-			languageRevisionsHashes[ extraPath ] = {};
+			return [ ...strings ];
+		} );
 
-			successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
-				const languageChunks = _.chain( chunks )
-					.mapValues( ( stringIds ) => _.pick( languageTranslations, stringIds ) )
-					.omitBy( _.isEmpty )
-					.value();
+		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
+			const languageChunks = _.chain( chunks )
+				.mapValues( ( stringIds ) => _.pick( languageTranslations, stringIds ) )
+				.omitBy( _.isEmpty )
+				.value();
 
-				// Write language translated chunks map
-				const translatedChunksKeys = Object.keys( languageChunks ).map(
-					( chunk ) => path.parse( chunk ).name
-				);
-				const manifestJsonDataRaw = {
-					locale: _.pick( languageTranslations, [ '' ] ),
-					translatedChunks: translatedChunksKeys,
-				};
-				const manifestJsonDataFingerprint = JSON.stringify( manifestJsonDataRaw );
+			// Write language translated chunks map
+			const translatedChunksKeys = Object.keys( languageChunks ).map(
+				( chunk ) => path.parse( chunk ).name
+			);
+			const manifestJsonDataRaw = {
+				locale: _.pick( languageTranslations, [ '' ] ),
+				translatedChunks: translatedChunksKeys,
+			};
+			const manifestJsonDataFingerprint = JSON.stringify( manifestJsonDataRaw );
 
-				manifestJsonDataRaw.hash = crypto
-					.createHash( 'sha1' )
-					.update( manifestJsonDataFingerprint )
-					.digest( 'hex' );
+			manifestJsonDataRaw.hash = crypto
+				.createHash( 'sha1' )
+				.update( manifestJsonDataFingerprint )
+				.digest( 'hex' );
 
-				// Trim hash in language revisions to 5 characters to reduce file size
-				languageRevisionsHashes[ extraPath ][ langSlug ] = manifestJsonDataRaw.hash.substr( 0, 5 );
+			// Trim hash in language revisions to 5 characters to reduce file size
+			languageRevisionsHashes[ langSlug ] = manifestJsonDataRaw.hash.substr( 0, 5 );
 
-				const manifestJsonData = JSON.stringify( manifestJsonDataRaw );
-				const manifestFilepathJson = path.join(
-					publicPath,
-					`${ langSlug }-${ LANGUAGE_MANIFEST_FILENAME }`
-				);
-				fs.writeFileSync( manifestFilepathJson, manifestJsonData );
+			const manifestJsonData = JSON.stringify( manifestJsonDataRaw );
+			const manifestFilepathJson = path.join(
+				OUTPUT_PATH,
+				`${ langSlug }-${ LANGUAGE_MANIFEST_FILENAME }`
+			);
+			fs.writeFileSync( manifestFilepathJson, manifestJsonData );
 
-				const manifestJsData = `var i18nLanguageManifest = ${ manifestJsonData }`;
-				const manifestFilepathJs = path.format( {
-					...path.parse( manifestFilepathJson ),
+			const manifestJsData = `var i18nLanguageManifest = ${ manifestJsonData }`;
+			const manifestFilepathJs = path.format( {
+				...path.parse( manifestFilepathJson ),
+				base: null,
+				ext: '.js',
+			} );
+			fs.writeFileSync( manifestFilepathJs, manifestJsData );
+
+			// Write language translation chunks
+			_.forEach( languageChunks, ( chunkTranslations, chunkFilename ) => {
+				const chunkId = path.basename( chunkFilename, path.extname( chunkFilename ) );
+				const chunkJsonData = JSON.stringify( chunkTranslations );
+				const chunkJsData = `var i18nTranslationChunks = i18nTranslationChunks || {}; i18nTranslationChunks[${ JSON.stringify(
+					chunkId
+				) }] = ${ chunkJsonData }`;
+
+				const chunkFilenameJson = chunkId + '.json';
+				const chunkFilepathJson = path.join( OUTPUT_PATH, `${ langSlug }-${ chunkFilenameJson }` );
+				fs.writeFileSync( chunkFilepathJson, chunkJsonData );
+
+				const chunkFilepathJs = path.format( {
+					...path.parse( chunkFilepathJson ),
 					base: null,
 					ext: '.js',
 				} );
-				fs.writeFileSync( manifestFilepathJs, manifestJsData );
-
-				// Write language translation chunks
-				_.forEach( languageChunks, ( chunkTranslations, chunkFilename ) => {
-					const chunkId = path.basename( chunkFilename, path.extname( chunkFilename ) );
-					const chunkJsonData = JSON.stringify( chunkTranslations );
-					const chunkJsData = `var i18nTranslationChunks = i18nTranslationChunks || {}; i18nTranslationChunks[${ JSON.stringify(
-						chunkId
-					) }] = ${ chunkJsonData }`;
-
-					const chunkFilenameJson = chunkId + '.json';
-					const chunkFilepathJson = path.join( publicPath, `${ langSlug }-${ chunkFilenameJson }` );
-					fs.writeFileSync( chunkFilepathJson, chunkJsonData );
-
-					const chunkFilepathJs = path.format( {
-						...path.parse( chunkFilepathJson ),
-						base: null,
-						ext: '.js',
-					} );
-					fs.writeFileSync( chunkFilepathJs, chunkJsData );
-				} );
+				fs.writeFileSync( chunkFilepathJs, chunkJsData );
 			} );
 		} );
 
-		logUpdate( 'Updating language revisions...\n' );
+		console.log( 'Updating language revisions...' );
 
-		languagesPaths.forEach( ( { extraPath, publicPath } ) => {
-			return fs.writeFileSync(
-				`${ publicPath }/${ LANGUAGES_REVISIONS_FILENAME }`,
-				JSON.stringify( {
-					...languageRevisions,
-					hashes: languageRevisionsHashes[ extraPath ],
-				} )
-			);
-		} );
+		return fs.writeFileSync(
+			`${ OUTPUT_PATH }/${ LANGUAGES_REVISIONS_FILENAME }`,
+			JSON.stringify( {
+				...languageRevisions,
+				hashes: languageRevisionsHashes,
+			} )
+		);
 	}
 
-	logUpdate(
-		`Building language chunks completed.\nSkipped due to failed translation downloads: ${ unsuccessfullyDownloadedLanguages
+	console.log( 'Building language chunks completed.' );
+	console.log(
+		`Skipped due to failed translation downloads: ${ unsuccessfullyDownloadedLanguages
 			.map( ( { langSlug } ) => langSlug )
 			.join( ', ' ) }.`
 	);

@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import { getTerm } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

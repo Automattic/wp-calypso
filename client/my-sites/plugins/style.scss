@@ -1,3 +1,38 @@
+.is-section-plugins .main {
+	padding-top: 35px; // Compensate for the fixed header.
+
+	@media ( max-width: 782px ) {
+		padding-top: 50px;
+	}
+
+	@media ( max-width: 660px ) {
+		padding-top: 70px;
+	}
+}
+
+body.is-section-plugins.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
+}
+
+// Fix for Jetpack not having nav-unification styles yet.
+body.is-section-plugins:not( .is-nav-unification ) {
+	.plugins-browser__header,
+	.plugins__page-heading {
+		@media ( min-width: 661px ) and ( max-width: 782px ) {
+			left: calc( var( --sidebar-width-min ) + 1px ); // 1px is the sidebar border.
+			width: calc( 100% - var( --sidebar-width-min ) - 1px ); // 1px is the sidebar border.
+		}
+	}
+}
+
+.upsell-nudge {
+	margin-top: 16px;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		margin: 16px;
+	}
+}
+
 .plugin__installed-on {
 	margin-bottom: 16px;
 }
@@ -6,26 +41,15 @@
 	white-space: nowrap;
 }
 
-.plugins__header {
-	display: flex;
-	flex: 1 1 auto;
-	justify-content: flex-start;
-	align-items: center;
-
-	.plugins__page-heading {
-		width: 100%;
-	}
-}
-
 .plugins__main-header {
 	background: var( --color-surface );
 	flex-direction: column;
 	display: flex;
-	margin-bottom: 9px;
+	margin: 9px 0;
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
-		margin-bottom: 17px;
+		margin: 17px 0;
 	}
 }
 
@@ -50,37 +74,30 @@
 
 .plugins__main-buttons {
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	align-items: stretch;
-	margin: auto;
-	margin-right: 15px;
+	align-items: center;
 
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-direction: row;
-		align-items: flex-end;
-		margin-right: 0;
-		margin-bottom: 17px;
+	@media screen and ( max-width: 960px ) {
+		.plugins__button {
+			border: none;
+		}
 	}
 
 	.plugins__button {
 		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		height: 32px;
+
+		.plugins__button-icon {
+			margin-right: 5px;
+		}
 
 		&:not( :last-child ) {
-			margin-bottom: 8px;
-
 			@include breakpoint-deprecated( '>480px' ) {
-				margin-bottom: 0;
 				margin-right: 10px;
 			}
 		}
 	}
-}
-
-.plugins__header-navigation {
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
-	width: 100%;
 }
 
 .plugins__more-header {

@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { keys, trim } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';

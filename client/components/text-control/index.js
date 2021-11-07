@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import FormLabel from 'calypso/components/forms/form-label';
 

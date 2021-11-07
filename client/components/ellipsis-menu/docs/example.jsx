@@ -1,4 +1,3 @@
-import React from 'react';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import EllipsisMenu from '../';

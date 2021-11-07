@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-import React, { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
+import { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
+import * as React from 'react';
 import Button from './button';
 
 const Label = styled.label< { disabled?: boolean } & LabelHTMLAttributes< HTMLLabelElement > >`

@@ -1,5 +1,4 @@
 import { Disabled, SelectControl, TextControl, TextareaControl } from '@wordpress/components';
-import React from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};

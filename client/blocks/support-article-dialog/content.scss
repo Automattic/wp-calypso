@@ -64,11 +64,6 @@
 		display: inline;
 		margin: auto;
 		margin-bottom: 12px;
-
-		&.emojify__emoji {
-			height: 1em;
-			margin-bottom: 0;
-		}
 	}
 
 	figure img {
@@ -159,10 +154,6 @@
 		img {
 			display: block;
 			margin: 0 auto;
-
-			&.emojify__emoji {
-				display: inline;
-			}
 		}
 	}
 

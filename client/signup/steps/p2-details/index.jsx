@@ -2,7 +2,6 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
@@ -14,7 +13,12 @@ function getRedirectToAfterLoginUrl( { flowName } ) {
 }
 
 function getLoginLink( { flowName, locale } ) {
-	return login( { redirectTo: getRedirectToAfterLoginUrl( { flowName } ), locale } );
+	return login( {
+		redirectTo: getRedirectToAfterLoginUrl( { flowName } ),
+		locale,
+		signupUrl: '/start/p2/user',
+		from: 'p2',
+	} );
 }
 
 function P2Details( {
@@ -36,7 +40,7 @@ function P2Details( {
 			flowName={ flowName }
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
-			headerText={ translate( "We're almost finished! Your P2 will be:" ) }
+			headerText={ translate( "We're almost finished! Your P2 workspace will be:" ) }
 		>
 			<div className="p2-details">
 				<div className="p2-details__site-part">

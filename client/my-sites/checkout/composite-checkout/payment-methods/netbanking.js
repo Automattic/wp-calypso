@@ -13,7 +13,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { camelCase } from 'lodash';
-import React from 'react';
+import { Fragment } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { maskField } from 'calypso/lib/checkout';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
@@ -311,12 +311,12 @@ function isFormValid( store, contactCountryCode, __, reduxDispatch ) {
 
 function NetBankingLabel() {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>Net Banking</span>
 			<PaymentMethodLogos className="netbanking__logo payment-logos">
 				<NetbankingLogo />
 			</PaymentMethodLogos>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

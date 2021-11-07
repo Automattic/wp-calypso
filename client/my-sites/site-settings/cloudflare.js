@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import jetpackIllustration from 'calypso/assets/images/illustrations/jetpack-logo.svg';

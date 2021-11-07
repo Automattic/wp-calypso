@@ -1,6 +1,20 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.email-providers-comparison__action-panel {
+
+	&.is-primary {
+		flex-direction: column;
+		@include break-mobile {
+			flex-direction: row;
+		}
+	}
+}
+
+.email-providers-comparison__provider-card.promo-card {
+	flex-direction: row;
+}
+
 .email-providers-comparison__providers {
 	display: flex;
 	flex-direction: row;
@@ -45,6 +59,8 @@
 
 .email-providers-comparison__providers-wordpress-com-email {
 	color: var( --color-wordpress-com );
+	height: 48px;
+	width: 48px;
 }
 
 .email-providers-comparison__action-panel {
@@ -61,11 +77,28 @@
 
 .email-providers-comparison__provider-card.promo-card {
 	.action-panel__figure {
+		float: right;
+		max-width: 208px;
 		margin-bottom: 0.5em;
 		margin-top: 0;
 
 		img {
-			max-width: 24px;
+			max-width: 36px;
+		}
+
+		&.is-inline-body-text {
+			margin-top: 40px;
+		}
+
+		&.align-left {
+			float: left;
+			margin-left: 0;
+			margin-right: 24px;
+			width: unset;
+		}
+
+		&.align-right {
+			margin: 0 0 24px 24px;
 		}
 	}
 
@@ -81,6 +114,17 @@
 		img {
 			max-height: 18px;
 		}
+	}
+
+	&.is-forwarding {
+		div > img {
+			width: 36px;
+			height: 36px;
+		}
+	}
+
+	h2.action-panel__title {
+		margin-top: 8px;
 	}
 
 	.email-providers-comparison__provider-card-main-details {
@@ -128,11 +172,27 @@
 			.price__discounted {
 				text-decoration: line-through;
 			}
+
+			&.price__discounted span {
+				color: var( --color-text-subtle );
+
+				&.email-providers-comparison__discounted-price {
+					color: var( --studio-gray-100 );
+					text-decoration: none;
+				}
+			}
 		}
 
 		.price__discount {
 			display: block;
+			font-weight: 600;
 			margin-left: 0;
+			margin-top: 0.25em;
+
+			.email-providers-comparison__discount-with-renewal span {
+				color: var( --color-text-subtle );
+				font-weight: 400;
+			}
 		}
 	}
 
@@ -194,7 +254,7 @@
 
 			@include breakpoint-deprecated( '>1040px' ) {
 				margin-bottom: 14px;
-				margin-left: 2em;
+				margin-left: 64px;
 				margin-top: 0;
 			}
 		}
@@ -234,7 +294,6 @@
 	@include breakpoint-deprecated( '>800px' ) {
 		flex-direction: row;
 		margin-top: 0;
-		margin-left: $container-left-margin;
 	}
 
 	> .button + .button {

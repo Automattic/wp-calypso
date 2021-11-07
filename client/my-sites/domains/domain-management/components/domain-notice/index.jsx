@@ -1,15 +1,22 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
 
 import './style.scss';
 
-export default class DomainNotice extends React.Component {
+export default class DomainNotice extends Component {
 	static propTypes = {
 		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
-		status: PropTypes.oneOf( [ 'success', 'info', 'warning', 'alert', 'verifying' ] ),
+		status: PropTypes.oneOf( [
+			'success',
+			'info',
+			'warning',
+			'alert',
+			'verifying',
+			'transfer-warning',
+		] ),
 		className: PropTypes.string,
 	};
 

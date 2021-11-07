@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search.svg';
 
 export default function JetpackSearchLogo(): ReactElement {

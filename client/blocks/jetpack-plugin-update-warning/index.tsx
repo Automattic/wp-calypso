@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Notice from 'calypso/components/notice';

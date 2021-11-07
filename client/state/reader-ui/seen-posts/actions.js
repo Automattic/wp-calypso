@@ -1,7 +1,7 @@
 import {
 	READER_UNSEEN_STATUS_REQUEST,
 	READER_UNSEEN_STATUS_RECEIVE,
-} from 'calypso/state/action-types';
+} from 'calypso/state/reader-ui/action-types';
 
 import 'calypso/state/data-layer/wpcom/seen-posts/unseen/status';
 import 'calypso/state/reader-ui/init';
@@ -17,10 +17,6 @@ export const requestUnseenStatus = () => ( {
 
 /**
  * Receive unseen status for any section
- *
- * @param status.status
- * @param status whether or not we have unseen content in any section
- * @returns {{type: string, status: *}} redux action
  */
 export const receiveUnseenStatus = ( { status } ) => ( {
 	type: READER_UNSEEN_STATUS_RECEIVE,

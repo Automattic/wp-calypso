@@ -3,7 +3,7 @@ import { CompactCard } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import SectionHeader from 'calypso/components/section-header';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
@@ -11,7 +11,7 @@ import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/
 
 import './style.scss';
 
-class ListHeader extends React.PureComponent {
+class ListHeader extends PureComponent {
 	static propTypes = {
 		action: PropTypes.string,
 		headerClasses: PropTypes.object,

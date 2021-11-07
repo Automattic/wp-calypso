@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryTheme from 'calypso/components/data/query-theme';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';

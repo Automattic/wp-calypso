@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { useQuery } from 'react-query';
 import EmptyContent from 'calypso/components/empty-content';
 import wpcom from 'calypso/lib/wp';

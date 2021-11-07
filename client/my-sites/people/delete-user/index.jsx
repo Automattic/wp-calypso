@@ -3,7 +3,7 @@
 import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AuthorSelector from 'calypso/blocks/author-selector';
 import FormButton from 'calypso/components/forms/form-button';
@@ -13,8 +13,10 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gravatar from 'calypso/components/gravatar';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import User from 'calypso/components/user';
 import accept from 'calypso/lib/accept';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -22,11 +24,12 @@ import {
 	requestExternalContributorsRemoval,
 } from 'calypso/state/data-getters';
 import { httpData } from 'calypso/state/data-layer/http-data';
+import { getSite } from 'calypso/state/sites/selectors';
 import withDeleteUser from './with-delete-user';
 
 import './style.scss';
 
-class DeleteUser extends React.Component {
+class DeleteUser extends Component {
 	static displayName = 'DeleteUser';
 
 	static propTypes = {
@@ -220,7 +223,34 @@ class DeleteUser extends React.Component {
 	};
 
 	renderSingleSite = () => {
-		const { translate } = this.props;
+		const { translate, isJetpack, siteOwner, user } = this.props;
+
+		// A user should not be able to remove the site owner.
+		if ( ! isJetpack && user.ID === siteOwner ) {
+			return (
+				<Card className="delete-user__single-site">
+					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>
+					<p className="delete-user__explanation">
+						{ translate(
+							'You cannot delete the site owner. Please transfer ownership of this site to a different account before deleting this user. {{supportLink}}Learn more.{{/supportLink}}',
+							{
+								components: {
+									supportLink: (
+										<InlineSupportLink
+											supportPostId={ 102743 }
+											supportLink={ localizeUrl(
+												'https://wordpress.com/support/transferring-a-site-to-another-wordpress-com-account/'
+											) }
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+				</Card>
+			);
+		}
+
 		return (
 			<Card className="delete-user__single-site">
 				<form onSubmit={ this.deleteUser }>
@@ -324,7 +354,10 @@ export default localize(
 			const userId = user && user.ID;
 			const linkedUserId = user && user.linked_user_ID;
 			const externalContributors = siteId ? requestExternalContributors( siteId ) : httpData.empty;
+			const site = getSite( state, siteId );
+
 			return {
+				siteOwner: site?.site_owner,
 				currentUser: getCurrentUser( state ),
 				contributorType: getContributorType(
 					externalContributors,

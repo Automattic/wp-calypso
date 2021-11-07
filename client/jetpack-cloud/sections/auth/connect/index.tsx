@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import './style.scss';

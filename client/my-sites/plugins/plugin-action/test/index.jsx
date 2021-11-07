@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { mount, shallow } from 'enzyme';
-import React from 'react';
 import PluginAction from '../plugin-action';
 
 jest.mock( 'calypso/components/info-popover', () =>

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import Pagination from 'calypso/components/pagination';
 
 class PaginationExample extends Component {

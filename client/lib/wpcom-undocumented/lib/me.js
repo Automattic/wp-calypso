@@ -98,35 +98,6 @@ UndocumentedMe.prototype.setPeerReferralLinkEnable = function ( enable, callback
 	return this.wpcom.req.post( args, callback );
 };
 
-/**
- * Get a list of the user's stored cards
- *
- * @param {object} [cardToken] Payment key
- * @param {object} [additionalData] Any additional data to send in the request
- * @returns {Promise} A promise for the request
- */
-UndocumentedMe.prototype.storedCardAdd = function ( cardToken, additionalData = {} ) {
-	debug( '/me/stored-cards', cardToken, additionalData );
-
-	return this.wpcom.req.post(
-		{
-			path: '/me/stored-cards',
-		},
-		{
-			payment_key: cardToken,
-			use_for_existing: true,
-			...additionalData,
-		}
-	);
-};
-
-UndocumentedMe.prototype.storedCardDelete = function ( card, callback ) {
-	const args = {
-		path: '/me/stored-cards/' + card.stored_details_id + '/delete',
-	};
-	return this.wpcom.req.post( args, callback );
-};
-
 UndocumentedMe.prototype.backupCodes = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',

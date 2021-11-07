@@ -1,6 +1,5 @@
 import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';

@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -21,7 +21,7 @@ import SecurityCheckupTwoFactorBackupCodes from './two-factor-backup-codes';
 
 import './style.scss';
 
-class SecurityCheckupComponent extends React.Component {
+class SecurityCheckupComponent extends Component {
 	static propTypes = {
 		path: PropTypes.string,
 		translate: PropTypes.func.isRequired,

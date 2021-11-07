@@ -1,7 +1,7 @@
 import { loadScript } from '@automattic/load-script';
 import debugFactory from 'debug';
 import { filter, forEach } from 'lodash';
-import React, { PureComponent } from 'react';
+import { Children, PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 
@@ -218,6 +218,6 @@ export default class EmbedContainer extends PureComponent {
 	}
 
 	render() {
-		return React.Children.only( this.props.children );
+		return Children.only( this.props.children );
 	}
 }

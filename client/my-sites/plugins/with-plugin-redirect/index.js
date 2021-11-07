@@ -1,6 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { transferStates } from 'calypso/state/automated-transfer/constants';

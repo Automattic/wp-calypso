@@ -1,7 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { get, includes, map } from 'lodash';
 import page from 'page';
-import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
@@ -9,7 +8,6 @@ import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
-import GSuiteUpgrade from 'calypso/components/upgrades/gsuite';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
@@ -27,7 +25,6 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getSites from 'calypso/state/selectors/get-sites';
 import {
 	getSelectedSiteId,
@@ -186,6 +183,10 @@ const useMyDomain = ( context, next ) => {
 		let path = `/domains/add/${ context.params.site }`;
 		if ( context.query.initialQuery ) {
 			path += `?suggestion=${ context.query.initialQuery }`;
+
+			if ( context.query.initialMode ) {
+				path = `/domains/manage/${ context.params.site }`;
+			}
 		}
 
 		page( path );
@@ -201,6 +202,7 @@ const useMyDomain = ( context, next ) => {
 				<UseMyDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					initialMode={ context.query.initialMode }
 					goBack={ handleGoBack }
 				/>
 			</CalypsoShoppingCartProvider>
@@ -238,29 +240,6 @@ const transferDomainPrecheck = ( context, next ) => {
 			</CalypsoShoppingCartProvider>
 		</Main>
 	);
-	next();
-};
-
-const googleAppsWithRegistration = ( context, next ) => {
-	if ( canUserPurchaseGSuite( context.store.getState() ) ) {
-		context.primary = (
-			<Main>
-				<PageViewTracker
-					path="/domains/add/:domain/google-apps/:site"
-					title="Domain Search > Domain Registration > Google Apps"
-				/>
-				<DocumentHead
-					title={ translate( 'Register %(domain)s', {
-						args: { domain: context.params.registerDomain },
-					} ) }
-				/>
-				<CalypsoShoppingCartProvider>
-					<GSuiteUpgrade domain={ context.params.registerDomain } />
-				</CalypsoShoppingCartProvider>
-			</Main>
-		);
-	}
-
 	next();
 };
 
@@ -354,7 +333,6 @@ export default {
 	siteRedirect,
 	mapDomain,
 	mapDomainSetup,
-	googleAppsWithRegistration,
 	redirectToDomainSearchSuggestion,
 	redirectIfNoSite,
 	redirectToUseYourDomainIfVipSite,

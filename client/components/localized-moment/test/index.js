@@ -4,7 +4,7 @@
 
 import { mount } from 'enzyme';
 import globalMoment from 'moment';
-import React from 'react';
+import { PureComponent } from 'react';
 import { createStore } from 'redux';
 import { withLocalizedMoment, useLocalizedMoment } from '..';
 import MomentProvider from '../provider';
@@ -24,7 +24,7 @@ const reducer = ( state, action ) => {
 
 // Pure component that renders a "day-name month-name" label
 // We'll be testing if it rerenders the date despite being pure
-class Label extends React.PureComponent {
+class Label extends PureComponent {
 	render() {
 		const { moment, date } = this.props;
 		return moment( date ).format( 'dddd MMMM' );

@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteBlocks from 'calypso/components/data/query-site-blocks';

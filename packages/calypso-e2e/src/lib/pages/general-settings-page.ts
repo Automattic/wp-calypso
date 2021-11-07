@@ -4,6 +4,9 @@ const selectors = {
 	// Common selectors
 	button: ( text: string ) => `button:text-is("${ text }")`,
 
+	// Launch site
+	launchSiteButton: 'a:text("Launch site")',
+
 	// Site Tools
 	deleteSiteLinkItem: `p:text-is("Delete your site permanently")`,
 	deleteSiteConfirmInput: `input[id="confirmDomainChangeInput"]`,
@@ -23,6 +26,16 @@ export class GeneralSettingsPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Start the site launch process.
+	 */
+	async launchSite(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.launchSiteButton ),
+		] );
 	}
 
 	/**

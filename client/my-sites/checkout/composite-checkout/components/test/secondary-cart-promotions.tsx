@@ -6,7 +6,6 @@ import config from '@automattic/calypso-config';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { ThemeProvider } from '@emotion/react';
 import { render, fireEvent } from '@testing-library/react';
-import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';

@@ -1,0 +1,24 @@
+{
+	"name": "@automattic/calypso-typescript-config",
+	"version": "1.0.0",
+	"description": "Shared configuration files for TypeScript projects",
+	"keywords": [
+		"typescript",
+		"build",
+		"calypso"
+	],
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-typescript-config"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	}
+}

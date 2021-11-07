@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -11,7 +11,7 @@ import { hasCustomDomain } from '../../../../../lib/site/utils';
 
 import './new-domains-redirection-notice-upsell.scss';
 
-class NewDomainsRedirectionNoticeUpsell extends React.Component {
+class NewDomainsRedirectionNoticeUpsell extends Component {
 	render() {
 		const {
 			hasNonPrimaryDomainsFlag,

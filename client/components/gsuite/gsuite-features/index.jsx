@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/docs.svg';
 import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
 import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
+import googleMeetIcon from 'calypso/assets/images/email-providers/google-workspace/services/meet.svg';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
@@ -86,8 +86,8 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 						? undefined
 						: translate( 'Use text chats or video calls, with built in screen sharing.' )
 				}
-				imagePath={ '/calypso/images/g-suite/logo_hangouts_48dp.svg' }
-				imageAlt={ 'Google Hangouts Logo' }
+				imagePath={ googleMeetIcon }
+				imageAlt={ 'Google Meet Logo' }
 				compact={ compact }
 			/>
 		</div>

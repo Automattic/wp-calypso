@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import { LiveProvider } from 'react-live';
 import ComponentPlayground from '../component-playground';
 

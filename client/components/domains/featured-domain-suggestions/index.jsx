@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import FeaturedDomainSuggestionsPlaceholder from './placeholder';
 

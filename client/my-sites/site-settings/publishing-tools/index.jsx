@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';

@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -15,7 +15,7 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 
 import './style.scss';
 
-class PluginSiteUpdateIndicator extends React.Component {
+class PluginSiteUpdateIndicator extends Component {
 	static displayName = 'PluginSiteUpdateIndicator';
 
 	static propTypes = {
@@ -77,12 +77,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 		}
 		return (
 			<div className="plugin-site-update-indicator__button">
-				<button
-					className="button"
-					ref="updatePlugin"
-					onClick={ this.updatePlugin }
-					disabled={ isUpdating }
-				>
+				<button className="button" onClick={ this.updatePlugin } disabled={ isUpdating }>
 					{ message }
 				</button>
 			</div>

@@ -1,0 +1,89 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.progress-line__container {
+	display: flex;
+	flex-direction: column;
+	margin-top: 35vh;
+
+	@include break-large {
+		transform: none;
+	}
+
+
+	.progress-line__status-text-container {
+		align-items: center;
+		display: flex;
+		justify-content: center;
+		margin-bottom: 10px;
+
+		@include break-large {
+			margin-bottom: 20px;
+		}
+
+		.progress-line__status-text {
+			font-family: $sans;
+			font-size: $font-title-small;
+			font-weight: 400;
+			line-height: 22px;
+
+			@include break-large {
+				font-size: $font-title-medium;
+				line-height: 28px;
+			}
+		}
+	}
+
+	.progress-line__loading-container {
+		align-items: center;
+		display: flex;
+		justify-content: center;
+
+		@keyframes load {
+			0% {
+				background: var( --studio-gray-70 );
+				width: 0;
+			}
+
+			25% {
+				background: var( --studio-gray-70 );
+				width: 25%;
+			}
+
+			50% {
+				background: var( --studio-gray-70 );
+				width: 50%;
+			}
+
+			75% {
+				background: var( --studio-gray-70 );
+				width: 75%;
+			}
+
+			100% {
+				background: var( --studio-gray-70 );
+				width: 100%;
+			}
+		}
+
+		.progress-line__loading-loader {
+			border-radius: 2px;
+			box-shadow: inset 0 0 5px rgba( 0, 0, 0, 0.2 );
+			display: flex;
+			height: 4px;
+			min-width: 280px;
+			overflow: hidden;
+			width: 50%;
+
+			@include break-large {
+				max-width: 400px;
+			}
+
+			&:after { /* stylelint-disable-line selector-pseudo-element-colon-notation */
+				animation: 5s ease 0s 1 normal forwards running load;
+				box-shadow: 0 0 5px rgba( 0, 0, 0, 0.2 );
+				content: '';
+			}
+		}
+	}
+}

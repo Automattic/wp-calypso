@@ -2,7 +2,6 @@ import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const noop = () => {};
@@ -21,6 +20,7 @@ const PlanFeaturesActionsButton = ( {
 	className,
 	current = false,
 	freePlan = false,
+	isDisabled = false,
 	isPlaceholder = false,
 	isPopular,
 	isInSignup,
@@ -55,7 +55,11 @@ const PlanFeaturesActionsButton = ( {
 
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
 		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+			<Button
+				className={ classes }
+				onClick={ handleUpgradeButtonClick }
+				disabled={ isPlaceholder || isDisabled }
+			>
 				{ translate( 'Select', {
 					args: {
 						plan: planName,

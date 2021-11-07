@@ -50,18 +50,118 @@
 	vertical-align: middle;
 }
 
+.cancel-purchase-form__step {
+	position: absolute;
+	right: 1.5rem;
+	display: none;
+
+	@include break-small {
+		display: inline-block;
+	}
+}
+
+.cancel-purchase-form__feedback,
+.cancel-purchase-form__atomic-revert {
+	max-width: 730px;
+	margin: 0 auto 3rem;
+}
+
 .cancel-purchase-form__feedback-questions {
 	max-width: 540px;
-	margin: 0 auto 3rem;
+	margin: 0 auto;
 }
 
 .cancel-purchase-form__feedback-question {
 	margin-bottom: 1.5rem;
 }
 
+.cancel-purchase-form__atomic-revert {
+	.formatted-header {
+		margin-bottom: 1.5rem;
+	}
+
+	> p {
+		color: var( --studio-gray-50 );
+
+		@include break-small {
+			text-align: center;
+		}
+	}
+
+	strong.is-highlighted {
+		background-color: var( --studio-yellow-5 );
+		padding: 0.25rem 0.5rem;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
+		color: var( --stugio-gray-80 );
+	}
+
+	.components-base-control__field {
+		background-color: var( --studio-white );
+		padding: 0.8125rem 1.25rem;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
+		box-shadow: 0 1px 2px rgb( 0 0 0 / 5% );
+		border: 1px solid var( --studio-gray-5 );
+		display: flex;
+		align-items: center;
+
+		.components-checkbox-control__label {
+			font-size: 0.875rem;
+			color: var( --studio-gray-60 );
+		}
+
+		.components-checkbox-control__input[type=checkbox]:checked {
+			background: var( --studio-black );
+			border-color: var( --studio-black );
+		}
+
+		.components-checkbox-control__input[type=checkbox]:focus {
+			box-shadow: 0 0 0 2px var( --studio-white ), 0 0 0 4px var( --studio-black );
+		}
+
+		.components-checkbox-control__input-container,
+		.components-checkbox-control__input[type=checkbox],
+		svg.components-checkbox-control__checked {
+			width: 1rem;
+			height: 1rem;
+		}
+
+		svg.components-checkbox-control__checked {
+			left: 0;
+			top: 0;
+		}
+	}
+}
+
+.info-popover.cancel-purchase-form__atomic-revert-more-info {
+	vertical-align: middle;
+}
+
+.info-popover__tooltip.cancel-purchase-form__atomic-revert-more-info .popover__inner {
+	max-width: 400px;
+}
+
+.cancel-purchase-form__backups {
+	background-color: var( --studio-blue-0 );
+	border: 1px solid var( --studio-blue-5 );
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 5px;
+	padding: 1.25rem;
+	margin-top: 2rem;
+	font-size: 0.875rem;
+
+	h4 {
+		color: var( --studio-gray-80 );
+		font-weight: 600;
+		margin-bottom: 0.5rem;
+		font-size: 1rem;
+	}
+}
+
 .cancel-purchase-form__actions {
 	@include break-small {
-		max-width: 700px;
+		max-width: 730px;
 		display: block;
 		margin: 0 auto;
 		text-align: center;
@@ -79,7 +179,7 @@
 		&::after {
 			content: '';
 			display: block;
-			width: 700px;
+			width: 730px;
 			height: 0;
 			border-top: 1px solid var( --studio-gray-5 );
 			top: 50%;

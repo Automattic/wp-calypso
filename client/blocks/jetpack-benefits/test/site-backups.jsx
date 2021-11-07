@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import JetpackBenefitsSiteBackups from '../site-backups';
 

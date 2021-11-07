@@ -1,4 +1,3 @@
-import React from 'react';
 import Animate from '../index';
 
 function AnimateExample( props ) {

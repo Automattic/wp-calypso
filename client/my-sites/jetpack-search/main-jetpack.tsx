@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	getSitePurchases,
@@ -48,12 +48,12 @@ export default function JetpackSearchMainJetpack( { siteId }: Props ): ReactElem
 		return <JetpackSearchPlaceholder siteId={ siteId } isJetpack={ true } />;
 	}
 
-	if ( ! isLoading && modules === null ) {
-		return <JetpackSearchDisconnected />;
-	}
-
 	if ( ! hasSearchProduct ) {
 		return <JetpackSearchUpsell />;
+	}
+
+	if ( ! isLoading && modules === null ) {
+		return <JetpackSearchDisconnected />;
 	}
 
 	return <JetpackSearchDetails isSearchEnabled={ isJetpackSearchModuleActive } />;

@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import appsImage from 'calypso/assets/images/illustrations/apps.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { addQueryArgs } from 'calypso/lib/route';

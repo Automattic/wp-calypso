@@ -1,5 +1,5 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Hook that will scroll to the bottom of a scrollable container whenever it's rendered.

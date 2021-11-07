@@ -8,7 +8,6 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { defer } from 'lodash';
 import moment from 'moment';
-import React from 'react';
 import { MediaLibraryList as MediaList } from '../list';
 import fixtures from './fixtures';
 

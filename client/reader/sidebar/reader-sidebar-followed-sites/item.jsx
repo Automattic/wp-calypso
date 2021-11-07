@@ -1,6 +1,6 @@
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import Count from 'calypso/components/count';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Favicon from 'calypso/reader/components/favicon';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -10,6 +10,7 @@ import '../style.scss';
 
 const ReaderSidebarFollowingItem = ( props ) => {
 	const { site, path } = props;
+	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 
 	const handleSidebarClick = ( selectedSite ) => {
@@ -51,6 +52,9 @@ const ReaderSidebarFollowingItem = ( props ) => {
 
 				<span className="sidebar__menu-item-sitename">
 					{ site.name || formatUrlForDisplay( site.URL ) }
+					<span className="sidebar__menu-item-last-updated">
+						{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
+					</span>
 				</span>
 				{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
 			</a>

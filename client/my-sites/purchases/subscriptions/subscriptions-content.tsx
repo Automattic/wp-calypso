@@ -1,6 +1,5 @@
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';

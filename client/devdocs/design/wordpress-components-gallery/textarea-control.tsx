@@ -1,5 +1,5 @@
 import { TextareaControl } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const TextareaControlExample = () => {
 	const [ value, setValue ] = useState( '' );

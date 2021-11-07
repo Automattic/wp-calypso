@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 
 export default localize( ( props ) => {
 	const { youtubeId } = props;

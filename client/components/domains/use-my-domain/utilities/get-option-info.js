@@ -7,16 +7,47 @@ import {
 	getMappingPriceText,
 	getTransferFreeText,
 	getTransferPriceText,
+	getTransferRestrictionMessage,
 	getTransferSalePriceText,
 	isFreeTransfer,
 	optionInfo,
 } from './index';
+
+export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
+	if ( ! domainInboundTransferStatusInfo ) {
+		return {
+			transferrable: false,
+			domainTransferContent: {
+				...optionInfo.transferNotSupported,
+				topText: optionInfo.transferNotSupported.topText,
+			},
+		};
+	}
+
+	const { inRedemption, transferEligibleDate } = domainInboundTransferStatusInfo;
+
+	const result = {
+		transferrable: ! inRedemption && null === transferEligibleDate,
+	};
+
+	if ( ! result.transferrable ) {
+		result.domainTransferContent = {
+			...optionInfo.transferNotSupported,
+			topText:
+				getTransferRestrictionMessage( domainInboundTransferStatusInfo ) ??
+				optionInfo.transferNotSupported.topText,
+		};
+	}
+
+	return result;
+};
 
 export function getOptionInfo( {
 	availability,
 	cart,
 	currencyCode,
 	domain,
+	domainInboundTransferStatusInfo,
 	isSignupStep,
 	onConnect,
 	onTransfer,
@@ -25,11 +56,13 @@ export function getOptionInfo( {
 	selectedSite,
 	siteIsOnPaidPlan,
 } ) {
+	availability = availability ?? {};
 	const mappingFreeText = getMappingFreeText( {
 		cart,
 		domain,
 		primaryWithPlansOnly,
 		selectedSite,
+		isSignupStep,
 	} );
 
 	const mappingPriceText = getMappingPriceText( {
@@ -73,6 +106,11 @@ export function getOptionInfo( {
 		text: mappingFreeText,
 	};
 
+	const {
+		transferrable: isDomainTransferrable,
+		domainTransferContent,
+	} = getDomainTransferrability( { ...domainInboundTransferStatusInfo, domain } );
+
 	let transferContent;
 	switch ( availability.status ) {
 		case domainAvailability.TRANSFERRABLE:
@@ -101,6 +139,10 @@ export function getOptionInfo( {
 			break;
 		default:
 			transferContent = optionInfo.transferNotSupported;
+	}
+
+	if ( ! isDomainTransferrable ) {
+		transferContent = domainTransferContent;
 	}
 
 	let connectContent;

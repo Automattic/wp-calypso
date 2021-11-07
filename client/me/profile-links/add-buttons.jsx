@@ -1,13 +1,13 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-class AddProfileLinksButtons extends React.Component {
+class AddProfileLinksButtons extends Component {
 	static propTypes = {
 		showingForm: PropTypes.string,
 		showPopoverMenu: PropTypes.bool,
@@ -15,7 +15,7 @@ class AddProfileLinksButtons extends React.Component {
 		onShowAddOther: PropTypes.func.isRequired,
 	};
 
-	popoverContext = React.createRef();
+	popoverContext = createRef();
 
 	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );

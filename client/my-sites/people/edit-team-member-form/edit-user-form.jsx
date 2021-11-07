@@ -1,6 +1,6 @@
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -18,6 +18,7 @@ import {
 } from 'calypso/state/data-getters';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getSite } from 'calypso/state/sites/selectors';
 import withUpdateUser from './with-update-user';
 
 import './style.scss';
@@ -35,7 +36,7 @@ const fieldKeys = {
 	isExternalContributor: 'isExternalContributor',
 };
 
-class EditUserForm extends React.Component {
+class EditUserForm extends Component {
 	state = this.getStateObject( this.props );
 
 	componentDidUpdate() {
@@ -82,10 +83,19 @@ class EditUserForm extends React.Component {
 			hasWPCOMAccountLinked,
 			isVip,
 			isWPForTeamsSite,
+			siteOwner,
 		} = this.props;
 		const allowedSettings = new Set();
 
 		if ( ! user.ID ) {
+			return [];
+		}
+
+		/*
+		 * If this is not a Jetpack site and the current user is not viewing their own profile,
+		 * the user should not be able to edit the site owner's details.
+		 */
+		if ( ! isJetpack && user.ID === siteOwner && user.ID !== currentUser.ID ) {
 			return [];
 		}
 
@@ -181,6 +191,7 @@ class EditUserForm extends React.Component {
 			case fieldKeys.roles:
 				returnField = (
 					<RoleSelect
+						key="role-select"
 						id={ fieldKeys.roles }
 						name={ fieldKeys.roles }
 						siteId={ this.props.siteId }
@@ -194,7 +205,8 @@ class EditUserForm extends React.Component {
 			case fieldKeys.isExternalContributor:
 				returnField = (
 					<ContractorSelect
-						key={ fieldKeys.isExternalContributor }
+						key="isExternalContributor"
+						id={ fieldKeys.isExternalContributor }
 						onChange={ this.handleExternalChange }
 						checked={ this.state.isExternalContributor }
 						disabled={ isDisabled }
@@ -308,8 +320,10 @@ export default localize(
 		( state, { siteId, user } ) => {
 			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
 			const userId = user.linked_user_ID || user.ID;
+			const site = getSite( state, siteId );
 
 			return {
+				siteOwner: site?.site_owner,
 				currentUser: getCurrentUser( state ),
 				isExternalContributor: userId && externalContributors.includes( userId ),
 				isVip: isVipSite( state, siteId ),

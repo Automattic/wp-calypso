@@ -4,13 +4,15 @@ import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, some } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import InfoPopover from 'calypso/components/info-popover';
 import PulsingDot from 'calypso/components/pulsing-dot';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
@@ -69,6 +71,9 @@ export class Theme extends Component {
 			PropTypes.func,
 			PropTypes.shape( { current: PropTypes.any } ),
 		] ),
+		blockEditorSettings: PropTypes.shape( {
+			is_fse_eligible: PropTypes.bool,
+		} ),
 	};
 
 	static defaultProps = {
@@ -108,12 +113,6 @@ export class Theme extends Component {
 		return some( skillLevels, { slug: 'beginner' } );
 	}
 
-	isFullSiteEditingTheme() {
-		const { theme } = this.props;
-		const features = get( theme, [ 'taxonomies', 'theme_feature' ] );
-		return some( features, { slug: 'block-templates' } );
-	}
-
 	renderPlaceholder() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -146,7 +145,7 @@ export class Theme extends Component {
 	};
 
 	render() {
-		const { active, price, theme, translate, upsellUrl } = this.props;
+		const { active, blockEditorSettings, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -207,6 +206,8 @@ export class Theme extends Component {
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
 		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
+		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+		const showBetaBadge = isFullSiteEditingTheme( this.props.theme ) && isFSEEligible;
 
 		return (
 			<Card className={ themeClass } data-e2e-theme={ e2eThemeName } onClick={ this.setBookmark }>
@@ -245,7 +246,7 @@ export class Theme extends Component {
 					<div className="theme__info">
 						<h2 className="theme__info-title">
 							{ name }
-							{ this.isFullSiteEditingTheme() && (
+							{ showBetaBadge && (
 								<Badge type="warning-clear" className="theme__badge-beta">
 									{ translate( 'Beta' ) }
 								</Badge>
@@ -276,4 +277,8 @@ export class Theme extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent, setThemesBookmark } )( localize( Theme ) );
+const ThemeWithEditorSettings = withBlockEditorSettings( Theme );
+
+export default connect( null, { recordTracksEvent, setThemesBookmark } )(
+	localize( ThemeWithEditorSettings )
+);

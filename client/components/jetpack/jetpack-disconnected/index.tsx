@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import JetpackDisconnectedSVG from 'calypso/assets/images/jetpack/disconnected-gray.svg';
 import ExternalLink from 'calypso/components/external-link';

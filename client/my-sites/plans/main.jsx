@@ -3,7 +3,7 @@ import { getPlan, getIntervalTypeForTerm } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
@@ -27,7 +27,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class Plans extends React.Component {
+class Plans extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
 		redirectToAddDomainFlow: PropTypes.bool,

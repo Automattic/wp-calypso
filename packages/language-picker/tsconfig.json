@@ -1,5 +1,5 @@
 {
-	"extends": "@automattic/calypso-build/typescript/ts-package.json",
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
 	"compilerOptions": {
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
@@ -7,5 +7,5 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../search" } ]
+	"references": [ { "path": "../search" }, { "path": "../languages" } ]
 }

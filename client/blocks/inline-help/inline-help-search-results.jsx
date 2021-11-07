@@ -1,18 +1,18 @@
 import { Gridicon } from '@automattic/components';
 import { speak } from '@wordpress/a11y';
 import { useTranslate } from 'i18n-calypso';
-import { debounce, isEmpty } from 'lodash';
+import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getContextResults } from 'calypso/blocks/inline-help/contextual-help';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
-import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
@@ -20,7 +20,6 @@ import {
 	SUPPORT_TYPE_API_HELP,
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
-import { useInlineHelpSearchQuery } from './data/use-inline-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 
 const noop = () => {};
@@ -54,14 +53,10 @@ function HelpSearchResults( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const currentUserId = useSelector( getCurrentUserId );
-	const hasPurchases = useSelector( ( state ) =>
-		hasCancelableUserPurchases( state, currentUserId )
-	);
-	const isPurchasesSection = useSelector( ( state ) =>
-		[ 'purchases', 'site-purchases' ].includes( getSectionName( state ) )
-	);
-	const rawContextualResults = useSelector( getContextualHelpResults );
+	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	const sectionName = useSelector( getSectionName );
+	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
+	const rawContextualResults = useMemo( () => getContextResults( sectionName ), [ sectionName ] );
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const contextualResults = rawContextualResults.filter(
@@ -69,9 +64,9 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchResults = [], isLoading: isSearching } = useInlineHelpSearchQuery(
-		searchQuery
-	);
+	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery );
+
+	const searchResults = searchData?.wordpress_support_links ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
 	useEffect( () => {
@@ -81,7 +76,7 @@ function HelpSearchResults( {
 		errorSpeak.cancel();
 
 		// If there's no query, then we don't need to announce anything.
-		if ( isEmpty( searchQuery ) ) {
+		if ( ! searchQuery ) {
 			return;
 		}
 
@@ -220,7 +215,7 @@ function HelpSearchResults( {
 
 	return (
 		<>
-			{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+			<QueryUserPurchases />
 			{ renderSearchResults() }
 		</>
 	);

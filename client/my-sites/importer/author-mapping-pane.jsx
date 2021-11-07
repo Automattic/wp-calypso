@@ -1,7 +1,7 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
@@ -10,7 +10,7 @@ import AuthorMapping from './author-mapping-item';
 
 import './author-mapping-pane.scss';
 
-class AuthorMappingPane extends React.PureComponent {
+class AuthorMappingPane extends PureComponent {
 	static displayName = 'AuthorMappingPane';
 
 	static propTypes = {

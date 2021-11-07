@@ -1,6 +1,5 @@
 import i18n from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
 
 // For now the site style step will determine which 'style pack' to use on pub/radcliffe-2
 export const siteStyleOptions = {

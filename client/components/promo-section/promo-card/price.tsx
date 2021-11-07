@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 
 export interface Props {
 	/** Should be of the format: <span>$price</span> /interval, e.g. <span>$1</span> /year */

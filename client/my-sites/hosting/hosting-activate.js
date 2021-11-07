@@ -1,6 +1,5 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import HeaderCake from 'calypso/components/header-cake';

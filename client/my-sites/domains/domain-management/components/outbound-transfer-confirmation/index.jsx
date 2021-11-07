@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -13,7 +13,7 @@ import { getMaintenanceMessageFromError } from '../../../../../landing/domains/u
 
 import './style.scss';
 
-class OutboundTransferConfirmation extends React.PureComponent {
+class OutboundTransferConfirmation extends PureComponent {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
 		siteId: PropTypes.number.isRequired,

@@ -3,7 +3,7 @@ import { isDesktop } from '@automattic/viewport';
 import { useInstanceId } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';

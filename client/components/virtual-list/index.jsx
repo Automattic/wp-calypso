@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { debounce, range } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { cloneElement, Component } from 'react';
 
 const noop = () => {};
 
@@ -152,7 +152,7 @@ export class VirtualList extends Component {
 			return element;
 		}
 		const setRowRef = ( ...args ) => this.setRowRef( props.index, ...args );
-		return React.cloneElement( element, { ref: setRowRef } );
+		return cloneElement( element, { ref: setRowRef } );
 	};
 
 	cellRendererWrapper = ( { key, style, ...rest } ) => {

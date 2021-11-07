@@ -36,7 +36,6 @@ export const updateCountriesDomains = ( action, countries ) => ( {
 /**
  * Dispatches a error notice action when the request for the supported countries list fails.
  *
- * @param   {Function} dispatch Redux dispatcher
  * @returns {object}            dispatched error notice action
  */
 export const showCountriesDomainsLoadingError = () =>

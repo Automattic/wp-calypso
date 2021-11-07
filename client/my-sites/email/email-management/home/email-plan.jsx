@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -101,7 +100,7 @@ const EmailPlan = ( props ) => {
 	};
 
 	function getAddMailboxProps() {
-		const { currentRoute, domain, selectedSite } = props;
+		const { currentRoute, domain, selectedSite, source } = props;
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
@@ -109,7 +108,8 @@ const EmailPlan = ( props ) => {
 					selectedSite.slug,
 					domain.name,
 					getProductType( getGSuiteProductSlug( domain ) ),
-					currentRoute
+					currentRoute,
+					source
 				),
 			};
 		}
@@ -117,7 +117,12 @@ const EmailPlan = ( props ) => {
 		if ( hasTitanMailWithUs( domain ) ) {
 			if ( getTitanSubscriptionId( domain ) ) {
 				return {
-					path: emailManagementNewTitanAccount( selectedSite.slug, domain.name, currentRoute ),
+					path: emailManagementNewTitanAccount(
+						selectedSite.slug,
+						domain.name,
+						currentRoute,
+						source
+					),
 				};
 			}
 
@@ -337,6 +342,7 @@ const EmailPlan = ( props ) => {
 EmailPlan.propType = {
 	domain: PropTypes.object.isRequired,
 	selectedSite: PropTypes.object.isRequired,
+	source: PropTypes.string,
 
 	// Connected props
 	currentRoute: PropTypes.string,

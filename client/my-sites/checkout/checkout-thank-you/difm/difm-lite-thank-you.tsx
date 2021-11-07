@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import checkEmail from 'calypso/assets/images/illustrations/check-email.svg';
 import HappinessSupport from 'calypso/components/happiness-support';
 
@@ -22,7 +21,7 @@ export default function DIFMLiteThankYou(): JSX.Element {
 
 					<h2 className="difm-lite-thank-you__header-text">
 						{ translate(
-							'Our Built By WordPress.com team will be in touch with you within 1-2 days when your site is ready to be transferred to your account and launched.'
+							'Our Built By WordPress.com team will be in touch with you when your site is ready to be transferred to your account and launched.'
 						) }
 					</h2>
 				</div>

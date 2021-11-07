@@ -1,5 +1,4 @@
 import page from 'page';
-import React from 'react';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';

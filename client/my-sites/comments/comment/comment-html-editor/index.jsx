@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { delay, get, map, reduce, reject } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import AddImageDialog from 'calypso/my-sites/comments/comment/comment-html-editor/add-image-dialog';

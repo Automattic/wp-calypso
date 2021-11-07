@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 

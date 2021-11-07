@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component, createFactory } from 'react';
 import { html } from '../indices-to-html';
 import { linkProps } from './functions';
 
@@ -8,7 +8,7 @@ const Snippet = ( { note, snippet, url } ) => (
 	</a>
 );
 
-class UserHeader extends React.Component {
+class UserHeader extends Component {
 	render() {
 		const grav = this.props.user.media[ 0 ];
 		const grav_tag = <img src={ grav.url } height={ grav.height } width={ grav.width } />;
@@ -61,8 +61,8 @@ class UserHeader extends React.Component {
 	}
 }
 
-const Header = React.createFactory(
-	class extends React.Component {
+const Header = createFactory(
+	class extends Component {
 		render() {
 			const subject = (
 				<div
@@ -83,7 +83,7 @@ const Header = React.createFactory(
 	}
 );
 
-class SummaryInSingle extends React.Component {
+class SummaryInSingle extends Component {
 	render() {
 		let header_url;
 		let parser;

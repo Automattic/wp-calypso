@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import ExternalLink from 'calypso/components/external-link';

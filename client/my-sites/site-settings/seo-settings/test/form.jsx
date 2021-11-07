@@ -19,7 +19,6 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { SeoForm } from '../form';
 
 const props = {

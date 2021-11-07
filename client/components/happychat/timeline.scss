@@ -142,3 +142,12 @@
 		margin-left: 0.5em;
 	}
 }
+
+.happychat__message-files {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.happychat__message-files-file {
+	margin: 0 5px 5px 0;
+}

@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import PluginSiteJetpack from 'calypso/my-sites/plugins/plugin-site-jetpack';
 import PluginSiteNetwork from 'calypso/my-sites/plugins/plugin-site-network';

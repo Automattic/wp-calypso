@@ -1,6 +1,5 @@
 import { isMobile } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import connectSocialAccountsIllustration from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';

@@ -1,6 +1,6 @@
 import { CompactCard, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import premiumThemesImage from 'calypso/assets/images/illustrations/themes.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

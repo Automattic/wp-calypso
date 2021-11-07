@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component, createRef } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import store from 'store';
 import AsyncLoad from 'calypso/components/async-load';

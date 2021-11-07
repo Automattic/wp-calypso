@@ -1,4 +1,3 @@
-import React from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import {
 	trackPageLoad,

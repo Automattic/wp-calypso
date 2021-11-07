@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { contextTypes } from '../context-types';
 
-export default class ConditionalBlock extends React.PureComponent {
+export default class ConditionalBlock extends PureComponent {
 	static propTypes = {
 		when: PropTypes.func.isRequired,
 	};

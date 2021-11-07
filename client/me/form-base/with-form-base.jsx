@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -14,7 +14,7 @@ import {
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 
 const withFormBase = ( WrappedComponent ) => {
-	class EnhancedComponent extends React.Component {
+	class EnhancedComponent extends Component {
 		static displayName = `withFormBase(${ WrappedComponent.displayName || WrappedComponent.name })`;
 
 		componentDidUpdate( prevProps ) {

@@ -1,13 +1,13 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { PureComponent } from 'react';
 import InputChrono from 'calypso/components/input-chrono';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 // Date Picker Demo
 const InputChronoExample = localize(
 	withLocalizedMoment(
-		class extends React.PureComponent {
+		class extends PureComponent {
 			state = {
 				date: this.props.moment(),
 			};
@@ -25,7 +25,6 @@ const InputChronoExample = localize(
 			}
 
 			onSet = ( date ) => {
-				// eslint-disable-next-line no-console
 				console.log( `date: %s`, date.toDate() );
 				this.setState( { date: date } );
 			};

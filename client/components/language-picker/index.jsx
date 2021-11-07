@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment, PureComponent } from 'react';
+import { Fragment, PureComponent } from 'react';
 import LanguagePickerModal from './modal';
 import { getLanguageCodeLabels } from './utils';
 

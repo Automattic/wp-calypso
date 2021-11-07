@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { createRef, PureComponent, Fragment } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
-class PostTrendsDay extends React.PureComponent {
+class PostTrendsDay extends PureComponent {
 	static propTypes = {
 		label: PropTypes.string,
 		className: PropTypes.string,
@@ -16,7 +16,7 @@ class PostTrendsDay extends React.PureComponent {
 	};
 
 	state = { showPopover: false };
-	dayRef = React.createRef();
+	dayRef = createRef();
 
 	mouseEnter = () => {
 		this.setState( { showPopover: true } );

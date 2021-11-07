@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { keys, filter } from 'lodash';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
 import ca from './ca-form';
 import fr from './fr-form';

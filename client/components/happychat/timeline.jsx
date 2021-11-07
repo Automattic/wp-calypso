@@ -1,30 +1,20 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Component, Fragment, useCallback, useEffect, useMemo, useRef } from 'react';
 import { connect } from 'react-redux';
-import Emojify from 'calypso/components/emojify';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { sendEvent } from 'calypso/state/happychat/connection/actions';
 import { useAutoscroll } from './autoscroll';
+import ImageFile from './image-file';
 import { useScrollbleed } from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
 
 import './timeline.scss';
 
-const debug = debugFactory( 'calypso:happychat:timeline' );
-
-const MessageParagraph = ( { message, isEdited, twemojiUrl } ) => (
-	<p>
-		<Emojify twemojiUrl={ twemojiUrl }>{ message }</Emojify>
-		{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
-	</p>
-);
-
-class MessageLink extends React.Component {
+class MessageLink extends Component {
 	handleClick = () => {
 		const { href, messageId, sendEventMessage, userId } = this.props;
 
@@ -71,107 +61,111 @@ class MessageLink extends React.Component {
 const MessageLinkConnected = connect( ( state ) => ( { userId: getCurrentUserId( state ) } ), {
 	sendEventMessage: sendEvent,
 } )( MessageLink );
-/*
- * Given a message and array of links contained within that message, returns the message
- * with clickable links inside of it.
- */
-const MessageWithLinks = ( { message, messageId, isEdited, links, isExternalUrl } ) => {
-	const children = links.reduce(
-		( { parts, last }, [ url, startIndex, length ] ) => {
-			const text = url;
-			let href = url;
-			let rel = null;
-			let target = null;
 
-			href = addSchemeIfMissing( href, 'http' );
-			if ( isExternalUrl( href ) ) {
-				rel = 'noopener noreferrer';
-				target = '_blank';
-			} else if ( typeof window !== 'undefined' ) {
-				// Force internal URLs to the current scheme to avoid a page reload
-				const scheme = window.location.protocol.replace( /:+$/, '' );
-				href = setUrlScheme( href, scheme );
-			}
-
-			if ( last < startIndex ) {
-				parts = parts.concat(
-					<span key={ parts.length }>{ message.slice( last, startIndex ) }</span>
-				);
-			}
-
-			parts = parts.concat(
-				<MessageLinkConnected
-					key={ parts.length }
-					href={ href }
-					rel={ rel }
-					target={ target }
-					messageId={ messageId }
-				>
-					{ text }
-				</MessageLinkConnected>
-			);
-
-			return { parts, last: startIndex + length };
-		},
-		{ parts: [], last: 0 }
-	);
-
-	if ( children.last < message.length ) {
-		children.parts = children.parts.concat(
-			<span key="last">{ message.slice( children.last ) }</span>
-		);
+const MessageFiles = ( { files } ) => {
+	if ( ! files || files.length === 0 ) {
+		return null;
 	}
 
 	return (
-		<p>
-			{ children.parts }
-			{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
-		</p>
+		<div className="happychat__message-files">
+			{ files.map( ( file ) => (
+				<span key={ file.id } className="happychat__message-files-file">
+					<ImageFile file={ file } />
+				</span>
+			) ) }
+		</div>
 	);
 };
 
+const FormattedMessageText = ( { message, messageId, links = [], isExternalUrl } ) => {
+	const children = [];
+	let lastIndex = 0;
+
+	links.forEach( ( [ url, linkStartIndex, length ] ) => {
+		// If there's text before this link, add it.
+		if ( lastIndex < linkStartIndex ) {
+			children.push( message.slice( lastIndex, linkStartIndex ) );
+		}
+
+		const text = url;
+		let href = url;
+		let rel = null;
+		let target = null;
+
+		href = addSchemeIfMissing( href, 'http' );
+		if ( isExternalUrl( href ) ) {
+			rel = 'noopener noreferrer';
+			target = '_blank';
+		} else if ( typeof window !== 'undefined' ) {
+			// Force internal URLs to the current scheme to avoid a page reload
+			const scheme = window.location.protocol.replace( /:+$/, '' );
+			href = setUrlScheme( href, scheme );
+		}
+		children.push(
+			<MessageLinkConnected href={ href } rel={ rel } target={ target } messageId={ messageId }>
+				{ text }
+			</MessageLinkConnected>
+		);
+		lastIndex = linkStartIndex + length;
+	} );
+	if ( lastIndex < message.length ) {
+		children.push( message.slice( lastIndex ) );
+	}
+
+	return children.map( ( child, index ) => <Fragment key={ index }>{ child }</Fragment> );
+};
+
 /*
- * If a message event has a message with links in it, return a component with clickable links.
- * Otherwise just return a single paragraph with the text.
+ * Render a formatted message.
  */
-const MessageText = ( props ) =>
-	props.links && props.links.length > 0 ? (
-		<MessageWithLinks { ...props } />
-	) : (
-		<MessageParagraph { ...props } />
+const Message = ( {
+	message,
+	messageId,
+	isEdited,
+	isOptimistic,
+	links = [],
+	files,
+	isExternalUrl,
+} ) => {
+	return (
+		<>
+			<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
+				<FormattedMessageText
+					message={ message }
+					messageId={ messageId }
+					links={ links }
+					isExternalUrl={ isExternalUrl }
+				/>
+				{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
+			</p>
+			<MessageFiles files={ files } />
+		</>
 	);
+};
 
 /*
  * Group messages based on user so when any user sends multiple messages they will be grouped
  * within the same message bubble until it reaches a message from a different user.
  */
-const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl }, index ) => {
-	const [ event, ...rest ] = item;
+const renderGroupedMessages = ( { messages, isCurrentUser, isExternalUrl }, index ) => {
 	return (
 		<div
 			className={ classnames( 'happychat__timeline-message', {
 				'is-user-message': isCurrentUser,
 			} ) }
-			key={ event.id || index }
+			key={ messages[ 0 ].id || index }
 		>
 			<div className="happychat__message-text">
-				<MessageText
-					name={ event.name }
-					message={ event.message }
-					messageId={ event.id }
-					isEdited={ event.isEdited }
-					links={ event.links }
-					twemojiUrl={ twemojiUrl }
-					isExternalUrl={ isExternalUrl }
-				/>
-				{ rest.map( ( { message, id, isEdited, links } ) => (
-					<MessageText
+				{ messages.map( ( { message, id, isEdited, isOptimistic, links, files } ) => (
+					<Message
 						key={ id }
 						message={ message }
-						messageId={ event.id }
+						messageId={ id }
 						isEdited={ isEdited }
+						isOptimistic={ isOptimistic }
 						links={ links }
-						twemojiUrl={ twemojiUrl }
+						files={ files }
 						isExternalUrl={ isExternalUrl }
 					/>
 				) ) }
@@ -181,28 +175,23 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl
 };
 
 const groupMessages = ( messages ) => {
-	const grouped = messages.reduce(
-		( { user_id, type, group, groups, source }, message ) => {
-			const message_user_id = message.user_id;
-			const message_type = message.type;
-			const message_source = message.source;
-			debug( 'compare source', message_source, message.source );
-			if ( user_id !== message_user_id || message_type !== type || message_source !== source ) {
-				return {
-					user_id: message_user_id,
-					type: message_type,
-					source: message_source,
-					group: [ message ],
-					groups: group ? groups.concat( [ group ] ) : groups,
-				};
-			}
-			// it's the same user so group it together
-			return { user_id, group: group.concat( [ message ] ), groups, type, source };
-		},
-		{ groups: [] }
-	);
+	const groups = [];
+	let user_id;
+	let type;
+	let source;
 
-	return grouped.groups.concat( [ grouped.group ] );
+	messages.forEach( ( message ) => {
+		if ( user_id !== message.user_id || type !== message.type || source !== message.source ) {
+			// This message is not like the others in this group, start a new group...
+			groups.push( [] );
+			// ... and update the comparison variables to what we expect to find in this new group.
+			( { user_id, type, source } = message );
+		}
+		// Add this message to the last group.
+		groups[ groups.length - 1 ].push( message );
+	} );
+
+	return groups;
 };
 
 function WelcomeMessage( { currentUserEmail } ) {
@@ -230,7 +219,7 @@ function getMessagesOlderThan( timestamp, messages ) {
 }
 
 function Timeline( props ) {
-	const { timeline, isCurrentUser, isExternalUrl = () => true, twemojiUrl } = props;
+	const { timeline, isCurrentUser, isExternalUrl = () => true } = props;
 	const autoscroll = useAutoscroll();
 	const scrollbleed = useScrollbleed();
 
@@ -273,19 +262,13 @@ function Timeline( props ) {
 				onMouseEnter={ scrollbleed.lock }
 				onMouseLeave={ scrollbleed.unlock }
 			>
-				{ groupMessages( timeline ).map( ( item ) => {
-					const firstItem = item[ 0 ];
-					if ( firstItem.type !== 'message' ) {
-						debug( 'no handler for message type', firstItem.type, firstItem );
-						return null;
-					}
-					return renderGroupedMessages( {
-						item,
-						isCurrentUser: isCurrentUser( firstItem ),
+				{ groupMessages( timeline ).map( ( messages ) =>
+					renderGroupedMessages( {
+						messages,
+						isCurrentUser: isCurrentUser( messages[ 0 ] ),
 						isExternalUrl,
-						twemojiUrl,
-					} );
-				} ) }
+					} )
+				) }
 			</div>
 			{ unreadMessagesCount > 0 && (
 				<div className="happychat__unread-messages-container">
@@ -308,7 +291,6 @@ Timeline.propTypes = {
 	isCurrentUser: PropTypes.func,
 	isExternalUrl: PropTypes.func,
 	timeline: PropTypes.array,
-	twemojiUrl: PropTypes.string,
 };
 
 export default Timeline;

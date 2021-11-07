@@ -1,4 +1,3 @@
-import React from 'react';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import {
 	radios,

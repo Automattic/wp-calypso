@@ -1,6 +1,6 @@
 import { ProgressBar } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import { JetpackBenefitsStandaloneCard } from 'calypso/blocks/jetpack-benefits/standalone-benefit-card';

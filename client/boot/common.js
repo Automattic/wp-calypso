@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import page from 'page';
-import React from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
@@ -18,7 +17,6 @@ import DesktopListeners from 'calypso/lib/desktop-listeners';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import setupGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { attachLogmein } from 'calypso/lib/logmein';
 import { getToken } from 'calypso/lib/oauth-token';
 import { checkFormHandler } from 'calypso/lib/protect-form';
@@ -27,6 +25,7 @@ import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { isOutsideCalypso } from 'calypso/lib/url';
+import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
@@ -38,9 +37,10 @@ import { initConnection as initHappychatConnection } from 'calypso/state/happych
 import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-happychat-recently-active';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
-import { getInitialState, persistOnChange, loadAllState } from 'calypso/state/initial-state';
+import { getInitialState, persistOnChange } from 'calypso/state/initial-state';
+import { loadPersistedState } from 'calypso/state/persisted-state';
 import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
-import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
+import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setRoute } from 'calypso/state/route/actions';
@@ -50,7 +50,7 @@ import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
 
-const setupContextMiddleware = ( reduxStore ) => {
+const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = getUrlParts( context.canonicalPath );
@@ -74,6 +74,7 @@ const setupContextMiddleware = ( reduxStore ) => {
 		}
 
 		context.store = reduxStore;
+		context.queryClient = reactQueryClient;
 
 		// client version of the isomorphic method for redirecting to another page
 		context.redirect = ( httpCode, newUrl = null ) => {
@@ -101,9 +102,9 @@ const setupContextMiddleware = ( reduxStore ) => {
 	} );
 
 	page.exit( '*', ( context, next ) => {
-		if ( ! context.store ) {
-			context.store = reduxStore;
-		}
+		context.store = reduxStore;
+		context.queryClient = reactQueryClient;
+
 		next();
 	} );
 };
@@ -157,8 +158,10 @@ const oauthTokenMiddleware = () => {
 		const loggedOutRoutes = [ '/start', '/api/oauth/token', '/connect' ];
 
 		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
-			loggedOutRoutes.push( '/pricing' );
-			getLanguageSlugs().forEach( ( slug ) => loggedOutRoutes.push( `/${ slug }/pricing` ) );
+			loggedOutRoutes.push( '/pricing', '/plans' );
+			getLanguageSlugs().forEach( ( slug ) =>
+				loggedOutRoutes.push( `/${ slug }/pricing`, `/${ slug }/plans` )
+			);
 		}
 
 		// Forces OAuth users to the /login page if no token is present
@@ -268,10 +271,10 @@ function setupErrorLogger( reduxStore ) {
 	} );
 }
 
-const setupMiddlewares = ( currentUser, reduxStore ) => {
+const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
-	setupContextMiddleware( reduxStore );
+	setupContextMiddleware( reduxStore, reactQueryClient );
 	oauthTokenMiddleware();
 	setupRoutes();
 	setRouteMiddleware();
@@ -337,7 +340,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	if ( ! currentUser ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {
-			//see server/pages/index for prod redirect
+			// see server/pages/index for prod redirect
 			if ( '/plans' === context.pathname ) {
 				const queryFor = context.query && context.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
@@ -345,7 +348,9 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans';
 				} else {
 					// pricing page is outside of Calypso, needs a full page load
-					window.location = 'https://wordpress.com/pricing';
+					window.location = isJetpackCloud()
+						? JETPACK_PRICING_PAGE
+						: 'https://wordpress.com/pricing';
 				}
 				return;
 			}
@@ -355,10 +360,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	const state = reduxStore.getState();
-	// get reader unread status
-	if ( config.isEnabled( 'reader/seen-posts' ) ) {
-		reduxStore.dispatch( requestUnseenStatus() );
-	}
 
 	if ( config.isEnabled( 'happychat' ) ) {
 		reduxStore.dispatch( requestHappychatEligibility() );
@@ -368,7 +369,9 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		setupGlobalKeyboardShortcuts();
+		asyncRequire( 'calypso/lib/keyboard-shortcuts/global', ( setupGlobalKeyboardShortcuts ) => {
+			setupGlobalKeyboardShortcuts();
+		} );
 	}
 
 	if ( window.electron ) {
@@ -403,44 +406,41 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 };
 
-function renderLayout( reduxStore ) {
-	const layoutElement = React.createElement( ProviderWrappedLayout, {
-		store: reduxStore,
-	} );
-
-	ReactDom.render( layoutElement, document.getElementById( 'wpcom' ) );
-
-	debug( 'Main layout rendered.' );
+function renderLayout( reduxStore, reactQueryClient ) {
+	ReactDom.render(
+		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />,
+		document.getElementById( 'wpcom' )
+	);
 }
 
-const boot = ( currentUser, registerRoutes ) => {
+const boot = async ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
-	loadAllState().then( () => {
-		const initialState = getInitialState( initialReducer, currentUser?.ID );
-		const reduxStore = createReduxStore( initialState, initialReducer );
-		setStore( reduxStore, currentUser?.ID );
-		onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
-		setupLocale( currentUser, reduxStore );
-		configureReduxStore( currentUser, reduxStore );
-		setupMiddlewares( currentUser, reduxStore );
-		detectHistoryNavigation.start();
-		if ( registerRoutes ) {
-			registerRoutes();
-		}
+	await loadPersistedState();
+	const queryClient = await createQueryClient( currentUser?.ID );
+	const initialState = getInitialState( initialReducer, currentUser?.ID );
+	const reduxStore = createReduxStore( initialState, initialReducer );
+	setStore( reduxStore, currentUser?.ID );
+	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
+	setupLocale( currentUser, reduxStore );
+	configureReduxStore( currentUser, reduxStore );
+	setupMiddlewares( currentUser, reduxStore, queryClient );
+	detectHistoryNavigation.start();
+	if ( registerRoutes ) {
+		registerRoutes();
+	}
 
-		// Render initial `<Layout>` for non-isomorphic sections.
-		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
-		if ( ! document.getElementById( 'primary' ) ) {
-			renderLayout( reduxStore );
-		}
+	// Render initial `<Layout>` for non-isomorphic sections.
+	// Isomorphic sections will take care of rendering their `<Layout>` themselves.
+	if ( ! document.getElementById( 'primary' ) ) {
+		renderLayout( reduxStore, queryClient );
+	}
 
-		page.start( { decodeURLComponents: false } );
-	} );
+	page.start( { decodeURLComponents: false } );
 };
 
 export const bootApp = async ( appName, registerRoutes ) => {
 	const user = await initializeCurrentUser();
 	debug( `Starting ${ appName }. Let's do this.` );
-	boot( user, registerRoutes );
+	await boot( user, registerRoutes );
 };

@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, size, delay } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
@@ -47,7 +47,7 @@ import './post-comment-list.scss';
  *
  */
 
-class PostCommentList extends React.Component {
+class PostCommentList extends Component {
 	static propTypes = {
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -88,7 +88,6 @@ class PostCommentList extends React.Component {
 	state = {
 		amountOfCommentsToTake: this.props.initialSize,
 		commentsFilter: 'all',
-		activeEditCommentId: null,
 	};
 
 	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
@@ -198,20 +197,13 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		// TODO Should not need to bind here
-		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
-
 		return (
 			<PostComment
 				post={ this.props.post }
 				commentsTree={ this.props.commentsTree }
 				commentId={ commentId }
 				key={ commentId }
-				showModerationTools={ this.props.showModerationTools }
-				activeEditCommentId={ this.state.activeEditCommentId }
 				activeReplyCommentId={ this.props.activeReplyCommentId }
-				onEditCommentClick={ onEditCommentClick }
-				onEditCommentCancel={ this.onEditCommentCancel }
 				onReplyClick={ this.onReplyClick }
 				onReplyCancel={ this.onReplyCancel }
 				commentText={ this.commentText }
@@ -243,12 +235,6 @@ class PostCommentList extends React.Component {
 			</Button>
 		);
 	};
-
-	onEditCommentClick = ( commentId ) => {
-		this.setState( { activeEditCommentId: commentId } );
-	};
-
-	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
 	onReplyClick = ( commentId ) => {
 		this.setActiveReplyComment( commentId );

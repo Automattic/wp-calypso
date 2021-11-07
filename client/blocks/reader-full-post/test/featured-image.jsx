@@ -1,6 +1,5 @@
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import FeaturedImage from '../featured-image';
 
 describe( 'FeaturedImage', () => {

@@ -4,7 +4,7 @@ import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

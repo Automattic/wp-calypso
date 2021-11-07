@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
@@ -35,7 +35,7 @@ const handlePostClick = ( uiIndex ) => ( post ) => {
 	recordAction( 'in_stream_rec_post_click' );
 };
 
-export class RecommendedPosts extends React.PureComponent {
+export class RecommendedPosts extends PureComponent {
 	static propTypes = {
 		index: PropTypes.number,
 		translate: PropTypes.func,

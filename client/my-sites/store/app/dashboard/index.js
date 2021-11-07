@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import Main from 'calypso/components/main';
 import ActionHeader from '../../components/action-header';
 import StoreMoveNoticeView from './store-move-notice-view';

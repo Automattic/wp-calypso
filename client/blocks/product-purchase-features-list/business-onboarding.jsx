@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 

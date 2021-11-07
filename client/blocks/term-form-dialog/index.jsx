@@ -4,7 +4,7 @@ import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, find } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import TermTreeSelectorTerms from 'calypso/blocks/term-tree-selector/terms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

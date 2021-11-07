@@ -3,7 +3,7 @@ import { Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
@@ -24,7 +24,6 @@ import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -36,7 +35,7 @@ import CancelPurchaseRefundInformation from './refund-information';
 
 import './style.scss';
 
-class CancelPurchase extends React.Component {
+class CancelPurchase extends Component {
 	static propTypes = {
 		purchaseListUrl: PropTypes.string,
 		getManagePurchaseUrlFor: PropTypes.func,
@@ -48,7 +47,6 @@ class CancelPurchase extends React.Component {
 		purchaseId: PropTypes.number.isRequired,
 		site: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
-		userId: PropTypes.number,
 	};
 
 	state = {
@@ -147,7 +145,7 @@ class CancelPurchase extends React.Component {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<div>
-					<QueryUserPurchases userId={ this.props.userId } />
+					<QueryUserPurchases />
 					<CancelPurchaseLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
 						siteSlug={ this.props.siteSlug }
@@ -217,7 +215,6 @@ class CancelPurchase extends React.Component {
 						purchase={ purchase }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
 						disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
-						selectedSite={ this.props.site }
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl }
@@ -237,6 +234,5 @@ export default connect( ( state, props ) => {
 		purchase,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		site: getSite( state, purchase ? purchase.siteId : null ),
-		userId: getCurrentUserId( state ),
 	};
 } )( localize( withLocalizedMoment( CancelPurchase ) ) );

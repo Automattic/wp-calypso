@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Children, PureComponent, cloneElement } from 'react';
+import { Children, PureComponent, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';

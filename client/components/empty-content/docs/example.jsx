@@ -1,4 +1,3 @@
-import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 
 const EmptyContentExample = ( props ) => {

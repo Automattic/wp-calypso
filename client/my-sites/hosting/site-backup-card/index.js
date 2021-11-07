@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

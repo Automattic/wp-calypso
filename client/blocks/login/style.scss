@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import 'calypso/assets/stylesheets/_p2-extends.scss';
 
 .layout:not( .is-jetpack-woocommerce-flow ):not( .is-jetpack-woo-dna-flow ):not( .is-wccom-oauth-flow ) {
 	.login.is-jetpack {
@@ -262,4 +263,192 @@
 	font-size: $font-body-extra-small;
 	position: initial;
 	text-transform: initial;
+}
+
+.layout.is-p2-login {
+	background: var( --p2-color-white );
+	font-family: var( --p2-font-inter );
+	color: var( --p2-color-text );
+	letter-spacing: -0.01em;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	a {
+		@extend %p2-link;
+	}
+
+	&.is-section-login {
+		padding-bottom: 0;
+		min-height: auto;
+	}
+
+	&.is-section-login.has-no-masterbar .layout__content {
+		padding: 0;
+		height: 100%;
+	}
+
+	.layout__primary {
+		padding: 0;
+		height: 100%;
+
+		> div {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+	}
+
+	.wp-login__main.main {
+		padding: 96px 24px 0;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+
+		@include break-mobile {
+			padding: 80px 20px 0;
+			max-width: 400px;
+		}
+	}
+
+	.login__form-header-wrapper {
+		margin-bottom: 3em;
+	}
+
+	form {
+		padding: 0;
+		margin-bottom: 3em;
+	}
+
+	.login__form {
+		padding: 0;
+		margin-bottom: 2em;
+		box-shadow: none;
+	}
+
+	.login__form-userdata {
+		margin-bottom: 2em;
+	}
+
+	.login__form label {
+		font-size: var( --p2-font-size-form-xxs );
+		color: var( --p2-color-text );
+		font-weight: 500; /* stylelint-disable-line */
+		margin-bottom: 0.5em;
+		line-height: 1.8;
+	}
+
+	.form-text-input {
+		@extend %p2-form-input-text;
+		margin-bottom: 0;
+	}
+
+	.form-input-validation {
+		@extend %p2-form-input-validation;
+	}
+
+	.form-password-input {
+		@extend %p2-form-input-password;
+	}
+
+	.login__form-header {
+		color: var( --p2-color-text );
+		font-size: var( --p2-font-size-form-xxl );
+		font-weight: 900; /* stylelint-disable-line */
+		text-align: center;
+		line-height: 1.3;
+		margin-top: 0;
+		margin-bottom: 0.5em;
+	}
+
+	.login__header-subtitle {
+		line-height: 1.8;
+		color: var( --p2-color-text );
+		margin-bottom: 0;
+	}
+
+	.login__form-terms {
+		margin-bottom: 1rem;
+		color: var( --p2-color-text );
+	}
+
+	.login__form-action {
+		button:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.login__social {
+		padding: 0;
+		box-shadow: none;
+		margin-bottom: 2em;
+	}
+
+	.login__social-tos {
+		color: var( --p2-color-text );
+		margin: 1em 0 0;
+	}
+
+	.login button {
+		@extend %p2-form-button;
+
+		&.login__form-change-username {
+			background: none;
+			color: var( --p2-color-link );
+			font-size: var( --p2-font-size-form-xs );
+			padding: 12px 0;
+			width: auto;
+		}
+	}
+
+	.wp-login__links {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-bottom: 2em;
+
+		a {
+			@extend %p2-link;
+			border-bottom: 1px solid currentColor;
+			font-size: var( --p2-font-size-form-xs );
+			font-weight: 400;
+			margin: 0 0 0.8em;
+			padding: 0;
+			line-height: 1.5;
+			display: inline-block;
+			width: auto;
+		}
+	}
+
+	.login__divider {
+		color: var( --p2-color-border );
+		font-size: var( --p2-font-size-form-xs );
+		margin: 0 auto 2rem;
+		max-width: 400px;
+		overflow: hidden;
+		text-align: center;
+		width: 100%;
+		text-transform: none;
+
+		&::before,
+		&::after {
+			background-color: var( --p2-color-border );
+			content: '';
+			display: inline-block;
+			height: 1px;
+			position: relative;
+			vertical-align: middle;
+			width: 50%;
+		}
+
+		&::before {
+			margin-left: -50%;
+			right: 0.5em;
+		}
+
+		&::after {
+			left: 0.5em;
+			margin-right: -50%;
+		}
+	}
 }

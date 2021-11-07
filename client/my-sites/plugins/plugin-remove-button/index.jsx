@@ -4,7 +4,7 @@
 
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import accept from 'calypso/lib/accept';
@@ -19,7 +19,7 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 
 import './style.scss';
 
-class PluginRemoveButton extends React.Component {
+class PluginRemoveButton extends Component {
 	static displayName = 'PluginRemoveButton';
 
 	removeAction = () => {

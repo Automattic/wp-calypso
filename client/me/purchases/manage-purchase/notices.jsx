@@ -9,7 +9,7 @@ import {
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';

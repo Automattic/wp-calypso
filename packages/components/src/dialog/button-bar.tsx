@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { isValidElement, cloneElement } from 'react';
+import { isValidElement, cloneElement } from 'react';
 import Button from '../button';
 import type { ReactElement, ReactNode, FunctionComponent } from 'react';
 

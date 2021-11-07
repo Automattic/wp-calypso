@@ -1,12 +1,13 @@
 import { Button, Dialog } from '@automattic/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 import ResizableIframe from 'calypso/components/resizable-iframe';
 
 import './dialog.scss';
 
-function InlineHelpDialog( { dialogType, videoLink, onClose, translate } ) {
+function InlineHelpDialog( { dialogType, videoLink, onClose } ) {
+	const translate = useTranslate();
+
 	/* @TODO: This class is not valid and this tricks the linter
 	 * fix this class and fix the linter to catch similar instances.
 	 */
@@ -46,4 +47,4 @@ function InlineHelpDialog( { dialogType, videoLink, onClose, translate } ) {
 	);
 }
 
-export default localize( InlineHelpDialog );
+export default InlineHelpDialog;

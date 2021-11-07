@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { numberFormat, translate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';

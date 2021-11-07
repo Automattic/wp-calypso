@@ -2,7 +2,6 @@ jest.mock( '../shared/upsell', () => 'Upsell' );
 jest.mock( '../shared/no-available-times', () => 'NoAvailableTimes' );
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import { ConciergeMain } from '../main';
 
 const props = {

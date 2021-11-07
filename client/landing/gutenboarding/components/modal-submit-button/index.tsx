@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import React from 'react';
 
 import './style.scss';
 

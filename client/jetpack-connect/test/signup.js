@@ -4,7 +4,6 @@
 
 import deepFreeze from 'deep-freeze';
 import { shallow } from 'enzyme';
-import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { JetpackSignup } from '../signup.js';

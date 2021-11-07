@@ -4,7 +4,7 @@ import requestExternalAccess from '@automattic/request-external-access';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AppleIcon from 'calypso/components/social-icons/apple';
 import { isFormDisabled } from 'calypso/state/login/selectors';
@@ -126,7 +126,7 @@ class AppleLoginButton extends Component {
 				onClick: this.handleClick,
 			};
 
-			customButton = React.cloneElement( children, childProps );
+			customButton = cloneElement( children, childProps );
 		}
 
 		return (

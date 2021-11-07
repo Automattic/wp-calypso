@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { getConfiguredTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';

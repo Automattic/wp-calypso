@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -10,7 +10,7 @@ const useErrorNotice = ( error, refetch ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( ! error ) {
 			return;
 		}

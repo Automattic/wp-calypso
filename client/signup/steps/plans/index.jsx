@@ -1,18 +1,18 @@
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { isDesktop } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
-import PulsingDot from 'calypso/components/pulsing-dot';
+import MarketingMessage from 'calypso/components/marketing-message';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
-import { Experiment } from 'calypso/lib/explat';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -26,8 +26,26 @@ import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 export class PlansStep extends Component {
+	state = {
+		isDesktop: isDesktop(),
+		experiment: null,
+	};
+
+	componentWillMount() {
+		loadExperimentAssignment( 'disabled_monthly_personal_premium' ).then( ( experimentName ) => {
+			this.setState( { experiment: experimentName } );
+		} );
+	}
+
 	componentDidMount() {
+		this.unsubscribe = subscribeIsDesktop( ( matchesDesktop ) =>
+			this.setState( { isDesktop: matchesDesktop } )
+		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+	}
+
+	componentWillUnmount() {
+		this.unsubscribe();
 	}
 
 	onSelectPlan = ( cartItem ) => {
@@ -114,7 +132,6 @@ export class PlansStep extends Component {
 			planTypes,
 			flowName,
 			showTreatmentPlansReorderTest,
-			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 		} = this.props;
@@ -122,32 +139,27 @@ export class PlansStep extends Component {
 		return (
 			<div>
 				<QueryPlans />
-				{ isLoadingExperiment ? (
-					<div className="plans__loading-container">
-						<PulsingDot delay={ 400 } active />
-					</div>
-				) : (
-					<PlansFeaturesMain
-						site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-						hideFreePlan={ hideFreePlan }
-						isInSignup={ true }
-						isLaunchPage={ isLaunchPage }
-						intervalType={ this.getIntervalType() }
-						onUpgradeClick={ this.onSelectPlan }
-						showFAQ={ false }
-						domainName={ this.getDomainName() }
-						customerType={ this.getCustomerType() }
-						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-						plansWithScroll={ isDesktop() }
-						planTypes={ planTypes }
-						flowName={ flowName }
-						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-						isAllPaidPlansShown={ true }
-						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-						shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
-						isReskinned={ isReskinned }
-					/>
-				) }
+				<PlansFeaturesMain
+					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					hideFreePlan={ hideFreePlan }
+					isInSignup={ true }
+					isLaunchPage={ isLaunchPage }
+					intervalType={ this.getIntervalType() }
+					onUpgradeClick={ this.onSelectPlan }
+					showFAQ={ false }
+					domainName={ this.getDomainName() }
+					customerType={ this.getCustomerType() }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					plansWithScroll={ this.state.isDesktop }
+					planTypes={ planTypes }
+					flowName={ flowName }
+					showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+					isAllPaidPlansShown={ true }
+					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+					isReskinned={ isReskinned }
+					disableMonthlyExperiment={ this.state.experiment?.variationName !== null }
+				/>
 			</div>
 		);
 	}
@@ -155,7 +167,7 @@ export class PlansStep extends Component {
 	getHeaderText() {
 		const { headerText, translate } = this.props;
 
-		if ( isDesktop() ) {
+		if ( this.state.isDesktop ) {
 			return translate( 'Choose a plan' );
 		}
 
@@ -166,7 +178,7 @@ export class PlansStep extends Component {
 		const { hideFreePlan, subHeaderText, translate } = this.props;
 
 		if ( ! hideFreePlan ) {
-			if ( isDesktop() ) {
+			if ( this.state.isDesktop ) {
 				return translate(
 					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
 					{
@@ -184,54 +196,11 @@ export class PlansStep extends Component {
 			} );
 		}
 
-		if ( isDesktop() ) {
+		if ( this.state.isDesktop ) {
 			return translate( "Pick one that's right for you and unlock features that help you grow." );
 		}
 
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
-	}
-
-	getSubHeaderTextForExperiment() {
-		const { hideFreePlan, flowName, translate } = this.props;
-		const defaultSubHeaderText = this.getSubHeaderText();
-		const refundWindow = 'yearly' === this.getIntervalType() ? 14 : 7;
-
-		if ( ! isDesktop() || 'onboarding' !== flowName ) {
-			return defaultSubHeaderText;
-		}
-
-		let emphasizedRefundPolicyText = '';
-		if ( hideFreePlan ) {
-			emphasizedRefundPolicyText = translate(
-				'Try risk-free with a %(days)s-day money back guarantee on all plans.',
-				{
-					args: {
-						days: refundWindow,
-					},
-				}
-			);
-		} else {
-			emphasizedRefundPolicyText = translate(
-				'Try risk-free with a %(days)s-day money back guarantee on all plans. Or {{link}}start with a free site{{/link}}.',
-				{
-					components: {
-						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-					},
-					args: {
-						days: refundWindow,
-					},
-				}
-			);
-		}
-
-		return (
-			<Experiment
-				name="emphasizing_refund_policy_v2"
-				defaultExperience={ defaultSubHeaderText }
-				treatmentExperience={ emphasizedRefundPolicyText }
-				loadingExperience={ '\u00A0' } // &nbsp;
-			/>
-		);
 	}
 
 	plansFeaturesSelection() {
@@ -241,11 +210,12 @@ export class PlansStep extends Component {
 			positionInFlow,
 			translate,
 			hasInitializedSitesBackUrl,
+			steps,
 		} = this.props;
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
-		const subHeaderText = this.getSubHeaderTextForExperiment();
+		const subHeaderText = this.getSubHeaderText();
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
 		let backUrl;
@@ -254,6 +224,22 @@ export class PlansStep extends Component {
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
 			backLabelText = translate( 'Back to My Sites' );
+		}
+
+		let queryParams;
+		if ( ! isNaN( Number( positionInFlow ) ) && 0 !== positionInFlow ) {
+			const previousStepName = steps[ this.props.positionInFlow - 1 ];
+			const previousStep = this.props.progress?.[ previousStepName ];
+
+			const isComingFromUseYourDomainStep = 'use-your-domain' === previousStep?.stepSectionName;
+
+			if ( isComingFromUseYourDomainStep ) {
+				queryParams = {
+					...this.props.queryParams,
+					step: 'transfer-or-connect',
+					initialQuery: previousStep?.siteUrl,
+				};
+			}
 		}
 
 		return (
@@ -271,6 +257,7 @@ export class PlansStep extends Component {
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
 					backLabelText={ backLabelText }
+					queryParams={ queryParams }
 				/>
 			</>
 		);
@@ -283,7 +270,12 @@ export class PlansStep extends Component {
 			'is-wide-layout': true,
 		} );
 
-		return <div className={ classes }>{ this.plansFeaturesSelection() }</div>;
+		return (
+			<>
+				<MarketingMessage path="signup/plans" />
+				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
+			</>
+		);
 	}
 }
 

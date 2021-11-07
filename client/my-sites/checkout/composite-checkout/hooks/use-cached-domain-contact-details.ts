@@ -1,21 +1,24 @@
 import { defaultRegistry } from '@automattic/composite-checkout';
+import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import getCountries from 'calypso/state/selectors/get-countries';
 import type { UpdateTaxLocationInCart } from '@automattic/shopping-cart';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
 
 const { dispatch } = defaultRegistry;
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
 export default function useCachedDomainContactDetails(
-	updateCartLocation: UpdateTaxLocationInCart
+	updateCartLocation: UpdateTaxLocationInCart,
+	countriesList: CountryListItem[]
 ): void {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef( false );
+
 	useEffect( () => {
 		if ( ! haveRequestedCachedDetails.current ) {
 			debug( 'requesting cached domain contact details' );
@@ -25,16 +28,17 @@ export default function useCachedDomainContactDetails(
 	}, [ reduxDispatch ] );
 
 	const cachedContactDetails = useSelector( getContactDetailsCache );
-	const cachedDetailCountry = useSelector( ( state ) => getCountries( state, 'domains' ) )?.find(
-		( country ) => country.code === cachedContactDetails?.countryCode
-	);
+
+	const arePostalCodesSupported = cachedContactDetails
+		? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode ?? '' )
+		: false;
 
 	useEffect( () => {
 		if ( cachedContactDetails ) {
 			debug( 'using fetched cached domain contact details', cachedContactDetails );
-			dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
-			dispatch( 'wpcom' ).updateRequiredDomainFields( {
-				postalCode: cachedDetailCountry?.has_postal_codes ?? true,
+			dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( {
+				...cachedContactDetails,
+				postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : undefined,
 			} );
 		}
 		if (
@@ -44,9 +48,9 @@ export default function useCachedDomainContactDetails(
 		) {
 			updateCartLocation( {
 				countryCode: cachedContactDetails.countryCode ?? '',
-				postalCode: cachedContactDetails.postalCode ?? '',
+				postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode ?? '' : '',
 				subdivisionCode: cachedContactDetails.state ?? '',
 			} );
 		}
-	}, [ cachedContactDetails, updateCartLocation, cachedDetailCountry ] );
+	}, [ cachedContactDetails, updateCartLocation, arePostalCodesSupported ] );
 }

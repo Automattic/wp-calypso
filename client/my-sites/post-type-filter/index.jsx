@@ -1,7 +1,7 @@
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { compact, find, flow, reduce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryPostTypes from 'calypso/components/data/query-post-types';

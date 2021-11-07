@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Suggestions from '..';
 

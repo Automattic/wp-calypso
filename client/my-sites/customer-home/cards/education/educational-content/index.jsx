@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';

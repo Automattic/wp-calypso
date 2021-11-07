@@ -1,13 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
-import Emojify from 'calypso/components/emojify';
 import Gravatar from 'calypso/components/gravatar';
 import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -19,7 +17,6 @@ import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/com
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import CommentActions from './comment-actions';
-import CommentEditForm from './comment-edit-form';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
@@ -46,7 +43,7 @@ const noop = () => {};
  *   conversations tool uses a mix depending on the situation.
  */
 
-class PostComment extends React.PureComponent {
+class PostComment extends PureComponent {
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
 		commentId: PropTypes.oneOfType( [
@@ -235,9 +232,6 @@ class PostComment extends React.PureComponent {
 								onReplyClick={ this.props.onReplyClick }
 								onReplyCancel={ this.props.onReplyCancel }
 								activeReplyCommentId={ this.props.activeReplyCommentId }
-								onEditCommentClick={ this.props.onEditCommentClick }
-								onEditCommentCancel={ this.props.onEditCommentCancel }
-								activeEditCommentId={ this.props.activeEditCommentId }
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }
@@ -293,11 +287,11 @@ class PostComment extends React.PureComponent {
 				onClick={ this.handleAuthorClick }
 				id={ `comment-${ commentId }` }
 			>
-				<Emojify>{ authorName }</Emojify>
+				{ authorName }
 			</a>
 		) : (
 			<strong className={ className } id={ `comment-${ commentId }` }>
-				<Emojify>{ authorName }</Emojify>
+				{ authorName }
 			</strong>
 		);
 	};
@@ -439,34 +433,18 @@ class PostComment extends React.PureComponent {
 					</p>
 				) : null }
 
-				{ this.props.activeEditCommentId !== this.props.commentId && (
-					<PostCommentContent
-						content={ comment.content }
-						setWithDimensionsRef={ this.props.setWithDimensionsRef }
-						isPlaceholder={ comment.isPlaceholder }
-						className={ displayType }
-					/>
-				) }
-
-				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-					this.props.activeEditCommentId === this.props.commentId && (
-						<CommentEditForm
-							post={ this.props.post }
-							commentId={ this.props.commentId }
-							commentText={ comment.content }
-							onCommentSubmit={ this.props.onEditCommentCancel }
-						/>
-					) }
+				<PostCommentContent
+					content={ comment.content }
+					setWithDimensionsRef={ this.props.setWithDimensionsRef }
+					isPlaceholder={ comment.isPlaceholder }
+					className={ displayType }
+				/>
 
 				<CommentActions
 					post={ this.props.post || {} }
 					comment={ comment }
-					showModerationTools={ this.props.showModerationTools }
-					activeEditCommentId={ this.props.activeEditCommentId }
 					activeReplyCommentId={ this.props.activeReplyCommentId }
 					commentId={ this.props.commentId }
-					editComment={ this.props.onEditCommentClick }
-					editCommentCancel={ this.props.onEditCommentCancel }
 					handleReply={ this.handleReply }
 					onReplyCancel={ this.props.onReplyCancel }
 					showReadMore={ overflowY && ! this.state.showFull && showReadMoreInActions }

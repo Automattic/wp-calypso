@@ -8,7 +8,6 @@ import {
 import { useEvents } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
@@ -148,14 +147,27 @@ export async function validateContactDetails(
 		return isContactValidationResponseValid( validationResult, contactInfo );
 	};
 
-	if (
-		isLoggedOutCart &&
-		! isContactValidationResponseValid(
-			await runLoggedOutEmailValidationCheck( contactInfo, reduxDispatch, translate ),
-			contactInfo
-		)
-	) {
-		return false;
+	if ( isLoggedOutCart ) {
+		const loggedOutValidationResult = await runLoggedOutEmailValidationCheck(
+			contactInfo,
+			reduxDispatch,
+			translate
+		);
+		if ( shouldDisplayErrors ) {
+			handleContactValidationResult( {
+				translate,
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod?.id ?? '',
+				validationResult: loggedOutValidationResult,
+				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
+			} );
+		}
+
+		if ( ! isContactValidationResponseValid( loggedOutValidationResult, contactInfo ) ) {
+			return false;
+		}
 	}
 
 	return completeValidationCheck( await runContactValidationCheck( contactInfo, responseCart ) );

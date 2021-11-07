@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import repliesCache from '../comment-replies-cache';
 import { modifierKeyIsActive } from '../helpers/input';
@@ -18,8 +18,8 @@ function stopEvent( event ) {
 	event.preventDefault();
 }
 
-class CommentReplyInput extends React.Component {
-	replyInput = React.createRef();
+class CommentReplyInput extends Component {
+	replyInput = createRef();
 
 	constructor( props ) {
 		super( props );

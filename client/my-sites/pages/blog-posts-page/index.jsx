@@ -2,7 +2,7 @@ import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
@@ -16,7 +16,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class BlogPostsPage extends React.Component {
+class BlogPostsPage extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		recordCalloutClick: PropTypes.func,

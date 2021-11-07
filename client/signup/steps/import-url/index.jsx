@@ -1,7 +1,7 @@
 import { Button, ScreenReaderText } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ExampleDomainBrowser from 'calypso/components/domains/example-domain-browser';
 import ExternalLink from 'calypso/components/external-link';

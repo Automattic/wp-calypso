@@ -47,12 +47,20 @@ export class PlansPage {
 	}
 
 	/**
+	 * Wait until the page is loaded and stable.
+	 */
+	private async waitUntilLoaded(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
+	/**
 	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
 	 *
 	 * @param {Plan} expectedPlan Name of the expected plan.
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlanInMyPlanTab( expectedPlan: Plan ): Promise< void > {
+		await this.waitUntilLoaded();
 		await this.page.waitForSelector( selectors.myPlanTitle( expectedPlan ) );
 	}
 
@@ -63,6 +71,7 @@ export class PlansPage {
 	 * @throws If the expected tab name is not the active tab.
 	 */
 	async validateActiveNavigationTab( expectedTab: PlansPageTab ): Promise< void > {
+		await this.waitUntilLoaded();
 		const targetDevice = getTargetDeviceName();
 
 		// For mobile sized viewport, the currently selected tab name will be shown alongside the
@@ -99,6 +108,7 @@ export class PlansPage {
 		plan: Plan;
 		buttonText: PlanActionButton;
 	} ): Promise< void > {
+		await this.waitUntilLoaded();
 		const selector = selectors.actionButton( {
 			viewport: getTargetDeviceName(),
 			plan: plan,
@@ -106,6 +116,5 @@ export class PlansPage {
 		} );
 		// These action buttons trigger real page navigations.
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selector ) ] );
-		await this.page.waitForLoadState( 'load' );
 	}
 }

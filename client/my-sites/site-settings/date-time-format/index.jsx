@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { capitalize, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateFormatOption from './date-format-option';
@@ -43,7 +43,13 @@ export class DateTimeFormat extends Component {
 			fields: { date_format: dateFormat, time_format: timeFormat },
 		} = nextProps;
 
-		if ( ! this.state.isLoadingSettings || '' === dateFormat || '' === timeFormat ) {
+		const localeDifferent = this.props.locale !== nextProps.locale;
+
+		if (
+			( ! this.state.isLoadingSettings && ! localeDifferent ) ||
+			'' === dateFormat ||
+			'' === timeFormat
+		) {
 			return;
 		}
 
@@ -54,7 +60,7 @@ export class DateTimeFormat extends Component {
 		} );
 	}
 
-	setFormat = ( name, defaultFormats ) => ( event ) => {
+	setFormat = ( name, defaultFormats, event ) => {
 		const { value: format } = event.currentTarget;
 		this.props.updateFields( { [ `${ name }_format` ]: format } );
 		this.setState( {
@@ -62,9 +68,9 @@ export class DateTimeFormat extends Component {
 		} );
 	};
 
-	setDateFormat = this.setFormat( 'date', getDefaultDateFormats() );
+	setDateFormat = ( event ) => this.setFormat( 'date', getDefaultDateFormats(), event );
 
-	setTimeFormat = this.setFormat( 'time', getDefaultTimeFormats() );
+	setTimeFormat = ( event ) => this.setFormat( 'time', getDefaultTimeFormats(), event );
 
 	setCustomFormat = ( name ) => ( event ) => {
 		const { value: format } = event.currentTarget;

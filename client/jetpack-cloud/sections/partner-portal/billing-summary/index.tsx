@@ -1,7 +1,7 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { numberFormat, useTranslate } from 'i18n-calypso';
-import React, { ReactElement, useCallback, useRef, useState } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';

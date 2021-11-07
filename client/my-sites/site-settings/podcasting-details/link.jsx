@@ -1,7 +1,7 @@
 import { Card, Button } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';

@@ -3,7 +3,7 @@ import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FoldableCard from 'calypso/components/foldable-card';

@@ -1,7 +1,7 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryApplicationPasswords from 'calypso/components/data/query-application-passwords';
 import FormButton from 'calypso/components/forms/form-button';

@@ -1,5 +1,5 @@
 import { TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 
 import './style.scss';
 

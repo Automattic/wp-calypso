@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import wpcom from 'calypso/lib/wp';

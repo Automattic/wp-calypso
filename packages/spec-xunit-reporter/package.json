@@ -17,5 +17,8 @@
 	"private": true,
 	"peerDependencies": {
 		"mocha": "^5.2.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
 	}
 }

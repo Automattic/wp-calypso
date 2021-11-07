@@ -1,10 +1,9 @@
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Component } from 'react';
+import { connect, useSelector } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -14,12 +13,9 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSavingSharingButtons from 'calypso/state/selectors/is-saving-sharing-buttons';
-import isSharingButtonsSaveSuccessful from 'calypso/state/selectors/is-sharing-buttons-save-successful';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import {
 	getSiteSettings,
@@ -27,10 +23,10 @@ import {
 	isSiteSettingsSaveSuccessful,
 } from 'calypso/state/site-settings/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { saveSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ButtonsAppearance from './appearance';
 import ButtonsOptions from './options';
+import { useSharingButtonsQuery, useSaveSharingButtonsMutation } from './use-sharing-buttons-query';
 
 class SharingButtons extends Component {
 	state = {
@@ -57,7 +53,7 @@ class SharingButtons extends Component {
 
 		this.props.saveSiteSettings( this.props.siteId, this.state.values );
 		if ( this.state.buttonsPendingSave ) {
-			this.props.saveSharingButtons( this.props.siteId, this.state.buttonsPendingSave );
+			this.props.saveSharingButtons( this.state.buttonsPendingSave );
 		}
 		this.props.recordTracksEvent( 'calypso_sharing_buttons_save_changes_click', { path } );
 		this.props.recordGoogleEvent( 'Sharing', 'Clicked Save Changes Button' );
@@ -87,22 +83,25 @@ class SharingButtons extends Component {
 		this.setState( { buttonsPendingSave: buttons } );
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		// Save request has been performed
-		if ( this.props.isSaving && ! nextProps.isSaving ) {
+		if (
+			( prevProps.isSavingSettings || prevProps.isSavingButtons ) &&
+			! ( this.props.isSavingSettings || this.props.isSavingButtons )
+		) {
 			if (
-				nextProps.isSaveSettingsSuccessful &&
-				( nextProps.isSaveButtonsSuccessful || ! this.state.buttonsPendingSave )
+				this.props.isSaveSettingsSuccessful &&
+				( this.props.isSaveButtonsSuccessful || ! prevProps.buttonsPendingSave )
 			) {
-				nextProps.successNotice( nextProps.translate( 'Settings saved successfully!' ) );
-				nextProps.markSaved();
+				this.props.successNotice( this.props.translate( 'Settings saved successfully!' ) );
+				this.props.markSaved();
 				this.setState( {
 					values: {},
 					buttonsPendingSave: null,
 				} );
 			} else {
-				nextProps.errorNotice(
-					nextProps.translate( 'There was a problem saving your changes. Please, try again.' )
+				this.props.errorNotice(
+					this.props.translate( 'There was a problem saving your changes. Please, try again.' )
 				);
 			}
 		}
@@ -126,7 +125,8 @@ class SharingButtons extends Component {
 			buttons,
 			isJetpack,
 			isPrivate,
-			isSaving,
+			isSavingSettings,
+			isSavingButtons,
 			settings,
 			siteId,
 			siteSlug,
@@ -136,6 +136,7 @@ class SharingButtons extends Component {
 		} = this.props;
 		const updatedSettings = this.getUpdatedSettings();
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
+		const isSaving = isSavingSettings || isSavingButtons;
 
 		return (
 			<form
@@ -148,7 +149,6 @@ class SharingButtons extends Component {
 					title="Marketing > Sharing Buttons"
 				/>
 				<QuerySiteSettings siteId={ siteId } />
-				<QuerySharingButtons siteId={ siteId } />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				{ isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive && (
 					<Notice
@@ -171,6 +171,7 @@ class SharingButtons extends Component {
 					</Notice>
 				) }
 				<ButtonsOptions
+					buttons={ buttons }
 					settings={ updatedSettings }
 					onChange={ this.handleChange }
 					saving={ isSaving }
@@ -188,20 +189,40 @@ class SharingButtons extends Component {
 	}
 }
 
+const withSharingButtons = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const siteId = useSelector( getSelectedSiteId );
+		const { data: buttons } = useSharingButtonsQuery( siteId );
+		const {
+			saveSharingButtons,
+			isLoading: isSavingButtons,
+			isSuccess: isSaveButtonsSuccessful,
+		} = useSaveSharingButtonsMutation( siteId );
+
+		return (
+			<Wrapped
+				{ ...props }
+				buttons={ buttons }
+				saveSharingButtons={ saveSharingButtons }
+				isSavingButtons={ isSavingButtons }
+				isSaveButtonsSuccessful={ isSaveButtonsSuccessful }
+			/>
+		);
+	},
+	'WithSharingButtons'
+);
+
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 		const settings = getSiteSettings( state, siteId );
-		const buttons = getSharingButtons( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isSharingButtonsModuleActive = isJetpackModuleActive( state, siteId, 'sharedaddy' );
 		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
 		const isFetchingModules = isFetchingJetpackModules( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
-		const isSavingButtons = isSavingSharingButtons( state, siteId );
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
-		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful( state, siteId );
 		const isPrivate = isPrivateSite( state, siteId );
 		const path = getCurrentRouteParameterized( state, siteId );
 
@@ -210,12 +231,10 @@ const connectComponent = connect(
 			isSharingButtonsModuleActive,
 			isLikesModuleActive,
 			isFetchingModules,
-			isSaving: isSavingSettings || isSavingButtons,
+			isSavingSettings,
 			isSaveSettingsSuccessful,
-			isSaveButtonsSuccessful,
 			isPrivate,
 			settings,
-			buttons,
 			siteId,
 			siteSlug,
 			path,
@@ -226,10 +245,9 @@ const connectComponent = connect(
 		errorNotice,
 		recordGoogleEvent,
 		recordTracksEvent,
-		saveSharingButtons,
 		saveSiteSettings,
 		successNotice,
 	}
 );
 
-export default flowRight( connectComponent, protectForm, localize )( SharingButtons );
+export default connectComponent( protectForm( localize( withSharingButtons( SharingButtons ) ) ) );

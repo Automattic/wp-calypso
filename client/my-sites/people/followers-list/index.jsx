@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useRemoveFollowerMutation from 'calypso/data/followers/use-remove-follower-mutation';

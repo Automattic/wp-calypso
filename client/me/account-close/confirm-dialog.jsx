@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -15,7 +15,7 @@ import './confirm-dialog.scss';
 
 const noop = () => {};
 
-class AccountCloseConfirmDialog extends React.Component {
+class AccountCloseConfirmDialog extends Component {
 	state = {
 		displayAlternativeOptions: true,
 		inputValue: '',
@@ -154,6 +154,7 @@ class AccountCloseConfirmDialog extends React.Component {
 							value={ this.state.inputValue }
 							aria-required="true"
 							id="confirmAccountCloseInput"
+							spellCheck={ false }
 						/>
 					</>
 				) }

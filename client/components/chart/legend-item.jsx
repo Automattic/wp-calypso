@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 
-export default class ChartLegendItem extends React.PureComponent {
+export default class ChartLegendItem extends PureComponent {
 	static propTypes = {
 		attr: PropTypes.string.isRequired,
 		changeHandler: PropTypes.func.isRequired,

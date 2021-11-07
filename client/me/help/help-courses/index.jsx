@@ -1,13 +1,11 @@
 import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { receiveHelpCourses } from 'calypso/state/help/courses/actions';
 import { getHelpCourses } from 'calypso/state/help/courses/selectors';
 import {
@@ -38,7 +36,7 @@ class Courses extends Component {
 	}
 
 	render() {
-		const { courses, isBusinessPlanUser, isLoading, translate, userId } = this.props;
+		const { courses, isBusinessPlanUser, isLoading, translate } = this.props;
 
 		return (
 			<Main className="help-courses">
@@ -52,18 +50,17 @@ class Courses extends Component {
 					<CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } />
 				) }
 
-				<QueryUserPurchases userId={ userId } />
+				<QueryUserPurchases />
 			</Main>
 		);
 	}
 }
 
 export function mapStateToProps( state ) {
-	const userId = getCurrentUserId( state );
-	const purchases = getUserPurchases( state, userId );
+	const purchases = getUserPurchases( state );
 	const isBusinessPlanUser =
 		purchases &&
-		!! find( purchases, ( { productSlug } ) =>
+		purchases.some( ( { productSlug } ) =>
 			planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING )
 		);
 	const courses = getHelpCourses( state );
@@ -73,7 +70,6 @@ export function mapStateToProps( state ) {
 	return {
 		isLoading,
 		isBusinessPlanUser,
-		userId,
 		courses,
 	};
 }

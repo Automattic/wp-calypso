@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import type {
 	ThankYouNextStepProps,
@@ -37,7 +36,7 @@ const ThankYouBody = styled.div`
 	margin-top: 50px;
 	> div {
 		width: 600px;
-		padding: 0 35px;
+		padding: 0 20px;
 	}
 	div {
 		min-width: 144px;

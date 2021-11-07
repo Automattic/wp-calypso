@@ -1,5 +1,5 @@
 import { MomentInput, Moment } from 'moment';
-import React, { FunctionComponent, useCallback } from 'react';
+import { createContext, FunctionComponent, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // Required to get site time offset
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -10,7 +10,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 export type contextTypeLoaded = ( input: MomentInput ) => Moment;
 export type contextType = contextTypeLoaded | null;
 
-const SiteOffsetContext = React.createContext< contextType >( null );
+const SiteOffsetContext = createContext< contextType >( null );
 
 interface Props {
 	site: string;

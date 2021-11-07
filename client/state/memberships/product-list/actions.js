@@ -52,6 +52,9 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				product
 			)
 			.then( ( newProduct ) => {
+				if ( newProduct.error ) {
+					throw new Error( newProduct.error );
+				}
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
 				dispatch(

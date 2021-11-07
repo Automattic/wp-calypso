@@ -11,7 +11,7 @@ const SEPARATORS = [ ' ', '/', ',', ';' ];
  * "tempor incididunt ut labore et dolore magna aliqua."
  *
  * @param {string} literal      - A string literal
- * @param {string|int} startAt  - A prefix (or the negative length of the prefix) the literal will be printed at
+ * @param {string|number} startAt  - A prefix (or the negative length of the prefix) the literal will be printed at
  * @returns {string}             - A multiline string compatible with the POT format
  */
 module.exports = function multiline( literal, startAt ) {

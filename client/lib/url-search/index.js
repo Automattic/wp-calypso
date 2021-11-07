@@ -2,7 +2,7 @@ import url from 'url';
 import debugFactory from 'debug';
 import { pick } from 'lodash';
 import page from 'page';
-import React from 'react';
+import * as React from 'react';
 
 const debug = debugFactory( 'calypso:url-search' );
 

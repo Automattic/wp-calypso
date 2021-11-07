@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent, ReactElement } from 'react';
+import { Children, cloneElement, FunctionComponent, ReactElement } from 'react';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
@@ -62,9 +62,9 @@ const PromoCard: FunctionComponent< Props > = ( {
 					{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
 				</ActionPanelTitle>
 				{ isPrimary
-					? React.Children.map( children, ( child ) => {
+					? Children.map( children, ( child ) => {
 							return child && PromoCardCta === child.type
-								? React.cloneElement( child, { isPrimary } )
+								? cloneElement( child, { isPrimary } )
 								: child;
 					  } )
 					: children }

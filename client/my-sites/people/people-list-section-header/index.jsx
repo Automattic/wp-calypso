@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';

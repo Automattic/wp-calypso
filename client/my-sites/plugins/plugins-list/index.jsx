@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, get, includes, isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import acceptDialog from 'calypso/lib/accept';
@@ -45,7 +45,7 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
-export class PluginsList extends React.Component {
+export class PluginsList extends Component {
 	static propTypes = {
 		plugins: PropTypes.arrayOf(
 			PropTypes.shape( {

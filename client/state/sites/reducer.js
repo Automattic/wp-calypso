@@ -30,7 +30,6 @@ import monitor from './monitor/reducer';
 import { plans } from './plans/reducer';
 import { products } from './products/reducer';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
-import sharingButtons from './sharing-buttons/reducer';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -352,7 +351,6 @@ export default combineReducers( {
 	guidedTransfer,
 	monitor,
 	requesting,
-	sharingButtons,
 	blogStickers,
 	hasAllSitesList,
 } );

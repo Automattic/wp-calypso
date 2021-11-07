@@ -5,7 +5,7 @@ import { localize } from 'i18n-calypso';
 import { includes, find, isEmpty, flowRight } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
@@ -68,7 +68,7 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
-class Upload extends React.Component {
+class Upload extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		selectedSite: PropTypes.object,
@@ -332,11 +332,7 @@ class Upload extends React.Component {
 						{
 							components: {
 								learnMoreLink: (
-									<InlineSupportLink
-										supportLink="https://wordpress.com/support/themes/uploading-setting-up-custom-themes/"
-										supportPostId={ 134784 }
-										showIcon={ false }
-									/>
+									<InlineSupportLink supportContext="themes-upload" showIcon={ false } />
 								),
 							},
 						}

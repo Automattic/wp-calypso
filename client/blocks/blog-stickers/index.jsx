@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import BlogStickersList from 'calypso/blocks/blog-stickers/list';
 import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';

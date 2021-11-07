@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import {
 	makeTour,
 	Continue,

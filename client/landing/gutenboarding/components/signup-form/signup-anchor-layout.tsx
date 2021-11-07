@@ -1,23 +1,23 @@
 import { Button, TextControl, Modal, Notice } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
 import type { WPElement } from '@wordpress/element';
+import type { Dispatch, FormEvent, SetStateAction } from 'react';
 
 interface Props {
 	closeModal: () => void;
 	emailVal: string;
 	errorMessage: string | undefined;
-	handleSignUp: ( event: React.FormEvent< HTMLFormElement > ) => Promise< void >;
+	handleSignUp: ( event: FormEvent< HTMLFormElement > ) => Promise< void >;
 	isFetchingNewUser: boolean | undefined;
 	isMobile: boolean;
 	loginUrl: string;
 	passwordVal: string;
 	recaptcha_tos: WPElement;
-	setEmailVal: React.Dispatch< React.SetStateAction< string > >;
-	setPasswordVal: React.Dispatch< React.SetStateAction< string > >;
+	setEmailVal: Dispatch< SetStateAction< string > >;
+	setPasswordVal: Dispatch< SetStateAction< string > >;
 	tos: WPElement;
 }
 

@@ -7,7 +7,7 @@ import { get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
 import themesImage from 'calypso/assets/images/illustrations/themes.svg';
@@ -28,6 +28,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER,
 	MAP_EXISTING_DOMAIN,
 } from 'calypso/lib/url/support';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -43,7 +44,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class UseYourDomainStep extends React.Component {
+class UseYourDomainStep extends Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
 		basePath: PropTypes.string,
@@ -447,4 +448,4 @@ export default connect(
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
-)( withShoppingCart( localize( UseYourDomainStep ) ) );
+)( withCartKey( withShoppingCart( localize( UseYourDomainStep ) ) ) );

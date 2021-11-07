@@ -8,7 +8,7 @@
 	bottom: 0;
 	right: 12px;
 	font-size: $font-body-small;
-	display: none;		/* disabled */
+	display: none; /* disabled */
 	box-sizing: border-box;
 
 	transform: translateZ( 0 );
@@ -34,13 +34,14 @@
 		background: var( --color-neutral-0 );
 		bottom: 0;
 		z-index: z-index( 'root', '.happychat__container.is-open' );
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.2 ), 0 1px 10px rgba( 0, 0, 0, 0.1 );
+		width: 280px;
 	}
-
 }
 
 // experiment: style scrollbars
-.happychat, .happychat__page {
-
+.happychat,
+.happychat__page {
 	::-webkit-scrollbar {
 		width: 12px;
 		height: 12px;
@@ -55,11 +56,8 @@
 		&:hover {
 			background-color: var( --color-neutral-light );
 		}
-
 	}
-
 }
-
 
 /**
  * Minimize animation
@@ -80,7 +78,16 @@
 		position: relative;
 		animation: happychat-disappear 0.1s 1 forwards;
 	}
+}
 
+.happychat__conversation,
+.happychat__welcome {
+	min-height: 160px;
+	max-height: 220px;
+}
+
+.happychat__message > textarea {
+	padding: 12px;
 }
 
 @keyframes happychat-disappear {
@@ -102,7 +109,8 @@
 	50% {
 		opacity: 1;
 	}
-	99%, 100% {
+	99%,
+	100% {
 		right: 25px;
 		width: 34px;
 		max-height: 34px;
@@ -122,7 +130,8 @@
 		50% {
 			opacity: 1;
 		}
-		99%, 100% {
+		99%,
+		100% {
 			right: 25px;
 			width: 34px;
 			max-height: 34px;
@@ -136,115 +145,46 @@
 }
 
 /**
- * Panel mode
- */
-
-@include breakpoint-deprecated( '>480px' ) {
-
-	.layout:not( .is-section-happychat ) {
-		.happychat__container.is-open {
-			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.2 ), 0 1px 10px rgba( 0, 0, 0, 0.1 );
-			width: 280px;
-		}
-
-		.happychat__message {
-			height: auto;
-		}
-
-		.happychat__message > textarea {
-			padding: 12px;
-		}
-
-		.happychat__conversation,
-		.happychat__welcome {
-			min-height: 160px;
-			max-height: 220px;
-		}
-	}
-
-}
-
-@include breakpoint-deprecated( '<480px' ) {
-
-	.layout:not( .is-section-happychat ) {
-		.happychat__container.is-open {
-			right: 0;
-		}
-
-		.happychat__conversation,
-		.happychat__welcome {
-			min-height: 160px;
-			max-height: 220px;
-		}
-	}
-
-}
-
-
-/**
  * Sidebar mode
  */
 
 @include breakpoint-deprecated( '>1040px' ) {
+	.layout.has-docked-chat {
+		.happychat__container.is-open {
+			position: fixed;
+			height: calc( 100% - var( --masterbar-height ) );
+			bottom: 0;
+			right: 0;
+			width: 272px;
+			display: flex;
+			flex-direction: column;
+			box-sizing: border-box;
+			box-shadow: none;
 
-	// be more specific in scope to override the panel mode
-	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ):not( .has-no-sidebar ) .happychat__container.is-open {
-		position: fixed;
-		height: calc( 100% - var( --masterbar-height ) );
-		bottom: 0;
-		right: 0;
-		width: 272px;
-		display: flex;
-		flex-direction: column;
-		box-sizing: border-box;
-		box-shadow: none;
+			.happychat__conversation,
+			.happychat__composer,
+			.happychat__welcome,
+			.happychat__active-toolbar {
+				border-left: 1px solid var( --color-neutral-10 );
+			}
 
-		.happychat__conversation,
-		.happychat__composer,
-		.happychat__welcome,
-		.happychat__active-toolbar {
-			border-left: 1px solid var( --color-neutral-10 );
+			.happychat__title {
+				line-height: 46px;
+			}
+
+			.happychat__active-toolbar > div {
+				padding: 11px;
+			}
+
+			.happychat__message > textarea {
+				padding-bottom: 32px;
+			}
+
+			.happychat__conversation,
+			.happychat__welcome {
+				min-height: 160px;
+				max-height: none;
+			}
 		}
-
-		.happychat__title {
-			line-height: 46px;
-		}
-
-		.happychat__active-toolbar > div {
-			padding: 11px;
-		}
-
-		.happychat__message {
-			height: auto;
-		}
-
-		.happychat__message > textarea {
-			padding: 12px 12px 32px;
-		}
-
-		.happychat__conversation,
-		.happychat__welcome {
-			min-height: 160px;
-			max-height: none;
-		}
-
 	}
-
-
-	// add space in the main column for the docked sidebar
-	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ):not( .has-no-sidebar ) .layout__content {
-		padding: 79px 304px 32px;
-	}
-
-	// adjust when scoll arrows show up in stats insights when panel is open
-	.has-chat.is-section-stats .post-trends__scroll-left,
-	.has-chat.is-section-stats .post-trends__scroll-right {
-			display: block;
-	}
-
-	// make space in customizer
-	.has-chat .main.customize.is-iframe {
-		right: 272px;
-	}
-
 }

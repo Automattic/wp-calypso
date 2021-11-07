@@ -12,7 +12,7 @@ import { Button, Card } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
-import React, { Fragment, PureComponent } from 'react';
+import { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Checklist, Task } from 'calypso/components/checklist';
 import QueryJetpackProductInstallStatus from 'calypso/components/data/query-jetpack-product-install-status';

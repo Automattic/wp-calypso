@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import DocsExampleWrapper from 'calypso/devdocs/docs-example/wrapper';

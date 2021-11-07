@@ -1,6 +1,6 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';

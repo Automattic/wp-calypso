@@ -1,9 +1,9 @@
 import { Card } from '@automattic/components';
-import React from 'react';
+import { PureComponent } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 
-export default class Typography extends React.PureComponent {
+export default class Typography extends PureComponent {
 	static displayName = 'Typography';
 
 	render() {

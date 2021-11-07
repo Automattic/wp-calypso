@@ -1,6 +1,5 @@
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions';
 import { screen, render, fireEvent } from '@testing-library/react';
-import * as React from 'react';
 import '../__mocks__/matchMedia.mock';
 import { MOCK_DOMAIN_SUGGESTION } from '../__mocks__';
 import DomainPicker from '../components';

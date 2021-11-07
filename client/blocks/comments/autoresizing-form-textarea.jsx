@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import withUserMentions from 'calypso/blocks/user-mentions/index';
 import AutoDirection from 'calypso/components/auto-direction';
 import FormTextarea from 'calypso/components/forms/form-textarea';

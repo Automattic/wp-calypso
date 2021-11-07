@@ -1,7 +1,6 @@
 import { FEATURE_SECURITY_SETTINGS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';

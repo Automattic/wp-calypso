@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	TERM_BIENNIALLY,
@@ -10,14 +11,19 @@ import {
 	isJetpackProduct,
 	getProductFromSlug,
 } from '@automattic/calypso-products';
+import { Card } from '@automattic/components';
+import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import UserItem from 'calypso/components/user';
+import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	getName,
@@ -26,7 +32,6 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-	cardProcessorSupportsUpdates,
 	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
@@ -34,7 +39,6 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -67,6 +71,9 @@ export default function PurchaseMeta( {
 		return <PurchaseMetaPlaceholder />;
 	}
 
+	const isJetpackProductOrPlan = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
+	const showJetpackUserLicense = isEnabled( 'jetpack/user-licensing' ) && isJetpackProductOrPlan;
+
 	return (
 		<>
 			<ul className="manage-purchase__meta">
@@ -92,6 +99,7 @@ export default function PurchaseMeta( {
 					site={ site }
 				/>
 			</ul>
+			{ showJetpackUserLicense && <PurchaseJetpackUserLicense purchaseId={ purchaseId } /> }
 			<RenewErrorMessage purchase={ purchase } translate={ translate } site={ site } />
 		</>
 	);
@@ -290,12 +298,7 @@ function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, s
 
 	const paymentDetails = <PaymentInfoBlock purchase={ purchase } />;
 
-	if (
-		! canEditPaymentDetails( purchase ) ||
-		! isPaidWithCreditCard( purchase ) ||
-		! cardProcessorSupportsUpdates( purchase ) ||
-		! site
-	) {
+	if ( ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) || ! site ) {
 		return <li>{ paymentDetails }</li>;
 	}
 
@@ -452,5 +455,48 @@ function PurchaseMetaExpiration( {
 				} ) }
 			</span>
 		</li>
+	);
+}
+
+function PurchaseJetpackUserLicense( { purchaseId } ) {
+	const translate = useTranslate();
+	const { data, isError, isLoading } = useUserLicenseBySubscriptionQuery( purchaseId );
+
+	const [ isCopied, setCopied ] = useState( false );
+
+	useEffect( () => {
+		if ( isCopied ) {
+			const confirmationTimeout = setTimeout( () => setCopied( false ), 4000 );
+			return () => clearTimeout( confirmationTimeout );
+		}
+	}, [ isCopied ] );
+
+	const showConfirmation = () => {
+		setCopied( true );
+	};
+
+	if ( isError || isLoading ) {
+		return null;
+	}
+
+	const { licenseKey } = data;
+	// Make sure the size of the input element can hold the entire key
+	const licenseKeyInputSize = licenseKey.length + 5;
+
+	return (
+		<Card className="manage-purchase__jetpack-user-license">
+			<strong>{ translate( 'License key' ) }</strong>
+			<div className="manage-purchase__jetpack-user-license-clipboard">
+				<FormTextInput
+					className="manage-purchase__jetpack-user-license-input"
+					value={ licenseKey }
+					size={ licenseKeyInputSize }
+					readOnly
+				/>
+				<ClipboardButton text={ licenseKey } onCopy={ showConfirmation } compact>
+					{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
+				</ClipboardButton>
+			</div>
+		</Card>
 	);
 }

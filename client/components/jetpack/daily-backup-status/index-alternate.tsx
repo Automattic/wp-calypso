@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import BackupCard from 'calypso/components/jetpack/backup-card';

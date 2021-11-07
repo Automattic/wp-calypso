@@ -2,7 +2,7 @@ import { CompactCard, ProgressBar } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
@@ -21,7 +21,7 @@ import './style.scss';
 const debug = debugModule( 'calypso:site-settings:jetpack-sync-panel' );
 const SYNC_STATUS_ERROR_NOTICE_THRESHOLD = 3; // Only show sync status error notice if >= this number
 
-class JetpackSyncPanel extends React.Component {
+class JetpackSyncPanel extends Component {
 	UNSAFE_componentWillMount() {
 		this.fetchSyncStatus();
 	}

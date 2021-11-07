@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Security2faEnable from 'calypso/me/security-2fa-enable';
 import Security2faInitialSetup from 'calypso/me/security-2fa-initial-setup';
@@ -16,6 +16,7 @@ class Security2faSetup extends Component {
 
 	state = {
 		step: 'initial-setup',
+		authMethod: 'app-based',
 	};
 
 	onCancelSetup = ( event ) => {
@@ -23,8 +24,8 @@ class Security2faSetup extends Component {
 		this.setState( { step: 'initial-setup' } );
 	};
 
-	onInitialSetupSuccess = () => {
-		this.setState( { step: 'sms-settings' } );
+	onInitialSetupSuccess = ( event, authMethod ) => {
+		this.setState( { step: authMethod, authMethod } );
 	};
 
 	onSetupSuccess = () => {
@@ -50,6 +51,7 @@ class Security2faSetup extends Component {
 	};
 
 	render() {
+		const isSmsFlow = [ 'sms-based', 'sms-settings' ].includes( this.state.authMethod );
 		return (
 			<div className="security-2fa-setup__steps-container">
 				{ 'initial-setup' === this.state.step ? (
@@ -66,7 +68,7 @@ class Security2faSetup extends Component {
 
 				{ 'app-based' === this.state.step ? (
 					<Security2faEnable
-						doSMSFlow={ false }
+						isSmsFlow={ false }
 						onCancel={ this.onCancelSetup }
 						onSuccess={ this.onSetupSuccess }
 					/>
@@ -74,14 +76,14 @@ class Security2faSetup extends Component {
 
 				{ 'sms-based' === this.state.step ? (
 					<Security2faEnable
-						doSMSFlow
+						isSmsFlow
 						onCancel={ this.onCancelSetup }
 						onSuccess={ this.onSetupSuccess }
 					/>
 				) : null }
 
 				{ 'backup-codes' === this.state.step ? (
-					<Security2faSetupBackupCodes onFinished={ this.onFinished } />
+					<Security2faSetupBackupCodes isSmsFlow={ isSmsFlow } onFinished={ this.onFinished } />
 				) : null }
 			</div>
 		);

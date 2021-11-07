@@ -1,13 +1,16 @@
 :root {
-	--p2-color-text-white: #ffffff;
 	--p2-color-text: #00101c;
+	--p2-color-text-light: #767676;
+
+	--p2-color-white: #ffffff;
 
 	--p2-color-link: #0267ff;
 	--p2-color-link-dark: #004cbf;
 
-	--p2-color-border: #9ea4a8;
+	--p2-color-border: #d8dbdd;
+	--p2-color-border-medium: #9ea4a8;
 
-	--p2-color-error: #d63638;
+	--p2-color-error: #f71619;
 	--p2-color-valid: #00db41;
 
 	--p2-color-button: #f3f3f3;
@@ -15,9 +18,10 @@
 
 	--p2-font-inter: 'Inter', -apple-system, system-ui, blinkmacsystemfont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 
-	--p2-font-size-form: 18px;
+	--p2-font-size-form-xxs: 14px;
+	--p2-font-size-form-xs: 15px;
 	--p2-font-size-form-s: 16px;
-	--p2-font-size-form-xs: 14px;
+	--p2-font-size-form: 18px;
 	--p2-font-size-form-xl: 26px;
 	--p2-font-size-form-xxl: 32px;
 }

@@ -83,8 +83,8 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
       className="gsuite-features__feature-image"
     >
       <img
-        alt="Google Hangouts Logo"
-        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+        alt="Google Meet Logo"
+        src="meet.svg"
       />
     </div>
     <div
@@ -186,8 +186,8 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
       className="gsuite-features__feature-image"
     >
       <img
-        alt="Google Hangouts Logo"
-        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+        alt="Google Meet Logo"
+        src="meet.svg"
       />
     </div>
     <div
@@ -289,8 +289,8 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
       className="gsuite-features__feature-image"
     >
       <img
-        alt="Google Hangouts Logo"
-        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+        alt="Google Meet Logo"
+        src="meet.svg"
       />
     </div>
     <div
@@ -392,8 +392,8 @@ exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
       className="gsuite-features__feature-image"
     >
       <img
-        alt="Google Hangouts Logo"
-        src="/calypso/images/g-suite/logo_hangouts_48dp.svg"
+        alt="Google Meet Logo"
+        src="meet.svg"
       />
     </div>
     <div

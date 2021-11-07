@@ -1,6 +1,6 @@
 import { map, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { generateGalleryShortcode } from 'calypso/lib/media/utils';
 import MediaModal from 'calypso/post-editor/media-modal';

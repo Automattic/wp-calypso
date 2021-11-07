@@ -1,10 +1,14 @@
+.p2-site__site-url-container {
+	position: relative;
+}
+
 .p2-site__wordpress-domain-suffix {
 	color: var( --p2-color-link );
 	line-height: 22px;
 	pointer-events: none;
 	position: absolute;
 	font-size: var( --p2-font-size-form );
-	top: 67px;
+	top: 19px;
 	right: 24px;
 }
 
@@ -16,7 +20,7 @@
 }
 
 .p2-site__validation-site-title.validation-fieldset {
-	margin-bottom: 48px;
+	margin-bottom: 32px;
 }
 
 .p2-site__form-footer {
@@ -26,26 +30,26 @@
 .p2-site__form-submit-btn.is-primary {
 	float: none;
 	margin: 0;
-	padding: 18px 24px;
+	padding: 1em 2em;
 	width: 100%;
 	background-color: var( --p2-color-link );
 	border: none;
-	border-radius: 40px;
+	border-radius: 50px; /* stylelint-disable-line */
 	font-weight: normal;
-	font-size: var( --p2-font-size-form );
-	color: var( --p2-color-text-white );
+	font-size: var( --p2-font-size-form-s );
+	color: var( --p2-color-white );
 	transition: background 0.2s ease;
 
 	&:hover,
 	&:focus {
 		background-color: var( --p2-color-link-dark );
 		border: none;
-		color: var( --p2-color-text-white );
+		color: var( --p2-color-white );
 	}
 
 	&[disabled] {
 		opacity: 0.5;
-		color: var( --p2-color-text-white );
+		color: var( --p2-color-white );
 		background-color: var( --p2-color-link );
 		border: none;
 	}
@@ -53,10 +57,10 @@
 
 .p2-site__form .form-label {
 	color: var( --p2-color-text );
-	font-weight: normal;
-	font-size: var( --p2-font-size-form );
-	letter-spacing: -0.26px;
-	margin-bottom: 16px;
+	font-weight: 500; /* stylelint-disable-line */
+	font-size: var( --p2-font-size-form-xxs );
+	letter-spacing: -0.01em;
+	margin-bottom: 8px;
 }
 
 .p2-site__form input[type='text'].form-text-input {
@@ -65,7 +69,7 @@
 	border-radius: 2px;
 	font-size: var( --p2-font-size-form );
 	color: var( --p2-color-text );
-	border-color: var( --p2-color-border );
+	border-color: var( --p2-color-border-medium );
 
 	&:focus,
 	&:hover {
@@ -111,7 +115,7 @@
 
 .p2-site__form .form-input-validation {
 	color: var( --p2-color-text );
-	font-size: var( --p2-font-size-form-xs );
+	font-size: var( --p2-font-size-form-xxs );
 	line-height: 1.5;
 	padding: 0;
 	padding-top: 9px;
@@ -134,8 +138,10 @@
 .p2-site__learn-more-link {
 	color: var( --p2-color-link );
 	text-decoration-line: underline;
-	font-size: var( --p2-font-size-form-xs );
-	line-height: 28px;
+	font-size: var( --p2-font-size-form-xxs );
+	line-height: 1.5;
+	border-bottom: 1px solid currentColor;
+	padding-bottom: 2px;
 }
 
 .p2-site__subdomain-suggestions {
@@ -145,11 +151,12 @@
 }
 
 .p2-site__subdomain-suggestions button.p2-site__subdomain-suggestions-item {
-	background: var( --p2-color-text-white );
-	border: 1px solid var( --p2-color-border );
+	background: var( --p2-color-white );
+	border: 1px solid var( --p2-color-border-medium );
 	border-radius: 0;
-	text-align: left;
+	justify-content: flex-start;
 	padding: 18px 24px;
+	margin-bottom: 0;
 	transition: border 0.2s ease;
 	margin-top: -1px;
 	position: relative;
@@ -171,5 +178,6 @@
 		cursor: pointer;
 		border-color: var( --p2-color-link );
 		z-index: 1;
+		background: var( --p2-color-white );
 	}
 }

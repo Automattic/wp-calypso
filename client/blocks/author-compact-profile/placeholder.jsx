@@ -1,4 +1,3 @@
-import React from 'react';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 
 const AuthorCompactProfilePlaceholder = () => {

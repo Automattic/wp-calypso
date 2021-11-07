@@ -5,7 +5,7 @@
 import {
 	DataHelper,
 	MediaHelper,
-	LoginFlow,
+	LoginPage,
 	MediaPage,
 	SidebarComponent,
 	setupHooks,
@@ -18,7 +18,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	let testImage: TestFile;
 	let page: Page;
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
@@ -28,36 +28,30 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 
 	describe.each`
 		siteType      | user
-		${ 'Simple' } | ${ 'defaultUser' }
-		${ 'Atomic' } | ${ 'wooCommerceUser' }
+		${ 'Atomic' } | ${ 'eCommerceUser' }
 	`( 'Edit Image ($siteType)', function ( { user } ) {
 		let mediaPage: MediaPage;
 
-		it( 'Log In', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+		it( 'Log in', async function () {
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Navigate to Media', async function () {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Media' );
-		} );
-
-		it( 'Show only images', async function () {
 			mediaPage = new MediaPage( page );
-			await mediaPage.clickTab( 'Images' );
 		} );
 
 		it( 'Upload image', async function () {
 			// Ideally, we'd not want to upload an image (that's a separate test)
 			// but occasionally, the photo gallery is cleaned out leaving no images.
-			const uploadedImageHandle = await mediaPage.upload( testImage.fullpath );
-			const isVisible = await uploadedImageHandle.isVisible();
-			expect( isVisible ).toBe( true );
+			await mediaPage.upload( testImage.fullpath );
 		} );
 
-		it( 'Click to edit selected image', async function () {
-			await mediaPage.editImage();
+		it( 'Launch image editor', async function () {
+			await mediaPage.editSelectedItem();
+			await mediaPage.launchImageEditor();
 		} );
 
 		it( 'Rotate image', async function () {

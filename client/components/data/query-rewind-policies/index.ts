@@ -4,7 +4,7 @@ import { requestPolicies } from 'calypso/state/rewind/policies/actions';
 import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import type { AppState } from 'calypso/types';
 
-export const useRequestRewindPolicies = ( siteId: number ): void => {
+export const useQueryRewindPolicies = ( siteId: number ): void => {
 	const dispatch = useDispatch();
 	const requesting = useSelector( ( state: AppState ) =>
 		isRequestingRewindPolicies( state, siteId )
@@ -34,7 +34,7 @@ type OwnProps = {
 };
 
 const QueryRewindPolicies: React.FC< OwnProps > = ( { siteId } ) => {
-	useRequestRewindPolicies( siteId );
+	useQueryRewindPolicies( siteId );
 	return null;
 };
 

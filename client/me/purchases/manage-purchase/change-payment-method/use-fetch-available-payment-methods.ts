@@ -1,11 +1,7 @@
 import { useReducer, useEffect, useRef } from 'react';
 import wp from 'calypso/lib/wp';
 
-const wpcom = wp.undocumented();
-
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcomGetAllowedPaymentMethods = () => wpcom.getAllowedPaymentMethods();
+const wpcomGetAllowedPaymentMethods = () => wp.req.get( { path: '/me/allowed-payment-methods' } );
 
 export default function useFetchAvailablePaymentMethods(): AvailablePaymentMethodsState {
 	const isSubscribed = useRef< boolean >( true );

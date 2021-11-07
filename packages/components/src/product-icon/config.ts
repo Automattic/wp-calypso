@@ -18,6 +18,8 @@ import jetpackSearchV2Darkblue from './images/jetpack-search-v2-darkblue.svg';
 import jetpackSearchV2 from './images/jetpack-search-v2.svg';
 import jetpackSearch from './images/jetpack-search.svg';
 import jetpackSecurityV2 from './images/jetpack-security-v2.svg';
+import jetpackVideoPressDarkBlue from './images/jetpack-videopress-darkblue.svg';
+import jetpackVideoPress from './images/jetpack-videopress.svg';
 import wpcomBlogger from './images/wpcom-blogger.svg';
 import wpcomBusiness from './images/wpcom-business.svg';
 import wpcomEcommerce from './images/wpcom-ecommerce.svg';
@@ -47,6 +49,8 @@ export const paths = {
 	'jetpack-anti-spam': jetpackAntiSpam,
 	'jetpack-anti-spam-v2': jetpackAntiSpamV2,
 	'jetpack-anti-spam-v2-dark': jetpackAntiSpamV2Darkblue,
+	'jetpack-videopress': jetpackVideoPress,
+	'jetpack-videopress-dark': jetpackVideoPressDarkBlue,
 	'wpcom-blogger': wpcomBlogger,
 	'wpcom-business': wpcomBusiness,
 	'wpcom-ecommerce': wpcomEcommerce,
@@ -101,6 +105,10 @@ export type SupportedSlugs =
 	| 'jetpack_backup_daily_monthly_v2_dark'
 	| 'jetpack_backup_realtime_v2_dark'
 	| 'jetpack_backup_realtime_monthly_v2_dark'
+	| 'jetpack_backup_t1_yearly'
+	| 'jetpack_backup_t1_monthly'
+	| 'jetpack_backup_t2_yearly'
+	| 'jetpack_backup_t2_monthly'
 	| 'jetpack_scan'
 	| 'jetpack_scan_monthly'
 	| 'jetpack_scan_v2'
@@ -138,7 +146,15 @@ export type SupportedSlugs =
 	| 'jetpack_security_daily'
 	| 'jetpack_security_daily_monthly'
 	| 'jetpack_security_realtime'
-	| 'jetpack_security_realtime_monthly';
+	| 'jetpack_security_realtime_monthly'
+	| 'jetpack_security_t1_yearly'
+	| 'jetpack_security_t1_monthly'
+	| 'jetpack_security_t2_yearly'
+	| 'jetpack_security_t2_monthly'
+	| 'jetpack_videopress'
+	| 'jetpack_videopress_monthly'
+	| 'jetpack_videopress_dark'
+	| 'jetpack_videopress_monthly_dark';
 
 export const iconToProductSlugMap: Record< keyof typeof paths, readonly SupportedSlugs[] > = {
 	'wpcom-free': [ 'free_plan' ],
@@ -172,6 +188,10 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'jetpack_backup_daily_monthly_v2',
 		'jetpack_backup_realtime_v2',
 		'jetpack_backup_realtime_monthly_v2',
+		'jetpack_backup_t1_yearly',
+		'jetpack_backup_t1_monthly',
+		'jetpack_backup_t2_yearly',
+		'jetpack_backup_t2_monthly',
 	],
 	'jetpack-backup-v2-dark': [
 		'jetpack_backup_v2_dark',
@@ -208,6 +228,8 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 	'jetpack-anti-spam': [ 'jetpack_anti_spam', 'jetpack_anti_spam_monthly' ],
 	'jetpack-anti-spam-v2': [ 'jetpack_anti_spam_v2', 'jetpack_anti_spam_monthly_v2' ],
 	'jetpack-anti-spam-v2-dark': [ 'jetpack_anti_spam_v2_dark', 'jetpack_anti_spam_monthly_v2_dark' ],
+	'jetpack-videopress': [ 'jetpack_videopress', 'jetpack_videopress_monthly' ],
+	'jetpack-videopress-dark': [ 'jetpack_videopress_dark', 'jetpack_videopress_monthly_dark' ],
 	'jetpack-security-v2': [
 		'jetpack_security_v2',
 		'jetpack_security_monthly_v2',
@@ -219,5 +241,9 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'jetpack_security_daily_monthly',
 		'jetpack_security_realtime',
 		'jetpack_security_realtime_monthly',
+		'jetpack_security_t1_yearly',
+		'jetpack_security_t1_monthly',
+		'jetpack_security_t2_yearly',
+		'jetpack_security_t2_monthly',
 	],
 } as const;

@@ -1,6 +1,7 @@
 import { CompactCard, Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

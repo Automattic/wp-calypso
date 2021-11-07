@@ -5,8 +5,15 @@ const { dirname } = require( 'path' );
 // of the given module.
 const findModule = ( module ) => dirname( require.resolve( module + '/package.json' ) );
 
-module.exports = function storybookDefaultConfig( { stories, webpackAliases = {} } = {} ) {
+module.exports = function storybookDefaultConfig( {
+	stories,
+	plugins = [],
+	webpackAliases = {},
+} = {} ) {
 	return {
+		core: {
+			builder: 'webpack5',
+		},
 		stories: stories && stories.length ? stories : [ '../src/**/*.stories.{js,jsx,ts,tsx}' ],
 		addons: [ '@storybook/addon-actions', '@storybook/preset-scss' ],
 		typescript: {
@@ -39,6 +46,7 @@ module.exports = function storybookDefaultConfig( { stories, webpackAliases = {}
 				...webpackAliases,
 			};
 			config.resolve.mainFields = [ 'browser', 'calypso:src', 'module', 'main' ];
+			config.plugins.push( ...plugins );
 			return config;
 		},
 	};

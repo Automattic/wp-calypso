@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';

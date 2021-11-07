@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { Children, cloneElement, PureComponent } from 'react';
 
 import './style.scss';
 
@@ -31,8 +31,8 @@ export class VerticalMenu extends PureComponent {
 
 		return (
 			<div className="vertical-menu">
-				{ React.Children.map( children, ( Item, index ) =>
-					React.cloneElement( Item, {
+				{ Children.map( children, ( Item, index ) =>
+					cloneElement( Item, {
 						isSelected: index === selectedIndex,
 						onClick: this.select( index ),
 					} )

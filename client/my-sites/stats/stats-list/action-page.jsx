@@ -2,12 +2,12 @@ import { Gridicon } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 const debug = debugFactory( 'calypso:stats:action-page' );
 
-class StatsActionPage extends React.Component {
+class StatsActionPage extends Component {
 	static displayName = 'StatsActionPage';
 
 	clickHandler = ( event ) => {

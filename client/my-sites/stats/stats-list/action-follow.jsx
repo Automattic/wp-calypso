@@ -2,14 +2,14 @@ import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import wpcom from 'calypso/lib/wp';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class StatsActionFollow extends React.Component {
+class StatsActionFollow extends Component {
 	state = {
 		isFollowing: this.props.isFollowing,
 	};

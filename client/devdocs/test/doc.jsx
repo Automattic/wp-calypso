@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import SingleDocClass from '../doc';
 
 jest.mock( 'calypso/devdocs/service', () => ( {

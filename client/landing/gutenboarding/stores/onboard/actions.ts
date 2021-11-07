@@ -54,12 +54,12 @@ export function* createSite( {
 		siteTitle,
 		siteVertical,
 		selectedFeatures,
+		isEnrollingInFseBeta,
 	}: State = yield select( ONBOARD_STORE, 'getState' );
 
-	const shouldEnableFse = !! selectedDesign?.is_fse;
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
+	const defaultTheme = 'zoologist';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
@@ -79,7 +79,7 @@ export function* createSite( {
 			},
 			lang_id: lang_id,
 			site_creation_flow: 'gutenboarding',
-			enable_fse: shouldEnableFse,
+			enable_fse: isEnrollingInFseBeta,
 			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
@@ -224,6 +224,11 @@ export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
 } );
 
+export const enrollInFseBeta = ( enrollInFseBeta: boolean ) => ( {
+	type: 'SET_ENROLL_IN_FSE_BETA' as const,
+	enrollInFseBeta,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -248,4 +253,5 @@ export type OnboardAction = ReturnType<
 	| typeof skipSiteVertical
 	| typeof togglePageLayout
 	| typeof startOnboarding
+	| typeof enrollInFseBeta
 >;

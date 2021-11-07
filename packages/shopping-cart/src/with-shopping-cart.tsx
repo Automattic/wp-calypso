@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import useManagerClient from './use-manager-client';
 import useShoppingCart from './use-shopping-cart';
 import type { WithShoppingCartProps } from './types';

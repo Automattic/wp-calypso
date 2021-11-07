@@ -1,12 +1,12 @@
 import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import getEmailForwardingMXServers from 'calypso/state/selectors/get-email-forwarding-mx-servers';
 
-class EmailForwardingCustomMxList extends React.Component {
+class EmailForwardingCustomMxList extends Component {
 	static propTypes = {
 		mxServers: PropTypes.arrayOf(
 			PropTypes.shape( {

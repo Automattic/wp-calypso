@@ -1,4 +1,3 @@
-import React from 'react';
 import CreditCardFields from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields';
 import CreditCardPayButton from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-pay-button';
 

@@ -1,6 +1,6 @@
 import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
 import { pick } from 'lodash';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';

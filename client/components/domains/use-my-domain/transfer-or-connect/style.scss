@@ -29,6 +29,7 @@
 
 			&__illustration {
 				flex-grow: 0;
+				min-width: 150px;
 			}
 
 			&__header {
@@ -74,6 +75,7 @@
 				color: var( --color-text-subtle );
 
 				@include break-mobile {
+					max-width: 625px;
 					margin: 0 40px 16px;
 				}
 
@@ -163,6 +165,20 @@
 
 					@include break-mobile {
 						flex-grow: 0;
+					}
+				}
+			}
+
+			&.is-placeholder {
+				.option-content {
+					&__illustration, &__header, &__top-text, &__learn-more {
+						@include placeholder( --color-neutral-10 );
+						color: transparent;
+					}
+
+					&__learn-more {
+						width: 70px;
+						margin-top: 2px;
 					}
 				}
 			}

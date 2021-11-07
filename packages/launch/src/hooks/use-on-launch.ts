@@ -1,5 +1,5 @@
 import { useSelect } from '@wordpress/data';
-import * as React from 'react';
+import { useContext, useEffect } from 'react';
 import LaunchContext from '../context';
 import { useCart, useSiteDomains } from '../hooks';
 import { LAUNCH_STORE, PLANS_STORE } from '../stores';
@@ -7,7 +7,7 @@ import { useSite } from './';
 
 // Hook used exclusively in Step-by-step launch flow until it will be using Editor Checkout Modal
 export const useOnLaunch = () => {
-	const { siteId, redirectTo } = React.useContext( LaunchContext );
+	const { siteId, redirectTo } = useContext( LaunchContext );
 
 	const { planProductId } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const isPlanFree = useSelect( ( select ) =>
@@ -18,7 +18,7 @@ export const useOnLaunch = () => {
 	const { siteSubdomain } = useSiteDomains();
 	const { goToCheckout } = useCart();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( isSiteLaunched ) {
 			// if a paid plan is selected, set cart and redirect to /checkout
 			if ( ! isPlanFree ) {

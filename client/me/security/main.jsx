@@ -3,7 +3,7 @@ import { Card } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
@@ -19,7 +19,7 @@ const debug = debugFactory( 'calypso:me:security:password' );
 
 import './style.scss';
 
-class Security extends React.Component {
+class Security extends Component {
 	static displayName = 'Security';
 
 	static propTypes = {

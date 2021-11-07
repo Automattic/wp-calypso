@@ -1,6 +1,6 @@
 import { NextButton } from '@automattic/onboarding';
 import classNames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import PlansFeatureListPlaceholder from '../plans-feature-list/plans-feature-list-placeholder';
 
 import './style.scss';

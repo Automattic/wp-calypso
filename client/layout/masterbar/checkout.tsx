@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { FunctionComponent, useCallback } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
@@ -69,7 +69,8 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			}
 		} catch ( error ) {
 			// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
-			console.error( 'Error getting query string in close button' ); // eslint-disable-line no-console
+			// eslint-disable-next-line no-console
+			console.error( 'Error getting query string in close button' );
 		}
 
 		window.location.href = closeUrl;

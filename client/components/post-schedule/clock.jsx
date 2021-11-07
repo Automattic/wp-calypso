@@ -2,7 +2,7 @@ import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
@@ -28,9 +28,9 @@ class PostScheduleClock extends Component {
 	setAm = ( event ) => this.setAmPm( event, 'AM' );
 	setPm = ( event ) => this.setAmPm( event, 'PM' );
 
-	amPmRef = React.createRef();
-	hourRef = React.createRef();
-	minRef = React.createRef();
+	amPmRef = createRef();
+	hourRef = createRef();
+	minRef = createRef();
 
 	handleKeyDown( event, field ) {
 		const operation = event.keyCode - 39;
@@ -153,7 +153,7 @@ class PostScheduleClock extends Component {
 			{
 				args: { timezoneText },
 				components: {
-					a: <a href={ `/settings/general/${ siteSlug || siteId }` } />,
+					a: <a href={ `/settings/general/${ siteSlug ?? siteId ?? '' }` } />,
 				},
 			}
 		);

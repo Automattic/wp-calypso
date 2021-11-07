@@ -1,5 +1,5 @@
 import { ColorPalette } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const ColorPaletteExample = () => {
 	const colors: ColorPalette.Color[] = [

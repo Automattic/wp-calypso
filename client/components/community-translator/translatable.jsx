@@ -2,7 +2,7 @@ import { Dialog, Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';

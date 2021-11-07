@@ -1,5 +1,4 @@
 import classnames from 'classnames';
-import React from 'react';
 
 const ActionPanelFigureListItem = ( { children, className } ) => {
 	return (

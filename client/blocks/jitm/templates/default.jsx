@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import React from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 export default function DefaultTemplate( {

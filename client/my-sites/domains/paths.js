@@ -237,13 +237,18 @@ export function domainUseYourDomain( siteName, domain ) {
 	return path;
 }
 
-export function domainUseMyDomain( siteName, domain ) {
-	let path = `/domains/add/use-my-domain/${ siteName }`;
+export function domainUseMyDomain( siteName, domain, initialMode ) {
+	const path = `/domains/add/use-my-domain/${ siteName }`;
+	const queryArgs = [];
 	if ( domain ) {
-		path += `?initialQuery=${ domain }`;
+		queryArgs.push( `initialQuery=${ domain }` );
+
+		if ( initialMode ) {
+			queryArgs.push( `initialMode=${ initialMode }` );
+		}
 	}
 
-	return path;
+	return path + ( queryArgs.length ? `?${ queryArgs.join( '&' ) }` : '' );
 }
 
 export function getSectionName( pathname ) {

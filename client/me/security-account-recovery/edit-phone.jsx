@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -10,7 +10,7 @@ import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import getCountries from 'calypso/state/selectors/get-countries';
 import Buttons from './buttons';
 
-class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
+class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 	static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
 
 	static propTypes = {

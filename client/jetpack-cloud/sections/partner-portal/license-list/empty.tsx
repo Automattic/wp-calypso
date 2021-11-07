@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

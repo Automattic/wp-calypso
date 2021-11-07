@@ -1,15 +1,15 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { omit } from 'lodash';
-import React from 'react';
+import { createRef, Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 import './style.scss';
 
-class FormPasswordInput extends React.Component {
+class FormPasswordInput extends Component {
 	static displayName = 'FormPasswordInput';
 
-	textFieldRef = React.createRef();
+	textFieldRef = createRef();
 
 	constructor( props ) {
 		super( props );

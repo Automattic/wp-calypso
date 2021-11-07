@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import SocialLogo from 'calypso/components/social-logo';
 import MediumLogo from './logos/medium';
 import SubstackLogo from './logos/substack';

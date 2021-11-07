@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { get, pick } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import LikeButton from 'calypso/blocks/like-button/button';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -9,7 +9,7 @@ import { likeComment, unlikeComment } from 'calypso/state/comments/actions';
 import { getCommentLike } from 'calypso/state/comments/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class CommentLikeButtonContainer extends React.Component {
+class CommentLikeButtonContainer extends Component {
 	constructor() {
 		super();
 		this.boundHandleLikeToggle = this.handleLikeToggle.bind( this );

@@ -1,6 +1,6 @@
 import { RootChild } from '@automattic/components';
 import { defer } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

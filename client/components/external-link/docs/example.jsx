@@ -1,8 +1,8 @@
 import { Card } from '@automattic/components';
-import React from 'react';
+import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'ExternalLink';
 
 	render() {

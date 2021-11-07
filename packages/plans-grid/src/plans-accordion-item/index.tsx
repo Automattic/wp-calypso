@@ -4,7 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import PlansFeatureList from '../plans-feature-list';
 import { PLANS_STORE } from '../stores';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';

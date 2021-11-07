@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import DocumentHead from 'calypso/components/data/document-head';

@@ -4,7 +4,6 @@
 
 import { mount } from 'enzyme';
 import page from 'page';
-import React from 'react';
 import { CartButtons } from '../cart-buttons';
 
 jest.mock( 'page', () => jest.fn() );

@@ -7,7 +7,7 @@ import {
 import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { pick } from 'lodash';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';

@@ -1,7 +1,7 @@
-import React from 'react';
+import { createElement } from 'react';
 import PendingPaymentsComponent from './index';
 
 export function pendingPayments( context, next ) {
-	context.primary = React.createElement( PendingPaymentsComponent );
+	context.primary = createElement( PendingPaymentsComponent );
 	next();
 }

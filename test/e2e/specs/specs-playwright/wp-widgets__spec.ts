@@ -1,12 +1,11 @@
 /**
- * @group calypso-pr
  * @group gutenberg
  */
 
 import {
 	BrowserHelper,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	SidebarComponent,
 	setupHooks,
 } from '@automattic/calypso-e2e';
@@ -25,8 +24,8 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, user );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: user } );
 	} );
 
 	// @todo: Refactor/Abstract these steps into a WidgetsEditor component

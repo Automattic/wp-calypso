@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 import AvailableTimeCard from './available-time-card';
 

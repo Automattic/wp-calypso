@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { isEmpty, trim } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

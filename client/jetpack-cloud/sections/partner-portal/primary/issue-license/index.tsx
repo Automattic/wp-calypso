@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';

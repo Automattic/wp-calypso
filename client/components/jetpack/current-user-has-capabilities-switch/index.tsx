@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useCallback } from 'react';
+import { FC, ReactElement, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';

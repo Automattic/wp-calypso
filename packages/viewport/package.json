@@ -26,6 +26,7 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"regenerator-runtime": "^0.13.4"
+		"@automattic/calypso-typescript-config": "^1.0.0",
+		"regenerator-runtime": "^0.13.9"
 	}
 }

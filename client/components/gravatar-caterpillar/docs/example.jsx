@@ -1,4 +1,3 @@
-import React from 'react';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar';
 import { users } from './fixtures';
 

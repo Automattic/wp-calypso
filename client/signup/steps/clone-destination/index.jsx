@@ -2,7 +2,7 @@ import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';

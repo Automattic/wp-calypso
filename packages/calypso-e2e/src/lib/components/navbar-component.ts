@@ -2,9 +2,10 @@ import { Page } from 'playwright';
 
 const selectors = {
 	// Buttons on navbar
-	mySiteButton: 'button[data-tip-target="my-sites"]',
+	mySiteButton: '[data-tip-target="my-sites"]',
 	writeButton: '*css=a >> text=Write',
 	notificationsButton: 'a[href="/notifications"]',
+	meButton: 'a[data-tip-target="me"]',
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
@@ -41,13 +42,21 @@ export class NavbarComponent {
 	}
 
 	/**
-	 * Clicks on `My Sites` on the top left of WPCOM dashboard.
+	 * Clicks on `My Sites` on the top left of Home dashboard.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMySites(): Promise< void > {
 		await this.pageSettled();
 		await this.page.click( selectors.mySiteButton );
+	}
+
+	/**
+	 * Click on `Me` on top right of the Home dashboard.
+	 */
+	async clickMe(): Promise< void > {
+		await this.pageSettled();
+		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.meButton ) ] );
 	}
 
 	/**

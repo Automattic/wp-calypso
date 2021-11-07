@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { get, has } from 'lodash';
-import React from 'react';
 import { makeLayout, render } from 'calypso/controller';
 import { addQueryArgs } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
@@ -217,6 +216,15 @@ function getAnchorFmData( query ) {
 	return { anchor_podcast, anchor_episode, spotify_url };
 }
 
+function showDraftPostModal() {
+	const value = window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' );
+	if ( value ) {
+		window.sessionStorage.removeItem( 'wpcom_signup_complete_show_draft_post_modal' );
+	}
+
+	return value;
+}
+
 export const post = ( context, next ) => {
 	// See post-editor/controller.js for reference.
 
@@ -252,6 +260,7 @@ export const post = ( context, next ) => {
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
 			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
+			showDraftPostModal={ showDraftPostModal() }
 		/>
 	);
 

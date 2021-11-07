@@ -31,7 +31,10 @@ export default function getSupportVariation( state ) {
 		return SUPPORT_TICKET;
 	}
 
-	if ( getCurrentUserLocale( state ) === 'en' && isDirectlyReady( state ) ) {
+	if (
+		config( 'english_locales' ).includes( getCurrentUserLocale( state ) ) &&
+		isDirectlyReady( state )
+	) {
 		return SUPPORT_DIRECTLY;
 	}
 

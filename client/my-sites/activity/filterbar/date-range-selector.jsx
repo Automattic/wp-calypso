@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight as compose } from 'lodash';
-import React, { Component, Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { DateUtils } from 'react-day-picker';
 import { connect } from 'react-redux';
 import DateRangePicker from 'calypso/components/date-range';
@@ -21,7 +21,7 @@ export class DateRangeSelector extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.dateRangeButton = React.createRef();
+		this.dateRangeButton = createRef();
 	}
 
 	handleClose = () => {

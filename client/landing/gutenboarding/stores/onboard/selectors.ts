@@ -38,3 +38,5 @@ export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 
 export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 	hasSelectedDesign( state ) && ! state.selectedFonts;
+
+export const isEnrollingInFseBeta = ( state: State ): boolean => state.isEnrollingInFseBeta;

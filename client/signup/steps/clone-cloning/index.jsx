@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './style.scss';

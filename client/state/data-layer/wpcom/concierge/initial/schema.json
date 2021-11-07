@@ -31,6 +31,9 @@
 		},
 		"schedule_id": {
 			"type": "number"
+		},
+		"is_blocked": {
+			"type": "boolean"
 		}
 	}
 }

@@ -1,7 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import ActivityActor from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';

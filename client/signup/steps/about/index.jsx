@@ -1,7 +1,7 @@
 import { Card, Button, ScreenReaderText } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

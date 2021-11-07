@@ -1,11 +1,11 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import PremiumBadge from 'calypso/components/domains/premium-badge';
 import MaterialIcon from 'calypso/components/material-icon';
 
-class DomainStatus extends React.Component {
+class DomainStatus extends Component {
 	static propTypes = {
 		header: PropTypes.string,
 		icon: PropTypes.string,

@@ -4,11 +4,12 @@ import {
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	getSubtotalLineItemFromCart,
+	NonProductLineItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import React from 'react';
+import * as React from 'react';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import { NonProductLineItem } from './wp-line-item';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
@@ -65,7 +66,8 @@ export default function PaymentMethodStep( {
 }: {
 	activeStepContent: React.ReactNode;
 } ): JSX.Element {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	return (

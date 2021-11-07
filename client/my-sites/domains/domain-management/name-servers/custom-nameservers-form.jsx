@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { dropRightWhile } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
@@ -16,7 +16,7 @@ import CustomNameserversRow from './custom-nameservers-row';
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;
 
-class CustomNameserversForm extends React.PureComponent {
+class CustomNameserversForm extends PureComponent {
 	static propTypes = {
 		nameservers: PropTypes.array,
 		onChange: PropTypes.func.isRequired,

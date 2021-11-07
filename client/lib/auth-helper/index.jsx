@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import React from 'react';
 import ReactDom from 'react-dom';
 import FormRadio from 'calypso/components/forms/form-radio';
 

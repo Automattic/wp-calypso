@@ -1,9 +1,9 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import DomainStatus from '../card/domain-status';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
-class WpcomDomainType extends React.Component {
+class WpcomDomainType extends Component {
 	render() {
 		const {
 			domain: { name: domain_name },

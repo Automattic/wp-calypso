@@ -1,5 +1,8 @@
 {
 	"files": [],
+	"compilerOptions": {
+		"composite": true
+	},
 
 	// Reference all TS packages
 	"references": [

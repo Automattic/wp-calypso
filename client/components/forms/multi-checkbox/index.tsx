@@ -1,4 +1,5 @@
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
+import * as React from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import CustomDomainPurchaseDetail from 'calypso/my-sites/checkout/checkout-thank-you/custom-domain-purchase-detail';
 
 export default function CustomDomainPurchaseDetailItem( {

@@ -2,7 +2,6 @@
 /* eslint-disable react/no-danger */
 
 import { flatMap, map } from 'lodash';
-import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 /**

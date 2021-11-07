@@ -15,6 +15,7 @@ export interface Purchase {
 	siteId: number;
 	subscribedDate: string;
 	payment: PurchasePayment;
+	subscriptionStatus: string;
 }
 
 export interface PurchasePayment {

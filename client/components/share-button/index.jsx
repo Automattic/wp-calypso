@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import SocialLogo from 'calypso/components/social-logo';
 import services from './services';
 

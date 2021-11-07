@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';

@@ -9,7 +9,6 @@ import {
 } from '@automattic/shopping-cart';
 import deepFreeze from 'deep-freeze';
 import { shallow, mount } from 'enzyme';
-import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { List as DomainList } from '..';
@@ -101,6 +100,7 @@ describe( 'index', () => {
 				currentUser: {
 					capabilities: {},
 				},
+				productsList: {},
 			},
 			( state ) => {
 				return state;

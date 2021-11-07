@@ -1,5 +1,6 @@
 import page from 'page';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { getActivePartnerKey } from 'calypso/state/partner-portal/partner/selectors';
 

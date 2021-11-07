@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';

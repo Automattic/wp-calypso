@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { compact } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';

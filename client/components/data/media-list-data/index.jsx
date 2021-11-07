@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import passToChildren from 'calypso/lib/react-pass-to-children';
 import { setQuery } from 'calypso/state/media/actions';
@@ -9,7 +9,7 @@ import getMediaSortedByDate from 'calypso/state/selectors/get-media-sorted-by-da
 import hasNextMediaPage from 'calypso/state/selectors/has-next-media-page';
 import utils from './utils';
 
-export class MediaListData extends React.Component {
+export class MediaListData extends Component {
 	static displayName = 'MediaListData';
 
 	static propTypes = {

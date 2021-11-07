@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { html } from '../indices-to-html';
 import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
@@ -19,7 +19,7 @@ function ReplyBlock( { block } ) {
 	return <div className="wpnc__reply">{ replyText }</div>;
 }
 
-export class NoteBody extends React.Component {
+export class NoteBody extends Component {
 	state = {
 		reply: null,
 	};
@@ -122,7 +122,7 @@ export class NoteBody extends React.Component {
 					replyBlock = <ReplyBlock key={ blockKey } block={ block.block } />;
 					break;
 				default:
-					body.push( p( html( block.block ) ) );
+					body.push( <div key={ blockKey }>{ p( html( block.block ) ) }</div> );
 					break;
 			}
 		}

@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -286,12 +286,35 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/slack-screenshot.png',
-					alt: this.props.translate( 'Get slack notifications on new P2 posts.', {
+					src: '/calypso/images/sharing/slack-screenshot-1.png',
+					alt: this.props.translate( 'Get Slack notifications with every new P2 post.', {
 						textOnly: true,
 					} ),
 				},
-				label: this.props.translate( 'Get slack notifications on new P2 posts.' ),
+				label: this.props.translate(
+					'Get {{strong}}Slack notifications{{/strong}} with every new P2 post.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
+			},
+			{
+				image: {
+					src: '/calypso/images/sharing/slack-screenshot-2.png',
+					alt: this.props.translate( 'Preview posts and pages directly from Slack.', {
+						textOnly: true,
+					} ),
+				},
+				label: this.props.translate(
+					'{{strong}}Preview posts and pages{{/strong}} directly from Slack.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
 			},
 		];
 	}

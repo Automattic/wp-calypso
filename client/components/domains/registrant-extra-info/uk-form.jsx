@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { camelCase, difference, filter, get, isEmpty, keys, map, pick } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -18,7 +18,7 @@ const defaultValues = {
 	registrantType: 'IND',
 };
 
-export class RegistrantExtraInfoUkForm extends React.PureComponent {
+export class RegistrantExtraInfoUkForm extends PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
 		ccTldDetails: PropTypes.object.isRequired,

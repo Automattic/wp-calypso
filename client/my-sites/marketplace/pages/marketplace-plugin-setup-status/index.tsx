@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Masterbar from 'calypso/layout/masterbar/masterbar';

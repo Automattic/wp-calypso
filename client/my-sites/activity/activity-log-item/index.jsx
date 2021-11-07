@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import HappychatButton from 'calypso/components/happychat/button';
@@ -192,13 +192,8 @@ class ActivityLogItem extends Component {
 
 	renderItemAction() {
 		const {
-			enableClone,
-			activity: { activityIsRewindable, activityName, activityMeta },
+			activity: { activityName, activityMeta },
 		} = this.props;
-
-		if ( enableClone ) {
-			return activityIsRewindable ? this.renderCloneAction() : null;
-		}
 
 		switch ( activityName ) {
 			case 'rewind__scan_result_found':
@@ -214,16 +209,14 @@ class ActivityLogItem extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="activity-log-item__action">
-				<Button
-					className="activity-log-item__clone-action"
-					primary
-					compact
-					onClick={ this.performCloneAction }
-				>
-					{ translate( 'Clone from here' ) }
-				</Button>
-			</div>
+			<Button
+				className="activity-log-item__clone-action"
+				primary
+				compact
+				onClick={ this.performCloneAction }
+			>
+				{ translate( 'Clone from here' ) }
+			</Button>
 		);
 	};
 
@@ -239,6 +232,7 @@ class ActivityLogItem extends Component {
 			createRewind,
 			disableBackup,
 			disableRestore,
+			enableClone,
 			siteId,
 			siteSlug,
 			trackAddCreds,
@@ -254,7 +248,7 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				{ ! showCredentialsButton && (
+				{ ! showCredentialsButton && ! enableClone && (
 					<Button compact={ isCompact } disabled={ disableRestore } onClick={ createRewind }>
 						<Gridicon icon="history" size={ 18 } /> { translate( 'Restore' ) }
 					</Button>
@@ -275,9 +269,13 @@ class ActivityLogItem extends Component {
 					</Button>
 				) }
 
-				<Button compact={ isCompact } disabled={ disableBackup } onClick={ createBackup }>
-					<Gridicon icon="cloud-download" size={ 18 } /> { translate( 'Download' ) }
-				</Button>
+				{ ! enableClone && (
+					<Button compact={ isCompact } disabled={ disableBackup } onClick={ createBackup }>
+						<Gridicon icon="cloud-download" size={ 18 } /> { translate( 'Download' ) }
+					</Button>
+				) }
+
+				{ enableClone && this.renderCloneAction() }
 			</div>
 		);
 	};
@@ -345,7 +343,7 @@ class ActivityLogItem extends Component {
 		const adjustedTime = applySiteOffset( moment( activityTs ), { timezone, gmtOffset } );
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ mightRewind && (
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
@@ -407,7 +405,7 @@ class ActivityLogItem extends Component {
 						summary={ this.renderItemAction() }
 					/>
 				</div>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

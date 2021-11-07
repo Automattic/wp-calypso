@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { find, get, omit } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
@@ -24,7 +24,7 @@ import TransferConfirmationDialog from './confirmation-dialog';
 
 const wpcom = wp.undocumented();
 
-export class TransferToOtherSite extends React.Component {
+export class TransferToOtherSite extends Component {
 	static propTypes = {
 		currentUserCanManage: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,

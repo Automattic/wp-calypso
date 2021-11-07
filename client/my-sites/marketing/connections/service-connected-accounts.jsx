@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const SharingServiceConnectedAccounts = ( { children, connect, service, translate } ) => (
 	<div className="connections__sharing-service-accounts-detail">

@@ -2,7 +2,6 @@ import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
-import React from 'react';
 import { PlanBillingPeriod } from '../billing-period';
 
 const props = {

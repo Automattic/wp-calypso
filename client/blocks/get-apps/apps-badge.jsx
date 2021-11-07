@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';

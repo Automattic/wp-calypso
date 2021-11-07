@@ -1,14 +1,14 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { fillGap } from 'calypso/state/reader/streams/actions';
 import './style.scss';
 
-class Gap extends React.Component {
+class Gap extends Component {
 	static propTypes = {
 		gap: PropTypes.object.isRequired,
 		streamKey: PropTypes.string.isRequired,

@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import spritePath from 'social-logos/svg-sprite/social-logos.svg';
 import { Assign } from 'utility-types';
 

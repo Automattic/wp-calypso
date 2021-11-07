@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getTrendingThemes } from 'calypso/state/themes/actions';
 import {
@@ -7,7 +7,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { ConnectedThemesSelection } from './themes-selection';
 
-class TrendingThemes extends React.Component {
+class TrendingThemes extends Component {
 	componentDidMount() {
 		if ( ! this.props.customizedThemesList.length ) {
 			this.fetchThemes();

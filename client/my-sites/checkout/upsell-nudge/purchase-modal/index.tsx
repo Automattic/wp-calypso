@@ -2,11 +2,12 @@ import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/composite-checkout/lib/existing-card-processor';
 import getContactDetailsType from 'calypso/my-sites/checkout/composite-checkout/lib/get-contact-details-type';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
@@ -73,9 +74,10 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 		isComingFromUpsell: true,
 		siteSlug: props.siteSlug,
 	} );
-	const { stripeConfiguration } = useStripe();
+	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const selectedSite = useSelector( getSelectedSite );
 
 	const contactDetailsType = getContactDetailsType( props.cart );
@@ -95,6 +97,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 			responseCart,
 			siteSlug: selectedSite?.slug ?? '',
 			siteId: selectedSite?.ID,
+			stripe,
 			stripeConfiguration,
 			contactDetails: {
 				countryCode: wrapValueInManagedValue( countryCode ),
@@ -106,6 +109,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 			postalCode,
 			includeDomainDetails,
 			includeGSuiteDetails,
+			stripe,
 			stripeConfiguration,
 			reduxDispatch,
 			selectedSite,

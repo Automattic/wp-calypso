@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';

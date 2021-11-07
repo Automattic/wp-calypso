@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import Spinner from 'calypso/components/spinner';
 
 export default function WaitForKey() {

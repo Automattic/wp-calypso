@@ -1,5 +1,5 @@
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -43,11 +43,11 @@ export async function handleHostingPanelRedirect( context, next ) {
 }
 
 export function layout( context, next ) {
-	context.primary = React.createElement( Hosting );
+	context.primary = createElement( Hosting );
 	next();
 }
 
 export function activationLayout( context, next ) {
-	context.primary = React.createElement( HostingActivate );
+	context.primary = createElement( HostingActivate );
 	next();
 }

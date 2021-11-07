@@ -3,7 +3,6 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import PurchaseNotice from '../notices';

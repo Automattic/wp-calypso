@@ -2,7 +2,7 @@ import { Card, Button } from '@automattic/components';
 import { PanelBody } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import ExternalLink from 'calypso/components/external-link';

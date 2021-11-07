@@ -1,7 +1,7 @@
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -19,7 +19,7 @@ import MasterbarDrafts from './drafts';
 import MasterbarItem from './item';
 import { WriteIcon } from './write-icon';
 
-class MasterbarItemNew extends React.Component {
+class MasterbarItemNew extends Component {
 	static propTypes = {
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
@@ -33,7 +33,7 @@ class MasterbarItemNew extends React.Component {
 		isShowingPopover: false,
 	};
 
-	postButtonRef = React.createRef();
+	postButtonRef = createRef();
 
 	toggleSitesPopover = () => {
 		this.setState( ( state ) => ( {

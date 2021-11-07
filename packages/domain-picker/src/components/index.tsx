@@ -6,7 +6,8 @@ import { Button, TextControl, Notice } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { times } from 'lodash';
-import React, { FunctionComponent, useState, useEffect, Fragment } from 'react';
+import { FunctionComponent, useState, useEffect, Fragment } from 'react';
+import * as React from 'react';
 import {
 	DOMAIN_SUGGESTIONS_TO_SHOW,
 	DOMAIN_SUGGESTIONS_TO_SHOW_EXPANDED,

@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
@@ -39,7 +39,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class ReaderPostOptionsMenu extends React.Component {
+class ReaderPostOptionsMenu extends Component {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		post: PropTypes.object,

@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,7 +15,7 @@ import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import EmptyContent from './empty';
 
-class SiteStream extends React.Component {
+class SiteStream extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		className: PropTypes.string,

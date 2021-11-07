@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

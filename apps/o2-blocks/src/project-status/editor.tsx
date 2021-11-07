@@ -2,7 +2,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { CustomSelectControl, PanelBody, TextControl } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import type { BlockAttributes, SelectAttributes } from './types';
 import type { BlockEditProps } from '@wordpress/blocks';
 

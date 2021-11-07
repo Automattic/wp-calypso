@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import ImagePreloader from 'calypso/components/image-preloader';
 import MediaFile, { MediaFileProps } from './media-file';
 import { RenderedComponent } from './proxied-image';

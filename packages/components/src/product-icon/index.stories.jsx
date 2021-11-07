@@ -1,4 +1,3 @@
-import React from 'react';
 import './index.stories.scss';
 import { iconToProductSlugMap } from './config';
 import ProductIcon from '.';

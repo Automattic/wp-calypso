@@ -1,8 +1,8 @@
 import { Gridicon } from '@automattic/components';
-import React from 'react';
+import { PureComponent } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 
-class SelectDropdownExample extends React.PureComponent {
+class SelectDropdownExample extends PureComponent {
 	static displayName = 'SelectDropdownExample';
 
 	static defaultProps = {
@@ -225,12 +225,10 @@ class SelectDropdownExample extends React.PureComponent {
 			selectedIcon: icon,
 		} );
 
-		// eslint-disable-next-line no-console
 		console.log( 'Select Dropdown Item (selected):', childSelected );
 	};
 
 	onDropdownSelect( option ) {
-		// eslint-disable-next-line no-console
 		console.log( 'Select Dropdown (selected):', option );
 	}
 }

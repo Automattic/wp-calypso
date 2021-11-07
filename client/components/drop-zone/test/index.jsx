@@ -3,13 +3,13 @@
  */
 
 import { expect } from 'chai';
-import React from 'react';
+import { Component, createElement } from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';
 import { DropZone } from '../';
 
-class Wrapper extends React.Component {
+class Wrapper extends Component {
 	render() {
 		return <div>{ this.props.children }</div>;
 	}
@@ -49,14 +49,14 @@ describe( 'index', () => {
 	} );
 
 	test( 'should render as a child of its container by default', () => {
-		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+		const tree = ReactDom.render( createElement( DropZone, requiredProps ), container );
 
 		expect( tree.zoneRef.current.parentNode.id ).to.equal( 'container' );
 	} );
 
 	test( 'should accept a fullScreen prop to be rendered at the root', () => {
 		const tree = ReactDom.render(
-			React.createElement( DropZone, {
+			createElement( DropZone, {
 				...requiredProps,
 				fullScreen: true,
 			} ),
@@ -68,7 +68,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should render default content if none is provided', () => {
-		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+		const tree = ReactDom.render( createElement( DropZone, requiredProps ), container );
 		const content = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content' );
 
 		TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-icon' );
@@ -78,7 +78,7 @@ describe( 'index', () => {
 
 	test( 'should accept children to override the default content', () => {
 		const tree = ReactDom.render(
-			React.createElement( DropZone, requiredProps, 'Hello World' ),
+			createElement( DropZone, requiredProps, 'Hello World' ),
 			container
 		);
 		const content = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content' );
@@ -88,7 +88,7 @@ describe( 'index', () => {
 
 	test( 'should accept an icon to override the default icon', () => {
 		const tree = ReactDom.render(
-			React.createElement( DropZone, {
+			createElement( DropZone, {
 				...requiredProps,
 				icon: <div className="customIconClassName" />,
 			} ),
@@ -101,7 +101,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should highlight the drop zone when dragging over the body', () => {
-		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+		const tree = ReactDom.render( createElement( DropZone, requiredProps ), container );
 		const dragEnterEvent = new window.MouseEvent( 'dragenter' );
 
 		window.dispatchEvent( dragEnterEvent );
@@ -112,7 +112,7 @@ describe( 'index', () => {
 
 	test( 'should start observing the body for mutations when dragging over', () => {
 		return new Promise( ( done ) => {
-			const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+			const tree = ReactDom.render( createElement( DropZone, requiredProps ), container );
 			const dragEnterEvent = new window.MouseEvent( 'dragenter' );
 
 			window.dispatchEvent( dragEnterEvent );
@@ -126,7 +126,7 @@ describe( 'index', () => {
 
 	test( 'should stop observing the body for mutations upon drag ending', () => {
 		return new Promise( ( done ) => {
-			const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+			const tree = ReactDom.render( createElement( DropZone, requiredProps ), container );
 			const dragEnterEvent = new window.MouseEvent( 'dragenter' );
 			const dragLeaveEvent = new window.MouseEvent( 'dragleave' );
 
@@ -144,7 +144,7 @@ describe( 'index', () => {
 		const dragEnterEvent = new window.MouseEvent( 'dragenter' );
 
 		const tree = ReactDom.render(
-			React.createElement( DropZone, {
+			createElement( DropZone, {
 				...requiredProps,
 				onVerifyValidTransfer: function () {
 					return false;
@@ -160,7 +160,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should further highlight the drop zone when dragging over the element', () => {
-		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+		const tree = ReactDom.render( createElement( DropZone, requiredProps ), container );
 		sandbox.stub( tree, 'isWithinZoneBounds' ).returns( true );
 
 		const dragEnterEvent = new window.MouseEvent( 'dragenter' );
@@ -172,7 +172,7 @@ describe( 'index', () => {
 
 	test( 'should further highlight the drop zone when dragging over the body if fullScreen', () => {
 		const tree = ReactDom.render(
-			React.createElement( DropZone, {
+			createElement( DropZone, {
 				...requiredProps,
 				fullScreen: true,
 			} ),
@@ -192,7 +192,7 @@ describe( 'index', () => {
 		sandbox.stub( window.HTMLElement.prototype, 'contains' ).returns( true );
 
 		ReactDom.render(
-			React.createElement( DropZone, {
+			createElement( DropZone, {
 				...requiredProps,
 				onDrop: spyDrop,
 			} ),
@@ -211,7 +211,7 @@ describe( 'index', () => {
 
 		sandbox.stub( window.HTMLElement.prototype, 'contains' ).returns( true );
 		ReactDom.render(
-			React.createElement( DropZone, {
+			createElement( DropZone, {
 				...requiredProps,
 				onFilesDrop: spyDrop,
 			} ),
@@ -231,7 +231,7 @@ describe( 'index', () => {
 		const dropEvent = new window.MouseEvent( 'drop' );
 
 		ReactDom.render(
-			React.createElement( DropZone, {
+			createElement( DropZone, {
 				...requiredProps,
 				fullScreen: true, // bypass a Node.contains check on the drop event
 				onFilesDrop: spyDrop,
@@ -250,11 +250,11 @@ describe( 'index', () => {
 
 	test( 'should allow more than one rendered DropZone on a page', () => {
 		const tree = ReactDom.render(
-			React.createElement(
+			createElement(
 				Wrapper,
 				null,
-				React.createElement( DropZone, requiredProps ),
-				React.createElement( DropZone, requiredProps )
+				createElement( DropZone, requiredProps ),
+				createElement( DropZone, requiredProps )
 			),
 			container
 		);
@@ -273,7 +273,7 @@ describe( 'index', () => {
 
 	test( 'should accept a custom textLabel to override the default text', () => {
 		const tree = ReactDom.render(
-			React.createElement( DropZone, {
+			createElement( DropZone, {
 				...requiredProps,
 				textLabel: 'Custom Drop Zone Label',
 			} ),
@@ -289,7 +289,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should show the default text label if none specified', () => {
-		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+		const tree = ReactDom.render( createElement( DropZone, requiredProps ), container );
 
 		const textContent = TestUtils.findRenderedDOMComponentWithClass(
 			tree,

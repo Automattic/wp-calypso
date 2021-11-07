@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import * as React from 'react';
 import ShoppingCartContext from './shopping-cart-context';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
 import type { ShoppingCartManagerOptions, ShoppingCartManagerClient } from './types';

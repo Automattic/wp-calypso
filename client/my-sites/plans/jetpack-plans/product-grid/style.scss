@@ -41,12 +41,12 @@
 
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
-	gap: 24px 16px;
+	gap: 16px;
 }
 
 .product-grid__plan-grid:not( .is-wrapping ) {
 	margin-top: 72px;
-	gap: 24px 0;
+	gap: 16px 0;
 
 	// Considering there are 3 plans
 	> li {
@@ -66,10 +66,13 @@
 	> li {
 		height: 100%;
 	}
+
+	&.second-grid {
+		margin-top: 16px;
+	}
 }
 
-.product-grid__filter-bar,
-.product-grid__filter-bar-placeholder {
+.product-grid__filter-bar {
 	height: 63px;
 	margin-bottom: 70px;
 
@@ -78,80 +81,31 @@
 	}
 }
 
-.product-grid__filter-bar-placeholder {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	width: 250px;
-	margin-left: auto;
-	margin-right: auto;
-
-	> :first-child {
-		@include placeholder();
-
-		width: 100%;
-		height: 24px;
-	}
-}
-
 .product-grid__free {
-	margin-block-start: 32px;
-}
+	display: flex;
+	gap: 16px;
+	flex-wrap: wrap;
 
-.product-grid__asterisk-items {
-	margin-top: initial;
-	margin-bottom: initial;
-}
-
-.product-grid__asterisk-list {
-	margin: 76px;
-	padding: 0;
-
-	list-style-type: none;
-}
-
-.product-grid__asterisk-item {
-	&::before {
-		content: '*';
+	.product-without-price {
+		flex: 1 1 0;
+		min-width: 300px;
 	}
 
-	color: var( --color-neutral-light );
+	&.add-top-margin {
+		margin-block-start: 16px;
+	}
 
-	font-size: $font-body;
-	line-height: 2;
-	text-align: center;
+	&.horizontal-layout {
+		.jetpack-free-card {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-gap: 32px;
+			align-items: center;
+			margin-block-start: 16px;
+		}
+	}
 }
 
 .product-grid__more.is-detached {
 	margin-top: 48px;
-}
-
-/*
- * From this point, rules only apply:
- * - when the 'jetpack/only-realtime-products' feature flag is enabled
- * - and the current active iteration is Iterations.ONLY_REALTIME_PRODUCTS
- */
-.jetpack-plans__iteration--only-realtime-products {
-	.product-grid__plan-grid,
-	.product-grid__product-grid {
-		gap: 16px;
-	}
-
-	.product-grid__plan-grid:not( .is-wrapping ) {
-		gap: 16px 0;
-	}
-
-	.product-grid__free {
-		display: flex;
-		gap: 16px;
-		flex-wrap: wrap;
-
-		margin-block-start: 16px;
-
-		.product-without-price {
-			flex: 1 1 0;
-			min-width: 300px;
-		}
-	}
 }

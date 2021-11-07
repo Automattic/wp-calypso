@@ -8,7 +8,6 @@ jest.mock( 'calypso/components/notice/notice-action', () => 'NoticeAction' );
 
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { CloudflareAnalyticsSettings } from '../analytics/form-cloudflare-analytics';
 
 const props = {

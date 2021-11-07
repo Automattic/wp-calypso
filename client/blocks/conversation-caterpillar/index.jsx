@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { map, get, last, uniqBy, size, filter, compact } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isAncestor } from 'calypso/blocks/comments/utils';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar';
@@ -16,7 +16,7 @@ import './style.scss';
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;
 
-class ConversationCaterpillarComponent extends React.Component {
+class ConversationCaterpillarComponent extends Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,

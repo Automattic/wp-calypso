@@ -47,6 +47,7 @@ import {
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
+	withSelectedSite,
 } from '../selectors';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -122,8 +123,6 @@ describe( 'selectors', () => {
 				title: 'WordPress.com Example Blog',
 				domain: 'example.com',
 				slug: 'example.com',
-				hasConflict: false,
-				is_previewable: true,
 				jetpack: true,
 				canAutoupdateFiles: true,
 				canUpdateFiles: true,
@@ -189,9 +188,7 @@ describe( 'selectors', () => {
 				title: 'WordPress.com Example Blog',
 				domain: 'example.wordpress.com',
 				slug: 'example.wordpress.com',
-				hasConflict: true,
 				jetpack: false,
-				is_previewable: true,
 				options: {
 					unmapped_url: 'https://example.wordpress.com',
 				},
@@ -1540,7 +1537,7 @@ describe( 'selectors', () => {
 			chaiExpect( seoTitle ).to.eql( '' );
 		} );
 
-		test( 'should convert site name, tagline and date for archives title type', () => {
+		test( 'should convert site name, tagline, date, and archive title for archives title type', () => {
 			const seoTitle = getSeoTitle(
 				{
 					sites: {
@@ -1568,6 +1565,13 @@ describe( 'selectors', () => {
 											{
 												value: 'date',
 											},
+											{
+												type: 'string',
+												value: ' | ',
+											},
+											{
+												value: 'archiveTitle',
+											},
 										],
 									},
 								},
@@ -1582,11 +1586,14 @@ describe( 'selectors', () => {
 						name: 'Site Title',
 						description: 'Site Tagline',
 					},
-					date: 'January 2000',
+					date: 'Example Archive Title/Date',
+					archiveTitle: 'Example Archive Title/Date',
 				}
 			);
 
-			chaiExpect( seoTitle ).to.eql( 'Site Title | Site Tagline > January 2000' );
+			chaiExpect( seoTitle ).to.eql(
+				'Site Title | Site Tagline > Example Archive Title/Date | Example Archive Title/Date'
+			);
 		} );
 
 		test( 'should default to empty string for archives title type if no other title is set', () => {
@@ -3353,8 +3360,6 @@ describe( 'selectors', () => {
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
-				is_previewable: false,
-				hasConflict: false,
 				domain: 'example.wordpress.com',
 				slug: 'example.wordpress.com',
 				options: {},
@@ -3392,8 +3397,6 @@ describe( 'selectors', () => {
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
-				is_previewable: true,
-				hasConflict: true,
 				domain: 'unmapped-url.wordpress.com',
 				slug: 'unmapped-url.wordpress.com',
 				options,
@@ -3653,6 +3656,25 @@ describe( 'selectors', () => {
 					createState( { created_at: '2020-01-01', jetpack: true, atomic: true } )
 				)
 			).toBe( true );
+		} );
+	} );
+
+	describe( 'withSelectedSite()', () => {
+		test( 'returns selector with selected site added on call', () => {
+			const state = {
+				sites: {
+					items: {
+						2916288: {
+							jetpack: true,
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 2916288,
+				},
+			};
+			const selector = withSelectedSite( isJetpackSite );
+			expect( selector( state ) ).toEqual( true );
 		} );
 	} );
 } );

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';

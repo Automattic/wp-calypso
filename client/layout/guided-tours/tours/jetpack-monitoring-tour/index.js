@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import {
 	ButtonRow,
 	Continue,

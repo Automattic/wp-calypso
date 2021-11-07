@@ -4,9 +4,9 @@ import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart
 import debugFactory from 'debug';
 import i18nCalypso, { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { EDIT_PAYMENT_DETAILS } from 'calypso/lib/url/support';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-service' );
@@ -16,7 +16,8 @@ const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-serv
 export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 	const translate = useTranslate();
 	const locale = useLocale();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	if ( ! responseCart.terms_of_service || responseCart.terms_of_service.length === 0 ) {

@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { NavigationLink } from '../';
 const signupUtils = require( 'calypso/signup/utils' );
 

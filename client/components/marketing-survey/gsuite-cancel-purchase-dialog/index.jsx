@@ -2,11 +2,11 @@ import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import { getName } from 'calypso/lib/purchases';
-import wpcom from 'calypso/lib/wp';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -86,7 +86,6 @@ class GSuiteCancelPurchaseDialog extends Component {
 	saveSurveyResults = async () => {
 		const { purchase } = this.props;
 		const { surveyAnswerId, surveyAnswerText } = this.state;
-		const survey = wpcom.marketing().survey( 'calypso-gsuite-remove-purchase', purchase.siteId );
 		const surveyData = {
 			'why-cancel': {
 				response: surveyAnswerId,
@@ -94,9 +93,12 @@ class GSuiteCancelPurchaseDialog extends Component {
 			},
 			type: 'remove',
 		};
-		survey.addResponses( enrichedSurveyData( surveyData, purchase ) );
 
-		const response = await survey.submit();
+		const response = await this.props.submitSurvey(
+			'calypso-gsuite-remove-purchase',
+			purchase.siteId,
+			enrichedSurveyData( surveyData, purchase )
+		);
 		if ( ! response.success ) {
 			this.props.errorNotice( response.err );
 		}
@@ -114,19 +116,11 @@ class GSuiteCancelPurchaseDialog extends Component {
 			return false;
 		}
 
-		this.props.successNotice(
-			translate( '%(productName)s was removed from {{domain/}}.', {
-				args: {
-					productName,
-				},
-				components: {
-					domain: <em>{ domain }</em>,
-				},
-			} ),
-			{
-				isPersistent: true,
-			}
-		);
+		const successMessage = translate( '%(productName)s was removed from {{domain/}}.', {
+			args: { productName },
+			components: { domain: <em>{ domain }</em> },
+		} );
+		this.props.successNotice( successMessage, { isPersistent: true } );
 
 		return true;
 	};
@@ -248,5 +242,6 @@ export default connect(
 		recordTracksEvent,
 		removePurchase,
 		successNotice,
+		submitSurvey,
 	}
 )( localize( GSuiteCancelPurchaseDialog ) );

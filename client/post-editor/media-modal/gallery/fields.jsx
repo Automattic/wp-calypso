@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { includes, times } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'calypso/lib/media/constants';
@@ -10,7 +10,7 @@ import EditorMediaModalFieldset from '../fieldset';
 
 const noop = () => {};
 
-export class EditorMediaModalGalleryFields extends React.Component {
+export class EditorMediaModalGalleryFields extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		settings: PropTypes.object,

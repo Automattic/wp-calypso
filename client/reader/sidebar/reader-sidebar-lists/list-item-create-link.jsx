@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';

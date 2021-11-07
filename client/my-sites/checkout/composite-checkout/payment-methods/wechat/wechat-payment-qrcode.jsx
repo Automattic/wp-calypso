@@ -2,7 +2,7 @@ import { localize, translate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import Spinner from 'calypso/components/spinner';

@@ -2,7 +2,7 @@ import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { filter, find } from 'lodash';
-import React from 'react';
+import { createRef, Component } from 'react';
 import titleCase from 'to-title-case';
 import ExternalLink from 'calypso/components/external-link';
 import SectionNav from 'calypso/components/section-nav';
@@ -13,12 +13,12 @@ import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 
 import './style.scss';
 
-class PluginSections extends React.Component {
+class PluginSections extends Component {
 	static displayName = 'PluginSections';
 
 	constructor( props ) {
 		super( props );
-		this.descriptionContent = React.createRef();
+		this.descriptionContent = createRef();
 	}
 
 	state = {

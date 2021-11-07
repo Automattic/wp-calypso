@@ -5,10 +5,11 @@
 import {
 	DataHelper,
 	EmailClient,
-	LoginFlow,
+	LoginPage,
 	SidebarComponent,
 	InvitePeoplePage,
 	PeoplePage,
+	BrowserManager,
 	setupHooks,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
@@ -27,13 +28,13 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	let peoplePage: PeoplePage;
 	let page: Page;
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'defaultUser' } );
 	} );
 
 	it( 'Navigate to Users > All Users', async function () {
@@ -41,7 +42,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		await sidebarComponent.navigate( 'Users', 'All Users' );
 	} );
 
-	it( `Create new invite for test user`, async function () {
+	it( 'Invite test user to the site', async function () {
 		peoplePage = new PeoplePage( page );
 		await peoplePage.clickInviteUser();
 
@@ -53,14 +54,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		} );
 	} );
 
-	it( 'Revoke the invite for test user', async function () {
-		await sidebarComponent.navigate( 'Users', 'All Users' );
-		await peoplePage.clickTab( 'Invites' );
-		await peoplePage.selectInvitedUser( testEmailAddress );
-		await peoplePage.revokeInvite();
-	} );
-
-	it( `Invite email was received for test user`, async function () {
+	it( 'Invite email was received for test user', async function () {
 		const emailClient = new EmailClient();
 		const message = await emailClient.getLastEmail( {
 			inboxId: inboxId,
@@ -76,9 +70,18 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink );
 	} );
 
-	it( `Ensure invite link is no longer valid`, async function () {
-		await page.goto( adjustedInviteLink );
+	it( 'Revoke the invite for test user', async function () {
+		await sidebarComponent.navigate( 'Users', 'All Users' );
+		await peoplePage.clickTab( 'Invites' );
+		await peoplePage.selectInvitedUser( testEmailAddress );
+		await peoplePage.revokeInvite();
+	} );
 
-		await page.waitForSelector( `:text("Oops, that invite is not valid")` );
+	it( `Ensure invite link is no longer valid`, async function () {
+		const testContext = await BrowserManager.newBrowserContext();
+		const testPage = await BrowserManager.newPage( { context: testContext } );
+		await testPage.goto( adjustedInviteLink );
+
+		await testPage.waitForSelector( `:text("Oops, that invite is not valid")` );
 	} );
 } );

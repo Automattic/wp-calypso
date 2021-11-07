@@ -1,6 +1,6 @@
 import { get, keys, last, map, omit, reduce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';
 import Label from './label';
 

@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight, has, trim, sortBy } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -38,7 +38,7 @@ import './site-importer-input-pane.scss';
 
 const noop = () => {};
 
-class SiteImporterInputPane extends React.Component {
+class SiteImporterInputPane extends Component {
 	static displayName = 'SiteImporterSitePreview';
 
 	static propTypes = {

@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { ChangeEvent, FunctionComponent, useState } from 'react';
+import { useTranslate, TranslateResult, useRtl } from 'i18n-calypso';
+import { ChangeEvent, FunctionComponent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -30,6 +30,7 @@ interface Props {
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
+	selectedDomainName: string;
 	showTrashButton: boolean;
 	user: NewUser;
 }
@@ -44,12 +45,14 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		firstName: { value: firstName, error: firstNameError },
 		lastName: { value: lastName, error: lastNameError },
 		mailBox: { value: mailBox, error: mailBoxError },
-		domain: { value: domain, error: domainError },
+		domain: { error: domainError },
 		password: { value: password, error: passwordError },
 	},
+	selectedDomainName,
 	showTrashButton = true,
 } ) => {
 	const translate = useTranslate();
+	const isRtl = useRtl();
 
 	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
@@ -86,7 +89,8 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						setMailBoxFieldTouched( wasValidated );
 					} }
 					onKeyUp={ onReturnKeyPress }
-					suffix={ `@${ domain }` }
+					prefix={ isRtl ? `\u200e@${ selectedDomainName }\u202c` : null }
+					suffix={ isRtl ? null : `\u200e@${ selectedDomainName }\u202c` }
 				/>
 			</LabelWrapper>
 		);
@@ -113,7 +117,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					onChange={ ( event ) => {
 						onUserValueChange( 'domain', event.target.value );
 					} }
-					value={ domain }
+					value={ selectedDomainName }
 				/>
 			</LabelWrapper>
 		);
@@ -201,7 +205,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						onClick={ onUserRemove }
 					>
 						<Gridicon icon="trash" />
-						<span>{ translate( 'Remove user' ) }</span>
+						<span>{ translate( 'Remove this mailbox' ) }</span>
 					</Button>
 				) }
 			</FormFieldset>

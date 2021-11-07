@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import versionCompare from 'calypso/lib/version-compare';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';

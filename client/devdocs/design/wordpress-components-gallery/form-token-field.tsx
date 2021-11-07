@@ -1,6 +1,5 @@
 import { FormTokenField } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
-import React from 'react';
 
 const FormTokenFieldExample = withState( {
 	tokens: [],

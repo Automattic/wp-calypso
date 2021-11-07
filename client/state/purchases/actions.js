@@ -70,13 +70,13 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 };
 
 export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
-	return wpcom.req
-		.post( {
-			path: `/purchases/${ purchaseId }/delete`,
-			apiNamespace: 'wpcom/v2',
-		} )
-		.then( ( data ) => {
-			if ( data.status === 'completed' ) {
+	return new Promise( ( resolve ) =>
+		wpcom.req
+			.post( {
+				path: `/purchases/${ purchaseId }/delete`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( ( data ) => {
 				dispatch( {
 					type: PURCHASE_REMOVE_COMPLETED,
 					purchases: data.purchases,
@@ -84,14 +84,18 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
 				} );
 
 				dispatch( requestHappychatEligibility() );
-			}
-		} )
-		.catch( ( error ) => {
-			dispatch( {
-				type: PURCHASE_REMOVE_FAILED,
-				error: error.message || PURCHASE_REMOVE_ERROR_MESSAGE,
-			} );
-		} );
+
+				resolve( data );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: PURCHASE_REMOVE_FAILED,
+					error: error.message || PURCHASE_REMOVE_ERROR_MESSAGE,
+				} );
+
+				resolve( error );
+			} )
+	);
 };
 
 export const resetSiteState = () => ( dispatch ) =>

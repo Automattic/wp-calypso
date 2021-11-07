@@ -1,0 +1,75 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.site-options__form {
+	margin-top: 12px;
+}
+
+.site-options__form-fieldset {
+	$gray-60: #50575e;
+	$gray-40: #787c82;
+
+	margin-bottom: 24px;
+
+	.form-label {
+		margin-bottom: 8px;
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		color: $gray-60;
+
+		.form-label__optional {
+			font-size: inherit;
+			color: $gray-40;
+			text-transform: lowercase;
+
+			&::before {
+				content: '(';
+			}
+
+			&::after {
+				content: ')';
+			}
+		}
+
+		@include break-small {
+			font-size: $font-body;
+		}
+	}
+
+	input.form-text-input {
+		height: 44px;
+		line-height: 44px;
+		border-radius: 4px; /* stylelint-disable-line scales/radii */
+
+		&:focus,
+		&:focus:hover {
+			border-color: #646970;
+			box-shadow: 0 0 0 2px #e2eaf1;
+		}
+	}
+
+	.form-setting-explanation {
+		display: flex;
+		align-items: center;
+		margin: 16px 0;
+		font-style: normal;
+		color: $gray-40;
+
+		.site-options__form-icon {
+			margin-right: 8px;
+		}
+	}
+}
+
+.button.site-options__submit-button.is-primary {
+	padding: 9px 48px;
+	border-radius: 4px; /* stylelint-disable-line scales/radii */
+	font-weight: 500; /* stylelint-disable-line scales/font-weights */
+
+	// override unnecessary super specificity added by another class
+	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+
+	&:disabled {
+		color: #fff;
+		background-color: #dcdcde;
+	}
+}

@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import playIconImage from 'calypso/assets/images/reader/play-icon.png';
@@ -16,7 +16,7 @@ import './style.scss';
 const noop = () => {};
 const defaultSizingFunction = () => ( {} );
 
-class ReaderFeaturedVideo extends React.Component {
+class ReaderFeaturedVideo extends Component {
 	static propTypes = {
 		thumbnailUrl: PropTypes.string,
 		autoplayIframe: PropTypes.string,

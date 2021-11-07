@@ -6,7 +6,7 @@ import {
 	useEvents,
 } from '@automattic/composite-checkout';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import { Fragment } from 'react';
 import WordPressLogo from '../components/wordpress-logo';
 
 export function createFreePaymentMethod() {
@@ -59,10 +59,10 @@ function WordPressFreePurchaseLabel() {
 	const { __ } = useI18n();
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<div>{ __( 'Free Purchase' ) }</div>
 			<WordPressLogo />
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

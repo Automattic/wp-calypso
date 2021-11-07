@@ -1,13 +1,11 @@
 import classNames from 'classnames';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Component } from 'react';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import DatePicker from 'calypso/components/date-picker';
 import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
 import InputChrono from 'calypso/components/input-chrono';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import Clock from './clock';
 import Header from './header';
 import { convertDateToUserLocation, convertDateToGivenOffset } from './utils';
@@ -16,7 +14,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class PostSchedule extends Component {
+export default class PostSchedule extends Component {
 	static propTypes = {
 		events: PropTypes.array,
 		posts: PropTypes.array,
@@ -28,7 +26,6 @@ class PostSchedule extends Component {
 		onMonthChange: PropTypes.func,
 		onDayMouseEnter: PropTypes.func,
 		onDayMouseLeave: PropTypes.func,
-		userLocale: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -186,7 +183,6 @@ class PostSchedule extends Component {
 				<InputChrono
 					value={ chronoText }
 					placeholder={ date.calendar() }
-					lang={ this.props.userLocale }
 					onSet={ this.updateDate }
 				/>
 
@@ -263,7 +259,3 @@ class PostSchedule extends Component {
 		);
 	}
 }
-
-export default connect( ( state ) => ( {
-	userLocale: getCurrentUserLocale( state ),
-} ) )( PostSchedule );

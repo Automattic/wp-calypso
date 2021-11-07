@@ -9,7 +9,7 @@ import {
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import React from 'react';
+import { Fragment } from 'react';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
@@ -37,12 +37,12 @@ export function PaypalLabel( { labelText = null }: { labelText?: string | null }
 	const { __ } = useI18n();
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>{ labelText || __( 'PayPal' ) }</span>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PaypalLogo />
 			</PaymentMethodLogos>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

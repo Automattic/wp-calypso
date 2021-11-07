@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useState, useCallback } from 'react';
+import { FunctionComponent, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {

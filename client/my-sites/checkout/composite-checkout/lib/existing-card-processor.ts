@@ -34,14 +34,14 @@ export default async function existingCardProcessor(
 		throw new Error( 'Required purchase data is missing' );
 	}
 	const {
-		stripeConfiguration,
+		stripe,
 		recordEvent,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		contactDetails,
 	} = dataForProcessor;
-	if ( ! stripeConfiguration ) {
-		throw new Error( 'Stripe configuration is required' );
+	if ( ! stripe ) {
+		throw new Error( 'Stripe is required to submit an existing card payment' );
 	}
 
 	const domainDetails = getDomainDetails( contactDetails, {
@@ -73,7 +73,7 @@ export default async function existingCardProcessor(
 				// 3DS authentication required
 				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 				return confirmStripePaymentIntent(
-					stripeConfiguration,
+					stripe,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
 			}

@@ -6,7 +6,7 @@ import assert from 'assert';
 import {
 	setupHooks,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	MediaPage,
 	SidebarComponent,
 	MediaHelper,
@@ -35,13 +35,13 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	describe.each`
 		siteType      | user
 		${ 'Simple' } | ${ 'defaultUser' }
-		${ 'Atomic' } | ${ 'wooCommerceUser' }
+		${ 'Atomic' } | ${ 'eCommerceUser' }
 	`( 'Upload media files ($siteType)', ( { user } ) => {
 		let mediaPage: MediaPage;
 
 		it( 'Log In', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Navigate to Media', async function () {
@@ -54,20 +54,20 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		} );
 
 		it( 'Upload image and confirm addition to gallery', async () => {
-			const uploadedItem = await mediaPage.upload( testFiles.image.fullpath );
-			assert.strictEqual( await uploadedItem.isVisible(), true );
+			await mediaPage.upload( testFiles.image.fullpath );
 		} );
 
 		it( 'Upload audio and confirm addition to gallery', async () => {
-			const uploadedItem = await mediaPage.upload( testFiles.audio.fullpath );
-			assert.strictEqual( await uploadedItem.isVisible(), true );
+			await mediaPage.upload( testFiles.audio.fullpath );
 		} );
 
 		it( 'Upload an unsupported file type and see the rejection notice', async function () {
 			try {
 				await mediaPage.upload( testFiles.unsupported.fullpath );
-			} catch ( error ) {
-				assert.match( error.message, /could not be uploaded/i );
+			} catch ( error: unknown ) {
+				if ( error instanceof Error ) {
+					assert.match( error.message, /could not be uploaded/i );
+				}
 			}
 		} );
 	} );

@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import {
 	makeLayout,
 	redirectLoggedOut,
@@ -8,7 +7,7 @@ import {
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { createNavigation, selectSiteIfLoggedIn, siteSelection } from 'calypso/my-sites/controller';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getTheme } from 'calypso/state/themes/selectors';
 import { details, fetchThemeDetailsData } from './controller';
 
 function redirectToLoginIfSiteRequested( context, next ) {
@@ -29,16 +28,16 @@ function addNavigationIfLoggedIn( context, next ) {
 }
 
 function setTitleAndSelectSiteIfLoggedIn( context, next ) {
-	const state = context.store.getState();
-	const theme = getCanonicalTheme( state, null, context.params.slug );
-	const themeName = theme.name;
+	const theme = getTheme( context.store.getState(), 'wpcom', context.params.slug );
+	if ( theme ) {
+		const themeName = theme.name;
 
-	context.getSiteSelectionHeaderText = () =>
-		translate( 'Select a site to view {{strong}}%(themeName)s{{/strong}}', {
-			args: { themeName },
-			components: { strong: <strong /> },
-		} );
-
+		context.getSiteSelectionHeaderText = () =>
+			translate( 'Select a site to view {{strong}}%(themeName)s{{/strong}}', {
+				args: { themeName },
+				components: { strong: <strong /> },
+			} );
+	}
 	selectSiteIfLoggedIn( context, next );
 }
 

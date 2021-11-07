@@ -38,33 +38,33 @@
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/shopping-cart": "^2.0.0",
-		"@wordpress/components": "^13.0.3",
-		"@wordpress/icons": "^2.10.3",
-		"@wordpress/react-i18n": "^1.0.3",
-		"@wordpress/url": "^2.22.2",
+		"@wordpress/components": "^17.0.0",
+		"@wordpress/icons": "^5.0.2",
+		"@wordpress/react-i18n": "^3.0.1",
+		"@wordpress/url": "^3.2.2",
 		"classnames": "^2.3.1",
 		"react-router-dom": "^5.1.2",
 		"tslib": "^2.3.0",
-		"typescript": "^4.4.2",
+		"typescript": "^4.4.4",
 		"use-debounce": "^3.1.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"@automattic/typography": "^1.0.0",
-		"@testing-library/react": "^12.0.0",
-		"@wordpress/base-styles": "^3.4.3",
+		"@testing-library/react": "^12.1.2",
+		"@wordpress/base-styles": "^4.0.0",
 		"copyfiles": "^2.3.0",
-		"react": "^16.12.0",
-		"react-dom": "^16.12.0",
-		"typescript": "^4.4.2"
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"typescript": "^4.4.4"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.27.3",
-		"@wordpress/element": "^2.20.3",
-		"@wordpress/i18n": "^3.20.0",
-		"@wp-g2/create-styles": "^0.0.154",
-		"react": "^16.8",
-		"react-native": "^0.63.4",
-		"reakit-utils": "^0.15.1"
+		"@wordpress/data": "^6.1.0",
+		"@wordpress/element": "^4.0.1",
+		"@wordpress/i18n": "^4.2.2",
+		"react-native": "^0.65.0",
+		"reakit-utils": "^0.15.1",
+		"redux": "^4.1.2"
 	},
 	"private": true
 }

@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useState, FormEventHandler } from 'react';
+import { FunctionComponent, useState, FormEventHandler } from 'react';
 import { useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';

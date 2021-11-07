@@ -3,16 +3,16 @@ import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import * as React from 'react';
 import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import Link from '../link';
 import PlansButton from '../plans-button';
+import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
-const Header: React.FunctionComponent = () => {
+const Header: FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const currentStep = useCurrentStep();
@@ -45,7 +45,10 @@ const Header: React.FunctionComponent = () => {
 		return (
 			<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right gutenboarding__header-language-section">
 				<Link to={ makePath( Step.LanguageModal ) }>
-					<span className="gutenboarding__header-site-language-label">
+					<span
+						className="gutenboarding__header-site-language-label"
+						data-e2e-string="Site Language"
+					>
 						{ __( 'Site Language' ) }
 					</span>
 					<span className="gutenboarding__header-site-language-badge">{ locale }</span>
@@ -69,7 +72,10 @@ const Header: React.FunctionComponent = () => {
 						</div>
 					</Button>
 				</div>
-				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
+				<div
+					className="gutenboarding__header-section-item gutenboarding__header-site-title-section"
+					data-e2e-string={ ! siteTitle && siteTitleDefault ? 'Start your website' : null }
+				>
 					<div className="gutenboarding__header-site-title">
 						{ siteTitle ? siteTitle : siteTitleDefault }
 					</div>

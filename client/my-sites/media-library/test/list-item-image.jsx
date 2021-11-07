@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import resize from 'calypso/lib/resize-image-url';
 import ListItemImage from 'calypso/my-sites/media-library/list-item-image';
 import fixtures from './fixtures';

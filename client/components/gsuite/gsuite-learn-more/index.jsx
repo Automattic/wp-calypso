@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { ADDING_GSUITE_TO_YOUR_SITE } from 'calypso/lib/url/support';
 

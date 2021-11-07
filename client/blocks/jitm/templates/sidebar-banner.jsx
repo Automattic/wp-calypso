@@ -1,4 +1,3 @@
-import React from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
 

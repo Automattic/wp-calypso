@@ -3,7 +3,7 @@ import debugFactory from 'debug';
 import validatorFactory from 'is-my-json-valid';
 import { get, isEmpty, map, once, reduce, update } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { cloneElement, Component } from 'react';
 import { connect } from 'react-redux';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import getValidationSchemas from 'calypso/state/selectors/get-validation-schemas';
@@ -16,7 +16,7 @@ export function disableSubmitButton( children ) {
 	}
 
 	return map( Array.isArray( children ) ? children : [ children ], ( child, index ) =>
-		React.cloneElement( child, {
+		cloneElement( child, {
 			disabled: !! child.props.className.match( /submit-button/ ) || child.props.disabled,
 			key: index,
 		} )

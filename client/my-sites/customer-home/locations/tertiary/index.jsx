@@ -1,4 +1,4 @@
-import React from 'react';
+import { createElement } from 'react';
 import { SECTION_MANAGE_SITE } from 'calypso/my-sites/customer-home/cards/constants';
 import ManageSite from './manage-site';
 
@@ -16,7 +16,7 @@ const Tertiary = ( { cards } ) => {
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
-					React.createElement( cardComponents[ card ], {
+					createElement( cardComponents[ card ], {
 						key: index,
 					} )
 			) }

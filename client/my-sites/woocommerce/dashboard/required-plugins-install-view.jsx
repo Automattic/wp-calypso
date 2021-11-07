@@ -2,12 +2,12 @@ import { Button, ProgressBar } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import {
 	activatePlugin,
 	installPlugin as installAndActivatePlugin,
@@ -167,7 +167,7 @@ class RequiredPluginsInstallView extends Component {
 			  } ) )
 			: sitePlugins;
 
-		this.props.logToLogstash( {
+		logToLogstash( {
 			feature: 'calypso_client',
 			message: 'woocommerce setup timeout',
 			extra: {
@@ -652,5 +652,4 @@ export default connect( mapStateToProps, {
 	fetchPluginData,
 	installAndActivatePlugin,
 	fetchPlugins,
-	logToLogstash,
 } )( localize( RequiredPluginsInstallView ) );

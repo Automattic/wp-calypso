@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AuthorSelector from 'calypso/blocks/author-selector';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';

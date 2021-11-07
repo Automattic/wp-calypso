@@ -1,13 +1,13 @@
 import classnames from 'classnames';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { v4 as uuid } from 'uuid';
 import FormRange from 'calypso/components/forms/form-range';
 
 import './style.scss';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'Range';
 
 	static propTypes = {

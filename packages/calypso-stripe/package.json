@@ -37,14 +37,15 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-stripe#readme",
 	"dependencies": {
-		"@automattic/load-script": "^1.0.0",
+		"@stripe/react-stripe-js": "^1.4.1",
+		"@stripe/stripe-js": "^1.17.1",
 		"debug": "^4.1.1",
-		"react": "^16.12.0",
-		"react-dom": "^16.12.0",
-		"react-stripe-elements": "^4.0.2"
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.2"
+		"@automattic/calypso-typescript-config": "^1.0.0",
+		"typescript": "^4.4.4"
 	},
 	"private": true
 }

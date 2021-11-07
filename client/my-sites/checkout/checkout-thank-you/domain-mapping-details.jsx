@@ -1,6 +1,5 @@
 import { isBusiness } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import PurchaseDetail from 'calypso/components/purchase-detail';

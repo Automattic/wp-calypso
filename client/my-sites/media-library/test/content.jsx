@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import { ValidationErrors } from 'calypso/lib/media/constants';
 import { MediaLibraryContent } from 'calypso/my-sites/media-library/content';
 

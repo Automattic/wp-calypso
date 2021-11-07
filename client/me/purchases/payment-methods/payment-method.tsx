@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import React, { FunctionComponent, ComponentProps } from 'react';
+import { FunctionComponent, ComponentProps } from 'react';
 import PaymentMethodDetails from './payment-method-details';
 
 import 'calypso/me/purchases/payment-methods/style.scss';

@@ -2,8 +2,6 @@
  * WARNING: No ES6 modules here. Not transpiled! *
  */
 
-/* eslint-disable import/no-nodejs-modules */
-
 const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
@@ -13,7 +11,6 @@ const {
 	cssNameFromFilename,
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
-const calypsoColorSchemes = require( '@automattic/calypso-color-schemes/js' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
@@ -21,7 +18,6 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const pkgDir = require( 'pkg-dir' );
-const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
@@ -57,7 +53,6 @@ const shouldUseReadonlyCache = process.env.READONLY_CACHE === 'true';
 const shouldProfile = process.env.PROFILE === 'true';
 
 function filterEntrypoints( entrypoints ) {
-	/* eslint-disable no-console */
 	if ( ! process.env.ENTRY_LIMIT ) {
 		return entrypoints;
 	}
@@ -88,7 +83,6 @@ function filterEntrypoints( entrypoints ) {
 	} );
 
 	return allowed;
-	/* eslint-enable no-console */
 }
 
 /**
@@ -143,7 +137,6 @@ const fileLoader = FileConfig.loader(
 				// Build off `outputPath` for a result like `/…/public/evergreen/../images/`.
 				publicPath: '/calypso/images/',
 				outputPath: '../images/',
-				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
 		  }
 );
 
@@ -216,11 +209,7 @@ const webpackConfig = {
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [
-						autoprefixerPlugin(),
-						browserslistEnv === 'defaults' &&
-							postcssCustomPropertiesPlugin( { importFrom: [ calypsoColorSchemes ] } ),
-					].filter( Boolean ),
+					plugins: [ autoprefixerPlugin() ],
 				},
 				prelude: `@use '${ path.join(
 					__dirname,
@@ -232,6 +221,9 @@ const webpackConfig = {
 				loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 				options: {
 					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
+					forceAll: ! isDevelopment,
+					activeSections: config( 'sections' ),
+					enableByDefault: config( 'enable_all_sections' ),
 				},
 			},
 			{
@@ -284,9 +276,8 @@ const webpackConfig = {
 			minify: ! isDevelopment,
 		} ),
 		new AssetsWriter( {
-			filename: `assets-${ browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv }.json`,
+			filename: `assets.json`,
 			path: path.join( outputDir, 'build' ),
-			assetExtraPath: extraPath,
 		} ),
 		shouldCheckForDuplicatePackages && new DuplicatePackageCheckerPlugin(),
 		shouldCheckForCycles &&
@@ -316,7 +307,7 @@ const webpackConfig = {
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldBuildChunksMap &&
 			new GenerateChunksMapPlugin( {
-				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
+				output: path.resolve( './public/chunks-map.json' ),
 			} ),
 		new RequireChunkCallbackPlugin(),
 		/*
@@ -334,14 +325,6 @@ const webpackConfig = {
 				res.request = 'calypso/components/empty-component';
 			}
 		} ),
-		/*
-		 * Use "evergreen" polyfill config, rather than fallback.
-		 */
-		browserslistEnv === 'evergreen' &&
-			new webpack.NormalModuleReplacementPlugin(
-				/^@automattic\/calypso-polyfills$/,
-				'@automattic/calypso-polyfills/browser-evergreen'
-			),
 		/*
 		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
 		 */

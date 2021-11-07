@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React from 'react';
+import { PureComponent } from 'react';
 import TokenField from 'calypso/components/token-field';
 
 /**
@@ -79,7 +79,7 @@ const expandedSuggestions = [
 	'amet',
 ];
 
-class TokenFields extends React.PureComponent {
+class TokenFields extends PureComponent {
 	static displayName = 'TokenFields';
 
 	state = {

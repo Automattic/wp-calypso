@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getPaymentMethodImageURL,

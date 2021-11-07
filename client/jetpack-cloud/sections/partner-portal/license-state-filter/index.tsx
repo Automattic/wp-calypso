@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement, useContext } from 'react';
+import { ReactElement, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Count from 'calypso/components/count';
 import Search from 'calypso/components/search';

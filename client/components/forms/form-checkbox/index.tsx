@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { FunctionComponent, InputHTMLAttributes } from 'react';
+import { FunctionComponent, InputHTMLAttributes } from 'react';
 
 import './style.scss';
 

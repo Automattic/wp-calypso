@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createElement } from 'react';
 import { connect } from 'react-redux';
 import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
 
@@ -14,7 +14,7 @@ function CommentButton( props ) {
 	const { commentCount, href, onClick, showLabel, tagName, target } = props;
 	const translate = useTranslate();
 
-	return React.createElement(
+	return createElement(
 		tagName,
 		omitBy(
 			{

@@ -1,6 +1,5 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';

@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -13,12 +13,13 @@ import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
 import { canRedirect } from 'calypso/lib/domains';
 import { withoutHttp } from 'calypso/lib/url';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 import './site-redirect-step.scss';
 
-class SiteRedirectStep extends React.Component {
+class SiteRedirectStep extends Component {
 	static propTypes = {
 		products: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
@@ -196,4 +197,4 @@ export default connect( null, {
 	recordInputFocus,
 	recordGoButtonClick,
 	recordFormSubmit,
-} )( withShoppingCart( localize( SiteRedirectStep ) ) );
+} )( withCartKey( withShoppingCart( localize( SiteRedirectStep ) ) ) );

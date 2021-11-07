@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import Gravatar from 'calypso/components/gravatar';
@@ -10,7 +10,7 @@ import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 
 import './style.scss';
 
-class PostLikes extends React.PureComponent {
+class PostLikes extends PureComponent {
 	static defaultProps = {
 		postType: 'post',
 		showDisplayNames: false,

@@ -1,14 +1,32 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import Search from '@automattic/search';
-import { Button, CustomSelectControl, Flex, FlexBlock, FlexItem } from '@wordpress/components';
+import {
+	Button,
+	CustomSelectControl,
+	Flex as WpFlex,
+	FlexBlock,
+	FlexItem,
+} from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { getSearchedLanguages, LocalizedLanguageNames } from './search';
 import type { Language, LanguageGroup } from './Language';
-import type { ReactNode } from 'react';
+import type { ReactNode, ComponentType } from 'react';
 
 import './style.scss';
+
+// TODO: Definitely typed is out of date with the latest wp components, so we need
+// to override the props for the Flex component to get everything working for now.
+// Remove once definitely typed is updated, or if we can consume types directly
+// from wp components.
+const Flex = WpFlex as ComponentType< {
+	className?: string;
+	align?: string;
+	direction?: string;
+	expanded?: boolean;
+	justify?: string;
+} >;
 
 type Props< TLanguage extends Language > = {
 	onSelectLanguage: ( language: TLanguage ) => void;
@@ -121,14 +139,14 @@ function LanguagePicker< TLanguage extends Language >( {
 
 	const selectControlOptions = languageGroups.map( ( lg ) => ( { key: lg.id, name: lg.name() } ) );
 
-	const handleSearchClose = React.useCallback( () => {
+	const handleSearchClose = useCallback( () => {
 		setFilter( findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, filter ) );
 	}, [ selectedLanguage, languageGroups, filter ] );
 
 	const searchPlaceholder = __( 'Search languages…' );
 
 	return (
-		<Flex className="language-picker-component" align="left">
+		<Flex className="language-picker-component" align="left" direction="column" expanded={ false }>
 			<FlexBlock className="language-picker-component__heading">
 				<Flex justify="space-between" align="left">
 					<FlexItem className="language-picker-component__title wp-brand-font">

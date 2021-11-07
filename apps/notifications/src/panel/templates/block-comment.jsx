@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import React from 'react';
 import { html } from '../indices-to-html';
 import { p } from './functions';
 

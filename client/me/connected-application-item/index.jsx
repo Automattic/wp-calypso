@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -12,7 +12,7 @@ import { deleteConnectedApplication } from 'calypso/state/connected-applications
 
 import './style.scss';
 
-class ConnectedApplicationItem extends React.Component {
+class ConnectedApplicationItem extends Component {
 	static defaultProps = {
 		isPlaceholder: false,
 	};

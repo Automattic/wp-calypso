@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import { type } from 'calypso/lib/domains/constants';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import {
@@ -51,4 +50,20 @@ export const showUpdatePrimaryDomainErrorNotice = ( errorMessage ) => {
 
 export const filterOutWpcomDomains = ( domains ) => {
 	return domains.filter( ( domain ) => domain.type !== type.WPCOM );
+};
+
+export const getSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder ) => {
+	if ( ! first.hasOwnProperty( column ) || ! second.hasOwnProperty( column ) ) {
+		return -1;
+	}
+	if ( first?.[ column ] === null || second?.[ column ] === null ) {
+		return -1;
+	}
+	if ( first?.[ column ] > second?.[ column ] ) {
+		return 1 * sortOrder;
+	}
+	if ( first?.[ column ] < second?.[ column ] ) {
+		return -1 * sortOrder;
+	}
+	return 0;
 };

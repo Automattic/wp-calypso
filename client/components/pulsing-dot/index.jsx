@@ -1,10 +1,10 @@
 import classnames from 'classnames';
 import { number } from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 
 import './style.scss';
 
-class PulsingDot extends React.Component {
+class PulsingDot extends Component {
 	timeout = null;
 
 	state = {

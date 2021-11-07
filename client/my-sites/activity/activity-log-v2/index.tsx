@@ -2,7 +2,7 @@ import { isFreePlan } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
-import React, { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import ActivityCardList from 'calypso/components/activity-card-list';

@@ -26,7 +26,10 @@ export function generateSteps( {
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
+	setDesignOnSite = noop,
 	setThemeOnSite = noop,
+	setOptionsOnSite = noop,
+	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
@@ -174,6 +177,20 @@ export function generateSteps( {
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
+		},
+
+		'site-options': {
+			stepName: 'site-options',
+			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			apiRequestFunction: setOptionsOnSite,
+			delayApiRequestUntilComplete: true,
+		},
+
+		'starting-point': {
+			stepName: 'starting-point',
+			providesDependencies: [ 'startingPoint' ],
+			optionalDependencies: [ 'startingPoint' ],
 		},
 
 		test: {
@@ -706,19 +723,60 @@ export function generateSteps( {
 			},
 		},
 
-		design: {
-			stepName: 'design-picker',
+		intent: {
+			stepName: 'intent',
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'intent' ],
+			optionalDependencies: [ 'intent' ],
+			apiRequestFunction: setIntentOnSite,
+			delayApiRequestUntilComplete: true,
 		},
 
 		'design-setup-site': {
 			stepName: 'design-setup-site',
-			apiRequestFunction: setThemeOnSite,
+			apiRequestFunction: setDesignOnSite,
+			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
+			props: {
+				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
+			},
+		},
+		'difm-design-setup-site': {
+			stepName: 'difm-design-setup-site',
+			apiRequestFunction: setDesignOnSite,
+			delayApiRequestUntilComplete: true,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
+			props: {
+				hideSkip: true,
+				hideExternalPreview: true,
+				useDIFMThemes: true,
+				showDesignPickerCategories: true,
+			},
+		},
+		'difm-design': {
+			stepName: 'difm-design',
+			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
+		},
+		'site-info-collection': {
+			stepName: 'site-info-collection',
+			dependencies: [ 'siteSlug', 'selectedDesign' ],
+			providesDependencies: [ 'cartItem' ],
+			apiRequestFunction: addPlanToCart,
+		},
+
+		// ↓ importer steps
+		list: {
+			stepName: 'list',
+		},
+		capture: {
+			stepName: 'capture',
+		},
+		ready: {
+			stepName: 'ready',
 		},
 	};
 }

@@ -4,7 +4,7 @@ import { trim, debounce, random, take, reject, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import RecommendedSites from 'calypso/blocks/reader-recommended-sites';
 import DocumentHead from 'calypso/components/data/document-head';

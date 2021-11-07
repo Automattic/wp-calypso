@@ -1,7 +1,6 @@
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';

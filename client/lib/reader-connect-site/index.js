@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
@@ -18,7 +18,7 @@ import { getSite } from 'calypso/state/reader/sites/selectors';
  * @returns {object} wrapped component that hands down feed/site to its child
  */
 const connectSite = ( Component ) => {
-	class connectSiteFetcher extends React.PureComponent {
+	class connectSiteFetcher extends PureComponent {
 		static propTypes = {
 			feed: PropTypes.object,
 			site: PropTypes.object,

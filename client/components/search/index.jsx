@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { v4 as uuid } from 'uuid';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Spinner from 'calypso/components/spinner';

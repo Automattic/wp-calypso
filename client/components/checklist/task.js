@@ -2,7 +2,7 @@ import { Button, CompactCard, ScreenReaderText, Gridicon } from '@automattic/com
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment, PureComponent } from 'react';
+import { Fragment, PureComponent } from 'react';
 import Notice from 'calypso/components/notice';
 import Spinner from 'calypso/components/spinner';
 

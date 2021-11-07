@@ -1,12 +1,12 @@
 import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 
-export default class SecuritySectionNav extends React.Component {
+export default class SecuritySectionNav extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 	};

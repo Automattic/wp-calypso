@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { localizeUrl } from 'calypso/lib/i18n-utils';

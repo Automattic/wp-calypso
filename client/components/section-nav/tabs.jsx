@@ -2,7 +2,7 @@ import { getWindowInnerWidth } from '@automattic/viewport';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Children, cloneElement, Component } from 'react';
 import ReactDom from 'react-dom';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -31,7 +31,7 @@ class NavTabs extends Component {
 		isDropdown: false,
 	};
 
-	navGroupRef = React.createRef();
+	navGroupRef = createRef();
 	tabRefMap = new Map();
 
 	componentDidMount() {
@@ -63,8 +63,8 @@ class NavTabs extends Component {
 	}
 
 	render() {
-		const tabs = React.Children.map( this.props.children, ( child, index ) => {
-			return child && React.cloneElement( child, { ref: this.storeTabRefs( index ) } );
+		const tabs = Children.map( this.props.children, ( child, index ) => {
+			return child && cloneElement( child, { ref: this.storeTabRefs( index ) } );
 		} );
 
 		const tabsClassName = classNames( 'section-nav-tabs', {
@@ -102,7 +102,7 @@ class NavTabs extends Component {
 	}
 
 	getDropdown() {
-		const dropdownOptions = React.Children.map( this.props.children, ( child, index ) => {
+		const dropdownOptions = Children.map( this.props.children, ( child, index ) => {
 			if ( ! child ) {
 				return null;
 			}

@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import WooCommerceLogo from './woocommerce-logo';
 

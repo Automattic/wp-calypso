@@ -1,12 +1,12 @@
-import React from 'react';
+import { Fragment } from 'react';
 import LoginBlock from 'calypso/blocks/login';
 
 const LoginExample = () => (
-	<React.Fragment>
+	<Fragment>
 		<LoginBlock disableAutoFocus />
 		<p />
 		<LoginBlock disableAutoFocus isJetpack />
-	</React.Fragment>
+	</Fragment>
 );
 
 LoginExample.displayName = 'Login';

@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -23,7 +23,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const TitanSetUpMailbox = ( { selectedDomainName } ) => {
+const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const currentRoute = useSelector( getCurrentRoute );
@@ -51,7 +51,9 @@ const TitanSetUpMailbox = ( { selectedDomainName } ) => {
 	const translate = useTranslate();
 
 	if ( areSiteDomainsLoaded && ! hasTitanSubscription ) {
-		page( emailManagementPurchaseNewEmailAccount( siteSlug, selectedDomainName, currentRoute ) );
+		page(
+			emailManagementPurchaseNewEmailAccount( siteSlug, selectedDomainName, currentRoute, source )
+		);
 
 		return null;
 	}
@@ -86,6 +88,7 @@ const TitanSetUpMailbox = ( { selectedDomainName } ) => {
 
 TitanSetUpMailbox.propType = {
 	selectedDomainName: PropTypes.string.isRequired,
+	source: PropTypes.string,
 };
 
 export default TitanSetUpMailbox;

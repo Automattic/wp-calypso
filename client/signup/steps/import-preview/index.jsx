@@ -1,7 +1,7 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';

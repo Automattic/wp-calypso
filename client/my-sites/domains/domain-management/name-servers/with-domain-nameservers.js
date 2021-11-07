@@ -1,7 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import useDomainNameserversQuery from 'calypso/data/domains/nameservers/use-domain-nameservers-query';
 import useUpdateNameserversMutation from 'calypso/data/domains/nameservers/use-update-nameservers-mutation';

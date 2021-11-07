@@ -1,4 +1,3 @@
-import React from 'react';
 import { MembershipSubscriptionsSite, MembershipSubscription } from 'calypso/lib/purchases/types';
 import MembershipItem from '../membership-item';
 

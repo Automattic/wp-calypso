@@ -11,7 +11,6 @@ import {
 	more,
 	paragraph,
 } from '@wordpress/icons';
-import React from 'react';
 
 function InlineImageIcon() {
 	return (

@@ -5,7 +5,6 @@
 import { render } from '@testing-library/react';
 import { act, renderHook } from '@testing-library/react-hooks';
 import { getLocaleData, subscribe } from '@wordpress/i18n';
-import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { LocaleProvider, useLocale, withLocale } from '../locale-context';
 

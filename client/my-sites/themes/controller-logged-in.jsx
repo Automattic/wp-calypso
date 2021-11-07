@@ -1,5 +1,4 @@
 import page from 'page';
-import React from 'react';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { setBackPath } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
 
 interface SignupFormHeaderProps {
 	onRequestClose: () => void;

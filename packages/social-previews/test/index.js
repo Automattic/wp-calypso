@@ -6,7 +6,6 @@
 
 import { shallow } from 'enzyme';
 import moment from 'moment';
-import React from 'react';
 import {
 	FacebookPreview as Facebook,
 	TwitterPreview as Twitter,

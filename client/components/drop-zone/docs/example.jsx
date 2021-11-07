@@ -1,10 +1,10 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { PureComponent } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 
 const DropZoneExample = localize(
-	class extends React.PureComponent {
+	class extends PureComponent {
 		state = {};
 
 		onFilesDrop = ( files ) => {

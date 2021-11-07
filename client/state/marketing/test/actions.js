@@ -1,5 +1,8 @@
-import { MARKETING_CLICK_UPGRADE_NUDGE } from 'calypso/state/action-types';
-import { clickUpgradeNudge } from '../actions';
+import {
+	MARKETING_CLICK_UPGRADE_NUDGE,
+	MARKETING_JETPACK_SALE_COUPON_FETCH,
+} from 'calypso/state/action-types';
+import { clickUpgradeNudge, fetchJetpackSaleCoupon } from '../actions';
 
 describe( 'clickUpgradeNudge()', () => {
 	test( 'should return the expected action object', () => {
@@ -10,6 +13,14 @@ describe( 'clickUpgradeNudge()', () => {
 			type: MARKETING_CLICK_UPGRADE_NUDGE,
 			siteId,
 			nudgeName,
+		} );
+	} );
+} );
+
+describe( 'fetchJetpackSaleCoupon()', () => {
+	test( 'should return the expected action object', () => {
+		expect( fetchJetpackSaleCoupon() ).toEqual( {
+			type: MARKETING_JETPACK_SALE_COUPON_FETCH,
 		} );
 	} );
 } );

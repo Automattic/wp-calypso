@@ -4,7 +4,6 @@
 
 import { assert } from 'chai';
 import { shallow, mount } from 'enzyme';
-import React from 'react';
 import D3Base from '../index';
 
 const noop = () => {};

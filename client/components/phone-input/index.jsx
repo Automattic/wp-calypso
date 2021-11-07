@@ -3,7 +3,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import CountryFlag from 'calypso/components/phone-input/country-flag';

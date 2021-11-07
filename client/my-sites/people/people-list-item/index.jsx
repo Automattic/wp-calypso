@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -16,7 +16,7 @@ import {
 
 import './style.scss';
 
-class PeopleListItem extends React.PureComponent {
+class PeopleListItem extends PureComponent {
 	static displayName = 'PeopleListItem';
 
 	static propTypes = {
@@ -91,10 +91,10 @@ class PeopleListItem extends React.PureComponent {
 					( isPending ? (
 						translate( 'Pending' )
 					) : (
-						<React.Fragment>
+						<Fragment>
 							<Gridicon icon="checkmark" size={ 18 } />
 							{ translate( 'Accepted' ) }
-						</React.Fragment>
+						</Fragment>
 					) ) }
 				{ isPending && (
 					<Button

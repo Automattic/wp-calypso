@@ -1,6 +1,6 @@
 import { TranslateResult } from 'i18n-calypso';
 import { get } from 'lodash';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import PromoCard, { Props as PromoCardProps } from './promo-card';
 import PromoCardCta, { Props as PromoCardCtaProps } from './promo-card/cta';
 

@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import Pagination from 'calypso/components/pagination';

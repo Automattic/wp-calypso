@@ -3,7 +3,7 @@ import { Button, Card, CompactCard, Dialog, Gridicon } from '@automattic/compone
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, map } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';

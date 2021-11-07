@@ -6,7 +6,6 @@
 
 import { render, mount } from 'enzyme';
 import { filter, map } from 'lodash';
-import React from 'react';
 import fixtures from './lib/fixtures';
 import TokenFieldWrapper from './lib/token-field-wrapper';
 

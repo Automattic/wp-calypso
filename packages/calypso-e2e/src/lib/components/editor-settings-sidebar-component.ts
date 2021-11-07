@@ -14,6 +14,7 @@ const selectors = {
 		`${ sidebarParentSelector } .components-panel__body-toggle:has-text("${ sectionName }")`,
 	expandedSection: ( sectionName: EditorSidebarSection ) =>
 		`${ sidebarParentSelector } .is-opened .components-panel__body-toggle:has-text("${ sectionName }")`,
+	lastSection: `${ sidebarParentSelector } .components-panel__body >> nth=-1`,
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ sidebarParentSelector } [aria-label=Categories] :text("${ categoryName }")`,
 	tagInput: `${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") input`,
@@ -58,6 +59,8 @@ export class EditorSettingsSidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async expandSectionIfCollapsed( sectionName: EditorSidebarSection ): Promise< void > {
+		// Avoid the wpcalypso/staging banner
+		await this.scrollToBottomOfSidebar();
 		if ( ! ( await this.frame.isVisible( selectors.expandedSection( sectionName ) ) ) ) {
 			await this.frame.click( selectors.sectionToggle( sectionName ) );
 		}
@@ -94,5 +97,15 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async closeSidebar(): Promise< void > {
 		await this.frame.click( selectors.closeSidebarButton );
+	}
+
+	/**
+	 *	Scroll to the bottom of the sidebar. Useful if trying to avoid the wpcalypso/staging banner.
+	 */
+	private async scrollToBottomOfSidebar(): Promise< void > {
+		// There are a lot of different ways this could be done (e.g. send `PageDown` or mouse scroll events).
+		// Opting for scrolling the last section into view as it targets an explicit element, and ensures waiting until scrolling is done before moving on.
+		const lastSectionElement = await this.frame.waitForSelector( selectors.lastSection );
+		await lastSectionElement.scrollIntoViewIfNeeded();
 	}
 }

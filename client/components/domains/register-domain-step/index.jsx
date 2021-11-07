@@ -25,7 +25,7 @@ import {
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
@@ -79,6 +79,7 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -125,7 +126,7 @@ function getQueryObject( props ) {
 	};
 }
 
-class RegisterDomainStep extends React.Component {
+class RegisterDomainStep extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		isCartPendingUpdate: PropTypes.bool,
@@ -659,12 +660,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return (
-				<>
-					{ this.renderExampleSuggestions() }
-					{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
-				</>
-			);
+			return this.renderExampleSuggestions();
 		}
 
 		return this.renderInitialSuggestions( false );
@@ -1637,4 +1633,4 @@ export default connect(
 		hideSitePreview,
 		showSitePreview,
 	}
-)( withShoppingCart( localize( RegisterDomainStep ) ) );
+)( withCartKey( withShoppingCart( localize( RegisterDomainStep ) ) ) );

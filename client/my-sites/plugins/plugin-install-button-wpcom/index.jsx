@@ -2,7 +2,6 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';

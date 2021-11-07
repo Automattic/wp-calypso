@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { defer, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -27,7 +27,7 @@ import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
 
-class RequestLoginEmailForm extends React.Component {
+class RequestLoginEmailForm extends Component {
 	static propTypes = {
 		// mapped to state
 		currentUser: PropTypes.object,

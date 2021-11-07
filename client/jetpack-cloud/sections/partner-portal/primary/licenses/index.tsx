@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';

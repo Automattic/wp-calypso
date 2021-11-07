@@ -6,7 +6,6 @@
 
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';

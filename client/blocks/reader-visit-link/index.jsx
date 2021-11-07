@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 
 import './style.scss';
 
 const noop = () => {};
 
-class ReaderVisitLink extends React.Component {
+class ReaderVisitLink extends Component {
 	static propTypes = {
 		href: PropTypes.string,
 		iconSize: PropTypes.number,

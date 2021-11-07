@@ -7,7 +7,6 @@ import { matchers } from '@emotion/jest';
 import { ThemeProvider } from '@emotion/react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import React from 'react';
 import FormFieldAnnotation from '../components/form-field-annotation';
 
 // Add the custom matchers provided by '@emotion/jest'

@@ -3,7 +3,7 @@ import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteMonitorSettings from 'calypso/components/data/query-site-monitor-settings';

@@ -1,4 +1,5 @@
-import React, { ReactNode, useCallback, useState, useEffect } from 'react';
+import { ReactNode, useCallback, useState, useEffect } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';

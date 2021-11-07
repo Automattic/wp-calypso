@@ -14,9 +14,9 @@ import {
 } from '@testing-library/react';
 import nock from 'nock';
 import page from 'page';
-import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -46,6 +46,8 @@ import {
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
+jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
@@ -98,6 +100,7 @@ describe( 'CompositeCheckout', () => {
 				setCart: mockSetCartEndpoint,
 			} );
 			const mainCartKey = 'foo.com';
+			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
 			return (
 				<ReduxProvider store={ store }>
 					<ShoppingCartProvider
@@ -271,7 +274,6 @@ describe( 'CompositeCheckout', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
-			expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'Phone' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Email' ) ).not.toBeInTheDocument();
@@ -329,6 +331,44 @@ describe( 'CompositeCheckout', () => {
 		} );
 	} );
 
+	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
+		} );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
+		} );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
+		} );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
+		} );
+	} );
+
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
@@ -339,7 +379,9 @@ describe( 'CompositeCheckout', () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Postal Code' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -362,6 +404,7 @@ describe( 'CompositeCheckout', () => {
 		{ complete: 'does', valid: 'valid', name: 'plan', email: 'passes', logged: 'out' },
 		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'passes', logged: 'out' },
 		{ complete: 'does not', valid: 'valid', name: 'domain', email: 'fails', logged: 'out' },
+		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'fails', logged: 'out' },
 	] )(
 		'$complete complete the contact step when validation is $valid with $name in the cart while logged-$logged and signup validation $email',
 		async ( { complete, valid, name, email, logged } ) => {
@@ -435,9 +478,19 @@ describe( 'CompositeCheckout', () => {
 						body.email === validContactDetails.email
 					);
 				} )
-				.reply( 200, {
-					success: email === 'passes',
+				.reply( 200, () => {
+					if ( logged === 'out' && email === 'fails' ) {
+						return {
+							success: false,
+							messages: { email: { taken: 'An account with this email already exists.' } },
+						};
+					}
+
+					return {
+						success: email === 'passes',
+					};
 				} );
+			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 
 			render(
 				<MyCheckout
@@ -476,7 +529,16 @@ describe( 'CompositeCheckout', () => {
 				await expect( screen.findByTestId( 'payment-method-step--visible' ) ).rejects.toThrow();
 				// Make sure the error message is displayed
 				if ( valid !== 'valid' ) {
-					expect( screen.getByText( 'Postal code error message' ) ).toBeInTheDocument();
+					if ( logged === 'out' && email === 'fails' ) {
+						expect(
+							screen.getByText( ( content ) =>
+								content.startsWith( 'That email address is already in use' )
+							)
+						);
+					} else if ( email === 'passes' ) {
+						expect( screen.getByText( 'Postal code error message' ) ).toBeInTheDocument();
+					}
+
 					if ( name === 'domain' ) {
 						expect( screen.getByText( 'Missing CIRA agreement' ) ).toBeInTheDocument();
 					}
@@ -911,7 +973,7 @@ describe( 'CompositeCheckout', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
 		} );
 	} );
 
@@ -928,7 +990,7 @@ describe( 'CompositeCheckout', () => {
 		await waitFor( () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 5 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
 		} );
 	} );
 

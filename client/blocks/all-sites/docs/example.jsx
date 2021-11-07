@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import React from 'react';
 import AllSites from 'calypso/blocks/all-sites';
 
 const AllSitesExample = () => (

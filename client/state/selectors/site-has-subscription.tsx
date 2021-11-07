@@ -37,8 +37,8 @@ export default function siteHasSubscription(
 		productsList = [
 			...productsList,
 			...[ sitePlan.product_slug ],
-			...sitePlanDetails.getHiddenFeatures(),
-			...( sitePlanDetails.getInferiorHiddenFeatures?.() ?? [] ),
+			...sitePlanDetails.getIncludedFeatures(),
+			...( sitePlanDetails.getInferiorFeatures?.() ?? [] ),
 		];
 	}
 	return productsList.some( ( product ) => subscriptionSlug.includes( product ) );

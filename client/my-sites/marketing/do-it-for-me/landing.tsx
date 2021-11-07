@@ -4,17 +4,11 @@ import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { useSelector } from 'react-redux';
-import IT from 'calypso/assets/images/difm/IT-1.png';
-import consult1 from 'calypso/assets/images/difm/consult-1.png';
-import consult2 from 'calypso/assets/images/difm/consult-2.png';
-import dietician from 'calypso/assets/images/difm/dietician-1.png';
-import musician from 'calypso/assets/images/difm/musician-1.png';
-import photography from 'calypso/assets/images/difm/photography-1.png';
-import phsych from 'calypso/assets/images/difm/phsych-1.png';
-import restaurant from 'calypso/assets/images/difm/restaurant-1.png';
-import treeremoval from 'calypso/assets/images/difm/tree-removal.png';
+import themeGrid from 'calypso/assets/images/difm/theme-grid.png';
+import verticalCreative from 'calypso/assets/images/difm/vertical-creative.png';
+import verticalResturants from 'calypso/assets/images/difm/vertical-restaurants.png';
+import verticalServices from 'calypso/assets/images/difm/vertical-services.png';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductCost } from 'calypso/state/products-list/selectors';
@@ -33,24 +27,30 @@ const VerticalsGrid = styled.div`
 const Vertical = styled.h1`
 	margin-bottom: 16px;
 	margin: 0 auto 10px;
-	padding: 16px;
-`;
-
-const VerticalHeading = styled.h1`
-	font-size: 1.25rem;
-	text-align: center;
-	margin: 1em 0 1em 0;
-	height: 4.25em;
-	border-bottom: 1px solid var( --color-border-subtle );
-	box-sizing: border-box;
+	h1 {
+		font-size: 1.25rem;
+		text-align: center;
+		margin: 1em 0 1em 0;
+		height: 4.25em;
+		border-bottom: 1px solid var( --color-border-subtle );
+		box-sizing: border-box;
+	}
 `;
 
 const ImageContainer = styled.div`
-	height: 150px;
-	overflow: hidden;
 	margin: 10px 0px;
+	min-height: 15em;
+	display: none;
 	@media ( min-width: 960px ) {
-		height: auto;
+		display: block;
+	}
+`;
+
+const MobileImageContainer = styled.div`
+	width: 100%;
+	display: block;
+	@media ( min-width: 960px ) {
+		display: none;
 	}
 `;
 
@@ -93,7 +93,7 @@ export default function DoItForMeLandingPage(): JSX.Element {
 
 			<Paragraph>
 				{ translate(
-					'Need a professionally designed website for your business fast? Choose from our custom-designed templates below, add your content and media, and in just 2-4 days your website will be ready to launch for just %(cost)s. The one-time fee includes a 4-page website and a 30-minute Quick Start Zoom orientation about your site when it’s complete.',
+					'Need a professionally designed website for your business fast? Choose from our custom-designed templates below, add your content and media, and in just 2-4 business days your website will be ready to launch for just %(cost)s. The one-time fee includes a 4-page website and a 30-minute Quick Start Zoom orientation about your site when it’s complete.',
 					{
 						args: { cost: displayCost },
 					}
@@ -107,51 +107,29 @@ export default function DoItForMeLandingPage(): JSX.Element {
 
 			<VerticalsGrid>
 				<Vertical>
-					<VerticalHeading>
+					<h1>
 						{ translate( 'Professional Services' ) } <br /> { translate( 'Local Business' ) }
-					</VerticalHeading>
-					<VerticalsGrid>
-						<ImageContainer>
-							<img src={ consult1 } width="100%" alt="WordPress logo" />
-						</ImageContainer>
-						<ImageContainer>
-							<img src={ consult2 } width="100%" alt="WordPress logo" />
-						</ImageContainer>
-						<ImageContainer>
-							<img src={ treeremoval } width="100%" alt="WordPress logo" />
-						</ImageContainer>
-					</VerticalsGrid>
+					</h1>
+					<MobileImageContainer>
+						<img src={ verticalServices } width="100%" alt="Built By Themes" />
+					</MobileImageContainer>
 				</Vertical>
 				<Vertical>
-					<VerticalHeading>{ translate( 'Restaurants' ) }</VerticalHeading>
-					<VerticalsGrid>
-						<ImageContainer>
-							<img src={ restaurant } width="100%" alt="WordPress logo" />
-						</ImageContainer>
-						<ImageContainer>
-							<img src={ dietician } width="100%" alt="WordPress logo" />
-						</ImageContainer>
-						<ImageContainer>
-							<img src={ IT } width="100%" alt="WordPress logo" />
-						</ImageContainer>
-					</VerticalsGrid>
+					<h1>{ translate( 'Restaurants' ) }</h1>
+					<MobileImageContainer>
+						<img src={ verticalResturants } width="100%" alt="Built By Themes" />
+					</MobileImageContainer>
 				</Vertical>
 				<Vertical>
-					<VerticalHeading>{ translate( 'Creatives & Portfolio' ) }</VerticalHeading>
-
-					<VerticalsGrid>
-						<ImageContainer>
-							<img src={ photography } width="100%" alt="WordPress logo" />
-						</ImageContainer>
-						<ImageContainer>
-							<img src={ musician } width="100%" alt="WordPress logo" />
-						</ImageContainer>
-						<ImageContainer>
-							<img src={ phsych } width="100%" alt="WordPress logo" />
-						</ImageContainer>
-					</VerticalsGrid>
+					<h1>{ translate( 'Creatives & Portfolio' ) }</h1>
+					<MobileImageContainer>
+						<img src={ verticalCreative } width="100%" alt="Built By Themes" />
+					</MobileImageContainer>
 				</Vertical>
 			</VerticalsGrid>
+			<ImageContainer>
+				<img src={ themeGrid } width="100%" alt="Built By Themes" />
+			</ImageContainer>
 			<ButtonContainer>
 				<FullWidthButton primary onClick={ onInterestedSelected }>
 					{ translate( 'I am interested' ) }

@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';

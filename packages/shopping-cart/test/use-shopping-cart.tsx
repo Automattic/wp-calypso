@@ -5,7 +5,6 @@ import {
 	fireEvent,
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
-import React from 'react';
 import { getEmptyResponseCart } from '../src/empty-carts';
 import { useShoppingCart } from '../src/index';
 import { planOne, planTwo, renewalOne, renewalTwo, mainCartKey } from './utils/mock-cart-api';

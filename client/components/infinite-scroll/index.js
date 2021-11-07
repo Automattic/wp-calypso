@@ -1,6 +1,6 @@
 import { throttle, defer } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 const SCROLL_CHECK_RATE_IN_MS = 400;
@@ -11,11 +11,11 @@ const propTypeDefinition = {
 	nextPageMethod: PropTypes.func.isRequired,
 };
 
-class InfiniteScrollWithIntersectionObserver extends React.Component {
+class InfiniteScrollWithIntersectionObserver extends Component {
 	static propTypes = propTypeDefinition;
 	static displayName = 'InfiniteScroll';
 
-	observedElement = React.createRef();
+	observedElement = createRef();
 
 	hasScrolledPastBottom = false;
 
@@ -71,7 +71,7 @@ class InfiniteScrollWithIntersectionObserver extends React.Component {
 	}
 }
 
-class InfiniteScrollWithScrollEvent extends React.Component {
+class InfiniteScrollWithScrollEvent extends Component {
 	static propTypes = propTypeDefinition;
 	static displayName = 'InfiniteScroll';
 

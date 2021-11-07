@@ -1,6 +1,6 @@
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import FollowLink from './follow-link';
@@ -12,7 +12,7 @@ function getDisplayURL( url ) {
 	return ( parser.hostname + parser.pathname ).replace( /\/$/, '' );
 }
 
-export class UserBlock extends React.Component {
+export class UserBlock extends Component {
 	/**
 	 * Format a timestamp for showing how long
 	 * ago an event occurred. Specifically here

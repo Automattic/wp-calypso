@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -9,7 +9,7 @@ export function usePersistentSelectedDomain(
 	currentDomain?: DomainSuggestion
 ): DomainSuggestion | undefined {
 	// Keep the users selected domain in local state so we can always show it to the user.
-	const [ persistentSelectedDomain, setPersistentSelectedDomain ] = React.useState<
+	const [ persistentSelectedDomain, setPersistentSelectedDomain ] = useState<
 		DomainSuggestion | undefined
 	>();
 
@@ -19,7 +19,7 @@ export function usePersistentSelectedDomain(
 			? [ existingSubdomain, ...domainSuggestions ]
 			: domainSuggestions;
 
-	React.useEffect( () => {
+	useEffect( () => {
 		const currentDomainIsInSuggestions = domainSuggestionsWithSubdomain?.some(
 			( suggestion ) => suggestion.domain_name === currentDomain?.domain_name
 		);

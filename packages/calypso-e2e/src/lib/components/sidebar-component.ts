@@ -1,5 +1,6 @@
 import { ElementHandle, Page } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import { getCalypsoURL } from '../../data-helper';
 import { NavbarComponent } from './navbar-component';
 
 const selectors = {
@@ -29,6 +30,7 @@ export class SidebarComponent {
 	 * @returns the ElementHandle for the sidebar
 	 */
 	async waitForSidebarInitialization(): Promise< ElementHandle > {
+		await this.page.waitForLoadState( 'load' );
 		const sidebarElementHandle = await this.page.waitForSelector( selectors.sidebar );
 		await sidebarElementHandle.waitForElementState( 'stable' );
 
@@ -40,82 +42,53 @@ export class SidebarComponent {
 	 *
 	 * @param {string} item Plaintext representation of the top level heading.
 	 * @param {string} subitem Plaintext representation of the child level heading.
-	 * @param {number} retries Number of retries in the case of navigation failure.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async navigate( item: string, subitem?: string, retries = 3 ): Promise< void > {
+	async navigate( item: string, subitem?: string ): Promise< void > {
+		await this.waitForSidebarInitialization();
+
 		if ( getTargetDeviceName() === 'mobile' ) {
 			await this.openMobileSidebar();
 		}
 
+		// Top level menu item selector.
 		const itemSelector = `${ selectors.sidebar } :text-is("${ item }"):visible`;
-		await this.scrollItemIntoViewIfNeeded( itemSelector );
+		await this.page.dispatchEvent( itemSelector, 'click' );
+
+		// Sub-level menu item selector.
+		if ( subitem ) {
+			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
+			await Promise.all( [
+				this.page.waitForNavigation(),
+				this.page.dispatchEvent( subitemSelector, 'click' ),
+			] );
+		}
+
+		/**
+		 * Do not verify selected menu items or retry if navigation takes user out of
+		 * Calypso (eg. WP-Admin, Widgets editor).
+		 */
+		const currentURL = this.page.url();
+		if ( ! currentURL.startsWith( getCalypsoURL() ) ) {
+			return;
+		}
+
+		// Some menu items (eg. Comments, Stats) do not have a submenu. In these cases,
+		// the `.selected` class is applied to the top level menu.
+		let selectedMenuItem = `${ selectors.sidebar } .selected :text-is("${ item }")`;
 
 		if ( subitem ) {
-			// Click top-level item without waiting for navigation if targeting subitem.
-			await this.page.click( itemSelector );
-
-			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
-			await this.scrollItemIntoViewIfNeeded( subitemSelector );
-
-			await Promise.all( [ this.page.waitForNavigation(), this.page.click( subitemSelector ) ] );
-		} else {
-			await Promise.all( [ this.page.waitForNavigation(), this.page.click( itemSelector ) ] );
+			selectedMenuItem = `${ selectors.sidebar } .selected :text-is("${ subitem }")`;
 		}
 
-		/**
-		 * Do not attempt to retry if we've navigated outside wp.com as the sidebar
-		 * is no longer present.
-		 */
-		const currentURL = await this.page.url();
-		if ( ! currentURL.startsWith( 'https://wordpress.com' ) ) {
-			return;
-		}
-
-		/**
-		 * Retry if the click missed the expected item. This can happen because of
-		 * the lazy-loading nature of the sidenav items.
-		 */
-		try {
-			const selectedItemSelector = `${ selectors.sidebar } .selected :text-is("${
-				subitem || item
-			}")`;
-			await this.page.waitForSelector( selectedItemSelector, {
-				timeout: 3000,
+		// Verify the expected item or subitem is selected.
+		await Promise.all( [
+			this.page.waitForSelector( selectedMenuItem, {
+				timeout: 10000,
 				state: 'attached',
-			} );
-			return;
-		} catch {
-			if ( retries === 0 ) {
-				const itemPath = subitem ? `${ item } > ${ subitem }` : item;
-				throw new Error( `Couldn't navigate to ${ itemPath }: Expected (sub)item was not active.` );
-			}
-			await this.page.reload();
-			return this.navigate( item, subitem, retries - 1 );
-		}
-	}
-
-	/**
-	 * Scrolls to reveal the target element if required. This workaround is necessary as the sidebar
-	 * is 'sticky' in calypso, so a traditional scroll behavior does not adequately expose the sidebar
-	 * element.
-	 *
-	 * @param {string} selector Selector for for the target item.
-	 * @returns {Promise<ElementHandle>} The evaluated element's handle.
-	 */
-	async scrollItemIntoViewIfNeeded( selector: string ): Promise< ElementHandle > {
-		const elementHandle = await this.page.waitForSelector( selector, { state: 'attached' } );
-
-		await this.page.evaluate( ( element ) => {
-			const elementBottom = element.getBoundingClientRect().bottom;
-			const isOutsideViewport = window.innerHeight < elementBottom;
-
-			if ( isOutsideViewport ) {
-				window.scrollTo( 0, elementBottom - window.innerHeight );
-			}
-		}, elementHandle );
-
-		return elementHandle;
+			} ),
+			this.page.waitForSelector( '.focus-content' ),
+		] );
 	}
 
 	/**

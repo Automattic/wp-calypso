@@ -1,4 +1,3 @@
-import React from 'react';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import recurringImage from 'calypso/assets/images/earn/recurring.svg';
 import simplePaymentsImage from 'calypso/assets/images/earn/simple-payments.svg';

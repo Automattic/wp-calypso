@@ -1,6 +1,6 @@
 import { memoize, pick, shuffle, values } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import MultipleChoiceAnswer from './answer';

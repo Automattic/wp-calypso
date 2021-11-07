@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Children, cloneElement, Component } from 'react';
 
 const noop = () => {};
 
@@ -31,7 +31,7 @@ export default class TrackInputChanges extends Component {
 
 	render() {
 		// Multiple children not supported
-		const child = React.Children.only( this.props.children );
+		const child = Children.only( this.props.children );
 
 		const props = {
 			...child.props,
@@ -49,6 +49,6 @@ export default class TrackInputChanges extends Component {
 			},
 		};
 
-		return React.cloneElement( child, props );
+		return cloneElement( child, props );
 	}
 }

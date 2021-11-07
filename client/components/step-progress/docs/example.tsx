@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import React, { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import StepProgress from 'calypso/components/step-progress';
 
 const StepProgressExample: FunctionComponent = () => {

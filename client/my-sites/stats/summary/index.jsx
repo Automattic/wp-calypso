@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import page from 'page';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';

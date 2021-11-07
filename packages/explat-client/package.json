@@ -26,7 +26,8 @@
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-polyfills": "^1.0.0",
-		"typescript": "^4.4.2"
+		"@automattic/calypso-polyfills": "^2.0.0",
+		"@automattic/calypso-typescript-config": "^1.0.0",
+		"typescript": "^4.4.4"
 	}
 }

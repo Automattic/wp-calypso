@@ -6,7 +6,7 @@ import { ENTER, TAB } from '@wordpress/keycodes';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { remove } from 'lodash';
-import React from 'react';
+import * as React from 'react';
 import useTyper from '../../../hooks/use-typer';
 import { recordVerticalSelection } from '../../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';

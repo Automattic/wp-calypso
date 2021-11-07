@@ -4,7 +4,7 @@ import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytic
 import { retarget as retargetAdTrackers } from 'calypso/lib/analytics/ad-tracking';
 import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
 import { updateQueryParamsTracking } from 'calypso/lib/analytics/sem';
-import { saveCouponQueryArgument } from 'calypso/lib/analytics/utils';
+import { refreshCountryCodeCookieGdpr, saveCouponQueryArgument } from 'calypso/lib/analytics/utils';
 import { gaRecordPageView } from './ga';
 import { processQueue } from './queue';
 import { referRecordPageView } from './refer';
@@ -15,7 +15,7 @@ export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) 
 	setTimeout( () => {
 		// Tracks, Google Analytics, Refer platform.
 		recordTracksPageViewWithPageParams( urlPath, params );
-		gaRecordPageView( urlPath, pageTitle, options?.useJetpackGoogleAnalytics );
+		safeGoogleAnalyticsPageView( urlPath, pageTitle, options?.useJetpackGoogleAnalytics );
 		referRecordPageView();
 
 		// Retargeting.
@@ -29,4 +29,13 @@ export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) 
 		// Process queue.
 		processQueue();
 	}, 0 );
+}
+
+async function safeGoogleAnalyticsPageView(
+	urlPath,
+	pageTitle,
+	useJetpackGoogleAnalytics = false
+) {
+	await refreshCountryCodeCookieGdpr();
+	gaRecordPageView( urlPath, pageTitle, useJetpackGoogleAnalytics );
 }

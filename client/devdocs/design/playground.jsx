@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import { keys } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -12,7 +12,7 @@ import { getExampleCodeFromComponent } from './playground-utils';
 import './playground.scss';
 import './syntax.scss';
 
-export default class DesignAssets extends React.Component {
+export default class DesignAssets extends Component {
 	static displayName = 'DesignAssets';
 
 	state = {

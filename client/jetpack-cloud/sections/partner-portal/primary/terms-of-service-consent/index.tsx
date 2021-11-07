@@ -1,6 +1,6 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement, useCallback, useState } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';

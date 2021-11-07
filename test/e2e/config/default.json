@@ -18,11 +18,6 @@
 	"reportWarningsToSlack": false,
 	"closeBrowserOnComplete": true,
 	"highlightElements": false,
-	"artifacts": {
-		"screenshot": "screenshots",
-		"video": "screenshots/videos",
-		"log": "."
-	},
 	"viewportName": "desktop",
 	"locale": "en",
 	"sauceConfigurations": {

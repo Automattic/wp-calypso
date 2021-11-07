@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import FeedItem from './feed-item';
 import SiteItem from './site-item';
 import TagItem from './tag-item';

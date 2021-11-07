@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
@@ -18,7 +18,7 @@ import './style.scss';
 //We want those taxonomies if they are used to be presented in this order
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
 
-class ThemesMagicSearchCard extends React.Component {
+class ThemesMagicSearchCard extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		onSearch: PropTypes.func.isRequired,
@@ -41,7 +41,7 @@ class ThemesMagicSearchCard extends React.Component {
 		};
 	}
 
-	popoverButtonRef = React.createRef();
+	popoverButtonRef = createRef();
 
 	setSuggestionsRefs = ( key ) => ( suggestionComponent ) => {
 		this.suggestionsRefs[ key ] = suggestionComponent;

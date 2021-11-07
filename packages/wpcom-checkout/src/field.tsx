@@ -1,7 +1,7 @@
 import { Button } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 
 // Disabling this to make migrating files easier
 /* eslint-disable @typescript-eslint/no-use-before-define */

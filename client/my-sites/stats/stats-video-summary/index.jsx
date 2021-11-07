@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

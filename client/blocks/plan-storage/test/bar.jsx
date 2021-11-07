@@ -13,7 +13,6 @@ import {
 } from '@automattic/calypso-products';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { PlanStorageBar } from '../bar';
 
 describe( 'PlanStorageBar basic tests', () => {

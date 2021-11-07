@@ -2,7 +2,7 @@ import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
 import { localize } from 'i18n-calypso';
 import { sortBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import DataType from './data-type';
 
 import './style.scss';

@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import launchedIllustration from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import {

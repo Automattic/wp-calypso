@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React from 'react';
 
 const noop = () => {};
 

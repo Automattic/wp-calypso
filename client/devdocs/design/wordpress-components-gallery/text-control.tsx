@@ -1,5 +1,5 @@
 import { TextControl } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const TextControlExample = () => {
 	const [ value, setValue ] = useState( '' );

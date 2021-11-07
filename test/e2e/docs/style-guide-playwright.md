@@ -509,7 +509,7 @@ it( 'Search for ${string}' );
 
 Each test file should only contain at most 1 top-level `describe` block.
 
-There is no restriction on the number `describe` blocks that are not top-level, nor a restriction on the depth of `describe` blocks.
+Additionally, you should avoid going too deep on the layers of nested `describe` blocks beneath that top level, as it can make the overall flow of the spec a bit more confusing to follow.
 
 ---
 

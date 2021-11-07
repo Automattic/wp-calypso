@@ -1,6 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 class Skeleton extends Component {
 	render() {

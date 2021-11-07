@@ -1,7 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { addQueryArgs } from 'calypso/lib/url';

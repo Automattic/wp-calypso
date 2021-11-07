@@ -1,4 +1,3 @@
-import React from 'react';
 import { TimeMismatchWarning } from 'calypso/blocks/time-mismatch-warning';
 
 const TimeMismatchWarningExample = () => {

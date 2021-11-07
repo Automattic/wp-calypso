@@ -2,7 +2,7 @@ import { ScreenReaderText, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { reject } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { selectMediaItems } from 'calypso/state/media/actions';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';

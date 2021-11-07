@@ -1,6 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -43,7 +43,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-class DomainManagementNavigationEnhanced extends React.Component {
+class DomainManagementNavigationEnhanced extends Component {
 	getEmail() {
 		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { emailForwardsCount } = domain;
@@ -557,7 +557,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 	renderRegisteredDomainNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getNameServers() }
 				{ this.getEmail() }
@@ -566,23 +566,23 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
 	renderSiteRedirectNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getRedirectSettings() }
 				{ this.getDeleteDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
 	renderMappedDomainNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getDnsRecords() }
 				{ this.getEmail() }
@@ -592,28 +592,28 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
 	renderTransferInDomainNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getDnsRecords() }
 				{ this.getSecurity() }
 				{ this.getDeleteDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
 	renderWpcomDomainNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getSiteAddressChange() }
 				{ this.getPickCustomDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

@@ -1,13 +1,13 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { dnsTemplates } from 'calypso/lib/domains/constants';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import EmailProvider from '../dns/email-provider';
 import DnsTemplateSelector from './dns-template-selector';
 
-class DnsTemplates extends React.Component {
+class DnsTemplates extends Component {
 	constructor( props ) {
 		super( props );
 

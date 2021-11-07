@@ -11,6 +11,7 @@ const selectors = {
 export class ClicktoTweetBlock {
 	// Static properties.
 	static blockName = 'Click to Tweet';
+	static blockEditorSelector = '[aria-label="Block: Click to Tweet"]';
 	block: ElementHandle;
 
 	/**

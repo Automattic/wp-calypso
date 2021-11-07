@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.signup__step.is-design {
+.signup__step.is-design-setup-site, .signup__step.is-difm-design-setup-site {
 	.step-wrapper {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -37,11 +37,61 @@
 
 	// Ugly, but necessary to cancel out some signup styles
 	// without causing regressions to other parts of `/start`
-	button {
+	button:not( .is-primary ) {
 		body.is-section-signup .layout:not( .dops ) & {
 			font-size: inherit;
 			padding-top: 0;
 			padding-bottom: 0;
 		}
+	}
+
+	.design-picker__grid {
+		grid-template-columns: 1fr;
+
+		@include break-medium {
+			grid-template-columns: 1fr 1fr;
+			column-gap: 49px;
+			row-gap: 39px;
+		}
+	}
+
+	.action-buttons {
+		@include break-small {
+			background-color: transparent;
+		}
+	}
+}
+
+.design-picker__preview {
+	padding-bottom: 30px;
+
+	.step-wrapper__content {
+		height: calc( 100vh - 256px );
+		max-height: 540px;
+	}
+
+	@include break-small {
+		.step-wrapper__header,
+		.step-wrapper__content {
+			transform: translateY( -48px );
+		}
+
+		.step-wrapper__content {
+			max-height: 960px;
+		}
+	}
+}
+
+.design-picker__web-preview {
+	.web-preview__frame-wrapper.is-resizable {
+		background-color: transparent;
+	}
+
+	.web-preview__frame {
+		border: 1px solid rgba( 0, 0, 0, 0.12 );
+		border-top-width: 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 0 0 6px 6px;
+		box-sizing: border-box;
 	}
 }

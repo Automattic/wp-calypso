@@ -1,6 +1,6 @@
 import i18n from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -61,7 +61,7 @@ function renderPeopleList( context, next ) {
 	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) );
 
-	context.primary = React.createElement( PeopleList, {
+	context.primary = createElement( PeopleList, {
 		filter: filter,
 		search: context.query.s,
 	} );
@@ -74,7 +74,7 @@ function renderInvitePeople( context, next ) {
 
 	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 
-	context.primary = React.createElement( InvitePeople, {
+	context.primary = createElement( InvitePeople, {
 		site: site,
 	} );
 	next();
@@ -83,14 +83,14 @@ function renderInvitePeople( context, next ) {
 function renderPeopleInvites( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Invites', { textOnly: true } ) ) );
 
-	context.primary = React.createElement( PeopleInvites );
+	context.primary = createElement( PeopleInvites );
 	next();
 }
 
 function renderPeopleInviteDetails( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Invite Details', { textOnly: true } ) ) );
 
-	context.primary = React.createElement( PeopleInviteDetails, {
+	context.primary = createElement( PeopleInviteDetails, {
 		inviteKey: context.params.invite_key,
 	} );
 	next();
@@ -99,7 +99,7 @@ function renderPeopleInviteDetails( context, next ) {
 function renderSingleTeamMember( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 
-	context.primary = React.createElement( EditTeamMember, {
+	context.primary = createElement( EditTeamMember, {
 		userLogin: context.params.user_login,
 	} );
 	next();

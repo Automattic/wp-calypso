@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import { like, unlike } from 'calypso/state/posts/likes/actions';

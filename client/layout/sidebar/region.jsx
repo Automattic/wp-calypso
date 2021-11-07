@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import React from 'react';
 import SkipNavigation from './skip-navigation';
 
 const SidebarRegion = ( { children, className } ) => (

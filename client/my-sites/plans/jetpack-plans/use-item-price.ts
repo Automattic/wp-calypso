@@ -13,7 +13,7 @@ import {
 	isRequestingSiteProducts,
 } from 'calypso/state/sites/products/selectors';
 import type { SelectorProduct } from './types';
-import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
+import type { PriceTierEntry } from '@automattic/calypso-products';
 
 interface ItemPrices {
 	isFetching: boolean | null;

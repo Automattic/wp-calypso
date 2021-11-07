@@ -1,10 +1,10 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 import './style.scss';
 
-class InviteFormHeader extends React.Component {
+class InviteFormHeader extends Component {
 	static displayName = 'InviteFormHeader';
 
 	clickedSiteLink = () => {

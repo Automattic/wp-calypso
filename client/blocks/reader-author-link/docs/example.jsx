@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import React from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 
 const ReaderAuthorLinkExample = () => {

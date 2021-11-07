@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -27,7 +27,7 @@ import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 
-class MappedDomainType extends React.Component {
+class MappedDomainType extends Component {
 	renderSettingUpNameserversAndARecords() {
 		const { domain, translate } = this.props;
 		if ( this.props.isJetpackSite && ! this.props.isSiteAutomatedTransfer ) {
@@ -71,7 +71,7 @@ class MappedDomainType extends React.Component {
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<div className="mapped-domain-type__main-content">
 					<p>{ setupInstructionsMessage }</p>
 					<DomainMappingInstructions
@@ -84,7 +84,7 @@ class MappedDomainType extends React.Component {
 					/>
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

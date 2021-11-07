@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import SpinnerButton from 'calypso/components/spinner-button';

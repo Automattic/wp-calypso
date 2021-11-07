@@ -4,7 +4,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { findIndex } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Children, Component } from 'react';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 const noop = () => {};
@@ -12,7 +12,7 @@ const debug = debugFactory( 'calypso:forms:sortable-list' );
 
 import './style.scss';
 
-class SortableList extends React.Component {
+class SortableList extends Component {
 	static propTypes = {
 		direction: PropTypes.oneOf( [ 'horizontal', 'vertical' ] ),
 		allowDrag: PropTypes.bool,
@@ -31,7 +31,7 @@ class SortableList extends React.Component {
 		position: null,
 	};
 
-	listRef = React.createRef();
+	listRef = createRef();
 	itemsRefs = new Map();
 	itemShadowRefs = new Map();
 
@@ -263,7 +263,7 @@ class SortableList extends React.Component {
 	getOrderedListItemElements = () => {
 		this.itemsRefs.clear();
 		this.itemShadowRefs.clear();
-		return React.Children.map(
+		return Children.map(
 			this.props.children,
 			function ( child, index ) {
 				const isActive = this.state.activeIndex === index;
@@ -285,7 +285,7 @@ class SortableList extends React.Component {
 				if ( isActive ) {
 					style = { ...style, ...this.state.position };
 				}
-				const itemRef = React.createRef();
+				const itemRef = createRef();
 				this.itemsRefs.set( 'wrap-' + index, itemRef );
 				const item = (
 					<li
@@ -300,7 +300,7 @@ class SortableList extends React.Component {
 				);
 
 				if ( isActive && isDraggable ) {
-					const shadowRef = React.createRef();
+					const shadowRef = createRef();
 					this.itemShadowRefs.set( 'wrap-shadow-' + index, shadowRef );
 					return [
 						<li

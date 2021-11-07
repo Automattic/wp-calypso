@@ -7,13 +7,11 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { some } from 'lodash';
-import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
 import './style.scss';
@@ -21,17 +19,17 @@ import './style.scss';
 const DATE_FORMAT_SHORT = 'MMMM D';
 const DATE_FORMAT_LONG = 'dddd, MMMM Do LT';
 
-const GMClosureNotice = ( {
+export default function GMClosureNotice( {
 	priorityChatClosesAt,
 	priorityChatReopensAt,
 	compact,
 	basicChatClosesAt,
 	basicChatReopensAt,
 	displayAt,
-	purchases,
-} ) => {
+} ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const purchases = useSelector( getUserPurchases );
 
 	const hasBusinessOrEcommercePlan = some(
 		purchases,
@@ -164,9 +162,4 @@ const GMClosureNotice = ( {
 			<hr />
 		</div>
 	);
-};
-
-export default connect( ( state ) => {
-	const userId = getCurrentUserId( state );
-	return { purchases: getUserPurchases( state, userId ) };
-} )( GMClosureNotice );
+}

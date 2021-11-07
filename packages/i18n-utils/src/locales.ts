@@ -7,8 +7,8 @@
 export type Locale = string;
 export const i18nDefaultLocaleSlug: Locale = 'en';
 export const localesWithBlog: Locale[] = [ 'en', 'ja', 'es', 'pt', 'fr', 'pt-br' ];
-export const localesWithPrivacyPolicy: Locale[] = [ 'en', 'fr', 'de' ];
-export const localesWithCookiePolicy: Locale[] = [ 'en', 'fr', 'de' ];
+export const localesWithPrivacyPolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
+export const localesWithCookiePolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
 
 type LocaleSubdomain = string;
 

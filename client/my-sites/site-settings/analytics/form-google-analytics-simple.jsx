@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -138,10 +138,7 @@ const GoogleAnalyticsSimpleForm = ( {
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
-								<InlineSupportLink
-									supportPostId={ 98905 }
-									supportLink="https://wordpress.com/support/google-analytics/#get-your-measurement-id"
-								>
+								<InlineSupportLink supportContext="google-analytics-measurement-id">
 									{ translate( 'Where can I find my Measurement ID?' ) }
 								</InlineSupportLink>
 							</FormFieldset>

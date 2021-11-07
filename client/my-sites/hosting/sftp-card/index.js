@@ -1,7 +1,7 @@
-import { Card, Button } from '@automattic/components';
+import { Card, Button, Gridicon } from '@automattic/components';
 import { PanelBody } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import ExternalLink from 'calypso/components/external-link';
@@ -51,11 +51,22 @@ export const SftpCard = ( {
 	// State for clipboard copy button for both username and password data
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
+	const [ isCopied, setIsCopied ] = useState( {
+		password: false,
+		url: false,
+		port: false,
+		username: false,
+	} );
 
 	const onDestroy = () => {
 		if ( password ) {
 			removePasswordFromState( siteId, currentUserId, username );
 		}
+	};
+
+	const onCopy = ( field ) => {
+		setIsCopied( { password: false, url: false, port: false, username: false } );
+		setIsCopied( { [ field ]: true } );
 	};
 
 	const resetPassword = () => {
@@ -93,8 +104,16 @@ export const SftpCard = ( {
 				<>
 					<div className="sftp-card__copy-field sftp-card__password-field">
 						<FormTextInput className="sftp-card__copy-input" value={ password } onChange={ noop } />
-						<ClipboardButton className="sftp-card__copy-button" text={ password } compact>
-							{ translate( 'Copy', { context: 'verb' } ) }
+						<ClipboardButton
+							className="sftp-card__copy-button"
+							text={ password }
+							onCopy={ () => onCopy( 'password' ) }
+							compact
+						>
+							{ isCopied.password && <Gridicon icon="checkmark" /> }
+							{ isCopied.password
+								? translate( 'Copied!' )
+								: translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
 					<p className="sftp-card__password-warning">
@@ -195,8 +214,14 @@ export const SftpCard = ( {
 					<FormLabel>{ translate( 'URL' ) }</FormLabel>
 					<div className="sftp-card__copy-field">
 						<FormTextInput className="sftp-card__copy-input" value={ SFTP_URL } onChange={ noop } />
-						<ClipboardButton className="sftp-card__copy-button" text={ SFTP_URL } compact>
-							{ translate( 'Copy', { context: 'verb' } ) }
+						<ClipboardButton
+							className="sftp-card__copy-button"
+							text={ SFTP_URL }
+							onCopy={ () => onCopy( 'url' ) }
+							compact
+						>
+							{ isCopied.url && <Gridicon icon="checkmark" /> }
+							{ isCopied.url ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
 					<FormLabel>{ translate( 'Port' ) }</FormLabel>
@@ -209,16 +234,26 @@ export const SftpCard = ( {
 						<ClipboardButton
 							className="sftp-card__copy-button"
 							text={ SFTP_PORT.toString() }
+							onCopy={ () => onCopy( 'port' ) }
 							compact
 						>
-							{ translate( 'Copy', { context: 'verb' } ) }
+							{ isCopied.port && <Gridicon icon="checkmark" /> }
+							{ isCopied.port ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
 					<FormLabel>{ translate( 'Username' ) }</FormLabel>
 					<div className="sftp-card__copy-field">
 						<FormTextInput className="sftp-card__copy-input" value={ username } onChange={ noop } />
-						<ClipboardButton className="sftp-card__copy-button" text={ username } compact>
-							{ translate( 'Copy', { context: 'verb' } ) }
+						<ClipboardButton
+							className="sftp-card__copy-button"
+							text={ username }
+							onCopy={ () => onCopy( 'username' ) }
+							compact
+						>
+							{ isCopied.username && <Gridicon icon="checkmark" /> }
+							{ isCopied.username
+								? translate( 'Copied!' )
+								: translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
 					<FormLabel>{ translate( 'Password' ) }</FormLabel>

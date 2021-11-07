@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React from 'react';
+import { useCallback } from 'react';
 import Modal from 'react-modal';
 import ButtonBar from './button-bar';
 import type { Button, BaseButton } from './button-bar';
@@ -36,8 +36,8 @@ const Dialog = ( {
 	onClose,
 	shouldCloseOnEsc,
 }: Props ): JSX.Element => {
-	const close = React.useCallback( () => onClose?.(), [ onClose ] );
-	const onButtonClick = React.useCallback(
+	const close = useCallback( () => onClose?.(), [ onClose ] );
+	const onButtonClick = useCallback(
 		( button: BaseButton ) => {
 			if ( button.onClick ) {
 				button.onClick( () => onClose?.( button.action ) );

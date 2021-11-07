@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';

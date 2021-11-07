@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import closest from 'component-closest';
 import { truncate, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
@@ -38,7 +38,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class ReaderPostCard extends React.Component {
+class ReaderPostCard extends Component {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		post: PropTypes.object.isRequired,

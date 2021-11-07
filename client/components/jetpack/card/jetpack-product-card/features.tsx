@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import FeaturesItem from './features-item';
 import type { ProductCardFeatures, ProductCardFeaturesItem } from './types';
 

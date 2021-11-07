@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import DomainsLandingContentCard from '../content-card';
 import DomainsLandingHeader from '../header';

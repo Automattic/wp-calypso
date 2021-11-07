@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';

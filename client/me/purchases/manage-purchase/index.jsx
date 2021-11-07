@@ -12,7 +12,6 @@ import {
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isJetpackSearch,
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
@@ -30,7 +29,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
@@ -45,7 +44,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
 	getDisplayName,
 	getPartnerName,
@@ -58,10 +56,8 @@ import {
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
-	isPaidWithCreditCard,
 	isPartnerPurchase,
 	isRenewable,
-	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
 	purchaseType,
@@ -70,7 +66,6 @@ import {
 } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
@@ -132,7 +127,6 @@ class ManagePurchase extends Component {
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
-		userId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -351,15 +345,6 @@ class ManagePurchase extends Component {
 
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
-			const renewing = isRenewing( purchase );
-
-			if (
-				renewing &&
-				isPaidWithCreditCard( purchase ) &&
-				! cardProcessorSupportsUpdates( purchase )
-			) {
-				return null;
-			}
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
@@ -440,18 +425,9 @@ class ManagePurchase extends Component {
 		}
 
 		let text;
-		let link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
+		const link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
 
-		if (
-			isAtomicSite &&
-			isSubscription( purchase ) &&
-			! isGSuiteOrGoogleWorkspace( purchase ) &&
-			! isTitanMail( purchase ) &&
-			! isJetpackSearch( purchase )
-		) {
-			text = translate( 'Contact Support to Cancel your Subscription' );
-			link = CALYPSO_CONTACT;
-		} else if ( hasAmountAvailableToRefund( purchase ) ) {
+		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				text = translate( 'Cancel Domain and Refund' );
 			}
@@ -764,34 +740,30 @@ class ManagePurchase extends Component {
 							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
-					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
-					{ isProductOwner && ! preventRenewal && this.renderRenewButton() }
+					{ isProductOwner && (
+						<>
+							{ preventRenewal && this.renderSelectNewButton() }
+							{ ! preventRenewal && this.renderRenewButton() }
+						</>
+					) }
 				</Card>
 				<PurchasePlanDetails
 					purchaseId={ this.props.purchaseId }
 					isProductOwner={ isProductOwner }
 				/>
 
-				{ isProductOwner && preventRenewal && this.renderSelectNewNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					! renderMonthlyRenewalOption &&
-					this.renderRenewNowNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					renderMonthlyRenewalOption &&
-					this.renderRenewAnnuallyNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					renderMonthlyRenewalOption &&
-					this.renderRenewMonthlyNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					! isJetpackTemporarySite &&
-					this.renderUpgradeNavItem() }
-				{ isProductOwner && this.renderEditPaymentMethodNavItem() }
-				{ isProductOwner && this.renderCancelPurchaseNavItem() }
-				{ isProductOwner && ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
+				{ isProductOwner && (
+					<>
+						{ preventRenewal && this.renderSelectNewNavItem() }
+						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
+						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
+						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
+						{ ! preventRenewal && ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ this.renderEditPaymentMethodNavItem() }
+						{ this.renderCancelPurchaseNavItem() }
+						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
+					</>
+				) }
 			</Fragment>
 		);
 	}
@@ -837,7 +809,7 @@ class ManagePurchase extends Component {
 				{ this.props.siteId ? (
 					<QuerySitePurchases siteId={ this.props.siteId } />
 				) : (
-					<QueryUserPurchases userId={ this.props.userId } />
+					<QueryUserPurchases />
 				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
@@ -930,7 +902,6 @@ export default connect( ( state, props ) => {
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
 		isAtomicSite: isSiteAtomic( state, siteId ),
-		userId,
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
 		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),

@@ -1,7 +1,7 @@
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -34,6 +34,8 @@ function AddNewPaymentMethod() {
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
 		activePayButtonText: translate( 'Save card' ),
+		allowUseForAllSubscriptions: true,
+		initialUseForAllSubscriptions: true,
 	} );
 	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( Boolean ), [ stripeMethod ] );
 	const reduxDispatch = useDispatch();
@@ -62,6 +64,7 @@ function AddNewPaymentMethod() {
 					<PaymentMethodSelector
 						paymentMethods={ paymentMethodList }
 						successCallback={ goToPaymentMethods }
+						eventContext={ '/me/purchases/add-payment-method' }
 					/>
 				</Column>
 				<Column type="sidebar">

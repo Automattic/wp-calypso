@@ -35,3 +35,4 @@ export const GOOGLE_WORKSPACE_PRODUCT_FAMILY = 'Google Workspace';
  */
 export const GOOGLE_WORKSPACE_PRODUCT_TYPE = 'google-workspace';
 export const GSUITE_PRODUCT_TYPE = 'gsuite';
+export const GOOGLE_PROVIDER_NAME = 'google';

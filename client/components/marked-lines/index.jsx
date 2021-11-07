@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { map } from 'lodash';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 import './style.scss';
 

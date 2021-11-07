@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function chunkCssLinks( chunkAssets, isRTL = false ) {
 	const styleAssets = chunkAssets[ isRTL ? 'css.rtl' : 'css.ltr' ];
 	return styleAssets.map( ( asset ) => (

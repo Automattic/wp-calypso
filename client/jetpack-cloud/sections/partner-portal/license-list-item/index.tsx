@@ -1,6 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
+import * as React from 'react';
 import './style.scss';
 
 interface Props {

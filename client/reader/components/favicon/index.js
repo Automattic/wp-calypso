@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 function Favicon( props ) {
 	const { site, className, size } = props;

@@ -1,7 +1,7 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import VerticalNav from 'calypso/components/vertical-nav';

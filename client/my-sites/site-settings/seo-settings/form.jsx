@@ -7,7 +7,7 @@ import {
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, isEqual, mapValues, omit, pickBy } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -69,7 +69,7 @@ function stateForSite( site ) {
 	};
 }
 
-export class SeoForm extends React.Component {
+export class SeoForm extends Component {
 	static displayName = 'SiteSettingsFormSEO';
 
 	state = {

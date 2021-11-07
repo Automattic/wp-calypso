@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import useRemoveViewer from 'calypso/data/viewers/use-remove-viewer-mutation';
 import useViewersQuery from 'calypso/data/viewers/use-viewers-query';

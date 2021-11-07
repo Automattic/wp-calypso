@@ -1,3 +1,4 @@
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { requestSitePosts } from 'calypso/state/posts/actions';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
@@ -41,6 +42,10 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 			search_taxonomies,
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
+
+		// There are instances where switching themes toggles menu items. This action refreshes
+		// the admin bar to ensure that those updates are displayed in the UI.
+		dispatch( requestAdminMenu( siteId ) );
 
 		// Update pages in case the front page was updated on theme switch.
 		dispatch( requestSitePosts( siteId, { type: 'page' } ) );

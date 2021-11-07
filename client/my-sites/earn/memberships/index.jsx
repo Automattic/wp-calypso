@@ -8,7 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { orderBy } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';

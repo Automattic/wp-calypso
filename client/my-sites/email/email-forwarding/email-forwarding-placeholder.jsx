@@ -1,4 +1,3 @@
-import React from 'react';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 

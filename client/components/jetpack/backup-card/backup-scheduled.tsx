@@ -1,7 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import cloudScheduleIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-schedule.svg';

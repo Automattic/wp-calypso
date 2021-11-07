@@ -1,5 +1,5 @@
 import { AnglePickerControl } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const AnglePickerControlExample = () => {
 	const [ angle, setAngle ] = useState();

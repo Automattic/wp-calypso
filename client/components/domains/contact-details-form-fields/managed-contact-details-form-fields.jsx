@@ -1,9 +1,12 @@
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import {
+	tryToGuessPostalCodeFormat,
+	getCountryPostalCodeSupport,
+} from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { camelCase, deburr } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component, createElement } from 'react';
+import { Component, createElement } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -20,7 +23,6 @@ import {
 } from './custom-form-fieldsets/constants';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { getCountryPostalCodeSupport } from './helper';
 
 import './style.scss';
 
@@ -295,6 +297,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 		const countryCode = form.countryCode?.value ?? '';
 		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
+		const isOrganizationFieldRequired = form.extra?.value?.ca?.legalType === 'CCO';
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -305,8 +308,7 @@ export class ManagedContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Organization' ),
 							text: translate( '+ Add organization name' ),
-							toggled:
-								form.organization?.value || this.props.getIsFieldRequired?.( 'organization' ),
+							toggled: form.organization?.value || isOrganizationFieldRequired,
 						},
 						{
 							customErrorMessage: this.props.contactDetailsErrors?.organization,

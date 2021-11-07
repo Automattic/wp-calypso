@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { some } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import GalleryShortcode from 'calypso/components/gallery-shortcode';
 import { generateGalleryShortcode } from 'calypso/lib/media/utils';
 
-export default class EditorMediaModalGalleryPreviewShortcode extends React.Component {
+export default class EditorMediaModalGalleryPreviewShortcode extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		settings: PropTypes.object,

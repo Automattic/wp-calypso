@@ -1,23 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { shuffle } from '@automattic/js-utils';
 import { addQueryArgs } from '@wordpress/url';
-import { DESIGN_IMAGE_FOLDER } from '../constants';
 import { availableDesignsConfig } from './available-designs-config';
-import { shuffleArray } from './shuffle';
 import type { MShotsOptions } from '../components/mshots-image';
-import type { Design } from '../types';
+import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
 
-function getCanUseWebP() {
-	if ( typeof window !== 'undefined' ) {
-		const elem = document.createElement( 'canvas' );
-		if ( elem.getContext?.( '2d' ) ) {
-			return elem.toDataURL( 'image/webp' ).indexOf( 'data:image/webp' ) === 0;
-		}
-	}
-	return false;
-}
-
-export const getDesignUrl = ( design: Design, locale: string ): string => {
+export const getDesignUrl = (
+	design: Design,
+	locale: string,
+	options: DesignUrlOptions = {}
+): string => {
 	const theme = encodeURIComponent( design.theme );
 	const template = encodeURIComponent( design.template );
 
@@ -31,29 +24,21 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 			viewport_height: 700,
 			language: locale,
 			use_screenshot_overrides: true,
+			...options,
 		}
 	);
 };
 
 // Used for both prefetching and loading design screenshots
-export const mShotOptions = (): MShotsOptions => {
+export const mShotOptions = ( { preview }: Design, highRes: boolean ): MShotsOptions => {
 	// Take care changing these values, as the design-picker CSS animations are written for these values (see the *__landscape and *__portrait classes)
-	if ( isEnabled( 'gutenboarding/long-previews' ) ) {
-		return { vpw: 1600, vph: 1600, w: 600, screen_height: 3600 };
-	}
-	if ( isEnabled( 'gutenboarding/landscape-preview' ) ) {
-		return { vpw: 1600, vph: 1600, w: 600, h: 600 };
-	}
-	return { vpw: 1600, vph: 3000, w: 600, h: 1124 };
-};
-
-const canUseWebP = getCanUseWebP();
-
-// Bump the version query param here to cache bust the images after running bin/generate-gutenboarding-design-thumbnails.js
-export const getDesignImageUrl = ( design: Design ): string => {
-	return `/calypso/${ DESIGN_IMAGE_FOLDER }/${ design.slug }_${ design.template }_${
-		design.theme
-	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
+	return {
+		vpw: 1600,
+		vph: preview === 'static' ? 1040 : 1600,
+		// When `w` was 1200 it created a visual glitch on one thumbnail. #57261
+		w: highRes ? 1201 : 600,
+		screen_height: 3600,
+	};
 };
 
 interface AvailableDesignsOptions {
@@ -61,9 +46,15 @@ interface AvailableDesignsOptions {
 	useFseDesigns?: boolean;
 	randomize?: boolean;
 }
+
+/**
+ * To prevent the accumulation of tech debt, make duplicate entries for all Universal
+ * themes, one with `is_fse: true`, the other not. This tech debt can be eliminated
+ * by using the REST API for themes rather than a hardcoded list.
+ */
 export function getAvailableDesigns( {
 	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
-	useFseDesigns = isEnabled( 'gutenboarding/site-editor' ),
+	useFseDesigns = false,
 	randomize = false,
 }: AvailableDesignsOptions = {} ): AvailableDesigns {
 	let designs = { ...availableDesignsConfig };
@@ -78,8 +69,7 @@ export function getAvailableDesigns( {
 		};
 	}
 
-	// If we are in the FSE flow, only show FSE designs. In normal flows, remove
-	// the FSE designs.
+	// If we are opting into FSE, show only FSE designs.
 	designs = {
 		...designs,
 		featured: designs.featured.filter( ( design ) =>
@@ -88,7 +78,7 @@ export function getAvailableDesigns( {
 	};
 
 	if ( randomize ) {
-		designs.featured = shuffleArray( designs.featured );
+		designs.featured = shuffle( designs.featured );
 	}
 
 	// Force blank canvas design to always be first in the list

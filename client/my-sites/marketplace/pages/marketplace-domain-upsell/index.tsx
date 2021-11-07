@@ -7,13 +7,14 @@ import { HorizontalRule } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
 import MarketplaceShoppingCart from 'calypso/my-sites/marketplace/components/marketplace-shopping-cart';
 import {
@@ -69,7 +70,8 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		undefined
 	);
 	const [ isExpandedBasketView, setIsExpandedBasketView ] = useState( false );
-	const { addProductsToCart, removeProductFromCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { addProductsToCart, removeProductFromCart } = useShoppingCart( cartKey );
 	const previousPath = useSelector( getPreviousPath );
 	const selectedSite = useSelector( getSelectedSite );
 	const domainObject = useSelector( ( state ) =>

@@ -1,6 +1,6 @@
 import { Button, ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { connect } from 'react-redux';
 import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import WizardProgressBar from '../index';
 
 export default class WizardProgressBarExample extends Component {

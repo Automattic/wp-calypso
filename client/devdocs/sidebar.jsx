@@ -1,10 +1,10 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarHeading from 'calypso/layout/sidebar/heading';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 
-export default class DevdocsSidebar extends React.PureComponent {
+export default class DevdocsSidebar extends PureComponent {
 	static displayName = 'DevdocsSidebar';
 
 	isItemSelected( itemPath, isStrict = true ) {

@@ -2,7 +2,7 @@ import { Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';

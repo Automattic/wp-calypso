@@ -1,7 +1,7 @@
 import { ReportImpl } from './report';
 import { send } from './transports/logstash';
 
-const inFlightReporters: Map< string, Promise< ReportImpl > > = new Map();
+const inFlightReporters: Map< string, Promise< Report > > = new Map();
 
 /**
  * Starts a new report
@@ -9,6 +9,7 @@ const inFlightReporters: Map< string, Promise< ReportImpl > > = new Map();
  * @param id id of the report, must be passed to `stop()` to stop it
  * @param obj Options
  * @param obj.fullPageLoad `true` if the report should start measuring from the load of the page, `false` to start measuring from now.
+ * @param obj.collectors list of collectors to run
  */
 export const start = async (
 	id: string,
@@ -16,7 +17,7 @@ export const start = async (
 		fullPageLoad = true,
 		collectors = [],
 	}: { fullPageLoad?: boolean; collectors?: Collector[] } = {}
-) => {
+): Promise< void > => {
 	// There is a report in progress for this key, ignore this second call.
 	if ( inFlightReporters.has( id ) ) return;
 
@@ -30,7 +31,8 @@ export const start = async (
  * Stops a report and sends it to the transporter.
  *
  * @param id id of the report to send, comes from `start()`
- * @param collectors list of collectors to run
+ * @param obj options
+ * @param obj.collectors list of collectors to run
  * @returns `true` if the report was sent successfully, `false` otherwise
  */
 export const stop = async (

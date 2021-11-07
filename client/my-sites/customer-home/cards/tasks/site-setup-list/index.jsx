@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
@@ -265,6 +265,7 @@ const SiteSetupList = ( {
 									isCurrent={
 										useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
 									}
+									timing={ enhancedTask.timing }
 									onClick={
 										useAccordionLayout && isCurrent && showAccordionSelectedTask
 											? () => {

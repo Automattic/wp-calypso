@@ -4,39 +4,70 @@ import connectIllustration from 'calypso/assets/images/illustrations/domain-conn
 import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 
 const optionTitleText = {
-	transfer: __( 'Transfer your domain' ),
-	connect: __( 'Connect your domain' ),
+	get transfer() {
+		return __( 'Transfer your domain' );
+	},
+	get connect() {
+		return __( 'Connect your domain' );
+	},
 };
 
-export const optionInfo = {
-	transferSupported: {
-		illustration: transferIllustration,
-		titleText: optionTitleText.transfer,
-		topText: __( 'Manage your domain directly on WordPress.com' ),
-		learnMoreLink: INCOMING_DOMAIN_TRANSFER,
-		benefits: [
+const transferSupported = {
+	illustration: transferIllustration,
+	get titleText() {
+		return optionTitleText.transfer;
+	},
+	get topText() {
+		return __( 'Manage your domain directly on WordPress.com' );
+	},
+	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
+	get benefits() {
+		return [
 			__( "We'll renew your domain for another year" ),
 			__( 'Manage everything you need in one place' ),
 			__( 'Private domain registration and SSL certificate included for free' ),
-		],
+		];
 	},
-	transferNotSupported: {
-		illustration: transferIllustration,
-		titleText: optionTitleText.transfer,
-		topText: __( 'This domain cannot be transfered.' ),
-		learnMoreLink: INCOMING_DOMAIN_TRANSFER,
+};
+
+const transferNotSupported = {
+	illustration: transferIllustration,
+	get titleText() {
+		return optionTitleText.transfer;
 	},
-	connectSupported: {
-		illustration: connectIllustration,
-		titleText: optionTitleText.connect,
-		topText: __( 'Keep your domain with your current provider and point it to WordPress.com' ),
-		learnMoreLink: MAP_EXISTING_DOMAIN,
-		benefits: [ __( 'Keep your current provider' ), __( 'SSL certificate included for free' ) ],
+	get topText() {
+		return __( 'This domain cannot be transfered.' );
 	},
-	connectNotSupported: {
-		illustration: connectIllustration,
-		titleText: optionTitleText.connect,
-		topText: __( 'This domain cannot be connected.' ),
-		learnMoreLink: MAP_EXISTING_DOMAIN,
+	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
+};
+
+const connectSupported = {
+	illustration: connectIllustration,
+	get titleText() {
+		return optionTitleText.connect;
 	},
+	get topText() {
+		return __( 'Keep your domain with your current provider and point it to WordPress.com' );
+	},
+	learnMoreLink: MAP_EXISTING_DOMAIN,
+	get benefits() {
+		return [ __( 'Keep your current provider' ), __( 'SSL certificate included for free' ) ];
+	},
+};
+
+const connectNotSupported = {
+	illustration: connectIllustration,
+	get titleText() {
+		return optionTitleText.connect;
+	},
+	get topText() {
+		return __( 'This domain cannot be connected.' );
+	},
+	learnMoreLink: MAP_EXISTING_DOMAIN,
+};
+export const optionInfo = {
+	transferSupported,
+	transferNotSupported,
+	connectSupported,
+	connectNotSupported,
 };

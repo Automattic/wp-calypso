@@ -1,21 +1,20 @@
 import { PLAN_BUSINESS, FEATURE_UPLOAD_THEMES } from '@automattic/calypso-products';
-import React from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
-	const { requestingSitePlans, siteId, isVip, siteSlug, translate } = props;
+	const { currentPlan, isVip, requestingSitePlans, siteId, siteSlug, translate } = props;
 
-	const displayUpsellBanner = ! requestingSitePlans && ! isVip;
+	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
 
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;
@@ -53,4 +52,5 @@ export default connect( ( state, { siteId } ) => ( {
 	isVip: isVipSite( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	requestingSitePlans: isRequestingSitePlans( state, siteId ),
+	currentPlan: getCurrentPlan( state, siteId ),
 } ) )( ConnectedSingleSiteWpcom );

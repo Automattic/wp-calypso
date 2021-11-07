@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import { SITES_BLOG_STICKER_ADD } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';

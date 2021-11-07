@@ -1,10 +1,12 @@
+import { Gridicon } from '@automattic/components';
+import { BackButton } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -23,8 +25,13 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
-import { domainAddEmailUpsell, domainMapping } from 'calypso/my-sites/domains/paths';
+import {
+	domainAddEmailUpsell,
+	domainMapping,
+	domainManagementList,
+} from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -211,6 +218,13 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
+						<BackButton
+							className={ 'domain-search__go-back' }
+							href={ domainManagementList( selectedSiteSlug ) }
+						>
+							<Gridicon icon="arrow-left" size={ 18 } />
+							{ translate( 'Back' ) }
+						</BackButton>
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="domains__header">
 							<FormattedHeader
@@ -287,4 +301,4 @@ export default connect(
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
 	}
-)( withShoppingCart( localize( DomainSearch ) ) );
+)( withCartKey( withShoppingCart( localize( DomainSearch ) ) ) );

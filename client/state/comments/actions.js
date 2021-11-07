@@ -12,7 +12,6 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_REQUEST,
 	COMMENTS_SET_ACTIVE_REPLY,
-	COMMENTS_TREE_SITE_REQUEST,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
 } from 'calypso/state/action-types';
@@ -22,7 +21,6 @@ import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
 import 'calypso/state/data-layer/wpcom/comments';
 import 'calypso/state/data-layer/wpcom/sites/comment-counts';
-import 'calypso/state/data-layer/wpcom/sites/comments-tree';
 import 'calypso/state/data-layer/wpcom/sites/comments';
 import 'calypso/state/data-layer/wpcom/sites/posts/replies';
 
@@ -82,6 +80,8 @@ export const receiveCommentsError = ( { siteId, commentId } ) => ( {
  * @param {object} options options object.
  * @param {number} options.siteId site identifier
  * @param {number} options.postId post identifier
+ * @param {string} options.direction
+ * @param {boolean} options.isPoll
  * @param {string} options.status status filter. Defaults to approved posts
  * @returns {Function} action that requests comments for a given post
  */
@@ -116,7 +116,6 @@ export function requestPostComments( {
  * listed in the API docs:
  *
  * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
- *
  * @param {object} query API call parameters
  * @param {string} query.listType Type of list to return (required as 'site')
  * @param {number} query.siteId Site identifier
@@ -124,19 +123,6 @@ export function requestPostComments( {
  */
 export const requestCommentsList = ( query ) => ( {
 	type: COMMENTS_LIST_REQUEST,
-	query,
-} );
-
-/**
- * Creates an action that requests the comments tree for a given site.
- *
- * @param {object} query API call parameters
- * @param {number} query.siteId Site identifier
- * @param {string} query.status Status filter
- * @returns {object} Action that requests a comment tree
- */
-export const requestCommentsTreeForSite = ( query ) => ( {
-	type: COMMENTS_TREE_SITE_REQUEST,
 	query,
 } );
 
@@ -343,7 +329,6 @@ export const editComment = ( siteId, postId, commentId, comment ) => ( {
  * @param {Array<number>} options.commentIds list of commentIds to expand.
  * @param {number} options.postId postId for the comments to expand.
  * @param {string} options.displayType which displayType to set the comment to.
- *
  * @returns {object} reader expand comments action
  */
 export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {

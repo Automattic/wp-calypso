@@ -17,6 +17,7 @@ export const subscriptionFromApi = ( subscription ) =>
 			blog_ID: toValidId( subscription.blog_ID ),
 			feed_ID: toValidId( subscription.feed_ID ),
 			date_subscribed: Date.parse( subscription.date_subscribed ),
+			last_updated: Date.parse( subscription.last_updated ),
 			delivery_methods: subscription.delivery_methods,
 			is_owner: subscription.is_owner,
 			organization_id: subscription.organization_id,

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getTracksPropertiesForPost } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';

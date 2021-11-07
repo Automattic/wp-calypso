@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React from 'react';
+import { Component } from 'react';
 import PostComment from 'calypso/blocks/comments/post-comment';
 import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 
@@ -79,7 +79,7 @@ const commentsToShow = {
 	4: excerpt,
 };
 
-export default class PostCommentExample extends React.Component {
+export default class PostCommentExample extends Component {
 	static displayName = 'PostCommentExample';
 
 	render() {

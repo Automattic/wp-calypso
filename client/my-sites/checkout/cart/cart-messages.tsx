@@ -1,9 +1,10 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { ResponseCartMessage } from '@automattic/shopping-cart';
@@ -21,7 +22,8 @@ function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Eleme
 }
 
 export default function CartMessages(): null {
-	const { responseCart: cart, isLoading: isLoadingCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart: cart, isLoading: isLoadingCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 
 	const showErrorMessages = useCallback(

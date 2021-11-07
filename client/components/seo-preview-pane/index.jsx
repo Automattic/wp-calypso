@@ -1,7 +1,7 @@
 import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
 import { compact, find, get } from 'lodash';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge';
 import ReaderPreview from 'calypso/components/seo/reader-preview';

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { flowRight, get, pick } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FeedSettings from 'calypso/my-sites/site-settings/feed-settings';

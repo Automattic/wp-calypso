@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
 import { has, omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Spinner from 'calypso/components/spinner';
 import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
@@ -78,7 +78,7 @@ const hasProgressInfo = ( progress ) => {
 	return true;
 };
 
-class ImportingPane extends React.PureComponent {
+class ImportingPane extends PureComponent {
 	static displayName = 'ImportingPane';
 
 	static propTypes = {

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import ProductIcon from '../index';
 
 function ProductIconExample() {
@@ -102,6 +102,9 @@ function ProductIconExample() {
 				</div>
 				<div style={ iconStyle }>
 					<ProductIcon slug="jetpack_search_v2" />
+				</div>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_videopress" />
 				</div>
 			</div>
 		</Fragment>

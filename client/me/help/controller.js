@@ -1,6 +1,4 @@
-import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
-import React from 'react';
 import { login } from 'calypso/lib/paths';
 import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -54,6 +52,6 @@ export function contact( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <ContactComponent clientSlug={ config( 'client_slug' ) } />;
+	context.primary = <ContactComponent />;
 	next();
 }

@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
-import React from 'react';
 
 import './style.scss';
 

@@ -594,21 +594,6 @@
 	}
 }
 
-// If chat window is open
-.is-group-reader.has-chat {
-	.reader-post-card__post .reader-featured-image {
-		height: 100px;
-		margin-right: 0;
-		max-width: 100%;
-	}
-
-	.reader-share__button-label,
-	.comment-button__label-status,
-	.like-button__label-status {
-		display: none;
-	}
-}
-
 // Gallery cards
 .reader-post-card__gallery {
 	display: flex;

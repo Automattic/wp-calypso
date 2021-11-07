@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginBlock from 'calypso/blocks/login';

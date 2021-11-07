@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import googleAnalyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 

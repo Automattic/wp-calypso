@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { pick } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import Shortcode from 'calypso/blocks/shortcode';
 import { GalleryDefaultAttrs } from 'calypso/lib/media/constants';
 import { generateGalleryShortcode } from 'calypso/lib/media/utils';

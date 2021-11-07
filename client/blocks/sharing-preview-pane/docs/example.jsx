@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane';
 import QueryPosts from 'calypso/components/data/query-posts';

@@ -1,4 +1,8 @@
-export default ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) => {
+export default (
+	titleFormats,
+	type,
+	{ site, post = {}, tag = '', date = '', archiveTitle = '' }
+) => {
 	const processPiece = ( piece = {}, data ) =>
 		'string' === piece.type ? piece.value : data[ piece.type ] ?? '';
 
@@ -44,6 +48,7 @@ export default ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) 
 				siteName: site.name,
 				tagline: site.description,
 				date: date,
+				archiveTitle: archiveTitle,
 			} );
 
 		default:

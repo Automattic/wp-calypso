@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import useUpdateUserMutation from 'calypso/data/users/use-update-user-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

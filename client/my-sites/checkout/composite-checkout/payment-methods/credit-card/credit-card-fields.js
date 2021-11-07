@@ -8,12 +8,13 @@ import {
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import {
 	LeftColumn,
 	RightColumn,
 } from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
 import Spinner from 'calypso/my-sites/checkout/composite-checkout/components/spinner';
+import AssignToAllPaymentMethods from './assign-to-all-payment-methods';
 import ContactFields from './contact-fields';
 import CreditCardCvvField from './credit-card-cvv-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
@@ -21,12 +22,19 @@ import CreditCardLoading from './credit-card-loading';
 import CreditCardNumberField from './credit-card-number-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 
-export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields } ) {
+export default function CreditCardFields( {
+	shouldUseEbanx,
+	shouldShowTaxFields,
+	allowUseForAllSubscriptions,
+} ) {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const useForAllSubscriptions = useSelect( ( select ) =>
+		select( 'credit-card' ).useForAllSubscriptions()
+	);
 	const getField = ( key ) => fields[ key ] || {};
 	const getFieldValue = ( key ) => getField( key ).value ?? '';
 	const getErrorMessagesForField = ( key ) => {
@@ -36,9 +44,13 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 		}
 		return managedValue.errors ?? [];
 	};
-	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
-		'credit-card'
-	);
+	const {
+		setFieldValue,
+		changeBrand,
+		setCardDataError,
+		setCardDataComplete,
+		setUseForAllSubscriptions,
+	} = useDispatch( 'credit-card' );
 
 	// We need the countryCode for the country specific payment fields which have
 	// no country selector but require country data during validation and submit
@@ -163,6 +175,13 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 							shouldShowTaxFields={ shouldShowTaxFields }
 						/>
 					) }
+
+					{ allowUseForAllSubscriptions && (
+						<AssignToAllPaymentMethods
+							isChecked={ useForAllSubscriptions }
+							onChange={ setUseForAllSubscriptions }
+						/>
+					) }
 				</div>
 			</CreditCardFieldsWrapper>
 		</StripeFields>
@@ -175,10 +194,10 @@ const StripeFields = styled.div`
 
 function LoadingFields() {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<LoadingIndicator />
 			<CreditCardLoading />
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

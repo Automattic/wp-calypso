@@ -2,7 +2,6 @@ import { FEATURE_NO_ADS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';

@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import TokenField from 'calypso/components/token-field';
 import { unescapeAndFormatSpaces } from 'calypso/lib/formatting';
 
@@ -39,7 +39,7 @@ const suggestions = [
 	'sound',
 ];
 
-class TokenFieldWrapper extends React.Component {
+class TokenFieldWrapper extends Component {
 	state = {
 		tokenSuggestions: suggestions,
 		tokens: Object.freeze( [ 'foo', 'bar' ] ),
@@ -52,7 +52,6 @@ class TokenFieldWrapper extends React.Component {
 				value={ this.state.tokens }
 				displayTransform={ unescapeAndFormatSpaces }
 				onChange={ this._onTokensChange }
-				ref="tokenField"
 			/>
 		);
 	}

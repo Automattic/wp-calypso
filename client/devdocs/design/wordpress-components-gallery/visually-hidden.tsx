@@ -1,5 +1,4 @@
 import { VisuallyHidden } from '@wordpress/components';
-import React from 'react';
 
 const VisuallyHiddenExample = () => (
 	<>

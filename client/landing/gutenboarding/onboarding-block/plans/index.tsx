@@ -95,8 +95,15 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const header = (
 		<>
 			<div>
-				<Title>{ __( 'Select a plan' ) }</Title>
-				<SubTitle>
+				<Title data-e2e-string="Select a plan">{ __( 'Select a plan' ) }</Title>
+				<SubTitle
+					data-e2e-string={
+						billingPeriod === 'MONTHLY'
+							? 'Pick a plan that’s right for you. There is no risk, you can cancel your monthly plan for a full refund within %1$d days.'
+							: 'Pick a plan that’s right for you. There is no risk, you can cancel your annual plan for a full refund within %1$d days.'
+					}
+					data-e2e-string-params={ billingPeriod === 'MONTHLY' ? '[7]' : '[14]' }
+				>
 					{ billingPeriod === 'MONTHLY'
 						? sprintf(
 								/* translators: %1$d is number of days */

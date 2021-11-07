@@ -1,10 +1,10 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import Spinner from 'calypso/components/spinner';
 
-class CustomizerLoadingPanel extends React.Component {
+class CustomizerLoadingPanel extends Component {
 	static displayName = 'CustomizerLoadingPanel';
 
 	static propTypes = {

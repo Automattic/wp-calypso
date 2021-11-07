@@ -1,5 +1,4 @@
 const { getOptions } = require( 'loader-utils' );
-const config = require( '../../client/server/config' );
 
 /*
  * This sections-loader has one responsibility: adding import statements for the section modules.
@@ -51,31 +50,31 @@ function printSectionsAndPaths( sections ) {
 	}
 }
 
-function filterSectionsInDevelopment( sections ) {
-	const bundleEnv = config( 'env' );
-	if ( 'development' !== bundleEnv ) {
+function filterSectionsInDevelopment( sections, { forceAll, activeSections, enableByDefault } ) {
+	if ( forceAll ) {
 		return sections;
 	}
-
-	const activeSections = config( 'sections' );
-	const byDefaultEnableSection = config( 'enable_all_sections' );
 
 	return sections.filter( ( section ) => {
 		if ( activeSections && typeof activeSections[ section.name ] !== 'undefined' ) {
 			return activeSections[ section.name ];
 		}
-		return byDefaultEnableSection;
+		return enableByDefault;
 	} );
 }
 
 const loader = function () {
 	const options = getOptions( this ) || {};
-	const { onlyIsomorphic } = options;
+	const { onlyIsomorphic, forceAll, activeSections, enableByDefault } = options;
 	// look also at the legacy `forceRequire` option to allow smooth migration
 	const useRequire = options.useRequire || options.forceRequire;
 	let { include } = options;
 
-	let sections = filterSectionsInDevelopment( require( this.resourcePath ) );
+	let sections = filterSectionsInDevelopment( require( this.resourcePath ), {
+		forceAll,
+		activeSections,
+		enableByDefault,
+	} );
 
 	if ( include ) {
 		if ( ! Array.isArray( include ) ) {

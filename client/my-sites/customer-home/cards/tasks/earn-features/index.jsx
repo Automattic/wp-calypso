@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import { TASK_EARN_FEATURES } from 'calypso/my-sites/customer-home/cards/constants';

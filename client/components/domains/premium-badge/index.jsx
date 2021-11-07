@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import Badge from 'calypso/components/badge';
 import InfoPopover from 'calypso/components/info-popover';
 
 import './style.scss';
 
-class PremiumBadge extends React.Component {
+class PremiumBadge extends Component {
 	getPopoverText( restrictedPremium ) {
 		const { translate } = this.props;
 		if ( restrictedPremium ) {

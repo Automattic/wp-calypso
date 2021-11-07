@@ -1,6 +1,5 @@
 import { FormToggle, BaseControl } from '@wordpress/components';
 import classNames from 'classnames';
-import React from 'react';
 import SocialLogo from 'calypso/components/social-logo';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 

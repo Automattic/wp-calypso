@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';

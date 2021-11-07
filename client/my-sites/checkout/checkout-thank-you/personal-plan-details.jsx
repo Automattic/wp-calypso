@@ -2,7 +2,6 @@ import { isPersonal, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import adsRemovedImage from 'calypso/assets/images/illustrations/removed-ads.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';

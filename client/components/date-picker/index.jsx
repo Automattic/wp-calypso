@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { merge, map, filter, get, debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import DayPicker from 'react-day-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DayItem from './day';

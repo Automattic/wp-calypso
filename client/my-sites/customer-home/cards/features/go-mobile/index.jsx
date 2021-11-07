@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import CardHeading from 'calypso/components/card-heading';

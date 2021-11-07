@@ -1,14 +1,15 @@
 import { Button } from '@automattic/components';
+import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
+import { Icon, upload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
 import page from 'page';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
-import InlineSupportLink from 'calypso/components/inline-support-link';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
@@ -44,6 +45,13 @@ import PluginsList from './plugins-list';
 import './style.scss';
 
 export class PluginsMain extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			isMobile: isWithinBreakpoint( '<960px' ),
+		};
+	}
+
 	componentDidUpdate() {
 		const { currentPlugins } = this.props;
 
@@ -52,6 +60,13 @@ export class PluginsMain extends Component {
 			if ( ! pluginData ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}
+		} );
+	}
+
+	componentDidMount() {
+		// Change the isMobile state when the size of the browser changes.
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
+			this.setState( { isMobile } );
 		} );
 	}
 
@@ -304,10 +319,13 @@ export class PluginsMain extends Component {
 
 		let searchTitle;
 		if ( search ) {
-			searchTitle = this.props.translate( 'Suggested plugins for: %(searchQuery)s', {
+			searchTitle = this.props.translate( 'Suggested plugins for: {{b}}%(searchQuery)s{{/b}}', {
 				textOnly: true,
 				args: {
 					searchQuery: search,
+				},
+				components: {
+					b: <b />,
 				},
 			} );
 		}
@@ -356,7 +374,7 @@ export class PluginsMain extends Component {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
 	};
 
-	renderUploadPluginButton() {
+	renderUploadPluginButton( isMobile ) {
 		const { selectedSiteSlug, translate } = this.props;
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
@@ -366,9 +384,29 @@ export class PluginsMain extends Component {
 				href={ uploadUrl }
 				onClick={ this.handleUploadPluginButtonClick }
 			>
-				<span className="plugins__button-text">{ translate( 'Install plugin' ) }</span>
+				<Icon className="plugins__button-icon" icon={ upload } width={ 18 } height={ 18 } />
+				{ ! isMobile && <span className="plugins__button-text">{ translate( 'Upload' ) }</span> }
 			</Button>
 		);
+	}
+
+	getNavigationItems() {
+		const { search, selectedSiteSlug } = this.props;
+		const navigationItems = [
+			{ label: this.props.translate( 'Plugins' ), href: `/plugins/${ selectedSiteSlug || '' }` },
+			{
+				label: this.props.translate( 'Manage' ),
+				href: `/plugins/manage/${ selectedSiteSlug || '' }`,
+			},
+		];
+		if ( search ) {
+			navigationItems.push( {
+				label: this.props.translate( 'Search Results' ),
+				href: `/plugins/${ selectedSiteSlug || '' }?s=${ search }`,
+			} );
+		}
+
+		return navigationItems;
 	}
 
 	render() {
@@ -399,29 +437,16 @@ export class PluginsMain extends Component {
 				<QueryJetpackPlugins siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
-				<div className="plugins__main">
-					<div className="plugins__header">
-						<FormattedHeader
-							brandFont
-							className="plugins__page-heading"
-							headerText={ this.props.translate( 'Plugins' ) }
-							align="left"
-							subHeaderText={ this.props.translate(
-								'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									components: {
-										learnMoreLink: (
-											<InlineSupportLink supportContext="plugins" showIcon={ false } />
-										),
-									},
-								}
-							) }
-						/>
-						<div className="plugins__main-buttons">
-							{ this.renderAddPluginButton() }
-							{ this.renderUploadPluginButton() }
-						</div>
+				<FixedNavigationHeader
+					className="plugins__page-heading"
+					navigationItems={ this.getNavigationItems() }
+				>
+					<div className="plugins__main-buttons">
+						{ this.renderAddPluginButton() }
+						{ this.renderUploadPluginButton( this.state.isMobile ) }
 					</div>
+				</FixedNavigationHeader>
+				<div className="plugins__main">
 					<div className="plugins__main-header">
 						<SectionNav selectedText={ this.getSelectedText() }>
 							<NavTabs>{ navItems }</NavTabs>

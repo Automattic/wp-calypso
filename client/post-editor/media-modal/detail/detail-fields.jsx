@@ -1,8 +1,8 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { debounce, get, noop } from 'lodash';
+import { debounce, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
@@ -18,6 +18,8 @@ import { getMimePrefix, url } from 'calypso/lib/media/utils';
 import { updateMedia } from 'calypso/state/media/thunks';
 import EditorMediaModalFieldset from '../fieldset';
 
+const noop = () => {};
+
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -31,19 +33,20 @@ class EditorMediaModalDetailFields extends Component {
 
 	constructor() {
 		super( ...arguments );
-		this.persistChange = debounce( this._persistChange, 1000 );
+
+		// Save changes to server after 1 second delay
+		this.delayedSaveChange = debounce( this.saveChange, 1000 );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
-			this.persistChange.cancel();
-			this._persistChange();
-			this.setState( { modifiedItem: null } );
+			this.updateChange( true );
+			this.setState( { modifiedChanges: null } );
 		}
 	}
 
 	componentWillUnmount() {
-		this._persistChange();
+		this.updateChange( true );
 	}
 
 	bumpTitleStat = () => {
@@ -70,23 +73,39 @@ class EditorMediaModalDetailFields extends Component {
 		return getMimePrefix( this.props.item ) === prefix;
 	}
 
-	_persistChange() {
-		if ( ! this.props.site || ! this.state?.modifiedItem ) {
+	updateChange( saveImmediately = false ) {
+		const siteId = this.props.site?.ID;
+		const itemId = this.props.item?.ID;
+		const modifiedChanges = this.state?.modifiedChanges;
+		const hasChanges = siteId && itemId && modifiedChanges;
+
+		if ( ! hasChanges ) {
 			return;
 		}
 
-		this.props.updateMedia( this.props.site.ID, this.state.modifiedItem );
-		this.props.onUpdate( this.props.item.ID, this.state.modifiedItem );
+		// Update changes to local state immediately
+		this.props.onUpdate( itemId, modifiedChanges );
+
+		// Save changes immediately or after a delay
+		if ( saveImmediately ) {
+			this.saveChange( siteId, modifiedChanges );
+		} else {
+			this.delayedSaveChange( siteId, modifiedChanges );
+		}
+	}
+
+	saveChange( siteId, modifiedChanges ) {
+		this.props.updateMedia( siteId, modifiedChanges );
 	}
 
 	setFieldByName = ( name, value ) => {
-		const modifiedItem = Object.assign(
+		const modifiedChanges = Object.assign(
 			{ ID: this.props.item.ID },
-			get( this.state, 'modifiedItem', {} ),
+			get( this.state, 'modifiedChanges', {} ),
 			{ [ name ]: value }
 		);
 
-		this.setState( { modifiedItem }, this.persistChange );
+		this.setState( { modifiedChanges }, this.updateChange );
 	};
 
 	setFieldValue = ( { target } ) => {
@@ -104,7 +123,7 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	getItemValue( attribute ) {
-		const modifiedValue = get( this.state, [ 'modifiedItem', attribute ], null );
+		const modifiedValue = get( this.state, [ 'modifiedChanges', attribute ], null );
 		if ( modifiedValue !== null ) {
 			return modifiedValue;
 		}
@@ -168,14 +187,15 @@ class EditorMediaModalDetailFields extends Component {
 				label: 'R',
 				value: 'R-17',
 			},
-			{
-				label: 'X',
-				value: 'X-18',
-			},
 		];
-		const rating = this.getItemValue( 'rating' );
+		let rating = this.getItemValue( 'rating' );
 		if ( ! rating ) {
 			return;
+		}
+
+		// X-18 was previously supported but is now removed to better comply with our TOS.
+		if ( 'X-18' === rating ) {
+			rating = 'R-17';
 		}
 
 		return (
@@ -212,7 +232,7 @@ class EditorMediaModalDetailFields extends Component {
 					/>
 					<span>
 						{ this.props.translate(
-							'Display share menu and allow viewers to embed or download this video'
+							'Display share menu and allow viewers to copy a link or embed this video'
 						) }
 					</span>
 				</FormLabel>

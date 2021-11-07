@@ -4,7 +4,7 @@
 
 import { render, fireEvent, screen } from '@testing-library/react';
 import { registerBlockType, unregisterBlockType } from '@wordpress/blocks';
-import React from 'react';
+import * as React from 'react';
 import PagePatternModal from '../page-pattern-modal';
 
 const noop = () => undefined;

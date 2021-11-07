@@ -1,4 +1,3 @@
-import React from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
 export default function JetpackLogoExample() {

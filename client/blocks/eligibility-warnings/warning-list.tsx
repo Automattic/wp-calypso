@@ -1,13 +1,12 @@
 import { Gridicon } from '@automattic/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
-import React from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import ExternalLink from 'calypso/components/external-link';
 
 interface ExternalProps {
 	context: string | null;
-	warnings: import('state/automated-transfer/selectors').EligibilityWarning[];
+	warnings: import('calypso/state/automated-transfer/selectors').EligibilityWarning[];
 }
 
 type Props = ExternalProps & LocalizeProps;

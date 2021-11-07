@@ -1,4 +1,3 @@
-import React from 'react';
 import Head from 'calypso/components/head';
 import BrowsehappyBody from 'calypso/landing/browsehappy';
 import { chunkCssLinks } from './utils';

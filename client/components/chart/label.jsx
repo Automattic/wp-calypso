@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 
-export default class ChartLabel extends React.PureComponent {
+export default class ChartLabel extends PureComponent {
 	static propTypes = {
 		isRtl: PropTypes.bool,
 		label: PropTypes.string.isRequired,

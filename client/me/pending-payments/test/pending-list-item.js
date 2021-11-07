@@ -1,7 +1,6 @@
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
 import moment from 'moment';
-import React from 'react';
 import * as localizedMoment from 'calypso/components/localized-moment';
 import { PendingListItem } from '../pending-list-item';
 

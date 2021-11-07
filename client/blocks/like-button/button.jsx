@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { createElement, PureComponent } from 'react';
 import LikeIcons from './icons';
 
 import './style.scss';
@@ -101,7 +101,7 @@ class LikeButton extends PureComponent {
 		);
 
 		const href = isLink ? `/stats/post/${ postId }/${ slug }` : null;
-		return React.createElement(
+		return createElement(
 			containerTag,
 			omitBy(
 				{

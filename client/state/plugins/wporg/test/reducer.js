@@ -258,6 +258,7 @@ describe( 'wporg reducer', () => {
 				category: { popular: pagination },
 			} );
 		} );
+
 		test( 'should store plugin list pagination by multiple categories', () => {
 			const state = listsPagination(
 				{
@@ -276,6 +277,7 @@ describe( 'wporg reducer', () => {
 				},
 			} );
 		} );
+
 		test( 'should overwrite existing plugin list paginations', () => {
 			const state = listsPagination(
 				{
@@ -294,6 +296,58 @@ describe( 'wporg reducer', () => {
 				category: {
 					popular: pagination2,
 					new: pagination,
+				},
+			} );
+		} );
+
+		test( 'should store plugin list pagination by search term', () => {
+			const state = listsPagination( undefined, {
+				type: PLUGINS_WPORG_LIST_RECEIVE,
+				searchTerm: 'woocommerce',
+				pagination,
+			} );
+			expect( state ).to.deep.equal( {
+				search: { woocommerce: pagination },
+			} );
+		} );
+
+		test( 'should store plugin list pagination by multiple search terms', () => {
+			const state = listsPagination(
+				{
+					search: { woocommerce: pagination },
+				},
+				{
+					type: PLUGINS_WPORG_LIST_RECEIVE,
+					searchTerm: 'jetpack',
+					pagination: pagination2,
+				}
+			);
+			expect( state ).to.deep.equal( {
+				search: {
+					woocommerce: pagination,
+					jetpack: pagination2,
+				},
+			} );
+		} );
+
+		test( 'should overwrite existing search term paginations', () => {
+			const state = listsPagination(
+				{
+					search: {
+						woocommerce: pagination,
+						jetpack: pagination,
+					},
+				},
+				{
+					type: PLUGINS_WPORG_LIST_RECEIVE,
+					searchTerm: 'woocommerce',
+					pagination: pagination2,
+				}
+			);
+			expect( state ).to.deep.equal( {
+				search: {
+					woocommerce: pagination2,
+					jetpack: pagination,
 				},
 			} );
 		} );

@@ -1,7 +1,7 @@
 import autosize from 'autosize';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 
 import './style.scss';
@@ -11,7 +11,7 @@ export default class TextareaAutosize extends Component {
 		className: PropTypes.string,
 	};
 
-	textareaRef = React.createRef();
+	textareaRef = createRef();
 
 	componentDidMount() {
 		autosize( this.textareaRef.current );

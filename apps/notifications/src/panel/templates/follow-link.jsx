@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { useState } from 'react';
 import useSafe from '../helpers/use-safe';
 import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
@@ -17,8 +17,8 @@ const followStatTypes = {
 export const FollowLink = ( { site, noteType, isFollowing: initialIsFollowing } ) => {
 	const translate = useTranslate();
 
-	const [ isRequestRunning, setIsRequestRunning ] = React.useState( false );
-	const [ isFollowing, setIsFollowing ] = React.useState( initialIsFollowing );
+	const [ isRequestRunning, setIsRequestRunning ] = useState( false );
+	const [ isFollowing, setIsFollowing ] = useState( initialIsFollowing );
 
 	const safeSetIsFollowing = useSafe( setIsFollowing );
 	const safeSetIsRequestRunning = useSafe( setIsRequestRunning );

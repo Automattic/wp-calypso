@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PaymentLogo from 'calypso/components/payment-logo';
 import {

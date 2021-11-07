@@ -40,11 +40,12 @@
 		"@automattic/calypso-config": "^1.0.0-alpha.0",
 		"@automattic/calypso-url": "^1.0.0",
 		"i18n-calypso": "^5.0.0",
-		"react": "^16.12.0"
+		"react": "^17.0.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"chai": "^4.3.4",
-		"typescript": "^4.4.2"
+		"typescript": "^4.4.4"
 	},
 	"private": true
 }

@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
@@ -12,7 +12,7 @@ import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 import './style.scss';
 
-class Security2faBackupCodes extends React.Component {
+class Security2faBackupCodes extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -111,9 +111,7 @@ class Security2faBackupCodes extends React.Component {
 			<div>
 				<p>
 					{ this.props.translate(
-						'Backup codes let you access your account if your phone is ' +
-							'lost, stolen, or if you run it through the washing ' +
-							"machine and the bag of rice trick doesn't work."
+						'Backup codes let you access your account if your phone is lost or stolen, or even just accidentally run through the washing machine!'
 					) }
 				</p>
 

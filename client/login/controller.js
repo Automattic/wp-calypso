@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { includes } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import MagicLogin from './magic-login';
@@ -27,6 +26,7 @@ const enhanceContextWithLogin = ( context ) => {
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
 			isGutenboarding={ isGutenboarding === 'new' }
+			isP2Login={ query && query.from === 'p2' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }

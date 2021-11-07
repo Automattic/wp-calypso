@@ -3,12 +3,12 @@ import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
 
 import './style.scss';
 
-class RenewButton extends React.Component {
+class RenewButton extends Component {
 	static propTypes = {
 		compact: PropTypes.bool,
 		primary: PropTypes.bool,
@@ -72,7 +72,7 @@ class RenewButton extends React.Component {
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<Button
 					compact={ this.props.compact }
 					primary={ this.props.primary }
@@ -81,7 +81,7 @@ class RenewButton extends React.Component {
 				>
 					{ buttonLabel }
 				</Button>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

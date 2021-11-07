@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import page from 'page';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';

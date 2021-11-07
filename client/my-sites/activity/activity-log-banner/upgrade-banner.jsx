@@ -5,7 +5,7 @@ import {
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
@@ -21,7 +21,7 @@ class UpgradeBanner extends Component {
 			<div className="activity-log-banner__upgrade">
 				{ isJetpack && ! isAtomic ? (
 					<UpsellNudge
-						callToAction={ translate( 'Learn more' ) }
+						callToAction={ translate( 'Upgrade now' ) }
 						event="activity_log_upgrade_click_jetpack"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
 						href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }` }
@@ -40,7 +40,7 @@ class UpgradeBanner extends Component {
 				) : (
 					<UpsellNudge
 						forceDisplay={ true }
-						callToAction={ translate( 'Learn more' ) }
+						callToAction={ translate( 'Upgrade now' ) }
 						event="activity_log_upgrade_click_wpcom"
 						feature={ FEATURE_JETPACK_ESSENTIAL }
 						plan={ PLAN_PERSONAL }

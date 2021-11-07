@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
 const noop = () => {};

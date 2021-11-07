@@ -1,6 +1,5 @@
 import { isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { getGoogleMailServiceFamily, isGSuiteExtraLicenseProductSlug } from 'calypso/lib/gsuite';

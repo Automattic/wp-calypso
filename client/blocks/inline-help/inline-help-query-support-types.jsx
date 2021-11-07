@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
-import React, { Component } from 'react';
+import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import QueryLanguageNames from 'calypso/components/data/query-language-names';
 import QuerySupportHistory from 'calypso/components/data/query-support-history';
 import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
@@ -52,12 +51,11 @@ class QueryInlineHelpSupportTypes extends Component {
 
 	render() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				<QueryTicketSupportConfiguration />
 				<QuerySupportHistory email={ this.props.currentUserEmail } />
-				<QueryLanguageNames />
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

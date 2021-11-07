@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -20,7 +20,7 @@ import {
 	getTitanProductName,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	areAllMailboxesAvailable,
@@ -28,6 +28,7 @@ import {
 	transformMailboxForCart,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import {
@@ -48,7 +49,7 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-class TitanAddMailboxes extends React.Component {
+class TitanAddMailboxes extends Component {
 	state = {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
 		isAddingToCart: false,
@@ -67,10 +68,12 @@ class TitanAddMailboxes extends React.Component {
 	}
 
 	recordClickEvent = ( eventName, eventProps ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		recordTracksEvent( eventName, {
 			...eventProps,
 			domain_name: selectedDomainName,
+			provider: TITAN_PROVIDER_NAME,
+			source,
 		} );
 	};
 
@@ -80,13 +83,15 @@ class TitanAddMailboxes extends React.Component {
 			isSelectedDomainNameValid,
 			selectedDomainName,
 			selectedSite,
+			source,
 		} = this.props;
 
 		page(
 			emailManagement(
 				selectedSite.slug,
 				isSelectedDomainNameValid ? selectedDomainName : null,
-				currentRoute
+				currentRoute,
+				{ source }
 			)
 		);
 	};
@@ -163,6 +168,7 @@ class TitanAddMailboxes extends React.Component {
 						// Stay on the page to show the relevant error
 						return;
 					}
+
 					return this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}
@@ -204,7 +210,7 @@ class TitanAddMailboxes extends React.Component {
 
 				<Card>
 					<TitanNewMailboxList
-						domain={ selectedDomainName }
+						selectedDomainName={ selectedDomainName }
 						mailboxes={ this.state.mailboxes }
 						onMailboxesChange={ this.onMailboxesChange }
 						validatedMailboxUuids={ this.state.validatedMailboxUuids }
@@ -309,4 +315,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) );
+)( withCartKey( withShoppingCart( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) ) );

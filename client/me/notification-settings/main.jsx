@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryUserDevices from 'calypso/components/data/query-user-devices';
 import FormattedHeader from 'calypso/components/formatted-header';

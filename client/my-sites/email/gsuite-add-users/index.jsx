@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
@@ -22,13 +22,18 @@ import {
 	getGSuiteSupportedDomains,
 	getProductSlug,
 } from 'calypso/lib/gsuite';
-import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_PROVIDER_NAME,
+	GOOGLE_WORKSPACE_PRODUCT_TYPE,
+	GSUITE_PRODUCT_TYPE,
+} from 'calypso/lib/gsuite/constants';
 import {
 	areAllUsersValid,
 	getItemsForCart,
 	newUsers,
 	validateAgainstExistingUsers,
 } from 'calypso/lib/gsuite/new-users';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -42,7 +47,7 @@ import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 
 import './style.scss';
 
-class GSuiteAddUsers extends React.Component {
+class GSuiteAddUsers extends Component {
 	state = {
 		users: [],
 	};
@@ -109,11 +114,13 @@ class GSuiteAddUsers extends React.Component {
 	};
 
 	recordClickEvent = ( eventName ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		const { users } = this.state;
 
 		recordTracksEvent( eventName, {
 			domain_name: selectedDomainName,
+			provider: GOOGLE_PROVIDER_NAME,
+			source,
 			user_count: users.length,
 		} );
 	};
@@ -276,6 +283,7 @@ GSuiteAddUsers.propTypes = {
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
 	} ).isRequired,
+	source: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
@@ -296,4 +304,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( localize( GSuiteAddUsers ) ) );
+)( withCartKey( withShoppingCart( localize( GSuiteAddUsers ) ) ) );

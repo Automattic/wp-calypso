@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../helpers/input';
 import { bumpStat } from '../rest-client/bump-stat';
@@ -12,7 +12,7 @@ const { recordTracksEvent } = require( '../helpers/stats' );
 
 const KEY_U = 85;
 
-export class UndoListItem extends React.Component {
+export class UndoListItem extends Component {
 	state = {
 		undoTimer: null /* handle for queued action timer */,
 		undoTimeout: 4500 /* ms until action is actually executed */,

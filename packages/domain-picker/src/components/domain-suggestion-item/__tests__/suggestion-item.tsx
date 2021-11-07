@@ -1,5 +1,4 @@
 import { render, fireEvent, screen } from '@testing-library/react';
-import * as React from 'react';
 import { MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } from '../__mocks__';
 import SuggestionItem from '../suggestion-item';
 import type { RenderResult } from '@testing-library/react';

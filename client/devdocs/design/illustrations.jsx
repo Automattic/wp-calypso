@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import customerHomeIllustrationBusiness from 'calypso/assets/images/customer-home/illustration--business.svg';
 import customerHomeIllustrationChecklistComplete from 'calypso/assets/images/customer-home/illustration--checklist-complete.svg';
 import customerHomeIllustrationFireworks from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
@@ -50,7 +50,7 @@ import whoops from 'calypso/assets/images/illustrations/whoops.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 
-export default class Illustrations extends React.PureComponent {
+export default class Illustrations extends PureComponent {
 	render() {
 		return (
 			<Main className="devdocs design__illustrations devdocs__illustrations">

@@ -1,16 +1,14 @@
 import { Button, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import ActionButtons from './actions';
 
-class ActionHeader extends React.Component {
+class ActionHeader extends Component {
 	static propTypes = {
 		breadcrumbs: PropTypes.node,
-		primaryLabel: PropTypes.string,
 		setLayoutFocus: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
@@ -31,7 +29,7 @@ class ActionHeader extends React.Component {
 	};
 
 	render() {
-		const { children, primaryLabel, site } = this.props;
+		const { site } = this.props;
 
 		return (
 			<header className="action-header">
@@ -51,7 +49,6 @@ class ActionHeader extends React.Component {
 						{ this.renderBreadcrumbs() }
 					</div>
 				</div>
-				<ActionButtons primaryLabel={ primaryLabel }>{ children }</ActionButtons>
 			</header>
 		);
 	}

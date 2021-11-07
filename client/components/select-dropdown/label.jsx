@@ -1,4 +1,3 @@
-import React from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 
 // Prevents the event from bubbling up the DOM tree

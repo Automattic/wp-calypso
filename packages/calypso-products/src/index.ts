@@ -5,3 +5,4 @@ export * from './constants';
 export * from './product-values';
 export * from './get-interval-type-for-term';
 export * from './gsuite-product-slug';
+export * from './get-price-tier-for-units';

@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AuthorSelector from 'calypso/blocks/author-selector';
 import User from 'calypso/components/user';
@@ -17,7 +17,7 @@ const userShape = ( nameField ) =>
 		avatar_URL: PropTypes.string.isRequired,
 	} );
 
-class ImporterAuthorMapping extends React.Component {
+class ImporterAuthorMapping extends Component {
 	static displayName = 'ImporterAuthorMapping';
 
 	static propTypes = {

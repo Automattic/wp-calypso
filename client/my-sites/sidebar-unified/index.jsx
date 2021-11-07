@@ -8,7 +8,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Spinner from 'calypso/components/spinner';
@@ -62,7 +62,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	// On which case we show a modal awaiting for user confirmation for opening that
 	// link on new tab in order to avoid Happy Chat session disconnection.
 	// We return a bool that shows if the logic should terminate here.
-	const continueInCalypso = ( url, event ) => {
+	const canNavigate = ( url, event ) => {
 		if ( isHappychatSessionActive && isExternal( url ) ) {
 			// Do not show warning modal on Jetpack sites, since all external links are
 			// always opened on new tabs for these sites.
@@ -118,7 +118,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 								sidebarCollapsed={ sidebarIsCollapsed }
 								isHappychatSessionActive={ isHappychatSessionActive }
 								isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
-								continueInCalypso={ continueInCalypso }
+								canNavigate={ canNavigate }
 								{ ...item }
 							/>
 						);
@@ -130,7 +130,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 							selected={ isSelected }
 							isHappychatSessionActive={ isHappychatSessionActive }
 							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
-							continueInCalypso={ continueInCalypso }
+							canNavigate={ canNavigate }
 							{ ...item }
 						/>
 					);

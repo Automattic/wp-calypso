@@ -4,7 +4,7 @@ import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import tip from 'calypso/components/domains/register-domain-step/tip';
 import EmailProductPrice from 'calypso/components/emails/email-product-price';
@@ -13,7 +13,7 @@ import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/
 
 import './style.scss';
 
-class EmailSignupTitanCard extends React.Component {
+class EmailSignupTitanCard extends Component {
 	static propTypes = {
 		addButtonTitle: PropTypes.node.isRequired,
 		buttonStyles: PropTypes.object,

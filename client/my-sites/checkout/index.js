@@ -8,11 +8,16 @@ import {
 	checkoutPending,
 	checkoutSiteless,
 	checkoutThankYou,
+	licensingThankYouManualActivation,
+	licensingThankYouManualActivationInstructions,
+	licensingThankYouManualActivationLicenseKey,
+	licensingThankYouAutoActivation,
 	jetpackCheckoutThankYou,
 	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
 	redirectToSupportSession,
 	upsellNudge,
+	upsellRedirect,
 } from './controller';
 import { noop } from './utils';
 
@@ -39,6 +44,34 @@ export default function () {
 			'/checkout/jetpack/thank-you/no-site/:product',
 			noSite,
 			jetpackCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-auto-activate/:product',
+			noSite,
+			licensingThankYouAutoActivation,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-manual-activate/:product',
+			noSite,
+			licensingThankYouManualActivation,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-manual-activate-instructions/:product',
+			noSite,
+			licensingThankYouManualActivationInstructions,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-manual-activate-license-key/:product',
+			noSite,
+			licensingThankYouManualActivationLicenseKey,
 			makeLayout,
 			clientRender
 		);
@@ -159,6 +192,24 @@ export default function () {
 			clientRender
 		);
 	}
+
+	page(
+		'/checkout/offer-professional-email/:domain/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/offer/:upsellType/:upsellMeta/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellRedirect,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/:domainOrProduct',

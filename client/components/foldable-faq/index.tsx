@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import React, { useRef, useState, useCallback, useLayoutEffect } from 'react';
+import { useRef, useState, useCallback, useLayoutEffect } from 'react';
+import * as React from 'react';
 
 import './style.scss';
 

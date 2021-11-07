@@ -23,7 +23,8 @@
 		"testarmada-logger": "1.2.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-polyfills": "^1.0.0",
+		"@automattic/calypso-polyfills": "^2.0.0",
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"coffee-script": "^1.12.7",
 		"mocha": "^8.1.3",
 		"mock-fs": "^5.0.0"

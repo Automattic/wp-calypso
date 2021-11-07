@@ -3,7 +3,7 @@ import { CheckoutCheckIcon, PaymentLogo } from '@automattic/composite-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import { BEFORE_SUBMIT } from './constants';
 import { formatDate } from './util';

@@ -3,17 +3,25 @@ import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import { addQueryArgs } from 'calypso/lib/url';
+import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
+import LicensingThankYouManualActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation';
+import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
+import LicensingThankYouManualActivationLicenseKey from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-license-key';
+import PostCheckoutUpsellExperimentRedirector, {
+	PROFESSIONAL_EMAIL_OFFER,
+} from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { sites } from 'calypso/my-sites/controller';
 import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
 import {
+	getCurrentUser,
 	getCurrentUserVisibleSiteCount,
 	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
@@ -34,6 +42,7 @@ import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
+	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
 import { getDomainOrProductFromContext } from './utils';
 
@@ -252,6 +261,9 @@ export function upsellNudge( context, next ) {
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
+	} else if ( context.path.includes( 'offer-professional-email' ) ) {
+		upsellType = PROFESSIONAL_EMAIL_UPSELL;
+		upgradeItem = context.params.domain;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
@@ -270,6 +282,36 @@ export function upsellNudge( context, next ) {
 	next();
 }
 
+export function upsellRedirect( context, next ) {
+	const { receiptId, site, upsellMeta, upsellType } = context.params;
+
+	setSectionMiddleware( { name: 'checkout-offer-redirect' } )( context );
+
+	let upsellExperimentName;
+	let upsellExperimentAssignmentName;
+	let upsellUrl;
+
+	if ( PROFESSIONAL_EMAIL_OFFER === upsellType ) {
+		upsellExperimentName = 'promote_professional_email_post_checkout_2021_10';
+		upsellExperimentAssignmentName = 'treatment';
+		upsellUrl = `/checkout/offer-professional-email/${ upsellMeta }/${ receiptId }/${ site }`;
+	}
+
+	if ( upsellExperimentName && upsellExperimentAssignmentName && upsellUrl ) {
+		context.primary = (
+			<PostCheckoutUpsellExperimentRedirector
+				receiptId={ receiptId }
+				siteSlug={ site }
+				upsellExperimentName={ upsellExperimentName }
+				upsellExperimentAssignmentName={ upsellExperimentAssignmentName }
+				upsellUrl={ upsellUrl }
+			/>
+		);
+	}
+
+	next();
+}
+
 export function redirectToSupportSession( context ) {
 	const { receiptId, site } = context.params;
 
@@ -280,13 +322,75 @@ export function redirectToSupportSession( context ) {
 	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
 
-export function jetpackCheckoutThankYou( context, next ) {
-	const forSitelessScheduling = context.path.includes(
-		'/checkout/jetpack/schedule-happiness-appointment'
+export function licensingThankYouManualActivation( context, next ) {
+	const { product } = context.params;
+	const { receiptId } = context.query;
+
+	context.primary = (
+		<LicensingThankYouManualActivation productSlug={ product } receiptId={ receiptId } />
 	);
+
+	next();
+}
+
+export function licensingThankYouManualActivationInstructions( context, next ) {
+	const { product } = context.params;
+	const { receiptId } = context.query;
+
+	context.primary = (
+		<LicensingThankYouManualActivationInstructions
+			productSlug={ product }
+			receiptId={ receiptId }
+		/>
+	);
+
+	next();
+}
+
+export function licensingThankYouManualActivationLicenseKey( context, next ) {
+	const { product } = context.params;
+	const { receiptId } = context.query;
+
+	context.primary = (
+		<LicensingThankYouManualActivationLicenseKey productSlug={ product } receiptId={ receiptId } />
+	);
+
+	next();
+}
+
+export function licensingThankYouAutoActivation( context, next ) {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+	const userHasJetpackSites = currentUser && currentUser.jetpack_visible_site_count >= 1;
+
+	const { product } = context.params;
+	const { receiptId, source, siteId } = context.query;
+
+	if ( ! userHasJetpackSites ) {
+		page.redirect(
+			addQueryArgs(
+				{ receiptId },
+				`/checkout/jetpack/thank-you/licensing-manual-activate/${ product }`
+			)
+		);
+	} else {
+		context.primary = (
+			<LicensingThankYouAutoActivation
+				userHasJetpackSites={ userHasJetpackSites }
+				productSlug={ context.params.product }
+				receiptId={ receiptId }
+				source={ source }
+				jetpackTemporarySiteId={ siteId }
+			/>
+		);
+	}
+
+	next();
+}
+
+export function jetpackCheckoutThankYou( context, next ) {
 	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
-	const isSitelessCheckoutFlow =
-		context.path.includes( '/checkout/jetpack/thank-you/no-site' ) || forSitelessScheduling;
+	const isSitelessCheckoutFlow = context.path.includes( '/checkout/jetpack/thank-you/no-site' );
 
 	const { receiptId, source, siteId } = context.query;
 
@@ -294,7 +398,6 @@ export function jetpackCheckoutThankYou( context, next ) {
 		<JetpackCheckoutSitelessThankYou
 			productSlug={ context.params.product }
 			receiptId={ receiptId }
-			forScheduling={ forSitelessScheduling }
 			source={ source }
 			jetpackTemporarySiteId={ siteId }
 		/>

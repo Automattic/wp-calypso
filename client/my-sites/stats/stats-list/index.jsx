@@ -1,13 +1,13 @@
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import React from 'react';
+import { Component } from 'react';
 import StatsListItem from './stats-list-item';
 
 import './style.scss';
 
 const debug = debugFactory( 'calypso:stats:list' );
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'StatsList';
 
 	state = {

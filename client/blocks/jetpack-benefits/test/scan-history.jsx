@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import { JetpackBenefitsStandaloneCard } from 'calypso/blocks/jetpack-benefits/standalone-benefit-card';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';

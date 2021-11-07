@@ -1,7 +1,6 @@
 import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import {
 	hasDomainRegistration,
 	hasPlan,

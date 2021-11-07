@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';

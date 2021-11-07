@@ -1,9 +1,8 @@
 import { CompactCard, Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import { flatMap, trim } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
+import { trim } from 'lodash';
 import page from 'page';
-import React from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SearchInput from 'calypso/components/search';
 import SectionHeader from 'calypso/components/section-header';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
@@ -32,21 +31,28 @@ function handleSearch( query ) {
 	}
 }
 
-const FollowingStream = ( props ) => {
-	const suggestionList =
-		props.suggestions &&
-		flatMap( props.suggestions, ( query ) => [
-			<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
-			', ',
-		] ).slice( 0, -1 );
-	const placeholderText = getSearchPlaceholderText();
-	const { translate, teams } = props;
+function FollowingStream( { suggestions, ...props } ) {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const markAllAsSeen = ( feedsInfo ) => {
+	const teams = useSelector( getReaderTeams );
+	const feedsInfo = useSelector( ( state ) => getReaderOrganizationFeedsInfo( state, NO_ORG_ID ) );
+
+	const markAllAsSeen = () => {
 		const { feedIds, feedUrls } = feedsInfo;
 		dispatch( recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' ) );
 		dispatch( requestMarkAllAsSeen( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
 	};
+
+	const suggestionList =
+		suggestions &&
+		suggestions
+			.flatMap( ( query ) => [
+				<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
+				', ',
+			] )
+			.slice( 0, -1 );
+	const placeholderText = getSearchPlaceholderText();
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
@@ -62,11 +68,7 @@ const FollowingStream = ( props ) => {
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
 				{ isEligibleForUnseen( { teams } ) && (
-					<Button
-						compact
-						onClick={ () => markAllAsSeen( props.feedsInfo ) }
-						disabled={ ! props.feedsInfo.unseenCount }
-					>
+					<Button compact onClick={ markAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
 						{ translate( 'Mark all as seen' ) }
 					</Button>
 				) }
@@ -77,9 +79,6 @@ const FollowingStream = ( props ) => {
 		</Stream>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-};
+}
 
-export default connect( ( state ) => ( {
-	teams: getReaderTeams( state ),
-	feedsInfo: getReaderOrganizationFeedsInfo( state, NO_ORG_ID ),
-} ) )( SuggestionProvider( localize( FollowingStream ) ) );
+export default SuggestionProvider( FollowingStream );

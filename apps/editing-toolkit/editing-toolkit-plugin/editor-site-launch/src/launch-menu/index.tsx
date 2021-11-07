@@ -1,6 +1,6 @@
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import * as React from 'react';
 import { LAUNCH_STORE } from '../stores';
 import LaunchMenuItem from './item';
 import type { LaunchStepType } from '../../../common/data-stores/launch';

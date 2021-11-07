@@ -1,4 +1,3 @@
-import React from 'react';
 import Main from 'calypso/components/main';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';

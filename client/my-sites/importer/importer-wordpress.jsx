@@ -1,10 +1,10 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import FileImporter from './file-importer';
 
-class ImporterWordPress extends React.PureComponent {
+class ImporterWordPress extends PureComponent {
 	static displayName = 'ImporterWordPress';
 
 	static propTypes = {

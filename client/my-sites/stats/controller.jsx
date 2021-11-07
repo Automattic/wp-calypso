@@ -2,7 +2,6 @@ import i18n from 'i18n-calypso';
 import { find, pick } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import React from 'react';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';

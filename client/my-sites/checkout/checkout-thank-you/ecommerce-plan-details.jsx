@@ -2,7 +2,6 @@ import { isEcommerce, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automatti
 import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
 import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import updatesImage from 'calypso/assets/images/illustrations/updates.svg';

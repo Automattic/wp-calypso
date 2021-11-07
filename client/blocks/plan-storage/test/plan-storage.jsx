@@ -11,7 +11,6 @@ import {
 } from '@automattic/calypso-products';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { PlanStorage } from '../index';
 
 describe( 'PlanStorage basic tests', () => {

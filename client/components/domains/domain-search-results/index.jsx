@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
@@ -22,7 +22,7 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 
 import './style.scss';
 
-class DomainSearchResults extends React.Component {
+class DomainSearchResults extends Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,

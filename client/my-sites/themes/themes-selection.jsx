@@ -1,6 +1,7 @@
 import { compact, isEqual, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
 import ThemesList from 'calypso/components/themes-list';

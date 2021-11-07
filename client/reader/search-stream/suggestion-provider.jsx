@@ -1,5 +1,5 @@
 import { map, sampleSize, times } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { suggestions } from 'calypso/reader/search-stream/suggestions';

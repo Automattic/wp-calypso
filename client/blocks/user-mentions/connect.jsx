@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryUsersSuggestions from 'calypso/components/data/query-users-suggestions';
 import { getUserSuggestions } from 'calypso/state/user-suggestions/selectors';
@@ -13,7 +13,7 @@ import { getUserSuggestions } from 'calypso/state/user-suggestions/selectors';
  * @returns {object} the enhanced component
  */
 const connectUserMentions = ( WrappedComponent ) => {
-	class connectUserMentionsFetcher extends React.PureComponent {
+	class connectUserMentionsFetcher extends PureComponent {
 		static propTypes = {
 			siteId: PropTypes.number,
 		};

@@ -1,6 +1,5 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export default localize( ( props ) => {

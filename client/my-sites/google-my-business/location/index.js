@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 import './style.scss';
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 function supportUserFn( { user, token, path, authorized } ) {
 	const url = window.location.toString();
 

@@ -5,7 +5,7 @@ import {
 	iconsThatNeedOffsetY,
 } from 'gridicons/dist/util/icons-offset';
 import spritePath from 'gridicons/svg-sprite/gridicons.svg';
-import React from 'react';
+import * as React from 'react';
 import type { ReactNode } from 'react';
 import type { Assign } from 'utility-types';
 

@@ -5,7 +5,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
@@ -25,7 +25,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-export class LoginLinks extends React.Component {
+export class LoginLinks extends Component {
 	static propTypes = {
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
@@ -43,7 +43,7 @@ export class LoginLinks extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.loginLinkRef = React.createRef();
+		this.loginLinkRef = createRef();
 	}
 
 	componentDidMount() {
@@ -114,11 +114,20 @@ export class LoginLinks extends React.Component {
 		return login( loginParameters );
 	};
 
+	getLoginLinkText = () => {
+		if ( this.props.isP2Login ) {
+			return this.props.translate( 'Get a login link on your email' );
+		}
+
+		return this.props.translate( 'Email me a login link' );
+	};
+
 	renderBackLink() {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isGutenboarding
+			this.props.isGutenboarding ||
+			this.props.isP2Login
 		) {
 			return null;
 		}
@@ -234,7 +243,7 @@ export class LoginLinks extends React.Component {
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 			>
-				{ this.props.translate( 'Email me a login link' ) }
+				{ this.getLoginLinkText() }
 			</a>
 		);
 	}
@@ -279,6 +288,7 @@ export class LoginLinks extends React.Component {
 		const {
 			currentRoute,
 			isGutenboarding,
+			isP2Login,
 			locale,
 			oauth2Client,
 			pathname,
@@ -294,6 +304,13 @@ export class LoginLinks extends React.Component {
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
+		}
+
+		if ( isP2Login && query?.redirect_to ) {
+			const urlParts = getUrlParts( query.redirect_to );
+			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
+				return null;
+			}
 		}
 
 		return (

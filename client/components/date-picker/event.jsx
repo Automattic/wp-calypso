@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import React from 'react';
 import SocialLogo from 'calypso/components/social-logo';
 
 const renderIcon = ( icon ) =>

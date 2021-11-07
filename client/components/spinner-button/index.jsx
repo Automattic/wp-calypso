@@ -1,12 +1,12 @@
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import Button from 'calypso/components/forms/form-button';
 import Spinner from 'calypso/components/spinner';
 
 import './style.scss';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'SpinnerButton';
 
 	static propTypes = {

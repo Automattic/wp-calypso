@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';

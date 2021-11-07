@@ -1,6 +1,5 @@
 import { Dialog, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 
 import './privacy-policy-dialog.scss';
 

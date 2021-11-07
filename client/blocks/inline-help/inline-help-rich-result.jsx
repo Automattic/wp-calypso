@@ -1,24 +1,14 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { get, omitBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
-import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
-import {
-	RESULT_ARTICLE,
-	RESULT_DESCRIPTION,
-	RESULT_LINK,
-	RESULT_TITLE,
-	RESULT_TOUR,
-	RESULT_TYPE,
-	RESULT_VIDEO,
-} from './constants';
+import { RESULT_ARTICLE, RESULT_TOUR, RESULT_VIDEO } from './constants';
 
 class InlineHelpRichResult extends Component {
 	static propTypes = {
@@ -33,31 +23,35 @@ class InlineHelpRichResult extends Component {
 		tour: PropTypes.string,
 	};
 
-	buttonLabels = {
-		article: this.props.translate( 'Read more' ),
-		video: this.props.translate( 'Watch a video' ),
-		tour: this.props.translate( 'Start Tour' ),
+	getButtonLabel = ( type = RESULT_ARTICLE ) => {
+		const { translate } = this.props;
+
+		const labels = {
+			[ RESULT_ARTICLE ]: translate( 'Read more' ),
+			[ RESULT_VIDEO ]: translate( 'Watch a video' ),
+			[ RESULT_TOUR ]: translate( 'Start Tour' ),
+		};
+
+		return labels[ type ];
 	};
 
 	buttonIcons = {
-		tour: 'list-ordered',
-		video: 'video',
-		article: 'reader',
+		[ RESULT_TOUR ]: 'list-ordered',
+		[ RESULT_VIDEO ]: 'video',
+		[ RESULT_ARTICLE ]: 'reader',
 	};
 
 	handleClick = ( event ) => {
 		const isLocaleEnglish = 'en' === getLocaleSlug();
-		const { type, tour, link, searchQuery, postId } = this.props;
+		const { searchQuery, result } = this.props;
+		const { type = RESULT_ARTICLE, tour, link, post_id: postId } = result;
 
-		const tracksData = omitBy(
-			{
-				search_query: searchQuery,
-				tour,
-				result_url: link,
-				location: 'inline-help-popover',
-			},
-			( data ) => typeof data === 'undefined'
-		);
+		const tracksData = {
+			search_query: searchQuery,
+			location: 'inline-help-popover',
+			result_url: link,
+			tour,
+		};
 
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData );
 		this.props.closePopover();
@@ -65,25 +59,32 @@ class InlineHelpRichResult extends Component {
 		if ( type === RESULT_TOUR ) {
 			event.preventDefault();
 			this.props.requestGuidedTour( tour );
-		} else if ( type === RESULT_VIDEO ) {
+			return;
+		}
+
+		if ( type === RESULT_VIDEO ) {
 			event.preventDefault();
 			this.props.setDialogState( {
 				showDialog: true,
 				dialogType: 'video',
 				videoLink: link,
 			} );
-		} else if ( type === RESULT_ARTICLE && postId && isLocaleEnglish ) {
+			return;
+		}
+
+		if ( postId && isLocaleEnglish ) {
 			// Until we can deliver localized inline support article content, we send the
 			// the user to the localized support blog, if one exists.
 			event.preventDefault();
 			this.props.openSupportArticleDialog( { postId, postUrl: link } );
-		} // else falls back on href
+		}
+		// falls back on href
 	};
 
 	render() {
-		const { type, title, description, link } = this.props;
-		const buttonLabel = get( this.buttonLabels, type, '' );
-		const buttonIcon = get( this.buttonIcons, type );
+		const { type, title, description, link } = this.props.result;
+		const buttonLabel = this.getButtonLabel( type );
+		const buttonIcon = this.buttonIcons[ type ];
 		const classes = classNames( 'inline-help__richresult__title' );
 
 		return (
@@ -102,20 +103,10 @@ class InlineHelpRichResult extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { result } ) => ( {
-	searchQuery: getSearchQuery( state ),
-	type: get( result, RESULT_TYPE, RESULT_ARTICLE ),
-	title: get( result, RESULT_TITLE ),
-	link: get( result, RESULT_LINK ),
-	description: get( result, RESULT_DESCRIPTION ),
-	tour: get( result, RESULT_TOUR ),
-	postId: get( result, 'post_id' ),
-} );
-
 const mapDispatchToProps = {
 	recordTracksEvent,
 	requestGuidedTour,
 	openSupportArticleDialog,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );
+export default connect( null, mapDispatchToProps )( localize( InlineHelpRichResult ) );

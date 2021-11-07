@@ -1,5 +1,4 @@
 import { omit } from 'lodash';
-import React from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 
 const SelectOptGroups = ( props ) => {

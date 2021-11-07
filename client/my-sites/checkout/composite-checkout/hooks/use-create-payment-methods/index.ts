@@ -22,6 +22,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
@@ -39,8 +40,9 @@ import {
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import type { StoredCard } from '../../types/stored-cards';
-import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
+import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { Stripe } from '@stripe/stripe-js';
 
 export { useCreateExistingCards };
 
@@ -57,6 +59,8 @@ export function useCreateCreditCard( {
 	shouldUseEbanx,
 	shouldShowTaxFields = false,
 	activePayButtonText = undefined,
+	initialUseForAllSubscriptions,
+	allowUseForAllSubscriptions,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -65,9 +69,18 @@ export function useCreateCreditCard( {
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
 	activePayButtonText?: string | undefined;
+	initialUseForAllSubscriptions?: boolean;
+	allowUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
-	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );
+	const stripePaymentMethodStore = useMemo(
+		() =>
+			createCreditCardPaymentMethodStore( {
+				initialUseForAllSubscriptions,
+				allowUseForAllSubscriptions,
+			} ),
+		[ initialUseForAllSubscriptions, allowUseForAllSubscriptions ]
+	);
 	const stripeMethod = useMemo(
 		() =>
 			shouldLoadStripeMethod
@@ -78,6 +91,7 @@ export function useCreateCreditCard( {
 						shouldUseEbanx,
 						shouldShowTaxFields,
 						activePayButtonText,
+						allowUseForAllSubscriptions,
 				  } )
 				: null,
 		[
@@ -88,6 +102,7 @@ export function useCreateCreditCard( {
 			shouldUseEbanx,
 			shouldShowTaxFields,
 			activePayButtonText,
+			allowUseForAllSubscriptions,
 		]
 	);
 	return stripeMethod;
@@ -372,7 +387,8 @@ export default function useCreatePaymentMethods( {
 	storedCards: StoredCard[];
 	siteSlug: string | undefined;
 } ): PaymentMethod[] {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 
 	const paypalMethod = useCreatePayPal( {} );
 
@@ -423,17 +439,17 @@ export default function useCreatePaymentMethods( {
 		siteSlug,
 	} );
 
-	const shouldUseEbanx = Boolean(
-		responseCart?.allowed_payment_methods?.includes(
-			translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
-		)
+	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
+		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
+	const allowUseForAllSubscriptions = true;
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
 		shouldUseEbanx,
+		allowUseForAllSubscriptions,
 	} );
 
 	const fullCreditsPaymentMethod = useCreateFullCredits();

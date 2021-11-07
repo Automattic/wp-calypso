@@ -1,7 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
 import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
 import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';

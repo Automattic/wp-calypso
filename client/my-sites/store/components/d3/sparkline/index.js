@@ -3,7 +3,6 @@ import { extent as d3Extent } from 'd3-array';
 import { scaleLinear as d3ScaleLinear } from 'd3-scale';
 import { line as d3Line } from 'd3-shape';
 import PropTypes from 'prop-types';
-import React from 'react';
 import D3Base from '../base';
 
 const Sparkline = ( {

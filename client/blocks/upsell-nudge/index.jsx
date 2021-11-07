@@ -11,7 +11,6 @@ import {
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import classnames from 'classnames';
-import React from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';

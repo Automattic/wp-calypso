@@ -1,6 +1,6 @@
 import { Button, Guide } from '@wordpress/components';
 import { times } from 'lodash';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const GuideExample = () => {
 	const numberOfPages = 5;

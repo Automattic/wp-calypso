@@ -84,8 +84,6 @@ $signup-sans: 'Noto Sans', $sans;
 		display: inline;
 		margin: auto;
 
-		&.emoji,
-		&.emojify__emoji,
 		&.wp-smiley {
 			height: 1em;
 			margin-bottom: 0;
@@ -177,11 +175,6 @@ $signup-sans: 'Noto Sans', $sans;
 		img {
 			display: block;
 			margin: 0 auto;
-
-			&.emoji,
-			&.emojify__emoji {
-				display: inline;
-			}
 		}
 	}
 
