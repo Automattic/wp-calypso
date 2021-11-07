@@ -16,3 +16,7 @@ export type DnsMenuOptionsButtonProps = {
 	onSuccess: ( records: DnsRecord[] ) => void;
 	onError: ( message: string ) => void;
 };
+
+export type RestoreDialogResult = {
+	shouldRestoreDefaultRecords: boolean;
+};

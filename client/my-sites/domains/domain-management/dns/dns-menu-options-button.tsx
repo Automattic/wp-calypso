@@ -8,11 +8,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import wpcom from 'calypso/lib/wp';
 import './dns-breadcrumb-button.scss';
 import RestoreDefaultARecordsDialog from './restore-default-a-records-dialog';
-import { DnsMenuOptionsButtonProps } from './types';
-
-type restoreDialogResult = {
-	shouldRestoreDefaultRecords: boolean;
-};
+import { DnsMenuOptionsButtonProps, RestoreDialogResult } from './types';
 
 function DnsMenuOptionsButton( {
 	domain,
@@ -51,7 +47,7 @@ function DnsMenuOptionsButton( {
 		}
 	}, [ domain, onError, onSuccess, restoreRecordsErrorMessage ] );
 
-	const closeRestoreDialog = ( result: restoreDialogResult ) => {
+	const closeRestoreDialog = ( result: RestoreDialogResult ) => {
 		setRestoreDialogVisible( false );
 		if ( result?.shouldRestoreDefaultRecords ?? false ) {
 			restoreDefaultRecords();
