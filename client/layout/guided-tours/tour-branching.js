@@ -1,4 +1,3 @@
-import { flatMap } from 'lodash';
 import { Children } from 'react';
 
 /*
@@ -61,7 +60,7 @@ const branching = ( element ) => {
 		return [ [ typeName.toLowerCase(), element.props.step ] ];
 	}
 
-	return flatMap( childrenToArray( element.props.children ), branching );
+	return childrenToArray( element.props.children ).flatMap( branching );
 };
 
 /*
