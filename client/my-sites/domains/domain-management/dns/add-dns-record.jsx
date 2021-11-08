@@ -87,11 +87,15 @@ class AddDnsRecprd extends Component {
 				label: translate( 'DNS records' ),
 				href: domainManagementDns( selectedSite.slug, selectedDomainName ),
 			},
-			'Add a record',
+			{
+				label: translate( 'Add a record', { comment: 'DNS record' } ),
+			},
 		];
 
 		const mobileItem = {
-			label: translate( 'Back to DNS records' ),
+			label: translate( 'Back to DNS records', {
+				comment: 'Link to return to the DNs records management page of a domain ',
+			} ),
 			href: domainManagementDns( selectedSite.slug, selectedDomainName ),
 			showBackArrow: true,
 		};
@@ -137,7 +141,11 @@ class AddDnsRecprd extends Component {
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<div className="add-dns-record__fullwidth">
 					{ this.renderBreadcrumbs() }
-					<FormattedHeader brandFont headerText="Add a new DNS record" align="left" />
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Add a new DNS record' ) }
+						align="left"
+					/>
 					<p className="add-dns-record__mobile-subtitle">{ mobileSubtitleText }</p>
 				</div>
 				<div className="add-dns-record__main">
