@@ -25,7 +25,7 @@ class ARecord extends Component {
 
 		let label = translate( 'Name (optional)', { context: 'DNS record' } );
 		if ( isAaaaRecord ) {
-			label = translate( 'Name (required)', { context: 'DNS record' } );
+			label = translate( 'Name', { context: 'DNS record' } );
 		}
 
 		const namePlaceholder = translate( 'Enter subdomain', {
