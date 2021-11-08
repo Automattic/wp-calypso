@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { RequestCart } from '@automattic/shopping-cart';
 
 import './style.scss';
@@ -36,6 +36,7 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
 
 	const site = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	useEffect( () => {
 		return () => {
@@ -77,7 +78,7 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 						isInEditor
 						isFocusedLaunch={ isFocusedLaunch }
-						siteId={ site?.ID }
+						siteId={ selectedSiteId ?? undefined }
 						siteSlug={ site?.slug }
 						productAliasFromUrl={ commaSeparatedProductSlugs }
 						onAfterPaymentComplete={ handleAfterPaymentComplete }
