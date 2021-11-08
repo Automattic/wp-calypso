@@ -17,17 +17,17 @@ interface ReadyPreviewProps {
 	goToImporterPage: ( platform: string ) => void;
 }
 
+const convertToFriendlyWebsiteName = ( website: string ): string => {
+	const { hostname, pathname } = new URL( website );
+	return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
+};
+
 const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 	urlData,
 	goToImporterPage,
 } ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
-
-	const convertToFriendlyWebsiteName = ( website: string ): string => {
-		const { hostname, pathname } = new URL( website );
-		return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
-	};
 
 	return (
 		<>
@@ -163,4 +163,43 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 	);
 };
 
-export { ReadyPreviewStep, ReadyNotStep, ReadyStep };
+interface ReadyWpComProps {
+	urlData: UrlData;
+}
+
+const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( { urlData } ) => {
+	const { __ } = useI18n();
+
+	return (
+		<div className="import-layout__center">
+			<div className="import__header">
+				<div className="import__heading  import__heading-center">
+					<Title>{ __( 'Your site is already on WordPress.com' ) }</Title>
+					<SubTitle>
+						{ createInterpolateElement(
+							sprintf(
+								/* translators: the website could be any domain (eg: "yourname.com") */
+								__(
+									'It looks like <strong>%(website)s</strong> is already on WordPress.com. Try a different address or start buidling a new site instead.'
+								),
+								{
+									website: convertToFriendlyWebsiteName( urlData.url ),
+								}
+							),
+							{ strong: createElement( 'strong' ) }
+						) }
+					</SubTitle>
+
+					<div className="import__buttons-group">
+						<NextButton>{ __( 'Start building' ) }</NextButton>
+						<div>
+							<BackButton>{ __( 'Back to start' ) }</BackButton>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep };
