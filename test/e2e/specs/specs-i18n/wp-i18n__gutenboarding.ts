@@ -5,12 +5,13 @@
 import {
 	setupHooks,
 	validatePageTranslations,
+	BrowserHelper,
 	DataHelper,
 	GutenboardingFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-const locale = DataHelper.getCurrentLocale();
+const locale = BrowserHelper.getLocale();
 
 describe( `Gutenboarding translations @i18n (${ locale })`, function () {
 	let gutenboardingFlow: GutenboardingFlow;

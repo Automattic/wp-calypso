@@ -264,12 +264,3 @@ export function createSuiteTitle( title: string ): string {
 
 	return parts.join( ' ' );
 }
-
-/**
- * Get current locale using the BROWSERLOCALE env variable.
- *
- * @returns {string} Current locale slug.
- */
-export function getCurrentLocale(): string {
-	return ( process.env.BROWSERLOCALE || 'en' ).toLowerCase();
-}
