@@ -3,6 +3,16 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 
 .add-dns-record {
+	.add-dns-record__mobile-subtitle {
+		padding: 0 16px;
+		color: var( --studio-gray-50 );
+		font-size: $font-body-small;
+
+		@include break-mobile {
+			display: none;
+		}
+	}
+
 	.add-dns-record__sidebar {
 		display: none;
 
@@ -60,6 +70,14 @@
 
 		.is-hidden {
 			display: none;
+		}
+	}
+
+	header.formatted-header {
+		margin-bottom: 4px;
+
+		@include break-mobile {
+			margin-bottom: initial;
 		}
 	}
 

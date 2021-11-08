@@ -108,17 +108,26 @@ class AddDnsRecprd extends Component {
 
 	renderMain() {
 		const { dns, selectedDomainName, translate } = this.props;
+		const dnsSupportPageLink = (
+			<ExternalLink
+				href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
+				target="_blank"
+				icon={ false }
+			/>
+		);
+		const mobileSubtitleText = translate(
+			'Add a new DNS record to your site. {{supportLink}}Learn more{{/supportLink}}',
+			{
+				components: {
+					supportLink: dnsSupportPageLink,
+				},
+			}
+		);
 		const explanationText = translate(
 			'Custom DNS records allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider. {{supportLink}}Learn more{{/supportLink}}.',
 			{
 				components: {
-					supportLink: (
-						<ExternalLink
-							href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
-							target="_blank"
-							icon={ false }
-						/>
-					),
+					supportLink: dnsSupportPageLink,
 				},
 			}
 		);
@@ -129,6 +138,7 @@ class AddDnsRecprd extends Component {
 				<div className="add-dns-record__fullwidth">
 					{ this.renderBreadcrumbs() }
 					<FormattedHeader brandFont headerText="Add a new DNS record" align="left" />
+					<p className="add-dns-record__mobile-subtitle">{ mobileSubtitleText }</p>
 				</div>
 				<div className="add-dns-record__main">
 					<DnsAddNew
