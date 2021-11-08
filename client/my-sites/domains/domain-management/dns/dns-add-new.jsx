@@ -32,6 +32,8 @@ class DnsAddNew extends React.Component {
 		{
 			component: ARecord,
 			types: [ 'A', 'AAAA' ],
+			description:
+				'An A record is used to point a domain (e.g. example.com) or a subdomain (e.g. subdomain.example.com) to an IP address (192.168.1.1).',
 			initialFields: {
 				name: '',
 				data: '',
@@ -40,6 +42,8 @@ class DnsAddNew extends React.Component {
 		{
 			component: CnameRecord,
 			types: [ 'CNAME' ],
+			description:
+				'CNAME (canonical name) records are typically used to link a subdomain (e.g. subdomain.example.com) to a domain (e.g. example.com).',
 			initialFields: {
 				name: '',
 				data: '',
@@ -48,6 +52,8 @@ class DnsAddNew extends React.Component {
 		{
 			component: MxRecord,
 			types: [ 'MX' ],
+			description:
+				'MX (mail exchange) records are used to route emails to the correct mail servers.',
 			initialFields: {
 				name: '',
 				data: '',
@@ -57,6 +63,8 @@ class DnsAddNew extends React.Component {
 		{
 			component: TxtRecord,
 			types: [ 'TXT' ],
+			description:
+				"TXT (text) records are used to record any textual information on a domain. They're typically used by other service providers (e.g. email services) to ensure you are the owner of the domain.",
 			initialFields: {
 				name: '',
 				data: '',
@@ -65,6 +73,8 @@ class DnsAddNew extends React.Component {
 		{
 			component: SrvRecord,
 			types: [ 'SRV' ],
+			description:
+				'SRV (service) records define the information to access certain internet services.',
 			initialFields: {
 				name: '',
 				service: '',
@@ -183,6 +193,9 @@ class DnsAddNew extends React.Component {
 			formState.isSubmitButtonDisabled( this.state.fields ) ||
 			this.props.isSubmittingForm ||
 			formState.hasErrors( this.state.fields );
+		const selectedType = this.dnsRecords.find( ( record ) =>
+			record.types.includes( this.state.type )
+		);
 
 		return (
 			<form className="dns__form">
@@ -195,6 +208,7 @@ class DnsAddNew extends React.Component {
 					>
 						{ options }
 					</FormSelect>
+					<p className="dns__type-explanation">{ selectedType.description }</p>
 				</FormFieldset>
 				{ this.recordFields() }
 				<div>

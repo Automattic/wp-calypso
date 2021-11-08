@@ -51,6 +51,11 @@
 		}
 	}
 
+	.dns__type-explanation {
+		margin: 8px 0 0;
+		color: var( --studio-gray-50 );
+	}
+
 	// make the DNS record type `select` expand to full width of the form
 	.dns__add-new-select-type {
 		width: 100%;
