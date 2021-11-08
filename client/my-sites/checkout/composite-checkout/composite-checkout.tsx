@@ -369,6 +369,7 @@ export default function CompositeCheckout( {
 		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
 
 	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
+	const recaptchaClientId: number | undefined = select( 'wpcom' )?.getRecaptchaClientId();
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
@@ -434,6 +435,7 @@ export default function CompositeCheckout( {
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
+			recaptchaClientId,
 		} ),
 		[
 			contactDetails,
@@ -448,6 +450,7 @@ export default function CompositeCheckout( {
 			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
+			recaptchaClientId,
 		]
 	);
 
