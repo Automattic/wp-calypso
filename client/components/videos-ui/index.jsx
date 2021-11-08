@@ -27,6 +27,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ currentVideo, setCurrentVideo ] = useState( null );
+	const [ shouldAutoPlay, setShouldAutoPlay ] = useState( false );
 
 	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
@@ -35,6 +36,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 		} );
 
 		setCurrentVideo( videoInfo );
+		setShouldAutoPlay( true );
 	};
 
 	useEffect( () => {
@@ -132,7 +134,9 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 					<h3>{ course && course.title }</h3>
 				</div>
 				<div className="videos-ui__video-content">
-					{ currentVideo && <VideoPlayer videoUrl={ currentVideo.url } /> }
+					{ currentVideo && (
+						<VideoPlayer videoUrl={ currentVideo.url } shouldAutoplay={ shouldAutoPlay } />
+					) }
 					<div className="videos-ui__chapters">
 						{ course &&
 							Object.entries( course.videos ).map( ( data, i ) => {
