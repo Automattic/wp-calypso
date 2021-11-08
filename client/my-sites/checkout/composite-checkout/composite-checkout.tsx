@@ -206,6 +206,8 @@ export default function CompositeCheckout( {
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
 
+	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
+
 	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
 		couponStatus === 'applied'
@@ -426,7 +428,7 @@ export default function CompositeCheckout( {
 			recordEvent,
 			reduxDispatch,
 			responseCart,
-			siteId,
+			siteId: updatedSiteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
@@ -441,7 +443,7 @@ export default function CompositeCheckout( {
 			recordEvent,
 			reduxDispatch,
 			responseCart,
-			siteId,
+			updatedSiteId,
 			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
@@ -626,8 +628,6 @@ export default function CompositeCheckout( {
 			</Fragment>
 		);
 	}
-
-	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
 	return (
 		<Fragment>
