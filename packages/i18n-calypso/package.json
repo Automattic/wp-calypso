@@ -20,7 +20,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso#readme",
 	"dependencies": {
 		"@automattic/interpolate-components": "^1.1.2",
-		"@babel/runtime": "^7.15.3",
+		"@babel/runtime": "^7.16.0",
 		"@tannin/sprintf": "^1.1.0",
 		"@wordpress/compose": "^5.0.2",
 		"debug": "^4.0.0",

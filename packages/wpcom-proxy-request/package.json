@@ -41,7 +41,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
+		"@babel/runtime": "^7.16.0",
 		"debug": "^4.1.1",
 		"progress-event": "^1.0.0",
 		"uuid": "^8.3.2",

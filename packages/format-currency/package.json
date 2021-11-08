@@ -25,7 +25,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
+		"@babel/runtime": "^7.16.0",
 		"i18n-calypso": "^5.0.0"
 	},
 	"scripts": {
