@@ -57,13 +57,13 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 			// several errors and several successes.
 			.then( ( data ) => {
 				if ( ! data.results.length ) {
-					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error: true } );
+					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId } );
 				} else {
 					dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
 				}
 			} )
 			.catch( () => {
-				dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error: true } );
+				dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId } );
 			} );
 	};
 }
