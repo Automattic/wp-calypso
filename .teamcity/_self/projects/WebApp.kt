@@ -681,3 +681,101 @@ object PreReleaseE2ETests : BuildType({
 		executionTimeoutMin = 20
 	}
 })
+
+object QuarantinedE2ETests: BuildType( {
+	id("Quarantined_E2E_Tests")
+	name = "Quarantined E2E Tests"
+	description = "E2E tests quarantined due to intermittent failures."
+	maxRunningBuilds = 1
+
+	artifactRules = """
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+		trace => trace
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		prepareEnvironment()
+		bashNodeScript {
+			name = "Run e2e tests"
+			scriptContent = """
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export URL="https://wpcalypso.wordpress.com"
+
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+				export TEAMCITY_VERSION=2021
+				export TARGET_DEVICE=desktop
+				export LOCALE=en
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+				export HEADLESS=true
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = simpleMessageFormat()
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = cron {
+				minutes = "15"
+			}
+			branchFilter = "+:trunk"
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 10
+	}
+})
