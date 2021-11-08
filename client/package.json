@@ -55,7 +55,7 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "^0.0.2",
 		"@automattic/webpack-inline-constant-exports-plugin": "^1.0.0",
 		"@automattic/wpcom-checkout": "^1.0.0",
-		"@babel/core": "^7.15.0",
+		"@babel/core": "^7.16.0",
 		"@emotion/jest": "^11.5.0",
 		"@emotion/react": "^11.4.1",
 		"@emotion/styled": "^11.3.0",

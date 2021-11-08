@@ -39,7 +39,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
+		"@babel/runtime": "^7.16.0",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/i18n": "^4.2.2",
 		"classnames": "^2.3.1",
