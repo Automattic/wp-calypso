@@ -1,11 +1,11 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement } from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { GoToStep } from '../../types';
 import Complete from './complete';
 import Confirm from './confirm';
 import Install from './install';
 import Transfer from './transfer';
+import type { GoToStep } from '../../types';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 

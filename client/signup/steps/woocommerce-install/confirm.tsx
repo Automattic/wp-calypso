@@ -16,7 +16,7 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { GoToStep } from '../../types';
+import type { GoToStep } from '../../types';
 import type { AppState } from 'calypso/types';
 
 interface Props {

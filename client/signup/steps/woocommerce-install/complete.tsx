@@ -1,7 +1,7 @@
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import type { GoToStep } from '../../types';
 import type { ReactElement } from 'react';
-import { GoToStep } from '../../types';
 
 interface Props {
 	goToStep: GoToStep;
