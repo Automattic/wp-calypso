@@ -91,29 +91,26 @@ export function fetchSitePlans( siteId ) {
 			siteId,
 		} );
 
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
-				if ( error ) {
-					debug( 'Fetching site plans failed: ', error );
+		return wpcom.req
+			.get( `/sites/${ siteId }/plans`, { apiVersion: '1.3' } )
+			.then( ( data ) => {
+				dispatch( fetchSitePlansCompleted( siteId, data ) );
+			} )
+			.catch( ( error ) => {
+				debug( 'Fetching site plans failed: ', error );
 
-					const errorMessage =
-						error.message ||
-						i18n.translate(
-							'There was a problem fetching site plans. Please try again later or contact support.'
-						);
+				const errorMessage =
+					error.message ||
+					i18n.translate(
+						'There was a problem fetching site plans. Please try again later or contact support.'
+					);
 
-					dispatch( {
-						type: SITE_PLANS_FETCH_FAILED,
-						siteId,
-						error: errorMessage,
-					} );
-				} else {
-					dispatch( fetchSitePlansCompleted( siteId, data ) );
-				}
-
-				resolve();
+				dispatch( {
+					type: SITE_PLANS_FETCH_FAILED,
+					siteId,
+					error: errorMessage,
+				} );
 			} );
-		} );
 	};
 }
 
