@@ -42,7 +42,7 @@ class Security2faSetupBackupCodes extends Component {
 
 	renderList() {
 		const { backupCodes } = this.props;
-		if ( ! backupCodes || backupCodes.length === 0 ) {
+		if ( ! backupCodes || ! backupCodes.length ) {
 			return this.renderError();
 		}
 
