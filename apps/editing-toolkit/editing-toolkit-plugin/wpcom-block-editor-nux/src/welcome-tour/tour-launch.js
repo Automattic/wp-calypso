@@ -120,6 +120,10 @@ function WelcomeTourFrame() {
 		} );
 	};
 
+	const isWelcomeTourNext = () => {
+		new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
+	};
+
 	useEffect( () => {
 		// focus the Next/Begin button as the first interactive element when tour loads
 		setTimeout( () => initialFocusedElement?.focus() );
@@ -167,7 +171,7 @@ function WelcomeTourFrame() {
 	);
 
 	const stepRepositionProps =
-		! isMinimized && referenceElement
+		! isMinimized && referenceElement && isWelcomeTourNext()
 			? {
 					style: popperStyles?.popper,
 					...popperAttributes?.popper,
@@ -186,7 +190,9 @@ function WelcomeTourFrame() {
 			/>
 			<div className="wpcom-editor-welcome-tour__container" ref={ tourContainerRef }>
 				{ /* @todo: Rethink the design here a bit - idealy split between minimized and step-tour components */ }
-				{ ! isMinimized && <Spotlight referenceElementSelector={ referenceElementSelector } /> }
+				{ ! isMinimized && isWelcomeTourNext() && (
+					<Spotlight referenceElementSelector={ referenceElementSelector } />
+				) }
 				<div
 					className="wpcom-editor-welcome-tour-frame"
 					ref={ popperElementRef }
