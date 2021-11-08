@@ -1,9 +1,8 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
 import classNames from 'classnames';
-import debugModule from 'debug';
 import { flowRight, includes, pickBy, filter } from 'lodash';
-import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -17,84 +16,94 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
 
-const debug = debugModule( 'calypso:my-sites:settings:p2-settings' );
-export class P2PreapprovedDomainsForm extends Component {
-	SETTING_KEY_PREAPPROVED_DOMAINS = 'p2_preapproved_domains';
+const P2PreapprovedDomainsForm = ( props ) => {
+	const SETTING_KEY_PREAPPROVED_DOMAINS = 'p2_preapproved_domains';
 
-	state = {
-		isToggledOn: false,
-		isValidating: false,
-		success: [],
-		errors: {},
-		errorToDisplay: '',
-	};
+	const {
+		fields,
+		handleSubmitForm,
+		isP2HubSite,
+		isRequestingSettings,
+		isSavingSettings,
+		isWPForTeamsSite,
+		recordTracksEvent,
+		site,
+		translate,
+		updateFields,
+	} = props;
 
-	static getDerivedStateFromProps( props, state ) {
-		if ( ! props.fields || ! props.fields.p2_preapproved_domains ) {
-			return null;
-		}
+	const [ isToggledOn, setIsToggledOn ] = useState( false );
+	const [ isValidating, setIsValidating ] = useState( false );
+	const [ validTokens, setValidTokens ] = useState( [] );
+	const [ invalidTokens, setInvalidTokens ] = useState( {} );
+	const [ error, setError ] = useState( {} );
 
-		if ( state.isToggledOn === !! props.fields?.p2_preapproved_domains ) {
-			return null;
+	useEffect( () => {
+		if ( ! fields || ! fields.p2_preapproved_domains ) {
+			return;
 		}
 
 		// Domains should always be toggled on if text field is not empty.
-		// The reverse is not true -- can be toggled on even if empty.
-		if ( props.fields?.p2_preapproved_domains?.length > 0 ) {
-			return { isToggledOn: true };
+		// The reverse is not true -- it can be toggled on while empty.
+		if ( fields.p2_preapproved_domains.length > 0 ) {
+			setIsToggledOn( true );
 		}
+	} );
+
+	if ( ! isWPForTeamsSite || ! isP2HubSite ) {
+		return <></>;
 	}
 
-	handleSubmitForm = ( event ) => {
-		if ( ! this.state.isValidating ) {
-			this.props.handleSubmitForm( event );
-		}
-	};
-
-	getPreapprovedDomains = () => {
-		const { fields } = this.props;
-
+	const getFormField = () => {
 		return fields?.p2_preapproved_domains || [];
 	};
 
-	setPreapprovedDomains = ( domains ) => {
-		const { updateFields } = this.props;
-
-		updateFields( { [ this.SETTING_KEY_PREAPPROVED_DOMAINS ]: domains } );
+	const setFormField = ( domains ) => {
+		updateFields( { [ SETTING_KEY_PREAPPROVED_DOMAINS ]: domains } );
 	};
 
-	/**
-	 * Handle toggle button action.
-	 */
-	handleDomainsToggle = () => {
-		const { updateFields } = this.props;
-
-		updateFields( { [ this.SETTING_KEY_PREAPPROVED_DOMAINS ]: [] } );
-
-		this.setState( {
-			isToggledOn: ! this.state.isToggledOn,
-		} );
+	const handleSubmitButtonClick = ( event ) => {
+		if ( ! isValidating ) {
+			handleSubmitForm( event );
+		}
 	};
 
-	refreshDomainsValidation = ( success = [], errors = {} ) => {
-		const errorsKeys = Object.keys( errors );
-		const errorToDisplay =
-			this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
+	const handleDomainsToggle = () => {
+		// Clear field if toggling off. If toggling on, it should have
+		// been empty to start with.
+		setFormField( [] );
 
-		this.setState( {
-			errorToDisplay,
-			errors,
-			success,
-		} );
+		setIsToggledOn( ! isToggledOn );
 	};
 
-	async validateDomains( domains ) {
-		this.setState( { isValidating: true } );
+	const refreshValidation = ( valid = [], invalid = {} ) => {
+		setInvalidTokens( invalid );
+		setValidTokens( valid );
 
-		if ( domains.length < 1 ) {
-			this.refreshDomainsValidation( [], {} );
+		const invalidTokenKeys = Object.keys( invalidTokens );
+		setError( error || ( invalidTokenKeys.length > 0 && invalidTokenKeys[ 0 ] ) );
+	};
+
+	const validateTokens = async ( tokens ) => {
+		setIsValidating( true );
+
+		if ( tokens.length < 1 ) {
+			refreshValidation( [], {} );
 			return;
 		}
+
+		// Prior to sending off a validation API request,
+		// first quickly remove old, now-deleted tokens from validation lists.
+		const updatedInvalidTokens = pickBy( invalidTokens, ( _, key ) => {
+			return tokens.includes( key );
+		} );
+		setInvalidTokens( updatedInvalidTokens );
+		setError( tokens.includes( error ) && error );
+
+		const updatedValidTokens = filter( validTokens, ( token ) => {
+			return tokens.includes( token );
+		} );
+		setValidTokens( updatedValidTokens );
 
 		try {
 			const { success, errors } = await wpcom.req.get(
@@ -102,149 +111,127 @@ export class P2PreapprovedDomainsForm extends Component {
 					path: `/p2/hub-settings/domains/validate`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ domains }
+				{ domains: tokens }
 			);
 
-			this.refreshDomainsValidation( success, errors );
+			refreshValidation( success, errors );
 
-			this.props.recordTracksEvent( 'calypso_p2_settings_validate_preapproved_domains_success' );
-		} catch ( error ) {
-			this.props.recordTracksEvent( 'calypso_p2_settings_validate_preapproved_domains_failed' );
+			recordTracksEvent( 'calypso_p2_settings_validate_preapproved_domains_valid' );
+		} catch ( e ) {
+			recordTracksEvent( 'calypso_p2_settings_validate_preapproved_domains_invalid' );
 		} finally {
-			this.setState( { isValidating: false } );
+			setIsValidating( false );
 		}
-	}
+	};
 
-	onDomainTokensChange = ( tokens ) => {
-		const { errorToDisplay, errors, success } = this.state;
-		const filteredTokens = tokens.map( ( value ) => {
+	const normalizeTokens = ( rawTokens ) => {
+		const tokens = rawTokens.map( ( value ) => {
 			if ( 'object' === typeof value ) {
 				return value.value;
 			}
 			return value;
 		} );
 
-		this.setPreapprovedDomains( filteredTokens );
-
-		const filteredErrors = pickBy( errors, ( error, key ) => {
-			return filteredTokens.includes( key );
-		} );
-
-		const filteredSuccess = filter( success, ( successfulValidation ) => {
-			return filteredTokens.includes( successfulValidation );
-		} );
-
-		this.setState( {
-			errors: filteredErrors,
-			success: filteredSuccess,
-			errorToDisplay: filteredTokens.includes( errorToDisplay ) && errorToDisplay,
-		} );
-
-		this.validateDomains( filteredTokens );
-	};
-
-	getDomainTokensWithStatus = () => {
-		const { success, errors } = this.state;
-
-		const domains = this.getPreapprovedDomains();
-
-		const tokens = domains.map( ( domain ) => {
-			if ( errors && errors[ domain ] ) {
-				return {
-					status: 'error',
-					value: domain,
-					tooltip: errors[ domain ],
-					onMouseEnter: () => this.setState( { errorToDisplay: domain } ),
-				};
-			}
-			if ( ! includes( success, domain ) ) {
-				return {
-					value: domain,
-					status: 'validating',
-				};
-			}
-			return domain;
-		} );
-
-		debug( 'Generated tokens: ' + JSON.stringify( tokens ) );
 		return tokens;
 	};
 
-	render() {
-		const {
-			isRequestingSettings,
-			isSavingSettings,
-			site,
-			translate,
-			isWPForTeamsSite,
-			isP2HubSite,
-		} = this.props;
+	const onTokensChange = ( rawTokens ) => {
+		const tokens = normalizeTokens( rawTokens );
+		setFormField( tokens );
+		validateTokens( tokens );
+	};
 
-		if ( ! isWPForTeamsSite || ! isP2HubSite ) {
-			return <></>;
-		}
+	const getTokensWithStatus = () => {
+		const rawTokens = getFormField();
 
-		const classes = classNames( 'site-settings__p2-preapproved-domains', {
-			'is-loading': isRequestingSettings,
+		const tokens = rawTokens.map( ( token ) => {
+			if ( invalidTokens && invalidTokens[ token ] ) {
+				return {
+					status: 'error',
+					value: token,
+					tooltip: invalidTokens[ token ],
+					onMouseEnter: () => setError( token ),
+				};
+			}
+
+			if ( ! includes( validTokens, token ) ) {
+				return {
+					value: token,
+					status: 'validating',
+				};
+			}
+
+			return token;
 		} );
 
-		return (
-			<div className={ classNames( classes ) }>
-				{ site && <QuerySiteSettings siteId={ site.ID } /> }
+		return tokens;
+	};
 
-				<SettingsSectionHeader
-					disabled={
-						isRequestingSettings || isSavingSettings || Object.keys( this.state.errors ).length > 0
-					}
-					isSaving={ isSavingSettings }
-					onButtonClick={ this.handleSubmitForm }
-					showButton
-					title={ translate( 'Joining this workspace' ) }
-				/>
-				<Card>
-					<form>
-						<div className="settings-p2__preapproved-domains">
-							<FormFieldset>
-								<ToggleControl
-									checked={ this.state.isToggledOn }
-									disabled={ isRequestingSettings || isSavingSettings }
-									onChange={ this.handleDomainsToggle }
-									label={ translate(
-										'Allow people with an email address from specified domains to join this workspace.'
-									) }
-								></ToggleControl>
-								{ this.state.isToggledOn && (
-									<>
-										<FormLabel htmlFor="blogname">{ translate( 'Approved domains' ) }</FormLabel>
-										<TokenField
-											name="p2_preapproved_domains"
-											id="p2-preapproved-domains"
-											isBorderless
-											tokenizeOnSpace
-											autoCapitalize="none"
-											autoComplete="off"
-											autoCorrect="off"
-											spellCheck="false"
-											maxLength={ 60 }
-											value={ this.getDomainTokensWithStatus() }
-											onChange={ this.onDomainTokensChange }
-											disabled={ isRequestingSettings }
-										/>
-										<FormSettingExplanation>
-											{ translate(
-												'If you enter automattic.com, anybody using an automattic.com email will be able to join this workspace. To add multiple domains, separate them with a comma.'
-											) }
-										</FormSettingExplanation>
-									</>
+	const classes = classNames( 'site-settings__p2-preapproved-domains', {
+		'is-loading': isRequestingSettings,
+	} );
+
+	return (
+		<div className={ classNames( classes ) }>
+			{ site && <QuerySiteSettings siteId={ site.ID } /> }
+
+			<SettingsSectionHeader
+				disabled={
+					isRequestingSettings || isSavingSettings || Object.keys( invalidTokens ).length > 0
+				}
+				isSaving={ isSavingSettings }
+				onButtonClick={ handleSubmitButtonClick }
+				showButton
+				title={ translate( 'Joining this workspace' ) }
+			/>
+			<Card>
+				<form>
+					<div className="settings-p2__preapproved-domains">
+						<FormFieldset>
+							<ToggleControl
+								checked={ isToggledOn }
+								disabled={ isRequestingSettings || isSavingSettings }
+								onChange={ handleDomainsToggle }
+								label={ translate(
+									'Allow people with an email address from specified domains to join this workspace.'
 								) }
-							</FormFieldset>
-						</div>
-					</form>
-				</Card>
-			</div>
-		);
-	}
-}
+							></ToggleControl>
+							{ isToggledOn && (
+								<>
+									<FormLabel htmlFor="blogname">{ translate( 'Approved domains' ) }</FormLabel>
+									<TokenField
+										name="p2_preapproved_domains"
+										id="p2-preapproved-domains"
+										isBorderless
+										tokenizeOnSpace
+										autoCapitalize="none"
+										autoComplete="off"
+										autoCorrect="off"
+										spellCheck="false"
+										maxLength={ 5 }
+										value={ getTokensWithStatus() }
+										onChange={ onTokensChange }
+										disabled={ isRequestingSettings }
+									/>
+									<FormSettingExplanation>
+										{ translate(
+											'If you enter %(emailDomain)s, anybody using %(emailDomain)s email will be able to join this workspace. To add multiple domains, separate them with a comma.',
+											{
+												args: {
+													emailDomain: 'automattic.com',
+												},
+											}
+										) }
+									</FormSettingExplanation>
+								</>
+							) }
+						</FormFieldset>
+					</div>
+				</form>
+			</Card>
+		</div>
+	);
+};
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
