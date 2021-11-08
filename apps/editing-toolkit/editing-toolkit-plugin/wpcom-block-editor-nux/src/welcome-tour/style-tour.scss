@@ -18,14 +18,31 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	cursor: default;
 }
 
-.wpcom-editor-welcome-tour__screen-overlay {
+.wpcom-editor-welcome-tour__spotlight-overlay {
 	position: fixed;
-	left: 0;
-	right: 0;
-	bottom: 0;
+	width: 100vw;
+	height: 100vh;
 	top: 0;
-	background-color: black;
-	opacity: 0.5;
+	left: 0;
+	background:rgba( 0, 0, 0 );
+	opacity: 0;
+
+	&.--visible {
+		opacity: 0.5;
+	}
+}
+
+.wpcom-editor-welcome-tour__spotlight-clip {
+	&.--visible {
+		position: fixed;
+		width: 50px;
+		height: 50px;
+		overflow: hidden;
+		// box-shadow: 0 0 0 9999px rgba(0, 0, 255, 0.2);
+		outline: 99999px solid rgba( 0, 0, 0, 0.5 );
+		border-radius: 2px;
+		z-index: 1;
+	}
 }
 
 .welcome-tour-card__heading {
