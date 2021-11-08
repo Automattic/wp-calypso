@@ -1,5 +1,8 @@
 import { delay } from 'lodash';
-import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'calypso/state/action-types';
+import {
+	AUTOMATED_TRANSFER_STATUS_REQUEST,
+	AUTOMATED_TRANSFER_STATUS_REQUEST_ONCE,
+} from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	fetchAutomatedTransferStatus,
@@ -61,4 +64,20 @@ registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/status/index.
 			onError: requestingStatusFailure,
 		} ),
 	],
+	[ AUTOMATED_TRANSFER_STATUS_REQUEST_ONCE ]: [
+		dispatchRequest( {
+			fetch: requestStatus,
+			onSuccess: receiveStatusOnce,
+			onError: requestingStatusFailure,
+		} ),
+	],
 } );
+
+export function receiveStatusOnce( { siteId }, { status, uploaded_plugin_slug } ) {
+	return ( dispatch ) => {
+		dispatch( setAutomatedTransferStatus( siteId, status, uploaded_plugin_slug ) );
+
+		// Prevent scenarios where isAtomic is false while transferStatus is complete.
+		dispatch( requestSite( siteId ) );
+	};
+}

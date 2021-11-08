@@ -15,3 +15,5 @@ export interface Flow {
 	showRecaptcha?: boolean;
 	enableBranchSteps?: boolean;
 }
+
+export type GoToStep = ( stepName: string, stepSectionName?: string, flowName?: string ) => void;
