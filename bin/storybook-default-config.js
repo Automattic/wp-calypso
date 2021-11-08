@@ -23,7 +23,7 @@ module.exports = function storybookDefaultConfig( {
 		babel: {
 			presets: [
 				[ '@babel/preset-env', { targets: { browsers: 'last 2 versions' } } ],
-				[ '@babel/preset-react' ],
+				[ '@babel/preset-react', { runtime: 'automatic' } ],
 			],
 			plugins: [ [ '@babel/plugin-proposal-private-property-in-object', { loose: false } ] ],
 		},
