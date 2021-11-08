@@ -4,6 +4,8 @@
 
 .add-dns-record {
 	.add-dns-record__sidebar {
+		display: none;
+
 		margin-top: 20px;
 
 		div {
@@ -17,6 +19,14 @@
 				margin: 0;
 			}
 		}
+
+		@include break-mobile {
+			display: block;
+		}
+	}
+
+	.add-dns-record__main {
+		padding: 0 16px;
 	}
 
 	@include break-xlarge {
@@ -27,6 +37,8 @@
 		grid-gap: 24px;
 		.add-dns-record__main {
 			@include grid-column( 1, 8 );
+
+			padding: 0;
 		}
 		.add-dns-record__sidebar {
 			@include grid-column( 9, 4 );
