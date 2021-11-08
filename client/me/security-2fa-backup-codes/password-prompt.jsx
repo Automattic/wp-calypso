@@ -7,7 +7,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
-class Security2faBackupCodesPasswordPromt extends Component {
+class Security2faBackupCodesPasswordPrompt extends Component {
 	static propTypes = {
 		onCancel: PropTypes.func.isRequired,
 		onSubmit: PropTypes.func.isRequired,
@@ -62,4 +62,4 @@ class Security2faBackupCodesPasswordPromt extends Component {
 	}
 }
 
-export default localize( Security2faBackupCodesPasswordPromt );
+export default localize( Security2faBackupCodesPasswordPrompt );
