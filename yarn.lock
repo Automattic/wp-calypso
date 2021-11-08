@@ -10868,16 +10868,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-runtime@npm:^6.26.0":
-  version: 6.26.0
-  resolution: "babel-runtime@npm:6.26.0"
-  dependencies:
-    core-js: ^2.4.0
-    regenerator-runtime: ^0.11.0
-  checksum: caa752004936b1463765ed3199c52f6a55d0613b9bed108743d6f13ca532b821d4ea9decc4be1b583193164462b1e3e7eefdfa36b15c72e7daac58dd72c1772f
-  languageName: node
-  linkType: hard
-
 "backo2@npm:1.0.2":
   version: 1.0.2
   resolution: "backo2@npm:1.0.2"
@@ -13687,7 +13677,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^2.4.0, core-js@npm:^2.4.1, core-js@npm:^2.5.3, core-js@npm:^2.6.5":
+"core-js@npm:^2.4.1, core-js@npm:^2.5.3, core-js@npm:^2.6.5":
   version: 2.6.11
   resolution: "core-js@npm:2.6.11"
   checksum: d6b010dcfa41f4e76c576b341b954ed16b6ec803d4993d9e03edefe35913d4074a39937b31db8a904032f3d90f034bb2e24e640ba18129386f4d01c9829d730d
@@ -32066,13 +32056,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.11.0":
-  version: 0.11.1
-  resolution: "regenerator-runtime@npm:0.11.1"
-  checksum: 69cfa839efcf2d627fe358bf302ab8b24e5f182cb69f13e66f0612d3640d7838aad1e55662135e3ef2c1cc4322315b757626094fab13a48f9a64ab4bdeb8795b
-  languageName: node
-  linkType: hard
-
 "regenerator-runtime@npm:^0.13.2, regenerator-runtime@npm:^0.13.4, regenerator-runtime@npm:^0.13.7, regenerator-runtime@npm:^0.13.9":
   version: 0.13.9
   resolution: "regenerator-runtime@npm:0.13.9"
@@ -39153,17 +39136,17 @@ testarmada-magellan@11.0.10:
   languageName: unknown
   linkType: soft
 
-"wpcom-xhr-request@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "wpcom-xhr-request@npm:1.2.0"
+"wpcom-xhr-request@^1.2.0, wpcom-xhr-request@workspace:packages/wpcom-xhr-request":
+  version: 0.0.0-use.local
+  resolution: "wpcom-xhr-request@workspace:packages/wpcom-xhr-request"
   dependencies:
-    babel-runtime: ^6.26.0
-    debug: ^3.1.0
+    "@automattic/calypso-typescript-config": ^1.0.0
+    "@babel/runtime": ^7.16.0
+    debug: ^4.1.1
     superagent: ^3.8.3
     wp-error: ^1.3.0
-  checksum: 098fd65e2e2d5ff4861b9a5235976fd757d2f74f87800d9a88853af8aefb67161b1b893c39b4f40331445ef8c905a204bde8934196a470f387358da14ebf863f
-  languageName: node
-  linkType: hard
+  languageName: unknown
+  linkType: soft
 
 "wpcom@^6.0.0, wpcom@workspace:packages/wpcom.js":
   version: 0.0.0-use.local
