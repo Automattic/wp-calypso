@@ -39141,7 +39141,7 @@ testarmada-magellan@11.0.10:
   resolution: "wpcom-xhr-request@workspace:packages/wpcom-xhr-request"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.15.3
+    "@babel/runtime": ^7.16.0
     debug: ^4.1.1
     superagent: ^3.8.3
     wp-error: ^1.3.0
