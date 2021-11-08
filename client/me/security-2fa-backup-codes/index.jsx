@@ -47,12 +47,12 @@ class Security2faBackupCodes extends Component {
 
 	toggleBackupCodePassword = ( event ) => {
 		event.preventDefault();
-		this.setState( {
-			addingPassword: ! this.state.addingPassword,
+		this.setState( ( prevState ) => ( {
+			addingPassword: ! prevState.addingPassword,
 			generatingCodes: false,
 			lastError: null,
 			showPrompt: true,
-		} );
+		} ) );
 	};
 
 	onDismissClick = () => this.setState( { lastError: null } );
