@@ -180,7 +180,8 @@
 		"onboarding-with-email",
 		"setup-site",
 		"do-it-for-me",
-		"importer"
+		"importer",
+		"woocommerce-install"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"difm_typeform_id": "YMiXMYId",

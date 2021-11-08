@@ -165,6 +165,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"woocommerce/extension-referrers": true,
+		"woop": true,
 		"wpcom-user-bootstrap": false,
 		"wordpress-action-search": false,
 		"redirect-fallback-browsers": true
