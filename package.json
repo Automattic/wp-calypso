@@ -149,7 +149,7 @@
 		"@babel/register": "^7.16.0",
 		"@babel/runtime": "^7.16.0",
 		"@signal-noise/stylelint-scales": "^2.0.0",
-		"@storybook/react": "^6.3.11",
+		"@storybook/react": "^6.3.12",
 		"@typeform/embed-react": "^1.1.0",
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
