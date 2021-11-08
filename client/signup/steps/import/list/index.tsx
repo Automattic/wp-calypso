@@ -1,9 +1,11 @@
 import { Button } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
-import { GoToStep } from '../types';
+import { urlDataUpdate } from 'calypso/state/imports/url-analyzer/actions';
+import { GoToStep, UrlData } from '../types';
 import type * as React from 'react';
 import './style.scss';
 
@@ -11,14 +13,19 @@ import './style.scss';
 
 interface Props {
 	goToStep: GoToStep;
+	urlDataUpdate: ( urlData: UrlData ) => void;
 }
 
 const ListStep: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { goToStep } = props;
+	const { goToStep, urlDataUpdate } = props;
 
 	const onButtonClick = ( platform: string ): void => {
-		goToStep( `ready?platform=${ platform }` );
+		urlDataUpdate( {
+			url: '',
+			platform,
+		} );
+		goToStep( `ready` );
 	};
 
 	return (
@@ -76,7 +83,7 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 					</div>
 
 					<div className={ 'list__importers list__importers-secondary' }>
-						<h3>Other platforms</h3>
+						<h3>{ __( 'Other platforms' ) }</h3>
 						<ul>
 							<li>
 								<Button borderless={ true } onClick={ () => onButtonClick( 'blogroll' ) }>
@@ -116,4 +123,8 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default ListStep;
+const connector = connect( () => ( {} ), {
+	urlDataUpdate,
+} );
+
+export default connector( ListStep );
