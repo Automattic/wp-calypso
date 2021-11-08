@@ -311,15 +311,10 @@ export default function CompositeCheckout( {
 	const areThereErrors =
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy ).length > 0;
 
-	const siteSlugLoggedOutCart: string | undefined = select( 'wpcom' )?.getSiteSlug();
 	const {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
-	} = useRemoveFromCartAndRedirect(
-		updatedSiteSlug,
-		siteSlugLoggedOutCart,
-		createUserAndSiteBeforeTransaction
-	);
+	} = useRemoveFromCartAndRedirect( updatedSiteSlug, createUserAndSiteBeforeTransaction );
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		wpcomGetStoredCards,
