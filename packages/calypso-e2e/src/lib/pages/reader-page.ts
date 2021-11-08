@@ -3,14 +3,16 @@ import { Page } from 'playwright';
 const selectors = {
 	// Reader main stream
 	readerCard: '.reader-post-card',
+	streamPlaceholder: 'span.reader__placeholder-text',
 	visitSiteLink: '.reader-visit-link',
 	actionButton: ( action: 'Share' | 'Comment' ) =>
 		`.reader-post-actions__item:has-text("${ action }")`,
 
+	// Post
+	relatedPostsPlaceholder: '.is-placeholder',
 	commentTextArea: '.comments__form textarea',
 	commentSubmitButton: '.comments__form button:text("Send")',
-	commentContentLocator: ( commentText: string ) =>
-		`.comments__comment :text( '${ commentText }' )`,
+	comment: ( commentText: string ) => `div:text( '${ commentText }' )`,
 };
 
 /**
@@ -26,13 +28,6 @@ export class ReaderPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-	}
-
-	/**
-	 * Waits until the page is considered to be loaded.
-	 */
-	private async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
 	}
 
 	/**
@@ -60,6 +55,9 @@ export class ReaderPage {
 	 * @throws {Error} If neither index or text are specified.
 	 */
 	async visitPost( { index, text }: { index?: number; text?: string } = {} ): Promise< void > {
+		// Wait for main reader stream to populate.
+		await this.page.waitForSelector( selectors.streamPlaceholder, { state: 'hidden' } );
+
 		let selector = '';
 
 		if ( index ) {
@@ -70,22 +68,37 @@ export class ReaderPage {
 			throw new Error( 'Unable to select and visit post - specify one of index or text.' );
 		}
 
-		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selector ) ] );
+		await Promise.all( [
+			this.page.waitForNavigation( { waitUntil: 'networkidle' } ),
+			this.page.click( selector ),
+		] );
 	}
 
 	/**
-	 * Sets and submits comment on latest post
+	 * Submits a given string of text as comment on a post.
+	 *
+	 * This method requires that current page is on an article that supports comments.
+	 * Otherwise, this method will throw.
 	 *
 	 * @param {string} comment Text of the comment.
-	 * @returns {Promise<void>} No return value.
 	 */
 	async comment( comment: string ): Promise< void > {
-		await this.waitUntilLoaded();
+		// Wait for related posts card to generate.
+		await this.page.waitForSelector( selectors.relatedPostsPlaceholder, { state: 'hidden' } );
 
+		// Force scroll.
 		const elementHandle = await this.page.waitForSelector( selectors.commentTextArea );
-		await elementHandle.scrollIntoViewIfNeeded();
+		await this.page.evaluate(
+			( element: SVGElement | HTMLElement ) => element.scrollIntoView(),
+			elementHandle
+		);
 		await this.page.fill( selectors.commentTextArea, comment );
-		await this.page.click( selectors.commentSubmitButton );
-		await this.page.waitForLoadState( 'networkidle' );
+
+		await Promise.all( [
+			this.page.waitForResponse(
+				( response ) => response.status() === 200 && response.url().includes( 'new?' )
+			),
+			this.page.click( selectors.commentSubmitButton ),
+		] );
 	}
 }
