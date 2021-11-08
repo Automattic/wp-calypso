@@ -45,5 +45,12 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 		store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 	}
 
-	document.location.replace( context.query.next || '/' );
+	if ( context.query?.next ) {
+		const nextUrl = new URL( context.query.next );
+		document.location.replace(
+			nextUrl.hostname === window.location.hostname ? nextUrl.toString() : '/'
+		);
+	} else {
+		document.location.replace( '/' );
+	}
 };
