@@ -2,11 +2,6 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import successImageAntiSpam from 'calypso/assets/images/jetpack/licensing-activation-success-Default.png';
-import successImageComplete from 'calypso/assets/images/jetpack/licensing-activation-success-Default.png';
-import successImageDefault from 'calypso/assets/images/jetpack/licensing-activation-success-Default.png';
-import successImageScan from 'calypso/assets/images/jetpack/licensing-activation-success-Default.png';
-import successImageSearch from 'calypso/assets/images/jetpack/licensing-activation-success-Default.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySites from 'calypso/components/data/query-sites';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
@@ -17,22 +12,16 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
-import getRawSite from 'calypso/state/selectors/get-raw-site';
-import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getActivationCompletedLink } from './utils';
+import useGetJetpackActivationConfirmationInfo from './use-get-jetpack-activation-confirmation-info';
 
 interface Props {
-	productSlug: string | 'no_product';
+	productSlug: string;
 	receiptId?: number;
 	jetpackTemporarySiteId?: number;
 }
 
-type RawSite = {
-	name: string;
-};
-
 const LicensingActivationThankYouCompleted: FC< Props > = ( {
-	productSlug,
+	productSlug = 'no_product',
 	jetpackTemporarySiteId = 0,
 } ) => {
 	const translate = useTranslate();
@@ -50,23 +39,27 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 		getJetpackCheckoutSupportTicketDestinationSiteId( state, jetpackTemporarySiteId )
 	);
 	const automaticTransferSucceeded = destinationSiteId > 0;
-	const rawSite = useSelector( ( state ) => getRawSite( state, destinationSiteId ) as RawSite );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, destinationSiteId ) );
-	const wpAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, destinationSiteId ) );
-	const siteConfirmedLink = getActivationCompletedLink( productSlug, siteSlug, wpAdminUrl );
 
 	const title = useMemo( () => {
 		return automaticTransferSucceeded
-			? translate( 'Your %(productName)s is active!', {
-					args: { productName },
+			? translate( `Your %(productName)s is active! %(celebrationEmoji)s`, {
+					args: {
+						productName: hasProductInfo ? productName : 'subscription',
+						celebrationEmoji: String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */,
+					},
 			  } )
 			: translate( 'Your subscription will be activated soon' );
-	}, [ automaticTransferSucceeded, translate, productName ] );
+	}, [ automaticTransferSucceeded, translate, productName, hasProductInfo ] );
+
+	const productConfirmationInfo = useGetJetpackActivationConfirmationInfo(
+		destinationSiteId,
+		productSlug
+	);
 
 	return (
 		<>
 			{ automaticTransferSucceeded && <QuerySites siteId={ destinationSiteId } /> }
-			{ productSlug && <QueryProducts type="jetpack" /> }
+			{ hasProductInfo && <QueryProducts type="jetpack" /> }
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
 				path="/checkout/jetpack/thank-you/licensing-auto-activate-completed/:product"
@@ -75,7 +68,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 			/>
 			<LicensingActivation
 				title={ title }
-				footerImage={ successImageDefault }
+				footerImage={ productConfirmationInfo.image }
 				isLoading={ isProductListFetching }
 				showContactUs
 			>
@@ -96,24 +89,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 				) }
 				{ automaticTransferSucceeded && (
 					<>
-						<p>
-							{ productName &&
-								rawSite?.name &&
-								translate( 'Your %(productName)s is active on {{strong}}%(siteName)s{{/strong}}!', {
-									args: { productName, siteName: rawSite.name },
-									components: {
-										strong: (
-											<strong className="licensing-thank-you-auto-activation-completed__site-name" />
-										),
-									},
-								} ) }
-							{ productName &&
-								! rawSite &&
-								translate( 'Your %(productName)s is active', {
-									args: { productName },
-								} ) }
-							{ ! productName && translate( 'We successfully activated your subscription.' ) }
-						</p>
+						<p>{ productConfirmationInfo.text }</p>
 
 						<Button
 							primary
@@ -124,7 +100,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 									} )
 								)
 							}
-							href={ siteConfirmedLink }
+							href={ productConfirmationInfo.buttonUrl }
 						>
 							{ translate( 'Go to Dashboard' ) }
 						</Button>
