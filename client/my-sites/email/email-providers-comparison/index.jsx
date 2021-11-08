@@ -60,6 +60,7 @@ import {
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
