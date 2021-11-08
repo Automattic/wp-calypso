@@ -7,6 +7,7 @@ import {
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
+import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
@@ -24,7 +25,7 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
@@ -48,6 +49,7 @@ import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import DomainOnly from './domain-only';
 import DomainsTable from './domains-table';
+import DomainsTableFilterButton from './domains-table-filter-button';
 import {
 	filterOutWpcomDomains,
 	getDomainManagementPath,
@@ -84,6 +86,17 @@ export class SiteDomains extends Component {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
 	}
 
+	filterDomains( domains, filter ) {
+		return domains.filter( ( domain ) => {
+			if ( 'owned-by-me' === filter ) {
+				return domain.currentUserCanManage;
+			} else if ( 'owned-by-others' === filter ) {
+				return ! domain.currentUserCanManage;
+			}
+			return true;
+		} );
+	}
+
 	renderNewDesign() {
 		const {
 			currentRoute,
@@ -91,12 +104,15 @@ export class SiteDomains extends Component {
 			hasProductsList,
 			isAtomicSite,
 			selectedSite,
+			context,
 			translate,
 		} = this.props;
 		const { primaryDomainIndex, settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
 
-		const nonWpcomDomains = filterOutWpcomDomains( domains );
+		const selectedFilter = context?.query?.filter;
+
+		const nonWpcomDomains = this.filterDomains( filterOutWpcomDomains( domains ), selectedFilter );
 		const wpcomDomain = domains.find(
 			( domain ) => domain.type === type.WPCOM || domain.isWpcomStagingDomain
 		);
@@ -155,7 +171,7 @@ export class SiteDomains extends Component {
 					</div>
 				</div>
 
-				{ ! this.isLoading() && nonWpcomDomains.length === 0 && (
+				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
@@ -166,10 +182,13 @@ export class SiteDomains extends Component {
 				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
 				<div className="domain-management-list__items">
+					<div className="domain-management-list__filter">
+						{ this.renderDomainTableFilterButton( false ) }
+					</div>
 					<DomainsTable
 						isLoading={ this.isLoading() }
 						currentRoute={ currentRoute }
-						domains={ domains }
+						domains={ nonWpcomDomains }
 						domainsTableColumns={ domainsTableColumns }
 						selectedSite={ selectedSite }
 						primaryDomainIndex={ primaryDomainIndex }
@@ -181,7 +200,7 @@ export class SiteDomains extends Component {
 					/>
 				</div>
 
-				{ ! this.isLoading() && nonWpcomDomains.length > 0 && (
+				{ ! this.isLoading() && nonWpcomDomains.length > 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
@@ -208,6 +227,54 @@ export class SiteDomains extends Component {
 		);
 	}
 
+	renderDomainTableFilterButton( compact ) {
+		const { selectedSite, domains, context } = this.props;
+
+		const selectedFilter = context?.query?.filter;
+		const nonWpcomDomains = filterOutWpcomDomains( domains );
+
+		const filterOptions = [
+			{
+				label: 'Site domains',
+				value: '',
+				path: domainManagementList( selectedSite?.slug ),
+				count: nonWpcomDomains?.length,
+			},
+			{
+				label: 'Owned by me',
+				value: 'owned-by-me',
+				path:
+					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
+				count: this.filterDomains( nonWpcomDomains, 'owned-by-me' )?.length,
+			},
+			{
+				label: 'Owned by others',
+				value: 'owned-by-others',
+				path:
+					domainManagementList( selectedSite?.slug ) +
+					'?' +
+					stringify( { filter: 'owned-by-others' } ),
+				count: this.filterDomains( nonWpcomDomains, 'owned-by-others' )?.length,
+			},
+			null,
+			{
+				label: 'All my domains',
+				value: 'all-my-domains',
+				path: domainManagementRoot(),
+				count: null,
+			},
+		];
+
+		return (
+			<DomainsTableFilterButton
+				key="breadcrumb_button_2"
+				selectedFilter={ selectedFilter || '' }
+				filterOptions={ filterOptions }
+				compact={ compact }
+			/>
+		);
+	}
+
 	renderBreadcrumbs() {
 		const { translate } = this.props;
 
@@ -222,9 +289,16 @@ export class SiteDomains extends Component {
 				}
 			),
 		};
+
 		const buttons = [
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<OptionsDomainButton key="breadcrumb_button_2" ellipsisButton />,
+			this.renderDomainTableFilterButton( true ),
+			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
+		];
+
+		const mobileButtons = [
+			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
+			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
 		];
 
 		return (
@@ -232,7 +306,7 @@ export class SiteDomains extends Component {
 				items={ [ item ] }
 				mobileItem={ item }
 				buttons={ buttons }
-				mobileButtons={ buttons }
+				mobileButtons={ mobileButtons }
 			/>
 		);
 	}
