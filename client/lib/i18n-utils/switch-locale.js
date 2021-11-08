@@ -60,10 +60,14 @@ export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevis
 		fileType = 'json';
 	}
 
-	const revision = languageRevisions[ localeSlug ];
 	const fileUrl = `${ getLanguageFilePathUrl() }${ localeSlug }-v1.1.${ fileType }`;
+	let revision = languageRevisions[ localeSlug ];
 
-	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
+	if ( typeof revision === 'number' ) {
+		revision = revision.toString();
+	}
+
+	return typeof revision === 'string' ? fileUrl + `?v=${ revision }` : fileUrl;
 }
 
 function getHtmlLangAttribute() {
