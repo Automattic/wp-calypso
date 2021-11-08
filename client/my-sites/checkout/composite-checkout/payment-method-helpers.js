@@ -1,10 +1,7 @@
-import { defaultRegistry } from '@automattic/composite-checkout';
 import i18n from 'i18n-calypso';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
-
-const { select } = defaultRegistry;
 
 async function createAccountCallback( response ) {
 	if ( ! response.bearer_token ) {
@@ -28,7 +25,7 @@ async function createAccountCallback( response ) {
 	} );
 }
 
-export async function createAccount( { signupFlowName } ) {
+export async function createAccount( { signupFlowName, email, siteId, recaptchaClientId } ) {
 	let newSiteParams = null;
 	try {
 		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
@@ -36,10 +33,6 @@ export async function createAccount( { signupFlowName } ) {
 		newSiteParams = {};
 	}
 
-	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
-	const siteId = select( 'wpcom' )?.getSiteId();
-	const emailValue = email.value;
-	const recaptchaClientId = select( 'wpcom' )?.getRecaptchaClientId();
 	const isRecaptchaLoaded = typeof recaptchaClientId === 'number';
 
 	let recaptchaToken = undefined;
@@ -63,7 +56,7 @@ export async function createAccount( { signupFlowName } ) {
 	try {
 		const response = await wp.undocumented().createUserAndSite(
 			{
-				email: emailValue,
+				email,
 				'g-recaptcha-error': recaptchaError,
 				'g-recaptcha-response': recaptchaToken || undefined,
 				is_passwordless: true,
