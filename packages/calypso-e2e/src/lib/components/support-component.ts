@@ -172,7 +172,6 @@ export class SupportComponent {
 	async clickReadMore(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } ),
-			this.page.waitForLoadState( 'networkidle' ),
 			this.page.click( selectors.readMoreButton ),
 		] );
 	}
