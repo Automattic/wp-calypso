@@ -4,6 +4,7 @@ import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
 
 interface CreateAccountResponse {
+	success: boolean;
 	bearer_token?: string;
 	username?: string;
 	blog_details?: {
@@ -79,23 +80,20 @@ export async function createAccount( {
 	const blogName = newSiteParams?.blog_name;
 
 	try {
-		const response = await wp.undocumented().createUserAndSite(
-			{
-				email,
-				'g-recaptcha-error': recaptchaError,
-				'g-recaptcha-response': recaptchaToken || undefined,
-				is_passwordless: true,
-				extra: { username_hint: blogName },
-				signup_flow_name: signupFlowName,
-				validate: false,
-				new_site_params: newSiteParams,
-				should_create_site: ! siteId,
-			},
-			null
-		);
+		const response = await wp.undocumented().createUserAndSite( {
+			email,
+			'g-recaptcha-error': recaptchaError,
+			'g-recaptcha-response': recaptchaToken || undefined,
+			is_passwordless: true,
+			extra: { username_hint: blogName },
+			signup_flow_name: signupFlowName,
+			validate: false,
+			new_site_params: newSiteParams,
+			should_create_site: ! siteId,
+		} );
 
-		if ( ! isCreateAccountResponse( response ) ) {
-			return {};
+		if ( ! isCreateAccountResponse( response ) || ! response.success ) {
+			throw new Error( 'Failed to create account' );
 		}
 
 		createAccountCallback( response );
