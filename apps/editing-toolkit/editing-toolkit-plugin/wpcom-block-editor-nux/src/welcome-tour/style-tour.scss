@@ -18,6 +18,16 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	cursor: default;
 }
 
+.wpcom-editor-welcome-tour__screen-overlay {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	background-color: black;
+	opacity: 0.5;
+}
+
 .welcome-tour-card__heading {
 	font-size: 1.125rem; /* stylelint-disable-line */
 	margin: 0.5rem 0;
