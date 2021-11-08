@@ -43,13 +43,9 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 		} );
 
 		const body = {
-			skipped_connections: [],
+			skipped_connections: skippedConnections ?? [],
 			message,
 		};
-
-		if ( skippedConnections && skippedConnections.length > 0 ) {
-			body.skipped_connections = skippedConnections;
-		}
 
 		wpcom.req
 			.post( {
