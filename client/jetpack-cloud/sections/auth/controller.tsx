@@ -6,6 +6,8 @@ import Connect from './connect';
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
 
+const DEFAULT_NEXT_LOCATION = '/';
+
 export const connect: PageJS.Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
 		const redirectUri = new URL( '/connect/oauth/token', window.location.origin );
@@ -45,5 +47,16 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 		store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 	}
 
-	document.location.replace( context.query.next || '/' );
+	try {
+		const nextUrl = new URL(
+			context?.query.next ?? DEFAULT_NEXT_LOCATION,
+			new URL( window.location.origin )
+		);
+		document.location.replace(
+			nextUrl.host === window.location.host ? nextUrl.toString() : DEFAULT_NEXT_LOCATION
+		);
+	} catch ( error ) {
+		// if something is fundamentally wrong with context.query.next we just go to root.
+		document.location.replace( DEFAULT_NEXT_LOCATION );
+	}
 };
