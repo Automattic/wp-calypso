@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { MShotParams } from '../types';
+import useWindowDimensions from '../windowDimensions.effect';
 import type { FunctionComponent } from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -12,6 +14,11 @@ const protocolRgx = /(?<protocol>https?:\/\/)?(?<address>.*)/i;
 
 const ImportPreview: FunctionComponent< Props > = ( { website } ) => {
 	const [ mShotUrl, setMShotUrl ] = useState( '' );
+	const { width } = useWindowDimensions();
+	const mShotParams: MShotParams = {
+		scale: 2,
+		vpw: width <= 640 ? 640 : undefined,
+	};
 	const websiteMatch = website.match( protocolRgx );
 
 	const checkScreenshot = ( screenShotUrl: string ) => {
@@ -33,7 +40,12 @@ const ImportPreview: FunctionComponent< Props > = ( { website } ) => {
 		http.send();
 	};
 
-	checkScreenshot( `https://s0.wp.com/mshots/v1/${ website }?scale=2` );
+	checkScreenshot(
+		`https://s0.wp.com/mshots/v1/${ website }?${ Object.keys( mShotParams )
+			.filter( ( key ) => !! mShotParams[ key as keyof MShotParams ] )
+			.map( ( key ) => key + '=' + mShotParams[ key as keyof MShotParams ] )
+			.join( '&' ) }`
+	);
 
 	const Screenshot = () => {
 		if ( mShotUrl !== '' ) {
