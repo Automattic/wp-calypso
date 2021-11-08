@@ -1,25 +1,21 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
-class Security2faBackupCodesPasswordPromt extends React.Component {
+class Security2faBackupCodesPasswordPromt extends Component {
 	static propTypes = {
-		onSubmit: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
 	};
 
 	state = {
 		error: false,
 		userPassword: '',
-	};
-
-	componentDidMount = () => {
-		this.passwordInput.focus();
 	};
 
 	handleSubmit = ( e ) => {
@@ -43,9 +39,10 @@ class Security2faBackupCodesPasswordPromt extends React.Component {
 						id="password"
 						name="password"
 						type="password"
-						ref={ ( input ) => ( this.passwordInput = input ) }
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus
 						value={ this.state.userPassword }
-						placeholder={ this.props.translate( 'WordPress.com password' ) }
+						placeholder={ this.props.translate( 'WordPress.com Password' ) }
 						onChange={ this.handleChange }
 					/>
 					<FormSettingExplanation>
