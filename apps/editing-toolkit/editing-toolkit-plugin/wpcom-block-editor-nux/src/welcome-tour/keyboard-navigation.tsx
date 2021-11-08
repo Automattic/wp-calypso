@@ -6,13 +6,14 @@ import * as React from 'react';
  * Internal dependencies
  */
 import useFocusHandler from './hooks/use-focus-handler';
+import useFocusTrap from './hooks/use-focus-trap';
 import useKeydownHandler from './hooks/use-keydown-handler';
 
 interface Props {
 	onMinimize: () => void;
 	onDismiss: ( target: string ) => () => void;
-	onNextCardProgression: () => void;
-	onPreviousCardProgression: () => void;
+	onNextStepProgression: () => void;
+	onPreviousStepProgression: () => void;
 	tourContainerRef: React.MutableRefObject< null | HTMLElement >;
 	isMinimized: boolean;
 }
@@ -20,22 +21,25 @@ interface Props {
 const KeyboardNavigation: React.FunctionComponent< Props > = ( {
 	onMinimize,
 	onDismiss,
-	onNextCardProgression,
-	onPreviousCardProgression,
+	onNextStepProgression,
+	onPreviousStepProgression,
 	tourContainerRef,
 	isMinimized,
 } ) => {
 	function ExpandedTourNav() {
 		useKeydownHandler( {
 			onEscape: onMinimize,
-			onArrowRight: onNextCardProgression,
-			onArrowLeft: onPreviousCardProgression,
+			onArrowRight: onNextStepProgression,
+			onArrowLeft: onPreviousStepProgression,
 		} );
+		useFocusTrap( tourContainerRef );
+
 		return null;
 	}
 
 	function MinimizedTourNav() {
 		useKeydownHandler( { onEscape: onDismiss( 'esc-key-minimized' ) } );
+
 		return null;
 	}
 

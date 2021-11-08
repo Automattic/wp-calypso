@@ -1275,6 +1275,7 @@ __metadata:
     "@babel/core": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@emotion/react": ^11.4.1
+    "@popperjs/core": ^2.10.2
     "@testing-library/jest-dom": ^5.15.0
     "@testing-library/react": ^12.1.2
     "@types/node": ^15.0.2
@@ -1324,6 +1325,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-native: ^0.65.0
+    react-popper: ^2.2.5
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     utility-types: ^3.10.0
@@ -4315,6 +4317,13 @@ __metadata:
   version: 1.0.0-next.11
   resolution: "@polka/url@npm:1.0.0-next.11"
   checksum: bc361ca82d715377b38b547fef42b3adb616925f28a12ad3da1f6f77304ffd07a3ccd970d49e42bb01ff8a4d180740ce805bb1f6c8e265b2ebf298b274162a8d
+  languageName: node
+  linkType: hard
+
+"@popperjs/core@npm:^2.10.2":
+  version: 2.10.2
+  resolution: "@popperjs/core@npm:2.10.2"
+  checksum: a626a586586f4589b958d02af9fab3c14cf4a865d3bce26a9b46a847eca6d975567914a3eb643a12516bfb6813023c9eaa4b57c98eff8de625b500816d5f91ac
   languageName: node
   linkType: hard
 
@@ -31215,6 +31224,19 @@ fsevents@~2.1.2:
     "@popperjs/core": ^2.0.0
     react: ^16.8.0 || ^17
   checksum: ac1ffc1ecdb408ec3f0e3449bac824c58d9949cf65effe96d94d1cf56fe2a60d0d45ef4a41cebb6344f917f16d04146555b936d20578766b5d9d3716164fb669
+  languageName: node
+  linkType: hard
+
+"react-popper@npm:^2.2.5":
+  version: 2.2.5
+  resolution: "react-popper@npm:2.2.5"
+  dependencies:
+    react-fast-compare: ^3.0.1
+    warning: ^4.0.2
+  peerDependencies:
+    "@popperjs/core": ^2.0.0
+    react: ^16.8.0 || ^17
+  checksum: 199ff9ec23670eece1c5972d48d2c5e9c28938dd610c432979fdab631a38371f8a3a5fbb9dcaeec0cff9ce9fb58b3bc1965c525de14fdb78f5e9b35f0d90f335
   languageName: node
   linkType: hard
 
