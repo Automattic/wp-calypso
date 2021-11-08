@@ -1,12 +1,14 @@
+import { NextButton } from '@automattic/onboarding';
+import { Icon, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
-import { GoToStep, urlData } from '../types';
+import { GoToStep, UrlData } from '../types';
 import './style.scss';
-import type { ChangeEvent, KeyboardEvent } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -35,7 +37,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 
 	const runProcess = (): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
-		analyzeUrl( urlValue ).then( ( response: urlData ) => {
+		analyzeUrl( urlValue ).then( ( response: UrlData ) => {
 			const stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
 			goToStep( 'ready', stepSectionName );
 		} );
@@ -47,11 +49,11 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 		setIsValid( validateUrl( e.target.value ) );
 	};
 
-	const onKeyDown = ( e: KeyboardEvent< HTMLInputElement > ) => {
-		if ( e.key === 'Enter' ) {
-			setShowError( true );
-			isValid && urlValue && runProcess();
-		}
+	const onFormSubmit = ( e: FormEvent< HTMLFormElement > ) => {
+		e.preventDefault();
+
+		setShowError( true );
+		isValid && urlValue && runProcess();
 	};
 
 	return (
@@ -59,22 +61,30 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 			{ ! isAnalyzing && (
 				<div className="import-layout__center">
 					<div className="capture__content">
-						<input
-							className="capture__input"
-							autoComplete="off"
-							autoCorrect="off"
-							spellCheck="false"
-							placeholder={ __( 'Enter your site address' ) }
-							onKeyDown={ onKeyDown }
-							onChange={ onInputChange }
-							value={ urlValue }
-						/>
-						{ ( ! isValid && showError ) ||
-							( analyzerError && (
-								<div className="capture__input-error-msg">
-									{ __( 'The address you entered is not valid. Please try again.' ) }
-								</div>
-							) ) }
+						<form className="capture__input-wrapper" onSubmit={ onFormSubmit.bind( this ) }>
+							<input
+								className="capture__input"
+								// eslint-disable-next-line jsx-a11y/no-autofocus
+								autoFocus
+								autoComplete="off"
+								autoCorrect="off"
+								spellCheck="false"
+								placeholder={ __( 'Enter your site address' ) }
+								onChange={ onInputChange }
+								value={ urlValue }
+							/>
+							{ isValid && urlValue && ! analyzerError && (
+								<NextButton type={ 'submit' }>
+									<Icon icon={ chevronRight } />
+								</NextButton>
+							) }
+							{ ( ! isValid && showError ) ||
+								( analyzerError && (
+									<div className="capture__input-error-msg">
+										{ __( 'The address you entered is not valid. Please try again.' ) }
+									</div>
+								) ) }
+						</form>
 					</div>
 				</div>
 			) }

@@ -6,13 +6,14 @@ import {
 	URL_ANALYZER_ANALYZE_SUCCESS,
 	URL_ANALYZER_ANALYZE_ERROR,
 	URL_ANALYZER_RESET_ERROR,
+	URL_ANALYZER_URL_DATA_UPDATE,
 } from '../../action-types';
-import type { urlData } from 'calypso/signup/steps/import/types';
+import type { UrlData } from 'calypso/signup/steps/import/types';
 import type { AnyAction, Dispatch } from 'redux';
 
 export const analyzeUrl = ( url: string ) => (
 	dispatch: Dispatch< AnyAction >
-): Promise< urlData > => {
+): Promise< UrlData > => {
 	dispatch( {
 		type: URL_ANALYZER_ANALYZE,
 	} );
@@ -20,7 +21,7 @@ export const analyzeUrl = ( url: string ) => (
 	return wpcom
 		.undocumented()
 		.ImportsAnalyzeUrl( url )
-		.then( ( response: urlData ) => {
+		.then( ( response: UrlData ) => {
 			// Update the state
 			dispatch( {
 				type: URL_ANALYZER_ANALYZE_SUCCESS,
@@ -47,5 +48,12 @@ export const analyzeUrl = ( url: string ) => (
 export const resetError = () => ( dispatch: Dispatch< AnyAction > ): void => {
 	dispatch( {
 		type: URL_ANALYZER_RESET_ERROR,
+	} );
+};
+
+export const urlDataUpdate = ( urlData: UrlData ) => ( dispatch: Dispatch< AnyAction > ): void => {
+	dispatch( {
+		type: URL_ANALYZER_URL_DATA_UPDATE,
+		payload: urlData,
 	} );
 };

@@ -3,33 +3,24 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { urlData } from '../types';
-import ImportPlatformDetails from './platform-details';
+import { UrlData, GoToStep } from '../types';
+import { convertPlatformName } from '../util';
+import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-interface Props {
-	urlData: urlData;
+interface ReadyPreviewProps {
+	urlData: UrlData;
+	siteSlug: string;
+	goToImporterPage: ( platform: string ) => void;
 }
 
-const platformMap: { [ key: string ]: string } = {
-	wordpress: 'WordPress',
-	wix: 'Wix',
-	blogger: 'Blogger',
-	medium: 'Medium',
-	'godaddy-central': 'GoDaddy Central',
-	tumblr: 'Tumblr',
-};
-
-const convertPlatformName = ( platform: string ): string => {
-	return platformMap[ platform ] !== undefined ? platformMap[ platform ] : 'Unknown';
-};
-
-const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
+const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
+	urlData,
+	goToImporterPage,
+} ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
@@ -60,12 +51,16 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton>{ __( 'Import your content' ) }</NextButton>
-						<div>
-							<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
-								{ __( 'What can be imported?' ) }
-							</BackButton>
-						</div>
+						<NextButton onClick={ () => goToImporterPage( urlData.platform ) }>
+							{ __( 'Import your content' ) }
+						</NextButton>
+						{ coveredPlatforms.includes( urlData.platform ) && (
+							<div>
+								<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
+									{ __( 'What can be imported?' ) }
+								</BackButton>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>
@@ -83,7 +78,11 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 	);
 };
 
-const ReadyNotStep: React.FunctionComponent = () => {
+interface ReadyNotProps {
+	goToStep: GoToStep;
+}
+
+const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -98,9 +97,13 @@ const ReadyNotStep: React.FunctionComponent = () => {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton>{ __( 'Start building' ) }</NextButton>
+						<NextButton onClick={ () => goToStep( 'design-setup-site', '', 'setup-site' ) }>
+							{ __( 'Start building' ) }
+						</NextButton>
 						<div>
-							<BackButton>{ __( 'Back to the start' ) }</BackButton>
+							<BackButton onClick={ () => goToStep( 'capture' ) }>
+								{ __( 'Back to the start' ) }
+							</BackButton>
 						</div>
 					</div>
 				</div>
@@ -109,12 +112,15 @@ const ReadyNotStep: React.FunctionComponent = () => {
 	);
 };
 
-interface PropsWithoutUrl {
+interface ReadyProps {
 	platform: string;
+	goToImporterPage: ( platform: string ) => void;
 }
 
-const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) => {
+const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
+	const { platform, goToImporterPage } = props;
 	const { __ } = useI18n();
+	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
 	return (
 		<div className="import-layout__center">
@@ -134,19 +140,27 @@ const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) =
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton>{ __( 'Import your content' ) }</NextButton>
-						<div>
-							<BackButton>{ __( 'View the import guide' ) }</BackButton>
-						</div>
+						<NextButton onClick={ () => goToImporterPage( platform ) }>
+							{ __( 'Import your content' ) }
+						</NextButton>
+						{ coveredPlatforms.includes( platform ) && (
+							<div>
+								<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
+									{ __( 'View the import guide' ) }
+								</BackButton>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>
+			{ isModalDetailsOpen && (
+				<ImportPlatformDetails
+					platform={ platform }
+					onClose={ setIsModalDetailsOpen.bind( this, false ) }
+				/>
+			) }
 		</div>
 	);
 };
-
-const ReadyPreviewStep = connect( ( state ) => ( {
-	urlData: getUrlData( state ),
-} ) )( ReadyPreview );
 
 export { ReadyPreviewStep, ReadyNotStep, ReadyStep };

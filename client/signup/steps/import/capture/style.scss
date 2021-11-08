@@ -8,6 +8,25 @@ $placeholder-color: #909398;
 		min-height: 80px;
 	}
 
+	.capture__input-wrapper {
+		position: relative;
+		margin: auto;
+		max-width: 450px;
+		padding-right: 50px;
+
+		.components-button.action-buttons__next.is-primary {
+			position: absolute;
+			min-width: auto;
+			padding: 0.625em;
+			top: 2px;
+			right: 0;
+
+			@include break-small {
+				top: 4px;
+			}
+		}
+	}
+
 	.capture__input {
 		width: 100%;
 
@@ -16,13 +35,11 @@ $placeholder-color: #909398;
 		font-weight: 400;
 		line-height: 1.1818em;
 		letter-spacing: -0.4px;
-		text-align: center;
 
 		height: auto;
 		background: transparent;
 		border: none;
 		padding: 0;
-		margin-bottom: 8px;
 		color: var( --studio-gray-100 );
 
 		&:focus {
@@ -50,8 +67,8 @@ $placeholder-color: #909398;
 
 	.capture__input-error-msg {
 		color: var( --studio-red-60 );
-		text-align: center;
 		font-size: 0.875rem;
 		line-height: 1.4286em;
+		margin-top: 8px;
 	}
 }
