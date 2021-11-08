@@ -3,11 +3,12 @@
  */
 
 import {
+	BrowserHelper,
+	ChangeUILanguageFlow,
 	DataHelper,
+	GutenbergEditorPage,
 	LoginPage,
 	NewPostFlow,
-	ChangeUILanguageFlow,
-	GutenbergEditorPage,
 	setupHooks,
 } from '@automattic/calypso-e2e';
 import { Page, Frame } from 'playwright';
@@ -213,29 +214,32 @@ const translations: Translations = {
 		],
 	},
 };
-const locales = Object.keys( translations ) as LanguageSlug[];
+const locale = BrowserHelper.getLocale() as LanguageSlug;
+const localeTranslations = translations[ locale ];
+const describeSkipNoTranslations = localeTranslations ? describe : describe.skip;
 
-describe( DataHelper.createSuiteTitle( 'Editor Translations' ), () => {
-	let gutenbergEditorPage: GutenbergEditorPage;
-	let page: Page;
+describeSkipNoTranslations(
+	DataHelper.createSuiteTitle( `Editor Translations (${ locale })` ),
+	() => {
+		let gutenbergEditorPage: GutenbergEditorPage;
+		let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+		setupHooks( ( args ) => {
+			page = args.page;
 
-		// Confirm page leave with unsaved changes prompt.
-		page.on( 'dialog', async ( dialog ) => {
-			if ( dialog.type() === 'beforeunload' ) {
-				await dialog.accept();
-			}
+			// Confirm page leave with unsaved changes prompt.
+			page.on( 'dialog', async ( dialog ) => {
+				if ( dialog.type() === 'beforeunload' ) {
+					await dialog.accept();
+				}
+			} );
 		} );
-	} );
 
-	it( 'Log in', async () => {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'i18nUser' } );
-	} );
+		it( 'Log in', async () => {
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: 'i18nUser' } );
+		} );
 
-	describe.each( locales )( 'Editor translations (%s)', ( locale ) => {
 		it( 'Change UI language', async () => {
 			await Promise.all( [
 				page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
@@ -258,7 +262,7 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), () => {
 			gutenbergEditorPage = new GutenbergEditorPage( page );
 		} );
 
-		describe.each( translations[ locale ].blocks )(
+		describeSkipNoTranslations.each( translations.fr.blocks || [] )(
 			'Translations for block: $blockName',
 			( block ) => {
 				let frame: Frame;
@@ -290,5 +294,5 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), () => {
 				} );
 			}
 		);
-	} );
-} );
+	}
+);
