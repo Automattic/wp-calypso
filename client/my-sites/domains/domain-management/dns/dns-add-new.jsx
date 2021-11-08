@@ -213,7 +213,7 @@ class DnsAddNew extends React.Component {
 					<FormSettingExplanation>{ selectedType.description }</FormSettingExplanation>
 				</FormFieldset>
 				{ this.recordFields() }
-				<div>
+				<div className="dns__form-buttons">
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ translate( 'Add new DNS record' ) }
 					</FormButton>
