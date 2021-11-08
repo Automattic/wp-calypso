@@ -4,7 +4,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import { UrlData, GoToStep } from '../types';
-import { convertPlatformName } from '../util';
+import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
 import './style.scss';
@@ -16,11 +16,6 @@ interface ReadyPreviewProps {
 	siteSlug: string;
 	goToImporterPage: ( platform: string ) => void;
 }
-
-const convertToFriendlyWebsiteName = ( website: string ): string => {
-	const { hostname, pathname } = new URL( website );
-	return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
-};
 
 const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 	urlData,

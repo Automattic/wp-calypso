@@ -29,6 +29,9 @@ export const orgImporters: string[] = [
 	'blogroll',
 ];
 
+/**
+ * Platform name helpers
+ */
 export function getPlatformImporterName( platform: string ): string {
 	return platformImporterNameMap[ platform ] ? platformImporterNameMap[ platform ] : platform;
 }
@@ -37,6 +40,14 @@ export function convertPlatformName( platform: string ): string {
 	return platformMap[ platform ] !== undefined ? platformMap[ platform ] : 'Unknown';
 }
 
+export function convertToFriendlyWebsiteName( website: string ): string {
+	const { hostname, pathname } = new URL( website );
+	return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
+}
+
+/**
+ * Importer URL helpers
+ */
 export function getWpComMigrateUrl( siteSlug: string ): string {
 	return '/migrate/{siteSlug}'.replace( '{siteSlug}', siteSlug );
 }
