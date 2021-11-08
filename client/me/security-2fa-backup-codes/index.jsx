@@ -9,7 +9,7 @@ import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-lis
 import Security2faBackupCodesPrompt from 'calypso/me/security-2fa-backup-codes-prompt';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import Security2faBackupCodesPasswordPromt from './password-prompt';
+import Security2faBackupCodesPasswordPrompt from './password-prompt';
 
 import './style.scss';
 
@@ -55,6 +55,15 @@ class Security2faBackupCodes extends Component {
 		} );
 	};
 
+	onDismissClick = () => this.setState( { lastError: null } );
+
+	onNextStep = () => {
+		this.setState( {
+			backupCodes: [],
+			printed: true,
+		} );
+	};
+
 	onRequestComplete = ( error, data ) => {
 		if ( error ) {
 			this.setState( { lastError: error, generatingCodes: false } );
@@ -67,13 +76,6 @@ class Security2faBackupCodes extends Component {
 			lastError: null,
 			showPrompt: true,
 			addingPassword: false,
-		} );
-	};
-
-	onNextStep = () => {
-		this.setState( {
-			backupCodes: [],
-			printed: true,
 		} );
 	};
 
@@ -127,16 +129,12 @@ class Security2faBackupCodes extends Component {
 					  );
 
 			return (
-				<Notice
-					status="is-error"
-					text={ friendlyMessage }
-					onDismissClick={ () => this.setState( { lastError: null } ) }
-				/>
+				<Notice status="is-error" text={ friendlyMessage } onDismissClick={ this.onDismissClick } />
 			);
 		}
 
 		return (
-			<Security2faBackupCodesPasswordPromt
+			<Security2faBackupCodesPasswordPrompt
 				isDisabled={ ! this.state.addingPassword }
 				onCancel={ this.toggleBackupCodePassword }
 				onSubmit={ this.handleGenerateButton }
