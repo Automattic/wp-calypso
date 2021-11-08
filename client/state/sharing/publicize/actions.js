@@ -42,37 +42,33 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 			message,
 		} );
 
-		return new Promise( ( resolve ) => {
-			const body = {
-				skipped_connections: [],
-				message,
-			};
+		const body = {
+			skipped_connections: [],
+			message,
+		};
 
-			if ( skippedConnections && skippedConnections.length > 0 ) {
-				body.skipped_connections = skippedConnections;
-			}
+		if ( skippedConnections && skippedConnections.length > 0 ) {
+			body.skipped_connections = skippedConnections;
+		}
 
-			wpcom.req
-				.post( {
-					path: `/sites/${ siteId }/posts/${ postId }/publicize`,
-					body,
-					apiNamespace: 'wpcom/v2',
-				} )
-				// Note: successes are recorded in data.results, errors are recorded in data.errors. There could be
-				// several errors and several successes.
-				.then( ( data ) => {
-					if ( ! data.results ) {
-						dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error: true } );
-					} else {
-						dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
-					}
-					resolve();
-				} )
-				.catch( ( error ) => {
-					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error } );
-					resolve();
-				} );
-		} );
+		wpcom.req
+			.post( {
+				path: `/sites/${ siteId }/posts/${ postId }/publicize`,
+				body,
+				apiNamespace: 'wpcom/v2',
+			} )
+			// Note: successes are recorded in data.results, errors are recorded in data.errors. There could be
+			// several errors and several successes.
+			.then( ( data ) => {
+				if ( ! data.results ) {
+					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error: true } );
+				} else {
+					dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
+				}
+			} )
+			.catch( ( error ) => {
+				dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error } );
+			} );
 	};
 }
 
