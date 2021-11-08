@@ -5,7 +5,6 @@ import { stringify } from 'qs';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import Me from './me';
-import Site from './site';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -35,10 +34,6 @@ function Undocumented( wpcom ) {
 	}
 	this.wpcom = wpcom;
 }
-
-Undocumented.prototype.site = function ( id ) {
-	return new Site( id, this.wpcom );
-};
 
 Undocumented.prototype.me = function () {
 	return new Me( this.wpcom );
