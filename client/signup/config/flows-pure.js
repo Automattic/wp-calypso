@@ -438,6 +438,16 @@ export function generateFlows( {
 			description: 'A flow for DIFM Lite leads',
 			lastModified: '2021-09-30',
 		},
+		{
+			name: 'woocommerce-install',
+			pageTitle: translate( 'Add WooCommerce to your site' ),
+			steps: [ 'confirm', 'transfer', 'install', 'complete' ],
+			destination: '/',
+			description: 'Onboarding and installation flow for woocommerce on all plans.',
+			providesDependenciesInQuery: [ 'siteSlug' ],
+			disallowResume: true,
+			lastModified: '2021-11-08',
+		},
 	];
 
 	// convert the array to an object keyed by `name`

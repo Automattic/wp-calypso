@@ -778,6 +778,20 @@ export function generateSteps( {
 		ready: {
 			stepName: 'ready',
 		},
+
+		// Woocommerce Install steps
+		confirm: {
+			stepName: 'confirm',
+		},
+		transfer: {
+			stepName: 'transfer',
+		},
+		install: {
+			stepName: 'install',
+		},
+		complete: {
+			stepName: 'complete',
+		},
 	};
 }
 
