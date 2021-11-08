@@ -22,6 +22,7 @@ class DnsAddNew extends React.Component {
 	static propTypes = {
 		isSubmittingForm: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
+		goBack: PropTypes.func,
 	};
 
 	state = {
@@ -215,6 +216,9 @@ class DnsAddNew extends React.Component {
 				<div>
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ translate( 'Add new DNS record' ) }
+					</FormButton>
+					<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
+						{ translate( 'Cancel' ) }
 					</FormButton>
 				</div>
 			</form>
