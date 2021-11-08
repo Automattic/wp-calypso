@@ -157,7 +157,11 @@ class AddDnsRecprd extends Component {
 				</div>
 				<div className="add-dns-record__sidebar">
 					<div>
-						<strong>{ translate( 'What are these used for?' ) }</strong>
+						<strong>
+							{ translate( 'What are these used for?', {
+								comment: '"These" refers to DNS records',
+							} ) }
+						</strong>
 						<p>{ explanationText }</p>
 					</div>
 				</div>
