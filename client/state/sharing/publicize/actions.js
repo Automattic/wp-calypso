@@ -56,7 +56,7 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 			// Note: successes are recorded in data.results, errors are recorded in data.errors. There could be
 			// several errors and several successes.
 			.then( ( data ) => {
-				if ( ! data.results ) {
+				if ( ! data.results.length ) {
 					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error: true } );
 				} else {
 					dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
