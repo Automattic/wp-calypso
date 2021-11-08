@@ -355,7 +355,7 @@ function installPluginHelper(
 	siteId,
 	plugin,
 	isMainNetworkSite = false,
-	simpleInstallation = false
+	shouldActivatePlugin = true
 ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id || plugin.slug;
@@ -420,7 +420,7 @@ function installPluginHelper(
 			return Promise.reject( error );
 		};
 
-		if ( isMainNetworkSite || simpleInstallation ) {
+		if ( isMainNetworkSite || ! shouldActivatePlugin ) {
 			return doInstall( plugin )
 				.then( doAutoupdates )
 				.then( successCallback )
@@ -435,16 +435,12 @@ function installPluginHelper(
 	};
 }
 
-export function installPlugin( siteId, plugin ) {
-	return installPluginHelper( siteId, plugin );
+export function installPlugin( siteId, plugin, shouldActivatePlugin = true ) {
+	return installPluginHelper( siteId, plugin, false, shouldActivatePlugin );
 }
 
 export function installPluginOnMultisite( siteId, plugin ) {
 	return installPluginHelper( siteId, plugin, true );
-}
-
-export function installPluginSimple( siteId, plugin ) {
-	return installPluginHelper( siteId, plugin, false, true );
 }
 
 export function removePlugin( siteId, plugin ) {

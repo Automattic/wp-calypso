@@ -12,7 +12,7 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { installPluginSimple, activatePlugin } from 'calypso/state/plugins/installed/actions';
+import { installPlugin, activatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 import { getPlugin } from 'calypso/state/plugins/wporg/selectors';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
@@ -63,7 +63,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	useEffect( () => {
 		if ( ! isUploadFlow && currentStep === 0 && wporgPlugin ) {
 			// initialize plugin installing
-			dispatch( installPluginSimple( siteId, wporgPlugin ) );
+			dispatch( installPlugin( siteId, wporgPlugin, false ) );
 			setCurrentStep( 1 );
 		}
 	}, [ isUploadFlow, currentStep, siteId, wporgPlugin, productSlug ] );

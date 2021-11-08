@@ -2,6 +2,7 @@ import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-produ
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -20,6 +21,7 @@ import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custo
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -27,6 +29,7 @@ import {
 	getSitesWithoutPlugin,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
 	isFetching as isWporgPluginFetching,
@@ -287,36 +290,61 @@ function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) {
 }
 
 function CTA( { slug, isPluginInstalledOnsite } ) {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) ) {
 		return null;
 	}
 
-	if (
+	const shouldUpgrade = ! (
 		isBusiness( selectedSite.plan ) ||
 		isEnterprise( selectedSite.plan ) ||
 		isEcommerce( selectedSite.plan )
-	) {
-		return (
-			<Button
-				className="single-plugin__install-button"
-				href={ `/marketplace/${ slug }/install/${ selectedSite.slug }` }
-			>
-				{ translate( 'Install and activate' ) }
-			</Button>
-		);
-	}
-
+	);
 	return (
 		<Button
 			className="single-plugin__install-button"
-			href={ `/checkout/${ selectedSite.slug }/business?redirect_to=/marketplace/${ slug }/install/${ selectedSite.slug }#step2` }
+			onClick={ () =>
+				onClickInstallPlugin( {
+					dispatch,
+					selectedSite,
+					selectedSiteId,
+					slug,
+					upgradeAndInstall: shouldUpgrade,
+				} )
+			}
 		>
-			{ translate( 'Upgrade and install' ) }
+			{ shouldUpgrade ? translate( 'Upgrade and install' ) : translate( 'Install and activate' ) }
 		</Button>
 	);
+}
+
+function onClickInstallPlugin( {
+	dispatch,
+	selectedSite,
+	selectedSiteId,
+	slug,
+	upgradeAndInstall,
+} ) {
+	dispatch( removePluginStatuses( 'completed', 'error' ) );
+
+	dispatch( recordGoogleEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', slug ) );
+	dispatch(
+		recordGoogleEvent( 'calypso_plugin_install_click_from_plugin_info', {
+			site: selectedSiteId,
+			plugin: slug,
+		} )
+	);
+
+	const installPluginURL = `/marketplace/${ slug }/install/${ selectedSite.slug }`;
+	if ( upgradeAndInstall ) {
+		page( `/checkout/${ selectedSite.slug }/business?redirect_to=${ installPluginURL }#step2` );
+	} else {
+		page( installPluginURL );
+	}
 }
 
 /* TODO: add the stars icons */
