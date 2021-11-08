@@ -139,7 +139,6 @@ export class PeoplePage {
 		// Retry three times, each time allowing 5 seconds for Playwright to locate the
 		// pending user invite.
 		for ( let retries = 3; retries > 0; retries -= 1 ) {
-			console.log( retries );
 			try {
 				await this.page.waitForSelector( selectors.invitedUser( emailAddress ), {
 					timeout: 5 * 1000,
