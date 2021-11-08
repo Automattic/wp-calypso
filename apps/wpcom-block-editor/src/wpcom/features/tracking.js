@@ -639,7 +639,41 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 			entityContent,
 			'wpcom_block_editor_global_styles_save'
 		);
+	} else {
+		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
+
+		const savePanel = document.querySelector( '.entities-saved-states__panel' );
+		const source = savePanel ? 'multi-entity-save-panel' : 'unknown';
+
+		const variationSlug =
+			type === 'wp_template_part' && savedEntity?.area !== 'uncategorized'
+				? savedEntity?.area
+				: undefined;
+
+		tracksRecordEvent( 'test-event', {
+			entity_kind: kind,
+			entity_type: type,
+			entity_id: id,
+			saving_source: source,
+			// TODO - consider the save changing the variation.
+			variation_slug: variationSlug,
+		} );
 	}
+};
+
+const trackSaveSpecifiedEntityEdits = ( kind, type, id, itemsToSave ) => {
+	const savePanel = document.querySelector( '.entities-saved-states__panel' );
+	const source = savePanel ? 'multi-entity-save-panel' : 'unknown';
+
+	itemsToSave.forEach( ( item ) =>
+		tracksRecordEvent( 'test-event', {
+			entity_kind: kind,
+			entity_type: type,
+			entity_id: id,
+			saving_source: source,
+			items_saved: item,
+		} )
+	);
 };
 
 /**
@@ -667,6 +701,7 @@ const REDUX_TRACKING = {
 		saveEntityRecord: trackSaveEntityRecord,
 		editEntityRecord: trackEditEntityRecord,
 		saveEditedEntityRecord: trackSaveEditedEntityRecord,
+		__experimentalSaveSpecifiedEntityEdits: trackSaveSpecifiedEntityEdits,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
