@@ -102,7 +102,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) 
 						</NextButton>
 						<div>
 							<BackButton onClick={ () => goToStep( 'capture' ) }>
-								{ __( 'Back to the start' ) }
+								{ __( 'Back to start' ) }
 							</BackButton>
 						</div>
 					</div>
@@ -165,9 +165,13 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 
 interface ReadyWpComProps {
 	urlData: UrlData;
+	goToStep: GoToStep;
 }
 
-const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( { urlData } ) => {
+const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
+	urlData,
+	goToStep,
+} ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -191,9 +195,13 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( { 
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton>{ __( 'Start building' ) }</NextButton>
+						<NextButton onClick={ () => goToStep( 'design-setup-site', '', 'setup-site' ) }>
+							{ __( 'Start building' ) }
+						</NextButton>
 						<div>
-							<BackButton>{ __( 'Back to start' ) }</BackButton>
+							<BackButton onClick={ () => goToStep( 'capture' ) }>
+								{ __( 'Back to start' ) }
+							</BackButton>
 						</div>
 					</div>
 				</div>
