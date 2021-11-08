@@ -161,10 +161,12 @@ class Dns extends Component {
 						selectedDomainName={ selectedDomainName }
 						hasWpcomNameservers={ hasWpcomNameservers }
 					/>
-					<DnsAddNew
-						isSubmittingForm={ dns.isSubmittingForm }
-						selectedDomainName={ selectedDomainName }
-					/>
+					{ ! config.isEnabled( 'domains/dns-records-redesign' ) ? (
+						<DnsAddNew
+							isSubmittingForm={ dns.isSubmittingForm }
+							selectedDomainName={ selectedDomainName }
+						/>
+					) : null }
 				</Card>
 				{ this.renderDnsTemplates() }
 			</Main>
