@@ -1,6 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import debugFactory from 'debug';
-import GuidedToursConfig from 'calypso/layout/guided-tours/config';
+import guidedToursConfig from 'calypso/layout/guided-tours/config';
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'calypso/state/action-types';
 import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -45,12 +45,11 @@ const getToursFromFeaturesReached = createSelector(
 			.filter( ( { type } ) => type === ROUTE_SET )
 			.reverse();
 		// find tours that match by route path
-		const tourEntries = Object.entries( GuidedToursConfig );
 		const matchingTours = navigationActions.flatMap( ( action ) =>
-			tourEntries.filter( ( [ , meta ] ) => tourMatchesPath( meta, action.path ) )
+			guidedToursConfig.filter( ( tour ) => tourMatchesPath( tour, action.path ) )
 		);
 		// return array of tour names
-		return matchingTours.map( ( [ tour ] ) => tour );
+		return matchingTours.map( ( tour ) => tour.name );
 	},
 	[ getActionLog ]
 );
@@ -75,7 +74,7 @@ const getTourFromQuery = createSelector(
 		const timestamp = getCurrentRouteTimestamp( state );
 		const tour = current.tour ?? initial.tour;
 
-		if ( tour && GuidedToursConfig[ tour ] ) {
+		if ( tour && guidedToursConfig.some( ( { name } ) => name === tour ) ) {
 			return { tour, timestamp };
 		}
 	},
@@ -117,7 +116,7 @@ const findTriggeredTour = ( state ) => {
 	const toursToDismiss = getToursSeen( state );
 	const newTours = toursFromTriggers.filter( ( tour ) => ! toursToDismiss.includes( tour ) );
 	return newTours.find( ( tour ) => {
-		const { when = () => true } = GuidedToursConfig[ tour ];
+		const { when = () => true } = guidedToursConfig.find( ( { name } ) => name === tour );
 		return when( state );
 	} );
 };
