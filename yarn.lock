@@ -134,7 +134,7 @@ __metadata:
     terser-webpack-plugin: ^5.2.4
     thread-loader: ^3.0.4
     typescript: ^4.4.4
-    webpack-cli: ^4.8.0
+    webpack-cli: ^4.9.1
   peerDependencies:
     enzyme: ^3.11.0
     jest: ">=27.2.4"
@@ -7426,36 +7426,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webpack-cli/configtest@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "@webpack-cli/configtest@npm:1.0.4"
+"@webpack-cli/configtest@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@webpack-cli/configtest@npm:1.1.0"
   peerDependencies:
     webpack: 4.x.x || 5.x.x
     webpack-cli: 4.x.x
-  checksum: 32a233e28da67fbdc04eb0871291943b4b263f066876b9dab0d863b651f3d155d7d59668f1abc0a928ce6fbe4e085e1860fa906af8781af2667bf47738acc54e
+  checksum: d5c3c11828930382431df4d86d4998a24eaea9826ad9c389aa4ee403471423229690d71f0b88ad7475c14227e54cb58dae8e6bc5f0b7e991f7a52866bd646c15
   languageName: node
   linkType: hard
 
-"@webpack-cli/info@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@webpack-cli/info@npm:1.3.0"
+"@webpack-cli/info@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@webpack-cli/info@npm:1.4.0"
   dependencies:
     envinfo: ^7.7.3
   peerDependencies:
     webpack-cli: 4.x.x
-  checksum: 17aa9829f58de55b57d6b4c41aeaedaacbd87bb7a5276aad0dda64d4637a94c8d0ffa94756882e28570ecd47ed793cec8c3636b0e25cf5c6ff9bf0bdd4eb7aab
+  checksum: 7761987f8f0a8bb4df81135cdd0aee88d58ded5373dd7d96dea333bb86ba922c22dd0c2bd79d4dbb31523d03ca0dfed90e8a8547f60a2a13cc99b22e5a24715e
   languageName: node
   linkType: hard
 
-"@webpack-cli/serve@npm:^1.5.2":
-  version: 1.5.2
-  resolution: "@webpack-cli/serve@npm:1.5.2"
+"@webpack-cli/serve@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@webpack-cli/serve@npm:1.6.0"
   peerDependencies:
     webpack-cli: 4.x.x
   peerDependenciesMeta:
     webpack-dev-server:
       optional: true
-  checksum: f90b7036078e806984431d1566122c491e541d4cf5cdfdad70ca817abe1fe4ec18c6d1beeb4182b489a8d7a0c6b8778483f23273696a599fae149e4707fa231b
+  checksum: 6e5588f3b29cbd777c9acf522dc0af3fb25042d0394a80db53ee95cb3fc0f9bfb04e57d83f863d2083286226bb2b59c5a15f24391b65c7f8cce4c83d08498ff5
   languageName: node
   linkType: hard
 
@@ -9314,7 +9314,7 @@ __metadata:
     semver: ^7.3.2
     superagent: ^3.8.3
     webpack: ^5.62.1
-    webpack-cli: ^4.8.0
+    webpack-cli: ^4.9.1
     winston: ^3.3.3
     wpcom-xhr-request: ^1.2.0
     ws: ^7.3.1
@@ -13023,6 +13023,13 @@ __metadata:
   version: 1.4.0
   resolution: "colorette@npm:1.4.0"
   checksum: 4955c8f7daafca8ae7081d672e4bd89d553bd5782b5846d5a7e05effe93c2f15f7e9c0cb46f341b59f579a39fcf436241ff79594899d75d5f3460c03d607fe9e
+  languageName: node
+  linkType: hard
+
+"colorette@npm:^2.0.14":
+  version: 2.0.16
+  resolution: "colorette@npm:2.0.16"
+  checksum: 7430bd996545347f262ae9716bfc8ca3776606e9db854279082004f3141b15a64ad2ee0e4f10cacba5a07cc92ca3edc2d01cbe73fd2843ccd80e98d0e3a8e79b
   languageName: node
   linkType: hard
 
@@ -37911,7 +37918,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"v8-compile-cache@npm:^2.0.3, v8-compile-cache@npm:^2.2.0, v8-compile-cache@npm:^2.3.0":
+"v8-compile-cache@npm:^2.0.3, v8-compile-cache@npm:^2.3.0":
   version: 2.3.0
   resolution: "v8-compile-cache@npm:2.3.0"
   checksum: b2d866febf943fbbf0b5e8d43ae9a9b0dacd11dd76e6a9c8e8032268f0136f081e894a2723774ae2d86befa994be4d4046b0717d82df4f3a10e067994ad5c688
@@ -38239,22 +38246,21 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:^4.7.2, webpack-cli@npm:^4.8.0":
-  version: 4.8.0
-  resolution: "webpack-cli@npm:4.8.0"
+"webpack-cli@npm:^4.7.2, webpack-cli@npm:^4.9.1":
+  version: 4.9.1
+  resolution: "webpack-cli@npm:4.9.1"
   dependencies:
     "@discoveryjs/json-ext": ^0.5.0
-    "@webpack-cli/configtest": ^1.0.4
-    "@webpack-cli/info": ^1.3.0
-    "@webpack-cli/serve": ^1.5.2
-    colorette: ^1.2.1
+    "@webpack-cli/configtest": ^1.1.0
+    "@webpack-cli/info": ^1.4.0
+    "@webpack-cli/serve": ^1.6.0
+    colorette: ^2.0.14
     commander: ^7.0.0
     execa: ^5.0.0
     fastest-levenshtein: ^1.0.12
     import-local: ^3.0.2
     interpret: ^2.2.0
     rechoir: ^0.7.0
-    v8-compile-cache: ^2.2.0
     webpack-merge: ^5.7.3
   peerDependencies:
     webpack: 4.x.x || 5.x.x
@@ -38269,7 +38275,7 @@ testarmada-magellan@11.0.10:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: 3d01ac4b48fb257c7ab26d801970b9360d1bf72facbb07d580a74ea8772dc21b6de82c91c28f34263635b4180d924d1884c7cd96d6ce46d7c146e59794a42329
+  checksum: 36bd4cf340758d1540e254b6e321af8b4a826ef31ebf0543c70fd1697f3b89a2e6de874e5cda54127b40e6d1bc5f13a4be421e8ff4f7aa80018f04f60a1aaf5f
   languageName: node
   linkType: hard
 
@@ -39013,7 +39019,7 @@ testarmada-magellan@11.0.10:
     typescript: ^4.4.4
     webpack: ^5.62.1
     webpack-bundle-analyzer: ^4.4.2
-    webpack-cli: ^4.8.0
+    webpack-cli: ^4.9.1
     webpack-dev-middleware: ^5.1.0
     whybundled: ^2.0.0
     wpcom: ^6.0.0
@@ -39159,7 +39165,7 @@ testarmada-magellan@11.0.10:
     npm-run-all: ^4.1.5
     qs: ^6.5.2
     webpack: ^5.62.1
-    webpack-cli: ^4.8.0
+    webpack-cli: ^4.9.1
     wpcom-oauth-cors: ^1.0.2-beta
     wpcom-proxy-request: ^6.0.0
   languageName: unknown
