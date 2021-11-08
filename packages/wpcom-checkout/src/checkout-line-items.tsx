@@ -79,30 +79,25 @@ export const LineItem = styled( WPLineItem )< {
 
 const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	display: flex;
 	font-size: 14px;
-	justify-content: space-between;
 	width: 100%;
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.success };
-	text-align: right;
-
-	.rtl & {
-		text-align: left;
-	}
+	display: block;
+	margin: 2px 0;
 `;
 
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
-	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+	font-size: 16px;
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+	font-size: 16px;
 
 	.rtl & {
 		margin-right: 12px;
