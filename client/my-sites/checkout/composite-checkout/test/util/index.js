@@ -742,11 +742,12 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	return transactionsEndpoint;
 }
 
-export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, {} ];
+export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, { success: true } ];
 
 export const mockCreateAccountSiteCreatedResponse = () => [
 	200,
 	{
+		success: true,
 		blog_details: {
 			blogid: 1234567,
 		},
