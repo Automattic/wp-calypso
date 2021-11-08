@@ -1,6 +1,6 @@
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { GoToStep } from '../../types';
 
 interface Props {
