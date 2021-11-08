@@ -77,13 +77,13 @@ class PeopleInvites extends PureComponent {
 
 		return (
 			<Main className="people-invites">
-				<PageViewTracker path="/people/invites/:site" title="People > Invites" />
+				<PageViewTracker path="/people/invites/:site" title="Users > Invites" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="people-invites__page-heading"
-					headerText={ translate( 'People' ) }
+					headerText={ translate( 'Users' ) }
 					subHeaderText={ translate( 'View and manage the invites to your site.' ) }
 					align="left"
 				/>
