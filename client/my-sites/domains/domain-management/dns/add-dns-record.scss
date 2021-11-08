@@ -51,9 +51,9 @@
 		}
 	}
 
-	.dns__type-explanation {
-		margin: 8px 0 0;
-		color: var( --studio-gray-50 );
+	.form-setting-explanation {
+		margin: 8px 0;
+		font-style: normal;
 	}
 
 	// make the DNS record type `select` expand to full width of the form

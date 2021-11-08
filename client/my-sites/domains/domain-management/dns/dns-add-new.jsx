@@ -7,6 +7,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import formState from 'calypso/lib/form-state';
 import { addDns } from 'calypso/state/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
@@ -208,7 +209,7 @@ class DnsAddNew extends React.Component {
 					>
 						{ options }
 					</FormSelect>
-					<p className="dns__type-explanation">{ selectedType.description }</p>
+					<FormSettingExplanation>{ selectedType.description }</FormSettingExplanation>
 				</FormFieldset>
 				{ this.recordFields() }
 				<div>
