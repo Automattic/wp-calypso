@@ -782,22 +782,15 @@ export function generateSteps( {
 		// Woocommerce Install steps
 		confirm: {
 			stepName: 'confirm',
-			providesDependencies: [ 'wooConfirmed' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-			providesDependencies: [ 'wooTransfer' ],
-			optionalDependencies: [ 'wooConfirmed' ],
 		},
 		install: {
 			stepName: 'install',
-			providesDependencies: [ 'wooConfirmed' ],
-			optionalDependencies: [ 'wooConfirmed' ],
 		},
 		complete: {
 			stepName: 'complete',
-			providesDependencies: [ 'wooConfirmed' ],
-			optionalDependencies: [ 'wooConfirmed' ],
 		},
 	};
 }
