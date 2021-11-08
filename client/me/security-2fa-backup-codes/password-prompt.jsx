@@ -54,7 +54,7 @@ class Security2faBackupCodesPasswordPrompt extends Component {
 				<FormButton disabled={ ! this.state.userPassword.length || this.props.isDisabled }>
 					{ this.props.translate( 'Generate Backup Codes' ) }
 				</FormButton>
-				<FormButton onClick={ this.props.onCancel } isPrimary={ false }>
+				<FormButton type="button" onClick={ this.props.onCancel } isPrimary={ false }>
 					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
 			</form>

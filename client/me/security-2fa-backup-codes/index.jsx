@@ -45,8 +45,7 @@ class Security2faBackupCodes extends Component {
 		twoStepAuthorization.backupCodes( userPassword, this.onRequestComplete );
 	};
 
-	toggleBackupCodePassword = ( event ) => {
-		event.preventDefault();
+	toggleBackupCodePassword = () => {
 		this.setState( ( prevState ) => ( {
 			addingPassword: ! prevState.addingPassword,
 			generatingCodes: false,
