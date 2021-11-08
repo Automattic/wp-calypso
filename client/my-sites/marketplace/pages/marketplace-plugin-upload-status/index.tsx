@@ -88,7 +88,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	useEffect( () => {
 		if ( pluginActive ) {
 			waitFor( 1 ).then( () =>
-				page( `/marketplace/thank-you/${ installedPlugin?.slug }/${ selectedSiteSlug }` )
+				page.redirect( `/marketplace/thank-you/${ installedPlugin?.slug }/${ selectedSiteSlug }` )
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
