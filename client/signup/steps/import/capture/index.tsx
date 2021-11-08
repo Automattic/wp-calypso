@@ -38,7 +38,11 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	const runProcess = (): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
 		analyzeUrl( urlValue ).then( ( response: UrlData ) => {
-			const stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
+			let stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
+
+			if ( response.platform === 'wordpress' && response.platform_data?.is_wpcom ) {
+				stepSectionName = 'wpcom';
+			}
 			goToStep( 'ready', stepSectionName );
 		} );
 	};
