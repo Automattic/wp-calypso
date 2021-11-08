@@ -4,10 +4,10 @@ import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
-import { getUrlData, isAnalyzing } from '../../../state/imports/url-analyzer/selectors';
+import { isAnalyzing, getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import CaptureStep from './capture';
 import ListStep from './list';
-import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
+import { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep } from './ready';
 import { GoToNextStep, GoToStep, UrlData } from './types';
 import { getImporterUrl } from './util';
 import './style.scss';
@@ -82,6 +82,9 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 							goToImporterPage={ goToImporterPage }
 							siteSlug={ signupDependencies.siteSlug }
 						/>
+					) }
+					{ stepName === 'ready' && stepSectionName === 'wpcom' && (
+						<ReadyAlreadyOnWPCOMStep urlData={ urlData } />
 					) }
 				</div>
 			}

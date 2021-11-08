@@ -3,6 +3,9 @@ export type GoToNextStep = () => void;
 export type UrlData = {
 	url: string;
 	platform: string;
+	platform_data?: {
+		is_wpcom: boolean;
+	};
 };
 
 export type FeatureName =
