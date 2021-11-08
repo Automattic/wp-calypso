@@ -6,6 +6,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import wp from 'calypso/lib/wp';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
@@ -89,8 +90,18 @@ async function wpcomPayPalExpress(
 		} ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
-			// If the account is already created(as happens when we are reprocessing after a transaction error), then
-			// the create account response will not have a site ID, so we fetch from state.
+			// We need to store the created site ID so that if the transaction fails,
+			// we can retry safely. createUserAndSiteBeforeTransaction will still be
+			// set and createAccount is idempotent for site site creation so long as
+			// siteId is set (although it will update the email address if that
+			// changes).
+			if ( siteIdFromResponse ) {
+				transactionOptions.reduxDispatch( setSelectedSiteId( Number( siteIdFromResponse ) ) );
+			}
+
+			// If the account is already created (as happens when we are reprocessing
+			// after a transaction error), then the create account response will not
+			// have a site ID, so we fetch from state.
 			const siteId = siteIdFromResponse || transactionOptions.siteId;
 			const newPayload = {
 				...payload,
