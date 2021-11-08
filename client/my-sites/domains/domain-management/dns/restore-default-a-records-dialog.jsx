@@ -1,8 +1,9 @@
 import { Dialog } from '@automattic/components';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 
 function RestoreDefaultARecordsDialog( { onClose, visible, defaultRecords } ) {
-	const { __, sprintf } = useI18n();
+	const { __ } = useI18n();
 
 	const onRestore = () => {
 		onClose( { shouldRestoreDefaultRecords: true } );
@@ -36,7 +37,7 @@ function RestoreDefaultARecordsDialog( { onClose, visible, defaultRecords } ) {
 		<Dialog isVisible={ visible } buttons={ buttons } onClose={ onCancel }>
 			<h1>{ __( 'Restore default A records' ) }</h1>
 			<p>{ __( 'Restoring the records will point this domain to your WordPress.com site.' ) }</p>
-			<p>{ message }</p>
+			<p className="restore-default-a-records-dialog__message">{ message }</p>
 		</Dialog>
 	);
 }

@@ -200,7 +200,8 @@ body.dns__body-white {
 	}
 }
 
-.domain-connect-info-dialog__message {
+.domain-connect-info-dialog__message,
+.restore-default-a-records-dialog__message {
 	@include break-mobile {
 		max-width: 600px;
 	}
