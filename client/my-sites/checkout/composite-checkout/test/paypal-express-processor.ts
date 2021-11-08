@@ -206,7 +206,7 @@ describe( 'payPalExpressProcessor', () => {
 				blog_id: 1234567,
 				cart_key: 1234567,
 				coupon: '',
-				create_new_blog: true,
+				create_new_blog: true, // NOTE: I wonder if this is incorrect behavior since the site has been created at this point
 			},
 		} );
 	} );
