@@ -90,16 +90,6 @@ UndocumentedMe.prototype.setPeerReferralLinkEnable = function ( enable, callback
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.backupCodes = function ( password, callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/backup-codes/new',
-		body: { password },
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
 UndocumentedMe.prototype.sendVerificationEmail = function ( callback ) {
 	debug( '/me/send-verification-email' );
 
