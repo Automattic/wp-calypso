@@ -17,6 +17,8 @@ describe( `Logged out homepage redirect test @i18n (${ locale })`, function () {
 
 	it( `Redirect to correct URL for wordpress.com (${ locale })`, async function () {
 		await page.goto( WPCOM_HOMEPAGE );
-		await page.waitForURL( `${ WPCOM_HOMEPAGE }/${ locale }/` );
+
+		const localePath = locale === 'en' ? '' : `${ locale }/`;
+		await page.waitForURL( `${ WPCOM_HOMEPAGE }/${ localePath }` );
 	} );
 } );
