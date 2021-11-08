@@ -62,8 +62,8 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 					dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
 				}
 			} )
-			.catch( ( error ) => {
-				dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error } );
+			.catch( () => {
+				dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error: true } );
 			} );
 	};
 }
