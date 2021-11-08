@@ -38289,6 +38289,8 @@ testarmada-magellan@11.0.10:
     wpcom: "workspace:^"
     yargs: ^17.0.1
   dependenciesMeta:
+    "@react-spring/core@9.3.0":
+      built: false
     fsevents:
       optional: true
   languageName: unknown
