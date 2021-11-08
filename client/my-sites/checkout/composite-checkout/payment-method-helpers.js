@@ -7,13 +7,6 @@ import { stringifyBody } from 'calypso/state/login/utils';
 const { select } = defaultRegistry;
 
 async function createAccountCallback( response ) {
-	// Set siteId from response
-	const siteIdFromResponse = response?.blog_details?.blogid;
-	const siteSlugFromResponse = response?.blog_details?.site_slug;
-	const { dispatch } = defaultRegistry;
-	siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
-	siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
-
 	if ( ! response.bearer_token ) {
 		return;
 	}
