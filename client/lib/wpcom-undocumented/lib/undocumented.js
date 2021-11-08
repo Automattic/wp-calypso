@@ -40,17 +40,6 @@ Undocumented.prototype.me = function () {
 };
 
 /**
- * Disconnects a Jetpack site with id siteId from WP.com
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.disconnectJetpack = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id:/mine/delete query' );
-	return this.wpcom.req.post( { path: '/jetpack-blogs/' + siteId + '/mine/delete' }, fn );
-};
-
-/**
  * Fetches plugin registration keys for WordPress.org sites with paid services
  *
  * @param {number} [siteId] The site ID
@@ -70,34 +59,6 @@ Undocumented.prototype.fetchJetpackKeys = function ( siteId, fn ) {
 Undocumented.prototype.testConnectionJetpack = function ( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id:/test-connection query' );
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
-};
-
-/*
- * Retrieve current connection status of a Jetpack site.
- *
- * @param {number}      [siteId]
- * @param {Function} fn
- */
-Undocumented.prototype.getJetpackConnectionStatus = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/connection/' },
-		fn
-	);
-};
-
-/*
- * Retrieve current user's connection data for a Jetpack site.
- *
- * @param {number}      [siteId]
- * @param {Function} fn
- */
-Undocumented.prototype.getJetpackUserConnectionData = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/connection/data/' },
-		fn
-	);
 };
 
 Undocumented.prototype.jetpackLogin = function ( siteId, _wp_nonce, redirect_uri, scope, state ) {
