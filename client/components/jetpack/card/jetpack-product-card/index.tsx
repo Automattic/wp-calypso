@@ -15,11 +15,12 @@ import type { Moment } from 'moment';
 import './style.scss';
 
 type OwnProps = {
+	className?: string;
 	item: SelectorProduct;
 	// Disallow h6, so it can be used for a sub-header if needed
 	headerLevel: 1 | 2 | 3 | 4 | 5;
 	description?: ReactNode;
-	originalPrice: number;
+	originalPrice?: number;
 	discountedPrice?: number;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
@@ -38,6 +39,7 @@ type OwnProps = {
 	aboveButtonText?: TranslateResult | ReactNode;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
+	showAbovePriceText?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 };
 
@@ -50,6 +52,7 @@ const Header: React.FC< HeaderProps > = ( { level, children, ...headerProps } ) 
 	createElement( `h${ level }`, headerProps, children );
 
 const JetpackProductCard: React.FC< OwnProps > = ( {
+	className,
 	item,
 	headerLevel,
 	description,
@@ -71,6 +74,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	tooltipText,
 	featuredLabel,
 	hideSavingLabel,
+	showAbovePriceText,
 	aboveButtonText = null,
 	scrollCardIntoView,
 } ) => {
@@ -87,7 +91,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 
 	return (
 		<div
-			className={ classNames( 'jetpack-product-card', {
+			className={ classNames( 'jetpack-product-card', className, {
 				'is-disabled': isDisabled,
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
@@ -125,6 +129,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					currencyCode={ item.displayCurrency }
 					originalPrice={ originalPrice }
 					displayFrom={ displayFrom }
+					showAbovePriceText={ showAbovePriceText }
 					belowPriceText={ item.belowPriceText }
 					expiryDate={ expiryDate }
 					billingTerm={ item.displayTerm || item.term }

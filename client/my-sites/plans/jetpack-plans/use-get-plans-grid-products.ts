@@ -10,7 +10,6 @@ import {
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
-	JETPACK_CRM_FREE_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
@@ -125,13 +124,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_VIDEOPRESS_PRODUCTS ];
 	}
-
-	// Show Jetpack CRM free products
-	doForCurrentCROIteration( ( key ) => {
-		if ( Iterations.ONLY_REALTIME_PRODUCTS === key ) {
-			availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
-		}
-	} );
 
 	return {
 		availableProducts: availableProducts.map( slugToSelectorProduct ) as SelectorProduct[],
