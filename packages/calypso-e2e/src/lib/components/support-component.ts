@@ -183,11 +183,14 @@ export class SupportComponent {
 	 * @returns {Promise<Page>} Reference to support page.
 	 */
 	async visitArticle(): Promise< Page > {
+		const visitArticleLocator = this.page.locator( selectors.visitArticleButton );
+
 		const browserContext = this.page.context();
 		// `Visit article` launches a new page.
 		const [ newPage ] = await Promise.all( [
 			browserContext.waitForEvent( 'page' ),
-			this.page.click( selectors.visitArticleButton ),
+			visitArticleLocator.click(),
+			// this.page.click( selectors.visitArticleButton ),
 		] );
 		await newPage.waitForLoadState( 'domcontentloaded' );
 
