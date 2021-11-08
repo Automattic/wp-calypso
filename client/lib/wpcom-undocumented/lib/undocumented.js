@@ -952,17 +952,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 	} );
 };
 
-Undocumented.prototype.cancelPlanTrial = function ( planId, fn ) {
-	debug( '/upgrades/{planId}/cancel-plan-trial' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ planId }/cancel-plan-trial`,
-		},
-		fn
-	);
-};
-
 /**
  * Get the available export configuration settings for a site
  *
