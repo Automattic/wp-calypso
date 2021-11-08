@@ -350,29 +350,6 @@ Undocumented.prototype.validateDomainContactInformation = function (
 };
 
 /**
- * Get site specific details for WordPress.com products
- *
- * @param {Function} siteDomain The site slug
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSiteProducts = function ( siteDomain, fn ) {
-	debug( '/sites/:site_domain:/products query' );
-
-	// the site domain could be for a jetpack site installed in
-	// a subdirectory.  encode any forward slash present before making
-	// the request
-	siteDomain = encodeURIComponent( siteDomain );
-
-	return this._sendRequest(
-		{
-			path: '/sites/' + siteDomain + '/products',
-			method: 'get',
-		},
-		fn
-	);
-};
-
-/**
  * Get a site specific details for WordPress.com plans
  *
  * @param {Function} siteDomain The site slug
