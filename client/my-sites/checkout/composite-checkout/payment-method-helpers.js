@@ -6,10 +6,6 @@ import { stringifyBody } from 'calypso/state/login/utils';
 
 const { select } = defaultRegistry;
 
-export async function fetchStripeConfiguration( requestArgs, wpcom ) {
-	return wpcom.req.get( '/me/stripe-configuration', requestArgs );
-}
-
 async function createAccountCallback( response ) {
 	// Set siteId from response
 	const siteIdFromResponse = response?.blog_details?.blogid;

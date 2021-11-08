@@ -5,18 +5,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import wp from 'calypso/lib/wp';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
-import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { RequestCart } from '@automattic/shopping-cart';
 
 import './style.scss';
-
-function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
-	return fetchStripeConfiguration( args, wp );
-}
 
 function removeHashFromUrl(): void {
 	try {
@@ -75,7 +70,7 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 		>
 			<CalypsoShoppingCartProvider>
 				<StripeHookProvider
-					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+					fetchStripeConfiguration={ getStripeConfiguration }
 					locale={ translate.locale }
 				>
 					<CompositeCheckout
