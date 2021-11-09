@@ -4,7 +4,7 @@
 	justify-content: space-between;
 	align-items: center;
 
-	margin-top: calc( 32px * 3 );
+	margin-top: 32px;
 	padding: 32px;
 
 	border-width: 1px 0;
@@ -15,7 +15,7 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
-		margin-bottom: calc( 32px * 3 );
+		margin-bottom: 32px;
 
 		border-width: 1px;
 		border-radius: calc( 2px * 4 );
