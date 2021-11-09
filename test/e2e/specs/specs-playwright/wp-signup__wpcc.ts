@@ -68,7 +68,10 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 			// Cursory check to ensure the newly registered account does not have a site.
 			// Waiting for `networkidle` is required so Calypso loading won't swallow up
 			// the click on navbar in the Close Account steps.
-			await page.goto( DataHelper.getCalypsoURL(), { waitUntil: 'networkidle' } );
+			await Promise.all( [
+				page.waitForNavigation( { url: '**/read', waitUntil: 'load' } ),
+				page.goto( DataHelper.getCalypsoURL() ),
+			] );
 		} );
 	} );
 
