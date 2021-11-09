@@ -36,12 +36,13 @@ class ChangeSiteAddress extends Component {
 
 	render() {
 		const domain = getSelectedDomain( this.props );
-		const dotblogSubdomain = get( domain, 'name', '' ).match( /\.\w+\.blog$/ );
+		const domainName = domain?.name ?? '';
+		const dotblogSubdomain = domainName.match( /\.\w+\.blog$/ );
 		const domainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
 
 		return (
 			<Main className="change-site-address">
-				<Header onClick={ this.goBack } selectedDomainName={ get( domain, 'name', '' ) }>
+				<Header onClick={ this.goBack } selectedDomainName={ domainName }>
 					{ translate( 'Change Site Address' ) }
 				</Header>
 
