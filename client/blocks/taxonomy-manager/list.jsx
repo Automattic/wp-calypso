@@ -66,7 +66,7 @@ export class TaxonomyManagerList extends Component {
 		}
 
 		return this.getTermChildren( item.ID ).reduce(
-			( memo, childItem ) => memo + this.getItemHeight( childItem, true ),
+			( totalHeight, childItem ) => totalHeight + this.getItemHeight( childItem, true ),
 			ITEM_HEIGHT
 		);
 	};
