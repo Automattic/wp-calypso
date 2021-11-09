@@ -79,30 +79,25 @@ export const LineItem = styled( WPLineItem )< {
 
 const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	display: flex;
 	font-size: 14px;
-	justify-content: space-between;
 	width: 100%;
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.success };
-	text-align: right;
-
-	.rtl & {
-		text-align: left;
-	}
+	display: block;
+	margin: 2px 0;
 `;
 
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
-	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+	font-size: 16px;
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+	font-size: 16px;
 
 	.rtl & {
 		margin-right: 12px;
@@ -579,6 +574,10 @@ function FirstTermDiscountCallout( {
 	const cost = product.product_cost_integer;
 	const isRenewal = product.is_renewal;
 
+	if ( product.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+
 	if (
 		( ! isWpComPlan( planSlug ) && ! isJetpackProductSlug( planSlug ) ) ||
 		origCost <= cost ||
@@ -617,7 +616,9 @@ function IntroductoryOfferCallout( {
 		translate,
 		product.introductory_offer_terms.interval_unit,
 		product.introductory_offer_terms.interval_count,
-		isFreeTrial
+		isFreeTrial,
+		'checkout',
+		product.introductory_offer_terms.transition_after_renewal_count
 	);
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
