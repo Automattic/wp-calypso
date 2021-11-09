@@ -7,11 +7,13 @@
 .name-servers__dns {
 	.name-servers__toggle {
 		.components-toggle-control .components-base-control__field {
+			justify-content: space-between;
+			margin-bottom: 0;
 			.components-toggle-control__label {
 				font-size: $font-body;
 			}
-			.components-form-toggle__input {
-				align-self: center;
+			.components-form-toggle {
+				order: 1;
 			}
 		}
 	}
