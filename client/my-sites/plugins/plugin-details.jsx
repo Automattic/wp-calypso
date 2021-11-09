@@ -180,33 +180,30 @@ function PluginDetails( props ) {
 								{ fullPlugin.short_description || fullPlugin.description }
 							</div>
 							<div className="plugin-details__additional-info">
-								<table>
-									<thead>
-										<tr>
-											<th>{ translate( 'Developer' ) }</th>
-											<th>{ translate( 'Ratings' ) }</th>
-											<th>{ translate( 'Last updated' ) }</th>
-											<th>{ translate( 'Version' ) }</th>
-										</tr>
-									</thead>
-
-									<tbody>
-										<tr>
-											<td>
-												<a href={ fullPlugin.author_url }>{ fullPlugin.author_name }</a>
-											</td>
-											<td>
-												<Rating rating={ fullPlugin.rating } />
-											</td>
-											<td>
-												{ moment
-													.utc( fullPlugin.last_updated, 'YYYY-MM-DD hh:mma' )
-													.format( 'YYYY-MM-DD' ) }
-											</td>
-											<td>{ fullPlugin.version }</td>
-										</tr>
-									</tbody>
-								</table>
+								<div className="plugin-details__info">
+									<div className="plugin-details__info-title">{ translate( 'Developer' ) }</div>
+									<div className="plugin-details__info-value">
+										<a href={ fullPlugin.author_url }>{ fullPlugin.author_name }</a>
+									</div>
+								</div>
+								<div className="plugin-details__info">
+									<div className="plugin-details__info-title">{ translate( 'Ratings' ) }</div>
+									<div className="plugin-details__info-value">
+										<Rating rating={ fullPlugin.rating } />
+									</div>
+								</div>
+								<div className="plugin-details__info">
+									<div className="plugin-details__info-title">{ translate( 'Last updated' ) }</div>
+									<div className="plugin-details__info-value">
+										{ moment
+											.utc( fullPlugin.last_updated, 'YYYY-MM-DD hh:mma' )
+											.format( 'YYYY-MM-DD' ) }
+									</div>
+								</div>
+								<div className="plugin-details__info">
+									<div className="plugin-details__info-title">{ translate( 'Version' ) }</div>
+									<div className="plugin-details__info-value">{ fullPlugin.version }</div>
+								</div>
 							</div>
 						</div>
 					</div>
