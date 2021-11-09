@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { clickNavTab } from '../../element-helper';
+import { clickNavTab, retryAction } from '../../element-helper';
 
 export type PeoplePageTabs = 'Team' | 'Followers' | 'Email Followers' | 'Invites';
 
@@ -138,15 +138,20 @@ export class PeoplePage {
 	async selectInvitedUser( emailAddress: string ): Promise< void > {
 		// Retry three times, each time allowing 5 seconds for Playwright to locate the
 		// pending user invite.
-		for ( let retries = 3; retries > 0; retries -= 1 ) {
-			try {
-				await this.page.waitForSelector( selectors.invitedUser( emailAddress ), {
-					timeout: 5 * 1000,
-				} );
-			} catch {
-				await this.page.reload();
-			}
+
+		/**
+		 * Closure to wait for the invited user to be processed in the backend and then
+		 * appear on the frontend.
+		 *
+		 * @param {Page} page Page on which the actions take place.
+		 */
+		async function waitForInviteToAppear( page: Page ): Promise< void > {
+			await page.waitForSelector( selectors.invitedUser( emailAddress ), {
+				timeout: 5 * 1000,
+			} );
 		}
+
+		await retryAction( this.page, waitForInviteToAppear );
 
 		await Promise.all( [
 			this.page.waitForNavigation(),
