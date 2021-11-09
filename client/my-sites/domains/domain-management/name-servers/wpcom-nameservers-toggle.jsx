@@ -4,14 +4,12 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-const NAMESERVERS_TOGGLE_TITLE = 'Use WordPress.com Name Servers';
 
 class NameserversToggle extends PureComponent {
 	static propTypes = {
@@ -20,6 +18,7 @@ class NameserversToggle extends PureComponent {
 	};
 
 	render() {
+		const toggleTitle = this.props.translate( 'Use WordPress.com Name Servers' );
 		return (
 			<Card compact className="name-servers__dns">
 				<form className="name-servers__toggle">
@@ -29,11 +28,11 @@ class NameserversToggle extends PureComponent {
 						onChange={ this.handleToggle }
 						checked={ this.props.enabled }
 						value="active"
-						label={ this.props.translate( NAMESERVERS_TOGGLE_TITLE ) }
+						label={ toggleTitle }
 						className="name-servers__title"
 						onClick={ this.handleToggle }
 					/>
-					<ScreenReaderText>{ this.props.translate( NAMESERVERS_TOGGLE_TITLE ) }</ScreenReaderText>
+					<ScreenReaderText>{ toggleTitle }</ScreenReaderText>
 				</form>
 				{ this.renderExplanation() }
 			</Card>

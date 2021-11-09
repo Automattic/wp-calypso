@@ -5,27 +5,16 @@
 }
 
 .name-servers__dns {
-	display: flex;
-	flex-direction: column;
-
 	.name-servers__toggle {
-		display: block;
 		.components-toggle-control .components-base-control__field {
-			display: flex;
-			justify-content: space-between;
-			.components-form-toggle {
-				order: 1;
-			}
 			.components-toggle-control__label {
-				order: 0;
-				border: 0;
-				font-size: 16px;
-				font-style: inherit;
-				font-weight: 400;
+				font-size: $font-body;
+			}
+			.components-form-toggle__input {
+				align-self: center;
 			}
 		}
 	}
-
 	.name-servers__explanation {
 		animation: appear 0.5s ease-in-out;
 		color: var( --color-text-subtle );
