@@ -2,18 +2,19 @@ import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
 import { emailManagement } from 'calypso/my-sites/email/paths';
-import {
-	composeAnalytics,
-	withAnalytics,
-} from 'calypso/state/analytics/actions';
+import { composeAnalytics, withAnalytics } from 'calypso/state/analytics/actions';
 import { addEmailForward } from 'calypso/state/email-forwarding/actions';
 import getEmailForwardingLimit from 'calypso/state/selectors/get-email-forwarding-limit';
-import { getEmailForwards, isAddingEmailForward } from 'calypso/state/selectors/get-email-forwards';
+import {
+	addEmailForwardSuccess,
+	getEmailForwards,
+	isAddingEmailForward,
+} from 'calypso/state/selectors/get-email-forwards';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -25,27 +26,22 @@ class EmailForwardingAddNewCompactList extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
-	state = {
-		emailForwards: [ { destination: '', mailbox: '', isValid: false } ],
-	};
-
-	hasReachedLimit() {
-		return this.props.emailForwards.length >= this.props.emailForwardingLimit;
+	constructor( props ) {
+		super( props );
+		this.state = {
+			emailForwards: [ { destination: '', mailbox: '', isValid: false } ],
+		};
 	}
 
 	hasValidEmailForwards() {
-		return ! this.state.emailForwards.some( ( forward ) => ! forward.isValid );
+		return ! this.state.emailForwards?.some( ( forward ) => ! forward.isValid );
 	}
 
-	addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination, siteSlug ) => {
-		const onSuccessRedirect = () => {
-			page( emailManagement( siteSlug, domainName ) );
-		};
-
+	addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) => {
 		withAnalytics(
 			composeAnalytics(
 				this.props.onConfirmEmailForwarding(),
-				this.props.addEmailForward( domainName, mailbox, destination, onSuccessRedirect )
+				this.props.addEmailForward( domainName, mailbox, destination )
 			)
 		);
 	};
@@ -59,7 +55,7 @@ class EmailForwardingAddNewCompactList extends Component {
 			return;
 		}
 
-		this.state.emailForwards.map( ( forward ) => {
+		this.state.emailForwards?.map( ( forward ) => {
 			const { mailbox, destination } = forward;
 
 			this.addNewEmailForwardWithAnalytics(
@@ -120,15 +116,17 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	render() {
-		const { selectedDomainName } = this.props;
+		const { emailForwardSuccess, selectedDomainName, selectedSiteSlug } = this.props;
+
+		if ( emailForwardSuccess ) {
+			page( emailManagement( selectedSiteSlug, selectedDomainName ) );
+		}
+
 		return (
 			<>
-				{ this.state.emailForwards.map( ( fields, index ) => (
-					<>
-						<form
-							className="email-forwarding__add-new"
-							key={ `email-forwarding__add-new_fragment__form-${ index }` }
-						>
+				{ this.state.emailForwards?.map( ( fields, index ) => (
+					<Fragment key={ `email-forwarding__add-new_fragment__card-${ index }` }>
+						<form className="email-forwarding__add-new">
 							<EmailForwardingAddNewCompact
 								fields={ fields }
 								index={ index }
@@ -139,7 +137,7 @@ class EmailForwardingAddNewCompactList extends Component {
 							/>
 						</form>
 						<hr key={ `email-forwarding__add-new_hr-${ index }` } />
-					</>
+					</Fragment>
 				) ) }
 				<div>{ this.renderActionsButtons() }</div>
 			</>
@@ -150,6 +148,7 @@ class EmailForwardingAddNewCompactList extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
+			emailForwardSuccess: addEmailForwardSuccess( state, ownProps.selectedDomainName ),
 			selectedSiteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 			isAddingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			emailForwards: getEmailForwards( state, ownProps.selectedDomainName ),

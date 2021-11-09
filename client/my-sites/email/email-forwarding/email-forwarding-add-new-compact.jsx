@@ -21,13 +21,14 @@ class EmailForwardingAddNewCompact extends Component {
 		emailForwards: PropTypes.array,
 	};
 
-	state = {
-		formSubmitting: false,
-		fields: this.props.fields,
-	};
-
 	constructor( props ) {
 		super( props );
+
+		this.state = {
+			formSubmitting: false,
+			fields: this.props.fields,
+		};
+
 		this.formStateController = formState.Controller( {
 			initialFields: this.getInitialFields(),
 			onNewState: this.setFormState,
@@ -35,8 +36,6 @@ class EmailForwardingAddNewCompact extends Component {
 				onComplete( null, validateAllFields( fieldValues, this.props.emailForwards ?? [] ) );
 			},
 		} );
-
-		this.setFormState( this.formStateController.getInitialState() );
 	}
 
 	getInitialFields() {

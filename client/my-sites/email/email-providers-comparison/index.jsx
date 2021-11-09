@@ -253,24 +253,13 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onForwardingConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, source } = this.props;
-		const { forwardingMailboxes } = this.state;
-
-		const usersAreValid = areAllUsersValid( forwardingMailboxes );
-		const userCanAddEmail = canCurrentUserAddEmail( domain );
+		const { comparisonContext, source } = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			context: comparisonContext,
-			mailbox_count: forwardingMailboxes.length,
-			mailboxes_valid: usersAreValid ? 1 : 0,
 			provider: 'email-forwarding',
 			source,
-			user_can_add_email: userCanAddEmail ? 1 : 0,
 		} );
-
-		if ( ! usersAreValid || ! userCanAddEmail ) {
-			return;
-		}
 	};
 
 	onGoogleConfirmNewUsers = () => {

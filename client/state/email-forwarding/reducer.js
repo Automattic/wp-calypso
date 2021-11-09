@@ -182,6 +182,20 @@ export const requestErrorReducer = ( state = false, action ) => {
 	return state;
 };
 
+export const addEmailForwardSuccess = ( state = false, action ) => {
+	switch ( action.type ) {
+		case EMAIL_FORWARDING_ADD_REQUEST:
+			return false;
+		case EMAIL_FORWARDING_ADD_REQUEST_SUCCESS:
+			return true;
+		case EMAIL_FORWARDING_ADD_REQUEST_FAILURE: {
+			return false;
+		}
+	}
+
+	return state;
+};
+
 const combinedReducer = keyedReducer(
 	'domainName',
 	combineReducers( {
@@ -190,6 +204,7 @@ const combinedReducer = keyedReducer(
 		requesting: requestingReducer,
 		requestError: requestErrorReducer,
 		addingForward: addingReducer,
+		addEmailForwardSuccess,
 		type: typeReducer,
 	} )
 );
