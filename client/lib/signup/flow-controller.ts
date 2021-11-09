@@ -248,9 +248,14 @@ export default class SignupFlowController {
 
 	_assertFlowProvidedRequiredDependencies() {
 		const storedDependencies = keys( getSignupDependencyStore( this._reduxStore.getState() ) );
+		const signupProgress = getSignupProgress( this._reduxStore.getState() );
 
 		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
 			if ( ! step.providesDependencies ) {
+				return;
+			}
+
+			if ( signupProgress[ step.stepName ]?.wasSkipped ) {
 				return;
 			}
 
@@ -317,7 +322,10 @@ export default class SignupFlowController {
 			includes( currentSteps, step.stepName )
 		);
 		const pendingSteps = filter( signupProgress, { status: 'pending' } );
-		const completedSteps = filter( signupProgress, { status: 'completed' } );
+		const completedSteps = filter(
+			signupProgress,
+			( step ) => step.status === 'completed' || step.wasSkipped
+		);
 		const dependencies = getSignupDependencyStore( this._reduxStore.getState() );
 
 		if ( dependencies.bearer_token && ! wpcom.isTokenLoaded() ) {

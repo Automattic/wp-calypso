@@ -36,6 +36,16 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [] );
 
+	const skipStep = () => {
+		dispatch(
+			submitSignupStep( {
+				stepName,
+				wasSkipped: true,
+			} )
+		);
+		goToNextStep();
+	};
+
 	return (
 		<StepWrapper
 			headerText={ headerText }
@@ -55,6 +65,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 			skipLabelText={ translate( 'Skip this step' ) }
 			isHorizontalLayout={ true }
 			{ ...props }
+			goToNextStep={ skipStep }
 		/>
 	);
 }
