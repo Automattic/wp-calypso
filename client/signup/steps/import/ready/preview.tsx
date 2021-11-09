@@ -41,9 +41,9 @@ const ImportPreview: FunctionComponent< Props > = ( { website } ) => {
 	};
 
 	checkScreenshot(
-		`https://s0.wp.com/mshots/v1/${ website }?${ Object.keys( mShotParams )
-			.filter( ( key ) => !! mShotParams[ key as keyof MShotParams ] )
-			.map( ( key ) => key + '=' + mShotParams[ key as keyof MShotParams ] )
+		`https://s0.wp.com/mshots/v1/${ website }?${ Object.entries( mShotParams )
+			.filter( ( entry ) => !! entry[ 1 ] )
+			.map( ( [ key, val ] ) => key + '=' + val )
 			.join( '&' ) }`
 	);
 
