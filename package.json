@@ -210,7 +210,7 @@
 		"concurrently": "^5.1.0",
 		"config": "^3.3.6",
 		"core-js-bundle": "^3.6.4",
-		"css-loader": "^3.4.2",
+		"css-loader": "^3.6.0",
 		"debug": "^4.1.1",
 		"doctrine": "^3.0.0",
 		"enhanced-resolve": "^5.8.2",
