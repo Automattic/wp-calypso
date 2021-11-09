@@ -6,12 +6,12 @@ import {
 	MainContentWrapper,
 	SubmitButtonWrapper,
 	checkoutTheme,
-	defaultRegistry,
 	Button,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
 import { ThemeProvider } from '@emotion/react';
+import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -82,8 +82,6 @@ import type { ManagedContactDetails, CountryListItem } from '@automattic/wpcom-c
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
-
-const { select, registerStore } = defaultRegistry;
 
 const wpcomGetStoredCards = (): StoredCard[] => wp.req.get( { path: '/me/stored-cards' } );
 
@@ -264,7 +262,6 @@ export default function CompositeCheckout( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	useWpcomStore(
-		registerStore,
 		applyContactDetailsRequiredMask(
 			emptyManagedContactDetails,
 			contactDetailsType === 'domain' ? domainRequiredContactDetails : taxRequiredContactDetails
@@ -365,8 +362,12 @@ export default function CompositeCheckout( {
 		// Only wait for web pay to load if we are using web pay
 		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
 
-	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
-	const recaptchaClientId: number | undefined = select( 'wpcom' )?.getRecaptchaClientId();
+	const contactDetails: ManagedContactDetails | undefined = useSelect( ( select ) =>
+		select( 'wpcom-checkout' )?.getContactInfo()
+	);
+	const recaptchaClientId: number | undefined = useSelect( ( select ) =>
+		select( 'wpcom-checkout' )?.getRecaptchaClientId()
+	);
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
@@ -653,7 +654,6 @@ export default function CompositeCheckout( {
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }
-				registry={ defaultRegistry }
 				isLoading={ isLoading }
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }

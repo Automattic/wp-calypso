@@ -1,14 +1,7 @@
-import {
-	Button,
-	FormStatus,
-	useLineItems,
-	useFormStatus,
-	registerStore,
-	useSelect,
-	useDispatch,
-} from '@automattic/composite-checkout';
+import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -215,7 +208,7 @@ function NetBankingPayButton( { disabled, onClick, store } ) {
 		{}
 	);
 	const contactCountryCode = useSelect(
-		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
+		( select ) => select( 'wpcom-checkout' )?.getContactInfo().countryCode?.value
 	);
 	const reduxDispatch = useReduxDispatch();
 
