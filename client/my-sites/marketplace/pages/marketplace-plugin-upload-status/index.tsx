@@ -1,3 +1,4 @@
+// import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -11,6 +12,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { installPlugin, activatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
@@ -20,15 +22,24 @@ import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-p
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { initiateThemeTransfer as initiateTransfer } from 'calypso/state/themes/actions';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	const isUploadFlow = ! productSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
+	const [ moveToAtomicFlow, setMoveToAtomicFlow ] = useState( false );
+	const [ atomicError ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSite = useSelector( getSelectedSite );
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const pluginUploadProgress = useSelector( ( state ) => getPluginUploadProgress( state, siteId ) );
 	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
@@ -61,12 +72,32 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	}, [ pluginUploadProgress, setCurrentStep ] );
 
 	useEffect( () => {
-		if ( ! isUploadFlow && currentStep === 0 && wporgPlugin ) {
-			// initialize plugin installing
-			dispatch( installPlugin( siteId, wporgPlugin, false ) );
-			setCurrentStep( 1 );
+		if ( ! isUploadFlow && ! initializeInstallFlow && wporgPlugin && selectedSite ) {
+			// const upgradablePlan = isBusiness( selectedSite.plan ) || isEnterprise( selectedSite.plan ) || isEcommerce( selectedSite.plan );
+
+			if ( selectedSite?.jetpack ) {
+				// initialize plugin installing
+				dispatch( installPlugin( siteId, wporgPlugin, false ) );
+			} else {
+				// initialize atomic flow
+				setMoveToAtomicFlow( true );
+				dispatch( initiateTransfer( siteId, null, productSlug ) );
+			}
+
+			setInitializeInstallFlow( true );
+			waitFor( 1 ).then( () => setCurrentStep( 1 ) );
 		}
-	}, [ isUploadFlow, currentStep, siteId, wporgPlugin, productSlug ] );
+	}, [ isUploadFlow, siteId, wporgPlugin, productSlug ] );
+
+	useEffect( () => {
+		if (
+			moveToAtomicFlow &&
+			currentStep === 1 &&
+			transferStates.COMPLETE === automatedTransferStatus
+		) {
+			setCurrentStep( 2 );
+		}
+	}, [ moveToAtomicFlow, automatedTransferStatus ] );
 
 	useEffect( () => {
 		if (
@@ -86,7 +117,10 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
 
 	useEffect( () => {
-		if ( pluginActive ) {
+		if (
+			pluginActive ||
+			( moveToAtomicFlow && transferStates.COMPLETE === automatedTransferStatus )
+		) {
 			waitFor( 1 ).then( () =>
 				page.redirect( `/marketplace/thank-you/${ installedPlugin?.slug }/${ selectedSiteSlug }` )
 			);
@@ -108,7 +142,10 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-upload-status__root">
-				{ pluginUploadError || pluginInstallStatus.error ? (
+				{ pluginUploadError ||
+				pluginInstallStatus.error ||
+				atomicError ||
+				automatedTransferStatus === transferStates.FAILURE ? (
 					<EmptyContent
 						illustration="/calypso/images/illustrations/error.svg"
 						title={ translate( 'An error occurred while installing the plugin.' ) }
