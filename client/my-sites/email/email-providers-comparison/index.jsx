@@ -115,11 +115,7 @@ class EmailProvidersComparison extends Component {
 		this.state = {
 			googleUsers: [],
 			titanMailboxes: [ buildNewTitanMailbox( props.selectedDomainName, false ) ],
-			expanded: {
-				forwarding: false,
-				google: false,
-				titan: true,
-			},
+			expanded: this.getDefaultExpandedState( props.source ),
 			addingToCart: false,
 			validatedTitanMailboxUuids: [],
 		};
@@ -131,6 +127,21 @@ class EmailProvidersComparison extends Component {
 
 	componentWillUnmount() {
 		this.isMounted = false;
+	}
+
+	getDefaultExpandedState( source ) {
+		if ( source === 'google-sale' ) {
+			return {
+				forwarding: false,
+				google: true,
+				titan: false,
+			};
+		}
+		return {
+			forwarding: false,
+			google: false,
+			titan: true,
+		};
 	}
 
 	onExpandedStateChange = ( providerKey, isExpanded ) => {
