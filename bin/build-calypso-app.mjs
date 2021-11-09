@@ -90,7 +90,6 @@ async function runBuilder( args ) {
  * mode after a full sync. Is otherwise pending until the user kills the process.
  */
 function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
-	console.log( 'HERE' );
 	return new Promise( ( resolve, reject ) => {
 		let rsync = null;
 		const debouncedSync = debouncer( () => {
@@ -142,7 +141,6 @@ function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
 function debouncer( cb ) {
 	let timeout = null;
 	return () => {
-		console.log( 'debounce' );
 		// Each time the debounced function is called, cancel the current schedule
 		// and re-schedule it for +1s.
 		clearTimeout( timeout );
