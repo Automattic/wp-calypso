@@ -390,13 +390,11 @@ export function licensingThankYouAutoActivation( context, next ) {
 }
 
 export function licensingThankYouAutoActivationCompleted( context, next ) {
-	const { siteId, receiptId, destinationSiteId } = context.query;
+	const { destinationSiteId } = context.query;
 
 	context.primary = (
 		<LicensingThankYouAutoActivationCompleted
 			productSlug={ context.params.product }
-			jetpackTemporarySiteId={ siteId }
-			receiptId={ receiptId }
 			destinationSiteId={ destinationSiteId }
 		/>
 	);
