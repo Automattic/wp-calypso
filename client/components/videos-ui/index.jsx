@@ -1,23 +1,12 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import VideoPlayer from './video-player';
 import './style.scss';
-
-const VideoPlayer = ( { videoUrl } ) => {
-	return (
-		<div key={ videoUrl } className="videos-ui__video">
-			<video controls>
-				<source src={ videoUrl } />{ ' ' }
-				{ /* @TODO: check if tracks are available, the linter demands one */ }
-				<track src="caption.vtt" kind="captions" srclang="en" label="english_captions" />
-			</video>
-		</div>
-	);
-};
 
 const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const translate = useTranslate();
@@ -27,7 +16,8 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ currentVideo, setCurrentVideo ] = useState( null );
-	const [ shouldAutoPlay, setShouldAutoPlay ] = useState( false );
+	const [ isPlaying, setIsPlaying ] = useState( false );
+	const videoRef = useRef( null );
 
 	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
@@ -36,8 +26,20 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 		} );
 
 		setCurrentVideo( videoInfo );
-		setShouldAutoPlay( true );
+		setIsPlaying( true );
 	};
+
+	useEffect( () => {
+		if ( videoRef.current ) {
+			videoRef.current.onplay = () => {
+				setIsPlaying( true );
+			};
+
+			videoRef.current.onpause = () => {
+				setIsPlaying( false );
+			};
+		}
+	} );
 
 	useEffect( () => {
 		if ( ! currentVideoKey && course ) {
@@ -135,7 +137,11 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 				</div>
 				<div className="videos-ui__video-content">
 					{ currentVideo && (
-						<VideoPlayer videoUrl={ currentVideo.url } shouldAutoplay={ shouldAutoPlay } />
+						<VideoPlayer
+							videoRef={ videoRef }
+							videoUrl={ currentVideo.url }
+							isPlaying={ isPlaying }
+						/>
 					) }
 					<div className="videos-ui__chapters">
 						{ course &&
