@@ -1,8 +1,8 @@
 import { GROUP_WPCOM } from '@automattic/calypso-products';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { isIntroductoryOfferAppliedToPlanPrice } from 'calypso/state/sites/plans/selectors';
 import { getPlanPrice } from './get-plan-price';
 import { getProductCost } from './get-product-cost';
-import { isIntroductoryOfferAppliedToPlanPrice } from './is-introductory-offer-applied-to-plan-price';
 
 /**
  * Computes a full and monthly price for a given plan, based on it's slug/constant
