@@ -10,6 +10,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -96,6 +97,7 @@ export class UserStep extends Component {
 	state = {
 		subHeaderText: '',
 		recaptchaClientId: null,
+		experiment: null,
 	};
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -119,6 +121,9 @@ export class UserStep extends Component {
 		if ( oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
 		}
+		loadExperimentAssignment( 'registration_remove_username' ).then( ( experimentName ) => {
+			this.setState( { experiment: experimentName } );
+		} );
 	}
 
 	componentDidMount() {
@@ -431,6 +436,10 @@ export class UserStep extends Component {
 		return translate( 'Create your account' );
 	}
 
+	isPasswordlessExperiment() {
+		return this.state.experiment?.variationName === 'treatment';
+	}
+
 	renderSignupForm() {
 		const { oauth2Client, wccomFrom, isReskinned } = this.props;
 		let socialService;
@@ -462,6 +471,7 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
+					isPasswordlessExperiment={ this.isPasswordlessExperiment() }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
@@ -502,15 +512,17 @@ export class UserStep extends Component {
 		}
 
 		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				headerText={ this.getHeaderText() }
-				subHeaderText={ this.state.subHeaderText }
-				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-				stepContent={ this.renderSignupForm() }
-			/>
+			this.state.experiment?.variationName !== undefined && (
+				<StepWrapper
+					flowName={ this.props.flowName }
+					stepName={ this.props.stepName }
+					headerText={ this.getHeaderText() }
+					subHeaderText={ this.state.subHeaderText }
+					positionInFlow={ this.props.positionInFlow }
+					fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+					stepContent={ this.renderSignupForm() }
+				/>
+			)
 		);
 	}
 }

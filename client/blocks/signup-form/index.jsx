@@ -51,6 +51,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
+import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 
 import './style.scss';
@@ -85,6 +86,7 @@ class SignupForm extends Component {
 		goToNextStep: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
+		isPasswordlessExperiment: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
@@ -108,6 +110,7 @@ class SignupForm extends Component {
 		displayNameInput: false,
 		displayUsernameInput: true,
 		flowName: '',
+		isPasswordlessExperiment: false,
 		isSocialSignupEnabled: false,
 		showRecaptchaToS: false,
 		horizontal: false,
@@ -1031,6 +1034,49 @@ class SignupForm extends Component {
 			);
 		}
 
+		/*
+			AB Test: passwordlessSignup
+			`<PasswordlessSignupForm />` is for the `onboarding` flow.
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
+		*/
+		if (
+			( this.props.flowName === 'onboarding' || this.props.flowName === 'test-fse' ) &&
+			this.props.isPasswordlessExperiment
+		) {
+			const logInUrl = config.isEnabled( 'login/native-login-links' )
+				? this.getLoginLink()
+				: localizeUrl( config( 'login_url' ), this.props.locale );
+
+			return (
+				<div
+					className={ classNames( 'signup-form', this.props.className, {
+						'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
+					} ) }
+				>
+					{ this.getNotice() }
+					<PasswordlessSignupForm
+						step={ this.props.step }
+						stepName={ this.props.stepName }
+						flowName={ this.props.flowName }
+						goToNextStep={ this.props.goToNextStep }
+						renderTerms={ this.termsOfServiceLink }
+						logInUrl={ logInUrl }
+						disabled={ this.props.disabled }
+						disableSubmitButton={ this.props.disableSubmitButton }
+						recaptchaClientId={ this.props.recaptchaClientId }
+					/>
+					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+						<SocialSignupForm
+							handleResponse={ this.props.handleSocialResponse }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+						/>
+					) }
+
+					{ this.props.footerLink || this.footerLink() }
+				</div>
+			);
+		}
 		return (
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
