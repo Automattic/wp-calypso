@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import { ROUTE_SET } from 'calypso/state/action-types';
 
 const initialState = {
@@ -7,11 +8,12 @@ const initialState = {
 };
 
 export const queryReducer = ( state = initialState, action ) => {
+	const query = isEmpty( action.query ) ? null : action.query;
 	switch ( action.type ) {
 		case ROUTE_SET:
 			return {
-				initial: state.initial ?? action.query,
-				current: action.query,
+				initial: state.initial ?? query,
+				current: query,
 				previous: state.current,
 			};
 	}

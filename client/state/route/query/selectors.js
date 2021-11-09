@@ -1,1 +1,1 @@
-export const getRouteQueryCurrent = ( state ) => state?.route.query.current;
+export const getRouteQueryCurrent = ( state ) => state.route.query.current;

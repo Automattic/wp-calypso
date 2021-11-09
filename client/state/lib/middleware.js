@@ -26,7 +26,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
  * @param {Function} getState - redux getState function
  */
 const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState ) => {
-	if ( ! action.query?.immediate_login_attempt ) {
+	if ( ! action.query.immediate_login_attempt ) {
 		return;
 	}
 

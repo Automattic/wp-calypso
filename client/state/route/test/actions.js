@@ -10,7 +10,7 @@ describe( 'setRoute()', () => {
 		expect( action ).toEqual( {
 			type: ROUTE_SET,
 			path: route,
-			query: null,
+			query: {},
 		} );
 	} );
 
