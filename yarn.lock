@@ -198,7 +198,7 @@ __metadata:
     asana-phrase: ^0.0.8
     config: ^3.3.6
     mailosaur: ^7.3.1
-    playwright: 1.14.0
+    playwright: 1.16
     typescript: ^4.4.4
   languageName: unknown
   linkType: soft
@@ -9307,7 +9307,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: 1.14.0
+    playwright: 1.16
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -9492,6 +9492,15 @@ __metadata:
   dependencies:
     es6-promisify: ^5.0.0
   checksum: a618d4e4ca7c0c2023b2664346570773455c501a930718764f65016a8a9eea6d2ab5ba54255589e46de529bab4026a088523dce17f94e34ba385af1f644febe1
+  languageName: node
+  linkType: hard
+
+"agent-base@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "agent-base@npm:6.0.2"
+  dependencies:
+    debug: 4
+  checksum: dc4f757e40b5f3e3d674bc9beb4f1048f4ee83af189bae39be99f57bf1f48dde166a8b0a5342a84b5944ee8e6ed1e5a9d801858f4ad44764e84957122fe46261
   languageName: node
   linkType: hard
 
@@ -13156,7 +13165,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^6.1.0, commander@npm:^6.2.1":
+"commander@npm:^6.2.1":
   version: 6.2.1
   resolution: "commander@npm:6.2.1"
   checksum: 85748abd9d18c8bc88febed58b98f66b7c591d9b5017cad459565761d7b29ca13b7783ea2ee5ce84bf235897333706c4ce29adf1ce15c8252780e7000e2ce9ea
@@ -13167,6 +13176,13 @@ __metadata:
   version: 7.2.0
   resolution: "commander@npm:7.2.0"
   checksum: 8d690ff13b0356df7e0ebbe6c59b4712f754f4b724d4f473d3cc5b3fdcf978e3a5dc3078717858a2ceb50b0f84d0660a7f22a96cdc50fb877d0c9bb31593d23a
+  languageName: node
+  linkType: hard
+
+"commander@npm:^8.2.0":
+  version: 8.3.0
+  resolution: "commander@npm:8.3.0"
+  checksum: 8b043bb8322ea1c39664a1598a95e0495bfe4ca2fad0d84a92d7d1d8d213e2a155b441d2470c8e08de7c4a28cf2bc6e169211c49e1b21d9f7edc6ae4d9356060
   languageName: node
   linkType: hard
 
@@ -28850,11 +28866,11 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.14.0":
-  version: 1.14.0
-  resolution: "playwright@npm:1.14.0"
+"playwright-core@npm:=1.16.3":
+  version: 1.16.3
+  resolution: "playwright-core@npm:1.16.3"
   dependencies:
-    commander: ^6.1.0
+    commander: ^8.2.0
     debug: ^4.1.1
     extract-zip: ^2.0.1
     https-proxy-agent: ^5.0.0
@@ -28865,12 +28881,25 @@ fsevents@~2.1.2:
     proper-lockfile: ^4.1.1
     proxy-from-env: ^1.1.0
     rimraf: ^3.0.2
+    socks-proxy-agent: ^6.1.0
     stack-utils: ^2.0.3
     ws: ^7.4.6
+    yauzl: ^2.10.0
     yazl: ^2.5.1
   bin:
-    playwright: lib/cli/cli.js
-  checksum: 12241c08c121ccfebd913de3d923e8edcf07a5f0c720a6a9aaf1c4ff8fd3578e8450adad832488c3208b0d9627a4990ac25e90fc9ef55840a672208b842b418e
+    playwright: cli.js
+  checksum: 9ae0cc2714d24fc464ab29cd9c9f4ed2b6d6cf0d88ed1034d40763501f4a9c5094bdff2008c1eb23123671eb61590b0c71af1971714d3b0b7541e42d3ba0d519
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.16":
+  version: 1.16.3
+  resolution: "playwright@npm:1.16.3"
+  dependencies:
+    playwright-core: =1.16.3
+  bin:
+    playwright: cli.js
+  checksum: dff5dd835a6d0a61d15b03dd2626971274c839babbc6533c6d0716129ec470fc3b95f3996d4e6f4a794c55e3380c20c97049a13d4fe8b06cc6a32fa418e4c0e2
   languageName: node
   linkType: hard
 
@@ -34648,6 +34677,17 @@ resolve@~1.1.0:
   languageName: node
   linkType: hard
 
+"socks-proxy-agent@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "socks-proxy-agent@npm:6.1.0"
+  dependencies:
+    agent-base: ^6.0.2
+    debug: ^4.3.1
+    socks: ^2.6.1
+  checksum: 8e42ce04de6aa995ed3613a4a53469dd35ab76b33c6c8ab6023783b44a5364a295852f2ff0fd6d40d1fe7519720870310afade16d9a727d63d07632e16842cfd
+  languageName: node
+  linkType: hard
+
 "socks@npm:^2.3.3":
   version: 2.5.1
   resolution: "socks@npm:2.5.1"
@@ -34655,6 +34695,16 @@ resolve@~1.1.0:
     ip: ^1.1.5
     smart-buffer: ^4.1.0
   checksum: db7bb7072196b2233a80a706d0cb247341bc592f354073a3224a2d813b5dab0d73d3327247a094ccf61aa77ccf2186bec73d3b71ffb9f672563b726300156d39
+  languageName: node
+  linkType: hard
+
+"socks@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "socks@npm:2.6.1"
+  dependencies:
+    ip: ^1.1.5
+    smart-buffer: ^4.1.0
+  checksum: e992192c7837bfa9093251abf3e78849741f332881900f481dcb3267d18b16595e93519f63dce29f39e4135789a7ed379d210dd68e98465564a40e81ccf9082a
   languageName: node
   linkType: hard
 
@@ -39140,7 +39190,7 @@ testarmada-magellan@11.0.10:
     mocha-multi-reporters: ^1.5.1
     mocha-teamcity-reporter: ^3.0.0
     node-slack-upload: ^1.2.1
-    playwright: 1.14.0
+    playwright: 1.16
     png-itxt: ^1.3.0
     postcss: ^8.3.11
     prettier: "npm:wp-prettier@2.2.1-beta-1"
