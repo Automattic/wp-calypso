@@ -1,41 +1,10 @@
 import config from '@automattic/calypso-config';
-import { Dialog, Gridicon } from '@automattic/components';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import playImage from 'calypso/assets/images/customer-home/plain-play.png';
-import VideosUi from 'calypso/components/videos-ui';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { EDUCATION_BLOGGING_QUICK_START } from 'calypso/my-sites/customer-home/cards/constants';
 import EducationalContent from '../educational-content';
-
-const BloggingQuickStartModal = ( props ) => {
-	const { isVisible = false, onClose = () => {} } = props;
-
-	return (
-		<Dialog
-			className="blogging-quick-start__modal"
-			isVisible={ isVisible }
-			buttons={ [
-				{
-					label: 'Close',
-					isPrimary: true,
-					onClick: onClose,
-				},
-			] }
-			onClose={ onClose }
-		>
-			<Gridicon
-				icon="cross"
-				className="blogging-quick-start__modal-close-icon"
-				onClick={ onClose }
-			/>
-			<TrackComponentView eventName={ 'calypso_theme_blogging_quick_start_modal_view' } />
-			<div className="blogging-quick-start__modal-wrapper">
-				<VideosUi />
-			</div>
-		</Dialog>
-	);
-};
+import BloggingQuickStartModal from './blogging-quick-start-modal';
 
 const BloggingQuickStart = () => {
 	const { localeSlug } = useTranslate();
