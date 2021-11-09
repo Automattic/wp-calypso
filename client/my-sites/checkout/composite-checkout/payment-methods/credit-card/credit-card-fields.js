@@ -1,12 +1,7 @@
-import {
-	FormStatus,
-	useEvents,
-	useSelect,
-	useDispatch,
-	useFormStatus,
-} from '@automattic/composite-checkout';
+import { FormStatus, useEvents, useFormStatus } from '@automattic/composite-checkout';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment, useState, useEffect } from 'react';
 import {

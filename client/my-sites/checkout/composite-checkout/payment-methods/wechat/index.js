@@ -4,14 +4,12 @@ import {
 	useLineItems,
 	useFormStatus,
 	useTransactionStatus,
-	registerStore,
-	useSelect,
-	useDispatch,
 	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';

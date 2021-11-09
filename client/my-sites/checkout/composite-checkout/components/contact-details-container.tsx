@@ -4,9 +4,9 @@ import {
 	isDomainMapping,
 	getDomain,
 } from '@automattic/calypso-products';
-import { useSelect, useDispatch } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field, styled } from '@automattic/wpcom-checkout';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -58,10 +58,10 @@ export default function ContactDetailsContainer( {
 		updatePostalCode,
 		updateRequiredDomainFields,
 		updateEmail,
-	} = useDispatch( 'wpcom' );
+	} = useDispatch( 'wpcom-checkout' );
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
-	const { email } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
+	const { email } = useSelect( ( select ) => select( 'wpcom-checkout' ).getContactInfo() );
 
 	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
 		updateDomainContactFields( details );

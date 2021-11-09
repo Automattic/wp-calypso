@@ -51,15 +51,6 @@ import {
 	makeRedirectResponse,
 	makeErrorResponse,
 } from './lib/payment-processors';
-import {
-	createRegistry,
-	defaultRegistry,
-	registerStore,
-	useDispatch,
-	useRegisterStore,
-	useRegistry,
-	useSelect,
-} from './lib/registry';
 import checkoutTheme from './lib/theme';
 import { useTransactionStatus } from './lib/transaction-status';
 export * from './types';
@@ -95,8 +86,6 @@ export {
 	RadioButton,
 	SubmitButtonWrapper,
 	checkoutTheme,
-	createRegistry,
-	defaultRegistry,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
@@ -105,9 +94,7 @@ export {
 	makeManualResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
-	registerStore,
 	useAllPaymentMethods,
-	useDispatch,
 	useEvents,
 	useFormStatus,
 	useIsStepActive,
@@ -119,9 +106,6 @@ export {
 	usePaymentProcessor,
 	usePaymentProcessors,
 	useProcessPayment,
-	useRegisterStore,
-	useRegistry,
-	useSelect,
 	useSetStepComplete,
 	useTotal,
 	useTransactionStatus,

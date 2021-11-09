@@ -4,9 +4,9 @@ import {
 	useLineItems,
 	useEvents,
 	useFormStatus,
-	useSelect,
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
+import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';

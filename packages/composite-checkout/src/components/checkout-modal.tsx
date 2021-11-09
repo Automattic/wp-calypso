@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import * as React from 'react';
 import joinClasses from '../lib/join-classes';
 import Button from './button';
+import type { MouseEvent } from 'react';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
@@ -182,7 +182,7 @@ function handleCancelAction( cancelAction: Callback, closeModal: Callback ) {
 	closeModal();
 }
 
-function preventClose( event: React.MouseEvent< HTMLDivElement, MouseEvent > ) {
+function preventClose( event: MouseEvent< HTMLDivElement > ) {
 	event.stopPropagation();
 }
 

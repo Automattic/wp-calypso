@@ -43,6 +43,7 @@
 		"@automattic/shopping-cart": "^2.0.0",
 		"@emotion/styled": "^11.3.0",
 		"@stripe/stripe-js": "^1.17.1",
+		"@wordpress/data": "^6.1.0",
 		"@wordpress/i18n": "^4.2.2",
 		"@wordpress/react-i18n": "^3.0.1",
 		"debug": "^4.1.1",
@@ -58,7 +59,8 @@
 		"typescript": "^4.4.4"
 	},
 	"peerDependencies": {
-		"@emotion/react": "^11.4.1"
+		"@emotion/react": "^11.4.1",
+		"redux": "^4.0.5"
 	},
 	"private": true
 }
