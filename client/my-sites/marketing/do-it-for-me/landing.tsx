@@ -93,7 +93,7 @@ export default function DoItForMeLandingPage(): JSX.Element {
 
 			<Paragraph>
 				{ translate(
-					'Need a professionally designed website for your business fast? Choose from our custom-designed templates below, add your content and media, and in just 2-4 business days your website will be ready to launch for just %(cost)s. The one-time fee includes a 4-page website and a 30-minute Quick Start Zoom orientation about your site when it’s complete.',
+					'Need a professionally designed website for your business fast? Choose from our custom-designed templates below, add your content and media, and in just 2-4 business days your website will be ready to launch for just %(cost)s. The one-time fee includes a 4-page website.',
 					{
 						args: { cost: displayCost },
 					}
@@ -102,6 +102,11 @@ export default function DoItForMeLandingPage(): JSX.Element {
 			<Paragraph>
 				{ translate(
 					'You’ll need to have content for 4 pages (Home, About, Contact, and one other page based on your selected template). You can add that content in the submission form.'
+				) }
+			</Paragraph>
+			<Paragraph>
+				{ translate(
+					'Want to add more pages? You can edit, add content, and modify any part of your site anytime after the build. Our Happiness team is ready to help you customize it as you wish.'
 				) }
 			</Paragraph>
 
