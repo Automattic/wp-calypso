@@ -12,6 +12,7 @@ import {
 	licensingThankYouManualActivationInstructions,
 	licensingThankYouManualActivationLicenseKey,
 	licensingThankYouAutoActivation,
+	licensingThankYouAutoActivationCompleted,
 	jetpackCheckoutThankYou,
 	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
@@ -51,6 +52,13 @@ export default function () {
 			'/checkout/jetpack/thank-you/licensing-auto-activate/:product',
 			noSite,
 			licensingThankYouAutoActivation,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-auto-activate-completed/:product',
+			noSite,
+			licensingThankYouAutoActivationCompleted,
 			makeLayout,
 			clientRender
 		);
