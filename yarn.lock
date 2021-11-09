@@ -12037,7 +12037,7 @@ __metadata:
     valid-url: ^1.0.9
     webpack: ^5.62.1
     webpack-bundle-analyzer: ^4.4.2
-    webpack-dev-middleware: ^5.1.0
+    webpack-dev-middleware: ^5.2.1
     webpack-hot-middleware: ^2.25.1
     webpack-node-externals: ^3.0.0
     wpcom: ^6.0.0
@@ -13026,7 +13026,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:^2.0.14":
+"colorette@npm:^2.0.10, colorette@npm:^2.0.14":
   version: 2.0.16
   resolution: "colorette@npm:2.0.16"
   checksum: 7430bd996545347f262ae9716bfc8ca3776606e9db854279082004f3141b15a64ad2ee0e4f10cacba5a07cc92ca3edc2d01cbe73fd2843ccd80e98d0e3a8e79b
@@ -38310,18 +38310,18 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack-dev-middleware@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "webpack-dev-middleware@npm:5.1.0"
+"webpack-dev-middleware@npm:^5.2.1":
+  version: 5.2.1
+  resolution: "webpack-dev-middleware@npm:5.2.1"
   dependencies:
-    colorette: ^1.2.2
+    colorette: ^2.0.10
     memfs: ^3.2.2
     mime-types: ^2.1.31
     range-parser: ^1.2.1
     schema-utils: ^3.1.0
   peerDependencies:
     webpack: ^4.0.0 || ^5.0.0
-  checksum: 44f1948678d2fa1d3e1c2a15a49a8236398a491d52f9caa2d3f81f48e7060f9b21aa3079d069001dd142c31dc861af68c1066b0c4494e6f1be9197a3d98e7ab0
+  checksum: 4500d862d18f8fefaf2128950ddf3b6ade8675fc18fa6aafd866e6243bce6099e5d3ce9de96878ecee9915957d8d5dca07a9c9e8b1844487b250f254b17f6c89
   languageName: node
   linkType: hard
 
@@ -39020,7 +39020,7 @@ testarmada-magellan@11.0.10:
     webpack: ^5.62.1
     webpack-bundle-analyzer: ^4.4.2
     webpack-cli: ^4.9.1
-    webpack-dev-middleware: ^5.1.0
+    webpack-dev-middleware: ^5.2.1
     whybundled: ^2.0.0
     wpcom: ^6.0.0
     yargs: ^17.0.1
