@@ -141,12 +141,18 @@ body.is-section-plugins:not( .is-nav-unification ) {
 .plugin-details__top-section {
 	border-bottom: 1px solid var( --studio-gray-5 );
 
-	.plugin-details__layout-col-left.no-cta {
-		@include grid-column( 1, 12 );
-	}
-
 	.plugin-details__layout-col-right.no-cta {
-		display: none;
+		visibility: hidden;
+
+		@media screen and ( max-width: 1040px ) {
+			display: none;
+		}
+	}
+}
+
+.plugin-details__page {
+	@media screen and ( max-width: 1040px ) {
+		padding: 16px;
 	}
 }
 
@@ -156,8 +162,13 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	justify-content: center;
 	height: 400px;
 
+	.plugin-details__tags {
+		font-size: $font-body-extra-small;
+		color: var( --studio-gray-40 );
+	}
+
 	.plugin-details__name, .plugin-details__price {
-		font-family: Recoleta;
+		font-family: $brand-serif;
 		font-size: $font-title-large;
 		color: var( --studio-gray-100 );
 		padding: 16px 0;

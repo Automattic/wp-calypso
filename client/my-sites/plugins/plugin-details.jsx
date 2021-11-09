@@ -86,6 +86,10 @@ function PluginDetails( props ) {
 		...wporgPlugin,
 	};
 
+	const tags = Object.values( fullPlugin?.tags || {} )
+		.slice( 0, 3 )
+		.join( ' · ' );
+
 	useEffect( () => {
 		if ( ! isFetched ) {
 			dispatch( wporgFetchPluginData( props.pluginSlug ) );
@@ -170,8 +174,11 @@ function PluginDetails( props ) {
 						) }
 					>
 						<div className="plugin-details__header">
+							<div className="plugin-details__tags">{ tags }</div>
 							<div className="plugin-details__name">{ fullPlugin.name }</div>
-							<div className="plugin-details__description">{ fullPlugin.description }</div>
+							<div className="plugin-details__description">
+								{ fullPlugin.short_description || fullPlugin.description }
+							</div>
 							<div className="plugin-details__additional-info">
 								<table>
 									<thead>
