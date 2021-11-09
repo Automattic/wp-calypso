@@ -226,7 +226,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					onSelectProduct={ onSelectProduct }
 				/>
 			) }
-			<ProductGridSection title={ translate( 'Most Popular' ) }>
+			<ProductGridSection>
 				{ ! planRecommendation && filterBar }
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
