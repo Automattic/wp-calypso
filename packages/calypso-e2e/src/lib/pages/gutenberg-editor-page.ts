@@ -393,9 +393,15 @@ export class GutenbergEditorPage {
 		}
 
 		const navbarComponent = new NavbarComponent( this.page );
-		const actions: Promise< unknown >[] = [
-			this.page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
-		];
+
+		// There are three different places you can return to, depending on how you entered the editor.
+		const navigationPromise = Promise.race( [
+			this.page.waitForNavigation( { url: '**/home/**' } ),
+			this.page.waitForNavigation( { url: '**/posts/**' } ),
+			this.page.waitForNavigation( { url: '**/pages/**' } ),
+		] );
+
+		const actions: Promise< unknown >[] = [ navigationPromise ];
 
 		if ( getTargetDeviceName() !== 'mobile' ) {
 			actions.push( frame.click( selectors.desktopDashboardLink ) );

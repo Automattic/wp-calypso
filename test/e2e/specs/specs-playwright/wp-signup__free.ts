@@ -7,17 +7,21 @@ import {
 	DomainSearchComponent,
 	GutenbergEditorPage,
 	LoginPage,
-	NewPostFlow,
 	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
 	CloseAccountFlow,
-	GutenboardingFlow,
+	StartSiteFlow,
+	SidebarComponent,
+	GeneralSettingsPage,
+	BrowserManager,
+	ComingSoonPage,
+	MyHomePage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 // Skipping while new onboarding flows are in transition and we map the new tests
-describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
+describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
 	const email = DataHelper.getTestEmailAddress( {
@@ -26,16 +30,27 @@ describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), func
 	} );
 	const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
 	const blogName = DataHelper.getBlogName();
+	const tagline = `${ blogName } tagline`;
 
 	let page: Page;
 	let domainSearchComponent: DomainSearchComponent;
 	let gutenbergEditorPage: GutenbergEditorPage;
+	let startSiteFlow: StartSiteFlow;
+	let generalSettingsPage: GeneralSettingsPage;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
-	describe( 'Signup', function () {
+	describe( 'Signup and select plan', function () {
+		it( 'Validate eligible Calypso host for test', async function () {
+			if ( DataHelper.getCalypsoURL().toLowerCase().includes( 'https://wordpress.com' ) ) {
+				throw new Error(
+					'Due to in progress development, this test is currently not eligible for staging or production.'
+				);
+			}
+		} );
+
 		it( 'Navigate to Signup page', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.signup();
@@ -56,25 +71,103 @@ describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), func
 			const signupPickPlanPage = new SignupPickPlanPage( page );
 			await signupPickPlanPage.selectPlan( 'Free' );
 		} );
+	} );
 
-		it( 'Skip the design selection prompt', async function () {
-			const gutenboardingFlow = new GutenboardingFlow( page );
-			await gutenboardingFlow.skipDesign();
+	describe( 'Onboarding flow', function () {
+		it( 'Select "write" path', async function () {
+			startSiteFlow = new StartSiteFlow( page );
+			await startSiteFlow.clickButton( 'Start writing' );
+		} );
+
+		it( 'Enter blog name', async function () {
+			await startSiteFlow.enterBlogName( blogName );
+		} );
+
+		it( 'Enter tagline', async function () {
+			await startSiteFlow.enterTagline( tagline );
+		} );
+
+		it( 'Click continue', async function () {
+			await startSiteFlow.clickButton( 'Continue' );
+		} );
+
+		it( 'Select "Choose a design" path', async function () {
+			await startSiteFlow.clickButton( 'View designs' );
+		} );
+
+		it( 'See design picker screen', async function () {
+			await startSiteFlow.validateOnDesignPickerScreen();
+		} );
+
+		it( 'Navigate back', async function () {
+			await startSiteFlow.goBackOneScreen();
+		} );
+
+		it( 'Select "Draft your first post" path', async function () {
+			const navigationTimeout = 2 * 60 * 1000;
+			// Let's add some resilience based on potential A/B test landing places for posts
+			const navigationPromise = Promise.race( [
+				page.waitForNavigation( { url: '**/post/**', timeout: navigationTimeout } ),
+				page.waitForNavigation( { url: '**/wp-admin/post-new.php**', timeout: navigationTimeout } ),
+			] );
+
+			await Promise.all( [ navigationPromise, startSiteFlow.clickButton( 'Start writing' ) ] );
 		} );
 	} );
 
-	describe( 'Interact with editor', function () {
-		it( 'Start a new post', async function () {
-			const newPostFlow = new NewPostFlow( page );
-			await newPostFlow.newPostFromNavbar();
+	describe( 'Validate site metadata', function () {
+		it( 'Return to Home dashboard', async function () {
+			gutenbergEditorPage = new GutenbergEditorPage( page );
+			await gutenbergEditorPage.returnToHomeDashboard();
 		} );
 
-		it( 'Return to Home dashboard', async function () {
-			// Temporary workaround due to https://github.com/Automattic/wp-calypso/issues/51162.
-			// Conditional can be removed once fixed.
-			gutenbergEditorPage = new GutenbergEditorPage( page );
-			await gutenbergEditorPage.openNavSidebar();
-			await gutenbergEditorPage.returnToHomeDashboard();
+		it( 'Navigate to settings', async function () {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Settings', 'General' );
+		} );
+
+		it( 'Validate blog name and tagline', async function () {
+			generalSettingsPage = new GeneralSettingsPage( page );
+
+			await generalSettingsPage.validateSiteTitle( blogName );
+			await generalSettingsPage.validateSiteTagline( tagline );
+		} );
+	} );
+
+	describe( 'Launch site', function () {
+		it( 'Verify site is not yet launched', async function () {
+			// Obtain a new Page in a separate BrowserContext.
+			const testContext = await BrowserManager.newBrowserContext();
+			const testPage = await BrowserManager.newPage( { context: testContext } );
+			// TODO: make a utility to obtain the blog URL.
+			await testPage.goto( `https://${ blogName }.wordpress.com` );
+			// View site without logging in.
+			const comingSoonPage = new ComingSoonPage( testPage );
+			await comingSoonPage.validateComingSoonState();
+			// Dispose the test page and context.
+			await BrowserManager.closePage( testPage, { closeContext: true } );
+		} );
+
+		it( 'Start site launch', async function () {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Settings', 'General' );
+			const generalSettingsPage = new GeneralSettingsPage( page );
+			await generalSettingsPage.launchSite();
+		} );
+
+		it( 'Skip domain purchasse', async function () {
+			const domainSearchComponent = new DomainSearchComponent( page );
+			await domainSearchComponent.clickButton( 'Skip Purchase' );
+		} );
+
+		it( 'Keep free plan', async function () {
+			const signupPickPlanPage = new SignupPickPlanPage( page );
+			await signupPickPlanPage.selectPlan( 'Free' );
+		} );
+
+		it( 'Confirm site is launched', async function () {
+			const myHomePage = new MyHomePage( page );
+			await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
 		} );
 	} );
 
