@@ -27,7 +27,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ConfirmationDialog from './dialog';
 
 import './style.scss';
-
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 const VALIDATION_DEBOUNCE_MS = 800;
@@ -214,10 +213,25 @@ export class SiteAddressChanger extends Component {
 		return currentDomainName.replace( currentDomainSuffix, '' );
 	}
 
+	/**
+	 * This is an edge case scenario where user have the site address changer opened and the user transfers
+	 * the site to atomic on other tab/window, losing sync between client and server. Client will try to
+	 * check availability against wordpress.com and will receive 404s because site is transfered to wpcomstaging.com
+	 */
+	isUnsyncedAtomicSite() {
+		const { validationError } = this.props;
+
+		return 404 === validationError?.errorStatus;
+	}
+
 	getValidationMessage() {
 		const { isAvailable, validationError, translate } = this.props;
 		const { validationMessage } = this.state;
 		const serverValidationMessage = get( validationError, 'message' );
+
+		if ( this.isUnsyncedAtomicSite() ) {
+			return translate( "This site's address cannot be changed" );
+		}
 
 		return isAvailable
 			? translate( 'Good news, that site address is available!' )
@@ -278,9 +292,12 @@ export class SiteAddressChanger extends Component {
 		const shouldShowValidationMessage = this.shouldShowValidationMessage();
 		const validationMessage = this.getValidationMessage();
 		const isBusy = isSiteAddressChangeRequesting || isAvailabilityPending;
+
 		const isDisabled =
 			( domainFieldValue === currentDomainPrefix && newDomainSuffix === currentDomainSuffix ) ||
-			! isAvailable;
+			! isAvailable ||
+			this.isUnsyncedAtomicSite();
+
 		const addDomainPath = '/domains/add/' + selectedSiteSlug;
 
 		if ( ! currentDomain.currentUserCanManage ) {
