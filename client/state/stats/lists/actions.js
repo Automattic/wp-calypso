@@ -66,7 +66,6 @@ export function requestSiteStats( siteId, statType, query ) {
 		let apiNamespace;
 		if ( wpcomV1Endpoints.hasOwnProperty( statType ) ) {
 			subpath = wpcomV1Endpoints[ statType ];
-			apiNamespace = 'rest/v1.1';
 		} else if ( wpcomV2Endpoints.hasOwnProperty( statType ) ) {
 			subpath = wpcomV2Endpoints[ statType ];
 			apiNamespace = 'wpcom/v2';
