@@ -1,6 +1,6 @@
 import emailValidator from 'email-validator';
 import { mapValues } from 'lodash';
-import { isDuplicatedEmailForwards } from 'calypso/lib/domains/email-forwarding/has-duplicated-email-forwards';
+import { hasDuplicatedEmailForwards } from 'calypso/lib/domains/email-forwarding/has-duplicated-email-forwards';
 
 function validateAllFields( fieldValues, existingForwards = [] ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -17,7 +17,7 @@ function validateAllFields( fieldValues, existingForwards = [] ) {
 			return [];
 		}
 
-		return isDuplicatedEmailForwards( value, existingForwards ) ? [ 'Duplicated' ] : [];
+		return hasDuplicatedEmailForwards( value, existingForwards ) ? [ 'Duplicated' ] : [];
 	} );
 }
 

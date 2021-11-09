@@ -9,7 +9,6 @@ import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwardin
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import {
 	composeAnalytics,
-	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { addEmailForward } from 'calypso/state/email-forwarding/actions';
@@ -22,6 +21,7 @@ class EmailForwardingAddNewCompactList extends Component {
 	static propTypes = {
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number,
+		onConfirmEmailForwarding: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
@@ -29,15 +29,11 @@ class EmailForwardingAddNewCompactList extends Component {
 		emailForwards: [ { destination: '', mailbox: '', isValid: false } ],
 	};
 
-	hasForwards() {
-		return this.props.emailForwards.length > 0;
-	}
-
 	hasReachedLimit() {
 		return this.props.emailForwards.length >= this.props.emailForwardingLimit;
 	}
 
-	hasValidForwards() {
+	hasValidEmailForwards() {
 		return ! this.state.emailForwards.some( ( forward ) => ! forward.isValid );
 	}
 
@@ -48,14 +44,7 @@ class EmailForwardingAddNewCompactList extends Component {
 
 		withAnalytics(
 			composeAnalytics(
-				recordTracksEvent(
-					'calypso_domain_management_email_forwarding_add_new_email_forward_click',
-					{
-						destination,
-						domain_name: domainName,
-						mailbox,
-					}
-				),
+				this.props.onConfirmEmailForwarding(),
 				this.props.addEmailForward( domainName, mailbox, destination, onSuccessRedirect )
 			)
 		);
@@ -105,7 +94,7 @@ class EmailForwardingAddNewCompactList extends Component {
 				<Button
 					primary
 					onClick={ this.addNewEmailForwardsClick }
-					disabled={ ! this.hasValidForwards() }
+					disabled={ ! this.hasValidEmailForwards() }
 				>
 					{ translate( 'Add' ) }
 				</Button>

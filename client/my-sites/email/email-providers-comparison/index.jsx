@@ -328,7 +328,10 @@ class EmailProvidersComparison extends Component {
 		}
 
 		const formFields = (
-			<EmailForwardingAddNewCompactList selectedDomainName={ selectedDomainName } />
+			<EmailForwardingAddNewCompactList
+				selectedDomainName={ selectedDomainName }
+				onConfirmEmailForwarding={ this.onForwardingConfirmNewMailboxes }
+			/>
 		);
 
 		return (
