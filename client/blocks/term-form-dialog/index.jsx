@@ -175,12 +175,10 @@ class TermFormDialog extends Component {
 		} );
 	}
 
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if (
-			this.props.term !== newProps.term ||
-			( this.props.showDialog !== newProps.showDialog && newProps.showDialog )
-		) {
-			this.init( newProps );
+	componentDidUpdate( prevProps ) {
+		const { term, showDialog } = this.props;
+		if ( term !== prevProps.term || ( showDialog !== prevProps.showDialog && showDialog ) ) {
+			this.init( this.props );
 		}
 	}
 
