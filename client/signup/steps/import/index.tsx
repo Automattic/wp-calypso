@@ -84,7 +84,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 						/>
 					) }
 					{ stepName === 'ready' && stepSectionName === 'wpcom' && (
-						<ReadyAlreadyOnWPCOMStep urlData={ urlData } />
+						<ReadyAlreadyOnWPCOMStep urlData={ urlData } goToStep={ goToStep } />
 					) }
 				</div>
 			}

@@ -4,7 +4,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import { UrlData, GoToStep } from '../types';
-import { convertPlatformName } from '../util';
+import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
 import './style.scss';
@@ -16,11 +16,6 @@ interface ReadyPreviewProps {
 	siteSlug: string;
 	goToImporterPage: ( platform: string ) => void;
 }
-
-const convertToFriendlyWebsiteName = ( website: string ): string => {
-	const { hostname, pathname } = new URL( website );
-	return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
-};
 
 const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 	urlData,
@@ -102,7 +97,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) 
 						</NextButton>
 						<div>
 							<BackButton onClick={ () => goToStep( 'capture' ) }>
-								{ __( 'Back to the start' ) }
+								{ __( 'Back to start' ) }
 							</BackButton>
 						</div>
 					</div>
@@ -165,9 +160,13 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 
 interface ReadyWpComProps {
 	urlData: UrlData;
+	goToStep: GoToStep;
 }
 
-const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( { urlData } ) => {
+const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
+	urlData,
+	goToStep,
+} ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -191,9 +190,13 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( { 
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton>{ __( 'Start building' ) }</NextButton>
+						<NextButton onClick={ () => goToStep( 'design-setup-site', '', 'setup-site' ) }>
+							{ __( 'Start building' ) }
+						</NextButton>
 						<div>
-							<BackButton>{ __( 'Back to start' ) }</BackButton>
+							<BackButton onClick={ () => goToStep( 'capture' ) }>
+								{ __( 'Back to start' ) }
+							</BackButton>
 						</div>
 					</div>
 				</div>
