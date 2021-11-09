@@ -93,7 +93,7 @@ function PluginDetails( props ) {
 		if ( ! isFetched ) {
 			dispatch( wporgFetchPluginData( props.pluginSlug ) );
 		}
-	}, [ isFetched ] );
+	}, [ isFetched, props.pluginSlug, dispatch ] );
 
 	const existingPlugin = useMemo( () => {
 		if ( isFetching || ! isFetched ) {
