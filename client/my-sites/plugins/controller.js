@@ -9,10 +9,10 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
+import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
-import PluginDetails from './single-plugin';
 /**
  * Module variables
  */

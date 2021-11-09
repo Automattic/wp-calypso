@@ -46,7 +46,7 @@ import {
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
 
-function SinglePlugin( props ) {
+function PluginDetails( props ) {
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
@@ -154,27 +154,32 @@ function SinglePlugin( props ) {
 			<FixedNavigationHeader navigationItems={ getNavigationItems() } />
 			<PluginNotices pluginId={ fullPlugin.id } sites={ sites } plugins={ [ fullPlugin ] } />
 
-			<div className="single-plugin__page">
-				<div className="single-plugin__layout single-plugin__top-section">
+			<div className="plugin-details__page">
+				<div className="plugin-details__layout plugin-details__top-section">
 					<div
-						className={ classNames( 'single-plugin__layout-col', 'single-plugin__layout-col-left', {
-							'no-cta ': ! shouldDisplayCTA(
-								selectedSite,
-								props.pluginSlug,
-								isPluginInstalledOnsite
-							),
-						} ) }
+						className={ classNames(
+							'plugin-details__layout-col',
+							'plugin-details__layout-col-left',
+							{
+								'no-cta ': ! shouldDisplayCTA(
+									selectedSite,
+									props.pluginSlug,
+									isPluginInstalledOnsite
+								),
+							}
+						) }
 					>
-						<div className="single-plugin__header">
-							<div className="single-plugin__name">{ fullPlugin.name }</div>
-							<div className="single-plugin__description">{ fullPlugin.description }</div>
-							<div className="single-plugin__additional-info">
+						<div className="plugin-details__header">
+							<div className="plugin-details__name">{ fullPlugin.name }</div>
+							<div className="plugin-details__description">{ fullPlugin.description }</div>
+							<div className="plugin-details__additional-info">
 								<table>
 									<thead>
 										<tr>
 											<th>{ translate( 'Developer' ) }</th>
 											<th>{ translate( 'Ratings' ) }</th>
 											<th>{ translate( 'Last updated' ) }</th>
+											<th>{ translate( 'Version' ) }</th>
 										</tr>
 									</thead>
 
@@ -191,6 +196,7 @@ function SinglePlugin( props ) {
 													.utc( fullPlugin.last_updated, 'YYYY-MM-DD hh:mma' )
 													.format( 'YYYY-MM-DD' ) }
 											</td>
+											<td>{ fullPlugin.version }</td>
 										</tr>
 									</tbody>
 								</table>
@@ -199,8 +205,8 @@ function SinglePlugin( props ) {
 					</div>
 					<div
 						className={ classNames(
-							'single-plugin__layout-col',
-							'single-plugin__layout-col-right',
+							'plugin-details__layout-col',
+							'plugin-details__layout-col-right',
 							{
 								'no-cta': ! shouldDisplayCTA(
 									selectedSite,
@@ -210,15 +216,15 @@ function SinglePlugin( props ) {
 							}
 						) }
 					>
-						<div className="single-plugin__header">
-							<div className="single-plugin__price">{ translate( 'Free' ) }</div>
-							<div className="single-plugin__install">
+						<div className="plugin-details__header">
+							<div className="plugin-details__price">{ translate( 'Free' ) }</div>
+							<div className="plugin-details__install">
 								<CTA
 									slug={ props.pluginSlug }
 									isPluginInstalledOnsite={ isPluginInstalledOnsite }
 								/>
 							</div>
-							<div className="single-plugin__t-and-c">
+							<div className="plugin-details__t-and-c">
 								{ translate(
 									'By installing, you agree to WordPress.com’s Terms of Service and the Third-Party plug-in Terms.'
 								) }
@@ -227,7 +233,7 @@ function SinglePlugin( props ) {
 					</div>
 				</div>
 
-				<div className="single-plugin__sites-list">
+				<div className="plugin-details__sites-list">
 					<SitesList
 						fullPlugin={ fullPlugin }
 						isPluginInstalledOnsite={ isPluginInstalledOnsite }
@@ -235,11 +241,11 @@ function SinglePlugin( props ) {
 					/>
 				</div>
 
-				<div className="single-plugin__layout single-plugin__body">
-					<div className="single-plugin__layout-col single-plugin__layout-col-left">
+				<div className="plugin-details__layout plugin-details__body">
+					<div className="plugin-details__layout-col plugin-details__layout-col-left">
 						{ fullPlugin.wporg ? (
 							<PluginSections
-								className="single-plugin__plugins-sections"
+								className="plugin-details__plugins-sections"
 								plugin={ fullPlugin }
 								isWpcom={ isWpcom }
 								addBanner
@@ -249,28 +255,24 @@ function SinglePlugin( props ) {
 							<PluginSectionsCustom plugin={ fullPlugin } />
 						) }
 					</div>
-					<div className="single-plugin__layout-col single-plugin__layout-col-right">
-						<div className="single-plugin__plugin-details-title">
+					<div className="plugin-details__layout-col plugin-details__layout-col-right">
+						<div className="plugin-details__plugin-details-title">
 							{ translate( 'Plugin details' ) }
 						</div>
-						<div className="single-plugin__plugin-details-content">
-							<div className="single-plugin__downloads">
-								<div className="single-plugin__downloads-text title">
+						<div className="plugin-details__plugin-details-content">
+							<div className="plugin-details__downloads">
+								<div className="plugin-details__downloads-text title">
 									{ translate( 'Downloads' ) }
 								</div>
-								<div className="single-plugin__downloads-value value">
+								<div className="plugin-details__downloads-value value">
 									{ formatNumberCompact( fullPlugin.downloaded, 'en' ) }
 								</div>
 							</div>
-							<div className="single-plugin__version">
-								<div className="single-plugin__version-text title">{ translate( 'Version' ) }</div>
-								<div className="single-plugin__version-value value">{ fullPlugin.version }</div>
-							</div>
-							<div className="single-plugin__tested">
-								<div className="single-plugin__tested-text title">
+							<div className="plugin-details__tested">
+								<div className="plugin-details__tested-text title">
 									{ translate( 'Tested up to' ) }
 								</div>
-								<div className="single-plugin__tested-value value">{ fullPlugin.version }</div>
+								<div className="plugin-details__tested-value value">{ fullPlugin.version }</div>
 							</div>
 						</div>
 					</div>
@@ -306,7 +308,7 @@ function CTA( { slug, isPluginInstalledOnsite } ) {
 	);
 	return (
 		<Button
-			className="single-plugin__install-button"
+			className="plugin-details__install-button"
 			onClick={ () =>
 				onClickInstallPlugin( {
 					dispatch,
@@ -375,7 +377,7 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 
 	if ( props.siteUrl && isPluginInstalledOnsite ) {
 		<PluginSiteList
-			className="single-plugin__installed-on"
+			className="plugin-details__installed-on"
 			title={ translate( 'Installed on', {
 				comment: 'header for list of sites a plugin is installed on',
 			} ) }
@@ -391,7 +393,7 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 	return (
 		<div>
 			<PluginSiteList
-				className="single-plugin__installed-on"
+				className="plugin-details__installed-on"
 				title={ translate( 'Installed on', {
 					comment: 'header for list of sites a plugin is installed on',
 				} ) }
@@ -400,7 +402,7 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 			/>
 			{ plugin.wporg && (
 				<PluginSiteList
-					className="single-plugin__not-installed-on"
+					className="plugin-details__not-installed-on"
 					title={ translate( 'Available sites', {
 						comment: 'header for list of sites a plugin can be installed on',
 					} ) }
@@ -435,4 +437,4 @@ function PluginPlaceholder() {
 	return <MainComponent wideLayout>{ /* TODO: Create Placeholder */ }</MainComponent>;
 }
 
-export default SinglePlugin;
+export default PluginDetails;
