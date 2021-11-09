@@ -9,9 +9,14 @@ import {
 	mockPayPalRedirectResponse,
 	processorOptions,
 	basicExpectedDomainDetails,
+	email,
 	countryCode,
 	postalCode,
 	contactDetailsForDomain,
+	mockCreateAccountEndpoint,
+	expectedCreateAccountRequest,
+	mockCreateAccountSiteCreatedResponse,
+	mockCreateAccountSiteNotCreatedResponse,
 } from './util';
 
 describe( 'payPalExpressProcessor', () => {
@@ -173,6 +178,103 @@ describe( 'payPalExpressProcessor', () => {
 				products: [ domainProduct ],
 			},
 			domain_details: basicExpectedDomainDetails,
+		} );
+	} );
+
+	it( 'creates an account and site before sending the correct data to the endpoint with no user, no site, and one product', async () => {
+		const transactionsEndpoint = mockPayPalEndpoint( mockPayPalRedirectResponse );
+		const createAccountEndpoint = mockCreateAccountEndpoint( mockCreateAccountSiteCreatedResponse );
+		const expected = { payload: 'https://test-redirect-url', type: 'REDIRECT' };
+		await expect(
+			payPalExpressProcessor( {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+					email,
+				},
+				createUserAndSiteBeforeTransaction: true,
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( createAccountEndpoint ).toHaveBeenCalledWith( expectedCreateAccountRequest );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedRequest,
+			site_id: 1234567,
+			cancel_url: 'https://example.com/?cart=no-user',
+			cart: {
+				...basicExpectedRequest.cart,
+				blog_id: 1234567,
+				cart_key: 1234567,
+				coupon: '',
+				create_new_blog: false,
+			},
+		} );
+	} );
+
+	it( 'creates an account before sending the correct data with a site creation request to the endpoint with no user, no site, and one product', async () => {
+		const transactionsEndpoint = mockPayPalEndpoint( mockPayPalRedirectResponse );
+		const createAccountEndpoint = mockCreateAccountEndpoint(
+			mockCreateAccountSiteNotCreatedResponse
+		);
+		const expected = { payload: 'https://test-redirect-url', type: 'REDIRECT' };
+		await expect(
+			payPalExpressProcessor( {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+					email,
+				},
+				createUserAndSiteBeforeTransaction: true,
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( createAccountEndpoint ).toHaveBeenCalledWith( expectedCreateAccountRequest );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedRequest,
+			cancel_url: 'https://example.com/?cart=no-user',
+			cart: {
+				...basicExpectedRequest.cart,
+				blog_id: '0',
+				cart_key: 'no-site',
+				coupon: '',
+				create_new_blog: true,
+			},
+		} );
+	} );
+
+	it( 'creates an account and no site before sending the correct data to the endpoint with no user, a site, and one product', async () => {
+		const transactionsEndpoint = mockPayPalEndpoint( mockPayPalRedirectResponse );
+		const createAccountEndpoint = mockCreateAccountEndpoint(
+			mockCreateAccountSiteNotCreatedResponse
+		);
+		const expected = { payload: 'https://test-redirect-url', type: 'REDIRECT' };
+		await expect(
+			payPalExpressProcessor( {
+				...options,
+				siteId: 1234567,
+				createUserAndSiteBeforeTransaction: true,
+				contactDetails: {
+					countryCode,
+					postalCode,
+					email,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( createAccountEndpoint ).toHaveBeenCalledWith( {
+			...expectedCreateAccountRequest,
+			should_create_site: false,
+		} );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedRequest,
+			cancel_url: 'https://example.com/?cart=no-user',
+			site_id: 1234567,
+			cart: {
+				...basicExpectedRequest.cart,
+				blog_id: 1234567,
+				cart_key: 1234567,
+				coupon: '',
+				create_new_blog: false,
+			},
 		} );
 	} );
 } );

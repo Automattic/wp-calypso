@@ -326,8 +326,6 @@ export interface ManagedValue {
 }
 
 export type WpcomStoreState = {
-	siteId: string;
-	siteSlug: string;
 	recaptchaClientId: number;
 	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	contactDetails: ManagedContactDetails;
