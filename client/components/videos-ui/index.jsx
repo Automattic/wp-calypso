@@ -8,7 +8,7 @@ import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-sl
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
+const VideosUi = ( { shouldDisplayTopLinks = false }, onBackClick = () => {} ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
@@ -87,7 +87,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 					<div>
 						<Gridicon icon="my-sites" size={ 24 } />
 						{ shouldDisplayTopLinks && (
-							<a href="/" className="videos-ui__back-link">
+							<a href="/" className="videos-ui__back-link" onClick={ onBackClick }>
 								<Gridicon icon="chevron-left" size={ 24 } />
 								<span>{ translate( 'Back' ) }</span>
 							</a>
