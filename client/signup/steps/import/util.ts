@@ -29,12 +29,27 @@ export const orgImporters: string[] = [
 	'blogroll',
 ];
 
+/**
+ * Platform name helpers
+ */
 export function getPlatformImporterName( platform: string ): string {
 	return platformImporterNameMap[ platform ] ? platformImporterNameMap[ platform ] : platform;
 }
 
 export function convertPlatformName( platform: string ): string {
 	return platformMap[ platform ] !== undefined ? platformMap[ platform ] : 'Unknown';
+}
+
+export function convertToFriendlyWebsiteName( website: string ): string {
+	const { hostname, pathname } = new URL( website );
+	return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
+}
+
+/**
+ * Importer URL helpers
+ */
+export function getWpComMigrateUrl( siteSlug: string ): string {
+	return '/migrate/{siteSlug}'.replace( '{siteSlug}', siteSlug );
 }
 
 export function getWpComImporterUrl( siteSlug: string, platform: string ): string {
@@ -54,7 +69,11 @@ export function getWpOrgImporterUrl( siteSlug: string, platform: string ): strin
 }
 
 export function getImporterUrl( siteSlug: string, platform: string ): string {
-	return orgImporters.includes( platform )
-		? getWpOrgImporterUrl( siteSlug, platform )
-		: getWpComImporterUrl( siteSlug, platform );
+	if ( platform === 'wordpress' ) {
+		return getWpComMigrateUrl( siteSlug );
+	} else if ( orgImporters.includes( platform ) ) {
+		return getWpOrgImporterUrl( siteSlug, platform );
+	}
+
+	return getWpComImporterUrl( siteSlug, platform );
 }
