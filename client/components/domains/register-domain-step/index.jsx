@@ -66,7 +66,6 @@ import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/s
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
-import StickyPanel from 'calypso/components/sticky-panel';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
@@ -445,11 +444,11 @@ class RegisterDomainStep extends Component {
 		return (
 			<>
 				<div className={ containerDivClassName }>
-					<StickyPanel className={ searchBoxClassName }>
+					<div className={ searchBoxClassName }>
 						<CompactCard className="register-domain-step__search-card">
 							{ this.renderSearchBar() }
 						</CompactCard>
-					</StickyPanel>
+					</div>
 					{ ! isSignupStep && isQueryInvalid && (
 						<Notice
 							className="register-domain-step__notice"
