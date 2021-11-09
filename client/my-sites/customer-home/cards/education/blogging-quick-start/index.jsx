@@ -24,7 +24,10 @@ const BloggingQuickStart = () => {
 					ModalComponent: BloggingQuickStartModal,
 					modalComponentProps: {
 						isVisible: isModalVisible,
-						onClose: () => setIsModalVisible( false ),
+						onClose: ( event ) => {
+							event.preventDefault();
+							setIsModalVisible( false );
+						},
 					},
 					onClick: () => setIsModalVisible( true ),
 					text: 'Start learning',
