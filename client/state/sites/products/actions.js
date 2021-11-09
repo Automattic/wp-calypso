@@ -40,29 +40,26 @@ export function fetchSiteProducts( siteId ) {
 			siteId,
 		} );
 
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getSiteProducts( siteId, ( error, data ) => {
-				if ( error ) {
-					debug( 'Fetching site products failed: ', error );
+		return wpcom.req
+			.get( `/sites/${ siteId }/products` )
+			.then( ( data ) => {
+				dispatch( fetchSiteProductsCompleted( siteId, data ) );
+			} )
+			.catch( ( error ) => {
+				debug( 'Fetching site products failed: ', error );
 
-					const errorMessage =
-						error.message ||
-						i18n.translate(
-							'There was a problem fetching site products. Please try again later or contact support.'
-						);
+				const errorMessage =
+					error.message ||
+					i18n.translate(
+						'There was a problem fetching site products. Please try again later or contact support.'
+					);
 
-					dispatch( {
-						type: SITE_PRODUCTS_FETCH_FAILED,
-						siteId,
-						error: errorMessage,
-					} );
-				} else {
-					dispatch( fetchSiteProductsCompleted( siteId, data ) );
-				}
-
-				resolve();
+				dispatch( {
+					type: SITE_PRODUCTS_FETCH_FAILED,
+					siteId,
+					error: errorMessage,
+				} );
 			} );
-		} );
 	};
 }
 
