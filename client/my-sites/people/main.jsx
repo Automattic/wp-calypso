@@ -94,17 +94,17 @@ class People extends Component {
 
 		if ( isWPForTeamsSite ) {
 			if ( isP2HubSite ) {
-				return translate( 'People in %(sitename)s', {
+				return translate( 'Users in %(sitename)s', {
 					args: {
 						sitename: site.name,
-						context: 'People page for P2 hubs.',
+						context: 'Users page for P2 hubs.',
 					},
 				} );
 			}
-			return translate( 'People in this P2' );
+			return translate( 'Users in this P2' );
 		}
 
-		return translate( 'People' );
+		return translate( 'Users' );
 	}
 
 	render() {

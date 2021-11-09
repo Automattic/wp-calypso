@@ -110,7 +110,7 @@ class Sites extends Component {
 				path = translate( 'Sharing' );
 				break;
 			case 'people':
-				path = translate( 'People' );
+				path = translate( 'Users' );
 				break;
 			case 'domains':
 				path = translate( 'Domains' );
