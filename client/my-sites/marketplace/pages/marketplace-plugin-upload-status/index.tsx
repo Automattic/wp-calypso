@@ -62,6 +62,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 		getStatusForPlugin( state, siteId, productSlug )
 	);
 
+	// Upload flow startup
 	useEffect( () => {
 		if ( 100 === pluginUploadProgress ) {
 			// For smaller uploads or fast networks give
@@ -71,6 +72,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 		}
 	}, [ pluginUploadProgress, setCurrentStep ] );
 
+	// Installing plugin flow startup
 	useEffect( () => {
 		if ( ! isUploadFlow && ! initializeInstallFlow && wporgPlugin && selectedSite ) {
 			// const upgradablePlan = isBusiness( selectedSite.plan ) || isEnterprise( selectedSite.plan ) || isEcommerce( selectedSite.plan );
@@ -89,6 +91,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 		}
 	}, [ isUploadFlow, siteId, wporgPlugin, productSlug ] );
 
+	// Validate completition of atomic transfer flow
 	useEffect( () => {
 		if (
 			moveToAtomicFlow &&
@@ -99,6 +102,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 		}
 	}, [ moveToAtomicFlow, automatedTransferStatus ] );
 
+	// Validate plugin is already installed and activate
 	useEffect( () => {
 		if (
 			installedPlugin &&
@@ -116,6 +120,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
 
+	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
 			( installedPlugin && pluginActive ) ||
