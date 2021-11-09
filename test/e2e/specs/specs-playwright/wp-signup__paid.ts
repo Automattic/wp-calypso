@@ -10,20 +10,18 @@ import {
 	UserSignupPage,
 	SignupPickPlanPage,
 	BrowserManager,
-	NavbarComponent,
 	SidebarComponent,
 	CartCheckoutPage,
-	ComingSoonPage,
-	GeneralSettingsPage,
-	MyHomePage,
 	CloseAccountFlow,
 	PlansPage,
 	IndividualPurchasePage,
+	StartSiteFlow,
+	ThemesPage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 // Skipping while new onboarding flows are in transition and we map the new tests
-describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function () {
+describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const username = `e2eflowtestingpaid${ DataHelper.getTimestamp() }`;
 	const email = DataHelper.getTestEmailAddress( {
@@ -32,14 +30,17 @@ describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), func
 	} );
 	const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
 	const blogName = DataHelper.getBlogName();
+	const theme = 'Zoologist';
 
 	let page: Page;
+	let startSiteFlow: StartSiteFlow;
+	let sidebarComponent: SidebarComponent;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
-	describe( 'Signup via /start', function () {
+	describe( 'Signup and select plan', function () {
 		const targetDomain = `${ blogName }.live`;
 
 		let cartCheckoutPage: CartCheckoutPage;
@@ -87,9 +88,9 @@ describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), func
 		} );
 
 		it( 'Apply coupon and validate purchase amount', async function () {
-			const originalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
+			const originalAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
 			await cartCheckoutPage.enterCouponCode( DataHelper.config.get( 'testCouponCode' ) );
-			const newAmount = await cartCheckoutPage.getCheckoutTotalAmount();
+			const newAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
 
 			expect( newAmount ).toBeLessThan( originalAmount );
 			const expectedAmount = originalAmount * 0.99;
@@ -102,9 +103,9 @@ describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), func
 		} );
 
 		it( 'Remove coupon code and validate purchase amount', async function () {
-			const originalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
+			const originalAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
 			await cartCheckoutPage.removeCouponCode( DataHelper.config.get( 'testCouponCode' ) );
-			const newAmount = await cartCheckoutPage.getCheckoutTotalAmount();
+			const newAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
 			expect( newAmount ).toBeGreaterThan( originalAmount );
 		} );
 
@@ -119,46 +120,47 @@ describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), func
 		} );
 	} );
 
-	describe( 'Launch site', function () {
-		it( 'Navigate to Home dashboard', async function () {
-			const navbarComponent = new NavbarComponent( page );
-			await navbarComponent.clickMySites();
+	describe( 'Onboarding flow', function () {
+		it( 'Select "build" path', async function () {
+			startSiteFlow = new StartSiteFlow( page );
+			await startSiteFlow.clickButton( 'Start building' );
 		} );
 
-		it( 'Verify site is not yet launched', async function () {
-			// Obtain a new Page in a separate BrowserContext.
-			const testContext = await BrowserManager.newBrowserContext();
-			const testPage = await BrowserManager.newPage( { context: testContext } );
-			// TODO: make a utility to obtain the blog URL.
-			await testPage.goto( `https://${ blogName }.wordpress.com` );
-			// View site without logging in.
-			const comingSoonPage = new ComingSoonPage( testPage );
-			await comingSoonPage.validateComingSoonState();
-			// Dispose the test page and context.
-			await BrowserManager.closePage( testPage, { closeContext: true } );
+		it( 'Select a theme to preview', async function () {
+			await startSiteFlow.previewTheme( theme );
 		} );
 
-		it( 'Start site launch', async function () {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Settings', 'General' );
-			const generalSettingsPage = new GeneralSettingsPage( page );
-			await generalSettingsPage.launchSite();
+		it( 'See site preview for the selected theme', async function () {
+			const previewFrame = await startSiteFlow.getThemePreviewIframe();
+			// Make sure the content actually fills in the iframe.
+			// For the Zoologist theme, the word Zoologist is right in the title.
+			// Also, that preview render can be slow, let's give it a minute to be safe.
+			await previewFrame.waitForSelector( `text=${ theme }`, { timeout: 60 * 1000 } );
 		} );
 
-		it( 'Skip domain purchasse', async function () {
-			const domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.clickButton( 'Skip Purchase' );
+		it( 'Start with the selected theme and land on home dashboard', async function () {
+			const navigationTimeout = 2 * 60 * 1000;
+			await Promise.all( [
+				page.waitForNavigation( { url: '**/home/**', timeout: navigationTimeout } ),
+				startSiteFlow.clickButton( `Start with ${ theme }` ),
+			] );
+		} );
+	} );
+
+	describe( 'Validate selected theme', function () {
+		it( 'Navigate to Appearance > Themes', async function () {
+			sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Appearance', 'Themes' );
 		} );
 
-		it( 'Confirm site is launched', async function () {
-			const myHomePage = new MyHomePage( page );
-			await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
+		it( 'Current theme is one selected in onboarding', async function () {
+			const themesPage = new ThemesPage( page );
+			await themesPage.validateCurrentTheme( theme );
 		} );
 	} );
 
 	describe( 'Cancel plan', function () {
 		it( 'Navigate to Upgrades > Plans', async function () {
-			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Upgrades', 'Plans' );
 		} );
 

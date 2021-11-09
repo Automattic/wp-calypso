@@ -1,4 +1,5 @@
-import { Page } from 'playwright';
+import { Frame, Page } from 'playwright';
+import { BrowserHelper } from '../..';
 
 const selectors = {
 	button: ( text: string ) => `button:text("${ text }")`,
@@ -6,6 +7,11 @@ const selectors = {
 	taglineInput: 'input#tagline',
 	backLink: 'a:text("Back")',
 	designPickerContainer: '.design-picker',
+	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
+	previewThemeButtonDesktop: ( name: string ) => `button:has-text("Preview ${ name }")`,
+	previewThemeButtonMobile: ( name: string ) =>
+		`button.design-picker__design-option:has-text("${ name }")`,
+	themePreviewIframe: 'iframe[title=Preview]',
 };
 
 /**
@@ -63,5 +69,29 @@ export class StartSiteFlow {
 	 */
 	async goBackOneScreen(): Promise< void > {
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.backLink ) ] );
+	}
+
+	/**
+	 * Clicks button to preview a specific theme from theme selection screen
+	 *
+	 * @param themeName Name of theme, e.g. "Zoologist"
+	 */
+	async previewTheme( themeName: string ): Promise< void > {
+		if ( BrowserHelper.getTargetDeviceName() === 'desktop' ) {
+			await this.page.hover( selectors.individualThemeContainer( themeName ) );
+			await this.page.click( selectors.previewThemeButtonDesktop( themeName ) );
+		} else {
+			await this.page.click( selectors.previewThemeButtonMobile( themeName ) );
+		}
+	}
+
+	/**
+	 * Get a Frame handle for the iframe holding the theme preview
+	 *
+	 * @returns The Frame handle for the theme preview iframe
+	 */
+	async getThemePreviewIframe(): Promise< Frame > {
+		const elementHandle = await this.page.waitForSelector( selectors.themePreviewIframe );
+		return ( await elementHandle.contentFrame() ) as Frame;
 	}
 }
