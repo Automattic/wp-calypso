@@ -20,7 +20,6 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-// Skipping while new onboarding flows are in transition and we map the new tests
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const username = `e2eflowtestingpaid${ DataHelper.getTimestamp() }`;
@@ -116,7 +115,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 		} );
 
 		it( 'Make purchase', async function () {
-			await cartCheckoutPage.purchase();
+			await cartCheckoutPage.purchase( { timeout: 90 * 100 } );
 		} );
 	} );
 
@@ -133,7 +132,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 		it( 'See site preview for the selected theme', async function () {
 			const previewFrame = await startSiteFlow.getThemePreviewIframe();
 			// Make sure the content actually fills in the iframe.
-			// For the Zoologist theme, the word Zoologist is right in the title.
+			// For the Zoologist theme, the word "Zoologist" is right at the top of the site content.
 			// Also, that preview render can be slow, let's give it a minute to be safe.
 			await previewFrame.waitForSelector( `text=${ theme }`, { timeout: 60 * 1000 } );
 		} );

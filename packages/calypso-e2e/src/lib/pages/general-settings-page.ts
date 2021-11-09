@@ -69,7 +69,7 @@ export class GeneralSettingsPage {
 	 */
 	async validateSiteTitle( title: string ): Promise< void > {
 		// Because of React state handling, we must wait for the expected input value rather than find the input and return its value.
-		// This input is empty when first rendered, then updated with the state. Believe it or not, Playwright can outpace React!
+		// This input is empty when first rendered, then updated with the state. Playwright can outpace React!
 		await this.page.waitForSelector( selectors.siteTitleInput( title ) );
 	}
 
@@ -80,7 +80,7 @@ export class GeneralSettingsPage {
 	 */
 	async validateSiteTagline( tagline: string ): Promise< void > {
 		// Because of React state handling, we must wait for the expected input value rather than find the input and return its value.
-		// This input is empty when first rendered, then updated with the state. Believe it or not, Playwright can outpace React!
+		// This input is empty when first rendered, then updated with the state. Playwright can outpace React!
 		await this.page.waitForSelector( selectors.siteTaglineInput( tagline ) );
 	}
 }

@@ -128,7 +128,7 @@ export class ThemesPage {
 	/**
 	 * Validates that the current theme (at top) is the expected theme. Throws if it is not.
 	 *
-	 * @param expectedTheme Expected theme name
+	 * @param expectedTheme Expected theme name.
 	 */
 	async validateCurrentTheme( expectedTheme: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.currentTheme( expectedTheme ) );

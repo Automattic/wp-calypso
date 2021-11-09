@@ -103,7 +103,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			await startSiteFlow.goBackOneScreen();
 		} );
 
-		it( 'Select "Draft your first post" path', async function () {
+		it( 'Select "Draft your first post" path and land in editor', async function () {
 			const navigationTimeout = 2 * 60 * 1000;
 			// Let's add some resilience based on potential A/B test landing places for posts
 			const navigationPromise = Promise.race( [
