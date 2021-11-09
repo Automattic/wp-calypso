@@ -12036,7 +12036,7 @@ __metadata:
     uuid: ^8.3.2
     valid-url: ^1.0.9
     webpack: ^5.62.1
-    webpack-bundle-analyzer: ^4.4.2
+    webpack-bundle-analyzer: ^4.5.0
     webpack-dev-middleware: ^5.2.1
     webpack-hot-middleware: ^2.25.1
     webpack-node-externals: ^3.0.0
@@ -13156,7 +13156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^6.1.0, commander@npm:^6.2.0, commander@npm:^6.2.1":
+"commander@npm:^6.1.0, commander@npm:^6.2.1":
   version: 6.2.1
   resolution: "commander@npm:6.2.1"
   checksum: 85748abd9d18c8bc88febed58b98f66b7c591d9b5017cad459565761d7b29ca13b7783ea2ee5ce84bf235897333706c4ce29adf1ce15c8252780e7000e2ce9ea
@@ -38227,14 +38227,14 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack-bundle-analyzer@npm:^4.4.2":
-  version: 4.4.2
-  resolution: "webpack-bundle-analyzer@npm:4.4.2"
+"webpack-bundle-analyzer@npm:^4.4.2, webpack-bundle-analyzer@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "webpack-bundle-analyzer@npm:4.5.0"
   dependencies:
     acorn: ^8.0.4
     acorn-walk: ^8.0.0
     chalk: ^4.1.0
-    commander: ^6.2.0
+    commander: ^7.2.0
     gzip-size: ^6.0.0
     lodash: ^4.17.20
     opener: ^1.5.2
@@ -38242,7 +38242,7 @@ testarmada-magellan@11.0.10:
     ws: ^7.3.1
   bin:
     webpack-bundle-analyzer: lib/bin/analyzer.js
-  checksum: 786887021819663973d4a7097d9f0f73f16a62d653d898a2c314bf439fe2a081733e770cae2da5b845898108582647ff13a0b1d4381c58478c5151d9c4481e52
+  checksum: 5130be9fa58645e412e9824f98bd961afe540b9918951ddc87b688f3e176f4a101fcb16a304c74f0d1ddd9f2528ec2fa44bcfcea3fe07635fa9af0e3104644aa
   languageName: node
   linkType: hard
 
@@ -39018,7 +39018,7 @@ testarmada-magellan@11.0.10:
     tslib: ^2.3.0
     typescript: ^4.4.4
     webpack: ^5.62.1
-    webpack-bundle-analyzer: ^4.4.2
+    webpack-bundle-analyzer: ^4.5.0
     webpack-cli: ^4.9.1
     webpack-dev-middleware: ^5.2.1
     whybundled: ^2.0.0
