@@ -36,6 +36,10 @@
 	.plugins-browser-list__title {
 		font-size: $font-title-small;
 		font-weight: 500;
+
+		&[class*='search-'] {
+			font-weight: 400;
+		}
 	}
 
 	.plugins-browser-list__subtitle {
