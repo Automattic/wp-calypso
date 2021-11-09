@@ -22,7 +22,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -160,7 +160,6 @@ export default function WPCheckout( {
 		sel( 'wpcom' ).getContactInfo()
 	);
 	const {
-		setSiteId,
 		touchContactFields,
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
@@ -198,11 +197,6 @@ export default function WPCheckout( {
 	} );
 
 	const { formStatus } = useFormStatus();
-
-	// Copy siteId to the store so it can be more easily accessed during payment submission
-	useEffect( () => {
-		setSiteId( siteId );
-	}, [ siteId, setSiteId ] );
 
 	const arePostalCodesSupported = getCountryPostalCodeSupport(
 		countriesList,

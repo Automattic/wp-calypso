@@ -19,8 +19,6 @@ type WpcomStoreAction =
 			payload: ManagedContactDetailsErrors;
 	  }
 	| { type: 'UPDATE_DOMAIN_CONTACT_FIELDS'; payload: DomainContactDetails }
-	| { type: 'SET_SITE_ID'; payload: string }
-	| { type: 'SET_SITE_SLUG'; payload: string }
 	| { type: 'SET_RECAPTCHA_CLIENT_ID'; payload: number }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
 	| { type: 'UPDATE_EMAIL'; payload: string }
@@ -87,24 +85,6 @@ export function useWpcomStore(
 		}
 	}
 
-	function siteIdReducer( state: string, action: WpcomStoreAction ): string {
-		switch ( action.type ) {
-			case 'SET_SITE_ID':
-				return action.payload;
-			default:
-				return state;
-		}
-	}
-
-	function siteSlugReducer( state: string, action: WpcomStoreAction ): string {
-		switch ( action.type ) {
-			case 'SET_SITE_SLUG':
-				return action.payload;
-			default:
-				return state;
-		}
-	}
-
 	function recaptchaClientIdReducer( state: number, action: WpcomStoreAction ): number {
 		switch ( action.type ) {
 			case 'SET_RECAPTCHA_CLIENT_ID':
@@ -120,8 +100,6 @@ export function useWpcomStore(
 				state === undefined ? getInitialWpcomStoreState( managedContactDetails ) : state;
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
-				siteId: siteIdReducer( checkedState.siteId, action ),
-				siteSlug: siteSlugReducer( checkedState.siteSlug, action ),
 				recaptchaClientId: recaptchaClientIdReducer( checkedState.recaptchaClientId, action ),
 			};
 		},
@@ -135,14 +113,6 @@ export function useWpcomStore(
 
 			clearDomainContactErrorMessages(): WpcomStoreAction {
 				return { type: 'CLEAR_DOMAIN_CONTACT_ERROR_MESSAGES' };
-			},
-
-			setSiteId( payload: string ): WpcomStoreAction {
-				return { type: 'SET_SITE_ID', payload };
-			},
-
-			setSiteSlug( payload: string ): WpcomStoreAction {
-				return { type: 'SET_SITE_SLUG', payload };
 			},
 
 			setRecaptchaClientId( payload: number ): WpcomStoreAction {
@@ -197,14 +167,6 @@ export function useWpcomStore(
 		},
 
 		selectors: {
-			getSiteId( state: WpcomStoreState ): string {
-				return state.siteId;
-			},
-
-			getSiteSlug( state: WpcomStoreState ): string {
-				return state.siteSlug;
-			},
-
 			getContactInfo( state: WpcomStoreState ): ManagedContactDetails {
 				return state.contactDetails;
 			},
