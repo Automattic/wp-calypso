@@ -196,7 +196,7 @@
 		"valid-url": "^1.0.9",
 		"webpack": "^5.62.1",
 		"webpack-bundle-analyzer": "^4.4.2",
-		"webpack-dev-middleware": "^5.1.0",
+		"webpack-dev-middleware": "^5.2.1",
 		"webpack-hot-middleware": "^2.25.1",
 		"webpack-node-externals": "^3.0.0",
 		"wpcom": "^6.0.0",
