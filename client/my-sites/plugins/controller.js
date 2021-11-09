@@ -12,7 +12,7 @@ import PluginComponent from './plugin';
 import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
-import SinglePluginComponent from './single-plugin';
+import PluginDetails from './single-plugin';
 /**
  * Module variables
  */
@@ -32,7 +32,7 @@ function renderSinglePlugin( context, siteUrl ) {
 	}
 	// Render single plugin component
 	context.primary = createElement(
-		config.isEnabled( 'marketplace' ) ? SinglePluginComponent : PluginComponent,
+		config.isEnabled( 'marketplace' ) ? PluginDetails : PluginComponent,
 		{
 			path: context.path,
 			prevQuerystring: lastPluginsQuerystring,
