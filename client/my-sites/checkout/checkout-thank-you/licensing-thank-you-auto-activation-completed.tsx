@@ -11,18 +11,16 @@ import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
-import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
 import useGetJetpackActivationConfirmationInfo from './use-get-jetpack-activation-confirmation-info';
 
 interface Props {
 	productSlug: string;
-	receiptId?: number;
-	jetpackTemporarySiteId?: number;
+	destinationSiteId: number;
 }
 
 const LicensingActivationThankYouCompleted: FC< Props > = ( {
 	productSlug = 'no_product',
-	jetpackTemporarySiteId = 0,
+	destinationSiteId = 0,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -35,13 +33,11 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
-	const destinationSiteId = useSelector( ( state ) =>
-		getJetpackCheckoutSupportTicketDestinationSiteId( state, jetpackTemporarySiteId )
-	);
-	const automaticTransferSucceeded = destinationSiteId > 0;
+	// In the siteless-checkout flow, the subscription is transferred from temporary-site to the user's target site.
+	const subscriptionTransferSucceeded = destinationSiteId > 0;
 
 	const title = useMemo( () => {
-		return automaticTransferSucceeded
+		return subscriptionTransferSucceeded
 			? translate( `Your %(productName)s is active! %(celebrationEmoji)s`, {
 					args: {
 						productName: hasProductInfo ? productName : 'subscription',
@@ -49,7 +45,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 					},
 			  } )
 			: translate( 'Your subscription will be activated soon' );
-	}, [ automaticTransferSucceeded, translate, productName, hasProductInfo ] );
+	}, [ subscriptionTransferSucceeded, translate, productName, hasProductInfo ] );
 
 	const productConfirmationInfo = useGetJetpackActivationConfirmationInfo(
 		destinationSiteId,
@@ -58,7 +54,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 
 	return (
 		<>
-			{ automaticTransferSucceeded && <QuerySites siteId={ destinationSiteId } /> }
+			{ subscriptionTransferSucceeded && <QuerySites siteId={ destinationSiteId } /> }
 			{ hasProductInfo && <QueryProducts type="jetpack" /> }
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
@@ -72,7 +68,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 				isLoading={ isProductListFetching }
 				showContactUs
 			>
-				{ ! automaticTransferSucceeded && (
+				{ ! subscriptionTransferSucceeded && (
 					<p>
 						{ productName &&
 							translate(
@@ -87,7 +83,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 							) }
 					</p>
 				) }
-				{ automaticTransferSucceeded && (
+				{ subscriptionTransferSucceeded && (
 					<>
 						<p>{ productConfirmationInfo.text }</p>
 
