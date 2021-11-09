@@ -1,4 +1,3 @@
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { normalizePluginData, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -11,6 +10,7 @@ import {
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	getNextPluginsListPage,
