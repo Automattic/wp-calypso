@@ -48,7 +48,7 @@ export class TaxonomyManagerList extends Component {
 
 	getTermChildren( termId ) {
 		const { terms } = this.props;
-		return terms.filter( ( term ) => term.parent === termId );
+		return terms?.filter( ( term ) => term.parent === termId ) ?? [];
 	}
 
 	getItemHeight = ( item, _recurse = false ) => {
