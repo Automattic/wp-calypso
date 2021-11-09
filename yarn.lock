@@ -770,7 +770,7 @@ __metadata:
     redux: ^4.1.2
     redux-thunk: ^2.3.0
     webpack: ^5.62.1
-    webpack-dev-server: ^3.11.2
+    webpack-dev-server: ^3.11.3
     wpcom: ^6.0.0
     wpcom-proxy-request: ^6.0.0
     wpcom-xhr-request: ^1.2.0
@@ -9686,7 +9686,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-html@npm:0.0.7, ansi-html@npm:^0.0.7":
+"ansi-html@npm:^0.0.7":
   version: 0.0.7
   resolution: "ansi-html@npm:0.0.7"
   bin:
@@ -38319,11 +38319,11 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:^3.11.2":
-  version: 3.11.2
-  resolution: "webpack-dev-server@npm:3.11.2"
+"webpack-dev-server@npm:^3.11.3":
+  version: 3.11.3
+  resolution: "webpack-dev-server@npm:3.11.3"
   dependencies:
-    ansi-html: 0.0.7
+    ansi-html-community: 0.0.8
     bonjour: ^3.5.0
     chokidar: ^2.1.8
     compression: ^1.7.4
@@ -38363,7 +38363,7 @@ testarmada-magellan@11.0.10:
       optional: true
   bin:
     webpack-dev-server: bin/webpack-dev-server.js
-  checksum: ee307572fad37ce1088c295c591dfb33287effb914593b51702974e606672e6a100b8cf410f9cf31caf8879c52594c80e0f376e637f4918b148657effda58f60
+  checksum: 90fe960dc28cc75b501b1fa4ad3eba358a98dbb929658725e74db12326afaf165b6bd54f0cad0381b9771f6c47c92dba573d615b491ceeec4875ffe49143a38a
   languageName: node
   linkType: hard
 
