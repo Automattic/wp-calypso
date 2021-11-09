@@ -1,5 +1,4 @@
 import { localize, translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
