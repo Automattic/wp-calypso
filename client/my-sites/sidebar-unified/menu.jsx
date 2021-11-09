@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { navigate } from 'calypso/lib/navigate';
 import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-sites/sidebar/actions';
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
 import MySitesSidebarUnifiedItem from './item';
@@ -27,7 +28,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	sidebarCollapsed,
 	isHappychatSessionActive,
 	isJetpackNonAtomicSite,
-	canNavigate,
+	continueInCalypso,
 	...props
 } ) => {
 	const reduxDispatch = useDispatch();
@@ -41,11 +42,18 @@ export const MySitesSidebarUnifiedMenu = ( {
 		( ! isWithinBreakpoint( '>782px' ) && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
 		( isWithinBreakpoint( '>782px' ) && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
 
-	// Avoid redirecting to the section if menu is full-width (i.e. mobile viewport) or if user
-	// is forced to keep the current page open (i.e. there is a Happychat session active).
-	const shouldRedirectToSection = isWithinBreakpoint( '>782px' ) && link && canNavigate( link );
-
 	const onClick = () => {
+		// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
+		if ( isWithinBreakpoint( '>782px' ) ) {
+			if ( link ) {
+				if ( ! continueInCalypso( link ) ) {
+					return;
+				}
+
+				navigate( link );
+			}
+		}
+
 		window.scrollTo( 0, 0 );
 		reduxDispatch( toggleSection( sectionId ) );
 	};
@@ -53,7 +61,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	return (
 		<li>
 			<ExpandableSidebarMenu
-				onClick={ onClick }
+				onClick={ () => onClick() }
 				expanded={ showAsExpanded }
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
@@ -61,7 +69,6 @@ export const MySitesSidebarUnifiedMenu = ( {
 				count={ count }
 				hideExpandableIcon={ true }
 				inlineText={ props.inlineText }
-				href={ shouldRedirectToSection ? link : undefined }
 				{ ...props }
 			>
 				{ children.map( ( item ) => {
@@ -74,7 +81,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 							isSubItem={ true }
 							isHappychatSessionActive={ isHappychatSessionActive }
 							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
-							canNavigate={ canNavigate }
+							continueInCalypso={ continueInCalypso }
 						/>
 					);
 				} ) }
@@ -94,7 +101,7 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	sidebarCollapsed: PropTypes.bool,
 	isHappychatSessionActive: PropTypes.bool.isRequired,
 	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
-	canNavigate: PropTypes.func.isRequired,
+	continueInCalypso: PropTypes.func.isRequired,
 	/*
 	Example of children shape:
 	[
