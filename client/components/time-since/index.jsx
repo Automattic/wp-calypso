@@ -1,40 +1,36 @@
 import moment from 'moment';
-import { PureComponent } from 'react';
-import humanDate from 'calypso/lib/human-date';
-import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
-import smartSetState from 'calypso/lib/react-smart-set-state';
+import { useState, useEffect } from 'react';
+import getHumanDate from 'calypso/lib/human-date';
+import { useInterval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
 
-export default class TimeSince extends PureComponent {
-	smartSetState = smartSetState;
+function TimeSince( { className, date, dateFormat } ) {
+	const [ humanDate, setHumanDate ] = useState( '' );
+	const [ fullDate, setFullDate ] = useState( '' );
 
-	UNSAFE_componentWillMount() {
-		this.update();
+	function update( newDate ) {
+		const newHumanDate = getHumanDate( newDate ?? date, dateFormat );
+		const newFullDate = moment( newDate ?? date ).format( 'llll' );
+
+		if ( newHumanDate !== humanDate ) {
+			setHumanDate( newHumanDate );
+		}
+
+		if ( newFullDate !== fullDate ) {
+			setFullDate( newFullDate );
+		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.update( nextProps.date );
-	}
+	useInterval( update, EVERY_TEN_SECONDS );
 
-	update = ( date ) => {
-		const { dateFormat } = this.props;
-		date = date || this.props.date;
+	useEffect( () => {
+		update( date );
+	}, [ update, date ] );
 
-		this.smartSetState( {
-			humanDate: humanDate( date, dateFormat ),
-			fullDate: moment( date ).format( 'llll' ),
-		} );
-	};
-
-	render() {
-		return (
-			<time
-				className={ this.props.className }
-				dateTime={ this.props.date }
-				title={ this.state.fullDate }
-			>
-				<Interval period={ EVERY_TEN_SECONDS } onTick={ this.update } />
-				{ this.state.humanDate }
-			</time>
-		);
-	}
+	return (
+		<time className={ className } dateTime={ date } title={ fullDate }>
+			{ humanDate }
+		</time>
+	);
 }
+
+export default TimeSince;
