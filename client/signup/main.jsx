@@ -418,6 +418,9 @@ class Signup extends Component {
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
+		const selectedDesign = get( dependencies, 'selectedDesign' );
+		const intent = get( dependencies, 'intent' );
+		const startingPoint = get( dependencies, 'startingPoint' );
 
 		const debugProps = {
 			isNewishUser,
@@ -427,6 +430,9 @@ class Signup extends Component {
 			isNew7DUserSite,
 			flow: this.props.flowName,
 			siteId,
+			theme: selectedDesign?.theme,
+			intent,
+			startingPoint,
 		};
 		debug( 'Tracking signup completion.', debugProps );
 
@@ -436,6 +442,10 @@ class Signup extends Component {
 			isNewUser,
 			hasCartItems,
 			isNew7DUserSite,
+			// Record the following values so that we can know the user completed which branch under the hero flow
+			theme: selectedDesign?.theme,
+			intent,
+			startingPoint,
 		} );
 
 		this.handleLogin( dependencies, destination );

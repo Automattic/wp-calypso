@@ -25,7 +25,7 @@ export function recordSignupStart( flow, ref ) {
 }
 
 export function recordSignupComplete(
-	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
+	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, theme, intent, startingPoint },
 	now
 ) {
 	const isNewSite = !! siteId;
@@ -35,7 +35,7 @@ export function recordSignupComplete(
 		return addToQueue(
 			'signup',
 			'recordSignupComplete',
-			{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
+			{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, theme, intent, startingPoint },
 			true
 		);
 	}
@@ -50,6 +50,9 @@ export function recordSignupComplete(
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
 		has_cart_items: hasCartItems,
+		theme,
+		intent,
+		starting_point: startingPoint,
 	} );
 
 	// Google Analytics
