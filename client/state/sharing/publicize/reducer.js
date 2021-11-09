@@ -49,7 +49,7 @@ export const sharePostStatus = ( state = {}, action ) => {
 			};
 		}
 		case PUBLICIZE_SHARE_FAILURE: {
-			const { siteId, postId, error } = action;
+			const { siteId, postId } = action;
 
 			return {
 				...state,
@@ -58,7 +58,7 @@ export const sharePostStatus = ( state = {}, action ) => {
 					[ postId ]: {
 						requesting: false,
 						success: false,
-						error,
+						error: true,
 					},
 				},
 			};
