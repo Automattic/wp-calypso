@@ -46,6 +46,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
@@ -282,7 +283,7 @@ function displayRenewalSuccessNotice(
 	purchases: Record< number, Purchase[] >,
 	translate: ReturnType< typeof useTranslate >,
 	moment: ReturnType< typeof useLocalizedMoment >,
-	reduxDispatch: ReturnType< typeof useDispatch >
+	reduxDispatch: CalypsoDispatch
 ): void {
 	const renewalItem = getRenewalItems( responseCart )[ 0 ];
 	// group all purchases into an array
@@ -355,7 +356,7 @@ function recordPaymentCompleteAnalytics( {
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	checkoutFlow?: string;
-	reduxDispatch: ReturnType< typeof useDispatch >;
+	reduxDispatch: CalypsoDispatch;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
