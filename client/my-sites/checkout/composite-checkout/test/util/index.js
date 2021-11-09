@@ -762,7 +762,7 @@ export const mockTransactionsRedirectResponse = () => [
 export const mockTransactionsSuccessResponse = () => [ 200, { success: 'true' } ];
 
 function getManagedValueFromString( value ) {
-	return { isTouched: true, value, errors: [], isRequired: true };
+	return { isTouched: true, value, errors: [] };
 }
 
 function getStringFromManagedValue( managedValue ) {
