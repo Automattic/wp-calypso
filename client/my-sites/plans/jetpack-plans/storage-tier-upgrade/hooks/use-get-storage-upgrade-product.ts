@@ -28,15 +28,12 @@ export const useGetTier1UpgradeProduct = (): StorageUpgradeGetter => {
 					items: [
 						{
 							text: translate( '%(storageAmount)s backup storage', { args: { storageAmount } } ),
-							isHighlighted: true,
 						},
 						{
 							text: translate( 'One-click restore from the last 30 days of backups' ),
-							isHighlighted: true,
 						},
 						{
 							text: translate( '30-day activity log' ),
-							isHighlighted: true,
 						},
 						{
 							text: translate( 'Real-time backups (as you edit)' ),
@@ -73,17 +70,14 @@ export const useGetTier2UpgradeProduct = (): StorageUpgradeGetter => {
 						{
 							text: translate( '%(storageAmount)s backup storage', { args: { storageAmount } } ),
 							isHighlighted: true,
-							isDifferentiator: true,
 						},
 						{
 							text: translate( 'One-click restore from the past year of backups' ),
 							isHighlighted: true,
-							isDifferentiator: true,
 						},
 						{
 							text: translate( 'One year activity log' ),
 							isHighlighted: true,
-							isDifferentiator: true,
 						},
 						{
 							text: translate( 'Real-time backups (as you edit)' ),
