@@ -104,7 +104,7 @@ export default function CompositeCheckout( {
 	isInEditor,
 	onAfterPaymentComplete,
 	isFocusedLaunch,
-	isJetpackCheckout,
+	isJetpackCheckout = false,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
@@ -125,7 +125,7 @@ export default function CompositeCheckout( {
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
 	isFocusedLaunch?: boolean;
-	isJetpackCheckout: boolean;
+	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
@@ -205,6 +205,8 @@ export default function CompositeCheckout( {
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
+
+	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
 	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
@@ -311,15 +313,10 @@ export default function CompositeCheckout( {
 	const areThereErrors =
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy ).length > 0;
 
-	const siteSlugLoggedOutCart: string | undefined = select( 'wpcom' )?.getSiteSlug();
 	const {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
-	} = useRemoveFromCartAndRedirect(
-		updatedSiteSlug,
-		siteSlugLoggedOutCart,
-		createUserAndSiteBeforeTransaction
-	);
+	} = useRemoveFromCartAndRedirect( updatedSiteSlug, createUserAndSiteBeforeTransaction );
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		wpcomGetStoredCards,
@@ -369,6 +366,7 @@ export default function CompositeCheckout( {
 		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
 
 	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
+	const recaptchaClientId: number | undefined = select( 'wpcom' )?.getRecaptchaClientId();
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
@@ -430,10 +428,11 @@ export default function CompositeCheckout( {
 			recordEvent,
 			reduxDispatch,
 			responseCart,
-			siteId,
+			siteId: updatedSiteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
+			recaptchaClientId,
 		} ),
 		[
 			contactDetails,
@@ -444,10 +443,11 @@ export default function CompositeCheckout( {
 			recordEvent,
 			reduxDispatch,
 			responseCart,
-			siteId,
+			updatedSiteId,
 			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
+			recaptchaClientId,
 		]
 	);
 
@@ -628,8 +628,6 @@ export default function CompositeCheckout( {
 			</Fragment>
 		);
 	}
-
-	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
 	return (
 		<Fragment>
