@@ -7,6 +7,18 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import './style.scss';
 
+const VideoPlayer = ( { videoUrl } ) => {
+	return (
+		<div key={ videoUrl } className="videos-ui__video">
+			<video controls>
+				<source src={ videoUrl } />{ ' ' }
+				{ /* @TODO: check if tracks are available, the linter demands one */ }
+				<track src="caption.vtt" kind="captions" srclang="en" label="english_captions" />
+			</video>
+		</div>
+	);
+};
+
 const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -38,18 +50,6 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 			setCurrentVideo( course.videos[ currentVideoKey ] );
 		}
 	}, [ currentVideoKey, course ] );
-
-	const VideoPlayer = ( { videoUrl } ) => {
-		return (
-			<div className="videos-ui__video">
-				<video controls>
-					<source src={ videoUrl } />{ ' ' }
-					{ /* @TODO: check if tracks are available, the linter demands one */ }
-					<track src="caption.vtt" kind="captions" srclang="en" label="english_captions" />
-				</video>
-			</div>
-		);
-	};
 
 	const isVideoSelected = ( idx ) => {
 		return selectedVideoIndex === idx;
