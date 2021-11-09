@@ -57,7 +57,11 @@ export class TaxonomyManagerList extends Component {
 		}
 
 		// if item has a parent, and parent is in payload, height is already part of parent
-		if ( item.parent && ! _recurse && this.props.termIds.includes( item.parent ) ) {
+		if (
+			item.parent &&
+			! _recurse &&
+			this.props.terms.some( ( term ) => term.ID === item.parent )
+		) {
 			return 0;
 		}
 
@@ -79,7 +83,11 @@ export class TaxonomyManagerList extends Component {
 
 	renderItem( item, _recurse = false ) {
 		// if item has a parent and it is in current props.terms, do not render
-		if ( item.parent && ! _recurse && this.props.termIds.includes( item.parent ) ) {
+		if (
+			item.parent &&
+			! _recurse &&
+			this.props.terms.some( ( term ) => term.ID === item.parent )
+		) {
 			return;
 		}
 		const children = this.getTermChildren( item.ID );
@@ -162,20 +170,15 @@ export class TaxonomyManagerList extends Component {
 	}
 }
 
-const getTermIds = ( terms ) => ( Array.isArray( terms ) ? terms.map( ( term ) => term.ID ) : [] );
-
 export default connect( ( state, ownProps ) => {
 	const { taxonomy, query } = ownProps;
 	const siteId = getSelectedSiteId( state );
-	const terms = getTermsForQueryIgnoringPage( state, siteId, taxonomy, query );
-	const termIds = getTermIds( terms );
 
 	return {
 		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		query,
 		siteId,
-		termIds,
-		terms,
+		terms: getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 	};
 } )( localize( TaxonomyManagerList ) );
