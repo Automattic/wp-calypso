@@ -101,7 +101,7 @@ __metadata:
     "@babel/cli": ^7.16.0
     "@babel/compat-data": ^7.16.0
     "@babel/core": ^7.16.0
-    "@babel/helpers": ^7.16.0
+    "@babel/helpers": ^7.16.3
     "@babel/plugin-proposal-class-properties": ^7.16.0
     "@babel/plugin-transform-react-jsx": ^7.16.0
     "@babel/plugin-transform-runtime": ^7.16.0
@@ -277,7 +277,7 @@ __metadata:
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     "@storybook/addon-actions": ^6.3.12
     "@storybook/preset-scss": ^1.0.3
     classnames: ^2.3.1
@@ -486,7 +486,7 @@ __metadata:
   resolution: "@automattic/format-currency@workspace:packages/format-currency"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     i18n-calypso: ^5.0.0
   peerDependencies:
     react: ^17.0.2
@@ -605,7 +605,7 @@ __metadata:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/languages": ^1.0.0
     "@automattic/search": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     "@wordpress/base-styles": ^4.0.0
     "@wordpress/components": ^17.0.0
     "@wordpress/i18n": ^4.2.2
@@ -684,7 +684,7 @@ __metadata:
   resolution: "@automattic/load-script@workspace:packages/load-script"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     debug: ^4.0.0
   languageName: unknown
   linkType: soft
@@ -943,7 +943,7 @@ __metadata:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@babel/core": ^7.16.0
     "@babel/preset-env": ^7.16.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     "@storybook/addon-actions": ^6.3.12
     "@storybook/builder-webpack5": ^6.3.12
     "@storybook/manager-webpack5": ^6.3.12
@@ -996,7 +996,7 @@ __metadata:
   resolution: "@automattic/social-previews@workspace:packages/social-previews"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     "@wordpress/components": ^17.0.0
     "@wordpress/i18n": ^4.2.2
     classnames: ^2.3.1
@@ -1070,7 +1070,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/viewport": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     "@wordpress/compose": ^5.0.2
     regenerator-runtime: ^0.13.9
   peerDependencies:
@@ -1449,9 +1449,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.16.0":
-  version: 7.16.0
-  resolution: "@babel/eslint-parser@npm:7.16.0"
+"@babel/eslint-parser@npm:^7.16.3":
+  version: 7.16.3
+  resolution: "@babel/eslint-parser@npm:7.16.3"
   dependencies:
     eslint-scope: ^5.1.1
     eslint-visitor-keys: ^2.1.0
@@ -1459,7 +1459,7 @@ __metadata:
   peerDependencies:
     "@babel/core": ">=7.11.0"
     eslint: ^7.5.0 || ^8.0.0
-  checksum: 5c0cd31ef6c54c2b1ecede04a4032167078cb830bba23f779e78314931c16af9c85ffb7ac4ab8d1a5a02b695094be2819b780ae56187ca2c123dde6d5c45f3f6
+  checksum: 723b905420acd4c3b4a4b95dd0bba6654698c945cdf2ebf762721c14a834b9adfcfdb48a69a46135a59f7353995eb4c960b2d9f67c181e058c7d3cb1d3b51cec
   languageName: node
   linkType: hard
 
@@ -1742,14 +1742,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helpers@npm:^7.12.5, @babel/helpers@npm:^7.16.0":
-  version: 7.16.0
-  resolution: "@babel/helpers@npm:7.16.0"
+"@babel/helpers@npm:^7.12.5, @babel/helpers@npm:^7.16.0, @babel/helpers@npm:^7.16.3":
+  version: 7.16.3
+  resolution: "@babel/helpers@npm:7.16.3"
   dependencies:
     "@babel/template": ^7.16.0
-    "@babel/traverse": ^7.16.0
+    "@babel/traverse": ^7.16.3
     "@babel/types": ^7.16.0
-  checksum: fee7257b269480593bfafcd6dff816c8e65a6a93d927f042dd1b80d6f6489752c35fe2234cedaa22a87a2d1bc1f90eb9e75aef2527178d90a0aa43b6cd0a8d47
+  checksum: d31511816e4722535d45bec5331cfe3bbafb7ff681fa16234a743ba8eada24b27e89c0930f5457d6706d5c613b9f0f160804de8320c733238e5f9003c739df92
   languageName: node
   linkType: hard
 
@@ -1764,12 +1764,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.1.6, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.12.7, @babel/parser@npm:^7.14.0, @babel/parser@npm:^7.16.0, @babel/parser@npm:^7.16.2, @babel/parser@npm:^7.4.3, @babel/parser@npm:^7.5.5, @babel/parser@npm:^7.7.0, @babel/parser@npm:^7.7.2, @babel/parser@npm:^7.8.4":
-  version: 7.16.2
-  resolution: "@babel/parser@npm:7.16.2"
+"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.1.6, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.12.7, @babel/parser@npm:^7.14.0, @babel/parser@npm:^7.16.0, @babel/parser@npm:^7.16.3, @babel/parser@npm:^7.4.3, @babel/parser@npm:^7.5.5, @babel/parser@npm:^7.7.0, @babel/parser@npm:^7.7.2, @babel/parser@npm:^7.8.4":
+  version: 7.16.3
+  resolution: "@babel/parser@npm:7.16.3"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: 8789c91f17854dc559033522e026587e3cb6a1973ead64e30287ac0417e8ee86e1b9d4d4d496753005b95f52808d2d0fbc643643b1f2db8f97b2f1422551a8fd
+  checksum: 162419fa921d51561e17d428f73e5f696adada248ff968eb858b3144cad647a854857a54b0c99560932f0544845539fd11d52ef09d85125e43bc1808138df227
   languageName: node
   linkType: hard
 
@@ -2940,12 +2940,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.14.0, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.16.0, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.5.0, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
-  version: 7.16.0
-  resolution: "@babel/runtime@npm:7.16.0"
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.14.0, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.5.0, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+  version: 7.16.3
+  resolution: "@babel/runtime@npm:7.16.3"
   dependencies:
     regenerator-runtime: ^0.13.4
-  checksum: 7dd42377ac41bc4c72e1f7f358d0181fb75a86a3fa97cc24da8fd143fa0c9444475ae933154faa3697a5bcf2d04cdf37ddd7faf98582b5739dee7630b6224308
+  checksum: 37a7f334e8ad1383a78d39224ba9f95b94556189a0f1e93bc1b5729dc18d9eb5eb0ba3742073629cd4024fc101315fe8945931f80ba32518f651a4f0438ec4dc
   languageName: node
   linkType: hard
 
@@ -2960,20 +2960,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.1.0, @babel/traverse@npm:^7.12.11, @babel/traverse@npm:^7.12.9, @babel/traverse@npm:^7.13.0, @babel/traverse@npm:^7.14.0, @babel/traverse@npm:^7.16.0, @babel/traverse@npm:^7.4.3, @babel/traverse@npm:^7.7.0, @babel/traverse@npm:^7.7.2, @babel/traverse@npm:^7.8.4":
-  version: 7.16.0
-  resolution: "@babel/traverse@npm:7.16.0"
+"@babel/traverse@npm:^7.1.0, @babel/traverse@npm:^7.12.11, @babel/traverse@npm:^7.12.9, @babel/traverse@npm:^7.13.0, @babel/traverse@npm:^7.14.0, @babel/traverse@npm:^7.16.0, @babel/traverse@npm:^7.16.3, @babel/traverse@npm:^7.4.3, @babel/traverse@npm:^7.7.0, @babel/traverse@npm:^7.7.2, @babel/traverse@npm:^7.8.4":
+  version: 7.16.3
+  resolution: "@babel/traverse@npm:7.16.3"
   dependencies:
     "@babel/code-frame": ^7.16.0
     "@babel/generator": ^7.16.0
     "@babel/helper-function-name": ^7.16.0
     "@babel/helper-hoist-variables": ^7.16.0
     "@babel/helper-split-export-declaration": ^7.16.0
-    "@babel/parser": ^7.16.0
+    "@babel/parser": ^7.16.3
     "@babel/types": ^7.16.0
     debug: ^4.1.0
     globals: ^11.1.0
-  checksum: cf8bfe05371304c88d0cbfab8e7f7aaa39810d89a71438a35ed87615e799549e51f604c7479568ba4b0efbfa39187355fdfc681d31ff86e86d19b105e87bef0e
+  checksum: 484296dbe162446e3254a60ed2ca9efe9cf1b3960d3607b78ccaeac68b23a97166963da3df1d88fc1efb209185ef68835737794acc6504e307c512723331d099
   languageName: node
   linkType: hard
 
@@ -16925,8 +16925,8 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@babel/core": ^7.16.0
-    "@babel/eslint-parser": ^7.16.0
-    "@babel/parser": ^7.16.2
+    "@babel/eslint-parser": ^7.16.3
+    "@babel/parser": ^7.16.3
     eslint: ">=7.32.0"
   peerDependencies:
     "@babel/core": ">=7.16.0"
@@ -20656,7 +20656,7 @@ fsevents@~2.1.2:
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/interpolate-components": ^1.1.2
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     "@tannin/sprintf": ^1.1.0
     "@wordpress/compose": ^5.0.2
     debug: ^4.0.0
@@ -28709,7 +28709,7 @@ fsevents@~2.1.2:
   resolution: "photon@workspace:packages/photon"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     crc32: ^0.2.2
     debug: ^4.0.0
     seed-random: ^2.2.0
@@ -38922,10 +38922,10 @@ testarmada-magellan@11.0.10:
     "@automattic/viewport": ^1.0.0
     "@automattic/wp-babel-makepot": ^1.0.0
     "@babel/core": ^7.16.0
-    "@babel/eslint-parser": ^7.16.0
+    "@babel/eslint-parser": ^7.16.3
     "@babel/preset-env": ^7.16.0
     "@babel/register": ^7.16.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     "@signal-noise/stylelint-scales": ^2.0.0
     "@storybook/react": ^6.3.12
     "@typeform/embed-react": ^1.1.0
@@ -39188,7 +39188,7 @@ testarmada-magellan@11.0.10:
   dependencies:
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     chai: ^4.3.4
     debug: ^4.1.1
     progress-event: ^1.0.0
@@ -39202,7 +39202,7 @@ testarmada-magellan@11.0.10:
   resolution: "wpcom-xhr-request@workspace:packages/wpcom-xhr-request"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     debug: ^4.1.1
     superagent: ^3.8.3
     wp-error: ^1.3.0
@@ -39215,7 +39215,7 @@ testarmada-magellan@11.0.10:
   dependencies:
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.16.0
+    "@babel/runtime": ^7.16.3
     debug: ^4.1.1
     npm-run-all: ^4.1.5
     qs: ^6.5.2
