@@ -58,8 +58,7 @@ export const requestSiteAddressAvailability = (
 		.undocumented()
 		.checkSiteAddressValidation( siteId, siteAddress, domain, siteType, testBool )
 		.then( ( data ) => {
-			const errorType = get( data, 'error' );
-			const message = get( data, 'message' );
+			const { error: errorType, message, status: errorStatus } = data;
 
 			if ( errorType ) {
 				dispatch( {
@@ -67,6 +66,7 @@ export const requestSiteAddressAvailability = (
 					siteId,
 					errorType,
 					message,
+					errorStatus,
 				} );
 
 				return;
@@ -79,14 +79,14 @@ export const requestSiteAddressAvailability = (
 			} );
 		} )
 		.catch( ( error ) => {
-			const errorType = get( error, 'error' );
-			const message = get( error, 'message' );
+			const { error: errorType, message, status: errorStatus } = error;
 
 			dispatch( {
 				type: SITE_ADDRESS_AVAILABILITY_ERROR,
 				siteId,
 				errorType,
 				message,
+				errorStatus,
 			} );
 		} );
 };
