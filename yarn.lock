@@ -281,7 +281,7 @@ __metadata:
     "@storybook/addon-actions": ^6.3.12
     "@storybook/preset-scss": ^1.0.3
     classnames: ^2.3.1
-    css-loader: ^3.4.2
+    css-loader: ^3.6.0
     enzyme: ^3.11.0
     gridicons: ^3.4.0
     i18n-calypso: ^5.0.0
@@ -313,7 +313,7 @@ __metadata:
     "@testing-library/react": ^12.1.2
     "@wordpress/i18n": ^4.2.2
     "@wordpress/react-i18n": ^3.0.1
-    css-loader: ^3.4.2
+    css-loader: ^3.6.0
     debug: ^4.1.1
     enzyme: ^3.11.0
     jest: ^27.2.4
@@ -958,7 +958,7 @@ __metadata:
     "@wordpress/is-shallow-equal": ^4.2.0
     "@wordpress/react-i18n": ^3.0.1
     classnames: ^2.3.1
-    css-loader: ^3.4.2
+    css-loader: ^3.6.0
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -14105,7 +14105,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:^3.4.2, css-loader@npm:^3.6.0":
+"css-loader@npm:^3.6.0":
   version: 3.6.0
   resolution: "css-loader@npm:3.6.0"
   dependencies:
@@ -38990,7 +38990,7 @@ testarmada-magellan@11.0.10:
     concurrently: ^5.1.0
     config: ^3.3.6
     core-js-bundle: ^3.6.4
-    css-loader: ^3.4.2
+    css-loader: ^3.6.0
     debug: ^4.1.1
     doctrine: ^3.0.0
     enhanced-resolve: ^5.8.2

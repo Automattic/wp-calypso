@@ -51,7 +51,7 @@
 		"@storybook/preset-scss": "^1.0.3",
 		"@testing-library/jest-dom": "^5.15.0",
 		"@testing-library/react": "^12.1.2",
-		"css-loader": "^3.4.2",
+		"css-loader": "^3.6.0",
 		"enzyme": "^3.11.0",
 		"jest": "^27.2.4",
 		"postcss": "^8.3.11",
