@@ -1,5 +1,5 @@
 import 'calypso/state/imports/init';
-import wpcom from 'calypso/lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	URL_ANALYZER_ANALYZE_DONE,
 	URL_ANALYZER_ANALYZE,
@@ -18,9 +18,8 @@ export const analyzeUrl = ( url: string ) => (
 		type: URL_ANALYZER_ANALYZE,
 	} );
 
-	return wpcom
-		.undocumented()
-		.ImportsAnalyzeUrl( url )
+	return wp.req
+		.get( { path: '/imports/analyze-url', apiNamespace: 'wpcom/v2' }, { site_url: url } )
 		.then( ( response: UrlData ) => {
 			// Update the state
 			dispatch( {
