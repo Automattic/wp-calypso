@@ -291,7 +291,7 @@
 		"typescript": "^4.4.4",
 		"webpack": "^5.62.1",
 		"webpack-bundle-analyzer": "^4.4.2",
-		"webpack-cli": "^4.8.0",
+		"webpack-cli": "^4.9.1",
 		"webpack-dev-middleware": "^5.1.0",
 		"whybundled": "^2.0.0",
 		"wpcom": "^6.0.0",
