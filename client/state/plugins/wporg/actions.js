@@ -132,7 +132,7 @@ export function fetchPluginsList(
 				// Do not trigger a new tracks event for subsequent pages.
 				if ( searchTerm && info?.page === 1 ) {
 					dispatch(
-						recordTracksEvent( 'calypso_plugins_search', {
+						recordTracksEvent( 'calypso_plugins_search_results_show', {
 							search_term: searchTerm,
 							results_count: info?.results,
 						} )
