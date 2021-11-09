@@ -2,7 +2,6 @@ import { Dialog } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { get, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -209,12 +208,11 @@ class TermFormDialog extends Component {
 			errors.name = this.props.translate( 'Name required', { textOnly: true } );
 		}
 		const lowerCasedTermName = values.name.toLowerCase();
-		const matchingTerm = find( this.props.terms, ( term ) => {
-			return (
+		const matchingTerm = this.props.terms.find(
+			( term ) =>
 				term.name.toLowerCase() === lowerCasedTermName &&
 				( ! this.props.term || term.ID !== this.props.term.ID )
-			);
-		} );
+		);
 		if ( matchingTerm ) {
 			errors.name = this.props.translate( 'Name already exists', {
 				context: 'Terms: Add term error message - duplicate term name exists',
@@ -242,13 +240,13 @@ class TermFormDialog extends Component {
 	}
 
 	renderParentSelector() {
-		const { labels, siteId, taxonomy, translate, terms } = this.props;
+		const { labels, siteId, taxonomy, translate, terms, term } = this.props;
 		const { isTopLevel, searchTerm, selectedParent } = this.state;
 		const query = {};
 		if ( searchTerm && searchTerm.length ) {
 			query.search = searchTerm;
 		}
-		const hideTermAndChildren = get( this.props.term, 'ID' );
+		const hideTermAndChildren = term?.ID;
 		const isError = !! this.state.errors.parent;
 
 		// if there is only one term for the site, and we are editing that term
@@ -379,8 +377,8 @@ export default connect(
 		const { taxonomy, postType } = ownProps;
 		const siteId = getSelectedSiteId( state );
 		const taxonomyDetails = getPostTypeTaxonomy( state, siteId, postType, taxonomy );
-		const labels = get( taxonomyDetails, 'labels', {} );
-		const isHierarchical = get( taxonomyDetails, 'hierarchical', false );
+		const labels = taxonomyDetails?.labels ?? {};
+		const isHierarchical = taxonomyDetails?.hierarchical ?? false;
 
 		return {
 			terms: getTerms( state, siteId, taxonomy ),
