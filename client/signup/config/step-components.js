@@ -48,6 +48,7 @@ const stepNameToModuleName = {
 	'site-topic-with-theme': 'site-topic',
 	'site-type': 'site-type',
 	'site-type-with-theme': 'site-type',
+	'starting-point': 'starting-point',
 	survey: 'survey',
 	'survey-user': 'survey-user',
 	test: 'test-step',
@@ -73,9 +74,17 @@ const stepNameToModuleName = {
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
 	'design-setup-site': 'design-picker',
+	'difm-design-setup-site': 'design-picker',
 	'difm-design': 'difm-design-picker',
 	'site-info-collection': 'site-info-collection',
 	intent: 'intent',
+	list: 'import',
+	capture: 'import',
+	ready: 'import',
+	confirm: 'woocommerce-install',
+	transfer: 'woocommerce-install',
+	install: 'woocommerce-install',
+	complete: 'woocommerce-install',
 };
 
 export function getStepModuleName( stepName ) {

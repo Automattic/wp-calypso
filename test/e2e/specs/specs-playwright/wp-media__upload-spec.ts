@@ -35,7 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	describe.each`
 		siteType      | user
 		${ 'Simple' } | ${ 'defaultUser' }
-		${ 'Atomic' } | ${ 'wooCommerceUser' }
+		${ 'Atomic' } | ${ 'eCommerceUser' }
 	`( 'Upload media files ($siteType)', ( { user } ) => {
 		let mediaPage: MediaPage;
 

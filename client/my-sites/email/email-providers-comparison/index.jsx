@@ -333,7 +333,6 @@ class EmailProvidersComparison extends Component {
 			isGSuiteSupported,
 			onSkipClick,
 			selectedDomainName,
-			selectedSite,
 			showSkipButton,
 			skipButtonLabel,
 			translate,
@@ -344,28 +343,61 @@ class EmailProvidersComparison extends Component {
 			return null;
 		}
 
-		const formattedPrice = translate( '{{price/}} /user /month billed annually', {
-			components: {
-				price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
-			},
-			comment: '{{price/}} is the formatted price, e.g. $20',
-		} );
-
-		const discount = hasDiscount( gSuiteProduct )
-			? translate( 'First year %(discountedPrice)s', {
-					args: {
-						discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
+		const productIsDiscounted = hasDiscount( gSuiteProduct );
+		const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
+		const formattedPrice = productIsDiscounted
+			? translate( '{{fullPrice/}} {{discountedPrice/}} /user /month billed annually', {
+					components: {
+						fullPrice: <span>{ monthlyPrice }</span>,
+						discountedPrice: (
+							<span className="email-providers-comparison__discounted-price">
+								{ getMonthlyPrice( gSuiteProduct.sale_cost, currencyCode ) }
+							</span>
+						),
 					},
-					comment: '%(discountedPrice)s is a formatted price, e.g. $75',
+					comment:
+						'{{fullPrice/}} is the formatted full price, e.g. $20; {{discountedPrice/}} is the discounted, formatted price, e.g. $10',
 			  } )
-			: null;
+			: translate( '{{price/}} /user /month billed annually', {
+					components: {
+						price: <span>{ monthlyPrice }</span>,
+					},
+					comment: '{{price/}} is the formatted price, e.g. $20',
+			  } );
 
-		const additionalPriceInformation = translate( '%(price)s billed annually', {
-			args: {
-				price: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ),
-			},
-			comment: "Annual price formatted with the currency (e.g. '$99.99')",
-		} );
+		const standardPrice = getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
+
+		// Note that when we have a discount, we include all renewal information in the discount content
+		const discount = productIsDiscounted ? (
+			<span className="email-providers-comparison__discount-with-renewal">
+				{ translate(
+					'%(discount)d% Off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
+					{
+						args: {
+							discount: gSuiteProduct.sale_coupon.discount,
+							discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
+							standardPrice,
+						},
+						comment:
+							'%(discount)d is a numeric discount percentage, e.g. 40; ' +
+							'%(discountedPrice)s is a formatted, discounted price that the user will pay today, e.g. $3; ' +
+							'%(standardPrice)s is a formatted price, e.g. $5',
+						components: {
+							span: <span />,
+						},
+					}
+				) }
+			</span>
+		) : null;
+
+		const additionalPriceInformation = productIsDiscounted
+			? null
+			: translate( '%(price)s billed annually', {
+					args: {
+						standardPrice,
+					},
+					comment: "Annual price formatted with the currency (e.g. '$99.99')",
+			  } );
 
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
@@ -399,7 +431,6 @@ class EmailProvidersComparison extends Component {
 						domains={ domainList }
 						onUsersChange={ this.onGoogleUsersChange }
 						selectedDomainName={ selectedDomainName }
-						siteId={ selectedSite.ID }
 						users={ googleUsers }
 						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
 					>
@@ -455,7 +486,6 @@ class EmailProvidersComparison extends Component {
 			skipButtonLabel,
 			titanMailProduct,
 			translate,
-			selectedSite,
 		} = this.props;
 
 		const formattedPrice = translate( '{{price/}} /user /month billed monthly', {
@@ -505,7 +535,6 @@ class EmailProvidersComparison extends Component {
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
 				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
-				siteId={ selectedSite.ID }
 			>
 				<Button
 					className="email-providers-comparison__titan-mailbox-action-continue"
@@ -692,6 +721,7 @@ class EmailProvidersComparison extends Component {
 			isGSuiteSupported,
 			selectedDomainName,
 			selectedSite,
+			source,
 		} = this.props;
 
 		return (
@@ -723,6 +753,7 @@ class EmailProvidersComparison extends Component {
 						context: comparisonContext,
 						is_gsuite_supported: isGSuiteSupported,
 						layout: 'stacked',
+						source,
 					} }
 				/>
 			</Main>
@@ -739,7 +770,8 @@ export default connect(
 			selectedDomainName: ownProps.selectedDomainName,
 		} );
 
-		const domainName = ownProps.cartDomainName ?? domain.name;
+		const resolvedDomainName = domain ? domain.name : ownProps.selectedDomainName;
+		const domainName = ownProps.cartDomainName ?? resolvedDomainName;
 		const hasCartDomain = Boolean( ownProps.cartDomainName );
 
 		const isGSuiteSupported =

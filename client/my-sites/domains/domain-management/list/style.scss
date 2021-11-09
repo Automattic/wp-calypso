@@ -2,6 +2,35 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.breadcrumbs {
+	svg.options-domain-button__add {
+		margin-left: 4px;
+
+		@include break-mobile {
+			margin-left: 0;
+		}
+	}
+
+	button.options-domain-button.ellipsis {
+		padding: 4px 0;
+
+		@include break-mobile {
+			padding: 7px;
+		}
+	}
+
+	svg.options-domain-button__ellipsis {
+		width: 28px;
+		height: 28px;
+		margin-left: 0;
+
+		@include break-mobile {
+			width: 18px;
+			height: 18px;
+		}
+	}
+}
+
 .domain-management-list__notice {
 	margin-bottom: 0;
 }
@@ -276,6 +305,20 @@
 	margin-top: 24px;
 }
 
+.domain-management-list__filter {
+	padding: 0 16px;
+	> .domains-table-filter-button.is-mobile-version {
+		width: 100%;
+		.select-dropdown__container {
+			width: 100%;
+		}
+
+		@include break-mobile {
+			display: none;
+		}
+	}
+}
+
 .empty-domains-list-card__wrapper {
 	display: flex;
 	flex-direction: column;
@@ -354,7 +397,58 @@
 	padding: 8px 0;
 	border-bottom: 1px solid var( --color-neutral-20 );
 	font-size: $font-body-small;
-	color: var( --color-neutral );
+	font-weight: 600;
+	color: var( --color-neutral-50 );
+
+	.button-plain {
+		text-align: left;
+	}
+
+	.list__header-column {
+		display: flex;
+		align-items: center;
+		&.is-sortable {
+			cursor: pointer;
+		}
+		svg {
+			margin-left: 4px;
+			fill: transparent;
+		}
+		&.is-sorted-by > svg,
+		&.is-sorted-by:hover > svg {
+			fill: var( --color-neutral-50 );
+		}
+		&:hover > svg {
+			fill: var( --color-neutral-10 );
+		}
+	}
+
+	&.domain-table-header__desktop {
+		display: none;
+	}
+	&.domain-table-header__mobile {
+		display: flex;
+		padding: 16px;
+		.select-dropdown {
+			width: 100%;
+			.select-dropdown__container {
+				width: 100%;
+			}
+		}
+	}
+
+	&.domain-table-header__mobile.hide-when-one-domain {
+		display: none;
+	}
+
+	@include break-mobile {
+		&.domain-table-header__desktop {
+			display: flex;
+		}
+		&.domain-table-header__mobile {
+			display: none;
+		}
+	}
 }
 
 .list__domain-cell {

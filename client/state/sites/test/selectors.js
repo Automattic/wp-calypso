@@ -47,6 +47,7 @@ import {
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
+	withSelectedSite,
 } from '../selectors';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -3655,6 +3656,25 @@ describe( 'selectors', () => {
 					createState( { created_at: '2020-01-01', jetpack: true, atomic: true } )
 				)
 			).toBe( true );
+		} );
+	} );
+
+	describe( 'withSelectedSite()', () => {
+		test( 'returns selector with selected site added on call', () => {
+			const state = {
+				sites: {
+					items: {
+						2916288: {
+							jetpack: true,
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 2916288,
+				},
+			};
+			const selector = withSelectedSite( isJetpackSite );
+			expect( selector( state ) ).toEqual( true );
 		} );
 	} );
 } );

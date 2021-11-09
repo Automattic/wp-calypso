@@ -187,6 +187,12 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
+		'starting-point': {
+			stepName: 'starting-point',
+			providesDependencies: [ 'startingPoint' ],
+			optionalDependencies: [ 'startingPoint' ],
+		},
+
 		test: {
 			stepName: 'test',
 		},
@@ -733,6 +739,23 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
+			props: {
+				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
+			},
+		},
+		'difm-design-setup-site': {
+			stepName: 'difm-design-setup-site',
+			apiRequestFunction: setDesignOnSite,
+			delayApiRequestUntilComplete: true,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
+			props: {
+				hideSkip: true,
+				hideExternalPreview: true,
+				useDIFMThemes: true,
+				showDesignPickerCategories: true,
+			},
 		},
 		'difm-design': {
 			stepName: 'difm-design',
@@ -740,9 +763,34 @@ export function generateSteps( {
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug', 'selectedDIFMDesign', 'selectedVertical' ],
+			dependencies: [ 'siteSlug', 'selectedDesign' ],
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
+		},
+
+		// ↓ importer steps
+		list: {
+			stepName: 'list',
+		},
+		capture: {
+			stepName: 'capture',
+		},
+		ready: {
+			stepName: 'ready',
+		},
+
+		// Woocommerce Install steps
+		confirm: {
+			stepName: 'confirm',
+		},
+		transfer: {
+			stepName: 'transfer',
+		},
+		install: {
+			stepName: 'install',
+		},
+		complete: {
+			stepName: 'complete',
 		},
 	};
 }

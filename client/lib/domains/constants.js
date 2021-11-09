@@ -104,5 +104,6 @@ export const sslStatuses = {
 
 export const domainInfoContext = {
 	DOMAIN_ITEM: 'DOMAIN_ITEM',
+	DOMAIN_ROW: 'DOMAIN_ROW',
 	PAGE_TITLE: 'PAGE_TITLE',
 };

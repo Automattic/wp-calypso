@@ -18,6 +18,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object WebApp : Project({
 	id("WebApp")
@@ -26,8 +27,6 @@ object WebApp : Project({
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(seleniumBuildType("desktop", "52f38738-92b2-43cb-b7fb-19fce03cb67c"))
-	buildType(seleniumBuildType("mobile", "04de2dd8-9896-4917-b31d-c04eb1c8ecdb"))
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
@@ -442,123 +441,12 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
-	return BuildType {
-		id("Calypso_E2E_Selenium_$viewportName")
-		uuid = buildUuid
-		name = "Selenium E2E Tests ($viewportName)"
-		description = "Runs Calypso e2e tests in $viewportName size using Selenium"
-		artifactRules = """
-			reports => reports
-			logs.tgz => logs.tgz
-			screenshots => screenshots
-		""".trimIndent()
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		steps {
-			bashNodeScript {
-				name = "Prepare environment"
-				scriptContent = """
-					export NODE_ENV="test"
-
-					# Install modules
-					${_self.yarn_install_cmd}
-
-					# Build package
-					yarn workspace @automattic/mocha-debug-reporter build
-				"""
-				dockerImage = "%docker_image_e2e%"
-			}
-			bashNodeScript {
-				name = "Run e2e tests ($viewportName)"
-				scriptContent = """
-					shopt -s globstar
-					set -x
-
-					chmod +x ./bin/get-calypso-live-url.sh
-					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-					if [[ ${'$'}? -ne 0 ]]; then
-						// Command failed. URL contains stderr
-						echo ${'$'}URL
-						exit 1
-					fi
-
-					cd test/e2e
-					mkdir temp
-
-					export LIVEBRANCHES=true
-					export NODE_CONFIG_ENV=test
-					export TEST_VIDEO=true
-					export HIGHLIGHT_ELEMENT=true
-
-					# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
-					# mocha-teamcity-reporter to work.
-					export MAGELLANDEBUG=true
-
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-					# Run the test
-					export BROWSERSIZE="$viewportName"
-					export BROWSERLOCALE="en"
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-
-					yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-				dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
-			}
-			bashNodeScript {
-				name = "Collect results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					mkdir -p screenshots
-					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-					mkdir -p logs
-					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-			}
-		}
-
-		features {
-			perfmon {}
-		}
-
-		triggers {}
-
-		failureConditions {
-			executionTimeoutMin = 20
-			// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
-			// display a difference between real errors and retries, making it hard to understand what is actually failing.
-			supportTestRetry = true
-
-			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
-			// been muted previously.
-			nonZeroExitCode = false
-		}
-
-		dependencies {
-			snapshot(BuildDockerImage) {
-				onDependencyFailure = FailureAction.FAIL_TO_START
-			}
-		}
-	}
-}
-
 fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	return BuildType {
 		id("Calypso_E2E_Playwright_$targetDevice")
 		uuid = buildUuid
-		name = "Playwright E2E Tests ($targetDevice)"
-		description = "Runs Calypso e2e tests as $targetDevice using Playwright"
+		name = "E2E Tests ($targetDevice)"
+		description = "Runs Calypso e2e tests on $targetDevice size"
 
 		artifactRules = """
 			logs.tgz => logs.tgz
@@ -569,6 +457,17 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 		vcs {
 			root(Settings.WpCalypso)
 			cleanCheckout = true
+		}
+
+		params {
+			checkbox(
+				name = "env.SAVE_AUTH_COOKIES",
+				value = "true",
+				label = "Save authentication cookies",
+				description = "Login once and reuse auth cookies for all specs",
+				checked = "true",
+				unchecked = "false"
+			)
 		}
 
 		steps {
@@ -660,10 +559,29 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					-:trunk
 				""".trimIndent()
 			}
+			schedule {
+				schedulingPolicy = cron {
+					minutes = "0/30"
+				}
+				branchFilter = "+:trunk"
+				triggerBuild = always()
+				withPendingChangesOnly = false
+			}
 		}
 
 		failureConditions {
 			executionTimeoutMin = 20
+			// Do not fail on non-zero exit code to permit passing builds with muted tests.
+			nonZeroExitCode = false
+			failOnMetricChange {
+				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+				threshold = 50
+				units = BuildFailureOnMetric.MetricUnit.PERCENTS
+				comparison = BuildFailureOnMetric.MetricComparison.LESS
+				compareTo = build {
+					buildRule = lastSuccessful()
+				}
+			}
 		}
 
 		dependencies {
@@ -761,5 +679,103 @@ object PreReleaseE2ETests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+	}
+})
+
+object QuarantinedE2ETests: BuildType( {
+	id("Quarantined_E2E_Tests")
+	name = "Quarantined E2E Tests"
+	description = "E2E tests quarantined due to intermittent failures."
+	maxRunningBuilds = 1
+
+	artifactRules = """
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+		trace => trace
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		prepareEnvironment()
+		bashNodeScript {
+			name = "Run e2e tests"
+			scriptContent = """
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export URL="https://wpcalypso.wordpress.com"
+
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+				export TEAMCITY_VERSION=2021
+				export TARGET_DEVICE=desktop
+				export LOCALE=en
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+				export HEADLESS=true
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = simpleMessageFormat()
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = cron {
+				minutes = "15"
+			}
+			branchFilter = "+:trunk"
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 10
 	}
 })

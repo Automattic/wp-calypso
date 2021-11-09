@@ -44,7 +44,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
 	getDisplayName,
 	getPartnerName,
@@ -57,10 +56,8 @@ import {
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
-	isPaidWithCreditCard,
 	isPartnerPurchase,
 	isRenewable,
-	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
 	purchaseType,
@@ -69,7 +66,6 @@ import {
 } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
@@ -86,9 +82,7 @@ import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
-	isPurchaseManagementLocked,
 	getRenewableSitePurchases,
-	shouldRevertAtomicSiteBeforeDeactivation,
 } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -133,7 +127,6 @@ class ManagePurchase extends Component {
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
-		userId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -352,15 +345,6 @@ class ManagePurchase extends Component {
 
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
-			const renewing = isRenewing( purchase );
-
-			if (
-				renewing &&
-				isPaidWithCreditCard( purchase ) &&
-				! cardProcessorSupportsUpdates( purchase )
-			) {
-				return null;
-			}
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
@@ -433,7 +417,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, shouldRevertAtomicSiteBeforeCancel, translate } = this.props;
+		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
 		if ( ! isCancelable( purchase ) ) {
@@ -441,12 +425,9 @@ class ManagePurchase extends Component {
 		}
 
 		let text;
-		let link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
+		const link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
 
-		if ( shouldRevertAtomicSiteBeforeCancel && ! config.isEnabled( 'atomic/automated-revert' ) ) {
-			text = translate( 'Contact Support to Cancel your Subscription' );
-			link = CALYPSO_CONTACT;
-		} else if ( hasAmountAvailableToRefund( purchase ) ) {
+		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				text = translate( 'Cancel Domain and Refund' );
 			}
@@ -705,7 +686,6 @@ class ManagePurchase extends Component {
 			siteSlug,
 			getChangePaymentMethodUrlFor,
 			hasLoadedPurchasesFromServer,
-			canManagePurchase,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
@@ -760,7 +740,7 @@ class ManagePurchase extends Component {
 							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
-					{ isProductOwner && canManagePurchase && (
+					{ isProductOwner && (
 						<>
 							{ preventRenewal && this.renderSelectNewButton() }
 							{ ! preventRenewal && this.renderRenewButton() }
@@ -772,7 +752,7 @@ class ManagePurchase extends Component {
 					isProductOwner={ isProductOwner }
 				/>
 
-				{ isProductOwner && canManagePurchase && (
+				{ isProductOwner && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
@@ -829,7 +809,7 @@ class ManagePurchase extends Component {
 				{ this.props.siteId ? (
 					<QuerySitePurchases siteId={ this.props.siteId } />
 				) : (
-					<QueryUserPurchases userId={ this.props.userId } />
+					<QueryUserPurchases />
 				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
@@ -922,14 +902,8 @@ export default connect( ( state, props ) => {
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
 		isAtomicSite: isSiteAtomic( state, siteId ),
-		userId,
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
 		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
-		shouldRevertAtomicSiteBeforeCancel: shouldRevertAtomicSiteBeforeDeactivation(
-			state,
-			purchase?.id
-		),
-		canManagePurchase: ! isPurchaseManagementLocked( state, purchase?.id ),
 	};
 } )( localize( ManagePurchase ) );

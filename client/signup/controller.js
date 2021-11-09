@@ -4,9 +4,9 @@ import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
@@ -275,6 +275,7 @@ export default {
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
+		const { providesDependenciesInQuery } = flows.getFlow( flowName, userLoggedIn );
 
 		const { query } = initialContext;
 
@@ -288,12 +289,13 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( ! [ 'launch-site' ].includes( flowName ) ) {
+		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
+		if (
+			! providesDependenciesInQuery?.includes( 'siteId' ) &&
+			! providesDependenciesInQuery?.includes( 'siteSlug' )
+		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
-
-		// ExPlat: Temporarily testing out the effects of prefetching experiments. Delete after 2021 week 31.
-		loadExperimentAssignment( 'explat_test_aa_weekly_calypso_2021_week_31' );
 
 		context.primary = createElement( SignupComponent, {
 			store: context.store,

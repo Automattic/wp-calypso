@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { localize, useTranslate } from 'i18n-calypso';
 import { connect, useSelector } from 'react-redux';
+import thankYouEmail from 'calypso/assets/images/illustrations/thank-you-email.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
@@ -39,7 +40,7 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 
 	const thankYouImage = {
 		alt: translate( 'Thank you' ),
-		src: '/calypso/images/illustrations/thank-you-email.svg',
+		src: thankYouEmail,
 	};
 
 	const titanControlPanelUrl = emailManagementTitanControlPanelRedirect(

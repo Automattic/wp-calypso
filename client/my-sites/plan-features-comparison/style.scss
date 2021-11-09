@@ -173,13 +173,6 @@ $plan-features-sidebar-width: 272px;
 			padding-bottom: 5px;
 		}
 
-		.plan-features-comparison__header-annual-discount {
-			color: var( --studio-green-60 );
-			&-is-loading {
-				@include placeholder();
-			}
-		}
-
 		.plan-price.is-original {
 			color: var( --color-neutral-light );
 
@@ -192,6 +185,19 @@ $plan-features-sidebar-width: 272px;
 				color: var( --color-text-subtle );
 			}
 		}
+	}
+
+	.plan-features-comparison__header-annual-discount {
+		color: var( --studio-green-60 );
+		&-is-loading {
+			@include placeholder();
+		}
+	}
+
+	.plan-features-comparison__not-available-with-monthly-disclaimer {
+		color: var( --studio-orange-40 );
+		width: 55%;
+		margin: auto;
 	}
 
 	.is-placeholder {
@@ -405,10 +411,15 @@ $plan-features-sidebar-width: 272px;
 body.is-section-signup.is-white-signup {
 	.plan-features-comparison__table-item {
 		border-left: none;
+		background-color: transparent;
 
 		&:last-of-type {
 			border-right: none;
 		}
+	}
+
+	.plan-features-comparison__header {
+		background-color: transparent;
 	}
 
 	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
@@ -485,4 +496,8 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 	}
+}
+
+.plan-monthly-disabled-experiment {
+	opacity: 0.4;
 }

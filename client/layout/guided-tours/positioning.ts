@@ -1,5 +1,4 @@
 import { isMobile } from '@automattic/viewport';
-import { find, startsWith } from 'lodash';
 import { CSSProperties } from 'react';
 import scrollTo from 'calypso/lib/scroll-to';
 import { Coordinate, DialogPosition, ArrowPosition } from './types';
@@ -101,7 +100,7 @@ export function targetForSlug( targetSlug?: string ) {
 		: `[data-tip-target="${ targetSlug }"]`;
 
 	const targetEls = query( cssSelector );
-	return find( targetEls, hasNonEmptyClientRect ) || null;
+	return targetEls.find( hasNonEmptyClientRect ) || null;
 }
 
 export function getValidatedArrowPosition( {
@@ -130,7 +129,8 @@ export function getValidatedArrowPosition( {
 	}
 
 	if (
-		( startsWith( arrow, 'left' ) || startsWith( arrow, 'right' ) ) &&
+		arrow &&
+		( arrow.startsWith( 'left' ) || arrow.startsWith( 'right' ) ) &&
 		DIALOG_WIDTH > 0.98 * document.documentElement.clientWidth
 	) {
 		// window not wide enough for adding an arrow

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { computer, tablet, phone } from './icons';
+import { computer, tablet, phone } from '../../icons';
 import './preview-toolbar.scss';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
@@ -17,9 +17,9 @@ const DesignPickerPreviewToolbar = ( {
 	translate,
 } ) => {
 	const devices = React.useRef( {
-		computer: { title: translate( 'Desktop' ), icon: computer },
-		tablet: { title: translate( 'Tablet' ), icon: tablet },
-		phone: { title: translate( 'Phone' ), icon: phone },
+		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
+		tablet: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
+		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
 	} );
 
 	return (
@@ -36,7 +36,10 @@ const DesignPickerPreviewToolbar = ( {
 							} ) }
 							onClick={ () => setDeviceViewport( device ) }
 						>
-							<Icon size={ 24 } icon={ devices.current[ device ].icon } />
+							<Icon
+								size={ devices.current[ device ].iconSize }
+								icon={ devices.current[ device ].icon }
+							/>
 						</Button>
 					) ) }
 				</div>
@@ -49,7 +52,7 @@ const DesignPickerPreviewToolbar = ( {
 						<rect x="32" width="8" height="8" rx="4" />
 					</g>
 				</svg>
-				<span className="preview-toolbar__browser-url">{ externalUrl }</span>
+				{ externalUrl && <span className="preview-toolbar__browser-url">{ externalUrl }</span> }
 			</div>
 		</div>
 	);

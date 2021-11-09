@@ -27,9 +27,8 @@ export function requestActiveTheme( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.activeTheme( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/themes/mine` )
 			.then( ( theme ) => {
 				debug( 'Received current theme', theme );
 				// We want to store the theme object in the appropriate Redux subtree -- either 'wpcom'

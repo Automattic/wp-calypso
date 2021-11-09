@@ -772,7 +772,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.signup__step.is-design-setup-site {
+	.signup__step.is-design-setup-site, .signup__step.is-difm-design-setup-site {
 		.step-wrapper__header {
 			@include breakpoint-deprecated( '<660px' ) {
 				margin-left: 0;
@@ -783,17 +783,17 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		.design-picker__preview .step-wrapper__header {
 			margin-top: 40px;
 
-			@include break-mobile {
-				margin-top: 11px;
+			.formatted-header__title {
+				font-size: 2rem; /* stylelint-disable-line */
 			}
 
-			@include break-xlarge {
-				margin-top: 6px;
+			@include break-mobile {
+				margin-top: 12px;
 			}
 		}
 	}
 
-	button.is-primary {
+	button.is-borderless {
 		box-shadow: none;
 		border: 0;
 	}
@@ -801,6 +801,19 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.inline-help {
 		@include breakpoint-deprecated( '<660px' ) {
 			bottom: 74px;
+		}
+	}
+}
+/**
+ * Removed the navigation back button step from mobile viewports.
+ * This is done because the there is usally already a back button displayed to the user (Browser back button)
+ * and the current back button is redundent.
+*/
+body.is-section-signup.is-white-signup {
+	.signup__step.is-plans .step-wrapper__navigation,
+	.signup__step.is-domains .step-wrapper__navigation {
+		@include breakpoint-deprecated( '<660px' ) {
+			display: none;
 		}
 	}
 }

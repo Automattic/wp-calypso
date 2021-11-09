@@ -55,9 +55,7 @@ export class PeoplePage {
 		// For Invites tab, wait for the full request to be completed.
 		if ( name === 'Invites' ) {
 			await Promise.all( [
-				this.page.waitForResponse(
-					( response ) => response.url().includes( 'invites?' ) && response.status() === 200
-				),
+				this.page.waitForNavigation( { url: '**/people/invites/**', waitUntil: 'networkidle' } ),
 				clickNavTab( this.page, name ),
 			] );
 			return;
@@ -83,6 +81,8 @@ export class PeoplePage {
 	 * Delete the user from site.
 	 */
 	async deleteUser(): Promise< void > {
+		await this.page.waitForLoadState( 'networkidle' );
+
 		const elementHandle = await this.page.waitForSelector(
 			selectors.deletedUserContentAction( 'delete' )
 		);
@@ -95,7 +95,13 @@ export class PeoplePage {
 			elementHandle
 		);
 
-		await this.page.check( selectors.deletedUserContentAction( 'delete' ) );
+		// Native `page.check` sometimes fails here. Instead, click on the radio and wait for the
+		// Delete user button to become enabled.
+		await this.page.click( selectors.deletedUserContentAction( 'delete' ) );
+		await this.page.waitForSelector(
+			`${ selectors.deletedUserContentAction( 'delete' ) }:checked`
+		);
+
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.deleteUserButton ),
@@ -120,9 +126,28 @@ export class PeoplePage {
 	/**
 	 * Locate and click on a pending invite.
 	 *
+	 * This method will make several attempts to locate the pending invite.
+	 * Each attempt will wait 5 seconds before the page is refreshed and another attempt made.
+	 *
+	 * The retry mechanism is necessary due to Calypso sometimes not immediately reflecting
+	 * the newly invited user. This can occur due to large number of pending invites and also
+	 * because of faster-than-human execution speed of automated test frameworks.
+	 *
 	 * @param {string} emailAddress Email address of the pending user.
 	 */
 	async selectInvitedUser( emailAddress: string ): Promise< void > {
+		// Retry three times, each time allowing 5 seconds for Playwright to locate the
+		// pending user invite.
+		for ( let retries = 3; retries > 0; retries -= 1 ) {
+			try {
+				await this.page.waitForSelector( selectors.invitedUser( emailAddress ), {
+					timeout: 5 * 1000,
+				} );
+			} catch {
+				await this.page.reload();
+			}
+		}
+
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.invitedUser( emailAddress ) ),

@@ -3,17 +3,27 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
+import { useEffect, useState, useRef } from 'react';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import { stepsHeadingTransfer } from 'calypso/components/domains/connect-domain-step/constants';
-import { getDomainTransferrability } from 'calypso/components/domains/use-my-domain/utilities';
+import { stepsHeading } from 'calypso/components/domains/connect-domain-step/constants';
+import {
+	getAvailabilityErrorMessage,
+	getDomainInboundTransferStatusInfo,
+	getDomainTransferrability,
+} from 'calypso/components/domains/use-my-domain/utilities';
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
+import wpcom from 'calypso/lib/wp';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import './style.scss';
-import { StartStepProps } from './types';
+import { Maybe, StartStepProps } from './types';
 
-export default function TransferDomainStepStart( {
+import './style.scss';
+
+function TransferDomainStepStart( {
 	className,
 	pageSlug,
 	onNextStep,
@@ -21,15 +31,68 @@ export default function TransferDomainStepStart( {
 	domainInboundTransferStatusInfo,
 	domain,
 	isFetchingAvailability,
+	selectedSite,
 }: StartStepProps ): JSX.Element {
 	const { __ } = useI18n();
 	const switchToDomainConnect = () => page( MAP_EXISTING_DOMAIN );
-	const isDomainTransferrable = getDomainTransferrability( domainInboundTransferStatusInfo )
+	const [ inboundTransferStatusInfo, setInboundTransferStatusInfo ] = useState<
+		Maybe< typeof domainInboundTransferStatusInfo >
+	>( domainInboundTransferStatusInfo );
+	const [ isFetching, setIsFetching ] = useState( isFetchingAvailability );
+	const isDomainTransferrable = getDomainTransferrability( inboundTransferStatusInfo )
 		.transferrable;
+
+	const initialValidation = useRef( false );
+
+	// retrieves the availability data by itself if not provided by the parent component
+	useEffect( () => {
+		( async () => {
+			if ( initialValidation.current ) return;
+			if ( isFetching ) return;
+
+			if ( ! inboundTransferStatusInfo ) {
+				setIsFetching( true );
+
+				try {
+					const inboundTransferStatusResult = await getDomainInboundTransferStatusInfo( domain );
+
+					setInboundTransferStatusInfo( inboundTransferStatusResult );
+				} catch {
+					setInboundTransferStatusInfo( {} );
+				}
+			}
+
+			try {
+				setIsFetching( true );
+
+				const availabilityData = await wpcom.domain( domain ).isAvailable( {
+					apiVersion: '1.3',
+					is_cart_pre_check: false,
+				} );
+
+				if ( domainAvailability.TRANSFER_PENDING_SAME_USER !== availabilityData.status ) {
+					const availabilityErrorMessage = getAvailabilityErrorMessage( {
+						availabilityData,
+						domainName: domain,
+						selectedSite,
+					} );
+
+					if ( availabilityErrorMessage ) {
+						setInboundTransferStatusInfo( null );
+					}
+				}
+			} catch {
+				setInboundTransferStatusInfo( {} );
+			} finally {
+				initialValidation.current = true;
+				setIsFetching( false );
+			}
+		} )();
+	}, [ domain, inboundTransferStatusInfo, selectedSite, isFetching ] );
 
 	const stepContent = (
 		<>
-			{ ! isFetchingAvailability && ! isDomainTransferrable && (
+			{ ! isFetching && ! isDomainTransferrable && (
 				<Notice
 					status="is-error"
 					showDismiss={ false }
@@ -73,8 +136,8 @@ export default function TransferDomainStepStart( {
 				<Button
 					primary
 					onClick={ onNextStep }
-					disabled={ ! isDomainTransferrable }
-					busy={ isFetchingAvailability }
+					disabled={ isFetching || ! isDomainTransferrable }
+					busy={ isFetching }
 				>
 					{ __( 'Start setup' ) }
 				</Button>
@@ -85,10 +148,14 @@ export default function TransferDomainStepStart( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
-			heading={ stepsHeadingTransfer }
+			heading={ stepsHeading.TRANSFER }
 			progressStepList={ progressStepList }
 			pageSlug={ pageSlug }
 			stepContent={ stepContent }
 		/>
 	);
 }
+
+export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(
+	TransferDomainStepStart
+);

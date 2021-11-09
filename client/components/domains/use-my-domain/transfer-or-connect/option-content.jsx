@@ -12,6 +12,7 @@ export default function OptionContent( {
 	illustration,
 	learnMoreLink,
 	onSelect,
+	isPlaceholder,
 	pricing,
 	primary,
 	recommended,
@@ -24,13 +25,27 @@ export default function OptionContent( {
 	const pricingCostClasses = classNames( 'option-content__pricing-cost', {
 		[ 'has-sale-price' ]: pricing?.sale,
 	} );
+	const optionContentClasses = classNames( 'option-content__main', {
+		'is-placeholder': isPlaceholder,
+	} );
 
-	return (
+	return isPlaceholder ? (
+		<div className="option-content is-placeholder">
+			<div className="option-content__illustration" height={ 100 } width={ 150 }></div>
+			<div className="option-content__main">
+				<div className="option-content__header">
+					<h2> </h2>
+				</div>
+				<div className="option-content__top-text"></div>
+				<div className="option-content__learn-more"></div>
+			</div>
+		</div>
+	) : (
 		<div className="option-content">
 			<div className="option-content__illustration">
 				{ illustration && <img src={ illustration } alt="" width={ 150 } /> }
 			</div>
-			<div className="option-content__main">
+			<div className={ optionContentClasses }>
 				<div className="option-content__header">
 					<h2>{ titleText }</h2>
 					{ recommended && <Badge type="info-green">{ __( 'Recommended' ) }</Badge> }

@@ -39,7 +39,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
+		"@babel/runtime": "^7.16.0",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/i18n": "^4.2.2",
 		"classnames": "^2.3.1",
@@ -56,8 +56,8 @@
 	"peerDependencies": {
 		"@wordpress/data": "^6.1.0",
 		"react": "^17.0.2",
-		"react-native": "^0.65.0",
+		"react-native": "^0.66.2",
 		"reakit-utils": "^0.15.1",
-		"redux": "^4.0.5"
+		"redux": "^4.1.2"
 	}
 }

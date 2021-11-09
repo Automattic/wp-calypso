@@ -9,7 +9,9 @@ import './style.scss';
 
 // Total time to perform "loading"
 const DURATION_IN_MS = 6000;
-const HEADSTART_DURATION_IN_MS = 80000;
+const HEADSTART_DURATION_IN_MS = 60000;
+
+const flowsWithDesignPicker = [ 'setup-site', 'do-it-for-me' ];
 
 const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => {
 	const { __ } = useI18n();
@@ -19,27 +21,27 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 		case 'launch-site':
 			steps = [ __( 'Your site will be live shortly.' ) ]; // copy from 'packages/launch/src/focused-launch/success'
 			break;
-		case 'setup-site':
-			steps = [
-				__( 'Personalizing your site' ),
-				__( 'Applying your theme' ),
-				__( 'Turning on hosting' ),
-				__( 'Enabling SSL encryption' ),
-				__( 'Switching on email' ),
-				__( 'Applying Jetpack essentials' ),
-				__( 'Adding a domain' ),
-				__( 'Applying a plan' ),
-				__( 'Securing your information' ),
-				__( 'Optimizing your content' ),
-				__( 'Closing the loop' ),
-			];
-			break;
 		default:
 			steps = [
 				! isDestinationSetupSiteFlow && __( 'Building your site' ),
 				hasPaidDomain && __( 'Getting your domain' ),
 				! isDestinationSetupSiteFlow && __( 'Applying design' ),
 			];
+	}
+
+	if ( flowsWithDesignPicker.includes( flowName ) ) {
+		steps = [
+			__( 'Laying the foundations' ),
+			__( 'Turning on the lights' ),
+			__( 'Making it beautiful' ),
+			__( 'Personalizing your site' ),
+			__( 'Sprinkling some magic' ),
+			__( 'Securing your data' ),
+			__( 'Enabling encryption' ),
+			__( 'Optimizing your content' ),
+			__( 'Applying a shiny top coat' ),
+			__( 'Closing the loop' ),
+		];
 	}
 
 	return useRef( steps.filter( Boolean ) );
@@ -53,9 +55,12 @@ export default function ReskinnedProcessingScreen( props ) {
 	const steps = useSteps( props );
 	const { isDestinationSetupSiteFlow, flowName } = props;
 	const totalSteps = steps.current.length;
-	const shouldShowNewSpinner = isDestinationSetupSiteFlow || flowName === 'setup-site';
+	const shouldShowNewSpinner =
+		isDestinationSetupSiteFlow || flowsWithDesignPicker.includes( flowName );
 
-	const duration = flowName === 'setup-site' ? HEADSTART_DURATION_IN_MS : DURATION_IN_MS;
+	const duration = flowsWithDesignPicker.includes( flowName )
+		? HEADSTART_DURATION_IN_MS
+		: DURATION_IN_MS;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	/**

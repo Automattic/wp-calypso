@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
@@ -11,17 +12,26 @@ import Main from 'calypso/components/main';
 import VerticalNav from 'calypso/components/vertical-nav';
 import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/lib/domains';
 import { domainConnect } from 'calypso/lib/domains/constants';
+import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementNameServers,
+	domainManagementList,
+} from 'calypso/my-sites/domains/paths';
+import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DnsTemplates from '../name-servers/dns-templates';
 import DnsAddNew from './dns-add-new';
+import DnsAddNewRecordButton from './dns-add-new-record-button';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
+import DnsMenuOptionsButton from './dns-menu-options-button';
 import DomainConnectRecord from './domain-connect-record';
 
 import './style.scss';
@@ -34,6 +44,26 @@ class Dns extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		this.onRestoreSuccess = this.onRestoreSuccess.bind( this );
+		this.onRestoreError = this.onRestoreError.bind( this );
+		this.renderBreadcrumbs = this.renderBreadcrumbs.bind( this );
+	}
+
+	onRestoreSuccess() {
+		const { translate, selectedDomainName } = this.props;
+		this.props.fetchDns( selectedDomainName, true );
+		this.props.successNotice(
+			translate( 'Yay, the name servers have been successfully updated!' )
+		);
+	}
+
+	onRestoreError( errorMessage ) {
+		this.props.errorNotice( errorMessage );
+	}
 
 	renderDnsTemplates() {
 		const selectedDomain = getSelectedDomain( this.props );
@@ -49,8 +79,63 @@ class Dns extends Component {
 		);
 	}
 
+	renderHeader() {
+		const { translate, selectedDomainName } = this.props;
+		<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
+			{ translate( 'DNS Records' ) }
+		</Header>;
+	}
+
+	renderBreadcrumbs() {
+		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+
+		const items = [
+			{
+				label: translate( 'Domains' ),
+				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+			},
+			{
+				label: selectedDomainName,
+				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+			},
+			{ label: translate( 'DNS records' ) },
+		];
+
+		const mobileItem = {
+			label: translate( 'Back' ),
+			href: domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute ),
+			showBackArrow: true,
+		};
+
+		const buttons = [
+			<DnsAddNewRecordButton />,
+			<DnsMenuOptionsButton
+				domain={ selectedDomainName }
+				onSuccess={ this.onRestoreSuccess }
+				onError={ this.onRestoreError }
+			/>,
+		];
+
+		return (
+			<Breadcrumbs
+				items={ items }
+				mobileItem={ mobileItem }
+				buttons={ buttons }
+				mobileButtons={ buttons }
+			/>
+		);
+	}
+
+	renderPlaceholder() {
+		return config.isEnabled( 'domains/dns-records-redesign' ) ? (
+			<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+		) : (
+			<DomainMainPlaceholder goBack={ this.goBack } />
+		);
+	}
+
 	renderMain() {
-		const { dns, selectedDomainName, selectedSite, translate } = this.props;
+		const { dns, selectedDomainName, selectedSite } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const hasWpcomNameservers = domain?.hasWpcomNameservers ?? false;
 		const domainConnectEnabled = some( dns.records, {
@@ -60,10 +145,10 @@ class Dns extends Component {
 		} );
 
 		return (
-			<Main className="dns">
-				<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
-					{ translate( 'DNS Records' ) }
-				</Header>
+			<Main wideLayout className="dns">
+				{ config.isEnabled( 'domains/dns-records-redesign' )
+					? this.renderBreadcrumbs()
+					: this.renderHeader() }
 				<Card>
 					<DnsDetails />
 					<DnsList
@@ -93,7 +178,7 @@ class Dns extends Component {
 			<Fragment>
 				<QuerySiteDomains siteId={ selectedSite.ID } />
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? <DomainMainPlaceholder goBack={ this.goBack } /> : this.renderMain() }
+				{ showPlaceholder ? this.renderPlaceholder() : this.renderMain() }
 			</Fragment>
 		);
 	}
@@ -112,18 +197,21 @@ class Dns extends Component {
 	};
 }
 
-export default connect( ( state, { selectedDomainName } ) => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySiteId( state, selectedSite.ID );
-	const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
-	const dns = getDomainDns( state, selectedDomainName );
-	const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
+export default connect(
+	( state, { selectedDomainName } ) => {
+		const selectedSite = getSelectedSite( state );
+		const domains = getDomainsBySiteId( state, selectedSite.ID );
+		const isRequestingDomains = isRequestingSiteDomains( state, selectedSite.ID );
+		const dns = getDomainDns( state, selectedDomainName );
+		const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
 
-	return {
-		selectedSite,
-		domains,
-		dns,
-		showPlaceholder,
-		currentRoute: getCurrentRoute( state ),
-	};
-} )( localize( Dns ) );
+		return {
+			selectedSite,
+			domains,
+			dns,
+			showPlaceholder,
+			currentRoute: getCurrentRoute( state ),
+		};
+	},
+	{ successNotice, errorNotice, fetchDns }
+)( localize( Dns ) );

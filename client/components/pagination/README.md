@@ -14,15 +14,16 @@ function render() {
 
 ### Props
 
-| Name          | Type       | Default | Description                                                                                      |
-| ------------- | ---------- | ------- | ------------------------------------------------------------------------------------------------ |
-| `page`\*      | `integer`  | null    | The current active page number.                                                                  |
-| `perPage`\*   | `integer`  | null    | Number of records shown per page.                                                                |
-| `total`\*     | `integer`  | null    | Total number of records.                                                                         |
-| `pageClick`\* | `function` | null    | Function called when a pagination item is clicked - the page clicked is provided as an argument. |
-| `compact`     | `bool`     | false   | Render a smaller version.                                                                        |
-| `nextLabel`   | `string`   | null    | Overrides the "Next" button label.                                                               |
-| `prevLabel`   | `string`   | null    | Overrides the "Previous" button label.                                                           |
+| Name          | Type                    | Default  | Description                                                                                      |
+| ------------- | ----------------------- | -------- | ------------------------------------------------------------------------------------------------ |
+| `page`\*      | `integer`               | null     | The current active page number.                                                                  |
+| `perPage`\*   | `integer`               | null     | Number of records shown per page.                                                                |
+| `total`\*     | `integer`               | null     | Total number of records.                                                                         |
+| `pageClick`\* | `function`              | null     | Function called when a pagination item is clicked - the page clicked is provided as an argument. |
+| `compact`     | `bool`                  | false    | Render a smaller version.                                                                        |
+| `nextLabel`   | `string`                | null     | Overrides the "Next" button label.                                                               |
+| `prevLabel`   | `string`                | null     | Overrides the "Previous" button label.                                                           |
+| `variant`     | `PaginationVariant`     | outlined | Sets the style of the component                                                                  |
 
 ### General guidelines
 

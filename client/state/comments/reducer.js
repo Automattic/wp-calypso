@@ -24,18 +24,16 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_UPDATES_RECEIVE,
 	COMMENTS_UNLIKE,
-	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_WRITE_ERROR,
 	COMMENTS_SET_ACTIVE_REPLY,
 } from 'calypso/state/action-types';
 import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	PLACEHOLDER_STATE,
 	NUMBER_OF_COMMENTS_PER_FETCH,
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
-import trees from './trees/reducer';
 import ui from './ui/reducer';
 import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './utils';
 
@@ -383,18 +381,6 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-export const treesInitializedReducer = ( state = {}, action ) => {
-	if ( action.type === COMMENTS_TREE_SITE_ADD ) {
-		return true;
-	}
-	return state;
-};
-
-export const treesInitialized = keyedReducer(
-	'siteId',
-	keyedReducer( 'status', treesInitializedReducer )
-);
-
 /**
  * Stores the active reply comment for a given siteId and postId
  *
@@ -536,8 +522,6 @@ const combinedReducer = combineReducers( {
 	errors,
 	expansions,
 	totalCommentsCount,
-	trees,
-	treesInitialized,
 	activeReplies,
 	ui,
 } );

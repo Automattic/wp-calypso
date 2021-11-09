@@ -37,8 +37,10 @@ import {
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
+	emailManagementPurchaseNewEmailAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
+import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -49,12 +51,14 @@ import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite, getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -152,6 +156,15 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	clientRender( reactContext );
 }
 
+function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
+	reactContext.primary = <DIFMLiteInProgress siteId={ selectedSite.ID } />;
+
+	reactContext.secondary = createNavigation( reactContext );
+
+	makeLayout( reactContext, noop );
+	clientRender( reactContext );
+}
+
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) {
 	const allPaths = [
 		domainManagementContactsPrivacy,
@@ -171,6 +184,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
 		emailManagementNewTitanAccount,
+		emailManagementPurchaseNewEmailAccount,
 		emailManagementTitanControlPanelRedirect,
 	];
 
@@ -236,6 +250,24 @@ function onSelectedSiteAvailable( context ) {
 		)
 	) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
+		return false;
+	}
+
+	/**
+	 * The paths allowed for domain-only sites and DIFM in-progress sites are the same.
+	 * Ignore this check if we are inside a support session.
+	 */
+	if (
+		isDIFMLiteInProgress( state, selectedSite.ID ) &&
+		! isPathAllowedForDomainOnlySite(
+			context.pathname,
+			selectedSite.slug,
+			primaryDomain,
+			context.params
+		) &&
+		! isSupportSession( state )
+	) {
+		renderSelectedSiteIsDIFMLiteInProgress( context, selectedSite );
 		return false;
 	}
 

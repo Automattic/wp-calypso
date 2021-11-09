@@ -140,14 +140,11 @@ class Security2faSMSSettings extends Component {
 		return (
 			<div className="security-2fa-sms-settings__container">
 				<form className="security-2fa-sms-settings">
-					<Security2faProgress step={ 1 } />
+					<Security2faProgress step={ 1 } isSmsFlow />
 
 					<p>
 						{ this.props.translate(
-							'First, we need your Mobile Phone number to ' +
-								'send you verification codes when you choose the SMS method or ' +
-								'in cases where the authenticator app on your phone is ' +
-								'unavailable.'
+							'We need your mobile phone number to send you two-step verification codes when you log in.'
 						) }
 					</p>
 
@@ -177,19 +174,7 @@ class Security2faSMSSettings extends Component {
 					<FormButtonsBar className="security-2fa-sms-settings__buttons">
 						<FormButton
 							disabled={ this.getSubmitDisabled() }
-							onClick={ ( event ) => {
-								gaRecordEvent( 'Me', 'Clicked On 2fa Use App Button' );
-								this.onVerifyByApp( event );
-							} }
-						>
-							{ this.props.isUpdatingUserSettings
-								? savingLabel
-								: this.props.translate( 'Verify via App' ) }
-						</FormButton>
-
-						<FormButton
-							disabled={ this.getSubmitDisabled() }
-							isPrimary={ false }
+							isPrimary
 							onClick={ ( event ) => {
 								gaRecordEvent( 'Me', 'Clicked On 2fa Use SMS Button' );
 								this.onVerifyBySMS( event );
@@ -197,7 +182,7 @@ class Security2faSMSSettings extends Component {
 						>
 							{ this.props.isUpdatingUserSettings
 								? savingLabel
-								: this.props.translate( 'Verify via SMS' ) }
+								: this.props.translate( 'Continue' ) }
 						</FormButton>
 
 						<FormButton

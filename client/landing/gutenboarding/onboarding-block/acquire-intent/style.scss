@@ -24,6 +24,7 @@
 	@include break-medium {
 		margin: 0 -88px; // override block margins
 		padding: 64px;
+		// stylelint-disable-next-line declaration-property-unit-allowed-list
 		font-size: 64px;
 	}
 }
@@ -69,6 +70,7 @@
 	display: flex;
 	color: var( --studio-gray-50 );
 	font-family: $default-font;
+	// stylelint-disable-next-line declaration-property-unit-allowed-list
 	font-size: 14px;
 	line-height: 14px;
 	opacity: 0;
@@ -95,6 +97,18 @@
 	margin-top: 20px;
 	display: flex;
 	justify-content: flex-end;
+
+	@include break-small {
+		margin-top: 40px;
+		justify-content: flex-start;
+	}
+}
+
+// The Action Buttons footer is only displayed in the FSE Beta flow,
+// where the Acquire Intent step gains an additional "go back" button.
+.acquire-intent__footer.action-buttons {
+	margin: 0;
+	justify-content: space-between;
 
 	@include break-small {
 		margin-top: 40px;

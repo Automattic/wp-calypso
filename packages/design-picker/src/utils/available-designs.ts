@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { shuffle } from '@automattic/js-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { availableDesignsConfig } from './available-designs-config';
-import { shuffleArray } from './shuffle';
 import type { MShotsOptions } from '../components/mshots-image';
 import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
@@ -35,7 +35,8 @@ export const mShotOptions = ( { preview }: Design, highRes: boolean ): MShotsOpt
 	return {
 		vpw: 1600,
 		vph: preview === 'static' ? 1040 : 1600,
-		w: highRes ? 1200 : 600,
+		// When `w` was 1200 it created a visual glitch on one thumbnail. #57261
+		w: highRes ? 1201 : 600,
 		screen_height: 3600,
 	};
 };
@@ -77,7 +78,7 @@ export function getAvailableDesigns( {
 	};
 
 	if ( randomize ) {
-		designs.featured = shuffleArray( designs.featured );
+		designs.featured = shuffle( designs.featured );
 	}
 
 	// Force blank canvas design to always be first in the list

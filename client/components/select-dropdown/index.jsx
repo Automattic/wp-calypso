@@ -4,6 +4,7 @@ import { filter, find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
 import Count from 'calypso/components/count';
+import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import DropdownItem from './item';
 import DropdownLabel from './label';
@@ -134,12 +135,15 @@ class SelectDropdown extends Component {
 		if ( this.props.children ) {
 			// add refs and focus-on-click handlers to children
 			return Children.map( this.props.children, ( child ) => {
-				if ( ! child || child.type !== DropdownItem ) {
+				if (
+					! child ||
+					! [ DropdownItem, DropdownSeparator, DropdownLabel ].includes( child.type )
+				) {
 					return null;
 				}
 
 				return cloneElement( child, {
-					ref: this.setItemRef( refIndex++ ),
+					ref: child.type === DropdownItem ? this.setItemRef( refIndex++ ) : null,
 					onClick: ( event ) => {
 						this.dropdownContainerRef.current.focus();
 						if ( typeof child.props.onClick === 'function' ) {
@@ -203,7 +207,9 @@ class SelectDropdown extends Component {
 				>
 					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
 						<span className="select-dropdown__header-text">
-							{ selectedIcon && selectedIcon.type === Gridicon ? selectedIcon : null }
+							{ selectedIcon && [ Gridicon, MaterialIcon ].includes( selectedIcon.type )
+								? selectedIcon
+								: null }
 							{ selectedText }
 						</span>
 						{ 'number' === typeof this.props.selectedCount && (

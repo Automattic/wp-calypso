@@ -68,34 +68,10 @@
 		left: -3px;
 		top: 3px;
 	}
-	
-	.comments__comment-actions-approve,
-	.comments__comment-actions-trash,
-	.comments__comment-actions-spam,
-	.comments__comment-actions-edit {
-		display: none;
-	}
-
-	@include breakpoint-deprecated( '>660px' ) {
-		.comments__comment-actions-approve,
-		.comments__comment-actions-trash,
-		.comments__comment-actions-spam,
-		.comments__comment-actions-edit {
-			display: inline;
-		}
-
-		.ellipsis-menu {
-			display: none;
-		}
-	}
 
 	@include breakpoint-deprecated( '<480px' ) {
 		.like-button .like-button__label-status {
 			display: inline;
 		}
 	}
-}
-
-.comments__comment-actions-moderation-tools {
-	display: inline-block;
 }

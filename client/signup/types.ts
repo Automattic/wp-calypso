@@ -5,7 +5,7 @@ export interface Dependencies {
 export interface Flow {
 	name: string;
 	steps: string[];
-	destination: string | ( ( dependencies: Dependencies ) => string );
+	destination: string | ( ( dependencies: Dependencies, localeSlug: string ) => string );
 	description: string;
 	lastModified: string;
 	pageTitle?: string;
@@ -15,3 +15,5 @@ export interface Flow {
 	showRecaptcha?: boolean;
 	enableBranchSteps?: boolean;
 }
+
+export type GoToStep = ( stepName: string, stepSectionName?: string, flowName?: string ) => void;

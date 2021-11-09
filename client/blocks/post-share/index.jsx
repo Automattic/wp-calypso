@@ -418,7 +418,7 @@ class PostShare extends Component {
 	}
 
 	renderRequestSharingNotice() {
-		const { failure, requesting, success, translate, moment } = this.props;
+		const { failed, requesting, success, translate, moment } = this.props;
 
 		if ( this.props.scheduling ) {
 			return (
@@ -461,7 +461,7 @@ class PostShare extends Component {
 			);
 		}
 
-		if ( failure ) {
+		if ( failed ) {
 			return (
 				<Notice status="is-error" onDismissClick={ this.dismiss }>
 					{ translate( "Something went wrong. Please don't be mad." ) }

@@ -18,10 +18,12 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"build": "yarn clean && BROWSERSLIST_ENV=wpcom calypso-build"
+		"build:o2-blocks": "calypso-build",
+		"dev": "node ../../bin/build-calypso-app.mjs --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/a8c-blocks",
+		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
-		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-build": "^10.0.0",
 		"@wordpress/api-fetch": "^5.2.2",
 		"@wordpress/base-styles": "^4.0.0",
 		"@wordpress/block-editor": "^7.0.2",
@@ -40,15 +42,15 @@
 		"new-github-issue-url": "^0.2.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"react-native": "^0.65.0",
+		"react-native": "^0.66.2",
 		"reakit-utils": "^0.15.1",
-		"redux": "^4.0.5"
+		"redux": "^4.1.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"enzyme": "^3.11.0",
 		"jest": "^27.2.4",
-		"postcss": "^8.2.6",
-		"webpack": "^5.54.0"
+		"postcss": "^8.3.11",
+		"webpack": "^5.62.1"
 	}
 }

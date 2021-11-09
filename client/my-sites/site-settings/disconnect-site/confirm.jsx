@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
-import { find, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DisconnectJetpack from 'calypso/blocks/disconnect-jetpack';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -18,7 +17,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 
-class ConfirmDisconnection extends PureComponent {
+class ConfirmDisconnection extends Component {
 	static propTypes = {
 		reason: PropTypes.string,
 		type: PropTypes.string,
@@ -45,7 +44,7 @@ class ConfirmDisconnection extends PureComponent {
 
 		const surveyData = {
 			'why-cancel': {
-				response: find( this.constructor.allowedReasons, ( r ) => r === reason ),
+				response: this.constructor.allowedReasons.find( ( r ) => r === reason ),
 				text: Array.isArray( text ) ? text.join() : text,
 			},
 			source: {
@@ -53,7 +52,7 @@ class ConfirmDisconnection extends PureComponent {
 			},
 		};
 
-		submitSurvey(
+		this.props.submitSurvey(
 			'calypso-disconnect-jetpack-july2019',
 			siteId,
 			enrichedSurveyData( surveyData, purchase )
@@ -92,18 +91,17 @@ class ConfirmDisconnection extends PureComponent {
 	}
 }
 
-const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		purchase: getCurrentPlan( state, siteId ),
-		site: getSelectedSite( state ),
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-	};
-} );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			purchase: getCurrentPlan( state, siteId ),
+			site: getSelectedSite( state ),
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	},
+	{ submitSurvey }
+);
 
-export default flowRight(
-	connectComponent,
-	localize,
-	redirectNonJetpack()
-)( ConfirmDisconnection );
+export default connectComponent( localize( redirectNonJetpack()( ConfirmDisconnection ) ) );

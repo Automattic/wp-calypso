@@ -1,5 +1,5 @@
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -34,6 +34,7 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
+import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import type { Domain } from '@automattic/data-stores';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -149,17 +150,18 @@ export default function getThankYouPageUrl( {
 		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug;
 
-		const thankYouUrlSiteLess = `/checkout/jetpack/thank-you/no-site/${
-			productSlug ?? 'no_product'
-		}`;
+		const thankYouUrl = isEnabled( 'jetpack/user-licensing' )
+			? `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug ?? 'no_product' }`
+			: `/checkout/jetpack/thank-you/no-site/${ productSlug ?? 'no_product' }`;
 
-		const isValidReceiptId = ! isNaN( parseInt( pendingOrReceiptId ) );
+		const isValidReceiptId =
+			! isNaN( parseInt( pendingOrReceiptId ) ) || pendingOrReceiptId === ':receiptId';
 		return addQueryArgs(
 			{
 				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
-			thankYouUrlSiteLess
+			thankYouUrl
 		);
 	}
 
@@ -496,11 +498,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	if (
-		! config.isEnabled( 'upsell/professional-email' ) ||
-		hasGoogleApps( cart ) ||
-		hasTitanMail( cart )
-	) {
+	if ( hasGoogleApps( cart ) || hasTitanMail( cart ) ) {
 		return;
 	}
 
@@ -536,7 +534,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	return `/checkout/offer-professional-email/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
+	return `/checkout/offer/${ PROFESSIONAL_EMAIL_OFFER }/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
 }
 
 function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useStripe } from '@automattic/calypso-stripe';
 import { Card, Gridicon } from '@automattic/components';
 import {
@@ -12,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getStoredPaymentAgreements } from 'calypso/state/stored-cards/selectors';
@@ -26,20 +28,41 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
-import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { CheckoutPageErrorCallback, PaymentMethod } from '@automattic/composite-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
+function useLogError( message: string ): CheckoutPageErrorCallback {
+	return useCallback(
+		( errorType, errorMessage ) => {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'payment_method_selector',
+					message: String( errorMessage ),
+					errorType,
+				},
+			} );
+		},
+		[ message ]
+	);
+}
+
 export default function PaymentMethodSelector( {
 	purchase,
 	paymentMethods,
 	successCallback,
+	eventContext,
 }: {
 	purchase?: Purchase;
 	paymentMethods: PaymentMethod[];
 	successCallback: () => void;
+	eventContext?: string;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
@@ -68,6 +91,8 @@ export default function PaymentMethodSelector( {
 		},
 		[ reduxDispatch ]
 	);
+
+	const logError = useLogError( 'payment method selector page load error' );
 
 	const currentPaymentMethodNotAvailable = ! paymentMethods.some(
 		( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
@@ -98,11 +123,13 @@ export default function PaymentMethodSelector( {
 			}
 			onPaymentRedirect={ showRedirectMessage }
 			onPaymentError={ showErrorMessage }
+			onPageLoadError={ logError }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
 				paypal: () => assignPayPalProcessor( purchase, reduxDispatch ),
-				'existing-card': ( data ) => assignExistingCardProcessor( purchase, reduxDispatch, data ),
-				card: ( data ) =>
+				'existing-card': ( data: unknown ) =>
+					assignExistingCardProcessor( purchase, reduxDispatch, data ),
+				card: ( data: unknown ) =>
 					assignNewCardProcessor(
 						{
 							purchase,
@@ -111,6 +138,7 @@ export default function PaymentMethodSelector( {
 							stripeConfiguration,
 							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 							reduxDispatch,
+							eventSource: eventContext,
 						},
 						data
 					),

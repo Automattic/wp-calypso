@@ -5,7 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 import {
 	getAvailableDesigns,
 	getDesignUrl,
@@ -61,7 +61,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const isBlankCanvas = isBlankCanvasDesign( design );
 
 	const defaultTitle = design.title;
-	const blankCanvasTitle = __( 'Start with an empty page', __i18n_text_domain__ );
+	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
 	return (
@@ -71,6 +71,15 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
 			onClick={ () => onSelect( design ) }
 		>
+			<span className="design-picker__design-option-header">
+				<svg width="28" height="6">
+					<g>
+						<rect width="6" height="6" rx="3" />
+						<rect x="11" width="6" height="6" rx="3" />
+						<rect x="22" width="6" height="6" rx="3" />
+					</g>
+				</svg>
+			</span>
 			<span
 				className={ classnames(
 					'design-picker__image-frame',
@@ -81,7 +90,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			>
 				{ isBlankCanvas ? (
 					<div className="design-picker__image-frame-blank-canvas__title">
-						{ __( 'Blank Canvas' ) }
+						{ __( 'Start from scratch', __i18n_text_domain__ ) }
 					</div>
 				) : (
 					<div className="design-picker__image-frame-inside">
@@ -118,11 +127,15 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 	onPreview,
 } ) => {
 	const { __ } = useI18n();
-	const isBlankCanvas = isBlankCanvasDesign( design );
-	const designTitle = isBlankCanvas ? __( 'Blank Canvas' ) : design.title;
 
 	return (
 		<div className="design-button-cover">
+			{ /* Make all of design button clickable and default behavior is preview  */ }
+			<button
+				className="design-button-cover__button-overlay"
+				tabIndex={ -1 }
+				onClick={ () => onPreview( design ) }
+			/>
 			<div className="design-button-cover__button-groups">
 				<Button
 					className="design-button-cover__button"
@@ -131,13 +144,13 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 				>
 					{
 						// translators: %s is the title of design with currency. Eg: Alves
-						sprintf( __( 'Start with %s', __i18n_text_domain__ ), designTitle )
+						sprintf( __( 'Start with %s', __i18n_text_domain__ ), design.title )
 					}
 				</Button>
 				<Button className="design-button-cover__button" onClick={ () => onPreview( design ) }>
 					{
 						// translators: %s is the title of design with currency. Eg: Alves
-						sprintf( __( 'Preview %s', __i18n_text_domain__ ), designTitle )
+						sprintf( __( 'Preview %s', __i18n_text_domain__ ), design.title )
 					}
 				</Button>
 			</div>
@@ -154,6 +167,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	...props
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
+	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
 	if ( ! onPreview ) {
 		return <DesignButton { ...props } />;
@@ -164,14 +178,17 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 		return <DesignButton { ...props } onSelect={ onPreview } />;
 	}
 
+	// We don't need preview for blank canvas
 	return (
 		<div className="design-button-container">
-			<DesignButtonCover
-				design={ props.design }
-				onSelect={ props.onSelect }
-				onPreview={ onPreview }
-			/>
-			<DesignButton { ...props } disabled />
+			{ ! isBlankCanvas && (
+				<DesignButtonCover
+					design={ props.design }
+					onSelect={ props.onSelect }
+					onPreview={ onPreview }
+				/>
+			) }
+			<DesignButton { ...props } disabled={ ! isBlankCanvas } />
 		</div>
 	);
 };
@@ -187,6 +204,7 @@ export interface DesignPickerProps {
 	className?: string;
 	highResThumbnails?: boolean;
 	showCategoryFilter?: boolean;
+	categoriesHeading?: ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -202,6 +220,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	showCategoryFilter = false,
+	categoriesHeading,
 } ) => {
 	const categories = gatherCategories( designs );
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
@@ -229,6 +248,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					categories={ categories }
 					selectedCategory={ selectedCategory }
 					onSelect={ setSelectedCategory }
+					heading={ categoriesHeading }
 				/>
 			) }
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>

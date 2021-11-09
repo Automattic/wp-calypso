@@ -343,6 +343,17 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'importer',
+			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
+			destination: '/',
+			pageTitle: translate( 'Import your site content' ),
+			description: 'A new import flow that can be used from the onboarding flow',
+			lastModified: '2021-10-18',
+			disallowResume: true,
+			hideFlowProgress: true,
+			providesDependenciesInQuery: [ 'siteSlug' ],
+		},
+		{
 			name: 'reader',
 			steps: [ 'reader-landing', 'user' ],
 			destination: '/',
@@ -408,14 +419,14 @@ export function generateFlows( {
 		{
 			name: 'setup-site',
 			steps: isEnabled( 'signup/hero-flow' )
-				? [ 'intent', 'site-options', 'design-setup-site' ]
+				? [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ]
 				: [ 'design-setup-site' ],
 			destination: isEnabled( 'signup/hero-flow' )
 				? getDestinationFromIntent
 				: getChecklistThemeDestination,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
-			lastModified: '2021-09-02',
+			lastModified: '2021-10-14',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
 			pageTitle: translate( 'Setup your site' ),
@@ -423,10 +434,20 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [ 'user', 'difm-design', 'site-info-collection', 'domains' ],
+			steps: [ 'user', 'difm-design-setup-site', 'site-info-collection', 'domains' ],
 			destination: getSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			lastModified: '2021-09-30',
+		},
+		{
+			name: 'woocommerce-install',
+			pageTitle: translate( 'Add WooCommerce to your site' ),
+			steps: [ 'confirm', 'transfer', 'install', 'complete' ],
+			destination: '/',
+			description: 'Onboarding and installation flow for woocommerce on all plans.',
+			providesDependenciesInQuery: [ 'siteSlug' ],
+			disallowResume: true,
+			lastModified: '2021-11-08',
 		},
 	];
 

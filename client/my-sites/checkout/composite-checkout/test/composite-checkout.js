@@ -490,6 +490,7 @@ describe( 'CompositeCheckout', () => {
 						success: email === 'passes',
 					};
 				} );
+			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 
 			render(
 				<MyCheckout
@@ -972,7 +973,7 @@ describe( 'CompositeCheckout', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
 		} );
 	} );
 
@@ -989,7 +990,7 @@ describe( 'CompositeCheckout', () => {
 		await waitFor( () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 5 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
 		} );
 	} );
 

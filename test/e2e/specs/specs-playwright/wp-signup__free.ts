@@ -11,13 +11,13 @@ import {
 	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
-	BrowserHelper,
 	CloseAccountFlow,
 	GutenboardingFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
+// Skipping while new onboarding flows are in transition and we map the new tests
+describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
 	const email = DataHelper.getTestEmailAddress( {
@@ -72,13 +72,9 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Return to Home dashboard', async function () {
 			// Temporary workaround due to https://github.com/Automattic/wp-calypso/issues/51162.
 			// Conditional can be removed once fixed.
-			if ( BrowserHelper.getTargetDeviceName() === 'mobile' ) {
-				await page.goBack();
-			} else {
-				gutenbergEditorPage = new GutenbergEditorPage( page );
-				await gutenbergEditorPage.openNavSidebar();
-				await gutenbergEditorPage.returnToDashboard();
-			}
+			gutenbergEditorPage = new GutenbergEditorPage( page );
+			await gutenbergEditorPage.openNavSidebar();
+			await gutenbergEditorPage.returnToHomeDashboard();
 		} );
 	} );
 

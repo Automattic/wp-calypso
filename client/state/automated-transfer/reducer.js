@@ -3,6 +3,7 @@ import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
+	AUTOMATED_TRANSFER_STATUS_REQUEST_ONCE as REQUEST_STATUS_ONCE,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
 } from 'calypso/state/action-types';
 import {
@@ -45,6 +46,8 @@ export const status = withPersistence( ( state = null, action ) => {
 export const fetchingStatus = ( state = false, action ) => {
 	switch ( action.type ) {
 		case REQUEST_STATUS:
+			return true;
+		case REQUEST_STATUS_ONCE:
 			return true;
 		case SET_STATUS:
 			return false;

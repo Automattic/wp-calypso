@@ -322,6 +322,10 @@ export class PlanFeatures extends Component {
 
 		// move any popular plan to the first place in the mobile view.
 		let popularPlanProperties;
+
+		// move disabled plans to the bottom of the list
+		const disabledPlanProperties = [];
+
 		const reorderedPlans = planProperties.filter( ( properties ) => {
 			if ( isFreePlan( properties.planName ) ) {
 				freePlanProperties = properties;
@@ -330,6 +334,12 @@ export class PlanFeatures extends Component {
 			// remove the popular plan.
 			if ( properties.popular && ! popularPlanProperties ) {
 				popularPlanProperties = properties;
+				return false;
+			}
+
+			// remove disabled plans.
+			if ( properties.isDisabled ) {
+				disabledPlanProperties.push( properties );
 				return false;
 			}
 			return true;
@@ -341,6 +351,12 @@ export class PlanFeatures extends Component {
 
 		if ( freePlanProperties ) {
 			reorderedPlans.push( freePlanProperties );
+		}
+
+		if ( disabledPlanProperties.length > 0 ) {
+			disabledPlanProperties.forEach( ( plan ) => {
+				reorderedPlans.push( plan );
+			} );
 		}
 
 		let buttonText = null;
@@ -366,13 +382,19 @@ export class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
+				isDisabled,
 			} = properties;
 			const { rawPrice, discountPrice, isMonthlyPlan } = properties;
 			const planDescription = isInVerticalScrollingPlansExperiment
 				? planConstantObj.getShortDescription()
 				: planConstantObj.getDescription();
 			return (
-				<div className="plan-features__mobile-plan" key={ planName }>
+				<div
+					className={ classNames( 'plan-features__mobile-plan', {
+						'plan-features__mobile-disabled': isDisabled,
+					} ) }
+					key={ planName }
+				>
 					<PlanFeaturesHeader
 						availableForPurchase={ availableForPurchase }
 						current={ current }
@@ -399,6 +421,11 @@ export class PlanFeatures extends Component {
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
 						isInSignup={ isInSignup }
 					/>
+					{ isDisabled && (
+						<p className="plan-features__not-available">
+							This plan is only available with annual billing
+						</p>
+					) }
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
 						availableForPurchase={ availableForPurchase }
@@ -408,6 +435,7 @@ export class PlanFeatures extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
+						isDisabled={ isDisabled }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						isLaunchPage={ isLaunchPage }
@@ -828,6 +856,8 @@ PlanFeatures.propTypes = {
 	siteId: PropTypes.number,
 	sitePlan: PropTypes.object,
 	kindOfPlanTypeSelector: PropTypes.oneOf( [ 'interval', 'customer' ] ),
+	monthlyDisabled: PropTypes.bool,
+	intervalType: PropTypes.string,
 };
 
 PlanFeatures.defaultProps = {
@@ -838,6 +868,7 @@ PlanFeatures.defaultProps = {
 	siteId: null,
 	onUpgradeClick: noop,
 	kindOfPlanTypeSelector: 'customer',
+	monthlyDisabled: false,
 };
 
 export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
@@ -877,10 +908,13 @@ const ConnectedPlanFeatures = connect(
 			placeholder,
 			plans,
 			isLandingPage,
+			monthlyDisabled,
 			siteId,
 			visiblePlans,
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
+			intervalType,
+			withScroll,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -912,7 +946,24 @@ const ConnectedPlanFeatures = connect(
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
-				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
+
+				// label Personal and Premium monthly plan options as disabled for the monthly disabled test
+				let isDisabled = false;
+				if (
+					! withScroll &&
+					intervalType === 'monthly' &&
+					monthlyDisabled &&
+					( planObject?.product_name_short === 'Premium' ||
+						planObject?.product_name_short === 'Personal' )
+				) {
+					isDisabled = true;
+				}
+
+				// Make Business plan popular for the monthly plans disabled test
+				const popular = monthlyDisabled
+					? planObject?.product_name_short === 'Business'
+					: popularPlanSpec && planMatches( plan, popularPlanSpec );
+
 				const newPlan = false;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
@@ -995,7 +1046,9 @@ const ConnectedPlanFeatures = connect(
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
 					features: planFeatures,
+					isDisabled,
 					isLandingPage,
+					isMonthlyPlan,
 					isPlaceholder,
 					planConstantObj,
 					planName: plan,
@@ -1014,7 +1067,6 @@ const ConnectedPlanFeatures = connect(
 					rawPrice,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
-					isMonthlyPlan,
 				};
 			} )
 		);

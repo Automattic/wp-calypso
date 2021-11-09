@@ -1,10 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import IntentScreen from './intent-screen';
 import type { IntentFlag } from './types';
@@ -17,8 +19,12 @@ interface Props {
 }
 
 const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
-	write: [ 'design-setup-site' ],
-	build: [ 'site-options' ],
+	write: [],
+	build: [ 'site-options', 'starting-point' ],
+};
+
+const EXTERNAL_FLOW: { [ key: string ]: string } = {
+	import: 'importer',
 };
 
 export default function IntentStep( props: Props ): React.ReactNode {
@@ -30,10 +36,15 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	const branchSteps = useBranchSteps( stepName );
 
 	const submitIntent = ( intent: IntentFlag ) => {
-		branchSteps( EXCLUDE_STEPS[ intent ] );
 		recordTracksEvent( 'calypso_signup_select_intent', { intent } );
-		dispatch( submitSignupStep( { stepName }, { intent } ) );
-		goToNextStep();
+
+		if ( EXTERNAL_FLOW[ intent ] ) {
+			page( getStepUrl( EXTERNAL_FLOW[ intent ] ) );
+		} else {
+			branchSteps( EXCLUDE_STEPS[ intent ] );
+			dispatch( submitSignupStep( { stepName }, { intent } ) );
+			goToNextStep();
+		}
 	};
 
 	// Only do following things when mounted

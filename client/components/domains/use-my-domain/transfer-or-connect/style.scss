@@ -168,6 +168,20 @@
 					}
 				}
 			}
+
+			&.is-placeholder {
+				.option-content {
+					&__illustration, &__header, &__top-text, &__learn-more {
+						@include placeholder( --color-neutral-10 );
+						color: transparent;
+					}
+
+					&__learn-more {
+						width: 70px;
+						margin-top: 2px;
+					}
+				}
+			}
 		}
 	}
 

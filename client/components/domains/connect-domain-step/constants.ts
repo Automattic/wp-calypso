@@ -52,14 +52,28 @@ export const domainLockStatusType = {
 	UNKNOWN: 'unknown',
 } as const;
 
-export const stepsHeadingSuggested = __( 'Suggested setup' );
-export const stepsHeadingAdvanced = __( 'Advanced setup' );
-export const stepsHeadingOwnershipVerification = __( 'Verify domain ownership' );
-export const stepsHeadingTransfer = __( 'Initial setup' );
+export const stepsHeading = {
+	get SUGGESTED() {
+		return __( 'Suggested setup' );
+	},
+	get ADVANCED() {
+		return __( 'Advanced setup' );
+	},
+	get OWNERSHIP_VERIFICATION() {
+		return __( 'Verify domain ownership' );
+	},
+	get TRANSFER() {
+		return __( 'Initial setup' );
+	},
+} as const;
 
-export const authCodeStepDefaultDescription = __(
-	'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
-);
+export const authCodeStepDefaultDescription = {
+	get label() {
+		return __(
+			'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
+		);
+	},
+} as const;
 
 export const useMyDomainInputMode = {
 	domainInput: 'domain-input',
@@ -69,7 +83,13 @@ export const useMyDomainInputMode = {
 } as const;
 
 export const transferDomainError = {
-	AUTH_CODE: __( 'Invalid auth code. Please check the specified code and try again.' ),
-	NO_SELECTED_SITE: __( 'Please specify a site.' ),
-	GENERIC_ERROR: __( 'We were unable to start the transfer.' ),
-};
+	get AUTH_CODE() {
+		return __( 'Invalid auth code. Please check the specified code and try again.' );
+	},
+	get NO_SELECTED_SITE() {
+		return __( 'Please specify a site.' );
+	},
+	get GENERIC_ERROR() {
+		return __( 'We were unable to start the transfer.' );
+	},
+} as const;

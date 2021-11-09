@@ -5,7 +5,6 @@ import { stringify } from 'qs';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import Me from './me';
-import Site from './site';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -36,102 +35,8 @@ function Undocumented( wpcom ) {
 	this.wpcom = wpcom;
 }
 
-Undocumented.prototype.site = function ( id ) {
-	return new Site( id, this.wpcom );
-};
-
 Undocumented.prototype.me = function () {
 	return new Me( this.wpcom );
-};
-
-/*
- * Retrieve Jetpack modules data for a site with id siteid.
- * Uses the REST API of the Jetpack site.
- *
- * @param {number}      [siteId]
- * @param {Function} fn
- */
-Undocumented.prototype.getJetpackModules = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/module/all/' },
-		fn
-	);
-};
-
-/*
- * Activate a Jetpack module with slug moduleSlug for a site with id siteid.
- * Uses the REST API of the Jetpack site.
- *
- * @param {number} [siteId]
- * @param {string} [moduleSlug]
- * @param {Function} fn
- */
-Undocumented.prototype.jetpackModuleActivate = function ( siteId, moduleSlug, fn ) {
-	return this.wpcom.req.post(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{
-			path: '/jetpack/v4/module/' + moduleSlug + '/active/',
-			body: JSON.stringify( { active: true } ),
-		},
-		fn
-	);
-};
-
-/*
- * Deactivate a Jetpack module with slug moduleSlug for a site with id siteid.
- * Uses the REST API of the Jetpack site.
- *
- * @param {number} [siteId]
- * @param {string} [moduleSlug]
- * @param {Function} fn
- */
-Undocumented.prototype.jetpackModuleDeactivate = function ( siteId, moduleSlug, fn ) {
-	return this.wpcom.req.post(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{
-			path: '/jetpack/v4/module/' + moduleSlug + '/active/',
-			body: JSON.stringify( { active: false } ),
-		},
-		fn
-	);
-};
-
-/**
- * Fetches settings for the Monitor module.
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.fetchMonitorSettings = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id: query' );
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId }, fn );
-};
-
-Undocumented.prototype.updateMonitorSettings = function (
-	siteId,
-	emailNotifications,
-	wpNoteNotifications,
-	fn
-) {
-	debug( '/jetpack-blogs/:site_id: query' );
-	return this.wpcom.req.post(
-		{ path: '/jetpack-blogs/' + siteId },
-		{},
-		{ email_notifications: emailNotifications, wp_note_notifications: wpNoteNotifications },
-		fn
-	);
-};
-
-/**
- * Disconnects a Jetpack site with id siteId from WP.com
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.disconnectJetpack = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id:/mine/delete query' );
-	return this.wpcom.req.post( { path: '/jetpack-blogs/' + siteId + '/mine/delete' }, fn );
 };
 
 /**
@@ -154,34 +59,6 @@ Undocumented.prototype.fetchJetpackKeys = function ( siteId, fn ) {
 Undocumented.prototype.testConnectionJetpack = function ( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id:/test-connection query' );
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
-};
-
-/*
- * Retrieve current connection status of a Jetpack site.
- *
- * @param {number}      [siteId]
- * @param {Function} fn
- */
-Undocumented.prototype.getJetpackConnectionStatus = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/connection/' },
-		fn
-	);
-};
-
-/*
- * Retrieve current user's connection data for a Jetpack site.
- *
- * @param {number}      [siteId]
- * @param {Function} fn
- */
-Undocumented.prototype.getJetpackUserConnectionData = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/connection/data/' },
-		fn
-	);
 };
 
 Undocumented.prototype.jetpackLogin = function ( siteId, _wp_nonce, redirect_uri, scope, state ) {
@@ -227,30 +104,6 @@ Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
 };
 
 /**
- * Gets the current status of a full sync for a Jetpack site.
- *
- * @param {number|string} siteId The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getJetpackSyncStatus = function ( siteId, fn ) {
-	debug( '/sites/:site_id:/sync/status query' );
-	const endpointPath = '/sites/' + siteId + '/sync/status';
-	return this.wpcom.req.get( { path: endpointPath }, fn );
-};
-
-/**
- * Schedules a full sync for a Jetpack site.
- *
- * @param {number|string} siteId The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
-	debug( '/sites/:site_id:/sync query' );
-	const endpointPath = '/sites/' + siteId + '/sync';
-	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
-};
-
-/**
  * GET/POST site settings
  *
  * @param {number|string} [siteId] The site ID
@@ -276,87 +129,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
 	}
 
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
-};
-
-/**
- * Get site keyrings
- *
- * @param {number|string} [siteId] The site ID
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) {
-	return this.wpcom.req.get( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, fn );
-};
-
-/**
- * Create a site keyring
- *
- * @param {number|string} [siteId] The site ID
- * @param {object} [data] site keyring object to create with properties:
- * 	- keyring_id {number} the keyring id link the site to
- * 	- external_user_id {string} Optional. The external user id to link the site to
- * 	- service {string} service name for this keyring id
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.createSiteKeyring = function createSiteKeyring( siteId, data, fn ) {
-	return this.wpcom.req.post( '/sites/' + siteId + '/keyrings', { apiVersion: '1.1' }, data, fn );
-};
-
-/**
- * Update a site keyring
- *
- * @param {number|string} [siteId] The site ID
- * @param {number} [keyringId] The keyring id to update,
- * @param {string} [externalUserId] The external user id to update on the site keyring
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.updateSiteKeyring = function updateSiteKeyring(
-	siteId,
-	keyringId,
-	externalUserId,
-	fn
-) {
-	return this.wpcom.req.post(
-		'/sites/' + siteId + '/keyrings/' + keyringId,
-		{ apiVersion: '1.1' },
-		{
-			external_user_id: externalUserId,
-		},
-		fn
-	);
-};
-
-/**
- * Delete a site keyring
- *
- * @param {number|string} [siteId] The site ID
- * @param {number} keyringId The keyring id
- * @param {string|null} externalUserId Optional, the external user id
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring(
-	siteId,
-	keyringId,
-	externalUserId,
-	fn
-) {
-	if ( ! fn && typeof externalUserId === 'function' ) {
-		fn = externalUserId;
-		externalUserId = null;
-	}
-
-	return this.wpcom.req.post(
-		'/sites/' + siteId + '/keyrings/' + keyringId + '/delete',
-		{ apiVersion: '1.1' },
-		{
-			external_user_id: externalUserId,
-		},
-		fn
-	);
 };
 
 Undocumented.prototype._sendRequest = function ( originalParams, fn ) {
@@ -454,49 +226,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
  */
 Undocumented.prototype.getAvailableTlds = function ( query = {} ) {
 	return this.wpcom.req.get( '/domains/suggestions/tlds', query );
-};
-
-/**
- * Determine whether a domain name can be used for Site Redirect
- *
- * @param {number|string} siteId The site ID
- * @param {string} domain The domain name to check
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.canRedirect = function ( siteId, domain, fn ) {
-	domain = encodeURIComponent( domain.toLowerCase() );
-
-	return this.wpcom.req.get( { path: '/domains/' + siteId + '/' + domain + '/can-redirect' }, fn );
-};
-
-/**
- * Retrieves the target of the site redirect.
- *
- * @param {number|string} siteId The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSiteRedirect = function ( siteId, fn ) {
-	debug( '/sites/:site_id/domains/redirect query' );
-
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/domains/redirect' }, fn );
-};
-
-/**
- * Points the site redirect to the specified location.
- *
- * @param {number|string} siteId The site ID
- * @param {string} location The location to redirect the site to
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.setSiteRedirect = function ( siteId, location, fn ) {
-	debug( '/sites/:site_id/domains/redirect' );
-
-	return this.wpcom.req.post(
-		{ path: '/sites/' + siteId + '/domains/redirect' },
-		{ location },
-		fn
-	);
 };
 
 /**
@@ -621,69 +350,6 @@ Undocumented.prototype.validateDomainContactInformation = function (
 };
 
 /**
- * Get site specific details for WordPress.com products
- *
- * @param {Function} siteDomain The site slug
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSiteProducts = function ( siteDomain, fn ) {
-	debug( '/sites/:site_domain:/products query' );
-
-	// the site domain could be for a jetpack site installed in
-	// a subdirectory.  encode any forward slash present before making
-	// the request
-	siteDomain = encodeURIComponent( siteDomain );
-
-	return this._sendRequest(
-		{
-			path: '/sites/' + siteDomain + '/products',
-			method: 'get',
-		},
-		fn
-	);
-};
-
-/**
- * Get the user's billing history
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.billingHistory = function ( fn ) {
-	return this._sendRequest(
-		{
-			path: '/me/billing-history',
-			method: 'get',
-			apiVersion: '1.3',
-		},
-		fn
-	);
-};
-
-/**
- * Get a site specific details for WordPress.com plans
- *
- * @param {Function} siteDomain The site slug
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSitePlans = function ( siteDomain, fn ) {
-	debug( '/sites/:site_domain:/plans query' );
-
-	// the site domain could be for a jetpack site installed in
-	// a subdirectory.  encode any forward slash present before making
-	// the request
-	siteDomain = encodeURIComponent( siteDomain );
-
-	return this._sendRequest(
-		{
-			path: '/sites/' + siteDomain + '/plans',
-			method: 'get',
-			apiVersion: '1.3',
-		},
-		fn
-	);
-};
-
-/**
  * Get a site specific details for WordPress.com featurs
  *
  * @param {Function} siteDomain The site slug
@@ -722,43 +388,6 @@ Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
 };
 
 /**
- * Return a list of user's connected publicize services for the given site
- *
- * @param {number|string} siteId The site ID or domain
- * @param {Function}      fn     The callback function
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.siteConnections = function ( siteId, fn ) {
-	debug( '/sites/:site_id:/publicize-connections query' );
-	return this.wpcom.req.get(
-		{
-			path: '/sites/' + siteId + '/publicize-connections',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
- * Deletes a single site connection
- *
- * @param {number|string} siteId       The site ID or domain
- * @param {number}        connectionId The connection ID to remove
- * @param {Function}      fn           Method to invoke when request is complete
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.deleteSiteConnection = function ( siteId, connectionId, fn ) {
-	debug( '/sites/:site_id:/publicize-connections/:connection_id:/delete query' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + siteId + '/publicize-connections/' + connectionId + '/delete',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Delete a site
  *
  * @param  {number|string} siteId The site ID or domain
@@ -767,150 +396,6 @@ Undocumented.prototype.deleteSiteConnection = function ( siteId, connectionId, f
 Undocumented.prototype.deleteSite = function ( siteId, fn ) {
 	debug( '/sites/:site_id/delete query' );
 	return this.wpcom.req.post( { path: '/sites/' + siteId + '/delete' }, fn );
-};
-
-/**
- * Creates a single connection using the specified Keyring connection ID and an
- *  optional `options` object, which can include a `shared` property
- *
- * @param {number}        keyringConnectionId The Keyring connection ID to use
- * @param {number|string} siteId              The site ID or domain
- * @param {string}        externalUserId      User ID if not connecting to primary account
- * @param {object}        options             Optional options
- * @param {boolean}       options.shared      Whether this connection is available to other users.
- * @param {Function}      fn                  Method to invoke when request is complete
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.createConnection = function (
-	keyringConnectionId,
-	siteId,
-	externalUserId,
-	options,
-	fn
-) {
-	// Method overloading: Optional `options`
-	if ( 'undefined' === typeof fn && 'function' === typeof options ) {
-		fn = options;
-		options = {};
-	}
-
-	// Build request body
-	const body = { keyring_connection_ID: keyringConnectionId };
-	if ( 'boolean' === typeof options.shared ) {
-		body.shared = options.shared;
-	}
-
-	if ( externalUserId ) {
-		body.external_user_ID = externalUserId;
-	}
-
-	const path = siteId
-		? '/sites/' + siteId + '/publicize-connections/new'
-		: '/me/publicize-connections/new';
-
-	return this.wpcom.req.post( { path, body, apiVersion: '1.1' }, fn );
-};
-
-/**
- * Share an arbitrary post using publicize connection
- *
- * @param {number}       siteId            The site ID
- * @param {number}       postId            The post ID
- * @param {string}    message           Message for social media
- * @param {Array(int)} skippedConnections           Keyring connection ids to skip publicizing
- * @param {Function}      fn           Function to invoke when request is complete
- * @returns {Promise} A promise representing the request
- */
-Undocumented.prototype.publicizePost = function (
-	siteId,
-	postId,
-	message,
-	skippedConnections,
-	fn
-) {
-	const body = { skipped_connections: [] };
-
-	body.message = message;
-
-	if ( skippedConnections && skippedConnections.length > 0 ) {
-		body.skipped_connections = skippedConnections;
-	}
-
-	return this.wpcom.req.post(
-		{ path: `/sites/${ siteId }/posts/${ postId }/publicize`, body, apiNamespace: 'wpcom/v2' },
-		fn
-	);
-};
-
-/**
- * Updates a single publicize connection
- *
- * @param {number|string} siteId       An optional site ID or domain
- * @param {number}        connectionId The connection ID to update
- * @param {object}        data         The update request body
- * @param {Function}      fn           Function to invoke when request is complete
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.updateConnection = function ( siteId, connectionId, data, fn ) {
-	let path;
-
-	if ( siteId ) {
-		debug( '/sites/:site_id:/publicize-connections/:connection_id: query' );
-		path = '/sites/' + siteId + '/publicize-connections/' + connectionId;
-	} else {
-		debug( '/me/publicize-connections/:connection_id: query' );
-		path = '/me/publicize-connections/' + connectionId;
-	}
-
-	return this.wpcom.req.post(
-		{
-			path: path,
-			body: data,
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
- * POST create a payment transaction
- *
- * @param {object} [data] The REQUEST data
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- *
- * The post data format is: {
- *		payment_method: {string} The payment gateway,
- *		payment_key: {string} Either the cc token from the gateway, or the mp_ref from /me/stored_cards,
- *		payment: {object} Payment details, including payment_method and payment_key,
- *		cart: {object>shopping_cart} A Shopping cart object
- *		domain_details: {object>contact_information} Optional set of domain contact information
- *		locale: {string} Locale for translating strings in response data,
- * }
- */
-Undocumented.prototype.transactions = function ( data, fn ) {
-	return this.wpcom.req.post( '/me/transactions', mapKeysRecursively( data, snakeCase ), fn );
-};
-
-/**
- * GET paypal_express_url
- *
- * @param {object} [data] The GET data
- * @param {Function} fn The callback function
- * @returns {string} Url
- *
- * The data format is: {
- *		country: {string} The billing country,
- *		postal_code: {string} The billing postal code,
- *		cart: {Array} An JSON serialization of the cart,
- * }
- */
-Undocumented.prototype.paypalExpressUrl = function ( data, fn ) {
-	debug( '/me/paypal-express-url query' );
-
-	data = mapKeysRecursively( data, snakeCase );
-
-	return this.wpcom.req.post( '/me/paypal-express-url', data, fn );
 };
 
 function addReaderContentWidth( params ) {
@@ -1211,11 +696,6 @@ Undocumented.prototype.deleteThemeFromJetpack = function ( siteId, themeId, fn )
 	);
 };
 
-Undocumented.prototype.activeTheme = function ( siteId, fn ) {
-	debug( '/sites/:site_id/themes/mine' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
-};
-
 Undocumented.prototype.activateTheme = function ( themeId, siteId, dontChangeHomepage, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.post(
@@ -1328,39 +808,6 @@ Undocumented.prototype.transferToUser = function ( siteId, domainName, targetUse
 Undocumented.prototype.transferToSite = function ( siteId, domainName, targetSiteId, fn ) {
 	return this.wpcom.req.post(
 		`/sites/${ siteId }/domains/${ domainName }/transfer-to-site/${ targetSiteId }`,
-		fn
-	);
-};
-
-/*
- * Retrieves WHOIS data for given domain.
- *
- * @param {string} [domainName]
- * @param {Function} [fn]
- */
-Undocumented.prototype.fetchWhois = function ( domainName, fn ) {
-	debug( '/domains/:domainName/whois query' );
-	return this.wpcom.req.get( `/domains/${ domainName }/whois`, fn );
-};
-
-/*
- * Updates WHOIS data for given domain.
- *
- * @param {string} [domainName]
- * @param {object} [whois]
- * @param {Function} [fn]
- */
-Undocumented.prototype.updateWhois = function ( domainName, whois, transferLock, fn ) {
-	debug( '/domains/:domainName/whois' );
-	return this.wpcom.req.post(
-		{
-			path: `/domains/${ domainName }/whois`,
-			apiVersion: '1.1',
-			body: {
-				whois,
-				transfer_lock: transferLock,
-			},
-		},
 		fn
 	);
 };
@@ -1505,51 +952,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 	} );
 };
 
-// TODO: remove this once the auto-renewal toggle has been fully rolled out.
-Undocumented.prototype.cancelPurchase = function ( purchaseId, fn ) {
-	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/disable-auto-renew`,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.disableAutoRenew = function ( purchaseId, fn ) {
-	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/disable-auto-renew`,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.enableAutoRenew = function ( purchaseId, fn ) {
-	debug( 'upgrades/{purchaseId}/enable-auto-renew' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/enable-auto-renew`,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.cancelPlanTrial = function ( planId, fn ) {
-	debug( '/upgrades/{planId}/cancel-plan-trial' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ planId }/cancel-plan-trial`,
-		},
-		fn
-	);
-};
-
 /**
  * Get the available export configuration settings for a site
  *
@@ -1638,41 +1040,6 @@ Undocumented.prototype.importReaderFeed = function ( file, fn ) {
 };
 
 /**
- * Creates a Push Notification registration for the device
- *
- * @param {string}     registration   The registration to be stored
- * @param {string}     deviceFamily   The device family
- * @param {string}     deviceName     The device name
- * @param {Function}   fn             The callback function
- * @returns {globalThis.XMLHttpRequest}          The XHR instance
- */
-Undocumented.prototype.registerDevice = function ( registration, deviceFamily, deviceName, fn ) {
-	debug( '/devices/new' );
-	return this.wpcom.req.post(
-		{ path: '/devices/new' },
-		{},
-		{
-			device_token: registration,
-			device_family: deviceFamily,
-			device_name: deviceName,
-		},
-		fn
-	);
-};
-
-/**
- * Removes a Push Notification registration for the device
- *
- * @param {number}        deviceId       The device ID for the registration to be removed
- * @param {Function}   fn             The callback function
- * @returns {globalThis.XMLHttpRequest}          The XHR instance
- */
-Undocumented.prototype.unregisterDevice = function ( deviceId, fn ) {
-	debug( '/devices/:device_id/delete' );
-	return this.wpcom.req.post( { path: `/devices/${ deviceId }/delete` }, fn );
-};
-
-/**
  * Requests streamlined approval to WordAds program
  *
  * @param {number}       siteId            The site ID
@@ -1717,20 +1084,6 @@ Undocumented.prototype.initiateTransfer = function ( siteId, plugin, theme, onPr
 };
 
 /**
- * Returns a list of media from an external media service. Similar to Site.mediaList in use, but
- * with a more restricted set of query params.
- *
- * @param {object} query - Media query, supports 'path', 'search', 'max', 'page_handle', and 'source'
- * @param {Function} fn - The callback function
- * @returns {Promise} promise for handling result
- */
-Undocumented.prototype.externalMediaList = function ( query, fn ) {
-	debug( `/meta/external-media/${ query.source }` );
-
-	return this.wpcom.req.get( `/meta/external-media/${ query.source }`, query, fn );
-};
-
-/**
  * Fetch the status of an Automated Transfer.
  *
  * @param {number} siteId -- the ID of the site being transferred
@@ -1757,16 +1110,6 @@ Undocumented.prototype.oauth2ClientId = function ( clientId, fn ) {
 		{ apiNamespace: 'wpcom/v2' },
 		fn
 	);
-};
-
-/**
- * Fetch the curated list of featured plugins.
- *
- * @param {Function}   fn             The callback function
- * @returns {Promise}  A promise
- */
-Undocumented.prototype.getFeaturedPlugins = function ( fn ) {
-	return this.wpcom.req.get( '/plugins/featured', { apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**
@@ -1999,6 +1342,27 @@ Undocumented.prototype.getMatchingAnchorSite = function (
 			apiNamespace: 'wpcom/v2',
 		},
 		queryParts
+	);
+};
+
+/**
+ * Analyze a URL and return various pieces of information about it (platform, colors, meta).
+ *
+ * @param url {string} Example: www.example.com
+ * @param fn {function} Callback function to run when the request completes.
+ * @returns {Promise} A promise
+ */
+Undocumented.prototype.ImportsAnalyzeUrl = function ( url, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: '/imports/analyze-url',
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			site_url: url,
+		},
+		fn
 	);
 };
 
