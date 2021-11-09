@@ -1,12 +1,16 @@
+import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, { isBlankCanvasDesign, getDesignUrl } from '@automattic/design-picker';
+import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { compose } from '@wordpress/compose';
 import { withViewportMatch } from '@wordpress/viewport';
+import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -157,8 +161,19 @@ class DesignPickerStep extends Component {
 				locale={ this.props.locale } // props.locale obtained via `localize` HoC
 				onSelect={ this.pickDesign }
 				onPreview={ this.previewDesign }
+				className={ classnames( {
+					'design-picker-step__has-categories': isEnabled( 'signup/design-picker-categories' ),
+				} ) }
 				highResThumbnails
 				showCategoryFilter={ this.props.showDesignPickerCategories }
+				categoriesHeading={
+					<FormattedHeader
+						id={ 'step-header' }
+						headerText={ this.headerText() }
+						subHeaderText={ this.subHeaderText() }
+						align="left"
+					/>
+				}
 			/>
 		);
 	}
@@ -195,12 +210,32 @@ class DesignPickerStep extends Component {
 	headerText() {
 		const { translate } = this.props;
 
+		if ( isEnabled( 'signup/design-picker-categories' ) ) {
+			return translate( 'Themes' );
+		}
+
 		return translate( 'Choose a design' );
 	}
-	subHeaderText() {
-		const { translate } = this.props;
 
-		return translate( 'Pick your favorite homepage layout. You can customize or change it later.' );
+	subHeaderText() {
+		const { locale, translate } = this.props;
+
+		if ( ! isEnabled( 'signup/design-picker-categories' ) ) {
+			return translate(
+				'Pick your favorite homepage layout. You can customize or change it later.'
+			);
+		}
+
+		const text = translate( 'Choose a starting theme. You can change it later.' );
+
+		if ( englishLocales.includes( locale ) ) {
+			// An English only trick so the line wraps between sentences.
+			return text
+				.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
+				.replace( /\.\s/g, '. ' ); // Replace all spaces at the end of sentences with a regular breaking space
+		}
+
+		return text;
 	}
 
 	skipLabelText() {
@@ -217,8 +252,6 @@ class DesignPickerStep extends Component {
 	render() {
 		const { flowName, stepName, userLoggedIn, isReskinned, isMobile, translate } = this.props;
 		const { selectedDesign } = this.state;
-		const headerText = this.headerText();
-		const subHeaderText = this.subHeaderText();
 
 		if ( selectedDesign ) {
 			const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
@@ -252,10 +285,10 @@ class DesignPickerStep extends Component {
 		return (
 			<StepWrapper
 				{ ...this.props }
-				fallbackHeaderText={ headerText }
-				headerText={ headerText }
-				fallbackSubHeaderText={ subHeaderText }
-				subHeaderText={ subHeaderText }
+				className={ classnames( {
+					'design-picker__has-categories': isEnabled( 'signup/design-picker-categories' ),
+				} ) }
+				hideFormattedHeader
 				stepContent={ this.renderDesignPicker() }
 				align={ isReskinned ? 'left' : 'center' }
 				skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
