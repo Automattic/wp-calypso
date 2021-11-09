@@ -12,6 +12,7 @@ import {
 	buildGlobalStylesContentEvents,
 	getFlattenedBlockNames,
 	getBlockEventContextProperties,
+	findSavingSource,
 } from './utils';
 
 // Debugger.
@@ -621,16 +622,17 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 };
 
 /**
- * Tracks saveEditedEntityRecord for saving global styles updates.
+ * Tracks saveEditedEntityRecord for saving various entities.
  *
  * @param {string} kind Kind of the edited entity record.
  * @param {string} type Name of the edited entity record.
  * @param {number} id   Record ID of the edited entity record.
  */
 const trackSaveEditedEntityRecord = ( kind, type, id ) => {
+	const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
+	const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
+
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
-		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
-		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = JSON.parse( savedEntity?.content?.raw );
 		const updatedContent = JSON.parse( editedEntity?.content );
 
@@ -640,38 +642,43 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 			'wpcom_block_editor_global_styles_save'
 		);
 	} else {
-		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
-
-		const savePanel = document.querySelector( '.entities-saved-states__panel' );
-		const source = savePanel ? 'multi-entity-save-panel' : 'unknown';
-
-		const variationSlug =
-			type === 'wp_template_part' && savedEntity?.area !== 'uncategorized'
-				? savedEntity?.area
+		// If the item saved is a template part, make note of the area variation.
+		const templatePartArea = type === 'wp_template_part' ? savedEntity?.area : undefined;
+		// If the template parts area variation changed, add the new area classification as well.
+		const newTemplatePartArea =
+			type === 'wp_template_part' && savedEntity?.area !== editedEntity?.area
+				? editedEntity.area
 				: undefined;
 
-		tracksRecordEvent( 'test-event', {
+		tracksRecordEvent( 'wpcom_block_editor_edited_entity_saved', {
 			entity_kind: kind,
 			entity_type: type,
 			entity_id: id,
-			saving_source: source,
-			// TODO - consider the save changing the variation.
-			variation_slug: variationSlug,
+			saving_source: findSavingSource(),
+			template_part_area: templatePartArea,
+			new_template_part_area: newTemplatePartArea,
 		} );
 	}
 };
 
+/**
+ * Tracks __experimentalSaveEditedEntityRecord for saving various entities. Currently this is only
+ * expected to be triggered for site entity items like logo, description, and title.
+ *
+ * @param {string} kind Kind of the edited entity record.
+ * @param {string} type Name of the edited entity record.
+ * @param {number} id   Record ID of the edited entity record.
+ */
 const trackSaveSpecifiedEntityEdits = ( kind, type, id, itemsToSave ) => {
-	const savePanel = document.querySelector( '.entities-saved-states__panel' );
-	const source = savePanel ? 'multi-entity-save-panel' : 'unknown';
+	const source = findSavingSource();
 
 	itemsToSave.forEach( ( item ) =>
-		tracksRecordEvent( 'test-event', {
+		tracksRecordEvent( 'wpcom_block_editor_edited_entity_saved', {
 			entity_kind: kind,
 			entity_type: type,
 			entity_id: id,
 			saving_source: source,
-			items_saved: item,
+			item_saved: item,
 		} )
 	);
 };
