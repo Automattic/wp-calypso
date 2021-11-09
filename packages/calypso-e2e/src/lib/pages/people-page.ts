@@ -136,7 +136,6 @@ export class PeoplePage {
 	 * @param {string} emailAddress Email address of the pending user.
 	 */
 	async selectInvitedUser( emailAddress: string ): Promise< void > {
-		emailAddress = emailAddress + 'lekwjrlwejr';
 		/**
 		 * Closure to wait for the invited user to be processed in the backend and then
 		 * appear on the frontend.
