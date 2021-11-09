@@ -77,7 +77,7 @@ class PeopleInvites extends PureComponent {
 
 		return (
 			<Main className="people-invites">
-				<PageViewTracker path="/people/invites/:site" title="Users > Invites" />
+				<PageViewTracker path="/people/invites/:site" title="People > Invites" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<SidebarNavigation />
 				<FormattedHeader
