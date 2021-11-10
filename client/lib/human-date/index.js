@@ -4,11 +4,11 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { EVERY_TEN_SECONDS, useInterval } from 'calypso/lib/interval';
 const MILLIS_IN_MINUTE = 60 * 1000;
 
-function getHumanDateString( dateOrMoment, dateFormat, moment, translate ) {
+function getHumanDateString( date, dateFormat, moment, translate ) {
 	const now = moment();
-	dateOrMoment = moment( dateOrMoment );
+	date = moment( date );
 
-	let millisAgo = now.diff( dateOrMoment );
+	let millisAgo = now.diff( date );
 	if ( millisAgo < 0 ) {
 		millisAgo = 0;
 	}
@@ -28,7 +28,7 @@ function getHumanDateString( dateOrMoment, dateFormat, moment, translate ) {
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 ) {
-		const hours = now.diff( dateOrMoment, 'hours' );
+		const hours = now.diff( date, 'hours' );
 		return translate( '%(hours)dh ago', {
 			args: {
 				hours: hours,
@@ -38,7 +38,7 @@ function getHumanDateString( dateOrMoment, dateFormat, moment, translate ) {
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 * 7 ) {
-		const days = now.diff( dateOrMoment, 'days' );
+		const days = now.diff( date, 'days' );
 		return translate( '%(days)dd ago', {
 			args: {
 				days: days,
@@ -47,10 +47,10 @@ function getHumanDateString( dateOrMoment, dateFormat, moment, translate ) {
 		} );
 	}
 
-	return dateOrMoment.format( dateFormat );
+	return date.format( dateFormat );
 }
 
-export function useHumanDate( dateOrMoment, dateFormat, interval = EVERY_TEN_SECONDS ) {
+export function useHumanDate( date, dateFormat, interval = EVERY_TEN_SECONDS ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const [ tick, doTick ] = useReducer( ( t ) => t + 1, 0 );
@@ -58,6 +58,6 @@ export function useHumanDate( dateOrMoment, dateFormat, interval = EVERY_TEN_SEC
 	useInterval( doTick, interval );
 
 	return useMemo( () => {
-		return getHumanDateString( dateOrMoment, dateFormat, moment, translate );
-	}, [ tick, dateOrMoment, dateFormat, moment, translate ] );
+		return getHumanDateString( date, dateFormat, moment, translate );
+	}, [ tick, date, dateFormat, moment, translate ] );
 }
