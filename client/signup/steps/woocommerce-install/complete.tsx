@@ -1,14 +1,22 @@
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import { useSelector } from 'react-redux';
+import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { GoToStep } from '../../types';
+import type { AppState } from 'calypso/types';
 import type { ReactElement } from 'react';
-
 interface Props {
 	goToStep: GoToStep;
 }
 
 export default function Complete( { goToStep }: Props ): ReactElement | null {
 	const { __ } = useI18n();
+
+	const siteId = useSelector( getSelectedSiteId ) as number;
+
+	const wcAdmin =
+		useSelector( ( state: AppState ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	return (
 		<>
@@ -26,7 +34,9 @@ export default function Complete( { goToStep }: Props ): ReactElement | null {
 			</div>
 			<div className="woocommerce-install__content">
 				<div>
-					<NextButton onClick={ () => goToStep( 'confirm' ) }>{ __( 'Finish' ) }</NextButton>
+					<NextButton onClick={ () => ( window.location.href = wcAdmin ) }>
+						{ __( 'Finish' ) }
+					</NextButton>
 				</div>
 			</div>
 		</>
