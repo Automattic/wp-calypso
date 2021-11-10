@@ -6,7 +6,7 @@ import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 import { getDefaultProductInProductGroup } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/pages/marketplace-domain-upsell';
 import MarketplacePluginSetup from 'calypso/my-sites/marketplace/pages/marketplace-plugin-setup-status';
-import MarketplacePluginUpload from 'calypso/my-sites/marketplace/pages/marketplace-plugin-upload-status';
+import MarketplacePluginInstall from 'calypso/my-sites/marketplace/pages/marketplace-plugin-upload-status';
 import MarketplacePluginDetails from 'calypso/my-sites/marketplace/pages/marketplace-product-details';
 import MarketplaceTest from 'calypso/my-sites/marketplace/pages/marketplace-test';
 
@@ -43,8 +43,9 @@ export function renderPluginsSetupStatusPage( context, next ) {
 	next();
 }
 
-export function renderPluginsUploadStatusPage( context, next ) {
-	context.primary = <MarketplacePluginUpload />;
+export function renderPluginsInstallPage( context, next ) {
+	const { productSlug } = context.params;
+	context.primary = <MarketplacePluginInstall productSlug={ productSlug } />;
 	next();
 }
 

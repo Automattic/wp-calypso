@@ -1,3 +1,5 @@
+@import './grid-mixins.scss';
+
 .is-section-plugins .main {
 	padding-top: 35px; // Compensate for the fixed header.
 
@@ -12,6 +14,10 @@
 
 body.is-section-plugins.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
+}
+
+.plugin__installed-on, .plugin-details__installed-on {
+	margin-bottom: 16px;
 }
 
 // Fix for Jetpack not having nav-unification styles yet.
@@ -108,5 +114,207 @@ body.is-section-plugins:not( .is-nav-unification ) {
 
 	@include breakpoint-deprecated( '>660px' ) {
 		padding: 0;
+	}
+}
+
+.plugin-details__layout {
+	@include grid-row( 4, 1 );
+	@include breakpoint-deprecated( '>1040px' ) {
+		@include display-grid;
+		@include grid-template-columns( 12, 24px, 1fr );
+		grid-gap: 24px;
+	}
+
+	.plugin-details__layout-col-left {
+		@include breakpoint-deprecated( '>1040px' ) {
+			@include grid-column( 1, 8 );
+		}
+	}
+
+	.plugin-details__layout-col-right {
+		@include breakpoint-deprecated( '>1040px' ) {
+			@include grid-column( 9, 4 );
+		}
+	}
+}
+
+.plugin-details__top-section {
+	border-bottom: 1px solid var( --studio-gray-5 );
+
+	.plugin-details__layout-col-right.no-cta {
+		visibility: hidden;
+
+		@media screen and ( max-width: 1040px ) {
+			display: none;
+		}
+	}
+}
+
+.plugin-details__page {
+	@media screen and ( max-width: 1040px ) {
+		padding: 16px;
+	}
+}
+
+.plugin-details__header {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 400px;
+
+	.plugin-details__tags {
+		font-size: $font-body-extra-small;
+		color: var( --studio-gray-40 );
+	}
+
+	.plugin-details__name, .plugin-details__price {
+		font-family: $brand-serif;
+		font-size: $font-title-large;
+		color: var( --studio-gray-100 );
+		padding: 16px 0;
+	}
+
+	.plugin-details__description {
+		font-size: $font-title-small;
+		color: var( --studio-gray-70 );
+		padding-bottom: 30px;
+	}
+
+	.plugin-details__additional-info {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+
+		.plugin-details__info {
+			@media screen and ( max-width: 1040px ) {
+				width: 50%;
+				padding-bottom: 12px;
+			}
+		}
+
+		.plugin-details__info-title {
+			font-size: $font-body-extra-small;
+			font-weight: 400;
+			color: var( --studio-gray-40 );
+		}
+
+		.plugin-details__info-value {
+			font-size: $font-body;
+			color: var( --studio-gray-70 );
+		}
+	}
+
+	.plugin-details__install {
+		padding-bottom: 20px;
+
+		.plugin-details__install-button {
+			width: 100%;
+			padding: 12px 16px;
+			background-color: var( --studio-pink-50 );
+			color: var( --studio-white );
+		}
+	}
+	
+	.plugin-details__t-and-c {
+		font-size: $font-body-extra-small;
+		color: var( --studio-gray-50 );
+
+		@media screen and ( max-width: 1040px ) {
+			padding-bottom: 40px;
+		}
+	}
+
+	@media screen and ( max-width: 1040px ) {
+		height: 100%;
+	}
+}
+
+.plugin-details__body {
+	.plugin-details__plugin-details-title {
+		padding: 15px 0;
+		display: none;
+		color: var( --studio-gray-100 );
+		font-size: $font-body-small;
+	}
+
+	.plugin-sections {
+		margin-top: 20px;
+
+		.section-nav {
+			box-shadow: none;
+		}
+
+		.card {
+			box-shadow: none;
+		}
+	}
+
+	.section-nav-tab {
+		&.is-selected,
+		&:hover:not( .is-selected ) {
+			border-bottom-color: transparent;
+		}
+
+		.section-nav-tab__link {
+			font-size: $font-body-small;
+			color: var( --studio-gray-60 );
+
+			&:hover {
+				background-color: transparent;
+				color: var( --studio-black );
+			}
+		}
+
+		&.is-selected .section-nav-tab__link {
+			color: var( --studio-black );
+			font-weight: bold;
+			border-bottom: none;
+		}
+	}
+
+	.plugin-details__layout-col-right {
+		margin-top: 100px;
+
+		.title {
+			color: var( --studio-gray-40 );
+			font-size: $font-body-extra-small;
+		}
+
+		.value {
+			color: var( --studio-gray-70 );
+			font-size: $font-body-small;
+			padding-bottom: 16px;
+
+			&.plugin-details__downloads-value {
+				font-size: $font-body;
+			}
+		}
+	}
+
+	@media screen and ( max-width: 1040px ) {
+		display: flex;
+		flex-direction: column;
+
+		.plugin-details__plugin-details-content {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.plugin-details__plugin-details-title {
+			display: block;
+		}
+		
+		.plugin-details__layout-col-left {
+			order: 2;
+		}
+		
+		.plugin-details__layout-col-right {
+			order: 1;
+			margin-top: 0;
+			padding: 0 24px;
+			display: flex;
+			flex-direction: column;
+			border-bottom: 1px solid var( --studio-gray-5 );
+		}
 	}
 }

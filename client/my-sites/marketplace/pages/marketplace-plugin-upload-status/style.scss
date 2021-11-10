@@ -1,16 +1,15 @@
-.is-section-plugins.has-no-sidebar {
+body.is-section-marketplace.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
+}
+
+.is-section-marketplace.has-no-sidebar {
 	.layout__content {
-		background-color: var( --studio-white );
 		height: 100vh;
 		@media ( max-width: 782px ) {
 			padding: 0;
-			background-color: var( --studio-white );
 			height: 100vh;
 			.layout__primary {
 				height: 100vh;
-				.marketplace-domain-upsell__root {
-					height: calc( 100vh - 50px );
-				}
 			}
 		}
 	}

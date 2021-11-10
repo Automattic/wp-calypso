@@ -58,7 +58,7 @@ class PluginUpload extends Component {
 		}
 
 		if ( config.isEnabled( 'marketplace' ) && nextProps.inProgress ) {
-			page( `/marketplace/product/install/${ nextProps.siteSlug }` );
+			page( `/marketplace/install/${ nextProps.siteSlug }` );
 		}
 
 		const { COMPLETE } = transferStates;
