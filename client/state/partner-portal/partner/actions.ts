@@ -12,19 +12,13 @@ import {
 	getActivePartnerKeyId,
 	isFetchingPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
-import {
-	APIError,
-	Partner,
-	PartnerPortalStore,
-	PartnerPortalThunkAction,
-} from 'calypso/state/partner-portal/types';
-import { ReduxDispatch } from 'calypso/state/redux-store';
+import { APIError, Partner, PartnerPortalThunkAction } from 'calypso/state/partner-portal/types';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 
 export function setActivePartnerKey( partnerKeyId: number ): PartnerPortalThunkAction {
-	return ( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ) => {
+	return ( dispatch, getState ) => {
 		if ( ! partnerKeyId || isFetchingPartner( getState() ) ) {
 			return;
 		}
@@ -36,16 +30,18 @@ export function setActivePartnerKey( partnerKeyId: number ): PartnerPortalThunkA
 	};
 }
 
-export function fetchPartner( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ): void {
-	if ( isFetchingPartner( getState() ) ) {
-		return;
-	}
+export function fetchPartner(): PartnerPortalThunkAction {
+	return ( dispatch, getState ) => {
+		if ( isFetchingPartner( getState() ) ) {
+			return;
+		}
 
-	dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } );
+		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } );
+	};
 }
 
 export function receivePartner( partner: Partner ): PartnerPortalThunkAction {
-	return ( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ): void => {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 			partner,
@@ -72,7 +68,7 @@ export function receivePartner( partner: Partner ): PartnerPortalThunkAction {
 }
 
 export function receivePartnerError( error: APIError ): PartnerPortalThunkAction {
-	return ( dispatch: ReduxDispatch ): void => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
 			error: {

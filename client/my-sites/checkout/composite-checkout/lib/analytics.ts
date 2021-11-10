@@ -6,10 +6,7 @@ import {
 	isRedirectPaymentMethod,
 } from '../lib/translate-payment-method-names';
 import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
-import type { AnyAction } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
-
-type Dispatch = ThunkDispatch< unknown, void, AnyAction >;
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 export function logStashLoadErrorEvent(
 	errorType: string,
@@ -44,7 +41,7 @@ export const recordCompositeCheckoutErrorDuringAnalytics = ( {
 }: {
 	errorObject: unknown;
 	failureDescription: string;
-} ) => ( dispatch: Dispatch ): void => {
+} ) => ( dispatch: CalypsoDispatch ): void => {
 	// This is a fallback to catch any errors caused by the analytics code
 	// Anything in this block should remain very simple and extremely
 	// tolerant of any kind of data. It should make no assumptions about
@@ -64,7 +61,7 @@ export const recordTransactionBeginAnalytics = ( {
 	paymentMethodId,
 }: {
 	paymentMethodId: CheckoutPaymentMethodSlug;
-} ) => ( dispatch: Dispatch ): void => {
+} ) => ( dispatch: CalypsoDispatch ): void => {
 	try {
 		if ( isRedirectPaymentMethod( paymentMethodId ) ) {
 			dispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
