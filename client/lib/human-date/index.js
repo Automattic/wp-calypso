@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useReducer, useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { EVERY_TEN_SECONDS, useInterval } from 'calypso/lib/interval';
 const MILLIS_IN_MINUTE = 60 * 1000;
@@ -53,23 +53,11 @@ function getHumanDateString( dateOrMoment, dateFormat, moment, translate ) {
 export function useHumanDate( dateOrMoment, dateFormat, interval = EVERY_TEN_SECONDS ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
-	const [ humanDate, setHumanDate ] = useState(
-		getHumanDateString( dateOrMoment, dateFormat, moment, translate )
-	);
+	const [ tick, doTick ] = useReducer( ( t ) => t + 1, 0 );
 
-	useInterval( () => {
-		const newHumanDateString = getHumanDateString( dateOrMoment, dateFormat, moment, translate );
-		if ( humanDate !== newHumanDateString ) {
-			setHumanDate( newHumanDateString );
-		}
-	}, interval );
+	useInterval( doTick, interval );
 
-	useEffect( () => {
-		const newHumanDateString = getHumanDateString( dateOrMoment, dateFormat, moment, translate );
-		if ( humanDate !== newHumanDateString ) {
-			setHumanDate( newHumanDateString );
-		}
-	}, [ setHumanDate, humanDate, dateOrMoment, dateFormat, moment, translate ] );
-
-	return humanDate;
+	return useMemo( () => {
+		return getHumanDateString( dateOrMoment, dateFormat, moment, translate );
+	}, [ tick, dateOrMoment, dateFormat, moment, translate ] );
 }
