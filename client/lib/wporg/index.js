@@ -46,7 +46,7 @@ export function fetchPluginInformation( pluginSlug, locale ) {
 		action: 'plugin_information',
 		'request[slug]': pluginSlug.replace( new RegExp( '.php$' ), '' ),
 		'request[locale]': getWporgLocaleCode( locale ),
-		'request[fields]': 'icons,short_description',
+		'request[fields]': 'icons,short_description,banners,compatibility',
 	};
 
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );

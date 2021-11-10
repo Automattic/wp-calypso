@@ -88,6 +88,7 @@ export function getAllowedPluginData( plugin ) {
 		'sections',
 		'slug',
 		'support_URL',
+		'tags',
 		'update',
 		'updating',
 		'version',

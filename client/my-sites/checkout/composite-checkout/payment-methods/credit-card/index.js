@@ -1,4 +1,5 @@
-import { registerStore, useSelect, PaymentLogo } from '@automattic/composite-checkout';
+import { PaymentLogo } from '@automattic/composite-checkout';
+import { useSelect, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { Fragment } from 'react';

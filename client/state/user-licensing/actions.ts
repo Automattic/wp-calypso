@@ -17,8 +17,7 @@ import {
 } from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
-import { ReduxDispatch } from 'calypso/state/redux-store';
-import {
+import type {
 	LicenseCounts,
 	PaginatedItems,
 	License,
@@ -69,7 +68,7 @@ export const licensesRequestFailureAction = (
 ): UserLicensingThunkAction => ( dispatch ) => {
 	dispatch( {
 		type: USER_LICENSES_REQUEST_FAILURE,
-		error: error,
+		error,
 	} );
 	return dispatch(
 		errorNotice( translate( 'Failed to retrieve your licenses. Please try again later.' ) )
@@ -82,18 +81,16 @@ export const requestLicenses = (
 	sortField?: LicenseSortField,
 	sortDirection?: LicenseSortDirection,
 	page?: number
-): UserLicensingThunkAction => {
-	return ( dispatch: ReduxDispatch ) => {
-		dispatch( {
-			type: USER_LICENSES_REQUEST,
-			filter,
-			search,
-			sortField,
-			sortDirection,
-			page: page,
-			perPage: LICENSES_PER_PAGE,
-		} );
+): UserLicensingThunkAction => ( dispatch ) => {
+	dispatch( {
+		type: USER_LICENSES_REQUEST,
+		filter,
+		search,
+		sortField,
+		sortDirection,
+		page,
+		perPage: LICENSES_PER_PAGE,
+	} );
 
-		dispatch( requestLicensesCounts() );
-	};
+	dispatch( requestLicensesCounts() );
 };

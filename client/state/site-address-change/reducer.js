@@ -124,7 +124,7 @@ export const validation = ( state = {}, action ) => {
 			};
 		}
 		case SITE_ADDRESS_AVAILABILITY_ERROR: {
-			const { siteId, errorType, message } = action;
+			const { siteId, errorType, message, errorStatus } = action;
 
 			return {
 				...state,
@@ -135,6 +135,7 @@ export const validation = ( state = {}, action ) => {
 					error: {
 						errorType,
 						message,
+						errorStatus,
 					},
 				},
 			};

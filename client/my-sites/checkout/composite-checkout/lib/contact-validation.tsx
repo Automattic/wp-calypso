@@ -8,7 +8,6 @@ import {
 import { useEvents } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -37,13 +36,14 @@ import type {
 	RawContactValidationResponseMessages,
 	ContactValidationResponseMessages,
 } from '@automattic/wpcom-checkout';
+import type { CalypsoDispatch } from 'calypso/state/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:composite-checkout:contact-validation' );
 
 const getEmailTakenLoginRedirectMessage = (
 	emailAddress: string,
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >
 ) => {
 	const { href, pathname } = window.location;
@@ -107,7 +107,7 @@ async function runContactValidationCheck(
 
 async function runLoggedOutEmailValidationCheck(
 	contactInfo: ManagedContactDetails,
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >
 ): Promise< unknown > {
 	const email = contactInfo.email?.value ?? '';
@@ -125,7 +125,7 @@ export async function validateContactDetails(
 	showErrorMessageBriefly: ( message: string ) => void,
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void,
 	clearDomainContactErrorMessages: () => void,
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >,
 	shouldDisplayErrors: boolean
 ): Promise< boolean > {

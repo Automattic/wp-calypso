@@ -145,6 +145,10 @@ function getNewSiteParams( {
 		get( signupDependencies, 'themeSlugWithRepo', false ) ||
 		siteTypeTheme;
 
+	// We will use the default annotation instead of theme annotation as fallback,
+	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
+	const shouldUseDefaultAnnotationAsFallback = true;
+
 	const newSiteParams = {
 		blog_title: siteTitle,
 		public: Visibility.PublicNotIndexed,
@@ -152,6 +156,7 @@ function getNewSiteParams( {
 			designType: designType || undefined,
 			theme,
 			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
+			default_annotation_as_primary_fallback: shouldUseDefaultAnnotationAsFallback,
 			siteGoals: siteGoals || undefined,
 			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,

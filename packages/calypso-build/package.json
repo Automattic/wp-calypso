@@ -40,7 +40,7 @@
 		"@babel/cli": "^7.16.0",
 		"@babel/compat-data": "^7.16.0",
 		"@babel/core": "^7.16.0",
-		"@babel/helpers": "^7.16.0",
+		"@babel/helpers": "^7.16.3",
 		"@babel/plugin-proposal-class-properties": "^7.16.0",
 		"@babel/plugin-transform-react-jsx": "^7.16.0",
 		"@babel/plugin-transform-runtime": "^7.16.0",
@@ -85,6 +85,6 @@
 		"postcss": "^8.3.11",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"webpack": "^5.62.1"
+		"webpack": "^5.63.0"
 	}
 }

@@ -1,5 +1,4 @@
 import '@emotion/react';
-import { DataRegistry } from '@wordpress/data';
 import { ReactElement } from 'react';
 import { Theme as ThemeType } from './lib/theme';
 
@@ -102,7 +101,6 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 
 export interface CheckoutProviderProps {
 	theme?: ThemeType;
-	registry?: DataRegistry;
 	total?: LineItem;
 	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
