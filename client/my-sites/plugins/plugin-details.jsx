@@ -236,13 +236,11 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 
-				<div className="plugin-details__sites-list">
-					<SitesList
-						fullPlugin={ fullPlugin }
-						isPluginInstalledOnsite={ isPluginInstalledOnsite }
-						{ ...props }
-					/>
-				</div>
+				<SitesList
+					fullPlugin={ fullPlugin }
+					isPluginInstalledOnsite={ isPluginInstalledOnsite }
+					{ ...props }
+				/>
 
 				<div className="plugin-details__layout plugin-details__body">
 					<div className="plugin-details__layout-col plugin-details__layout-col-left">
@@ -372,23 +370,12 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 		return null;
 	}
 
-	if ( props.siteUrl && isPluginInstalledOnsite ) {
-		<PluginSiteList
-			className="plugin-details__installed-on"
-			title={ translate( 'Installed on', {
-				comment: 'header for list of sites a plugin is installed on',
-			} ) }
-			sites={ sites }
-			plugin={ plugin }
-		/>;
-	}
-
 	const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
 		sites.find( ( site ) => site.ID === siteId )
 	);
 
 	return (
-		<div>
+		<div className="plugin-details__sites-list">
 			<PluginSiteList
 				className="plugin-details__installed-on"
 				title={ translate( 'Installed on', {
