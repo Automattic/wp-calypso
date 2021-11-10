@@ -5,6 +5,7 @@ import {
 	setLocaleMiddleware,
 	setSectionMiddleware,
 	makeLayoutMiddleware,
+	setHrefLangLinks,
 } from 'calypso/controller/shared';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
@@ -87,6 +88,7 @@ export default ( router ) => {
 		redirectJetpack,
 		redirectDefaultLocale,
 		setLocaleMiddleware,
+		setHrefLangLinks,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		login,
 		setShouldServerSideRenderLogin,
