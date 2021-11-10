@@ -161,16 +161,6 @@ export class SiteDomains extends Component {
 			<>
 				{ ! hasProductsList && <QueryProductsList /> }
 
-				<div className="domains__header">
-					{ /* TODO: we need to decide where the HeaderCart will appear in the new design */ }
-					<div className="domains__header-buttons">
-						<HeaderCart
-							selectedSite={ this.props.selectedSite }
-							currentRoute={ this.props.currentRoute }
-						/>
-					</div>
-				</div>
-
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
@@ -291,14 +281,24 @@ export class SiteDomains extends Component {
 		};
 
 		const buttons = [
+			this.renderDomainTableFilterButton( false ),
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			this.renderDomainTableFilterButton( true ),
-			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
+			<HeaderCart
+				key="breadcrumb_button_cart"
+				selectedSite={ this.props.selectedSite }
+				currentRoute={ this.props.currentRoute }
+			/>,
+			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
 		const mobileButtons = [
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
+			<HeaderCart
+				key="breadcrumb_button_cart"
+				selectedSite={ this.props.selectedSite }
+				currentRoute={ this.props.currentRoute }
+			/>,
+			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
 		return (

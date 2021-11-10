@@ -3,8 +3,9 @@
 @import '@wordpress/base-styles/mixins';
 
 .breadcrumbs {
-	svg.options-domain-button__add {
-		margin-left: 4px;
+	svg.options-domain-button__add.gridicon {
+		margin-left: 2px;
+		margin-right: 2px;
 
 		@include break-mobile {
 			margin-left: 0;
