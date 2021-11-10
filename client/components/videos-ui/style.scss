@@ -1,5 +1,7 @@
 @import '@automattic/typography/styles/variables';
 @import '@automattic/onboarding/styles/mixins.scss';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .videos-ui {
 	background: #101517;
@@ -33,6 +35,8 @@
 			display: flex;
 			flex-direction: column;
 			padding: 20px;
+			max-width: 1280px;
+			margin: auto;
 
 			ul {
 				margin: 40px 0 0;
@@ -55,6 +59,8 @@
 	}
 
 	.videos-ui__body {
+		max-width: 1280px;
+		margin: auto;
 
 		h3 {
 			font-size: $font-title-medium;
@@ -64,7 +70,6 @@
 		.videos-ui__video-content {
 			display: flex;
 			flex-direction: column;
-			padding: 0 20px 20px;
 		}
 
 		.videos-ui__video {
@@ -135,7 +140,8 @@
 			}
 		}
 	}
-	@media screen and ( min-width: 660px ) {
+
+	@include break-medium {
 		.videos-ui__header {
 			.videos-ui__header-content {
 				flex-direction: row;
@@ -157,17 +163,19 @@
 				}
 			}
 		}
+	}
 
+	@include break-xlarge {
 		.videos-ui__body {
 
+			padding: 0 80px 80px;
 			h3 {
-				margin: 80px 80px 30px;
+				margin: 80px 0 20px;
 			}
 
 			.videos-ui__video-content {
 				flex-direction: row;
 				justify-content: space-between;
-				padding: 0 80px 80px;
 
 				.videos-ui__video {
 					flex-basis: auto;
