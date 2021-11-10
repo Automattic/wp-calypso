@@ -730,59 +730,50 @@ private object I18NTests : BuildType({
 	}
 
 	steps {
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-					export NODE_ENV="test"
-
-					# Install modules
-					${_self.yarn_install_cmd}
-				"""
-		}
+		prepareEnvironment()
 		bashNodeScript {
 			name = "Run i18n tests"
 			scriptContent = """
-					shopt -s globstar
-					set -x
+				shopt -s globstar
+				set -x
 
-					cd test/e2e
-					mkdir temp
+				cd test/e2e
+				mkdir temp
 
-					export URL=%URL%
-					export LIVEBRANCHES=false
-					export NODE_CONFIG_ENV=test
-					export TEST_VIDEO=true
-					export HIGHLIGHT_ELEMENT=true
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL}\"}"
-					export TARGET=I18N
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+				export TEAMCITY_VERSION=2021
+				export URL=%URL%
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+				export HEADLESS=true
+				export TARGET_DEVICE=desktop
 
-					# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
-					# mocha-teamcity-reporter to work.
-					export MAGELLANDEBUG=true
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-					# Run the test
-					IFS="," read -r -a LOCALE <<< "%LOCALES%"
-					for locale in ${'$'}{LOCALE[@]}; do
-						BROWSERLOCALE="${'$'}{locale}" yarn magellan --config=magellan-i18n.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json" || true
-					done
-				""".trimIndent()
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+				# Run the test
+				IFS="," read -r -a TARGET_LOCALES <<< "%LOCALES%"
+				for locale in ${'$'}{TARGET_LOCALES[@]}; do
+					LOCALE="${'$'}{locale}" yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=i18n
+				done
+			""".trimIndent()
 		}
 		bashNodeScript {
 			name = "Collect results"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-					set -x
+				set -x
 
-					mkdir -p screenshots
-					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+				mkdir -p screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
-					mkdir -p logs
-					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-				""".trimIndent()
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+			""".trimIndent()
 		}
 	}
 
