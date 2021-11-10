@@ -227,7 +227,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								: 'licensing-thank-you-auto-activation__product-info'
 						}
 					>
-						{ translate( 'Hello %(username)s,', {
+						{ translate( 'Hello %(username)s!', {
 							args: {
 								username: userName,
 							},
