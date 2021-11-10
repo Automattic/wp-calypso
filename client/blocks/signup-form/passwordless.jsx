@@ -138,6 +138,8 @@ class PasswordlessSignupForm extends Component {
 			email: this.state.email,
 		};
 
+		const marketing_price_group = response?.marketing_price_group ?? '';
+
 		recordRegistration( {
 			userData,
 			flow: this.props.flowName,
@@ -146,6 +148,7 @@ class PasswordlessSignupForm extends Component {
 
 		this.submitStep( {
 			username,
+			marketing_price_group,
 			bearer_token: response.bearer_token,
 		} );
 	};
@@ -220,7 +223,7 @@ class PasswordlessSignupForm extends Component {
 	}
 
 	formFooter() {
-		const { isSubmitting, isEmailAddressValid } = this.state;
+		const { isSubmitting } = this.state;
 		if ( this.userCreationComplete() ) {
 			return (
 				<LoggedOutFormFooter>
@@ -239,12 +242,7 @@ class PasswordlessSignupForm extends Component {
 					type="submit"
 					primary
 					busy={ isSubmitting }
-					disabled={
-						isSubmitting ||
-						! isEmailAddressValid ||
-						!! this.props.disabled ||
-						!! this.props.disableSubmitButton
-					}
+					disabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
 				>
 					{ submitButtonText }
 				</Button>

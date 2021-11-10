@@ -1040,6 +1040,7 @@ class SignupForm extends Component {
 				<div
 					className={ classNames( 'signup-form', this.props.className, {
 						'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
+						'is-horizontal': this.props.horizontal,
 					} ) }
 				>
 					{ this.getNotice() }
@@ -1054,14 +1055,23 @@ class SignupForm extends Component {
 						disableSubmitButton={ this.props.disableSubmitButton }
 						recaptchaClientId={ this.props.recaptchaClientId }
 					/>
+
+					{ ! config.isEnabled( 'desktop' ) &&
+						this.props.horizontal &&
+						! this.userCreationComplete() && (
+							<div className="signup-form__separator">
+								<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
+							</div>
+						) }
+
 					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 						<SocialSignupForm
 							handleResponse={ this.props.handleSocialResponse }
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
+							isReskinned={ this.props.isReskinned }
 						/>
 					) }
-
 					{ this.props.footerLink || this.footerLink() }
 				</div>
 			);
