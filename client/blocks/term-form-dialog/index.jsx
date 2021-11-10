@@ -147,13 +147,14 @@ class TermFormDialog extends Component {
 		this.state = this.constructor.initialState;
 	}
 
-	init( props ) {
-		if ( ! props.term ) {
-			if ( props.searchTerm && props.searchTerm.trim().length ) {
+	init() {
+		const { term, searchTerm } = this.props;
+		if ( ! term ) {
+			if ( searchTerm && searchTerm.trim().length ) {
 				this.setState(
 					{
 						...this.constructor.initialState,
-						name: props.searchTerm,
+						name: searchTerm,
 					},
 					this.isValid
 				);
@@ -164,7 +165,7 @@ class TermFormDialog extends Component {
 			return;
 		}
 
-		const { name, description, parent = false } = props.term;
+		const { name, description, parent = false } = term;
 		this.setState( {
 			...this.constructor.initialState,
 			name,
@@ -177,12 +178,12 @@ class TermFormDialog extends Component {
 	componentDidUpdate( prevProps ) {
 		const { term, showDialog } = this.props;
 		if ( term !== prevProps.term || ( showDialog !== prevProps.showDialog && showDialog ) ) {
-			this.init( this.props );
+			this.init();
 		}
 	}
 
 	componentDidMount() {
-		this.init( this.props );
+		this.init();
 	}
 
 	getFormValues() {
