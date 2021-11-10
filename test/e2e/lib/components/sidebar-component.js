@@ -70,10 +70,16 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectSiteEditor() {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.menu-link-text[data-e2e-sidebar*="Site Editor"]' )
-		);
+		// This menu location is being removed with 11.9.  Once the new menu location under
+		// 'Appearance' is stable, we can remove this old menu handling.
+		const oldMenuSelector = By.css( '.menu-link-text[data-e2e-sidebar*="Site Editor"]' );
+		const isOldMenuPresent = await driverHelper.isElementLocated( this.driver, oldMenuSelector );
+		if ( isOldMenuPresent ) {
+			return await driverHelper.clickWhenClickable( this.driver, oldMenuSelector );
+		}
+
+		await this.expandDrawerItem( 'Appearance' );
+		return await this._scrollToAndClickMenuItem( 'Editor' );
 	}
 
 	async selectWPAdmin() {
