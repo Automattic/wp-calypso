@@ -39,14 +39,23 @@ const navigationSidebarBackToRoot = async ( driver ) => {
 const deleteCustomEntities = async function ( driver, entityName ) {
 	await SiteEditorComponent.Expect( driver );
 	const getAndDeleteEntities = async ( name ) => {
-		const entities = window.wp.data
-			.select( 'core' )
-			.getEntityRecords( 'postType', name, {
+		// These selectors may not be pre-loaded and can return `null` on the first run.  We run the
+		// selector a second time if this is the case.
+		let entities = window.wp.data.select( 'core' ).getEntityRecords( 'postType', name, {
+			per_page: -1,
+		} );
+
+		if ( ! entities ) {
+			entities = window.wp.data.select( 'core' ).getEntityRecords( 'postType', name, {
 				per_page: -1,
-			} )
-			.filter( ( item ) => item.source === 'custom' );
-		for ( const entity of entities ) {
-			await window.wp.data.dispatch( 'core' ).deleteEntityRecord( 'postType', name, entity.id );
+			} );
+		}
+
+		if ( Array.isArray( entities ) ) {
+			entities = entities.filter( ( item ) => item.source === 'custom' );
+			for ( const entity of entities ) {
+				await window.wp.data.dispatch( 'core' ).deleteEntityRecord( 'postType', name, entity.id );
+			}
 		}
 	};
 	await driver.executeScript( getAndDeleteEntities, entityName );
