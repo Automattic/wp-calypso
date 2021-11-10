@@ -141,6 +141,12 @@
 		}
 	}
 
+	@include break-small {
+		.videos-ui__play-button {
+			max-width: 300px;
+		}
+	}
+
 	@include break-medium {
 		.videos-ui__header {
 			.videos-ui__header-content {
