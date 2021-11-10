@@ -560,14 +560,14 @@ class DomainsStep extends Component {
 			const searchParams = new URLSearchParams( window.location.search );
 
 			Object.entries( params ).forEach( ( [ key, value ] ) => searchParams.set( key, value ) );
-			const newurl =
+			const newUrl =
 				window.location.protocol +
 				'//' +
 				window.location.host +
 				window.location.pathname +
 				'?' +
 				decodeURIComponent( searchParams.toString() );
-			window.history.pushState( { path: newurl }, '', newurl );
+			window.history.pushState( { path: newUrl }, '', newUrl );
 		}
 	}
 
