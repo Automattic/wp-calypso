@@ -49,9 +49,10 @@ const setLocalizedWpComPath = (
 	return url;
 };
 
-const prefixLocalizedUrlPath = (
+const prefixOrSuffixLocalizedUrlPath = (
 	validLocales: Locale[] = [],
-	limitPathMatch: RegExp | null = null
+	limitPathMatch: RegExp | null = null,
+	prefixOrSuffix: string
 ) => ( url: URL, localeSlug: Locale ): URL => {
 	if ( typeof limitPathMatch === 'object' && limitPathMatch instanceof RegExp ) {
 		if ( ! limitPathMatch.test( url.pathname ) ) {
@@ -60,9 +61,35 @@ const prefixLocalizedUrlPath = (
 	}
 
 	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
-		url.pathname = localeSlug + url.pathname;
+		if ( prefixOrSuffix === 'prefix' ) {
+			url.pathname = localeSlug + url.pathname;
+		} else if ( prefixOrSuffix === 'suffix' ) {
+			url.pathname = url.pathname + localeSlug;
+		}
 	}
 	return url;
+};
+
+const prefixLocalizedUrlPath = (
+	validLocales: Locale[] = [],
+	limitPathMatch: RegExp | null = null
+) => ( url: URL, localeSlug: Locale ): URL => {
+	return prefixOrSuffixLocalizedUrlPath(
+		validLocales,
+		limitPathMatch,
+		'prefix'
+	)( url, localeSlug );
+};
+
+const suffixLocalizedUrlPath = (
+	validLocales: Locale[] = [],
+	limitPathMatch: RegExp | null = null
+) => ( url: URL, localeSlug: Locale ): URL => {
+	return prefixOrSuffixLocalizedUrlPath(
+		validLocales,
+		limitPathMatch,
+		'suffix'
+	)( url, localeSlug );
 };
 
 type LinkLocalizer = ( url: URL, localeSlug: string, isLoggedIn: boolean ) => URL;
@@ -107,6 +134,9 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	},
 	'wordpress.com/themes/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
+	'wordpress.com/log-in/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
 };
 
