@@ -100,7 +100,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false }, onBackClick = () => {} ) =
 								className="videos-ui__skip-link"
 								onClick={ skipClickHandler }
 							>
-								{ translate( 'Skip and draft first post' ) }
+								{ translate( 'Draft your first post' ) }
 							</a>
 						) }
 					</div>
