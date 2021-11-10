@@ -46,7 +46,7 @@ export class StartSiteFlow {
 	/**
 	 * Enter blog name.
 	 *
-	 * @param name Name for the blog.
+	 * @param {string} name Name for the blog.
 	 */
 	async enterBlogName( name: string ): Promise< void > {
 		await this.page.fill( selectors.blogNameInput, name );
@@ -55,7 +55,7 @@ export class StartSiteFlow {
 	/**
 	 * Enter blog tagline.
 	 *
-	 * @param tagline Tagline for the blog.
+	 * @param {string} tagline Tagline for the blog.
 	 */
 	async enterTagline( tagline: string ): Promise< void > {
 		await this.page.fill( selectors.taglineInput, tagline );
@@ -78,7 +78,7 @@ export class StartSiteFlow {
 	/**
 	 * Clicks button to preview a specific theme from theme selection screen.
 	 *
-	 * @param themeName Name of theme, e.g. "Zoologist".
+	 * @param {string} themeName Name of theme, e.g. "Zoologist".
 	 */
 	async previewTheme( themeName: string ): Promise< void > {
 		if ( BrowserHelper.getTargetDeviceName() === 'desktop' ) {
