@@ -17,6 +17,13 @@
 	}
 }
 
+.scan__content p.scan__initial-scan-message {
+	font-size: $font-title-medium;
+	line-height: 32px;
+	letter-spacing: 0.005em;
+	color: #2c3338;
+}
+
 .security-icon {
 	display: block;
 	margin: 0 auto;

@@ -155,16 +155,16 @@ class ScanPage extends Component< Props > {
 			<>
 				<SecurityIcon icon="in-progress" />
 				{ this.renderHeader( heading ) }
-				<p className="scan__progress-bar-percent">{ scanProgress }%</p>
-				<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
 				{ isInitialScan && (
-					<p>
+					<p className="scan__initial-scan-message">
 						{ translate(
 							'Welcome to Jetpack Scan. We are starting your first scan now. ' +
 								'Scan results will be ready soon.'
 						) }
 					</p>
 				) }
+				<p className="scan__progress-bar-percent">{ scanProgress }%</p>
+				<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
 				<p>
 					{ translate(
 						'{{strong}}Did you know{{/strong}} {{br/}}' +
