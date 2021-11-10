@@ -8,7 +8,7 @@ import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-sl
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { shouldDisplayTopLinks = false }, onBackClick = () => {} ) => {
+const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
