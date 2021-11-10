@@ -140,17 +140,15 @@ export class UpsellNudge extends Component {
 					value: postalCode,
 					isTouched: true,
 					errors: [],
-					isRequired: false,
 				},
 				countryCode: {
 					value: countryCode,
 					isTouched: true,
 					errors: [],
-					isRequired: false,
 				},
 			};
 			const validationResult = await getTaxValidationResult( contactInfo );
-			return isContactValidationResponseValid( validationResult, contactInfo );
+			return isContactValidationResponseValid( validationResult );
 		};
 
 		validateContactDetails().then( ( isValid ) => {

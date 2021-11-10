@@ -64,7 +64,6 @@ function wrapValueInManagedValue( value: string | undefined ): ManagedValue {
 	return {
 		value: value ?? '',
 		isTouched: true,
-		isRequired: false,
 		errors: [],
 	};
 }

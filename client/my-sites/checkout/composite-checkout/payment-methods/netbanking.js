@@ -128,9 +128,6 @@ function NetBankingFields() {
 	const getFieldValue = ( key ) => getField( key ).value ?? '';
 	const getErrorMessagesForField = ( key ) => {
 		const managedValue = getField( key );
-		if ( managedValue?.isRequired && managedValue?.value === '' ) {
-			return [ __( 'This field is required.' ) ];
-		}
 		return managedValue.errors ?? [];
 	};
 	const { setFieldValue } = useDispatch( 'netbanking' );
