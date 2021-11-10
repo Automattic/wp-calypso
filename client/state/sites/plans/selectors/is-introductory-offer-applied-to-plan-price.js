@@ -11,5 +11,5 @@ import { getSitePlan } from 'calypso/state/sites/plans/selectors/get-site-plan';
 export function isIntroductoryOfferAppliedToPlanPrice( state, siteId, productSlug ) {
 	const plan = getSitePlan( state, siteId, productSlug );
 
-	return ( plan.introductoryOfferRawPrice ?? -1 ) > 0;
+	return ( plan?.introductoryOfferRawPrice ?? -1 ) > 0;
 }
