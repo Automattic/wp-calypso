@@ -68,12 +68,7 @@ import weChatProcessor from './lib/we-chat-processor';
 import webPayProcessor from './lib/web-pay-processor';
 import createAnalyticsEventHandler from './record-analytics';
 import { StoredCard } from './types/stored-cards';
-import {
-	emptyManagedContactDetails,
-	applyContactDetailsRequiredMask,
-	domainRequiredContactDetails,
-	taxRequiredContactDetails,
-} from './types/wpcom-store-state';
+import { emptyManagedContactDetails } from './types/wpcom-store-state';
 import type { ReactStandardAction } from './types/analytics';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
@@ -261,13 +256,7 @@ export default function CompositeCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	useWpcomStore(
-		applyContactDetailsRequiredMask(
-			emptyManagedContactDetails,
-			contactDetailsType === 'domain' ? domainRequiredContactDetails : taxRequiredContactDetails
-		),
-		updateContactDetailsCache
-	);
+	useWpcomStore( emptyManagedContactDetails, updateContactDetailsCache );
 
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation, countriesList );

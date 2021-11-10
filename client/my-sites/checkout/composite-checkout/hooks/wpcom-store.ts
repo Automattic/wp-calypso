@@ -10,7 +10,6 @@ import type {
 	WpcomStoreState,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
-	ManagedContactDetailsRequiredMask,
 } from '@automattic/wpcom-checkout';
 
 type WpcomStoreAction =
@@ -25,7 +24,6 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_PHONE'; payload: string }
 	| { type: 'UPDATE_PHONE_NUMBER_COUNTRY'; payload: string }
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
-	| { type: 'UPDATE_REQUIRED_DOMAIN_FIELDS'; payload: ManagedContactDetailsRequiredMask }
 	| { type: 'TOUCH_CONTACT_DETAILS' }
 	| { type: 'CLEAR_DOMAIN_CONTACT_ERROR_MESSAGES' }
 	| { type: 'UPDATE_COUNTRY_CODE'; payload: string }
@@ -63,8 +61,6 @@ export function useWpcomStore(
 				return updaters.updatePhoneNumberCountry( state, action.payload );
 			case 'UPDATE_POSTAL_CODE':
 				return updaters.updatePostalCode( state, action.payload );
-			case 'UPDATE_REQUIRED_DOMAIN_FIELDS':
-				return updaters.updateRequiredDomainFields( state, action.payload );
 			case 'UPDATE_EMAIL':
 				return updaters.updateEmail( state, action.payload );
 			case 'UPDATE_COUNTRY_CODE':
@@ -132,10 +128,6 @@ export function useWpcomStore(
 
 			updatePostalCode( payload: string ): WpcomStoreAction {
 				return { type: 'UPDATE_POSTAL_CODE', payload };
-			},
-
-			updateRequiredDomainFields( payload: ManagedContactDetailsRequiredMask ): WpcomStoreAction {
-				return { type: 'UPDATE_REQUIRED_DOMAIN_FIELDS', payload };
 			},
 
 			updateEmail( payload: string ): WpcomStoreAction {
