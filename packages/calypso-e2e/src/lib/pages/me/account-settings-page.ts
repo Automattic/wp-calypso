@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { reloadAndRetry } from '../../../element-helper';
 import type { LanguageSlug } from '@automattic/languages';
 
 const selectors = {
@@ -40,7 +41,18 @@ export class AccountSettingsPage {
 	 * Closes the currently logged in user's account.
 	 */
 	async closeAccount(): Promise< void > {
-		// Wait for the async navigation
+		/**
+		 * Closure to handle the scenario where purchase(s) have been cancelled on the frontend,
+		 * but the backend still thinks there are valid purchases.
+		 * This is typically observed for more 'involved' purchases such as domains.
+		 *
+		 * @param {Page} page Page object.
+		 */
+		async function waitForPurchasesRemoved( page: Page ): Promise< void > {
+			await page.waitForSelector( 'a:text("Manage purchases")', { state: 'hidden' } );
+		}
+
+		// Wait for the async navigation after clicking on the initial `Close Account` link at /me/account.
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.closeAccountLink ),
@@ -51,13 +63,22 @@ export class AccountSettingsPage {
 		// The only thing that doesn't appear until all the loading is done is the sidebar of items to be deleted.
 		// So we must wait for that text before continuing, or our close account button click can get swallowed!
 		await this.page.waitForSelector( selectors.deletedItemsSidebar );
+
+		// Ensure the button is not `Manage Purchases` but rather `Close Account` a few times.
+		await reloadAndRetry( this.page, waitForPurchasesRemoved );
+
+		// `Close Account` button on /me/account/close.
 		await this.page.click( selectors.closeAccountButton );
 
+		// `Are you sure?` modal.
 		await this.page.click( selectors.modalContinueButton );
+
+		// Final attempt to save the situation in getting the user to type their account username.
 		const username = await this.page
 			.waitForSelector( selectors.usernameSpan )
 			.then( ( element ) => element.innerText() );
 		await this.page.fill( selectors.usernameConfirmationInput, username );
+		// Confirm closure.
 		await this.page.click( selectors.modalCloseAccountButton );
 	}
 
