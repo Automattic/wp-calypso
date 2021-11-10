@@ -1,10 +1,8 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
-import {
-	isTranslatedIncompletely,
-	getLanguageSlugs,
-	localizeUrl,
-} from 'calypso/lib/i18n-utils/utils';
+import { getLanguageSlugs } from 'calypso/lib/i18n-utils';
+import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 import { setSection } from 'calypso/state/ui/actions';
