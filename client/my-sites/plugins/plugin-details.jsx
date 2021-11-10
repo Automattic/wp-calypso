@@ -60,18 +60,18 @@ function PluginDetails( props ) {
 	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
 	const isFetched = useSelector( ( state ) => isWporgPluginFetched( state, props.pluginSlug ) );
 	const isJetpackSite = useSelector(
-		( state ) => selectedSite.ID && checkJetpackSite( state, selectedSite.ID )
+		( state ) => selectedSite?.ID && checkJetpackSite( state, selectedSite?.ID )
 	);
 	const isRequestingSites = useSelector( checkRequestingSites );
 	const requestingPluginsForSites = useSelector( ( state ) =>
 		isRequestingForSites( state, siteIds )
 	);
 	const sitePlugin = useSelector(
-		( state ) => selectedSite.ID && getPluginOnSite( state, selectedSite.ID, props.pluginSlug )
+		( state ) => selectedSite?.ID && getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
 	const userCanManagePlugins = useSelector( ( state ) =>
-		selectedSite.ID
-			? canCurrentUser( state, selectedSite.ID, 'manage_options' )
+		selectedSite?.ID
+			? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
 			: canCurrentUserManagePlugins( state )
 	);
 
@@ -298,7 +298,7 @@ function CTA( { slug, isPluginInstalledOnsite } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
-	const isJetpack = useSelector( ( state ) => checkJetpackSite( state, selectedSite.ID ) );
+	const isJetpack = useSelector( ( state ) => checkJetpackSite( state, selectedSite?.ID ) );
 
 	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) ) {
 		return null;
@@ -333,7 +333,7 @@ function onClickInstallPlugin( { dispatch, selectedSite, slug, upgradeAndInstall
 	dispatch( recordGoogleEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', slug ) );
 	dispatch(
 		recordGoogleEvent( 'calypso_plugin_install_click_from_plugin_info', {
-			site: selectedSite.ID,
+			site: selectedSite?.ID,
 			plugin: slug,
 		} )
 	);
