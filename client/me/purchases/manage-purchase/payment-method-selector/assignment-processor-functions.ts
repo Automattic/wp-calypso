@@ -68,11 +68,7 @@ export async function assignNewCardProcessor(
 
 		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
 
-		recordFormSubmitEvent( {
-			reduxDispatch,
-			purchase,
-			useForAllSubscriptions,
-		} );
+		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
 
 		const formFieldValues = {
 			country: countryCode,
@@ -161,7 +157,7 @@ export async function assignExistingCardProcessor(
 	reduxDispatch: CalypsoDispatch,
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
-	recordFormSubmitEvent( { reduxDispatch, purchase } );
+	reduxDispatch( recordFormSubmitEvent( { purchase } ) );
 	try {
 		if ( ! isValidExistingCardData( submitData ) ) {
 			throw new Error( 'Credit card data is missing stored details id' );
@@ -194,7 +190,7 @@ export async function assignPayPalProcessor(
 	if ( ! purchase ) {
 		throw new Error( 'Cannot assign PayPal payment method without a purchase' );
 	}
-	recordFormSubmitEvent( { reduxDispatch, purchase } );
+	reduxDispatch( recordFormSubmitEvent( { purchase } ) );
 	return wpcomCreatePayPalAgreement(
 		String( purchase.id ),
 		addQueryArgs( window.location.href, { success: 'true' } ),
@@ -207,22 +203,18 @@ export async function assignPayPalProcessor(
 }
 
 function recordFormSubmitEvent( {
-	reduxDispatch,
 	purchase,
 	useForAllSubscriptions,
 }: {
-	reduxDispatch: CalypsoDispatch;
-	purchase?: Purchase | undefined;
+	purchase?: Purchase;
 	useForAllSubscriptions?: boolean;
 } ) {
-	reduxDispatch(
-		purchase?.productSlug
-			? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
-					product_slug: purchase.productSlug,
-					use_for_all_subs: String( useForAllSubscriptions ),
-			  } )
-			: recordTracksEvent( 'calypso_add_credit_card_form_submit', {
-					use_for_all_subs: String( useForAllSubscriptions ),
-			  } )
-	);
+	return purchase?.productSlug
+		? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
+				product_slug: purchase.productSlug,
+				use_for_all_subs: String( useForAllSubscriptions ),
+		  } )
+		: recordTracksEvent( 'calypso_add_credit_card_form_submit', {
+				use_for_all_subs: String( useForAllSubscriptions ),
+		  } );
 }
