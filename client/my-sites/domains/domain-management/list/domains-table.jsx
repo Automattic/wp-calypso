@@ -120,7 +120,6 @@ class DomainsTable extends PureComponent {
 						key={ `${ domain.name }-${ index }` }
 						currentRoute={ currentRoute }
 						domain={ domain }
-						domainDetails={ domain }
 						site={ selectedSite }
 						isManagingAllSites={ false }
 						onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }

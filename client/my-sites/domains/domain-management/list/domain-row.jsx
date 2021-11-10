@@ -30,7 +30,6 @@ class DomainRow extends PureComponent {
 		currentRoute: PropTypes.string,
 		disabled: PropTypes.bool,
 		domain: PropTypes.object.isRequired,
-		domainDetails: PropTypes.object,
 		enableAllDomainsView: PropTypes.bool,
 		isBusy: PropTypes.bool,
 		isLoadingDomainDetails: PropTypes.bool,
@@ -57,12 +56,12 @@ class DomainRow extends PureComponent {
 	};
 
 	handleClick = () => {
-		const { onClick, domainDetails } = this.props;
-		onClick( domainDetails );
+		const { onClick, domain } = this.props;
+		onClick( domain );
 	};
 
 	renderDomainName( domainTypeText ) {
-		const { domain, domainDetails, isManagingAllSites } = this.props;
+		const { domain, isManagingAllSites } = this.props;
 		return (
 			<div className="domain-row__domain-cell">
 				<div className="domain-row__domain-name">
@@ -73,7 +72,7 @@ class DomainRow extends PureComponent {
 					{ /* eslint-enable jsx-a11y/anchor-is-valid */ }
 				</div>
 				{ domainTypeText && <div className="domain-row__domain-type-text">{ domainTypeText }</div> }
-				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
+				{ domain?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 			</div>
 		);
 	}
@@ -93,8 +92,8 @@ class DomainRow extends PureComponent {
 	}
 
 	renderDomainStatus() {
-		const { domain, domainDetails, site } = this.props;
-		const { status, statusClass } = resolveDomainStatus( domainDetails || domain, null, {
+		const { domain, site } = this.props;
+		const { status, statusClass } = resolveDomainStatus( domain, null, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
 		} );
@@ -160,14 +159,11 @@ class DomainRow extends PureComponent {
 	}
 
 	shouldShowAutoRenewStatus = () => {
-		const { domainDetails } = this.props;
-		if (
-			domainDetails?.type === domainTypes.WPCOM ||
-			domainDetails?.type === domainTypes.TRANSFER
-		) {
+		const { domain } = this.props;
+		if ( domain?.type === domainTypes.WPCOM || domain?.type === domainTypes.TRANSFER ) {
 			return false;
 		}
-		return ! domainDetails?.bundledPlanSubscriptionId && domainDetails.currentUserCanManage;
+		return ! domain?.bundledPlanSubscriptionId && domain.currentUserCanManage;
 	};
 
 	renderEmail() {
@@ -176,14 +172,14 @@ class DomainRow extends PureComponent {
 
 	/* eslint-disable jsx-a11y/anchor-is-valid */
 	renderEmailLabel = () => {
-		const { domainDetails, translate } = this.props;
+		const { domain, translate } = this.props;
 
-		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
+		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domain.type ) === -1 ) {
 			return null;
 		}
 
-		if ( hasGSuiteWithUs( domainDetails ) ) {
-			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
+		if ( hasGSuiteWithUs( domain ) ) {
+			const gSuiteMailboxCount = getGSuiteMailboxCount( domain );
 
 			const text = translate(
 				'%(gSuiteMailboxCount)d mailbox',
@@ -203,8 +199,8 @@ class DomainRow extends PureComponent {
 			);
 		}
 
-		if ( hasTitanMailWithUs( domainDetails ) ) {
-			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
+		if ( hasTitanMailWithUs( domain ) ) {
+			const titanMailboxCount = getMaxTitanMailboxCount( domain );
 
 			const text = translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
 				args: {
@@ -220,8 +216,8 @@ class DomainRow extends PureComponent {
 			);
 		}
 
-		if ( hasEmailForwards( domainDetails ) ) {
-			const emailForwardsCount = getEmailForwardsCount( domainDetails );
+		if ( hasEmailForwards( domain ) ) {
+			const emailForwardsCount = getEmailForwardsCount( domain );
 
 			const text = translate( '%(emailForwardsCount)d forward', '%(emailForwardsCount)d forwards', {
 				count: emailForwardsCount,
@@ -237,7 +233,7 @@ class DomainRow extends PureComponent {
 			);
 		}
 
-		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
+		if ( ! canCurrentUserAddEmail( domain ) ) {
 			return null;
 		}
 
@@ -270,7 +266,7 @@ class DomainRow extends PureComponent {
 	renderEllipsisMenu() {
 		const {
 			isLoadingDomainDetails,
-			domainDetails,
+			domain,
 			showDomainDetails,
 			disabled,
 			isBusy,
@@ -281,7 +277,7 @@ class DomainRow extends PureComponent {
 			return <div className="domain-row__action-cell"></div>;
 		}
 
-		if ( isLoadingDomainDetails || ! domainDetails ) {
+		if ( isLoadingDomainDetails || ! domain ) {
 			return (
 				<div className="domain-row__action-cell">
 					<p className="domain-row__placeholder" />
@@ -317,12 +313,12 @@ class DomainRow extends PureComponent {
 	}
 
 	canSetAsPrimary() {
-		const { domainDetails, isManagingAllSites, shouldUpgradeToMakePrimary } = this.props;
+		const { domain, isManagingAllSites, shouldUpgradeToMakePrimary } = this.props;
 		return (
 			! isManagingAllSites &&
-			domainDetails &&
-			domainDetails.canSetAsPrimary &&
-			! domainDetails.isPrimary &&
+			domain &&
+			domain.canSetAsPrimary &&
+			! domain.isPrimary &&
 			! shouldUpgradeToMakePrimary
 		);
 	}
@@ -330,9 +326,9 @@ class DomainRow extends PureComponent {
 	makePrimary = ( event ) => {
 		event.stopPropagation();
 
-		const { domainDetails, selectionIndex, onMakePrimaryClick } = this.props;
+		const { domain, selectionIndex, onMakePrimaryClick } = this.props;
 		if ( onMakePrimaryClick ) {
-			onMakePrimaryClick( selectionIndex, domainDetails );
+			onMakePrimaryClick( selectionIndex, domain );
 		}
 	};
 
@@ -354,13 +350,9 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, domainDetails, enableAllDomainsView, translate } = this.props;
-		const domainTypeText = getDomainTypeText(
-			domainDetails,
-			translate,
-			domainInfoContext.DOMAIN_ROW
-		);
-		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry );
+		const { domain, enableAllDomainsView, translate } = this.props;
+		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
+		const expiryDate = moment.utc( domain?.expiry );
 
 		return (
 			<div className="domain-row">
