@@ -31,16 +31,17 @@ class DomainRow extends PureComponent {
 		disabled: PropTypes.bool,
 		domain: PropTypes.object.isRequired,
 		domainDetails: PropTypes.object,
-		site: PropTypes.object,
-		isManagingAllSites: PropTypes.bool,
+		enableAllDomainsView: PropTypes.bool,
 		isBusy: PropTypes.bool,
+		isLoadingDomainDetails: PropTypes.bool,
+		isManagingAllSites: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
 		onMakePrimaryClick: PropTypes.func,
-		shouldUpgradeToMakePrimary: PropTypes.bool,
 		purchase: PropTypes.object,
-		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
+		shouldUpgradeToMakePrimary: PropTypes.bool,
 		showDomainDetails: PropTypes.bool,
+		site: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -75,6 +76,11 @@ class DomainRow extends PureComponent {
 				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 			</div>
 		);
+	}
+
+	renderSite() {
+		const { site } = this.props;
+		return <div className="domain-row__site-cell">{ site?.slug }</div>;
 	}
 
 	renderPrimaryBadge() {
@@ -130,7 +136,7 @@ class DomainRow extends PureComponent {
 			return <span className="domain-row__auto-renew-cell">-</span>;
 		}
 
-		if ( ! purchase ) {
+		if ( ! purchase || ! site ) {
 			return (
 				<span className="domain-row__auto-renew-cell">
 					<p className="domain-row__placeholder" />
@@ -348,7 +354,7 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, domainDetails, translate } = this.props;
+		const { domain, domainDetails, enableAllDomainsView, translate } = this.props;
 		const domainTypeText = getDomainTypeText(
 			domainDetails,
 			translate,
@@ -360,10 +366,11 @@ class DomainRow extends PureComponent {
 			<div className="domain-row">
 				<div className="domain-row__mobile-container">
 					{ this.renderDomainName( domainTypeText ) }
+					{ enableAllDomainsView && this.renderSite() }
 					{ this.renderDomainStatus() }
 					{ this.renderExpiryDate( expiryDate ) }
 					{ this.renderAutoRenew() }
-					{ this.renderEmail() }
+					{ ! enableAllDomainsView && this.renderEmail() }
 					{ this.renderEllipsisMenu() }
 				</div>
 				<div className="domain-row__mobile-container2">

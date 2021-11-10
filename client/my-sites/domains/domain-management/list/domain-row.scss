@@ -147,6 +147,18 @@
 	}
 }
 
+.domain-row__site-cell {
+	display: none;
+
+	@include break-mobile {
+		flex: 70 70 0;
+		display: block;
+		align-items: center;
+		padding-top: 2px;
+		font-size: $font-body-small;
+	}
+}
+
 .domain-row__status-cell {
 	display: none;
 

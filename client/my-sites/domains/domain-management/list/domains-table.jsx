@@ -11,17 +11,19 @@ const noop = () => {};
 
 class DomainsTable extends PureComponent {
 	static propTypes = {
-		isLoading: PropTypes.bool,
 		currentRoute: PropTypes.string,
 		domains: PropTypes.array,
 		domainsTableColumns: PropTypes.array,
-		selectedSite: PropTypes.object,
-		settingPrimaryDomain: PropTypes.bool,
-		primaryDomainIndex: PropTypes.number,
-		translate: PropTypes.func,
-		shouldUpgradeToMakeDomainPrimary: PropTypes.func,
+		enableAllDomainsView: PropTypes.bool,
 		goToEditDomainRoot: PropTypes.func,
 		handleUpdatePrimaryDomainOptionClick: PropTypes.func,
+		isLoading: PropTypes.bool,
+		primaryDomainIndex: PropTypes.number,
+		purchases: PropTypes.array,
+		settingPrimaryDomain: PropTypes.bool,
+		shouldUpgradeToMakeDomainPrimary: PropTypes.func,
+		sites: PropTypes.object,
+		translate: PropTypes.func,
 	};
 
 	state = {
@@ -63,18 +65,19 @@ class DomainsTable extends PureComponent {
 
 	render() {
 		const {
-			isLoading,
 			currentRoute,
-			domainsTableColumns,
 			domains,
-			selectedSite,
-			settingPrimaryDomain,
-			primaryDomainIndex,
-			translate,
-			shouldUpgradeToMakeDomainPrimary,
+			domainsTableColumns,
+			enableAllDomainsView,
 			goToEditDomainRoot,
 			handleUpdatePrimaryDomainOptionClick,
+			isLoading,
+			primaryDomainIndex,
 			purchases,
+			settingPrimaryDomain,
+			shouldUpgradeToMakeDomainPrimary,
+			sites,
+			translate,
 		} = this.props;
 
 		const { sortKey, sortOrder } = this.state;
@@ -107,33 +110,38 @@ class DomainsTable extends PureComponent {
 		}
 
 		const domainListItems = domainItems.map( ( domain, index ) => {
-			const purchase = purchases
-				? purchases.find( ( p ) => p.id === parseInt( domain.subscriptionId, 10 ) )
-				: null;
+			const purchase = purchases?.find( ( p ) => p.id === parseInt( domain.subscriptionId, 10 ) );
+			const selectedSite = sites?.[ domain.blogId ];
+
 			return (
-				<DomainRow
-					key={ `${ domain.name }-${ index }` }
-					currentRoute={ currentRoute }
-					domain={ domain }
-					domainDetails={ domain }
-					site={ selectedSite }
-					isManagingAllSites={ false }
-					onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
-					isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
-					busyMessage={ translate( 'Setting primary site address…', {
-						context: 'Shows up when the primary domain is changing and the user is waiting',
-					} ) }
-					disabled={ settingPrimaryDomain }
-					selectionIndex={ index }
-					onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
-					shouldUpgradeToMakePrimary={ shouldUpgradeToMakeDomainPrimary( domain ) }
-					purchase={ purchase }
-				/>
+				<>
+					{ domain.blogId && <QuerySitePurchases key="query-purchases" siteId={ domain.blogId } /> }
+					<DomainRow
+						key={ `${ domain.name }-${ index }` }
+						currentRoute={ currentRoute }
+						domain={ domain }
+						domainDetails={ domain }
+						site={ selectedSite }
+						isManagingAllSites={ false }
+						onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
+						isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
+						busyMessage={ translate( 'Setting primary site address…', {
+							context: 'Shows up when the primary domain is changing and the user is waiting',
+						} ) }
+						disabled={ settingPrimaryDomain }
+						selectionIndex={ index }
+						onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
+						shouldUpgradeToMakePrimary={
+							shouldUpgradeToMakeDomainPrimary && shouldUpgradeToMakeDomainPrimary( domain )
+						}
+						purchase={ purchase }
+						enableAllDomainsView={ enableAllDomainsView }
+					/>
+				</>
 			);
 		} );
 
 		return [
-			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
 			domains.length > 0 && (
 				<DomainsTableHeader
 					key="domains-header"

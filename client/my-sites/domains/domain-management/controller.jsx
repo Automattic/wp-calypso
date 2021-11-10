@@ -49,14 +49,15 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
+		let listAllComponent = DomainManagement.ListAll;
 		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
-			// TODO: set different component for the new domain list
+			listAllComponent = DomainManagement.AllDomains;
 		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementRoot() }
 				analyticsTitle="Domain Management > All Domains"
-				component={ DomainManagement.ListAll }
+				component={ listAllComponent }
 				context={ pageContext }
 			/>
 		);
