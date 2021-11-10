@@ -37,29 +37,26 @@ export function fetchSiteFeatures( siteId ) {
 			siteId,
 		} );
 
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getSiteFeatures( siteId, ( error, data ) => {
-				if ( error ) {
-					debug( 'Fetching site features failed: ', error );
+		return wpcom.req
+			.get( `/sites/${ siteId }/features` )
+			.then( ( data ) => {
+				dispatch( fetchSiteFeaturesCompleted( siteId, data ) );
+			} )
+			.catch( ( error ) => {
+				debug( 'Fetching site features failed: ', error );
 
-					const errorMessage =
-						error.message ||
-						i18n.translate(
-							'There was a problem fetching site features. Please try again later or contact support.'
-						);
+				const errorMessage =
+					error.message ||
+					i18n.translate(
+						'There was a problem fetching site features. Please try again later or contact support.'
+					);
 
-					dispatch( {
-						type: SITE_FEATURES_FETCH_FAILED,
-						siteId,
-						error: errorMessage,
-					} );
-				} else {
-					dispatch( fetchSiteFeaturesCompleted( siteId, data ) );
-				}
-
-				resolve();
+				dispatch( {
+					type: SITE_FEATURES_FETCH_FAILED,
+					siteId,
+					error: errorMessage,
+				} );
 			} );
-		} );
 	};
 }
 
