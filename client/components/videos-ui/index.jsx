@@ -7,7 +7,7 @@ import VideoLinksBar from './video-links-bar';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) => {
+const VideosUi = ( { shouldDisplayTopLinks = false }, onBackClick = () => {} ) => {
 	const translate = useTranslate();
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
 	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
