@@ -555,10 +555,11 @@ class DomainsStep extends Component {
 		this.handleAddMapping( 'useYourDomainForm', domain );
 	};
 
-	insertUrlParam( key, value ) {
+	insertUrlParams( params ) {
 		if ( history.pushState ) {
 			const searchParams = new URLSearchParams( window.location.search );
-			searchParams.set( key, value );
+
+			Object.entries( params ).forEach( ( [ key, value ] ) => searchParams.set( key, value ) );
 			const newurl =
 				window.location.protocol +
 				'//' +
@@ -572,8 +573,7 @@ class DomainsStep extends Component {
 
 	setCurrentFlowStep( { mode, domain } ) {
 		this.setState( { currentStep: mode }, () => {
-			this.insertUrlParam( 'step', this.state.currentStep );
-			this.insertUrlParam( 'initialQuery', domain );
+			this.insertUrlParams( { step: this.state.currentStep, initialQuery: domain } );
 		} );
 	}
 
