@@ -39,6 +39,7 @@ import {
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import {
 	isJetpackSite as checkJetpackSite,
 	isRequestingSites as checkRequestingSites,
@@ -300,6 +301,7 @@ function CTA( { slug, isPluginInstalledOnsite } ) {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => checkJetpackSite( state, selectedSite?.ID ) );
+	const isVipSite = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
 
 	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) ) {
 		return null;
@@ -309,7 +311,8 @@ function CTA( { slug, isPluginInstalledOnsite } ) {
 		isBusiness( selectedSite.plan ) ||
 		isEnterprise( selectedSite.plan ) ||
 		isEcommerce( selectedSite.plan ) ||
-		isJetpack
+		isJetpack ||
+		isVipSite
 	);
 	return (
 		<Button
