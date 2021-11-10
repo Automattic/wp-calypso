@@ -187,14 +187,17 @@ export default {
 	},
 
 	domainManagementDns( pageContext, next ) {
+		let component = DomainManagement.Dns;
+
 		if ( config.isEnabled( 'domains/dns-records-redesign' ) ) {
-			// TODO: set different component for the new dns records list (and there'll be a separate page for the add/edit form)
+			component = DomainManagement.DnsRecords;
 		}
+
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementDns( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
-				component={ DomainManagement.Dns }
+				component={ component }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
 			/>

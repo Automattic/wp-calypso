@@ -12,6 +12,11 @@ export type DnsRecord = {
 
 export type DnsMenuOptionsButtonProps = {
 	domain: string;
+	pointsToWpcom: boolean;
 	onSuccess: ( records: DnsRecord[] ) => void;
 	onError: ( message: string ) => void;
+};
+
+export type RestoreDialogResult = {
+	shouldRestoreDefaultRecords: boolean;
 };

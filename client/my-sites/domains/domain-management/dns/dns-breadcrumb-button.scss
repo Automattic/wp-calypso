@@ -6,6 +6,14 @@
 
 	&.popover {
 		margin-top: 5px;
+
+		&.is-bottom,
+		&.is-bottom-left,
+		&.is-bottom-right {
+			.popover__inner {
+				top: 2px;
+			}
+		}
 	}
 
 	@include break-mobile {
