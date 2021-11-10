@@ -14,6 +14,7 @@ import {
 	transferStatus,
 	gdprConsentStatus,
 } from 'calypso/lib/domains/constants';
+import { hasPendingGSuiteUsers, isPendingGSuiteTOSAcceptance } from 'calypso/lib/gsuite';
 import {
 	CHANGE_NAME_SERVERS,
 	DOMAINS,
@@ -32,6 +33,7 @@ import {
 	domainManagementManageConsent,
 } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
 
 import './style.scss';
 
@@ -65,6 +67,7 @@ export class DomainWarnings extends PureComponent {
 			'expiredDomainsCanManage',
 			'expiringDomainsCanManage',
 			'unverifiedDomainsCanManage',
+			'pendingGSuiteTosAcceptanceDomains',
 			'expiredDomainsCannotManage',
 			'expiringDomainsCannotManage',
 			'unverifiedDomainsCannotManage',
@@ -106,6 +109,7 @@ export class DomainWarnings extends PureComponent {
 			this.expiringDomainsCanManage,
 			this.unverifiedDomainsCanManage,
 			this.unverifiedDomainsCannotManage,
+			this.pendingGSuiteTosAcceptanceDomains,
 			this.expiredDomainsCannotManage,
 			this.expiringDomainsCannotManage,
 			this.wrongNSMappedDomains,
@@ -803,6 +807,26 @@ export class DomainWarnings extends PureComponent {
 			>
 				{ this.props.isCompact ? compactContent : fullContent }
 			</Notice>
+		);
+	};
+
+	pendingGSuiteTosAcceptanceDomains = () => {
+		const domains = this.getDomains().filter(
+			( domain ) => hasPendingGSuiteUsers( domain ) || isPendingGSuiteTOSAcceptance( domain )
+		);
+
+		if ( domains.length === 0 || ! this.props.isCompact ) {
+			return null;
+		}
+
+		return (
+			<PendingGSuiteTosNotice
+				isCompact={ this.props.isCompact }
+				key="pending-gsuite-tos-notice"
+				siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
+				domains={ domains }
+				section="domain-management"
+			/>
 		);
 	};
 
