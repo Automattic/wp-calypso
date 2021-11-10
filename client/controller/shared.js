@@ -101,7 +101,7 @@ const getLocalizedCanonicalUrl = ( path, locale ) => {
 };
 
 export const setLocalizedCanonicalUrl = ( context, next ) => {
-	if ( isUserLoggedIn( context.store.getState() ) ) {
+	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
 		next();
 		return;
 	}
