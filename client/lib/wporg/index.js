@@ -46,7 +46,7 @@ export function fetchPluginInformation( pluginSlug, locale ) {
 		action: 'plugin_information',
 		'request[slug]': pluginSlug.replace( new RegExp( '.php$' ), '' ),
 		'request[locale]': getWporgLocaleCode( locale ),
-		'request[fields]': 'icons,short_description,banners,compatibility',
+		'request[fields]': 'icons,short_description,-contributors,-added,-donate_link,-homepage',
 	};
 
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
@@ -63,7 +63,8 @@ export function fetchPluginsList( options ) {
 		action: 'query_plugins',
 		'request[page]': page,
 		'request[per_page]': pageSize,
-		'request[fields]': 'icons',
+		'request[fields]':
+			'icons,-active_installs,-downloaded,-last_updated,-ratings,-rating,-requires,-requires_php,-tags,-tested,-contributors,-added,-donate_link,-homepage',
 		'request[locale]': getWporgLocaleCode( options.locale ),
 	};
 
