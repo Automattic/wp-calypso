@@ -4,7 +4,6 @@ import Main from 'calypso/components/main';
 import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
-import WooCommerceColophon from './woocommerce-colophon';
 
 function WooCommerce() {
 	const siteId = useSelector( getSelectedSiteId );
@@ -22,7 +21,6 @@ function WooCommerce() {
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				{ areInstalledPluginsLoadedIntoState && <RequiredPluginsInstallView /> }
 			</Main>
-			<WooCommerceColophon />
 		</div>
 	);
 }

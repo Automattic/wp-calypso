@@ -482,7 +482,6 @@ class RequiredPluginsInstallView extends Component {
 		const { translate } = this.props;
 		return (
 			<div className="dashboard__setup-wrapper setup__wrapper">
-				<WoopLandingPage startSetup={ this.startSetup } />
 				<SetupNotices />
 				<div className="card dashboard__setup-confirm">
 					<SetupHeader
@@ -599,7 +598,8 @@ class RequiredPluginsInstallView extends Component {
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
-			return this.renderConfirmScreen();
+			return <WoopLandingPage startSetup={ this.startSetup } />;
+			//return this.renderConfirmScreen();
 		}
 
 		if ( 'DONEFAILURE' === engineState ) {
