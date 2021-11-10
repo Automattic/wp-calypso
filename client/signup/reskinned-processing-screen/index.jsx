@@ -62,7 +62,7 @@ export default function ReskinnedProcessingScreen( props ) {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	const defaultDuration = DURATION_IN_MS / totalSteps;
-	const duration = steps.current[ currentStep ].duration || defaultDuration;
+	const duration = steps.current[ currentStep ]?.duration || defaultDuration;
 
 	/**
 	 * Completion progress: 0 <= progress <= 1
@@ -90,7 +90,7 @@ export default function ReskinnedProcessingScreen( props ) {
 			} ) }
 		>
 			<h1 className="reskinned-processing-screen__progress-step">
-				{ steps.current[ currentStep ].title }
+				{ steps.current[ currentStep ]?.title }
 			</h1>
 			{ shouldShowNewSpinner && <LoadingEllipsis /> }
 			{ ! shouldShowNewSpinner && (
