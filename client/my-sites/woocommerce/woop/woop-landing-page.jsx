@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import CtaHeader from 'calypso/components/cta-header';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import './style.scss';
 
 const WoopLandingPage = ( props ) => {
 	const { startSetup } = props;
@@ -15,7 +16,7 @@ const WoopLandingPage = ( props ) => {
 			</FixedNavigationHeader>
 			<CtaHeader
 				title={ translate( 'Have something to sell?' ) }
-				subtitle={ translate( 'Upgrade to the Premium plan and set up your WooCommerce store.' ) }
+				subtitle={ translate( 'Build exactly the eCommerce website you want.' ) }
 				buttonText={ translate( 'Set up my store!' ) }
 				buttonAction={ startSetup }
 			>
