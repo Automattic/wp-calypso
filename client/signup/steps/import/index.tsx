@@ -53,6 +53,11 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 			: page.redirect( importerUrl );
 	};
 
+	const getBackUrl = ( stepName: string, stepSectionName: string ) => {
+		if ( stepName === 'capture' ) return getStepUrl( 'setup-site', 'intent' );
+		else if ( stepName === 'ready' && ! stepSectionName ) return getStepUrl( 'importer', 'list' );
+	};
+
 	return (
 		<StepWrapper
 			flowName={ 'importer' }
@@ -61,7 +66,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 			hideNext={ shouldHideNextBtn( stepName ) }
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
-			backUrl={ stepName === 'capture' ? getStepUrl( 'setup-site', 'intent' ) : undefined }
+			backUrl={ getBackUrl( stepName, stepSectionName ) }
 			goToNextStep={ goToNextStep }
 			hideFormattedHeader={ true }
 			stepName={ stepName }
