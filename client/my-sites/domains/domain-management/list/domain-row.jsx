@@ -32,7 +32,6 @@ class DomainRow extends PureComponent {
 		currentRoute: PropTypes.string,
 		disabled: PropTypes.bool,
 		domain: PropTypes.object.isRequired,
-		enableAllDomainsView: PropTypes.bool,
 		isBusy: PropTypes.bool,
 		isLoadingDomainDetails: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
