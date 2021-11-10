@@ -61,6 +61,12 @@ const Discount = styled.span`
 		margin-right: 0;
 		margin-left: 8px;
 	}
+	order: unset;
+
+	@media ( max-width: 660px ) {
+		order: 1;
+		width: 100%;
+	}
 `;
 
 const DoNotPayThis = styled.del`
