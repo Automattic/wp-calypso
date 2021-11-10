@@ -1,15 +1,12 @@
-import i18n from 'i18n-calypso';
-import moment from 'moment';
-
+import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect } from 'react';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { EVERY_TEN_SECONDS, useInterval } from 'calypso/lib/interval';
 const MILLIS_IN_MINUTE = 60 * 1000;
 
-export default function humanDate(
-	dateOrMoment,
-	dateFormat = 'll',
-	locale = i18n.getLocaleSlug()
-) {
-	const now = moment().locale( locale );
-	dateOrMoment = moment( dateOrMoment ).locale( locale );
+function getHumanDateString( dateOrMoment, dateFormat, moment, translate ) {
+	const now = moment();
+	dateOrMoment = moment( dateOrMoment );
 
 	let millisAgo = now.diff( dateOrMoment );
 	if ( millisAgo < 0 ) {
@@ -17,12 +14,12 @@ export default function humanDate(
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE ) {
-		return i18n.translate( 'just now' );
+		return translate( 'just now' );
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 ) {
 		const minutes = Math.ceil( millisAgo / MILLIS_IN_MINUTE );
-		return i18n.translate( '%(minutes)dm ago', {
+		return translate( '%(minutes)dm ago', {
 			args: {
 				minutes: minutes,
 			},
@@ -32,7 +29,7 @@ export default function humanDate(
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 ) {
 		const hours = now.diff( dateOrMoment, 'hours' );
-		return i18n.translate( '%(hours)dh ago', {
+		return translate( '%(hours)dh ago', {
 			args: {
 				hours: hours,
 			},
@@ -42,7 +39,7 @@ export default function humanDate(
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 * 7 ) {
 		const days = now.diff( dateOrMoment, 'days' );
-		return i18n.translate( '%(days)dd ago', {
+		return translate( '%(days)dd ago', {
 			args: {
 				days: days,
 			},
@@ -51,4 +48,28 @@ export default function humanDate(
 	}
 
 	return dateOrMoment.format( dateFormat );
+}
+
+export function useHumanDate( dateOrMoment, dateFormat, interval = EVERY_TEN_SECONDS ) {
+	const moment = useLocalizedMoment();
+	const translate = useTranslate();
+	const [ humanDate, setHumanDate ] = useState(
+		getHumanDateString( dateOrMoment, dateFormat, moment, translate )
+	);
+
+	useInterval( () => {
+		const newHumanDateString = getHumanDateString( dateOrMoment, dateFormat, moment, translate );
+		if ( humanDate !== newHumanDateString ) {
+			setHumanDate( newHumanDateString );
+		}
+	}, interval );
+
+	useEffect( () => {
+		const newHumanDateString = getHumanDateString( dateOrMoment, dateFormat, moment, translate );
+		if ( humanDate !== newHumanDateString ) {
+			setHumanDate( newHumanDateString );
+		}
+	}, [ setHumanDate, humanDate, dateOrMoment, dateFormat, moment, translate ] );
+
+	return humanDate;
 }
