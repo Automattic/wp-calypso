@@ -598,8 +598,6 @@ class RequiredPluginsInstallView extends Component {
 		const { hasPendingAT, fixMode, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
-		// if has feature flag, show the landing page
-
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
 			return (
 				<>
