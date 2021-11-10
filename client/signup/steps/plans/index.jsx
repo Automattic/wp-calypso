@@ -32,7 +32,7 @@ export class PlansStep extends Component {
 	};
 
 	componentWillMount() {
-		loadExperimentAssignment( 'disabled_monthly_personal_premium' ).then( ( experimentName ) => {
+		loadExperimentAssignment( 'disabled_monthly_personal_premium_v2' ).then( ( experimentName ) => {
 			this.setState( { experiment: experimentName } );
 		} );
 	}
