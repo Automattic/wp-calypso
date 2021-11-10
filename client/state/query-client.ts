@@ -3,7 +3,7 @@ import { QueryClient } from 'react-query';
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 import { shouldPersist, MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/initial-state';
 import { getPersistedStateItem, storePersistedStateItem } from 'calypso/state/persisted-state';
-import { shouldDehydrateQuery, shouldPersistQuery } from './should-dehydrate-query';
+import { shouldDehydrateQuery } from './should-dehydrate-query';
 
 export async function createQueryClient( userId: number | undefined ): Promise< QueryClient > {
 	const queryClient = new QueryClient( {
@@ -34,5 +34,3 @@ export async function createQueryClient( userId: number | undefined ): Promise< 
 	}
 	return queryClient;
 }
-
-export { shouldPersistQuery };

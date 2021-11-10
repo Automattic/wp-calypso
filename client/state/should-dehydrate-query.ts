@@ -1,12 +1,6 @@
 import { Query } from 'react-query';
 
-const SHOULD_PERSIST_QUERY_KEY = 'shouldPersistQuery';
-
 type PersistencePredicate< T > = ( data: T ) => boolean;
-
-type PersistenceMetaPartial< T > = {
-	[ SHOULD_PERSIST_QUERY_KEY ]: PersistencePredicate< T > | boolean;
-};
 
 const hasPersistenceSetting = ( value: unknown ): value is boolean => {
 	return typeof value === 'boolean';
@@ -18,25 +12,19 @@ const hasPersistenceCustomSetting = (
 	return typeof value === 'function';
 };
 
-export const shouldPersistQuery = < T >(
-	predicate: PersistencePredicate< T > | boolean
-): PersistenceMetaPartial< T > => ( {
-	[ SHOULD_PERSIST_QUERY_KEY ]: predicate,
-} );
-
 export const shouldDehydrateQuery = ( query: Query ): boolean => {
 	if ( query.state.status !== 'success' ) {
 		return false;
 	}
 
-	const shouldPersistQuery = query.meta?.[ SHOULD_PERSIST_QUERY_KEY ];
+	const shouldPersist = query.meta?.persist;
 
-	if ( hasPersistenceSetting( shouldPersistQuery ) ) {
-		return shouldPersistQuery;
+	if ( hasPersistenceSetting( shouldPersist ) ) {
+		return shouldPersist;
 	}
 
-	if ( hasPersistenceCustomSetting( shouldPersistQuery ) ) {
-		return shouldPersistQuery( query.state.data );
+	if ( hasPersistenceCustomSetting( shouldPersist ) ) {
+		return shouldPersist( query.state.data );
 	}
 
 	return true;
