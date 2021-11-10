@@ -6,30 +6,12 @@
 .videos-ui {
 	background: #101517;
 	color: #fff;
+	display: flex;
+	flex-direction: column;
+
 	.videos-ui__header {
 		background: #151b1e;
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.1 );
-
-		.videos-ui__header-links {
-			padding: 24px;
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			justify-content: space-between;
-			font-size: $font-body-small;
-			div,
-			a {
-				display: flex;
-				color: #fff;
-				align-items: center;
-			}
-			.videos-ui__back-link {
-				margin-left: 24px;
-			}
-			.videos-ui__skip-link {
-				text-decoration: underline;
-			}
-		}
 
 		.videos-ui__header-content {
 			display: flex;
@@ -60,7 +42,7 @@
 
 	.videos-ui__body {
 		max-width: 1280px;
-		margin: auto;
+		margin: 0 auto;
 
 		h3 {
 			font-size: $font-title-medium;
