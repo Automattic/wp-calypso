@@ -9,11 +9,11 @@ import {
 	PaymentMethod,
 } from 'calypso/lib/checkout/payment-methods';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { ReduxDispatch } from 'calypso/state/redux-store';
 import { deleteStoredCard } from 'calypso/state/stored-cards/actions';
 import { isDeletingStoredCard } from 'calypso/state/stored-cards/selectors';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 import PaymentMethodDetails from './payment-method-details';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 interface Props {
 	card: PaymentMethod;
@@ -24,7 +24,7 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	const isDeleting = useSelector( ( state ) =>
 		isDeletingStoredCard( state, card.stored_details_id )
 	);
-	const reduxDispatch = useDispatch< ReduxDispatch >();
+	const reduxDispatch = useDispatch< CalypsoDispatch >();
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDialogVisible( false ), [] );
 
