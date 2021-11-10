@@ -37,9 +37,9 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 					<SubTitle>
 						{ createInterpolateElement(
 							sprintf(
-								/* translators: the website could be any domain (eg: "yourname.com") that is hosted by a platform (eg: Wix, Squarespace, Blogger, etc.) */
+								/* translators: the website could be any domain (eg: "yourname.com") that is built with a platform (eg: Wix, Squarespace, Blogger, etc.) */
 								__(
-									'It looks like <strong>%(website)s</strong> is hosted by %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
+									'It looks like <strong>%(website)s</strong> is built with %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
 								),
 								{
 									website: convertToFriendlyWebsiteName( urlData.url ),
