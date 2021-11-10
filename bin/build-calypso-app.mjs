@@ -39,7 +39,7 @@ const { argv } = yargs( hideBin( process.argv ) ).options( {
 	verbose: { type: 'boolean', default: false, alias: 'v' },
 	watch: { type: 'boolean', default: process.env.NODE_ENV === 'development', alias: 'w' },
 } );
-const VERBOSE = argv.versbose;
+const VERBOSE = argv.verbose;
 
 try {
 	await runBuilder( argv );
@@ -85,7 +85,7 @@ async function runBuilder( args ) {
 
 /**
  * Sets up remote syncing. In watch mode, schedules syncs to the remote after changes
- * have stoped happening and existing syncs have stopped. In non-watch mode, does
+ * have stopped happening and existing syncs have stopped. In non-watch mode, does
  * a single sync. Rejects if any errors happen during rsync. Resolves in non-watch
  * mode after a full sync. Is otherwise pending until the user kills the process.
  */
@@ -104,12 +104,13 @@ function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
 				`rsync -ahz --exclude=".*" ${ localPath } wpcom-sandbox:${ remotePath }`,
 				( err ) => {
 					rsync = null;
-					if ( err && err.signal !== 'SIGINT' ) {
-						// If there's an error other than sigint, reject and abort.
+					// err.signal is null on macOS, so use error code 20 in that case.
+					const wasRsyncCancelled = err && ( err.signal === 'SIGINT' || err.code === 20 );
+					if ( err && ! wasRsyncCancelled ) {
+						// If there's an error unrelated to cancellation, reject and abort.
 						reject( err );
 						return;
-					} else if ( err?.signal === 'SIGINT' ) {
-						// Sigint just means that we want to restart rsync.
+					} else if ( wasRsyncCancelled ) {
 						if ( VERBOSE ) {
 							console.log( 'Restarting sync.' );
 						}
