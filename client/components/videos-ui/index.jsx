@@ -1,16 +1,14 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import VideoLinksBar from './video-links-bar';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { shouldDisplayTopLinks = false }, onBackClick = () => {} ) => {
+const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) => {
 	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
 	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
 
@@ -83,28 +81,13 @@ const VideosUi = ( { shouldDisplayTopLinks = false }, onBackClick = () => {} ) =
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
-				<div className="videos-ui__header-links">
-					<div>
-						<Gridicon icon="my-sites" size={ 24 } />
-						{ shouldDisplayTopLinks && (
-							<a href="/" className="videos-ui__back-link" onClick={ onBackClick }>
-								<Gridicon icon="chevron-left" size={ 24 } />
-								<span>{ translate( 'Back' ) }</span>
-							</a>
-						) }
-					</div>
-					<div>
-						{ shouldDisplayTopLinks && (
-							<a
-								href={ `/post/${ siteSlug }` }
-								className="videos-ui__skip-link"
-								onClick={ skipClickHandler }
-							>
-								{ translate( 'Skip and draft first post' ) }
-							</a>
-						) }
-					</div>
-				</div>
+				<VideoLinksBar
+					displayIcon={ true }
+					displayLinks={ shouldDisplayTopLinks }
+					extraClasses={ 'desktop' }
+					onBackClick={ onBackClick }
+					skipClickHandler={ skipClickHandler }
+				/>
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
 						<h2>{ translate( 'Watch five videos.' ) }</h2>
@@ -192,6 +175,13 @@ const VideosUi = ( { shouldDisplayTopLinks = false }, onBackClick = () => {} ) =
 					</div>
 				</div>
 			</div>
+			<VideoLinksBar
+				displayIcon={ false }
+				displayLinks={ shouldDisplayTopLinks }
+				extraClasses={ 'mobile' }
+				onBackClick={ onBackClick }
+				skipClickHandler={ skipClickHandler }
+			/>
 		</div>
 	);
 };
