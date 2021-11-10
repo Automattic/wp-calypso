@@ -17,7 +17,7 @@ import {
 	IndividualPurchasePage,
 	StartSiteFlow,
 	ThemesPage,
-	describeif,
+	skipDescribeIf,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -25,7 +25,7 @@ const isStagingOrProd = DataHelper.getCalypsoURL()
 	.toLowerCase()
 	.includes( 'https://wordpress.com' );
 
-describeif( ! isStagingOrProd )(
+skipDescribeIf( isStagingOrProd )(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ),
 	function () {
 		const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;

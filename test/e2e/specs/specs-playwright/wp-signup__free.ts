@@ -17,7 +17,7 @@ import {
 	BrowserManager,
 	ComingSoonPage,
 	MyHomePage,
-	describeif,
+	skipDescribeIf,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -26,7 +26,7 @@ const isStagingOrProd = DataHelper.getCalypsoURL()
 	.includes( 'https://wordpress.com' );
 
 // Skipping while new onboarding flows are in transition and we map the new tests
-describeif( ! isStagingOrProd )(
+skipDescribeIf( isStagingOrProd )(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ),
 	function () {
 		const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
