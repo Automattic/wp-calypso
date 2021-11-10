@@ -1,6 +1,9 @@
 import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
+	// Curent theme
+	currentTheme: ( name: string ) => `.current-theme:has-text("${ name }")`,
+
 	// Main themes listing
 	items: '.card.theme',
 	excludeActiveTheme: ':not(.is-active)',
@@ -120,5 +123,14 @@ export class ThemesPage {
 		await selectedTheme.waitForElementState( 'stable' );
 		// Clicking on the INFO button will always result in navigation to a new page.
 		await Promise.all( [ this.page.waitForNavigation(), selectedTheme.click() ] );
+	}
+
+	/**
+	 * Validates that the current theme (at top) is the expected theme. Throws if it is not.
+	 *
+	 * @param expectedTheme Expected theme name.
+	 */
+	async validateCurrentTheme( expectedTheme: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.currentTheme( expectedTheme ) );
 	}
 }
