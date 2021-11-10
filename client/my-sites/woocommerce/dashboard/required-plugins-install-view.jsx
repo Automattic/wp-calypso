@@ -22,6 +22,7 @@ import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 import { getSelectedSiteWithFallback, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { recordTrack } from '../lib/analytics';
+import WoopLandingPage from '../woop/woop-landing-page';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 
@@ -481,6 +482,7 @@ class RequiredPluginsInstallView extends Component {
 		const { translate } = this.props;
 		return (
 			<div className="dashboard__setup-wrapper setup__wrapper">
+				<WoopLandingPage startSetup={ this.startSetup } />
 				<SetupNotices />
 				<div className="card dashboard__setup-confirm">
 					<SetupHeader
@@ -595,6 +597,8 @@ class RequiredPluginsInstallView extends Component {
 	render() {
 		const { hasPendingAT, fixMode, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
+
+		// if has feature flag, show the landing page
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
 			return this.renderConfirmScreen();
