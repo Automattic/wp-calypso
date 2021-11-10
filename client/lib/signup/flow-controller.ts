@@ -322,7 +322,7 @@ export default class SignupFlowController {
 			includes( currentSteps, step.stepName )
 		);
 		const pendingSteps = filter( signupProgress, { status: 'pending' } );
-		const completedSteps = filter(
+		const completedOrSkippedSteps = filter(
 			signupProgress,
 			( step ) => step.status === 'completed' || step.wasSkipped
 		);
@@ -336,7 +336,10 @@ export default class SignupFlowController {
 			this._processStep( pendingStep );
 		}
 
-		if ( completedSteps.length === currentSteps.length && undefined !== this._onComplete ) {
+		if (
+			completedOrSkippedSteps.length === currentSteps.length &&
+			undefined !== this._onComplete
+		) {
 			this._assertFlowProvidedRequiredDependencies();
 			// deferred to ensure that the onComplete function is called after the stores have
 			// emitted their final change events.
