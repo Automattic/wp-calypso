@@ -20,3 +20,8 @@ export type DnsMenuOptionsButtonProps = {
 export type RestoreDialogResult = {
 	shouldRestoreDefaultRecords: boolean;
 };
+
+export type DndAddNewRecordButtonProps = {
+	site: string;
+	domain: string;
+};

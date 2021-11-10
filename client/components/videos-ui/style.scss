@@ -66,10 +66,10 @@
 		}
 
 		.videos-ui__chapters {
-			background: #1d262a;
 			font-size: $font-body-small;
 
 			.videos-ui__chapter {
+				background: #1d262a;
 				border-bottom: 1px solid #343c3f;
 
 				&:last-child {
@@ -102,9 +102,9 @@
 
 				.videos-ui__active-video-content {
 					overflow: hidden;
-					height: 0;
+					max-height: 0;
 					transition:
-						height 0.2s ease-out;
+						max-height 0.2s ease-out;
 
 					div {
 						padding: 20px;
@@ -117,9 +117,15 @@
 				}
 
 				&.selected .videos-ui__active-video-content {
-					height: 250px;
+					max-height: 250px;
 				}
 			}
+		}
+	}
+
+	@include break-small {
+		.videos-ui__play-button {
+			max-width: 300px;
 		}
 	}
 
@@ -171,4 +177,8 @@
 			}
 		}
 	}
+}
+
+.blank-canvas .videos-ui {
+	min-height: 100vh;
 }
