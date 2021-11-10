@@ -34,8 +34,6 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 		() => fetchIsBackup( storedDetailsId ),
 		{
 			initialData: { is_backup: initialIsBackup },
-			refetchOnMount: false,
-			refetchOnWindowFocus: false,
 		}
 	);
 	const mutation = useMutation( ( isBackup: boolean ) => setIsBackup( storedDetailsId, isBackup ), {
