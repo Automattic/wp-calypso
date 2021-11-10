@@ -17,8 +17,6 @@
 			display: flex;
 			flex-direction: column;
 			padding: 20px;
-			max-width: 1280px;
-			margin: auto;
 
 			ul {
 				margin: 40px 0 0;
@@ -43,10 +41,11 @@
 	.videos-ui__body {
 		max-width: 1280px;
 		margin: 0 auto;
+		padding: 20px;
 
 		h3 {
 			font-size: $font-title-medium;
-			margin: 20px;
+			margin-bottom: 24px;
 		}
 
 		.videos-ui__video-content {
