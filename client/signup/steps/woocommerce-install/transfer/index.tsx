@@ -1,5 +1,4 @@
-import { ProgressBar } from '@automattic/components';
-import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,8 +10,10 @@ import {
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { hasUploadFailed } from 'calypso/state/themes/upload-theme/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { GoToStep } from '../../types';
+import type { GoToStep } from '../../../types';
 import type { AppState } from 'calypso/types';
+
+import './style.scss';
 
 interface Props {
 	goToStep: GoToStep;
@@ -23,7 +24,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const [ progress, setProgress ] = useState( 0 );
+	const [ progress, setProgress ] = useState( 0.1 );
 	const [ error, setError ] = useState( { transferFailed: false, transferStatus: null } );
 
 	const dispatch = useDispatch();
@@ -66,19 +67,19 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 			case transferStates.FAILURE:
 			case transferStates.START:
 			case transferStates.REVERTED:
-				setProgress( 20 );
+				setProgress( 0.1 );
 				break;
 			case transferStates.SETUP:
 			case transferStates.CONFLICTS:
 			case transferStates.ACTIVE:
-				setProgress( 50 );
+				setProgress( 0.5 );
 				break;
 			case transferStates.UPLOADING:
 			case transferStates.BACKFILLING:
-				setProgress( 60 );
+				setProgress( 0.6 );
 				break;
 			case transferStates.COMPLETE:
-				setProgress( 100 );
+				setProgress( 1 );
 				goToStep( 'complete' );
 				break;
 		}
@@ -90,7 +91,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 			transferStatus === transferStates.REQUEST_FAILURE ||
 			transferStatus === transferStates.CONFLICTS
 		) {
-			setProgress( 100 );
+			setProgress( 1 );
 			setError( { transferFailed, transferStatus } );
 		}
 	}, [
@@ -103,28 +104,38 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 		transferFailed,
 	] );
 
-	return (
-		<>
-			<div className="woocommerce-install__heading-wrapper">
-				<div className="woocommerce-install__heading">
-					<Title>{ __( 'Upgrading your site…' ) }</Title>
-					<SubTitle></SubTitle>
+	// Progress smoothing, works out to be around 40seconds unless transfer step polling dictates otherwise
+	const [ simulatedProgress, setSimulatedProgress ] = useState( 0.01 );
+	useEffect( () => {
+		const timeOutReference = setTimeout( () => {
+			if ( progress > simulatedProgress ) {
+				setSimulatedProgress( progress );
+			} else if ( simulatedProgress <= 1 ) {
+				setSimulatedProgress( ( previousProgress ) => {
+					// Stall at 95%, allow complete to finish up
+					let newProgress = previousProgress + Math.random() * 0.05;
+					if ( newProgress >= 0.95 ) {
+						newProgress = 0.95;
+					}
+					return newProgress;
+				} );
+			}
+		}, 1000 );
+		return () => clearTimeout( timeOutReference );
+	}, [ simulatedProgress, progress ] );
 
-					<div className="woocommerce-install__buttons-group">
-						<div>
-							<BackButton onClick={ () => goToStep( 'confirm' ) } />
-						</div>
-					</div>
+	return (
+		<div className="transfer__step-wrapper">
+			<div className="transfer__heading-wrapper woocommerce-install__heading-wrapper">
+				<div className="transfer__heading woocommerce-install__heading">
+					<Title>{ __( 'Upgrading your site…' ) }</Title>
 				</div>
 			</div>
-			<div className="woocommerce-install__content">
-				<div>
-					{ error.transferFailed && 'error...' }
-					{ error.transferFailed && error.transferStatus }
-					<ProgressBar value={ progress || 1 } total={ 100 } isPulsing />
-					<NextButton onClick={ () => goToStep( 'install' ) }>{ __( 'Next' ) }</NextButton>
-				</div>
+			<div className="transfer__content woocommerce-install__content">
+				{ error.transferFailed && 'error...' }
+				{ error.transferFailed && error.transferStatus }
+				<div className="transfer__progress-bar" style={ { '--progress': simulatedProgress } } />
 			</div>
-		</>
+		</div>
 	);
 }
