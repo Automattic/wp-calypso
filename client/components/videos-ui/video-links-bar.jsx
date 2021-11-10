@@ -9,19 +9,23 @@ import './style-video-links-bar.scss';
 const VideoLinksBar = ( {
 	displayIcon,
 	displayLinks,
-	extraClasses,
+	isFooter = false,
 	onBackClick = () => {},
 	skipClickHandler = () => {},
 } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const classes = classNames( 'videos-ui__header-links', extraClasses ?? '' );
+	const classes = classNames( 'videos-ui__bar', isFooter ? 'mobile' : 'desktop' );
 
 	return (
-		<div className={ classes }>
+		<div
+			className={ classNames( 'videos-ui__header-links', {
+				'videos-ui__is-footer': isFooter,
+			} ) }
+		>
 			{ displayIcon && <Gridicon icon="my-sites" size={ 24 } /> }
 			{ displayLinks && (
-				<div className="videos-ui__bar">
+				<div className={ classes }>
 					<div>
 						<a
 							href="/"

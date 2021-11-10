@@ -84,7 +84,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 				<VideoLinksBar
 					displayIcon={ true }
 					displayLinks={ shouldDisplayTopLinks }
-					extraClasses={ 'desktop' }
+					isFooter={ false }
 					onBackClick={ onBackClick }
 					skipClickHandler={ skipClickHandler }
 				/>
@@ -178,7 +178,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 			<VideoLinksBar
 				displayIcon={ false }
 				displayLinks={ shouldDisplayTopLinks }
-				extraClasses={ 'mobile' }
+				isFooter={ true }
 				onBackClick={ onBackClick }
 				skipClickHandler={ skipClickHandler }
 			/>

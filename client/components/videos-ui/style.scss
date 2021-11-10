@@ -9,16 +9,6 @@
 	display: flex;
 	flex-direction: column;
 
-	.videos-ui__header-links {
-		&.desktop {
-			display: none;
-		}
-		&.mobile {
-			border-top: 1px solid rgba( 255, 255, 255, 0.1 );
-			margin-top: auto;
-		}
-	}
-
 	.videos-ui__header {
 		background: #151b1e;
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.1 );
@@ -129,17 +119,6 @@
 				&.selected .videos-ui__active-video-content {
 					height: 250px;
 				}
-			}
-		}
-	}
-
-	@include break-small {
-		.videos-ui__header-links {
-			&.desktop {
-				display: flex;
-			}
-			&.mobile {
-				display: none;
 			}
 		}
 	}
