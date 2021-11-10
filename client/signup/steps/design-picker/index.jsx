@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, { isBlankCanvasDesign, getDesignUrl } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -162,7 +161,7 @@ class DesignPickerStep extends Component {
 				onSelect={ this.pickDesign }
 				onPreview={ this.previewDesign }
 				className={ classnames( {
-					'design-picker-step__has-categories': isEnabled( 'signup/design-picker-categories' ),
+					'design-picker-step__has-categories': this.props.showDesignPickerCategories,
 				} ) }
 				highResThumbnails
 				showCategoryFilter={ this.props.showDesignPickerCategories }
@@ -208,9 +207,9 @@ class DesignPickerStep extends Component {
 	}
 
 	headerText() {
-		const { translate } = this.props;
+		const { showDesignPickerCategories, translate } = this.props;
 
-		if ( isEnabled( 'signup/design-picker-categories' ) ) {
+		if ( showDesignPickerCategories ) {
 			return translate( 'Themes' );
 		}
 
@@ -218,9 +217,9 @@ class DesignPickerStep extends Component {
 	}
 
 	subHeaderText() {
-		const { locale, translate } = this.props;
+		const { locale, showDesignPickerCategories, translate } = this.props;
 
-		if ( ! isEnabled( 'signup/design-picker-categories' ) ) {
+		if ( ! showDesignPickerCategories ) {
 			return translate(
 				'Pick your favorite homepage layout. You can customize or change it later.'
 			);
@@ -286,7 +285,7 @@ class DesignPickerStep extends Component {
 			<StepWrapper
 				{ ...this.props }
 				className={ classnames( {
-					'design-picker__has-categories': isEnabled( 'signup/design-picker-categories' ),
+					'design-picker__has-categories': this.props.showDesignPickerCategories,
 				} ) }
 				hideFormattedHeader
 				stepContent={ this.renderDesignPicker() }
