@@ -59,15 +59,13 @@ function PluginDetails( props ) {
 	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, props.pluginSlug ) );
 	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
 	const isFetched = useSelector( ( state ) => isWporgPluginFetched( state, props.pluginSlug ) );
-	const isJetpackSite = useSelector(
-		( state ) => selectedSite?.ID && checkJetpackSite( state, selectedSite?.ID )
-	);
+	const isJetpackSite = useSelector( ( state ) => checkJetpackSite( state, selectedSite?.ID ) );
 	const isRequestingSites = useSelector( checkRequestingSites );
 	const requestingPluginsForSites = useSelector( ( state ) =>
 		isRequestingForSites( state, siteIds )
 	);
-	const sitePlugin = useSelector(
-		( state ) => selectedSite?.ID && getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
+	const sitePlugin = useSelector( ( state ) =>
+		getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
 	const userCanManagePlugins = useSelector( ( state ) =>
 		selectedSite?.ID
