@@ -247,7 +247,7 @@ class TermFormDialog extends Component {
 		if ( searchTerm && searchTerm.length ) {
 			query.search = searchTerm;
 		}
-		const hideTermAndChildren = term?.ID;
+		const hideTermAndChildren = !! term?.ID;
 		const isError = !! this.state.errors.parent;
 
 		// if there is only one term for the site, and we are editing that term
