@@ -106,6 +106,10 @@
 	.product-grid__free {
 		margin-top: 16px;
 		flex-direction: column;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			flex-direction: initial;
+		}
 	}
 
 	.jetpack-product-card.jetpack-free-card {
