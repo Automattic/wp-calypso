@@ -3,7 +3,6 @@ import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding'
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	isFetchingAutomatedTransferStatus,
@@ -45,7 +44,6 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 			return;
 		}
 
-		dispatch( fetchAutomatedTransferStatus( siteId ) ); // todo: can possibly drop this, polling should be kicked off by initiate call
 		dispatch( initiateThemeTransfer( siteId, null, 'woocommerce' ) );
 	}, [ siteId, dispatch ] );
 
