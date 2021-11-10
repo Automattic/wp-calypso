@@ -281,13 +281,22 @@ class DesignPickerStep extends Component {
 			);
 		}
 
+		const headerProps = this.props.showDesignPickerCategories
+			? { hideFormattedHeader: true }
+			: {
+					fallbackHeaderText: this.headerText(),
+					headerText: this.headerText(),
+					fallbackSubHeaderText: this.subHeaderText(),
+					subHeaderText: this.subHeaderText(),
+			  };
+
 		return (
 			<StepWrapper
 				{ ...this.props }
 				className={ classnames( {
 					'design-picker__has-categories': this.props.showDesignPickerCategories,
 				} ) }
-				hideFormattedHeader
+				{ ...headerProps }
 				stepContent={ this.renderDesignPicker() }
 				align={ isReskinned ? 'left' : 'center' }
 				skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
