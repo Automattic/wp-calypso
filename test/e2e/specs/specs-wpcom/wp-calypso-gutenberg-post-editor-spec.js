@@ -730,7 +730,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					);
 				} );
 
-				it( 'Can see the Line Height setting for the paragraph', async function () {
+				it( 'Can add and see the Line Height setting for the paragraph in the `Typography` panel', async function () {
 					const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( this.driver );
 
 					if ( driverManager.currentScreenSize() === 'mobile' )
@@ -744,6 +744,28 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 					await gSidebarComponent.displayComponentIfNecessary();
 					await gSidebarComponent.chooseBlockSettings();
+
+					/**
+					 * Before GB 11.9, `line-height` was always shown, but 11.9 introduces changes to the panel that
+					 * requires the user to add some settings manually. Discussion about the rationale can be found
+					 * in this Slack thread:
+					 * - p1636568230296600/1636417237.235700-slack-C7YPUHBB2
+					 *
+					 * This setting is still present for all themes in WPCOM regardless of theme support, so the code
+					 * here still relevant:
+					 *- https://github.com/Automattic/wp-calypso/blob/trunk/apps/editing-toolkit/editing-toolkit-plugin/common/index.php#L179-L182
+					 *
+					 * @todo provided we have more cases like this, abstract this in a `ToolsPanel` general component
+					 * that can handle any `ToolsPanel`-like section that need to have settings added like this.
+					 */
+					await driverHelper.clickWhenClickable(
+						this.driver,
+						By.css( 'button[aria-label="View and add options"]' )
+					);
+					await driverHelper.clickWhenClickable(
+						this.driver,
+						By.css( 'button[aria-label="Show Line height"]' )
+					);
 
 					const lineHeighSettingPresent = await driverHelper.isElementLocated(
 						this.driver,
