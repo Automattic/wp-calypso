@@ -209,7 +209,7 @@ class TermFormDialog extends Component {
 			errors.name = this.props.translate( 'Name required', { textOnly: true } );
 		}
 		const lowerCasedTermName = values.name.toLowerCase();
-		const matchingTerm = this.props.terms.find(
+		const matchingTerm = this.props.terms?.find(
 			( term ) =>
 				term.name.toLowerCase() === lowerCasedTermName &&
 				( ! this.props.term || term.ID !== this.props.term.ID )
