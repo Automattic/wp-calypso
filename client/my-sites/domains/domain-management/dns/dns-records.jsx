@@ -61,7 +61,11 @@ class DnsRecords extends Component {
 		};
 
 		const buttons = [
-			<DnsAddNewRecordButton key="add-new-record-button" />,
+			<DnsAddNewRecordButton
+				key="add-new-record-button"
+				site={ selectedSite.slug }
+				domain={ selectedDomainName }
+			/>,
 			<DnsMenuOptionsButton
 				key="menu-options-button"
 				domain={ selectedDomainName }
