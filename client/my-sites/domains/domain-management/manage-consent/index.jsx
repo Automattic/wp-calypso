@@ -95,13 +95,13 @@ class ManageConsent extends Component {
 
 	requestConsentManagementLink = () => {
 		this.setState( { submitting: true } );
-		requestGdprConsentManagementLink( this.props.selectedDomainName, ( error ) => {
-			if ( error ) {
-				this.setState( { error: error.message, success: false, submitting: false } );
-			} else {
+		requestGdprConsentManagementLink( this.props.selectedDomainName )
+			.then( () => {
 				this.setState( { error: null, success: true, submitting: false } );
-			}
-		} );
+			} )
+			.catch( ( error ) => {
+				this.setState( { error: error.message, success: false, submitting: false } );
+			} );
 	};
 
 	goToContactsPrivacy = () => {
