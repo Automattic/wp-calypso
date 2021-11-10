@@ -45,7 +45,7 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 					<span>{ name }</span>
 				</div>
 				<div className="dns-records-list-item__data dns-records-list-item__value">
-					<span>{ value ?? 'example-value' }</span>
+					<span>{ value }</span>
 				</div>
 				<div className="dns-records-list-item__data dns-records-list-item__menu">
 					{ ! isHeader && menu }

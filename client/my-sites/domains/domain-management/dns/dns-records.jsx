@@ -5,7 +5,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -103,11 +102,10 @@ class DnsRecords extends Component {
 	}
 
 	render() {
-		const { showPlaceholder, selectedDomainName, selectedSite } = this.props;
+		const { showPlaceholder, selectedDomainName } = this.props;
 
 		return (
 			<Fragment>
-				<QuerySiteDomains siteId={ selectedSite.ID } />
 				<QueryDomainDns domain={ selectedDomainName } />
 				{ showPlaceholder ? <DomainMainPlaceholder goBack={ this.goBack } /> : this.renderMain() }
 			</Fragment>

@@ -34,20 +34,22 @@ class DnsRecordData extends Component {
 
 		switch ( type ) {
 			case 'MX':
-				return translate( '%(data)s with priority %(aux)s', {
+				return translate( '%(data)s with priority %(aux)d', {
 					args: {
 						data,
 						aux,
 					},
+					comment: '%(data)s is a hostname',
 				} );
 
 			case 'SRV':
-				return translate( '%(target)s:%(port)s, with priority %(aux)s and weight %(weight)s', {
+				return translate( '%(target)s:%(port)d, with priority %(aux)d and weight %(weight)d', {
 					args: {
 						target,
 						port,
 						aux,
 						weight,
+						comment: '%(target)s is a hostname',
 					},
 				} );
 		}

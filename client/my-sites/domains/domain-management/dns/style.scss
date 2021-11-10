@@ -142,6 +142,7 @@ body.dns__body-white {
 
 					&.dns-records-list-item__name {
 						margin-left: 16px;
+						flex-basis: 70%;
 
 						@include break-mobile {
 							flex-basis: 240px;
