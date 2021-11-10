@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { Guide } from '@wordpress/components';
 import { useSelector, useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -38,7 +39,7 @@ const Modal = ( { announcementId, pages, finishButtonText } ) => {
 	const dispatch = useDispatch();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
-	const dismissPreference = `announcement-modal-${ userId }-${ announcementId }`;
+	const dismissPreference = `announcement-modal-${ announcementId }-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const singlePage = pages.length === 1;
 
@@ -48,6 +49,11 @@ const Modal = ( { announcementId, pages, finishButtonText } ) => {
 
 	const handleDismiss = () => {
 		dispatch( savePreference( dismissPreference, 1 ) );
+		dispatch(
+			recordTracksEvent( 'calypso_announcement_modal_dismiss', {
+				announcement_id: announcementId,
+			} )
+		);
 	};
 
 	return (
