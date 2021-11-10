@@ -9,6 +9,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
+import { SoftwareApplicationSchema } from 'calypso/components/seo/software-application-schema';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
@@ -187,6 +188,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					scrollCardIntoView={ scrollCardIntoView }
 					createButtonURL={ createProductURL }
 				/>
+
+				<SoftwareApplicationSchema />
 
 				<QueryProductsList type="jetpack" />
 				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
