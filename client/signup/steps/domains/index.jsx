@@ -588,7 +588,7 @@ class DomainsStep extends Component {
 						analyticsSection={ this.getAnalyticsSection() }
 						basePath={ this.props.path }
 						initialQuery={ initialQuery }
-						initialMode={ queryObject.step }
+						initialMode={ queryObject.step ?? inputMode.domainInput }
 						onNextStep={ this.setCurrentFlowStep }
 						isSignupStep
 						showHeader={ false }
