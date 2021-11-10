@@ -6,7 +6,13 @@ function injectNavigationToggleOnClickHandler() {
 		return;
 	}
 
-	const toggle = document.querySelector( '.edit-site-navigation-toggle' );
+	const toggle =
+		document.querySelector( '.edit-site-navigation-toggle' ) ||
+		// The navigation toggle is being removed with Gutenberg v11.9, so we must check the
+		// navigation link button to override the click behavior.  Once v12.0 lands, we should
+		// be able to use a slotfill and get rid of this entire file.
+		document.querySelector( '.edit-site-navigation-link__button' );
+
 	if ( ! toggle ) {
 		return;
 	}
@@ -35,7 +41,13 @@ domReady( () => {
 	}
 
 	const waitForNavigationToggleButton = setInterval( () => {
-		const toggleButton = document.querySelector( '.edit-site-navigation-toggle__button' );
+		const toggleButton =
+			document.querySelector( '.edit-site-navigation-toggle__button' ) ||
+			// The navigation toggle is being removed with Gutenberg v11.9, so we must check the
+			// navigation link button to override the click behavior.  Once v12.0 lands, we should
+			// be able to use a slotfill and get rid of this entire file.
+			document.querySelector( '.edit-site-navigation-link__button' );
+
 		if ( ! toggleButton ) {
 			return;
 		}
