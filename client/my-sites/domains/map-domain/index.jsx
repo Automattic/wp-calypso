@@ -112,7 +112,8 @@ export class MapDomain extends Component {
 		// Instead, we add the mapping directly
 		if ( selectedSite.is_vip ) {
 			wpcom
-				.addVipDomainMapping( selectedSite.ID, domain )
+				.site( selectedSite.ID )
+				.addVipDomainMapping( domain )
 				.then(
 					() => {
 						page( domainManagementList( selectedSiteSlug ) );

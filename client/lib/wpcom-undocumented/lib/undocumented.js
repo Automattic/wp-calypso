@@ -814,27 +814,6 @@ Undocumented.prototype.addDomainMapping = function ( siteId, domainName, fn ) {
 	);
 };
 
-/**
- * Add domain mapping for VIP clients.
- *
- * @param {number} siteId The site ID
- * @param {string} [domainName] Name of the domain mapping
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.addVipDomainMapping = function ( siteId, domainName, fn ) {
-	debug( '/site/:site_id/vip-domain-mapping' );
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/vip-domain-mapping`,
-			body: {
-				domain: domainName,
-			},
-		},
-		fn
-	);
-};
-
 /*
  * Change the theme of a given site.
  *
