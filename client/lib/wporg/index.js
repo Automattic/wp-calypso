@@ -66,7 +66,7 @@ async function getRequest( url, query ) {
  */
 export function fetchPluginInformation( pluginSlug ) {
 	const query = {
-		fields: 'icons,banners,compatibility,ratings,-contributors',
+		fields: 'short_description,icons,banners,compatibility,ratings,-contributors',
 		locale: getWporgLocaleCode(),
 	};
 
