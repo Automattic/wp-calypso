@@ -46,12 +46,14 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 			// @TODO add logic to pick the first unseen video
 			const initialVideoId = 'find-theme';
 			setCurrentVideoKey( initialVideoId );
+			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( initialVideoId ) );
 		}
 	}, [ currentVideoKey, course ] );
 
 	useEffect( () => {
 		if ( currentVideoKey && course ) {
 			setCurrentVideo( course.videos[ currentVideoKey ] );
+			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( currentVideoKey ) );
 		}
 	}, [ currentVideoKey, course ] );
 
