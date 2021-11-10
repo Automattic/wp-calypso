@@ -409,7 +409,7 @@ class AllDomains extends Component {
 				currentRoute={ currentRoute }
 				domains={ this.mergeFilteredDomainsWithDomainsDetails() }
 				domainsTableColumns={ domainsTableColumns }
-				enableAllDomainsView={ true }
+				isManagingAllSites={ true }
 				goToEditDomainRoot={ this.handleDomainItemClick }
 				isLoading={ this.isLoading() }
 				purchases={ purchases }

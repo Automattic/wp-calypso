@@ -30,7 +30,6 @@ class DomainRow extends PureComponent {
 		currentRoute: PropTypes.string,
 		disabled: PropTypes.bool,
 		domain: PropTypes.object.isRequired,
-		enableAllDomainsView: PropTypes.bool,
 		isBusy: PropTypes.bool,
 		isLoadingDomainDetails: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
@@ -350,7 +349,7 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, enableAllDomainsView, translate } = this.props;
+		const { domain, isManagingAllSites, translate } = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = moment.utc( domain?.expiry );
 
@@ -358,11 +357,11 @@ class DomainRow extends PureComponent {
 			<div className="domain-row">
 				<div className="domain-row__mobile-container">
 					{ this.renderDomainName( domainTypeText ) }
-					{ enableAllDomainsView && this.renderSite() }
+					{ isManagingAllSites && this.renderSite() }
 					{ this.renderDomainStatus() }
 					{ this.renderExpiryDate( expiryDate ) }
 					{ this.renderAutoRenew() }
-					{ ! enableAllDomainsView && this.renderEmail() }
+					{ ! isManagingAllSites && this.renderEmail() }
 					{ this.renderEllipsisMenu() }
 				</div>
 				<div className="domain-row__mobile-container2">
