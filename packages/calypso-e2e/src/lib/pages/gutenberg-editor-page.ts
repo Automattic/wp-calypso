@@ -371,16 +371,17 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Returns to the Posts > All Posts view in Calypso.
+	 * Leave the editor to return to the Calypso dashboard.
 	 *
 	 * On desktop sized viewport, this method clicks on the `< All Posts` link in the block editor sidebar.
 	 * Note, for desktop the editor sidebar must be open. To open the sidebar, call `openNavSidebar` method.
 	 *
 	 * On mobile sized viewport, this method clicks on Navbar > My Sites.
 	 *
-	 * For both cases the esulting page will be the `My Home` page.
+	 * The resulting page can change based on where you come from, and the viewport. Either way, the resulting landing spot
+	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
 	 */
-	async returnToHomeDashboard(): Promise< void > {
+	async returnToCalypsoDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
 		const targetDevice = getTargetDeviceName();
 

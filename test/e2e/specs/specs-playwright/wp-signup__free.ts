@@ -118,9 +118,9 @@ skipDescribeIf( isStagingOrProd )(
 		} );
 
 		describe( 'Validate site metadata', function () {
-			it( 'Return to Home dashboard', async function () {
+			it( 'Return to Calypso dashboard', async function () {
 				gutenbergEditorPage = new GutenbergEditorPage( page );
-				await gutenbergEditorPage.returnToHomeDashboard();
+				await gutenbergEditorPage.returnToCalypsoDashboard();
 			} );
 
 			it( 'Navigate to settings', async function () {
