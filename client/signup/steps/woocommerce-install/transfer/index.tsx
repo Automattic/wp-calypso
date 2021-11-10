@@ -80,7 +80,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 				break;
 			case transferStates.COMPLETE:
 				setProgress( 1 );
-				goToStep( 'complete' );
+				goToStep( 'install' );
 				break;
 		}
 
