@@ -51,6 +51,11 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 
 	// Watch transfer status
 	useEffect( () => {
+		if ( ! siteId ) {
+			goToStep( 'confirm' );
+			return;
+		}
+
 		if ( fetchingTransferStatus ) {
 			return;
 		}
@@ -90,7 +95,15 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 			setProgress( 100 );
 			setError( { transferFailed, transferStatus } );
 		}
-	}, [ setProgress, goToStep, fetchingTransferStatus, transferStatus, transferFailed ] );
+	}, [
+		setProgress,
+		setError,
+		siteId,
+		goToStep,
+		fetchingTransferStatus,
+		transferStatus,
+		transferFailed,
+	] );
 
 	return (
 		<>
