@@ -136,6 +136,7 @@ class DesignPickerStep extends Component {
 			theme: `pub/${ selectedDesign.theme }`,
 			template: selectedDesign.template,
 			flow: this.props.flowName,
+			intent: this.props.signupDependencies.intent,
 		} );
 
 		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme, locale ) );
@@ -146,6 +147,7 @@ class DesignPickerStep extends Component {
 			theme: `pub/${ selectedDesign?.theme }`,
 			template: selectedDesign?.template,
 			flow: this.props.flowName,
+			intent: this.props.signupDependencies.intent,
 		} );
 
 		this.props.goToNextStep();
