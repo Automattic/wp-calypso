@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { Icon, home, moreVertical } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -7,6 +8,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
 import {
@@ -19,9 +21,9 @@ import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/ema
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
 import './domain-row.scss';
 
 class DomainRow extends PureComponent {
@@ -77,8 +79,23 @@ class DomainRow extends PureComponent {
 	}
 
 	renderSite() {
-		const { site } = this.props;
-		return <div className="domain-row__site-cell">{ site?.slug }</div>;
+		const { site, translate } = this.props;
+		if ( site?.options?.is_domain_only ) {
+			return (
+				<div className="domain-row__site-cell">
+					<Button href={ createSiteFromDomainOnly( site?.slug, site?.siteId ) } plain>
+						{ translate( 'Create site' ) } <MaterialIcon icon="add" />
+					</Button>
+				</div>
+			);
+		}
+		return (
+			<div className="domain-row__site-cell">
+				<Button href={ domainManagementList( site?.slug ) } plain>
+					{ site?.title || site?.slug }
+				</Button>
+			</div>
+		);
 	}
 
 	renderPrimaryBadge() {

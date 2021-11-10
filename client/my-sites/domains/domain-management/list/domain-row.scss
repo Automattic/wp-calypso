@@ -157,6 +157,24 @@
 		padding-top: 2px;
 		font-size: $font-body-small;
 	}
+
+	a {
+		color: var( --studio-gray-50 );
+
+		svg {
+			width: 18px;
+			height: 18px;
+			vertical-align: text-bottom;
+			fill: var( --studio-gray-50 );
+		}
+
+		&:hover {
+			color: var( --color-link );
+			svg {
+				fill: var( --color-link );
+			}
+		}
+	}
 }
 
 .domain-row__status-cell {

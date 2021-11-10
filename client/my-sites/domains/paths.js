@@ -261,3 +261,9 @@ export function getSectionName( pathname ) {
 export function domainManagementDomainConnectMapping( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'domain-connect-mapping', relativeTo );
 }
+
+export function createSiteFromDomainOnly( siteSlug, siteId ) {
+	return `/start/site-selected/?siteSlug=${ encodeURIComponent(
+		siteSlug
+	) }&siteId=${ encodeURIComponent( siteId ) }`;
+}
