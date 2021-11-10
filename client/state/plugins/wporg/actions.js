@@ -10,6 +10,7 @@ import {
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	getNextPluginsListPage,
@@ -128,6 +129,15 @@ export function fetchPluginsList(
 		} )
 			.then( ( { info, plugins } ) => {
 				dispatch( receivePluginsList( category, page, searchTerm, plugins, null, info ) );
+				// Do not trigger a new tracks event for subsequent pages.
+				if ( searchTerm && info?.page === 1 ) {
+					dispatch(
+						recordTracksEvent( 'calypso_plugins_search_results_show', {
+							search_term: searchTerm,
+							results_count: info?.results,
+						} )
+					);
+				}
 			} )
 			.catch( ( error ) => {
 				dispatch( receivePluginsList( category, page, searchTerm, [], error ) );
