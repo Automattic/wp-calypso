@@ -40,7 +40,7 @@ const VideoLinksBar = ( {
 					</div>
 					<div className="videos-ui__bar-skip-link">
 						<a href={ `/post/${ siteSlug }` } onClick={ skipClickHandler }>
-							{ translate( 'Skip and draft first post' ) }
+							{ translate( 'Draft your first post' ) }
 						</a>
 					</div>
 				</div>
