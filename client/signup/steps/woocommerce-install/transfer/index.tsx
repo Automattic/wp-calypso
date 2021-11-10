@@ -21,22 +21,18 @@ interface Props {
 
 export default function Transfer( { goToStep }: Props ): ReactElement | null {
 	const { __ } = useI18n();
-
-	const siteId = useSelector( getSelectedSiteId ) as number;
+	const dispatch = useDispatch();
 
 	const [ progress, setProgress ] = useState( 0.1 );
 	const [ error, setError ] = useState( { transferFailed: false, transferStatus: null } );
 
-	const dispatch = useDispatch();
-
-	// Select state
+	const siteId = useSelector( getSelectedSiteId ) as number;
 	const fetchingTransferStatus = !! useSelector( ( state: AppState ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )
 	);
 	const transferStatus = useSelector( ( state: AppState ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
-
 	const transferFailed = useSelector( ( state: AppState ) => hasUploadFailed( state, siteId ) );
 
 	// Initiate Atomic transfer
@@ -45,7 +41,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 			return;
 		}
 
-		dispatch( initiateThemeTransfer( siteId, null, 'woocommerce' ) );
+		dispatch( initiateThemeTransfer( siteId, null, '' /*'woocommerce'*/ ) );
 	}, [ siteId, dispatch ] );
 
 	// Watch transfer status
@@ -132,7 +128,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 				</div>
 			</div>
 			<div className="transfer__content woocommerce-install__content">
-				{ error.transferFailed && 'error...' }
+				{ error.transferFailed && 'error...' /* todo */ }
 				{ error.transferFailed && error.transferStatus }
 				<div className="transfer__progress-bar" style={ { '--progress': simulatedProgress } } />
 			</div>
