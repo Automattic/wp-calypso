@@ -41,7 +41,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 			return;
 		}
 
-		dispatch( initiateThemeTransfer( siteId, null, '' /*'woocommerce'*/ ) );
+		dispatch( initiateThemeTransfer( siteId, null, 'woocommerce' ) );
 	}, [ siteId, dispatch ] );
 
 	// Watch transfer status
@@ -76,7 +76,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 				break;
 			case transferStates.COMPLETE:
 				setProgress( 1 );
-				goToStep( 'install' );
+				goToStep( 'complete' );
 				break;
 		}
 
