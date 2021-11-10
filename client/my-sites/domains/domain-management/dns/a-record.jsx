@@ -23,19 +23,20 @@ class ARecord extends Component {
 		const isDataValid = isValid( 'data' );
 		const isAaaaRecord = fieldValues.type === 'AAAA';
 
-		let namePlaceholder = translate( 'Enter subdomain (optional)', {
-			context: 'Placeholder shown when entering the optional subdomain part of a new DNS record',
+		let label = translate( 'Name (optional)', { context: 'DNS record' } );
+		if ( isAaaaRecord ) {
+			label = translate( 'Name', { context: 'DNS record' } );
+		}
+
+		const namePlaceholder = translate( 'Enter subdomain', {
+			context: 'Placeholder shown when entering the subdomain part of a new DNS record',
 		} );
 		let dataPlaceholder = translate( 'e.g. %(example)s', {
 			args: {
 				example: '123.45.78.9',
 			},
 		} );
-
 		if ( isAaaaRecord ) {
-			namePlaceholder = translate( 'Enter subdomain (required)', {
-				context: 'Placeholder shown when entering the required subdomain part of a new DNS record',
-			} );
 			dataPlaceholder = translate( 'e.g. %(example)s', {
 				args: {
 					example: '2001:500:84::b',
@@ -46,7 +47,7 @@ class ARecord extends Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ label }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
 						placeholder={ namePlaceholder }

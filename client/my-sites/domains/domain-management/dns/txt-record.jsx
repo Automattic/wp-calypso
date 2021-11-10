@@ -40,10 +40,10 @@ class TxtRecord extends Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Name (optional)', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={ translate( 'Enter subdomain (optional)', {
+						placeholder={ translate( 'Enter subdomain', {
 							context:
 								'Placeholder shown when entering the optional subdomain part of a new DNS record',
 						} ) }

@@ -7,6 +7,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import formState from 'calypso/lib/form-state';
 import { addDns } from 'calypso/state/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
@@ -21,61 +22,82 @@ class DnsAddNew extends React.Component {
 	static propTypes = {
 		isSubmittingForm: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
+		goBack: PropTypes.func,
 	};
 
-	state = {
-		fields: null,
-		type: 'A',
-	};
+	constructor( props ) {
+		super( props );
+		const { translate } = props;
 
-	dnsRecords = [
-		{
-			component: ARecord,
-			types: [ 'A', 'AAAA' ],
-			initialFields: {
-				name: '',
-				data: '',
+		this.state = {
+			fields: null,
+			type: 'A',
+		};
+
+		this.dnsRecords = [
+			{
+				component: ARecord,
+				types: [ 'A', 'AAAA' ],
+				description: translate(
+					'An A record is used to point a domain (e.g. example.com) or a subdomain (e.g. subdomain.example.com) to an IP address (192.168.1.1).'
+				),
+				initialFields: {
+					name: '',
+					data: '',
+				},
 			},
-		},
-		{
-			component: CnameRecord,
-			types: [ 'CNAME' ],
-			initialFields: {
-				name: '',
-				data: '',
+			{
+				component: CnameRecord,
+				types: [ 'CNAME' ],
+				description: translate(
+					'CNAME (canonical name) records are typically used to link a subdomain (e.g. subdomain.example.com) to a domain (e.g. example.com).'
+				),
+				initialFields: {
+					name: '',
+					data: '',
+				},
 			},
-		},
-		{
-			component: MxRecord,
-			types: [ 'MX' ],
-			initialFields: {
-				name: '',
-				data: '',
-				aux: 10,
+			{
+				component: MxRecord,
+				types: [ 'MX' ],
+				description: translate(
+					'MX (mail exchange) records are used to route emails to the correct mail servers.'
+				),
+				initialFields: {
+					name: '',
+					data: '',
+					aux: 10,
+				},
 			},
-		},
-		{
-			component: TxtRecord,
-			types: [ 'TXT' ],
-			initialFields: {
-				name: '',
-				data: '',
+			{
+				component: TxtRecord,
+				types: [ 'TXT' ],
+				description: translate(
+					"TXT (text) records are used to record any textual information on a domain. They're typically used by other service providers (e.g. email services) to ensure you are the owner of the domain."
+				),
+				initialFields: {
+					name: '',
+					data: '',
+				},
 			},
-		},
-		{
-			component: SrvRecord,
-			types: [ 'SRV' ],
-			initialFields: {
-				name: '',
-				service: '',
-				aux: 10,
-				weight: 10,
-				target: '',
-				port: '',
-				protocol: 'tcp',
+			{
+				component: SrvRecord,
+				types: [ 'SRV' ],
+				description: translate(
+					'SRV (service) records define the information to access certain internet services.'
+				),
+				initialFields: {
+					name: '',
+					service: '',
+					aux: 10,
+					weight: 10,
+					target: '',
+					port: '',
+					protocol: 'tcp',
+				},
 			},
-		},
-	];
+		];
+	}
 
 	getFieldsForType( type ) {
 		const dnsRecord = find( this.dnsRecords, ( record ) => {
@@ -183,6 +205,9 @@ class DnsAddNew extends React.Component {
 			formState.isSubmitButtonDisabled( this.state.fields ) ||
 			this.props.isSubmittingForm ||
 			formState.hasErrors( this.state.fields );
+		const selectedType = this.dnsRecords.find( ( record ) =>
+			record.types.includes( this.state.type )
+		);
 
 		return (
 			<form className="dns__form">
@@ -195,11 +220,15 @@ class DnsAddNew extends React.Component {
 					>
 						{ options }
 					</FormSelect>
+					<FormSettingExplanation>{ selectedType.description }</FormSettingExplanation>
 				</FormFieldset>
 				{ this.recordFields() }
-				<div>
+				<div className="dns__form-buttons">
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ translate( 'Add new DNS record' ) }
+					</FormButton>
+					<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
+						{ translate( 'Cancel' ) }
 					</FormButton>
 				</div>
 			</form>

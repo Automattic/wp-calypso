@@ -108,7 +108,7 @@ class Dns extends Component {
 		};
 
 		const buttons = [
-			<DnsAddNewRecordButton />,
+			<DnsAddNewRecordButton site={ selectedSite.slug } domain={ selectedDomainName } />,
 			<DnsMenuOptionsButton
 				domain={ selectedDomainName }
 				onSuccess={ this.onRestoreSuccess }
