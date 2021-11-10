@@ -16915,12 +16915,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-hooks@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "eslint-plugin-react-hooks@npm:4.2.0"
+"eslint-plugin-react-hooks@npm:^4.2.0, eslint-plugin-react-hooks@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "eslint-plugin-react-hooks@npm:4.3.0"
   peerDependencies:
-    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
-  checksum: 981f6fc09a2cad298574eeab265e9c7de672dc975f7c249ef8079bdcf491241ecce02a45897c0e561a277d63762c80c7319a182492a544a9c61e9c25569e9f51
+    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
+  checksum: fdf491b182fd0815c95af6b5a9ef9de0640cbf0e446b2886899769470276c9a69be35a2aac42b2ada3e26b73cefee23b1eb4a93f27ee984b5763ee4718509629
   languageName: node
   linkType: hard
 
@@ -16962,7 +16962,7 @@ __metadata:
     eslint: ">=7.32.0"
     eslint-plugin-inclusive-language: ^2.1.1
     eslint-plugin-jsdoc: ^36.1.1
-    eslint-plugin-react-hooks: ^4.2.0
+    eslint-plugin-react-hooks: ^4.3.0
   languageName: unknown
   linkType: soft
 
@@ -39001,7 +39001,7 @@ testarmada-magellan@11.0.10:
     eslint-plugin-mocha: ^9.0.0
     eslint-plugin-prettier: ^3.4.1
     eslint-plugin-react: ^7.26.1
-    eslint-plugin-react-hooks: ^4.2.0
+    eslint-plugin-react-hooks: ^4.3.0
     eslint-plugin-wpcalypso: ^5.1.0
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
     exports-loader: ^0.7.0
