@@ -565,7 +565,7 @@ class DomainsStep extends Component {
 				window.location.host +
 				window.location.pathname +
 				'?' +
-				searchParams.toString();
+				decodeURIComponent( searchParams.toString() );
 			window.history.pushState( { path: newurl }, '', newurl );
 		}
 	}
