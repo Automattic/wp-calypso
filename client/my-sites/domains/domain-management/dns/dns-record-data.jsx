@@ -19,7 +19,7 @@ class DnsRecordData extends Component {
 
 	handledBy() {
 		const { dnsRecord, translate } = this.props;
-		const { type, aux, port, service, weight, protocol } = dnsRecord;
+		const { type, aux, port, weight } = dnsRecord;
 		const data = this.trimDot( dnsRecord.data );
 		const target = this.trimDot( dnsRecord.target );
 
@@ -42,20 +42,14 @@ class DnsRecordData extends Component {
 				} );
 
 			case 'SRV':
-				return translate(
-					'%(service)s (%(protocol)s) on target %(target)s:%(port)s, ' +
-						'with priority %(aux)s and weight %(weight)s',
-					{
-						args: {
-							service,
-							protocol,
-							target,
-							port,
-							aux,
-							weight,
-						},
-					}
-				);
+				return translate( '%(target)s:%(port)s, with priority %(aux)s and weight %(weight)s', {
+					args: {
+						target,
+						port,
+						aux,
+						weight,
+					},
+				} );
 		}
 
 		return data;
@@ -68,17 +62,16 @@ class DnsRecordData extends Component {
 	getName() {
 		const { name, service, protocol, type } = this.props.dnsRecord;
 		const domain = this.props.selectedDomainName;
-		const isRoot = name === `${ domain }.`;
+
+		if ( name.replace( /\.$/, '' ) === domain ) {
+			return '@';
+		}
 
 		if ( 'SRV' === type ) {
-			return `_${ service }._${ protocol }.${ isRoot ? '' : name + '.' }${ domain }`;
+			return `_${ service }._${ protocol }.${ name }`;
 		}
 
-		if ( name.endsWith( '.' ) ) {
-			return name.slice( 0, -1 );
-		}
-
-		return name ? `${ name }.${ domain }` : domain;
+		return name;
 	}
 
 	deleteDns = () => {
