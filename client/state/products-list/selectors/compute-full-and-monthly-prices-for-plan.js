@@ -23,7 +23,7 @@ export const computeFullAndMonthlyPricesForPlan = (
 ) => {
 	const couponDiscount = couponDiscounts[ planObject.getProductId() ] || 0;
 
-	if ( planObject?.group === GROUP_WPCOM ) {
+	if ( planObject.group === GROUP_WPCOM ) {
 		return computePricesForWpComPlan( state, planObject );
 	}
 
