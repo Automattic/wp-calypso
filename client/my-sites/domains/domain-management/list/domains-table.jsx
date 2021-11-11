@@ -92,7 +92,6 @@ class DomainsTable extends PureComponent {
 			goToEditDomainRoot,
 			handleUpdatePrimaryDomainOptionClick,
 			isLoading,
-			isManagingAllSites,
 			primaryDomainIndex,
 			purchases,
 			settingPrimaryDomain,
