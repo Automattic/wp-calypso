@@ -442,12 +442,12 @@ export function generateFlows( {
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: [ 'confirm', 'transfer', 'install' ],
+			steps: [ 'confirm-wordpress-subdomain', 'confirm', 'transfer', 'install' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			disallowResume: true,
-			lastModified: '2021-11-08',
+			lastModified: '2021-11-11',
 		},
 	];
 
