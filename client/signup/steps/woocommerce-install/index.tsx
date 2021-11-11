@@ -29,7 +29,7 @@ export default function WooCommerceInstall( props: WooCommerceInstallProps ): Re
 			allowBackFirstStep={ true }
 			backUrl="/woocommerce-installation"
 			hideFormattedHeader={ true }
-			classNames="woocommerce-install__step-wrapper"
+			className="woocommerce-install__step-wrapper"
 			stepContent={
 				<div className="woocommerce-install__step-content">
 					{ props.stepName === 'confirm' && <Confirm goToStep={ props.goToStep } /> }
