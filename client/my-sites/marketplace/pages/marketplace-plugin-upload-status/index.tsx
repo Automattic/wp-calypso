@@ -179,10 +179,10 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-upload-status__root">
+				{ /* eslint-disable-next-line no-nested-ternary */ }
 				{ pluginUploadError ||
 				pluginInstallStatus.error ||
-				( atomicFlow && automatedTransferStatus === transferStates.FAILURE ) ||
-				nonInstallablePlanError ? (
+				( atomicFlow && automatedTransferStatus === transferStates.FAILURE ) ? (
 					<EmptyContent
 						illustration="/calypso/images/illustrations/error.svg"
 						title={ translate( 'An error occurred while installing the plugin.' ) }
@@ -192,6 +192,15 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 								? `/plugins/upload/${ selectedSiteSlug }`
 								: `/plugins/${ productSlug }/${ selectedSiteSlug }`
 						}
+					/>
+				) : nonInstallablePlanError ? (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/error.svg"
+						title={ translate(
+							"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
+						) }
+						action={ translate( 'Upgrade to Business plan' ) }
+						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
 					/>
 				) : (
 					<MarketplaceProgressBar steps={ steps } currentStep={ currentStep } />
