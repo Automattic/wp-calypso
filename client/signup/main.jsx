@@ -240,8 +240,8 @@ class Signup extends Component {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.startTrackingForBusinessSite();
-		recordSignupStart( this.props.flowName, this.props.refParameter );
-		recordSignupStep( this.props.flowName, this.props.stepName );
+		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
+		recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
 		this.preloadNextStep();
 		this.maybeShowSitePreview();
 	}
@@ -251,7 +251,7 @@ class Signup extends Component {
 			this.props.flowName !== prevProps.flowName ||
 			this.props.stepName !== prevProps.stepName
 		) {
-			recordSignupStep( this.props.flowName, this.props.stepName );
+			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
 		}
 
 		if (
@@ -267,6 +267,16 @@ class Signup extends Component {
 			// `scrollToTop` here handles cases where the viewport may fall slightly below the top of the page when the next step is rendered
 			this.scrollToTop();
 		}
+	}
+
+	getRecordProps() {
+		const { signupDependencies } = this.props;
+
+		return {
+			theme: get( signupDependencies, 'selectedDesign.theme' ),
+			intent: get( signupDependencies, 'intent' ),
+			starting_point: get( signupDependencies, 'startingPoint' ),
+		};
 	}
 
 	scrollToTop() {
