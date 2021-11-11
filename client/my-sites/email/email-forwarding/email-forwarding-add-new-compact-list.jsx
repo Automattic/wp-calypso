@@ -105,7 +105,8 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	onUpdateEmailForward = ( index, name, value ) => {
-		const emailForwards = this.state.emailForwards;
+		// eslint-disable-next-line prefer-const
+		let emailForwards = this.state.emailForwards;
 		emailForwards[ index ][ name ] = value;
 
 		const validEmailForward = validateAllFields( emailForwards[ index ] );
