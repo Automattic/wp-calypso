@@ -62,11 +62,19 @@ const prefixOrSuffixLocalizedUrlPath = (
 		}
 	}
 
-	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
-		if ( prefixOrSuffix === 'prefix' ) {
-			url.pathname = localeSlug + url.pathname;
-		} else if ( prefixOrSuffix === 'suffix' ) {
-			url.pathname = url.pathname + localeSlug;
+	if ( ! validLocales.includes( localeSlug ) || localeSlug === 'en' ) {
+		return url;
+	}
+
+	if ( prefixOrSuffix === 'prefix' ) {
+		url.pathname = localeSlug + url.pathname;
+	} else if ( prefixOrSuffix === 'suffix' ) {
+		// Make sure there's a slash between the path and the locale. Plus, if
+		// the path has a trailing slash, add one after the suffix too.
+		if ( url.pathname.endsWith( '/' ) ) {
+			url.pathname += localeSlug + '/';
+		} else {
+			url.pathname += '/' + localeSlug;
 		}
 	}
 	return url;
