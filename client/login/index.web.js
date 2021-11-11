@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { Provider as ReduxProvider } from 'react-redux';
 import { RouteProvider } from 'calypso/components/route';
+import { setHrefLangLinks } from 'calypso/controller/localized-links';
 import {
 	setLocaleMiddleware,
 	setSectionMiddleware,
 	makeLayoutMiddleware,
-	setHrefLangLinks,
 } from 'calypso/controller/shared';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';

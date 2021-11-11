@@ -9,12 +9,7 @@ import { ssrSetupLocaleMiddleware } from './ssr-setup-locale.js';
 /**
  * Re-export
  */
-export {
-	setSectionMiddleware,
-	setLocaleMiddleware,
-	setLocalizedCanonicalUrl,
-	setHrefLangLinks,
-} from './shared.js';
+export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 
 /**
  * Server side rendering (SSR) is used exclusively for logged out users. Normally, for
