@@ -65,14 +65,11 @@ export class IndividualPurchasePage {
 	 * Renew purchase by clicking on the "Renew Now" card button (as opposed to the inline "Renew now" button).
 	 */
 	async clickRenewNowCardButton(): Promise< void > {
-		// This triggers a real navigation.
+		// This triggers a real navigation to the `/checkout/<site_name>` endpoint.
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForNavigation( { timeout: 45 * 1000, waitUntil: 'networkidle' } ),
 			this.page.click( selectors.renewNowCardButton ),
 		] );
-
-		// We're landing on the cart page, which has a lot of async loading, so let's make sure we let everything settle.
-		await this.page.waitForLoadState( 'networkidle' );
 	}
 
 	/**
