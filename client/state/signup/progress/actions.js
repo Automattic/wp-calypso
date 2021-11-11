@@ -23,7 +23,7 @@ function addProvidedDependencies( step, providedDependencies ) {
 	return { ...step, providedDependencies };
 }
 
-function recordSubmitStep( stepName, providedDependencies ) {
+function recordSubmitStep( stepName, providedDependencies, isSkipped ) {
 	// Transform the keys since tracks events only accept snaked prop names.
 	// And anonymize personally identifiable information.
 	const inputs = reduce(
@@ -70,6 +70,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		device,
 		step: stepName,
+		skipped: !! isSkipped,
 		...inputs,
 	} );
 }
@@ -86,13 +87,13 @@ export function saveSignupStep( step ) {
 	};
 }
 
-export function submitSignupStep( step, providedDependencies ) {
+export function submitSignupStep( step, providedDependencies, isSkipped ) {
 	assertValidDependencies( step.stepName, providedDependencies );
 	return ( dispatch, getState ) => {
 		const lastKnownFlow = getCurrentFlowName( getState() );
 		const lastUpdated = Date.now();
 
-		dispatch( recordSubmitStep( step.stepName, providedDependencies ) );
+		dispatch( recordSubmitStep( step.stepName, providedDependencies, isSkipped ) );
 
 		dispatch( {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,

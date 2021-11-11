@@ -37,7 +37,7 @@ const object = {
 
 #### Actions
 
-- `submitSignupStep( step, providedDependencies )` — the user submits a step
+- `submitSignupStep( step, providedDependencies, isSkipped )` — the user submits a step
 - `completeSignupStep( step, errors, providedDependencies )` — a step processed by the API
 
 If `errors` has a non-zero length, it will be attached to the step and the step's status will be set to `invalid` as it is added to the store. If a `providedDependencies` object is included, its information will be added to the dependency store.
