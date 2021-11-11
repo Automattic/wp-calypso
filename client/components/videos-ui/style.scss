@@ -56,7 +56,7 @@
 	.videos-ui__body {
 		max-width: 1280px;
 		margin: 0 auto;
-		padding: 20px;
+		padding: 64px 20px 41px;
 
 		h3 {
 			font-size: $font-title-medium;
@@ -87,16 +87,19 @@
 				border-bottom: 1px solid #343c3f;
 
 				&:first-child {
-					border-radius: 2px 2px 0 0;
+					border-radius: 4px 4px 0 0;
 				}
 
 				&:last-child {
 					border-bottom: none;
-					border-radius: 0 0 2px 2px;
+					border-radius: 0 0 4px 4px;
 				}
 
 				.videos-ui__duration {
 					color: rgba( 255, 255, 255, 0.5 );
+					span {
+						margin-left: 10px;
+					}
 				}
 
 				.videos-ui__status-icon {
@@ -137,6 +140,8 @@
 
 				.videos-ui__play-button {
 					width: 100%;
+					border: 0;
+					border-radius: 4px;
 					span {
 						font-weight: 500;
 						color: #101517;
