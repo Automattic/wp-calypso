@@ -188,7 +188,7 @@ export class UpsellNudge extends Component {
 				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
-				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
+				{ this.renderPlaceholders() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 				{ this.preloadIconsForPurchaseModal() }
 			</Main>
@@ -251,7 +251,7 @@ export class UpsellNudge extends Component {
 						<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__price-placeholder" />
 					</div>
 				</div>
-				<div>
+				<div className="upsell-nudge__placeholders upsell-nudge__form-container-placeholder">
 					<div className="upsell-nudge__placeholders upsell-nudge__form-placeholder">
 						<div>
 							<div className="upsell-nudge__placeholder-row is-placeholder" />

@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .upsell-nudge__placeholders {
 	display: flex;
 	flex-direction: column;
@@ -39,21 +42,26 @@
 }
 
 .upsell-nudge__form-placeholder {
-	>div {
-		padding: 12px;
-	}
-	width: 60%;
+	width: 100%;
 	margin-top: 64px;
 	float: left;
+	margin-right: 0px;
+	@include break-medium {
+		width: 60%;
+		margin-right: 8px;
+	}
+
 }
 
 .upsell-nudge__benefits-placeholder {
-	>div {
-		padding: 12px 46px;
-	}
-	width: 40%;
+	width: 100%;
 	margin-top: 64px;
 	float: right;
+	margin-left: 0px;
+	@include break-medium {
+		width: 40%;
+		margin-left: 8px;
+	}
 }
 
 .upsell-nudge__feature-placeholder {
@@ -79,4 +87,12 @@
 	width: 0;
 	height: 0;
 	overflow: hidden;
+}
+
+.upsell-nudge__form-container-placeholder {
+	display: flex;
+	flex-direction: column;
+	@include break-medium {
+		flex-direction: row;
+	}
 }
