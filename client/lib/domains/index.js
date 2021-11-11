@@ -30,7 +30,6 @@ export {
 	isMappedDomainWithWpcomNameservers,
 } from './mapped-domains';
 export { getRegisteredDomains, isRegisteredDomain } from './registered-domains';
-export { requestGdprConsentManagementLink } from './request-gdpr-consent-management-link';
 export { resendIcannVerification } from './resend-icann-verification';
 export { resolveDomainStatus } from './resolve-domain-status';
 export { startInboundTransfer } from './start-inbound-transfer';
