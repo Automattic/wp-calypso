@@ -195,9 +195,11 @@ __metadata:
     "@types/config": ^0.0.40
     "@types/jest": ^27.0.2
     "@types/node": ^16.11.6
+    "@types/node-fetch": ^2.5.7
     asana-phrase: ^0.0.8
     config: ^3.3.6
     mailosaur: ^7.3.1
+    node-fetch: ^2.6.1
     playwright: 1.14.0
     typescript: ^4.4.4
   languageName: unknown
