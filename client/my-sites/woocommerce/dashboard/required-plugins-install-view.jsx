@@ -478,29 +478,6 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	renderConfirmScreen = () => {
-		const { translate } = this.props;
-		return (
-			<div className="dashboard__setup-wrapper setup__wrapper">
-				<SetupNotices />
-				<div className="card dashboard__setup-confirm">
-					<SetupHeader
-						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
-						imageWidth={ 160 }
-						title={ translate( 'Have something to sell?' ) }
-						subtitle={ translate(
-							'You can sell your products right on your site and ship them to customers in a snap!'
-						) }
-					>
-						<Button onClick={ this.startSetup } primary>
-							{ translate( 'Set up my store!' ) }
-						</Button>
-					</SetupHeader>
-				</div>
-			</div>
-		);
-	};
-
 	getTotalSeconds = () => {
 		const { hasPendingAT } = this.props;
 
@@ -598,8 +575,12 @@ class RequiredPluginsInstallView extends Component {
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
-			return <WoopLandingPage startSetup={ this.startSetup } />;
-			//return this.renderConfirmScreen();
+			return (
+				<>
+					<SetupNotices />
+					<WoopLandingPage startSetup={ this.startSetup } />
+				</>
+			);
 		}
 
 		if ( 'DONEFAILURE' === engineState ) {
