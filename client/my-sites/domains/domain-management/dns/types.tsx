@@ -1,3 +1,6 @@
+import { setDnsDefaultARecords } from 'calypso/state/domains/dns/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+
 export type DnsRecord = {
 	id: string;
 	name: string;
@@ -13,8 +16,9 @@ export type DnsRecord = {
 export type DnsMenuOptionsButtonProps = {
 	domain: string;
 	pointsToWpcom: boolean;
-	onSuccess: ( records: DnsRecord[] ) => void;
-	onError: ( message: string ) => void;
+	dispatchSetDnsDefaultARecords: ( domain: string ) => typeof setDnsDefaultARecords;
+	dispatchSuccessNotice: ( message: string ) => typeof successNotice;
+	dispatchErrorNotice: ( message: string ) => typeof errorNotice;
 };
 
 export type RestoreDialogResult = {
