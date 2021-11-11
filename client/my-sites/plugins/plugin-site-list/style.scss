@@ -5,4 +5,14 @@
 	.foldable-card__secondary {
 		flex: 2 1;
 	}
+
+	.plugin-site-list__title {
+		padding: 20px 0;
+		font-size: $font-body-small;
+		color: var( --studio-gray-60 );
+
+		&.primary {
+			color: var( --studio-green-30 );
+		}
+	}
 }

@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { compact } from 'lodash';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import SectionHeader from 'calypso/components/section-header';
 import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
@@ -46,7 +45,9 @@ export function PluginSiteList( props ) {
 
 	return (
 		<div className={ classNames( 'plugin-site-list', props.className ) }>
-			<SectionHeader label={ props.title } />
+			<div className={ classNames( 'plugin-site-list__title', { primary: props.titlePrimary } ) }>
+				{ props.title }
+			</div>
 			{ sitesWithSecondarySites.map( ( { site, secondarySites } ) => (
 				<PluginSite
 					key={ 'pluginSite' + site.ID }
