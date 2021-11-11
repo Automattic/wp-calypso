@@ -30,13 +30,13 @@ const Title = styled.h4`
 `;
 
 const CtaHeader: React.FunctionComponent< Props > = ( props ) => {
-	const { children, title, subtitle, buttonText, buttonAction } = props;
+	const { children, title, subtitle, buttonText, buttonAction, ctaRef } = props;
 	return (
 		<Container>
 			<CtaContainer>
 				<Headline>{ title }</Headline>
 				<Title>{ subtitle }</Title>
-				<Button primary onClick={ buttonAction }>
+				<Button primary onClick={ buttonAction } ref={ ctaRef }>
 					{ buttonText }
 				</Button>
 			</CtaContainer>
