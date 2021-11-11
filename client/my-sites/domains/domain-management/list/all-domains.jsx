@@ -374,8 +374,8 @@ class AllDomains extends Component {
 				initialSortOrder: 1,
 				supportsOrderSwitching: true,
 				sortFunctions: [
-					( first, second ) => {
-						// sort all domain olny sites at the end of the list ignoring the sortOrder
+					( first, second, sortOrder ) => {
+						// sort all domain olny sites after/before the other sites
 						const firstSite = sites[ first?.blogId ];
 						const secondSite = sites[ second?.blogId ];
 
@@ -384,11 +384,11 @@ class AllDomains extends Component {
 						}
 
 						if ( firstSite?.options?.is_domain_only ) {
-							return 1;
+							return 1 * sortOrder;
 						}
 
 						if ( secondSite?.options?.is_domain_only ) {
-							return -1;
+							return -1 * sortOrder;
 						}
 
 						return 0;
