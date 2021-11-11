@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
+import { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 const Container = styled.div`
@@ -29,13 +30,21 @@ const Title = styled.h4`
 	padding-bottom: 30px;
 `;
 
-const CtaHeader: React.FunctionComponent< Props > = ( props ) => {
-	const { children, title, subtitle, buttonText, buttonAction, ctaRef } = props;
+interface Props {
+	title?: TranslateResult;
+	headline?: TranslateResult;
+	buttonText: TranslateResult;
+	buttonAction: () => void;
+	ctaRef?: React.RefObject< HTMLButtonElement >;
+}
+
+const CtaSection: React.FunctionComponent< Props > = ( props ) => {
+	const { children, title, headline, buttonText, buttonAction, ctaRef } = props;
 	return (
 		<Container>
 			<CtaContainer>
 				<Headline>{ title }</Headline>
-				<Title>{ subtitle }</Title>
+				<Title>{ headline }</Title>
 				<Button primary onClick={ buttonAction } ref={ ctaRef }>
 					{ buttonText }
 				</Button>
@@ -45,4 +54,4 @@ const CtaHeader: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default CtaHeader;
+export default CtaSection;

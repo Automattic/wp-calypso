@@ -22,7 +22,7 @@ import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 import { getSelectedSiteWithFallback, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { recordTrack } from '../lib/analytics';
-import WoopLandingPage from '../woop/woop-landing-page';
+import WoopLandingPage from '../woop/landing-page';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 

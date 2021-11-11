@@ -7,31 +7,35 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CtaHeader from 'calypso/components/cta-header';
+import CtaSection from 'calypso/components/cta-section';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import './style.scss';
 
-const WoopLandingPage = ( props ) => {
+interface Props {
+	startSetup: () => void;
+}
+
+const WoopLandingPage: React.FunctionComponent< Props > = ( props ) => {
 	const { startSetup } = props;
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
 	return (
-		<div className="woop-landing-page">
+		<div className="woop__landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
 				<Button onClick={ startSetup } primary>
 					{ translate( 'Set up my store!' ) }
 				</Button>
 			</FixedNavigationHeader>
-			<CtaHeader
+			<CtaSection
 				title={ translate( 'Have something to sell?' ) }
-				subtitle={ translate( 'Build exactly the eCommerce website you want.' ) }
+				headline={ translate( 'Build exactly the eCommerce website you want.' ) }
 				buttonText={ translate( 'Set up my store!' ) }
 				buttonAction={ startSetup }
 				ctaRef={ ctaRef }
 			>
 				Right content
-			</CtaHeader>
+			</CtaSection>
 		</div>
 	);
 };
