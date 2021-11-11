@@ -98,18 +98,18 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 					<div className="videos-ui__summary">
 						<ul>
 							<li>
-								<Gridicon icon="checkmark" size={ 16 } />{ ' ' }
+								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
 								{ translate( 'Learn the basics of blogging' ) }
 							</li>
 							<li>
-								<Gridicon icon="checkmark" size={ 16 } />{ ' ' }
+								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
 								{ translate( 'Familiarize yourself with WordPress' ) }
 							</li>
 							<li>
-								<Gridicon icon="checkmark" size={ 16 } /> { translate( 'Upskill and save hours' ) }
+								<Gridicon icon="checkmark" size={ 18 } /> { translate( 'Upskill and save hours' ) }
 							</li>
 							<li>
-								<Gridicon icon="checkmark" size={ 16 } />{ ' ' }
+								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
 								{ translate( 'Set yourself up for blogging success' ) }
 							</li>
 						</ul>

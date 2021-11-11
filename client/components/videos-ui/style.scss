@@ -87,12 +87,12 @@
 				border-bottom: 1px solid #343c3f;
 
 				&:first-child {
-					border-radius: 4px 4px 0 0;
+					border-radius: 2px 2px 0 0;
 				}
 
 				&:last-child {
 					border-bottom: none;
-					border-radius: 0 0 4px 4px;
+					border-radius: 0 0 2px 2px;
 				}
 
 				.videos-ui__duration {
@@ -141,9 +141,9 @@
 				.videos-ui__play-button {
 					width: 100%;
 					border: 0;
-					border-radius: 4px;
+					border-radius: 2px;
 					span {
-						font-weight: 500;
+						font-weight: 400;
 						color: #101517;
 					}
 				}
