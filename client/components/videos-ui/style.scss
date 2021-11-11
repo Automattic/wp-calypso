@@ -97,9 +97,8 @@
 
 				.videos-ui__duration {
 					color: rgba( 255, 255, 255, 0.5 );
-					span {
-						margin-left: 10px;
-					}
+					display: inline-block;
+					margin-left: 10px;
 				}
 
 				.videos-ui__status-icon {
@@ -146,6 +145,13 @@
 					span {
 						font-weight: 400;
 						color: #101517;
+						display: inline-block;
+						vertical-align: middle;
+					}
+
+					svg {
+						padding-right: 10px;
+						vertical-align: middle;
 					}
 				}
 
@@ -170,18 +176,20 @@
 	@include break-medium {
 		.videos-ui__header {
 			.videos-ui__header-content {
+				max-width: 1160px;
+				margin: auto;
 				flex-direction: row;
 				justify-content: space-between;
 				padding: 80px;
 
 				.videos-ui__titles {
 					flex-basis: auto;
-					width: 60%;
+					width: 65.5%;
+					font-size: $font-headline-small;
 				}
-
 				.videos-ui__summary {
 					flex-basis: auto;
-					width: 33%;
+					width: 31%;
 				}
 
 				ul {
@@ -193,6 +201,9 @@
 
 	@include break-xlarge {
 		.videos-ui__body {
+			max-width: 1160px;
+			margin: auto;
+
 			padding: 0 80px 80px;
 			h3 {
 				margin: 80px 0 20px;
@@ -204,12 +215,12 @@
 
 				.videos-ui__video {
 					flex-basis: auto;
-					width: 60%;
+					width: 65.5%;
 				}
 
 				.videos-ui__chapters {
 					flex-basis: auto;
-					width: 33%;
+					width: 31%;
 				}
 			}
 		}
