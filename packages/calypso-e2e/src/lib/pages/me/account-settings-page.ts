@@ -49,7 +49,7 @@ export class AccountSettingsPage {
 		 * @param {Page} page Page object.
 		 */
 		async function waitForPurchasesRemoved( page: Page ): Promise< void > {
-			await page.waitForSelector( 'a:text("Manage purchases")', { state: 'hidden' } );
+			await page.waitForSelector( selectors.closeAccountLink );
 		}
 
 		// Wait for the async navigation after clicking on the initial `Close Account` link at /me/account.
