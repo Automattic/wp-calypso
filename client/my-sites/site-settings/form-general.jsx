@@ -145,6 +145,7 @@ export class SiteSettingsFormGeneral extends Component {
 					</div>
 					<div className="site-settings__fiver-cta-button">
 						<Button
+							target="_blank"
 							href={ 'https://wp.me/logo-maker/?utm_campaign=general_settings' }
 							onClick={ this.trackFiverrLogoMakerClick }
 						>
