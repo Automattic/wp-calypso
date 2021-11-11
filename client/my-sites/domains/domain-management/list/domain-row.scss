@@ -77,6 +77,13 @@
 
 .domain-row__mobile-container2 {
 	display: block;
+	@include break-mobile {
+		display: none;
+	}
+}
+
+.domain-row__mobile-container3 {
+	display: block;
 	margin-top: 4px;
 
 	.domain-row__status-cell {

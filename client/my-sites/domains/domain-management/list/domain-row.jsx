@@ -98,6 +98,14 @@ class DomainRow extends PureComponent {
 		);
 	}
 
+	renderMobileSite() {
+		const { site } = this.props;
+		if ( site?.options?.is_domain_only ) {
+			return null;
+		}
+		return site?.title || site?.slug;
+	}
+
 	renderPrimaryBadge() {
 		return (
 			<Badge className="domain-row__primary-badge" type="info-green">
@@ -388,6 +396,9 @@ class DomainRow extends PureComponent {
 					{ this.renderEllipsisMenu() }
 				</div>
 				<div className="domain-row__mobile-container2">
+					{ isManagingAllSites && this.renderMobileSite() }
+				</div>
+				<div className="domain-row__mobile-container3">
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 				</div>
