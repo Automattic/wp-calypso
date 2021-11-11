@@ -4,7 +4,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { EVERY_TEN_SECONDS, useInterval } from 'calypso/lib/interval';
 const MILLIS_IN_MINUTE = 60 * 1000;
 
-function getHumanDateString( now, date, dateFormat, moment, translate ) {
+export function getHumanDateString( now, date, dateFormat, moment, translate ) {
 	date = moment( date );
 	now = moment( now );
 
