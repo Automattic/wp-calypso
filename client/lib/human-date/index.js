@@ -6,6 +6,7 @@ const MILLIS_IN_MINUTE = 60 * 1000;
 
 function getHumanDateString( now, date, dateFormat, moment, translate ) {
 	date = moment( date );
+	now = moment( now );
 
 	let millisAgo = now.diff( date );
 	if ( millisAgo < 0 ) {
@@ -51,10 +52,10 @@ function getHumanDateString( now, date, dateFormat, moment, translate ) {
 
 export function useHumanDate( date, dateFormat, interval = EVERY_TEN_SECONDS ) {
 	const moment = useLocalizedMoment();
-	const [ now, setNow ] = useState( () => moment() );
+	const [ now, setNow ] = useState( () => new Date() );
 	const translate = useTranslate();
 
-	useInterval( () => setNow( moment() ), interval );
+	useInterval( () => setNow( new Date() ), interval );
 
 	return useMemo( () => {
 		return getHumanDateString( now, date, dateFormat, moment, translate );
