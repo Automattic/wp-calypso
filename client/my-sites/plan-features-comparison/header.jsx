@@ -183,7 +183,7 @@ PlanFeaturesComparisonHeader.propTypes = {
 	rawPrice: PropTypes.number,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
-	disabledClasses: PropTypes.object,
+	disabledClasses: PropTypes.string,
 
 	// For Monthly Pricing test
 	annualPricePerMonth: PropTypes.number,

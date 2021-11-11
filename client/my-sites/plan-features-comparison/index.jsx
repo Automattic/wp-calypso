@@ -177,7 +177,7 @@ export class PlanFeaturesComparison extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
-						isDisabled={ disabledClasses }
+						isDisabled={ Boolean( disabledClasses ) }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }
