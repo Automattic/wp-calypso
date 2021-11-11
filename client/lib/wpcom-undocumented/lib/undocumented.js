@@ -953,60 +953,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 };
 
 /**
- * Get the available export configuration settings for a site
- *
- * @param {number}       siteId            The site ID
- * @param {Function}  fn                The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getExportSettings = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/exports/settings`,
-		},
-		fn
-	);
-};
-
-/*
- * Start an export
- *
- * @param {number}       siteId            The site ID
- * @param {object}    advancedSettings  Advanced export configuration
- * @param {Function}  fn                The callback function
- * @returns {Promise}                   A promise that resolves when the export started
- */
-Undocumented.prototype.startExport = function ( siteId, advancedSettings, fn ) {
-	return this.wpcom.req.post(
-		{
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/exports/start`,
-		},
-		advancedSettings,
-		fn
-	);
-};
-
-/**
- * Check the status of an export
- *
- * @param {number|string} siteId - The site ID
- * @param {object} exportId - Export ID (for future use)
- * @param {Function} fn - The callback function
- * @returns {Promise}  promise
- */
-Undocumented.prototype.getExport = function ( siteId, exportId, fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/exports/${ exportId }`,
-		},
-		fn
-	);
-};
-
-/**
  * Check different info about WordPress and Jetpack status on a url
  *
  * @param  {string}  inputUrl The url of the site to check. Must use http or https protocol.
