@@ -182,6 +182,7 @@ export class SupportComponent {
 	 * @returns {Promise<Page>} Reference to support page.
 	 */
 	async visitArticle(): Promise< Page > {
+		await this.page.waitForLoadState( 'networkidle' );
 		const visitArticleLocator = this.page.locator( selectors.visitArticleButton );
 
 		const browserContext = this.page.context();
