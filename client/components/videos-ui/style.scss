@@ -151,9 +151,6 @@
 				}
 			}
 		}
-		.videos-ui__play-button {
-			max-width: inherit;
-		}
 	}
 
 	@include break-xlarge {
@@ -177,6 +174,10 @@
 					width: 33%;
 				}
 			}
+		}
+
+		.videos-ui__play-button {
+			max-width: inherit;
 		}
 	}
 }
