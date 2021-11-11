@@ -51,7 +51,7 @@
 		"@storybook/builder-webpack5": "^6.3.12",
 		"@storybook/manager-webpack5": "^6.3.12",
 		"@storybook/preset-scss": "^1.0.3",
-		"@testing-library/dom": "^8.11.0",
+		"@testing-library/dom": "^8.11.1",
 		"@testing-library/react": "^12.1.2",
 		"@testing-library/user-event": "^13.5.0",
 		"@wordpress/data": "^6.1.0",
