@@ -1,7 +1,10 @@
 import { getPlan, TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
+import {
+	getPlanDiscountedRawPrice,
+	isIntroductoryOfferAppliedToPlanPrice,
+} from 'calypso/state/sites/plans/selectors';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
@@ -13,6 +16,7 @@ import {
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
+	isIntroductoryOfferAppliedToPlanPrice: jest.fn(),
 } ) );
 
 jest.mock( '@automattic/calypso-products', () => ( {
@@ -118,6 +122,10 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#computeFullAndMonthlyPricesForPlan()', () => {
+		beforeEach( () => {
+			isIntroductoryOfferAppliedToPlanPrice.mockReset();
+			isIntroductoryOfferAppliedToPlanPrice.mockImplementation( () => false );
+		} );
 		test( 'Should return shape { priceFull }', () => {
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, c, { isMonthly } ) =>
 				isMonthly ? 10 : 120
@@ -126,6 +134,7 @@ describe( 'selectors', () => {
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
+				isIntroductoryOfferApplied: false,
 				priceFull: 120,
 				priceFinal: 120,
 			} );
@@ -134,8 +143,19 @@ describe( 'selectors', () => {
 		test( 'Should return proper priceFinal if couponDiscounts are provided', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, { def: 60 } ) ).toEqual( {
+				isIntroductoryOfferApplied: false,
 				priceFull: 120,
 				priceFinal: 60,
+			} );
+		} );
+
+		test( 'Should return the isIntroductoryOfferApplied value', () => {
+			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
+			isIntroductoryOfferAppliedToPlanPrice.mockImplementation( () => true );
+			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
+				isIntroductoryOfferApplied: true,
+				priceFull: 120,
+				priceFinal: 120,
 			} );
 		} );
 	} );
@@ -168,9 +188,12 @@ describe( 'selectors', () => {
 			} );
 
 			getPlan.mockImplementation( ( slug ) => testPlans[ slug ] );
+
+			isIntroductoryOfferAppliedToPlanPrice.mockReset();
+			isIntroductoryOfferAppliedToPlanPrice.mockImplementation( () => false );
 		} );
 
-		test( 'Should return list of shapes { priceFull, plan, product, planSlug }', () => {
+		test( 'Should return list of shapes { isIntroductoryOfferApplied, priceFull, plan, product, planSlug }', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -187,6 +210,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFull: 120,
 					priceFinal: 120,
+					isIntroductoryOfferApplied: false,
 				},
 				{
 					planSlug: 'plan2',
@@ -194,6 +218,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan2,
 					priceFull: 240,
 					priceFinal: 240,
+					isIntroductoryOfferApplied: false,
 				},
 			] );
 		} );
@@ -217,6 +242,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFull: 120,
 					priceFinal: 60,
+					isIntroductoryOfferApplied: false,
 				},
 				{
 					planSlug: 'plan2',
@@ -224,6 +250,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan2,
 					priceFull: 240,
 					priceFinal: 120,
+					isIntroductoryOfferApplied: false,
 				},
 			] );
 		} );
@@ -245,6 +272,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFinal: 120,
 					priceFull: 120,
+					isIntroductoryOfferApplied: false,
 				},
 			] );
 		} );
@@ -265,6 +293,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFull: 120,
 					priceFinal: 120,
+					isIntroductoryOfferApplied: false,
 				},
 			] );
 		} );
@@ -297,6 +326,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFull: 120,
 					priceFinal: 120,
+					isIntroductoryOfferApplied: false,
 				},
 			] );
 		} );

@@ -89,6 +89,13 @@ const DiscountCallout = styled.div< { theme?: Theme } >`
 	margin: 2px 0;
 `;
 
+const NotApplicableCallout = styled.div< { theme?: Theme } >`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	display: block;
+	margin: 2px 0;
+	font-size: 12px;
+`;
+
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
@@ -608,6 +615,13 @@ function IntroductoryOfferCallout( {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
+	if ( product.introductory_offer_terms?.reason ) {
+		return (
+			<NotApplicableCallout>
+				{ translate( 'Order not eligible for introductory discount' ) }
+			</NotApplicableCallout>
+		);
+	}
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
