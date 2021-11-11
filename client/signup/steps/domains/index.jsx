@@ -663,12 +663,6 @@ class DomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
-	resetState() {
-		if ( inputMode.domainInput === this.state?.step ) {
-			this.setState( {} );
-		}
-	}
-
 	renderContent() {
 		let content;
 		let sideContent;
@@ -678,7 +672,6 @@ class DomainsStep extends Component {
 		}
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
-			this.resetState();
 			content = this.domainForm();
 		}
 
