@@ -22,7 +22,9 @@ import 'calypso/state/site-address-change/init';
 
 // @TODO proper redux data layer stuff for the nonce
 function fetchNonce( siteId ) {
-	return wpcom.undocumented().getRequestSiteAddressChangeNonce( siteId );
+	return wpcom.req.get( `/sites/${ siteId }/site-address-change/nonce`, {
+		apiNamespace: 'wpcom/v2',
+	} );
 }
 
 export const getErrorNotice = ( message ) =>
@@ -41,22 +43,23 @@ const dispatchErrorNotice = ( dispatch, error ) =>
 		)
 	);
 
-export const requestSiteAddressAvailability = (
-	siteId,
-	siteAddress,
-	domain,
-	siteType,
-	testBool
-) => ( dispatch ) => {
+export const requestSiteAddressAvailability = ( siteId, siteAddress, domain, siteType ) => (
+	dispatch
+) => {
 	dispatch( {
 		type: SITE_ADDRESS_AVAILABILITY_REQUEST,
 		siteId,
 		siteAddress,
 	} );
 
-	return wpcom
-		.undocumented()
-		.checkSiteAddressValidation( siteId, siteAddress, domain, siteType, testBool )
+	return wpcom.req
+		.post(
+			{
+				path: `/sites/${ siteId }/site-address-change/validate`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{ blogname: siteAddress, domain, type: siteType }
+		)
 		.then( ( data ) => {
 			const { error: errorType, message, status: errorStatus } = data;
 
@@ -124,9 +127,13 @@ export const requestSiteAddressChange = (
 
 	try {
 		const nonce = await fetchNonce( siteId );
-		const data = await wpcom
-			.undocumented()
-			.updateSiteAddress( siteId, newBlogName, domain, oldDomain, siteType, discard, nonce );
+		const data = await wpcom.req.post(
+			{
+				path: `/sites/${ siteId }/site-address-change`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{ blogname: newBlogName, domain, old_domain: oldDomain, type: siteType, discard, nonce }
+		);
 
 		const newSlug = get( data, 'new_slug' );
 
