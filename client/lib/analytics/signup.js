@@ -87,6 +87,9 @@ export function recordSignupComplete(
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
 		has_cart_items: hasCartItems,
+		theme,
+		intent,
+		starting_point: startingPoint,
 	} );
 }
 

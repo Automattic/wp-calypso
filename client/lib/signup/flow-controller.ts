@@ -387,9 +387,12 @@ export default class SignupFlowController {
 				if ( errors ) {
 					this._reduxStore.dispatch( invalidateStep( step, errors ) );
 				} else {
+					const { intent } = getSignupDependencyStore( this._reduxStore.getState() );
+
 					recordTracksEvent( 'calypso_signup_actions_complete_step', {
 						step: step.stepName,
 						flow: this._flowName,
+						intent,
 					} );
 					this._reduxStore.dispatch( completeSignupStep( step, providedDependencies ) );
 				}
