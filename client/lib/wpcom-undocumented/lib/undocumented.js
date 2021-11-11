@@ -1039,20 +1039,6 @@ Undocumented.prototype.oauth2ClientId = function ( clientId, fn ) {
 	);
 };
 
-Undocumented.prototype.requestGdprConsentManagementLink = function ( domain, callback ) {
-	return this.wpcom.req.get(
-		`/domains/${ domain }/request-gdpr-consent-management-link`,
-		function ( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-
-			callback( null, response );
-		}
-	);
-};
-
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 	domain,
 	providerId,
