@@ -310,7 +310,7 @@ class EmailProvidersComparison extends Component {
 	};
 
 	renderEmailForwardingCard() {
-		const { domain, selectedDomainName, translate } = this.props;
+		const { domain, selectedDomainName, translate, selectedSite } = this.props;
 
 		if ( this.isUpgrading() ) {
 			return null;
@@ -320,6 +320,7 @@ class EmailProvidersComparison extends Component {
 			<EmailForwardingAddNewCompactList
 				selectedDomainName={ selectedDomainName }
 				onConfirmEmailForwarding={ this.onForwardingConfirmNewMailboxes }
+				onSuccessRedirectDestination={ emailManagement( selectedSite.slug, selectedDomainName ) }
 			/>
 		);
 

@@ -114,7 +114,7 @@ EmailProviderCard.propTypes = {
 	badge: PropTypes.object,
 	description: PropTypes.string,
 	formattedPrice: PropTypes.node,
-	discount: PropTypes.string,
+	discount: PropTypes.object,
 	additionalPriceInformation: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	formFields: PropTypes.node,
 	buttonLabel: PropTypes.string,

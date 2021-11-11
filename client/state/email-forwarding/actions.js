@@ -19,8 +19,6 @@ import 'calypso/state/data-layer/wpcom/email-forwarding/remove';
 import 'calypso/state/data-layer/wpcom/email-forwarding/resend-email-verification';
 import 'calypso/state/email-forwarding/init';
 
-const noop = () => {};
-
 export const getEmailForwards = ( domainName ) => {
 	return {
 		type: EMAIL_FORWARDING_REQUEST,
@@ -44,13 +42,12 @@ export const receiveGetEmailForwardsFailure = ( domainName, error ) => {
 	};
 };
 
-export const addEmailForward = ( domainName, mailbox, destination, onSuccessRedirect = noop ) => {
+export const addEmailForward = ( domainName, mailbox, destination ) => {
 	return {
 		type: EMAIL_FORWARDING_ADD_REQUEST,
 		domainName,
 		mailbox,
 		destination,
-		onSuccessRedirect,
 	};
 };
 

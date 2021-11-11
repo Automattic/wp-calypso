@@ -6,7 +6,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
-import { emailManagement } from 'calypso/my-sites/email/paths';
 import { composeAnalytics, withAnalytics } from 'calypso/state/analytics/actions';
 import { addEmailForward } from 'calypso/state/email-forwarding/actions';
 import getEmailForwardingLimit from 'calypso/state/selectors/get-email-forwarding-limit';
@@ -23,6 +22,7 @@ class EmailForwardingAddNewCompactList extends Component {
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number,
 		onConfirmEmailForwarding: PropTypes.func.isRequired,
+		onSuccessRedirectDestination: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
@@ -105,22 +105,26 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	onUpdateEmailForward = ( index, name, value ) => {
-		const array = this.state.emailForwards;
-		array[ index ][ name ] = value;
+		const emailForwards = this.state.emailForwards;
+		emailForwards[ index ][ name ] = value;
 
-		const validEmailForward = validateAllFields( array[ index ] );
-		array[ index ].isValid =
+		const validEmailForward = validateAllFields( emailForwards[ index ] );
+		emailForwards[ index ].isValid =
 			validEmailForward.mailbox.length === 0 && validEmailForward.destination.length === 0;
 
-		this.setState( { emailForwards: array } );
+		this.setState( { emailForwards } );
 	};
 
-	render() {
-		const { emailForwardSuccess, selectedDomainName, selectedSiteSlug } = this.props;
+	componentDidUpdate() {
+		const { emailForwardSuccess, onSuccessRedirectDestination } = this.props;
 
-		if ( emailForwardSuccess ) {
-			page( emailManagement( selectedSiteSlug, selectedDomainName ) );
+		if ( emailForwardSuccess && onSuccessRedirectDestination ) {
+			page( onSuccessRedirectDestination );
 		}
+	}
+
+	render() {
+		const { selectedDomainName } = this.props;
 
 		return (
 			<>
