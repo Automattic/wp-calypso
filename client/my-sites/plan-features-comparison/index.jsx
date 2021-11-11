@@ -131,6 +131,7 @@ export class PlanFeaturesComparison extends Component {
 						title={ planConstantObj.getTitle() }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
+						monthlyDisabled={ this.props.monthlyDisabled }
 					/>
 				</th>
 			);
