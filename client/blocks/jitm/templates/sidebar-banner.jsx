@@ -15,14 +15,22 @@ export default function SidebarBannerTemplate( { CTA, message, id, onDismiss, tr
 
 	const jitmProps = { id: id, jitm: true };
 
+	let dismissPreferenceName = '';
+	let forceHref = true;
+	if ( props.isDismissible ) {
+		// Don't force the whole banner to be a link - the whole thing can't be a link when it has a dismiss and a link
+		forceHref = false;
+		dismissPreferenceName = id;
+	}
+
 	return (
 		<UpsellNudge
 			callToAction={ CTA.message }
 			compact
 			event={ displayName }
-			forceHref={ true }
+			forceHref={ forceHref }
 			forceDisplay={ true }
-			dismissPreferenceName={ props.isDismissible ? id : '' }
+			dismissPreferenceName={ dismissPreferenceName }
 			href={ CTA.link }
 			onDismissClick={ onDismiss }
 			title={ preventWidows( message ) }

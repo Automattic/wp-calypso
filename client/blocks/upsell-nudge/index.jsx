@@ -11,6 +11,7 @@ import {
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import classnames from 'classnames';
+import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -23,6 +24,8 @@ import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
+
+const debug = debugFactory( 'calypso:upsell-nudge' );
 
 export const UpsellNudge = ( {
 	callToAction,
@@ -103,6 +106,12 @@ export const UpsellNudge = ( {
 		{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
 		{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) }
 	);
+
+	if ( dismissPreferenceName && forceHref && href ) {
+		debug(
+			"It's not possible to force the whole banner to be a link when it needs to link and be dismissable"
+		);
+	}
 
 	return (
 		<Banner
