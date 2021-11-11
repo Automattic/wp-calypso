@@ -374,9 +374,7 @@ export default connect(
 
 				let popular = false;
 				if ( monthlyDisabled && isMonthlyPlan ) {
-					if ( planObject?.product_name_short === 'Business' ) {
-						popular = plan;
-					}
+					popular = planObject?.product_name_short === 'Business';
 				} else {
 					popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
 				}
