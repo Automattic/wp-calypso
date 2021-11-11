@@ -49,10 +49,12 @@ const setLocalizedWpComPath = (
 	return url;
 };
 
+type PrefixOrSuffix = 'prefix' | 'suffix';
+
 const prefixOrSuffixLocalizedUrlPath = (
 	validLocales: Locale[] = [],
 	limitPathMatch: RegExp | null = null,
-	prefixOrSuffix: string
+	prefixOrSuffix: PrefixOrSuffix
 ) => ( url: URL, localeSlug: Locale ): URL => {
 	if ( typeof limitPathMatch === 'object' && limitPathMatch instanceof RegExp ) {
 		if ( ! limitPathMatch.test( url.pathname ) ) {
