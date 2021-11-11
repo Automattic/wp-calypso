@@ -104,7 +104,7 @@ function getDestinationFromIntent( dependencies ) {
 	const { intent, startingPoint, siteSlug } = dependencies;
 
 	// If the user skips starting point, redirect them to My Home
-	if ( intent === 'write' && startingPoint !== 'skip' ) {
+	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 		if ( startingPoint !== 'write' ) {
 			window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
 		}
