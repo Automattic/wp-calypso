@@ -17,6 +17,7 @@
 			display: flex;
 			flex-direction: column;
 			padding: 20px;
+			padding-top: 15px;
 
 			ul {
 				margin: 40px 0 0;
@@ -24,15 +25,29 @@
 
 			li {
 				list-style: none;
-				margin-bottom: 14px;
+				margin-bottom: 10px;
 				font-size: $font-body-small;
 			}
+
 			h2 {
 				@include onboarding-font-recoleta;
-				font-size: $font-title-large;
+				//font-size: $font-title-large;
+				font-size: $font-headline-small;
+				letter-spacing: 0;
+				height: 40px;
 
 				&:first-child {
 					color: rgba( 255, 255, 255, 0.5 );
+				}
+			}
+
+			.videos-ui__summary {
+				padding-left: 2.55px;
+
+				svg {
+					padding-right: 16px;
+					fill: rgba( 255, 255, 255, 0.6 );
+					vertical-align: text-bottom;
 				}
 			}
 		}
@@ -71,8 +86,13 @@
 				background: #1d262a;
 				border-bottom: 1px solid #343c3f;
 
+				&:first-child {
+					border-radius: 2px 2px 0 0;
+				}
+
 				&:last-child {
 					border-bottom: none;
+					border-radius: 0 0 2px 2px;
 				}
 
 				.videos-ui__duration {
@@ -107,12 +127,20 @@
 
 					div {
 						padding: 20px;
+						padding-top: 12px;
 						overflow-y: auto;
+						p {
+							color: rgba( 255, 255, 255, 0.72 );
+						}
 					}
 				}
 
 				.videos-ui__play-button {
 					width: 100%;
+					span {
+						font-weight: 600;
+						color: #101517;
+					}
 				}
 
 				&.selected .videos-ui__active-video-content {
