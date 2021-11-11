@@ -20,9 +20,7 @@ export function getHumanDateString( now, date, dateFormat, moment, translate ) {
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 ) {
 		const minutes = Math.ceil( millisAgo / MILLIS_IN_MINUTE );
 		return translate( '%(minutes)dm ago', {
-			args: {
-				minutes: minutes,
-			},
+			args: { minutes },
 			comment: 'example for a resulting string: 2m ago',
 		} );
 	}
@@ -30,9 +28,7 @@ export function getHumanDateString( now, date, dateFormat, moment, translate ) {
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 ) {
 		const hours = now.diff( date, 'hours' );
 		return translate( '%(hours)dh ago', {
-			args: {
-				hours: hours,
-			},
+			args: { hours },
 			comment: 'example for a resulting string: 5h ago',
 		} );
 	}
@@ -40,9 +36,7 @@ export function getHumanDateString( now, date, dateFormat, moment, translate ) {
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 * 7 ) {
 		const days = now.diff( date, 'days' );
 		return translate( '%(days)dd ago', {
-			args: {
-				days: days,
-			},
+			args: { days },
 			comment: 'example for a resulting string: 4d ago',
 		} );
 	}
