@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .site-settings {
 	font-size: $font-body-small;
 
@@ -275,6 +278,9 @@
 }
 
 .site-settings__site-options {
+	border-bottom: 1px var( --color-neutral-0 ) solid;
+	border-width: 1px 0;
+	padding-bottom: 10px;
 	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 	}
@@ -283,6 +289,53 @@
 		.site-icon-setting {
 			padding-bottom: 0;
 		}
+	}
+}
+
+.site-settings__fiverr-logo-maker-cta {
+	margin-top: 10px;
+	margin-bottom: 20px;
+
+	@include break-small {
+		display: flex;
+		align-items: center;
+	}
+}
+
+.site-settings__fiverr-logo-icon {
+	width: 32px;
+	height: 32px;
+	padding-right: 15px;
+	margin-bottom: 10px;
+
+	@include break-small {
+		margin-bottom: 0;
+	}
+}
+
+.site-settings__fiverr-logo-maker-cta-text-title {
+	line-height: 17.9px;
+	font-weight: 600;
+	font-size: $font-body-small;
+	margin-bottom: 5px;
+}
+
+.site-settings__fiverr-logo-maker-cta-text-subhead {
+	line-height: 15.51px;
+	font-weight: 400;
+	font-size: $font-body-small;
+	margin-top: 5px;
+}
+
+.site-settings__fiver-cta-button {
+	width: 195px;
+	height: 40px;
+	text-align: center;
+	margin-top: 10px;
+
+	@include break-small {
+		margin-left: auto;
+		margin-top: 0;
 	}
 }
 
