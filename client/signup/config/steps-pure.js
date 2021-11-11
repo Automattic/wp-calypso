@@ -782,6 +782,9 @@ export function generateSteps( {
 		},
 
 		// Woocommerce Install steps
+		'confirm-wordpress-subdomain': {
+			stepName: 'confirm-wordpress-subdomain',
+		},
 		confirm: {
 			stepName: 'confirm',
 		},

@@ -81,6 +81,7 @@ const stepNameToModuleName = {
 	list: 'import',
 	capture: 'import',
 	ready: 'import',
+	'confirm-wordpress-subdomain': 'woocommerce-install-confirm-wordpress-subdomain',
 	confirm: 'woocommerce-install',
 	transfer: 'woocommerce-install',
 	install: 'woocommerce-install',
