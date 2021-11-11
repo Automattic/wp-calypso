@@ -10,7 +10,6 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import {
 	domainManagementDns,
 	domainManagementEdit,
@@ -28,7 +27,6 @@ import './add-dns-record.scss';
 class AddDnsRecprd extends Component {
 	static propTypes = {
 		dns: PropTypes.object.isRequired,
-		showPlaceholder: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
@@ -132,16 +130,12 @@ class AddDnsRecprd extends Component {
 	}
 
 	render() {
-		const { showPlaceholder, selectedDomainName } = this.props;
+		const { selectedDomainName } = this.props;
 
 		return (
 			<Fragment>
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? (
-					<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
-				) : (
-					this.renderMain()
-				) }
+				{ this.renderMain() }
 			</Fragment>
 		);
 	}
@@ -151,12 +145,10 @@ export default connect(
 	( state, { selectedDomainName } ) => {
 		const selectedSite = getSelectedSite( state );
 		const dns = getDomainDns( state, selectedDomainName );
-		const showPlaceholder = false; // ! dns.hasLoadedFromServer;
 
 		return {
 			selectedSite,
 			dns,
-			showPlaceholder,
 			currentRoute: getCurrentRoute( state ),
 		};
 	},
