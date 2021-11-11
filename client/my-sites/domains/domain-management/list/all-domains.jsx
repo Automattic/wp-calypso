@@ -372,7 +372,38 @@ class AllDomains extends Component {
 				label: translate( 'Site' ),
 				isSortable: true,
 				initialSortOrder: 1,
-				sortFunctions: [ getSimpleSortFunctionBy( 'blogId' ) ],
+				supportsOrderSwitching: true,
+				sortFunctions: [
+					( first, second ) => {
+						// sort all domain olny sites at the end of the list ignoring the sortOrder
+						const firstSite = sites[ first?.blogId ];
+						const secondSite = sites[ second?.blogId ];
+
+						if ( firstSite?.options?.is_domain_only && secondSite?.options?.is_domain_only ) {
+							return 0;
+						}
+
+						if ( firstSite?.options?.is_domain_only ) {
+							return 1;
+						}
+
+						if ( secondSite?.options?.is_domain_only ) {
+							return -1;
+						}
+
+						return 0;
+					},
+					( first, second, sortOrder ) => {
+						const firstSite = sites[ first?.blogId ];
+						const secondSite = sites[ second?.blogId ];
+
+						const firstTitle = firstSite?.title || firstSite?.slug;
+						const secondTitle = secondSite?.title || secondSite?.slug;
+
+						return firstTitle.localeCompare( secondTitle ) * sortOrder;
+					},
+					getSimpleSortFunctionBy( 'domain' ),
+				],
 			},
 			{
 				name: 'status',
