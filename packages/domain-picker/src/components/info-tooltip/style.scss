@@ -1,18 +1,19 @@
 @import '@automattic/onboarding/styles/variables';
 
 .info-tooltip {
-    &.components-button.has-icon.has-text svg {
-        margin-right: 0;
-    }
+	&.components-button.has-icon.has-text svg {
+		margin-right: 0;
+	}
 
 	.components-popover__content > div {
-        color: var( --color-neutral-50 );
-        font-size: $font-body-small;
-        padding: 16px;
-        text-align: left;
-
-        a {
-            color: var( --studio-blue-40 );
-        }
-    }
+		color: var( --color-neutral-50 );
+		font-size: $font-body-small;
+		padding: 16px;
+		text-align: left;
+		width: 232px;
+		word-break: keep-all;
+		a {
+			color: var( --studio-blue-40 );
+		}
+	}
 }
