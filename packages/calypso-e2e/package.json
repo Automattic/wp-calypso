@@ -27,6 +27,7 @@
 		"@types/jest": "^27.0.2",
 		"@types/node": "^16.11.6",
 		"asana-phrase": "^0.0.8",
+		"node-fetch": "^2.6.1",
 		"typescript": "^4.4.4"
 	},
 	"scripts": {
