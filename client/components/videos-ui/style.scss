@@ -113,7 +113,13 @@
 				}
 
 				.videos-ui__play-button {
+					opacity: 90%;
 					width: 100%;
+				}
+
+				.videos-ui__play-button:hover,
+				.videos-ui__play-button:active {
+					opacity: 100%;
 				}
 
 				&.selected .videos-ui__active-video-content {
