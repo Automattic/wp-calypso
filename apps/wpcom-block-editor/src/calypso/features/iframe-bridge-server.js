@@ -2,7 +2,7 @@
 
 import { createBlock, parse } from '@wordpress/blocks';
 import { Button } from '@wordpress/components';
-import { dispatch, select, subscribe, use } from '@wordpress/data';
+import { dispatch, select, subscribe, use, useSelect } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -496,6 +496,12 @@ function handleCloseEditor( calypsoPort ) {
 				const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
 				const [ label, setLabel ] = useState( calypsoifyGutenberg.closeButtonLabel );
 
+				const siteIconUrl = useSelect(
+					( _select ) =>
+						_select( 'core' ).getEntityRecord( 'root', '__unstableBase', undefined )?.site_icon_url,
+					[]
+				);
+
 				useEffect( () => {
 					addAction(
 						'updateCloseButtonOverrides',
@@ -510,12 +516,22 @@ function handleCloseEditor( calypsoPort ) {
 							'updateCloseButtonOverrides',
 							'a8c/wpcom-block-editor/CloseWpcomBlockEditor'
 						);
-				} );
+				}, [] );
 
 				const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
 				if ( ! SiteEditorDashboardFill ) {
 					return null;
 				}
+
+				const buttonIcon = siteIconUrl ? (
+					<img
+						alt={ __( 'Site Icon' ) }
+						className="iframe-bridge-server__edit-site-navigation-link-site-icon edit-site-navigation-link__site-icon"
+						src={ siteIconUrl }
+					/>
+				) : (
+					wordpress
+				);
 
 				return (
 					<SiteEditorDashboardFill>
@@ -525,7 +541,7 @@ function handleCloseEditor( calypsoPort ) {
 								href={ closeUrl }
 								onClick={ dispatchAction }
 								label={ label }
-								icon={ wordpress }
+								icon={ buttonIcon }
 								iconSize={ 36 }
 							/>
 						</div>
