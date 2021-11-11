@@ -121,7 +121,7 @@ function WelcomeTourFrame() {
 	};
 
 	const isWelcomeTourNext = () => {
-		new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
+		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
 
 	useEffect( () => {

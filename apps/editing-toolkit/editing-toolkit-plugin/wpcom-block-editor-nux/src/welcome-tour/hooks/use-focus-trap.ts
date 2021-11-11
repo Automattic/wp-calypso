@@ -39,7 +39,7 @@ const useFocusTrap = ( ref: React.MutableRefObject< null | HTMLElement > ): void
 	);
 
 	useEffect( () => {
-		const focuableElementSelectors = [
+		const focusableElementSelectors = [
 			'a[href]:not([disabled])',
 			'button:not([disabled])',
 			'textarea:not([disabled])',
@@ -50,7 +50,7 @@ const useFocusTrap = ( ref: React.MutableRefObject< null | HTMLElement > ): void
 		];
 
 		const focusableElements = ref.current?.querySelectorAll< HTMLElement >(
-			focuableElementSelectors.toString()
+			focusableElementSelectors.toString()
 		);
 
 		if ( focusableElements && focusableElements.length ) {
