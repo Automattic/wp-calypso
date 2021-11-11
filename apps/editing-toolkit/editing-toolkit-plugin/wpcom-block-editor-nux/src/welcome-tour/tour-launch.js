@@ -11,16 +11,19 @@ import {
 	useState,
 	useRef,
 	createInterpolateElement,
+	useMemo,
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
+import { usePopper } from 'react-popper';
 /**
  * Internal Dependencies
  */
+import Spotlight from './components/spotlight';
 import maximize from './icons/maximize';
 import KeyboardNavigation from './keyboard-navigation';
 import WelcomeTourCard from './tour-card';
-import getTourContent from './tour-content';
+import getTourSteps from './tour-steps';
 
 import './style-tour.scss';
 
@@ -38,7 +41,7 @@ function LaunchWpcomWelcomeTour() {
 	const localeSlug = useLocale();
 
 	// Preload first card image (others preloaded after open state confirmed)
-	new window.Image().src = getTourContent( localeSlug )[ 0 ].imgSrc;
+	new window.Image().src = getTourSteps( localeSlug )[ 0 ].meta.imgSrc;
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
@@ -68,42 +71,43 @@ function LaunchWpcomWelcomeTour() {
 
 function WelcomeTourFrame() {
 	const tourContainerRef = useRef( null );
-	const focusedOnLaunchRef = useRef( null );
+	const popperElementRef = useRef( null );
+	const [ initialFocusedElement, setInitialFocusedElement ] = useState( null );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
-	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
+	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
 	const localeSlug = useLocale();
-	const cardContent = getTourContent( localeSlug );
-	const lastCardIndex = cardContent.length - 1;
+	const steps = getTourSteps( localeSlug );
+	const lastStepIndex = steps.length - 1;
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
 
 	const handleDismiss = ( source ) => {
 		return () => {
 			recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 				is_gutenboarding: isGutenboarding,
-				slide_number: currentCardIndex + 1,
+				slide_number: currentStepIndex + 1,
 				action: source,
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
 		};
 	};
 
-	const handleNextCardProgression = () => {
-		if ( lastCardIndex > currentCardIndex ) {
-			setCurrentCardIndex( currentCardIndex + 1 );
+	const handleNextStepProgression = () => {
+		if ( lastStepIndex > currentStepIndex ) {
+			setCurrentStepIndex( currentStepIndex + 1 );
 		}
 	};
 
-	const handlePreviousCardProgression = () => {
-		currentCardIndex && setCurrentCardIndex( currentCardIndex - 1 );
+	const handlePreviousStepProgression = () => {
+		currentStepIndex && setCurrentStepIndex( currentStepIndex - 1 );
 	};
 
 	const handleMinimize = () => {
 		setIsMinimized( true );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
 			is_gutenboarding: isGutenboarding,
-			slide_number: currentCardIndex + 1,
+			slide_number: currentStepIndex + 1,
 		} );
 	};
 
@@ -112,63 +116,122 @@ function WelcomeTourFrame() {
 		setJustMaximized( true );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
 			is_gutenboarding: isGutenboarding,
-			slide_number: currentCardIndex + 1,
+			slide_number: currentStepIndex + 1,
 		} );
+	};
+
+	const isWelcomeTourNext = () => {
+		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
 
 	useEffect( () => {
 		// focus the Next/Begin button as the first interactive element when tour loads
-		setTimeout( () => focusedOnLaunchRef.current?.focus() );
-	}, [] );
+		setTimeout( () => initialFocusedElement?.focus() );
+	}, [ initialFocusedElement ] );
 
 	// Preload card images
-	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
+	steps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
+
+	const referenceElementSelector = steps[ currentStepIndex ].referenceElements.desktop;
+	const referenceElement = document.querySelector( referenceElementSelector );
+	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
+		referenceElement,
+		popperElementRef?.current,
+		{
+			strategy: 'fixed',
+			modifiers: [
+				{
+					name: 'preventOverflow',
+					options: {
+						rootBoundary: 'document',
+						padding: 16, // same as the left/margin of the tour frame
+					},
+				},
+				useMemo(
+					() => ( {
+						name: 'offset',
+						options: {
+							offset: ( { placement, reference } ) => {
+								if ( placement === 'bottom' ) {
+									const boundary = document.querySelector( '.edit-post-header' );
+									const boundaryRect = boundary.getBoundingClientRect();
+									const boundaryBottomY = boundaryRect.height + boundaryRect.y;
+									const referenceBottomY = reference.height + reference.y;
+
+									return [ 0, boundaryBottomY - referenceBottomY + 16 ];
+								}
+								return [ 0, 0 ];
+							},
+						},
+					} ),
+					[]
+				),
+			],
+		}
+	);
+
+	const stepRepositionProps =
+		! isMinimized && referenceElement && isWelcomeTourNext()
+			? {
+					style: popperStyles?.popper,
+					...popperAttributes?.popper,
+			  }
+			: null;
 
 	return (
 		<>
 			<KeyboardNavigation
 				onMinimize={ handleMinimize }
 				onDismiss={ handleDismiss }
-				onNextCardProgression={ handleNextCardProgression }
-				onPreviousCardProgression={ handlePreviousCardProgression }
+				onNextStepProgression={ handleNextStepProgression }
+				onPreviousStepProgression={ handlePreviousStepProgression }
 				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
-			<div className="wpcom-editor-welcome-tour-frame" ref={ tourContainerRef }>
-				{ ! isMinimized ? (
-					<>
-						<WelcomeTourCard
-							cardContent={ cardContent[ currentCardIndex ] }
-							currentCardIndex={ currentCardIndex }
-							justMaximized={ justMaximized }
-							key={ currentCardIndex }
-							lastCardIndex={ lastCardIndex }
-							onDismiss={ handleDismiss }
-							onMinimize={ handleMinimize }
-							setJustMaximized={ setJustMaximized }
-							setCurrentCardIndex={ setCurrentCardIndex }
-							onNextCardProgression={ handleNextCardProgression }
-							onPreviousCardProgression={ handlePreviousCardProgression }
-							isGutenboarding={ isGutenboarding }
-							focusedOnLaunchRef={ focusedOnLaunchRef }
-						/>
-					</>
-				) : (
-					<WelcomeTourMinimized
-						onMaximize={ handleMaximize }
-						onDismiss={ handleDismiss }
-						currentCardIndex={ currentCardIndex }
-						lastCardIndex={ lastCardIndex }
-					/>
+			<div className="wpcom-editor-welcome-tour__container" ref={ tourContainerRef }>
+				{ /* @todo: Rethink the design here a bit - idealy split between minimized and step-tour components */ }
+				{ ! isMinimized && isWelcomeTourNext() && (
+					<Spotlight referenceElementSelector={ referenceElementSelector } />
 				) }
+				<div
+					className="wpcom-editor-welcome-tour-frame"
+					ref={ popperElementRef }
+					{ ...stepRepositionProps }
+				>
+					{ ! isMinimized ? (
+						<>
+							<WelcomeTourCard
+								cardContent={ steps[ currentStepIndex ].meta }
+								currentStepIndex={ currentStepIndex }
+								justMaximized={ justMaximized }
+								lastStepIndex={ lastStepIndex }
+								onDismiss={ handleDismiss }
+								onMinimize={ handleMinimize }
+								setJustMaximized={ setJustMaximized }
+								setCurrentStepIndex={ setCurrentStepIndex }
+								onNextStepProgression={ handleNextStepProgression }
+								onPreviousStepProgression={ handlePreviousStepProgression }
+								isGutenboarding={ isGutenboarding }
+								setInitialFocusedElement={ setInitialFocusedElement }
+							/>
+						</>
+					) : (
+						<WelcomeTourMinimized
+							onMaximize={ handleMaximize }
+							onDismiss={ handleDismiss }
+							currentStepIndex={ currentStepIndex }
+							lastStepIndex={ lastStepIndex }
+						/>
+					) }
+				</div>
 			</div>
 		</>
 	);
 }
 
-function WelcomeTourMinimized( { onMaximize, onDismiss, currentCardIndex, lastCardIndex } ) {
-	const page = currentCardIndex + 1;
-	const numberOfPages = lastCardIndex + 1;
+function WelcomeTourMinimized( { onMaximize, onDismiss, currentStepIndex, lastStepIndex } ) {
+	const page = currentStepIndex + 1;
+	const numberOfPages = lastStepIndex + 1;
 
 	return (
 		<Flex gap={ 0 } className="wpcom-editor-welcome-tour__minimized">
