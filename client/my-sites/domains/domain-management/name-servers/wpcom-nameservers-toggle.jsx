@@ -18,7 +18,6 @@ class NameserversToggle extends PureComponent {
 	};
 
 	render() {
-		const toggleTitle = this.props.translate( 'Use WordPress.com Name Servers' );
 		return (
 			<Card compact className="name-servers__dns">
 				<form className="name-servers__toggle">
@@ -28,7 +27,7 @@ class NameserversToggle extends PureComponent {
 						onChange={ this.handleToggle }
 						checked={ this.props.enabled }
 						value="active"
-						label={ toggleTitle }
+						label={ this.props.translate( 'Use WordPress.com Name Servers' ) }
 					/>
 				</form>
 				{ this.renderExplanation() }
