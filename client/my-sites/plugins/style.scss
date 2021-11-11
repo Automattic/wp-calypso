@@ -362,3 +362,9 @@ $plugin-details-header-padding: 100px;
 		}
 	}
 }
+
+.plugin-details__sites-list {
+	background-color: var( --studio-gray-0 );
+	padding-top: 20px;
+	padding-bottom: 60px;
+}
