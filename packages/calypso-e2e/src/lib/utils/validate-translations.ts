@@ -1,6 +1,6 @@
-import { request } from 'https';
 import { URLSearchParams } from 'url';
 import { sprintf } from '@wordpress/i18n';
+import fetch from 'node-fetch';
 import { Page, ElementHandle } from 'playwright';
 
 const GLOTPRESS_ORIGINALS_ENDPOINT =
@@ -24,6 +24,11 @@ interface Translation {
 	}[];
 }
 
+interface TranslationsResponse {
+	[ key: number ]: Translation;
+	originals_not_found?: OriginalString[];
+}
+
 /**
  * Fetch translations for originals.
  */
@@ -37,37 +42,18 @@ async function fetchTranslations(
 		original_strings: JSON.stringify( originals ),
 	} );
 
-	return new Promise( ( resolve, reject ) => {
-		const req = request(
-			GLOTPRESS_ORIGINALS_ENDPOINT,
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-			},
-			( res ) => {
-				const body: Buffer[] = [];
-				res.on( 'data', ( chunk ) => body.push( chunk ) );
-				res.on( 'end', () => {
-					const data = JSON.parse( Buffer.concat( body ).toString() );
-					if ( ! res.statusCode || res.statusCode < 200 || res.statusCode > 299 ) {
-						return reject( data );
-					}
+	const translations = await fetch( GLOTPRESS_ORIGINALS_ENDPOINT, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: payload.toString(),
+	} ).then( ( response ) => response.json() as Promise< TranslationsResponse > );
 
-					// Not found originals are not needed.
-					delete data.originals_not_found;
-					return resolve( data );
-				} );
-			}
-		);
+	// Not found originals are not needed in the payload.
+	delete translations.originals_not_found;
 
-		req.on( 'error', reject );
-		req.on( 'timeout', reject );
-
-		req.write( payload.toString() );
-		req.end();
-	} );
+	return Object.values( translations );
 }
 
 /**
@@ -127,11 +113,13 @@ export async function validatePageTranslations( page: Page, locale: string ): Pr
 					throw new Error( `Element rendered with empty inner text: \n${ element.outerHTML }` );
 				}
 
-				if ( elementText?.trim().includes( translation?.trim() || '' ) ) {
+				if ( ! elementText?.trim().includes( translation?.trim() || '' ) ) {
 					throw new Error(
 						`Element text did not match translation! Expected: "${ translation }" -- Actual: "${ elementText }"`
 					);
 				}
+
+				return true;
 			},
 			{ element, translation }
 		);
