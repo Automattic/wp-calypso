@@ -29,6 +29,11 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const [ isClosed, setIsClosed ] = useState( false );
+	const blackFridaySaleText = translate( 'Black Friday Sale!' );
+	// creating this variable just to trigger the string for translation
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const cyberMondaySaleText = translate( 'Cyber Monday Sale!' );
+
 	const now = moment.utc().unix();
 	const expiryDate = moment.utc( coupon?.expiry_date ).unix();
 	const isBeforeExpiry = coupon && now <= expiryDate;
@@ -55,11 +60,14 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 				<div className="sale-banner" role="banner" aria-label={ translate( 'Discount Banner' ) }>
 					<div className="sale-banner__content">
 						<div>
-							<b>{ translate( 'End of Summer Sale!' ) }</b>
+							<b>{ blackFridaySaleText }</b>
 							&nbsp;
-							{ translate( 'Get %(discount)d%% off your first year of Jetpack.', {
-								args: { discount: coupon.discount },
-							} ) }
+							{ translate(
+								'Get %(discount)d%% off your first year on all Jetpack products & plans.',
+								{
+									args: { discount: coupon.discount },
+								}
+							) }
 						</div>
 						<span className="sale-banner__countdown-timer">
 							{ translate( 'Sale ends in: %(days)dd %(hours)dh %(minutes)dm %(seconds)ss', {
