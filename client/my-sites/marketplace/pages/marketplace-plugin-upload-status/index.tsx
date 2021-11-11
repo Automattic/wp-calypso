@@ -199,7 +199,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 						title={ translate(
 							"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
 						) }
-						action={ translate( 'Upgrade to Business plan' ) }
+						action={ translate( 'Upgrade to Business Plan' ) }
 						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
 					/>
 				) : (
