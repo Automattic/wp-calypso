@@ -350,25 +350,6 @@ Undocumented.prototype.validateDomainContactInformation = function (
 };
 
 /**
- * Get a site specific details for WordPress.com featurs
- *
- * @param {Function} siteDomain The site slug
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
-	debug( '/sites/:site_domain:/features query' );
-
-	return this._sendRequest(
-		{
-			path: `/sites/${ encodeURIComponent( siteDomain ) }/features`,
-			method: 'get',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Return a list of third-party services that WordPress.com can integrate with for a specific site
  *
  * @param {number|string} siteId The site ID or domain
