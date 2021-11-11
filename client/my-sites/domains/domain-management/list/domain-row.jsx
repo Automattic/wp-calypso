@@ -123,7 +123,9 @@ class DomainRow extends PureComponent {
 
 	renderExpiryDate( expiryDate ) {
 		return (
-			<div className="domain-row__registered-until-cell">{ expiryDate.format( 'LL' ) || '-' }</div>
+			<div className="domain-row__registered-until-cell">
+				{ expiryDate ? expiryDate.format( 'LL' ) : '-' }
+			</div>
 		);
 	}
 
@@ -134,10 +136,14 @@ class DomainRow extends PureComponent {
 		if ( domainTypeText ) {
 			extraInfo = domainTypeText;
 		} else if ( domain.expired ) {
-			extraInfo = 'Expired on ' + expiryDate.format( 'LL' );
+			if ( expiryDate ) {
+				extraInfo = 'Expired on ' + expiryDate.format( 'LL' );
+			} else {
+				extraInfo = 'Expired';
+			}
 		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
 			extraInfo = 'Renews on ' + moment.utc( domain.autoRenewalDate ).format( 'LL' );
-		} else {
+		} else if ( expiryDate ) {
 			extraInfo = 'Expires on ' + expiryDate.format( 'LL' );
 		}
 
@@ -368,7 +374,7 @@ class DomainRow extends PureComponent {
 	render() {
 		const { domain, isManagingAllSites, translate } = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
-		const expiryDate = moment.utc( domain?.expiry );
+		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
 
 		return (
 			<div className="domain-row">
