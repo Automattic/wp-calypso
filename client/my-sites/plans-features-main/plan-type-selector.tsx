@@ -32,6 +32,8 @@ type Props = {
 	selectedFeature?: string;
 	isInSignup: boolean;
 	plans: string[];
+	eligibleForWpcomMonthlyPlans?: boolean;
+	disableMonthlyExperiment?: boolean;
 };
 
 interface PathArgs {
@@ -97,7 +99,11 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 
 type IntervalTypeProps = Pick<
 	Props,
-	'intervalType' | 'plans' | 'isInSignup' | 'eligibleForWpcomMonthlyPlans'
+	| 'intervalType'
+	| 'plans'
+	| 'isInSignup'
+	| 'eligibleForWpcomMonthlyPlans'
+	| 'disableMonthlyExperiment'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -108,7 +114,13 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = intervalType === 'monthly' && isInSignup;
-	const maxDiscount = useMaxDiscount( props.plans );
+	const maxDiscount = useMaxDiscount(
+		props.plans.filter(
+			( plan ) =>
+				! props.disableMonthlyExperiment ||
+				! [ 'personal-bundle-monthly', 'value_bundle_monthly' ].includes( plan )
+		)
+	);
 
 	if ( ! eligibleForWpcomMonthlyPlans ) {
 		return null;
