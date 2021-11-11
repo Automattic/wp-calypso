@@ -35,7 +35,7 @@ function DnsMenuOptionsButton( {
 		dispatchSetDnsDefaultARecords( domain )
 			.then( () => dispatchSuccessNotice( __( 'Default A records restored' ) ) )
 			.catch( () => dispatchErrorNotice( __( 'Failed to restore the default A records' ) ) );
-	}, [ dispatchErrorNotice, dispatchSetDnsDefaultARecords, dispatchSuccessNotice, domain ] );
+	}, [ __, dispatchErrorNotice, dispatchSetDnsDefaultARecords, dispatchSuccessNotice, domain ] );
 
 	const closeRestoreDialog = ( result: RestoreDialogResult ) => {
 		setRestoreDialogVisible( false );

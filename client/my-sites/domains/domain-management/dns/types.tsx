@@ -16,9 +16,9 @@ export type DnsRecord = {
 export type DnsMenuOptionsButtonProps = {
 	domain: string;
 	pointsToWpcom: boolean;
-	dispatchSetDnsDefaultARecords: ( domain: string ) => typeof setDnsDefaultARecords;
-	dispatchSuccessNotice: ( message: string ) => typeof successNotice;
-	dispatchErrorNotice: ( message: string ) => typeof errorNotice;
+	dispatchSetDnsDefaultARecords: typeof setDnsDefaultARecords;
+	dispatchSuccessNotice: typeof successNotice;
+	dispatchErrorNotice: typeof errorNotice;
 };
 
 export type RestoreDialogResult = {
