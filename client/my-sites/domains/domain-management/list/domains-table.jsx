@@ -88,11 +88,10 @@ class DomainsTable extends PureComponent {
 			currentRoute,
 			domains,
 			domainsTableColumns,
-			enableAllDomainsView,
+			isManagingAllSites,
 			goToEditDomainRoot,
 			handleUpdatePrimaryDomainOptionClick,
 			isLoading,
-			isManagingAllSites,
 			primaryDomainIndex,
 			purchases,
 			settingPrimaryDomain,
@@ -137,10 +136,10 @@ class DomainsTable extends PureComponent {
 			// TODO: how can we optimize the data loading? Can we load the daomin data using `InView` component as in list-all.jsx?
 			return (
 				<>
-					{ ! enableAllDomainsView &&
+					{ ! isManagingAllSites &&
 						domain.blogId &&
 						this.renderQuerySitePurchasesOnce( domain.blogId ) }
-					{ enableAllDomainsView &&
+					{ isManagingAllSites &&
 						domain.blogId &&
 						this.renderQuerySiteDomainsOnce( domain.blogId ) }
 					<DomainRow
@@ -161,7 +160,6 @@ class DomainsTable extends PureComponent {
 							shouldUpgradeToMakeDomainPrimary && shouldUpgradeToMakeDomainPrimary( domain )
 						}
 						purchase={ purchase }
-						enableAllDomainsView={ enableAllDomainsView }
 					/>
 				</>
 			);

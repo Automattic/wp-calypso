@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { parse } from 'qs';
+import { stringify, parse } from 'qs';
 import { Fragment, Component } from 'react';
 import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
@@ -24,6 +24,7 @@ import { type as domainTypes } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
@@ -45,6 +46,7 @@ import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainItem from './domain-item';
 import DomainsTable from './domains-table';
+import DomainsTableFilterButton from './domains-table-filter-button';
 import ListItemPlaceholder from './item-placeholder';
 import ListHeader from './list-header';
 import { getDomainManagementPath, getSimpleSortFunctionBy, ListAllActions } from './utils';
@@ -356,7 +358,9 @@ class AllDomains extends Component {
 			) );
 		}
 
-		const { purchases, sites, currentRoute, translate } = this.props;
+		const { purchases, sites, currentRoute, context, translate } = this.props;
+
+		const selectedFilter = context?.query?.filter;
 
 		const domainsTableColumns = [
 			{
@@ -438,7 +442,10 @@ class AllDomains extends Component {
 		return (
 			<DomainsTable
 				currentRoute={ currentRoute }
-				domains={ this.mergeFilteredDomainsWithDomainsDetails() }
+				domains={ this.filterDomains(
+					this.mergeFilteredDomainsWithDomainsDetails(),
+					selectedFilter
+				) }
 				domainsTableColumns={ domainsTableColumns }
 				isManagingAllSites={ true }
 				goToEditDomainRoot={ this.handleDomainItemClick }
@@ -604,6 +611,53 @@ class AllDomains extends Component {
 		);
 	}
 
+	filterDomains( domains, filter ) {
+		return domains.filter( ( domain ) => {
+			if ( 'owned-by-me' === filter ) {
+				return domain.currentUserCanManage;
+			} else if ( 'owned-by-others' === filter ) {
+				return ! domain.currentUserCanManage;
+			}
+			return true;
+		} );
+	}
+
+	renderDomainTableFilterButton() {
+		const { context } = this.props;
+
+		const selectedFilter = context?.query?.filter;
+		const nonWpcomDomains = this.mergeFilteredDomainsWithDomainsDetails();
+
+		const filterOptions = [
+			{
+				label: 'All domains',
+				value: '',
+				path: domainManagementRoot(),
+				count: nonWpcomDomains?.length,
+			},
+			{
+				label: 'Owned by me',
+				value: 'owned-by-me',
+				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
+				count: this.filterDomains( nonWpcomDomains, 'owned-by-me' )?.length,
+			},
+			{
+				label: 'Owned by others',
+				value: 'owned-by-others',
+				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-others' } ),
+				count: this.filterDomains( nonWpcomDomains, 'owned-by-others' )?.length,
+			},
+		];
+
+		return (
+			<DomainsTableFilterButton
+				key="breadcrumb_button_2"
+				selectedFilter={ selectedFilter || '' }
+				filterOptions={ filterOptions }
+			/>
+		);
+	}
+
 	renderBreadcrumbs() {
 		const { translate } = this.props;
 
@@ -621,7 +675,7 @@ class AllDomains extends Component {
 
 		const buttons = [
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			// this.renderDomainTableFilterButton( true ),
+			this.renderDomainTableFilterButton(),
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
 		];
 
