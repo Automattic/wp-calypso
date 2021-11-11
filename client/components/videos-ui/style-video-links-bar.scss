@@ -2,7 +2,8 @@
 @import '@wordpress/base-styles/mixins';
 
 .videos-ui__header-links {
-    padding: 24px;
+    padding: 20px;
+    padding-bottom: 15px;
     display: flex;
     flex-direction: row;
     align-items: center;
