@@ -125,9 +125,7 @@ export class MapDomain extends Component {
 			return;
 		} else if ( this.props.isSiteOnPaidPlan ) {
 			wpcom.req
-				.post( `/sites/${ selectedSite.ID }/add-domain-mapping`, {
-					domain,
-				} )
+				.post( `/sites/${ selectedSite.ID }/add-domain-mapping`, { domain } )
 				.then(
 					() => {
 						this.props.successNotice(
