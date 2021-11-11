@@ -24,6 +24,49 @@
 	}
 }
 
+.upsell-nudge__price-placeholder {
+	width: 33%;
+	margin: 0 auto;
+	height: 20px;
+}
+
+.upsell-nudge__hold-tight-placeholder {
+	width: 33%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 20px;
+	height: 20px;
+}
+
+.upsell-nudge__form-placeholder {
+	>div {
+		padding: 12px;
+	}
+	width: 60%;
+	margin-top: 64px;
+	float: left;
+}
+
+.upsell-nudge__benefits-placeholder {
+	>div {
+		padding: 12px 46px;
+	}
+	width: 40%;
+	margin-top: 64px;
+	float: right;
+}
+
+.upsell-nudge__feature-placeholder {
+	margin-bottom: 20px;
+	height: 20px;
+}
+
+.upsell-nudge__price-placeholder {
+	width: 33%;
+	margin: 0 auto;
+	height: 20px;
+}
+
 .upsell-nudge__placeholder-button-container {
 	display: flex;
 	justify-content: space-between;
