@@ -321,7 +321,10 @@ export default class SignupFlowController {
 		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
 			includes( currentSteps, step.stepName )
 		);
-		const pendingSteps = filter( signupProgress, { status: 'pending' } );
+		const pendingNotSkippedSteps = filter(
+			signupProgress,
+			( step ) => step.status === 'pending' && ! step.wasSkipped
+		);
 		const completedOrSkippedSteps = filter(
 			signupProgress,
 			( step ) => step.status === 'completed' || step.wasSkipped
@@ -332,7 +335,7 @@ export default class SignupFlowController {
 			wpcom.loadToken( dependencies.bearer_token );
 		}
 
-		for ( const pendingStep of pendingSteps ) {
+		for ( const pendingStep of pendingNotSkippedSteps ) {
 			this._processStep( pendingStep );
 		}
 
