@@ -618,6 +618,24 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 			);
 		}
 	}
+
+	// Gutenberg v11.9 has changed the global styles object to this format.
+	// Once this is stable we can remove the old postType format above.
+	if ( kind === 'root' && type === 'globalStyles' ) {
+		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
+		const entityContent = { settings: editedEntity.settings, styles: editedEntity.styles };
+		const updatedContent = { settings: updates.settings, styles: updates.styles };
+
+		// Sometimes a second update is triggered corresponding to no changes since the last update.
+		// Therefore we must check if there is a change to avoid debouncing a valid update to a changeless update.
+		if ( ! isEqual( updatedContent, entityContent ) ) {
+			buildGlobalStylesContentEvents(
+				updatedContent,
+				entityContent,
+				'wpcom_block_editor_global_styles_update'
+			);
+		}
+	}
 };
 
 /**
@@ -633,6 +651,21 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = JSON.parse( savedEntity?.content?.raw );
 		const updatedContent = JSON.parse( editedEntity?.content );
+
+		buildGlobalStylesContentEvents(
+			updatedContent,
+			entityContent,
+			'wpcom_block_editor_global_styles_save'
+		);
+	}
+
+	// Gutenberg v11.9 has changed the global styles object to this format.
+	// Once this is stable we can remove the old postType format above.
+	if ( kind === 'root' && type === 'globalStyles' ) {
+		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
+		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
+		const entityContent = { settings: savedEntity.settings, styles: savedEntity.styles };
+		const updatedContent = { settings: editedEntity.settings, styles: editedEntity.styles };
 
 		buildGlobalStylesContentEvents(
 			updatedContent,
