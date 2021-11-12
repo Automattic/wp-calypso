@@ -21,7 +21,7 @@ interface WooCommerceInstallProps {
 export default function WooCommerceInstall( props: WooCommerceInstallProps ): ReactElement | null {
 	const { __ } = useI18n();
 
-	const { stepName, goToStep, isReskinned } = props;
+	const { isReskinned } = props;
 
 	return (
 		<StepWrapper
