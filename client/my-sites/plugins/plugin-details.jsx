@@ -52,8 +52,8 @@ function PluginDetails( props ) {
 	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
-	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
-	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
 	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, props.pluginSlug ) );
@@ -76,7 +76,8 @@ function PluginDetails( props ) {
 	const isWpcom = selectedSite && ! isJetpackSite;
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
-	const isPluginInstalledOnsite = ! requestingPluginsForSites ? !! sitePlugin : null;
+	const isPluginInstalledOnsite =
+		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
 
 	const fullPlugin = {
 		...plugin,
@@ -153,7 +154,11 @@ function PluginDetails( props ) {
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<SidebarNavigation />
 			<FixedNavigationHeader navigationItems={ getNavigationItems() } />
-			<PluginNotices pluginId={ fullPlugin.id } sites={ sites } plugins={ [ fullPlugin ] } />
+			<PluginNotices
+				pluginId={ fullPlugin.id }
+				sites={ sitesWithPlugins }
+				plugins={ [ fullPlugin ] }
+			/>
 
 			<div className="plugin-details__page">
 				<div className="plugin-details__layout plugin-details__top-section">
@@ -353,8 +358,8 @@ function Rating( { rating } ) {
 function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) {
 	const translate = useTranslate();
 
-	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
-	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 
 	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
 	const sitesWithPlugin = useSelector( ( state ) =>
@@ -369,7 +374,7 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 	}
 
 	const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
-		sites.find( ( site ) => site.ID === siteId )
+		sitesWithPlugins.find( ( site ) => site.ID === siteId )
 	);
 
 	return (
