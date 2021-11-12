@@ -6,6 +6,7 @@ const selectors = {
 	writeButton: '.masterbar__item-new',
 	notificationsButton: 'a[href="/notifications"]',
 	meButton: 'a[data-tip-target="me"]',
+	closeCheckout: 'a[data-tip-target="close"]',
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
@@ -57,6 +58,14 @@ export class NavbarComponent {
 	async clickMe(): Promise< void > {
 		await this.pageSettled();
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.meButton ) ] );
+	}
+	
+	/**
+	 * Click on `Close checkout` on top left of the checkout page.
+	 */
+	 async clickCloseCheckout(): Promise< void > {
+		await this.pageSettled();
+		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.closeCheckout ) ] );
 	}
 
 	/**
