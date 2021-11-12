@@ -358,7 +358,14 @@ class AllDomains extends Component {
 			) );
 		}
 
-		const { purchases, sites, currentRoute, context, translate } = this.props;
+		const {
+			purchases,
+			sites,
+			currentRoute,
+			context,
+			requestingSiteDomains,
+			translate,
+		} = this.props;
 
 		const selectedFilter = context?.query?.filter;
 
@@ -452,6 +459,7 @@ class AllDomains extends Component {
 				isLoading={ this.isLoading() }
 				purchases={ purchases }
 				sites={ sites }
+				requestingSiteDomains={ requestingSiteDomains }
 			/>
 		);
 

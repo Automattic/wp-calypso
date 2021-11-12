@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, home, moreVertical } from '@wordpress/icons';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
@@ -24,6 +25,7 @@ import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-tog
 import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+
 import './domain-row.scss';
 
 class DomainRow extends PureComponent {
@@ -116,14 +118,18 @@ class DomainRow extends PureComponent {
 	}
 
 	renderDomainStatus() {
-		const { domain, site } = this.props;
+		const { domain, site, isLoadingDomainDetails } = this.props;
 		const { status, statusClass } = resolveDomainStatus( domain, null, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
 		} );
 
+		const domainStatusClass = classnames( 'domain-row__status-cell', {
+			'is-loading': isLoadingDomainDetails,
+		} );
+
 		return (
-			<div className="domain-row__status-cell">
+			<div className={ domainStatusClass }>
 				<span className={ `domain-row__${ statusClass }-dot` }></span> { status }
 			</div>
 		);
