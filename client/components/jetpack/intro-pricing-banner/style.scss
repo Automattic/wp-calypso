@@ -39,13 +39,15 @@
 
 .intro-pricing-banner__header {
 	margin-top: -8px;
-	margin-bottom: 8px;
+	margin-bottom: 1rem;
 
 	text-align: center;
 	font-size: $font-title-small;
 	font-weight: 700;
 
 	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 0.5rem;
+
 		text-align: initial;
 		font-size: $font-title-medium;
 	}
@@ -55,10 +57,12 @@
 	margin-bottom: initial;
 
 	font-size: $font-body-small;
+	text-align: center;
 	color: var( --studio-gray-60 );
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: $font-body;
+		text-align: left;
 	}
 }
 
