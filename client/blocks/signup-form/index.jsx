@@ -89,7 +89,6 @@ class SignupForm extends Component {
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
-		recaptchaClientId: PropTypes.number,
 		save: PropTypes.func,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
@@ -97,7 +96,6 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		showRecaptchaToS: PropTypes.bool,
 		horizontal: PropTypes.bool,
 
 		// Connected props
@@ -111,7 +109,6 @@ class SignupForm extends Component {
 		flowName: '',
 		isPasswordlessExperiment: false,
 		isSocialSignupEnabled: false,
-		showRecaptchaToS: false,
 		horizontal: false,
 	};
 
@@ -882,7 +879,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, showRecaptchaToS, translate } = this.props;
+		const { flowName, translate } = this.props;
 
 		if ( flowName === 'p2' ) {
 			return (
@@ -913,25 +910,6 @@ class SignupForm extends Component {
 							/>
 						) }
 					</LoggedOutFormLinks>
-				) }
-				{ showRecaptchaToS && (
-					<div className="signup-form__recaptcha-tos">
-						<LoggedOutFormLinks>
-							<p>
-								{ translate(
-									'This site is protected by reCAPTCHA and the Google {{a1}}Privacy Policy{{/a1}} and {{a2}}Terms of Service{{/a2}} apply.',
-									{
-										components: {
-											a1: <a href="https://policies.google.com/privacy" />,
-											a2: <a href="https://policies.google.com/terms" />,
-										},
-										comment:
-											'English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed',
-									}
-								) }
-							</p>
-						</LoggedOutFormLinks>
-					</div>
 				) }
 			</>
 		);
@@ -1032,14 +1010,11 @@ class SignupForm extends Component {
 			( this.props.flowName === 'onboarding' || this.props.flowName === 'test-fse' ) &&
 			this.props.isPasswordlessExperiment
 		) {
-			const logInUrl = config.isEnabled( 'login/native-login-links' )
-				? this.getLoginLink()
-				: localizeUrl( config( 'login_url' ), this.props.locale );
+			const logInUrl = this.getLoginLink();
 
 			return (
 				<div
 					className={ classNames( 'signup-form', this.props.className, {
-						'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
 						'is-horizontal': this.props.horizontal,
 					} ) }
 				>
@@ -1053,7 +1028,6 @@ class SignupForm extends Component {
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
-						recaptchaClientId={ this.props.recaptchaClientId }
 					/>
 
 					{ ! config.isEnabled( 'desktop' ) &&
@@ -1079,7 +1053,6 @@ class SignupForm extends Component {
 		return (
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
-					'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
 					'is-horizontal': this.props.horizontal,
 				} ) }
 			>
