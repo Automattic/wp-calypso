@@ -171,12 +171,16 @@ export class NavigationLink extends Component {
 			this.props.cssClass
 		);
 
+		const hrefUrl =
+			this.props.direction === 'forward' && this.props.forwardUrl
+				? this.props.forwardUrl
+				: this.getBackUrl();
 		return (
 			<Button
 				primary={ primary }
 				borderless={ borderless }
 				className={ buttonClasses }
-				href={ this.getBackUrl() }
+				href={ hrefUrl }
 				onClick={ this.handleClick }
 				rel={ this.props.rel }
 			>

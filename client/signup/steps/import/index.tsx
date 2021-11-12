@@ -1,5 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
+import { stringify } from 'qs';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -8,7 +9,7 @@ import { isAnalyzing, getUrlData } from 'calypso/state/imports/url-analyzer/sele
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep } from './ready';
-import { GoToNextStep, GoToStep, UrlData } from './types';
+import { GoToStep, GoToNextStep, UrlData } from './types';
 import { getImporterUrl } from './util';
 import './style.scss';
 
@@ -26,7 +27,6 @@ type Props = ConnectedProps< typeof connector > & {
 const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const {
-		goToStep,
 		goToNextStep,
 		stepName,
 		stepSectionName,
@@ -45,6 +45,30 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 		return ! STEPS_WITH_NEXT.includes( stepName ) || isAnalyzing;
 	};
 
+	const getStepWithQueryParamUrl = (
+		stepName: string,
+		stepSectionName?: string,
+		flowName = 'importer',
+		dependency = signupDependencies
+	): string => {
+		let stepUrl = getStepUrl( flowName, stepName, stepSectionName );
+
+		if ( Object.keys( dependency ).length ) {
+			stepUrl += '?' + stringify( dependency );
+		}
+
+		return stepUrl;
+	};
+
+	const goToStepWithDependencies: GoToStep = function (
+		stepName,
+		stepSectionName,
+		flowName = 'importer',
+		dependency = signupDependencies
+	): void {
+		page( getStepWithQueryParamUrl( stepName, stepSectionName, flowName, dependency ) );
+	};
+
 	const goToImporterPage = ( platform: string ): void => {
 		const importerUrl = getImporterUrl( signupDependencies.siteSlug, platform );
 
@@ -54,8 +78,16 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	};
 
 	const getBackUrl = ( stepName: string, stepSectionName: string ) => {
-		if ( stepName === 'capture' ) return getStepUrl( 'setup-site', 'intent' );
-		else if ( stepName === 'ready' && ! stepSectionName ) return getStepUrl( 'importer', 'list' );
+		if ( stepName === 'capture' )
+			return getStepWithQueryParamUrl( 'intent', undefined, 'setup-site' );
+		if ( stepName === 'list' ) return getStepWithQueryParamUrl( 'capture' );
+		else if ( stepName === 'ready' && ! stepSectionName ) return getStepWithQueryParamUrl( 'list' );
+
+		return getStepWithQueryParamUrl( 'capture' );
+	};
+
+	const getForwardUrl = () => {
+		return getStepWithQueryParamUrl( 'list' );
 	};
 
 	return (
@@ -67,19 +99,20 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
 			backUrl={ getBackUrl( stepName, stepSectionName ) }
+			forwardUrl={ getForwardUrl() }
 			goToNextStep={ goToNextStep }
 			hideFormattedHeader={ true }
 			stepName={ stepName }
 			stepContent={
 				<div className="import__onboarding-page">
-					{ stepName === 'capture' && <CaptureStep goToStep={ goToStep } /> }
-					{ stepName === 'list' && <ListStep goToStep={ goToStep } /> }
+					{ stepName === 'capture' && <CaptureStep goToStep={ goToStepWithDependencies } /> }
+					{ stepName === 'list' && <ListStep goToStep={ goToStepWithDependencies } /> }
 
 					{ stepName === 'ready' && ! stepSectionName && (
 						<ReadyStep goToImporterPage={ goToImporterPage } platform={ urlData.platform } />
 					) }
 					{ stepName === 'ready' && stepSectionName === 'not' && (
-						<ReadyNotStep goToStep={ goToStep } />
+						<ReadyNotStep goToStep={ goToStepWithDependencies } />
 					) }
 					{ stepName === 'ready' && stepSectionName === 'preview' && (
 						<ReadyPreviewStep
@@ -89,7 +122,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 						/>
 					) }
 					{ stepName === 'ready' && stepSectionName === 'wpcom' && (
-						<ReadyAlreadyOnWPCOMStep urlData={ urlData } goToStep={ goToStep } />
+						<ReadyAlreadyOnWPCOMStep urlData={ urlData } goToStep={ goToStepWithDependencies } />
 					) }
 				</div>
 			}
