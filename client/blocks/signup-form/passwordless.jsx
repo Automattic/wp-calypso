@@ -9,10 +9,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
-import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
-import flows from 'calypso/signup/config/flows';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -71,32 +69,10 @@ class PasswordlessSignupForm extends Component {
 			form,
 		} );
 
-		const isRecaptchaLoaded = typeof this.props.recaptchaClientId === 'number';
-
-		let recaptchaToken = undefined;
-		let recaptchaError = undefined;
-
-		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
-			if ( isRecaptchaLoaded ) {
-				recaptchaToken = await recordGoogleRecaptchaAction(
-					this.props.recaptchaClientId,
-					'calypso/signup/formSubmit'
-				);
-
-				if ( ! recaptchaToken ) {
-					recaptchaError = 'recaptcha_failed';
-				}
-			} else {
-				recaptchaError = 'recaptcha_didnt_load';
-			}
-		}
-
 		try {
 			const response = await wpcom.undocumented().usersNew(
 				{
 					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-					'g-recaptcha-error': recaptchaError,
-					'g-recaptcha-response': recaptchaToken || undefined,
 					is_passwordless: true,
 					signup_flow_name: this.props.flowName,
 					validate: false,

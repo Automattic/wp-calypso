@@ -476,9 +476,6 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					showRecaptchaToS={
-						flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha
-					}
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
 				/>
