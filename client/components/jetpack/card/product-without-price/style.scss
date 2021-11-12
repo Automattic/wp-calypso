@@ -119,35 +119,3 @@
 		margin: 16px;
 	}
 }
-
-.jetpack-plans__iteration--only-realtime-products .product-without-price {
-	@include breakpoint-deprecated( '>660px' ) {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		grid-column-gap: 32px;
-
-		.product-without-price__title {
-			grid-row: 1;
-			grid-column: 1 / span 2;
-			margin-block-end: initial;
-		}
-
-		.product-without-price__button {
-			grid-row: 3;
-			grid-column: 1;
-			margin: initial;
-			align-self: flex-end;
-		}
-
-		.product-without-price__subheadline {
-			grid-row: 2;
-			grid-column: 2;
-		}
-
-		.product-without-price__features-list {
-			grid-row: 3;
-			grid-column: 2;
-			margin: 0 0 0 16px;
-		}
-	}
-}
