@@ -19,7 +19,6 @@ export default function EducationalContent( {
 	title,
 	description,
 	links,
-	modalLinks,
 	illustration,
 	cardName,
 } ) {
@@ -33,50 +32,42 @@ export default function EducationalContent( {
 					{ description }
 				</p>
 				<div className="educational-content__links">
-					{ links &&
-						links.map( ( { postId, url, calypsoLink, externalLink, text, icon, materialIcon } ) => (
-							<div className="educational-content__link" key={ url }>
-								{ icon && <Gridicon icon={ icon } size={ 18 } /> }
-								{ materialIcon && <MaterialIcon icon={ materialIcon } /> }
-								{ postId && (
-									<InlineSupportLink
-										supportPostId={ postId }
-										supportLink={ url }
-										showIcon={ false }
-										tracksEvent="calypso_customer_home_education"
-										statsGroup="calypso_customer_home"
-										tracksOptions={ {
-											url,
-											card_name: cardName,
-										} }
-										statsName={ cardName }
-									>
-										{ text }
-									</InlineSupportLink>
-								) }
-								{ externalLink && (
-									<ExternalLink
-										href={ url }
-										onClick={ () => dispatch( trackNavigation( url, cardName ) ) }
-										icon
-									>
-										{ text }
-									</ExternalLink>
-								) }
-								{ calypsoLink && (
-									<a href={ url } onClick={ () => dispatch( trackNavigation( url, cardName ) ) }>
-										{ text }
-									</a>
-								) }
-							</div>
-						) ) }
-					{ modalLinks &&
-						modalLinks.map( ( { ModalComponent, modalComponentProps, onClick, text } ) => (
-							<div className="educational-content__link" key={ text }>
-								<ModalComponent { ...modalComponentProps } />
-								<button onClick={ () => onClick() }>{ text }</button>
-							</div>
-						) ) }
+					{ links.map( ( { postId, url, calypsoLink, externalLink, text, icon, materialIcon } ) => (
+						<div className="educational-content__link" key={ url }>
+							{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+							{ materialIcon && <MaterialIcon icon={ materialIcon } /> }
+							{ postId && (
+								<InlineSupportLink
+									supportPostId={ postId }
+									supportLink={ url }
+									showIcon={ false }
+									tracksEvent="calypso_customer_home_education"
+									statsGroup="calypso_customer_home"
+									tracksOptions={ {
+										url,
+										card_name: cardName,
+									} }
+									statsName={ cardName }
+								>
+									{ text }
+								</InlineSupportLink>
+							) }
+							{ externalLink && (
+								<ExternalLink
+									href={ url }
+									onClick={ () => dispatch( trackNavigation( url, cardName ) ) }
+									icon
+								>
+									{ text }
+								</ExternalLink>
+							) }
+							{ calypsoLink && (
+								<a href={ url } onClick={ () => dispatch( trackNavigation( url, cardName ) ) }>
+									{ text }
+								</a>
+							) }
+						</div>
+					) ) }
 				</div>
 			</div>
 			{ isDesktop() && (
