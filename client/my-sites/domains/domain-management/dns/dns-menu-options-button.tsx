@@ -6,7 +6,7 @@ import { useCallback, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { setDnsDefaultARecords } from 'calypso/state/domains/dns/actions';
+import { updateDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import RestoreDefaultARecordsDialog from './restore-default-a-records-dialog';
 import { DnsMenuOptionsButtonProps, RestoreDialogResult } from './types';
@@ -14,7 +14,8 @@ import { DnsMenuOptionsButtonProps, RestoreDialogResult } from './types';
 function DnsMenuOptionsButton( {
 	domain,
 	pointsToWpcom,
-	dispatchSetDnsDefaultARecords,
+	dns,
+	dispatchUpdateDns,
 	dispatchSuccessNotice,
 	dispatchErrorNotice,
 }: DnsMenuOptionsButtonProps ): JSX.Element {
@@ -30,11 +31,26 @@ function DnsMenuOptionsButton( {
 
 	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
 
+	const getRecordsToRemove = useCallback( () => {
+		console.log( dns );
+
+		return [];
+	}, [ dns ] );
+
 	const restoreDefaultRecords = useCallback( async () => {
-		dispatchSetDnsDefaultARecords( domain )
+		console.log( dispatchUpdateDns );
+
+		dispatchUpdateDns( domain, [], getRecordsToRemove() )
 			.then( () => dispatchSuccessNotice( __( 'Default A records restored' ) ) )
 			.catch( () => dispatchErrorNotice( __( 'Failed to restore the default A records' ) ) );
-	}, [ __, dispatchErrorNotice, dispatchSetDnsDefaultARecords, dispatchSuccessNotice, domain ] );
+	}, [
+		__,
+		dispatchErrorNotice,
+		dispatchSuccessNotice,
+		dispatchUpdateDns,
+		domain,
+		getRecordsToRemove,
+	] );
 
 	const closeRestoreDialog = ( result: RestoreDialogResult ) => {
 		setRestoreDialogVisible( false );
@@ -77,7 +93,7 @@ function DnsMenuOptionsButton( {
 }
 
 export default connect( null, {
-	dispatchSetDnsDefaultARecords: setDnsDefaultARecords,
+	dispatchUpdateDns: updateDns,
 	dispatchSuccessNotice: successNotice,
 	dispatchErrorNotice: errorNotice,
 } )( DnsMenuOptionsButton );
