@@ -685,6 +685,7 @@ object PreReleaseE2ETests : BuildType({
 
 object QuarantinedE2ETests: BuildType( {
 	id("Quarantined_E2E_Tests")
+	uuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c"
 	name = "Quarantined E2E Tests"
 	description = "E2E tests quarantined due to intermittent failures."
 	maxRunningBuilds = 1
