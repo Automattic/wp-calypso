@@ -6,7 +6,6 @@ import { useCallback, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import './dns-breadcrumb-button.scss';
 import { setDnsDefaultARecords } from 'calypso/state/domains/dns/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import RestoreDefaultARecordsDialog from './restore-default-a-records-dialog';
@@ -57,6 +56,7 @@ function DnsMenuOptionsButton( {
 				className="dns__breadcrumb-button ellipsis"
 				onClick={ toggleMenu }
 				ref={ optionsButtonRef }
+				borderless
 			>
 				<Icon icon={ moreVertical } className="gridicon" />
 			</Button>

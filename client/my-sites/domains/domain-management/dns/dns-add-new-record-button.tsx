@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { domainManagementDnsAddRecord } from 'calypso/my-sites/domains/paths';
-import './dns-breadcrumb-button.scss';
 import { DndAddNewRecordButtonProps } from './types';
 
 function DnsAddNewRecordButton( { site, domain }: DndAddNewRecordButtonProps ): JSX.Element {
