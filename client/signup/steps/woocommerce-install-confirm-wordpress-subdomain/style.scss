@@ -3,6 +3,14 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
+body.is-section-signup {
+	.signup__step.is-confirm-wordpress-subdomain {
+		.is-wide-layout {
+			max-width: 1280px;
+		}
+	}
+}
+
 .is-confirm-wordpress-subdomain {
 	margin: 0 0 0 20px;
 	padding: 0 20px;
