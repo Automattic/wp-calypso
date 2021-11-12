@@ -52,7 +52,7 @@ const JetpackSearchContent: FunctionComponent< Props > = ( {
 				<div className="jetpack-search__content">
 					{ iconComponent }
 					{ headerText && <h1 className="jetpack-search__header">{ headerText }</h1> }
-					<p>{ translate( 'Your visitors are getting our fastest search experience.' ) }</p>
+					<p>{ bodyText }</p>
 					<Button
 						primary
 						className="jetpack-search__button"
