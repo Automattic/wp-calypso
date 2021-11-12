@@ -16,7 +16,9 @@ const StorageFull: React.FC = () => {
 	const translate = useTranslate();
 	return (
 		<div className="usage-warning__storage-full">
-			{ translate( 'Your Backup storage is full and new backups have been paused' ) }
+			{ translate(
+				'Your Backup storage is full. We’re currently not enforcing storage limits but plan to do so in the future.'
+			) }
 		</div>
 	);
 };
