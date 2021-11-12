@@ -272,6 +272,7 @@
 
 	.sharing-connection__account-avatar.is-fallback.#{ $name } {
 		background-color: $color;
+		color: var( --color-neutral-0 );
 	}
 }
 
@@ -842,7 +843,7 @@
 	padding: 1px 8px 0 5px;
 
 	&.style-icon {
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		border: 0;
 		box-shadow: none;
 		padding: 7px;
