@@ -1,9 +1,8 @@
+import { Button, Card } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent, ReactNode, Fragment } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackUpsell from 'calypso/components/jetpack/upsell';
-import PromoCard from 'calypso/components/promo-section/promo-card';
-import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 interface Props {
@@ -49,20 +48,21 @@ const JetpackSearchContent: FunctionComponent< Props > = ( {
 				align="left"
 				brandFont
 			/>
-			<PromoCard title={ headerText } image={ iconComponent } isPrimary>
-				<p className="jetpack-search__content-body-text">{ bodyText }</p>
-
-				<PromoCardCTA
-					cta={ {
-						text: buttonText,
-						action: {
-							url: buttonLink,
-							onClick: onClick ? onClick : null,
-							selfTarget: true,
-						},
-					} }
-				/>
-			</PromoCard>
+			<Card>
+				<div className="jetpack-search__content">
+					{ iconComponent }
+					{ headerText && <h1 className="jetpack-search__header">{ headerText }</h1> }
+					<p>{ translate( 'Your visitors are getting our fastest search experience.' ) }</p>
+					<Button
+						primary
+						className="jetpack-search__button"
+						href={ buttonLink as string }
+						onClick={ onClick || undefined }
+					>
+						{ buttonText }
+					</Button>
+				</div>
+			</Card>
 		</Fragment>
 	);
 };
