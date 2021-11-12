@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -14,6 +14,8 @@ import {
 	getEmailForwards,
 	isAddingEmailForward,
 } from 'calypso/state/selectors/get-email-forwards';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -30,6 +32,8 @@ class EmailForwardingAddNewCompactList extends Component {
 		super( props );
 		this.state = {
 			emailForwards: [ { destination: '', mailbox: '', isValid: false } ],
+			isRedirecting: false,
+			newForwardAdded: false,
 		};
 	}
 
@@ -65,6 +69,7 @@ class EmailForwardingAddNewCompactList extends Component {
 				selectedSiteSlug
 			);
 		} );
+		this.state.newForwardAdded = true;
 	};
 
 	onForwardAdd = () => {
@@ -73,20 +78,10 @@ class EmailForwardingAddNewCompactList extends Component {
 		} );
 	};
 
-	renderActionsButtons( addMoreButton = false ) {
+	renderActionsButtons() {
 		const { translate } = this.props;
 		return (
 			<div className="email-forwarding-add-new-compact-list__actions">
-				{ addMoreButton && (
-					<Button
-						className="email-forwarding-add-new-compact-list__add-another-forward-button"
-						onClick={ this.onForwardAdd }
-					>
-						<Gridicon icon="plus" />
-						<span>{ translate( 'Add another forward' ) }</span>
-					</Button>
-				) }
-
 				<Button
 					primary
 					onClick={ this.addNewEmailForwardsClick }
@@ -117,10 +112,24 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	componentDidUpdate() {
-		const { emailForwardSuccess, onSuccessRedirectDestination } = this.props;
+		const {
+			emailForwardSuccess,
+			isRequestingDomains,
+			onSuccessRedirectDestination,
+			siteId,
+		} = this.props;
 
-		if ( emailForwardSuccess && onSuccessRedirectDestination ) {
+		if (
+			emailForwardSuccess &&
+			onSuccessRedirectDestination &&
+			! this.state.isRedirecting &&
+			this.state.newForwardAdded
+		) {
+			if ( ! isRequestingDomains && ! this.state.isRedirecting ) {
+				this.props.fetchSiteDomains( siteId );
+			}
 			page( onSuccessRedirectDestination );
+			this.state.isRedirecting = true;
 		}
 	}
 
@@ -152,13 +161,16 @@ class EmailForwardingAddNewCompactList extends Component {
 
 export default connect(
 	( state, ownProps ) => {
+		const siteId = getSelectedSiteId( state );
 		return {
 			emailForwardSuccess: addEmailForwardSuccess( state, ownProps.selectedDomainName ),
 			selectedSiteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 			isAddingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
+			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
 			emailForwards: getEmailForwards( state, ownProps.selectedDomainName ),
-			emailForwardingLimit: getEmailForwardingLimit( state, getSelectedSiteId( state ) ),
+			emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
+			siteId,
 		};
 	},
-	{ addEmailForward }
+	{ addEmailForward, fetchSiteDomains }
 )( localize( EmailForwardingAddNewCompactList ) );
