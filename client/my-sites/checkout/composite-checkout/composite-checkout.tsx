@@ -584,7 +584,7 @@ export default function CompositeCheckout( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
-	// The gotToPreviousPage function and subsequent conditional statement controls the 'back' button functionality on the empty cart page
+	// The goToPreviousPage function and subsequent conditional statement controls the 'back' button functionality on the empty cart page
 
 	const checkoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 
