@@ -31,7 +31,6 @@
 
 			h2 {
 				@include onboarding-font-recoleta;
-				//font-size: $font-title-large;
 				font-size: $font-headline-small;
 				letter-spacing: 0;
 				height: 40px;
@@ -48,6 +47,10 @@
 					padding-right: 16px;
 					fill: rgba( 255, 255, 255, 0.6 );
 					vertical-align: text-bottom;
+				}
+
+				li {
+					color: rgba( 255, 255, 255, 0.88 );
 				}
 			}
 		}
@@ -180,16 +183,17 @@
 				margin: auto;
 				flex-direction: row;
 				justify-content: space-between;
-				padding: 80px;
+				padding: 60px;
 
 				.videos-ui__titles {
 					flex-basis: auto;
 					width: 65.5%;
-					font-size: $font-headline-small;
 				}
+
 				.videos-ui__summary {
 					flex-basis: auto;
 					width: 31%;
+					padding-top: 16px;
 				}
 
 				ul {
@@ -200,6 +204,17 @@
 	}
 
 	@include break-xlarge {
+		.videos-ui__header {
+			.videos-ui__header-content {
+                .videos-ui__titles {
+                    h2 {
+                        font-size: $font-headline-medium;
+                        height: 60px;
+                    }
+                }
+			}
+		}
+
 		.videos-ui__body {
 			max-width: 1160px;
 			margin: auto;
