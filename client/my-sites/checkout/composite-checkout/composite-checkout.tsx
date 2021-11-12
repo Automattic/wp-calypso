@@ -6,12 +6,12 @@ import {
 	MainContentWrapper,
 	SubmitButtonWrapper,
 	checkoutTheme,
-	defaultRegistry,
 	Button,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
 import { ThemeProvider } from '@emotion/react';
+import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -68,12 +68,7 @@ import weChatProcessor from './lib/we-chat-processor';
 import webPayProcessor from './lib/web-pay-processor';
 import createAnalyticsEventHandler from './record-analytics';
 import { StoredCard } from './types/stored-cards';
-import {
-	emptyManagedContactDetails,
-	applyContactDetailsRequiredMask,
-	domainRequiredContactDetails,
-	taxRequiredContactDetails,
-} from './types/wpcom-store-state';
+import { emptyManagedContactDetails } from './types/wpcom-store-state';
 import type { ReactStandardAction } from './types/analytics';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
@@ -82,8 +77,6 @@ import type { ManagedContactDetails, CountryListItem } from '@automattic/wpcom-c
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
-
-const { select, registerStore } = defaultRegistry;
 
 const wpcomGetStoredCards = (): StoredCard[] => wp.req.get( { path: '/me/stored-cards' } );
 
@@ -104,7 +97,7 @@ export default function CompositeCheckout( {
 	isInEditor,
 	onAfterPaymentComplete,
 	isFocusedLaunch,
-	isJetpackCheckout,
+	isJetpackCheckout = false,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
@@ -125,7 +118,7 @@ export default function CompositeCheckout( {
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
 	isFocusedLaunch?: boolean;
-	isJetpackCheckout: boolean;
+	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
@@ -206,6 +199,8 @@ export default function CompositeCheckout( {
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
 
+	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
+
 	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
 		couponStatus === 'applied'
@@ -261,14 +256,7 @@ export default function CompositeCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	useWpcomStore(
-		registerStore,
-		applyContactDetailsRequiredMask(
-			emptyManagedContactDetails,
-			contactDetailsType === 'domain' ? domainRequiredContactDetails : taxRequiredContactDetails
-		),
-		updateContactDetailsCache
-	);
+	useWpcomStore( emptyManagedContactDetails, updateContactDetailsCache );
 
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation, countriesList );
@@ -311,15 +299,10 @@ export default function CompositeCheckout( {
 	const areThereErrors =
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy ).length > 0;
 
-	const siteSlugLoggedOutCart: string | undefined = select( 'wpcom' )?.getSiteSlug();
 	const {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
-	} = useRemoveFromCartAndRedirect(
-		updatedSiteSlug,
-		siteSlugLoggedOutCart,
-		createUserAndSiteBeforeTransaction
-	);
+	} = useRemoveFromCartAndRedirect( updatedSiteSlug, createUserAndSiteBeforeTransaction );
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		wpcomGetStoredCards,
@@ -368,7 +351,12 @@ export default function CompositeCheckout( {
 		// Only wait for web pay to load if we are using web pay
 		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
 
-	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
+	const contactDetails: ManagedContactDetails | undefined = useSelect( ( select ) =>
+		select( 'wpcom-checkout' )?.getContactInfo()
+	);
+	const recaptchaClientId: number | undefined = useSelect( ( select ) =>
+		select( 'wpcom-checkout' )?.getRecaptchaClientId()
+	);
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
@@ -430,10 +418,11 @@ export default function CompositeCheckout( {
 			recordEvent,
 			reduxDispatch,
 			responseCart,
-			siteId,
+			siteId: updatedSiteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
+			recaptchaClientId,
 		} ),
 		[
 			contactDetails,
@@ -444,10 +433,11 @@ export default function CompositeCheckout( {
 			recordEvent,
 			reduxDispatch,
 			responseCart,
-			siteId,
+			updatedSiteId,
 			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
+			recaptchaClientId,
 		]
 	);
 
@@ -629,8 +619,6 @@ export default function CompositeCheckout( {
 		);
 	}
 
-	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
-
 	return (
 		<Fragment>
 			<QueryJetpackSaleCoupon />
@@ -655,7 +643,6 @@ export default function CompositeCheckout( {
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }
-				registry={ defaultRegistry }
 				isLoading={ isLoading }
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }

@@ -351,7 +351,12 @@ function refreshNetworkSites( siteId ) {
 	};
 }
 
-function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
+function installPluginHelper(
+	siteId,
+	plugin,
+	isMainNetworkSite = false,
+	shouldActivatePlugin = true
+) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id || plugin.slug;
 		const defaultAction = {
@@ -415,7 +420,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 			return Promise.reject( error );
 		};
 
-		if ( isMainNetworkSite ) {
+		if ( isMainNetworkSite || ! shouldActivatePlugin ) {
 			return doInstall( plugin )
 				.then( doAutoupdates )
 				.then( successCallback )
@@ -430,8 +435,8 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 	};
 }
 
-export function installPlugin( siteId, plugin ) {
-	return installPluginHelper( siteId, plugin );
+export function installPlugin( siteId, plugin, shouldActivatePlugin = true ) {
+	return installPluginHelper( siteId, plugin, false, shouldActivatePlugin );
 }
 
 export function installPluginOnMultisite( siteId, plugin ) {

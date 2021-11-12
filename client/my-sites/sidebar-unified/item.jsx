@@ -25,7 +25,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	url,
 	isHappychatSessionActive,
 	isJetpackNonAtomicSite,
-	canNavigate,
+	continueInCalypso,
 } ) => {
 	const reduxDispatch = useDispatch();
 
@@ -40,7 +40,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			count={ count }
 			label={ title }
 			link={ url }
-			onNavigate={ ( event ) => canNavigate( url, event ) && onNavigate() }
+			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink={ ! isHappychatSessionActive && ! isJetpackNonAtomicSite }
@@ -61,7 +61,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	url: PropTypes.string,
 	isHappychatSessionActive: PropTypes.bool.isRequired,
 	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
-	canNavigate: PropTypes.func.isRequired,
+	continueInCalypso: PropTypes.func.isRequired,
 };
 
 export default memo( MySitesSidebarUnifiedItem );

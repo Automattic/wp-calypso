@@ -18,7 +18,6 @@ import type {
 	ManagedContactDetailsErrors,
 	ManagedContactDetailsUpdate,
 	ManagedContactDetailsUpdaters,
-	ManagedContactDetailsRequiredMask,
 	WpcomStoreState,
 	SignupValidationResponse,
 	DomainContactValidationRequest,
@@ -237,19 +236,17 @@ export function flattenManagedContactDetailsShape< A, B >(
 }
 
 export function isValid( arg: ManagedValue ): boolean {
-	return ( arg.errors?.length ?? 0 ) <= 0 && ( arg.value?.length > 0 || ! arg.isRequired );
+	return ( arg.errors?.length ?? 0 ) <= 0;
 }
 
 function getInitialManagedValue( initialProperties?: {
 	value?: string;
 	isTouched?: boolean;
 	errors?: Array< string | TranslateResult >;
-	isRequired?: boolean;
 } ): ManagedValue {
 	return {
 		value: '',
 		isTouched: false,
-		isRequired: false,
 		errors: [],
 		...initialProperties,
 	};
@@ -273,7 +270,7 @@ function touchIfDifferent(
 	if ( oldData !== undefined && newValue === oldData.value ) {
 		return oldData;
 	}
-	return { isRequired: false, ...oldData, value: newValue ?? '', isTouched: true, errors: [] };
+	return { ...oldData, value: newValue ?? '', isTouched: true, errors: [] };
 }
 
 function setValueUnlessTouched(
@@ -305,17 +302,6 @@ export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
 export function isTouched( details: ManagedContactDetails ): boolean {
 	const values = getManagedValuesList( details );
 	return values.length > 0 && values.every( ( value ) => value.isTouched );
-}
-
-export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boolean {
-	const values = getManagedValuesList( details );
-	if ( values.length === 0 ) {
-		return false;
-	}
-	if ( values.some( ( value ) => value.value?.length === 0 && value.isRequired ) ) {
-		return false;
-	}
-	return true;
 }
 
 function setManagedContactDetailsErrors(
@@ -727,13 +713,6 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		};
 	},
 
-	updateRequiredDomainFields: (
-		details: ManagedContactDetails,
-		requiredMask: ManagedContactDetailsRequiredMask
-	): ManagedContactDetails => {
-		return applyContactDetailsRequiredMask( details, requiredMask );
-	},
-
 	updateEmail: ( oldDetails: ManagedContactDetails, newEmail: string ): ManagedContactDetails => {
 		return {
 			...oldDetails,
@@ -832,58 +811,6 @@ export const emptyManagedContactDetails: ManagedContactDetails = {
 	countryCode: getInitialManagedValue(),
 	fax: getInitialManagedValue(),
 	vatId: getInitialManagedValue(),
-	tldExtraFields: {},
-};
-
-export function applyContactDetailsRequiredMask(
-	details: ManagedContactDetails,
-	requiredMask: ManagedContactDetailsRequiredMask
-): ManagedContactDetails {
-	return updateManagedContactDetailsShape(
-		( isRequired, managedValue ) => {
-			return { ...managedValue, isRequired };
-		},
-		( isRequired ) => getInitialManagedValue( { isRequired } ),
-		requiredMask,
-		details
-	);
-}
-
-export const domainRequiredContactDetails: ManagedContactDetailsRequiredMask = {
-	firstName: false,
-	lastName: false,
-	organization: false,
-	email: false,
-	alternateEmail: false,
-	phone: false,
-	phoneNumberCountry: false,
-	address1: false,
-	address2: false,
-	city: false,
-	state: false,
-	postalCode: false,
-	countryCode: false,
-	fax: false,
-	vatId: false,
-	tldExtraFields: {},
-};
-
-export const taxRequiredContactDetails: ManagedContactDetailsRequiredMask = {
-	firstName: false,
-	lastName: false,
-	organization: false,
-	email: false,
-	alternateEmail: false,
-	phone: false,
-	phoneNumberCountry: false,
-	address1: false,
-	address2: false,
-	city: false,
-	state: false,
-	postalCode: false,
-	countryCode: false,
-	fax: false,
-	vatId: false,
 	tldExtraFields: {},
 };
 

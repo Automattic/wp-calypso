@@ -30,8 +30,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 		await newPostFlow.newPostFromNavbar();
 	} );
 
-	it( 'Return to Home dashboard', async function () {
+	it( 'Return to Calypso dashboard', async function () {
 		const gutenbergEditorPage = new GutenbergEditorPage( page );
-		await gutenbergEditorPage.returnToHomeDashboard();
+		await gutenbergEditorPage.returnToCalypsoDashboard();
 	} );
 } );

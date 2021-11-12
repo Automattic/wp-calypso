@@ -20,14 +20,14 @@ interface Props {
 const EXCLUDE_STEPS: { [ key in StartingPointFlag ]: string[] } = {
 	write: [ 'design-setup-site' ],
 	design: [],
-	skip: [ 'design-setup-site' ],
+	'skip-to-my-home': [ 'design-setup-site' ],
 };
 
 export default function StartingPointStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { goToNextStep, stepName } = props;
-	const headerText = translate( 'Nice job! Lastly,{{br}}{{/br}}pick a starting point', {
+	const headerText = translate( 'Nice job! Now it’s{{br}}{{/br}} time to get creative.', {
 		components: { br: <br /> },
 	} );
 	const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
@@ -58,7 +58,7 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 			skipButtonAlign={ 'top' }
 			skipLabelText={ translate( 'Skip to My Home' ) }
 			// We need to redirect user to My Home and apply the default theme if the user skips this step
-			goToNextStep={ () => submitStartingPoint( 'skip' ) }
+			goToNextStep={ () => submitStartingPoint( 'skip-to-my-home' ) }
 			isHorizontalLayout={ true }
 		/>
 	);

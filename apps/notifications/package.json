@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"build:notifications": "calypso-build",
-		"dev-server": "webpack serve --inline --progress --liveReload --content-base dist --watch-content-base --host calypso.localhost --port 3000",
+		"dev-server": "NODE_ENV=development webpack serve",
 		"start": "yarn run clean && yarn run build:notifications && yarn run dev-server",
 		"dev": "node ../../bin/build-calypso-app.mjs --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
 		"build": "NODE_ENV=production yarn dev"
@@ -50,7 +50,7 @@
 		"html-webpack-plugin": "^5.0.0-beta.4",
 		"jest": "^27.2.4",
 		"postcss": "^8.3.11",
-		"webpack": "^5.62.1",
-		"webpack-dev-server": "^3.11.3"
+		"webpack": "^5.63.0",
+		"webpack-dev-server": "^4.4.0"
 	}
 }

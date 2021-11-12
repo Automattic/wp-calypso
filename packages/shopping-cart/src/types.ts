@@ -320,6 +320,8 @@ export interface IntroductoryOfferTerms {
 	interval_unit: string;
 	interval_count: number;
 	reason?: string;
+	transition_after_renewal_count: number;
+	should_prorate_when_offer_ends: boolean;
 }
 
 export interface CartLocation {

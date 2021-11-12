@@ -15,7 +15,16 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	renderPlansHeaderNoTabs() {
-		const { disabledClasses, planType, popular, selectedPlan, title, translate } = this.props;
+		const {
+			disabledClasses,
+			planType,
+			popular,
+			selectedPlan,
+			isMonthlyPlan,
+			monthlyDisabled,
+			title,
+			translate,
+		} = this.props;
 
 		const headerClasses = classNames(
 			'plan-features-comparison__header',
@@ -23,12 +32,13 @@ export class PlanFeaturesComparisonHeader extends Component {
 			disabledClasses
 		);
 
+		const popularLabel =
+			monthlyDisabled && isMonthlyPlan ? translate( 'Popular on monthly' ) : translate( 'Popular' );
+
 		return (
 			<span>
 				<div>
-					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ true }>{ translate( 'Popular' ) }</PlanPill>
-					) }
+					{ popular && ! selectedPlan && <PlanPill isInSignup={ true }>{ popularLabel }</PlanPill> }
 				</div>
 				<header className={ headerClasses }>
 					<h4 className={ classNames( 'plan-features-comparison__header-title', disabledClasses ) }>
@@ -173,14 +183,17 @@ PlanFeaturesComparisonHeader.propTypes = {
 	rawPrice: PropTypes.number,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
-	disabledClasses: PropTypes.object,
+	disabledClasses: PropTypes.string,
 
 	// For Monthly Pricing test
 	annualPricePerMonth: PropTypes.number,
+
+	monthlyDisabled: PropTypes.bool,
 };
 
 PlanFeaturesComparisonHeader.defaultProps = {
 	popular: false,
+	monthlyDisabled: false,
 };
 
 export default localize( PlanFeaturesComparisonHeader );

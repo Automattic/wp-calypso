@@ -75,12 +75,12 @@
 			margin-bottom: 20px;
 		}
 
-		.action-buttons__back {
-			color: var( --studio-gray-100 ) !important;
+		.components-button.action-buttons__back {
+			color: var( --studio-gray-100 );
 			font-weight: 500; /* stylelint-disable-line */
 
 			&:hover {
-				text-decoration: none;
+				color: var( --color-neutral-70 );
 			}
 		}
 	}

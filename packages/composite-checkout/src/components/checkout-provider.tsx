@@ -1,12 +1,10 @@
 import { ThemeProvider } from '@emotion/react';
-import { DataRegistry } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatusManager } from '../lib/form-status';
 import { LineItemsProvider } from '../lib/line-items';
-import { defaultRegistry, RegistryProvider } from '../lib/registry';
 import defaultTheme from '../lib/theme';
 import { useTransactionStatusManager } from '../lib/transaction-status';
 import {
@@ -50,7 +48,6 @@ export function CheckoutProvider( {
 	theme,
 	paymentMethods,
 	paymentProcessors,
-	registry,
 	onEvent,
 	isLoading,
 	isValidating,
@@ -64,7 +61,6 @@ export function CheckoutProvider( {
 		theme,
 		paymentMethods,
 		paymentProcessors,
-		registry,
 		onEvent,
 		isLoading,
 		isValidating,
@@ -111,10 +107,6 @@ export function CheckoutProvider( {
 		transactionLastResponse,
 	} );
 
-	// Create the registry automatically if it's not a prop
-	const registryRef = useRef< DataRegistry | undefined >( registry );
-	registryRef.current = registryRef.current || defaultRegistry;
-
 	const value = useMemo(
 		() => ( {
 			allPaymentMethods: paymentMethods,
@@ -151,14 +143,12 @@ export function CheckoutProvider( {
 		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onLoadError }>
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
-				<RegistryProvider value={ registryRef.current }>
-					<LineItemsProvider items={ items } total={ total }>
-						<CheckoutContext.Provider value={ value }>
-							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
-							{ children }
-						</CheckoutContext.Provider>
-					</LineItemsProvider>
-				</RegistryProvider>
+				<LineItemsProvider items={ items } total={ total }>
+					<CheckoutContext.Provider value={ value }>
+						<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+						{ children }
+					</CheckoutContext.Provider>
+				</LineItemsProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
 	);

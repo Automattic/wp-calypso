@@ -62,6 +62,7 @@
 		"@automattic/typography": "^1.0.0",
 		"@babel/core": "^7.16.0",
 		"@emotion/react": "^11.4.1",
+		"@popperjs/core": "^2.10.2",
 		"@wordpress/a11y": "^3.2.2",
 		"@wordpress/api-fetch": "^5.2.2",
 		"@wordpress/base-styles": "^4.0.0",
@@ -104,7 +105,8 @@
 		"puppeteer": "^3.0.4",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"react-native": "^0.65.0",
+		"react-native": "^0.66.2",
+		"react-popper": "^2.2.5",
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2",
 		"utility-types": "^3.10.0"
@@ -119,6 +121,6 @@
 		"@wordpress/eslint-plugin": "^9.1.2",
 		"babel-jest": "^26.6.3",
 		"wait-for-expect": "^3.0.2",
-		"webpack": "^5.62.1"
+		"webpack": "^5.63.0"
 	}
 }

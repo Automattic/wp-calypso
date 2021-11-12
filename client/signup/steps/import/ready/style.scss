@@ -103,7 +103,11 @@
 		}
 
 		.import__screenshot-loading {
-			margin-top: 150px;
+			margin-top: 25px;
+
+			@include break-small {
+				margin-top: 150px;
+			}
 
 			.wpcom__loading-ellipsis {
 				display: block;

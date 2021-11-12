@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, { getAvailableDesigns } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
@@ -105,7 +104,6 @@ const Designs: React.FunctionComponent = () => {
 						<span className="designs__premium-badge-text">{ __( 'Premium' ) }</span>
 					</Badge>
 				}
-				showCategoryFilter={ isEnabled( 'signup/design-picker-categories' ) }
 			/>
 		</div>
 	);

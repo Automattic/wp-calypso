@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getEmptyResponseCart } from '@automattic/shopping-cart';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
@@ -716,6 +717,18 @@ export const mockPayPalRedirectResponse = () => [
 	{ redirect_url: 'https://test-redirect-url' },
 ];
 
+export function mockCreateAccountEndpoint( endpointResponse ) {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/users/new', ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( endpointResponse );
+	return endpoint;
+}
+
 export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	const transactionsEndpoint = jest.fn();
 	transactionsEndpoint.mockReturnValue( true );
@@ -729,6 +742,18 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	return transactionsEndpoint;
 }
 
+export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, { success: true } ];
+
+export const mockCreateAccountSiteCreatedResponse = () => [
+	200,
+	{
+		success: true,
+		blog_details: {
+			blogid: 1234567,
+		},
+	},
+];
+
 export const mockTransactionsRedirectResponse = () => [
 	200,
 	{ redirect_url: 'https://test-redirect-url' },
@@ -737,7 +762,7 @@ export const mockTransactionsRedirectResponse = () => [
 export const mockTransactionsSuccessResponse = () => [ 200, { success: 'true' } ];
 
 function getManagedValueFromString( value ) {
-	return { isTouched: true, value, errors: [], isRequired: true };
+	return { isTouched: true, value, errors: [] };
 }
 
 function getStringFromManagedValue( managedValue ) {
@@ -752,6 +777,7 @@ export const state = getManagedValueFromString( 'NY' );
 export const firstName = getManagedValueFromString( 'Human' );
 export const lastName = getManagedValueFromString( 'Person' );
 export const phone = getManagedValueFromString( '+1.5555555555' );
+export const email = getManagedValueFromString( 'test@example.com' );
 
 export const contactDetailsForDomain = {
 	countryCode,
@@ -783,4 +809,19 @@ export const basicExpectedDomainDetails = {
 	phone: getStringFromManagedValue( phone ),
 	postal_code: getStringFromManagedValue( postalCode ),
 	state: getStringFromManagedValue( state ),
+};
+
+export const expectedCreateAccountRequest = {
+	email: getStringFromManagedValue( email ),
+	'g-recaptcha-error': 'recaptcha_didnt_load',
+	'g-recaptcha-response': undefined,
+	is_passwordless: true,
+	extra: {},
+	signup_flow_name: 'onboarding-registrationless',
+	validate: false,
+	new_site_params: {},
+	should_create_site: true,
+	locale: 'en',
+	client_id: config( 'wpcom_signup_id' ),
+	client_secret: config( 'wpcom_signup_key' ),
 };

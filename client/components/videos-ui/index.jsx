@@ -1,20 +1,21 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useState, useRef } from 'react';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import VideoLinksBar from './video-links-bar';
+import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
+const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) => {
 	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
 	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
 
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ currentVideo, setCurrentVideo ] = useState( null );
+	const [ isPlaying, setIsPlaying ] = useState( false );
+	const videoRef = useRef( null );
 
 	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
@@ -23,33 +24,36 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 		} );
 
 		setCurrentVideo( videoInfo );
+		setIsPlaying( true );
 	};
+
+	useEffect( () => {
+		if ( videoRef.current ) {
+			videoRef.current.onplay = () => {
+				setIsPlaying( true );
+			};
+
+			videoRef.current.onpause = () => {
+				setIsPlaying( false );
+			};
+		}
+	} );
 
 	useEffect( () => {
 		if ( ! currentVideoKey && course ) {
 			// @TODO add logic to pick the first unseen video
 			const initialVideoId = 'find-theme';
 			setCurrentVideoKey( initialVideoId );
+			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( initialVideoId ) );
 		}
 	}, [ currentVideoKey, course ] );
 
 	useEffect( () => {
 		if ( currentVideoKey && course ) {
 			setCurrentVideo( course.videos[ currentVideoKey ] );
+			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( currentVideoKey ) );
 		}
 	}, [ currentVideoKey, course ] );
-
-	const VideoPlayer = ( { videoUrl } ) => {
-		return (
-			<div className="videos-ui__video">
-				<video controls>
-					<source src={ videoUrl } />{ ' ' }
-					{ /* @TODO: check if tracks are available, the linter demands one */ }
-					<track src="caption.vtt" kind="captions" srclang="en" label="english_captions" />
-				</video>
-			</div>
-		);
-	};
 
 	const isVideoSelected = ( idx ) => {
 		return selectedVideoIndex === idx;
@@ -79,28 +83,13 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
-				<div className="videos-ui__header-links">
-					<div>
-						<Gridicon icon="my-sites" size={ 24 } />
-						{ shouldDisplayTopLinks && (
-							<a href="/" className="videos-ui__back-link">
-								<Gridicon icon="chevron-left" size={ 24 } />
-								<span>{ translate( 'Back' ) }</span>
-							</a>
-						) }
-					</div>
-					<div>
-						{ shouldDisplayTopLinks && (
-							<a
-								href={ `/post/${ siteSlug }` }
-								className="videos-ui__skip-link"
-								onClick={ skipClickHandler }
-							>
-								{ translate( 'Skip and draft first post' ) }
-							</a>
-						) }
-					</div>
-				</div>
+				<VideoLinksBar
+					displayIcon={ true }
+					displayLinks={ shouldDisplayTopLinks }
+					isFooter={ false }
+					onBackClick={ onBackClick }
+					skipClickHandler={ skipClickHandler }
+				/>
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
 						<h2>{ translate( 'Watch five videos.' ) }</h2>
@@ -109,18 +98,18 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 					<div className="videos-ui__summary">
 						<ul>
 							<li>
-								<Gridicon icon="checkmark" size={ 12 } />{ ' ' }
+								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
 								{ translate( 'Learn the basics of blogging' ) }
 							</li>
 							<li>
-								<Gridicon icon="checkmark" size={ 12 } />{ ' ' }
+								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
 								{ translate( 'Familiarize yourself with WordPress' ) }
 							</li>
 							<li>
-								<Gridicon icon="checkmark" size={ 12 } /> { translate( 'Upskill and save hours' ) }
+								<Gridicon icon="checkmark" size={ 18 } /> { translate( 'Upskill and save hours' ) }
 							</li>
 							<li>
-								<Gridicon icon="checkmark" size={ 12 } />{ ' ' }
+								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
 								{ translate( 'Set yourself up for blogging success' ) }
 							</li>
 						</ul>
@@ -132,7 +121,13 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 					<h3>{ course && course.title }</h3>
 				</div>
 				<div className="videos-ui__video-content">
-					{ currentVideo && <VideoPlayer videoUrl={ currentVideo.url } /> }
+					{ currentVideo && (
+						<VideoPlayer
+							videoRef={ videoRef }
+							videoUrl={ currentVideo.url }
+							isPlaying={ isPlaying }
+						/>
+					) }
 					<div className="videos-ui__chapters">
 						{ course &&
 							Object.entries( course.videos ).map( ( data, i ) => {
@@ -182,6 +177,13 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 					</div>
 				</div>
 			</div>
+			<VideoLinksBar
+				displayIcon={ false }
+				displayLinks={ shouldDisplayTopLinks }
+				isFooter={ true }
+				onBackClick={ onBackClick }
+				skipClickHandler={ skipClickHandler }
+			/>
 		</div>
 	);
 };

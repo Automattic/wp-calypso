@@ -14,12 +14,6 @@
 		}
 	}
 
-	&.purchase-concierge .action-card__illustration {
-		@include breakpoint-deprecated( '>960px' ) {
-			margin-right: 20px;
-		}
-	}
-
 	&.card {
 		@include breakpoint-deprecated( '>480px' ) {
 			align-items: flex-start;

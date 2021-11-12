@@ -1,40 +1,17 @@
-import moment from 'moment';
-import { PureComponent } from 'react';
-import humanDate from 'calypso/lib/human-date';
-import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
-import smartSetState from 'calypso/lib/react-smart-set-state';
+import { useMemo } from 'react';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useHumanDate } from 'calypso/lib/human-date';
 
-export default class TimeSince extends PureComponent {
-	smartSetState = smartSetState;
+function TimeSince( { className, date, dateFormat = 'll' } ) {
+	const moment = useLocalizedMoment();
+	const fullDate = useMemo( () => moment( date ).format( 'llll' ), [ moment, date ] );
+	const humanDate = useHumanDate( date, dateFormat );
 
-	UNSAFE_componentWillMount() {
-		this.update();
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.update( nextProps.date );
-	}
-
-	update = ( date ) => {
-		const { dateFormat } = this.props;
-		date = date || this.props.date;
-
-		this.smartSetState( {
-			humanDate: humanDate( date, dateFormat ),
-			fullDate: moment( date ).format( 'llll' ),
-		} );
-	};
-
-	render() {
-		return (
-			<time
-				className={ this.props.className }
-				dateTime={ this.props.date }
-				title={ this.state.fullDate }
-			>
-				<Interval period={ EVERY_TEN_SECONDS } onTick={ this.update } />
-				{ this.state.humanDate }
-			</time>
-		);
-	}
+	return (
+		<time className={ className } dateTime={ date } title={ fullDate }>
+			{ humanDate }
+		</time>
+	);
 }
+
+export default TimeSince;

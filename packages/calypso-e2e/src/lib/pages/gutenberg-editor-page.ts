@@ -14,7 +14,7 @@ const selectors = {
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
 	blockInserterPanel: '.block-editor-inserter__content',
-	blockSearch: '[placeholder="Search"]',
+	blockSearch: '.block-editor-inserter__search input[type="search"]',
 	blockInserterResultItem: '.block-editor-block-types-list__list-item',
 
 	// Within the editor body.
@@ -24,7 +24,7 @@ const selectors = {
 
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
-	settingsToggle: '[aria-label="Settings"]',
+	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
 	saveDraftButton: '.editor-post-save-draft',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
@@ -371,16 +371,17 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Returns to the Posts > All Posts view in Calypso.
+	 * Leave the editor to return to the Calypso dashboard.
 	 *
 	 * On desktop sized viewport, this method clicks on the `< All Posts` link in the block editor sidebar.
 	 * Note, for desktop the editor sidebar must be open. To open the sidebar, call `openNavSidebar` method.
 	 *
 	 * On mobile sized viewport, this method clicks on Navbar > My Sites.
 	 *
-	 * For both cases the esulting page will be the `My Home` page.
+	 * The resulting page can change based on where you come from, and the viewport. Either way, the resulting landing spot
+	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
 	 */
-	async returnToHomeDashboard(): Promise< void > {
+	async returnToCalypsoDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
 		const targetDevice = getTargetDeviceName();
 
@@ -393,9 +394,15 @@ export class GutenbergEditorPage {
 		}
 
 		const navbarComponent = new NavbarComponent( this.page );
-		const actions: Promise< unknown >[] = [
-			this.page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
-		];
+
+		// There are three different places you can return to, depending on how you entered the editor.
+		const navigationPromise = Promise.race( [
+			this.page.waitForNavigation( { url: '**/home/**' } ),
+			this.page.waitForNavigation( { url: '**/posts/**' } ),
+			this.page.waitForNavigation( { url: '**/pages/**' } ),
+		] );
+
+		const actions: Promise< unknown >[] = [ navigationPromise ];
 
 		if ( getTargetDeviceName() !== 'mobile' ) {
 			actions.push( frame.click( selectors.desktopDashboardLink ) );

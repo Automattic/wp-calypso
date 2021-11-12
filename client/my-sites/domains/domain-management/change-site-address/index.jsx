@@ -1,5 +1,4 @@
 import { localize, translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -36,12 +35,13 @@ class ChangeSiteAddress extends Component {
 
 	render() {
 		const domain = getSelectedDomain( this.props );
-		const dotblogSubdomain = get( domain, 'name', '' ).match( /\.\w+\.blog$/ );
+		const domainName = domain?.name ?? '';
+		const dotblogSubdomain = domainName.match( /\.\w+\.blog$/ );
 		const domainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
 
 		return (
 			<Main className="change-site-address">
-				<Header onClick={ this.goBack } selectedDomainName={ domain.name }>
+				<Header onClick={ this.goBack } selectedDomainName={ domainName }>
 					{ translate( 'Change Site Address' ) }
 				</Header>
 

@@ -7,16 +7,19 @@ import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import wpcom from 'calypso/lib/wp';
 import './dns-breadcrumb-button.scss';
-import { DnsMenuOptionsButtonProps } from './types';
+import RestoreDefaultARecordsDialog from './restore-default-a-records-dialog';
+import { DnsMenuOptionsButtonProps, RestoreDialogResult } from './types';
 
 function DnsMenuOptionsButton( {
 	domain,
+	pointsToWpcom,
 	onSuccess,
 	onError,
 }: DnsMenuOptionsButtonProps ): JSX.Element {
 	const { __ } = useI18n();
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
+	const [ isRestoreDialogVisible, setRestoreDialogVisible ] = useState( false );
 	const optionsButtonRef = useRef( null );
 	const restoreRecordsErrorMessage = __(
 		'An unexpected error occurred when trying to restore your DNS records. Please try again later.'
@@ -25,6 +28,8 @@ function DnsMenuOptionsButton( {
 	const toggleMenu = useCallback( () => {
 		setMenuVisible( ! isMenuVisible );
 	}, [ isMenuVisible ] );
+
+	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
 
 	const restoreDefaultRecords = useCallback( async () => {
 		const wpcomDomain = wpcom.domain( domain );
@@ -42,9 +47,22 @@ function DnsMenuOptionsButton( {
 		}
 	}, [ domain, onError, onSuccess, restoreRecordsErrorMessage ] );
 
-	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
+	const closeRestoreDialog = ( result: RestoreDialogResult ) => {
+		setRestoreDialogVisible( false );
+		if ( result?.shouldRestoreDefaultRecords ?? false ) {
+			restoreDefaultRecords();
+		}
+	};
+
+	const showRestoreDialog = useCallback( () => setRestoreDialogVisible( true ), [] );
+
 	return (
 		<>
+			<RestoreDefaultARecordsDialog
+				visible={ isRestoreDialogVisible }
+				onClose={ closeRestoreDialog }
+				defaultRecords={ null }
+			/>
 			<Button
 				className="dns__breadcrumb-button ellipsis"
 				onClick={ toggleMenu }
@@ -59,9 +77,9 @@ function DnsMenuOptionsButton( {
 				context={ optionsButtonRef.current }
 				position="bottom"
 			>
-				<PopoverMenuItem onClick={ restoreDefaultRecords }>
+				<PopoverMenuItem onClick={ showRestoreDialog } disabled={ pointsToWpcom }>
 					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
-					{ __( 'Restore default records' ) }
+					{ __( 'Restore default A records' ) }
 				</PopoverMenuItem>
 			</PopoverMenu>
 		</>

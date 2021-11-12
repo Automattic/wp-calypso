@@ -30,8 +30,17 @@
 
 .plugins-browser-list__header {
 	color: var( --color-gray-90 );
-	padding-top: 34px;
-	padding-bottom: 30px;
+	padding-top: 40px;
+	padding-bottom: 20px;
+
+	.plugins-browser-list__title {
+		font-size: $font-title-small;
+		font-weight: 500;
+
+		&[class*='search-'] {
+			font-weight: 400;
+		}
+	}
 
 	.plugins-browser-list__subtitle {
 		font-size: $font-body-small;

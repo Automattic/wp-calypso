@@ -1,0 +1,53 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.videos-ui__header-links {
+    padding: 20px;
+    padding-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    font-size: $font-body-small;
+
+    &.videos-ui__is-footer {
+        border-top: 1px solid rgba( 255, 255, 255, 0.1 );
+        margin-top: auto;
+    }
+    .videos-ui__bar {
+        &.desktop {
+            display: none;
+        }
+    }
+
+    div,
+    a {
+        display: flex;
+        color: #fff;
+        align-items: center;
+    }
+
+    .videos-ui__back-link {
+        margin-left: 24px;
+    }
+
+    .videos-ui__bar {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        .videos-ui__bar-skip-link {
+            text-decoration: underline;
+        }
+    }
+	@include break-small {
+        .videos-ui__bar {
+            &.desktop {
+                display: flex;
+            }
+            &.mobile {
+                display: none;
+            }
+        }
+	}
+}

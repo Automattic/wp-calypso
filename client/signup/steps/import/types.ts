@@ -7,6 +7,10 @@ export type UrlData = {
 		is_wpcom: boolean;
 	};
 };
+export type MShotParams = {
+	vpw?: number;
+	scale?: number;
+};
 
 export type FeatureName =
 	| 'tags'

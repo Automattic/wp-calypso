@@ -10,14 +10,17 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
 import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
+	getProductsList,
 } from 'calypso/state/products-list/selectors';
+import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
+import getJetpackCheckoutSupportTicketIncompatibleProductIds from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-incompatible-products';
 import getSupportTicketRequestStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import getJetpackSites from 'calypso/state/selectors/get-jetpack-sites';
 
@@ -33,6 +36,15 @@ type JetpackSite = {
 	URL: string;
 };
 
+type Product = {
+	product_id: number;
+	product_name: string;
+};
+
+interface ProductsList {
+	[ P: string ]: Product;
+}
+
 const LicensingActivationThankYou: FC< Props > = ( {
 	productSlug,
 	receiptId = 0,
@@ -47,13 +59,19 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	const productName = useSelector( ( state ) =>
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
-
+	const productsList: ProductsList = useSelector( getProductsList );
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 	const userName = useSelector( getCurrentUserName );
 	const jetpackSites = useSelector( getJetpackSites ) as JetpackSite[];
 
 	const supportTicketRequestStatus = useSelector( ( state ) =>
 		getSupportTicketRequestStatus( state, receiptId )
+	);
+	const destinationSiteId = useSelector( ( state ) =>
+		getJetpackCheckoutSupportTicketDestinationSiteId( state, jetpackTemporarySiteId )
+	);
+	const incompatibleProductIds = useSelector( ( state ) =>
+		getJetpackCheckoutSupportTicketIncompatibleProductIds( state, jetpackTemporarySiteId )
 	);
 
 	const [ selectedSite, setSelectedSite ] = useState( '' );
@@ -62,6 +80,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	const onContinue = useCallback(
 		( e ) => {
 			e.preventDefault();
+			setError( false );
 			if ( selectedSite === 'activate-license-manually' ) {
 				const manualActivationUrl = addQueryArgs(
 					{
@@ -80,6 +99,8 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					receipt_id: receiptId,
 				} )
 			);
+			// Update the support ticket with the submitted site URL(selectedSite) and attempt to
+			// transfer the temporary-site subscription to the user's selectedSite.
 			dispatch(
 				requestUpdateJetpackCheckoutSupportTicket(
 					selectedSite,
@@ -93,21 +114,57 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	);
 
 	useEffect( () => {
-		if ( supportTicketRequestStatus === 'success' ) {
-			const thankYouCompletedUrl = addQueryArgs(
-				{
-					siteId: jetpackTemporarySiteId,
-					receiptId,
-				},
-				`/checkout/jetpack/thank-you-completed/no-site/${ productSlug }`
-			);
-			page( thankYouCompletedUrl );
-		} else if ( supportTicketRequestStatus === 'failed' ) {
-			setError(
+		if ( error || supportTicketRequestStatus === undefined ) {
+			return;
+		}
+		if ( supportTicketRequestStatus === 'failed' ) {
+			return setError(
 				translate( 'There was a problem submitting your website address, please try again.' )
 			);
 		}
-	}, [ jetpackTemporarySiteId, receiptId, supportTicketRequestStatus, productSlug, translate ] );
+		if ( supportTicketRequestStatus === 'success' && destinationSiteId !== undefined ) {
+			if ( incompatibleProductIds.length ) {
+				const incompatibleProductKey = Object.keys( productsList ).find( ( productKey ) =>
+					incompatibleProductIds.includes( productsList[ productKey ].product_id )
+				);
+				const incompatibleProductName =
+					productsList[ incompatibleProductKey as keyof ProductsList ].product_name;
+				return setError(
+					translate(
+						"I'm sorry, you cannot activate %(productName)s on {{strong}}%(selectedSite)s{{/strong}} because that site already has a subscription to %(incompatibleProductName)s.",
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								productName,
+								selectedSite: urlToSlug( selectedSite ),
+								incompatibleProductName,
+							},
+						}
+					)
+				);
+			}
+			// If the destinationSiteId is greater than 0, then the subscription transfer was successful.
+			const thankYouCompletedUrl = addQueryArgs(
+				{
+					destinationSiteId,
+				},
+				`/checkout/jetpack/thank-you/licensing-auto-activate-completed/${ productSlug }`
+			);
+			page( thankYouCompletedUrl );
+		}
+	}, [
+		destinationSiteId,
+		supportTicketRequestStatus,
+		incompatibleProductIds,
+		selectedSite,
+		error,
+		translate,
+		productSlug,
+		productsList,
+		productName,
+	] );
 
 	const siteSelectOptions = useMemo( () => {
 		return jetpackSites.map( ( site: JetpackSite ) => ( {
@@ -170,7 +227,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								: 'licensing-thank-you-auto-activation__product-info'
 						}
 					>
-						{ translate( 'Hello %(username)s,', {
+						{ translate( 'Hello %(username)s!', {
 							args: {
 								username: userName,
 							},
