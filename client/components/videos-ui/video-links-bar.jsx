@@ -9,6 +9,7 @@ import './style-video-links-bar.scss';
 const VideoLinksBar = ( {
 	displayIcon,
 	displayLinks,
+	displaySkipLink,
 	isFooter = false,
 	onBackClick = () => {},
 	skipClickHandler = () => {},
@@ -38,11 +39,13 @@ const VideoLinksBar = ( {
 							<span>{ translate( 'Back' ) }</span>
 						</a>
 					</div>
-					<div className="videos-ui__bar-skip-link">
-						<a href={ `/post/${ siteSlug }` } onClick={ skipClickHandler }>
-							{ translate( 'Draft your first post' ) }
-						</a>
-					</div>
+					{ displaySkipLink && (
+						<div className="videos-ui__bar-skip-link">
+							<a href={ `/post/${ siteSlug }` } onClick={ skipClickHandler }>
+								{ translate( 'Draft your first post' ) }
+							</a>
+						</div>
+					) }
 				</div>
 			) }
 		</div>
