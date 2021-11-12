@@ -11,6 +11,9 @@ import {
 	DOMAINS_DNS_FETCH,
 	DOMAINS_DNS_FETCH_COMPLETED,
 	DOMAINS_DNS_FETCH_FAILED,
+	DOMAINS_DNS_UPDATE,
+	DOMAINS_DNS_UPDATE_COMPLETED,
+	DOMAINS_DNS_UPDATE_FAILED,
 } from 'calypso/state/action-types';
 
 function isWpcomRecord( record ) {
@@ -176,6 +179,7 @@ export default function reducer( state = {}, action ) {
 			break;
 		case DOMAINS_DNS_ADD_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
+				records: action.records,
 				isSubmittingForm: false,
 			} );
 			state = updateDnsState( state, action.domainName, action.record, {
@@ -206,6 +210,23 @@ export default function reducer( state = {}, action ) {
 		case DOMAINS_DNS_DELETE_FAILED:
 			state = updateDnsState( state, action.domainName, action.record, {
 				isBeingDeleted: false,
+			} );
+			break;
+		case DOMAINS_DNS_UPDATE:
+			state = updateDomainState( state, action.domainName, {
+				isFetching: true,
+			} );
+			break;
+		case DOMAINS_DNS_UPDATE_COMPLETED:
+			state = updateDomainState( state, action.domainName, {
+				records: action.records,
+				isFetching: false,
+				hasLoadedFromServer: true,
+			} );
+			break;
+		case DOMAINS_DNS_UPDATE_FAILED:
+			state = updateDomainState( state, action.domainName, {
+				isFetching: false,
 			} );
 			break;
 	}
