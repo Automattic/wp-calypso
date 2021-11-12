@@ -1,0 +1,9 @@
+@import '@automattic/onboarding/styles/base-styles.scss';
+@import '@automattic/onboarding/styles/mixins.scss';
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.is-confirm-wordpress-subdomain {
+	margin: 0 0 0 20px;
+	padding: 0 20px;
+}
