@@ -156,16 +156,22 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
+.plugin-details__tags {
+	position: absolute;
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-40 );
+	margin-top: 85px;
+
+	@media screen and ( max-width: 1040px ) {
+		margin-top: -5px;
+	}
+}
+
 .plugin-details__header {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	height: 400px;
-
-	.plugin-details__tags {
-		font-size: $font-body-extra-small;
-		color: var( --studio-gray-40 );
-	}
+	padding: 100px 0;
 
 	.plugin-details__name, .plugin-details__price {
 		font-family: $brand-serif;
@@ -225,7 +231,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 
 	@media screen and ( max-width: 1040px ) {
-		height: 100%;
+		padding: 0;
 	}
 }
 
