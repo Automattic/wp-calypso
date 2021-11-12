@@ -79,13 +79,6 @@ class Dns extends Component {
 		);
 	}
 
-	renderHeader() {
-		const { translate, selectedDomainName } = this.props;
-		<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
-			{ translate( 'DNS Records' ) }
-		</Header>;
-	}
-
 	renderBreadcrumbs() {
 		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
 
@@ -135,7 +128,7 @@ class Dns extends Component {
 	}
 
 	renderMain() {
-		const { dns, selectedDomainName, selectedSite } = this.props;
+		const { dns, selectedDomainName, selectedSite, translate } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const hasWpcomNameservers = domain?.hasWpcomNameservers ?? false;
 		const domainConnectEnabled = some( dns.records, {
@@ -146,9 +139,9 @@ class Dns extends Component {
 
 		return (
 			<Main wideLayout className="dns">
-				{ config.isEnabled( 'domains/dns-records-redesign' )
-					? this.renderBreadcrumbs()
-					: this.renderHeader() }
+				<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
+					{ translate( 'DNS Records' ) }
+				</Header>
 				<Card>
 					<DnsDetails />
 					<DnsList
