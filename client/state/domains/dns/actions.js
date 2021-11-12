@@ -11,6 +11,7 @@ import {
 	DOMAINS_DNS_FETCH_COMPLETED,
 	DOMAINS_DNS_FETCH_FAILED,
 <<<<<<< HEAD
+<<<<<<< HEAD
 	DOMAINS_DNS_UPDATE,
 	DOMAINS_DNS_UPDATE_COMPLETED,
 	DOMAINS_DNS_UPDATE_FAILED,
@@ -19,6 +20,11 @@ import {
 	DOMAINS_DNS_RESET_DEFAULT_A_RECORDS_COMPLETED,
 	DOMAINS_DNS_RESET_DEFAULT_A_RECORDS_FAILED,
 >>>>>>> 75130a756f (Set default A records on user request)
+=======
+	DOMAINS_DNS_UPDATE,
+	DOMAINS_DNS_UPDATE_COMPLETED,
+	DOMAINS_DNS_UPDATE_FAILED,
+>>>>>>> dea4220c9b (re-add updateDns)
 } from 'calypso/state/action-types';
 import { getDomainDns } from './selectors';
 
