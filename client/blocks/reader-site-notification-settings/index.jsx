@@ -29,25 +29,10 @@ class ReaderSiteNotificationSettings extends Component {
 		siteId: PropTypes.number,
 	};
 
-	state = {
-		showPopover: false,
-		selected: this.props.emailDeliveryFrequency,
-	};
+	state = { showPopover: false };
 
 	iconRef = createRef();
 	spanRef = createRef();
-
-	updateSelectedState = ( selected ) => {
-		this.setState( ( prevState ) => {
-			return prevState.selected !== selected ? { selected } : null;
-		} );
-	};
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.emailDeliveryFrequency !== prevProps.emailDeliveryFrequency ) {
-			this.updateSelectedState( this.props.emailDeliveryFrequency );
-		}
-	}
 
 	togglePopoverVisibility = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
@@ -59,7 +44,6 @@ class ReaderSiteNotificationSettings extends Component {
 
 	setSelected = ( text ) => () => {
 		const { siteId } = this.props;
-		this.updateSelectedState( text );
 		this.props.updateNewPostEmailSubscription( siteId, text );
 
 		const tracksProperties = { site_id: siteId, delivery_frequency: text };
@@ -196,19 +180,19 @@ class ReaderSiteNotificationSettings extends Component {
 					{ ! isEmailBlocked && sendNewPostsByEmail && (
 						<SegmentedControl>
 							<SegmentedControl.Item
-								selected={ this.state.selected === 'instantly' }
+								selected={ this.props.emailDeliveryFrequency === 'instantly' }
 								onClick={ this.setSelected( 'instantly' ) }
 							>
 								{ translate( 'Instantly' ) }
 							</SegmentedControl.Item>
 							<SegmentedControl.Item
-								selected={ this.state.selected === 'daily' }
+								selected={ this.props.emailDeliveryFrequency === 'daily' }
 								onClick={ this.setSelected( 'daily' ) }
 							>
 								{ translate( 'Daily' ) }
 							</SegmentedControl.Item>
 							<SegmentedControl.Item
-								selected={ this.state.selected === 'weekly' }
+								selected={ this.props.emailDeliveryFrequency === 'weekly' }
 								onClick={ this.setSelected( 'weekly' ) }
 							>
 								{ translate( 'Weekly' ) }
