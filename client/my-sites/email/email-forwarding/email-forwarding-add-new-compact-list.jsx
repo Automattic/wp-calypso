@@ -119,13 +119,15 @@ class EmailForwardingAddNewCompactList extends Component {
 			siteId,
 		} = this.props;
 
+		const { isRedirecting, newForwardAdded } = this.state;
+
 		if (
 			emailForwardSuccess &&
 			onSuccessRedirectDestination &&
-			! this.state.isRedirecting &&
-			this.state.newForwardAdded
+			! isRedirecting &&
+			newForwardAdded
 		) {
-			if ( ! isRequestingDomains && ! this.state.isRedirecting ) {
+			if ( ! isRequestingDomains && ! isRedirecting ) {
 				this.props.fetchSiteDomains( siteId );
 			}
 			page( onSuccessRedirectDestination );
