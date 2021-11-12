@@ -28,7 +28,9 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
+import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
@@ -125,7 +127,6 @@ export default function CompositeCheckout( {
 	isUserComingFromLoginForm?: boolean;
 } ): JSX.Element {
 	const previousPath = useSelector( getPreviousPath );
-
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
 		useSelector(
@@ -583,6 +584,56 @@ export default function CompositeCheckout( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
+	// The gotToPreviousPage function and subsequent conditional statement controls the 'back' button functionality on the empty cart page
+
+	const checkoutBackUrl = useValidCheckoutBackUrl( siteSlug );
+
+	const goToPreviousPage = useCallback( () => {
+		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
+
+		reduxDispatch( recordTracksEvent( 'EMPTY_CART_CTA_CLICKED' ) );
+
+		if ( checkoutBackUrl ) {
+			window.location.href = checkoutBackUrl;
+			return;
+		}
+
+		if (
+			previousPath &&
+			'' !== previousPath &&
+			previousPath !== window.location.href &&
+			! previousPath.includes( '/checkout/' )
+		) {
+			closeUrl = previousPath;
+		}
+
+		try {
+			const searchParams = new URLSearchParams( window.location.search );
+
+			if ( searchParams.has( 'signup' ) ) {
+				clearSignupDestinationCookie();
+			}
+
+			// Some places that open checkout (eg: purchase page renewals) return the
+			// user there after checkout by putting the previous page's path in the
+			// `redirect_to` query param. When leaving checkout via the close button,
+			// we probably want to return to that location also.
+			if ( searchParams.has( 'redirect_to' ) ) {
+				const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
+				// Only allow redirecting to relative paths.
+				if ( redirectPath.startsWith( '/' ) ) {
+					page( redirectPath );
+					return;
+				}
+			}
+		} catch ( error ) {
+			// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
+			console.error( 'Error getting query string in close button' ); // eslint-disable-line no-console
+		}
+
+		window.location.href = closeUrl;
+	}, [ siteSlug, checkoutBackUrl, previousPath, reduxDispatch ] );
+
 	if (
 		shouldShowEmptyCartPage( {
 			responseCart,
@@ -593,12 +644,7 @@ export default function CompositeCheckout( {
 		} )
 	) {
 		debug( 'rendering empty cart page' );
-		const goToPreviousPage = () => {
-			recordEvent( {
-				type: 'EMPTY_CART_CTA_CLICKED',
-			} );
-			page( previousPath );
-		};
+
 		return (
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
