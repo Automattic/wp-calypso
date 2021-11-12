@@ -81,7 +81,7 @@ export const applyDnsTemplate = ( domainName, provider, service, variables ) => 
 export const updateDns = ( domainName, recordsToAdd, recordsToRemove ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_DNS_UPDATE, recordsToAdd, recordsToRemove } );
 
-	const updateResult = wpcom.undocumented.updateDns( domainName, {
+	const updateResult = wpcom.undocumented().updateDns( domainName, {
 		records_to_add: recordsToAdd,
 		records_to_remove: recordsToRemove,
 	} );
@@ -90,4 +90,6 @@ export const updateDns = ( domainName, recordsToAdd, recordsToRemove ) => ( disp
 		( { records } ) => dispatch( { type: DOMAINS_DNS_UPDATE_COMPLETED, domainName, records } ),
 		() => dispatch( { type: DOMAINS_DNS_UPDATE_FAILED, domainName } )
 	);
+
+	return updateResult;
 };
