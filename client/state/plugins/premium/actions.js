@@ -300,12 +300,10 @@ export function fetchInstallInstructions( siteId ) {
 		wpcom.req
 			.get( `/jetpack-blogs/${ siteId }/keys` )
 			.then( ( data ) => {
-				data = normalizePluginInstructions( data );
-
 				dispatch( {
 					type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
 					siteId,
-					data,
+					data: normalizePluginInstructions( data ),
 				} );
 			} )
 			.catch( () => {
