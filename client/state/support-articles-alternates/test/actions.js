@@ -11,14 +11,6 @@ import {
 	fetchAlternatesRequestFailure,
 } from '../actions';
 
-const mockSupportAlternates = jest.fn( () => Promise.resolve() );
-
-jest.mock( 'calypso/lib/wp', () => ( {
-	undocumented: () => ( {
-		supportAlternates: mockSupportAlternates,
-	} ),
-} ) );
-
 describe( 'actions', () => {
 	describe( 'fetchAlternatesReceive()', () => {
 		test( 'should return an action object', () => {
