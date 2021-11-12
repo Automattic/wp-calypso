@@ -165,6 +165,7 @@ $plugin-details-header-padding: 100px;
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-40 );
 	top: calc( $plugin-details-header-padding - 15px );
+	left: 0;
 
 	@media screen and ( max-width: 1040px ) {
 		top: -5px;
