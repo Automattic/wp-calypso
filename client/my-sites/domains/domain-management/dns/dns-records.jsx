@@ -71,8 +71,6 @@ class DnsRecords extends Component {
 				domain={ selectedDomainName }
 				dns={ dns }
 				pointsToWpcom={ pointsToWpcom }
-				onSuccess={ this.onRestoreSuccess }
-				onError={ this.onRestoreError }
 			/>,
 		];
 
