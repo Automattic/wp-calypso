@@ -168,6 +168,7 @@ class DesignPickerStep extends Component {
 				} ) }
 				highResThumbnails
 				showCategoryFilter={ this.props.showDesignPickerCategories }
+				showAllFilter={ this.props.showDesignPickerCategoriesAllFilter }
 				categoriesHeading={
 					<FormattedHeader
 						id={ 'step-header' }

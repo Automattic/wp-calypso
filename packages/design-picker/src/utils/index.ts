@@ -1,6 +1,7 @@
 export * from './available-designs-config';
 export * from './available-designs';
 export * from './fonts';
+import { SHOW_ALL_SLUG } from '../constants';
 import type { Category, Design } from '../types';
 
 export function gatherCategories( designs: Design[] ): Category[] {
@@ -20,6 +21,10 @@ export function filterDesignsByCategory(
 	categorySlug: string | null
 ): Design[] {
 	if ( ! categorySlug ) {
+		return designs;
+	}
+
+	if ( categorySlug === SHOW_ALL_SLUG ) {
 		return designs;
 	}
 

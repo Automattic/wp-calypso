@@ -6,6 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useState, ReactNode } from 'react';
+import { SHOW_ALL_SLUG } from '../constants';
 import {
 	getAvailableDesigns,
 	getDesignUrl,
@@ -205,6 +206,7 @@ export interface DesignPickerProps {
 	className?: string;
 	highResThumbnails?: boolean;
 	showCategoryFilter?: boolean;
+	showAllFilter?: boolean;
 	categoriesHeading?: ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -221,9 +223,18 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	showCategoryFilter = false,
+	showAllFilter = false,
 	categoriesHeading,
 } ) => {
+	const { __ } = useI18n();
+
 	const categories = gatherCategories( designs );
+	if ( showAllFilter && designs.length ) {
+		categories.push( {
+			name: __( 'Show All', __i18n_text_domain__ ),
+			slug: SHOW_ALL_SLUG,
+		} );
+	}
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
 		categories[ 0 ]?.slug ?? null
 	);
