@@ -56,6 +56,8 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 			return;
 		}
 
+		// Note: most of these states are never seen and the ones you do see will
+		// sometimes be missed from transfer to transfer due to polling request timing.
 		switch ( transferStatus ) {
 			case transferStates.NONE:
 			case transferStates.PENDING:
