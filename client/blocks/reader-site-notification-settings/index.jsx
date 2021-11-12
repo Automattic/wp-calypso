@@ -37,9 +37,13 @@ class ReaderSiteNotificationSettings extends Component {
 	iconRef = createRef();
 	spanRef = createRef();
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.emailDeliveryFrequency !== this.props.emailDeliveryFrequency ) {
-			this.setState( { selected: nextProps.emailDeliveryFrequency } );
+	updateSelectedState = ( selected ) => {
+		this.setState( { selected } );
+	};
+
+	componentDidUpdate( prevProps ) {
+		if ( this.props.emailDeliveryFrequency !== prevProps.emailDeliveryFrequency ) {
+			this.updateSelectedState( this.props.emailDeliveryFrequency );
 		}
 	}
 
@@ -53,7 +57,7 @@ class ReaderSiteNotificationSettings extends Component {
 
 	setSelected = ( text ) => () => {
 		const { siteId } = this.props;
-		this.setState( { selected: text } );
+		this.updateSelectedState( text );
 		this.props.updateNewPostEmailSubscription( siteId, text );
 
 		const tracksProperties = { site_id: siteId, delivery_frequency: text };
