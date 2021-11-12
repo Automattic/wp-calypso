@@ -55,7 +55,7 @@ export const link = withSchemaValidation( linkSchema, ( state = [], action ) => 
 			// Append action.link to the state array and prevent duplicate objects.
 			// Works with action.link being a single link object or an array of link objects.
 			const links = Array.isArray( action.link ) ? action.link : [ action.link ];
-			state = links.reduce( ( accuState, newLink ) => {
+			return links.reduce( ( accuState, newLink ) => {
 				const isNew = ! accuState.some( ( accuLink ) => isEqual( accuLink, newLink ) );
 				return isNew ? [ ...accuState, newLink ] : accuState;
 			}, state );
