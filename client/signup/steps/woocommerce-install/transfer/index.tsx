@@ -7,11 +7,11 @@ import {
 	isFetchingAutomatedTransferStatus,
 	getAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
+import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { hasUploadFailed } from 'calypso/state/themes/upload-theme/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { GoToStep } from '../../../types';
-import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
@@ -25,15 +25,16 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 
 	const [ progress, setProgress ] = useState( 0.1 );
 	const [ error, setError ] = useState( { transferFailed: false, transferStatus: null } );
+	const [ step, setStep ] = useState( __( 'Upgrading your site' ) );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const fetchingTransferStatus = !! useSelector( ( state: AppState ) =>
+	const fetchingTransferStatus = !! useSelector( ( state ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )
 	);
-	const transferStatus = useSelector( ( state: AppState ) =>
-		getAutomatedTransferStatus( state, siteId )
-	);
-	const transferFailed = useSelector( ( state: AppState ) => hasUploadFailed( state, siteId ) );
+	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
+	const transferFailed = useSelector( ( state ) => hasUploadFailed( state, siteId ) );
+
+	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	// Initiate Atomic transfer
 	useEffect( () => {
@@ -63,7 +64,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 			case transferStates.FAILURE:
 			case transferStates.START:
 			case transferStates.REVERTED:
-				setProgress( 0.1 );
+				setProgress( 0.2 );
 				break;
 			case transferStates.SETUP:
 			case transferStates.CONFLICTS:
@@ -76,7 +77,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 				break;
 			case transferStates.COMPLETE:
 				setProgress( 1 );
-				goToStep( 'complete' );
+				window.location.href = wcAdmin;
 				break;
 		}
 
@@ -90,15 +91,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 			setProgress( 1 );
 			setError( { transferFailed, transferStatus } );
 		}
-	}, [
-		setProgress,
-		setError,
-		siteId,
-		goToStep,
-		fetchingTransferStatus,
-		transferStatus,
-		transferFailed,
-	] );
+	}, [ siteId, goToStep, fetchingTransferStatus, transferStatus, transferFailed, wcAdmin, __ ] );
 
 	// Progress smoothing, works out to be around 40seconds unless transfer step polling dictates otherwise
 	const [ simulatedProgress, setSimulatedProgress ] = useState( 0.01 );
@@ -117,20 +110,32 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 				} );
 			}
 		}, 1000 );
+
+		if ( simulatedProgress >= 0.8 ) {
+			setStep( __( 'Turning on the lights' ) );
+		} else if ( simulatedProgress >= 0.6 ) {
+			setStep( __( 'Last paint touchups' ) );
+		} else if ( simulatedProgress >= 0 ) {
+			setStep( __( 'Building your store' ) );
+		}
+
 		return () => clearTimeout( timeOutReference );
-	}, [ simulatedProgress, progress ] );
+	}, [ simulatedProgress, progress, __ ] );
 
 	return (
 		<div className="transfer__step-wrapper">
 			<div className="transfer__heading-wrapper woocommerce-install__heading-wrapper">
 				<div className="transfer__heading woocommerce-install__heading">
-					<Title>{ __( 'Upgrading your site…' ) }</Title>
+					<Title>{ step }</Title>
 				</div>
 			</div>
 			<div className="transfer__content woocommerce-install__content">
 				{ error.transferFailed && 'error...' /* todo */ }
 				{ error.transferFailed && error.transferStatus }
-				<div className="transfer__progress-bar" style={ { '--progress': simulatedProgress } } />
+				<div
+					className="transfer__progress-bar"
+					style={ { '--progress': simulatedProgress } as React.CSSProperties }
+				/>
 			</div>
 		</div>
 	);
