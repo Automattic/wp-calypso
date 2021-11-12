@@ -815,7 +815,7 @@ export class DomainWarnings extends PureComponent {
 			( domain ) => hasPendingGSuiteUsers( domain ) || isPendingGSuiteTOSAcceptance( domain )
 		);
 
-		if ( domains.length === 0 || ! this.props.isCompact ) {
+		if ( domains.length === 0 ) {
 			return null;
 		}
 
