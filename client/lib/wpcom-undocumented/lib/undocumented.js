@@ -405,17 +405,6 @@ Undocumented.prototype.readFeedPost = function ( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readTagImages = function ( query, fn ) {
-	const params = omit( query, 'tag' );
-	debug( '/read/tags/' + query.tag + '/images' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get(
-		'/read/tags/' + encodeURIComponent( query.tag ) + '/images',
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readSitePost = function ( query, fn ) {
 	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
