@@ -51,8 +51,17 @@ class WP_REST_WPCOM_Block_Editor_First_Post_Published_Modal_Controller extends \
 	 * @return WP_REST_Response
 	 */
 	public function should_show_first_post_published_modal() {
-		// We don't sync this option to AT sites because we cannot update the value on the AT sites now
-		// Thus, the value on the AT sites is always false.
+		// As we has synced the `has_never_published_post` option to part of atomic sites but we cannot
+		// update the value now, always return false to avoid showing the modal at every publishing until
+		// we can update the value on atomic sites.
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			return rest_ensure_response(
+				array(
+					'should_show_first_post_published_modal' => false,
+				)
+			);
+		}
+
 		$has_never_published_post        = (bool) get_option( 'has_never_published_post', false );
 		$intent                          = get_option( 'site_intent', '' );
 		$show_first_post_published_modal = $has_never_published_post && 'write' === $intent;
