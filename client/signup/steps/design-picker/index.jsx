@@ -47,6 +47,7 @@ class DesignPickerStep extends Component {
 	};
 
 	state = {
+		designs: [],
 		selectedDesign: null,
 		scrollTop: 0,
 	};
@@ -61,6 +62,10 @@ class DesignPickerStep extends Component {
 			this.updateSelectedDesign();
 			this.updateScrollPosition();
 		}
+
+		if ( prevProps.themes !== this.props.themes ) {
+			this.updateDesigns();
+		}
 	}
 
 	updateScrollPosition() {
@@ -72,6 +77,10 @@ class DesignPickerStep extends Component {
 				document.scrollingElement.scrollTop = this.state.scrollTop;
 			} );
 		}
+	}
+
+	updateDesigns() {
+		this.setState( { designs: this.getDesigns() } );
 	}
 
 	fetchThemes() {
@@ -107,9 +116,10 @@ class DesignPickerStep extends Component {
 
 	updateSelectedDesign() {
 		const { stepSectionName } = this.props;
+		const { designs } = this.state;
 
 		this.setState( {
-			selectedDesign: this.getDesigns().find( ( { theme } ) => theme === stepSectionName ),
+			selectedDesign: designs.find( ( { theme } ) => theme === stepSectionName ),
 		} );
 	}
 
@@ -153,11 +163,9 @@ class DesignPickerStep extends Component {
 	};
 
 	renderDesignPicker() {
-		const designs = this.getDesigns();
-
 		return (
 			<DesignPicker
-				designs={ designs }
+				designs={ this.state.designs }
 				theme={ this.props.isReskinned ? 'light' : 'dark' }
 				locale={ this.props.locale } // props.locale obtained via `localize` HoC
 				onSelect={ this.pickDesign }
