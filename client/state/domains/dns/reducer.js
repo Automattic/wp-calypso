@@ -214,7 +214,6 @@ export default function reducer( state = {}, action ) {
 			break;
 		case DOMAINS_DNS_UPDATE:
 			state = updateDomainState( state, action.domainName, {
-				records: action.records,
 				isFetching: true,
 			} );
 			break;
