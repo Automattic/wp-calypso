@@ -167,7 +167,6 @@
 		"react-intersection-observer": "^8.32.1",
 		"react-live": "^2.3.0",
 		"react-modal": "^3.14.3",
-		"react-native": "^0.66.2",
 		"react-query": "^3.32.1",
 		"react-redux": "^7.2.6",
 		"react-router-dom": "^5.1.2",
