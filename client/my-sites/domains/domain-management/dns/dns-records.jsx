@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -37,6 +38,12 @@ class DnsRecords extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.renderBreadcrumbs = this.renderBreadcrumbs.bind( this );
+		this.goBack = this.goBack.bind( this );
+	}
 
 	renderBreadcrumbs() {
 		const { dns, domains, translate, selectedSite, currentRoute, selectedDomainName } = this.props;
@@ -106,13 +113,21 @@ class DnsRecords extends Component {
 		);
 	}
 
+	renderPlaceholder() {
+		return config.isEnabled( 'domains/dns-records-redesign' ) ? (
+			<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+		) : (
+			<DomainMainPlaceholder goBack={ this.goBack } />
+		);
+	}
+
 	render() {
 		const { showPlaceholder, selectedDomainName } = this.props;
 
 		return (
 			<Fragment>
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? <DomainMainPlaceholder goBack={ this.goBack } /> : this.renderMain() }
+				{ showPlaceholder ? this.renderPlaceholder() : this.renderMain() }
 			</Fragment>
 		);
 	}
