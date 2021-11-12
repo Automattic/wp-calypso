@@ -38,7 +38,9 @@ class ReaderSiteNotificationSettings extends Component {
 	spanRef = createRef();
 
 	updateSelectedState = ( selected ) => {
-		this.setState( { selected } );
+		this.setState( ( prevState ) => {
+			return prevState.selected !== selected ? { selected } : null;
+		} );
 	};
 
 	componentDidUpdate( prevProps ) {
