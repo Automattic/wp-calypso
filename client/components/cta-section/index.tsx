@@ -8,6 +8,11 @@ const Container = styled.div`
 	grid-template-columns: 1fr 1fr;
 	align-items: center;
 	min-height: 500px;
+
+	@media ( max-width: 660px ) {
+		display: table;
+		padding: 0 16px;
+	}
 `;
 
 const CtaContainer = styled.div`
@@ -24,6 +29,7 @@ const Headline = styled.h3`
 `;
 
 const Title = styled.h4`
+	font-family: Recoleta;
 	color: var( --studio-gray-90 );
 	font-size: 45px;
 	line-height: 1.19;
