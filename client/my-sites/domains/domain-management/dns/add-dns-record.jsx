@@ -31,8 +31,20 @@ class AddDnsRecprd extends Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
-	renderBreadcrumbs = () => {
+	getRecordBeingEdited() {
+		const { dns } = this.props;
+		const searchParams = new URLSearchParams( window.location.search );
+		const recordId = searchParams.get( 'record' );
+
+		if ( recordId ) {
+			return dns.records && dns.records.find( ( record ) => recordId === record.id );
+		}
+		return null;
+	}
+
+	renderBreadcrumbs() {
 		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+		const recordBeingEdited = this.getRecordBeingEdited();
 
 		const items = [
 			{
@@ -48,7 +60,9 @@ class AddDnsRecprd extends Component {
 				href: domainManagementDns( selectedSite.slug, selectedDomainName ),
 			},
 			{
-				label: translate( 'Add a record', { comment: 'DNS record' } ),
+				label: recordBeingEdited
+					? translate( 'Edit record', { comment: 'DNS record' } )
+					: translate( 'Add a record', { comment: 'DNS record' } ),
 			},
 		];
 
@@ -96,16 +110,17 @@ class AddDnsRecprd extends Component {
 			}
 		);
 
+		const recordBeingEdited = this.getRecordBeingEdited();
+		const headerText = recordBeingEdited
+			? translate( 'Edit DNS record' )
+			: translate( 'Add a new DNS record' );
+
 		return (
 			<Main wideLayout className="add-dns-record">
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<div className="add-dns-record__fullwidth">
 					{ this.renderBreadcrumbs() }
-					<FormattedHeader
-						brandFont
-						headerText={ translate( 'Add a new DNS record' ) }
-						align="left"
-					/>
+					<FormattedHeader brandFont headerText={ headerText } align="left" />
 					<p className="add-dns-record__mobile-subtitle">{ mobileSubtitleText }</p>
 				</div>
 				<div className="add-dns-record__main">
@@ -113,6 +128,7 @@ class AddDnsRecprd extends Component {
 						isSubmittingForm={ dns.isSubmittingForm }
 						selectedDomainName={ selectedDomainName }
 						goBack={ this.goBack }
+						recordToEdit={ recordBeingEdited }
 					/>
 				</div>
 				<div className="add-dns-record__sidebar">
