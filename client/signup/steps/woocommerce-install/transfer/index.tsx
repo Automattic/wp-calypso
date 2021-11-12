@@ -25,7 +25,7 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 
 	const [ progress, setProgress ] = useState( 0.1 );
 	const [ error, setError ] = useState( { transferFailed: false, transferStatus: null } );
-	const [ step, setStep ] = useState( __( 'Upgrading your site' ) );
+	const [ step, setStep ] = useState( __( 'Building your store' ) );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const fetchingTransferStatus = !! useSelector( ( state ) =>
