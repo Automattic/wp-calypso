@@ -246,6 +246,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 
 		.card {
 			box-shadow: none;
+			padding-left: 0;
 		}
 	}
 
@@ -253,6 +254,10 @@ body.is-section-plugins:not( .is-nav-unification ) {
 		&.is-selected,
 		&:hover:not( .is-selected ) {
 			border-bottom-color: transparent;
+		}
+
+		&:first-child .section-nav-tab__link {
+			padding-left: 0;
 		}
 
 		.section-nav-tab__link {
