@@ -1,7 +1,9 @@
 import { NextButton } from '@automattic/onboarding';
-import { useI18n } from '@wordpress/react-i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import yourNewStoreImage from 'calypso/assets/images/woocommerce-install/your-new-store.png';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	fetchAutomatedTransferStatusOnce,
@@ -12,6 +14,7 @@ import {
 	getEligibility,
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { GoToStep } from '../../types';
 import type { AppState } from 'calypso/types';
@@ -26,8 +29,6 @@ export default function ConfirmWordPressSubdoamin( {
 	goToStep,
 	isReskinned,
 }: Props ): ReactElement | null {
-	const { __ } = useI18n();
-
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	const dispatch = useDispatch();
@@ -42,6 +43,9 @@ export default function ConfirmWordPressSubdoamin( {
 	const fetchingTransferStatus = !! useSelector( ( state: AppState ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )
 	);
+
+	const wpcomDomain = useSelector( ( state: AppState ) => getSiteDomain( state, siteId ) );
+	const stagindDomaon = wpcomDomain?.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 
 	const { eligibilityWarnings }: EligibilityData = useSelector( ( state ) =>
 		getEligibility( state, siteId )
@@ -78,11 +82,36 @@ export default function ConfirmWordPressSubdoamin( {
 
 	function getStepContent() {
 		return (
-			<div>
-				<NextButton disabled={ fetchingTransferStatus } onClick={ () => goToStep( 'confirm' ) }>
-					{ __( 'Sounds Good' ) }
-				</NextButton>
-			</div>
+			<>
+				<div className="woocommerce-install-confirm-wordpress-subdomain__image-container">
+					<img src={ yourNewStoreImage } alt="" />
+				</div>
+				<div className="woocommerce-install-confirm-wordpress-subdomain__instructions-container">
+					<div className="woocommerce-install-confirm-wordpress-subdomain__instructions-wpcom-domain">
+						{ wpcomDomain }
+					</div>
+					<div className="woocommerce-install-confirm-wordpress-subdomain__instructions-staging-domain">
+						{ stagindDomaon }
+					</div>
+
+					<p>
+						{ __(
+							'By installing this product your subdomain will change. You can change it later to a custom domain and we will pick up the tap for a year.'
+						) }
+					</p>
+
+					<p>
+						{ createInterpolateElement( __( '<a>Contact support</a> for help and questions.' ), {
+							a: <a href="#support-link" />,
+						} ) }
+						{ __( 'Contact support for help and questions.' ) }
+					</p>
+
+					<NextButton disabled={ fetchingTransferStatus } onClick={ () => goToStep( 'confirm' ) }>
+						{ __( 'Sounds good' ) }
+					</NextButton>
+				</div>
+			</>
 		);
 	}
 
