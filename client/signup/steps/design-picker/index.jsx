@@ -86,9 +86,7 @@ class DesignPickerStep extends Component {
 		const allThemes = this.props.themes
 			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
 			.map( ( { id, name, taxonomies } ) => ( {
-				categories: taxonomies?.theme_subject ?? [
-					{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
-				],
+				categories: taxonomies?.theme_subject ?? [],
 				// Blank Canvas uses the theme_picks taxonomy with a "featured" term in order to
 				// appear prominently in theme galleries.
 				showFirst: !! taxonomies?.theme_picks?.find( ( { slug } ) => slug === 'featured' ),
