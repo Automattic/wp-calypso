@@ -12,6 +12,7 @@ interface WooCommerceInstallProps {
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;
+	isReskinned: boolean;
 	queryObject: {
 		siteSlug: string;
 	};
@@ -19,6 +20,8 @@ interface WooCommerceInstallProps {
 
 export default function WooCommerceInstall( props: WooCommerceInstallProps ): ReactElement | null {
 	const { __ } = useI18n();
+
+	const { stepName, goToStep, isReskinned } = props;
 
 	return (
 		<StepWrapper
@@ -36,6 +39,7 @@ export default function WooCommerceInstall( props: WooCommerceInstallProps ): Re
 					{ props.stepName === 'install' && <Install goToStep={ props.goToStep } /> }
 				</div>
 			}
+			isWideLayout={ isReskinned }
 			{ ...props }
 		/>
 	);
