@@ -13,6 +13,7 @@ import {
 	isBlankCanvasDesign,
 	gatherCategories,
 	filterDesignsByCategory,
+	sortDesigns,
 } from '../utils';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import MShotsImage from './mshots-image';
@@ -240,6 +241,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	const filteredDesigns = ! showCategoryFilter
 		? designs
 		: filterDesignsByCategory( designs, selectedCategory );
+
+	filteredDesigns.sort( sortDesigns );
 
 	return (
 		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>

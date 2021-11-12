@@ -13,6 +13,8 @@ export function gatherCategories( designs: Design[] ): Category[] {
 	return [ ...allCategories.entries() ].map( ( [ slug, name ] ) => ( { slug, name } ) );
 }
 
+// Returns designs that match the category slug. Designs with `showFirst` are always
+// included in every category.
 export function filterDesignsByCategory(
 	designs: Design[],
 	categorySlug: string | null
@@ -21,7 +23,19 @@ export function filterDesignsByCategory(
 		return designs;
 	}
 
-	return designs.filter( ( { categories } ) =>
-		categories.find( ( { slug } ) => slug === categorySlug )
+	return designs.filter(
+		( { categories, showFirst } ) =>
+			showFirst || categories.find( ( { slug } ) => slug === categorySlug )
 	);
+}
+
+// Ensures that designs with `showFirst` appear first.
+export function sortDesigns( a: Design, b: Design ): number {
+	if ( a.showFirst === b.showFirst ) {
+		return 0;
+	}
+	if ( a.showFirst ) {
+		return -1;
+	}
+	return 1;
 }
