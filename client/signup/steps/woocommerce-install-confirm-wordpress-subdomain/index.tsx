@@ -1,4 +1,5 @@
 import { NextButton } from '@automattic/onboarding';
+import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ReactElement, useEffect } from 'react';
@@ -80,6 +81,8 @@ export default function ConfirmWordPressSubdoamin( {
 		</>
 	);
 
+	const isProcessing = ! siteId || fetchingTransferStatus || ! wordPressSubdomainWarning;
+
 	function getStepContent() {
 		return (
 			<>
@@ -107,12 +110,16 @@ export default function ConfirmWordPressSubdoamin( {
 						{ __( 'Contact support for help and questions.' ) }
 					</p>
 
-					<NextButton disabled={ fetchingTransferStatus } onClick={ () => goToStep( 'confirm' ) }>
+					<NextButton disabled={ isProcessing } onClick={ () => goToStep( 'confirm' ) }>
 						{ __( 'Sounds good' ) }
 					</NextButton>
 				</div>
 			</>
 		);
+	}
+
+	if ( isProcessing ) {
+		return <Spinner />;
 	}
 
 	return (
