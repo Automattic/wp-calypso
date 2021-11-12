@@ -13,18 +13,19 @@ export const connectDomainAction = (
 	const siteHasPaidPlan = isSiteOnPaidPlan( getState(), selectedSite.ID );
 
 	if ( selectedSite.is_vip ) {
-		wpcom
-			.site( selectedSite.ID )
-			.addVipDomainMapping( domain )
+		wpcom.req
+			.post( `/sites/${ selectedSite.ID }/vip-domain-mapping`, { domain } )
 			.then( () => page( domainManagementList( selectedSite.slug ) ) )
 			.catch( ( error ) => {
 				dispatch( errorNotice( error.message ) );
 				onDone();
 			} );
 	} else if ( siteHasPaidPlan ) {
-		wpcom
-			.site( selectedSite.ID )
-			.addDomainMapping( domain, verificationData )
+		wpcom.req
+			.post( `/sites/${ selectedSite.ID }/add-domain-mapping`, {
+				domain,
+				...verificationData,
+			} )
 			.then( () => {
 				dispatch(
 					successNotice(
