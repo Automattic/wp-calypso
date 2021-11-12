@@ -76,7 +76,8 @@ function PluginDetails( props ) {
 	const isWpcom = selectedSite && ! isJetpackSite;
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
-	const isPluginInstalledOnsite = ! requestingPluginsForSites ? !! sitePlugin : null;
+	const isPluginInstalledOnsite =
+		sites.length && ! requestingPluginsForSites ? !! sitePlugin : false;
 
 	const fullPlugin = {
 		...plugin,
