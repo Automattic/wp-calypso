@@ -447,20 +447,23 @@ class AllDomains extends Component {
 		];
 
 		return (
-			<DomainsTable
-				currentRoute={ currentRoute }
-				domains={ this.filterDomains(
-					this.mergeFilteredDomainsWithDomainsDetails(),
-					selectedFilter
-				) }
-				domainsTableColumns={ domainsTableColumns }
-				isManagingAllSites={ true }
-				goToEditDomainRoot={ this.handleDomainItemClick }
-				isLoading={ this.isLoading() }
-				purchases={ purchases }
-				sites={ sites }
-				requestingSiteDomains={ requestingSiteDomains }
-			/>
+			<>
+				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
+				<DomainsTable
+					currentRoute={ currentRoute }
+					domains={ this.filterDomains(
+						this.mergeFilteredDomainsWithDomainsDetails(),
+						selectedFilter
+					) }
+					domainsTableColumns={ domainsTableColumns }
+					isManagingAllSites={ true }
+					goToEditDomainRoot={ this.handleDomainItemClick }
+					isLoading={ this.isLoading() }
+					purchases={ purchases }
+					sites={ sites }
+					requestingSiteDomains={ requestingSiteDomains }
+				/>
+			</>
 		);
 
 		// let domainListItems = this.filteredDomains().map( ( domain, index ) => {

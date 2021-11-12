@@ -306,7 +306,8 @@
 	margin-top: 24px;
 }
 
-.domain-management-list__filter {
+.domain-management-list__filter,
+.all-domains__filter {
 	padding: 0 16px;
 	> .domains-table-filter-button.is-mobile-version {
 		width: 100%;
