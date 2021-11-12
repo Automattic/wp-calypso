@@ -166,7 +166,23 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 													className="videos-ui__play-button"
 													onClick={ () => onVideoPlayClick( data[ 0 ], videoInfo ) }
 												>
-													<Gridicon icon="play" />
+													<svg
+														width="12"
+														height="14"
+														viewBox="0 0 12 14"
+														fill="none"
+														xmlns="http://www.w3.org/2000/svg"
+													>
+														<path
+															d="M1.9165 1.75L10.0832 7L1.9165 12.25V1.75Z"
+															fill="#101517"
+															stroke="#101517"
+															stroke-width="2"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+														/>
+													</svg>
+
 													<span>{ translate( 'Play video' ) }</span>
 												</Button>
 											</div>
