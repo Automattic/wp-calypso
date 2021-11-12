@@ -676,8 +676,8 @@ class AllDomains extends Component {
 		};
 
 		const buttons = [
-			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
 			this.renderDomainTableFilterButton(),
+			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
 		];
 

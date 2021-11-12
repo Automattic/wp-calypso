@@ -173,7 +173,7 @@ export class SiteDomains extends Component {
 
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
-						{ this.renderDomainTableFilterButton( false ) }
+						{ this.renderDomainTableFilterButton() }
 					</div>
 					<DomainsTable
 						currentRoute={ currentRoute }
@@ -217,7 +217,7 @@ export class SiteDomains extends Component {
 		);
 	}
 
-	renderDomainTableFilterButton( compact ) {
+	renderDomainTableFilterButton() {
 		const { selectedSite, domains, context } = this.props;
 
 		const selectedFilter = context?.query?.filter;
@@ -260,7 +260,8 @@ export class SiteDomains extends Component {
 				key="breadcrumb_button_2"
 				selectedFilter={ selectedFilter || '' }
 				filterOptions={ filterOptions }
-				compact={ compact }
+				isLoading={ this.isLoading() }
+				disabled={ this.isLoading() }
 			/>
 		);
 	}
