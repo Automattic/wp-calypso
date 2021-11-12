@@ -297,24 +297,24 @@ export function fetchInstallInstructions( siteId ) {
 			} );
 		}, 1 );
 
-		wpcom.undocumented().fetchJetpackKeys( siteId, ( error, data ) => {
-			if ( error ) {
+		wpcom.req
+			.get( `/jetpack-blogs/${ siteId }/keys` )
+			.then( ( data ) => {
+				data = normalizePluginInstructions( data );
+
+				dispatch( {
+					type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
+					siteId,
+					data,
+				} );
+			} )
+			.catch( () => {
 				dispatch( {
 					type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
 					siteId,
 					data: [],
 				} );
-				return;
-			}
-
-			data = normalizePluginInstructions( data );
-
-			dispatch( {
-				type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
-				siteId,
-				data,
 			} );
-		} );
 	};
 }
 
