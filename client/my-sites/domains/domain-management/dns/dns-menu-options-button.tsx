@@ -32,14 +32,16 @@ function DnsMenuOptionsButton( {
 	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
 
 	const getRecordsToRemove = useCallback( () => {
-		console.log( dns );
+		const dnsRecords = dns?.records ?? [];
 
-		return [];
+		return dnsRecords.filter(
+			( record ) =>
+				record.domain === record.name.replace( /\.$/, '' ) &&
+				[ 'A', 'AAAA' ].includes( record.type )
+		);
 	}, [ dns ] );
 
 	const restoreDefaultRecords = useCallback( async () => {
-		console.log( dispatchUpdateDns );
-
 		dispatchUpdateDns( domain, [], getRecordsToRemove() )
 			.then( () => dispatchSuccessNotice( __( 'Default A records restored' ) ) )
 			.catch( () => dispatchErrorNotice( __( 'Failed to restore the default A records' ) ) );
