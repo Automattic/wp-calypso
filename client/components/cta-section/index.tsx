@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
-import './style.scss';
 
 const Container = styled.div`
 	display: grid;
@@ -31,9 +30,9 @@ const Headline = styled.h3`
 const Title = styled.h4`
 	font-family: Recoleta;
 	color: var( --studio-gray-90 );
-	font-size: 45px;
+	font-size: 2.81rem;
 	line-height: 1.19;
-	padding-bottom: 30px;
+	padding-bottom: 1em;
 `;
 
 interface Props {
