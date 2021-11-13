@@ -109,7 +109,6 @@ class AddDnsRecprd extends Component {
 				},
 			}
 		);
-
 		const recordBeingEdited = this.getRecordBeingEdited();
 		const headerText = recordBeingEdited
 			? translate( 'Edit DNS record' )

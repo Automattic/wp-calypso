@@ -23,6 +23,7 @@ class DnsAddNew extends React.Component {
 		isSubmittingForm: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		goBack: PropTypes.func,
+		recordToEdit: PropTypes.object,
 	};
 
 	constructor( props ) {
@@ -119,7 +120,29 @@ class DnsAddNew extends React.Component {
 			},
 		} );
 
-		this.setFormState( this.formStateController.getInitialState() );
+		if ( this.props.recordToEdit ) {
+			this.loadRecord();
+		} else {
+			this.setFormState( this.formStateController.getInitialState() );
+		}
+	}
+
+	loadRecord() {
+		const { recordToEdit } = this.props;
+
+		const selectedDnsRecordFields = this.getFieldsForType( recordToEdit.type );
+		const recordAttributes = Object.keys( selectedDnsRecordFields ).reduce( ( obj, field ) => {
+			obj[ field ] = recordToEdit[ field ];
+			return obj;
+		}, {} );
+
+		this.formStateController.resetFields( recordAttributes );
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.recordToEdit !== this.props.recordToEdit ) {
+			this.loadRecord();
+		}
 	}
 
 	setFormState = ( fields ) => {
