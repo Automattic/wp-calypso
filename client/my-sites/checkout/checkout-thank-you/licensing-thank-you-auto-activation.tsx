@@ -34,6 +34,7 @@ interface Props {
 type JetpackSite = {
 	ID: number;
 	URL: string;
+	is_wpcom_atomic: boolean;
 };
 
 type Product = {
@@ -167,18 +168,20 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	] );
 
 	const siteSelectOptions = useMemo( () => {
-		return jetpackSites.map( ( site: JetpackSite ) => ( {
-			value: site?.URL,
-			label: site.URL,
-			props: {
-				key: site.ID,
-				selected: site.URL === selectedSite,
-				value: site.URL,
-				onClick: () => {
-					setSelectedSite( site.URL );
+		return jetpackSites
+			.filter( ( site: JetpackSite ) => ! site.is_wpcom_atomic )
+			.map( ( site: JetpackSite ) => ( {
+				value: site?.URL,
+				label: site.URL,
+				props: {
+					key: site.ID,
+					selected: site.URL === selectedSite,
+					value: site.URL,
+					onClick: () => {
+						setSelectedSite( site.URL );
+					},
 				},
-			},
-		} ) );
+			} ) );
 	}, [ jetpackSites, selectedSite ] );
 
 	const lastSelectOption = {
