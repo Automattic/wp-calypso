@@ -68,7 +68,8 @@ import { getProductBySlug, getProductsList } from 'calypso/state/products-list/s
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import EmailProviderCard from './email-provider-card';
 
@@ -309,8 +310,16 @@ class EmailProvidersComparison extends Component {
 			} );
 	};
 
+	onSuccessAddForwarding = () => {
+		const { domain, getSiteDomains, requestingSiteDomains, selectedSite } = this.props;
+		if ( ! requestingSiteDomains ) {
+			getSiteDomains( selectedSite.ID );
+		}
+		page( emailManagement( selectedSite.slug, domain.name ) );
+	};
+
 	renderEmailForwardingCard() {
-		const { domain, selectedDomainName, translate, selectedSite } = this.props;
+		const { domain, selectedDomainName, translate } = this.props;
 
 		if ( this.isUpgrading() ) {
 			return null;
@@ -320,7 +329,7 @@ class EmailProvidersComparison extends Component {
 			<EmailForwardingAddNewCompactList
 				selectedDomainName={ selectedDomainName }
 				onConfirmEmailForwarding={ this.onForwardingConfirmNewMailboxes }
-				onSuccessRedirectDestination={ emailManagement( selectedSite.slug, selectedDomainName ) }
+				onSuccessAddForwarding={ this.onSuccessAddForwarding }
 			/>
 		);
 
@@ -806,6 +815,7 @@ export default connect(
 			hasCartDomain,
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
+			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
@@ -813,6 +823,7 @@ export default connect(
 	( dispatch ) => {
 		return {
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+			getSiteDomains: ( siteId ) => dispatch( fetchSiteDomains( siteId ) ),
 		};
 	}
 )( withCartKey( withShoppingCart( localize( EmailProvidersComparison ) ) ) );

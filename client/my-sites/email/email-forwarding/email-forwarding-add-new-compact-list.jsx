@@ -14,7 +14,6 @@ import {
 	getEmailForwards,
 	isAddingEmailForward,
 } from 'calypso/state/selectors/get-email-forwards';
-import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -24,7 +23,7 @@ class EmailForwardingAddNewCompactList extends Component {
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number,
 		onConfirmEmailForwarding: PropTypes.func.isRequired,
-		onSuccessRedirectDestination: PropTypes.string,
+		onSuccessAddForwarding: PropTypes.func,
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
@@ -111,27 +110,18 @@ class EmailForwardingAddNewCompactList extends Component {
 		this.setState( { emailForwards } );
 	};
 
-	componentDidUpdate() {
-		const {
-			emailForwardSuccess,
-			isRequestingDomains,
-			onSuccessRedirectDestination,
-			siteId,
-		} = this.props;
+	componentDidUpdate( prevProps ) {
+		const { emailForwardSuccess, onSuccessAddForwarding } = this.props;
 
-		const { isRedirecting, newForwardAdded } = this.state;
+		const { newForwardAdded } = this.state;
 
 		if (
 			emailForwardSuccess &&
-			onSuccessRedirectDestination &&
-			! isRedirecting &&
-			newForwardAdded
+			onSuccessAddForwarding &&
+			newForwardAdded &&
+			prevProps.emailForwardSuccess !== emailForwardSuccess
 		) {
-			if ( ! isRequestingDomains && ! isRedirecting ) {
-				this.props.fetchSiteDomains( siteId );
-			}
-			page( onSuccessRedirectDestination );
-			this.state.isRedirecting = true;
+			onSuccessAddForwarding();
 		}
 	}
 
@@ -174,5 +164,5 @@ export default connect(
 			siteId,
 		};
 	},
-	{ addEmailForward, fetchSiteDomains }
+	{ addEmailForward }
 )( localize( EmailForwardingAddNewCompactList ) );
