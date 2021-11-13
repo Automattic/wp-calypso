@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
