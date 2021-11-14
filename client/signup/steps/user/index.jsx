@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
@@ -97,6 +98,7 @@ export class UserStep extends Component {
 		subHeaderText: '',
 		recaptchaClientId: null,
 		experiment: null,
+		isDesktop: isDesktop(),
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -118,7 +120,11 @@ export class UserStep extends Component {
 		if ( oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
 		}
-		loadExperimentAssignment( 'registration_remove_username' ).then( ( experimentName ) => {
+		const experimentCheck = this.state.isDesktop
+			? 'registration_email_only_desktop'
+			: 'registration_email_only_mobile';
+
+		loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
 			this.setState( { experiment: experimentName } );
 		} );
 	}
@@ -469,6 +475,7 @@ export class UserStep extends Component {
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
 					isPasswordlessExperiment={ this.isPasswordlessExperiment() }
+					experimentName={ this.state.experiment }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
