@@ -18,8 +18,8 @@ export const ChecklistSiteTitleTour = makeTour(
 		<Step
 			name="init"
 			target="site-title-input"
-			arrow="top-left"
-			placement="below"
+			arrow="bottom-left"
+			placement="above"
 			style={ {
 				animationDelay: '0.7s',
 			} }
