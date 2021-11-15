@@ -55,7 +55,7 @@ const P2PreapprovedDomainsForm = ( {
 	}, [ fields ] );
 
 	if ( ! isWPForTeamsSite || ! isP2Hub ) {
-		return <></>;
+		return null;
 	}
 
 	const getFormField = () => {
