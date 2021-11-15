@@ -10,7 +10,7 @@ import SiteTools from './site-tools';
 const SiteSettingsGeneral = ( { site, isWPForTeamsSite, isP2HubSite } ) => (
 	<div className="site-settings__main general-settings">
 		<GeneralForm site={ site } />
-		{ isWPForTeamsSite && isP2HubSite && config.isEnabled( 'p2/settings/preapproved-domains' ) && (
+		{ isWPForTeamsSite && isP2HubSite && config.isEnabled( 'p2/preapproved-domains' ) && (
 			<P2PreapprovedDomainsForm site={ site } />
 		) }
 		<SiteTools />
