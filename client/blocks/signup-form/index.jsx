@@ -1006,10 +1006,7 @@ class SignupForm extends Component {
 			`<PasswordlessSignupForm />` is for the `onboarding` flow.
 			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
-		if (
-			( this.props.flowName === 'onboarding' || this.props.flowName === 'test-fse' ) &&
-			this.props.isPasswordlessExperiment
-		) {
+		if ( this.props.flowName === 'onboarding' && this.props.isPasswordlessExperiment ) {
 			const logInUrl = this.getLoginLink();
 
 			return (
