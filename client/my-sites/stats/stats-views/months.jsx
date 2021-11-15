@@ -1,6 +1,5 @@
 import { Popover } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { map, range, flatten, keys, zipObject, times, size, concat, merge } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, createElement, PureComponent } from 'react';
@@ -51,24 +50,22 @@ class Month extends PureComponent {
 				ref: this.monthRef,
 				onClick: this.openPopover,
 			},
-			concat(
-				children,
-				<Popover
-					isVisible={ this.state.showPopover }
-					onClose={ this.closePopover }
-					position={ position }
-					key="popover"
-					context={ this.monthRef.current }
-				>
-					<div style={ { padding: '10px' } }>{ value }</div>
-				</Popover>
-			)
+			<>{ children }</>,
+			<Popover
+				isVisible={ this.state.showPopover }
+				onClose={ this.closePopover }
+				position={ position }
+				context={ this.monthRef.current }
+			>
+				<div style={ { padding: '10px' } }>{ value }</div>
+			</Popover>
 		);
 	}
 }
 
 const StatsViewsMonths = ( props ) => {
 	const { translate, dataKey, data, numberFormat, moment, siteSlug } = props;
+	const dataEntries = data ? Object.entries( data ) : [];
 	const isAverageChart = dataKey === 'average';
 	let earliestDate = moment();
 	const today = moment();
@@ -87,42 +84,31 @@ const StatsViewsMonths = ( props ) => {
 		return sum;
 	};
 
-	const allMonths = flatten(
-		map( data, ( year, yearNumber ) => {
-			return map( year, ( month, monthIndex ) => {
-				// keep track of earliest date to fill in zeros when applicable
-				const momentMonth = momentFromMonthYear( monthIndex, yearNumber );
-				if ( momentMonth.isBefore( earliestDate ) ) {
-					earliestDate = moment( momentMonth );
-				}
-				return month[ dataKey ];
-			} );
+	const allMonths = dataEntries.flatMap( ( [ yearNumber, year ] ) =>
+		Object.entries( year ).map( ( [ monthIndex, month ] ) => {
+			// keep track of earliest date to fill in zeros when applicable
+			const momentMonth = momentFromMonthYear( monthIndex, yearNumber );
+			if ( momentMonth.isBefore( earliestDate ) ) {
+				earliestDate = moment( momentMonth );
+			}
+			return month[ dataKey ];
 		} )
 	);
 
 	const highestMonth = Math.max( ...allMonths );
-	const yearsObject = zipObject(
-		keys( data ),
-		times( size( data ), () => {
-			return 0;
-		} )
-	);
-	const monthsObject = zipObject(
-		range( 0, 12 ),
-		times( 12, () => {
-			return 0;
-		} )
-	);
+	const yearsObject = Object.fromEntries( dataEntries.map( ( [ year ] ) => [ year, 0 ] ) );
+	const monthsArray = Array.from( { length: 12 }, ( _, month ) => month ); // [ 0, 1, ..., 11 ]
+	const monthsObject = Object.fromEntries( monthsArray.map( ( month ) => [ month, 0 ] ) );
 	const totals = {
-		years: merge( {}, yearsObject ),
-		months: merge( {}, monthsObject ),
-		yearsCount: merge( {}, yearsObject ),
-		monthsCount: merge( {}, monthsObject ),
+		years: { ...yearsObject },
+		months: { ...monthsObject },
+		yearsCount: { ...yearsObject },
+		monthsCount: { ...monthsObject },
 	};
 
-	const years = map( data, ( item, year ) => {
-		const cells = map( range( 0, 12 ), ( month ) => {
-			let value = item[ month ] ? item[ month ][ dataKey ] : null;
+	const years = dataEntries.map( ( [ year, item ] ) => {
+		const cells = monthsArray.map( ( month ) => {
+			let value = item[ month ]?.[ dataKey ] ?? null;
 			let displayValue;
 			const momentMonth = momentFromMonthYear( month, year );
 			let className;
