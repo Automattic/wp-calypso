@@ -205,7 +205,7 @@ export default function reducer( state = {}, action ) {
 			} );
 			break;
 		case DOMAINS_DNS_DELETE_COMPLETED:
-			state = deleteDns( state, action.domainName, action.record );
+			state = updateDomainState( state, action.domainName, { records: action.records } );
 			break;
 		case DOMAINS_DNS_DELETE_FAILED:
 			state = updateDnsState( state, action.domainName, action.record, {
