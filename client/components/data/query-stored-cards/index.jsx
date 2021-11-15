@@ -1,31 +1,22 @@
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { fetchStoredCards } from 'calypso/state/stored-cards/actions';
 import { isFetchingStoredCards } from 'calypso/state/stored-cards/selectors';
 
-class QueryStoredCards extends Component {
-	UNSAFE_componentWillMount() {
-		if ( ! this.props.isRequesting ) {
-			this.props.fetchStoredCards();
-		}
+const request = () => ( dispatch, getState ) => {
+	if ( ! isFetchingStoredCards( getState() ) ) {
+		dispatch( fetchStoredCards() );
 	}
-
-	render() {
-		return null;
-	}
-}
-
-QueryStoredCards.propTypes = {
-	fetchStoredCards: PropTypes.func.isRequired,
-	isRequesting: PropTypes.bool.isRequired,
 };
 
-export default connect(
-	( state ) => {
-		return {
-			isRequesting: isFetchingStoredCards( state ),
-		};
-	},
-	{ fetchStoredCards }
-)( QueryStoredCards );
+function QueryStoredCards() {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( request() );
+	}, [ dispatch ] );
+
+	return null;
+}
+
+export default QueryStoredCards;
