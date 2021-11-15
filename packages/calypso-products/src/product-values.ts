@@ -1,4 +1,3 @@
-export { allowedProductAttributes } from './allowed-product-attributes';
 export { formatProduct } from './format-product';
 export { getDomain } from './get-domain';
 export { getDomainProductRanking } from './get-domain-product-ranking';
