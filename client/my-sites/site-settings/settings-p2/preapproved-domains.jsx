@@ -89,12 +89,12 @@ const P2PreapprovedDomainsForm = ( {
 	};
 
 	const validateTokens = async ( tokens ) => {
-		setIsValidating( true );
-
 		if ( tokens.length < 1 ) {
 			refreshValidation( [], {} );
 			return;
 		}
+
+		setIsValidating( true );
 
 		// Prior to sending off a validation API request,
 		// first quickly remove old, now-deleted tokens from validation lists.
