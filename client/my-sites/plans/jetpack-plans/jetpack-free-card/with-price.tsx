@@ -14,6 +14,7 @@ const useFreeItem = () => {
 
 	return useMemo(
 		() => ( {
+			productSlug: 'free',
 			isFree: true,
 			displayName: translate( 'Jetpack Free' ),
 			features: {
