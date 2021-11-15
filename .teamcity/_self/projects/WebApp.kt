@@ -680,6 +680,16 @@ object PreReleaseE2ETests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		nonZeroExitCode = false
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
 	}
 })
 
@@ -778,6 +788,7 @@ object QuarantinedE2ETests: BuildType( {
 	}
 
 	failureConditions {
-		executionTimeoutMin = 10
+		executionTimeoutMin = 20
+		nonZeroExitCode = false
 	}
 })
