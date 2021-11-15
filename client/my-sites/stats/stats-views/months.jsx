@@ -65,6 +65,7 @@ class Month extends PureComponent {
 
 const StatsViewsMonths = ( props ) => {
 	const { translate, dataKey, data, numberFormat, moment, siteSlug } = props;
+	const dataEntries = data ? Object.entries( data ) : [];
 	const isAverageChart = dataKey === 'average';
 	let earliestDate = moment();
 	const today = moment();
@@ -83,7 +84,7 @@ const StatsViewsMonths = ( props ) => {
 		return sum;
 	};
 
-	const allMonths = Object.entries( data || {} ).flatMap( ( [ yearNumber, year ] ) =>
+	const allMonths = dataEntries.flatMap( ( [ yearNumber, year ] ) =>
 		Object.entries( year ).map( ( [ monthIndex, month ] ) => {
 			// keep track of earliest date to fill in zeros when applicable
 			const momentMonth = momentFromMonthYear( monthIndex, yearNumber );
@@ -95,9 +96,7 @@ const StatsViewsMonths = ( props ) => {
 	);
 
 	const highestMonth = Math.max( ...allMonths );
-	const yearsObject = Object.fromEntries(
-		Object.keys( data || {} ).map( ( year ) => [ year, 0 ] )
-	);
+	const yearsObject = Object.fromEntries( dataEntries.map( ( [ year ] ) => [ year, 0 ] ) );
 	const monthsArray = Array.from( { length: 12 }, ( _, month ) => month ); // [ 0, 1, ..., 11 ]
 	const monthsObject = Object.fromEntries( monthsArray.map( ( month ) => [ month, 0 ] ) );
 	const totals = {
@@ -107,7 +106,7 @@ const StatsViewsMonths = ( props ) => {
 		monthsCount: { ...monthsObject },
 	};
 
-	const years = Object.entries( data || {} ).map( ( [ year, item ] ) => {
+	const years = dataEntries.map( ( [ year, item ] ) => {
 		const cells = monthsArray.map( ( month ) => {
 			let value = item[ month ]?.[ dataKey ] ?? null;
 			let displayValue;
