@@ -37,10 +37,9 @@ const AnnouncementModalExample = () => {
 		},
 	];
 
-	const TriggerButton = () => <Button onClick={ () => setShow( true ) }>Show</Button>;
 	return (
 		<>
-			<TriggerButton />
+			<Button onClick={ () => setShow( true ) }>Show</Button>
 			{ show && (
 				<AnnouncementModal
 					announcementId={ announcementId }
