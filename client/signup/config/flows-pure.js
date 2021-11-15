@@ -354,6 +354,16 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 		},
 		{
+			name: 'from',
+			steps: [ 'importer' ],
+			destination: '/',
+			pageTitle: translate( 'Import your site content' ),
+			description: 'Onboarding - start from importer',
+			lastModified: '2021-11-15',
+			hideFlowProgress: true,
+			enableBranchSteps: true,
+		},
+		{
 			name: 'reader',
 			steps: [ 'reader-landing', 'user' ],
 			destination: '/',

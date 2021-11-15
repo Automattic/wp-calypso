@@ -81,6 +81,7 @@ const stepNameToModuleName = {
 	list: 'import',
 	capture: 'import',
 	ready: 'import',
+	importer: 'import-from',
 	confirm: 'woocommerce-install',
 	transfer: 'woocommerce-install',
 	install: 'woocommerce-install',

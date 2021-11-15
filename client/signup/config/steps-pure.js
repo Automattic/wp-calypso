@@ -778,6 +778,9 @@ export function generateSteps( {
 		ready: {
 			stepName: 'ready',
 		},
+		importer: {
+			stepName: 'importer',
+		},
 
 		// Woocommerce Install steps
 		confirm: {
