@@ -1,6 +1,7 @@
 import assert from 'assert';
 import { Page, Frame, ElementHandle } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import { reloadAndRetry } from '../../element-helper';
 import { NavbarComponent } from '../components';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
@@ -304,7 +305,7 @@ export class GutenbergEditorPage {
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
 		if ( visit ) {
-			await this._visitPublishedEntryFromPublishPane();
+			await this.visitPublishedPost( publishedURL );
 		}
 		return publishedURL;
 	}
@@ -348,11 +349,31 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _visitPublishedEntryFromPublishPane(): Promise< void > {
+	private async visitPublishedPost( url: string ): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		await Promise.all( [ this.page.waitForNavigation(), frame.click( selectors.viewButton ) ] );
-		await this.page.waitForLoadState( 'networkidle' );
+		await Promise.all( [
+			this.page.waitForNavigation( { waitUntil: 'networkidle', url: url } ),
+			frame.click( selectors.viewButton ),
+		] );
+
+		await reloadAndRetry( this.page, confirmPostShown );
+
+		/**
+		 * Closure to confirm that post is shown on screen as expected.
+		 *
+		 * In rare cases, visiting the post immediately after it has been published can result
+		 * in the post not being visible to the public yet. In such cases, an error message is
+		 * instead shown to the user.
+		 *
+		 * When used in conjunction with `reloadAndRetry` this method will reload the page
+		 * multiple times to ensure the post content is shown.
+		 *
+		 * @param page
+		 */
+		async function confirmPostShown( page: Page ): Promise< void > {
+			await page.waitForSelector( '.entry-content', { timeout: 5 * 1000 } );
+		}
 	}
 
 	/**
