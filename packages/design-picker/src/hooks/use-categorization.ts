@@ -12,7 +12,8 @@ type UseCategorizationResult = [
 
 export function useCategorization(
 	designs: Design[],
-	showAllFilter: boolean
+	showAllFilter: boolean,
+	defaultSelection: string | null
 ): UseCategorizationResult {
 	const { __ } = useI18n();
 
@@ -25,7 +26,7 @@ export function useCategorization(
 	}
 
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
-		chooseDefaultSelection( categories )
+		chooseDefaultSelection( categories, defaultSelection )
 	);
 
 	useEffect( () => {
@@ -34,20 +35,29 @@ export function useCategorization(
 		// the current selection.
 		const findResult = categories.find( ( { slug } ) => slug === selectedCategory );
 		if ( ! findResult ) {
-			setSelectedCategory( chooseDefaultSelection( categories ) );
+			setSelectedCategory( chooseDefaultSelection( categories, defaultSelection ) );
 		}
-	}, [ categories, selectedCategory ] );
+	}, [ categories, defaultSelection, selectedCategory ] );
 
 	return [ categories, selectedCategory, setSelectedCategory ];
 }
 
 /**
- * Chooses which category is the one that should be used by default. It'll be
- * whichever category is first in the list.
+ * Chooses which category is the one that should be used by default.
+ * If `defaultSelection` is a valid category slug then it'll be used, otherwise it'll be whichever
+ * category appears first in the list.
  *
  * @param categories the categories from which the default will be selected
+ * @param defaultSelection use this category as the default selection if possible
  * @returns the default category or null if none is available
  */
-function chooseDefaultSelection( categories: Category[] ): string | null {
+function chooseDefaultSelection(
+	categories: Category[],
+	defaultSelection: string | null
+): string | null {
+	if ( defaultSelection && categories.find( ( { slug } ) => slug === defaultSelection ) ) {
+		return defaultSelection;
+	}
+
 	return categories[ 0 ]?.slug ?? null;
 }

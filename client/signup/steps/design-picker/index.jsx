@@ -168,6 +168,9 @@ class DesignPickerStep extends Component {
 				} ) }
 				highResThumbnails
 				showCategoryFilter={ this.props.showDesignPickerCategories }
+				defaultCategorySelection={
+					this.props.signupDependencies.intent === 'write' ? 'blog' : null
+				}
 				showAllFilter={ this.props.showDesignPickerCategoriesAllFilter }
 				categoriesHeading={
 					<FormattedHeader

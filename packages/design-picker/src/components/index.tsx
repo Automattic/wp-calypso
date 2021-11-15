@@ -205,6 +205,7 @@ export interface DesignPickerProps {
 	highResThumbnails?: boolean;
 	showCategoryFilter?: boolean;
 	showAllFilter?: boolean;
+	defaultCategorySelection?: string | null;
 	categoriesHeading?: React.ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -221,12 +222,14 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	showCategoryFilter = false,
+	defaultCategorySelection = null,
 	showAllFilter = false,
 	categoriesHeading,
 } ) => {
 	const [ categories, selectedCategory, setSelectedCategory ] = useCategorization(
 		designs,
-		showAllFilter
+		showAllFilter,
+		defaultCategorySelection
 	);
 
 	const filteredDesigns = ! showCategoryFilter
