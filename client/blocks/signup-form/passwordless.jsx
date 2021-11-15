@@ -76,7 +76,6 @@ class PasswordlessSignupForm extends Component {
 					is_passwordless: true,
 					signup_flow_name: this.props.flowName,
 					validate: false,
-					// ab_test_variations: getSavedVariations(),
 				},
 				null
 			);
@@ -140,7 +139,7 @@ class PasswordlessSignupForm extends Component {
 					<>
 						{ translate( 'An account with this email address already exists.' ) }
 						&nbsp;
-						{ translate( 'If this is you {{a}}log in now{{/a}}.', {
+						{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
 							components: {
 								a: (
 									<a
