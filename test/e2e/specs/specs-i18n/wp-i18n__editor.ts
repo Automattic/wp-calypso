@@ -288,9 +288,15 @@ describeSkipNoTranslations(
 				it( 'Render block title translations', async () => {
 					await gutenbergEditorPage.openSettings();
 					await frame.click( block.blockEditorSelector );
+
+					// Ensure topmost block parent is selected.
+					async function clickBlockParentSelector() {
+						await frame.click( '.block-editor-block-parent-selector__button' );
+						return clickBlockParentSelector();
+					}
 					await Promise.race( [
 						frame.waitForSelector( `${ block.blockEditorSelector }.is-selected` ),
-						frame.click( '.block-editor-block-parent-selector__button' ),
+						clickBlockParentSelector(),
 					] );
 
 					await frame.waitForSelector(
