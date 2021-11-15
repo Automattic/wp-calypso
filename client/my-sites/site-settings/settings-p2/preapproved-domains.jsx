@@ -16,21 +16,19 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
 
-const P2PreapprovedDomainsForm = ( props ) => {
+const P2PreapprovedDomainsForm = ( {
+	fields,
+	handleSubmitForm,
+	isP2HubSite,
+	isRequestingSettings,
+	isSavingSettings,
+	isWPForTeamsSite,
+	recordTracksEvent,
+	site,
+	translate,
+	updateFields,
+} ) => {
 	const SETTING_KEY_PREAPPROVED_DOMAINS = 'p2_preapproved_domains';
-
-	const {
-		fields,
-		handleSubmitForm,
-		isP2HubSite,
-		isRequestingSettings,
-		isSavingSettings,
-		isWPForTeamsSite,
-		recordTracksEvent,
-		site,
-		translate,
-		updateFields,
-	} = props;
 
 	const [ isToggledOn, setIsToggledOn ] = useState( false );
 	const [ isValidating, setIsValidating ] = useState( false );
