@@ -105,31 +105,6 @@ UndocumentedMe.prototype.sendVerificationEmail = function ( callback ) {
 	return this.wpcom.req.post( { path: '/me/send-verification-email' }, callback );
 };
 
-UndocumentedMe.prototype.getNotificationSettings = function ( callback ) {
-	debug( '/me/notification/settings/' );
-
-	return this.wpcom.req.get( { apiVersion: '1.1', path: '/me/notifications/settings/' }, callback );
-};
-
-UndocumentedMe.prototype.updateNotificationSettings = function ( settings, applyToAll, callback ) {
-	let query = {};
-	debug( '/me/notification/settings/' );
-
-	if ( applyToAll ) {
-		query = { applyToAll: true };
-	}
-
-	return this.wpcom.req.post(
-		{
-			apiVersion: '1.1',
-			path: '/me/notifications/settings/',
-		},
-		query,
-		settings,
-		callback
-	);
-};
-
 /**
  * Connect the current account with a social service (e.g. Google/Facebook).
  *
