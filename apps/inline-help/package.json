@@ -25,16 +25,16 @@
 		"sync": "yarn clean && yarn build && sh ./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
-		"@automattic/calypso-polyfills": "^2.0.0",
-		"calypso": "^0.17.0",
+		"@automattic/calypso-polyfills": "workspace:^",
+		"calypso": "workspace:^",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"react-query": "^3.9.8",
+		"react-query": "^3.32.1",
 		"react-redux": "^7.2.6",
 		"redux": "^4.1.2",
 		"redux-thunk": "^2.3.0",
-		"wpcom": "^6.0.0",
-		"wpcom-proxy-request": "^6.0.0"
+		"wpcom": "workspace:^",
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
@@ -48,6 +48,6 @@
 		"postcss": "^8.3.11",
 		"webpack": "^5.63.0",
 		"webpack-bundle-analyzer": "^4.5.0",
-		"webpack-dev-server": "^4.4.0"
+		"webpack-dev-server": "^4.7.2"
 	}
 }
