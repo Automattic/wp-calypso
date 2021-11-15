@@ -26,7 +26,6 @@
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"features": {
 		"ad-tracking": false,
-		"activity-log/display-rules": true,
 		"async-payments": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": false,
@@ -48,7 +47,6 @@
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
-		"jetpack/only-realtime-products": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jitms": true,
 		"lasagna": false,
