@@ -249,7 +249,8 @@ function FooTour() {
 		},
 		options: {
 			effects: {
-				arrowIndicator: true,
+				arrowIndicator: false,
+				__experimental__spotlight: true,
 			},
 			className: 'foo-tour',
 		},

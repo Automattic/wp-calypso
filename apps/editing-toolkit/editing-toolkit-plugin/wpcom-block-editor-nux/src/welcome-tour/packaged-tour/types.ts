@@ -25,7 +25,7 @@ export interface Config {
 		};
 		effects?: {
 			__experimental__spotlight?: boolean;
-			arrowIndicator?: boolean; // defaults to show
+			arrowIndicator?: boolean; // defaults to true
 			overlay?: boolean;
 		};
 		popperModifiers?: PopperModifier[];

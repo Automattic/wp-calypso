@@ -8,6 +8,7 @@ import { usePopper } from 'react-popper';
  * Internal Dependencies
  */
 import KeyboardNavigation from './keyboard-navigation';
+import Overlay from './overlay';
 import Spotlight from './spotlight';
 import type { Config, Callback } from '../types';
 
@@ -51,13 +52,13 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				{
 					name: 'arrow',
 					options: {
-						padding: 16,
+						padding: 12,
 					},
 				},
 				{
 					name: 'offset',
 					options: {
-						offset: [ 0, showArrowIndicator() ? 16 : 10 ],
+						offset: [ 0, showArrowIndicator() ? 12 : 10 ],
 					},
 				},
 				...( config.options?.popperModifiers || [] ),
@@ -79,7 +80,24 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	};
 
 	const showSpotlight = () => {
-		return ! isMinimized && config.options?.effects?.__experimental__spotlight;
+		if ( ! config.options?.effects?.__experimental__spotlight ) {
+			return false;
+		}
+
+		return referenceElement && ! isMinimized;
+	};
+
+	const showOverlay = () => {
+		if ( showSpotlight() ) {
+			return false;
+		}
+
+		// rendered for the spotlight, but hidden
+		if ( config.options?.effects?.__experimental__spotlight ) {
+			return ! referenceElement && ! isMinimized;
+		}
+
+		return !! ( config.options?.effects?.overlay && ! isMinimized );
 	};
 
 	const handleCallback = ( callback?: Callback ) => {
@@ -137,7 +155,11 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				isMinimized={ isMinimized }
 			/>
 			<div className={ classNames } ref={ tourContainerRef }>
-				{ showSpotlight() && <Spotlight referenceElementSelector={ referenceElementSelector } /> }
+				<Overlay visible={ showOverlay() } />
+				<Spotlight
+					referenceElementSelector={ referenceElementSelector }
+					visible={ showSpotlight() }
+				/>
 				<div className="packaged-tour__frame" ref={ popperElementRef } { ...stepRepositionProps }>
 					{ showArrowIndicator() && (
 						<div className="packaged-tour__arrow" data-popper-arrow { ...arrowPositionProps } />

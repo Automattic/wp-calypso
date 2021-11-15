@@ -10,13 +10,13 @@
     box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.1);
 }
 
-.packaged-tour__spotlight-overlay {
+.packaged-tour__overlay {
 	position: fixed;
 	width: 100vw;
 	height: 100vh;
 	top: 0;
 	left: 0;
-	background: inherit;
+	background: rgba( 0, 0, 0 );
 	opacity: 0;
 
 	&.--visible {
@@ -24,7 +24,7 @@
 	}
 }
 
-.packaged-tour__spotlight-clip {
+.packaged-tour__spotlight {
 	&.--visible {
 		position: fixed;
 		width: 50px;
@@ -44,8 +44,8 @@
 .packaged-tour__arrow,
 .packaged-tour__arrow::before {
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     background: inherit;
     z-index: -1;
 }
@@ -57,28 +57,28 @@
 }
 
 .packaged-tour__frame[data-popper-placement^='top'] > .packaged-tour__arrow {
-    bottom: -8px;
+    bottom: -6px;
     &::before {
         box-shadow: 1px 1px 2px -1px rgb(0 0 0 / 10%);
     }
 }
 
 .packaged-tour__frame[data-popper-placement^='bottom'] > .packaged-tour__arrow {
-    top: -8px;
+    top: -6px;
     &::before {
         box-shadow: -1px -1px 2px -1px rgb(0 0 0 / 10%);
     }
 }
 
 .packaged-tour__frame[data-popper-placement^='left'] > .packaged-tour__arrow {
-    right: -8px;
+    right: -6px;
     &::before {
         box-shadow: -1px 1px 2px -1px rgb(0 0 0 / 10%);
     }
 }
 
 .packaged-tour__frame[data-popper-placement^='right'] > .packaged-tour__arrow {
-    left: -8px;
+    left: -6px;
     &::before {
         box-shadow: 1px -1px 2px -1px rgb(0 0 0 / 10%);
     }

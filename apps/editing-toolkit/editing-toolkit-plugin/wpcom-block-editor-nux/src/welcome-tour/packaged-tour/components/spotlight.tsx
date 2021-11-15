@@ -8,9 +8,10 @@ import type { Rect, Placement } from '@popperjs/core';
 
 interface Props {
 	referenceElementSelector: string;
+	visible: boolean;
 }
 
-const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector } ) => {
+const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector, visible } ) => {
 	const popperElementRef = useRef( null );
 	const referenceElement = document.querySelector( referenceElementSelector );
 	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
@@ -45,7 +46,7 @@ const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector
 		}
 	);
 
-	const clipRepositionProps = referenceElement
+	const clipRepositionProps = visible
 		? {
 				style: popperStyles?.popper,
 				...popperAttributes?.popper,
@@ -53,20 +54,13 @@ const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector
 		: null;
 
 	return (
-		<>
-			<div
-				className={ classnames( 'packaged-tour__spotlight-overlay', {
-					'--visible': ! clipRepositionProps,
-				} ) }
-			/>
-			<div
-				className={ classnames( 'packaged-tour__spotlight-clip', {
-					'--visible': clipRepositionProps,
-				} ) }
-				ref={ popperElementRef }
-				{ ...clipRepositionProps }
-			/>
-		</>
+		<div
+			className={ classnames( 'packaged-tour__spotlight', {
+				'--visible': visible,
+			} ) }
+			ref={ popperElementRef }
+			{ ...clipRepositionProps }
+		/>
 	);
 };
 
