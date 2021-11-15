@@ -1,0 +1,73 @@
+.packaged-tour__frame {
+	background-color: red;
+	border-radius: 2px;
+	bottom: 44px;
+	display: inline;
+	left: 16px;
+	position: fixed;
+	z-index: 9999;
+	// Avoid the text cursor when the text is not selectable
+	cursor: default;
+}
+
+.packaged-tour__spotlight-overlay {
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	background:rgba( 0, 0, 0 );
+	opacity: 0;
+
+	&.--visible {
+		opacity: 0.5;
+	}
+}
+
+.packaged-tour__spotlight-clip {
+	&.--visible {
+		position: fixed;
+		width: 50px;
+		height: 50px;
+		overflow: hidden;
+		// box-shadow: 0 0 0 9999px rgba(0, 0, 255, 0.2);
+		outline: 99999px solid rgba( 0, 0, 0, 0.5 );
+		border-radius: 2px;
+		z-index: 1;
+	}
+}
+
+.packaged-tour__arrow {
+    visibility: hidden;
+}
+
+.packaged-tour__arrow,
+.packaged-tour__arrow::before {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: inherit;
+    z-index: -1;
+}
+
+.packaged-tour__arrow::before {
+    visibility: visible;
+    content: '';
+    transform: rotate(45deg);
+}
+
+.packaged-tour__frame[data-popper-placement^='top'] > .packaged-tour__arrow {
+    bottom: -8px;
+}
+
+.packaged-tour__frame[data-popper-placement^='bottom'] > .packaged-tour__arrow {
+    top: -8px;
+}
+
+.packaged-tour__frame[data-popper-placement^='left'] > .packaged-tour__arrow {
+    right: -8px;
+}
+
+.packaged-tour__frame[data-popper-placement^='right'] > .packaged-tour__arrow {
+    left: -8px;
+}

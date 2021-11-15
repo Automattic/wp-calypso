@@ -55,12 +55,12 @@ const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector
 	return (
 		<>
 			<div
-				className={ classnames( 'wpcom-editor-welcome-tour__spotlight-overlay', {
+				className={ classnames( 'packaged-tour__spotlight-overlay', {
 					'--visible': ! clipRepositionProps,
 				} ) }
 			/>
 			<div
-				className={ classnames( 'wpcom-editor-welcome-tour__spotlight-clip', {
+				className={ classnames( 'packaged-tour__spotlight-clip', {
 					'--visible': clipRepositionProps,
 				} ) }
 				ref={ popperElementRef }
