@@ -83,6 +83,7 @@
 	@extend %p2-form-button;
 }
 
+.is-p2v2 .p2-step-wrapper,
 .signup__step.is-user .p2-step-wrapper {
 	padding-top: 96px;
 	height: 100%;
