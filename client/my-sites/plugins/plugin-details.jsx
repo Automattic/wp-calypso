@@ -1,4 +1,8 @@
-import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
+import {
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isEnterprise,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -308,9 +312,9 @@ function CTA( { slug, isPluginInstalledOnsite } ) {
 	}
 
 	const shouldUpgrade = ! (
-		isBusiness( selectedSite.plan ) ||
+		isWpComBusinessPlan( selectedSite.plan ) ||
 		isEnterprise( selectedSite.plan ) ||
-		isEcommerce( selectedSite.plan ) ||
+		isWpComEcommercePlan( selectedSite.plan ) ||
 		isJetpack ||
 		isVipSite
 	);
