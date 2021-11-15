@@ -31,7 +31,7 @@ const PostPublishedModal: React.FC = () => {
 		fetchShouldShowFirstPostPublishedModal();
 	}, [ fetchShouldShowFirstPostPublishedModal ] );
 	useEffect( () => {
-		// If the user never published any post before and the current post status changed to publish,
+		// If the user is set to see the first post modal and current post status changes to publish,
 		// open the post publish modal
 		if (
 			shouldShowFirstPostPublishedModal &&

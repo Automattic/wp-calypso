@@ -96,7 +96,7 @@ const actions = {
 
 		return {
 			type: 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL',
-			value: response.show_first_post_published_modal,
+			value: response.should_show_first_post_published_modal,
 		};
 	},
 	setShowWelcomeGuide: ( show, { openedManually } = {} ) => {
