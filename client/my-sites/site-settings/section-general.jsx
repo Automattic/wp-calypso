@@ -11,7 +11,7 @@ const SiteSettingsGeneral = ( { site, isWPForTeamsSite, isP2Hub } ) => (
 	<div className="site-settings__main general-settings">
 		<GeneralForm site={ site } />
 		{ isWPForTeamsSite && isP2Hub && isEnabled( 'p2/preapproved-domains' ) && (
-			<P2PreapprovedDomainsForm site={ site } />
+			<P2PreapprovedDomainsForm siteId={ site?.ID } />
 		) }
 		<SiteTools />
 	</div>
