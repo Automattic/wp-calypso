@@ -32,6 +32,10 @@ export default function ConfirmWordPressSubdoamin( {
 }: Props ): ReactElement | null {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
+	const fetchingTransferStatus = !! useSelector( ( state: AppState ) =>
+		isFetchingAutomatedTransferStatus( state, siteId )
+	);
+
 	const dispatch = useDispatch();
 	useEffect( () => {
 		if ( ! siteId ) {
@@ -40,10 +44,6 @@ export default function ConfirmWordPressSubdoamin( {
 		dispatch( fetchAutomatedTransferStatusOnce( siteId ) );
 		dispatch( requestEligibility( siteId ) );
 	}, [ siteId, dispatch ] );
-
-	const fetchingTransferStatus = !! useSelector( ( state: AppState ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
-	);
 
 	const wpcomDomain = useSelector( ( state: AppState ) => getSiteDomain( state, siteId ) );
 	const stagindDomaon = wpcomDomain?.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
