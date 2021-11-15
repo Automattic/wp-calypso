@@ -325,25 +325,6 @@ Undocumented.prototype.validateDomainContactInformation = function (
 };
 
 /**
- * Return a list of third-party services that WordPress.com can integrate with for a specific site
- *
- * @param {number|string} siteId The site ID or domain
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete
- */
-
-Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
-	debug( '/sites/:site-id:/external-services query' );
-	return this.wpcom.req.get(
-		{
-			path: '/sites/' + siteId + '/external-services',
-			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
-/**
  * Delete a site
  *
  * @param  {number|string} siteId The site ID or domain
