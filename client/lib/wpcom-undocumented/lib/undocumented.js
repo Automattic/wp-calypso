@@ -40,17 +40,6 @@ Undocumented.prototype.me = function () {
 };
 
 /**
- * Fetches plugin registration keys for WordPress.org sites with paid services
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.fetchJetpackKeys = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id:/keys query' );
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/keys' }, fn );
-};
-
-/**
  * Test if a Jetpack Site is connected to .com
  *
  * @param {number} [siteId] The site ID
