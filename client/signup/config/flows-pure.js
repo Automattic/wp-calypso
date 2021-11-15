@@ -275,7 +275,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'p2v2',
-			steps: [ 'user' ],
+			steps: [ 'p2-get-started', 'user' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'New P2 signup flow',
 			lastModified: '2021-11-15',
