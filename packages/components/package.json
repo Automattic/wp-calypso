@@ -32,7 +32,7 @@
 		"@babel/runtime": "^7.16.3",
 		"classnames": "^2.3.1",
 		"gridicons": "^3.4.0",
-		"i18n-calypso": "^5.0.0",
+		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
 		"prop-types": "^15.7.2",
 		"react-modal": "^3.14.3",
@@ -43,7 +43,7 @@
 		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-actions": "^6.3.12",
 		"@storybook/preset-scss": "^1.0.3",
 		"css-loader": "^3.6.0",

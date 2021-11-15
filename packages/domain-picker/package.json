@@ -31,10 +31,10 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
-		"@automattic/data-stores": "^2.0.0",
-		"@automattic/i18n-utils": "^1.0.0",
-		"@automattic/onboarding": "^1.0.0",
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/onboarding": "workspace:^",
 		"@wordpress/base-styles": "^4.0.0",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/compose": "^5.0.2",
@@ -47,7 +47,7 @@
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^5.15.0",
 		"@testing-library/react": "^12.1.2",
 		"react": "^17.0.2",

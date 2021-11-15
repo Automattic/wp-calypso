@@ -31,9 +31,9 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/calypso-config": "^1.0.0-alpha.0",
-		"@automattic/js-utils": "^0.1.0",
-		"@automattic/onboarding": "^1.0.0",
+		"@automattic/calypso-config": "workspace:^",
+		"@automattic/js-utils": "workspace:^",
+		"@automattic/onboarding": "workspace:^",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/react-i18n": "^3.0.1",
 		"@wordpress/url": "^3.2.2",
@@ -42,7 +42,7 @@
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^5.15.0",
 		"@testing-library/react": "^12.1.2",
 		"jest-canvas-mock": "^2.3.0",

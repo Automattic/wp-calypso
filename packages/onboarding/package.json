@@ -31,7 +31,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/data-stores": "^2.0.0",
+		"@automattic/data-stores": "workspace:^",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/data": "^6.1.0",
 		"@wordpress/icons": "^5.0.2",
@@ -41,8 +41,8 @@
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"@automattic/typography": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/typography": "workspace:^",
 		"@testing-library/react": "^12.1.2",
 		"@wordpress/base-styles": "^4.0.0",
 		"copyfiles": "^2.3.0",
