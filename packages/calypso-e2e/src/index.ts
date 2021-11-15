@@ -13,3 +13,4 @@ export * from './jest-conditionals';
 export * from './lib';
 export * from './hooks';
 export * from './email-client';
+export * from './totp-client';
