@@ -187,6 +187,7 @@ function WelcomeTour() {
 					[]
 				),
 			],
+			className: 'wpcom-editor-welcome-tour',
 		},
 	};
 
@@ -248,8 +249,9 @@ function FooTour() {
 		},
 		options: {
 			effects: {
-				arrowIndicator: false,
+				arrowIndicator: true,
 			},
+			className: 'foo-tour',
 		},
 	};
 

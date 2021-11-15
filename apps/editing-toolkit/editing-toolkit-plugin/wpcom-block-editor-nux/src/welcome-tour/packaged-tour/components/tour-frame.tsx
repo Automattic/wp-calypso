@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { useEffect, useRef, useState } from '@wordpress/element';
+import classnames from 'classnames';
 import { usePopper } from 'react-popper';
 /**
  * Internal Dependencies
@@ -123,6 +124,8 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		setTimeout( () => initialFocusedElement?.focus() );
 	}, [ initialFocusedElement ] );
 
+	const classNames = classnames( 'packaged-tour', config.options?.className );
+
 	return (
 		<>
 			<KeyboardNavigation
@@ -130,10 +133,10 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				onDismiss={ handleDismiss }
 				onNextStepProgression={ handleNextStepProgression }
 				onPreviousStepProgression={ handlePreviousStepProgression }
-				tourContainerRef={ tourContainerRef }
+				tourContainerRef={ tourContainerRef } // @todo clk rename: tourFrameRef
 				isMinimized={ isMinimized }
 			/>
-			<div className="packaged-tour__container" ref={ tourContainerRef }>
+			<div className={ classNames } ref={ tourContainerRef }>
 				{ showSpotlight() && <Spotlight referenceElementSelector={ referenceElementSelector } /> }
 				<div className="packaged-tour__frame" ref={ popperElementRef } { ...stepRepositionProps }>
 					{ showArrowIndicator() && (

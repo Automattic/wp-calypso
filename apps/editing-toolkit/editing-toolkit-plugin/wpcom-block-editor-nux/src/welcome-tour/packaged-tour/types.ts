@@ -29,5 +29,6 @@ export interface Config {
 			overlay?: boolean;
 		};
 		popperModifiers?: PopperModifier[];
+		className?: string;
 	};
 }
