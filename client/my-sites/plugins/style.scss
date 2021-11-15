@@ -16,7 +16,8 @@ body.is-section-plugins.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
 }
 
-.plugin__installed-on, .plugin-details__installed-on {
+.plugin__installed-on,
+.plugin-details__installed-on {
 	margin-bottom: 16px;
 }
 
@@ -178,17 +179,30 @@ $plugin-details-header-padding: 100px;
 	justify-content: center;
 	padding: $plugin-details-header-padding 0;
 
-	.plugin-details__name, .plugin-details__price {
+	.plugin-details__name,
+	.plugin-details__price,
+	.plugin-details__description,
+	.plugin-details__additional-info {
+		&.is-placeholder {
+			cursor: default;
+			color: transparent;
+			background-color: var( --color-neutral-0 );
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+	}
+
+	.plugin-details__name,
+	.plugin-details__price {
 		font-family: $brand-serif;
 		font-size: $font-title-large;
 		color: var( --studio-gray-100 );
-		padding: 16px 0;
+		margin: 16px 0;
 	}
 
 	.plugin-details__description {
 		font-size: $font-title-small;
 		color: var( --studio-gray-70 );
-		padding-bottom: 30px;
+		margin-bottom: 30px;
 	}
 
 	.plugin-details__additional-info {
@@ -225,7 +239,7 @@ $plugin-details-header-padding: 100px;
 			color: var( --studio-white );
 		}
 	}
-	
+
 	.plugin-details__t-and-c {
 		font-size: $font-body-extra-small;
 		color: var( --studio-gray-50 );
@@ -319,11 +333,11 @@ $plugin-details-header-padding: 100px;
 		.plugin-details__plugin-details-title {
 			display: block;
 		}
-		
+
 		.plugin-details__layout-col-left {
 			order: 2;
 		}
-		
+
 		.plugin-details__layout-col-right {
 			order: 1;
 			margin-top: 0;
