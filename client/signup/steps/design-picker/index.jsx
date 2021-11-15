@@ -1,4 +1,8 @@
-import DesignPicker, { isBlankCanvasDesign, getDesignUrl } from '@automattic/design-picker';
+import DesignPicker, {
+	isBlankCanvasDesign,
+	getDesignUrl,
+	useCategorySelection,
+} from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { useViewportMatch } from '@wordpress/compose';
@@ -6,7 +10,7 @@ import classnames from 'classnames';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { useEffect, useLayoutEffect, useState, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
@@ -66,7 +70,11 @@ export default function DesignPickerStep( props ) {
 
 	const userLoggedIn = useSelector( isUserLoggedIn );
 
-	const designs = useSelector( ( state ) => {
+	const apiThemes = useSelector( ( state ) =>
+		getRecommendedThemes( state, 'auto-loading-homepage' )
+	);
+
+	const designs = useMemo( () => {
 		if ( props.useDIFMThemes ) {
 			return DIFMThemes;
 		}
@@ -75,7 +83,7 @@ export default function DesignPickerStep( props ) {
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		const allThemes = getRecommendedThemes( state, 'auto-loading-homepage' )
+		const allThemes = apiThemes
 			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
 			.map( ( { id, name, taxonomies } ) => ( {
 				categories: taxonomies?.theme_subject ?? [],
@@ -96,12 +104,18 @@ export default function DesignPickerStep( props ) {
 		}
 
 		return [ allThemes[ 0 ], ...shuffle( allThemes.slice( 1 ) ) ];
-	} );
+	}, [ props.useDIFMThemes, apiThemes ] );
 
 	// Update the selected design when the section changes
 	useEffect( () => {
 		setSelectedDesign( designs.find( ( { theme } ) => theme === props.stepSectionName ) );
 	}, [ designs, props.stepSectionName, setSelectedDesign ] );
+
+	const [ selectedCategory, setSelectedCategory ] = useCategorySelection(
+		designs,
+		props.showDesignPickerCategoriesAllFilter,
+		props.signupDependencies.intent === 'write' ? 'blog' : null
+	);
 
 	function pickDesign( _selectedDesign ) {
 		// Design picker preview will submit the defaultDependencies via next button,
@@ -157,7 +171,8 @@ export default function DesignPickerStep( props ) {
 				} ) }
 				highResThumbnails
 				showCategoryFilter={ props.showDesignPickerCategories }
-				defaultCategorySelection={ props.signupDependencies.intent === 'write' ? 'blog' : null }
+				selectedCategory={ selectedCategory }
+				onSelectedCategoryChange={ setSelectedCategory }
 				showAllFilter={ props.showDesignPickerCategoriesAllFilter }
 				categoriesHeading={
 					<FormattedHeader
