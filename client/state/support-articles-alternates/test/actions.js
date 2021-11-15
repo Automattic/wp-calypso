@@ -9,16 +9,7 @@ import {
 	fetchAlternatesRequest,
 	fetchAlternatesRequestSuccess,
 	fetchAlternatesRequestFailure,
-	fetchAlternates,
 } from '../actions';
-
-const mockSupportAlternates = jest.fn( () => Promise.resolve() );
-
-jest.mock( 'calypso/lib/wp', () => ( {
-	undocumented: () => ( {
-		supportAlternates: mockSupportAlternates,
-	} ),
-} ) );
 
 describe( 'actions', () => {
 	describe( 'fetchAlternatesReceive()', () => {
@@ -59,19 +50,6 @@ describe( 'actions', () => {
 				type: SUPPORT_ARTICLE_ALTERNATES_REQUEST_FAILURE,
 				postKey: 'post-key',
 				error: {},
-			} );
-		} );
-	} );
-
-	describe( 'fetchAlternates()', () => {
-		test( 'should call support wpcom().undocumented().supportAlternates()', () => {
-			const postKey = { blogId: 1, postId: 1 };
-			const dispatchMock = jest.fn();
-			fetchAlternates( postKey )( dispatchMock );
-
-			expect( mockSupportAlternates ).toHaveBeenCalledWith( {
-				site: postKey.blogId,
-				postId: postKey.postId,
 			} );
 		} );
 	} );
