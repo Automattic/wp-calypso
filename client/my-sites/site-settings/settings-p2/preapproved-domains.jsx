@@ -190,7 +190,7 @@ const P2PreapprovedDomainsForm = ( {
 			/>
 			<Card>
 				<form>
-					<div className="settings-p2__preapproved-domains">
+					<div className="preapproved-domains__form">
 						<FormFieldset>
 							<ToggleControl
 								checked={ isToggledOn }
