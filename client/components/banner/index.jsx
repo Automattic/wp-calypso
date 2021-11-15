@@ -57,7 +57,7 @@ export class Banner extends Component {
 		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
-		title: PropTypes.string.isRequired,
+		title: PropTypes.node.isRequired,
 		tracksImpressionName: PropTypes.string,
 		tracksClickName: PropTypes.string,
 		tracksDismissName: PropTypes.string,
