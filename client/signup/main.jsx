@@ -115,7 +115,7 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function isP2Flow( flowName ) {
-	return flowName === 'p2' || flowName === 'p2v2';
+	return flowName === 'p2' || flowName === 'p2v1';
 }
 
 function showProgressIndicator( flowName ) {

@@ -266,15 +266,15 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'p2',
+			name: 'p2v1',
 			steps: [ 'p2-site', 'p2-details', 'user' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-			description: 'P2 signup flow',
+			description: 'Old P2 signup flow',
 			lastModified: '2020-09-01',
 			showRecaptcha: true,
 		},
 		{
-			name: 'p2v2',
+			name: 'p2',
 			steps: [ 'p2-get-started', 'user' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'New P2 signup flow',
