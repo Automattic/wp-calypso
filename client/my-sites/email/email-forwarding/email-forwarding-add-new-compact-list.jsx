@@ -67,7 +67,7 @@ class EmailForwardingAddNewCompactList extends Component {
 				selectedSiteSlug
 			);
 		} );
-		this.state.newForwardAdded = true;
+		this.setState( { newForwardAdded: true } );
 	};
 
 	onForwardAdd = () => {
