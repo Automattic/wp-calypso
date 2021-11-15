@@ -11,11 +11,7 @@ function range( start, end ) {
 		return range( end, start ).reverse();
 	}
 	const length = end - start + 1;
-	const result = Array( length );
-	for ( let i = 0; i < length; i++ ) {
-		result[ i ] = start + i;
-	}
-	return result;
+	return Array.from( { length }, ( _, i ) => i + start );
 }
 
 export default class VirtualList extends Component {
