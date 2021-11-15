@@ -46,7 +46,7 @@ const P2PreapprovedDomainsForm = ( {
 		if ( fields.p2_preapproved_domains.length > 0 ) {
 			setIsToggledOn( true );
 		}
-	} );
+	}, [ fields ] );
 
 	if ( ! isWPForTeamsSite || ! isP2HubSite ) {
 		return <></>;
