@@ -171,7 +171,7 @@ const P2PreapprovedDomainsForm = ( {
 		return tokens;
 	};
 
-	const classes = classNames( 'site-settings__p2-preapproved-domains', {
+	const classes = classNames( 'p2-preapproved-domains', {
 		'is-loading': isRequestingSettings,
 	} );
 
