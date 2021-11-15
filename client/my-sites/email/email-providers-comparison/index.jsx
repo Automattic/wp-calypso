@@ -310,7 +310,7 @@ class EmailProvidersComparison extends Component {
 			} );
 	};
 
-	onSuccessAddForwarding = () => {
+	onAddForwardSuccess = () => {
 		const { domain, getSiteDomains, requestingSiteDomains, selectedSite } = this.props;
 		if ( ! requestingSiteDomains ) {
 			getSiteDomains( selectedSite.ID );
@@ -329,7 +329,7 @@ class EmailProvidersComparison extends Component {
 			<EmailForwardingAddNewCompactList
 				selectedDomainName={ selectedDomainName }
 				onConfirmEmailForwarding={ this.onForwardingConfirmNewMailboxes }
-				onSuccessAddForwarding={ this.onSuccessAddForwarding }
+				onAddForwardSuccess={ this.onAddForwardSuccess }
 			/>
 		);
 

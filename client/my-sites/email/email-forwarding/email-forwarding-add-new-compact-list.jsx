@@ -22,7 +22,7 @@ class EmailForwardingAddNewCompactList extends Component {
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number,
 		onConfirmEmailForwarding: PropTypes.func.isRequired,
-		onSuccessAddForwarding: PropTypes.func,
+		onAddForwardSuccess: PropTypes.func,
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
@@ -110,17 +110,17 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { emailForwardSuccess, onSuccessAddForwarding } = this.props;
+		const { emailForwardSuccess, onAddForwardSuccess } = this.props;
 
 		const { newForwardAdded } = this.state;
 
 		if (
 			emailForwardSuccess &&
-			onSuccessAddForwarding &&
+			onAddForwardSuccess &&
 			newForwardAdded &&
 			prevProps.emailForwardSuccess !== emailForwardSuccess
 		) {
-			onSuccessAddForwarding();
+			onAddForwardSuccess();
 		}
 	}
 
