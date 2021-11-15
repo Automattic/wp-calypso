@@ -262,7 +262,7 @@ describeSkipNoTranslations(
 			gutenbergEditorPage = new GutenbergEditorPage( page );
 		} );
 
-		describeSkipNoTranslations.each( translations.fr.blocks || [] )(
+		describeSkipNoTranslations.each( localeTranslations.blocks )(
 			'Translations for block: $blockName',
 			( block ) => {
 				let frame: Frame;
