@@ -5,7 +5,7 @@ import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import classNames from 'classnames';
-import { flowRight, includes, pickBy, filter } from 'lodash';
+import { includes, pickBy, filter } from 'lodash';
 import { useSelector } from 'react-redux';
 /**
  * Internal Dependencies
@@ -253,4 +253,4 @@ const getFormSettings = ( settings ) => {
 	return formSettings;
 };
 
-export default flowRight( wrapSettingsForm( getFormSettings ) )( P2PreapprovedDomainsForm );
+export default wrapSettingsForm( getFormSettings )( P2PreapprovedDomainsForm );
