@@ -17,10 +17,10 @@
 			display: flex;
 			flex-direction: column;
 			padding: 20px;
-			padding-top: 15px;
+			padding-top: 21px;
 
 			ul {
-				margin: 40px 0 0;
+				margin: 38px 0 0;
 			}
 
 			li {
@@ -33,7 +33,7 @@
 				@include onboarding-font-recoleta;
 				font-size: $font-headline-small;
 				letter-spacing: 0;
-				height: 40px;
+				line-height: 1.1;
 
 				&:first-child {
 					color: rgba( 255, 255, 255, 0.5 );
@@ -187,12 +187,10 @@
 
 				.videos-ui__titles {
 					flex-basis: auto;
-					width: 65.5%;
 				}
 
 				.videos-ui__summary {
 					flex-basis: auto;
-					width: 31%;
 					padding-top: 16px;
 				}
 
