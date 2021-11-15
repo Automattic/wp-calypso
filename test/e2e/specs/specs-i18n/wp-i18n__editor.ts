@@ -14,16 +14,21 @@ import {
 import { Page, Frame } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
+interface TranslationsBlock {
+	blockName: string;
+	blockEditorSelector: string;
+	blockEditorContent: string[];
+	blockPanelTitle: string;
+}
+
 type Translations = {
 	[ language in LanguageSlug ]?: Partial< {
-		blocks: {
-			blockName: string;
-			blockEditorSelector: string;
-			blockEditorContent: string[];
-			blockPanelTitle: string;
-		}[];
+		blocks: TranslationsBlock[];
 	} >;
 };
+
+const EMPTY_TRANSLATIONS_BLOCKS = [ {} as TranslationsBlock ];
+
 const translations: Translations = {
 	en: {
 		blocks: [
@@ -262,7 +267,7 @@ describeSkipNoTranslations(
 			gutenbergEditorPage = new GutenbergEditorPage( page );
 		} );
 
-		describeSkipNoTranslations.each( localeTranslations.blocks )(
+		describeSkipNoTranslations.each( localeTranslations?.blocks || EMPTY_TRANSLATIONS_BLOCKS )(
 			'Translations for block: $blockName',
 			( block ) => {
 				let frame: Frame;
