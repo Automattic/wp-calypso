@@ -18,11 +18,13 @@ import './style.scss';
 const CRM_FREE_URL =
 	'https://jetpackcrm.com/pricing?utm_source=jetpack&utm_medium=web&utm_campaign=pricing_i4&utm_content=pricing';
 
-const useCrmFreeItem = () => {
+const useCrmFreeItem = ( duration: Duration ) => {
 	const translate = useTranslate();
 
 	return useMemo(
 		() => ( {
+			productSlug:
+				duration === TERM_MONTHLY ? PRODUCT_JETPACK_CRM_FREE_MONTHLY : PRODUCT_JETPACK_CRM_FREE,
 			isFree: true,
 			displayName: translate( 'Jetpack CRM' ),
 			features: {
@@ -33,7 +35,7 @@ const useCrmFreeItem = () => {
 				],
 			},
 		} ),
-		[ translate ]
+		[ duration, translate ]
 	);
 };
 
@@ -44,12 +46,7 @@ export type CardWithPriceProps = {
 
 const CardWithPrice: React.FC< CardWithPriceProps > = ( { duration, siteId } ) => {
 	const translate = useTranslate();
-	const crmFreeProduct = useCrmFreeItem();
-	const slug = useMemo(
-		() =>
-			duration === TERM_MONTHLY ? PRODUCT_JETPACK_CRM_FREE_MONTHLY : PRODUCT_JETPACK_CRM_FREE,
-		[ duration ]
-	);
+	const crmFreeProduct = useCrmFreeItem( duration );
 
 	const dispatch = useDispatch();
 	const trackCallback = useCallback(
@@ -63,9 +60,9 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { duration, siteId } ) =
 	);
 
 	const onButtonClick = useCallback( () => {
-		storePlan( slug );
+		storePlan( crmFreeProduct.productSlug );
 		trackCallback();
-	}, [ slug, trackCallback ] );
+	}, [ crmFreeProduct, trackCallback ] );
 
 	return (
 		<JetpackProductCard
