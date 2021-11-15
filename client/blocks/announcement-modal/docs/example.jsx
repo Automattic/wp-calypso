@@ -1,23 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlaceholderImage from 'calypso/assets/images/marketplace/plugins-revamp.png';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import Button from 'calypso/components/forms/form-button';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
 const AnnouncementModalExample = () => {
-	const announcementId = 'announcement-modal-example';
-	const [ show, setShow ] = useState( false );
 	const dispatch = useDispatch();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
+	const announcementId = 'example';
 	const dismissPreference = `announcement-modal-${ announcementId }-${ userId }`;
+	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
+	const [ show, setShow ] = useState( false );
 
-	if ( ! hasPreferences ) {
-		return null;
-	}
+	useEffect( () => {
+		if ( ! hasPreferences ) {
+			return;
+		}
+
+		if ( isDismissed ) {
+			// Override the dismissing mechanism of the AnnouncementModal and just utilize useState here.
+			dispatch( savePreference( dismissPreference, 0 ) );
+			setShow( false );
+		}
+	}, [ isDismissed, hasPreferences, dismissPreference, dispatch ] );
 
 	const pages = [
 		{
@@ -28,26 +37,19 @@ const AnnouncementModalExample = () => {
 		},
 	];
 
-	const TriggerButton = () => (
-		<Button onClick={ () => dispatch( savePreference( dismissPreference, 0 ) ) && setShow( true ) }>
-			Show
-		</Button>
-	);
-
-	if ( show ) {
-		return (
-			<>
-				{ TriggerButton() }
+	const TriggerButton = () => <Button onClick={ () => setShow( true ) }>Show</Button>;
+	return (
+		<>
+			<TriggerButton />
+			{ show && (
 				<AnnouncementModal
 					announcementId={ announcementId }
 					pages={ pages }
 					finishButtonText="Close"
 				/>
-			</>
-		);
-	}
-
-	return TriggerButton();
+			) }
+		</>
+	);
 };
 
 AnnouncementModalExample.displayName = 'AnnouncementModal';
