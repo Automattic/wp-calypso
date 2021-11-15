@@ -181,6 +181,7 @@
 		"setup-site",
 		"do-it-for-me",
 		"importer",
+		"from",
 		"woocommerce-install"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
