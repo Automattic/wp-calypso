@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
@@ -71,6 +72,7 @@ const PostPublishedModal: React.FC = () => {
 				</Button>
 			}
 			onRequestClose={ closeModal }
+			onOpen={ () => recordTracksEvent( 'calypso_editor_wpcom_first_post_published_modal_show' ) }
 		/>
 	);
 };
