@@ -12,7 +12,6 @@ export { getProductTermVariants } from './get-product-term-variants';
 export { getProductYearlyVariant } from './get-product-yearly-variant';
 export { getProductFromSlug } from './get-product-from-slug';
 export { getProductsSlugs } from './get-products-slugs';
-export { includesProduct } from './includes-product';
 export { isBiennially } from './is-biennially';
 export { isBlogger } from './is-blogger';
 export { isBundled } from './is-bundled';
