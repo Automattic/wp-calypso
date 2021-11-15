@@ -15,6 +15,8 @@ import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import MainComponent from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { userCan } from 'calypso/lib/site/utils';
@@ -43,9 +45,10 @@ import {
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import {
-	isJetpackSite as checkJetpackSite,
+	isJetpackSite,
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -58,17 +61,18 @@ function PluginDetails( props ) {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
-	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
+	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+	const isRequestingSites = useSelector( checkRequestingSites );
+	const requestingPluginsForSites = useSelector( ( state ) =>
+		isRequestingForSites( state, siteIds )
+	);
+	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
 	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, props.pluginSlug ) );
 	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
 	const isFetched = useSelector( ( state ) => isWporgPluginFetched( state, props.pluginSlug ) );
-	const isJetpackSite = useSelector( ( state ) => checkJetpackSite( state, selectedSite?.ID ) );
-	const isRequestingSites = useSelector( checkRequestingSites );
-	const requestingPluginsForSites = useSelector( ( state ) =>
-		isRequestingForSites( state, siteIds )
-	);
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
@@ -78,11 +82,14 @@ function PluginDetails( props ) {
 			: canCurrentUserManagePlugins( state )
 	);
 
-	const isWpcom = selectedSite && ! isJetpackSite;
-	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
-
 	const isPluginInstalledOnsite =
 		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
+
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
+	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
+	const isWpcom = selectedSite && ! isJetpack;
+	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 
 	const fullPlugin = {
 		...plugin,
@@ -175,7 +182,8 @@ function PluginDetails( props ) {
 								'no-cta ': ! shouldDisplayCTA(
 									selectedSite,
 									props.pluginSlug,
-									isPluginInstalledOnsite
+									isPluginInstalledOnsite,
+									isJetpackSelfHosted
 								),
 							}
 						) }
@@ -222,7 +230,8 @@ function PluginDetails( props ) {
 								'no-cta': ! shouldDisplayCTA(
 									selectedSite,
 									props.pluginSlug,
-									isPluginInstalledOnsite
+									isPluginInstalledOnsite,
+									isJetpackSelfHosted
 								),
 							}
 						) }
@@ -233,6 +242,10 @@ function PluginDetails( props ) {
 								<CTA
 									slug={ props.pluginSlug }
 									isPluginInstalledOnsite={ isPluginInstalledOnsite }
+									isJetpackSelfHosted={ isJetpackSelfHosted }
+									selectedSite={ selectedSite }
+									isJetpack={ isJetpack }
+									isVip={ isVip }
 								/>
 							</div>
 							<div className="plugin-details__t-and-c">
@@ -243,6 +256,20 @@ function PluginDetails( props ) {
 						</div>
 					</div>
 				</div>
+
+				{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
+					<Notice
+						text={ translate(
+							'Incompatible plugin: This plugin is not supported on WordPress.com.'
+						) }
+						status="is-warning"
+						showDismiss={ false }
+					>
+						<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+							{ translate( 'More info' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 
 				<SitesList
 					fullPlugin={ fullPlugin }
@@ -291,23 +318,32 @@ function PluginDetails( props ) {
 	);
 }
 
-function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) {
-	return (
-		isPluginInstalledOnsite === false &&
-		selectedSite &&
-		userCan( 'manage_options', selectedSite ) &&
-		isCompatiblePlugin( slug )
-	);
+function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpackSelfHosted ) {
+	if ( ! isJetpackSelfHosted && ! isCompatiblePlugin( slug ) ) {
+		// Check for WordPress.com compatibility.
+		return false;
+	}
+
+	if ( ! selectedSite || ! userCan( 'manage_options', selectedSite ) ) {
+		// Check if user can manage plugins.
+		return false;
+	}
+
+	return ! isPluginInstalledOnsite;
 }
 
-function CTA( { slug, isPluginInstalledOnsite } ) {
+function CTA( {
+	slug,
+	isPluginInstalledOnsite,
+	isJetpackSelfHosted,
+	selectedSite,
+	isJetpack,
+	isVip,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const isJetpack = useSelector( ( state ) => checkJetpackSite( state, selectedSite?.ID ) );
-	const isVipSite = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
 
-	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) ) {
+	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpackSelfHosted ) ) {
 		return null;
 	}
 
@@ -316,7 +352,7 @@ function CTA( { slug, isPluginInstalledOnsite } ) {
 		isEnterprise( selectedSite.plan ) ||
 		isWpComEcommercePlan( selectedSite.plan ) ||
 		isJetpack ||
-		isVipSite
+		isVip
 	);
 	return (
 		<Button
