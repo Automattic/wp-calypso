@@ -5,14 +5,12 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState, ReactNode } from 'react';
-import { SHOW_ALL_SLUG } from '../constants';
+import { useCategorization } from '../hooks/use-categorization';
 import {
 	getAvailableDesigns,
 	getDesignUrl,
 	mShotOptions,
 	isBlankCanvasDesign,
-	gatherCategories,
 	filterDesignsByCategory,
 	sortDesigns,
 } from '../utils';
@@ -207,7 +205,7 @@ export interface DesignPickerProps {
 	highResThumbnails?: boolean;
 	showCategoryFilter?: boolean;
 	showAllFilter?: boolean;
-	categoriesHeading?: ReactNode;
+	categoriesHeading?: React.ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -226,28 +224,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	showAllFilter = false,
 	categoriesHeading,
 } ) => {
-	const { __ } = useI18n();
-
-	const categories = gatherCategories( designs );
-	if ( showAllFilter && designs.length ) {
-		categories.push( {
-			name: __( 'Show All', __i18n_text_domain__ ),
-			slug: SHOW_ALL_SLUG,
-		} );
-	}
-	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
-		categories[ 0 ]?.slug ?? null
+	const [ categories, selectedCategory, setSelectedCategory ] = useCategorization(
+		designs,
+		showAllFilter
 	);
-
-	useEffect( () => {
-		// When the category list changes check that the current selection
-		// still matches one of the given slugs, and if it doesn't reset
-		// the current selection.
-		const findResult = categories.find( ( { slug } ) => slug === selectedCategory );
-		if ( ! findResult ) {
-			setSelectedCategory( categories[ 0 ]?.slug ?? null );
-		}
-	}, [ categories, selectedCategory ] );
 
 	const filteredDesigns = ! showCategoryFilter
 		? designs
