@@ -244,18 +244,6 @@ Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
 	);
 };
 
-Undocumented.prototype.getDomainRegistrationSupportedStates = function ( countryCode, fn ) {
-	debug( '/domains/supported-states/ query' );
-
-	return this._sendRequest(
-		{
-			path: '/domains/supported-states/' + countryCode,
-			method: 'get',
-		},
-		fn
-	);
-};
-
 function mapKeysRecursively( object, fn ) {
 	return Object.keys( object ).reduce( function ( mapped, key ) {
 		let value = object[ key ];
