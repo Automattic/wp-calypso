@@ -171,12 +171,12 @@ const P2PreapprovedDomainsForm = ( {
 		return tokens;
 	};
 
-	const classes = classNames( 'p2-preapproved-domains', {
-		'is-loading': isRequestingSettings,
-	} );
-
 	return (
-		<div className={ classNames( classes ) }>
+		<div
+			className={ classNames( 'p2-preapproved-domains', {
+				'is-loading': isRequestingSettings,
+			} ) }
+		>
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 
 			<SettingsSectionHeader
