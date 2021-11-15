@@ -41,20 +41,6 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 			} ),
 		},
 		{
-			name: 'uploads',
-			label: translate(
-				'{{strong}}Media Uploads{{/strong}} (check {{em}}Site database{{/em}} to ensure uploads are visible in the restored site)',
-				{
-					components: {
-						strong: <strong />,
-						em: <em />,
-					},
-					comment:
-						'"Site database" is another item of the list, at the same level as "Media Uploads"',
-				}
-			),
-		},
-		{
 			name: 'roots',
 			label: translate(
 				'{{strong}}WordPress root{{/strong}} (includes wp-config php and any non WordPress files)',
@@ -83,6 +69,20 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 					strong: <strong />,
 				},
 			} ),
+		},
+		{
+			name: 'uploads',
+			label: translate(
+				'{{strong}}Media Uploads{{/strong}} (you must also select {{em}}Site database{{/em}} for restored media uploads to appear)',
+				{
+					components: {
+						strong: <strong />,
+						em: <em />,
+					},
+					comment:
+						'"Site database" is another item of the list, at the same level as "Media Uploads"',
+				}
+			),
 		},
 	];
 
