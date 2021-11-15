@@ -72,20 +72,6 @@ Undocumented.prototype.jetpackAuthorize = function (
 	return this.wpcom.req.post( { path: endpointUrl }, params );
 };
 
-Undocumented.prototype.jetpackValidateSSONonce = function ( siteId, ssoNonce, fn ) {
-	debug( '/jetpack-blogs/:site_id:/sso-validate query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-validate';
-	const params = { sso_nonce: ssoNonce };
-	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
-};
-
-Undocumented.prototype.jetpackAuthorizeSSONonce = function ( siteId, ssoNonce, fn ) {
-	debug( '/jetpack-blogs/:site_id:/sso-authorize query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-authorize';
-	const params = { sso_nonce: ssoNonce };
-	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
-};
-
 Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
 	debug( '/sites/:site_id:/jetpack-connect/is-user-connected query' );
 	const endpointUrl = '/sites/' + siteId + '/jetpack-connect/is-user-connected';
