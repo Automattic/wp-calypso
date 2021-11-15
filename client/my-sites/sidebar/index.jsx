@@ -16,6 +16,7 @@ import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import Sidebar from 'calypso/layout/sidebar';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -56,7 +57,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -1102,7 +1102,10 @@ export class MySitesSidebar extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
+function mapStateToProps( state, props ) {
+	const { blockEditorSettings } = props;
+
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 	const currentUser = getCurrentUser( state );
 	const currentRoute = getCurrentRoute( state );
 
@@ -1157,12 +1160,8 @@ function mapStateToProps( state ) {
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
-		showCustomizerLink:
-			! (
-				isSiteUsingFullSiteEditing( state, selectedSiteId ) ||
-				isSiteUsingCoreSiteEditor( state, selectedSiteId )
-			) && siteId,
-		showSiteEditor: isSiteUsingCoreSiteEditor( state, selectedSiteId ),
+		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ) && siteId,
+		showSiteEditor: isFSEActive,
 		siteEditorUrl: getSiteEditorUrl( state, selectedSiteId ),
 		siteId,
 		site,
@@ -1187,7 +1186,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, {
+const ConnectedMySitesSidebar = connect( mapStateToProps, {
 	recordGoogleEvent,
 	recordTracksEvent,
 	setLayoutFocus,
@@ -1196,3 +1195,5 @@ export default connect( mapStateToProps, {
 	expandSection,
 	toggleSection,
 } )( localize( MySitesSidebar ) );
+
+export default withBlockEditorSettings( ConnectedMySitesSidebar );
