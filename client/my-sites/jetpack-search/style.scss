@@ -1,12 +1,25 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.jetpack-search .formatted-header.is-left-align {
+	margin-top: 20px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 4px;
+		margin-bottom: 18px;
+	}
+}
+
 .jetpack-search__placeholder {
-	.action-panel__title, .jetpack-search__content-body-text, .promo-card__cta-button, .upsell__header-text, .upsell__body-text {
+	.jetpack-search__header,
+	.jetpack-search__content p,
+	.jetpack-search__button,
+	.upsell__header-text,
+	.upsell__body-text {
 		@include placeholder( --color-neutral-10 );
 	}
 
-	.promo-card__cta-button {
+	.jetpack-search__button {
 		border: 0;
 
 		&:hover {
@@ -26,13 +39,56 @@
 }
 
 .jetpack-search__logo {
+	text-align: center;
 
-	@include break-xlarge() {
-		margin-right: 48px;
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: left;
 	}
-	
+
 	img {
 		height: 72px;
 		width: auto;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-left: -14px;
+		}
+	}
+}
+
+.jetpack-search__header {
+	color: var( --studio-black );
+	font-size: $font-title-medium;
+	font-weight: 600;
+	line-height: 1;
+	margin: 16px 0;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-headline-small;
+		margin: 20px 0 24px;
+	}
+}
+
+.jetpack-search__content {
+	flex: 1 0 auto;
+
+	p {
+		font-size: $font-body;
+		margin-bottom: 16px;
+		line-height: 24px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-bottom: 24px;
+		}
+	}
+}
+
+.jetpack-search__button {
+	margin: 16px 0;
+	width: 100%;
+	text-align: center;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		width: auto;
+		text-align: left;
 	}
 }
