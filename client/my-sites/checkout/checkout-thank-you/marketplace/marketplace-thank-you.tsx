@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/success.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import { ThankYou } from 'calypso/components/thank-you';
+import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -21,6 +22,10 @@ const ThankYouContainer = styled.div`
 			height: auto;
 		}
 	}
+`;
+
+const WordPressWordmarkStyled = styled( WordPressWordmark )`
+	align-self: center;
 `;
 
 const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
@@ -84,6 +89,7 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 					tooltip={ translate( 'Go to home' ) }
 					tipTarget="close"
 				/>
+				<WordPressWordmarkStyled />
 			</Masterbar>
 			<ThankYouContainer>
 				<ThankYou
