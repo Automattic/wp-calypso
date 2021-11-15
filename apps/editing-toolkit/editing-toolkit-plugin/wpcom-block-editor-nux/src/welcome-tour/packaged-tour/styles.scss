@@ -1,5 +1,5 @@
 .packaged-tour__frame {
-	border-radius: 4px;
+	border-radius: 2px;
 	bottom: 44px;
 	display: inline;
 	left: 16px;
@@ -7,7 +7,7 @@
 	z-index: 9999;
 	// Avoid the text cursor when the text is not selectable
 	cursor: default;
-    box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.1);
 }
 
 .packaged-tour__spotlight-overlay {
@@ -58,16 +58,28 @@
 
 .packaged-tour__frame[data-popper-placement^='top'] > .packaged-tour__arrow {
     bottom: -8px;
+    &::before {
+        box-shadow: 1px 1px 2px -1px rgb(0 0 0 / 10%);
+    }
 }
 
 .packaged-tour__frame[data-popper-placement^='bottom'] > .packaged-tour__arrow {
     top: -8px;
+    &::before {
+        box-shadow: -1px -1px 2px -1px rgb(0 0 0 / 10%);
+    }
 }
 
 .packaged-tour__frame[data-popper-placement^='left'] > .packaged-tour__arrow {
     right: -8px;
+    &::before {
+        box-shadow: -1px 1px 2px -1px rgb(0 0 0 / 10%);
+    }
 }
 
 .packaged-tour__frame[data-popper-placement^='right'] > .packaged-tour__arrow {
     left: -8px;
+    &::before {
+        box-shadow: 1px -1px 2px -1px rgb(0 0 0 / 10%);
+    }
 }
