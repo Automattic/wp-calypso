@@ -5,6 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useMemo } from 'react';
 import { useCategorization } from '../hooks/use-categorization';
 import {
 	getAvailableDesigns,
@@ -230,11 +231,14 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 } ) => {
 	const categories = useCategorization( designs, showAllFilter );
 
-	const filteredDesigns = ! showCategoryFilter
-		? designs
-		: filterDesignsByCategory( designs, selectedCategory );
+	const filteredDesigns = useMemo( () => {
+		const result = ! showCategoryFilter
+			? designs.slice() // cloning because otherwise .sort() would mutate the original prop
+			: filterDesignsByCategory( designs, selectedCategory );
 
-	filteredDesigns.sort( sortDesigns );
+		result.sort( sortDesigns );
+		return result;
+	}, [ designs, selectedCategory, showCategoryFilter ] );
 
 	return (
 		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
