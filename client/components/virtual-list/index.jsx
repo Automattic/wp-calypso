@@ -1,13 +1,20 @@
 import { AutoSizer, List } from '@automattic/react-virtualized';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { debounce, range } from 'lodash';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import { cloneElement, Component } from 'react';
+import { cloneElement, createRef, Component } from 'react';
 
 const noop = () => {};
 
-export class VirtualList extends Component {
+function range( start, end ) {
+	if ( end < start ) {
+		return range( end, start ).reverse();
+	}
+	const length = end - start + 1;
+	return Array.from( { length }, ( _, i ) => i + start );
+}
+
+export default class VirtualList extends Component {
 	static propTypes = {
 		items: PropTypes.array,
 		lastPage: PropTypes.number,
@@ -34,21 +41,17 @@ export class VirtualList extends Component {
 		query: {},
 	};
 
-	state = {};
+	rowHeights = {};
+	listRef = createRef();
 
-	UNSAFE_componentWillMount() {
-		this.rowHeights = {};
-		this.list = null;
-
-		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
-	}
+	queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
 
 	componentDidUpdate( prevProps ) {
 		const forceUpdate =
 			( prevProps.loading && ! this.props.loading ) || ( ! prevProps.items && this.props.items );
 
 		if ( forceUpdate ) {
-			this.list.forceUpdateGrid();
+			this.listRef.current.forceUpdateGrid();
 		}
 
 		if ( this.props.items !== prevProps.items ) {
@@ -57,11 +60,7 @@ export class VirtualList extends Component {
 	}
 
 	recomputeRowHeights() {
-		if ( ! this.list ) {
-			return;
-		}
-
-		this.list.recomputeRowHeights();
+		this.listRef.current?.recomputeRowHeights();
 	}
 
 	getPageForIndex( index ) {
@@ -76,7 +75,7 @@ export class VirtualList extends Component {
 		const { loadOffset, onRequestPages } = this.props;
 		const pagesToRequest = range(
 			this.getPageForIndex( startIndex - loadOffset ),
-			this.getPageForIndex( stopIndex + loadOffset ) + 1
+			this.getPageForIndex( stopIndex + loadOffset )
 		);
 
 		if ( ! pagesToRequest.length ) {
@@ -114,10 +113,6 @@ export class VirtualList extends Component {
 		return count;
 	}
 
-	setListRef = ( ref ) => {
-		this.list = ref;
-	};
-
 	renderNoResults = () => {
 		if ( this.hasNoRows() ) {
 			return (
@@ -128,7 +123,7 @@ export class VirtualList extends Component {
 		}
 	};
 
-	setRowRef = ( index, rowRef ) => {
+	setRowRef = ( index ) => ( rowRef ) => {
 		if ( ! rowRef ) {
 			return;
 		}
@@ -151,8 +146,7 @@ export class VirtualList extends Component {
 		if ( ! element ) {
 			return element;
 		}
-		const setRowRef = ( ...args ) => this.setRowRef( props.index, ...args );
-		return cloneElement( element, { ref: setRowRef } );
+		return cloneElement( element, { ref: this.setRowRef( props.index ) } );
 	};
 
 	cellRendererWrapper = ( { key, style, ...rest } ) => {
@@ -175,7 +169,7 @@ export class VirtualList extends Component {
 				{ ( { width } ) => (
 					<div className={ classes }>
 						<List
-							ref={ this.setListRef }
+							ref={ this.listRef }
 							onRowsRendered={ this.setRequestedPages }
 							rowCount={ rowCount }
 							estimatedRowSize={ defaultRowHeight }
@@ -194,5 +188,3 @@ export class VirtualList extends Component {
 		);
 	}
 }
-
-export default localize( VirtualList );
