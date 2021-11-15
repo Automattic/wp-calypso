@@ -3,13 +3,15 @@ import {
 	isWpComEcommercePlan,
 	isEnterprise,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -28,6 +30,10 @@ import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'calypso/state/automated-transfer/selectors';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -59,6 +65,7 @@ function PluginDetails( props ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
+	// Site information.
 	const selectedSite = useSelector( getSelectedSite );
 	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -69,6 +76,7 @@ function PluginDetails( props ) {
 	);
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
+	// Plugin information.
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
 	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, props.pluginSlug ) );
 	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
@@ -85,11 +93,22 @@ function PluginDetails( props ) {
 	const isPluginInstalledOnsite =
 		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
 
+	// Site type.
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+
+	// Eligibilities for Simple Sites.
+	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
+		getEligibility( state, selectedSite?.ID )
+	);
+	const isEligible = useSelector( ( state ) =>
+		isEligibleForAutomatedTransfer( state, selectedSite?.ID )
+	);
+	const hasEligibilityMessages =
+		! isJetpack && ( eligibilityHolds || eligibilityWarnings || isEligible );
 
 	const fullPlugin = {
 		...plugin,
@@ -165,6 +184,7 @@ function PluginDetails( props ) {
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<SidebarNavigation />
+			<QueryEligibility siteId={ selectedSite?.ID } />
 			<FixedNavigationHeader navigationItems={ getNavigationItems() } />
 			<PluginNotices
 				pluginId={ fullPlugin.id }
@@ -246,6 +266,7 @@ function PluginDetails( props ) {
 									selectedSite={ selectedSite }
 									isJetpack={ isJetpack }
 									isVip={ isVip }
+									hasEligibilityMessages={ hasEligibilityMessages }
 								/>
 							</div>
 							<div className="plugin-details__t-and-c">
@@ -339,9 +360,11 @@ function CTA( {
 	selectedSite,
 	isJetpack,
 	isVip,
+	hasEligibilityMessages,
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const [ showEligibility, setShowEligibility ] = useState( false );
 
 	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpackSelfHosted ) ) {
 		return null;
@@ -354,20 +377,43 @@ function CTA( {
 		isJetpack ||
 		isVip
 	);
+
 	return (
-		<Button
-			className="plugin-details__install-button"
-			onClick={ () =>
-				onClickInstallPlugin( {
-					dispatch,
-					selectedSite,
-					slug,
-					upgradeAndInstall: shouldUpgrade,
-				} )
-			}
-		>
-			{ shouldUpgrade ? translate( 'Upgrade and install' ) : translate( 'Install and activate' ) }
-		</Button>
+		<>
+			<Dialog
+				isVisible={ showEligibility }
+				title="Eligibility"
+				onClose={ () => setShowEligibility( false ) }
+			>
+				<EligibilityWarnings
+					standaloneProceed
+					onProceed={ () =>
+						onClickInstallPlugin( {
+							dispatch,
+							selectedSite,
+							slug,
+							upgradeAndInstall: shouldUpgrade,
+						} )
+					}
+				/>
+			</Dialog>
+			<Button
+				className="plugin-details__install-button"
+				onClick={ () => {
+					if ( hasEligibilityMessages ) {
+						return setShowEligibility( true );
+					}
+					onClickInstallPlugin( {
+						dispatch,
+						selectedSite,
+						slug,
+						upgradeAndInstall: shouldUpgrade,
+					} );
+				} }
+			>
+				{ shouldUpgrade ? translate( 'Upgrade and install' ) : translate( 'Install and activate' ) }
+			</Button>
+		</>
 	);
 }
 
