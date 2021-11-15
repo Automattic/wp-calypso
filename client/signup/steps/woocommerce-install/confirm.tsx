@@ -50,8 +50,17 @@ export default function Confirm( { goToStep }: Props ): ReactElement | null {
 		setLoading( false );
 	}, [ fetchingTransferStatus ] );
 
-	const { eligibilityHolds, eligibilityWarnings }: EligibilityData = useSelector( ( state ) =>
-		getEligibility( state, siteId )
+	const {
+		eligibilityHolds,
+		eligibilityWarnings: allEligibilityWarnings,
+	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
+
+	/*
+	 * Clean wpcom subdomain from eligibility warnings array.
+	 * It's handled in the `woocommerce-install-confirm-wordpress-subdomain` step.
+	 */
+	const eligibilityWarnings = allEligibilityWarnings?.filter(
+		( { id } ) => id !== 'wordpress_subdomain'
 	);
 
 	return (
