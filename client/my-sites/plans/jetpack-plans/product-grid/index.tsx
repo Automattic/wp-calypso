@@ -1,6 +1,4 @@
 import {
-	PLAN_JETPACK_FREE,
-	JETPACK_CRM_FREE_PRODUCTS,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
@@ -11,7 +9,6 @@ import {
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState, useEffect } from 'react';
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -125,10 +122,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, currentPlanSlug, translate ] );
 
 	const { shouldWrap: shouldWrapGrid, gridRef } = useWrapGridForSmallScreens( 3 );
-	const {
-		shouldWrap: shouldWrapOtherItems,
-		gridRef: otherItemsGridRef,
-	} = useWrapGridForSmallScreens( 3 );
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
 	);
@@ -179,55 +172,19 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		],
 	} ) ?? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
 
-	const getJetpackFreeCard = () => {
-		if ( ! showFreeCard ) {
-			return undefined;
-		}
-
-		return (
-			<div
-				className={ classNames( 'product-grid__free', {
-					[ 'horizontal-layout' ]: ! shouldWrapOtherItems,
-				} ) }
-			>
-				<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-			</div>
-		);
-	};
-
-	const getOtherItemsProductCard = ( product: SelectorProduct ) => {
-		if ( PLAN_JETPACK_FREE === product.productSlug ) {
-			return showFreeCard ? (
-				<li key={ product.productSlug }>{ getJetpackFreeCard() }</li>
-			) : undefined;
-		}
-
-		if ( JETPACK_CRM_FREE_PRODUCTS.includes( product.productSlug ) ) {
-			return (
-				<li key={ product.productSlug }>
-					<JetpackCrmFreeCard
-						fullWidth={ ! showFreeCard }
-						siteId={ siteId }
-						duration={ duration }
-					/>
-				</li>
-			);
-		}
-
-		return (
-			<li key={ product.iconSlug }>
-				<ProductCard
-					item={ product }
-					onClick={ onSelectProduct }
-					siteId={ siteId }
-					currencyCode={ currencyCode }
-					selectedTerm={ duration }
-					scrollCardIntoView={ scrollCardIntoView }
-					createButtonURL={ createButtonURL }
-				/>
-			</li>
-		);
-	};
+	const getOtherItemsProductCard = ( product: SelectorProduct ) => (
+		<li key={ product.iconSlug }>
+			<ProductCard
+				item={ product }
+				onClick={ onSelectProduct }
+				siteId={ siteId }
+				currencyCode={ currencyCode }
+				selectedTerm={ duration }
+				scrollCardIntoView={ scrollCardIntoView }
+				createButtonURL={ createButtonURL }
+			/>
+		</li>
+	);
 
 	return (
 		<>
@@ -278,21 +235,19 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			<ProductGridSection title={ translate( 'More Products' ) }>
 				{ getForCurrentCROIteration( {
 					[ Iterations.ONLY_REALTIME_PRODUCTS ]: (
-						<>
-							<ul className="product-grid__product-grid" ref={ otherItemsGridRef }>
-								{ otherItems
-									.slice( 0, shouldWrapOtherItems ? undefined : 3 )
-									.map( getOtherItemsProductCard ) }
-							</ul>
-							{ ! shouldWrapOtherItems && (
-								<>
-									<ul className="product-grid__product-grid second-grid">
-										{ otherItems.slice( 3, 5 ).map( getOtherItemsProductCard ) }
-									</ul>
-									{ getJetpackFreeCard() }
-								</>
+						<ul className="product-grid__product-grid">
+							{ otherItems.map( getOtherItemsProductCard ) }
+
+							<li>
+								<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+							</li>
+
+							{ showFreeCard && (
+								<li>
+									<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+								</li>
 							) }
-						</>
+						</ul>
 					),
 				} ) ?? (
 					<>

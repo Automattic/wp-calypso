@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { clickNavTab } from '../../element-helper';
+import { clickNavTab, reloadAndRetry } from '../../element-helper';
 
 export type PeoplePageTabs = 'Team' | 'Followers' | 'Email Followers' | 'Invites';
 
@@ -126,9 +126,30 @@ export class PeoplePage {
 	/**
 	 * Locate and click on a pending invite.
 	 *
+	 * This method will make several attempts to locate the pending invite.
+	 * Each attempt will wait 5 seconds before the page is refreshed and another attempt made.
+	 *
+	 * The retry mechanism is necessary due to Calypso sometimes not immediately reflecting
+	 * the newly invited user. This can occur due to large number of pending invites and also
+	 * because of faster-than-human execution speed of automated test frameworks.
+	 *
 	 * @param {string} emailAddress Email address of the pending user.
 	 */
 	async selectInvitedUser( emailAddress: string ): Promise< void > {
+		/**
+		 * Closure to wait for the invited user to be processed in the backend and then
+		 * appear on the frontend.
+		 *
+		 * @param {Page} page Page on which the actions take place.
+		 */
+		async function waitForInviteToAppear( page: Page ): Promise< void > {
+			await page.waitForSelector( selectors.invitedUser( emailAddress ), {
+				timeout: 5 * 1000,
+			} );
+		}
+
+		await reloadAndRetry( this.page, waitForInviteToAppear );
+
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.invitedUser( emailAddress ) ),

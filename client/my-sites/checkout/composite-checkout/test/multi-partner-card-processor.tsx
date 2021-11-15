@@ -6,9 +6,14 @@ import {
 	mockTransactionsSuccessResponse,
 	processorOptions,
 	basicExpectedDomainDetails,
+	mockCreateAccountEndpoint,
+	expectedCreateAccountRequest,
 	countryCode,
 	postalCode,
+	email,
 	contactDetailsForDomain,
+	mockCreateAccountSiteCreatedResponse,
+	mockCreateAccountSiteNotCreatedResponse,
 } from './util';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -311,6 +316,112 @@ describe( 'multiPartnerCardProcessor', () => {
 				} )
 			).resolves.toStrictEqual( expected );
 			expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
+		} );
+
+		it( 'creates an account and site before sending the correct data to the endpoint with no user, no site, and one product', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+			const createAccountEndpoint = mockCreateAccountEndpoint(
+				mockCreateAccountSiteCreatedResponse
+			);
+			const submitData = {
+				paymentPartner: 'stripe',
+				stripe,
+				stripeConfiguration,
+				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
+			};
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+			await expect(
+				multiPartnerCardProcessor( submitData, {
+					...options,
+					createUserAndSiteBeforeTransaction: true,
+					contactDetails: {
+						email,
+						countryCode,
+						postalCode,
+					},
+				} )
+			).resolves.toStrictEqual( expected );
+			expect( createAccountEndpoint ).toHaveBeenCalledWith( expectedCreateAccountRequest );
+			expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+				...basicExpectedStripeRequest,
+				cart: {
+					...basicExpectedStripeRequest.cart,
+					blog_id: 1234567,
+					cart_key: 1234567,
+					coupon: '',
+					create_new_blog: false,
+				},
+			} );
+		} );
+
+		it( 'creates an account before sending the correct data with a site creation request to the endpoint with no user, no site, and one product', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+			const createAccountEndpoint = mockCreateAccountEndpoint(
+				mockCreateAccountSiteNotCreatedResponse
+			);
+			const submitData = {
+				paymentPartner: 'stripe',
+				stripe,
+				stripeConfiguration,
+				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
+			};
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+			await expect(
+				multiPartnerCardProcessor( submitData, {
+					...options,
+					createUserAndSiteBeforeTransaction: true,
+					contactDetails: {
+						email,
+						countryCode,
+						postalCode,
+					},
+				} )
+			).resolves.toStrictEqual( expected );
+			expect( createAccountEndpoint ).toHaveBeenCalledWith( expectedCreateAccountRequest );
+			expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
+		} );
+
+		it( 'creates an account and no site before sending the correct data to the endpoint with no user, a site, and one product', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+			const createAccountEndpoint = mockCreateAccountEndpoint(
+				mockCreateAccountSiteNotCreatedResponse
+			);
+			const submitData = {
+				paymentPartner: 'stripe',
+				stripe,
+				stripeConfiguration,
+				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
+			};
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+			await expect(
+				multiPartnerCardProcessor( submitData, {
+					...options,
+					siteId: 1234567,
+					createUserAndSiteBeforeTransaction: true,
+					contactDetails: {
+						email,
+						countryCode,
+						postalCode,
+					},
+				} )
+			).resolves.toStrictEqual( expected );
+			expect( createAccountEndpoint ).toHaveBeenCalledWith( {
+				...expectedCreateAccountRequest,
+				should_create_site: false,
+			} );
+			expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+				...basicExpectedStripeRequest,
+				cart: {
+					...basicExpectedStripeRequest.cart,
+					blog_id: 1234567,
+					cart_key: 1234567,
+					coupon: '',
+					create_new_blog: false,
+				},
+			} );
 		} );
 
 		it( 'returns an explicit error response if the transaction fails with a non-200 error', async () => {

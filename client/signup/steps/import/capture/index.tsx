@@ -1,9 +1,14 @@
+import { NextButton } from '@automattic/onboarding';
+import { Icon, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
+import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
-import { GoToStep } from '../types';
+import { GoToStep, UrlData } from '../types';
 import './style.scss';
-import type { ChangeEvent, KeyboardEvent } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -13,16 +18,16 @@ const validateUrl = ( url: string ): boolean => {
 	return urlRgx.test( url );
 };
 
-interface Props {
+type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
-	isScanning: boolean;
-	setIsScanning: ( inProgress: boolean ) => void;
-}
+};
 
 const CaptureStep: React.FunctionComponent< Props > = ( {
 	goToStep,
-	isScanning,
-	setIsScanning,
+	analyzeUrl,
+	resetError,
+	isAnalyzing,
+	analyzerError,
 } ) => {
 	const { __ } = useI18n();
 
@@ -31,62 +36,77 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	const [ showError, setShowError ] = React.useState( false );
 
 	const runProcess = (): void => {
-		setIsScanning( true );
+		// Analyze the URL and when we receive the urlData, decide where to go next.
+		analyzeUrl( urlValue ).then( ( response: UrlData ) => {
+			let stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
 
-		/**
-		 * Temp piece of code
-		 * goToStep is a function for redirecting users to
-		 * the next step depending on the scanning result
-		 *
-		 * It can be:
-		 * - goToStep( 'ready' );
-		 * - goToStep( 'ready', 'not' );
-		 * - goToStep( 'ready', 'preview' );
-		 */
-		setTimeout( () => {
-			goToStep( 'ready', 'preview' );
-		}, 3000 );
+			if ( response.platform === 'wordpress' && response.platform_data?.is_wpcom ) {
+				stepSectionName = 'wpcom';
+			}
+			goToStep( 'ready', stepSectionName );
+		} );
 	};
 
 	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {
+		resetError();
 		setUrlValue( e.target.value );
 		setIsValid( validateUrl( e.target.value ) );
 	};
 
-	const onKeyDown = ( e: KeyboardEvent< HTMLInputElement > ) => {
-		if ( e.key === 'Enter' ) {
-			setShowError( true );
-			isValid && urlValue && runProcess();
-		}
+	const onFormSubmit = ( e: FormEvent< HTMLFormElement > ) => {
+		e.preventDefault();
+
+		setShowError( true );
+		isValid && urlValue && runProcess();
 	};
 
 	return (
 		<>
-			{ ! isScanning && (
+			{ ! isAnalyzing && (
 				<div className="import-layout__center">
 					<div className="capture__content">
-						<input
-							className="capture__input"
-							autoComplete="off"
-							autoCorrect="off"
-							spellCheck="false"
-							placeholder={ __( 'Enter your site address' ) }
-							onKeyDown={ onKeyDown }
-							onChange={ onInputChange }
-							value={ urlValue }
-						/>
-						{ ! isValid && showError && (
-							<div className="capture__input-error-msg">
-								{ __( 'The address you entered is not valid. Please try again.' ) }
-							</div>
-						) }
+						<form className="capture__input-wrapper" onSubmit={ onFormSubmit.bind( this ) }>
+							<input
+								className="capture__input"
+								// eslint-disable-next-line jsx-a11y/no-autofocus
+								autoFocus
+								autoComplete="off"
+								autoCorrect="off"
+								spellCheck="false"
+								placeholder={ __( 'Enter your site address' ) }
+								onChange={ onInputChange }
+								value={ urlValue }
+							/>
+							{ isValid && urlValue && ! analyzerError && (
+								<NextButton type={ 'submit' }>
+									<Icon icon={ chevronRight } />
+								</NextButton>
+							) }
+							{ ( ! isValid && showError ) ||
+								( analyzerError && (
+									<div className="capture__input-error-msg">
+										{ __( 'The address you entered is not valid. Please try again.' ) }
+									</div>
+								) ) }
+						</form>
 					</div>
 				</div>
 			) }
 
-			{ isScanning && <ScanningStep /> }
+			{ isAnalyzing && <ScanningStep /> }
 		</>
 	);
 };
 
-export default CaptureStep;
+const connector = connect(
+	( state ) => ( {
+		isAnalyzing: isAnalyzing( state ),
+		analyzerError: getAnalyzerError( state ),
+	} ),
+	{
+		analyzeUrl,
+		resetError,
+	}
+);
+
+export default connector( CaptureStep );

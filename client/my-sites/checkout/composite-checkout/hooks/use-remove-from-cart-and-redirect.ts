@@ -11,7 +11,6 @@ const debug = debugFactory( 'calypso:composite-checkout:use-redirect-if-cart-emp
 
 export default function useRemoveFromCartAndRedirect(
 	siteSlug: string | undefined,
-	siteSlugLoggedOutCart: string | undefined,
 	createUserAndSiteBeforeTransaction: boolean
 ): {
 	isRemovingProductFromCart: boolean;
@@ -21,14 +20,14 @@ export default function useRemoveFromCartAndRedirect(
 	const { removeProductFromCart } = useShoppingCart( cartKey );
 
 	// In some cases, the cloud.jetpack.com/pricing page sends a `checkoutBackUrl` url query param to checkout.
-	const checkoutBackUrl = useValidCheckoutBackUrl( siteSlug || siteSlugLoggedOutCart );
+	const checkoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 
 	const redirectDueToEmptyCart = useCallback( () => {
 		debug( 'cart is empty; redirecting...' );
 		let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
 
 		if ( createUserAndSiteBeforeTransaction ) {
-			cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
+			cartEmptyRedirectUrl = siteSlug ? `/plans/${ siteSlug }` : '/start';
 		}
 
 		debug( 'Before redirect, first clear redirect url cookie' );
@@ -51,7 +50,7 @@ export default function useRemoveFromCartAndRedirect(
 		} else {
 			page.redirect( cartEmptyRedirectUrl );
 		}
-	}, [ createUserAndSiteBeforeTransaction, siteSlug, siteSlugLoggedOutCart, checkoutBackUrl ] );
+	}, [ createUserAndSiteBeforeTransaction, siteSlug, checkoutBackUrl ] );
 
 	const isMounted = useRef( true );
 	useEffect( () => {

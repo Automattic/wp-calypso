@@ -8,21 +8,20 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
-	useDispatch,
 	useEvents,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
 	usePaymentMethod,
-	useSelect,
 	useTotal,
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
+import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -157,14 +156,13 @@ export default function WPCheckout( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
-		sel( 'wpcom' ).getContactInfo()
+		sel( 'wpcom-checkout' ).getContactInfo()
 	);
 	const {
-		setSiteId,
 		touchContactFields,
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
-	} = useDispatch( 'wpcom' );
+	} = useDispatch( 'wpcom-checkout' );
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -198,11 +196,6 @@ export default function WPCheckout( {
 	} );
 
 	const { formStatus } = useFormStatus();
-
-	// Copy siteId to the store so it can be more easily accessed during payment submission
-	useEffect( () => {
-		setSiteId( siteId );
-	}, [ siteId, setSiteId ] );
 
 	const arePostalCodesSupported = getCountryPostalCodeSupport(
 		countriesList,

@@ -355,19 +355,22 @@ class PurchasesListing extends Component {
 				<Card compact>
 					<strong>{ translate( 'My Solutions' ) }</strong>
 				</Card>
-				{ productPurchases.map( ( purchase ) => (
-					<MyPlanCard
-						key={ purchase.id }
-						action={ this.getProductActionButtons( purchase ) }
-						details={ this.getExpirationInfoForPurchase( purchase ) }
-						isError={ this.isProductExpiring( purchase ) }
-						isPlaceholder={ this.isLoading() }
-						product={ purchase.productSlug }
-						tagline={ getJetpackProductTagline( purchase, true ) }
-						title={ this.getTitle( purchase ) }
-						headerChildren={ this.getHeaderChildren( purchase ) }
-					/>
-				) ) }
+				{ productPurchases.map( ( purchase ) =>
+					this.isLoading() ? (
+						<MyPlanCard isPlaceholder key={ purchase.id } />
+					) : (
+						<MyPlanCard
+							key={ purchase.id }
+							action={ this.getProductActionButtons( purchase ) }
+							details={ this.getExpirationInfoForPurchase( purchase ) }
+							isError={ this.isProductExpiring( purchase ) }
+							product={ purchase.productSlug }
+							tagline={ getJetpackProductTagline( purchase, true ) }
+							title={ this.getTitle( purchase ) }
+							headerChildren={ this.getHeaderChildren( purchase ) }
+						/>
+					)
+				) }
 			</Fragment>
 		);
 	}

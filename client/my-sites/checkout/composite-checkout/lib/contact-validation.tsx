@@ -8,7 +8,6 @@ import {
 import { useEvents } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -16,7 +15,6 @@ import wp from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isCompleteAndValid,
-	areRequiredFieldsNotEmpty,
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
@@ -37,13 +35,14 @@ import type {
 	RawContactValidationResponseMessages,
 	ContactValidationResponseMessages,
 } from '@automattic/wpcom-checkout';
+import type { CalypsoDispatch } from 'calypso/state/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:composite-checkout:contact-validation' );
 
 const getEmailTakenLoginRedirectMessage = (
 	emailAddress: string,
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >
 ) => {
 	const { href, pathname } = window.location;
@@ -107,7 +106,7 @@ async function runContactValidationCheck(
 
 async function runLoggedOutEmailValidationCheck(
 	contactInfo: ManagedContactDetails,
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >
 ): Promise< unknown > {
 	const email = contactInfo.email?.value ?? '';
@@ -125,7 +124,7 @@ export async function validateContactDetails(
 	showErrorMessageBriefly: ( message: string ) => void,
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void,
 	clearDomainContactErrorMessages: () => void,
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >,
 	shouldDisplayErrors: boolean
 ): Promise< boolean > {
@@ -144,7 +143,7 @@ export async function validateContactDetails(
 				clearDomainContactErrorMessages,
 			} );
 		}
-		return isContactValidationResponseValid( validationResult, contactInfo );
+		return isContactValidationResponseValid( validationResult );
 	};
 
 	if ( isLoggedOutCart ) {
@@ -165,7 +164,7 @@ export async function validateContactDetails(
 			} );
 		}
 
-		if ( ! isContactValidationResponseValid( loggedOutValidationResult, contactInfo ) ) {
+		if ( ! isContactValidationResponseValid( loggedOutValidationResult ) ) {
 			return false;
 		}
 	}
@@ -189,22 +188,12 @@ function isContactValidationResponse( data: unknown ): data is DomainContactVali
 	return true;
 }
 
-export function isContactValidationResponseValid(
-	data: unknown,
-	contactDetails: ManagedContactDetails
-): boolean {
+export function isContactValidationResponseValid( data: unknown ): boolean {
 	if ( ! isContactValidationResponse( data ) ) {
 		throw new Error( 'Invalid contact validation response.' );
 	}
 	if ( ! data.success ) {
 		debug( 'Validation response says that the contact details not valid' );
-		return false;
-	}
-	if ( ! areRequiredFieldsNotEmpty( contactDetails ) ) {
-		debug(
-			'Validation response says that the contact details are valid but there are empty required fields in',
-			contactDetails
-		);
 		return false;
 	}
 	return true;

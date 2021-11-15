@@ -11,19 +11,13 @@ import {
 import { getTopLevelOfTld } from 'calypso/lib/domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
-import type {
-	DomainContactDetailsErrors,
-	ManagedContactDetails,
-	ManagedContactDetailsRequiredMask,
-} from '@automattic/wpcom-checkout';
+import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 
 export default function DomainContactDetails( {
 	domainNames,
 	contactDetails,
 	contactDetailsErrors,
 	updateDomainContactFields,
-	updateRequiredDomainFields,
-	getIsFieldRequired,
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 	isLoggedOutCart,
@@ -33,13 +27,6 @@ export default function DomainContactDetails( {
 	contactDetails: DomainContactDetailsData;
 	contactDetailsErrors: DomainContactDetailsErrors;
 	updateDomainContactFields: ( details: DomainContactDetailsData ) => void;
-	updateRequiredDomainFields?: (
-		details: ManagedContactDetails,
-		requiredMask: ManagedContactDetailsRequiredMask
-	) => ManagedContactDetails;
-	getIsFieldRequired?: (
-		field: Exclude< keyof ManagedContactDetails, 'tldExtraFields' >
-	) => boolean;
 	shouldShowContactDetailsValidationErrors: boolean;
 	isDisabled: boolean;
 	isLoggedOutCart: boolean;
@@ -66,7 +53,6 @@ export default function DomainContactDetails( {
 					shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 				}
 				onContactDetailsChange={ updateDomainContactFields }
-				getIsFieldRequired={ getIsFieldRequired }
 				getIsFieldDisabled={ getIsFieldDisabled }
 				isLoggedOutCart={ isLoggedOutCart }
 				emailOnly={ emailOnly }
@@ -76,7 +62,6 @@ export default function DomainContactDetails( {
 					contactDetails={ contactDetails }
 					ccTldDetails={ contactDetails?.extra?.ca ?? {} }
 					onContactDetailsChange={ updateDomainContactFields }
-					updateRequiredDomainFields={ updateRequiredDomainFields }
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}

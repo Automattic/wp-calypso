@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { expect } from 'chai';
-import { times } from 'lodash';
 import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '../selectors';
 
 jest.mock( 'calypso/layout/guided-tours/config', () => {
@@ -14,7 +12,7 @@ describe( 'selectors', () => {
 	describe( '#hasTourJustBeenVisible', () => {
 		test( 'should return false when no tour has been seen', () => {
 			const state = { ui: { actionLog: [] } };
-			expect( hasTourJustBeenVisible( state ) ).to.be.undefined;
+			expect( hasTourJustBeenVisible( state ) ).toBeUndefined();
 		} );
 
 		test( 'should return true when a tour has just been seen', () => {
@@ -30,7 +28,7 @@ describe( 'selectors', () => {
 					],
 				},
 			};
-			expect( hasTourJustBeenVisible( state, now ) ).to.be.true;
+			expect( hasTourJustBeenVisible( state, now ) ).toBe( true );
 		} );
 
 		test( 'should return false when a tour has been seen longer ago', () => {
@@ -46,7 +44,7 @@ describe( 'selectors', () => {
 					],
 				},
 			};
-			expect( hasTourJustBeenVisible( state, now ) ).to.not.be.ok;
+			expect( hasTourJustBeenVisible( state, now ) ).toBe( false );
 		} );
 	} );
 
@@ -72,7 +70,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( tourState ).to.deep.equal( { shouldShow: false } );
+			expect( tourState ).toEqual( { shouldShow: false } );
 		} );
 	} );
 	describe( '#findEligibleTour()', () => {
@@ -155,13 +153,13 @@ describe( 'selectors', () => {
 			const state = makeState( { actionLog: [ { type: 'IRRELEVANT' } ] } );
 			const tour = findEligibleTour( state );
 
-			expect( tour ).to.equal( undefined );
+			expect( tour ).toBeUndefined();
 		} );
 		test( 'should find `themes` when applicable', () => {
 			const state = makeState( { actionLog: [ navigateToThemes ] } );
 			const tour = findEligibleTour( state );
 
-			expect( tour ).to.equal( 'themes' );
+			expect( tour ).toBe( 'themes' );
 		} );
 		test( 'should not find `themes` if previously seen', () => {
 			const state = makeState( {
@@ -171,7 +169,7 @@ describe( 'selectors', () => {
 
 			const tour = findEligibleTour( state );
 
-			expect( tour ).to.equal( undefined );
+			expect( tour ).toBeUndefined();
 		} );
 		test( 'should see to it that an ongoing tour is selected', () => {
 			const havingStartedTour = makeState( {
@@ -181,8 +179,8 @@ describe( 'selectors', () => {
 				actionLog: [ mainTourStarted, mainTourAborted, navigateToThemes ],
 			} );
 
-			expect( findEligibleTour( havingStartedTour ) ).to.equal( 'main' );
-			expect( findEligibleTour( havingQuitTour ) ).to.equal( 'themes' );
+			expect( findEligibleTour( havingStartedTour ) ).toBe( 'main' );
+			expect( findEligibleTour( havingQuitTour ) ).toBe( 'themes' );
 		} );
 		test( 'should favor a tour launched via query arguments', () => {
 			const state = makeState( {
@@ -192,7 +190,7 @@ describe( 'selectors', () => {
 			} );
 			const tour = findEligibleTour( state );
 
-			expect( tour ).to.equal( 'main' );
+			expect( tour ).toBe( 'main' );
 		} );
 		test( 'should dismiss a requested tour at the end', () => {
 			const mainTourJustSeen = {
@@ -208,7 +206,7 @@ describe( 'selectors', () => {
 			} );
 			const tour = findEligibleTour( state );
 
-			expect( tour ).to.equal( undefined );
+			expect( tour ).toBeUndefined();
 		} );
 		test( 'should respect tour "when" conditions', () => {
 			const state = makeState( {
@@ -221,7 +219,7 @@ describe( 'selectors', () => {
 			// to `/`, and `state` satisfies `main`'s "when" condition that the user
 			// should be a new user. In our config, `main` is declared before
 			// `themes`, so the selector should prefer the former.
-			expect( tour ).to.equal( 'main' );
+			expect( tour ).toBe( 'main' );
 		} );
 		test( "shouldn't show a requested tour twice", () => {
 			/*
@@ -230,14 +228,14 @@ describe( 'selectors', () => {
 			 * anymore.
 			 */
 			const state = makeState( {
-				actionLog: times( 50, () => navigateToTest ),
+				actionLog: Array.from( { length: 50 }, () => navigateToTest ),
 				toursHistory: [ testTourSeen, themesTourSeen ],
 				queryArguments: { tour: 'themes' },
 				timestamp: 0,
 			} );
 			const tour = findEligibleTour( state );
 
-			expect( tour ).to.equal( undefined );
+			expect( tour ).toBeUndefined();
 		} );
 		test( 'should bail if user preferences are stale', () => {
 			const state = makeState( {
@@ -247,7 +245,7 @@ describe( 'selectors', () => {
 			delete state.preferences.lastFetchedTimestamp;
 			const tour = findEligibleTour( state );
 
-			expect( tour ).to.equal( undefined );
+			expect( tour ).toBeUndefined();
 		} );
 		describe( 'picking a tour based on the most recent actions', () => {
 			test( 'should pick `themes`', () => {
@@ -256,7 +254,7 @@ describe( 'selectors', () => {
 				} );
 				const tour = findEligibleTour( state );
 
-				expect( tour ).to.equal( 'test' );
+				expect( tour ).toBe( 'test' );
 			} );
 			test( 'should pick `test`', () => {
 				const state = makeState( {
@@ -264,7 +262,7 @@ describe( 'selectors', () => {
 				} );
 				const tour = findEligibleTour( state );
 
-				expect( tour ).to.equal( 'themes' );
+				expect( tour ).toBe( 'themes' );
 			} );
 		} );
 	} );

@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"build:notifications": "calypso-build",
-		"dev-server": "webpack serve --inline --progress --liveReload --content-base dist --watch-content-base --host calypso.localhost --port 3000",
+		"dev-server": "NODE_ENV=development webpack serve",
 		"start": "yarn run clean && yarn run build:notifications && yarn run dev-server",
 		"dev": "node ../../bin/build-calypso-app.mjs --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
 		"build": "NODE_ENV=production yarn dev"
@@ -36,21 +36,21 @@
 		"prop-types": "^15.7.2",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"react-redux": "^7.2.4",
-		"redux": "^4.1.1",
+		"react-redux": "^7.2.6",
+		"redux": "^4.1.2",
 		"redux-thunk": "^2.3.0",
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0",
 		"wpcom-xhr-request": "^1.2.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-build": "^10.0.0",
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",
 		"jest": "^27.2.4",
 		"postcss": "^8.3.11",
-		"webpack": "^5.54.0",
-		"webpack-dev-server": "^3.11.2"
+		"webpack": "^5.63.0",
+		"webpack-dev-server": "^4.4.0"
 	}
 }

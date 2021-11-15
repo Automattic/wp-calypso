@@ -1,5 +1,6 @@
-import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardExpiryElement } from '@stripe/react-stripe-js';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';

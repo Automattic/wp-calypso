@@ -5,7 +5,6 @@ import { stringify } from 'qs';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import Me from './me';
-import Site from './site';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -36,60 +35,8 @@ function Undocumented( wpcom ) {
 	this.wpcom = wpcom;
 }
 
-Undocumented.prototype.site = function ( id ) {
-	return new Site( id, this.wpcom );
-};
-
 Undocumented.prototype.me = function () {
 	return new Me( this.wpcom );
-};
-
-/**
- * Fetches settings for the Monitor module.
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.fetchMonitorSettings = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id: query' );
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId }, fn );
-};
-
-Undocumented.prototype.updateMonitorSettings = function (
-	siteId,
-	emailNotifications,
-	wpNoteNotifications,
-	fn
-) {
-	debug( '/jetpack-blogs/:site_id: query' );
-	return this.wpcom.req.post(
-		{ path: '/jetpack-blogs/' + siteId },
-		{},
-		{ email_notifications: emailNotifications, wp_note_notifications: wpNoteNotifications },
-		fn
-	);
-};
-
-/**
- * Disconnects a Jetpack site with id siteId from WP.com
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.disconnectJetpack = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id:/mine/delete query' );
-	return this.wpcom.req.post( { path: '/jetpack-blogs/' + siteId + '/mine/delete' }, fn );
-};
-
-/**
- * Fetches plugin registration keys for WordPress.org sites with paid services
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.fetchJetpackKeys = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id:/keys query' );
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/keys' }, fn );
 };
 
 /**
@@ -101,34 +48,6 @@ Undocumented.prototype.fetchJetpackKeys = function ( siteId, fn ) {
 Undocumented.prototype.testConnectionJetpack = function ( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id:/test-connection query' );
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
-};
-
-/*
- * Retrieve current connection status of a Jetpack site.
- *
- * @param {number}      [siteId]
- * @param {Function} fn
- */
-Undocumented.prototype.getJetpackConnectionStatus = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/connection/' },
-		fn
-	);
-};
-
-/*
- * Retrieve current user's connection data for a Jetpack site.
- *
- * @param {number}      [siteId]
- * @param {Function} fn
- */
-Undocumented.prototype.getJetpackUserConnectionData = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/connection/data/' },
-		fn
-	);
 };
 
 Undocumented.prototype.jetpackLogin = function ( siteId, _wp_nonce, redirect_uri, scope, state ) {
@@ -151,20 +70,6 @@ Undocumented.prototype.jetpackAuthorize = function (
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
 	const params = { code, state, redirect_uri, secret, jp_version, from };
 	return this.wpcom.req.post( { path: endpointUrl }, params );
-};
-
-Undocumented.prototype.jetpackValidateSSONonce = function ( siteId, ssoNonce, fn ) {
-	debug( '/jetpack-blogs/:site_id:/sso-validate query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-validate';
-	const params = { sso_nonce: ssoNonce };
-	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
-};
-
-Undocumented.prototype.jetpackAuthorizeSSONonce = function ( siteId, ssoNonce, fn ) {
-	debug( '/jetpack-blogs/:site_id:/sso-authorize query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-authorize';
-	const params = { sso_nonce: ssoNonce };
-	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
 };
 
 Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
@@ -339,18 +244,6 @@ Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
 	);
 };
 
-Undocumented.prototype.getDomainRegistrationSupportedStates = function ( countryCode, fn ) {
-	debug( '/domains/supported-states/ query' );
-
-	return this._sendRequest(
-		{
-			path: '/domains/supported-states/' + countryCode,
-			method: 'get',
-		},
-		fn
-	);
-};
-
 function mapKeysRecursively( object, fn ) {
 	return Object.keys( object ).reduce( function ( mapped, key ) {
 		let value = object[ key ];
@@ -420,144 +313,6 @@ Undocumented.prototype.validateDomainContactInformation = function (
 };
 
 /**
- * Get site specific details for WordPress.com products
- *
- * @param {Function} siteDomain The site slug
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSiteProducts = function ( siteDomain, fn ) {
-	debug( '/sites/:site_domain:/products query' );
-
-	// the site domain could be for a jetpack site installed in
-	// a subdirectory.  encode any forward slash present before making
-	// the request
-	siteDomain = encodeURIComponent( siteDomain );
-
-	return this._sendRequest(
-		{
-			path: '/sites/' + siteDomain + '/products',
-			method: 'get',
-		},
-		fn
-	);
-};
-
-/**
- * Get the user's billing history
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.billingHistory = function ( fn ) {
-	return this._sendRequest(
-		{
-			path: '/me/billing-history',
-			method: 'get',
-			apiVersion: '1.3',
-		},
-		fn
-	);
-};
-
-/**
- * Get a site specific details for WordPress.com plans
- *
- * @param {Function} siteDomain The site slug
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSitePlans = function ( siteDomain, fn ) {
-	debug( '/sites/:site_domain:/plans query' );
-
-	// the site domain could be for a jetpack site installed in
-	// a subdirectory.  encode any forward slash present before making
-	// the request
-	siteDomain = encodeURIComponent( siteDomain );
-
-	return this._sendRequest(
-		{
-			path: '/sites/' + siteDomain + '/plans',
-			method: 'get',
-			apiVersion: '1.3',
-		},
-		fn
-	);
-};
-
-/**
- * Get a site specific details for WordPress.com featurs
- *
- * @param {Function} siteDomain The site slug
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
-	debug( '/sites/:site_domain:/features query' );
-
-	return this._sendRequest(
-		{
-			path: `/sites/${ encodeURIComponent( siteDomain ) }/features`,
-			method: 'get',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
- * Return a list of third-party services that WordPress.com can integrate with for a specific site
- *
- * @param {number|string} siteId The site ID or domain
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete
- */
-
-Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
-	debug( '/sites/:site-id:/external-services query' );
-	return this.wpcom.req.get(
-		{
-			path: '/sites/' + siteId + '/external-services',
-			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
-/**
- * Return a list of user's connected publicize services for the given site
- *
- * @param {number|string} siteId The site ID or domain
- * @param {Function}      fn     The callback function
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.siteConnections = function ( siteId, fn ) {
-	debug( '/sites/:site_id:/publicize-connections query' );
-	return this.wpcom.req.get(
-		{
-			path: '/sites/' + siteId + '/publicize-connections',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
- * Deletes a single site connection
- *
- * @param {number|string} siteId       The site ID or domain
- * @param {number}        connectionId The connection ID to remove
- * @param {Function}      fn           Method to invoke when request is complete
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.deleteSiteConnection = function ( siteId, connectionId, fn ) {
-	debug( '/sites/:site_id:/publicize-connections/:connection_id:/delete query' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + siteId + '/publicize-connections/' + connectionId + '/delete',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Delete a site
  *
  * @param  {number|string} siteId The site ID or domain
@@ -566,130 +321,6 @@ Undocumented.prototype.deleteSiteConnection = function ( siteId, connectionId, f
 Undocumented.prototype.deleteSite = function ( siteId, fn ) {
 	debug( '/sites/:site_id/delete query' );
 	return this.wpcom.req.post( { path: '/sites/' + siteId + '/delete' }, fn );
-};
-
-/**
- * Creates a single connection using the specified Keyring connection ID and an
- *  optional `options` object, which can include a `shared` property
- *
- * @param {number}        keyringConnectionId The Keyring connection ID to use
- * @param {number|string} siteId              The site ID or domain
- * @param {string}        externalUserId      User ID if not connecting to primary account
- * @param {object}        options             Optional options
- * @param {boolean}       options.shared      Whether this connection is available to other users.
- * @param {Function}      fn                  Method to invoke when request is complete
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.createConnection = function (
-	keyringConnectionId,
-	siteId,
-	externalUserId,
-	options,
-	fn
-) {
-	// Method overloading: Optional `options`
-	if ( 'undefined' === typeof fn && 'function' === typeof options ) {
-		fn = options;
-		options = {};
-	}
-
-	// Build request body
-	const body = { keyring_connection_ID: keyringConnectionId };
-	if ( 'boolean' === typeof options.shared ) {
-		body.shared = options.shared;
-	}
-
-	if ( externalUserId ) {
-		body.external_user_ID = externalUserId;
-	}
-
-	const path = siteId
-		? '/sites/' + siteId + '/publicize-connections/new'
-		: '/me/publicize-connections/new';
-
-	return this.wpcom.req.post( { path, body, apiVersion: '1.1' }, fn );
-};
-
-/**
- * Share an arbitrary post using publicize connection
- *
- * @param {number}       siteId            The site ID
- * @param {number}       postId            The post ID
- * @param {string}    message           Message for social media
- * @param {Array(int)} skippedConnections           Keyring connection ids to skip publicizing
- * @param {Function}      fn           Function to invoke when request is complete
- * @returns {Promise} A promise representing the request
- */
-Undocumented.prototype.publicizePost = function (
-	siteId,
-	postId,
-	message,
-	skippedConnections,
-	fn
-) {
-	const body = { skipped_connections: [] };
-
-	body.message = message;
-
-	if ( skippedConnections && skippedConnections.length > 0 ) {
-		body.skipped_connections = skippedConnections;
-	}
-
-	return this.wpcom.req.post(
-		{ path: `/sites/${ siteId }/posts/${ postId }/publicize`, body, apiNamespace: 'wpcom/v2' },
-		fn
-	);
-};
-
-/**
- * Updates a single publicize connection
- *
- * @param {number|string} siteId       An optional site ID or domain
- * @param {number}        connectionId The connection ID to update
- * @param {object}        data         The update request body
- * @param {Function}      fn           Function to invoke when request is complete
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.updateConnection = function ( siteId, connectionId, data, fn ) {
-	let path;
-
-	if ( siteId ) {
-		debug( '/sites/:site_id:/publicize-connections/:connection_id: query' );
-		path = '/sites/' + siteId + '/publicize-connections/' + connectionId;
-	} else {
-		debug( '/me/publicize-connections/:connection_id: query' );
-		path = '/me/publicize-connections/' + connectionId;
-	}
-
-	return this.wpcom.req.post(
-		{
-			path: path,
-			body: data,
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
- * GET paypal_express_url
- *
- * @param {object} [data] The GET data
- * @param {Function} fn The callback function
- * @returns {string} Url
- *
- * The data format is: {
- *		country: {string} The billing country,
- *		postal_code: {string} The billing postal code,
- *		cart: {Array} An JSON serialization of the cart,
- * }
- */
-Undocumented.prototype.paypalExpressUrl = function ( data, fn ) {
-	debug( '/me/paypal-express-url query' );
-
-	data = mapKeysRecursively( data, snakeCase );
-
-	return this.wpcom.req.post( '/me/paypal-express-url', data, fn );
 };
 
 function addReaderContentWidth( params ) {
@@ -718,17 +349,6 @@ Undocumented.prototype.readFeedPost = function ( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readTagImages = function ( query, fn ) {
-	const params = omit( query, 'tag' );
-	debug( '/read/tags/' + query.tag + '/images' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get(
-		'/read/tags/' + encodeURIComponent( query.tag ) + '/images',
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readSitePost = function ( query, fn ) {
 	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
@@ -743,17 +363,6 @@ Undocumented.prototype.readSitePostRelated = function ( query, fn ) {
 	addReaderContentWidth( params );
 	return this.wpcom.req.get(
 		'/read/site/' + query.site_id + '/post/' + query.post_id + '/related',
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.supportAlternates = function ( query, fn ) {
-	const params = omit( query, [ 'site', 'postId' ] );
-	debug( '/support/alternates/:site/posts/:post' );
-	addReaderContentWidth( params );
-	return this.wpcom.req.get(
-		'/support/alternates/' + query.site + '/posts/' + query.postId,
 		params,
 		fn
 	);
@@ -1106,48 +715,6 @@ Undocumented.prototype.transferToSite = function ( siteId, domainName, targetSit
 	);
 };
 
-/**
- * Add domain mapping for eligible clients.
- *
- * @param {number} siteId The site ID
- * @param {string} [domainName] Name of the domain mapping
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.addDomainMapping = function ( siteId, domainName, fn ) {
-	debug( '/site/:site_id/add-domain-mapping' );
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/add-domain-mapping`,
-			body: {
-				domain: domainName,
-			},
-		},
-		fn
-	);
-};
-
-/**
- * Add domain mapping for VIP clients.
- *
- * @param {number} siteId The site ID
- * @param {string} [domainName] Name of the domain mapping
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.addVipDomainMapping = function ( siteId, domainName, fn ) {
-	debug( '/site/:site_id/vip-domain-mapping' );
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/vip-domain-mapping`,
-			body: {
-				domain: domainName,
-			},
-		},
-		fn
-	);
-};
-
 /*
  * Change the theme of a given site.
  *
@@ -1244,71 +811,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 		req.upload.onprogress = params.onprogress;
 		req.onabort = params.onabort;
 	} );
-};
-
-Undocumented.prototype.cancelPlanTrial = function ( planId, fn ) {
-	debug( '/upgrades/{planId}/cancel-plan-trial' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ planId }/cancel-plan-trial`,
-		},
-		fn
-	);
-};
-
-/**
- * Get the available export configuration settings for a site
- *
- * @param {number}       siteId            The site ID
- * @param {Function}  fn                The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getExportSettings = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/exports/settings`,
-		},
-		fn
-	);
-};
-
-/*
- * Start an export
- *
- * @param {number}       siteId            The site ID
- * @param {object}    advancedSettings  Advanced export configuration
- * @param {Function}  fn                The callback function
- * @returns {Promise}                   A promise that resolves when the export started
- */
-Undocumented.prototype.startExport = function ( siteId, advancedSettings, fn ) {
-	return this.wpcom.req.post(
-		{
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/exports/start`,
-		},
-		advancedSettings,
-		fn
-	);
-};
-
-/**
- * Check the status of an export
- *
- * @param {number|string} siteId - The site ID
- * @param {object} exportId - Export ID (for future use)
- * @param {Function} fn - The callback function
- * @returns {Promise}  promise
- */
-Undocumented.prototype.getExport = function ( siteId, exportId, fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/exports/${ exportId }`,
-		},
-		fn
-	);
 };
 
 /**
@@ -1414,84 +916,6 @@ Undocumented.prototype.oauth2ClientId = function ( clientId, fn ) {
 		`/oauth2/client-data/${ clientId }`,
 		{ apiNamespace: 'wpcom/v2' },
 		fn
-	);
-};
-
-/**
- * Fetch a nonce to use in the `updateSiteAddress` call
- *
- * @param {number}   siteId  The ID of the site for which to get a nonce.
- * @returns {Promise}     A promise
- */
-Undocumented.prototype.getRequestSiteAddressChangeNonce = function ( siteId ) {
-	return this.wpcom.req.get( {
-		path: `/sites/${ siteId }/site-address-change/nonce`,
-		apiNamespace: 'wpcom/v2',
-	} );
-};
-
-/**
- * Request server-side validation (including an availibility check) of the given site address.
- *
- * @param {number} siteId The siteId for which to validate
- * @param {object} [siteAddress]	The site address to validate
- * @param {string} [domain] The domain name of the new site address (ex. news.blog, wordpress.com, etc.)
- * @param {string} [type] blog/dotblog - blog for wordpress.com, dotblog for .blog domains
- * @returns {Promise}  A promise
- */
-Undocumented.prototype.checkSiteAddressValidation = function ( siteId, siteAddress, domain, type ) {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/site-address-change/validate`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{},
-		{ blogname: siteAddress, domain, type }
-	);
-};
-
-/**
- * Request a new .wordpress.com or .*.blog address for a site with the option to discard the current.
- *
- * @param {number} siteId The siteId for which to change the address
- * @param {object} [blogname] The desired new site address
- * @param {string} [domain] The domain name of the new site address (ex. news.blog, wordpress.com, etc.)
- * @param {string} [oldDomain] The full domain name of the original site (ex. mysite.news.blog, mysite.wordpress.com, etc.)
- * @param {string} [type] blog/dotblog - blog for wordpress.com->wordpress.com, dotblog if the old and/or new domain is .blog
- * @param {boolean} [discard] Should the old site address name be discarded?
- * @param {string} [nonce] A nonce provided by the API
- * @returns {Promise}  A promise
- */
-Undocumented.prototype.updateSiteAddress = function (
-	siteId,
-	blogname,
-	domain,
-	oldDomain,
-	type,
-	discard,
-	nonce
-) {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/site-address-change`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{},
-		{ blogname, domain, old_domain: oldDomain, type, discard, nonce }
-	);
-};
-
-Undocumented.prototype.requestGdprConsentManagementLink = function ( domain, callback ) {
-	return this.wpcom.req.get(
-		`/domains/${ domain }/request-gdpr-consent-management-link`,
-		function ( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-
-			callback( null, response );
-		}
 	);
 };
 

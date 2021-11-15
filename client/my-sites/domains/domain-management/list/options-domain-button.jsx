@@ -26,11 +26,13 @@ class AddDomainButton extends Component {
 		selectedSiteSlug: PropTypes.string,
 		specificSiteActions: PropTypes.bool,
 		ellipsisButton: PropTypes.bool,
+		borderless: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		specificSiteActions: false,
 		ellipsisButton: false,
+		borderless: false,
 	};
 
 	state = {
@@ -130,7 +132,7 @@ class AddDomainButton extends Component {
 	}
 
 	render() {
-		const { specificSiteActions, ellipsisButton } = this.props;
+		const { specificSiteActions, ellipsisButton, borderless } = this.props;
 		const classes = classNames( 'options-domain-button', ellipsisButton && 'ellipsis' );
 
 		return (
@@ -140,6 +142,7 @@ class AddDomainButton extends Component {
 					className={ classes }
 					onClick={ this.toggleAddMenu }
 					ref={ this.addDomainButtonRef }
+					borderless={ borderless }
 				>
 					{ this.renderLabel() }
 				</Button>

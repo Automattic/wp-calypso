@@ -9,7 +9,10 @@ import {
 	checkoutSiteless,
 	checkoutThankYou,
 	licensingThankYouManualActivation,
+	licensingThankYouManualActivationInstructions,
+	licensingThankYouManualActivationLicenseKey,
 	licensingThankYouAutoActivation,
+	licensingThankYouAutoActivationCompleted,
 	jetpackCheckoutThankYou,
 	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
@@ -53,9 +56,30 @@ export default function () {
 			clientRender
 		);
 		page(
+			'/checkout/jetpack/thank-you/licensing-auto-activate-completed/:product',
+			noSite,
+			licensingThankYouAutoActivationCompleted,
+			makeLayout,
+			clientRender
+		);
+		page(
 			'/checkout/jetpack/thank-you/licensing-manual-activate/:product',
 			noSite,
 			licensingThankYouManualActivation,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-manual-activate-instructions/:product',
+			noSite,
+			licensingThankYouManualActivationInstructions,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-manual-activate-license-key/:product',
+			noSite,
+			licensingThankYouManualActivationLicenseKey,
 			makeLayout,
 			clientRender
 		);

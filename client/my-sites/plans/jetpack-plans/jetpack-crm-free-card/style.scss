@@ -1,3 +1,37 @@
+.jetpack-plans__iteration--only-realtime-products {
+	.jetpack-free-card .display-price__price-free {
+		padding-block-start: 24px;
+	}
+
+	.jetpack-crm-free-card,
+	.jetpack-free-card {
+		.display-price {
+			min-height: 133px;
+			margin-block-start: 38px;
+		}
+
+		.display-price__above-price-text {
+			display: block;
+			margin-inline-start: 2px;
+
+			font-size: 1rem;
+			font-weight: 700;
+
+			// Adjust leading margin so that different UI fonts
+			// still align to the price the same way
+			&.is-jetpack-cloud {
+				margin-inline-start: 4px;
+			}
+		}
+
+		.display-price__price-free {
+			display: block;
+			line-height: $font-headline-medium;
+			letter-spacing: -2px;
+		}
+	}
+}
+
 .jetpack-crm-free-card.product-without-price--full-width {
 	display: flex;
 	column-gap: 64px;

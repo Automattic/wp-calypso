@@ -32,7 +32,6 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-	cardProcessorSupportsUpdates,
 	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
@@ -277,13 +276,42 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
 		translate,
 		purchase.introductoryOffer.intervalUnit,
 		purchase.introductoryOffer.intervalCount,
-		isIntroductoryOfferFreeTrial( purchase )
+		isIntroductoryOfferFreeTrial( purchase ),
+		'manage-purchases',
+		purchase.introductoryOffer.remainingRenewalsUsingOffer
 	);
+
+	let regularPriceText = null;
+	if ( purchase.introductoryOffer.isNextRenewalUsingOffer ) {
+		regularPriceText = translate(
+			'After the offer ends, the subscription price will be %(regularPrice)s',
+			{
+				args: {
+					regularPrice: purchase.regularPriceText,
+				},
+			}
+		);
+	} else if ( purchase.introductoryOffer.isNextRenewalProrated ) {
+		regularPriceText = translate(
+			'After the first renewal, the subscription price will be %(regularPrice)s',
+			{
+				args: {
+					regularPrice: purchase.regularPriceText,
+				},
+			}
+		);
+	}
 
 	return (
 		<>
 			<br />
 			<small> { text } </small>
+			{ regularPriceText && (
+				<>
+					{ ' ' }
+					<br /> <small> { regularPriceText } </small>{ ' ' }
+				</>
+			) }
 		</>
 	);
 }
@@ -299,12 +327,7 @@ function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, s
 
 	const paymentDetails = <PaymentInfoBlock purchase={ purchase } />;
 
-	if (
-		! canEditPaymentDetails( purchase ) ||
-		! isPaidWithCreditCard( purchase ) ||
-		! cardProcessorSupportsUpdates( purchase ) ||
-		! site
-	) {
+	if ( ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) || ! site ) {
 		return <li>{ paymentDetails }</li>;
 	}
 

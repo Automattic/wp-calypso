@@ -7,8 +7,12 @@ import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import { addQueryArgs } from 'calypso/lib/url';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
+import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
 import LicensingThankYouManualActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation';
+import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
+import LicensingThankYouManualActivationLicenseKey from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-license-key';
 import PostCheckoutUpsellExperimentRedirector, {
 	PROFESSIONAL_EMAIL_OFFER,
 } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
@@ -320,15 +324,36 @@ export function redirectToSupportSession( context ) {
 }
 
 export function licensingThankYouManualActivation( context, next ) {
-	const { receiptId, source, siteId } = context.query;
+	const { product } = context.params;
+	const { receiptId } = context.query;
 
 	context.primary = (
-		<LicensingThankYouManualActivation
-			productSlug={ context.params.product }
+		<LicensingThankYouManualActivation productSlug={ product } receiptId={ receiptId } />
+	);
+
+	next();
+}
+
+export function licensingThankYouManualActivationInstructions( context, next ) {
+	const { product } = context.params;
+	const { receiptId } = context.query;
+
+	context.primary = (
+		<LicensingThankYouManualActivationInstructions
+			productSlug={ product }
 			receiptId={ receiptId }
-			source={ source }
-			jetpackTemporarySiteId={ siteId }
 		/>
+	);
+
+	next();
+}
+
+export function licensingThankYouManualActivationLicenseKey( context, next ) {
+	const { product } = context.params;
+	const { receiptId } = context.query;
+
+	context.primary = (
+		<LicensingThankYouManualActivationLicenseKey productSlug={ product } receiptId={ receiptId } />
 	);
 
 	next();
@@ -343,15 +368,34 @@ export function licensingThankYouAutoActivation( context, next ) {
 	const { receiptId, source, siteId } = context.query;
 
 	if ( ! userHasJetpackSites ) {
-		page.redirect( `/checkout/jetpack/thank-you/licensing-manual-activate/${ product }` );
+		page.redirect(
+			addQueryArgs(
+				{ receiptId },
+				`/checkout/jetpack/thank-you/licensing-manual-activate/${ product }`
+			)
+		);
+	} else {
+		context.primary = (
+			<LicensingThankYouAutoActivation
+				userHasJetpackSites={ userHasJetpackSites }
+				productSlug={ context.params.product }
+				receiptId={ receiptId }
+				source={ source }
+				jetpackTemporarySiteId={ siteId }
+			/>
+		);
 	}
+
+	next();
+}
+
+export function licensingThankYouAutoActivationCompleted( context, next ) {
+	const { destinationSiteId } = context.query;
+
 	context.primary = (
-		<LicensingThankYouAutoActivation
-			userHasJetpackSites={ userHasJetpackSites }
+		<LicensingThankYouAutoActivationCompleted
 			productSlug={ context.params.product }
-			receiptId={ receiptId }
-			source={ source }
-			jetpackTemporarySiteId={ siteId }
+			destinationSiteId={ destinationSiteId }
 		/>
 	);
 

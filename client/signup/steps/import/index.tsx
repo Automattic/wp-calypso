@@ -1,74 +1,141 @@
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
+import { stringify } from 'qs';
 import React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
+import { isAnalyzing, getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import CaptureStep from './capture';
 import ListStep from './list';
-import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
-import { GoToStep } from './types';
+import { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep } from './ready';
+import { GoToStep, GoToNextStep, UrlData } from './types';
+import { getImporterUrl } from './util';
 import './style.scss';
 
-interface Props {
+type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
+	goToNextStep: GoToNextStep;
 	stepName: string;
 	stepSectionName: string;
-	queryObject: {
-		siteSlug?: string;
+	signupDependencies: {
+		siteSlug: string;
 	};
-}
-
-const MOCK_DATA = {
-	website: 'https://openweb.com',
-	platform: 'Wix',
+	urlData: UrlData;
 };
 
-const shouldHideBackBtn = ( stepName: string, isScanning = false ): boolean => {
-	const STEPS_WITHOUT_BACK = [ 'scanning' ];
-
-	return STEPS_WITHOUT_BACK.includes( stepName ) || isScanning;
-};
-
-const shouldHideNextBtn = ( stepName: string, isScanning = false ): boolean => {
-	const STEPS_WITH_NEXT = [ 'capture' ];
-
-	return ! STEPS_WITH_NEXT.includes( stepName ) || isScanning;
-};
-
-export default function ImportOnboarding( props: Props ): React.ReactNode {
+const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const [ isScanning, setIsScanning ] = React.useState( false );
+	const {
+		goToNextStep,
+		stepName,
+		stepSectionName,
+		isAnalyzing,
+		signupDependencies,
+		urlData,
+	} = props;
+
+	const shouldHideBackBtn = ( stepName: string ): boolean => {
+		const STEPS_WITHOUT_BACK = [ 'scanning' ];
+		return STEPS_WITHOUT_BACK.includes( stepName ) || isAnalyzing;
+	};
+
+	const shouldHideNextBtn = ( stepName: string ): boolean => {
+		const STEPS_WITH_NEXT = [ 'capture' ];
+		return ! STEPS_WITH_NEXT.includes( stepName ) || isAnalyzing;
+	};
+
+	const getStepWithQueryParamUrl = (
+		stepName: string,
+		stepSectionName?: string,
+		flowName = 'importer',
+		dependency = signupDependencies
+	): string => {
+		let stepUrl = getStepUrl( flowName, stepName, stepSectionName );
+
+		if ( Object.keys( dependency ).length ) {
+			stepUrl += '?' + stringify( dependency );
+		}
+
+		return stepUrl;
+	};
+
+	const goToStepWithDependencies: GoToStep = function (
+		stepName,
+		stepSectionName,
+		flowName = 'importer',
+		dependency = signupDependencies
+	): void {
+		page( getStepWithQueryParamUrl( stepName, stepSectionName, flowName, dependency ) );
+	};
+
+	const goToImporterPage = ( platform: string ): void => {
+		const importerUrl = getImporterUrl( signupDependencies.siteSlug, platform );
+
+		importerUrl.includes( 'wp-admin' )
+			? ( window.location.href = importerUrl )
+			: page.redirect( importerUrl );
+	};
+
+	const getBackUrl = ( stepName: string, stepSectionName: string ) => {
+		if ( stepName === 'capture' )
+			return getStepWithQueryParamUrl( 'intent', undefined, 'setup-site' );
+		if ( stepName === 'list' ) return getStepWithQueryParamUrl( 'capture' );
+		else if ( stepName === 'ready' && ! stepSectionName ) return getStepWithQueryParamUrl( 'list' );
+
+		return getStepWithQueryParamUrl( 'capture' );
+	};
+
+	const getForwardUrl = () => {
+		return getStepWithQueryParamUrl( 'list' );
+	};
 
 	return (
 		<StepWrapper
 			flowName={ 'importer' }
 			hideSkip={ true }
-			hideBack={ shouldHideBackBtn( props.stepName, isScanning ) }
-			hideNext={ shouldHideNextBtn( props.stepName, isScanning ) }
+			hideBack={ shouldHideBackBtn( stepName ) }
+			hideNext={ shouldHideNextBtn( stepName ) }
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
-			backUrl={ props.stepName === 'capture' ? getStepUrl( 'setup-site', 'intent' ) : undefined }
+			backUrl={ getBackUrl( stepName, stepSectionName ) }
+			forwardUrl={ getForwardUrl() }
+			goToNextStep={ goToNextStep }
 			hideFormattedHeader={ true }
+			stepName={ stepName }
 			stepContent={
 				<div className="import__onboarding-page">
-					{ props.stepName === 'capture' && (
-						<CaptureStep
-							goToStep={ props.goToStep }
-							isScanning={ isScanning }
-							setIsScanning={ setIsScanning }
+					{ stepName === 'capture' && <CaptureStep goToStep={ goToStepWithDependencies } /> }
+					{ stepName === 'list' && <ListStep goToStep={ goToStepWithDependencies } /> }
+
+					{ stepName === 'ready' && ! stepSectionName && (
+						<ReadyStep goToImporterPage={ goToImporterPage } platform={ urlData.platform } />
+					) }
+					{ stepName === 'ready' && stepSectionName === 'not' && (
+						<ReadyNotStep goToStep={ goToStepWithDependencies } />
+					) }
+					{ stepName === 'ready' && stepSectionName === 'preview' && (
+						<ReadyPreviewStep
+							urlData={ urlData }
+							goToImporterPage={ goToImporterPage }
+							siteSlug={ signupDependencies.siteSlug }
 						/>
 					) }
-					{ props.stepName === 'list' && <ListStep goToStep={ props.goToStep } /> }
-
-					{ props.stepName === 'ready' && ! props.stepSectionName && (
-						<ReadyStep platform={ MOCK_DATA.platform } />
-					) }
-					{ props.stepName === 'ready' && props.stepSectionName === 'not' && <ReadyNotStep /> }
-					{ props.stepName === 'ready' && props.stepSectionName === 'preview' && (
-						<ReadyPreviewStep website={ MOCK_DATA.website } platform={ MOCK_DATA.platform } />
+					{ stepName === 'ready' && stepSectionName === 'wpcom' && (
+						<ReadyAlreadyOnWPCOMStep urlData={ urlData } goToStep={ goToStepWithDependencies } />
 					) }
 				</div>
 			}
-			{ ...props }
 		/>
 	);
-}
+};
+
+const connector = connect(
+	( state ) => ( {
+		urlData: getUrlData( state ),
+		isAnalyzing: isAnalyzing( state ),
+	} ),
+	{}
+);
+
+export default connector( ImportOnboarding );

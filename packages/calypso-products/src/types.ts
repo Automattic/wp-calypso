@@ -12,7 +12,6 @@ import type {
 	TYPES_LIST,
 	PERIOD_LIST,
 } from './constants';
-import type { getJetpackStorageAmountDisplays } from './translations';
 import type { TranslateResult } from 'i18n-calypso';
 
 const featureValues = Object.values( features );
@@ -49,7 +48,6 @@ export type JetpackPlanSlug =
 export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
-export type JetpackSlugsWithStorage = keyof ReturnType< typeof getJetpackStorageAmountDisplays >;
 
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;

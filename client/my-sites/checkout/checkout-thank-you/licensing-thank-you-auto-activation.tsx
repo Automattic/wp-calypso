@@ -1,26 +1,27 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
-import { FC, useState, useCallback, useEffect } from 'react';
+import { FC, useState, useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import footerCardBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-bg.svg';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import Main from 'calypso/components/main';
+import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
 import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
+	getProductsList,
 } from 'calypso/state/products-list/selectors';
-import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
+import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
+import getJetpackCheckoutSupportTicketIncompatibleProductIds from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-incompatible-products';
+import getSupportTicketRequestStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import getJetpackSites from 'calypso/state/selectors/get-jetpack-sites';
 
 interface Props {
@@ -35,7 +36,16 @@ type JetpackSite = {
 	URL: string;
 };
 
-const LicensingThankYouAutoActivation: FC< Props > = ( {
+type Product = {
+	product_id: number;
+	product_name: string;
+};
+
+interface ProductsList {
+	[ P: string ]: Product;
+}
+
+const LicensingActivationThankYou: FC< Props > = ( {
 	productSlug,
 	receiptId = 0,
 	source = 'onboarding-calypso-ui',
@@ -49,17 +59,20 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 	const productName = useSelector( ( state ) =>
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
-
+	const productsList: ProductsList = useSelector( getProductsList );
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 	const userName = useSelector( getCurrentUserName );
 	const jetpackSites = useSelector( getJetpackSites ) as JetpackSite[];
 
-	const supportTicketStatus = useSelector( ( state ) =>
-		getJetpackCheckoutSupportTicketStatus( state, receiptId )
+	const supportTicketRequestStatus = useSelector( ( state ) =>
+		getSupportTicketRequestStatus( state, receiptId )
 	);
-
-	const supportContactLink =
-		'https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/';
+	const destinationSiteId = useSelector( ( state ) =>
+		getJetpackCheckoutSupportTicketDestinationSiteId( state, jetpackTemporarySiteId )
+	);
+	const incompatibleProductIds = useSelector( ( state ) =>
+		getJetpackCheckoutSupportTicketIncompatibleProductIds( state, jetpackTemporarySiteId )
+	);
 
 	const [ selectedSite, setSelectedSite ] = useState( '' );
 	const [ error, setError ] = useState< TranslateResult | false >( false );
@@ -67,6 +80,7 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 	const onContinue = useCallback(
 		( e ) => {
 			e.preventDefault();
+			setError( false );
 			if ( selectedSite === 'activate-license-manually' ) {
 				const manualActivationUrl = addQueryArgs(
 					{
@@ -85,6 +99,8 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 					receipt_id: receiptId,
 				} )
 			);
+			// Update the support ticket with the submitted site URL(selectedSite) and attempt to
+			// transfer the temporary-site subscription to the user's selectedSite.
 			dispatch(
 				requestUpdateJetpackCheckoutSupportTicket(
 					selectedSite,
@@ -98,25 +114,60 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 	);
 
 	useEffect( () => {
-		if ( supportTicketStatus === 'success' ) {
-			const thankYouCompletedUrl = addQueryArgs(
-				{
-					siteId: jetpackTemporarySiteId,
-					receiptId,
-				},
-				`/checkout/jetpack/thank-you-completed/no-site/${ productSlug }`
-			);
-			page( thankYouCompletedUrl );
-		} else if ( supportTicketStatus === 'failed' ) {
-			setError(
+		if ( error || supportTicketRequestStatus === undefined ) {
+			return;
+		}
+		if ( supportTicketRequestStatus === 'failed' ) {
+			return setError(
 				translate( 'There was a problem submitting your website address, please try again.' )
 			);
 		}
-	}, [ jetpackTemporarySiteId, receiptId, supportTicketStatus, productSlug, translate ] );
+		if ( supportTicketRequestStatus === 'success' && destinationSiteId !== undefined ) {
+			if ( incompatibleProductIds.length ) {
+				const incompatibleProductKey = Object.keys( productsList ).find( ( productKey ) =>
+					incompatibleProductIds.includes( productsList[ productKey ].product_id )
+				);
+				const incompatibleProductName =
+					productsList[ incompatibleProductKey as keyof ProductsList ].product_name;
+				return setError(
+					translate(
+						"I'm sorry, you cannot activate %(productName)s on {{strong}}%(selectedSite)s{{/strong}} because that site already has a subscription to %(incompatibleProductName)s.",
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								productName,
+								selectedSite: urlToSlug( selectedSite ),
+								incompatibleProductName,
+							},
+						}
+					)
+				);
+			}
+			// If the destinationSiteId is greater than 0, then the subscription transfer was successful.
+			const thankYouCompletedUrl = addQueryArgs(
+				{
+					destinationSiteId,
+				},
+				`/checkout/jetpack/thank-you/licensing-auto-activate-completed/${ productSlug }`
+			);
+			page( thankYouCompletedUrl );
+		}
+	}, [
+		destinationSiteId,
+		supportTicketRequestStatus,
+		incompatibleProductIds,
+		selectedSite,
+		error,
+		translate,
+		productSlug,
+		productsList,
+		productName,
+	] );
 
-	const siteSelectOptions =
-		jetpackSites &&
-		jetpackSites.map( ( site: JetpackSite ) => ( {
+	const siteSelectOptions = useMemo( () => {
+		return jetpackSites.map( ( site: JetpackSite ) => ( {
 			value: site?.URL,
 			label: site.URL,
 			props: {
@@ -128,6 +179,7 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 				},
 			},
 		} ) );
+	}, [ jetpackSites, selectedSite ] );
 
 	const lastSelectOption = {
 		value: 'activate-license-manually',
@@ -148,102 +200,87 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 	const selectedItem = selectDropdownItems.find( ( item ) => item.props.selected );
 
 	return (
-		<Main fullWidthLayout className="licensing-thank-you-auto-activation">
+		<>
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
-				path={ '/checkout/jetpack/thank-you/licensing/:product' }
+				path={ '/checkout/jetpack/thank-you/licensing-auto-activate/:product' }
 				properties={ { product_slug: productSlug } }
 				title="Checkout > Jetpack Thank You Licensing Auto Activation"
 			/>
-			<Card className="licensing-thank-you-auto-activation__card">
-				<div className="licensing-thank-you-auto-activation__card-main">
-					<JetpackLogo size={ 45 } />
-					{ hasProductInfo && <QueryProducts type="jetpack" /> }
-					<h1 className="licensing-thank-you-auto-activation__main-message">
+			{ hasProductInfo && <QueryProducts type="jetpack" /> }
+			<LicensingActivation
+				title={
+					<>
 						{ translate( 'Thank you for your purchase!' ) }{ ' ' }
 						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
-					</h1>
-					{ hasProductInfo && ( isProductListFetching || productName ) && (
-						<p
-							className={
-								isProductListFetching
-									? 'licensing-thank-you-auto-activation__product-info-loading'
-									: 'licensing-thank-you-auto-activation__product-info'
-							}
-						>
-							{ translate( 'Hello %(username)s,', {
-								args: {
-									username: userName,
-								},
-							} ) }
-							<br />
-							{ translate( 'Select the site you want %(productName)s on:', {
-								args: {
-									productName,
-								},
-							} ) }
-						</p>
-					) }
-					<SelectDropdown
-						className="licensing-thank-you-auto-activation__select"
-						selectedText={ selectedItem ? selectedItem.label : translate( 'Select…' ) }
+					</>
+				}
+				footerImage={ footerCardImg }
+				showProgressIndicator={ false }
+				showContactUs
+			>
+				{ hasProductInfo && ( isProductListFetching || productName ) && (
+					<p
+						className={
+							isProductListFetching
+								? 'licensing-thank-you-auto-activation__product-info-loading'
+								: 'licensing-thank-you-auto-activation__product-info'
+						}
 					>
-						{ selectDropdownItems.map( ( option ) => (
-							<SelectDropdown.Item { ...option.props }>
-								<div
-									className={ classnames(
-										'licensing-thank-you-auto-activation__dropdown-item-flex-container',
-										{
-											'has-seperator': option.value === 'activate-license-manually',
-										}
-									) }
-								>
-									<span className="licensing-thank-you-auto-activation__dropdown-item-text">
-										{ option.label }
-									</span>
-									{ option.value !== 'activate-license-manually' && (
-										<span>
-											<Gridicon icon="link" size={ 18 } />
-										</span>
-									) }
-								</div>
-							</SelectDropdown.Item>
-						) ) }
-						<SelectDropdown.Separator />
-					</SelectDropdown>
-					{ error && (
-						<FormInputValidation isError={ !! error } text={ error }></FormInputValidation>
-					) }
-					<Button
-						className="licensing-thank-you-auto-activation__button"
-						primary
-						disabled={ ! selectedSite }
-						busy={ supportTicketStatus === 'pending' }
-						onClick={ onContinue }
-					>
-						{ supportTicketStatus === 'pending'
-							? translate( 'Working…' )
-							: translate( 'Continue' ) }
-					</Button>
-				</div>
-				<div
-					className="licensing-thank-you-auto-activation__card-footer"
-					style={ { backgroundImage: `url(${ footerCardBackground })` } }
-				>
-					<div className="licensing-thank-you-auto-activation__card-footer-image">
-						<img src={ footerCardImg } alt="Checkout Thank you" />
-					</div>
-					<div className="licensing-thank-you-auto-activation__card-footer-text">
-						{ translate( 'Do you need help? {{a}}Contact us{{/a}}.', {
-							components: {
-								a: <a href={ supportContactLink } target="_blank" rel="noopener noreferrer" />,
+						{ translate( 'Hello %(username)s!', {
+							args: {
+								username: userName,
 							},
 						} ) }
-					</div>
-				</div>
-			</Card>
-		</Main>
+						<br />
+						{ translate( 'Select the site you want %(productName)s on:', {
+							args: {
+								productName,
+							},
+						} ) }
+					</p>
+				) }
+				<SelectDropdown
+					className="licensing-thank-you-auto-activation__select"
+					selectedText={ selectedItem ? selectedItem.label : translate( 'Select…' ) }
+				>
+					{ selectDropdownItems.map( ( option ) => (
+						<SelectDropdown.Item { ...option.props }>
+							<div
+								className={ classnames(
+									'licensing-thank-you-auto-activation__dropdown-item-flex-container',
+									{
+										'has-seperator': option.value === 'activate-license-manually',
+									}
+								) }
+							>
+								<span className="licensing-thank-you-auto-activation__dropdown-item-text">
+									{ option.label }
+								</span>
+								{ option.value !== 'activate-license-manually' && (
+									<span>
+										<Gridicon icon="link" size={ 18 } />
+									</span>
+								) }
+							</div>
+						</SelectDropdown.Item>
+					) ) }
+				</SelectDropdown>
+				{ error && <FormInputValidation isError={ !! error } text={ error }></FormInputValidation> }
+				<Button
+					className="licensing-thank-you-auto-activation__button"
+					primary
+					disabled={ ! selectedSite }
+					busy={ supportTicketRequestStatus === 'pending' }
+					onClick={ onContinue }
+				>
+					{ supportTicketRequestStatus === 'pending'
+						? translate( 'Working…' )
+						: translate( 'Continue' ) }
+				</Button>
+			</LicensingActivation>
+		</>
 	);
 };
 
-export default LicensingThankYouAutoActivation;
+export default LicensingActivationThankYou;

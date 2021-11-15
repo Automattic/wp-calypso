@@ -32,7 +32,7 @@ export class PlansStep extends Component {
 	};
 
 	componentWillMount() {
-		loadExperimentAssignment( 'disabled_monthly_personal_premium' ).then( ( experimentName ) => {
+		loadExperimentAssignment( 'disabled_monthly_personal_premium_v2' ).then( ( experimentName ) => {
 			this.setState( { experiment: experimentName } );
 		} );
 	}
@@ -210,6 +210,7 @@ export class PlansStep extends Component {
 			positionInFlow,
 			translate,
 			hasInitializedSitesBackUrl,
+			steps,
 		} = this.props;
 
 		const headerText = this.getHeaderText();
@@ -223,6 +224,22 @@ export class PlansStep extends Component {
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
 			backLabelText = translate( 'Back to My Sites' );
+		}
+
+		let queryParams;
+		if ( ! isNaN( Number( positionInFlow ) ) && 0 !== positionInFlow ) {
+			const previousStepName = steps[ this.props.positionInFlow - 1 ];
+			const previousStep = this.props.progress?.[ previousStepName ];
+
+			const isComingFromUseYourDomainStep = 'use-your-domain' === previousStep?.stepSectionName;
+
+			if ( isComingFromUseYourDomainStep ) {
+				queryParams = {
+					...this.props.queryParams,
+					step: 'transfer-or-connect',
+					initialQuery: previousStep?.siteUrl,
+				};
+			}
 		}
 
 		return (
@@ -240,6 +257,7 @@ export class PlansStep extends Component {
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
 					backLabelText={ backLabelText }
+					queryParams={ queryParams }
 				/>
 			</>
 		);

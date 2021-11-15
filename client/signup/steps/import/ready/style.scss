@@ -101,6 +101,19 @@
 				margin-top: 30px;
 			}
 		}
+
+		.import__screenshot-loading {
+			margin-top: 25px;
+
+			@include break-small {
+				margin-top: 150px;
+			}
+
+			.wpcom__loading-ellipsis {
+				display: block;
+				margin: auto;
+			}
+		}
 	}
 }
 

@@ -11,6 +11,7 @@
 		padding: 9px 40px;
 		border-radius: 4px; /* stylelint-disable-line scales/radii */
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		line-height: 20px;
 
 		// override unnecessary super specificity added by another class
 		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
@@ -74,12 +75,12 @@
 			margin-bottom: 20px;
 		}
 
-		.action-buttons__back {
-			color: var( --studio-gray-100 ) !important;
+		.components-button.action-buttons__back {
+			color: var( --studio-gray-100 );
 			font-weight: 500; /* stylelint-disable-line */
 
 			&:hover {
-				text-decoration: none;
+				color: var( --color-neutral-70 );
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 import assert from 'assert';
 import { Page, Frame, ElementHandle } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import { NavbarComponent } from '../components';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
 type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
@@ -13,7 +14,7 @@ const selectors = {
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
 	blockInserterPanel: '.block-editor-inserter__content',
-	blockSearch: '[placeholder="Search"]',
+	blockSearch: '.block-editor-inserter__search input[type="search"]',
 	blockInserterResultItem: '.block-editor-block-types-list__list-item',
 
 	// Within the editor body.
@@ -23,7 +24,7 @@ const selectors = {
 
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
-	settingsToggle: '[aria-label="Settings"]',
+	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
 	saveDraftButton: '.editor-post-save-draft',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
@@ -42,8 +43,9 @@ const selectors = {
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 
 	// Block editor sidebar
-	openSidebarButton: 'button[aria-label="Block editor sidebar"]',
-	dashboardLink: 'a[aria-description="Returns to the dashboard"]',
+	desktopEditorSidebarButton: 'button[aria-label="Block editor sidebar"]:visible',
+	desktopDashboardLink: 'a[aria-description="Returns to the dashboard"]:visible',
+	mobileDashboardLink: 'a[aria-current="page"]:visible',
 
 	// Preview
 	previewMenuItem: ( target: PreviewOptions ) => `button[role="menuitem"] span:text("${ target }")`,
@@ -355,18 +357,60 @@ export class GutenbergEditorPage {
 
 	/**
 	 * Opens the Nav Sidebar on the left hand side.
+	 *
+	 * On desktop sized viewport, this will open the editor block sidebar listing recently edited posts and drafts.
+	 *
+	 * On mobile sized viewport, this method will pass through.
+	 *
 	 */
 	async openNavSidebar(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		await frame.click( selectors.openSidebarButton );
+		if ( getTargetDeviceName() === 'desktop' ) {
+			await frame.click( selectors.desktopEditorSidebarButton );
+		}
 	}
 
 	/**
-	 * Clicks on the Dashboard link within the Block Editor Sidebar.
+	 * Leave the editor to return to the Calypso dashboard.
+	 *
+	 * On desktop sized viewport, this method clicks on the `< All Posts` link in the block editor sidebar.
+	 * Note, for desktop the editor sidebar must be open. To open the sidebar, call `openNavSidebar` method.
+	 *
+	 * On mobile sized viewport, this method clicks on Navbar > My Sites.
+	 *
+	 * The resulting page can change based on where you come from, and the viewport. Either way, the resulting landing spot
+	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
 	 */
-	async returnToDashboard(): Promise< void > {
+	async returnToCalypsoDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		await frame.click( selectors.dashboardLink );
+		const targetDevice = getTargetDeviceName();
+
+		if (
+			targetDevice !== 'mobile' &&
+			( await frame.getAttribute( selectors.desktopEditorSidebarButton, 'aria-expanded' ) ) ===
+				'false'
+		) {
+			await this.openNavSidebar();
+		}
+
+		const navbarComponent = new NavbarComponent( this.page );
+
+		// There are three different places you can return to, depending on how you entered the editor.
+		const navigationPromise = Promise.race( [
+			this.page.waitForNavigation( { url: '**/home/**' } ),
+			this.page.waitForNavigation( { url: '**/posts/**' } ),
+			this.page.waitForNavigation( { url: '**/pages/**' } ),
+		] );
+
+		const actions: Promise< unknown >[] = [ navigationPromise ];
+
+		if ( getTargetDeviceName() !== 'mobile' ) {
+			actions.push( frame.click( selectors.desktopDashboardLink ) );
+		} else {
+			actions.push( navbarComponent.clickMySites() );
+		}
+
+		await Promise.all( actions );
 	}
 
 	/* Previews */

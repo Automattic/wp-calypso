@@ -170,7 +170,10 @@ export class SupportComponent {
 	 * The target button is shown only for Article type results.
 	 */
 	async clickReadMore(): Promise< void > {
-		await this.page.click( selectors.readMoreButton );
+		await Promise.all( [
+			this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } ),
+			this.page.click( selectors.readMoreButton ),
+		] );
 	}
 
 	/**
@@ -179,14 +182,15 @@ export class SupportComponent {
 	 * @returns {Promise<Page>} Reference to support page.
 	 */
 	async visitArticle(): Promise< Page > {
-		// Wait for the placeholder to disappear from the Support article preview.
-		await this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } );
+		await this.page.waitForLoadState( 'networkidle' );
+		const visitArticleLocator = this.page.locator( selectors.visitArticleButton );
 
 		const browserContext = this.page.context();
 		// `Visit article` launches a new page.
 		const [ newPage ] = await Promise.all( [
 			browserContext.waitForEvent( 'page' ),
-			this.page.click( selectors.visitArticleButton ),
+			visitArticleLocator.click(),
+			// this.page.click( selectors.visitArticleButton ),
 		] );
 		await newPage.waitForLoadState( 'domcontentloaded' );
 

@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
@@ -28,16 +29,19 @@ import DomainTransferOrConnect from './transfer-or-connect';
 
 import './style.scss';
 
-function UseMyDomain( {
-	goBack,
-	initialQuery,
-	isSignupStep,
-	onConnect,
-	onTransfer,
-	selectedSite,
-	transferDomainUrl,
-	initialMode,
-} ) {
+function UseMyDomain( props ) {
+	const {
+		goBack,
+		initialQuery,
+		isSignupStep = false,
+		onConnect,
+		onTransfer,
+		selectedSite,
+		transferDomainUrl,
+		initialMode,
+		onNextStep,
+	} = props;
+
 	const { __ } = useI18n();
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( null );
 	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( null );
@@ -61,6 +65,10 @@ function UseMyDomain( {
 	const initialValidation = useRef( null );
 
 	const baseClassName = 'use-my-domain';
+
+	useEffect( () => {
+		if ( initialMode ) setMode( initialMode );
+	}, [ initialMode ] );
 
 	const onGoBack = () => {
 		const prevOwnershipVerificationFlowPageSlug =
@@ -160,7 +168,7 @@ function UseMyDomain( {
 		try {
 			const availabilityData = await wpcom
 				.domain( domainName )
-				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
+				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
 
 			await setDomainTransferData();
 
@@ -173,6 +181,7 @@ function UseMyDomain( {
 			if ( availabilityErrorMessage ) {
 				setDomainNameValidationError( availabilityErrorMessage );
 			} else {
+				onNextStep?.( { mode: inputMode.transferOrConnect, domain: domainName } );
 				setMode( inputMode.transferOrConnect );
 				setDomainAvailabilityData( availabilityData );
 			}
@@ -181,7 +190,7 @@ function UseMyDomain( {
 		} finally {
 			setIsFetchingAvailability( false );
 		}
-	}, [ domainName, selectedSite, setDomainTransferData, validateDomainName ] );
+	}, [ domainName, selectedSite, setDomainTransferData, validateDomainName, onNextStep ] );
 
 	const onDomainNameChange = ( event ) => {
 		setDomainName( event.target.value );
@@ -211,10 +220,12 @@ function UseMyDomain( {
 	}, [ mode, setDomainTransferData, initialMode ] );
 
 	const showOwnershipVerificationFlow = () => {
+		onNextStep?.( { mode: inputMode.ownershipVerification, domain: domainName } );
 		setMode( inputMode.ownershipVerification );
 	};
 
 	const showTransferDomainFlow = () => {
+		onNextStep?.( { mode: inputMode.transferDomain, domain: domainName } );
 		setMode( inputMode.transferDomain );
 	};
 
@@ -300,33 +311,64 @@ function UseMyDomain( {
 			case inputMode.domainInput:
 				return __( 'Use a domain I own' );
 			case inputMode.transferDomain:
-				/* translators: %s - the name of the domain the user will add to their site */
-				return sprintf( __( 'Transfer %s' ), domainName );
+				return createInterpolateElement(
+					sprintf(
+						/* translators: %(domainName)s - the name of the domain the user will add to their site */
+						__( 'Transfer <span>%(domainName)s</span>' ),
+						{
+							domainName,
+						}
+					),
+					{
+						span: <span />,
+					}
+				);
+
 			default:
-				/* translators: %s - the name of the domain the user will add to their site */
-				return sprintf( __( 'Use a domain I own: %s' ), domainName );
+				return createInterpolateElement(
+					sprintf(
+						/* translators: %(domainName)s - the name of the domain the user will add to their site */
+						__( 'Use a domain I own: <span>%(domainName)s</span>' ),
+						{
+							domainName,
+						}
+					),
+					{
+						span: <span />,
+					}
+				);
 		}
 	}, [ domainName, mode, __ ] );
 
+	const renderHeader = () => {
+		return (
+			<>
+				{ goBack && (
+					<BackButton className={ baseClassName + '__go-back' } onClick={ onGoBack }>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ __( 'Back' ) }
+					</BackButton>
+				) }
+				<FormattedHeader
+					brandFont
+					className={ baseClassName + '__page-heading' }
+					headerText={ headerText }
+					align="left"
+				/>
+			</>
+		);
+	};
+
 	return (
 		<>
-			<BackButton className={ baseClassName + '__go-back' } onClick={ onGoBack }>
-				<Gridicon icon="arrow-left" size={ 18 } />
-				{ __( 'Back' ) }
-			</BackButton>
-			<FormattedHeader
-				brandFont
-				className={ baseClassName + '__page-heading' }
-				headerText={ headerText }
-				align="left"
-			/>
+			{ renderHeader() }
 			{ renderContent() }
 		</>
 	);
 }
 
 UseMyDomain.propTypes = {
-	goBack: PropTypes.func.isRequired,
+	goBack: PropTypes.func,
 	initialQuery: PropTypes.string,
 	isSignupStep: PropTypes.bool,
 	onConnect: PropTypes.func,

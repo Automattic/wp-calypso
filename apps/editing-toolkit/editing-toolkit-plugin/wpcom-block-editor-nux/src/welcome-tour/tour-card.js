@@ -23,20 +23,20 @@ const useEffectOnlyOnce = ( func ) => useEffect( func, [] );
 
 function WelcomeTourCard( {
 	cardContent,
-	currentCardIndex,
+	currentStepIndex,
 	justMaximized,
-	lastCardIndex,
+	lastStepIndex,
 	onMinimize,
 	onDismiss,
 	setJustMaximized,
-	setCurrentCardIndex,
-	onNextCardProgression,
-	onPreviousCardProgression,
+	setCurrentStepIndex,
+	onNextStepProgression,
+	onPreviousStepProgression,
 	isGutenboarding,
-	focusedOnLaunchRef,
+	setInitialFocusedElement,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
-	const isLastCard = currentCardIndex === lastCardIndex;
+	const isLastStep = currentStepIndex === lastStepIndex;
 
 	// Ensure tracking is recorded once per slide view
 	useEffectOnlyOnce( () => {
@@ -47,8 +47,8 @@ function WelcomeTourCard( {
 		}
 
 		recordTracksEvent( 'calypso_editor_wpcom_tour_slide_view', {
-			slide_number: currentCardIndex + 1,
-			is_last_slide: isLastCard,
+			slide_number: currentStepIndex + 1,
+			is_last_slide: isLastStep,
 			slide_heading: heading,
 			is_gutenboarding: isGutenboarding,
 		} );
@@ -64,11 +64,12 @@ function WelcomeTourCard( {
 				<h2 className="welcome-tour-card__heading">{ heading }</h2>
 				<p className="welcome-tour-card__description">
 					{ description }
-					{ isLastCard ? (
+					{ isLastStep ? (
 						<Button
 							className="welcome-tour-card__description"
 							isTertiary
-							onClick={ () => setCurrentCardIndex( 0 ) }
+							onClick={ () => setCurrentStepIndex( 0 ) }
+							ref={ setInitialFocusedElement }
 						>
 							{ __( 'Restart tour', 'full-site-editing' ) }
 						</Button>
@@ -76,17 +77,17 @@ function WelcomeTourCard( {
 				</p>
 			</CardBody>
 			<CardFooter>
-				{ isLastCard ? (
+				{ isLastStep ? (
 					<TourRating isGutenboarding={ isGutenboarding }></TourRating>
 				) : (
 					<CardNavigation
-						currentCardIndex={ currentCardIndex }
-						lastCardIndex={ lastCardIndex }
+						currentStepIndex={ currentStepIndex }
+						lastStepIndex={ lastStepIndex }
 						onDismiss={ onDismiss }
-						setCurrentCardIndex={ setCurrentCardIndex }
-						onNextCardProgression={ onNextCardProgression }
-						onPreviousCardProgression={ onPreviousCardProgression }
-						focusedOnLaunchRef={ focusedOnLaunchRef }
+						setCurrentStepIndex={ setCurrentStepIndex }
+						onNextStepProgression={ onNextStepProgression }
+						onPreviousStepProgression={ onPreviousStepProgression }
+						setInitialFocusedElement={ setInitialFocusedElement }
 					></CardNavigation>
 				) }
 			</CardFooter>
@@ -95,13 +96,13 @@ function WelcomeTourCard( {
 }
 
 function CardNavigation( {
-	currentCardIndex,
-	lastCardIndex,
+	currentStepIndex,
+	lastStepIndex,
 	onDismiss,
-	setCurrentCardIndex,
-	onNextCardProgression,
-	onPreviousCardProgression,
-	focusedOnLaunchRef,
+	setCurrentStepIndex,
+	onNextStepProgression,
+	onPreviousStepProgression,
+	setInitialFocusedElement,
 } ) {
 	// These are defined on their own lines because of a minification issue.
 	// __('translations') do not always work correctly when used inside of ternary statements.
@@ -111,17 +112,17 @@ function CardNavigation( {
 	return (
 		<>
 			<PaginationControl
-				currentPage={ currentCardIndex }
-				numberOfPages={ lastCardIndex + 1 }
-				setCurrentPage={ setCurrentCardIndex }
+				currentPage={ currentStepIndex }
+				numberOfPages={ lastStepIndex + 1 }
+				setCurrentPage={ setCurrentStepIndex }
 			/>
 			<div>
-				{ currentCardIndex === 0 ? (
+				{ currentStepIndex === 0 ? (
 					<Button isTertiary={ true } onClick={ onDismiss( 'no-thanks-btn' ) }>
 						{ __( 'Skip', 'full-site-editing' ) }
 					</Button>
 				) : (
-					<Button isTertiary={ true } onClick={ onPreviousCardProgression }>
+					<Button isTertiary={ true } onClick={ onPreviousStepProgression }>
 						{ __( 'Back', 'full-site-editing' ) }
 					</Button>
 				) }
@@ -129,10 +130,10 @@ function CardNavigation( {
 				<Button
 					className="welcome-tour-card__next-btn"
 					isPrimary={ true }
-					onClick={ onNextCardProgression }
-					ref={ focusedOnLaunchRef }
+					onClick={ onNextStepProgression }
+					ref={ setInitialFocusedElement }
 				>
-					{ currentCardIndex === 0 ? startTourLabel : nextLabel }
+					{ currentStepIndex === 0 ? startTourLabel : nextLabel }
 				</Button>
 			</div>
 		</>

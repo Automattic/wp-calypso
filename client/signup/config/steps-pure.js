@@ -325,7 +325,7 @@ export function generateSteps( {
 		},
 		'domain-only': {
 			stepName: 'domain-only',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
@@ -334,7 +334,7 @@ export function generateSteps( {
 
 		'select-domain': {
 			stepName: 'select-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in add-domain flow
 			props: {
 				isAllDomains: true,
 				isDomainOnly: true,
@@ -739,6 +739,23 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
+			props: {
+				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
+			},
+		},
+		'difm-design-setup-site': {
+			stepName: 'difm-design-setup-site',
+			apiRequestFunction: setDesignOnSite,
+			delayApiRequestUntilComplete: true,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
+			props: {
+				hideSkip: true,
+				hideExternalPreview: true,
+				useDIFMThemes: true,
+				showDesignPickerCategories: true,
+			},
 		},
 		'difm-design': {
 			stepName: 'difm-design',
@@ -746,7 +763,7 @@ export function generateSteps( {
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug', 'selectedDIFMDesign', 'selectedVertical' ],
+			dependencies: [ 'siteSlug', 'selectedDesign' ],
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
 		},
@@ -760,6 +777,20 @@ export function generateSteps( {
 		},
 		ready: {
 			stepName: 'ready',
+		},
+
+		// Woocommerce Install steps
+		confirm: {
+			stepName: 'confirm',
+		},
+		transfer: {
+			stepName: 'transfer',
+		},
+		install: {
+			stepName: 'install',
+		},
+		complete: {
+			stepName: 'complete',
 		},
 	};
 }

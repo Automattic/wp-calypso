@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -10,7 +9,6 @@ import {
 	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
-	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
 } from 'calypso/me/concierge/constants';
 
 import './style.scss';
@@ -21,7 +19,6 @@ class ConciergeBanner extends Component {
 			CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 			CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 			CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
-			CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
 		] ).isRequired,
 	};
 
@@ -91,28 +88,13 @@ class ConciergeBanner extends Component {
 				buttonHref = '/me/quickstart';
 				illustrationUrl = conciergeImage;
 				break;
-
-			case CONCIERGE_SUGGEST_PURCHASE_CONCIERGE:
-				headerText = translate( 'Need an expert by your side?' );
-				mainText = translate(
-					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these %(durationInMinutes)d minute calls.',
-					{
-						comment:
-							'Quick Start Session is a one-on-one video session between the user and our support staff.',
-						args: { durationInMinutes: 30 },
-					}
-				);
-				buttonText = translate( 'Learn more' );
-				buttonHref = '/checkout/offer-quickstart-session';
-				illustrationUrl = '/calypso/images/illustrations/illustration-start.svg';
-				break;
 		}
 
 		return { headerText, mainText, buttonText, buttonHref, illustrationUrl };
 	}
 
 	render() {
-		const { bannerType, showPlaceholder } = this.props;
+		const { showPlaceholder } = this.props;
 
 		if ( showPlaceholder ) {
 			return this.placeholder();
@@ -125,10 +107,6 @@ class ConciergeBanner extends Component {
 			buttonHref,
 			illustrationUrl,
 		} = this.getBannerContent();
-
-		const className = classnames( 'concierge-banner', {
-			'purchase-concierge': CONCIERGE_SUGGEST_PURCHASE_CONCIERGE === bannerType,
-		} );
 
 		return (
 			<>
@@ -148,7 +126,7 @@ class ConciergeBanner extends Component {
 					} }
 					compact={ false }
 					illustration={ illustrationUrl }
-					classNames={ className }
+					classNames="concierge-banner"
 				/>
 			</>
 		);

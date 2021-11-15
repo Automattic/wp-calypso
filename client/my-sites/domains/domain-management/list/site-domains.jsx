@@ -1,13 +1,18 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import {
+	FEATURE_SET_PRIMARY_CUSTOM_DOMAIN,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
+import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -20,16 +25,19 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getPurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -41,6 +49,7 @@ import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import DomainOnly from './domain-only';
 import DomainsTable from './domains-table';
+import DomainsTableFilterButton from './domains-table-filter-button';
 import {
 	filterOutWpcomDomains,
 	getDomainManagementPath,
@@ -77,12 +86,33 @@ export class SiteDomains extends Component {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
 	}
 
+	filterDomains( domains, filter ) {
+		return domains.filter( ( domain ) => {
+			if ( 'owned-by-me' === filter ) {
+				return domain.currentUserCanManage;
+			} else if ( 'owned-by-others' === filter ) {
+				return ! domain.currentUserCanManage;
+			}
+			return true;
+		} );
+	}
+
 	renderNewDesign() {
-		const { selectedSite, domains, currentRoute, isAtomicSite, translate } = this.props;
+		const {
+			currentRoute,
+			domains,
+			hasProductsList,
+			isAtomicSite,
+			selectedSite,
+			context,
+			translate,
+		} = this.props;
 		const { primaryDomainIndex, settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
 
-		const nonWpcomDomains = filterOutWpcomDomains( domains );
+		const selectedFilter = context?.query?.filter;
+
+		const nonWpcomDomains = this.filterDomains( filterOutWpcomDomains( domains ), selectedFilter );
 		const wpcomDomain = domains.find(
 			( domain ) => domain.type === type.WPCOM || domain.isWpcomStagingDomain
 		);
@@ -129,17 +159,9 @@ export class SiteDomains extends Component {
 
 		return (
 			<>
-				<div className="domains__header">
-					{ /* TODO: we need to decide where the HeaderCart will appear in the new design */ }
-					<div className="domains__header-buttons">
-						<HeaderCart
-							selectedSite={ this.props.selectedSite }
-							currentRoute={ this.props.currentRoute }
-						/>
-					</div>
-				</div>
+				{ ! hasProductsList && <QueryProductsList /> }
 
-				{ ! this.isLoading() && nonWpcomDomains.length === 0 && (
+				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
@@ -147,11 +169,16 @@ export class SiteDomains extends Component {
 					/>
 				) }
 
+				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
+
 				<div className="domain-management-list__items">
+					<div className="domain-management-list__filter">
+						{ this.renderDomainTableFilterButton( false ) }
+					</div>
 					<DomainsTable
 						isLoading={ this.isLoading() }
 						currentRoute={ currentRoute }
-						domains={ domains }
+						domains={ nonWpcomDomains }
 						domainsTableColumns={ domainsTableColumns }
 						selectedSite={ selectedSite }
 						primaryDomainIndex={ primaryDomainIndex }
@@ -163,7 +190,7 @@ export class SiteDomains extends Component {
 					/>
 				</div>
 
-				{ ! this.isLoading() && nonWpcomDomains.length > 0 && (
+				{ ! this.isLoading() && nonWpcomDomains.length > 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
@@ -190,6 +217,54 @@ export class SiteDomains extends Component {
 		);
 	}
 
+	renderDomainTableFilterButton( compact ) {
+		const { selectedSite, domains, context } = this.props;
+
+		const selectedFilter = context?.query?.filter;
+		const nonWpcomDomains = filterOutWpcomDomains( domains );
+
+		const filterOptions = [
+			{
+				label: 'Site domains',
+				value: '',
+				path: domainManagementList( selectedSite?.slug ),
+				count: nonWpcomDomains?.length,
+			},
+			{
+				label: 'Owned by me',
+				value: 'owned-by-me',
+				path:
+					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
+				count: this.filterDomains( nonWpcomDomains, 'owned-by-me' )?.length,
+			},
+			{
+				label: 'Owned by others',
+				value: 'owned-by-others',
+				path:
+					domainManagementList( selectedSite?.slug ) +
+					'?' +
+					stringify( { filter: 'owned-by-others' } ),
+				count: this.filterDomains( nonWpcomDomains, 'owned-by-others' )?.length,
+			},
+			null,
+			{
+				label: 'All my domains',
+				value: 'all-my-domains',
+				path: domainManagementRoot(),
+				count: null,
+			},
+		];
+
+		return (
+			<DomainsTableFilterButton
+				key="breadcrumb_button_2"
+				selectedFilter={ selectedFilter || '' }
+				filterOptions={ filterOptions }
+				compact={ compact }
+			/>
+		);
+	}
+
 	renderBreadcrumbs() {
 		const { translate } = this.props;
 
@@ -204,9 +279,26 @@ export class SiteDomains extends Component {
 				}
 			),
 		};
+
 		const buttons = [
+			this.renderDomainTableFilterButton( false ),
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<OptionsDomainButton key="breadcrumb_button_2" ellipsisButton />,
+			<HeaderCart
+				key="breadcrumb_button_cart"
+				selectedSite={ this.props.selectedSite }
+				currentRoute={ this.props.currentRoute }
+			/>,
+			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
+		];
+
+		const mobileButtons = [
+			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
+			<HeaderCart
+				key="breadcrumb_button_cart"
+				selectedSite={ this.props.selectedSite }
+				currentRoute={ this.props.currentRoute }
+			/>,
+			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
 		return (
@@ -214,7 +306,7 @@ export class SiteDomains extends Component {
 				items={ [ item ] }
 				mobileItem={ item }
 				buttons={ buttons }
-				mobileButtons={ buttons }
+				mobileButtons={ mobileButtons }
 			/>
 		);
 	}
@@ -421,10 +513,13 @@ export default connect(
 		const purchases = getPurchases( state );
 
 		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
+			hasProductsList: 0 < ( getProductsList( state )?.length ?? 0 ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			googleWorkspaceProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 				: false,

@@ -8,11 +8,11 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
@@ -111,7 +111,7 @@ class P2Site extends Component {
 	};
 
 	logValidationErrorToLogstash = ( error, errorMessage ) => {
-		this.props.logToLogstash( {
+		logToLogstash( {
 			feature: 'calypso_wp_for_teams',
 			message: 'P2 signup validation failed',
 			extra: {
@@ -471,6 +471,4 @@ class P2Site extends Component {
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep, logToLogstash } )(
-	localize( P2Site )
-);
+export default connect( null, { saveSignupStep, submitSignupStep } )( localize( P2Site ) );

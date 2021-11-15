@@ -1,8 +1,8 @@
-import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import domainRegisteredSuccess from 'calypso/assets/images/illustrations/domain-registration-success.svg';
 import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
+import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import type {
 	DomainThankYouParams,
 	DomainThankYouProps,
@@ -40,15 +40,14 @@ const DomainRegistrationThankYouProps = ( {
 							'Set up a primary domain, connect other domains and make sure people can find your site'
 						),
 						stepCta: (
-							<Button
+							<FullWidthButton
 								href={ domainMappingSetup( selectedSiteSlug, domain ) }
-								className={ 'domain-registration__thank-you-button domain-thank-you__button' }
 								primary
 								busy={ false }
 								disabled={ false }
 							>
 								{ translate( 'Manage domains' ) }
-							</Button>
+							</FullWidthButton>
 						),
 					},
 					professionalEmail,

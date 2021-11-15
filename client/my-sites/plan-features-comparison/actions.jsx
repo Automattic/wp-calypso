@@ -103,6 +103,7 @@ PlanFeaturesComparisonActions.propTypes = {
 	className: PropTypes.string,
 	current: PropTypes.bool,
 	freePlan: PropTypes.bool,
+	isDisabled: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isLaunchPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,

@@ -346,11 +346,12 @@ export function generateFlows( {
 			name: 'importer',
 			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
 			destination: '/',
+			pageTitle: translate( 'Import your site content' ),
 			description: 'A new import flow that can be used from the onboarding flow',
 			lastModified: '2021-10-18',
 			disallowResume: true,
 			hideFlowProgress: true,
-			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'siteSlug' ],
 		},
 		{
 			name: 'reader',
@@ -433,10 +434,20 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [ 'user', 'difm-design', 'site-info-collection', 'domains' ],
+			steps: [ 'user', 'difm-design-setup-site', 'site-info-collection', 'domains' ],
 			destination: getSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			lastModified: '2021-09-30',
+		},
+		{
+			name: 'woocommerce-install',
+			pageTitle: translate( 'Add WooCommerce to your site' ),
+			steps: [ 'confirm', 'transfer', 'install', 'complete' ],
+			destination: '/',
+			description: 'Onboarding and installation flow for woocommerce on all plans.',
+			providesDependenciesInQuery: [ 'siteSlug' ],
+			disallowResume: true,
+			lastModified: '2021-11-08',
 		},
 	];
 

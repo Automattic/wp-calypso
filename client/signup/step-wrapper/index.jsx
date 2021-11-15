@@ -29,6 +29,7 @@ class StepWrapper extends Component {
 		isExternalBackUrl: PropTypes.bool,
 		headerButton: PropTypes.node,
 		isHorizontalLayout: PropTypes.bool,
+		queryParams: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -53,6 +54,7 @@ class StepWrapper extends Component {
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
 				backIcon={ isReskinnedFlow( this.props.flowName ) ? 'chevron-left' : undefined }
+				queryParams={ this.props.queryParams }
 			/>
 		);
 	}
@@ -111,6 +113,7 @@ class StepWrapper extends Component {
 			<NavigationLink
 				direction="forward"
 				goToNextStep={ goToNextStep }
+				forwardUrl={ this.props.forwardUrl }
 				defaultDependencies={ defaultDependencies }
 				flowName={ flowName }
 				stepName={ stepName }

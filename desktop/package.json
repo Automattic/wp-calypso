@@ -23,8 +23,8 @@
 		"dev": "cross-env NODE_ENV=development DEBUG=1 WP_DESKTOP_DEBUG=1 electron app/index.js",
 		"dev:localhost": "cross-env WP_DESKTOP_BASE_URL=\"http://calypso.localhost:3000\" yarn run dev",
 		"ci:build-mac": "yarn run build:main && node bin/build-mac-ci",
-		"build": "yarn run build:main && ELECTRON_BUILDER_ARGS=${ELECTRON_BUILDER_ARGS} yarn run build:app",
-		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",
+		"build": "yarn run build:main && yarn run build:app",
+		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS:-} build --publish never",
 		"build:main": "yarn run build:config && webpack --stats-preset errors-only",
 		"build:config": "node bin/build-desktop-config.js",
 		"build:secrets": "node bin/build-desktop-secrets.js",
@@ -33,18 +33,22 @@
 		"test:e2e": "jest -c test/e2e/config/jest.config.js"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-build": "^10.0.0",
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"copy-webpack-plugin": "^6.2.1",
-		"electron": "^12.0.12",
+		"electron": "12.0.13",
 		"electron-builder": "^22.11.7",
 		"electron-notarize": "^0.1.1",
 		"electron-rebuild": "^2.3.5",
+		"enzyme": "^3.11.0",
 		"jest": "^27.2.4",
 		"lodash": "^4.17.21",
 		"playwright": "1.14.0",
-		"webpack": "^5.54.0",
-		"webpack-cli": "^4.8.0"
+		"postcss": "^8.3.11",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"webpack": "^5.63.0",
+		"webpack-cli": "^4.9.1"
 	},
 	"dependencies": {
 		"archiver": "^3.1.1",

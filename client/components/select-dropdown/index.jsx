@@ -135,12 +135,15 @@ class SelectDropdown extends Component {
 		if ( this.props.children ) {
 			// add refs and focus-on-click handlers to children
 			return Children.map( this.props.children, ( child ) => {
-				if ( ! child || child.type !== DropdownItem ) {
+				if (
+					! child ||
+					! [ DropdownItem, DropdownSeparator, DropdownLabel ].includes( child.type )
+				) {
 					return null;
 				}
 
 				return cloneElement( child, {
-					ref: this.setItemRef( refIndex++ ),
+					ref: child.type === DropdownItem ? this.setItemRef( refIndex++ ) : null,
 					onClick: ( event ) => {
 						this.dropdownContainerRef.current.focus();
 						if ( typeof child.props.onClick === 'function' ) {

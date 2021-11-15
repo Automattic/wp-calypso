@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.signup__step.is-design-setup-site {
+.signup__step.is-design-setup-site, .signup__step.is-difm-design-setup-site {
 	.step-wrapper {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -16,11 +16,6 @@
 			padding-left: 48px;
 			padding-right: 48px;
 		}
-
-		@include break-medium {
-			padding-left: 96px;
-			padding-right: 96px;
-		}
 	}
 
 	.step-wrapper__content {
@@ -32,6 +27,14 @@
 
 		@include break-medium {
 			margin-top: 48px;
+		}
+	}
+
+	.step-wrapper.design-picker__has-categories {
+		.step-wrapper__content {
+			@include break-medium {
+				margin-top: 64px;
+			}
 		}
 	}
 
@@ -52,6 +55,20 @@
 			grid-template-columns: 1fr 1fr;
 			column-gap: 49px;
 			row-gap: 39px;
+		}
+	}
+
+	.design-picker__has-categories {
+		.design-picker__grid {
+			@include break-medium {
+				column-gap: 24px;
+				row-gap: 36px;
+			}
+		}
+
+		.formatted-header__subtitle {
+			// Overrides some very specific selectors in /client/signup/style.scss
+			margin: 12px 0 48px !important;
 		}
 	}
 

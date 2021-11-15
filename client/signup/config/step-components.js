@@ -74,12 +74,17 @@ const stepNameToModuleName = {
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
 	'design-setup-site': 'design-picker',
+	'difm-design-setup-site': 'design-picker',
 	'difm-design': 'difm-design-picker',
 	'site-info-collection': 'site-info-collection',
 	intent: 'intent',
 	list: 'import',
 	capture: 'import',
 	ready: 'import',
+	confirm: 'woocommerce-install',
+	transfer: 'woocommerce-install',
+	install: 'woocommerce-install',
+	complete: 'woocommerce-install',
 };
 
 export function getStepModuleName( stepName ) {

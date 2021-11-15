@@ -8,7 +8,7 @@ import {
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
 	renderPluginsSetupStatusPage,
-	renderPluginsUploadStatusPage,
+	renderPluginsInstallPage,
 	redirectToHome,
 } from './controller';
 
@@ -34,9 +34,9 @@ export default function () {
 			clientRender
 		);
 		page(
-			'/marketplace/product/install/:site',
+			'/marketplace/:productSlug?/install/:site?',
 			siteSelection,
-			renderPluginsUploadStatusPage,
+			renderPluginsInstallPage,
 			makeLayout,
 			clientRender
 		);
