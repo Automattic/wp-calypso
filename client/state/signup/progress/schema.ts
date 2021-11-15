@@ -29,6 +29,7 @@ export interface StepState {
 	providedDependencies?: string[];
 	status: 'completed' | 'processing' | 'pending' | 'in-progress' | 'invalid';
 	stepName: string;
+	wasSkipped?: boolean;
 }
 
 export type ProgressState = Record< string, StepState >;
