@@ -56,10 +56,9 @@ export const fetchSettings = () => ( dispatch ) => {
 				data,
 			} )
 		)
-		.catch( ( error ) =>
+		.catch( () =>
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_FETCH_FAILED,
-				error,
 			} )
 		);
 };
@@ -103,16 +102,13 @@ export const saveSettings = ( source, settings, applyToAll = false ) => ( dispat
 			dispatch( showSaveSuccessNotice() );
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_SAVE_COMPLETE,
-				error: undefined,
 				data,
 			} );
 		} )
-		.catch( ( error ) => {
+		.catch( () => {
 			dispatch( showSaveErrorNotice() );
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_SAVE_FAILED,
-				error,
-				data: undefined,
 			} );
 		} );
 };
