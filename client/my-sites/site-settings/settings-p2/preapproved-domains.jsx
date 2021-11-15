@@ -1,9 +1,9 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import { useState, useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { flowRight, includes, pickBy, filter } from 'lodash';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -13,22 +13,22 @@ import wpcom from 'calypso/lib/wp';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
 
 const P2PreapprovedDomainsForm = ( {
 	fields,
 	handleSubmitForm,
-	isP2HubSite,
 	isRequestingSettings,
 	isSavingSettings,
-	isWPForTeamsSite,
 	recordTracksEvent,
-	site,
+	siteId,
 	translate,
 	updateFields,
 } ) => {
 	const SETTING_KEY_PREAPPROVED_DOMAINS = 'p2_preapproved_domains';
+
+	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
+	const isP2Hub = useSelector( ( state ) => isSiteP2Hub( state, siteId ) );
 
 	const [ isToggledOn, setIsToggledOn ] = useState( false );
 	const [ isValidating, setIsValidating ] = useState( false );
@@ -48,7 +48,7 @@ const P2PreapprovedDomainsForm = ( {
 		}
 	}, [ fields ] );
 
-	if ( ! isWPForTeamsSite || ! isP2HubSite ) {
+	if ( ! isWPForTeamsSite || ! isP2Hub ) {
 		return <></>;
 	}
 
@@ -171,7 +171,7 @@ const P2PreapprovedDomainsForm = ( {
 
 	return (
 		<div className={ classNames( classes ) }>
-			{ site && <QuerySiteSettings siteId={ site.ID } /> }
+			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 
 			<SettingsSectionHeader
 				disabled={
@@ -231,15 +231,6 @@ const P2PreapprovedDomainsForm = ( {
 	);
 };
 
-const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-		isP2HubSite: isSiteP2Hub( state, siteId ),
-	};
-} );
-
 const getFormSettings = ( settings ) => {
 	const defaultSettings = {
 		p2_preapproved_domains: '',
@@ -256,7 +247,4 @@ const getFormSettings = ( settings ) => {
 	return formSettings;
 };
 
-export default flowRight(
-	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( P2PreapprovedDomainsForm );
+export default flowRight( wrapSettingsForm( getFormSettings ) )( P2PreapprovedDomainsForm );
