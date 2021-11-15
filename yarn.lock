@@ -20687,7 +20687,7 @@ fsevents@~2.1.2:
     globby: ^10.0.0
     xgettext-js: ^3.0.0
   bin:
-    i18n-calypso: "workspace:^"
+    i18n-calypso: cli.js
   languageName: unknown
   linkType: soft
 
