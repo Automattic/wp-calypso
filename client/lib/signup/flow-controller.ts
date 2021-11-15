@@ -248,14 +248,9 @@ export default class SignupFlowController {
 
 	_assertFlowProvidedRequiredDependencies() {
 		const storedDependencies = keys( getSignupDependencyStore( this._reduxStore.getState() ) );
-		const signupProgress = getSignupProgress( this._reduxStore.getState() );
 
 		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
 			if ( ! step.providesDependencies ) {
-				return;
-			}
-
-			if ( signupProgress[ step.stepName ]?.wasSkipped ) {
 				return;
 			}
 
@@ -321,28 +316,19 @@ export default class SignupFlowController {
 		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
 			includes( currentSteps, step.stepName )
 		);
-		const pendingNotSkippedSteps = filter(
-			signupProgress,
-			( step ) => step.status === 'pending' && ! step.wasSkipped
-		);
-		const completedOrSkippedSteps = filter(
-			signupProgress,
-			( step ) => step.status === 'completed' || step.wasSkipped
-		);
+		const pendingSteps = filter( signupProgress, { status: 'pending' } );
+		const completedSteps = filter( signupProgress, { status: 'completed' } );
 		const dependencies = getSignupDependencyStore( this._reduxStore.getState() );
 
 		if ( dependencies.bearer_token && ! wpcom.isTokenLoaded() ) {
 			wpcom.loadToken( dependencies.bearer_token );
 		}
 
-		for ( const pendingStep of pendingNotSkippedSteps ) {
+		for ( const pendingStep of pendingSteps ) {
 			this._processStep( pendingStep );
 		}
 
-		if (
-			completedOrSkippedSteps.length === currentSteps.length &&
-			undefined !== this._onComplete
-		) {
+		if ( completedSteps.length === currentSteps.length && undefined !== this._onComplete ) {
 			this._assertFlowProvidedRequiredDependencies();
 			// deferred to ensure that the onComplete function is called after the stores have
 			// emitted their final change events.
