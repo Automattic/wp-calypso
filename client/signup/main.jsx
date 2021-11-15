@@ -667,9 +667,16 @@ class Signup extends Component {
 			};
 		}
 
+		const classes = [ 'signup__step' ];
+		if ( isP2Flow( this.props.flowName ) ) {
+			classes.push( `is-${ this.props.stepName }` );
+		} else {
+			classes.push( `is-${ kebabCase( this.props.stepName ) }` );
+		}
+
 		return (
 			<div className="signup__step" key={ stepKey }>
-				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
+				<div className={ classes.join( ' ' ) }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
@@ -738,8 +745,15 @@ class Signup extends Component {
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 
+		const classes = [ 'signup' ];
+		if ( isP2Flow( this.props.flowName ) ) {
+			classes.push( `is-${ this.props.flowName }` );
+		} else {
+			classes.push( `is-${ kebabCase( this.props.flowName ) }` );
+		}
+
 		return (
-			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+			<div className={ classes.join( ' ' ) }>
 				<DocumentHead title={ this.props.pageTitle } />
 				{ ! isP2Flow( this.props.flowName ) && (
 					<SignupHeader
