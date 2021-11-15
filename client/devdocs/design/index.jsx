@@ -198,7 +198,7 @@ export default class DesignAssets extends Component {
 					<FeatureGate readmeFilePath="feature-example" />
 					<FilePickers readmeFilePath="file-picker" />
 					<FixedNavigationHeader
-						searchKeywords="header,navigatio,breadcrumbs"
+						searchKeywords="breadcrumbs"
 						readmeFilePath="fixed-navigation-header"
 					/>
 					<FocusableExample readmeFilePath="focusable" />
