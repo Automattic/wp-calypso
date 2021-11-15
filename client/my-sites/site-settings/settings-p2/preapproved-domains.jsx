@@ -43,7 +43,7 @@ const P2PreapprovedDomainsForm = ( {
 	const [ error, setError ] = useState( {} );
 
 	useEffect( () => {
-		if ( ! fields || ! fields.p2_preapproved_domains ) {
+		if ( ! fields?.p2_preapproved_domains ) {
 			return;
 		}
 
