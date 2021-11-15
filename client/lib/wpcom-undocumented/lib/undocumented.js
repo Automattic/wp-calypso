@@ -204,32 +204,6 @@ Undocumented.prototype.getAvailableTlds = function ( query = {} ) {
 };
 
 /**
- * Retrieves the domain contact information of the user.
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getDomainContactInformation = function ( fn ) {
-	debug( '/me/domain-contact-information query' );
-
-	return this._sendRequest(
-		{
-			path: '/me/domain-contact-information',
-			method: 'get',
-		},
-		function ( error, data ) {
-			if ( error ) {
-				return fn( error );
-			}
-
-			const newData = mapKeysRecursively( data, function ( key ) {
-				return key === '_headers' ? key : camelCase( key );
-			} );
-
-			fn( null, newData );
-		}
-	);
-};
-/**
  *
  * @param domain {string}
  * @param fn {function}
