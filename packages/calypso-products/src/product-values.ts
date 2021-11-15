@@ -1,7 +1,6 @@
 export { allowedProductAttributes } from './allowed-product-attributes';
 export { formatProduct } from './format-product';
 export { getDomain } from './get-domain';
-export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-amount';
 export * from './get-jetpack-item-term-variants';
 export { getJetpackProductCallToAction } from './get-jetpack-product-call-to-action';
 export { getJetpackProductDescription } from './get-jetpack-product-description';
