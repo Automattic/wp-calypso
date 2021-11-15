@@ -21,10 +21,11 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 
 	describe( 'Follow the WordPress flow', function () {
 		it( 'Navigate to Capture page', async function () {
-			await page.goto( DataHelper.getCalypsoURL( 'start/importer', { siteSlug: siteTitle } ) );
+			await page.goto( DataHelper.getCalypsoURL( '/start/importer', { siteSlug: siteTitle } ) );
 		} );
 
 		it( 'Start a WordPress import', async () => {
+			startImportFlow = new StartImportFlow( page );
 			await startImportFlow.enterURL( 'pento.net' );
 		} );
 	} );
