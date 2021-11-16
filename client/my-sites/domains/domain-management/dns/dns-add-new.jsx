@@ -278,9 +278,12 @@ class DnsAddNew extends React.Component {
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ buttonLabel }
 					</FormButton>
-					<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
-						{ translate( 'Cancel' ) }
-					</FormButton>
+
+					{ config.isEnabled( 'domains/dns-records-redesign' ) && (
+						<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
+							{ translate( 'Cancel' ) }
+						</FormButton>
+					) }
 				</div>
 			</form>
 		);
