@@ -27,39 +27,13 @@ export function fetchWPCOMPlugins( type: Type ) {
 		type: type,
 	};
 
-	// return wpcom.req.get(
-	// 	{
-	// 		path: `marketplace/plugins`,
-	// 		apiNamespace: 'wpcom/v2',
-	// 	},
-	// 	query
-	// );
-	return [
+	return wpcom.req.get(
 		{
-			author: '<a href="https://yoast.com/">Team Yoast</a>',
-			author_name: 'Team Yoast',
-			author_url: 'https://yoast.com/',
-			icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389',
-			name: 'Yoast SEO',
-			rating: 98,
-			slug: 'wordpress-seo',
-
-			raw_price: 70,
-			billed: 'annually',
+			path: `/marketplace/products`,
+			apiNamespace: 'wpcom/v2',
 		},
-		{
-			author: '<a href="https://yoast.com/">Team Yoast</a>',
-			author_name: 'Team Yoast',
-			author_url: 'https://yoast.com/',
-			icon: 'https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389',
-			name: 'Yoast SEO',
-			rating: 98,
-			slug: 'wordpress-seo',
-
-			raw_price: 70,
-			billed: 'annually',
-		},
-	];
+		query
+	);
 }
 
 export default useWPCOMPlugins;

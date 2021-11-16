@@ -12,10 +12,12 @@ import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import useWPCOMPlugins from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { normalizePluginsList } from 'calypso/lib/plugins/utils';
 import { YOAST, WOO } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
 import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
+import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	fetchAutomatedTransferStatus,
@@ -121,12 +123,14 @@ export default function MarketplaceTest(): JSX.Element {
 			<SidebarNavigation />
 			<Card key="wpcom-plugins">
 				<PluginsBrowserList
-					plugins={ data }
+					plugins={ normalizePluginsList( data.results ) }
 					listName={ 'paid' }
 					title={ 'Paid Plugins' }
 					site={ selectedSiteSlug }
 					showPlaceholders={ isFetching }
 					currentSites={ null }
+					variant={ PluginsBrowserListVariant.Fixed }
+					extended
 				/>
 			</Card>
 			<Card key="heading">
