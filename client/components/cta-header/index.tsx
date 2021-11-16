@@ -4,17 +4,31 @@ import './style.scss';
 
 const Container = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr;
 	align-items: center;
 	min-height: 500px;
+
+	@media ( min-width: 480px ) {
+		grid-template-columns: 1fr 1fr;
+	}
 `;
 
 const CtaContainer = styled.div`
+	text-align: center;
 	justify-self: start;
+
+	@media ( min-width: 480px ) {
+		text-align: inherit;
+	}
 `;
 
 const ContentContainer = styled.div`
 	justify-self: end;
+	margin-top: 2rem;
+
+	@media ( min-width: 480px ) {
+		margin-top: 0;
+	}
 `;
 
 const Headline = styled.h3`
