@@ -778,8 +778,8 @@ export function generateSteps( {
 		ready: {
 			stepName: 'ready',
 		},
-		importer: {
-			stepName: 'importer',
+		importing: {
+			stepName: 'importing',
 		},
 
 		// Woocommerce Install steps

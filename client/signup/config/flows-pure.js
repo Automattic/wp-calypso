@@ -355,7 +355,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'from',
-			steps: [ 'importer' ],
+			steps: [ 'importing' ],
 			destination: '/',
 			pageTitle: translate( 'Import your site content' ),
 			description: 'Onboarding - start from importer',
