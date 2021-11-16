@@ -51,6 +51,6 @@
 		"jest": "^27.2.4",
 		"postcss": "^8.3.11",
 		"webpack": "^5.63.0",
-		"webpack-dev-server": "^4.4.0"
+		"webpack-dev-server": "^4.5.0"
 	}
 }

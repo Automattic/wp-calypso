@@ -770,7 +770,7 @@ __metadata:
     redux: ^4.1.2
     redux-thunk: ^2.3.0
     webpack: ^5.63.0
-    webpack-dev-server: ^4.4.0
+    webpack-dev-server: ^4.5.0
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
     wpcom-xhr-request: "workspace:^"
@@ -38441,9 +38441,9 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "webpack-dev-server@npm:4.4.0"
+"webpack-dev-server@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "webpack-dev-server@npm:4.5.0"
   dependencies:
     ansi-html-community: ^0.0.8
     bonjour: ^3.5.0
@@ -38477,7 +38477,7 @@ testarmada-magellan@11.0.10:
       optional: true
   bin:
     webpack-dev-server: bin/webpack-dev-server.js
-  checksum: adf451529893b78a5eec4b478e06a9b830f342ca76c125b956607817122e9db4e8d8cf0588b061de959a6ed7c6922524e7e7423f11c02f68920e9815870f1ff8
+  checksum: 7fc19fb3741d331e5967851782f97f7e50251d1ab2f89bd32d0b9fae5103c72ec0d386cb2e8591b0e4ed3a6609d5c33125aeb8fbd87821dc41cd25ac6acd081a
   languageName: node
   linkType: hard
 
