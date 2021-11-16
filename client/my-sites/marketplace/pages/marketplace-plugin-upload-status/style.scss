@@ -2,17 +2,24 @@ body.is-section-marketplace.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
 }
 
-.is-section-marketplace.has-no-sidebar {
-	.layout__content {
-		height: 100vh;
-		@media ( max-width: 782px ) {
-			padding: 0;
+.is-section-marketplace {
+	&.has-no-sidebar {
+		.layout__content {
 			height: 100vh;
-			.layout__primary {
+			@media ( max-width: 782px ) {
+				padding: 0;
 				height: 100vh;
+				.layout__primary {
+					height: 100vh;
+				}
 			}
 		}
 	}
+}
+
+.marketplace-plugin-upload-status__wpcom-wordmark {
+	align-self: center;
+	margin-left: 10px;
 }
 
 .marketplace-plugin-upload-status__root {

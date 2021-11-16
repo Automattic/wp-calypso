@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
+import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -176,6 +177,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 			/>
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar>
+				<WordPressWordmark className="marketplace-plugin-upload-status__wpcom-wordmark" />
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-upload-status__root">
