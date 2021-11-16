@@ -1,4 +1,6 @@
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Main from 'calypso/components/main';
 import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
@@ -18,6 +20,7 @@ function WooCommerce() {
 	return (
 		<div className="woocommerce">
 			<Main class="main" wideLayout>
+				<DocumentHead title={ translate( 'WooCommerce' ) } />
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				{ areInstalledPluginsLoadedIntoState && <RequiredPluginsInstallView /> }
 			</Main>
