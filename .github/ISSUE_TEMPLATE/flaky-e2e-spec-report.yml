@@ -1,6 +1,6 @@
 name: Flaky E2E Spec Report
-description: Noticed an erratic E2E spec? Report it!
-title: "Flaky E2E:"
+description: Report an intermittently failing E2E test.
+title: "Flaky E2E: "
 labels: "Flaky e2e"
 body:
   - type: markdown
@@ -12,24 +12,11 @@ body:
     attributes:
       label: Spec file
       placeholder: eg. wp-likes__post.js
-    validations:
-      required: true
   - type: input
-    id: suite
+    id: spec
     attributes:
-      label: Suite or step
-      placeholder: eg. Like new post
-  - type: dropdown
-    id: framework
-    attributes:
-      label: Framework
-      description: Which framework does the spec belong to?
-      options:
-        - Selenium
-        - Playwright
-      multiple: true
-    validations:
-      required: true
+      label: TeamCity ID
+      placeholder: eg. 648729
   - type: textarea
     id: logs
     attributes:
