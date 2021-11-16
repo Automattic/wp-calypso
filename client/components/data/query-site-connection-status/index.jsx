@@ -1,44 +1,23 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import isRequestingSiteConnectionStatus from 'calypso/state/selectors/is-requesting-site-connection-status';
 import { requestConnectionStatus } from 'calypso/state/sites/connection/actions';
 
-class QuerySiteConnectionStatus extends Component {
-	static propTypes = {
-		siteId: PropTypes.number,
-		requestingSiteConnectionStatus: PropTypes.bool,
-		requestConnectionStatus: PropTypes.func,
-	};
-
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( siteId && ! isRequestingSiteConnectionStatus( getState(), siteId ) ) {
+		dispatch( requestConnectionStatus( siteId ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
-		}
-	}
+export default function QuerySiteConnectionStatus( { siteId } ) {
+	const dispatch = useDispatch();
 
-	request( props ) {
-		if ( props.requestingSiteConnectionStatus || ! props.siteId ) {
-			return;
-		}
+	useEffect( () => {
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
-		props.requestConnectionStatus( props.siteId );
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingSiteConnectionStatus: isRequestingSiteConnectionStatus( state, ownProps.siteId ),
-		};
-	},
-	{ requestConnectionStatus }
-)( QuerySiteConnectionStatus );
+QuerySiteConnectionStatus.propTypes = { siteId: PropTypes.number };
