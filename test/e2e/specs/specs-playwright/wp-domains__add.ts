@@ -16,7 +16,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
 	let page: Page;
 
 	setupHooks( ( args ) => {
