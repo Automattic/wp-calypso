@@ -3,6 +3,8 @@ import React from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import WixImporter from './wix';
 
+import './style.scss';
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
