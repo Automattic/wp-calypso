@@ -107,7 +107,6 @@ export default function ConfirmWordPressSubdoamin( {
 						{ createInterpolateElement( __( '<a>Contact support</a> for help and questions.' ), {
 							a: <a href="#support-link" />,
 						} ) }
-						{ __( 'Contact support for help and questions.' ) }
 					</p>
 
 					<NextButton disabled={ isProcessing } onClick={ () => goToStep( 'confirm' ) }>
