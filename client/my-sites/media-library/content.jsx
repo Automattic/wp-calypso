@@ -517,8 +517,6 @@ export default withMobileBreakpoint(
 			deleteKeyringConnection,
 			clearMediaErrors,
 			changeMediaSource,
-		},
-		null,
-		{ pure: false }
+		}
 	)( localize( withMedia( MediaLibraryContent ) ) )
 );
