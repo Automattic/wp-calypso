@@ -205,12 +205,16 @@
 	@include break-xlarge {
 		.videos-ui__header {
 			.videos-ui__header-content {
-                .videos-ui__titles {
-                    h2 {
-                        font-size: $font-headline-medium;
-                        height: 60px;
-                    }
-                }
+				.videos-ui__titles {
+					h2 {
+						font-size: $font-headline-medium;
+						height: 60px;
+					}
+				}
+
+				.videos-ui__summary {
+					width: 31%;
+				}
 			}
 		}
 
