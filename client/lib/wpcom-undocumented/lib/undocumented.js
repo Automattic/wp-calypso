@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, snakeCase, set } from 'lodash';
+import { omit } from 'lodash';
 import { stringify } from 'qs';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -106,18 +106,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
 };
 
-Undocumented.prototype._sendRequest = function ( originalParams, fn ) {
-	const { apiVersion, method } = originalParams;
-	const updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
-
-	if ( apiVersion ) {
-		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
-		return this.wpcom.req[ method.toLowerCase() ]( updatedParams, { apiVersion }, fn );
-	}
-
-	return this.wpcom.req[ method.toLowerCase() ]( updatedParams, fn );
-};
-
 /**
  * Determine whether a domain name is available for registration
  *
@@ -204,32 +192,6 @@ Undocumented.prototype.getAvailableTlds = function ( query = {} ) {
 };
 
 /**
- * Retrieves the domain contact information of the user.
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getDomainContactInformation = function ( fn ) {
-	debug( '/me/domain-contact-information query' );
-
-	return this._sendRequest(
-		{
-			path: '/me/domain-contact-information',
-			method: 'get',
-		},
-		function ( error, data ) {
-			if ( error ) {
-				return fn( error );
-			}
-
-			const newData = mapKeysRecursively( data, function ( key ) {
-				return key === '_headers' ? key : camelCase( key );
-			} );
-
-			fn( null, newData );
-		}
-	);
-};
-/**
  *
  * @param domain {string}
  * @param fn {function}
@@ -241,74 +203,6 @@ Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
 			apiVersion: '1.1',
 		},
 		fn
-	);
-};
-
-function mapKeysRecursively( object, fn ) {
-	return Object.keys( object ).reduce( function ( mapped, key ) {
-		let value = object[ key ];
-		if ( isPlainObject( value ) ) {
-			value = mapKeysRecursively( value, fn );
-		}
-
-		mapped[ fn( key ) ] = value;
-		return mapped;
-	}, {} );
-}
-
-/**
- * Validates the specified domain contact information against a list of domain names.
- *
- * @param {object} contactInformation - user's contact information
- * @param {string[]} domainNames - list of domain names
- * @param {Function} fn The callback function
- * @param {object} query Query object for the call to wpcom.req.post
- */
-Undocumented.prototype.validateDomainContactInformation = function (
-	contactInformation,
-	domainNames,
-	fn,
-	query
-) {
-	let data = {
-		contactInformation: contactInformation,
-		domainNames: domainNames,
-	};
-
-	debug( '/me/domain-contact-information/validate query' );
-	data = mapKeysRecursively( data, snakeCase );
-
-	// Due to backend limitations some versions of this endpoint
-	// serialize a nested object in the response, encoding e.g.
-	//   { foo: { bar: { baz: [ "error" ] } } }
-	// as
-	//   { foo.bar.baz: [ "error" ] }
-	// here we decide whether to rehydrate this.
-	const shouldReshapeResponse = query?.apiVersion === '1.2';
-
-	return this.wpcom.req.post(
-		{ path: '/me/domain-contact-information/validate' },
-		query,
-		data,
-		function ( error, successData ) {
-			if ( error ) {
-				return fn( error );
-			}
-
-			// Reshape the error messages to a nested object
-			if ( successData.messages && shouldReshapeResponse ) {
-				successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
-					set( obj, key, successData.messages[ key ] );
-					return obj;
-				}, {} );
-			}
-
-			const newData = mapKeysRecursively( successData, function ( key ) {
-				return key === '_headers' ? key : camelCase( key );
-			} );
-
-			fn( null, newData );
-		}
 	);
 };
 

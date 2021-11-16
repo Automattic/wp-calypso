@@ -1,3 +1,4 @@
+import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/wpcom-checkout';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -43,20 +44,22 @@ export function requestContactDetailsCache() {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
 
-		wpcom.undocumented().getDomainContactInformation( ( error, data ) => {
-			if ( error ) {
+		wpcom.req
+			.get( '/me/domain-contact-information' )
+			.then( ( data ) => {
+				dispatch(
+					receiveContactDetailsCache( mapRecordKeysRecursively( data, snakeToCamelCase ) )
+				);
+				dispatch( {
+					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
+				} );
+			} )
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
 					error,
 				} );
-				return;
-			}
-
-			dispatch( receiveContactDetailsCache( data ) );
-			dispatch( {
-				type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
 			} );
-		} );
 	};
 }
 
