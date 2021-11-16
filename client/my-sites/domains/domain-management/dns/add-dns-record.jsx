@@ -24,7 +24,7 @@ import DnsAddNew from './dns-add-new';
 
 import './add-dns-record.scss';
 
-class AddDnsRecprd extends Component {
+class AddDnsRecord extends Component {
 	static propTypes = {
 		dns: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -169,4 +169,4 @@ export default connect(
 		};
 	},
 	{ successNotice, errorNotice, fetchDns }
-)( localize( AddDnsRecprd ) );
+)( localize( AddDnsRecord ) );
