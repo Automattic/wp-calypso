@@ -394,11 +394,7 @@ describe( '#createAccount()', () => {
 	test( 'should resolve with the username and bearer token', async () => {
 		const userData = { username: 'happyuser' };
 		const data = { bearer_token: '1234 abcd' };
-		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew() {
-				return Promise.resolve( data );
-			},
-		} ) );
+		jest.spyOn( wpcom.req.post ).mockImplementation( () => Promise.resolve( data ) );
 
 		await expect( createAccount( userData )( () => {} ) ).resolves.toEqual( {
 			username: userData.username,
@@ -409,11 +405,7 @@ describe( '#createAccount()', () => {
 	test( 'should reject with the error', async () => {
 		const userData = { username: 'happyuser' };
 		const error = { code: 'user_exists' };
-		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew() {
-				return Promise.reject( error );
-			},
-		} ) );
+		jest.spyOn( wpcom.req.post ).mockImplementation( () => Promise.reject( error ) );
 
 		await expect( createAccount( userData )( () => {} ) ).rejects.toBe( error );
 	} );
@@ -430,11 +422,7 @@ describe( '#createSocialAccount()', () => {
 			error: 'an_error_code',
 			message: 'An error message',
 		};
-		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersSocialNew() {
-				return Promise.reject( error );
-			},
-		} ) );
+		jest.spyOn( wpcom.req.post ).mockImplementation( () => Promise.reject( error ) );
 
 		await expect( createSocialAccount()( () => {} ) ).rejects.toEqual( {
 			code: error.error,
@@ -446,14 +434,12 @@ describe( '#createSocialAccount()', () => {
 	test( 'should resolve with the username and bearer token', async () => {
 		const bearerToken = 'foobar';
 		const username = 'a_happy_user';
-		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersSocialNew() {
-				return Promise.resolve( {
-					bearer_token: bearerToken,
-					username,
-				} );
-			},
-		} ) );
+		jest.spyOn( wpcom.req.post ).mockImplementation( () =>
+			Promise.resolve( {
+				bearer_token: bearerToken,
+				username,
+			} )
+		);
 
 		await expect( createSocialAccount()( () => {} ) ).resolves.toEqual( {
 			bearerToken,

@@ -1,26 +1,11 @@
-import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { camelCase, isPlainObject, omit, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
-import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import Me from './me';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
-
-/**
- * Some endpoints are restricted by OAuth client IDs and secrets
- * to prevent them being spammed. This adds these keys to the request
- * so that they will be successful. This is not a sufficent measure
- * against spam as these keys are exposed publicly
- *
- * @param { object } query - Add client_id and client_secret to the query.
- */
-function restrictByOauthKeys( query ) {
-	query.client_id = config( 'wpcom_signup_id' );
-	query.client_secret = config( 'wpcom_signup_key' );
-}
 
 /**
  * Create an `Undocumented` instance
@@ -364,143 +349,6 @@ Undocumented.prototype.readSitePostRelated = function ( query, fn ) {
 	return this.wpcom.req.get(
 		'/read/site/' + query.site_id + '/post/' + query.post_id + '/related',
 		params,
-		fn
-	);
-};
-
-/**
- * Sign up for a new user account
- * Create a new user
- *
- * @param {object} query - an object with the following values: email, username, password, first_name (optional), last_name (optional)
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersNew = function ( query, fn ) {
-	debug( '/users/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	// Set the language for the user
-	query.locale = getLocaleSlug();
-	const args = {
-		path: '/users/new',
-		body: query,
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Sign up for a new account with a social service (e.g. Google/Facebook).
- *
- * @param {object} query - an object with the following values: service, access_token, id_token (optional), signup_flow_name
- * @param {Function} fn - callback
- * @returns {Promise} A promise for the request
- */
-Undocumented.prototype.usersSocialNew = function ( query, fn ) {
-	query.locale = getLocaleSlug();
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	const args = {
-		path: '/users/social/new',
-		body: query,
-	};
-
-	return this.wpcom.req.post( args, fn );
-};
-
-Undocumented.prototype.createUserAndSite = function ( query, fn ) {
-	debug( '/users/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	// Set the language for the user
-	query.locale = getLocaleSlug();
-	const args = {
-		path: '/users/new',
-		body: query,
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Verify user for new signups
- *
- * @param {object} data - object containing an email address, username and password
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.validateNewUser = function ( data, fn ) {
-	debug( '/signups/validation/user' );
-
-	data.locale = getLocaleSlug();
-
-	return this.wpcom.req.post( '/signups/validation/user/', null, data, fn );
-};
-
-/**
- * Sign up for a new passwordless user account
- *
- * @param {object} query - an object with the following values: email
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersEmailNew = function ( query, fn ) {
-	debug( '/users/email/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	const args = {
-		path: '/users/email/new',
-		body: query,
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Verify a new passwordless user account
- *
- * @param {object} query - an object with the following values: email, code
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersEmailVerification = function ( query, fn ) {
-	debug( '/users/email/verification' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	const args = {
-		path: '/users/email/verification',
-		body: query,
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Create a new site
- *
- * @param {object} query - object containing an site address
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.sitesNew = function ( query, fn ) {
-	const localeSlug = getLocaleSlug();
-
-	debug( '/sites/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	// Set the language for the user
-	query.lang_id = getLanguage( localeSlug ).value;
-	query.locale = localeSlug;
-
-	return this.wpcom.req.post(
-		{
-			path: '/sites/new',
-			body: query,
-		},
 		fn
 	);
 };
