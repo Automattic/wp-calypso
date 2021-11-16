@@ -32,7 +32,7 @@ function DnsMenuOptionsButton( {
 	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
 
 	const getRecordsToRemove = useCallback( () => {
-		const dnsRecords = dns?.records ?? [];
+		const dnsRecords = dns.records ?? [];
 
 		return dnsRecords.filter(
 			( record ) =>
