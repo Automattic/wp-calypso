@@ -81,7 +81,6 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 			await Promise.all( [
 				page.waitForNavigation( {
 					url: '**/checkout/thank-you/**',
-					waitUntil: 'networkidle',
 					// Sometimes the testing domain third party system is really slow. It's better to wait a while than to throw a false positive.
 					timeout: 90 * 1000,
 				} ),
