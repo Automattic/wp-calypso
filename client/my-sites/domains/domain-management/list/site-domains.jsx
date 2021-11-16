@@ -56,6 +56,7 @@ import {
 	showUpdatePrimaryDomainSuccessNotice,
 	showUpdatePrimaryDomainErrorNotice,
 	getSimpleSortFunctionBy,
+	getReverseSimpleSortFunctionBy,
 } from './utils';
 
 import './style.scss';
@@ -141,7 +142,7 @@ export class SiteDomains extends Component {
 						} );
 						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
 					},
-					getSimpleSortFunctionBy( 'domain' ),
+					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
 			},
 			{
