@@ -99,7 +99,7 @@ export default function ConfirmWordPressSubdoamin( {
 
 					<p>
 						{ __(
-							'By installing this product your subdomain will change. You can change it later to a custom domain and we will pick up the tap for a year.'
+							'By installing this product your subdomain will change. You can change it later to a custom domain and we will pick up the tab for a year.'
 						) }
 					</p>
 
