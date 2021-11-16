@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Provider as ReduxProvider } from 'react-redux';
 import { RouteProvider } from 'calypso/components/route';
+import { setHrefLangLinks } from 'calypso/controller/localized-links';
 import {
 	setLocaleMiddleware,
 	setSectionMiddleware,
@@ -87,6 +88,7 @@ export default ( router ) => {
 		redirectJetpack,
 		redirectDefaultLocale,
 		setLocaleMiddleware,
+		setHrefLangLinks,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		login,
 		setShouldServerSideRenderLogin,
