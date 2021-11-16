@@ -85,7 +85,7 @@ class AddDnsRecprd extends Component {
 	};
 
 	renderMain() {
-		const { dns, selectedDomainName, translate } = this.props;
+		const { dns, selectedDomainName, selectedSite, translate } = this.props;
 		const dnsSupportPageLink = (
 			<ExternalLink
 				href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
@@ -126,6 +126,7 @@ class AddDnsRecprd extends Component {
 					<DnsAddNew
 						isSubmittingForm={ dns.isSubmittingForm }
 						selectedDomainName={ selectedDomainName }
+						selectedSiteSlug={ selectedSite.slug }
 						goBack={ this.goBack }
 						recordToEdit={ recordBeingEdited }
 					/>

@@ -1,5 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { includes, find, flatMap } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -9,6 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import formState from 'calypso/lib/form-state';
+import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { addDns } from 'calypso/state/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -22,6 +24,7 @@ class DnsAddNew extends React.Component {
 	static propTypes = {
 		isSubmittingForm: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
+		selectedSiteSlug: PropTypes.string,
 		goBack: PropTypes.func,
 		recordToEdit: PropTypes.object,
 	};
@@ -165,10 +168,12 @@ class DnsAddNew extends React.Component {
 			this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
 
 			this.props.addDns( this.props.selectedDomainName, normalizedData ).then(
-				() =>
+				() => {
+					page( domainManagementDns( this.props.selectedSiteSlug, this.props.selectedDomainName ) );
 					this.props.successNotice( translate( 'The DNS record has been added.' ), {
 						duration: 5000,
-					} ),
+					} );
+				},
 				( error ) =>
 					this.props.errorNotice(
 						error.message || translate( 'The DNS record has not been added.' )
