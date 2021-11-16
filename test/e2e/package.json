@@ -24,11 +24,11 @@
 		"eslint-plugin-mocha": "^9.0.0"
 	},
 	"dependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-e2e": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/mocha-debug-reporter": "workspace:^",
 		"@automattic/testarmada-magellan-mocha-plugin": "workspace:^",
-		"@babel/core": "^7.16.0",
 		"@testim/chrome-version": "^1.0.7",
 		"@types/jest": "^27.0.2",
 		"@xmpp/plugins": "^0.3.0",

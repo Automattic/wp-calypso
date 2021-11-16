@@ -192,10 +192,13 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/languages": "workspace:^"
+    "@jest/globals": ^27.2.4
     "@types/config": ^0.0.40
     "@types/jest": ^27.0.2
     "@types/node": ^16.11.7
     "@types/node-fetch": ^2.5.12
+    "@wordpress/i18n": ^4.2.2
     asana-phrase: ^0.0.8
     config: ^3.3.6
     mailosaur: ^7.3.1
@@ -38153,13 +38156,13 @@ testarmada-magellan@11.0.10:
   version: 0.0.0-use.local
   resolution: "wp-e2e-tests@workspace:test/e2e"
   dependencies:
+    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-e2e": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/mocha-debug-reporter": "workspace:^"
     "@automattic/testarmada-magellan-mocha-plugin": "workspace:^"
-    "@babel/core": ^7.16.0
     "@testim/chrome-version": ^1.0.7
     "@types/jest": ^27.0.2
     "@xmpp/plugins": ^0.3.0
