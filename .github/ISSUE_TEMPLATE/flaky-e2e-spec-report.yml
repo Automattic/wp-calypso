@@ -13,7 +13,7 @@ body:
       label: Spec file
       placeholder: eg. wp-likes__post.js
   - type: input
-    id: spec
+    id: teamcity_id
     attributes:
       label: TeamCity ID
       placeholder: eg. 648729
