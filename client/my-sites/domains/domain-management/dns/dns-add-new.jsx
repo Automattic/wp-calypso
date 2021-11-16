@@ -15,6 +15,7 @@ import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { addDns, updateDns } from 'calypso/state/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ARecord from './a-record';
 import CnameRecord from './cname-record';
 import MxRecord from './mx-record';
@@ -25,7 +26,7 @@ class DnsAddNew extends React.Component {
 	static propTypes = {
 		isSubmittingForm: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSiteSlug: PropTypes.string,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		goBack: PropTypes.func,
 		recordToEdit: PropTypes.object,
 	};
@@ -155,7 +156,7 @@ class DnsAddNew extends React.Component {
 
 	onAddDnsRecord = ( event ) => {
 		event.preventDefault();
-		const { recordToEdit, selectedDomainName, selectedSiteSlug, translate } = this.props;
+		const { recordToEdit, selectedDomainName, selectedSite, translate } = this.props;
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
@@ -173,7 +174,7 @@ class DnsAddNew extends React.Component {
 			if ( recordToEdit ) {
 				this.props.updateDns( selectedDomainName, [ normalizedData ], [ recordToEdit ] ).then(
 					() => {
-						page( domainManagementDns( selectedSiteSlug, selectedDomainName ) );
+						page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
 						this.props.successNotice( translate( 'The DNS record has been updated.' ), {
 							duration: 5000,
 						} );
@@ -189,7 +190,7 @@ class DnsAddNew extends React.Component {
 
 			this.props.addDns( selectedDomainName, normalizedData ).then(
 				() => {
-					page( domainManagementDns( selectedSiteSlug, selectedDomainName ) );
+					page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
 					this.props.successNotice( translate( 'The DNS record has been added.' ), {
 						duration: 5000,
 					} );
@@ -291,9 +292,15 @@ class DnsAddNew extends React.Component {
 	}
 }
 
-export default connect( null, {
-	addDns,
-	updateDns,
-	errorNotice,
-	successNotice,
-} )( localize( DnsAddNew ) );
+export default connect(
+	( state ) => {
+		const selectedSite = getSelectedSite( state );
+		return { selectedSite };
+	},
+	{
+		addDns,
+		updateDns,
+		errorNotice,
+		successNotice,
+	}
+)( localize( DnsAddNew ) );
