@@ -51,9 +51,7 @@ const MasonryWaveElement = ( props ) => {
 	const { image } = props;
 
 	return (
-		<div className="masonry-wave__element">
-			<img src={ image?.src } alt={ image?.alt ?? 'alt text' } />
-		</div>
+			<img src={ image?.src } alt={ image?.alt ?? 'alt text' } className="masonry-wave__element" />
 	);
 };
 
