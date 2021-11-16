@@ -5,14 +5,15 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState, ReactNode } from 'react';
+import { useMemo } from 'react';
+import { useCategorization } from '../hooks/use-categorization';
 import {
 	getAvailableDesigns,
 	getDesignUrl,
 	mShotOptions,
 	isBlankCanvasDesign,
-	gatherCategories,
 	filterDesignsByCategory,
+	sortDesigns,
 } from '../utils';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import MShotsImage from './mshots-image';
@@ -204,7 +205,10 @@ export interface DesignPickerProps {
 	className?: string;
 	highResThumbnails?: boolean;
 	showCategoryFilter?: boolean;
-	categoriesHeading?: ReactNode;
+	showAllFilter?: boolean;
+	selectedCategory?: string | null;
+	onSelectedCategoryChange?: ( categorySlug: string | null ) => void;
+	categoriesHeading?: React.ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -220,26 +224,21 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	showCategoryFilter = false,
+	selectedCategory = null,
+	onSelectedCategoryChange = () => undefined,
+	showAllFilter = false,
 	categoriesHeading,
 } ) => {
-	const categories = gatherCategories( designs );
-	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
-		categories[ 0 ]?.slug ?? null
-	);
+	const categories = useCategorization( designs, showAllFilter );
 
-	useEffect( () => {
-		// When the category list changes check that the current selection
-		// still matches one of the given slugs, and if it doesn't reset
-		// the current selection.
-		const findResult = categories.find( ( { slug } ) => slug === selectedCategory );
-		if ( ! findResult ) {
-			setSelectedCategory( categories[ 0 ]?.slug ?? null );
-		}
-	}, [ categories, selectedCategory ] );
+	const filteredDesigns = useMemo( () => {
+		const result = ! showCategoryFilter
+			? designs.slice() // cloning because otherwise .sort() would mutate the original prop
+			: filterDesignsByCategory( designs, selectedCategory );
 
-	const filteredDesigns = ! showCategoryFilter
-		? designs
-		: filterDesignsByCategory( designs, selectedCategory );
+		result.sort( sortDesigns );
+		return result;
+	}, [ designs, selectedCategory, showCategoryFilter ] );
 
 	return (
 		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
@@ -247,7 +246,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				<DesignPickerCategoryFilter
 					categories={ categories }
 					selectedCategory={ selectedCategory }
-					onSelect={ setSelectedCategory }
+					onSelect={ onSelectedCategoryChange }
 					heading={ categoriesHeading }
 				/>
 			) }
