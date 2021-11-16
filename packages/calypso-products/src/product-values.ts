@@ -50,7 +50,6 @@ export { isJetpackBackup } from './is-jetpack-backup';
 export { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 export { isJetpackBusiness } from './is-jetpack-business';
 export { isJetpackCloudProductSlug } from './is-jetpack-cloud-product-slug';
-export { isJetpackMonthlyPlan } from './is-jetpack-monthly-plan';
 export { isJetpackPlan } from './is-jetpack-plan';
 export { isJetpackPlanSlug } from './is-jetpack-plan-slug';
 export { isJetpackPremium } from './is-jetpack-premium';
