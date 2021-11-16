@@ -1,4 +1,4 @@
-import { get, has, includes, overSome } from 'lodash';
+import { get, has, includes } from 'lodash';
 import { GUIDED_TOUR_UPDATE, ROUTE_SET, SITE_SETTINGS_RECEIVE } from 'calypso/state/action-types';
 import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 
@@ -24,6 +24,7 @@ const isRelevantActionType = ( action ) =>
 	has( relevantTypes, action.type ) &&
 	( typeof relevantTypes[ action.type ] !== 'function' || relevantTypes[ action.type ]( action ) );
 
+const overSome = ( checks ) => ( item ) => checks.some( ( check ) => check( item ) );
 const isRelevantAction = overSome( [ isRelevantActionType, hasRelevantAnalytics ] );
 
 const newAction = ( action ) => ( {
