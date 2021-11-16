@@ -17,12 +17,10 @@ const VideoHeaderBar = ( {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	return (
-		<div
-			className={ 'videos-ui__header-links' }
-		>
+		<div className={ 'videos-ui__bar' }>
 			{ displayIcon && <Gridicon icon="my-sites" size={ 24 } /> }
 			{ displayLinks && (
-				<div className={ classNames( 'videos-ui__bar', 'desktop' ) }>
+				<div className={ classNames( 'videos-ui__bar-content', 'desktop' ) }>
 					<div>
 						<a
 							href="/"
