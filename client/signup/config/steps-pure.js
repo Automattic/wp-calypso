@@ -791,9 +791,6 @@ export function generateSteps( {
 		install: {
 			stepName: 'install',
 		},
-		complete: {
-			stepName: 'complete',
-		},
 	};
 }
 
