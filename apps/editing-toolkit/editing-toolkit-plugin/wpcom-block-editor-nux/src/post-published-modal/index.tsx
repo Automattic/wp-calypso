@@ -17,29 +17,30 @@ const PostPublishedModal: React.FC = () => {
 		select( 'core/editor' ).isCurrentPostPublished()
 	);
 	const previousIsCurrentPostPublished = useRef( isCurrentPostPublished );
-	const siteHasNeverPublishedPost = useSelect( ( select ) =>
-		select( 'automattic/wpcom-welcome-guide' ).getSiteHasNeverPublishedPost()
+	const shouldShowFirstPostPublishedModal = useSelect( ( select ) =>
+		select( 'automattic/wpcom-welcome-guide' ).getShouldShowFirstPostPublishedModal()
 	);
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
-	const { fetchSiteHasNeverPublishedPost, setSiteHasNeverPublishedPost } = useDispatch(
-		'automattic/wpcom-welcome-guide'
-	);
+	const {
+		fetchShouldShowFirstPostPublishedModal,
+		setShouldShowFirstPostPublishedModal,
+	} = useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	useEffect( () => {
-		fetchSiteHasNeverPublishedPost();
-	}, [ fetchSiteHasNeverPublishedPost ] );
+		fetchShouldShowFirstPostPublishedModal();
+	}, [ fetchShouldShowFirstPostPublishedModal ] );
 	useEffect( () => {
-		// If the user never published any post before and the current post status changed to publish,
+		// If the user is set to see the first post modal and current post status changes to publish,
 		// open the post publish modal
 		if (
-			siteHasNeverPublishedPost &&
+			shouldShowFirstPostPublishedModal &&
 			! previousIsCurrentPostPublished.current &&
 			isCurrentPostPublished &&
 			postType === 'post'
 		) {
 			previousIsCurrentPostPublished.current = isCurrentPostPublished;
-			setSiteHasNeverPublishedPost( false );
+			setShouldShowFirstPostPublishedModal( false );
 
 			// When the post published panel shows, it is focused automatically.
 			// Thus, we need to delay open the modal so that the modal would not be close immediately
@@ -50,9 +51,9 @@ const PostPublishedModal: React.FC = () => {
 		}
 	}, [
 		postType,
-		siteHasNeverPublishedPost,
+		shouldShowFirstPostPublishedModal,
 		isCurrentPostPublished,
-		setSiteHasNeverPublishedPost,
+		setShouldShowFirstPostPublishedModal,
 	] );
 
 	return (
