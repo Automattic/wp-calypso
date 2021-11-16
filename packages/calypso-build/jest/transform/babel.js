@@ -1,10 +1,9 @@
-const path = require( 'path' );
 const babelJest = require( 'babel-jest' ).default;
 
 module.exports = babelJest.createTransformer( {
 	presets: [
 		[
-			path.join( __dirname, '..', '..', 'babel', 'default.js' ),
+			require.resolve( '@automattic/calypso-babel-config/presets/default' ),
 			{ modules: 'commonjs', runtime: 'automatic' },
 		],
 	],
