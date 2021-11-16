@@ -28,6 +28,9 @@ export interface Design {
 	title: string;
 	features: Array< DesignFeatures >;
 
+	// This design will appear at the top, regardless of category
+	showFirst?: boolean;
+
 	/**
 	 * Quickly hide a design from the picker without having to remove
 	 * it from the list of available design configs (stored in the
