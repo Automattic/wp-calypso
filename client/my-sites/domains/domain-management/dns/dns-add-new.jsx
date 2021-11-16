@@ -154,9 +154,9 @@ class DnsAddNew extends React.Component {
 		this.setState( { fields } );
 	};
 
-	onAddDnsRecord = ( event ) => {
+	onAddOrUpdateDnsRecord = ( event ) => {
 		event.preventDefault();
-		const { recordToEdit, selectedDomainName, selectedSite, translate } = this.props;
+		const { recordToEdit, selectedDomainName, translate } = this.props;
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
@@ -173,34 +173,29 @@ class DnsAddNew extends React.Component {
 
 			if ( recordToEdit ) {
 				this.props.updateDns( selectedDomainName, [ normalizedData ], [ recordToEdit ] ).then(
-					() => {
-						page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
-						this.props.successNotice( translate( 'The DNS record has been updated.' ), {
-							duration: 5000,
-						} );
-					},
-					( error ) => {
-						this.props.errorNotice(
-							error.message || translate( 'The DNS record has not been updated.' )
-						);
-					}
+					() => this.handleSuccess( translate( 'The DNS record has been updated.' ) ),
+					( error ) =>
+						this.handleError( error, translate( 'The DNS record has not been updated.' ) )
 				);
 				return;
 			}
 
 			this.props.addDns( selectedDomainName, normalizedData ).then(
-				() => {
-					page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
-					this.props.successNotice( translate( 'The DNS record has been added.' ), {
-						duration: 5000,
-					} );
-				},
-				( error ) =>
-					this.props.errorNotice(
-						error.message || translate( 'The DNS record has not been added.' )
-					)
+				() => this.handleSuccess( translate( 'The DNS record has been added.' ) ),
+				( error ) => this.handleError( error, translate( 'The DNS record has not been added.' ) )
 			);
 		} );
+	};
+
+	handleSuccess = ( message ) => {
+		const { selectedSite, selectedDomainName } = this.props;
+
+		page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
+		this.props.successNotice( message, { duration: 5000 } );
+	};
+
+	handleError = ( error, message ) => {
+		this.props.errorNotice( error.message || message );
 	};
 
 	onChange = ( event ) => {
@@ -277,7 +272,7 @@ class DnsAddNew extends React.Component {
 				</FormFieldset>
 				{ this.renderFields() }
 				<div className="dns__form-buttons">
-					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
+					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddOrUpdateDnsRecord }>
 						{ buttonLabel }
 					</FormButton>
 
