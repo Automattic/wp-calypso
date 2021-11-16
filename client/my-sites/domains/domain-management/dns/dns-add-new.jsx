@@ -11,7 +11,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import formState from 'calypso/lib/form-state';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
-import { addDns } from 'calypso/state/domains/dns/actions';
+import { addDns, updateDns } from 'calypso/state/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import ARecord from './a-record';
@@ -154,7 +154,7 @@ class DnsAddNew extends React.Component {
 
 	onAddDnsRecord = ( event ) => {
 		event.preventDefault();
-		const { translate } = this.props;
+		const { recordToEdit, selectedDomainName, selectedSiteSlug, translate } = this.props;
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
@@ -163,13 +163,30 @@ class DnsAddNew extends React.Component {
 
 			const normalizedData = getNormalizedData(
 				formState.getAllFieldValues( this.state.fields ),
-				this.props.selectedDomainName
+				selectedDomainName
 			);
 			this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
 
-			this.props.addDns( this.props.selectedDomainName, normalizedData ).then(
+			if ( recordToEdit ) {
+				this.props.updateDns( selectedDomainName, [ normalizedData ], [ recordToEdit ] ).then(
+					() => {
+						page( domainManagementDns( selectedSiteSlug, selectedDomainName ) );
+						this.props.successNotice( translate( 'The DNS record has been updated.' ), {
+							duration: 5000,
+						} );
+					},
+					( error ) => {
+						this.props.errorNotice(
+							error.message || translate( 'The DNS record has not been updated.' )
+						);
+					}
+				);
+				return;
+			}
+
+			this.props.addDns( selectedDomainName, normalizedData ).then(
 				() => {
-					page( domainManagementDns( this.props.selectedSiteSlug, this.props.selectedDomainName ) );
+					page( domainManagementDns( selectedSiteSlug, selectedDomainName ) );
 					this.props.successNotice( translate( 'The DNS record has been added.' ), {
 						duration: 5000,
 					} );
@@ -226,7 +243,7 @@ class DnsAddNew extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { recordToEdit, translate } = this.props;
 		const dnsRecordTypes = flatMap( this.dnsRecords, ( dnsRecord ) => dnsRecord.types );
 		const options = dnsRecordTypes.map( ( type ) => <option key={ type }>{ type }</option> );
 		const isSubmitDisabled =
@@ -236,6 +253,9 @@ class DnsAddNew extends React.Component {
 		const selectedType = this.dnsRecords.find( ( record ) =>
 			record.types.includes( this.state.type )
 		);
+		const buttonLabel = recordToEdit
+			? translate( 'Update DNS record' )
+			: translate( 'Add new DNS record' );
 
 		return (
 			<form className="dns__form">
@@ -253,7 +273,7 @@ class DnsAddNew extends React.Component {
 				{ this.recordFields() }
 				<div className="dns__form-buttons">
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
-						{ translate( 'Add new DNS record' ) }
+						{ buttonLabel }
 					</FormButton>
 					<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
 						{ translate( 'Cancel' ) }
@@ -266,6 +286,7 @@ class DnsAddNew extends React.Component {
 
 export default connect( null, {
 	addDns,
+	updateDns,
 	errorNotice,
 	successNotice,
 } )( localize( DnsAddNew ) );
