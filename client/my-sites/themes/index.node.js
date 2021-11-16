@@ -1,9 +1,5 @@
-import {
-	makeLayout,
-	ssrSetupLocale,
-	setHrefLangLinks,
-	setLocalizedCanonicalUrl,
-} from 'calypso/controller';
+import { makeLayout, ssrSetupLocale } from 'calypso/controller';
+import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import {
 	fetchThemeData,
