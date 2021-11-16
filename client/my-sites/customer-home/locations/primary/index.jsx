@@ -98,7 +98,6 @@ const Primary = ( { cards, trackCard } ) => {
 				'primary__is-urgent': isUrgent,
 			} ) }
 			showControlLabels="true"
-			hasDynamicHeight
 			onPageSelected={ handlePageSelected }
 		>
 			{ cards.map(

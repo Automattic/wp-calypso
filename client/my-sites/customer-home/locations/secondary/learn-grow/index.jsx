@@ -58,7 +58,6 @@ const LearnGrow = () => {
 	return (
 		<DotPager
 			className="learn-grow__content customer-home__card"
-			hasDynamicHeight
 			onPageSelected={ handlePageSelected }
 		>
 			{ cards.map(

@@ -5,8 +5,6 @@
 	display: flex;
 	align-items: flex-start;
 	position: relative;
-	transition: height 0.5s ease-in-out;
-	@include reduce-motion( 'transition' );
 }
 
 .dot-pager__page {
@@ -20,6 +18,7 @@
 	&.is-prev,
 	&.is-next {
 		opacity: 0;
+		height: 0;
 	}
 
 	&.is-prev {
