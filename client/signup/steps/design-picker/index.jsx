@@ -190,11 +190,16 @@ export default function DesignPickerStep( props ) {
 
 	function renderDesignPreview() {
 		const {
-			signupDependencies: { siteSlug },
+			signupDependencies: { siteSlug, siteTitle, intent },
 			hideExternalPreview,
 		} = props;
 
-		const previewUrl = getDesignUrl( selectedDesign, translate.locale, { iframe: true } );
+		const previewUrl = getDesignUrl( selectedDesign, translate.locale, {
+			iframe: true,
+			// If the user fills out the site title with write intent, we show it on the design preview
+			// Otherwise, use the title of selected design directly
+			site_title: intent === 'write' && siteTitle ? siteTitle : selectedDesign?.title,
+		} );
 
 		return (
 			<WebPreview
