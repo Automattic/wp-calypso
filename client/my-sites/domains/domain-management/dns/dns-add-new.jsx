@@ -141,6 +141,7 @@ class DnsAddNew extends React.Component {
 			return obj;
 		}, {} );
 
+		this.setState( { type: recordToEdit.type } );
 		this.formStateController.resetFields( recordAttributes );
 	}
 
