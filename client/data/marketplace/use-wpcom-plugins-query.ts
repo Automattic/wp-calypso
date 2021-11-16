@@ -1,39 +1,70 @@
-import { useQuery, UseQueryResult, QueryKey } from 'react-query';
+import { useQuery, UseQueryResult, UseQueryOptions, QueryKey } from 'react-query';
+import { normalizePluginsList, normalizePluginData } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
-
-interface Options {
-	enabled?: boolean;
-	staleTime?: number;
-	refetchOnMount?: boolean;
-}
 
 type Type = 'all' | 'featured';
 
-export const getCacheKey = ( type: Type ): QueryKey => [ 'wpcom-plugins', type ];
+const plugisApiBase = '/marketplace/products';
+const pluginsApiNamespace = 'wpcom/v2';
 
-const useWPCOMPlugins = (
+const getCacheKey = ( key: string ): QueryKey => [ 'wpcom-plugins', key ];
+
+const fetchWPCOMPlugins = ( type: Type, searchTerm?: string ) => {
+	return wpcom.req.get(
+		{
+			path: plugisApiBase,
+			apiNamespace: pluginsApiNamespace,
+		},
+		{
+			q: searchTerm,
+			type: type,
+		}
+	);
+};
+
+/**
+ * Returns marketplace plugins list filtered by searchterm and type.
+ *
+ * @param {Type} type Optional The query type
+ * @param {string} searchTerm Optional The term to search for
+ * @param {object} {} Optional options to pass to the underlying query engine
+ * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
+ */
+export const useWPCOMPlugins = (
 	type: Type,
-	{ enabled = true, staleTime = 1000 * 60 * 60 * 24, refetchOnMount = false }: Options = {}
+	searchTerm?: string,
+	{ enabled = true, staleTime = 1000 * 60 * 60 * 24, refetchOnMount = false }: UseQueryOptions = {}
 ): UseQueryResult => {
-	return useQuery( getCacheKey( type ), () => fetchWPCOMPlugins( type ), {
+	return useQuery( getCacheKey( type ), () => fetchWPCOMPlugins( type, searchTerm ), {
+		select: ( data ) => normalizePluginsList( data.results ),
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,
 	} );
 };
 
-export function fetchWPCOMPlugins( type: Type ) {
-	const query = {
-		type: type,
-	};
+const fetchWPCOMPlugin = ( slug: string ) => {
+	return wpcom.req.get( {
+		path: `${ plugisApiBase }/${ slug }`,
+		apiNamespace: pluginsApiNamespace,
+	} );
+};
 
-	return wpcom.req.get(
-		{
-			path: `/marketplace/products`,
-			apiNamespace: 'wpcom/v2',
-		},
-		query
-	);
-}
-
-export default useWPCOMPlugins;
+/**
+ * Returns a marketplace plugin data
+ *
+ * @param {Type} slug The plugin slug to query
+ * @param {object} {} Optional options to pass to the underlying query engine
+ * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
+ */
+export const useWPCOMPlugin = (
+	slug: string,
+	{ enabled = true, staleTime = 1000 * 60 * 60 * 24, refetchOnMount = false }: UseQueryOptions = {}
+): UseQueryResult => {
+	return useQuery( getCacheKey( slug ), () => fetchWPCOMPlugin( slug ), {
+		select: ( data ) => normalizePluginData( { detailsFetched: Date.now() }, data ),
+		enabled: enabled,
+		staleTime: staleTime,
+		refetchOnMount: refetchOnMount,
+	} );
+};

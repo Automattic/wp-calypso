@@ -11,8 +11,7 @@ import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
-import useWPCOMPlugins from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { normalizePluginsList } from 'calypso/lib/plugins/utils';
+import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { YOAST, WOO } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
 import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
@@ -123,7 +122,7 @@ export default function MarketplaceTest(): JSX.Element {
 			<SidebarNavigation />
 			<Card key="wpcom-plugins">
 				<PluginsBrowserList
-					plugins={ normalizePluginsList( data.results ) }
+					plugins={ data }
 					listName={ 'paid' }
 					title={ 'Paid Plugins' }
 					site={ selectedSiteSlug }
