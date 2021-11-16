@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { keys, filter } from 'lodash';
 import { PureComponent } from 'react';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
@@ -17,9 +16,7 @@ const tldSpecificForms = {
 export const getApplicableTldsWithAdditionalDetailsForms = ( tlds ) => {
 	const topLevelTlds = tlds.map( getTopLevelOfTld );
 	return filter( keys( tldSpecificForms ), ( tldFormName ) => {
-		return (
-			config.isEnabled( `domains/cctlds/${ tldFormName }` ) && topLevelTlds.includes( tldFormName )
-		);
+		return topLevelTlds.includes( tldFormName );
 	} );
 };
 
