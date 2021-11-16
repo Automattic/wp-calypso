@@ -1,16 +1,24 @@
-import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import {
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isEnterprise,
+} from '@automattic/calypso-products';
+import { Button, Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import MainComponent from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { userCan } from 'calypso/lib/site/utils';
@@ -22,6 +30,10 @@ import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'calypso/state/automated-transfer/selectors';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -39,8 +51,10 @@ import {
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import {
-	isJetpackSite as checkJetpackSite,
+	isJetpackSite,
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -51,19 +65,22 @@ function PluginDetails( props ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
+	// Site information.
 	const selectedSite = useSelector( getSelectedSite );
 	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
-	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
-
-	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
-	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, props.pluginSlug ) );
-	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
-	const isFetched = useSelector( ( state ) => isWporgPluginFetched( state, props.pluginSlug ) );
-	const isJetpackSite = useSelector( ( state ) => checkJetpackSite( state, selectedSite?.ID ) );
+	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const isRequestingSites = useSelector( checkRequestingSites );
 	const requestingPluginsForSites = useSelector( ( state ) =>
 		isRequestingForSites( state, siteIds )
 	);
+	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+
+	// Plugin information.
+	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
+	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, props.pluginSlug ) );
+	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
+	const isFetched = useSelector( ( state ) => isWporgPluginFetched( state, props.pluginSlug ) );
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
@@ -73,11 +90,25 @@ function PluginDetails( props ) {
 			: canCurrentUserManagePlugins( state )
 	);
 
-	const isWpcom = selectedSite && ! isJetpackSite;
-	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
-
 	const isPluginInstalledOnsite =
 		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
+
+	// Site type.
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
+	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
+	const isWpcom = selectedSite && ! isJetpack;
+	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+
+	// Eligibilities for Simple Sites.
+	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
+		getEligibility( state, selectedSite?.ID )
+	);
+	const isEligible = useSelector( ( state ) =>
+		isEligibleForAutomatedTransfer( state, selectedSite?.ID )
+	);
+	const hasEligibilityMessages =
+		! isJetpack && ( eligibilityHolds || eligibilityWarnings || isEligible );
 
 	const fullPlugin = {
 		...plugin,
@@ -153,6 +184,7 @@ function PluginDetails( props ) {
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<SidebarNavigation />
+			<QueryEligibility siteId={ selectedSite?.ID } />
 			<FixedNavigationHeader navigationItems={ getNavigationItems() } />
 			<PluginNotices
 				pluginId={ fullPlugin.id }
@@ -170,7 +202,8 @@ function PluginDetails( props ) {
 								'no-cta ': ! shouldDisplayCTA(
 									selectedSite,
 									props.pluginSlug,
-									isPluginInstalledOnsite
+									isPluginInstalledOnsite,
+									isJetpackSelfHosted
 								),
 							}
 						) }
@@ -217,7 +250,8 @@ function PluginDetails( props ) {
 								'no-cta': ! shouldDisplayCTA(
 									selectedSite,
 									props.pluginSlug,
-									isPluginInstalledOnsite
+									isPluginInstalledOnsite,
+									isJetpackSelfHosted
 								),
 							}
 						) }
@@ -228,6 +262,11 @@ function PluginDetails( props ) {
 								<CTA
 									slug={ props.pluginSlug }
 									isPluginInstalledOnsite={ isPluginInstalledOnsite }
+									isJetpackSelfHosted={ isJetpackSelfHosted }
+									selectedSite={ selectedSite }
+									isJetpack={ isJetpack }
+									isVip={ isVip }
+									hasEligibilityMessages={ hasEligibilityMessages }
 								/>
 							</div>
 							<div className="plugin-details__t-and-c">
@@ -238,6 +277,20 @@ function PluginDetails( props ) {
 						</div>
 					</div>
 				</div>
+
+				{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
+					<Notice
+						text={ translate(
+							'Incompatible plugin: This plugin is not supported on WordPress.com.'
+						) }
+						status="is-warning"
+						showDismiss={ false }
+					>
+						<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+							{ translate( 'More info' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 
 				<SitesList
 					fullPlugin={ fullPlugin }
@@ -286,45 +339,81 @@ function PluginDetails( props ) {
 	);
 }
 
-function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) {
-	return (
-		isPluginInstalledOnsite === false &&
-		selectedSite &&
-		userCan( 'manage_options', selectedSite ) &&
-		isCompatiblePlugin( slug )
-	);
+function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpackSelfHosted ) {
+	if ( ! isJetpackSelfHosted && ! isCompatiblePlugin( slug ) ) {
+		// Check for WordPress.com compatibility.
+		return false;
+	}
+
+	if ( ! selectedSite || ! userCan( 'manage_options', selectedSite ) ) {
+		// Check if user can manage plugins.
+		return false;
+	}
+
+	return ! isPluginInstalledOnsite;
 }
 
-function CTA( { slug, isPluginInstalledOnsite } ) {
+function CTA( {
+	slug,
+	isPluginInstalledOnsite,
+	isJetpackSelfHosted,
+	selectedSite,
+	isJetpack,
+	isVip,
+	hasEligibilityMessages,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const isJetpack = useSelector( ( state ) => checkJetpackSite( state, selectedSite?.ID ) );
+	const [ showEligibility, setShowEligibility ] = useState( false );
 
-	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) ) {
+	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpackSelfHosted ) ) {
 		return null;
 	}
 
 	const shouldUpgrade = ! (
-		isBusiness( selectedSite.plan ) ||
+		isWpComBusinessPlan( selectedSite.plan ) ||
 		isEnterprise( selectedSite.plan ) ||
-		isEcommerce( selectedSite.plan ) ||
-		isJetpack
+		isWpComEcommercePlan( selectedSite.plan ) ||
+		isJetpack ||
+		isVip
 	);
+
 	return (
-		<Button
-			className="plugin-details__install-button"
-			onClick={ () =>
-				onClickInstallPlugin( {
-					dispatch,
-					selectedSite,
-					slug,
-					upgradeAndInstall: shouldUpgrade,
-				} )
-			}
-		>
-			{ shouldUpgrade ? translate( 'Upgrade and install' ) : translate( 'Install and activate' ) }
-		</Button>
+		<>
+			<Dialog
+				isVisible={ showEligibility }
+				title={ translate( 'Eligibility' ) }
+				onClose={ () => setShowEligibility( false ) }
+			>
+				<EligibilityWarnings
+					standaloneProceed
+					onProceed={ () =>
+						onClickInstallPlugin( {
+							dispatch,
+							selectedSite,
+							slug,
+							upgradeAndInstall: shouldUpgrade,
+						} )
+					}
+				/>
+			</Dialog>
+			<Button
+				className="plugin-details__install-button"
+				onClick={ () => {
+					if ( hasEligibilityMessages ) {
+						return setShowEligibility( true );
+					}
+					onClickInstallPlugin( {
+						dispatch,
+						selectedSite,
+						slug,
+						upgradeAndInstall: shouldUpgrade,
+					} );
+				} }
+			>
+				{ shouldUpgrade ? translate( 'Upgrade and install' ) : translate( 'Install and activate' ) }
+			</Button>
+		</>
 	);
 }
 
