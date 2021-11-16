@@ -1,5 +1,4 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React from 'react';
 import useDeleteMediaMutation from './use-delete-media-mutation';
 
 const withDeleteMedia = createHigherOrderComponent(
