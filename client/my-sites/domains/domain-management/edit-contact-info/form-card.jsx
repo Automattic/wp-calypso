@@ -1,9 +1,5 @@
 import { Card, Dialog } from '@automattic/components';
-import {
-	mapRecordKeysRecursively,
-	camelToSnakeCase,
-	snakeToCamelCase,
-} from '@automattic/wpcom-checkout';
+import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
 import page from 'page';

@@ -10,7 +10,7 @@
  * - Numbers are considered to be capital letters of a different type.
  * - Multiple adjacent captial letters of the same type are considered part of the same word.
  */
-export function camelToSnakeCase( camelCaseString: string ): string {
+export default function camelToSnakeCase( camelCaseString: string ): string {
 	return (
 		camelCaseString
 			// collapse all spaces into an underscore

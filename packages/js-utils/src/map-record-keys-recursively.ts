@@ -9,7 +9,7 @@
  * it finds, so any objects contained within arrays that are properties of the
  * original object will be returned unchanged.
  */
-export function mapRecordKeysRecursively(
+export default function mapRecordKeysRecursively(
 	record: Record< string, unknown >,
 	transform: ( original: string ) => string
 ): Record< string, unknown > {
