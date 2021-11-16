@@ -125,6 +125,11 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 			name = translate( 'Loading Users', {
 				context: 'Placeholder text while fetching users.',
 			} );
+		}
+		//Jetpack/Atomic sites use linked_user_info to get the most up to date name
+		//See https://github.com/Automattic/wp-calypso/issues/55175
+		else if ( user.linked_user_info ) {
+			name = user.linked_user_info?.name;
 		} else if ( user.name ) {
 			name = user.name;
 		} else if ( user.label ) {
