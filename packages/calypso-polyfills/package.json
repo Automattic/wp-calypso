@@ -29,6 +29,6 @@
 		"regenerator-runtime": "^0.13.9"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

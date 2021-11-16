@@ -25,12 +25,12 @@
 		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
-		"@automattic/calypso-color-schemes": "^2.1.1",
-		"@automattic/calypso-polyfills": "^2.0.0",
-		"calypso": "^0.17.0",
+		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/calypso-polyfills": "workspace:^",
+		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
 		"debug": "^4.1.1",
-		"i18n-calypso": "^5.0.0",
+		"i18n-calypso": "workspace:^",
 		"moment": "^2.26.0",
 		"page": "^1.11.5",
 		"prop-types": "^15.7.2",
@@ -39,13 +39,13 @@
 		"react-redux": "^7.2.6",
 		"redux": "^4.1.2",
 		"redux-thunk": "^2.3.0",
-		"wpcom": "^6.0.0",
-		"wpcom-proxy-request": "^6.0.0",
-		"wpcom-xhr-request": "^1.2.0"
+		"wpcom": "workspace:^",
+		"wpcom-proxy-request": "workspace:^",
+		"wpcom-xhr-request": "workspace:^"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^10.0.0",
-		"@automattic/calypso-eslint-overrides": "^1.0.0",
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",
 		"jest": "^27.2.4",

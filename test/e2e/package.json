@@ -19,14 +19,14 @@
 		"decryptconfig": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_CONFIG_ENV.json"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "^1.0.0",
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"dependencies": {
-		"@automattic/calypso-build": "^10.0.0",
-		"@automattic/calypso-e2e": "^0.1.0",
-		"@automattic/mocha-debug-reporter": "^0.1.0",
-		"@automattic/testarmada-magellan-mocha-plugin": "^10.0.0",
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-e2e": "workspace:^",
+		"@automattic/mocha-debug-reporter": "workspace:^",
+		"@automattic/testarmada-magellan-mocha-plugin": "workspace:^",
 		"@babel/core": "^7.2.2",
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
@@ -86,7 +86,7 @@
 		"selenium-webdriver": "^4.0.0-alpha.7",
 		"slack-notify": "^0.1.7",
 		"speakeasy": "^2.0.0",
-		"spec-junit-reporter": "^0.0.1",
+		"spec-junit-reporter": "workspace:^",
 		"testarmada-magellan": "patch:testarmada-magellan@11.0.10#../../.patches/testarmada-magellan@11.0.10.diff",
 		"testarmada-magellan-local-executor": "^2.0.3",
 		"webpack": "^5.54.0",

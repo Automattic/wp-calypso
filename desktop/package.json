@@ -33,8 +33,8 @@
 		"test:e2e": "jest -c test/e2e/config/jest.config.js"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^10.0.0",
-		"@automattic/calypso-eslint-overrides": "^1.0.0",
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"copy-webpack-plugin": "^6.2.1",
 		"electron": "12.0.13",
 		"electron-builder": "^22.11.7",
@@ -61,7 +61,7 @@
 		"semver": "^7.3.2",
 		"superagent": "^3.8.3",
 		"winston": "^3.3.3",
-		"wpcom-xhr-request": "^1.2.0",
+		"wpcom-xhr-request": "workspace:^",
 		"ws": "^7.3.1"
 	}
 }

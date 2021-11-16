@@ -45,8 +45,8 @@
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^10.0.0",
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-actions": "^6.3.12",
 		"@storybook/preset-scss": "^1.0.3",
 		"@testing-library/jest-dom": "^5.15.0",

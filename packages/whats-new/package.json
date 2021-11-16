@@ -36,12 +36,12 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
-		"@automattic/i18n-utils": "^1.0.0",
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/react-i18n": "^3.0.1",
-		"wpcom": "^6.0.0",
-		"wpcom-proxy-request": "^6.0.0"
+		"wpcom": "workspace:^",
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^6.1.0",
@@ -52,6 +52,6 @@
 		"redux": "^4.1.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }
