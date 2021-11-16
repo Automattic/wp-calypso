@@ -3,7 +3,7 @@ import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ReactElement, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import yourNewStoreImage from 'calypso/assets/images/woocommerce-install/your-new-store.png';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -32,8 +32,9 @@ export default function ConfirmWordPressSubdoamin( {
 }: Props ): ReactElement | null {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const fetchingTransferStatus = !! useSelector( ( state: AppState ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
+	const fetchingTransferStatus = !! useSelector(
+		( state: AppState ) => isFetchingAutomatedTransferStatus( state, siteId ),
+		shallowEqual
 	);
 
 	const dispatch = useDispatch();
