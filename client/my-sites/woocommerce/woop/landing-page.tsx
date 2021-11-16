@@ -16,8 +16,7 @@ interface Props {
 
 const images = [ { src: Image01 }, { src: Image05 }, { src: Image02 }, { src: Image04 } ];
 
-const WoopLandingPage: React.FunctionComponent< Props > = ( props ) => {
-	const { startSetup } = props;
+const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup } ) => {
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
