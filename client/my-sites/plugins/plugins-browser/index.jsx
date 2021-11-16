@@ -543,6 +543,26 @@ export class PluginsBrowser extends Component {
 	}
 }
 
+/**
+ * Filter the popular plugins list.
+ * Remove the displayed featured plugins from the popular list to
+ * avoid show them twice
+ *
+ * @param {Array} popularPlugins
+ * @param {Array} featuredPlugins
+ */
+function filterPopularList( popularPlugins = [], featuredPlugins = [] ) {
+	const displayedFeaturedSlugs = featuredPlugins
+		.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins
+		.map( ( plugin ) => plugin.slug );
+
+	const displayedFeaturedSlugsMap = new Map(
+		displayedFeaturedSlugs.map( ( slug ) => [ slug, slug ] )
+	);
+
+	return popularPlugins.filter( ( plugin ) => ! displayedFeaturedSlugsMap.has( plugin.slug ) );
+}
+
 export default flow(
 	localize,
 	urlSearch,
@@ -556,6 +576,8 @@ export default flow(
 				( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 			const hasPremiumPlan = sitePlan && ( hasBusinessPlan || isPremium( sitePlan ) );
 			const recommendedPlugins = getRecommendedPlugins( state, selectedSiteId );
+			const featuredPlugins = getPluginsListByCategory( state, 'featured' );
+			const popularPlugins = getPluginsListByCategory( state, 'popular' );
 
 			return {
 				selectedSiteId,
@@ -577,8 +599,8 @@ export default flow(
 				recommendedPlugins: recommendedPlugins || [],
 				pluginsByCategory: getPluginsListByCategory( state, category ),
 				pluginsByCategoryNew: getPluginsListByCategory( state, 'new' ),
-				pluginsByCategoryPopular: getPluginsListByCategory( state, 'popular' ),
-				pluginsByCategoryFeatured: getPluginsListByCategory( state, 'featured' ),
+				pluginsByCategoryPopular: filterPopularList( popularPlugins, featuredPlugins ),
+				pluginsByCategoryFeatured: featuredPlugins,
 				pluginsBySearchTerm: getPluginsListBySearchTerm( state, search ),
 				pluginsPagination: getPluginsListPagination( state, search ),
 				isFetchingPluginsByCategory: isFetchingPluginsList( state, category ),
