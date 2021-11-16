@@ -17,7 +17,6 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { GoToStep } from '../../types';
-import type { AppState } from 'calypso/types';
 
 interface Props {
 	goToStep: GoToStep;
@@ -39,7 +38,7 @@ export default function Confirm( { goToStep }: Props ): ReactElement | null {
 		dispatch( requestEligibility( siteId ) );
 	}, [ siteId, dispatch ] );
 
-	const fetchingTransferStatus = !! useSelector( ( state: AppState ) =>
+	const fetchingTransferStatus = !! useSelector( ( state ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )
 	);
 
