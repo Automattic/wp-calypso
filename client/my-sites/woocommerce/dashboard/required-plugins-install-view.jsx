@@ -77,6 +77,8 @@ class RequiredPluginsInstallView extends Component {
 			ID: PropTypes.number.isRequired,
 		} ),
 		skipConfirmation: PropTypes.bool,
+		isFeatureActive: PropTypes.bool,
+		upgradingPlan: PropTypes.object,
 	};
 
 	constructor( props ) {
