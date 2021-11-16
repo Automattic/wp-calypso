@@ -20,7 +20,7 @@ const VideoHeaderBar = ( {
 		<div className={ 'videos-ui__bar' }>
 			{ displayIcon && <Gridicon icon="my-sites" size={ 24 } /> }
 			{ displayLinks && (
-				<div className={ classNames( 'videos-ui__bar-content', 'desktop' ) }>
+				<div className={ classNames( 'videos-ui__bar-content', 'videos-ui__desktop' ) }>
 					<div>
 						<a
 							href="/"
