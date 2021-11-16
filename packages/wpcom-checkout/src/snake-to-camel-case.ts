@@ -1,7 +1,7 @@
 /**
  * Convert a snake_case_word to a camelCaseWord.
  *
- * This is designed to work nearly identically to the lodash `snakeCase` function.
+ * This is designed to work nearly identically to the lodash `camelCase` function.
  */
 export function snakeToCamelCase( snakeCaseString: string ): string {
 	return snakeCaseString
