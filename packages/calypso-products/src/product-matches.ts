@@ -28,7 +28,8 @@ export function productMatches( productSlug: JetpackProductSlug, query: Query = 
 		);
 	}
 
-	const plan = getProductFromSlug( productSlug ) || {};
+	const planFromSlug = getProductFromSlug( productSlug );
+	const plan = typeof planFromSlug === 'string' ? { term: '', type: '' } : planFromSlug;
 	return (
 		( query.term ? plan.term === query.term : true ) &&
 		( query.type ? plan.type === query.type : true )

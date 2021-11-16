@@ -1,8 +1,6 @@
 export { allowedProductAttributes } from './allowed-product-attributes';
 export { formatProduct } from './format-product';
 export { getDomain } from './get-domain';
-export { getDomainProductRanking } from './get-domain-product-ranking';
-export { getIncludedDomainPurchaseAmount } from './get-included-domain-purchase-amount';
 export * from './get-jetpack-item-term-variants';
 export { getJetpackProductCallToAction } from './get-jetpack-product-call-to-action';
 export { getJetpackProductDescription } from './get-jetpack-product-description';
@@ -14,7 +12,6 @@ export { getProductTermVariants } from './get-product-term-variants';
 export { getProductYearlyVariant } from './get-product-yearly-variant';
 export { getProductFromSlug } from './get-product-from-slug';
 export { getProductsSlugs } from './get-products-slugs';
-export { includesProduct } from './includes-product';
 export { isBiennially } from './is-biennially';
 export { isBlogger } from './is-blogger';
 export { isBundled } from './is-bundled';

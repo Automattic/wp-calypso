@@ -1,8 +1,4 @@
-import {
-	getIncludedDomainPurchaseAmount,
-	isDomainRegistration,
-	isDomainMapping,
-} from '@automattic/calypso-products';
+import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { find } from 'lodash';
 import { isSubscription } from 'calypso/lib/purchases';
 import { getSitePurchases } from './get-site-purchases';
@@ -24,7 +20,8 @@ export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 	if (
 		! subscriptionPurchase ||
 		! isSubscription( subscriptionPurchase ) ||
-		getIncludedDomainPurchaseAmount( subscriptionPurchase )
+		subscriptionPurchase.included_domain_purchase_amount ||
+		subscriptionPurchase.includedDomainPurchaseAmount
 	) {
 		return null;
 	}
