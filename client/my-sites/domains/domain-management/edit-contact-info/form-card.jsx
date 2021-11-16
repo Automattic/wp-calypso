@@ -113,16 +113,10 @@ class EditContactInfoFormCard extends Component {
 
 	validate = ( fieldValues, onComplete ) => {
 		wp.req
-			.post(
-				'/me/domain-contact-information/validate',
-				mapRecordKeysRecursively(
-					{
-						contactInformation: fieldValues,
-						domainNames: [ this.props.selectedDomain.name ],
-					},
-					camelToSnakeCase
-				)
-			)
+			.post( '/me/domain-contact-information/validate', {
+				contactInformation: mapRecordKeysRecursively( fieldValues, camelToSnakeCase ),
+				domainNames: [ this.props.selectedDomain.name ],
+			} )
 			.then( ( data ) => {
 				onComplete( null, mapRecordKeysRecursively( data.messages || {}, snakeToCamelCase ) );
 			} )
