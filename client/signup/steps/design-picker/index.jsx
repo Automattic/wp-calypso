@@ -35,6 +35,8 @@ const EXCLUDED_THEMES = [
 ];
 
 export default function DesignPickerStep( props ) {
+	const { flowName, stepName, isReskinned } = props;
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -255,8 +257,6 @@ export default function DesignPickerStep( props ) {
 	}
 
 	const isMobile = useViewportMatch( 'small', '<' );
-
-	const { flowName, stepName, isReskinned } = props;
 
 	if ( selectedDesign ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
