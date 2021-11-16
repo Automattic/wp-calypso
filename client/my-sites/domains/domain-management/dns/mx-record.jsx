@@ -80,7 +80,6 @@ class MxRecord extends Component {
 						isError={ ! isAuxValid }
 						onChange={ onChange }
 						value={ fieldValues.aux }
-						defaultValue="10"
 					/>
 					{ ! isAuxValid && (
 						<FormInputValidation text={ translate( 'Invalid Priority' ) } isError />

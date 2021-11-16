@@ -228,21 +228,22 @@ class DnsAddNew extends React.Component {
 		return ! formState.isFieldInvalid( this.state.fields, fieldName );
 	};
 
-	recordFields() {
-		return this.dnsRecords.map( ( dnsRecord ) => {
-			const { component: Component, types: showTypes } = dnsRecord;
+	renderFields() {
+		const selectedRecordType = this.dnsRecords.find( ( dnsRecord ) =>
+			dnsRecord.types.includes( this.state.fields.type.value )
+		);
 
-			return (
-				<Component
-					key={ showTypes.join( ',' ) }
+		return (
+			selectedRecordType && (
+				<selectedRecordType.component
 					selectedDomainName={ this.props.selectedDomainName }
-					show={ includes( showTypes, this.state.fields.type.value ) }
+					show={ true }
 					fieldValues={ formState.getAllFieldValues( this.state.fields ) }
 					isValid={ this.isValid }
 					onChange={ this.onChange }
 				/>
-			);
-		} );
+			)
+		);
 	}
 
 	render() {
@@ -273,7 +274,7 @@ class DnsAddNew extends React.Component {
 					</FormSelect>
 					<FormSettingExplanation>{ selectedType.description }</FormSettingExplanation>
 				</FormFieldset>
-				{ this.recordFields() }
+				{ this.renderFields() }
 				<div className="dns__form-buttons">
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ buttonLabel }
