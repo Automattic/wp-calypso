@@ -16,6 +16,7 @@ import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { userCan } from 'calypso/lib/site/utils';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
@@ -188,12 +189,14 @@ function PluginDetails( props ) {
 										<a href={ fullPlugin.author_url }>{ fullPlugin.author_name }</a>
 									</div>
 								</div>
-								<div className="plugin-details__info">
-									<div className="plugin-details__info-title">{ translate( 'Ratings' ) }</div>
-									<div className="plugin-details__info-value">
-										<Rating rating={ fullPlugin.rating } />
+								{ !! fullPlugin.rating && (
+									<div className="plugin-details__info">
+										<div className="plugin-details__info-title">{ translate( 'Ratings' ) }</div>
+										<div className="plugin-details__info-value">
+											<PluginRatings rating={ fullPlugin.rating } />
+										</div>
 									</div>
-								</div>
+								) }
 								<div className="plugin-details__info">
 									<div className="plugin-details__info-title">{ translate( 'Last updated' ) }</div>
 									<div className="plugin-details__info-value">
@@ -345,14 +348,6 @@ function onClickInstallPlugin( { dispatch, selectedSite, slug, upgradeAndInstall
 	} else {
 		page( installPluginURL );
 	}
-}
-
-/* TODO: add the stars icons */
-function Rating( { rating } ) {
-	// const inverseRating = 100 - Math.round( rating / 10 ) * 10;
-	// const noFillOutlineCount = Math.floor( inverseRating / 20 ); // (5 - noFillOutlineCount) gives the number of stars to add
-
-	return rating / 20;
 }
 
 function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) {
