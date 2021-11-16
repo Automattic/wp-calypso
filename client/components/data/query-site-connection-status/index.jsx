@@ -20,4 +20,6 @@ export default function QuerySiteConnectionStatus( { siteId } ) {
 	return null;
 }
 
-QuerySiteConnectionStatus.propTypes = { siteId: PropTypes.number };
+QuerySiteConnectionStatus.propTypes = {
+	siteId: PropTypes.number.isRequired,
+};
