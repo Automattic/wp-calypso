@@ -627,16 +627,6 @@ Undocumented.prototype.changeTheme = function ( siteSlug, data, fn ) {
 	);
 };
 
-Undocumented.prototype.resetPasswordForMailbox = function ( domainName, mailbox, fn ) {
-	debug( '/domains/:domainName/google-apps/:mailbox/get-new-password' );
-	return this.wpcom.req.post(
-		{
-			path: '/domains/' + domainName + '/google-apps/' + mailbox + '/get-new-password',
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.isSiteImportable = function ( site_url ) {
 	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
 
