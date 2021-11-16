@@ -38,8 +38,20 @@
 		}
 	}
 
+	.filterbar__control-list {
+		display: flex;
+
+		margin: 0 0 0 4px;
+		padding: 0;
+
+		list-style-type: none;
+
+		> li {
+			margin: 4px;
+		}
+	}
+
 	.filterbar__selection.button {
-		margin: 8px;
 		padding: 8px;
 		border: 1px solid var( --color-neutral-20 );
 		border-radius: 2px;
