@@ -1,4 +1,4 @@
 module.exports = {
-	require: [ 'coffeescript/register' ],
+	require: [ 'coffee-script/register' ],
 	extension: [ 'coffee' ],
 };

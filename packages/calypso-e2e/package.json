@@ -23,10 +23,13 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/languages": "workspace:^",
+		"@jest/globals": "^27.2.4",
 		"@types/config": "^0.0.40",
 		"@types/jest": "^27.0.2",
 		"@types/node": "^16.11.7",
 		"@types/node-fetch": "^2.5.12",
+		"@wordpress/i18n": "^4.2.2",
 		"asana-phrase": "^0.0.8",
 		"node-fetch": "^2.6.1",
 		"typescript": "^4.4.4"
