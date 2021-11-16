@@ -6,7 +6,7 @@ import './public-path';
 import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { getQueryArg } from '@wordpress/url';
 import DraftPostModal from './draft-post-modal';
@@ -16,6 +16,10 @@ import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
 function WelcomeTour() {
+	const [ showDraftPostModal ] = useState(
+		getQueryArg( window.location.href, 'showDraftPostModal' )
+	);
+
 	const { show, isLoaded, variant, isManuallyOpened, isNewPageLayoutModalOpen } = useSelect(
 		( select ) => {
 			const welcomeGuideStoreSelect = select( 'automattic/wpcom-welcome-guide' );
@@ -55,7 +59,6 @@ function WelcomeTour() {
 	}
 
 	if ( variant === DEFAULT_VARIANT ) {
-		const showDraftPostModal = getQueryArg( window.location.href, 'showDraftPostModal' );
 		return (
 			<LocaleProvider localeSlug={ window.wpcomBlockEditorNuxLocale ?? i18nDefaultLocaleSlug }>
 				{ showDraftPostModal ? <DraftPostModal /> : <LaunchWpcomWelcomeTour /> }
