@@ -230,8 +230,12 @@
 
 			form.email-forwarding__add-new {
 				.email-forwarding__form-content {
+					border-top-width: 0;
 					padding-top: 0;
 				}
+			}
+			.email-forwarding__add-new-separator {
+				margin-top: 3em;
 			}
 
 			@include breakpoint-deprecated( '>1040px' ) {

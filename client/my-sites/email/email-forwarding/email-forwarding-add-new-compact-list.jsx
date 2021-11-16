@@ -142,7 +142,10 @@ class EmailForwardingAddNewCompactList extends Component {
 								selectedDomainName={ selectedDomainName }
 							/>
 						</form>
-						<hr key={ `email-forwarding__add-new_hr-${ index }` } />
+						<hr
+							className="email-forwarding__add-new-separator"
+							key={ `email-forwarding__add-new_hr-${ index }` }
+						/>
 					</Fragment>
 				) ) }
 				<div>{ this.renderActionsButtons() }</div>
