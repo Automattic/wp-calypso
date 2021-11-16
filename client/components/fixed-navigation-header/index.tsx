@@ -87,6 +87,8 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 			}
 		};
 
+		handleScroll();
+
 		window.addEventListener( 'scroll', handleScroll );
 		return () => {
 			window.removeEventListener( 'scroll', handleScroll );
@@ -97,12 +99,7 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 		<Header id={ id } className={ className } ref={ headerRef }>
 			<Container>
 				<Breadcrumb items={ navigationItems } />
-				<ActionsContainer
-					ref={ actionsRef }
-					style={ { visibility: `${ contentRef ? 'hidden' : 'visible' }` } }
-				>
-					{ children }
-				</ActionsContainer>
+				<ActionsContainer ref={ actionsRef }>{ children }</ActionsContainer>
 			</Container>
 		</Header>
 	);

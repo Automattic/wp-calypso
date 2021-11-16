@@ -7,6 +7,8 @@ const Container = styled.div`
 	grid-template-columns: 1fr 1fr;
 	align-items: center;
 	min-height: 500px;
+	column-gap: 2em;
+	row-gap: 2em;
 
 	@media ( max-width: 660px ) {
 		display: table;
@@ -16,6 +18,10 @@ const Container = styled.div`
 
 const CtaContainer = styled.div`
 	justify-self: start;
+
+	@media ( max-width: 660px ) {
+		margin-bottom: 4em;
+	}
 `;
 
 const ContentContainer = styled.div`
