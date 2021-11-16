@@ -8,11 +8,14 @@ import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/se
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
 
 function WooCommerce() {
 	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+
 	const areInstalledPluginsLoadedIntoState = useSelector( ( state ) =>
 		arePluginsLoaded( state, siteId )
 	);
@@ -40,6 +43,7 @@ function WooCommerce() {
 				{ areInstalledPluginsLoadedIntoState && (
 					<RequiredPluginsInstallView
 						siteId={ siteId }
+						siteSlug={ siteSlug }
 						isFeatureActive={ isWoopFeatureActive }
 						upgradingPlan={ upgradingPlan }
 					/>

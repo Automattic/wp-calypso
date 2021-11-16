@@ -76,6 +76,7 @@ class RequiredPluginsInstallView extends Component {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		skipSlug: PropTypes.string,
 		skipConfirmation: PropTypes.bool,
 		isFeatureActive: PropTypes.bool,
 		upgradingPlan: PropTypes.object,
