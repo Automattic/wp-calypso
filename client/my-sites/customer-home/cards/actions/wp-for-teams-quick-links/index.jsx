@@ -8,7 +8,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import {
 	getSiteFrontPage,
 	getCustomizerUrl,
@@ -156,7 +156,7 @@ const mapStateToProps = ( state ) => {
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
-		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
+		showCustomizer: ! isSiteUsingLegacyFSE( state, siteId ),
 		isP2Hub,
 		siteSlug,
 		isStaticHomePage,

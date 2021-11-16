@@ -57,7 +57,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import {
@@ -1160,7 +1160,7 @@ function mapStateToProps( state, props ) {
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
-		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ) && siteId,
+		showCustomizerLink: ! isSiteUsingLegacyFSE( state, selectedSiteId ) && siteId,
 		showSiteEditor: isFSEActive,
 		siteEditorUrl: getSiteEditorUrl( state, selectedSiteId ),
 		siteId,
