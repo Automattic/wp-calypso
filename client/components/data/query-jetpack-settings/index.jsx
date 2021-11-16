@@ -4,25 +4,24 @@ import { useDispatch } from 'react-redux';
 import { requestJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
 
-const request = ( siteId, query ) => ( dispatch, getState ) => {
+const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( ! isRequestingJetpackSettings( getState(), siteId ) ) {
-		dispatch( requestJetpackSettings( siteId, query ) );
+		dispatch( requestJetpackSettings( siteId ) );
 	}
 };
 
-function QueryJetpackSettings( { siteId, query } ) {
+function QueryJetpackSettings( { siteId } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( request( siteId, query ) );
-	}, [ dispatch, siteId, query ] );
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
 	return null;
 }
 
 QueryJetpackSettings.propTypes = {
 	siteId: PropTypes.number.isRequired,
-	query: PropTypes.object,
 };
 
 export default QueryJetpackSettings;
