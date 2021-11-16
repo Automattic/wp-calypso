@@ -1,17 +1,14 @@
-/**
- * External Dependencies
- */
 import { useRef, useMemo } from '@wordpress/element';
 import classnames from 'classnames';
 import { usePopper } from 'react-popper';
+import Overlay from './overlay';
 import type { Rect, Placement } from '@popperjs/core';
 
 interface Props {
 	referenceElementSelector: string;
-	visible: boolean;
 }
 
-const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector, visible } ) => {
+const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector } ) => {
 	const popperElementRef = useRef( null );
 	const referenceElement = document.querySelector( referenceElementSelector );
 	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
@@ -46,7 +43,7 @@ const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector
 		}
 	);
 
-	const clipRepositionProps = visible
+	const clipRepositionProps = referenceElement
 		? {
 				style: popperStyles?.popper,
 				...popperAttributes?.popper,
@@ -54,13 +51,16 @@ const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector
 		: null;
 
 	return (
-		<div
-			className={ classnames( 'packaged-tour__spotlight', {
-				'--visible': visible,
-			} ) }
-			ref={ popperElementRef }
-			{ ...clipRepositionProps }
-		/>
+		<>
+			<Overlay visible={ ! clipRepositionProps } />
+			<div
+				className={ classnames( 'packaged-tour__spotlight', {
+					'--visible': !! clipRepositionProps,
+				} ) }
+				ref={ popperElementRef }
+				{ ...clipRepositionProps }
+			/>
+		</>
 	);
 };
 

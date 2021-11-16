@@ -249,8 +249,9 @@ function FooTour() {
 		},
 		options: {
 			effects: {
-				arrowIndicator: false,
-				__experimental__spotlight: true,
+				arrowIndicator: true,
+				__experimental__spotlight: false,
+				overlay: false,
 			},
 			className: 'foo-tour',
 		},

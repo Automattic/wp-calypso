@@ -84,20 +84,15 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 			return false;
 		}
 
-		return referenceElement && ! isMinimized;
+		return ! isMinimized;
 	};
 
 	const showOverlay = () => {
-		if ( showSpotlight() ) {
+		if ( showSpotlight() || ! config.options?.effects?.overlay ) {
 			return false;
 		}
 
-		// rendered for the spotlight, but hidden
-		if ( config.options?.effects?.__experimental__spotlight ) {
-			return ! referenceElement && ! isMinimized;
-		}
-
-		return !! ( config.options?.effects?.overlay && ! isMinimized );
+		return ! isMinimized;
 	};
 
 	const handleCallback = ( callback?: Callback ) => {
@@ -155,11 +150,8 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				isMinimized={ isMinimized }
 			/>
 			<div className={ classNames } ref={ tourContainerRef }>
-				<Overlay visible={ showOverlay() } />
-				<Spotlight
-					referenceElementSelector={ referenceElementSelector }
-					visible={ showSpotlight() }
-				/>
+				{ showOverlay() && <Overlay visible={ true } /> }
+				{ showSpotlight() && <Spotlight referenceElementSelector={ referenceElementSelector } /> }
 				<div className="packaged-tour__frame" ref={ popperElementRef } { ...stepRepositionProps }>
 					{ showArrowIndicator() && (
 						<div className="packaged-tour__arrow" data-popper-arrow { ...arrowPositionProps } />
