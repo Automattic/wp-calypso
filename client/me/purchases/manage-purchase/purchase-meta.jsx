@@ -133,7 +133,7 @@ function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
 			return translate( 'Domain expired on' );
 		}
 
-		if ( isConciergeSession( purchase ) ) {
+		if ( isConciergeSession( purchase.productSlug ) ) {
 			return translate( 'Session used on' );
 		}
 

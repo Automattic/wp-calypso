@@ -410,7 +410,6 @@ function isCloseToExpiration( purchase ) {
  * who are likely to be eligible for one.
  *
  * @param {object} purchase - the purchase with which we are concerned
- *
  * @returns {boolean} Whether in refund period.
  */
 function maybeWithinRefundPeriod( purchase ) {
@@ -491,7 +490,7 @@ function isRemovable( purchase ) {
 		return false;
 	}
 
-	if ( isConciergeSession( purchase ) ) {
+	if ( isConciergeSession( purchase.productSlug ) ) {
 		return false;
 	}
 
@@ -652,7 +651,7 @@ function purchaseType( purchase ) {
 		return i18n.translate( 'Premium Theme' );
 	}
 
-	if ( isConciergeSession( purchase ) ) {
+	if ( isConciergeSession( purchase.productSlug ) ) {
 		return i18n.translate( 'One-on-one Support' );
 	}
 

@@ -230,7 +230,7 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isExpired( purchase ) ) {
-			if ( isConciergeSession( purchase ) ) {
+			if ( isConciergeSession( purchase.productSlug ) ) {
 				return translate( 'Session used on %s', {
 					args: expiry.format( 'LL' ),
 				} );

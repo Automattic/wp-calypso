@@ -262,7 +262,7 @@ export function hasOnlyRenewalItems( cart ) {
  * @returns {boolean} true if there is at least one concierge session item, false otherwise
  */
 export function hasConciergeSession( cart ) {
-	return getAllCartItems( cart ).some( isConciergeSession );
+	return getAllCartItems( cart ).some( ( product ) => isConciergeSession( product.product_slug ) );
 }
 
 /**
@@ -658,7 +658,6 @@ export function hasDomainInCart( cart, domain ) {
  *
  * @param {import('@automattic/shopping-cart').ResponseCartProduct} item - the object for domain registrations
  * @param {boolean} value - whether privacy is on or off
- *
  * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new ResponseCartProduct with added/removed privacy
  */
 export function updatePrivacyForDomain( item, value ) {

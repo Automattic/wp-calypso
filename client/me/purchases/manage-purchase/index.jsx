@@ -528,7 +528,7 @@ class ManagePurchase extends Component {
 			description = plan.getDescription();
 		} else if ( isTheme( purchase ) && theme ) {
 			description = theme.description;
-		} else if ( isConciergeSession( purchase ) ) {
+		} else if ( isConciergeSession( purchase.productSlug ) ) {
 			description = purchase.description;
 		} else if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
 			description = translate(

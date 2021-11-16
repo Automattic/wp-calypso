@@ -102,7 +102,7 @@ class PurchaseNotice extends Component {
 	 * Returns appropriate warning text for a purchase that is expiring but where the expiration is not imminent.
 	 *
 	 * @param  {object} purchase  The purchase object
-	 * @param  {React.Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
+	 * @param  {import('react').Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
 	 * @returns  {string}  Translated text for the warning message.
 	 */
 	getExpiringLaterText( purchase, autoRenewingUpgradesLink = null ) {
@@ -949,7 +949,7 @@ class PurchaseNotice extends Component {
 
 	shouldRenderConciergeConsumedNotice() {
 		const { purchase } = this.props;
-		if ( ! isConciergeSession( purchase ) ) {
+		if ( ! isConciergeSession( purchase.productSlug ) ) {
 			return false;
 		}
 		if ( ! isExpired( purchase ) ) {
