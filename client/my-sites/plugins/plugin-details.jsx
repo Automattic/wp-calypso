@@ -382,7 +382,7 @@ function CTA( {
 		<>
 			<Dialog
 				isVisible={ showEligibility }
-				title="Eligibility"
+				title={ translate('Eligibility') }
 				onClose={ () => setShowEligibility( false ) }
 			>
 				<EligibilityWarnings
