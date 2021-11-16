@@ -70,7 +70,7 @@ class EmailForwardingAddNewCompactList extends Component {
 		this.setState( { newEmailForwardAdded: true } );
 	};
 
-	onForwardAdd = () => {
+	onAddNewEmailForward = () => {
 		this.setState( {
 			emailForwards: [ ...this.state.emailForwards, { destination: '', mailbox: '' } ],
 		} );
@@ -133,12 +133,13 @@ class EmailForwardingAddNewCompactList extends Component {
 					<Fragment key={ `email-forwarding__add-new_fragment__card-${ index }` }>
 						<form className="email-forwarding__add-new">
 							<EmailForwardingAddNewCompact
+								emailForwards={ this.state.emailForwards }
 								fields={ fields }
 								index={ index }
-								emailForwards={ this.state.emailForwards }
-								selectedDomainName={ selectedDomainName }
+								onAddEmailForward={ this.onAddNewEmailForward }
 								onRemoveEmailForward={ this.onRemoveEmailForward }
 								onUpdateEmailForward={ this.onUpdateEmailForward }
+								selectedDomainName={ selectedDomainName }
 							/>
 						</form>
 						<hr key={ `email-forwarding__add-new_hr-${ index }` } />

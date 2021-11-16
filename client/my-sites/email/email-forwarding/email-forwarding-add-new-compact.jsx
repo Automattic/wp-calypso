@@ -15,6 +15,7 @@ class EmailForwardingAddNewCompact extends Component {
 	static propTypes = {
 		fields: PropTypes.object,
 		index: PropTypes.number,
+		onAddEmailForward: PropTypes.func.isRequired,
 		onRemoveEmailForward: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		onUpdateEmailForward: PropTypes.func.isRequired,
@@ -46,13 +47,13 @@ class EmailForwardingAddNewCompact extends Component {
 		this.setState( { fields } );
 	};
 
-	addButton() {
-		const { onButtonClick, translate } = this.props;
+	renderAddButton() {
+		const { onAddEmailForward, onButtonClick, translate } = this.props;
 		return (
 			<div className="email-forwarding-add-new-compact__actions">
 				<Button
 					className="email-forwarding-add-new-compact__add-another-forward-button"
-					onClick={ this.onForwardAdd }
+					onClick={ onAddEmailForward }
 				>
 					<Gridicon icon="plus" />
 					<span>{ translate( 'Add another forward' ) }</span>
@@ -65,7 +66,7 @@ class EmailForwardingAddNewCompact extends Component {
 		);
 	}
 
-	removeButton() {
+	renderRemoveButton() {
 		const updateForm = () => {
 			this.props.onRemoveEmailForward( this.props.index );
 		};
@@ -78,7 +79,7 @@ class EmailForwardingAddNewCompact extends Component {
 		);
 	}
 
-	formFields() {
+	renderFormFields() {
 		const { translate, selectedDomainName, index, fields } = this.props;
 		const contactText = translate( 'contact', {
 			context: 'part of e-mail address',
@@ -130,8 +131,8 @@ class EmailForwardingAddNewCompact extends Component {
 	render() {
 		return (
 			<>
-				{ this.formFields() }
-				{ this.props.index > 0 ? this.removeButton() : null }
+				{ this.renderFormFields() }
+				{ this.props.index > 0 ? this.renderRemoveButton() : null }
 			</>
 		);
 	}
