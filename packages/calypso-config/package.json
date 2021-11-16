@@ -33,12 +33,12 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/create-calypso-config": "^1.0.0-alpha.0",
+		"@automattic/create-calypso-config": "workspace:^",
 		"cookie": "^0.4.0",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^4.4.4"
 	}
 }

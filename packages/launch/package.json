@@ -31,13 +31,13 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
-		"@automattic/data-stores": "^2.0.0",
-		"@automattic/domain-picker": "^1.0.0-alpha.0",
-		"@automattic/i18n-utils": "^1.0.0",
-		"@automattic/onboarding": "^1.0.0",
-		"@automattic/plans-grid": "^1.0.0-alpha.0",
-		"@automattic/shopping-cart": "^2.0.0",
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"@automattic/domain-picker": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/onboarding": "workspace:^",
+		"@automattic/plans-grid": "workspace:^",
+		"@automattic/shopping-cart": "workspace:^",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/icons": "^5.0.2",
 		"@wordpress/react-i18n": "^3.0.1",
@@ -49,8 +49,8 @@
 		"use-debounce": "^3.1.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"@automattic/typography": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/typography": "workspace:^",
 		"@testing-library/react": "^12.1.2",
 		"@wordpress/base-styles": "^4.0.0",
 		"copyfiles": "^2.3.0",
