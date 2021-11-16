@@ -68,14 +68,15 @@
 	align-self: flex-start;
 	width: 52px;
 	margin: 1px 22px 0 10px;
-	padding: 4px 0 6px;
+	padding: 8px 0 6px;
 	background: var( --color-surface-backdrop );
+	line-height: 1;
 	text-align: center;
 	z-index: 1;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		width: 40px;
-		margin: -2px 8px 0 0;
+		margin: 0 8px 0 0;
 	}
 
 	.is-loading & {
@@ -105,7 +106,7 @@
 	display: flex;
 	width: 24px;
 	height: 24px;
-	margin-top: 2px;
+	margin-top: 4px;
 	padding: 12px;
 	background: var( --color-neutral-20 );
 	color: var( --color-text-inverted );
@@ -311,6 +312,10 @@
 	@include breakpoint-deprecated( '<960px' ) {
 		margin-top: 8px;
 	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-top: 12px;
+	}
 }
 
 .activity-log-item__description-content {
@@ -319,14 +324,38 @@
 	.activity-log-item.is-aggregated & {
 		margin-bottom: 0;
 	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		font-size: $font-body;
+	}
 }
 
 .activity-log-item__action {
 	display: flex;
+	flex-wrap: wrap;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		margin-top: 16px;
+		margin-top: 12px;
 		text-align: left;
+	}
+
+	.button {
+		margin-top: 4px;
+		margin-bottom: 4px;
+	}
+
+	.button.is-compact {
+		display: flex;
+		align-items: center;
+
+		line-height: 1.2;
+		text-align: left;
+
+		.gridicon {
+			position: static;
+
+			margin: 0 0.5rem 0 0;
+		}
 	}
 }
 

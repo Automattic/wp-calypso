@@ -11,6 +11,7 @@
 		fill: currentColor;
 	}
 	@include breakpoint-deprecated( '<660px' ) {
+		font-size: $font-body-small;
 		margin-bottom: 24px;
 	}
 }
