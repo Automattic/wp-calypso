@@ -161,6 +161,13 @@ $plugin-details-header-padding: 100px;
 	}
 }
 
+%placeholder {
+	cursor: default;
+	color: transparent;
+	background-color: var( --color-neutral-0 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
 .plugin-details__tags {
 	position: absolute;
 	font-size: $font-body-extra-small;
@@ -171,6 +178,11 @@ $plugin-details-header-padding: 100px;
 	@media screen and ( max-width: 1040px ) {
 		top: -5px;
 	}
+
+	&.is-placeholder {
+		@extend %placeholder;
+		width: 50%;
+	}
 }
 
 .plugin-details__header {
@@ -179,15 +191,14 @@ $plugin-details-header-padding: 100px;
 	justify-content: center;
 	padding: $plugin-details-header-padding 0;
 
-	.plugin-details__name,
-	.plugin-details__price,
-	.plugin-details__description,
-	.plugin-details__additional-info {
-		&.is-placeholder {
-			cursor: default;
-			color: transparent;
-			background-color: var( --color-neutral-0 );
-			animation: loading-fade 1.6s ease-in-out infinite;
+	&.is-placeholder {
+		.plugin-details__name,
+		.plugin-details__price,
+		.plugin-details__description,
+		.plugin-details__additional-info,
+		.plugin-details__install,
+		.plugin-details__t-and-c {
+			@extend %placeholder;
 		}
 	}
 
