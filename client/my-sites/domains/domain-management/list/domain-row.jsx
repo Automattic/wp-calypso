@@ -34,6 +34,7 @@ class DomainRow extends PureComponent {
 		currentRoute: PropTypes.string,
 		disabled: PropTypes.bool,
 		domain: PropTypes.object.isRequired,
+		hasLoadedPurchases: PropTypes.bool,
 		isBusy: PropTypes.bool,
 		isLoadingDomainDetails: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
@@ -165,13 +166,13 @@ class DomainRow extends PureComponent {
 	}
 
 	renderAutoRenew() {
-		const { site, purchase } = this.props;
+		const { site, hasLoadedPurchases, purchase } = this.props;
 
-		if ( ! this.shouldShowAutoRenewStatus() ) {
+		if ( ! this.shouldShowAutoRenewStatus() || ( hasLoadedPurchases && ! purchase ) ) {
 			return <span className="domain-row__auto-renew-cell">-</span>;
 		}
 
-		if ( ! purchase || ! site ) {
+		if ( ! hasLoadedPurchases ) {
 			return (
 				<span className="domain-row__auto-renew-cell">
 					<p className="domain-row__placeholder" />

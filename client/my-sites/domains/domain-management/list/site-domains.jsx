@@ -38,7 +38,7 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
-import { getPurchases } from 'calypso/state/purchases/selectors';
+import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -104,6 +104,7 @@ export class SiteDomains extends Component {
 			domains,
 			hasProductsList,
 			isAtomicSite,
+			isFetchingPurchases,
 			selectedSite,
 			context,
 			translate,
@@ -188,6 +189,7 @@ export class SiteDomains extends Component {
 						settingPrimaryDomain={ settingPrimaryDomain }
 						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
 						sites={ { [ selectedSite.ID ]: selectedSite } }
+						hasLoadedPurchases={ ! isFetchingPurchases }
 					/>
 				</div>
 
@@ -530,6 +532,7 @@ export default connect(
 			userCanManageOptions,
 			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
 			purchases,
+			isFetchingPurchases: isFetchingSitePurchases( state ),
 		};
 	},
 	( dispatch ) => {

@@ -32,7 +32,10 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import {
+	getUserPurchases,
+	hasLoadedUserPurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -364,6 +367,7 @@ class AllDomains extends Component {
 			currentRoute,
 			context,
 			requestingSiteDomains,
+			hasLoadedUserPurchases,
 			translate,
 		} = this.props;
 
@@ -462,6 +466,7 @@ class AllDomains extends Component {
 					purchases={ purchases }
 					sites={ sites }
 					requestingSiteDomains={ requestingSiteDomains }
+					hasLoadedPurchases={ hasLoadedUserPurchases }
 				/>
 			</>
 		);
@@ -826,6 +831,7 @@ export default connect(
 			hasAllSitesLoaded: hasAllSitesList( state ),
 			isContactEmailEditContext: ListAllActions.editContactEmail === action,
 			purchases: getUserPurchases( state ) || [],
+			hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,

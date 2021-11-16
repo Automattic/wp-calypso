@@ -17,6 +17,7 @@ class DomainsTable extends PureComponent {
 		domainsTableColumns: PropTypes.array,
 		goToEditDomainRoot: PropTypes.func,
 		handleUpdatePrimaryDomainOptionClick: PropTypes.func,
+		hasLoadedPurchases: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
 		primaryDomainIndex: PropTypes.number,
@@ -91,6 +92,7 @@ class DomainsTable extends PureComponent {
 			isManagingAllSites,
 			goToEditDomainRoot,
 			handleUpdatePrimaryDomainOptionClick,
+			hasLoadedPurchases,
 			isLoading,
 			primaryDomainIndex,
 			purchases,
@@ -162,6 +164,7 @@ class DomainsTable extends PureComponent {
 						shouldUpgradeToMakePrimary={
 							shouldUpgradeToMakeDomainPrimary && shouldUpgradeToMakeDomainPrimary( domain )
 						}
+						hasLoadedPurchases={ hasLoadedPurchases }
 						purchase={ purchase }
 					/>
 				</>
