@@ -128,10 +128,16 @@ class BulkEditContactInfo extends Component {
 		}
 
 		wp.req
-			.post( '/me/domain-contact-information/validate', {
-				contactInformation: mapRecordKeysRecursively( contactDetails, camelToSnakeCase ),
-				domainNames: this.props.domainNamesList ?? [],
-			} )
+			.post(
+				'/me/domain-contact-information/validate',
+				mapRecordKeysRecursively(
+					{
+						contactInformation: contactDetails,
+						domainNames: this.props.domainNamesList ?? [],
+					},
+					camelToSnakeCase
+				)
+			)
 			.then( ( data ) => {
 				let errorMessages = mapRecordKeysRecursively(
 					( data && data.messages ) || {},
