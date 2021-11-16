@@ -102,7 +102,9 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Dismisses the Welcome Tour (card) if it is present.
+	 * Dismisses the Welcome Tour (card) if it is present, then return the editor frame.
+	 *
+	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async dismissWelcomeTour(): Promise< Frame > {
 		const frame = await this.getEditorFrame();
