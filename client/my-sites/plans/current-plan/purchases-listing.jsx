@@ -365,7 +365,7 @@ class PurchasesListing extends Component {
 							details={ this.getExpirationInfoForPurchase( purchase ) }
 							isError={ this.isProductExpiring( purchase ) }
 							product={ purchase.productSlug }
-							tagline={ getJetpackProductTagline( purchase, true ) }
+							tagline={ getJetpackProductTagline( { product_slug: purchase.productSlug }, true ) }
 							title={ this.getTitle( purchase ) }
 							headerChildren={ this.getHeaderChildren( purchase ) }
 						/>

@@ -174,6 +174,9 @@ export const getJetpackProductsCallToAction = () => {
 	};
 };
 
+/**
+ * @returns {Object.<string, {default: import('i18n-calypso').TranslateResult, owned?: import('i18n-calypso').TranslateResult}>}
+ */
 export const getJetpackProductsTaglines = () => {
 	const backupDailyTagline = translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );

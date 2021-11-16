@@ -1,3 +1,18 @@
+/**
+ * This function is deprecated. Do not use it for new code.
+ *
+ * Please use the properties you expect rather than running objects through
+ * this function superstitiously. It will make type checking much easier.
+ *
+ * This function basically just snake_cases specific properties, but it does so
+ * for various definitions of the word "product". Some products are shopping
+ * cart products, some are product endpoint products, some are products list
+ * products, some are purchases list products, and some are even stranger
+ * things. As long as this function is used, we cannot know what sorts of data
+ * we are using.
+ *
+ * @deprecated
+ */
 export function formatProduct( product ) {
 	return {
 		...product,
