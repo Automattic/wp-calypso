@@ -36,10 +36,7 @@ class AddDnsRecord extends Component {
 		const searchParams = new URLSearchParams( window.location.search );
 		const recordId = searchParams.get( 'record' );
 
-		if ( recordId ) {
-			return dns.records && dns.records.find( ( record ) => recordId === record.id );
-		}
-		return null;
+		return recordId ? dns.records?.find( ( record ) => recordId === record.id ) : null;
 	}
 
 	renderBreadcrumbs() {
