@@ -1,4 +1,3 @@
-import { keys, filter } from 'lodash';
 import { PureComponent } from 'react';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
 import ca from './ca-form';
@@ -15,7 +14,7 @@ const tldSpecificForms = {
 
 export const getApplicableTldsWithAdditionalDetailsForms = ( tlds ) => {
 	const topLevelTlds = tlds.map( getTopLevelOfTld );
-	return filter( keys( tldSpecificForms ), ( tldFormName ) => {
+	return Object.keys( tldSpecificForms ).filter( ( tldFormName ) => {
 		return topLevelTlds.includes( tldFormName );
 	} );
 };
