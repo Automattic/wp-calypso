@@ -586,7 +586,7 @@ export default function CompositeCheckout( {
 
 	// The goToPreviousPage function and subsequent conditional statement controls the 'back' button functionality on the empty cart page
 
-	const checkoutBackUrl = useValidCheckoutBackUrl( siteSlug );
+	const checkoutBackUrl = useValidCheckoutBackUrl( updatedSiteSlug );
 
 	const goToPreviousPage = useCallback( () => {
 		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
@@ -630,7 +630,10 @@ export default function CompositeCheckout( {
 			// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
 			console.error( 'Error getting query string in close button' ); // eslint-disable-line no-console
 		}
-
+		if ( closeUrl.startsWith( '/' ) ) {
+			page( closeUrl );
+			return;
+		}
 		window.location.href = closeUrl;
 	}, [ siteSlug, checkoutBackUrl, previousPath, reduxDispatch ] );
 
@@ -654,7 +657,7 @@ export default function CompositeCheckout( {
 							<EmptyCart />
 							<SubmitButtonWrapper>
 								<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
-									{ translate( 'Return to previous page' ) }
+									{ translate( 'Go back' ) }
 								</Button>
 							</SubmitButtonWrapper>
 						</CheckoutStepAreaWrapper>
