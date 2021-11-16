@@ -5,7 +5,7 @@ const selectors = {
 };
 
 /**
- * Represents the Audio block.
+ * Represents the Paragraph block.
  */
 export class ParagraphBlock {
 	static blockName = 'Paragraph';

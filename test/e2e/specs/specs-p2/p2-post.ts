@@ -16,6 +16,7 @@ import { ElementHandle, Page } from 'playwright';
 describe( DataHelper.createSuiteTitle( 'Post' ), function () {
 	let page: Page;
 	let blockHandle: ElementHandle;
+	let p2Page: P2Page;
 	let isolatedBlockEditorComponent: IsolatedBlockEditorComponent;
 
 	const user = 'p2User';
@@ -44,8 +45,9 @@ describe( DataHelper.createSuiteTitle( 'Post' ), function () {
 	} );
 
 	it( 'Add a Paragraph block', async function () {
-		const p2Page = new P2Page( page );
+		p2Page = new P2Page( page );
 		await p2Page.focusInlineEditor();
+
 		isolatedBlockEditorComponent = new IsolatedBlockEditorComponent( page );
 		blockHandle = await isolatedBlockEditorComponent.addBlock(
 			ParagraphBlock.blockName,
@@ -63,6 +65,6 @@ describe( DataHelper.createSuiteTitle( 'Post' ), function () {
 	} );
 
 	it( 'Validate post submission was successful', async function () {
-		await page.waitForSelector( `.entry-content:has-text("${ postContent }")` );
+		await p2Page.validatePostContent( postContent );
 	} );
 } );
