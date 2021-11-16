@@ -31,7 +31,7 @@ class EmailForwardingAddNewCompactList extends Component {
 		this.state = {
 			emailForwards: [ { destination: '', mailbox: '', isValid: false } ],
 			isRedirecting: false,
-			newForwardAdded: false,
+			newEmailForwardAdded: false,
 		};
 	}
 
@@ -67,7 +67,7 @@ class EmailForwardingAddNewCompactList extends Component {
 				selectedSiteSlug
 			);
 		} );
-		this.setState( { newForwardAdded: true } );
+		this.setState( { newEmailForwardAdded: true } );
 	};
 
 	onForwardAdd = () => {
@@ -112,12 +112,12 @@ class EmailForwardingAddNewCompactList extends Component {
 	componentDidUpdate( prevProps ) {
 		const { emailForwardSuccess, onAddEmailForwardSuccess } = this.props;
 
-		const { newForwardAdded } = this.state;
+		const { newEmailForwardAdded } = this.state;
 
 		if (
 			emailForwardSuccess &&
 			onAddEmailForwardSuccess &&
-			newForwardAdded &&
+			newEmailForwardAdded &&
 			prevProps.emailForwardSuccess !== emailForwardSuccess
 		) {
 			onAddEmailForwardSuccess();
