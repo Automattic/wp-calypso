@@ -164,6 +164,10 @@
 		}
 	}
 
+	.videos-ui__play-button:hover {
+		opacity: 80%;
+	}
+
 	@include break-small {
 		.videos-ui__play-button {
 			max-width: 300px;
