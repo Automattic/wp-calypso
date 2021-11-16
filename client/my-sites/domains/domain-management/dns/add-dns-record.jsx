@@ -34,7 +34,7 @@ class AddDnsRecord extends Component {
 	getRecordBeingEdited() {
 		const { dns } = this.props;
 		const searchParams = new URLSearchParams( window.location.search );
-		const recordId = searchParams.get( 'record' );
+		const recordId = searchParams.get( 'recordId' );
 
 		return recordId ? dns.records?.find( ( record ) => recordId === record.id ) : null;
 	}

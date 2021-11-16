@@ -133,7 +133,7 @@ export function domainManagementDnsAddRecord( siteName, domainName, relativeTo =
 export function domainManagementDnsEditRecord( siteName, domainName, recordId, relativeTo = null ) {
 	return (
 		domainManagementEditBase( siteName, domainName, 'add-dns-record', relativeTo ) +
-		'?record=' +
+		'?recordId=' +
 		encodeURI( recordId )
 	);
 }
