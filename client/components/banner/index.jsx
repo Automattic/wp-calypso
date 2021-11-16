@@ -9,6 +9,7 @@ import {
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
@@ -157,7 +158,7 @@ export class Banner extends Component {
 		if ( iconPath ) {
 			iconComponent = <img src={ iconPath } alt="" />;
 		} else {
-			iconComponent = <Gridicon icon={ icon || 'star' } size={ 18 } />;
+			iconComponent = <Gridicon icon={ icon || 'star' } size={ isMobile() ? 24 : 18 } />;
 		}
 
 		return (
