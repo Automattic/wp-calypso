@@ -25,7 +25,6 @@ export { isCredits } from './is-credits';
 export { isComplete } from './is-complete';
 export { isCustomDesign } from './is-custom-design';
 export { isDelayedDomainTransfer } from './is-delayed-domain-transfer';
-export { isDependentProduct } from './is-dependent-product';
 export { isDIFMProduct } from './is-difm-product';
 export { isDomainMapping } from './is-domain-mapping';
 export { isDomainProduct } from './is-domain-product';
