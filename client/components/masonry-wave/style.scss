@@ -1,0 +1,27 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.masonry-wave__container {
+  display: grid;
+  grid-template-columns: repeat(var(--masonry-wave--amountOfColumns), 1fr);
+	column-gap: 0.75rem;
+	.masonry-wave__column {
+		&:nth-child(even) {
+			padding-top: 1rem;
+		}
+
+		.masonry-wave__element {
+			overflow: hidden;
+			box-shadow: 2px 2px 10px #aaa;
+			margin-bottom: 0.75rem;
+			
+			img {
+				max-width: 100%;
+			}
+
+			:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
