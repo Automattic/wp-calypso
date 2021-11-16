@@ -36,8 +36,9 @@
         justify-content: space-between;
         width: 100%;
 
-        .videos-ui__bar-skip-link {
+        .videos-ui__bar-finish-link {
             text-decoration: underline;
+			cursor: pointer;
         }
     }
 	@include break-small {

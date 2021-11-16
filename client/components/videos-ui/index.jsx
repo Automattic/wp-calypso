@@ -7,7 +7,11 @@ import VideoLinksBar from './video-links-bar';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) => {
+const VideosUi = ( {
+	shouldDisplayTopLinks = false,
+	onBackClick = () => {},
+	finishLink = null,
+} ) => {
 	const translate = useTranslate();
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
 	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
@@ -67,11 +71,6 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 		}
 	};
 
-	const skipClickHandler = () =>
-		recordTracksEvent( 'calypso_courses_skip_to_draft', {
-			course: course.slug,
-		} );
-
 	useEffect( () => {
 		if ( course ) {
 			recordTracksEvent( 'calypso_courses_view', {
@@ -86,10 +85,9 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 				<VideoLinksBar
 					displayIcon={ true }
 					displayLinks={ shouldDisplayTopLinks }
-					displaySkipLink={ false }
 					isFooter={ false }
 					onBackClick={ onBackClick }
-					skipClickHandler={ skipClickHandler }
+					finishLink={ finishLink }
 				/>
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
@@ -197,10 +195,9 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 			<VideoLinksBar
 				displayIcon={ false }
 				displayLinks={ shouldDisplayTopLinks }
-				displaySkipLink={ false }
 				isFooter={ true }
 				onBackClick={ onBackClick }
-				skipClickHandler={ skipClickHandler }
+				finishLink={ finishLink }
 			/>
 		</div>
 	);
