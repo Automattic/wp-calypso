@@ -11,8 +11,7 @@ const Container = styled.div`
 	row-gap: 2em;
 
 	@media ( max-width: 660px ) {
-		display: table;
-		padding: 0 16px;
+		grid-template-columns: 1fr;
 	}
 `;
 
@@ -21,6 +20,7 @@ const CtaContainer = styled.div`
 
 	@media ( max-width: 660px ) {
 		margin-bottom: 4em;
+		text-align: center;
 	}
 `;
 
