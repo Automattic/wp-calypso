@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { speak } from '@wordpress/a11y';
 import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -107,12 +106,7 @@ function HelpSearchResults( {
 				} )
 			);
 
-			// push state only if it's internal link.
-			if ( ! /^http/.test( link ) ) {
-				event.preventDefault();
-				page( link );
-				onAdminSectionSelect( event );
-			}
+			onAdminSectionSelect( event );
 
 			return;
 		}
