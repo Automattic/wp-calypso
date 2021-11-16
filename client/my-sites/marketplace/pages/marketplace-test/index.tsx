@@ -5,27 +5,14 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-	getBlockingMessages,
-	getBlockingMessages,
-	getBlockingMessages,
-} from 'calypso/blocks/eligibility-warnings/hold-list';
-import {
-	isAtomicSiteWithoutBusinessPlan,
-	isAtomicSiteWithoutBusinessPlan,
-	isAtomicSiteWithoutBusinessPlan,
-} from 'calypso/blocks/eligibility-warnings/utils';
+import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
+import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
 import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import useWPCOMPlugins from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import {
-	YOAST,
-	WOO,
-	YOAST,
-	YOAST,
-} from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { YOAST, WOO } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
 import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
@@ -70,7 +57,6 @@ export default function MarketplaceTest(): JSX.Element {
 	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
 	const { data = [], isFetching } = useWPCOMPlugins( 'all' );
-	console.log( data, isFetching );
 
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
