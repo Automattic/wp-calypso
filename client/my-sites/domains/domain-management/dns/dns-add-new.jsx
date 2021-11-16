@@ -144,7 +144,7 @@ class DnsAddNew extends React.Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.recordToEdit !== this.props.recordToEdit ) {
+		if ( prevProps.recordToEdit !== this.props.recordToEdit && this.props.recordToEdit ) {
 			this.loadRecord();
 		}
 	}
