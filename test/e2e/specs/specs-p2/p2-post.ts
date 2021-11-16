@@ -13,7 +13,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { ElementHandle, Page } from 'playwright';
 
-describe( DataHelper.createSuiteTitle( 'Post' ), function () {
+describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 	let page: Page;
 	let blockHandle: ElementHandle;
 	let p2Page: P2Page;
