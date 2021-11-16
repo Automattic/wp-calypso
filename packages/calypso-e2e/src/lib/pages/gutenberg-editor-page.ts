@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Page, Frame, ElementHandle } from 'playwright';
+import { Page, Frame, ElementHandle, Locator } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
 import { reloadAndRetry } from '../../element-helper';
 import { NavbarComponent } from '../components';
@@ -53,11 +53,14 @@ const selectors = {
 	previewPane: ( target: PreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
 };
 
+const iframeTimeout = 45 * 1000;
+
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
 export class GutenbergEditorPage {
 	private page: Page;
+	private locator: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -66,6 +69,7 @@ export class GutenbergEditorPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.locator = page.locator( selectors.editorFrame );
 	}
 
 	/**
@@ -74,24 +78,28 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		await this.page.waitForLoadState( 'load' );
+		/**
+		 * Closure that is nearly identical to the `getEditorFrame` method but
+		 * one that operates on the Page object passed in as parameter.
+		 */
+		async function waitForEditorFrame( page: Page ): Promise< void > {
+			const locator = page.locator( selectors.editorFrame );
+			await locator.elementHandle( { timeout: iframeTimeout } );
+		}
 
-		const frame = await this.getEditorFrame();
-		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
-		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
-		await frame.waitForSelector( selectors.editorTitle );
+		await reloadAndRetry( this.page, waitForEditorFrame );
 
-		await this.dismissWelcomeTourIfPresent();
-		return frame;
+		await this.dismissWelcomeTour();
+		return await this.getEditorFrame();
 	}
 
 	/**
 	 * Dismisses the Welcome Tour (card) if it is present.
 	 */
-	async dismissWelcomeTourIfPresent(): Promise< void > {
+	async dismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
 		try {
-			await frame.click( selectors.welcomeTourCloseButton, { timeout: 5 * 1000 } );
+			await frame.click( selectors.welcomeTourCloseButton, { timeout: 3 * 1000 } );
 		} catch ( err ) {
 			// noop - welcome tour was not found, which is great.
 		}
@@ -103,11 +111,11 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		const elementHandle = await this.page.waitForSelector( selectors.editorFrame, {
-			timeout: 105 * 1000,
-			state: 'attached',
-		} );
-		return ( await elementHandle.contentFrame() ) as Frame;
+		const elementHandle = await this.locator.elementHandle( { timeout: iframeTimeout } );
+		if ( ! elementHandle ) {
+			throw new Error( 'Failed to locate iframed editor.' );
+		}
+		return ( await elementHandle?.contentFrame() ) as Frame;
 	}
 
 	/**
@@ -305,7 +313,7 @@ export class GutenbergEditorPage {
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL );
+			await this._visitPublishedEntryFromPublishPane();
 		}
 		return publishedURL;
 	}
@@ -349,31 +357,11 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	private async visitPublishedPost( url: string ): Promise< void > {
+	async _visitPublishedEntryFromPublishPane(): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		await Promise.all( [
-			this.page.waitForNavigation( { waitUntil: 'networkidle', url: url } ),
-			frame.click( selectors.viewButton ),
-		] );
-
-		await reloadAndRetry( this.page, confirmPostShown );
-
-		/**
-		 * Closure to confirm that post is shown on screen as expected.
-		 *
-		 * In rare cases, visiting the post immediately after it has been published can result
-		 * in the post not being visible to the public yet. In such cases, an error message is
-		 * instead shown to the user.
-		 *
-		 * When used in conjunction with `reloadAndRetry` this method will reload the page
-		 * multiple times to ensure the post content is shown.
-		 *
-		 * @param page
-		 */
-		async function confirmPostShown( page: Page ): Promise< void > {
-			await page.waitForSelector( '.entry-content', { timeout: 5 * 1000 } );
-		}
+		await Promise.all( [ this.page.waitForNavigation(), frame.click( selectors.viewButton ) ] );
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 
 	/**
