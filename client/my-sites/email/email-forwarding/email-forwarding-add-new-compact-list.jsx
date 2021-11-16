@@ -49,11 +49,11 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	addNewEmailForwardsClick = ( event ) => {
-		const { selectedSiteSlug, selectedDomainName } = this.props;
+		const { isSubmittingEmailForward, selectedSiteSlug, selectedDomainName } = this.props;
 
 		event.preventDefault();
 
-		if ( this.props.isAddingEmailForward ) {
+		if ( isSubmittingEmailForward ) {
 			return;
 		}
 
@@ -156,7 +156,7 @@ export default connect(
 		return {
 			emailForwardSuccess: addEmailForwardSuccess( state, ownProps.selectedDomainName ),
 			selectedSiteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
-			isAddingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
+			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
 			emailForwards: getEmailForwards( state, ownProps.selectedDomainName ),
 			emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
