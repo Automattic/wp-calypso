@@ -16,7 +16,7 @@ body:
     id: teamcity_id
     attributes:
       label: TeamCity ID
-      description: Six-digit ID present at end of URL like https://teamcity.a8c.com/.../<id>
+      description: Digits present at end of URL like https://teamcity.a8c.com/.../id
       placeholder: eg. 648729
   - type: textarea
     id: logs
