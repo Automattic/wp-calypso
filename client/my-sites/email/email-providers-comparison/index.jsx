@@ -379,7 +379,7 @@ class EmailProvidersComparison extends Component {
 		const productIsDiscounted = hasDiscount( gSuiteProduct );
 		const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
 		const formattedPrice = productIsDiscounted
-			? translate( '{{fullPrice/}} {{discountedPrice/}} /user /month billed annually', {
+			? translate( '{{fullPrice/}} {{discountedPrice/}} /mailbox /month billed annually', {
 					components: {
 						fullPrice: <span>{ monthlyPrice }</span>,
 						discountedPrice: (
@@ -391,7 +391,7 @@ class EmailProvidersComparison extends Component {
 					comment:
 						'{{fullPrice/}} is the formatted full price, e.g. $20; {{discountedPrice/}} is the discounted, formatted price, e.g. $10',
 			  } )
-			: translate( '{{price/}} /user /month billed annually', {
+			: translate( '{{price/}} /mailbox /month billed annually', {
 					components: {
 						price: <span>{ monthlyPrice }</span>,
 					},
@@ -521,7 +521,7 @@ class EmailProvidersComparison extends Component {
 			translate,
 		} = this.props;
 
-		const formattedPrice = translate( '{{price/}} /user /month billed monthly', {
+		const formattedPrice = translate( '{{price/}} /mailbox /month billed monthly', {
 			components: {
 				price: <span>{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }</span>,
 			},
