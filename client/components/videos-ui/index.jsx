@@ -201,7 +201,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 					displayCTA={ false }
 					descriptionCTA={ course.cta.description }
 					buttonTextCTA={ course.cta.action }
-					hrefCTA={ course.cta.link }
+					hrefCTA={ course.cta.url }
 					onBackClick={ onBackClick }
 					skipClickHandler={ skipClickHandler }
 				/>
