@@ -15,6 +15,7 @@
 		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/browser-data-collector": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
