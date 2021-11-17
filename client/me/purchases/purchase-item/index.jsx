@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import i18nCalypso, { localize } from 'i18n-calypso';
+import i18nCalypso, { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -388,7 +388,7 @@ class PurchaseItem extends Component {
 	};
 
 	renderPurhaseItemContent = () => {
-		const { purchase, showSite } = this.props;
+		const { purchase, showSite, isBackupMethodAvailable } = this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
@@ -405,6 +405,7 @@ class PurchaseItem extends Component {
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
 					{ this.getPaymentMethod() }
+					{ isBackupMethodAvailable && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
 		);
@@ -462,6 +463,15 @@ class PurchaseItem extends Component {
 	}
 }
 
+function BackupPaymentMethodNotice() {
+	const translate = useTranslate();
+	return (
+		<a href="https://wordpress.com/support/payment/#manage-payment-methods">
+			{ translate( 'May use backup payment method.' ) }
+		</a>
+	);
+}
+
 PurchaseItem.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func,
 	isDisconnectedSite: PropTypes.bool,
@@ -471,6 +481,7 @@ PurchaseItem.propTypes = {
 	purchase: PropTypes.object,
 	showSite: PropTypes.bool,
 	slug: PropTypes.string,
+	isBackupMethodAvailable: PropTypes.bool,
 };
 
 export default localize( withLocalizedMoment( PurchaseItem ) );
