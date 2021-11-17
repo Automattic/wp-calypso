@@ -61,7 +61,7 @@ function WelcomeTour() {
 		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
 	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() );
-	const [ setJustMaximized ] = useWelcomeTourContext();
+	const { setJustMaximized } = useWelcomeTourContext();
 
 	// Preload card images
 	tourSteps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
