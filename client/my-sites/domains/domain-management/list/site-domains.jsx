@@ -176,17 +176,17 @@ export class SiteDomains extends Component {
 						{ this.renderDomainTableFilterButton( false ) }
 					</div>
 					<DomainsTable
-						isLoading={ this.isLoading() }
 						currentRoute={ currentRoute }
 						domains={ nonWpcomDomains }
 						domainsTableColumns={ domainsTableColumns }
-						selectedSite={ selectedSite }
-						primaryDomainIndex={ primaryDomainIndex }
-						settingPrimaryDomain={ settingPrimaryDomain }
-						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
 						goToEditDomainRoot={ this.goToEditDomainRoot }
 						handleUpdatePrimaryDomainOptionClick={ this.handleUpdatePrimaryDomainOptionClick }
+						isLoading={ this.isLoading() }
+						primaryDomainIndex={ primaryDomainIndex }
 						purchases={ this.props.purchases }
+						settingPrimaryDomain={ settingPrimaryDomain }
+						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
+						sites={ { [ selectedSite.ID ]: selectedSite } }
 					/>
 				</div>
 
