@@ -113,6 +113,7 @@
 		"signup/social": true,
 		"signup/setup-site-after-checkout": true,
 		"signup/hero-flow": true,
+		"signup/design-picker-categories": true,
 		"site-indicator": true,
 		"support-user": true,
 		"tools/migrate": true,
