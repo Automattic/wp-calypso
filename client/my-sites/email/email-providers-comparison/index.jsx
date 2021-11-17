@@ -423,15 +423,6 @@ class EmailProvidersComparison extends Component {
 			</span>
 		) : null;
 
-		const additionalPriceInformation = productIsDiscounted
-			? null
-			: translate( '%(price)s billed annually', {
-					args: {
-						standardPrice,
-					},
-					comment: "Annual price formatted with the currency (e.g. '$99.99')",
-			  } );
-
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
 			( this.state.googleUsers ?? [] ).length === 0
@@ -496,7 +487,6 @@ class EmailProvidersComparison extends Component {
 				) }
 				formattedPrice={ formattedPrice }
 				discount={ discount }
-				additionalPriceInformation={ additionalPriceInformation }
 				formFields={ formFields }
 				detailsExpanded={ this.state.expanded.google }
 				onExpandedChange={ this.onExpandedStateChange }
