@@ -133,16 +133,16 @@ class PluginsBrowserListElement extends Component {
 }
 
 export default compose(
-	connect( ( state, { currentSites, plugin, site } ) => {
+	connect( ( state, { currentSites, plugin } ) => {
 		const selectedSiteId = getSelectedSiteId( state );
-
+		const isJetpack = isJetpackSite( state, selectedSiteId );
 		const sitesWithPlugin =
-			site && currentSites
+			isJetpack && currentSites
 				? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
 				: [];
 
 		return {
-			isJetpackSite: isJetpackSite( state, selectedSiteId ),
+			isJetpackSite: isJetpack,
 			sitesWithPlugin,
 		};
 	} ),
