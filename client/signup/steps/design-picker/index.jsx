@@ -1,7 +1,7 @@
 import DesignPicker, {
 	isBlankCanvasDesign,
 	getDesignUrl,
-	useCategorySelection,
+	useCategorization,
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -111,11 +111,11 @@ export default function DesignPickerStep( props ) {
 		setSelectedDesign( designs.find( ( { theme } ) => theme === props.stepSectionName ) );
 	}, [ designs, props.stepSectionName, setSelectedDesign ] );
 
-	const [ selectedCategory, setSelectedCategory ] = useCategorySelection(
-		designs,
-		props.showDesignPickerCategoriesAllFilter,
-		props.signupDependencies.intent === 'write' ? 'blog' : null
-	);
+	const categorization = useCategorization( designs, {
+		showAllFilter: props.showDesignPickerCategoriesAllFilter,
+		defaultSelection: props.signupDependencies.intent === 'write' ? 'blog' : null,
+		sort: sortBlogToTop,
+	} );
 
 	function pickDesign( _selectedDesign ) {
 		// Design picker preview will submit the defaultDependencies via next button,
@@ -170,10 +170,7 @@ export default function DesignPickerStep( props ) {
 					'design-picker-step__has-categories': props.showDesignPickerCategories,
 				} ) }
 				highResThumbnails
-				showCategoryFilter={ props.showDesignPickerCategories }
-				selectedCategory={ selectedCategory }
-				onSelectedCategoryChange={ setSelectedCategory }
-				showAllFilter={ props.showDesignPickerCategoriesAllFilter }
+				categorization={ props.showDesignPickerCategories ? categorization : undefined }
 				categoriesHeading={
 					<FormattedHeader
 						id={ 'step-header' }
@@ -319,3 +316,16 @@ DesignPicker.propTypes = {
 	signupDependencies: PropTypes.object.isRequired,
 	stepName: PropTypes.string.isRequired,
 };
+
+// Ensures Blog category appears at the top of the design category list
+// (directly below the All Themes category).
+function sortBlogToTop( a, b ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'blog' ) {
+		return -1;
+	} else if ( b.slug === 'blog' ) {
+		return 1;
+	}
+	return 0;
+}
