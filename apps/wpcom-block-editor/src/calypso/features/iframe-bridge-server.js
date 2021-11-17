@@ -1,8 +1,11 @@
 /* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
 import { createBlock, parse } from '@wordpress/blocks';
-import { Button } from '@wordpress/components';
-import { dispatch, select, subscribe, use, useSelect } from '@wordpress/data';
+import {
+	Button,
+	__experimentalNavigationBackButton as NavigationBackButton,
+} from '@wordpress/components';
+import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -492,59 +495,21 @@ function handleCloseEditor( calypsoPort ) {
 	// Add back to dashboard fill for Site Editor when edit-site package is available.
 	if ( editSitePackage ) {
 		registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
-			render: function SiteEditorCloseButton() {
-				const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
-				const [ label, setLabel ] = useState( calypsoifyGutenberg.closeButtonLabel );
-
-				const siteIconUrl = useSelect(
-					( _select ) =>
-						_select( 'core' ).getEntityRecord( 'root', '__unstableBase', undefined )?.site_icon_url,
-					[]
-				);
-
-				useEffect( () => {
-					addAction(
-						'updateCloseButtonOverrides',
-						'a8c/wpcom-block-editor/CloseWpcomBlockEditor',
-						( data ) => {
-							setCloseUrl( data.closeUrl );
-							setLabel( data.label );
-						}
-					);
-					return () =>
-						removeAction(
-							'updateCloseButtonOverrides',
-							'a8c/wpcom-block-editor/CloseWpcomBlockEditor'
-						);
-				}, [] );
-
+			render: () => {
 				const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
-				if ( ! SiteEditorDashboardFill ) {
+				if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
 					return null;
 				}
 
-				const buttonIcon = siteIconUrl ? (
-					<img
-						alt={ __( 'Site Icon' ) }
-						className="iframe-bridge-server__edit-site-navigation-link-site-icon edit-site-navigation-link__site-icon"
-						src={ siteIconUrl }
-					/>
-				) : (
-					wordpress
-				);
-
 				return (
 					<SiteEditorDashboardFill>
-						<div className="iframe-bridge-server__edit-site-navigation-link edit-site-navigation-link">
-							<Button
-								className="iframe-bridge-server__edit-site-navigation-link-button edit-site-navigation-link__button has-icon"
-								href={ closeUrl }
-								onClick={ dispatchAction }
-								label={ label }
-								icon={ buttonIcon }
-								iconSize={ 36 }
-							/>
-						</div>
+						<NavigationBackButton
+							backButtonLabel={ __( 'Dashboard' ) }
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							className="edit-site-navigation-panel__back-to-dashboard"
+							href={ calypsoifyGutenberg.closeUrl }
+							onClick={ dispatchAction }
+						/>
 					</SiteEditorDashboardFill>
 				);
 			},
