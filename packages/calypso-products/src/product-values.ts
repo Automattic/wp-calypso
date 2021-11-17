@@ -27,7 +27,6 @@ export { isDomainProduct } from './is-domain-product';
 export { isDomainRedemption } from './is-domain-redemption';
 export { isDomainRegistration } from './is-domain-registration';
 export { isDomainTransfer } from './is-domain-transfer';
-export { isDomainTransferProduct } from './is-domain-transfer-product';
 export { isDotComPlan } from './is-dot-com-plan';
 export { isEcommerce } from './is-ecommerce';
 export { isEnterprise } from './is-enterprise';
