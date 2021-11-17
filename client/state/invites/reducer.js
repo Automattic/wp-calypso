@@ -1,5 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { includes, map, pick, zipObject } from 'lodash';
+import { includes, pick } from 'lodash';
 import moment from 'moment';
 import {
 	INVITES_DELETE_REQUEST,
@@ -213,10 +213,7 @@ export function deleting( state = {}, action ) {
 			const inviteDeletionRequests = Object.assign(
 				{},
 				state[ action.siteId ],
-				zipObject(
-					action.inviteIds,
-					map( action.inviteIds, () => 'requesting' )
-				)
+				Object.fromEntries( action.inviteIds.map( ( id ) => [ id, 'requesting' ] ) )
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionRequests } );
 		}
@@ -224,10 +221,7 @@ export function deleting( state = {}, action ) {
 			const inviteDeletionFailures = Object.assign(
 				{},
 				state[ action.siteId ],
-				zipObject(
-					action.inviteIds,
-					map( action.inviteIds, () => 'failure' )
-				)
+				Object.fromEntries( action.inviteIds.map( ( id ) => [ id, 'failure' ] ) )
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionFailures } );
 		}
@@ -235,10 +229,7 @@ export function deleting( state = {}, action ) {
 			const inviteDeletionSuccesses = Object.assign(
 				{},
 				state[ action.siteId ],
-				zipObject(
-					action.inviteIds,
-					map( action.inviteIds, () => 'success' )
-				)
+				Object.fromEntries( action.inviteIds.map( ( id ) => [ id, 'success' ] ) )
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionSuccesses } );
 		}
