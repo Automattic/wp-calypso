@@ -60,8 +60,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": ^7.16.0
     lodash: ^4.17.21
-  peerDependencies:
-    "@babel/core": ^7.16.0
   languageName: unknown
   linkType: soft
 

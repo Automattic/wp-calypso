@@ -16,8 +16,5 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@babel/core": "^7.16.0"
-	},
-	"peerDependencies": {
-		"@babel/core": "^7.16.0"
 	}
 }
