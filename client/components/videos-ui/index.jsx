@@ -127,6 +127,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 							videoRef={ videoRef }
 							videoUrl={ currentVideo.url }
 							isPlaying={ isPlaying }
+							poster={ currentVideo.poster ? currentVideo.poster : false }
 						/>
 					) }
 					<div className="videos-ui__chapters">
