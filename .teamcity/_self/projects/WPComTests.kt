@@ -748,15 +748,13 @@ private object I18NTests : BuildType({
 				export DEBUG=pw:api
 				export HEADLESS=true
 				export TARGET_DEVICE=desktop
+				export LOCALES=%LOCALES%
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				IFS="," read -r -a TARGET_LOCALES <<< "%LOCALES%"
-				for locale in ${'$'}{TARGET_LOCALES[@]}; do
-					LOCALE="${'$'}{locale}" yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=i18n
-				done
+				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=i18n
 			""".trimIndent()
 		}
 		bashNodeScript {

@@ -215,7 +215,7 @@ const translations: Translations = {
 	},
 };
 
-describe( 'Translations: Editor', function () {
+describe( 'I18N: Editor', function () {
 	let page: Page;
 	// Filter out the locales that do not have valid translation content defined above.
 	const locales = Object.keys( translations ).filter( ( locale ) =>
@@ -266,13 +266,13 @@ describe( 'Translations: Editor', function () {
 				let frame: Frame;
 				let gutenbergEditorPage: GutenbergEditorPage;
 
-				beforeAll( async function () {
+				it( 'Insert test block', async function () {
 					gutenbergEditorPage = new GutenbergEditorPage( page );
-					frame = await gutenbergEditorPage.getEditorFrame();
 					await gutenbergEditorPage.addBlock( block.blockName, block.blockEditorSelector );
 				} );
 
 				it( 'Render block content translations', async function () {
+					frame = await gutenbergEditorPage.getEditorFrame();
 					await Promise.all(
 						block.blockEditorContent.map( ( content: any ) =>
 							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }`, {

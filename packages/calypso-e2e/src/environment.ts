@@ -6,6 +6,6 @@ export const COOKIES_PATH = process.env.COOKIES_PATH ?? '';
  * @returns {string[]} Array of lowercase strings.
  */
 export const LOCALES = (): string[] => {
-	const locales = process.env.I18N_LOCALES ?? '';
+	const locales = process.env.LOCALES ?? '';
 	return locales.split( ',' ).map( ( locale ) => locale.toLowerCase() );
 };
