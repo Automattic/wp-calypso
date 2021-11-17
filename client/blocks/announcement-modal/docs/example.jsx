@@ -11,7 +11,6 @@ const AnnouncementModalExample = () => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const announcementId = 'example';
 	const dismissPreference = `announcement-modal-${ announcementId }-${ userId }`;
-	console.log( 'example reload' );
 
 	useLayoutEffect( () => {
 		// Initially hide for users visiting devdocs.
