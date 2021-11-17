@@ -3,27 +3,27 @@ import { Button } from '@automattic/components';
 import { Icon, moreVertical, redo } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useRef, useState } from 'react';
+import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import wpcom from 'calypso/lib/wp';
-import './dns-breadcrumb-button.scss';
+import { updateDns } from 'calypso/state/domains/dns/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import RestoreDefaultARecordsDialog from './restore-default-a-records-dialog';
 import { DnsMenuOptionsButtonProps, RestoreDialogResult } from './types';
 
 function DnsMenuOptionsButton( {
 	domain,
 	pointsToWpcom,
-	onSuccess,
-	onError,
+	dns,
+	dispatchUpdateDns,
+	dispatchSuccessNotice,
+	dispatchErrorNotice,
 }: DnsMenuOptionsButtonProps ): JSX.Element {
 	const { __ } = useI18n();
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const [ isRestoreDialogVisible, setRestoreDialogVisible ] = useState( false );
 	const optionsButtonRef = useRef( null );
-	const restoreRecordsErrorMessage = __(
-		'An unexpected error occurred when trying to restore your DNS records. Please try again later.'
-	);
 
 	const toggleMenu = useCallback( () => {
 		setMenuVisible( ! isMenuVisible );
@@ -31,21 +31,28 @@ function DnsMenuOptionsButton( {
 
 	const closeMenu = useCallback( () => setMenuVisible( false ), [] );
 
+	const getRecordsToRemove = useCallback( () => {
+		const dnsRecords = dns.records ?? [];
+
+		return dnsRecords.filter(
+			( record ) =>
+				record.domain === record.name.replace( /\.$/, '' ) &&
+				[ 'A', 'AAAA' ].includes( record.type )
+		);
+	}, [ dns ] );
+
 	const restoreDefaultRecords = useCallback( async () => {
-		const wpcomDomain = wpcom.domain( domain );
-
-		try {
-			const restoreResult = await wpcomDomain.dns().restoreDefaultRecords();
-
-			if ( restoreResult.success ) {
-				onSuccess( restoreResult.records );
-			} else {
-				onError( restoreRecordsErrorMessage );
-			}
-		} catch {
-			onError( restoreRecordsErrorMessage );
-		}
-	}, [ domain, onError, onSuccess, restoreRecordsErrorMessage ] );
+		dispatchUpdateDns( domain, [], getRecordsToRemove() )
+			.then( () => dispatchSuccessNotice( __( 'Default A records restored' ) ) )
+			.catch( () => dispatchErrorNotice( __( 'Failed to restore the default A records' ) ) );
+	}, [
+		__,
+		dispatchErrorNotice,
+		dispatchSuccessNotice,
+		dispatchUpdateDns,
+		domain,
+		getRecordsToRemove,
+	] );
 
 	const closeRestoreDialog = ( result: RestoreDialogResult ) => {
 		setRestoreDialogVisible( false );
@@ -67,6 +74,7 @@ function DnsMenuOptionsButton( {
 				className="dns__breadcrumb-button ellipsis"
 				onClick={ toggleMenu }
 				ref={ optionsButtonRef }
+				borderless
 			>
 				<Icon icon={ moreVertical } className="gridicon" />
 			</Button>
@@ -86,4 +94,8 @@ function DnsMenuOptionsButton( {
 	);
 }
 
-export default DnsMenuOptionsButton;
+export default connect( null, {
+	dispatchUpdateDns: updateDns,
+	dispatchSuccessNotice: successNotice,
+	dispatchErrorNotice: errorNotice,
+} )( DnsMenuOptionsButton );
