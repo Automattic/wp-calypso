@@ -1,0 +1,16 @@
+I've just finished publishing the weekly dev standup notes (https://jetpackinfinity.wordpress.com/2021/11/08/weekly-platform-dev-meeting-notes-week-44-2/), and I'd like to highlight that this is the nth week where we didn't manage to get to the latter parts of the agenda on this call.
+
+There could be a couple ways to fix this problem. We could aim to make better use of our time together and be cognizant of our agenda during this call - or - we could try to schedule a bit more time together. What I'd like to propose is that we split this call in two.
+
+The first call could happen on Monday at the current time, and would follow the existing pattern, but we actively trim the agenda as follows:
+	- Team health check
+	- Updates from Patrick
+	- Non-project-related team discussions
+	- Technical discussion as needed
+	- Janitorial handoff as needed
+
+The second call would be held on Tuesdays, and would be focused on roadmapping and project discussions. This call would be optional for non +jetpackavalon folks, and would include the following
+	- Jetpack and/or Infinity roadmap review
+	- Project discussion and updates for each open Avalon project
+
+

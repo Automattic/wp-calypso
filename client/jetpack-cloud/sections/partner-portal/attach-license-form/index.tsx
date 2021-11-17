@@ -20,6 +20,7 @@ export default function AttachLicenseForm( { sites } ): ReactElement {
 	const dispatch = useDispatch();
 	const [ filter, setFilter ] = useState( false );
 	const [ selectedSite, setSelectedSite ] = useState( false );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 
 	const siteCards = sites.map( ( site: any ) => {
@@ -44,15 +45,18 @@ export default function AttachLicenseForm( { sites } ): ReactElement {
 
 	const attachLicense = useAttachLicenseMutation( {
 		onSuccess: ( licenseKey: any ) => {
+			setIsSubmitting( false );
 			page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
 		},
 		onError: ( error: Error ) => {
+			setIsSubmitting( false );
 			dispatch( errorNotice( error.message ) );
 		},
 	} );
 
 	const onAttachLicense = useCallback( () => {
 		console.log( 'attach ' + licenseKey + ' to ' + selectedSite );
+		setIsSubmitting( true );
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_attach_license_submit', {
 				licenseKey,
@@ -71,7 +75,7 @@ export default function AttachLicenseForm( { sites } ): ReactElement {
 					) }
 				</p>
 				<div className="attach-license-form__controls">
-					<Button primary onClick={ onAttachLicense }>
+					<Button primary onClick={ onAttachLicense } disabled={ isSubmitting }>
 						{ translate( 'Attach to website' ) }
 					</Button>
 				</div>
