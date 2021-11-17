@@ -258,33 +258,55 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		);
 	}
 
-	async saveGlobalStyles( { pauseAfter = false } = {} ) {
+	async maybeSaveGlobalStyles( { pauseAfter = false } = {} ) {
+		// Bail early if saving is not enabled.
+		const isNothingToSave = await driverHelper.isElementLocated(
+			this.driver,
+			By.css( '.edit-site-save-button__button[aria-disabled="true"]' )
+		);
+		if ( isNothingToSave ) {
+			return isNothingToSave;
+		}
+
+		// Open the save panel and verify whether or not there are Global Styles to save.
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.edit-site-save-button__button' )
 		);
-		const allCheckboxes = await this.driver.findElements(
-			By.css( '.entities-saved-states__panel .components-checkbox-control__input' )
-		);
-		for ( const checkbox of allCheckboxes ) {
-			await driverHelper.setCheckbox( this.driver, () => checkbox, false );
-		}
-		const locator = driverHelper.createTextLocator(
+		const globalStylesSaveItemLocator = driverHelper.createTextLocator(
 			By.css( '.entities-saved-states__panel .components-checkbox-control__label' ),
 			'Custom Styles'
 		);
-		await driverHelper.clickWhenClickable( this.driver, locator );
-		const saveClicked = await driverHelper.clickWhenClickable(
+		const isGlobalStylesDirty = await driverHelper.isElementLocated(
 			this.driver,
-			By.css( '.editor-entities-saved-states__save-button' )
+			globalStylesSaveItemLocator
 		);
 
-		if ( pauseAfter ) {
-			// The pause ensures there is enough time for the debounced tracking function to run,
-			// and get/compare entities to create the tracks event.
-			return await this.driver.sleep( 500 );
+		if ( isGlobalStylesDirty ) {
+			const allCheckboxes = await this.driver.findElements(
+				By.css( '.entities-saved-states__panel .components-checkbox-control__input' )
+			);
+			for ( const checkbox of allCheckboxes ) {
+				await driverHelper.setCheckbox( this.driver, () => checkbox, false );
+			}
+			await driverHelper.clickWhenClickable( this.driver, globalStylesSaveItemLocator );
+			const saveClicked = await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.editor-entities-saved-states__save-button' )
+			);
+			if ( pauseAfter ) {
+				// The pause ensures there is enough time for the debounced tracking function to run,
+				// and get/compare entities to create the tracks event.
+				return await this.driver.sleep( 500 );
+			}
+			return saveClicked;
 		}
-		return saveClicked;
+
+		// If there were no Global Styles to save, close the panel.
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.entities-saved-states__panel button[aria-label="Close panel"]' )
+		);
 	}
 
 	async changeGlobalStylesFirstColorPaletteItem( value, { pickerOpened = false } = {} ) {
