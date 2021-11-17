@@ -546,12 +546,12 @@ export class PluginsBrowser extends Component {
 /**
  * Filter the popular plugins list.
  * Remove the displayed featured plugins from the popular list to
- * avoid show them twice
+ * avoid showing them twice
  *
  * @param {Array} popularPlugins
  * @param {Array} featuredPlugins
  */
-function filterPopularList( popularPlugins = [], featuredPlugins = [] ) {
+function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	const displayedFeaturedSlugs = featuredPlugins
 		.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins
 		.map( ( plugin ) => plugin.slug );
@@ -599,7 +599,7 @@ export default flow(
 				recommendedPlugins: recommendedPlugins || [],
 				pluginsByCategory: getPluginsListByCategory( state, category ),
 				pluginsByCategoryNew: getPluginsListByCategory( state, 'new' ),
-				pluginsByCategoryPopular: filterPopularList( popularPlugins, featuredPlugins ),
+				pluginsByCategoryPopular: filterPopularPlugins( popularPlugins, featuredPlugins ),
 				pluginsByCategoryFeatured: featuredPlugins,
 				pluginsBySearchTerm: getPluginsListBySearchTerm( state, search ),
 				pluginsPagination: getPluginsListPagination( state, search ),
