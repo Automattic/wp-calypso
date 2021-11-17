@@ -31,6 +31,7 @@ export default function SidebarBannerTemplate( { CTA, message, id, onDismiss, tr
 			forceHref={ forceHref }
 			forceDisplay={ true }
 			dismissPreferenceName={ dismissPreferenceName }
+			dismissTemporary={ true }
 			href={ CTA.link }
 			onDismissClick={ onDismiss }
 			title={ preventWidows( message ) }

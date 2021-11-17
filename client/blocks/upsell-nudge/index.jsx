@@ -37,6 +37,7 @@ export const UpsellNudge = ( {
 	description,
 	disableHref,
 	dismissPreferenceName,
+	dismissTemporary,
 	event,
 	feature,
 	forceDisplay,
@@ -121,6 +122,7 @@ export const UpsellNudge = ( {
 			description={ description }
 			disableHref={ disableHref }
 			dismissPreferenceName={ dismissPreferenceName }
+			dismissTemporary={ dismissTemporary }
 			event={ event }
 			feature={ feature }
 			forceHref={ forceHref }
