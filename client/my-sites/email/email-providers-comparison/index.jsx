@@ -556,7 +556,6 @@ class EmailProvidersComparison extends Component {
 				mailboxes={ this.state.titanMailboxes }
 				selectedDomainName={ selectedDomainName }
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
-				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
 			>
 				<Button
