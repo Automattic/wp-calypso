@@ -1,4 +1,4 @@
-import { findIndex, last, takeRightWhile, takeWhile, filter } from 'lodash';
+import { findIndex, last, filter } from 'lodash';
 import moment from 'moment';
 import { keysAreEqual } from 'calypso/reader/post-key';
 import {
@@ -13,6 +13,19 @@ import {
 } from 'calypso/state/reader/action-types';
 import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import { combineXPosts } from './utils';
+
+const takeWhile = ( array, predicate ) => {
+	const [ x, ...xs ] = array;
+
+	if ( array.length > 0 && predicate( x ) ) {
+		return [ x, ...takeWhile( xs, predicate ) ];
+	}
+	return [];
+};
+
+const takeRightWhile = ( array, predicate ) => {
+	return takeWhile( [ ...array ].reverse(), predicate );
+};
 
 /*
  * Contains a list of post-keys representing the items of a stream.
