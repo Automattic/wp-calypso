@@ -337,3 +337,10 @@ $guided-tour-step_border: 2px solid white;
 .guided-tours__step-dark.guided-tours__step-pointing-left-top::before {
 	left: -8.5px;
 }
+
+.card.guided-tours__step {
+	@include breakpoint-deprecated( '<480px' ) {
+		top: 90px !important;
+		left: 10px !important;
+	}
+}
