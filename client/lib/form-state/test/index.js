@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { mapValues, zipObject } from 'lodash';
+import { mapValues } from 'lodash';
 import formState from '../';
 
 function checkNthState( n, callback ) {
@@ -19,10 +19,7 @@ function testController( options ) {
 
 	const defaults = {
 		loadFunction: function ( onComplete ) {
-			const fieldValues = zipObject(
-				fieldNames,
-				fieldNames.map( () => 'loaded' )
-			);
+			const fieldValues = Object.fromEntries( fieldNames.map( ( name ) => [ name, 'loaded' ] ) );
 			onComplete( null, fieldValues );
 		},
 
