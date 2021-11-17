@@ -1,32 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlaceholderImage from 'calypso/assets/images/marketplace/plugins-revamp.png';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import Button from 'calypso/components/forms/form-button';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { setPreference } from 'calypso/state/preferences/actions';
 
 const AnnouncementModalExample = () => {
 	const dispatch = useDispatch();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const announcementId = 'example';
 	const dismissPreference = `announcement-modal-${ announcementId }-${ userId }`;
-	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
-	const [ show, setShow ] = useState( false );
+	console.log( 'example reload' );
 
-	useEffect( () => {
-		if ( ! hasPreferences ) {
-			return;
-		}
-
-		if ( isDismissed ) {
-			// Override the dismissing mechanism of the AnnouncementModal and just utilize useState here.
-			dispatch( savePreference( dismissPreference, 0 ) );
-			setShow( false );
-		}
-	}, [ isDismissed, hasPreferences, dismissPreference, dispatch ] );
+	useLayoutEffect( () => {
+		// Initially hide for users visiting devdocs.
+		dispatch( setPreference( dismissPreference, 1 ) );
+	}, [] );
 
 	const pages = [
 		{
@@ -39,14 +29,16 @@ const AnnouncementModalExample = () => {
 
 	return (
 		<>
-			<Button onClick={ () => setShow( true ) }>Show</Button>
-			{ show && (
-				<AnnouncementModal
-					announcementId={ announcementId }
-					pages={ pages }
-					finishButtonText="Close"
-				/>
-			) }
+			<Button
+				onClick={ () => setTimeout( () => dispatch( setPreference( dismissPreference, 0 ) ), 200 ) }
+			>
+				Show
+			</Button>
+			<AnnouncementModal
+				announcementId={ announcementId }
+				pages={ pages }
+				finishButtonText="Close"
+			/>
 		</>
 	);
 };
