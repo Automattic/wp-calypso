@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/success.png';
@@ -81,7 +80,12 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 					'Take your site to the next level. We have all the solutions to help you grow and thrive.'
 				),
 				stepCta: (
-					<FullWidthButton href={ `/plugins/${ siteSlug }` }>
+					<FullWidthButton
+						onClick={ () =>
+							// Force reload the page.
+							( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
+						}
+					>
 						{ translate( 'Explore plugins' ) }
 					</FullWidthButton>
 				),
@@ -98,7 +102,9 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 			<Masterbar>
 				<Item
 					icon="cross"
-					onClick={ () => page( `/plugins/${ siteSlug }` ) }
+					onClick={ () =>
+						( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
+					} // Force reload the page.
 					tooltip={ translate( 'Go to home' ) }
 					tipTarget="close"
 				/>
