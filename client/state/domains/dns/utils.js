@@ -118,7 +118,7 @@ function isRootDomain( name, domainName ) {
 }
 
 function canBeRootDomain( type ) {
-	return [ 'A', 'MX', 'SRV', 'TXT' ].includes( type );
+	return [ 'A', 'AAAA', 'MX', 'SRV', 'TXT' ].includes( type );
 }
 
 function getFieldWithDot( field ) {

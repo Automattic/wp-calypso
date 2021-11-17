@@ -23,10 +23,7 @@ class ARecord extends Component {
 		const isDataValid = isValid( 'data' );
 		const isAaaaRecord = fieldValues.type === 'AAAA';
 
-		let label = translate( 'Name (optional)', { context: 'DNS record' } );
-		if ( isAaaaRecord ) {
-			label = translate( 'Name', { context: 'DNS record' } );
-		}
+		const label = translate( 'Name (optional)', { context: 'DNS record' } );
 
 		const namePlaceholder = translate( 'Enter subdomain', {
 			context: 'Placeholder shown when entering the subdomain part of a new DNS record',
