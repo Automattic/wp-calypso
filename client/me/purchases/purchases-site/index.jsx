@@ -30,7 +30,7 @@ const PurchasesSite = ( {
 	if ( isPlaceholder ) {
 		return <PurchaseItem isPlaceholder />;
 	}
-	const isBackupMethodAvailable = cards.find(
+	const isBackupMethodAvailable = cards.some(
 		( card ) => !! card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
 	);
 

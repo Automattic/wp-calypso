@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -167,6 +168,7 @@ class PurchasesList extends Component {
 		return (
 			<Main wideLayout className="purchases-list">
 				<QueryUserPurchases />
+				<QueryStoredCards />
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
