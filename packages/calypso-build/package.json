@@ -35,6 +35,7 @@
 	],
 	"types": "./typings/calypso-assets/index.d.ts",
 	"dependencies": {
+		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/webpack-rtl-plugin": "workspace:^",
 		"@babel/compat-data": "^7.16.0",
 		"@babel/core": "^7.16.0",

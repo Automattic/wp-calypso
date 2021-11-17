@@ -119,6 +119,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-build@workspace:packages/calypso-build"
   dependencies:
+    "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/webpack-rtl-plugin": "workspace:^"
