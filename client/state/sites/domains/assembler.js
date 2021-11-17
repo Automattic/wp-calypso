@@ -60,6 +60,7 @@ export const createSiteDomainObject = ( domain ) => {
 		currentUserCannotAddEmailReason: assembleCurrentUserCannotAddEmailReason(
 			domain.current_user_cannot_add_email_reason
 		),
+		currentUserIsOwner: Boolean( domain.current_user_is_owner ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
 		domainRegistrationAgreementUrl: getDomainRegistrationAgreementUrl( domain ),
