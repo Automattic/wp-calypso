@@ -316,12 +316,12 @@ function PluginDetails( props ) {
 							{ translate( 'Plugin details' ) }
 						</div>
 						<div className="plugin-details__plugin-details-content">
-							<div className="plugin-details__downloads">
-								<div className="plugin-details__downloads-text title">
-									{ translate( 'Downloads' ) }
+							<div className="plugin-details__active-installs">
+								<div className="plugin-details__active-installs-text title">
+									{ translate( 'Active installations' ) }
 								</div>
-								<div className="plugin-details__downloads-value value">
-									{ formatNumberCompact( fullPlugin.downloaded, 'en' ) }
+								<div className="plugin-details__active-installs-value value">
+									{ formatNumberCompact( fullPlugin.active_installs, 'en' ) }
 								</div>
 							</div>
 							<div className="plugin-details__tested">
