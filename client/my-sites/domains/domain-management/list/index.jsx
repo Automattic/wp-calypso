@@ -90,6 +90,7 @@ export class List extends Component {
 					selectedSite={ this.props.selectedSite }
 					allowedRules={ [
 						'unverifiedDomainsCanManage',
+						'pendingGSuiteTosAcceptanceDomains',
 						'unverifiedDomainsCannotManage',
 						'transferStatus',
 						'newTransfersWrongNS',

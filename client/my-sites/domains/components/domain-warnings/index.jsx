@@ -811,8 +811,8 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	pendingGSuiteTosAcceptanceDomains = () => {
-		const domains = this.getDomains().filter(
-			( domain ) => hasPendingGSuiteUsers( domain ) || isPendingGSuiteTOSAcceptance( domain )
+		const domains = this.getDomains().filter( ( domain ) =>
+			isPendingGSuiteTOSAcceptance( domain )
 		);
 
 		if ( domains.length === 0 ) {
