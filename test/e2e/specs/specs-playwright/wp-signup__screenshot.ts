@@ -1,7 +1,7 @@
 /**
  * @group calypso-release
  */
-
+import fs from 'fs';
 import {
 	DataHelper,
 	DomainSearchComponent,
@@ -10,15 +10,14 @@ import {
 	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
-	BrowserHelper,
 	CloseAccountFlow,
 	NavbarComponent,
 	BrowserManager,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
-import fetch from 'node-fetch';
+import archiver from 'archiver';
 import FormData from 'form-data';
-import fs from 'fs';
+import fetch from 'node-fetch';
+import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
@@ -43,14 +42,6 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			const loginPage = new LoginPage( page );
 			await loginPage.visit();
 			await page.screenshot( { path: 'login.png', fullPage: true } );
-			let form = new FormData();
-			form.append( 'my_file', fs.createReadStream( 'login.png' ) );
-			await fetch( 'https://public-api.wordpress.com/wpcom/v2/screenshots', {
-				method: 'POST',
-				body: form,
-			} )
-			.then( response => response.json())
-			.then( response => expect( response?.upload_status ).toStrictEqual( 'success' ) );
 			await loginPage.signup();
 		} );
 
@@ -61,14 +52,6 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Screenshot signup page and sign up as new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
 			await page.screenshot( { path: 'signup.png', fullPage: true } );
-			let form = new FormData();
-            form.append( 'my_file', fs.createReadStream( 'signup.png' ) );
-            await fetch( 'https://public-api.wordpress.com/wpcom/v2/screenshots', {
-            	method: 'POST',
-                body: form,
-            } )
-            .then( response => response.json())
-            .then( response => expect( response?.upload_status ).toStrictEqual( 'success' ) );
 			await userSignupPage.signup( email, username, signupPassword );
 		} );
 
@@ -95,15 +78,27 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		} );
 
 		it( 'Take screenshot of checkout page', async function () {
-			await page.screenshot( { path: 'checkout.png', fullPage: true } );
-			let form = new FormData();
-            form.append( 'my_file', fs.createReadStream( 'checkout.png' ) );
-            await fetch( 'https://public-api.wordpress.com/wpcom/v2/screenshots', {
-            	method: 'POST',
-                body: form,
-            } )
-            .then( response => response.json())
-            .then( response => expect( response?.upload_status ).toStrictEqual( 'success' ) );
+			const archive = archiver( 'zip', {
+				zlib: { level: 9 }, // Sets the compression level.
+			} );
+			const output = fs.createWriteStream( 'test-screenshots-1.zip' );
+			archive.pipe( output );
+			archive.append( fs.createReadStream( 'login.png' ), { name: 'login.png' } );
+			archive.append( fs.createReadStream( 'signup.png' ), { name: 'signup.png' } );
+			archive.append( fs.createReadStream( 'checkout.png' ), { name: 'checkout.png' } );
+			archive.finalize();
+
+			output.on( 'close', function () {
+				const form = new FormData();
+				form.append( 'zip_file', fs.createReadStream( 'test-screenshots-1.zip' ) );
+				fetch( 'https://public-api.wordpress.com/wpcom/v2/screenshots', {
+					method: 'POST',
+					body: form,
+				} )
+					.then( ( response ) => response.json() )
+					.then( ( response ) => expect( response?.upload_status ).toStrictEqual( 'success' ) );
+			} );
+
 			const navbarComponent = new NavbarComponent( page );
 			await navbarComponent.clickCloseCheckout();
 		} );
