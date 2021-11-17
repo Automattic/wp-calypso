@@ -369,7 +369,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/format-currency": "workspace:^"
-    "@types/validator": ^13.6.6
+    "@types/validator": ^13.7.0
     "@wordpress/api-fetch": ^5.2.2
     "@wordpress/data-controls": ^2.2.3
     "@wordpress/deprecated": ^3.2.1
@@ -521,7 +521,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.15.0
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": 7.0.2
-    "@types/react": ^17.0.34
+    "@types/react": ^17.0.35
     "@wordpress/compose": ^5.0.2
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
@@ -6333,10 +6333,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.14.176":
-  version: 4.14.176
-  resolution: "@types/lodash@npm:4.14.176"
-  checksum: 43dcc9fff1a42d53cd41fcd1904ea72551cafc7c7ef72fadc0f212ac8297a151472c3e7f212cf81622b6062cf37039cb805b555eafe4e6d7729f5314c69a88e0
+"@types/lodash@npm:*, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.14.177":
+  version: 4.14.177
+  resolution: "@types/lodash@npm:4.14.177"
+  checksum: b411e2fcf3cf6a97a96bd1f06b2d059c413530bfec6f3cc4ff14e627ab8dafe8fb22c192bcfd2f1334eed6efe09b9903696da1aff35fa6f9f66b21fb54feb4fa
   languageName: node
   linkType: hard
 
@@ -6637,14 +6637,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^17.0.34":
-  version: 17.0.34
-  resolution: "@types/react@npm:17.0.34"
+"@types/react@npm:^17.0.35":
+  version: 17.0.35
+  resolution: "@types/react@npm:17.0.35"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 68d06c0e16f47d056fcba4b1ca600748fdb41505735e1a659e4e9e776d9517fa31ef4e4e2d7b8457d2d74f3a31735b142579eb15f14515c5210ea8056d305051
+  checksum: c24aeae3ca1b2621e30d98b28b9cfd3bcb3971ab3fc2273547543fa2bd98f9d5bffda841953297aaee6fe946ad0c22df6516258e00bb47f4b5e41a23164839ed
   languageName: node
   linkType: hard
 
@@ -6768,17 +6768,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^8.3.1":
-  version: 8.3.1
-  resolution: "@types/uuid@npm:8.3.1"
-  checksum: 3f7adf2bf15a805044e2b30e40247008a0b3b2d0795ad0d2de57c91ff55c69c340e1e4d9fc6959e330f1a8844f584a8f0b9c73b813986430b8e7ac2b38c87d81
+"@types/uuid@npm:^8.3.3":
+  version: 8.3.3
+  resolution: "@types/uuid@npm:8.3.3"
+  checksum: 9ee8d21a9f11fd4dbd217d43ae7336afe3799bbe19d1aad8d1a08a493b1b57f5a333577968c646a464cee8f7d839f997f3f7ae2c2a7bc43d2d34a950a79b5a88
   languageName: node
   linkType: hard
 
-"@types/validator@npm:^13.6.6":
-  version: 13.6.6
-  resolution: "@types/validator@npm:13.6.6"
-  checksum: a6f24bed7098b7d338a88804e6101af23fc2f8eeeb1528d2cb09c77c22140f6ba4c44dc6689dd29bfcce324d6c3fe4fc601db616a10c2493a8026919307fe5ea
+"@types/validator@npm:^13.7.0":
+  version: 13.7.0
+  resolution: "@types/validator@npm:13.7.0"
+  checksum: 29b2b0459fe21044cb75c6c2bb5334f48c2edcba9c4605b2c23bbffd684833ca0226487efed8b4057e6fdad8715433ffe04f298dbab61713e7d72e6bdb3efeed
   languageName: node
   linkType: hard
 
@@ -38031,18 +38031,18 @@ testarmada-magellan@11.0.10:
     "@types/debug": ^4.1.7
     "@types/enzyme": ^3.10.10
     "@types/fast-json-stable-stringify": ^2.0.0
-    "@types/lodash": ^4.14.176
+    "@types/lodash": ^4.14.177
     "@types/node": ^16.11.7
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
-    "@types/react": ^17.0.34
+    "@types/react": ^17.0.35
     "@types/react-modal": ^3.13.1
     "@types/react-redux": ^7.1.20
     "@types/react-router-dom": ^5.3.2
     "@types/react-transition-group": ^4.4.4
     "@types/store": ^2.0.2
-    "@types/uuid": ^8.3.1
-    "@types/validator": ^13.6.6
+    "@types/uuid": ^8.3.3
+    "@types/validator": ^13.7.0
     "@types/webpack-env": ^1.16.3
     "@types/wordpress__api-fetch": ^3.2.4
     "@types/wordpress__block-editor": ^6.0.4
