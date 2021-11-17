@@ -24,17 +24,6 @@ Undocumented.prototype.me = function () {
 	return new Me( this.wpcom );
 };
 
-/**
- * Test if a Jetpack Site is connected to .com
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.testConnectionJetpack = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id:/test-connection query' );
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
-};
-
 Undocumented.prototype.jetpackLogin = function ( siteId, _wp_nonce, redirect_uri, scope, state ) {
 	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/jetpack-login';
