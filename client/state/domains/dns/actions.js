@@ -57,7 +57,7 @@ export const deleteDns = ( domainName, record ) => ( dispatch ) => {
 		.updateDns( domainName, { records_to_remove: [ record ] } );
 
 	updateResult.then(
-		() => dispatch( { type: DOMAINS_DNS_DELETE_COMPLETED, domainName, record } ),
+		( { records } ) => dispatch( { type: DOMAINS_DNS_DELETE_COMPLETED, domainName, records } ),
 		() => dispatch( { type: DOMAINS_DNS_DELETE_FAILED, domainName, record } )
 	);
 
