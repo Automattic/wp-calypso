@@ -492,7 +492,7 @@ class EmailProvidersComparison extends Component {
 				logo={ { path: googleWorkspaceIcon } }
 				title={ getGoogleMailServiceFamily() }
 				description={ translate(
-					'Professional email integrated with Google Meet and other collaboration tools from Google.'
+					'Professional email integrated with Google Meet and other productivity tools from Google.'
 				) }
 				formattedPrice={ formattedPrice }
 				discount={ discount }
