@@ -1,7 +1,5 @@
 import { isBloggerPlan } from './main';
-
-type WithSnakeCaseSlug = { product_slug: string };
-type WithCamelCaseSlug = { productSlug: string };
+import type { WithSnakeCaseSlug, WithCamelCaseSlug } from './types';
 
 export function isBlogger( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
 	if ( 'product_slug' in product ) {

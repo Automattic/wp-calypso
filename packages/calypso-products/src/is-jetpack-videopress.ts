@@ -1,7 +1,5 @@
 import { JETPACK_VIDEOPRESS_PRODUCTS } from './constants';
-
-type WithSnakeCaseSlug = { product_slug: string };
-type WithCamelCaseSlug = { productSlug: string };
+import type { WithSnakeCaseSlug, WithCamelCaseSlug } from './types';
 
 export function isJetpackVideoPress( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
 	const products = JETPACK_VIDEOPRESS_PRODUCTS as ReadonlyArray< string >;
