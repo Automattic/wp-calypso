@@ -1,4 +1,4 @@
-import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/wpcom-checkout';
+import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,

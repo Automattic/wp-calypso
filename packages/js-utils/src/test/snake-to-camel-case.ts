@@ -1,4 +1,4 @@
-import { snakeToCamelCase } from '../src/snake-to-camel-case';
+import snakeToCamelCase from '../snake-to-camel-case';
 
 describe( 'snakeToCamelCase', () => {
 	it( 'transforms snake_case to camelCase for strings with two words', () => {

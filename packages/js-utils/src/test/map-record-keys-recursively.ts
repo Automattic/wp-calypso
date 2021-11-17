@@ -1,5 +1,5 @@
-import { camelToSnakeCase } from '../src/camel-to-snake-case';
-import { mapRecordKeysRecursively } from '../src/map-record-keys-recursively';
+import camelToSnakeCase from '../camel-to-snake-case';
+import mapRecordKeysRecursively from '../map-record-keys-recursively';
 
 describe( 'mapRecordKeysRecursively', () => {
 	it( 'transforms the keys of a string/string record', () => {
