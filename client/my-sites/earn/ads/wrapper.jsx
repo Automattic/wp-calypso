@@ -9,7 +9,6 @@ import {
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { overSome } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -47,6 +46,7 @@ import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 import './style.scss';
 import 'calypso/my-sites/stats/stats-module/style.scss';
 
+const overSome = ( ...checks ) => ( item ) => checks.some( ( check ) => check( item ) );
 const isEligbleJetpackPlan = overSome( isPremium, isBusiness, isEcommerce, isSecurityDaily );
 
 class AdsWrapper extends Component {

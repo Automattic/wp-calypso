@@ -14,7 +14,7 @@ import {
 } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { compact, overSome } from 'lodash';
+import { compact } from 'lodash';
 import page from 'page';
 import { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -53,6 +53,8 @@ interface ConnectedProps {
 	trackLearnLink: ( feature: string ) => void;
 	trackCtaButton: ( feature: string ) => void;
 }
+
+const overSome = ( ...checks ) => ( item ) => checks.some( ( check ) => check( item ) );
 
 const wpcom = wp.undocumented();
 
