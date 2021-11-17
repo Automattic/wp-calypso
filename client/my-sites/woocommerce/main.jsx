@@ -1,10 +1,11 @@
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Main from 'calypso/components/main';
 import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
-import WooCommerceColophon from './woocommerce-colophon';
 
 function WooCommerce() {
 	const siteId = useSelector( getSelectedSiteId );
@@ -19,10 +20,10 @@ function WooCommerce() {
 	return (
 		<div className="woocommerce">
 			<Main class="main" wideLayout>
+				<DocumentHead title={ translate( 'WooCommerce' ) } />
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				{ areInstalledPluginsLoadedIntoState && <RequiredPluginsInstallView /> }
 			</Main>
-			<WooCommerceColophon />
 		</div>
 	);
 }
