@@ -62,14 +62,8 @@
 	}
 }
 
-.product-grid__product-grid {
-	> li {
-		height: 100%;
-	}
-
-	.jetpack-product-card.jetpack-free-card {
-		margin: initial;
-	}
+.product-grid__product-grid > li {
+	height: 100%;
 }
 
 .product-grid__filter-bar {
