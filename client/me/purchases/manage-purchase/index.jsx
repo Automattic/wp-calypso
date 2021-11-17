@@ -548,7 +548,7 @@ class ManagePurchase extends Component {
 			);
 		} else if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 			description = translate(
-				'Professional email integrated with Google Meet and other collaboration tools from Google.'
+				'Professional email integrated with Google Meet and other productivity tools from Google.'
 			);
 
 			if ( purchase.purchaseRenewalQuantity ) {
