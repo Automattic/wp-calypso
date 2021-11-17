@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
@@ -11,6 +12,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
+import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
@@ -280,32 +282,44 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		return;
 	}
 
-	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
+	const locale = getLocaleSlug();
+
+	wpcom.req.post(
+		'/sites/new',
+		{
+			...newSiteParams,
+			locale,
+			lang_id: getLanguage( locale ).value,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		},
+		function ( error, response ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
+
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
+
+			const siteSlug = parsedBlogURL.hostname;
+			const siteId = response.blog_details.blogid;
+			const providedDependencies = {
+				siteId,
+				siteSlug,
+				domainItem,
+				themeItem,
+			};
+			processItemCart(
+				providedDependencies,
+				newCartItems,
+				callback,
+				reduxStore,
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo
+			);
 		}
-
-		const parsedBlogURL = getUrlParts( response.blog_details.url );
-
-		const siteSlug = parsedBlogURL.hostname;
-		const siteId = response.blog_details.blogid;
-		const providedDependencies = {
-			siteId,
-			siteSlug,
-			domainItem,
-			themeItem,
-		};
-		processItemCart(
-			providedDependencies,
-			newCartItems,
-			callback,
-			reduxStore,
-			siteSlug,
-			isFreeThemePreselected,
-			themeSlugWithRepo
-		);
-	} );
+	);
 }
 
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
@@ -628,18 +642,23 @@ export function createAccount(
 
 	if ( service ) {
 		// We're creating a new social account
-		wpcom.undocumented().usersSocialNew(
+		wpcom.req.post(
+			'/users/social/new',
 			{
 				service,
 				access_token,
 				id_token,
 				signup_flow_name: flowName,
+				locale: getLocaleSlug(),
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
 				...userData,
 			},
 			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);
 	} else {
-		wpcom.undocumented().usersNew(
+		wpcom.req.post(
+			'/users/new',
 			Object.assign(
 				{},
 				userData,
@@ -651,6 +670,9 @@ export function createAccount(
 					nux_q_question_experience: userExperience || undefined,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
+					locale: getLocaleSlug(),
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
 				},
 				oauth2Signup
 					? {
@@ -672,6 +694,7 @@ export function createAccount(
 export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { themeSlugWithRepo } = dependencies;
 	const { site } = stepData;
+	const locale = getLocaleSlug();
 
 	const data = {
 		blog_name: site,
@@ -683,9 +706,13 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 			wpcom_public_coming_soon: 1,
 		},
 		validate: false,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
 	};
 
-	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
+	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
 		let providedDependencies;
 		let siteSlug;
 
@@ -711,6 +738,8 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	// More info: https://wp.me/p9lV3a-1dM-p2
 	const themeSlugWithRepo = 'pub/p2020';
 
+	const locale = getLocaleSlug();
+
 	const data = {
 		blog_name: site,
 		blog_title: siteTitle,
@@ -722,9 +751,13 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 			p2_initialize_as_hub: true,
 		},
 		validate: false,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
 	};
 
-	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
+	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
 		let providedDependencies;
 		let siteSlug;
 

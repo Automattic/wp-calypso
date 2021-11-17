@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
 
@@ -80,7 +82,7 @@ export async function createAccount( {
 	const blogName = newSiteParams?.blog_name;
 
 	try {
-		const response = await wp.undocumented().createUserAndSite( {
+		const response = await wp.req.post( '/users/new', {
 			email,
 			'g-recaptcha-error': recaptchaError,
 			'g-recaptcha-response': recaptchaToken || undefined,
@@ -90,6 +92,9 @@ export async function createAccount( {
 			validate: false,
 			new_site_params: newSiteParams,
 			should_create_site: ! siteId,
+			locale: getLocaleSlug(),
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
 		} );
 
 		if ( ! isCreateAccountResponse( response ) || ! response.success ) {
