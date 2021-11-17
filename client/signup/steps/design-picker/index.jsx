@@ -76,12 +76,9 @@ export default function DesignPickerStep( props ) {
 		getRecommendedThemes( state, 'auto-loading-homepage' )
 	);
 
-	const designs = useMemo( () => {
-		let themesToBeTransformed = apiThemes;
-		if ( props.useDIFMThemes ) {
-			themesToBeTransformed = DIFMThemes;
-		}
+	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
+	const designs = useMemo( () => {
 		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
@@ -107,7 +104,7 @@ export default function DesignPickerStep( props ) {
 		}
 
 		return [ allThemes[ 0 ], ...shuffle( allThemes.slice( 1 ) ) ];
-	}, [ props.useDIFMThemes, apiThemes ] );
+	}, [ themesToBeTransformed ] );
 
 	// Update the selected design when the section changes
 	useEffect( () => {
