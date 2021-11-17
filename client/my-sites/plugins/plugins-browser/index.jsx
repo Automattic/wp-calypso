@@ -513,7 +513,7 @@ export class PluginsBrowser extends Component {
 				{ this.renderPageViewTracker() }
 				<DocumentHead title={ translate( 'Plugins' ) } />
 				<SidebarNavigation />
-				{ isEnabled( 'marketplace' ) && (
+				{ isEnabled( 'marketplace-v0.5' ) && (
 					<AnnouncementModal
 						announcementId="plugins-page-revamp"
 						pages={ this.getAnnoncementPages() }
