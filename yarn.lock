@@ -1419,6 +1419,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/core@npm:*, @babel/core@npm:>=7.9.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.14.0, @babel/core@npm:^7.16.0, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.5":
+  version: 7.16.0
+  resolution: "@babel/core@npm:7.16.0"
+  dependencies:
+    "@babel/code-frame": ^7.16.0
+    "@babel/generator": ^7.16.0
+    "@babel/helper-compilation-targets": ^7.16.0
+    "@babel/helper-module-transforms": ^7.16.0
+    "@babel/helpers": ^7.16.0
+    "@babel/parser": ^7.16.0
+    "@babel/template": ^7.16.0
+    "@babel/traverse": ^7.16.0
+    "@babel/types": ^7.16.0
+    convert-source-map: ^1.7.0
+    debug: ^4.1.0
+    gensync: ^1.0.0-beta.2
+    json5: ^2.1.2
+    semver: ^6.3.0
+    source-map: ^0.5.0
+  checksum: ce3526f15cc9c51f12f1fa311fdd32574a7c938aa1aad02e0dff45f1ef07b4a3c2fb74163b9bdbfe3bf8081fde19cceab6409d5c461478731ecccf2e1581b244
+  languageName: node
+  linkType: hard
+
 "@babel/core@npm:7.12.9":
   version: 7.12.9
   resolution: "@babel/core@npm:7.12.9"
@@ -1440,29 +1463,6 @@ __metadata:
     semver: ^5.4.1
     source-map: ^0.5.0
   checksum: c11d26f5a33a29c94fdd1c492dfd723f48926c51e975448dda57c081c0d74c7b03298642b2651559e0d330ec868b5757b60f9648c71cf7f89fddf79a17cf006f
-  languageName: node
-  linkType: hard
-
-"@babel/core@npm:>=7.9.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.14.0, @babel/core@npm:^7.16.0, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.5":
-  version: 7.16.0
-  resolution: "@babel/core@npm:7.16.0"
-  dependencies:
-    "@babel/code-frame": ^7.16.0
-    "@babel/generator": ^7.16.0
-    "@babel/helper-compilation-targets": ^7.16.0
-    "@babel/helper-module-transforms": ^7.16.0
-    "@babel/helpers": ^7.16.0
-    "@babel/parser": ^7.16.0
-    "@babel/template": ^7.16.0
-    "@babel/traverse": ^7.16.0
-    "@babel/types": ^7.16.0
-    convert-source-map: ^1.7.0
-    debug: ^4.1.0
-    gensync: ^1.0.0-beta.2
-    json5: ^2.1.2
-    semver: ^6.3.0
-    source-map: ^0.5.0
-  checksum: ce3526f15cc9c51f12f1fa311fdd32574a7c938aa1aad02e0dff45f1ef07b4a3c2fb74163b9bdbfe3bf8081fde19cceab6409d5c461478731ecccf2e1581b244
   languageName: node
   linkType: hard
 
@@ -2792,7 +2792,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.1.6, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.12.11, @babel/preset-env@npm:^7.13.10, @babel/preset-env@npm:^7.16.4":
+"@babel/preset-env@npm:*, @babel/preset-env@npm:^7.1.6, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.12.11, @babel/preset-env@npm:^7.13.10, @babel/preset-env@npm:^7.16.4":
   version: 7.16.4
   resolution: "@babel/preset-env@npm:7.16.4"
   dependencies:
@@ -12151,9 +12151,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001125, caniuse-lite@npm:^1.0.30001173, caniuse-lite@npm:^1.0.30001196, caniuse-lite@npm:^1.0.30001280":
-  version: 1.0.30001281
-  resolution: "caniuse-lite@npm:1.0.30001281"
-  checksum: 245a6c03a8668afce3b860d4a5563bcfddc5728694878aee211a7fe99f438ffe39da8653e12b690c6ba5e3bab41e30071358178f92df71c7afd5eca068663c3b
+  version: 1.0.30001280
+  resolution: "caniuse-lite@npm:1.0.30001280"
+  checksum: 52f59405cfd2d53787d3716e7dcdb2ad1211e9a826acb276a046a3428f0b3f94565862e62c9ab5b8f9ec9f9c8b25ada9d4bac044bc49013b9ef2d649bfc8fcdd
   languageName: node
   linkType: hard
 
@@ -38193,6 +38193,7 @@ testarmada-magellan@11.0.10:
     "@automattic/languages": "workspace:^"
     "@automattic/mocha-debug-reporter": "workspace:^"
     "@automattic/testarmada-magellan-mocha-plugin": "workspace:^"
+    "@babel/core": ^7.16.0
     "@testim/chrome-version": ^1.0.7
     "@types/jest": ^27.0.2
     "@xmpp/plugins": ^0.3.0
@@ -38201,6 +38202,7 @@ testarmada-magellan@11.0.10:
     babel-plugin-dynamic-import-node: ^2.3.0
     chromedriver: ^89.0.0
     config: ^1.28.0
+    enzyme: ^3.11.0
     eslint: ^7.28.0
     eslint-plugin-jest: ^24.3.6
     eslint-plugin-mocha: ^9.0.0
@@ -38222,8 +38224,10 @@ testarmada-magellan@11.0.10:
     mocha-teamcity-reporter: ^3.0.0
     playwright: 1.14.0
     png-itxt: ^1.3.0
+    postcss: ^8.3.11
     push-receiver: ^2.0.0
     react: ^17.0.2
+    react-dom: ^17.0.2
     request: ^2.88.2
     request-promise: ^4.2.2
     sanitize-filename: ^1.6.0
@@ -38233,6 +38237,7 @@ testarmada-magellan@11.0.10:
     spec-junit-reporter: "workspace:^"
     testarmada-magellan: "patch:testarmada-magellan@11.0.10#../../.patches/testarmada-magellan@11.0.10.diff"
     testarmada-magellan-local-executor: ^2.0.3
+    webpack: ^5.63.0
     xmpp.js: ^0.3.0
   languageName: unknown
   linkType: soft
