@@ -308,7 +308,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	checkForBloggerPlan() {
-		const plan = get( this.props, 'selectedSite.plan', false );
+		const plan = get( this.props, 'selectedSite.plan', {} );
 		const products = get( this.props, 'cart.products', [] );
 		const isBloggerPlan = isBlogger( plan ) || products.some( isBlogger );
 
