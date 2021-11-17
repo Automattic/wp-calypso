@@ -15,6 +15,7 @@ import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gravatar from 'calypso/components/gravatar';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import User from 'calypso/components/user';
+import TestList from './test-list';
 import accept from 'calypso/lib/accept';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -313,6 +314,7 @@ class DeleteUser extends Component {
 						</FormButton>
 					</FormButtonsBar>
 				</form>
+				<TestList />
 			</Card>
 		);
 	};
