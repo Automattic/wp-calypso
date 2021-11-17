@@ -50,7 +50,7 @@ const VideoFooterBar = ( {
 					</div>
 				) }
 				{ displaySkipLink && (
-					<div className="videos-ui__bar-skip-link">
+					<div className="videos-ui__bar-skip-link videos-ui__mobile">
 						<a href={ `/post/${ siteSlug }` } onClick={ skipClickHandler }>
 							{ translate( 'Draft your first post' ) }
 						</a>
