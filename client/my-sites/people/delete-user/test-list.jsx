@@ -53,9 +53,8 @@ class Listing extends React.Component {
 		return placeholders;
 	}
 
-	clickButton = () => {
+	clickButton = ( j ) => {
 		const items = [];
-		const j = 1000;
 		for ( let i = 0; i < j; i++ ) {
 			items.push( { id: i, name: 'person ' + i } );
 		}
@@ -68,9 +67,37 @@ class Listing extends React.Component {
 	render() {
 		return (
 			<div>
-				<button onClick={ this.clickButton } style={ { border: '1px solid black' } }>
-					Create 1000 items
+				<button
+					onClick={ () => this.clickButton( 1 ) }
+					style={ { border: '1px solid #888', marginRight: '10px' } }
+				>
+					set to 1 items
 				</button>
+				<button
+					onClick={ () => this.clickButton( 10 ) }
+					style={ { border: '1px solid #888', marginRight: '10px' } }
+				>
+					set to 10 items
+				</button>
+				<button
+					onClick={ () => this.clickButton( 100 ) }
+					style={ { border: '1px solid #888', marginRight: '10px' } }
+				>
+					set to 100 items
+				</button>
+				<button
+					onClick={ () => this.clickButton( 1000 ) }
+					style={ { border: '1px solid #888', marginRight: '10px' } }
+				>
+					set to 1000 items
+				</button>
+				<button
+					onClick={ () => this.clickButton( 10000 ) }
+					style={ { border: '1px solid #888', marginRight: '10px' } }
+				>
+					set to 10000 items
+				</button>
+				<br />
 
 				<span>
 					<span
@@ -81,9 +108,9 @@ class Listing extends React.Component {
 						tabIndex={ -1 }
 						ref={ this.authorSelectorToggleRef }
 					>
+						See fake list
 						{ this.props.children }
 						<Gridicon ref={ this.authorSelectorChevronRef } icon="chevron-down" size={ 18 } />
-						See fake list
 					</span>
 					{ /* // position={ this.props.popoverPosition } */ }
 					{ /* 
