@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useRef } from '@wordpress/element';
-import { translate } from 'i18n-calypso';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import './style.scss';
 import Image01 from 'calypso/assets/images/woocommerce/woop-cta-image01.jpeg';
 import Image02 from 'calypso/assets/images/woocommerce/woop-cta-image02.jpeg';
@@ -26,6 +27,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( {
 	isFeatureActive,
 	upgradingPlan,
 } ) => {
+	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
@@ -40,25 +42,27 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( {
 		startSetup();
 	}
 
+	const upgradeButtonText = sprintf(
+		/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
+		__( 'Upgrade to %s' ),
+		upgradingPlan.product_name
+	);
+
 	return (
 		<div className="woop__landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
 				<Button onClick={ onCTAHandler } primary>
-					{ isFeatureActive
-						? translate( 'Set up my store!' )
-						: translate( 'Upgrade to Premium plan' ) }
+					{ isFeatureActive ? __( 'Set up my store!' ) : upgradeButtonText }
 				</Button>
 			</FixedNavigationHeader>
 			<CtaSection
-				title={ translate( 'Have something to sell?' ) }
+				title={ __( 'Have something to sell?' ) }
 				headline={
 					isFeatureActive
-						? translate( 'Build exactly the eCommerce website you want.' )
-						: translate( 'Upgrade to the Premium plan and set up your WooCommerce store.' )
+						? __( 'Build exactly the eCommerce website you want.' )
+						: __( 'Upgrade to the Premium plan and set up your WooCommerce store.' )
 				}
-				buttonText={
-					isFeatureActive ? translate( 'Set up my store!' ) : translate( 'Upgrade to Premium plan' )
-				}
+				buttonText={ isFeatureActive ? __( 'Set up my store!' ) : upgradeButtonText }
 				buttonAction={ onCTAHandler }
 				ctaRef={ ctaRef }
 			>
