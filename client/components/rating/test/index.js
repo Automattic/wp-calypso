@@ -4,11 +4,11 @@ import Rating from 'calypso/components/rating';
 
 describe( '<Rating />', () => {
 	describe( 'check props size', () => {
-		test( 'should be set to 24px if no size', () => {
+		test( 'should be set to 18px if no size', () => {
 			const wrapper = shallow( <Rating /> );
 
 			const component = wrapper.find( 'div.rating' );
-			expect( component.props().style.width ).to.equal( '120px' ); // 24 * 5 = 120;
+			expect( component.props().style.width ).to.equal( '90px' ); // 18 * 5 = 120;
 		} );
 
 		test( 'should use size if passed', () => {
@@ -32,7 +32,7 @@ describe( '<Rating />', () => {
 
 	describe( 'check props rating', () => {
 		test( 'should render full width mask for no rating', () => {
-			const size = 24; // use default size
+			const size = 24;
 			const wrapper = shallow( <Rating size={ size } /> );
 
 			const component = wrapper.find( 'div.rating__overlay' );
@@ -42,7 +42,7 @@ describe( '<Rating />', () => {
 
 		test( 'should render rating clipping mask properly', () => {
 			[ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ].forEach( function ( ratingValue ) {
-				const size = 24; // use default size
+				const size = 24;
 				const wrapper = shallow( <Rating rating={ ratingValue } size={ size } /> );
 
 				const roundRating = Math.round( ratingValue / 10 ) * 10;
