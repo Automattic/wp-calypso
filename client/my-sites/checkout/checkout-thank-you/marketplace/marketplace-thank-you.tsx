@@ -45,6 +45,8 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 			setRetries( retries + 1 );
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
+		// Do not add retries in dependencies to avoid infinite loop.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isRequestingPlugins, plugin, dispatch, siteId ] );
 
 	const thankYouImage = {
