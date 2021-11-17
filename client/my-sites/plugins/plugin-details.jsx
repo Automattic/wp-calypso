@@ -475,9 +475,10 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 					count: sitesWithPlugin.length,
 					comment: 'header for list of sites a plugin is installed on',
 				} ) }
-				titlePrimary
 				sites={ sitesWithPlugin }
 				plugin={ plugin }
+				titlePrimary
+				showAdditionalHeaders
 			/>
 			{ plugin.wporg && (
 				<PluginSiteList

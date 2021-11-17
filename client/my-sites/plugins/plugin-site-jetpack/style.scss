@@ -31,3 +31,25 @@
 	line-height: 1;
 	padding: 6px 0;
 }
+
+.plugin-site-jetpack__container {
+	display: flex;
+	background: var( --studio-white );
+	border: 1px solid var( --studio-gray-5 );
+	padding: 16px 24px;
+	
+	.plugin-site-jetpack__domain {
+		flex: 8 8 0;
+		overflow-wrap: anywhere;
+	}
+
+ 	.plugin-action {
+		flex: 4 4 0;
+		margin-top: 0;
+	}
+
+	.last-actions {
+		display: flex;
+		justify-content: space-between;
+	}
+}

@@ -1,5 +1,7 @@
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
+import PropTypes from 'prop-types';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
@@ -13,7 +15,8 @@ import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connecte
 
 import './style.scss';
 
-export function PluginSiteList( props ) {
+const PluginSiteList = ( props ) => {
+	const translate = useTranslate();
 	const siteIds = siteObjectsToSiteIds( props.sites );
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, props.plugin.slug )
@@ -42,24 +45,43 @@ export function PluginSiteList( props ) {
 	if ( ! props.sites || props.sites.length === 0 ) {
 		return null;
 	}
-
 	return (
 		<div className={ classNames( 'plugin-site-list', props.className ) }>
 			<div className={ classNames( 'plugin-site-list__title', { primary: props.titlePrimary } ) }>
 				{ props.title }
 			</div>
-			{ sitesWithSecondarySites.map( ( { site, secondarySites } ) => (
-				<PluginSite
-					key={ 'pluginSite' + site.ID }
-					site={ site }
-					secondarySites={ getSecondaryPluginSites( site, secondarySites ) }
-					plugin={ props.plugin }
-					wporg={ props.wporg }
-				/>
-			) ) }
+			<div className="plugin-site-list__content">
+				<div className="plugin-site-list__header">
+					<div className="plugin-site-list__header-title domain">{ translate( 'Domain' ) }</div>
+					{ props.showAdditionalHeaders && (
+						<>
+							<div className="plugin-site-list__header-title">{ translate( 'Active' ) }</div>
+							<div className="plugin-site-list__header-title">{ translate( 'Autoupdates' ) }</div>
+							<div className="plugin-site-list__header-title empty" />
+						</>
+					) }
+				</div>
+
+				{ sitesWithSecondarySites.map( ( { site, secondarySites } ) => (
+					<PluginSite
+						key={ 'pluginSite' + site.ID }
+						site={ site }
+						secondarySites={ getSecondaryPluginSites( site, secondarySites ) }
+						plugin={ props.plugin }
+						wporg={ props.wporg }
+					/>
+				) ) }
+			</div>
 		</div>
 	);
-}
+};
+
+PluginSiteList.propTypes = {
+	plugin: PropTypes.object,
+	sites: PropTypes.array,
+	sitesWithSecondarySites: PropTypes.array,
+	title: PropTypes.string,
+};
 
 // TODO: make this memoized after sites-list is removed and `sites` comes from Redux
 function getSitesWithSecondarySites( state, sites ) {

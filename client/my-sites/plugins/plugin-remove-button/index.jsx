@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import { Gridicon } from '@automattic/components';
+import { Icon, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -165,9 +165,11 @@ class PluginRemoveButton extends Component {
 			  } );
 		if ( this.props.inProgress ) {
 			return (
-				<span className="plugin-action plugin-remove-button__remove">
-					{ this.props.translate( 'Removing…' ) }
-				</span>
+				<div className="plugin-action">
+					<span className="plugin-remove-button__remove">
+						{ this.props.translate( 'Removing…' ) }
+					</span>
+				</div>
 			);
 		}
 
@@ -183,7 +185,7 @@ class PluginRemoveButton extends Component {
 				className="plugin-remove-button__remove-link"
 			>
 				<a onClick={ handleClick } className="plugin-remove-button__remove-icon">
-					<Gridicon icon="trash" size={ 18 } />
+					<Icon icon={ trash } />
 				</a>
 			</PluginAction>
 		);

@@ -3,14 +3,11 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Site from 'calypso/blocks/site';
-import FoldableCard from 'calypso/components/foldable-card';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
-import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
 import {
 	getPluginOnSite,
 	isPluginActionInProgress,
@@ -52,12 +49,10 @@ class PluginSiteJetpack extends Component {
 
 	renderInstallPlugin = () => {
 		return (
-			<FoldableCard
-				compact
-				className="plugin-site-jetpack"
-				header={ <Site site={ this.props.site } indicator={ false } /> }
-				actionButton={ this.renderInstallButton() }
-			/>
+			<div className="plugin-site-jetpack__container">
+				<div className="plugin-site-jetpack__domain">{ this.props.site.domain }</div>
+				<div>{ this.renderInstallButton() }</div>
+			</div>
 		);
 	};
 
@@ -73,37 +68,19 @@ class PluginSiteJetpack extends Component {
 		const settingsLink = this.props?.pluginOnSite?.action_links?.Settings ?? null;
 
 		return (
-			<FoldableCard
-				compact
-				clickableHeader
-				className="plugin-site-jetpack"
-				header={ <Site site={ this.props.site } indicator={ false } /> }
-				summary={
-					<PluginUpdateIndicator
+			<div className="plugin-site-jetpack__container">
+				<div className="plugin-site-jetpack__domain">{ this.props.site.domain }</div>
+				{ canToggleActivation && (
+					<PluginActivateToggle site={ this.props.site } plugin={ this.props.pluginOnSite } />
+				) }
+				{ canToggleAutoupdate && (
+					<PluginAutoupdateToggle
 						site={ this.props.site }
-						plugin={ this.props.plugin }
-						expanded={ false }
+						plugin={ this.props.pluginOnSite }
+						wporg={ true }
 					/>
-				}
-				expandedSummary={
-					<PluginUpdateIndicator
-						site={ this.props.site }
-						plugin={ this.props.plugin }
-						expanded={ true }
-					/>
-				}
-			>
-				<div>
-					{ canToggleActivation && (
-						<PluginActivateToggle site={ this.props.site } plugin={ this.props.pluginOnSite } />
-					) }
-					{ canToggleAutoupdate && (
-						<PluginAutoupdateToggle
-							site={ this.props.site }
-							plugin={ this.props.pluginOnSite }
-							wporg={ true }
-						/>
-					) }
+				) }
+				<div className="plugin-site-jetpack__action plugin-action last-actions">
 					{ canToggleRemove && (
 						<PluginRemoveButton plugin={ this.props.pluginOnSite } site={ this.props.site } />
 					) }
@@ -118,7 +95,7 @@ class PluginSiteJetpack extends Component {
 						</div>
 					) }
 				</div>
-			</FoldableCard>
+			</div>
 		);
 	};
 

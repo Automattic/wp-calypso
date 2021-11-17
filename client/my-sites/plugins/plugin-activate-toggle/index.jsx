@@ -91,7 +91,7 @@ export class PluginActivateToggle extends Component {
 	}
 
 	render() {
-		const { inProgress, site, plugin, disabled, translate } = this.props;
+		const { inProgress, site, plugin, disabled } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -111,7 +111,6 @@ export class PluginActivateToggle extends Component {
 			<PluginAction
 				disabled={ disabled }
 				className="plugin-activate-toggle"
-				label={ translate( 'Active', { context: 'plugin status' } ) }
 				inProgress={ inProgress }
 				status={ plugin && plugin.active }
 				action={ this.toggleActivation }

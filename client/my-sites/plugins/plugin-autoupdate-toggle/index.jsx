@@ -133,21 +133,16 @@ export class PluginAutoUpdateToggle extends Component {
 	}
 
 	render() {
-		const { inProgress, site, plugin, translate, disabled } = this.props;
+		const { inProgress, site, plugin, disabled } = this.props;
 		if ( ! site.jetpack ) {
 			return null;
 		}
 
 		const getDisabledInfo = this.getDisabledInfo();
-		const label = translate( 'Autoupdates', {
-			comment:
-				'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
-		} );
 
 		return (
 			<PluginAction
 				disabled={ disabled }
-				label={ label }
 				status={ plugin.autoupdate }
 				action={ this.toggleAutoUpdates }
 				inProgress={ inProgress }
