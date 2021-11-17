@@ -11,7 +11,7 @@ import {
  * @param {string} productSlug - slug of the product
  * @returns {boolean} true if the slug refers to Google Workspace Business Starter, false otherwise
  */
-export function isGoogleWorkspaceProductSlug( productSlug ) {
+export function isGoogleWorkspaceProductSlug( productSlug: string ): boolean {
 	return productSlug === GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
 }
 
@@ -21,7 +21,7 @@ export function isGoogleWorkspaceProductSlug( productSlug ) {
  * @param {string} productSlug - slug of the product
  * @returns {boolean} true if the slug refers to G Suite Basic or Business, false otherwise
  */
-export function isGSuiteProductSlug( productSlug ) {
+export function isGSuiteProductSlug( productSlug: string ): boolean {
 	return [ GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG ].includes( productSlug );
 }
 
@@ -31,7 +31,7 @@ export function isGSuiteProductSlug( productSlug ) {
  * @param {string} productSlug - slug of the product
  * @returns {boolean} true if the slug refers to an extra license, false otherwise
  */
-export function isGSuiteExtraLicenseProductSlug( productSlug ) {
+export function isGSuiteExtraLicenseProductSlug( productSlug: string ): boolean {
 	return productSlug === GSUITE_EXTRA_LICENSE_SLUG;
 }
 
@@ -41,7 +41,7 @@ export function isGSuiteExtraLicenseProductSlug( productSlug ) {
  * @param {string} productSlug - slug of the product
  * @returns {boolean} true if the slug refers to any G Suite product, false otherwise
  */
-export function isGSuiteOrExtraLicenseProductSlug( productSlug ) {
+export function isGSuiteOrExtraLicenseProductSlug( productSlug: string ): boolean {
 	return isGSuiteProductSlug( productSlug ) || isGSuiteExtraLicenseProductSlug( productSlug );
 }
 
@@ -51,6 +51,6 @@ export function isGSuiteOrExtraLicenseProductSlug( productSlug ) {
  * @param {string} productSlug - slug of the product
  * @returns {boolean} true if the slug refers to G Suite or Google Workspace, false otherwise
  */
-export function isGSuiteOrGoogleWorkspaceProductSlug( productSlug ) {
+export function isGSuiteOrGoogleWorkspaceProductSlug( productSlug: string ): boolean {
 	return isGSuiteProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 }
