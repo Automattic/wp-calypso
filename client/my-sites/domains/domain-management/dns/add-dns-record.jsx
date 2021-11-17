@@ -34,13 +34,7 @@ class AddDnsRecprd extends Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.renderBreadcrumbs = this.renderBreadcrumbs.bind( this );
-		this.goBack = this.goBack.bind( this );
-	}
-
-	renderBreadcrumbs() {
+	renderBreadcrumbs = () => {
 		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
 
 		const items = [
@@ -72,7 +66,7 @@ class AddDnsRecprd extends Component {
 		return (
 			<Breadcrumbs items={ items } mobileItem={ mobileItem } buttons={ [] } mobileButtons={ [] } />
 		);
-	}
+	};
 
 	goBack = () => {
 		const { selectedSite, selectedDomainName } = this.props;
