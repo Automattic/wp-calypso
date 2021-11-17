@@ -1,4 +1,4 @@
-import { addLocaleToPath } from 'calypso/lib/i18n-utils';
+import { addLocaleToPath } from 'calypso/lib/i18n-utils/path';
 import { addQueryArgs } from 'calypso/lib/url';
 
 export function login( {

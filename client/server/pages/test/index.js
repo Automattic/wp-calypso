@@ -99,9 +99,8 @@ jest.mock( 'calypso/server/lib/analytics', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/lib/i18n-utils', () => ( {
+jest.mock( '@automattic/languages', () => ( {
 	getLanguage: jest.fn( ( lang ) => ( { langSlug: lang } ) ),
-	filterLanguageRevisions: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/lib/oauth2-clients', () => ( {

@@ -5,9 +5,9 @@ import {
 	WPCOMFeatures,
 } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { getLanguage } from '@automattic/languages';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
-import { getLanguage } from 'calypso/lib/i18n-utils';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { SITE_STORE } from '../site';
 import { STORE_KEY as ONBOARD_STORE } from './constants';

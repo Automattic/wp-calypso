@@ -1,17 +1,15 @@
 import {
-	addLocaleToPath,
-	getLanguage,
-	getLocaleFromPath,
 	isDefaultLocale,
-	removeLocaleFromPath,
-	isLocaleVariant,
 	localizeUrl,
 	canBeTranslated,
-	getPathParts,
-	filterLanguageRevisions,
 	translationExists,
 	isMagnificentLocale,
 } from 'calypso/lib/i18n-utils';
+import {
+	addLocaleToPath,
+	getLocaleFromPath,
+	removeLocaleFromPath,
+} from 'calypso/lib/i18n-utils/path';
 
 jest.mock( '@automattic/calypso-config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
@@ -166,62 +164,6 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( '#getLanguage', () => {
-		test( 'should return a language', () => {
-			expect( getLanguage( 'ja' ).langSlug ).toEqual( 'ja' );
-		} );
-
-		test( 'should return a language with a country code', () => {
-			expect( getLanguage( 'pt-br' ).langSlug ).toEqual( 'pt-br' );
-		} );
-
-		test( 'should fall back to the language code when a country code is not available', () => {
-			expect( getLanguage( 'fr-zz' ).langSlug ).toEqual( 'fr' );
-		} );
-
-		test( 'should return undefined when no arguments are given', () => {
-			//note that removeLocaleFromPath is dependant on getLanguage returning undefined in this case.
-			expect( getLanguage() ).toBeUndefined();
-		} );
-
-		test( 'should return undefined when the locale is invalid', () => {
-			//note that removeLocaleFromPath is dependant on getLanguage returning undefined in this case.
-			expect( getLanguage( 'zz' ) ).toBeUndefined();
-		} );
-
-		test( 'should return undefined when we lookup random words', () => {
-			expect( getLanguage( 'themes' ) ).toBeUndefined();
-			expect( getLanguage( 'log-in' ) ).toBeUndefined();
-		} );
-
-		test( 'should return a language with a three letter country code', () => {
-			expect( getLanguage( 'ast' ).langSlug ).toEqual( 'ast' );
-		} );
-
-		test( 'should return the variant', () => {
-			expect( getLanguage( 'de_formal' ).langSlug ).toEqual( 'de_formal' );
-		} );
-
-		test( 'should return the parent slug since the given variant does not exist', () => {
-			expect( getLanguage( 'fr_formal' ).langSlug ).toEqual( 'fr' );
-		} );
-	} );
-
-	describe( '#isLocaleVariant', () => {
-		test( 'should return false by default', () => {
-			expect( isLocaleVariant( 'lol' ) ).toEqual( false );
-			expect( isLocaleVariant() ).toEqual( false );
-		} );
-
-		test( 'should detect a locale variant', () => {
-			expect( isLocaleVariant( 'de_formal' ) ).toEqual( true );
-		} );
-
-		test( 'should detect a root language', () => {
-			expect( isLocaleVariant( 'de' ) ).toEqual( false );
-		} );
-	} );
-
 	describe( '#canBeTranslated', () => {
 		test( 'should return true by default', () => {
 			expect( canBeTranslated() ).toEqual( true );
@@ -253,55 +195,6 @@ describe( 'utils', () => {
 			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/de/support/'
 			);
-		} );
-	} );
-
-	describe( '#getPathParts', () => {
-		test( 'should split path', () => {
-			expect( getPathParts( '/show/me/the/money' ) ).toEqual( [
-				'',
-				'show',
-				'me',
-				'the',
-				'money',
-			] );
-		} );
-		test( 'should split path and remove trailing slash', () => {
-			expect( getPathParts( '/show/me/the/money/' ) ).toEqual( [
-				'',
-				'show',
-				'me',
-				'the',
-				'money',
-			] );
-		} );
-	} );
-	describe( 'filterLanguageRevisions()', () => {
-		const valid = {
-			en: 123,
-			ja: 456,
-		};
-
-		test( 'should leave a valid object as it is', () => {
-			expect( filterLanguageRevisions( valid ) ).toEqual( valid );
-		} );
-
-		test( 'should filter out unexpected keys.', () => {
-			const invalid = {
-				hahahaha: 999,
-				...valid,
-			};
-
-			expect( filterLanguageRevisions( invalid ) ).toEqual( valid );
-		} );
-
-		test( 'should filter out unexpected values.', () => {
-			const invalid = {
-				es: 'to crash or not to crash, that is the problem.',
-				...valid,
-			};
-
-			expect( filterLanguageRevisions( invalid ) ).toEqual( valid );
 		} );
 	} );
 

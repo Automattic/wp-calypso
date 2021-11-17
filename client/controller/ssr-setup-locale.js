@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { readFile } from 'fs/promises';
+import { getLanguage } from '@automattic/languages';
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
-import { getLanguage } from 'calypso/lib/i18n-utils';
 import config from 'calypso/server/config';
 import { setLocaleRawData } from 'calypso/state/ui/language/actions';
 

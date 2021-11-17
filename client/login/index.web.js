@@ -8,7 +8,7 @@ import {
 	makeLayoutMiddleware,
 } from 'calypso/controller/shared';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils/path';
 import {
 	login,
 	magicLogin,

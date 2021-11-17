@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
+import { isTranslatedIncompletely } from '@automattic/languages';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';
 import { setLocale } from 'calypso/state/ui/language/actions';

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { getLanguage } from '@automattic/languages';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
@@ -12,7 +13,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';

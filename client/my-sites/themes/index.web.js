@@ -3,7 +3,7 @@ import {
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
 } from 'calypso/controller';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils/path';
 import {
 	navigation,
 	selectSiteIfLoggedIn,
