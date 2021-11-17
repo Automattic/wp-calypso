@@ -12,14 +12,10 @@ const ratingTiers = [ 5, 4, 3, 2, 1 ];
 class PluginRatings extends Component {
 	static propTypes = {
 		rating: PropTypes.number,
-		ratings: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
-		downloaded: PropTypes.number,
-		slug: PropTypes.string,
-		numRatings: PropTypes.number,
-	};
-
-	static defaultProps = {
-		barWidth: 88,
+		ratings: PropTypes?.oneOfType( [ PropTypes.object, PropTypes.array ] ),
+		downloaded: PropTypes?.number,
+		slug: PropTypes?.string,
+		numRatings: PropTypes?.number,
 	};
 
 	buildReviewUrl( ratingTier ) {
@@ -94,34 +90,37 @@ class PluginRatings extends Component {
 	}
 
 	render() {
-		const { placeholder, ratings, rating, numRatings } = this.props;
+		const { placeholder, ratings, rating, numRatings, downloaded } = this.props;
 
 		if ( placeholder ) {
 			return this.renderPlaceholder();
 		}
 
-		if ( ! ratings ) {
+		if ( ! rating ) {
 			return null;
 		}
 
-		const tierViews = ratingTiers.map( this.renderRatingTier );
+		const tierViews = ratings && ratingTiers.map( this.renderRatingTier );
 		return (
 			<div className="plugin-ratings">
 				<div className="plugin-ratings__rating-stars">
 					<Rating rating={ rating } />
+					<span className="plugin-ratings__number">{ rating / 20 }</span>
 				</div>
-				<div className="plugin-ratings__rating-text">
-					{ this.props.translate(
-						'Based on %(ratingsNumber)s rating',
-						'Based on %(ratingsNumber)s ratings',
-						{
-							count: numRatings,
-							args: { ratingsNumber: numRatings },
-						}
-					) }
-				</div>
-				<div className="plugin-ratings__rating-tiers">{ tierViews }</div>
-				{ this.renderDownloaded() }
+				{ numRatings && (
+					<div className="plugin-ratings__rating-text">
+						{ this.props.translate(
+							'Based on %(ratingsNumber)s rating',
+							'Based on %(ratingsNumber)s ratings',
+							{
+								count: numRatings,
+								args: { ratingsNumber: numRatings },
+							}
+						) }
+					</div>
+				) }
+				{ tierViews && <div className="plugin-ratings__rating-tiers">{ tierViews }</div> }
+				{ downloaded && this.renderDownloaded() }
 			</div>
 		);
 	}

@@ -9,11 +9,16 @@
 }
 
 .plugin-ratings__rating-stars {
-	font-size: $font-title-medium;
+	display: flex;
+	align-items: center;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		display: inline-block;
 		margin-right: 8px;
+	}
+
+	.rating {
+		margin-right: 5px;
 	}
 }
 
