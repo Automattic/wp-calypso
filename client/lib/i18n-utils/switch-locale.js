@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
+import { getLanguage } from '@automattic/languages';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
-import { isDefaultLocale, getLanguage } from './utils';
+import { isDefaultLocale } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getLanguage } from '@automattic/languages';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
@@ -11,7 +12,7 @@ import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
-import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import StepWrapper from 'calypso/signup/step-wrapper';

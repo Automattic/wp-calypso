@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getLanguageSlugs } from '@automattic/languages';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { QueryClientProvider } from 'react-query';
@@ -9,7 +10,6 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { getLanguageSlugs } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import { getSiteFragment } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';

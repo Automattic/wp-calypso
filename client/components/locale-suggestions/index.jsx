@@ -1,3 +1,4 @@
+import { getLanguage } from '@automattic/languages';
 import { getLocaleSlug } from 'i18n-calypso';
 import startsWith from 'lodash/startsWith';
 import PropTypes from 'prop-types';
@@ -5,7 +6,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
 import Notice from 'calypso/components/notice';
-import { addLocaleToPath, getLanguage } from 'calypso/lib/i18n-utils';
+import { addLocaleToPath } from 'calypso/lib/i18n-utils/path';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import { setLocale } from 'calypso/state/ui/language/actions';
 import LocaleSuggestionsListItem from './list-item';

@@ -8,6 +8,7 @@
 import 'moment-timezone'; // monkey patches the existing moment.js
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
+import { getLanguage } from '@automattic/languages';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -20,7 +21,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SelectOptGroups from 'calypso/components/forms/select-opt-groups';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getLanguage } from 'calypso/lib/i18n-utils';
 
 const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
