@@ -77,15 +77,16 @@ export default function DesignPickerStep( props ) {
 	);
 
 	const designs = useMemo( () => {
+		let themesToBeTransformed = apiThemes;
 		if ( props.useDIFMThemes ) {
-			return DIFMThemes;
+			themesToBeTransformed = DIFMThemes;
 		}
 
 		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		const allThemes = apiThemes
+		const allThemes = themesToBeTransformed
 			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
 			.map( ( { id, name, taxonomies } ) => ( {
 				categories: taxonomies?.theme_subject ?? [],
