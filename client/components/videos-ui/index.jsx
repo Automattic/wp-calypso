@@ -3,7 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import VideoLinksBar from './video-links-bar';
+import VideoFooterBar from './video-footer-bar';
+import VideoHeaderBar from './video-header-bar';
 import VideoPlayer from './video-player';
 import './style.scss';
 
@@ -83,11 +84,10 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
-				<VideoLinksBar
+				<VideoHeaderBar
 					displayIcon={ true }
 					displayLinks={ shouldDisplayTopLinks }
 					displaySkipLink={ false }
-					isFooter={ false }
 					onBackClick={ onBackClick }
 					skipClickHandler={ skipClickHandler }
 				/>
@@ -164,7 +164,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 											<div>
 												<p>{ videoInfo.description } </p>
 												<Button
-													className="videos-ui__play-button"
+													className="videos-ui__button"
 													onClick={ () => onVideoPlayClick( data[ 0 ], videoInfo ) }
 												>
 													<svg
@@ -194,14 +194,19 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 					</div>
 				</div>
 			</div>
-			<VideoLinksBar
-				displayIcon={ false }
-				displayLinks={ shouldDisplayTopLinks }
-				displaySkipLink={ false }
-				isFooter={ true }
-				onBackClick={ onBackClick }
-				skipClickHandler={ skipClickHandler }
-			/>
+			{ course && (
+				<VideoFooterBar
+					displayBackButton={ true }
+					displaySkipLink={ true }
+					displayCTA={ false }
+					descriptionCTA={ course.cta.description }
+					buttonTextCTA={ course.cta.action }
+					hrefCTA={ course.cta.url }
+					courseSlug={ course.slug }
+					onBackClick={ onBackClick }
+					skipClickHandler={ skipClickHandler }
+				/>
+			) }
 		</div>
 	);
 };
