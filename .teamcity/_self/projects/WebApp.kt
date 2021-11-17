@@ -87,6 +87,7 @@ object BuildDockerImage : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
 				commandArgs = """
 					--pull
@@ -107,6 +108,7 @@ object BuildDockerImage : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
 			}
 		}
