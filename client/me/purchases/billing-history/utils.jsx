@@ -109,40 +109,6 @@ function renderTransactionQuantitySummaryForTitanMail(
 	} );
 }
 
-function renderTransactionQuantitySummaryForGoogleWorkspace(
-	licensed_quantity,
-	new_quantity,
-	isRenewal,
-	isUpgrade,
-	translate
-) {
-	if ( isRenewal ) {
-		return translate( 'Renewal for %(quantity)d user', 'Renewal for %(quantity)d users', {
-			args: { quantity: licensed_quantity },
-			count: licensed_quantity,
-			comment: '%(quantity)d is number of users renewed',
-		} );
-	}
-
-	if ( isUpgrade ) {
-		return translate(
-			'Purchase of %(quantity)d additional user',
-			'Purchase of %(quantity)d additional users',
-			{
-				args: { quantity: new_quantity },
-				count: new_quantity,
-				comment: '%(quantity)d is additional number of users purchased',
-			}
-		);
-	}
-
-	return translate( 'Purchase of %(quantity)d user', 'Purchase of %(quantity)d users', {
-		args: { quantity: licensed_quantity },
-		count: licensed_quantity,
-		comment: '%(quantity)d is number of users purchased',
-	} );
-}
-
 export function renderTransactionQuantitySummary(
 	{ licensed_quantity, new_quantity, type, wpcom_product_slug },
 	translate
@@ -157,7 +123,7 @@ export function renderTransactionQuantitySummary(
 	const isRenewal = 'recurring' === type;
 	const isUpgrade = 'new purchase' === type && new_quantity > 0;
 
-	if ( isTitanMail( product ) ) {
+	if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
 		return renderTransactionQuantitySummaryForTitanMail(
 			licensed_quantity,
 			new_quantity,
@@ -165,15 +131,8 @@ export function renderTransactionQuantitySummary(
 			isUpgrade,
 			translate
 		);
-	} else if ( isGoogleWorkspace( product ) ) {
-		return renderTransactionQuantitySummaryForGoogleWorkspace(
-			licensed_quantity,
-			new_quantity,
-			isRenewal,
-			isUpgrade,
-			translate
-		);
 	}
+
 	if ( isRenewal ) {
 		return translate( 'Renewal for %(quantity)d item', 'Renewal for %(quantity)d items', {
 			args: { quantity: licensed_quantity },
