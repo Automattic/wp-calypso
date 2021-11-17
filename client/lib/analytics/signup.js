@@ -138,3 +138,20 @@ export function recordRegistration( { userData, flow, type } ) {
 	// FullStory
 	recordFullStoryEvent( 'calypso_user_registration_complete', { flow, type, device } );
 }
+
+/**
+ * Records loading of the processing screen
+ *
+ * @param {string} flow Signup flow name
+ * @param {string} previousStep The step before the processing screen
+ * @param {string} optionalProps Extra properties to record
+ */
+export function recordSignupProcessingScreen( flow, previousStep, optionalProps ) {
+	const device = resolveDeviceTypeByViewPort();
+	recordTracksEvent( 'calypso_signup_processing_screen', {
+		flow,
+		previous_step: previousStep,
+		device,
+		...optionalProps,
+	} );
+}
