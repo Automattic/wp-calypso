@@ -109,3 +109,4 @@ desktop/.yarn/*
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+yarn-json-output.json

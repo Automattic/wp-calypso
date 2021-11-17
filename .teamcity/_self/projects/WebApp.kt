@@ -174,21 +174,37 @@ object RunAllUnitTests : BuildType({
 				# Install modules
 				${_self.yarn_install_cmd}
 
-				# Fail when we encounter these yarn warnings. We want to take
-				# action on them before merging the PR.
-				declare -A fail_yarn
-				fail_yarn[YN0002]="There are unmet peer dependencies."
-				fail_yarn[YN0068]="An entry in yarnrc.yml is out of date."
+				# The "name" property refers to the code of the message (like YN0002).
 
-				for yarn_err_code in "${'$'}{!fail_yarn[@]}"
-				do
-					if echo "${'$'}yarn_output" | grep -q "${'$'}yarn_err_code" ; then
-						err_msg="Yarn error ${'$'}yarn_err_code: ${'$'}{fail_yarn[${'$'}yarn_err_code]}"
-						echo "${'$'}err_msg"
-						echo "##teamcity[buildProblem description='${'$'}err_msg' identity='yarn_problem']]"
-						exit 1
-					fi
-				done
+				# Generate a JSON array of the errors we care about:
+				# 1. Select warning YN0002 (Unmet peer dependencies.)
+				# 2. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
+				# 3. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
+				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 68 or (.type == "error" and .name != 0)) ]')
+
+				num_errors=${'$'}(jq length <<< "${'$'}yarn_errors")
+				if [ "${'$'}num_errors" -gt 0 ] ; then
+					# Construct warning strings from the JSON array of yarn problems.
+					err_string=${'$'}(jq '.[] | "Yarn error \(.displayName): \(.data)"' <<< "${'$'}yarn_errors")
+
+					# Remove quotes which had to be added in the jq expression:
+					err_string=${'$'}(sed 's/^"//g;s/"${'$'}//g' <<< "${'$'}err_string")
+					
+					# Escape values as needed for TeamCity: https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+values
+					# Specifically, add | before every [, ], |, and '.
+					err_string=${'$'}(sed "s/\([][|']\)/|\1/g" <<< "${'$'}err_string")
+
+					# Output each yarn problem as a TeamCity service message for easier debugging.
+					while read -r err ; do
+						echo "##teamcity[message text='${'$'}err' status='ERROR']"
+					done <<< "${'$'}err_string"
+
+					# Quick plural handling because why not.
+					if [ "${'$'}num_errors" -gt 1 ]; then s='s'; else s=''; fi
+
+					echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
+					exit 1
+				fi
 			"""
 		}
 		bashNodeScript {
