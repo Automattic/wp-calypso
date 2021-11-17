@@ -48,6 +48,14 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( {
 		upgradingPlan.product_name
 	);
 
+	const headlineText = isFeatureActive
+		? __( 'Build exactly the eCommerce website you want.' )
+		: sprintf(
+				/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
+				__( 'Upgrade to the %s plan and set up your WooCommerce store.' ),
+				upgradingPlan.product_name
+		  );
+
 	return (
 		<div className="woop__landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
@@ -57,11 +65,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( {
 			</FixedNavigationHeader>
 			<CtaSection
 				title={ __( 'Have something to sell?' ) }
-				headline={
-					isFeatureActive
-						? __( 'Build exactly the eCommerce website you want.' )
-						: __( 'Upgrade to the Premium plan and set up your WooCommerce store.' )
-				}
+				headline={ headlineText }
 				buttonText={ isFeatureActive ? __( 'Set up my store!' ) : upgradeButtonText }
 				buttonAction={ onCTAHandler }
 				ctaRef={ ctaRef }
