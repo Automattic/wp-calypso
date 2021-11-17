@@ -34,6 +34,7 @@ import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-n
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getSites from 'calypso/state/selectors/get-sites';
+import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import ConciergeBanner from '../concierge-banner';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
@@ -103,7 +104,7 @@ class PurchasesList extends Component {
 	}
 
 	render() {
-		const { purchases, sites, translate, subscriptions } = this.props;
+		const { cards, purchases, sites, translate, subscriptions } = this.props;
 		let content;
 
 		if ( this.isDataLoading() ) {
@@ -125,6 +126,7 @@ class PurchasesList extends Component {
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite={ true }
+							cards={ cards }
 						/>
 					) ) }
 				</>
@@ -200,6 +202,7 @@ PurchasesList.propTypes = {
 
 export default connect(
 	( state ) => ( {
+		cards: getAllStoredCards( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		isFetchingUserPurchases: isFetchingUserPurchases( state ),
 		purchases: getUserPurchases( state ),

@@ -24,11 +24,15 @@ const PurchasesSite = ( {
 	purchases,
 	name,
 	slug,
+	cards,
 	showSite = false,
 } ) => {
 	if ( isPlaceholder ) {
 		return <PurchaseItem isPlaceholder />;
 	}
+	const isBackupMethodAvailable = cards.find(
+		( card ) => !! card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
+	);
 
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
@@ -56,6 +60,7 @@ const PurchasesSite = ( {
 					site={ site }
 					showSite={ showSite }
 					name={ name }
+					isBackupMethodAvailable={ isBackupMethodAvailable }
 				/>
 			) ) }
 		</div>
@@ -70,6 +75,7 @@ PurchasesSite.propTypes = {
 	showSite: PropTypes.bool,
 	siteId: PropTypes.number,
 	slug: PropTypes.string,
+	cards: PropTypes.array,
 };
 
 export default connect( ( state, { siteId } ) => ( {
