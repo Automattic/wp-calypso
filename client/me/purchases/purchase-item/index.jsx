@@ -466,7 +466,10 @@ class PurchaseItem extends Component {
 function BackupPaymentMethodNotice() {
 	const translate = useTranslate();
 	return (
-		<a href="https://wordpress.com/support/payment/#manage-payment-methods">
+		<a
+			className="purchase-item__backup-payment-method-notice"
+			href="https://wordpress.com/support/payment/#manage-payment-methods"
+		>
 			{ translate( 'May use backup payment method.' ) }
 		</a>
 	);
