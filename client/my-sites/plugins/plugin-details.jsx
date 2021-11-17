@@ -501,7 +501,29 @@ function PluginDoesNotExistView() {
 }
 
 function PluginPlaceholder() {
-	return <MainComponent wideLayout>{ /* TODO: Create Placeholder */ }</MainComponent>;
+	return (
+		<MainComponent wideLayout>
+			<div className="plugin-details__page">
+				<div className="plugin-details__layout plugin-details__top-section is-placeholder">
+					<div className="plugin-details__layout-col plugin-details__layout-col-left">
+						<div className="plugin-details__tags">...</div>
+						<div className="plugin-details__header">
+							<div className="plugin-details__name">...</div>
+							<div className="plugin-details__description">...</div>
+							<div className="plugin-details__additional-info">...</div>
+						</div>
+					</div>
+					<div className="plugin-details__layout-col plugin-details__layout-col-right">
+						<div className="plugin-details__header">
+							<div className="plugin-details__price">...</div>
+							<div className="plugin-details__install">...</div>
+							<div className="plugin-details__t-and-c">...</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</MainComponent>
+	);
 }
 
 export default PluginDetails;
