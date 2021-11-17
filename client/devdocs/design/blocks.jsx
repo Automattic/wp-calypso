@@ -4,6 +4,7 @@ import { trim } from 'lodash';
 import page from 'page';
 import { Component, Fragment } from 'react';
 import AllSites from 'calypso/blocks/all-sites/docs/example';
+import AnnouncementModalExample from 'calypso/blocks/announcement-modal/docs/example';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/example';
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
 import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
@@ -116,6 +117,7 @@ export default class AppComponents extends Component {
 					{ isEnabled( 'devdocs/color-scheme-picker' ) && (
 						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 					) }
+					<AnnouncementModalExample readmeFilePath="announcement-modal" />
 					<AllSites readmeFilePath="all-sites" />
 					<AuthorSelector readmeFilePath="author-selector" />
 					<CalendarButton readmeFilePath="calendar-button" />

@@ -16,7 +16,7 @@ const StyledLi = styled.li`
 	font-weight: 500;
 	--color-link: var( --studio-gray-100 );
 
-	:first-child {
+	:first-of-type {
 		font-size: 16px;
 		font-weight: 600;
 		--color-link: var( --studio-gray-80 );
