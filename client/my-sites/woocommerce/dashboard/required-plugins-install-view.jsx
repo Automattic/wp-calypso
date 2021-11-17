@@ -22,7 +22,6 @@ import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 import { getSelectedSiteWithFallback, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { recordTrack } from '../lib/analytics';
-import WoopLandingPage from '../woop/landing-page';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 
@@ -478,6 +477,29 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
+	renderConfirmScreen = () => {
+		const { translate } = this.props;
+		return (
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<SetupNotices />
+				<div className="card dashboard__setup-confirm">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
+						imageWidth={ 160 }
+						title={ translate( 'Have something to sell?' ) }
+						subtitle={ translate(
+							'You can sell your products right on your site and ship them to customers in a snap!'
+						) }
+					>
+						<Button onClick={ this.startSetup } primary>
+							{ translate( 'Set up my store!' ) }
+						</Button>
+					</SetupHeader>
+				</div>
+			</div>
+		);
+	};
+
 	getTotalSeconds = () => {
 		const { hasPendingAT } = this.props;
 
@@ -575,12 +597,7 @@ class RequiredPluginsInstallView extends Component {
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
-			return (
-				<>
-					<SetupNotices />
-					<WoopLandingPage startSetup={ this.startSetup } />
-				</>
-			);
+			return this.renderConfirmScreen();
 		}
 
 		if ( 'DONEFAILURE' === engineState ) {
