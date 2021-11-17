@@ -1,3 +1,4 @@
+import AllDomains from 'calypso/my-sites/domains/domain-management/list/all-domains';
 import SiteDomains from 'calypso/my-sites/domains/domain-management/list/site-domains';
 import ChangeSiteAddress from './change-site-address';
 import ContactsPrivacy from './contacts-privacy';
@@ -34,6 +35,7 @@ export default {
 	ManageConsent,
 	List,
 	ListAll,
+	AllDomains,
 	SiteDomains,
 	NameServers,
 	Security,
