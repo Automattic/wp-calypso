@@ -6,7 +6,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useMemo } from 'react';
-import { useCategorization } from '../hooks/use-categorization';
 import {
 	getAvailableDesigns,
 	getDesignUrl,
@@ -17,6 +16,7 @@ import {
 } from '../utils';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import MShotsImage from './mshots-image';
+import type { Categorization } from '../hooks/use-categorization';
 export { default as MShotsImage } from './mshots-image';
 import type { Design } from '../types';
 
@@ -204,10 +204,7 @@ export interface DesignPickerProps {
 	theme?: 'dark' | 'light';
 	className?: string;
 	highResThumbnails?: boolean;
-	showCategoryFilter?: boolean;
-	showAllFilter?: boolean;
-	selectedCategory?: string | null;
-	onSelectedCategoryChange?: ( categorySlug: string | null ) => void;
+	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -223,30 +220,25 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	theme = 'light',
 	className,
 	highResThumbnails = false,
-	showCategoryFilter = false,
-	selectedCategory = null,
-	onSelectedCategoryChange = () => undefined,
-	showAllFilter = false,
 	categoriesHeading,
+	categorization,
 } ) => {
-	const categories = useCategorization( designs, showAllFilter );
-
 	const filteredDesigns = useMemo( () => {
-		const result = ! showCategoryFilter
-			? designs.slice() // cloning because otherwise .sort() would mutate the original prop
-			: filterDesignsByCategory( designs, selectedCategory );
+		const result = categorization?.selection
+			? filterDesignsByCategory( designs, categorization.selection )
+			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
 		return result;
-	}, [ designs, selectedCategory, showCategoryFilter ] );
+	}, [ designs, categorization?.selection ] );
 
 	return (
 		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
-			{ showCategoryFilter && !! categories.length && (
+			{ !! categorization?.categories.length && (
 				<DesignPickerCategoryFilter
-					categories={ categories }
-					selectedCategory={ selectedCategory }
-					onSelect={ onSelectedCategoryChange }
+					categories={ categorization.categories }
+					selectedCategory={ categorization.selection }
+					onSelect={ categorization.onSelect }
 					heading={ categoriesHeading }
 				/>
 			) }
