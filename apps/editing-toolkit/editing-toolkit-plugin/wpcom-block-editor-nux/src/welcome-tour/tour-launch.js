@@ -3,17 +3,15 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
-import { Button, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState, createInterpolateElement, useMemo, useRef } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { Icon, close } from '@wordpress/icons';
+import { useEffect, useMemo } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import maximize from './icons/maximize';
 import PackagedTour from './packaged-tour';
-import WelcomeTourCard from './tour-card';
+import { WelcomeTourContextProvider, useWelcomeTourContext } from './tour-context';
+import WelcomeTourMinimized from './tour-minimized-renderer';
+import WelcomeTourStep from './tour-step-renderer';
 import getTourSteps from './tour-steps';
 
 import './style-tour.scss';
@@ -48,86 +46,22 @@ function LaunchWpcomWelcomeTour() {
 		return null;
 	}
 
-	return <FooTour />;
-}
-
-function WelcomeTourStep( { justMaximized, setJustMaximized } ) {
-	return ( {
-		steps,
-		currentStepIndex,
-		onDismiss,
-		onNext,
-		onPrevious,
-		onMinimize,
-		setInitialFocusedElement,
-		onGoToStep,
-	} ) => {
-		const lastStepIndex = steps.length - 1;
-		const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
-
-		return (
-			<WelcomeTourCard
-				cardContent={ steps[ currentStepIndex ].meta }
-				currentStepIndex={ currentStepIndex }
-				justMaximized={ justMaximized }
-				lastStepIndex={ lastStepIndex }
-				onDismiss={ onDismiss }
-				onMinimize={ onMinimize }
-				setJustMaximized={ setJustMaximized }
-				setCurrentStepIndex={ onGoToStep }
-				onNextStepProgression={ onNext }
-				onPreviousStepProgression={ onPrevious }
-				isGutenboarding={ isGutenboarding }
-				setInitialFocusedElement={ setInitialFocusedElement }
-			/>
-		);
-	};
-}
-
-function WelcomeTourMinimized( { steps, onMaximize, onDismiss, currentStepIndex } ) {
-	const lastStepIndex = steps.length - 1;
-	const page = currentStepIndex + 1;
-	const numberOfPages = lastStepIndex + 1;
-
 	return (
-		<Flex gap={ 0 } className="wpcom-editor-welcome-tour__minimized">
-			<Button onClick={ onMaximize } aria-label={ __( 'Resume Tour', 'full-site-editing' ) }>
-				<Flex gap={ 13 }>
-					<p>
-						{ createInterpolateElement(
-							sprintf(
-								/* translators: 1: current page number, 2: total number of pages */
-								__( 'Resume welcome tour <span>(%1$d/%2$d)</span>', 'full-site-editing' ),
-								page,
-								numberOfPages
-							),
-							{
-								span: <span className="wpcom-editor-welcome-tour__minimized-tour-index" />,
-							}
-						) }
-					</p>
-					<Icon icon={ maximize } size={ 24 } />
-				</Flex>
-			</Button>
-			<Button
-				onClick={ onDismiss( 'close-btn-minimized' ) }
-				aria-label={ __( 'Close Tour', 'full-site-editing' ) }
-			>
-				<Icon icon={ close } size={ 24 } />
-			</Button>
-		</Flex>
+		<WelcomeTourContextProvider>
+			<WelcomeTour />
+		</WelcomeTourContextProvider>
 	);
 }
 
 function WelcomeTour() {
 	const localeSlug = useLocale();
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
-	const [ justMaximized, setJustMaximized ] = useState( false );
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
 	const isWelcomeTourNext = () => {
 		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
 	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() );
+	const [ setJustMaximized ] = useWelcomeTourContext();
 
 	// Preload card images
 	tourSteps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
@@ -135,7 +69,7 @@ function WelcomeTour() {
 	const tourConfig = {
 		steps: tourSteps,
 		renderers: {
-			tourStep: WelcomeTourStep( { justMaximized, setJustMaximized } ),
+			tourStep: WelcomeTourStep,
 			tourMinimized: WelcomeTourMinimized,
 		},
 		closeHandler: ( steps, currentStepIndex, source ) => {
