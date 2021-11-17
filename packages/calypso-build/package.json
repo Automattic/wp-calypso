@@ -37,7 +37,7 @@
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/webpack-rtl-plugin": "workspace:^",
-		"@babel/compat-data": "^7.16.0",
+		"@babel/compat-data": "^7.16.4",
 		"@babel/core": "^7.16.0",
 		"@types/webpack-env": "^1.16.3",
 		"@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
