@@ -180,17 +180,6 @@ Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
 	);
 };
 
-/**
- * Delete a site
- *
- * @param  {number|string} siteId The site ID or domain
- * @param  {Function} fn Function to invoke when request is complete
- */
-Undocumented.prototype.deleteSite = function ( siteId, fn ) {
-	debug( '/sites/:site_id/delete query' );
-	return this.wpcom.req.post( { path: '/sites/' + siteId + '/delete' }, fn );
-};
-
 function addReaderContentWidth( params ) {
 	if ( params.content_width ) {
 		return;
