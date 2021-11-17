@@ -148,7 +148,7 @@ export function recordRegistration( { userData, flow, type } ) {
  */
 export function recordSignupProcessingScreen( flow, previousStep, optionalProps ) {
 	const device = resolveDeviceTypeByViewPort();
-	recordTracksEvent( 'calypso_signup_processing_screen', {
+	recordTracksEvent( 'calypso_signup_processing_screen_show', {
 		flow,
 		previous_step: previousStep,
 		device,
