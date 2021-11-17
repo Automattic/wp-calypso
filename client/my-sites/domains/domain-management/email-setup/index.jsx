@@ -9,7 +9,7 @@ import { dnsTemplates } from 'calypso/lib/domains/constants';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import EmailProvider from '../dns/email-provider';
 
-import './email-setup.scss';
+import './style.scss';
 
 class EmailSetup extends Component {
 	static propTypes = {

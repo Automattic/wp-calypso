@@ -24,3 +24,9 @@
 		border-top: none;
 	}
 }
+
+.dns-records.main {
+	* + .email-setup {
+		margin-top: 32px;
+	}
+}

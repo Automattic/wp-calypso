@@ -17,6 +17,7 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
+import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -35,7 +36,6 @@ import {
 } from './constants';
 import CustomNameserversForm from './custom-nameservers-form';
 import DnsTemplates from './dns-templates';
-import EmailSetup from './email-setup';
 import FetchError from './fetch-error';
 import withDomainNameservers from './with-domain-nameservers';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
