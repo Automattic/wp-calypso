@@ -53,6 +53,7 @@
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"marketplace-test": false,
+		"marketplace-v0.5": false,
 		"marketplace": false,
 		"oauth": true,
 		"purchases/new-payment-methods": true,
