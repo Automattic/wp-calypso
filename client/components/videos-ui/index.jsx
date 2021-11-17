@@ -164,7 +164,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 											<div>
 												<p>{ videoInfo.description } </p>
 												<Button
-													className="videos-ui__play-button"
+													className="videos-ui__button"
 													onClick={ () => onVideoPlayClick( data[ 0 ], videoInfo ) }
 												>
 													<svg

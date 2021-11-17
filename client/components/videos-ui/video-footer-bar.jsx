@@ -37,7 +37,7 @@ const VideoFooterBar = ( {
 				{ displayCTA && (
 					<div className={ 'videos-ui__cta' }>
 						<div className={ 'videos-ui__desktop' }>{ descriptionCTA }</div>
-						<Button type="button" href={ hrefCTA }>
+						<Button className="videos-ui__button" href={ hrefCTA }>
 							<span>{ buttonTextCTA }</span>
 						</Button>
 					</div>

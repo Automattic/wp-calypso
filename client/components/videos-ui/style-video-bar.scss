@@ -54,11 +54,10 @@
             overflow: hidden;
             font-weight: 400;
         }
-        button {
+        .videos-ui__button {
             min-width: 134px;
+            flex: 0;
             span {
-                font-weight: 400;
-                color: #101517;
                 flex: 1;
             }
         }
