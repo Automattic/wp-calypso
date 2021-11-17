@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -47,6 +48,7 @@ const DraftPostModal = () => {
 				</>
 			}
 			onRequestClose={ closeModal }
+			onOpen={ () => recordTracksEvent( 'calypso_editor_wpcom_draft_post_modal_show' ) }
 		/>
 	);
 };
