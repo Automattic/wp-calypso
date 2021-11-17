@@ -88,6 +88,8 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 					displayIcon={ true }
 					displayLinks={ shouldDisplayTopLinks }
 					displaySkipLink={ false }
+					displayBackLink={ false }
+					displayCloseLink={ true }
 					onBackClick={ onBackClick }
 					skipClickHandler={ skipClickHandler }
 				/>

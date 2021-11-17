@@ -9,7 +9,9 @@ import './style-video-bar.scss';
 const VideoHeaderBar = ( {
 	displayIcon,
 	displayLinks,
-	displaySkipLink,
+	displayBackLink = false,
+	displaySkipLink = false,
+	displayCloseLink = false,
 	onBackClick = () => {},
 	skipClickHandler = () => {},
 } ) => {
@@ -22,24 +24,31 @@ const VideoHeaderBar = ( {
 			{ displayLinks && (
 				<div className={ classNames( 'videos-ui__bar-content', 'videos-ui__desktop' ) }>
 					<div>
-						<a
-							href="/"
-							className={ classNames( {
-								'videos-ui__back-link': displayIcon,
-							} ) }
-							onClick={ onBackClick }
-						>
-							<Gridicon icon="chevron-left" size={ 24 } />
-							<span>{ translate( 'Back' ) }</span>
-						</a>
+						{ displayBackLink && (
+							<a
+								href="/"
+								className={ classNames( {
+									'videos-ui__back-link': displayIcon,
+								} ) }
+								onClick={ onBackClick }
+							>
+								<Gridicon icon="chevron-left" size={ 24 } />
+								<span>{ translate( 'Back' ) }</span>
+							</a>
+						) }
 					</div>
-					{ displaySkipLink && (
-						<div className="videos-ui__bar-skip-link">
+					<div className="videos-ui__bar-skip-link">
+						{ displaySkipLink && (
 							<a href={ `/post/${ siteSlug }` } onClick={ skipClickHandler }>
 								{ translate( 'Draft your first post' ) }
 							</a>
-						</div>
-					) }
+						) }
+						{ displayCloseLink && (
+							<span role="button" onKeyDown={ onBackClick } tabIndex={ 0 } onClick={ onBackClick }>
+								<Gridicon icon="cross" size={ 24 } />
+							</span>
+						) }
+					</div>
 				</div>
 			) }
 		</div>
