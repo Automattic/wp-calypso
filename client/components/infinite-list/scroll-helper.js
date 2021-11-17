@@ -353,6 +353,14 @@ class ScrollHelper {
 		//       |
 		//       +---- container bottom relative to context, e.g. 5000
 		//
+
+		// If we are rendering all available items, we don't need to hide any.
+		const howManyRendered = this.lastRenderedIndex - this.firstRenderedIndex + 1;
+		const itemsLength = this.props?.items?.length || 0;
+		if ( howManyRendered === itemsLength ) {
+			return false;
+		}
+
 		const placeholderTop = this.containerBottom - this.bottomPlaceholderHeight;
 		return placeholderTop > this.bottomHideLevelUltraSoft;
 	}
