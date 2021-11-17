@@ -31,6 +31,7 @@ import {
 	recordSignupComplete,
 	recordSignupStep,
 	recordSignupInvalidStep,
+	recordSignupProcessingScreen,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -241,15 +242,18 @@ class Signup extends Component {
 		debug( 'Signup component mounted' );
 		this.startTrackingForBusinessSite();
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
-		recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+		if ( ! this.state.shouldShowLoadingScreen ) {
+			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+		}
 		this.preloadNextStep();
 		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
 		if (
-			this.props.flowName !== prevProps.flowName ||
-			this.props.stepName !== prevProps.stepName
+			( this.props.flowName !== prevProps.flowName ||
+				this.props.stepName !== prevProps.stepName ) &&
+			! this.state.shouldShowLoadingScreen
 		) {
 			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
 		}
@@ -366,6 +370,12 @@ class Signup extends Component {
 		}
 
 		if ( startLoadingScreen ) {
+			recordSignupProcessingScreen(
+				this.props.flowName,
+				this.props.stepName,
+				this.getRecordProps()
+			);
+
 			this.setState( { shouldShowLoadingScreen: true } );
 			/* Temporary change to add a 10 second delay to the processing screen.
 			 * This is done to allow the user 10 seconds to answer the bizx survey
