@@ -4,29 +4,23 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
-import './style-video-links-bar.scss';
+import './style-video-bar.scss';
 
-const VideoLinksBar = ( {
+const VideoHeaderBar = ( {
 	displayIcon,
 	displayLinks,
 	displaySkipLink,
-	isFooter = false,
 	onBackClick = () => {},
 	skipClickHandler = () => {},
 } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const classes = classNames( 'videos-ui__bar', isFooter ? 'mobile' : 'desktop' );
 
 	return (
-		<div
-			className={ classNames( 'videos-ui__header-links', {
-				'videos-ui__is-footer': isFooter,
-			} ) }
-		>
+		<div className={ 'videos-ui__bar' }>
 			{ displayIcon && <Gridicon icon="my-sites" size={ 24 } /> }
 			{ displayLinks && (
-				<div className={ classes }>
+				<div className={ classNames( 'videos-ui__bar-content', 'videos-ui__desktop' ) }>
 					<div>
 						<a
 							href="/"
@@ -52,4 +46,4 @@ const VideoLinksBar = ( {
 	);
 };
 
-export default VideoLinksBar;
+export default VideoHeaderBar;
