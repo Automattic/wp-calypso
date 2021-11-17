@@ -39,7 +39,7 @@ const receiveJetpackSettings = ( { siteId }, settings ) =>
  * @returns {object}   Dispatched http action
  */
 export const requestJetpackSettings = ( action ) => {
-	const { siteId, query } = action;
+	const { siteId } = action;
 
 	return http(
 		{
@@ -48,7 +48,6 @@ export const requestJetpackSettings = ( action ) => {
 			path: '/jetpack-blogs/' + siteId + '/rest-api/',
 			query: {
 				path: '/jetpack/v4/settings/',
-				query: JSON.stringify( query ),
 				json: true,
 			},
 		},
