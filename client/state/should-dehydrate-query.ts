@@ -2,13 +2,11 @@ import { Query } from 'react-query';
 
 type PersistencePredicate< T > = ( data: T ) => boolean;
 
-const hasPersistenceSetting = ( value: unknown ): value is boolean => {
+const hasSimplePersistence = ( value: unknown ): value is boolean => {
 	return typeof value === 'boolean';
 };
 
-const hasPersistenceCustomSetting = (
-	value: unknown
-): value is PersistencePredicate< unknown > => {
+const hasPersistencePredicate = ( value: unknown ): value is PersistencePredicate< unknown > => {
 	return typeof value === 'function';
 };
 
@@ -19,11 +17,11 @@ export const shouldDehydrateQuery = ( query: Query ): boolean => {
 
 	const shouldPersist = query.meta?.persist;
 
-	if ( hasPersistenceSetting( shouldPersist ) ) {
+	if ( hasSimplePersistence( shouldPersist ) ) {
 		return shouldPersist;
 	}
 
-	if ( hasPersistenceCustomSetting( shouldPersist ) ) {
+	if ( hasPersistencePredicate( shouldPersist ) ) {
 		return shouldPersist( query.state.data );
 	}
 
