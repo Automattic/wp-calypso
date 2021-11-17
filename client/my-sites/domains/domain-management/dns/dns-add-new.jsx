@@ -137,12 +137,27 @@ class DnsAddNew extends React.Component {
 
 		const selectedDnsRecordFields = this.getFieldsForType( recordToEdit.type );
 		const recordAttributes = Object.keys( selectedDnsRecordFields ).reduce( ( obj, field ) => {
-			obj[ field ] = recordToEdit[ field ];
+			obj[ field ] = this.getProcessedRecordValue( field );
 			return obj;
 		}, {} );
 
 		this.setState( { type: recordToEdit.type } );
 		this.formStateController.resetFields( recordAttributes );
+	}
+
+	getProcessedRecordValue( field ) {
+		const { recordToEdit } = this.props;
+
+		const isRootDomainRecord = recordToEdit.name === `${ recordToEdit.domain }.`;
+		if ( isRootDomainRecord && 'name' === field ) {
+			return '';
+		}
+
+		if ( [ 'data', 'target' ].includes( field ) && 'TXT' !== recordToEdit.type ) {
+			return recordToEdit[ field ].replace( /\.$/, '' );
+		}
+
+		return recordToEdit[ field ];
 	}
 
 	componentDidUpdate( prevProps ) {
