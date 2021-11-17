@@ -14,7 +14,7 @@ import {
 	transferStatus,
 	gdprConsentStatus,
 } from 'calypso/lib/domains/constants';
-import { hasPendingGSuiteUsers, isPendingGSuiteTOSAcceptance } from 'calypso/lib/gsuite';
+import { isPendingGSuiteTOSAcceptance } from 'calypso/lib/gsuite';
 import {
 	CHANGE_NAME_SERVERS,
 	DOMAINS,
