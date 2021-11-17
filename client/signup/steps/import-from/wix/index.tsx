@@ -29,9 +29,9 @@ const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 
 			{ queryObject.temp === 'hooray' && (
 				<Hooray>
-					<Title>Hooray!</Title>
-					<SubTitle>Congratulations. Your content was successfully imported.</SubTitle>
-					<NextButton>View site</NextButton>
+					<Title>{ __( 'Hooray!' ) }</Title>
+					<SubTitle>{ __( 'Congratulations. Your content was successfully imported.' ) }</SubTitle>
+					<NextButton>{ __( 'View site' ) }</NextButton>
 				</Hooray>
 			) }
 		</div>
