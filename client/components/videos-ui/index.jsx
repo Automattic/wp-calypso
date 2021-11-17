@@ -194,16 +194,18 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 					</div>
 				</div>
 			</div>
-			<VideoFooterBar
-				displayBackButton={ true }
-				displaySkipLink={ true }
-				displayCTA={ false }
-				descriptionCTA={ course.cta.description }
-				buttonTextCTA={ course.cta.action }
-				hrefCTA={ course.cta.link }
-				onBackClick={ onBackClick }
-				skipClickHandler={ skipClickHandler }
-			/>
+			{ course && (
+				<VideoFooterBar
+					displayBackButton={ true }
+					displaySkipLink={ true }
+					displayCTA={ false }
+					descriptionCTA={ course.cta.description }
+					buttonTextCTA={ course.cta.action }
+					hrefCTA={ course.cta.link }
+					onBackClick={ onBackClick }
+					skipClickHandler={ skipClickHandler }
+				/>
+			) }
 		</div>
 	);
 };
