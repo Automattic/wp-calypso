@@ -43,10 +43,16 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
+	const apiThemes = useSelector( ( state ) =>
+		getRecommendedThemes( state, 'auto-loading-homepage' )
+	);
+
 	useEffect(
 		() => {
 			dispatch( saveSignupStep( { stepName: props.stepName } ) );
-			dispatch( fetchRecommendedThemes( 'auto-loading-homepage' ) );
+			if ( ! apiThemes.length ) {
+				dispatch( fetchRecommendedThemes( 'auto-loading-homepage' ) );
+			}
 		},
 		// Ignoring dependencies because we only want these actions to run on first mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,10 +77,6 @@ export default function DesignPickerStep( props ) {
 	}, [ props.stepSectionName ] );
 
 	const userLoggedIn = useSelector( isUserLoggedIn );
-
-	const apiThemes = useSelector( ( state ) =>
-		getRecommendedThemes( state, 'auto-loading-homepage' )
-	);
 
 	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
