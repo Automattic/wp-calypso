@@ -143,6 +143,14 @@ $plugin-details-header-padding: 100px;
 	}
 }
 
+%placeholder {
+	cursor: default;
+	color: transparent;
+	user-select: none;
+	background-color: var( --color-neutral-0 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
 .plugin-details__top-section {
 	border-bottom: 1px solid var( --studio-gray-5 );
 
@@ -153,19 +161,30 @@ $plugin-details-header-padding: 100px;
 			display: none;
 		}
 	}
+
+	&.is-placeholder {
+		border-bottom: none;
+
+		.plugin-details__name,
+		.plugin-details__price,
+		.plugin-details__description,
+		.plugin-details__additional-info,
+		.plugin-details__install,
+		.plugin-details__t-and-c {
+			@extend %placeholder;
+		}
+
+		.plugin-details__tags {
+			@extend %placeholder;
+			width: 50%;
+		}
+	}
 }
 
 .plugin-details__page {
 	@media screen and ( max-width: 1040px ) {
 		padding: 16px;
 	}
-}
-
-%placeholder {
-	cursor: default;
-	color: transparent;
-	background-color: var( --color-neutral-0 );
-	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
 .plugin-details__tags {
@@ -178,11 +197,6 @@ $plugin-details-header-padding: 100px;
 	@media screen and ( max-width: 1040px ) {
 		top: -5px;
 	}
-
-	&.is-placeholder {
-		@extend %placeholder;
-		width: 50%;
-	}
 }
 
 .plugin-details__header {
@@ -190,17 +204,6 @@ $plugin-details-header-padding: 100px;
 	flex-direction: column;
 	justify-content: center;
 	padding: $plugin-details-header-padding 0;
-
-	&.is-placeholder {
-		.plugin-details__name,
-		.plugin-details__price,
-		.plugin-details__description,
-		.plugin-details__additional-info,
-		.plugin-details__install,
-		.plugin-details__t-and-c {
-			@extend %placeholder;
-		}
-	}
 
 	.plugin-details__name,
 	.plugin-details__price {
@@ -241,7 +244,7 @@ $plugin-details-header-padding: 100px;
 	}
 
 	.plugin-details__install {
-		padding-bottom: 20px;
+		margin-bottom: 20px;
 
 		.plugin-details__install-button {
 			width: 100%;
