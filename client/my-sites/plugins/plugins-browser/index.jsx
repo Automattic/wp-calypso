@@ -552,12 +552,10 @@ export class PluginsBrowser extends Component {
  * @param {Array} featuredPlugins
  */
 function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
-	const displayedFeaturedSlugs = featuredPlugins
-		.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins
-		.map( ( plugin ) => plugin.slug );
-
 	const displayedFeaturedSlugsMap = new Map(
-		displayedFeaturedSlugs.map( ( slug ) => [ slug, slug ] )
+		featuredPlugins
+			.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins
+			.map( ( plugin ) => [ plugin.slug, plugin.slug ] )
 	);
 
 	return popularPlugins.filter( ( plugin ) => ! displayedFeaturedSlugsMap.has( plugin.slug ) );
