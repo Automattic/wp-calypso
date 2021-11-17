@@ -22,7 +22,7 @@ describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 	const user = 'p2User';
 	const postContent = DataHelper.getTimestamp();
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
@@ -35,7 +35,7 @@ describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 		However, TOTP codes are time-sensitive and so as an exception
 		the setup is done within the test step.
 		*/
-		const totpClient = new TOTPClient( DataHelper.config.get( 'e2eflowtestingp2totp' ) );
+		const totpClient = new TOTPClient( DataHelper.config.get( 'p2UserTOTP' ) );
 		const code = totpClient.getToken();
 		await loginPage.enter2FACode( code );
 	} );
