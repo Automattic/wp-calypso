@@ -1,9 +1,6 @@
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import {
-	mapRecordKeysRecursively,
-	camelToSnakeCase,
-	tryToGuessPostalCodeFormat,
-} from '@automattic/wpcom-checkout';
+import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import wp from 'calypso/lib/wp';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';

@@ -1,4 +1,4 @@
-import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/wpcom-checkout';
+import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import wp from 'calypso/lib/wp';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { createAccount } from '../payment-method-helpers';

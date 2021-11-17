@@ -1,9 +1,5 @@
 import { Button } from '@automattic/components';
-import {
-	mapRecordKeysRecursively,
-	camelToSnakeCase,
-	snakeToCamelCase,
-} from '@automattic/wpcom-checkout';
+import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
