@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -132,21 +131,17 @@ class AddDnsRecprd extends Component {
 		);
 	}
 
-	renderPlaceholder() {
-		return config.isEnabled( 'domains/dns-records-redesign' ) ? (
-			<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
-		) : (
-			<DomainMainPlaceholder goBack={ this.goBack } />
-		);
-	}
-
 	render() {
 		const { showPlaceholder, selectedDomainName } = this.props;
 
 		return (
 			<Fragment>
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? this.renderPlaceholder() : this.renderMain() }
+				{ showPlaceholder ? (
+					<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+				) : (
+					this.renderMain()
+				) }
 			</Fragment>
 		);
 	}
