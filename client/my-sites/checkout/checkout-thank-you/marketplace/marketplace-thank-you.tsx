@@ -2,16 +2,18 @@ import { ThemeProvider } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/success.png';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import { ThankYou } from 'calypso/components/thank-you';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import theme from 'calypso/my-sites/marketplace/theme';
-import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -29,11 +31,21 @@ const WordPressWordmarkStyled = styled( WordPressWordmark )`
 `;
 
 const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 	const plugin = useSelector( ( state ) => getPluginOnSite( state, siteId, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const [ retries, setRetries ] = useState( 0 );
+
+	useEffect( () => {
+		if ( ! isRequestingPlugins && ! plugin && retries < 10 ) {
+			setRetries( retries + 1 );
+			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
+		}
+	}, [ isRequestingPlugins, plugin, dispatch, siteId ] );
 
 	const thankYouImage = {
 		alt: '',
@@ -55,7 +67,7 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 					'Get to know your plugin and customize it, so you can hit the ground running.'
 				),
 				stepCta: (
-					<FullWidthButton href={ setupURL } primary busy={ ! plugin }>
+					<FullWidthButton href={ setupURL } primary busy={ ! plugin && retries < 10 }>
 						{ translate( 'Manage plugin' ) }
 					</FullWidthButton>
 				),
@@ -81,7 +93,6 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 
 	return (
 		<ThemeProvider theme={ theme }>
-			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar>
 				<Item
 					icon="cross"
