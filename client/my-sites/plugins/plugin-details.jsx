@@ -467,31 +467,33 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 	);
 
 	return (
-		<div className="plugin-details__sites-list">
-			<PluginSiteList
-				className="plugin-details__installed-on"
-				title={ translate( 'Installed on %d site', 'Installed on %d sites', {
-					args: [ sitesWithPlugin.length ],
-					count: sitesWithPlugin.length,
-					comment: 'header for list of sites a plugin is installed on',
-				} ) }
-				sites={ sitesWithPlugin }
-				plugin={ plugin }
-				titlePrimary
-				showAdditionalHeaders
-			/>
-			{ plugin.wporg && (
+		<div className="plugin-details__sites-list-background">
+			<div className="plugin-details__sites-list">
 				<PluginSiteList
-					className="plugin-details__not-installed-on"
-					title={ translate( 'Available on %d site', 'Available on %d sites', {
-						comment: 'header for list of sites a plugin can be installed on',
-						args: [ notInstalledSites.length ],
-						count: notInstalledSites.length,
+					className="plugin-details__installed-on"
+					title={ translate( 'Installed on %d site', 'Installed on %d sites', {
+						args: [ sitesWithPlugin.length ],
+						count: sitesWithPlugin.length,
+						comment: 'header for list of sites a plugin is installed on',
 					} ) }
-					sites={ notInstalledSites }
+					sites={ sitesWithPlugin }
 					plugin={ plugin }
+					titlePrimary
+					showAdditionalHeaders
 				/>
-			) }
+				{ plugin.wporg && (
+					<PluginSiteList
+						className="plugin-details__not-installed-on"
+						title={ translate( 'Available on %d site', 'Available on %d sites', {
+							comment: 'header for list of sites a plugin can be installed on',
+							args: [ notInstalledSites.length ],
+							count: notInstalledSites.length,
+						} ) }
+						sites={ notInstalledSites }
+						plugin={ plugin }
+					/>
+				) }
+			</div>
 		</div>
 	);
 }

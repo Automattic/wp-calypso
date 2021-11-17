@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/variables';
 @import './grid-mixins.scss';
 
 .is-section-plugins .main {
@@ -152,8 +153,6 @@ $plugin-details-header-padding: 100px;
 }
 
 .plugin-details__top-section {
-	border-bottom: 1px solid var( --studio-gray-5 );
-
 	.plugin-details__layout-col-right.no-cta {
 		visibility: hidden;
 
@@ -163,8 +162,6 @@ $plugin-details-header-padding: 100px;
 	}
 
 	&.is-placeholder {
-		border-bottom: none;
-
 		.plugin-details__name,
 		.plugin-details__price,
 		.plugin-details__description,
@@ -269,6 +266,8 @@ $plugin-details-header-padding: 100px;
 }
 
 .plugin-details__body {
+	border-top: 1px solid var( --studio-gray-5 );
+
 	.plugin-details__plugin-details-title {
 		padding: 15px 0;
 		display: none;
@@ -363,8 +362,21 @@ $plugin-details-header-padding: 100px;
 	}
 }
 
-.plugin-details__sites-list {
+.plugin-details__sites-list-background + .plugin-details__body {
+	border-top: none;
+}
+
+.plugin-details__sites-list-background {
 	background-color: var( --studio-gray-0 );
 	padding-top: 20px;
 	padding-bottom: 60px;
+	position: relative;
+	transform: translateX(-50%);
+	left: 50%;
+	width: calc( 100vw - $sidebar-width );
+}
+
+.plugin-details__sites-list {
+	max-width: 1040px;
+	margin: auto;
 }
