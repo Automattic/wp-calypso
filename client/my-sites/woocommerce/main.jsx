@@ -29,6 +29,10 @@ function WooCommerce() {
 		hasAvailableSiteFeature( state, siteId, FEATURE_WOOP )
 	);
 
+	/*
+	 * We pick the first plan from the available plans list.
+	 * The priority is defined by the store products list.
+	 */
 	const upgradingPlan =
 		useSelector( ( state ) => getProductBySlug( state, hasWoopFeatureAvailable?.[ 0 ] ) ) || {};
 
