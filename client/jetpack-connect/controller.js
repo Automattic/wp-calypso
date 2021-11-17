@@ -35,7 +35,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackAuthorize from './authorize';
 import {
 	ALLOWED_MOBILE_APP_REDIRECT_URL_LIST,
@@ -77,6 +77,26 @@ const analyticsPageTitleByType = {
 	scan: 'Jetpack Scan Daily',
 	antispam: 'Jetpack Anti-spam',
 };
+
+export function partnerCouponRedirects( context, next ) {
+	const queryArgs = new URLSearchParams( context?.query?.redirect );
+	const partnerCoupon = queryArgs.get( 'partnerCoupon' );
+
+	if ( partnerCoupon.startsWith( 'IONOS_' ) ) {
+		const state = context.store.getState();
+		const siteSlug = getSelectedSiteSlug( state );
+		const wpcomUrl =
+			'development' === config( 'env_id' )
+				? 'http://calypso.localhost:3000'
+				: 'https://wordpress.com';
+
+		return navigate(
+			`${ wpcomUrl }/checkout/${ siteSlug }/jetpack_backup_daily?coupon=${ partnerCoupon }`
+		);
+	}
+
+	next();
+}
 
 export function offerResetRedirects( context, next ) {
 	debug( 'controller: offerResetRedirects', context.params );
