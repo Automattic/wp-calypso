@@ -213,12 +213,14 @@ __metadata:
     "@types/jest": ^27.0.2
     "@types/node": ^16.11.7
     "@types/node-fetch": ^2.5.12
+    "@types/totp-generator": ^0.0.2
     "@wordpress/i18n": ^4.2.2
     asana-phrase: ^0.0.8
     config: ^3.3.6
     mailosaur: ^7.3.1
     node-fetch: ^2.6.1
     playwright: 1.14.0
+    totp-generator: ^0.0.12
     typescript: ^4.4.4
   languageName: unknown
   linkType: soft
@@ -6733,6 +6735,13 @@ __metadata:
   version: 1.4.2
   resolution: "@types/tinycolor2@npm:1.4.2"
   checksum: e4116cf95e6f7c4d024f5250ac13d357f1a5f1f9d2a3ee9cf1ff85c11012f611fa1aa4d75880cc7620ba61436b945f556e9d779b9c221f7f03d7219fe87417c9
+  languageName: node
+  linkType: hard
+
+"@types/totp-generator@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@types/totp-generator@npm:0.0.2"
+  checksum: 4009f1d3eb40ed27037302c874d014bc87dad317475b525f0407f41764c5793688d77d69a5cd6905475ac8c363fd9ce35df2f6c2f79ce64b7fcb270c5dab670b
   languageName: node
   linkType: hard
 
@@ -23428,6 +23437,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"jssha@npm:^3.1.2":
+  version: 3.2.0
+  resolution: "jssha@npm:3.2.0"
+  checksum: eba7fb986a6ed12238d57b959c522fae90ff25a9e427d70aeffaf698d4ffadc7a994af7cb28e121139b1a54e38e0bd9b08f2da4ea7979c72653ccba2fb558924
+  languageName: node
+  linkType: hard
+
 "jsx-ast-utils@npm:^2.4.1 || ^3.0.0, jsx-ast-utils@npm:^3.2.1":
   version: 3.2.1
   resolution: "jsx-ast-utils@npm:3.2.1"
@@ -35867,6 +35883,15 @@ testarmada-magellan@11.0.10:
   version: 1.1.0
   resolution: "totalist@npm:1.1.0"
   checksum: 2adbd4501c8290c2a96617a83dc67dfdd02bcbd360032017e27ccf27bbb09649bbe8dad1c45d97be6874281178aca5b3f62ed059d1eeda77c479cfb8eb3a9266
+  languageName: node
+  linkType: hard
+
+"totp-generator@npm:^0.0.12":
+  version: 0.0.12
+  resolution: "totp-generator@npm:0.0.12"
+  dependencies:
+    jssha: ^3.1.2
+  checksum: b79886c39bbfef4c60313ac26240a1f11dd3645948f84286ab1d11684163d3628e1b3fb7dd2803c2b3c337535d96eb9167b5b03f807463223ceef75b9cc51e8d
   languageName: node
   linkType: hard
 
