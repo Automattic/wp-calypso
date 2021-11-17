@@ -24,6 +24,7 @@
 		"eslint-plugin-mocha": "^9.0.0"
 	},
 	"dependencies": {
+		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-e2e": "workspace:^",
 		"@automattic/languages": "workspace:^",

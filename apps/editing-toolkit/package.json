@@ -113,7 +113,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@babel/preset-typescript": "^7.16.0",
 		"@testing-library/jest-dom": "^5.15.0",
 		"@testing-library/react": "^12.1.2",
 		"@types/node": "^15.0.2",

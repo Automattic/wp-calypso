@@ -130,8 +130,7 @@
 		"composite-checkout:storybook:start": "start-storybook -c packages/composite-checkout/.storybook"
 	},
 	"dependencies": {
-		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
-		"@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^",
+		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-doctor": "workspace:^",
@@ -145,7 +144,6 @@
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@babel/core": "^7.16.0",
 		"@babel/eslint-parser": "^7.16.3",
-		"@babel/preset-env": "^7.16.0",
 		"@babel/register": "^7.16.0",
 		"@babel/runtime": "^7.16.3",
 		"@signal-noise/stylelint-scales": "^2.0.0",
@@ -193,8 +191,6 @@
 		"autoprefixer": "^10.2.5",
 		"babel-jest": "^27.2.4",
 		"babel-loader": "^8.2.3",
-		"babel-plugin-dynamic-import-node": "^2.3.0",
-		"babel-plugin-transform-react-remove-prop-types": "^0.4.24",
 		"backstopjs": "5.1.0",
 		"browserslist": "^4.16.0",
 		"calypso": "workspace:^",
