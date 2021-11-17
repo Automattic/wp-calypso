@@ -101,6 +101,3 @@ export interface Plan {
 	 */
 	getInferiorFeatures?: () => Feature[];
 }
-
-export type WithSnakeCaseSlug = { product_slug: string };
-export type WithCamelCaseSlug = { productSlug: string };

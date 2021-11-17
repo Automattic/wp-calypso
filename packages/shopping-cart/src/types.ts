@@ -292,7 +292,6 @@ export interface ResponseCartProduct {
 	is_sale_coupon_applied: boolean;
 	meta: string;
 	time_added_to_cart: number;
-	bill_period: string;
 	months_per_bill_period: number | null;
 	volume: number;
 	quantity: number | null;

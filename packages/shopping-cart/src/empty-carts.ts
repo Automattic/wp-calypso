@@ -63,7 +63,6 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		is_domain_registration: false,
 		is_bundled: false,
 		is_sale_coupon_applied: false,
-		bill_period: '365',
 		months_per_bill_period: null,
 		uuid: 'product001',
 		cost: 0,

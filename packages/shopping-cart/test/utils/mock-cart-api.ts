@@ -11,7 +11,6 @@ export const mainCartKey = '1';
 const emptyResponseCart = getEmptyResponseCart();
 
 export const planOne: ResponseCartProduct = {
-	bill_period: '365',
 	time_added_to_cart: Date.now(),
 	current_quantity: 1,
 	product_name: 'WordPress.com Personal',
@@ -48,7 +47,6 @@ export const planOne: ResponseCartProduct = {
 };
 
 export const planTwo: ResponseCartProduct = {
-	bill_period: '365',
 	time_added_to_cart: Date.now(),
 	current_quantity: 1,
 	product_name: 'WordPress.com Business',
