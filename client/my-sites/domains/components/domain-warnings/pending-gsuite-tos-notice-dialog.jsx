@@ -64,14 +64,14 @@ function PendingGSuiteTosNoticeDialog( props ) {
 	const onPasswordClick = ( event ) => {
 		event.preventDefault();
 
-		const wpcom = wp.undocumented();
 		const mailbox = props.user.split( '@' )[ 0 ];
 
-		wpcom.resetPasswordForMailbox( props.domainName, mailbox ).then(
-			( data ) => {
+		wp.req
+			.post( `/domains/${ props.domainName }/google-apps/${ mailbox }/get-new-password` )
+			.then( ( data ) => {
 				setPassword( data.password );
-			},
-			() => {
+			} )
+			.catch( () => {
 				props.errorNotice(
 					translate(
 						'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.',
@@ -88,8 +88,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 
 				setOpenTracked( false );
 				props.onClose();
-			}
-		);
+			} );
 
 		trackEvent(
 			`Clicked "Get Password" link in G Suite pending ToS dialog via ${ props.section }`,
