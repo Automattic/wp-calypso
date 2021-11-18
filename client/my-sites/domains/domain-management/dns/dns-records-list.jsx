@@ -1,11 +1,13 @@
 import { edit, Icon, info, redo, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import { domainConnect } from 'calypso/lib/domains/constants';
 import DnsRecordsListHeader from 'calypso/my-sites/domains/domain-management/dns/dns-records-list-header';
+import { domainManagementDnsEditRecord } from 'calypso/my-sites/domains/paths';
 import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
 import { isDeletingLastMXRecord } from 'calypso/state/domains/dns/utils';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
@@ -70,8 +72,7 @@ class DnsRecordsList extends Component {
 			/>
 		),
 		title: this.props.translate( 'Edit' ),
-		// TODO: Add the correct callback function once the DNS add page is complete
-		callback: () => {},
+		callback: ( record ) => this.editDns( record ),
 	};
 
 	deleteRecordAction = {
@@ -106,6 +107,11 @@ class DnsRecordsList extends Component {
 	handleDialogClose = ( result ) => {
 		this.state.dialog.onClose( result );
 		this.setState( { dialog: this.noDialog() } );
+	};
+
+	editDns = ( record ) => {
+		const { selectedDomainName, selectedSite } = this.props;
+		page( domainManagementDnsEditRecord( selectedSite.slug, selectedDomainName, record.id ) );
 	};
 
 	deleteDns = ( record, action = 'delete', confirmed = false ) => {
@@ -178,6 +184,10 @@ class DnsRecordsList extends Component {
 	}
 
 	getActionsForDnsRecord( record ) {
+		if ( record.protected_field ) {
+			return [];
+		}
+
 		if ( this.isDomainConnectRecord( record ) ) {
 			return [
 				record.enabled ? this.disableRecordAction : this.enableRecordAction,

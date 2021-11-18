@@ -7,6 +7,7 @@ import {
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
+	domainManagementDnsEditRecord,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
@@ -212,6 +213,19 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementDnsAddRecord( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records > Add a record"
+				component={ DomainManagement.AddDnsRecord }
+				context={ pageContext }
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementDnsEditRecord( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementDnsEditRecord( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records > Edit record"
 				component={ DomainManagement.AddDnsRecord }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
