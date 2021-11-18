@@ -15,7 +15,7 @@ export function checkPrerequisites( context, next ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
 
-	// Only allow AT sites to access.
+	// Only allow AT sites to access, unless the woop feature flag is enabled.
 	if ( ! config.isEnabled( 'woop' ) && ! isAtomicSite( state, siteId ) ) {
 		return page.redirect( `/home/${ site.slug }` );
 	}
