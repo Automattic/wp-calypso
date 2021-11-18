@@ -890,6 +890,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/packaged-tour@workspace:^, @automattic/packaged-tour@workspace:packages/packaged-tour":
+  version: 0.0.0-use.local
+  resolution: "@automattic/packaged-tour@workspace:packages/packaged-tour"
+  dependencies:
+    "@automattic/calypso-build": ^10.0.0
+    "@popperjs/core": ^2.10.2
+    classnames: ^2.3.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-popper: ^2.2.5
+    typescript: ^4.4.4
+    use-debounce: ^3.1.0
+  peerDependencies:
+    "@wordpress/element": ^4.0.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/page-pattern-modal@workspace:^, @automattic/page-pattern-modal@workspace:packages/page-pattern-modal":
   version: 0.0.0-use.local
   resolution: "@automattic/page-pattern-modal@workspace:packages/page-pattern-modal"
@@ -1318,6 +1335,7 @@ __metadata:
     "@automattic/launch": "workspace:^"
     "@automattic/newspack-blocks": ^1.37.1
     "@automattic/onboarding": "workspace:^"
+    "@automattic/packaged-tour": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
     "@automattic/typography": "workspace:^"
@@ -30747,19 +30765,6 @@ fsevents@~2.1.2:
   linkType: hard
 
 "react-popper@npm:^2.2.4, react-popper@npm:^2.2.5":
-  version: 2.2.5
-  resolution: "react-popper@npm:2.2.5"
-  dependencies:
-    react-fast-compare: ^3.0.1
-    warning: ^4.0.2
-  peerDependencies:
-    "@popperjs/core": ^2.0.0
-    react: ^16.8.0 || ^17
-  checksum: 199ff9ec23670eece1c5972d48d2c5e9c28938dd610c432979fdab631a38371f8a3a5fbb9dcaeec0cff9ce9fb58b3bc1965c525de14fdb78f5e9b35f0d90f335
-  languageName: node
-  linkType: hard
-
-"react-popper@npm:^2.2.5":
   version: 2.2.5
   resolution: "react-popper@npm:2.2.5"
   dependencies:

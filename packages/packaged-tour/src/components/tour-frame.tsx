@@ -26,7 +26,9 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const lastStepIndex = config.steps.length - 1;
 	const referenceElementSelector = config.steps[ currentStepIndex ].referenceElements?.desktop;
-	const referenceElement = document.querySelector( referenceElementSelector );
+	const referenceElement = referenceElementSelector
+		? document.querySelector( referenceElementSelector )
+		: null;
 
 	const showArrowIndicator = () => {
 		if ( config.options?.effects?.arrowIndicator === false ) {

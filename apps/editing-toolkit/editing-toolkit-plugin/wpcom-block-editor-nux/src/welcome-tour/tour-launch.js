@@ -3,12 +3,14 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
+import PackagedTour from '@automattic/packaged-tour';
+import { Button, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useMemo } from '@wordpress/element';
+import { useEffect, useMemo, useState } from '@wordpress/element';
+import { previous, next, close } from '@wordpress/icons';
 /**
  * Internal Dependencies
  */
-import PackagedTour from './packaged-tour';
 import { WelcomeTourContextProvider, useWelcomeTourContext } from './tour-context';
 import WelcomeTourMinimized from './tour-minimized-renderer';
 import WelcomeTourStep from './tour-step-renderer';
@@ -129,6 +131,57 @@ function WelcomeTour() {
 }
 
 function FooTour() {
+	const [ showTour, setShowTour ] = useState( true );
+
+	const config = {
+		steps: [
+			{
+				referenceElements: {
+					desktop: '.render-step-near-me',
+				},
+				meta: {
+					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+				},
+			},
+			{
+				meta: {
+					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+				},
+			},
+		],
+		closeHandler: () => setShowTour( false ),
+		renderers: {
+			tourStep: ( {
+				steps,
+				currentStepIndex,
+				setInitialFocusedElement,
+				onNext,
+				onPrevious,
+				onDismiss,
+			} ) => {
+				return (
+					<>
+						<Flex justify={ 'right' }>
+							<Button onClick={ onPrevious } icon={ previous } />
+							<Button onClick={ onNext } icon={ next } ref={ setInitialFocusedElement } />
+							<Button onClick={ onDismiss( 'close-btn' ) } icon={ close } />
+						</Flex>
+						<p>{ steps[ currentStepIndex ].meta.description }</p>
+					</>
+				);
+			},
+			tourMinimized: () => null,
+		},
+	};
+
+	if ( ! showTour ) {
+		return null;
+	}
+
+	return <PackagedTour config={ config } />;
+}
+
+function BarTour() {
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	const tourConfig = {

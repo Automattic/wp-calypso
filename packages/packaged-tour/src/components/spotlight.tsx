@@ -5,12 +5,14 @@ import Overlay from './overlay';
 import type { Rect, Placement } from '@popperjs/core';
 
 interface Props {
-	referenceElementSelector: string;
+	referenceElementSelector?: string;
 }
 
 const Spotlight: React.FunctionComponent< Props > = ( { referenceElementSelector } ) => {
 	const popperElementRef = useRef( null );
-	const referenceElement = document.querySelector( referenceElementSelector );
+	const referenceElement = referenceElementSelector
+		? document.querySelector( referenceElementSelector )
+		: null;
 	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
 		referenceElement,
 		popperElementRef?.current,
