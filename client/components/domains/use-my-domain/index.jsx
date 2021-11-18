@@ -133,9 +133,9 @@ function UseMyDomain( props ) {
 		setIsFetchingAvailability( true );
 		let inboundTransferStatusResult = {};
 		try {
-			inboundTransferStatusResult = await wpcom
-				.undocumented()
-				.getInboundTransferStatus( domainName );
+			inboundTransferStatusResult = await wpcom.req.get(
+				`/domains/${ encodeURIComponent( domainName ) }/inbound-transfer-status`
+			);
 		} catch {}
 
 		const inboundTransferStatusInfo = {

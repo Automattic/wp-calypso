@@ -27,7 +27,9 @@ const TransferDomainStepUnlock = ( {
 
 	const getDomainLockStatus = useCallback( async () => {
 		setCheckInProgress( true );
-		const { unlocked } = await wpcom.undocumented().getInboundTransferStatus( domain );
+		const { unlocked } = await wpcom.req.get(
+			`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-status`
+		);
 		setCheckInProgress( false );
 		return unlocked;
 	}, [ domain, setCheckInProgress ] );
