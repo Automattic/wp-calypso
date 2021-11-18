@@ -7,6 +7,12 @@ const selectors = {
 
 	// Inputs
 	urlInput: 'input.capture__input',
+
+	// Headers
+	scanningHeader: 'h1:text("Scanning your site")',
+
+	// Buttons
+	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
 };
 
 /**
@@ -34,12 +40,34 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that we've landed on the URL capture page.
+	 */
+	async validateURLCapturePage(): Promise< void > {
+		await this.page.waitForSelector( selectors.urlInput );
+	}
+
+	/**
+	 * Validates that we've landed on the scanning page.
+	 */
+	async validateScanningPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.scanningHeader );
+	}
+
+	/**
+	 * Validates that we've landed on the import page.
+	 */
+	async validateImportPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.button( 'Import your content' ) );
+	}
+
+	/**
 	 * Enter the URL to import from.
 	 *
 	 * @param {string} url The source URL.
 	 */
 	async enterURL( url: string ): Promise< void > {
 		await this.page.fill( selectors.urlInput, url );
+		await this.page.click( selectors.checkUrlButton );
 	}
 
 	/**
