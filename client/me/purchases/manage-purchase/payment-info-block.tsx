@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
+import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PaymentLogo from 'calypso/components/payment-logo';
 import {
@@ -12,11 +12,18 @@ import {
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
+import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { ReactNode } from 'react';
 
 export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } ): JSX.Element {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const cards: StoredCard[] = useSelector( getAllStoredCards );
+	const isBackupMethodAvailable = cards.some(
+		( card ) => !! card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
+	);
 
 	if ( isIncludedWithPlan( purchase ) ) {
 		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
@@ -32,12 +39,12 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		isRechargeable( purchase )
 	) {
 		const logoType = paymentLogoType( purchase );
+		const willNotBeBilled = !! ( isExpiring( purchase ) && purchase.payment.creditCard );
 		return (
-			<PaymentInfoBlockWrapper
-				willNotBeBilled={ !! ( isExpiring( purchase ) && purchase.payment.creditCard ) }
-			>
+			<PaymentInfoBlockWrapper willNotBeBilled={ willNotBeBilled }>
 				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
 				{ purchase.payment.creditCard?.number ?? '' }
+				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
 			</PaymentInfoBlockWrapper>
 		);
 	}
@@ -48,23 +55,27 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		isRechargeable( purchase )
 	) {
 		const logoType = paymentLogoType( purchase );
+		const willNotBeBilled = isExpiring( purchase );
 		return (
-			<PaymentInfoBlockWrapper willNotBeBilled={ isExpiring( purchase ) }>
-				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+			<PaymentInfoBlockWrapper willNotBeBilled={ willNotBeBilled }>
+				<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
 				{ translate( 'expiring %(cardExpiry)s', {
 					args: {
 						cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
 					},
 				} ) }
+				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
 			</PaymentInfoBlockWrapper>
 		);
 	}
 
 	if ( hasPaymentMethod( purchase ) && isRechargeable( purchase ) ) {
 		const logoType = paymentLogoType( purchase );
+		const willNotBeBilled = isExpiring( purchase );
 		return (
-			<PaymentInfoBlockWrapper willNotBeBilled={ isExpiring( purchase ) }>
-				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+			<PaymentInfoBlockWrapper willNotBeBilled={ willNotBeBilled }>
+				<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
+				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
 			</PaymentInfoBlockWrapper>
 		);
 	}
@@ -76,7 +87,7 @@ function PaymentInfoBlockWrapper( {
 	children,
 	willNotBeBilled,
 }: {
-	children: React.ReactNode;
+	children: ReactNode;
 	willNotBeBilled?: boolean;
 } ) {
 	const translate = useTranslate();
@@ -90,5 +101,19 @@ function PaymentInfoBlockWrapper( {
 			) }
 			<span className="manage-purchase__detail">{ children }</span>
 		</aside>
+	);
+}
+
+function BackupPaymentMethodNotice() {
+	const translate = useTranslate();
+	/* translators: Notice that this purchase may use a backup payment method if it fails to renew */
+	const noticeText = translate( 'May use backup' );
+	return (
+		<a
+			className="manage-purchase__backup-payment-method-notice"
+			href="https://wordpress.com/support/payment/#manage-payment-methods"
+		>
+			{ noticeText }
+		</a>
 	);
 }
