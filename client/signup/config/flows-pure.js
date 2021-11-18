@@ -395,7 +395,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'setup-site',
-			steps: [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ],
+			steps: [ 'intent', 'site-options', 'starting-point', 'courses', 'design-setup-site' ],
 			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',

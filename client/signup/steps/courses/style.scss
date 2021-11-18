@@ -1,0 +1,23 @@
+.courses {
+	.action-buttons {
+		border: 0;
+		box-shadow: 0 -1px 0 #2c3234;
+		background-color: #101517;
+
+		.button.navigation-link.is-borderless {
+			color: #fff !important;
+		}
+
+		.button.navigation-link.is-borderless svg {
+			fill: #fff !important;
+		}
+	}
+
+	.videos-ui {
+		position: fixed;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+}

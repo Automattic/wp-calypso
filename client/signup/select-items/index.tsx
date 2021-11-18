@@ -12,6 +12,7 @@ export interface SelectItem< T > {
 	icon: React.ReactElement;
 	value: T;
 	actionText: TranslateResult;
+	disabled?: boolean;
 }
 
 interface Props< T > {

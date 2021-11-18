@@ -26,7 +26,7 @@ interface Props {
 
 const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
 	write: [],
-	build: [ 'site-options', 'starting-point' ],
+	build: [ 'site-options', 'starting-point', 'courses' ],
 };
 
 const EXTERNAL_FLOW: { [ key: string ]: string } = {
