@@ -1,6 +1,7 @@
 import { Frame, Page } from 'playwright';
 import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../data-helper';
+import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	// Modal
@@ -37,7 +38,8 @@ const selectors = {
 	// Tax information
 	countryCode: `select[aria-labelledby="country-selector-label"]`,
 	postalCode: `input[id="contact-postal-code"]`,
-	submitBillingInformationButton: `button[aria-label="Continue with the entered contact details"]`,
+	submitBillingInformationButton:
+		'[data-testid="contact-form--visible"] button.checkout-button.is-status-primary',
 
 	// Payment field
 	cardholderName: `input[id="cardholder-name"]`,
@@ -59,6 +61,7 @@ const selectors = {
 			? '.wp-checkout__total-price'
 			: '.wp-checkout-order-summary__total-price',
 	purchaseButton: `button.checkout-button:has-text("Pay")`,
+	closeCheckout: 'a[data-tip-target="close"]',
 };
 
 /**
@@ -74,6 +77,25 @@ export class CartCheckoutPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Navigates to checkout page of the specified blog
+	 *
+	 * @param blogName Blog name for which the checkout page is to be loaded.
+	 */
+	async visit( blogName = '' ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `checkout/${ blogName }` ), { waitUntil: 'networkidle' } );
+	}
+
+	/**
+	 * Click on `Close checkout` on top left of the checkout page.
+	 */
+	async clickCloseCheckout(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.closeCheckout ),
+		] );
 	}
 
 	/**
@@ -230,6 +252,15 @@ export class CartCheckoutPage {
 		 ).contentFrame() ) as Frame;
 		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput );
 		await cvvInput.fill( paymentDetails.cvv );
+	}
+
+	/**
+	 * Enter cardholder's name in the payment details form.
+	 *
+	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
+	 */
+	async enterCardholderName( paymentDetails: PaymentDetails ): Promise< void > {
+		await this.page.fill( selectors.cardholderName, paymentDetails.cardHolder );
 	}
 
 	/**
