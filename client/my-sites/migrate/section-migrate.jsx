@@ -102,14 +102,12 @@ class SectionMigrate extends Component {
 		wpcom.req
 			.get( `/sites/${ this.props.sourceSite.ID }/themes`, { apiVersion: '1' } )
 			.then( ( data ) => {
-				if ( data.themes ) {
-					const sourceSiteThemes = [
-						// Put active theme first
-						...data.themes.filter( ( theme ) => theme.active ),
-						...data.themes.filter( ( theme ) => ! theme.active ),
-					];
-					this.setState( { sourceSiteThemes } );
-				}
+				const sourceSiteThemes = [
+					// Put active theme first
+					...data.themes.filter( ( theme ) => theme.active ),
+					...data.themes.filter( ( theme ) => ! theme.active ),
+				];
+				this.setState( { sourceSiteThemes } );
 			} );
 	};
 
