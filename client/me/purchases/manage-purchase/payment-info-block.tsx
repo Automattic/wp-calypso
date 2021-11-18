@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PaymentLogo from 'calypso/components/payment-logo';
 import {
@@ -12,15 +11,19 @@ import {
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
-import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 import type { ReactNode } from 'react';
 
-export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } ): JSX.Element {
+export default function PaymentInfoBlock( {
+	purchase,
+	cards,
+}: {
+	purchase: Purchase;
+	cards: StoredCard[];
+} ): JSX.Element {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const cards: StoredCard[] = useSelector( getAllStoredCards );
 	const isBackupMethodAvailable = cards.some(
 		( card ) => !! card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
 	);
