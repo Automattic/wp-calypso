@@ -59,9 +59,18 @@ class ExportMediaCard extends Component {
 									</h2>
 									<h2 className="export-media-card__warning">
 										{ translate(
-											'Depending on your media library size and/or connection speed you might need to use a download manager.'
+											'Depending on your media library size and/or connection speed you might need to use a download manager. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+											{
+												components: {
+													learnMoreLink: (
+														<InlineSupportLink
+															supportContext="export-media-library"
+															showIcon={ false }
+														/>
+													),
+												},
+											}
 										) }
-										<InlineSupportLink supportContext="export-media-library" showIcon={ false } />
 									</h2>
 								</div>
 							}
