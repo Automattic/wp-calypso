@@ -389,7 +389,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6
     react: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
   languageName: unknown
   linkType: soft
 
@@ -420,7 +420,7 @@ __metadata:
     debug: ^4.1.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -455,7 +455,7 @@ __metadata:
     "@wordpress/element": ^4.0.1
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -539,7 +539,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     react-dom: ^17.0.2
   peerDependencies:
-    react: ">=16.2.0"
+    react: ">=16.14.0"
   languageName: unknown
   linkType: soft
 
@@ -635,7 +635,7 @@ __metadata:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -693,7 +693,7 @@ __metadata:
     "@wordpress/data": ^6.1.0
     "@wordpress/element": ^4.0.1
     "@wordpress/i18n": ^4.2.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -822,7 +822,7 @@ __metadata:
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     webpack: ^5.63.0
@@ -854,7 +854,7 @@ __metadata:
   peerDependencies:
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
   languageName: unknown
   linkType: soft
@@ -883,7 +883,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -917,7 +917,7 @@ __metadata:
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -980,7 +980,7 @@ __metadata:
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     sass-loader: ^10.1.1
@@ -1026,7 +1026,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -1169,7 +1169,7 @@ __metadata:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
   languageName: unknown
@@ -1234,7 +1234,7 @@ __metadata:
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tinymce: ^4.9.6
@@ -1339,7 +1339,7 @@ __metadata:
     puppeteer: ^3.0.4
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     react-popper: ^2.2.5
     reakit-utils: ^0.15.1
     redux: ^4.1.2
@@ -11998,7 +11998,7 @@ __metadata:
     react-intersection-observer: ^8.32.1
     react-live: ^2.3.0
     react-modal: ^3.14.3
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     react-query: ^3.32.1
     react-redux: ^7.2.6
     react-router-dom: ^5.1.2
@@ -30493,9 +30493,9 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-native@npm:^0.66.2":
-  version: 0.66.2
-  resolution: "react-native@npm:0.66.2"
+"react-native@npm:^0.66.3":
+  version: 0.66.3
+  resolution: "react-native@npm:0.66.3"
   dependencies:
     "@jest/create-cache-key-function": ^27.0.1
     "@react-native-community/cli": ^6.0.0
@@ -30532,7 +30532,7 @@ fsevents@~2.1.2:
     react: 17.0.2
   bin:
     react-native: cli.js
-  checksum: dd9e50ed844aa62cb29ffe93a70666456acb401c138e93edde9f02031a2c8d3b3de2ae0640123a45f86199295ab65ffae1bc7b03f53a1744a3fd3eca51f46847
+  checksum: d4b4e0d7956a30a4222478b22a7a77a89290e17e6e80a1c80cc56cda6b7203091219e4f5197fedc01bc68587575853166fc79390a1e6547203b3d2c008169672
   languageName: node
   linkType: hard
 
@@ -38145,7 +38145,7 @@ testarmada-magellan@11.0.10:
     qs: ^6.9.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.10
