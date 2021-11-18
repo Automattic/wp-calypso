@@ -37,6 +37,27 @@
 
 		&:hover {
 			background-color: transparent;
+			color: var( --p2-color-white );
 		}
+
+		&:focus {
+			box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) var( --p2-color-white );
+		}
+	}
+
+	.p2-get-started__log-in {
+		font-size: 0.875rem;
+		text-align: center;
+		margin-top: 2rem;
+
+		a,
+		a:hover {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+
+	.p2-step-wrapper__footer {
+		display: none;
 	}
 }
