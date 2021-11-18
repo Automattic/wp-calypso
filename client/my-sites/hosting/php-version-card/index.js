@@ -41,17 +41,11 @@ const PhpVersionCard = ( {
 	const getPhpVersions = () => {
 		return [
 			{
-				label: translate( '7.2', {
-					comment: 'PHP Version for a version switcher',
-				} ),
-				value: '7.2',
-				disabled: true, // EOL 30th November, 2020
-			},
-			{
 				label: translate( '7.3', {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '7.3',
+				disabled: true, // EOL 6th December, 2021
 			},
 			{
 				label: translate( '7.4 (recommended)', {
