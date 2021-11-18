@@ -109,7 +109,13 @@ export default function Confirm( {
 
 					<NextButton
 						disabled={ isProcessing }
-						onClick={ () => goToStep( 'confirm', 'eligibility_substep' ) }
+						onClick={ () => {
+							if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
+								return goToStep( 'confirm', 'eligibility_substep' );
+							}
+
+							return goToStep( 'transfer' );
+						} }
 					>
 						{ __( 'Sounds good' ) }
 					</NextButton>
