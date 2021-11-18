@@ -405,7 +405,7 @@ class PurchaseItem extends Component {
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
 					{ this.getPaymentMethod() }
-					{ isBackupMethodAvailable && <BackupPaymentMethodNotice /> }
+					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
 		);
