@@ -255,9 +255,7 @@ export class UpsellNudge extends Component {
 					<div className="upsell-nudge__placeholders upsell-nudge__form-placeholder">
 						<div>
 							<div className="upsell-nudge__placeholder-row is-placeholder" />
-							<br />
 							<div className="upsell-nudge__placeholder-row is-placeholder" />
-							<br />
 							<div className="upsell-nudge__placeholder-button-container">
 								<div className="upsell-nudge__placeholder-button is-placeholder" />
 								<div className="upsell-nudge__placeholder-button is-placeholder" />

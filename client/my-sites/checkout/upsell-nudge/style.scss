@@ -14,7 +14,7 @@
 .upsell-nudge__placeholder-row {
 	height: 40px;
 	flex: 0 0 100%;
-	margin-bottom: 15px;
+	margin-bottom: 20px;
 }
 
 .upsell-nudge__placeholder-button {
@@ -44,7 +44,6 @@
 .upsell-nudge__form-placeholder {
 	width: 100%;
 	margin-top: 64px;
-	float: left;
 	margin-right: 0px;
 	@include break-medium {
 		width: 60%;
@@ -65,7 +64,6 @@
 }
 
 .upsell-nudge__feature-placeholder {
-	margin-bottom: 20px;
 	height: 20px;
 }
 
