@@ -48,8 +48,10 @@ export function convertToFriendlyWebsiteName( website: string ): string {
 /**
  * Importer URL helpers
  */
-export function getWpComMigrateUrl( siteSlug: string ): string {
-	return '/migrate/{siteSlug}'.replace( '{siteSlug}', siteSlug );
+export function getWpComMigrateUrl( siteSlug: string, fromSite?: string ): string {
+	return '/migrate/{siteSlug}?from-site={fromSite}'
+		.replace( '{siteSlug}', siteSlug )
+		.replace( '{fromSite}', fromSite || '' );
 }
 
 export function getWpComImporterUrl(
@@ -75,7 +77,7 @@ export function getWpOrgImporterUrl( siteSlug: string, platform: string ): strin
 
 export function getImporterUrl( siteSlug: string, platform: string, fromSite?: string ): string {
 	if ( platform === 'wordpress' ) {
-		return getWpComMigrateUrl( siteSlug );
+		return getWpComMigrateUrl( siteSlug, fromSite );
 	} else if ( orgImporters.includes( platform ) ) {
 		return getWpOrgImporterUrl( siteSlug, platform );
 	}
