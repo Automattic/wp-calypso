@@ -11,6 +11,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -21,12 +22,14 @@ function SubscriptionsContent( {
 	selectedSiteId,
 	selectedSite,
 	purchases,
+	cards,
 }: {
 	isFetchingPurchases: boolean;
 	hasLoadedPurchases: boolean;
 	selectedSiteId: number | null;
 	selectedSite: null | { ID: number; name: string; domain: string; slug: string };
 	purchases: Purchase[];
+	cards: { meta?: { meta_key: string; meta_value: string }[] }[];
 } ) {
 	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
 		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
@@ -58,6 +61,7 @@ function SubscriptionsContent( {
 					name={ selectedSite.name }
 					slug={ selectedSite.slug }
 					purchases={ purchases }
+					cards={ cards }
 				/>
 			</div>
 		);
@@ -82,6 +86,7 @@ export default function SubscriptionsContentWrapper(): JSX.Element {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSite = useSelector( getSelectedSite );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const cards = useSelector( getAllStoredCards );
 
 	return (
 		<SubscriptionsContent
@@ -90,6 +95,7 @@ export default function SubscriptionsContentWrapper(): JSX.Element {
 			selectedSiteId={ selectedSiteId }
 			selectedSite={ selectedSite }
 			purchases={ purchases }
+			cards={ cards }
 		/>
 	);
 }
