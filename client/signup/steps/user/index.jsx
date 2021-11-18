@@ -225,6 +225,10 @@ export class UserStep extends Component {
 					}
 				);
 			}
+
+			if ( this.props.userLoggedIn ) {
+				subHeaderText = '';
+			}
 		}
 
 		this.setState( { subHeaderText } );
@@ -445,6 +449,17 @@ export class UserStep extends Component {
 
 		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			isSocialSignupEnabled = true;
+		}
+
+		if ( this.props.step && 'completed' === this.props.step.status ) {
+			// It looks like the user just completed the User Registartion Step
+			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
+			const url = new URL( window.location );
+			const search_params = url.searchParams;
+			search_params.set( 'user_completed', true );
+			url.search = search_params.toString();
+			// redirect to itself and append ?user_completed
+			window.location.replace( url.toString() );
 		}
 
 		return (

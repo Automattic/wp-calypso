@@ -197,7 +197,13 @@ const Flows = {
 		}
 
 		if ( isUserLoggedIn ) {
-			flow = removeUserStepFromFlow( flow );
+			// Remove the user step unless the user has just completed the step
+			// and then clicked the back button.
+			const urlParams = new URLSearchParams( window.location.search );
+			const param = urlParams.get( 'user_completed' );
+			if ( ! param ) {
+				flow = removeUserStepFromFlow( flow );
+			}
 		}
 
 		if ( flowName === 'p2' && isUserLoggedIn ) {

@@ -22,6 +22,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
+import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
 import FormButton from 'calypso/components/forms/form-button';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -44,6 +45,8 @@ import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -965,6 +968,18 @@ class SignupForm extends Component {
 			);
 		}
 
+		if ( this.props.currentUser ) {
+			return (
+				<ContinueAsUser
+					redirectPath={ this.props.redirectToAfterLoginUrl }
+					onChangeAccount={ () => {
+						// todo: Add track this event!
+						this.props.redirectToLogout( window.location.href );
+					} }
+				/>
+			);
+		}
+
 		if (
 			this.props.isJetpackWooCommerceFlow ||
 			this.props.isJetpackWooDnaFlow ||
@@ -1072,6 +1087,7 @@ function TrackRender( { children, eventName } ) {
 
 export default connect(
 	( state, props ) => ( {
+		currentUser: getCurrentUser( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:
@@ -1084,5 +1100,6 @@ export default connect(
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,
+		redirectToLogout,
 	}
 )( localize( SignupForm ) );

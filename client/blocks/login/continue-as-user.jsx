@@ -31,7 +31,7 @@ async function validateUrl( redirectUrl ) {
 	}
 }
 
-function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } ) {
+function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount, redirectPath } ) {
 	const translate = useTranslate();
 	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
 	const [ isLoading, setIsLoading ] = useState( true );
@@ -52,23 +52,26 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 
 	return (
 		<div className="continue-as-user">
-			<a
-				style={ { pointerEvents: isLoading ? 'none' : 'auto' } }
-				href={ validatedRedirectUrl || '/' }
-				className="continue-as-user__gravatar-link"
-			>
-				<Gravatar
-					user={ currentUser }
-					className="continue-as-user__gravatar"
-					imgSize={ 400 }
-					size={ 110 }
-				/>
-				<div>{ userName }</div>
-			</a>
-			<Button busy={ isLoading } primary href={ validatedRedirectUrl || '/' }>
-				{ translate( 'Continue' ) }
-			</Button>
-			<p>
+			<div className="continue-as-user__user-info">
+				<a
+					style={ { pointerEvents: isLoading ? 'none' : 'auto' } }
+					href={ validatedRedirectUrl || redirectPath || '/' }
+					className="continue-as-user__gravatar-link"
+				>
+					<Gravatar
+						user={ currentUser }
+						className="continue-as-user__gravatar"
+						imgSize={ 400 }
+						size={ 110 }
+					/>
+					<div className="continue-as-user__username">{ userName }</div>
+					<div className="continue-as-user__email">{ currentUser.email }</div>
+				</a>
+				<Button busy={ isLoading } primary href={ validatedRedirectUrl || redirectPath || '/' }>
+					{ translate( 'Continue' ) }
+				</Button>
+			</div>
+			<div className="continue-as-user__not-you">
 				{ translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
 					components: {
 						br: <br />,
@@ -84,7 +87,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 					args: { userName },
 					comment: 'Link to continue login as different user',
 				} ) }
-			</p>
+			</div>
 		</div>
 	);
 }
