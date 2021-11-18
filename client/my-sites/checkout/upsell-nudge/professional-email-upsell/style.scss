@@ -30,6 +30,7 @@
 .professional-email-upsell__pricing {
 	display: flex;
 	flex-direction: column;
+	margin-top: 10px;
 
 	@include break-mobile {
 		flex-direction: row;
