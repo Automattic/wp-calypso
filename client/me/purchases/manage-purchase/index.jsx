@@ -302,6 +302,7 @@ class ManagePurchase extends Component {
 			: translate( 'Upgrade Plan' );
 
 		if (
+			! purchase ||
 			! isPlan( purchase ) ||
 			isEcommerce( purchase ) ||
 			isComplete( purchase ) ||
