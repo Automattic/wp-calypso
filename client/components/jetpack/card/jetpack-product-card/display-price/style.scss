@@ -1,8 +1,8 @@
-.jetpack-product-card.is-disabled .display-price {
-	opacity: 0.4;
-}
-
 .jetpack-product-card .display-price {
+	.is-disabled & {
+		opacity: 0.4;
+	}
+
 	&.is-free {
 		min-height: 130px;
 		margin-block-start: -4px;
