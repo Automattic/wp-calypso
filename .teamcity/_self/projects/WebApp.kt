@@ -843,6 +843,7 @@ object P2E2ETests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
 				export HEADLESS=true
+
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
