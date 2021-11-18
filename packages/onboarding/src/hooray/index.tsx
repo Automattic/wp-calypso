@@ -11,7 +11,7 @@ interface Props {
 
 const Hooray: React.FunctionComponent< Props > = ( {
 	className,
-	animate = true,
+	animate = false,
 	children,
 	...additionalProps
 } ) => {
