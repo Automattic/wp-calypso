@@ -29,12 +29,16 @@ interface Props {
 	goToStep: GoToStep;
 	stepSectionName: string;
 	isReskinned: boolean;
+	headerTitle: string;
+	headerDescription: string;
 }
 
 export default function Confirm( {
 	goToStep,
 	isReskinned,
 	stepSectionName,
+	headerTitle,
+	headerDescription,
 }: Props ): ReactElement | null {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -139,15 +143,6 @@ export default function Confirm( {
 			</>
 		);
 	}
-
-	const headerTitle = __( 'Your new store' );
-	const headerDescription = (
-		<>
-			{ __( 'This will be your new store domain.' ) }
-			<br />
-			{ __( 'You can change it later and get a custom one.' ) }
-		</>
-	);
 
 	return (
 		<StepWrapper

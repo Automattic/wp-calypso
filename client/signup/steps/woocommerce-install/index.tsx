@@ -13,6 +13,8 @@ interface WooCommerceInstallProps {
 	stepName: string;
 	stepSectionName: string;
 	isReskinned: boolean;
+	headerTitle: string;
+	headerDescription: string;
 	queryObject: {
 		siteSlug: string;
 	};
@@ -21,7 +23,14 @@ interface WooCommerceInstallProps {
 export default function WooCommerceInstall( props: WooCommerceInstallProps ): ReactElement | null {
 	const { __ } = useI18n();
 
-	const { stepName, isReskinned, goToStep, stepSectionName } = props;
+	const {
+		stepName,
+		isReskinned,
+		goToStep,
+		stepSectionName,
+		headerTitle,
+		headerDescription,
+	} = props;
 
 	if ( stepName === 'confirm' ) {
 		return (
@@ -29,6 +38,8 @@ export default function WooCommerceInstall( props: WooCommerceInstallProps ): Re
 				goToStep={ goToStep }
 				isReskinned={ isReskinned }
 				stepSectionName={ stepSectionName }
+				headerTitle={ headerTitle }
+				headerDescription={ headerDescription }
 			/>
 		);
 	}
