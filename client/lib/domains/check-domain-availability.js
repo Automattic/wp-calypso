@@ -10,14 +10,20 @@ export function checkDomainAvailability( params, onComplete ) {
 		return;
 	}
 
-	wpcom
-		.undocumented()
-		.isDomainAvailable( domainName, blogId, isCartPreCheck, function ( serverError, result ) {
+	wpcom.req.get(
+		`/domains/${ encodeURIComponent( domainName ) }/is-available`,
+		{
+			blog_id: blogId,
+			apiVersion: '1.3',
+			is_cart_pre_check: isCartPreCheck,
+		},
+		function ( serverError, result ) {
 			if ( serverError ) {
 				onComplete( serverError.error );
 				return;
 			}
 
 			onComplete( null, result );
-		} );
+		}
+	);
 }
