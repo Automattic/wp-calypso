@@ -1,28 +1,42 @@
-.p2-get-started__option {
-	border-bottom: 1px solid #808080;
-	padding: 2em 1em;
-	display: grid;
-	grid-template-columns: auto max-content;
-	grid-template-rows: auto auto;
-	align-items: center;
-
-	&:first-of-type {
-		border-top: 1px solid #808080;
+.is-p2-get-started {
+	&.signup__step {
+		color: var( --p2-color-white );
+		background-color: #000000;
 	}
-}
 
-.p2-get-started__option-title {
-	font-weight: 700;
-	font-size: 1.25rem;
-}
+	.p2-step-wrapper__header-logo {
+		svg path {
+			fill: var( --p2-color-white );
+		}
+	}
 
-button.p2-get-started__button-next {
-	grid-area: 1 / 2 / span 2;
-	margin-bottom: 0;
-	padding: 0;
-	background: none;
+	.p2-get-started__option {
+		border-bottom: 1px solid #808080;
+		padding: 2em 1em;
+		display: grid;
+		grid-template-columns: auto max-content;
+		grid-template-rows: auto auto;
+		align-items: center;
 
-	&:hover {
-		background: none;
+		&:first-of-type {
+			border-top: 1px solid #808080;
+		}
+	}
+
+	.p2-get-started__option-title {
+		font-weight: 700;
+		font-size: 1.25rem;
+	}
+
+	button.p2-get-started__button-next {
+		grid-area: 1 / 2 / span 2;
+		margin-bottom: 0;
+		padding: 0;
+		background-color: transparent;
+		color: var( --p2-color-white );
+
+		&:hover {
+			background-color: transparent;
+		}
 	}
 }

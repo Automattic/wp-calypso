@@ -34,14 +34,16 @@
 		a {
 			@extend %p2-link;
 		}
-
-		.p2-step-wrapper__header-text {
-			margin-bottom: 0.5em;
-		}
 	}
 
-	.p2-step-wrapper__header {
-		margin-bottom: 40px;
+	.p2-step-wrapper__header-text {
+		margin-bottom: 0.5em;
+	}
+
+	.p2-step-wrapper__header-logo {
+		svg path {
+			fill: inherit;
+		}
 	}
 
 	.p2-step-wrapper__header-text {
