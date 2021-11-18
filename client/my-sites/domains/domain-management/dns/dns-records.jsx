@@ -38,8 +38,8 @@ class DnsRecords extends Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
-	renderBreadcrumbs() {
-		const { dns, domains, translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+	renderBreadcrumbs = () => {
+		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 		const pointsToWpcom = selectedDomain?.pointsToWpcom ?? false;
 
@@ -83,7 +83,7 @@ class DnsRecords extends Component {
 				mobileButtons={ buttons }
 			/>
 		);
-	}
+	};
 
 	renderMain() {
 		const { dns, selectedDomainName, selectedSite, translate } = this.props;
@@ -112,7 +112,11 @@ class DnsRecords extends Component {
 		return (
 			<Fragment>
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? <DomainMainPlaceholder goBack={ this.goBack } /> : this.renderMain() }
+				{ showPlaceholder ? (
+					<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+				) : (
+					this.renderMain()
+				) }
 			</Fragment>
 		);
 	}
