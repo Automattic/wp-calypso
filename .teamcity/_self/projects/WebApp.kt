@@ -814,7 +814,7 @@ object QuarantinedE2ETests: BuildType( {
 		schedule {
 			schedulingPolicy = cron {
 				hours = "*/3"
-                dayOfWeek = "2-6"
+				dayOfWeek = "2-6"
 			}
 			branchFilter = "+:trunk"
 			triggerBuild = always()
