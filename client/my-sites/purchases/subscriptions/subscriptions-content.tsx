@@ -13,6 +13,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 import './style.scss';
 
@@ -29,7 +30,7 @@ function SubscriptionsContent( {
 	selectedSiteId: number | null;
 	selectedSite: null | { ID: number; name: string; domain: string; slug: string };
 	purchases: Purchase[];
-	cards: { meta?: { meta_key: string; meta_value: string }[] }[];
+	cards: StoredCard[];
 } ) {
 	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
 		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
