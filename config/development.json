@@ -134,6 +134,7 @@
 		"reader/gutenberg-for-comments": false,
 		"reader/list-management": true,
 		"recommend-plugins": true,
+		"redirect-fallback-browsers": true,
 		"republicize": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
@@ -162,8 +163,7 @@
 		"upsell/concierge-session": true,
 		"woocommerce/extension-referrers": true,
 		"woop": true,
-		"wpcom-user-bootstrap": false,
 		"wordpress-action-search": false,
-		"redirect-fallback-browsers": true
+		"wpcom-user-bootstrap": false
 	}
 }

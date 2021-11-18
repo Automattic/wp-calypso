@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from 'page';
 import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -15,7 +16,7 @@ export function checkPrerequisites( context, next ) {
 	const siteId = site ? site.ID : null;
 
 	// Only allow AT sites to access.
-	if ( ! isAtomicSite( state, siteId ) ) {
+	if ( ! config.isEnabled( 'woop' ) && ! isAtomicSite( state, siteId ) ) {
 		return page.redirect( `/home/${ site.slug }` );
 	}
 
