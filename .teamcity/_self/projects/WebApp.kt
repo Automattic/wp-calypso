@@ -825,7 +825,7 @@ object P2E2ETests : BuildType({
 		prepareEnvironment()
 
 		bashNodeScript {
-			name = "Run e2e tests ($targetDevice)"
+			name = "Execute tests"
 			scriptContent = """
 				shopt -s globstar
 				set -x
@@ -838,7 +838,6 @@ object P2E2ETests : BuildType({
 				export NODE_CONFIG_ENV=test
 				export PLAYWRIGHT_BROWSERS_PATH=0
 				export TEAMCITY_VERSION=2021
-				export TARGET_DEVICE=desktop
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
@@ -848,7 +847,7 @@ object P2E2ETests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				export TARGET_DEVICE=$targetDevice
+				export TARGET_DEVICE=desktop
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
