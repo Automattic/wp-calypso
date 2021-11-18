@@ -266,6 +266,8 @@ describe( 'I18N: Editor', function () {
 				let frame: Frame;
 				let gutenbergEditorPage: GutenbergEditorPage;
 
+				const blockTimeout = 10 * 1000;
+
 				it( 'Insert test block', async function () {
 					gutenbergEditorPage = new GutenbergEditorPage( page );
 					await gutenbergEditorPage.addBlock( block.blockName, block.blockEditorSelector );
@@ -273,10 +275,11 @@ describe( 'I18N: Editor', function () {
 
 				it( 'Render block content translations', async function () {
 					frame = await gutenbergEditorPage.getEditorFrame();
+					// Ensure block contents are translated as expected.
 					await Promise.all(
 						block.blockEditorContent.map( ( content: any ) =>
 							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }`, {
-								timeout: 10 * 1000,
+								timeout: blockTimeout,
 							} )
 						)
 					);
@@ -286,16 +289,23 @@ describe( 'I18N: Editor', function () {
 					await gutenbergEditorPage.openSettings();
 					await frame.click( block.blockEditorSelector );
 
-					await Promise.race( [
-						frame.waitForSelector( `${ block.blockEditorSelector }.is-selected`, {
-							timeout: 10 * 1000,
-						} ),
-						frame.click( '.block-editor-block-parent-selector__button' ),
-					] );
+					// Ensure the block is highlighted.
+					await frame.waitForSelector(
+						`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`,
+						{ timeout: blockTimeout }
+					);
 
+					// If on block insertion, one of the sub-blocks are selected, click on
+					// the first button in the floating toolbar which selects the overall
+					// block.
+					if ( await frame.isVisible( '.block-editor-block-parent-selector__button' ) ) {
+						await frame.click( '.block-editor-block-parent-selector__button' );
+					}
+
+					// Ensure the Settings with the block selected shows the expected title.
 					await frame.waitForSelector(
 						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`,
-						{ timeout: 10 * 1000 }
+						{ timeout: blockTimeout }
 					);
 				} );
 			}
