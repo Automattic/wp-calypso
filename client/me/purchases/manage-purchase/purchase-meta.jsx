@@ -67,7 +67,7 @@ export default function PurchaseMeta( {
 
 	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
 
-	if ( isDataLoading || ! purchaseId ) {
+	if ( isDataLoading || ! purchaseId || ! purchase ) {
 		return <PurchaseMetaPlaceholder />;
 	}
 
