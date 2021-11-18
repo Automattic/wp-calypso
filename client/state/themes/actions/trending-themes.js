@@ -35,7 +35,7 @@ export function getTrendingThemes( filter ) {
 			apiVersion: '1.1',
 		};
 		try {
-			const res = await wpcom.undocumented().themes( null, query );
+			const res = await wpcom.req.get( '/themes', query );
 			dispatch( receiveTrendingThemes( res ) );
 		} catch ( error ) {
 			dispatch( { type: TRENDING_THEMES_FAIL } );

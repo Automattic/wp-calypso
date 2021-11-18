@@ -9,12 +9,28 @@ import { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 
 import 'calypso/state/themes/init';
 
+const performThemeUpload = ( siteId, file, onProgress ) =>
+	new Promise( ( resolve, rejectPromise ) => {
+		const resolver = ( error, data ) => {
+			error ? rejectPromise( error ) : resolve( data );
+		};
+
+		const req = wpcom.req.post(
+			{
+				path: '/sites/' + siteId + '/themes/new',
+				formData: [ [ 'zip[]', file ] ],
+			},
+			resolver
+		);
+
+		req.upload.onprogress = onProgress;
+	} );
+
 /**
  * Triggers a theme upload to the given site.
  *
  * @param {number} siteId -- Site to upload to
  * @param {window.File} file -- the theme zip to upload
- *
  * @returns {Function} the action function
  */
 export function uploadTheme( siteId, file ) {
@@ -23,16 +39,14 @@ export function uploadTheme( siteId, file ) {
 			type: THEME_UPLOAD_START,
 			siteId,
 		} );
-		return wpcom
-			.undocumented()
-			.uploadTheme( siteId, file, ( event ) => {
-				dispatch( {
-					type: THEME_UPLOAD_PROGRESS,
-					siteId,
-					loaded: event.loaded,
-					total: event.total,
-				} );
-			} )
+		return performThemeUpload( siteId, file, ( event ) => {
+			dispatch( {
+				type: THEME_UPLOAD_PROGRESS,
+				siteId,
+				loaded: event.loaded,
+				total: event.total,
+			} );
+		} )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
