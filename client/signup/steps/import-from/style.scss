@@ -1,0 +1,12 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '../import/style';
+
+.import__onboarding-page {
+	.onboarding-progress {
+		margin: auto;
+
+		@include break-small {
+			min-width: 465px;
+		}
+	}
+}
