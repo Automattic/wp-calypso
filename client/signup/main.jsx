@@ -614,7 +614,7 @@ class Signup extends Component {
 		}
 
 		if ( isReskinned ) {
-			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
+			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
 			const destination = this.signupFlowController.getDestination();
 

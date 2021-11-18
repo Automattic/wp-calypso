@@ -67,7 +67,7 @@ export default function PurchaseMeta( {
 
 	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
 
-	if ( isDataLoading || ! purchaseId ) {
+	if ( isDataLoading || ! purchaseId || ! purchase ) {
 		return <PurchaseMetaPlaceholder />;
 	}
 
@@ -415,7 +415,7 @@ function PurchaseMetaExpiration( {
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
-	if ( isDomainTransfer( purchase ) ) {
+	if ( ! purchase || isDomainTransfer( purchase ) ) {
 		return null;
 	}
 
