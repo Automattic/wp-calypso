@@ -56,6 +56,11 @@ class ExportMediaCard extends Component {
 											'Download all the media library files (images, videos, audio and documents) from your site.'
 										) }
 									</h2>
+									<h2 className="export-media-card__warning">
+										{ translate(
+											'Depending on your media library size and/or connection speed you might need to use a download manager.'
+										) }
+									</h2>
 								</div>
 							}
 							summary={ exportMediaButton }
