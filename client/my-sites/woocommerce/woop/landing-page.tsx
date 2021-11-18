@@ -42,19 +42,27 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( {
 		startSetup();
 	}
 
-	const upgradeButtonText = sprintf(
-		/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
-		__( 'Upgrade to %s' ),
-		upgradingPlan.product_name
-	);
-
-	const headlineText = isFeatureActive
-		? __( 'Build exactly the eCommerce website you want.' )
-		: sprintf(
+	const upgradeButtonText = upgradingPlan.product_name
+		? sprintf(
 				/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
-				__( 'Upgrade to the %s plan and set up your WooCommerce store.' ),
+				__( 'Upgrade to %s' ),
 				upgradingPlan.product_name
-		  );
+		  )
+		: __( 'Upgrade' );
+
+	let headlineText;
+
+	if ( isFeatureActive ) {
+		headlineText = __( 'Build exactly the eCommerce website you want.' );
+	} else {
+		headlineText = upgradingPlan.product_name
+			? sprintf(
+					/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
+					__( 'Upgrade to the %s plan and set up your WooCommerce store.' ),
+					upgradingPlan.product_name
+			  )
+			: __( 'Upgrade to set up your WooCommerce store.' );
+	}
 
 	return (
 		<div className="woop__landing-page">
