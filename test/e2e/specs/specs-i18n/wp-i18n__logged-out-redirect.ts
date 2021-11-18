@@ -10,7 +10,7 @@ describe( 'I18N: Homepage Redirect', function () {
 		args.page;
 	} );
 
-	it.each( TestEnvironment.LOCALES() )( 'Locale: %s', async function ( locale ) {
+	it.each( TestEnvironment.LOCALES() )( 'Homepage Redirect (%s)', async function ( locale ) {
 		// Launch a new BrowserContext with the custom locale specified.
 		const browserContext = await BrowserManager.newBrowserContext( { locale: locale } );
 		const testPage = await browserContext.newPage();
