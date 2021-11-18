@@ -89,9 +89,9 @@ export class SiteDomains extends Component {
 	filterDomains( domains, filter ) {
 		return domains.filter( ( domain ) => {
 			if ( 'owned-by-me' === filter ) {
-				return domain.currentUserCanManage;
+				return domain.currentUserIsOwner;
 			} else if ( 'owned-by-others' === filter ) {
-				return ! domain.currentUserCanManage;
+				return ! domain.currentUserIsOwner;
 			}
 			return true;
 		} );
