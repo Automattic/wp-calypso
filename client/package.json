@@ -79,6 +79,7 @@
 		"@wordpress/i18n": "^4.2.3",
 		"@wordpress/icons": "^6.1.0",
 		"@wordpress/is-shallow-equal": "^4.2.0",
+		"@wordpress/keyboard-shortcuts": "^3.0.5",
 		"@wordpress/keycodes": "^3.2.3",
 		"@wordpress/react-i18n": "^3.0.3",
 		"@wordpress/url": "^3.3.0",
