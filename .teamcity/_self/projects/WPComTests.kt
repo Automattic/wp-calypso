@@ -13,6 +13,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailu
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -919,15 +920,6 @@ object P2E2ETests : BuildType({
 
 	features {
 		perfmon {
-		}
-		pullRequests {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
 		}
 		commitStatusPublisher {
 			vcsRootExtId = "${Settings.WpCalypso.id}"
