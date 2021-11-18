@@ -1,5 +1,4 @@
 import { BackButton, NextButton } from '@automattic/onboarding';
-import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect } from 'react';
@@ -76,9 +75,9 @@ export default function Confirm( {
 	// Pick the wpcom subdomain.
 	const wpcomDomain = useSelector( ( state: AppState ) => getSiteDomain( state, siteId ) );
 
-	function getWPComSubdomainWarningContent() {
-		const isProcessing = ! siteId || isFetchingTransferStatus || ! wordPressSubdomainWarning;
+	const isProcessing = ! siteId || isFetchingTransferStatus || ! wordPressSubdomainWarning;
 
+	function getWPComSubdomainWarningContent() {
 		// Get staging sudomain based on the wpcom subdomain.
 		const stagingDomain = wpcomDomain?.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 
@@ -136,13 +135,13 @@ export default function Confirm( {
 		return (
 			<>
 				<div className="confirm__image-container">
+					{ isProcessing && <LoadingEllipsis /> }
 					<img src={ yourNewStoreImage } alt="" />
 					<div>
 						<BackButton onClick={ () => goToStep( 'confirm', 'wpcom_subdomain_substep' ) } />
 					</div>
 				</div>
 				<div className="confirm__instructions-container">
-					{ isFetchingTransferStatus && <Spinner /> }
 					{ !! eligibilityHolds?.length && (
 						<p>
 							<HoldList holds={ eligibilityHolds } context={ 'plugins' } isPlaceholder={ false } />
