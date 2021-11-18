@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import yourNewStoreImage from 'calypso/assets/images/woocommerce-install/your-new-store.png';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	fetchAutomatedTransferStatusOnce,
@@ -79,6 +80,7 @@ export default function Confirm( {
 		return (
 			<>
 				<div className="confirm__image-container">
+					{ isProcessing && <LoadingEllipsis /> }
 					<img src={ yourNewStoreImage } alt="" />
 				</div>
 				<div className="confirm__instructions-container">
@@ -109,6 +111,7 @@ export default function Confirm( {
 	}
 
 	function getContent() {
+		// wpcom subdomain warning.
 		if (
 			wordPressSubdomainWarning &&
 			( stepSectionName === 'wpcom_subdomain_substep' || typeof stepSectionName === 'undefined' )

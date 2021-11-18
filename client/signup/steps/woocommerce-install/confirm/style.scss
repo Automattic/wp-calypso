@@ -17,6 +17,12 @@ body.is-section-signup {
 
 .confirm__image-container {
 	flex: 1;
+	position: relative;
+
+	.wpcom__loading-ellipsis {
+		position: absolute;
+		right: 0;
+	}
 }
 
 .confirm__instructions-container {
