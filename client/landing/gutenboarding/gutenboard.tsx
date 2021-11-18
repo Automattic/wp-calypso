@@ -18,10 +18,7 @@ import useSiteTitle from './hooks/use-site-title';
 import useTrackOnboardingStart from './hooks/use-track-onboarding-start';
 import { name, settings } from './onboarding-block';
 import './style.scss';
-
-// TODO: uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
-// See https://github.com/WordPress/gutenberg/pull/19535
-// import '@wordpress/components/build-style/style.css';
+import '@wordpress/components/build-style/style.css';
 
 registerBlockType( name, settings );
 
