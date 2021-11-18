@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { BackButton, NextButton } from '@automattic/onboarding';
 import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -27,11 +27,15 @@ import './style.scss';
 
 interface Props {
 	goToStep: GoToStep;
-	submitSignupStep: ( step: string, data: unknown ) => void;
+	stepSectionName: string;
 	isReskinned: boolean;
 }
 
-export default function Confirm( { goToStep, isReskinned }: Props ): ReactElement | null {
+export default function Confirm( {
+	goToStep,
+	isReskinned,
+	stepSectionName,
+}: Props ): ReactElement | null {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const dispatch = useDispatch();
@@ -43,7 +47,7 @@ export default function Confirm( { goToStep, isReskinned }: Props ): ReactElemen
 		}
 		dispatch( fetchAutomatedTransferStatusOnce( siteId ) );
 		dispatch( requestEligibility( siteId ) );
-	}, [ siteId, dispatch ] );
+	}, [ siteId, dispatch, goToStep ] );
 
 	// Check whether it's requesting eligibility data.
 	const isFetchingTransferStatus = !! useSelector( ( state ) =>
@@ -89,7 +93,10 @@ export default function Confirm( { goToStep, isReskinned }: Props ): ReactElemen
 						} ) }
 					</p>
 
-					<NextButton disabled={ isProcessing } onClick={ () => goToStep( 'confirm' ) }>
+					<NextButton
+						disabled={ isProcessing }
+						onClick={ () => goToStep( 'confirm', 'eligibility_substep' ) }
+					>
 						{ __( 'Sounds good' ) }
 					</NextButton>
 				</div>
@@ -98,25 +105,22 @@ export default function Confirm( { goToStep, isReskinned }: Props ): ReactElemen
 	}
 
 	function getContent() {
-		if ( wordPressSubdomainWarning ) {
+		if (
+			wordPressSubdomainWarning &&
+			( stepSectionName === 'wpcom_subdomain_substep' || typeof stepSectionName === 'undefined' )
+		) {
 			return getWPComSubdomainWarningContent();
 		}
 
 		return (
 			<>
-				<div className="confirm__heading-wrapper">
-					<div className="confirm__heading">
-						<Title>{ __( 'Add WooCommerce to your site' ) }</Title>
-						<SubTitle></SubTitle>
-
-						<div className="confirm__buttons-group">
-							<div>
-								<BackButton onClick={ () => goToStep( 'confirm' ) } />
-							</div>
-						</div>
+				<div className="confirm__image-container">
+					<img src={ yourNewStoreImage } alt="" />
+					<div>
+						<BackButton onClick={ () => goToStep( 'confirm', 'wpcom_subdomain_substep' ) } />
 					</div>
 				</div>
-				<div className="confirm__content">
+				<div className="confirm__instructions-container">
 					{ isFetchingTransferStatus && <Spinner /> }
 					{ !! eligibilityHolds?.length && (
 						<CompactCard>
