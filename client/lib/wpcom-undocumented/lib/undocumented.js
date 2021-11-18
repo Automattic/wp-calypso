@@ -81,27 +81,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
 };
 
 /**
- * Determine whether a domain name is available for registration
- *
- * @param {string} domain - The domain name to check.
- * @param {number} blogId - Optional blogId to determine if domain is used on another site.
- * @param {boolean} isCartPreCheck - specifies whether this availability check is for a domain about to be added to the cart.
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.isDomainAvailable = function ( domain, blogId, isCartPreCheck, fn ) {
-	return this.wpcom.req.get(
-		`/domains/${ encodeURIComponent( domain ) }/is-available`,
-		{
-			blog_id: blogId,
-			apiVersion: '1.3',
-			is_cart_pre_check: isCartPreCheck,
-		},
-		fn
-	);
-};
-
-/**
  * Get the inbound transfer status for this domain
  *
  * @param {string} domain - The domain name to check.
