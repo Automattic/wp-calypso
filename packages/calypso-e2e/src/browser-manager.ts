@@ -9,7 +9,8 @@ import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 export let browser: Browser;
 
 export interface LaunchOptions {
-	logger: Logger;
+	logger?: Logger;
+	locale?: string;
 }
 
 /**
@@ -35,6 +36,10 @@ export async function newBrowserContext(
 	// Add logging details.
 	if ( launchOptions?.logger ) {
 		config.logger = launchOptions.logger;
+	}
+
+	if ( launchOptions?.locale ) {
+		config.locale = launchOptions.locale;
 	}
 
 	// Launch a new BrowserContext with launch configuration.
