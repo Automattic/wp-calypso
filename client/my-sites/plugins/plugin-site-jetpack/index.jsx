@@ -1,8 +1,9 @@
-import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
@@ -85,9 +86,11 @@ class PluginSiteJetpack extends Component {
 						<PluginRemoveButton plugin={ this.props.pluginOnSite } site={ this.props.site } />
 					) }
 					{ settingsLink && (
-						<Button compact href={ settingsLink }>
-							{ this.props.translate( `Settings` ) }
-						</Button>
+						<EllipsisMenu position={ 'bottom' }>
+							<PopoverMenuItem href={ settingsLink }>
+								{ this.props.translate( 'Settings' ) }
+							</PopoverMenuItem>
+						</EllipsisMenu>
 					) }
 					{ showAutoManagedMessage && (
 						<div className="plugin-site-jetpack__automanage-notice">
