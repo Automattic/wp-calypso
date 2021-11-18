@@ -165,7 +165,7 @@ export default function DesignPickerStep( props ) {
 			<DesignPicker
 				designs={ designs }
 				theme={ props.isReskinned ? 'light' : 'dark' }
-				locale={ translate.locale }
+				locale={ translate.localeSlug }
 				onSelect={ pickDesign }
 				onPreview={ previewDesign }
 				className={ classnames( {
@@ -191,7 +191,7 @@ export default function DesignPickerStep( props ) {
 			hideExternalPreview,
 		} = props;
 
-		const previewUrl = getDesignUrl( selectedDesign, translate.locale, {
+		const previewUrl = getDesignUrl( selectedDesign, translate.localeSlug, {
 			iframe: true,
 			// If the user fills out the site title with write intent, we show it on the design preview
 			// Otherwise, use the title of selected design directly
@@ -237,7 +237,7 @@ export default function DesignPickerStep( props ) {
 
 		const text = translate( 'Choose a starting theme. You can change it later.' );
 
-		if ( englishLocales.includes( translate.locale ) ) {
+		if ( englishLocales.includes( translate.localeSlug ) ) {
 			// An English only trick so the line wraps between sentences.
 			return text
 				.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
