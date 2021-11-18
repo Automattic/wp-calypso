@@ -867,6 +867,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
+    "@automattic/launch": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.2
     "@wordpress/base-styles": ^4.0.4
