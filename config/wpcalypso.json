@@ -47,6 +47,7 @@
 		"google-my-business": true,
 		"gutenboarding/alpha-templates": false,
 		"gutenboarding/import": true,
+		"gutenboarding/import-from-wix": true,
 		"happychat": true,
 		"help": true,
 		"home/layout-dev": true,
