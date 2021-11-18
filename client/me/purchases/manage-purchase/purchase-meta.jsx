@@ -415,7 +415,7 @@ function PurchaseMetaExpiration( {
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
-	if ( isDomainTransfer( purchase ) ) {
+	if ( ! purchase || isDomainTransfer( purchase ) ) {
 		return null;
 	}
 
