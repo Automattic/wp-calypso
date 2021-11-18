@@ -72,6 +72,7 @@ export function getAllowedPluginData( plugin ) {
 		'banners',
 		'compatibility',
 		'description',
+		'active_installs',
 		'short_description',
 		'detailsFetched',
 		'downloaded',
