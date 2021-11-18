@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
 import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import * as redux from 'react-redux';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getSite,
@@ -48,10 +47,7 @@ import {
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
-	useSelectedSiteSelector,
 } from '../selectors';
-
-const useSelector = jest.spyOn( redux, 'useSelector' );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const configMock = () => '';
@@ -3659,25 +3655,6 @@ describe( 'selectors', () => {
 					createState( { created_at: '2020-01-01', jetpack: true, atomic: true } )
 				)
 			).toBe( true );
-		} );
-	} );
-
-	describe( 'useSelectedSiteSelector()', () => {
-		test( 'returns selector with selected site added on call', () => {
-			const state = {
-				sites: {
-					items: {
-						2916288: {
-							jetpack: true,
-						},
-					},
-				},
-				ui: {
-					selectedSiteId: 2916288,
-				},
-			};
-			useSelector.mockImplementation( ( selector ) => selector( state ) );
-			expect( useSelectedSiteSelector( isJetpackSite ) ).toEqual( true );
 		} );
 	} );
 } );
