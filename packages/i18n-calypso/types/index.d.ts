@@ -98,7 +98,7 @@ declare namespace i18nCalypso {
 
 	export function localize< C >( component: C ): LocalizedComponent< C >;
 
-	export function useTranslate(): typeof translate & { locale: string | undefined };
+	export function useTranslate(): typeof translate & { localeSlug: string | undefined };
 
 	export function reRenderTranslations(): void;
 
