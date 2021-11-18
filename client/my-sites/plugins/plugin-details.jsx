@@ -16,7 +16,7 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import formatNumberCompact from 'calypso/lib/format-number-compact';
+import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { userCan } from 'calypso/lib/site/utils';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -321,7 +321,7 @@ function PluginDetails( props ) {
 									{ translate( 'Active installations' ) }
 								</div>
 								<div className="plugin-details__active-installs-value value">
-									{ formatNumberCompact( fullPlugin.active_installs, 'en' ) }
+									{ formatNumberMetric( fullPlugin.active_installs, 'en' ) }
 								</div>
 							</div>
 							<div className="plugin-details__tested">
