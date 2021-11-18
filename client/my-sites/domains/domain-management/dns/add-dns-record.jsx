@@ -10,7 +10,6 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import {
 	domainManagementDns,
 	domainManagementEdit,
@@ -25,16 +24,24 @@ import DnsAddNew from './dns-add-new';
 
 import './add-dns-record.scss';
 
-class AddDnsRecprd extends Component {
+class AddDnsRecord extends Component {
 	static propTypes = {
 		dns: PropTypes.object.isRequired,
-		showPlaceholder: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
-	renderBreadcrumbs = () => {
+	getRecordBeingEdited() {
+		const { dns } = this.props;
+		const searchParams = new URLSearchParams( window.location.search );
+		const recordId = searchParams.get( 'recordId' );
+
+		return recordId ? dns.records?.find( ( record ) => recordId === record.id ) : null;
+	}
+
+	renderBreadcrumbs() {
 		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+		const recordBeingEdited = this.getRecordBeingEdited();
 
 		const items = [
 			{
@@ -50,7 +57,9 @@ class AddDnsRecprd extends Component {
 				href: domainManagementDns( selectedSite.slug, selectedDomainName ),
 			},
 			{
-				label: translate( 'Add a record', { comment: 'DNS record' } ),
+				label: recordBeingEdited
+					? translate( 'Edit record', { comment: 'DNS record' } )
+					: translate( 'Add a record', { comment: 'DNS record' } ),
 			},
 		];
 
@@ -73,7 +82,7 @@ class AddDnsRecprd extends Component {
 	};
 
 	renderMain() {
-		const { dns, selectedDomainName, translate } = this.props;
+		const { dns, selectedDomainName, selectedSite, translate } = this.props;
 		const dnsSupportPageLink = (
 			<ExternalLink
 				href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
@@ -97,24 +106,26 @@ class AddDnsRecprd extends Component {
 				},
 			}
 		);
+		const recordBeingEdited = this.getRecordBeingEdited();
+		const headerText = recordBeingEdited
+			? translate( 'Edit DNS record' )
+			: translate( 'Add a new DNS record' );
 
 		return (
 			<Main wideLayout className="add-dns-record">
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<div className="add-dns-record__fullwidth">
 					{ this.renderBreadcrumbs() }
-					<FormattedHeader
-						brandFont
-						headerText={ translate( 'Add a new DNS record' ) }
-						align="left"
-					/>
+					<FormattedHeader brandFont headerText={ headerText } align="left" />
 					<p className="add-dns-record__mobile-subtitle">{ mobileSubtitleText }</p>
 				</div>
 				<div className="add-dns-record__main">
 					<DnsAddNew
 						isSubmittingForm={ dns.isSubmittingForm }
 						selectedDomainName={ selectedDomainName }
+						selectedSiteSlug={ selectedSite.slug }
 						goBack={ this.goBack }
+						recordToEdit={ recordBeingEdited }
 					/>
 				</div>
 				<div className="add-dns-record__sidebar">
@@ -132,16 +143,12 @@ class AddDnsRecprd extends Component {
 	}
 
 	render() {
-		const { showPlaceholder, selectedDomainName } = this.props;
+		const { selectedDomainName } = this.props;
 
 		return (
 			<Fragment>
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? (
-					<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
-				) : (
-					this.renderMain()
-				) }
+				{ this.renderMain() }
 			</Fragment>
 		);
 	}
@@ -151,14 +158,12 @@ export default connect(
 	( state, { selectedDomainName } ) => {
 		const selectedSite = getSelectedSite( state );
 		const dns = getDomainDns( state, selectedDomainName );
-		const showPlaceholder = false; // ! dns.hasLoadedFromServer;
 
 		return {
 			selectedSite,
 			dns,
-			showPlaceholder,
 			currentRoute: getCurrentRoute( state ),
 		};
 	},
 	{ successNotice, errorNotice, fetchDns }
-)( localize( AddDnsRecprd ) );
+)( localize( AddDnsRecord ) );

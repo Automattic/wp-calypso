@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { includes, find, flatMap } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -9,9 +11,11 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import formState from 'calypso/lib/form-state';
-import { addDns } from 'calypso/state/domains/dns/actions';
+import { domainManagementDns } from 'calypso/my-sites/domains/paths';
+import { addDns, updateDns } from 'calypso/state/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ARecord from './a-record';
 import CnameRecord from './cname-record';
 import MxRecord from './mx-record';
@@ -22,7 +26,9 @@ class DnsAddNew extends React.Component {
 	static propTypes = {
 		isSubmittingForm: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		goBack: PropTypes.func,
+		recordToEdit: PropTypes.object,
 	};
 
 	constructor( props ) {
@@ -119,16 +125,54 @@ class DnsAddNew extends React.Component {
 			},
 		} );
 
-		this.setFormState( this.formStateController.getInitialState() );
+		if ( this.props.recordToEdit ) {
+			this.loadRecord();
+		} else {
+			this.setFormState( this.formStateController.getInitialState() );
+		}
+	}
+
+	loadRecord() {
+		const { recordToEdit } = this.props;
+
+		const selectedDnsRecordFields = this.getFieldsForType( recordToEdit.type );
+		const recordAttributes = Object.keys( selectedDnsRecordFields ).reduce( ( obj, field ) => {
+			obj[ field ] = this.getProcessedRecordValue( field );
+			return obj;
+		}, {} );
+
+		this.setState( { type: recordToEdit.type } );
+		this.formStateController.resetFields( recordAttributes );
+	}
+
+	getProcessedRecordValue( field ) {
+		const { recordToEdit } = this.props;
+
+		const isRootDomainRecord = recordToEdit.name === `${ recordToEdit.domain }.`;
+		if ( isRootDomainRecord && 'name' === field ) {
+			return '';
+		}
+
+		if ( [ 'data', 'target' ].includes( field ) && 'TXT' !== recordToEdit.type ) {
+			return recordToEdit[ field ].replace( /\.$/, '' );
+		}
+
+		return recordToEdit[ field ];
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.recordToEdit !== this.props.recordToEdit && this.props.recordToEdit ) {
+			this.loadRecord();
+		}
 	}
 
 	setFormState = ( fields ) => {
 		this.setState( { fields } );
 	};
 
-	onAddDnsRecord = ( event ) => {
+	onAddOrUpdateDnsRecord = ( event ) => {
 		event.preventDefault();
-		const { translate } = this.props;
+		const { recordToEdit, selectedDomainName, translate } = this.props;
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
@@ -137,21 +181,37 @@ class DnsAddNew extends React.Component {
 
 			const normalizedData = getNormalizedData(
 				formState.getAllFieldValues( this.state.fields ),
-				this.props.selectedDomainName
+				selectedDomainName
 			);
-			this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
+			if ( ! config.isEnabled( 'domains/dns-records-redesign' ) ) {
+				this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
+			}
 
-			this.props.addDns( this.props.selectedDomainName, normalizedData ).then(
-				() =>
-					this.props.successNotice( translate( 'The DNS record has been added.' ), {
-						duration: 5000,
-					} ),
-				( error ) =>
-					this.props.errorNotice(
-						error.message || translate( 'The DNS record has not been added.' )
-					)
+			if ( recordToEdit ) {
+				this.props.updateDns( selectedDomainName, [ normalizedData ], [ recordToEdit ] ).then(
+					() => this.handleSuccess( translate( 'The DNS record has been updated.' ) ),
+					( error ) =>
+						this.handleError( error, translate( 'The DNS record has not been updated.' ) )
+				);
+				return;
+			}
+
+			this.props.addDns( selectedDomainName, normalizedData ).then(
+				() => this.handleSuccess( translate( 'The DNS record has been added.' ) ),
+				( error ) => this.handleError( error, translate( 'The DNS record has not been added.' ) )
 			);
 		} );
+	};
+
+	handleSuccess = ( message ) => {
+		const { selectedSite, selectedDomainName } = this.props;
+
+		page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
+		this.props.successNotice( message, { duration: 5000 } );
+	};
+
+	handleError = ( error, message ) => {
+		this.props.errorNotice( error.message || message );
 	};
 
 	onChange = ( event ) => {
@@ -180,34 +240,32 @@ class DnsAddNew extends React.Component {
 		return ! formState.isFieldInvalid( this.state.fields, fieldName );
 	};
 
-	recordFields() {
-		return this.dnsRecords.map( ( dnsRecord ) => {
-			const { component: Component, types: showTypes } = dnsRecord;
-
-			return (
-				<Component
-					key={ showTypes.join( ',' ) }
-					selectedDomainName={ this.props.selectedDomainName }
-					show={ includes( showTypes, this.state.fields.type.value ) }
-					fieldValues={ formState.getAllFieldValues( this.state.fields ) }
-					isValid={ this.isValid }
-					onChange={ this.onChange }
-				/>
-			);
-		} );
+	renderFields( selectedRecordType ) {
+		return (
+			<selectedRecordType.component
+				selectedDomainName={ this.props.selectedDomainName }
+				show={ true }
+				fieldValues={ formState.getAllFieldValues( this.state.fields ) }
+				isValid={ this.isValid }
+				onChange={ this.onChange }
+			/>
+		);
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { recordToEdit, translate } = this.props;
 		const dnsRecordTypes = flatMap( this.dnsRecords, ( dnsRecord ) => dnsRecord.types );
 		const options = dnsRecordTypes.map( ( type ) => <option key={ type }>{ type }</option> );
 		const isSubmitDisabled =
 			formState.isSubmitButtonDisabled( this.state.fields ) ||
 			this.props.isSubmittingForm ||
 			formState.hasErrors( this.state.fields );
-		const selectedType = this.dnsRecords.find( ( record ) =>
+		const selectedRecordType = this.dnsRecords.find( ( record ) =>
 			record.types.includes( this.state.type )
 		);
+		const buttonLabel = recordToEdit
+			? translate( 'Update DNS record' )
+			: translate( 'Add new DNS record' );
 
 		return (
 			<form className="dns__form">
@@ -220,24 +278,34 @@ class DnsAddNew extends React.Component {
 					>
 						{ options }
 					</FormSelect>
-					<FormSettingExplanation>{ selectedType.description }</FormSettingExplanation>
+					<FormSettingExplanation>{ selectedRecordType.description }</FormSettingExplanation>
 				</FormFieldset>
-				{ this.recordFields() }
+				{ selectedRecordType && this.renderFields( selectedRecordType ) }
 				<div className="dns__form-buttons">
-					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
-						{ translate( 'Add new DNS record' ) }
+					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddOrUpdateDnsRecord }>
+						{ buttonLabel }
 					</FormButton>
-					<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
-						{ translate( 'Cancel' ) }
-					</FormButton>
+
+					{ config.isEnabled( 'domains/dns-records-redesign' ) && (
+						<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
+							{ translate( 'Cancel' ) }
+						</FormButton>
+					) }
 				</div>
 			</form>
 		);
 	}
 }
 
-export default connect( null, {
-	addDns,
-	errorNotice,
-	successNotice,
-} )( localize( DnsAddNew ) );
+export default connect(
+	( state ) => {
+		const selectedSite = getSelectedSite( state );
+		return { selectedSite };
+	},
+	{
+		addDns,
+		updateDns,
+		errorNotice,
+		successNotice,
+	}
+)( localize( DnsAddNew ) );
