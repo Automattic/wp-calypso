@@ -15,6 +15,7 @@
 		margin-bottom: 8px;
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 		color: $gray-60;
+		border-radius: 4px; /* stylelint-disable-line scales/radii */
 
 		.form-label__optional {
 			font-size: inherit;
