@@ -1,9 +1,8 @@
-import { useResizeObserver } from '@wordpress/compose';
 import { Icon, arrowRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
-import { Children, useState, useEffect, useRef } from 'react';
+import { Children, useState, useEffect, useRef, useCallback } from 'react';
 
 import './style.scss';
 
@@ -86,18 +85,27 @@ export const DotPager = ( {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ pagesStyle, setPagesStyle ] = useState();
 	const pagesRef = useRef();
-	const [ resizeObserver, sizes ] = useResizeObserver();
 	const numPages = Children.count( children );
-
-	useEffect( () => {
+	const updateLayout = useCallback( () => {
 		if ( ! hasDynamicHeight ) {
 			return;
 		}
 
-		const targetHeight = pagesRef.current?.children[ currentPage ]?.offsetHeight;
-
+		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
 		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
-	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle, children ] );
+	}, [ hasDynamicHeight, setPagesStyle ] );
+
+	useEffect( () => {
+		updateLayout();
+	}, [ currentPage, updateLayout ] );
+
+	useEffect( () => {
+		window.addEventListener( 'resize', updateLayout );
+
+		return () => {
+			window.removeEventListener( 'resize', updateLayout );
+		};
+	}, [ updateLayout ] );
 
 	useEffect( () => {
 		if ( currentPage >= numPages ) {
@@ -107,7 +115,6 @@ export const DotPager = ( {
 
 	return (
 		<div className={ className } { ...props }>
-			{ resizeObserver }
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
