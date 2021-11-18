@@ -80,14 +80,10 @@ class CancelPurchase extends Component {
 
 		const { purchase } = props;
 
-		if ( ! purchase ) {
-			return false;
-		}
-
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
 
-		return isCancelable( purchase ) && isDomainTransferCancelable;
+		return purchase && isCancelable( purchase ) && isDomainTransferCancelable;
 	};
 
 	redirect = ( props ) => {

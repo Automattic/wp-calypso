@@ -1,6 +1,6 @@
 import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from './constants';
 
-export function getIntervalTypeForTerm( term: string ): string | null {
+export function getIntervalTypeForTerm( term ) {
 	switch ( term ) {
 		case TERM_MONTHLY:
 			return 'monthly';

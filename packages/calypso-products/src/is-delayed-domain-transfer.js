@@ -1,8 +1,5 @@
 import { isDomainTransfer } from './is-domain-transfer';
 
-export function isDelayedDomainTransfer( product: {
-	productSlug: string;
-	delayedProvisioning: boolean;
-} ): boolean {
+export function isDelayedDomainTransfer( product ) {
 	return isDomainTransfer( product ) && product.delayedProvisioning;
 }

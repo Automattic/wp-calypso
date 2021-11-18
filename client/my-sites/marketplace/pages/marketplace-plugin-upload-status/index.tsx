@@ -68,10 +68,9 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	const supportsAtomicUpgrade = useRef< boolean >();
 	useEffect( () => {
 		supportsAtomicUpgrade.current =
-			selectedSite?.plan &&
-			( isBusiness( selectedSite.plan ) ||
-				isEnterprise( selectedSite.plan ) ||
-				isEcommerce( selectedSite.plan ) );
+			isBusiness( selectedSite?.plan ) ||
+			isEnterprise( selectedSite?.plan ) ||
+			isEcommerce( selectedSite?.plan );
 	}, [ selectedSite ] );
 
 	// retrieve plugin data if not available

@@ -80,7 +80,7 @@ function renderWithRedux( ui ) {
 
 const props = {
 	site: {
-		plan: { product_slug: PLAN_FREE },
+		plan: PLAN_FREE,
 	},
 	selectedSite: {},
 	translate: ( x ) => x,
@@ -103,11 +103,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 		[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( plan ) => {
 			test( `Business 1 year for (${ plan })`, () => {
 				const comp = shallow(
-					<SiteSettingsFormGeneral
-						{ ...props }
-						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan } } }
-					/>
+					<SiteSettingsFormGeneral { ...props } siteIsJetpack={ false } site={ { plan } } />
 				);
 				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
 				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
@@ -117,11 +113,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 		[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( ( plan ) => {
 			test( `Business 2 year for (${ plan })`, () => {
 				const comp = shallow(
-					<SiteSettingsFormGeneral
-						{ ...props }
-						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan } } }
-					/>
+					<SiteSettingsFormGeneral { ...props } siteIsJetpack={ false } site={ { plan } } />
 				);
 				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
 				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
@@ -141,7 +133,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			testProps = {
 				...props,
 				siteIsJetpack: false,
-				site: { plan: { product_slug: PLAN_PERSONAL } },
+				site: { plan: PLAN_PERSONAL },
 				fields: {
 					blog_public: 1,
 					wpcom_coming_soon: 0,

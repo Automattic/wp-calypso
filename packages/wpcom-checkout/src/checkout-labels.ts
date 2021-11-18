@@ -1,6 +1,6 @@
 import {
 	isPlan,
-	isDomainTransfer,
+	isDomainTransferProduct,
 	isDomainProduct,
 	isDotComPlan,
 	isGSuiteOrGoogleWorkspace,
@@ -46,7 +46,10 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 		return String( translate( 'Productivity and Collaboration Tools' ) );
 	}
 
-	if ( meta && ( isDomainProduct( serverCartItem ) || isDomainTransfer( serverCartItem ) ) ) {
+	if (
+		meta &&
+		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
+	) {
 		if ( ! isRenewalItem ) {
 			return productName || '';
 		}
@@ -70,7 +73,7 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 export function getLabel( serverCartItem: ResponseCartProduct ): string {
 	if (
 		serverCartItem.meta &&
-		( isDomainProduct( serverCartItem ) || isDomainTransfer( serverCartItem ) )
+		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
 	) {
 		return serverCartItem.meta;
 	}
