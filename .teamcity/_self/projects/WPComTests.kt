@@ -702,9 +702,9 @@ private object I18NTests : BuildType({
 	description = "Runs tests related to i18n"
 
 	artifactRules = """
-		reports => reports
 		logs.tgz => logs.tgz
 		screenshots => screenshots
+		trace => trace
 	""".trimIndent()
 
 	vcs {
