@@ -4,7 +4,7 @@ import { translate } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 
 import './style.scss';
 

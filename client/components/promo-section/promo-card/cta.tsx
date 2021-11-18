@@ -3,7 +3,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import ActionPanelCta from 'calypso/components/action-panel/cta';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { URL } from 'calypso/types';

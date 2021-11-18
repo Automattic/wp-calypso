@@ -6,7 +6,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import ExternalLink from 'calypso/components/external-link';
-import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
+import { isDefaultLocale } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import {
 	bumpStat,
 	composeAnalytics,

@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

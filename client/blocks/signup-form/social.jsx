@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 

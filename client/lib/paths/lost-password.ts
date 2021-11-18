@@ -1,4 +1,4 @@
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 
 type LostPasswordOptions = {
 	locale?: string;

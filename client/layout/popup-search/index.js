@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import './style.scss';
 
 export default function PopUpSearch( { onClose } ) {

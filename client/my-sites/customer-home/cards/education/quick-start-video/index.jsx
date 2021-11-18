@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import quickStartVideoImage from 'calypso/assets/images/customer-home/quick-start-video-ss.png';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { FEATURE_QUICK_START_VIDEO } from 'calypso/my-sites/customer-home/cards/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 

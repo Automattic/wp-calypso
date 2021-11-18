@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
 import './style.scss';

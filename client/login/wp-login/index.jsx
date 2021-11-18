@@ -12,7 +12,7 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
 import TranslatorInvite from 'calypso/components/translator-invite';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { isCrowdsignalOAuth2Client } from 'calypso/lib/oauth2-clients';
 import {
 	recordPageViewWithClientId as recordPageView,

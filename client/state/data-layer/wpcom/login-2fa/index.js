@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { get } from 'lodash';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';

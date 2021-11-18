@@ -18,7 +18,7 @@ import SelectDropdown from 'calypso/components/select-dropdown';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { resemblesUrl } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import HelpResults from 'calypso/me/help/help-results';

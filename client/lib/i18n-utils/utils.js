@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
-import { localizeUrl as _localizeUrl } from '@automattic/i18n-utils';
-import i18n, { getLocaleSlug } from 'i18n-calypso';
+import i18n from 'i18n-calypso';
 
 /**
  * Checks if provided locale is a default one.
@@ -33,14 +32,9 @@ export function canBeTranslated( locale ) {
  *
  * @returns {boolean} true when a user would see text they can read.
  */
-export function translationExists() {
-	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
-	return isDefaultLocale( localeSlug ) || i18n.hasTranslation( ...arguments );
-}
-
-export function localizeUrl( fullUrl, locale ) {
-	const localeSlug = locale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en' );
-	return _localizeUrl( fullUrl, localeSlug );
+export function translationExists( ...args ) {
+	const localeSlug = i18n.getLocaleSlug();
+	return isDefaultLocale( localeSlug ) || i18n.hasTranslation( ...args );
 }
 
 /**

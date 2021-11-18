@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import freePhotoLibraryVideoPrompt from 'calypso/assets/images/customer-home/illustration--secondary-free-photo-library.svg';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { EDUCATION_FREE_PHOTO_LIBRARY } from 'calypso/my-sites/customer-home/cards/constants';
 import EducationalContent from '../educational-content';
 

@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import HelpResults from 'calypso/me/help/help-results';
 import NoResults from 'calypso/my-sites/no-results';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

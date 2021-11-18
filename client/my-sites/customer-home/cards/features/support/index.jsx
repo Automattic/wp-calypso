@@ -5,7 +5,7 @@ import happinessIllustration from 'calypso/assets/images/customer-home/happiness
 import CardHeading from 'calypso/components/card-heading';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { getSiteOption } from 'calypso/state/sites/selectors';

@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 
 const trackForumOpen = () =>
 	recordTracksEvent( 'calypso_inlinehelp_forums_open', {

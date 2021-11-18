@@ -3,7 +3,7 @@
 import { CompactCard, Gridicon } from '@automattic/components';
 import { PureComponent } from 'react';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 
 export default class extends PureComponent {
 	static displayName = 'HelpResult';

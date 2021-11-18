@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import gutenbergIllustration from 'calypso/assets/images/customer-home/illustration--secondary-gutenberg.svg';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { EDUCATION_GUTENBERG } from 'calypso/my-sites/customer-home/cards/constants';
 import EducationalContent from '../educational-content';
 

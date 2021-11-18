@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import ExternalLink from 'calypso/components/external-link';
 import MaterialIcon from 'calypso/components/material-icon';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import {
 	composeAnalytics,
 	recordTracksEvent,

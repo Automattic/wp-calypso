@@ -3,7 +3,7 @@ import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import GooglePlusDeprication from './google-plus-deprecation';
 import ServiceExample from './service-example';
