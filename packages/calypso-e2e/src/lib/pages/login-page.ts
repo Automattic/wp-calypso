@@ -34,6 +34,14 @@ export class LoginPage {
 	}
 
 	/**
+	 * Navigates to the /log-in/{locale} endpoint.
+	 */
+	async visitLocale( locale = '' ): Promise< void > {
+		const targetUrl = locale ? `log-in/${ locale }` : 'log-in';
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
+	}
+
+	/**
 	 * Submits provided verification code.
 	 */
 	async submitVerificationCode( code: string ): Promise< void > {

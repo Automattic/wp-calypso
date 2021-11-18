@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
 import envVariables from '../../env-variables';
+import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	// Fields
@@ -33,6 +34,15 @@ export class UserSignupPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Navigates to the /log-in endpoint.
+	 */
+	async visitLocale( locale = '' ): Promise< void > {
+		const targetUrl = locale ? `start/${ locale }` : 'start';
+		console.log( targetUrl );
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
 	}
 
 	/**
