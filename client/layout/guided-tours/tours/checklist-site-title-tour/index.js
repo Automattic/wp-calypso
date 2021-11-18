@@ -17,8 +17,8 @@ export const ChecklistSiteTitleTour = makeTour(
 	<Tour { ...meta }>
 		<Step
 			name="init"
-			target="site-title-input"
-			placement="beside"
+			target="site-tagline-input"
+			placement="below"
 			style={ {
 				animationDelay: '0.7s',
 			} }
