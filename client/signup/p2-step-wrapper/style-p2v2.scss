@@ -3,7 +3,7 @@
 @import '@wordpress/base-styles/mixins';
 @import 'calypso/assets/stylesheets/_p2-extends.scss';
 
-.is-p2v1 {
+.is-p2v2 {
 	.p2-step-wrapper {
 		box-sizing: border-box;
 		margin: 0 auto;
@@ -16,7 +16,7 @@
 
 		@include break-mobile {
 			padding: 48px 20px 0;
-			max-width: 440px;
+			max-width: 600px;
 		}
 
 		@include break-medium {
@@ -45,11 +45,16 @@
 	}
 
 	.p2-step-wrapper__header-text {
-		font-size: var( --p2-font-size-form-s );
+		font-size: var( --p2-font-size-form-xxl );
+		font-weight: 900; /* stylelint-disable-line */
+		text-align: center;
+		line-height: 1.3;
 	}
 
 	.p2-step-wrapper__header-logo {
-		margin-bottom: 40px;
+		position: absolute;
+		top: 24px;
+		left: 24px;
 	}
 
 	.p2-step-wrapper__footer {
@@ -91,12 +96,14 @@
 			margin-bottom: 3em;
 		}
 
+		/* TODO check if redundant and can remove */
 		.p2-step-wrapper__header-logo {
 			position: absolute;
 			top: 24px;
 			left: 24px;
 		}
 
+		/* TODO check if redundant and can remove */
 		.p2-step-wrapper__header-text {
 			font-size: var( --p2-font-size-form-xxl );
 			font-weight: 900; /* stylelint-disable-line */

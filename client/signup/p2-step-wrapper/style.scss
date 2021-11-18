@@ -15,7 +15,7 @@
 
 	@include break-mobile {
 		padding: 48px 20px 0;
-		max-width: 600px;
+		max-width: 440px;
 	}
 
 	@include break-medium {
@@ -50,16 +50,11 @@
 }
 
 .p2-step-wrapper__header-text {
-	font-size: var( --p2-font-size-form-xxl );
-	font-weight: 900; /* stylelint-disable-line */
-	text-align: center;
-	line-height: 1.3;
+	font-size: var( --p2-font-size-form-s );
 }
 
 .p2-step-wrapper__header-logo {
-	position: absolute;
-	top: 24px;
-	left: 24px;
+	margin-bottom: 40px;
 }
 
 .p2-step-wrapper__footer {
@@ -101,14 +96,12 @@
 		margin-bottom: 3em;
 	}
 
-	/* TODO check if redundant and can remove */
 	.p2-step-wrapper__header-logo {
 		position: absolute;
 		top: 24px;
 		left: 24px;
 	}
 
-	/* TODO check if redundant and can remove */
 	.p2-step-wrapper__header-text {
 		font-size: var( --p2-font-size-form-xxl );
 		font-weight: 900; /* stylelint-disable-line */
