@@ -48,7 +48,7 @@
 		"react-native": "^0.66.2",
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2",
-		"tinymce": "^4.9.6"
+		"tinymce": "^5.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
