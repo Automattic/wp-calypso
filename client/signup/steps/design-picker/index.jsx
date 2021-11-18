@@ -313,7 +313,7 @@ export default function DesignPickerStep( props ) {
 	);
 }
 
-DesignPicker.propTypes = {
+DesignPickerStep.propTypes = {
 	goToNextStep: PropTypes.func.isRequired,
 	signupDependencies: PropTypes.object.isRequired,
 	stepName: PropTypes.string.isRequired,
