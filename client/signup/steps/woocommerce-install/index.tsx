@@ -10,6 +10,7 @@ import './style.scss';
 
 interface WooCommerceInstallProps {
 	goToStep: GoToStep;
+	submitSignupStep: ( step: string, data: unknown ) => void;
 	stepName: string;
 	stepSectionName: string;
 	isReskinned: boolean;
@@ -21,7 +22,17 @@ interface WooCommerceInstallProps {
 export default function WooCommerceInstall( props: WooCommerceInstallProps ): ReactElement | null {
 	const { __ } = useI18n();
 
-	const { isReskinned } = props;
+	const { stepName, isReskinned, goToStep, submitSignupStep } = props;
+
+	if ( stepName === 'confirm' ) {
+		return (
+			<Confirm
+				goToStep={ goToStep }
+				isReskinned={ isReskinned }
+				submitSignupStep={ submitSignupStep }
+			/>
+		);
+	}
 
 	return (
 		<StepWrapper
@@ -34,9 +45,8 @@ export default function WooCommerceInstall( props: WooCommerceInstallProps ): Re
 			className="woocommerce-install__step-wrapper"
 			stepContent={
 				<div className="woocommerce-install__step-content">
-					{ props.stepName === 'confirm' && <Confirm goToStep={ props.goToStep } /> }
-					{ props.stepName === 'transfer' && <Transfer goToStep={ props.goToStep } /> }
-					{ props.stepName === 'install' && <Install goToStep={ props.goToStep } /> }
+					{ stepName === 'transfer' && <Transfer goToStep={ goToStep } /> }
+					{ stepName === 'install' && <Install goToStep={ goToStep } /> }
 				</div>
 			}
 			isWideLayout={ isReskinned }
