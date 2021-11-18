@@ -1,4 +1,3 @@
-import { CompactCard } from '@automattic/components';
 import { BackButton, NextButton } from '@automattic/onboarding';
 import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -60,13 +59,19 @@ export default function Confirm( {
 	);
 
 	// Get eligibility data.
-	const { eligibilityHolds, eligibilityWarnings }: EligibilityData = useSelector( ( state ) =>
-		getEligibility( state, siteId )
-	);
+	const {
+		eligibilityHolds,
+		eligibilityWarnings: allEligibilityWarnings,
+	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
 
 	// Check whether the wpcom.com subdomain warning is present.
-	const wordPressSubdomainWarning =
-		eligibilityWarnings && eligibilityWarnings.find( ( { id } ) => id === 'wordpress_subdomain' );
+	const wordPressSubdomainWarning = allEligibilityWarnings?.find(
+		( { id } ) => id === 'wordpress_subdomain'
+	);
+
+	const eligibilityWarnings = allEligibilityWarnings?.filter(
+		( { id } ) => id !== 'wordpress_subdomain'
+	);
 
 	// Pick the wpcom subdomain.
 	const wpcomDomain = useSelector( ( state: AppState ) => getSiteDomain( state, siteId ) );
@@ -84,8 +89,11 @@ export default function Confirm( {
 					<img src={ yourNewStoreImage } alt="" />
 				</div>
 				<div className="confirm__instructions-container">
-					<div className="confirm__instructions-wpcom-domain">{ wpcomDomain }</div>
-					<div className="confirm__instructions-staging-domain">{ stagingDomain }</div>
+					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
+						{ wpcomDomain }
+					</div>
+
+					<div className="confirm__instructions-title">{ stagingDomain }</div>
 
 					<p>
 						{ __(
@@ -130,18 +138,17 @@ export default function Confirm( {
 				<div className="confirm__instructions-container">
 					{ isFetchingTransferStatus && <Spinner /> }
 					{ !! eligibilityHolds?.length && (
-						<CompactCard>
+						<p>
 							<HoldList holds={ eligibilityHolds } context={ 'plugins' } isPlaceholder={ false } />
-						</CompactCard>
+						</p>
 					) }
 					{ !! eligibilityWarnings?.length && (
-						<CompactCard>
+						<p>
 							<WarningList warnings={ eligibilityWarnings } context={ 'plugins' } />
-						</CompactCard>
+						</p>
 					) }
-					<div>
-						<NextButton onClick={ () => goToStep( 'transfer' ) }>{ __( 'Confirm' ) }</NextButton>
-					</div>
+
+					<NextButton onClick={ () => goToStep( 'transfer' ) }>{ __( 'Confirm' ) }</NextButton>
 				</div>
 			</>
 		);
