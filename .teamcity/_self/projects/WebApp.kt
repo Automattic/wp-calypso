@@ -189,7 +189,7 @@ object RunAllUnitTests : BuildType({
 
 					# Remove quotes which had to be added in the jq expression:
 					err_string=${'$'}(sed 's/^"//g;s/"${'$'}//g' <<< "${'$'}err_string")
-					
+
 					# Escape values as needed for TeamCity: https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+values
 					# Specifically, add | before every [, ], |, and '.
 					err_string=${'$'}(sed "s/\([][|']\)/|\1/g" <<< "${'$'}err_string")
@@ -813,7 +813,8 @@ object QuarantinedE2ETests: BuildType( {
 	triggers {
 		schedule {
 			schedulingPolicy = cron {
-				minutes = "15"
+				hours = "*/3"
+				dayOfWeek = "2-6"
 			}
 			branchFilter = "+:trunk"
 			triggerBuild = always()
