@@ -53,8 +53,8 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	): string => {
 		let stepUrl = getStepUrl( flowName, stepName, stepSectionName );
 
-		if ( Object.keys( dependency ).length ) {
-			stepUrl += '?' + stringify( dependency );
+		if ( typeof dependency?.siteSlug !== 'undefined' ) {
+			stepUrl += '?' + stringify( { siteSlug: dependency.siteSlug } );
 		}
 
 		return stepUrl;
