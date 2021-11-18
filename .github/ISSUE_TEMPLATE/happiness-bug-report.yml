@@ -85,13 +85,9 @@ body:
 
         <br>
 
-        ### Additional context
+        # Additional context
 
-        Please provide whatever additional information you have available to you. If not, please scroll to the bottom and submit the issue.
-
-        <br>
-
-        ---
+        Please provide whatever additional context/information you have available to you in this section.
 
         <br>
   - type: dropdown
@@ -112,7 +108,7 @@ body:
     attributes:
       label: Theme-specific issue?
       placeholder: |
-        If yes, what is the theme name?
+        If so, add the affected theme name(s) here.
   - type: markdown
     attributes:
       value: |
@@ -120,9 +116,9 @@ body:
   - type: textarea
     id: other_notes
     attributes:
-      label: Other notes
+      label: Browser, operating system and other notes
       placeholder: |
-        e.g. Logs, CLI or console errors, notes, observations, etc.
+        Note the affected browser(s), operating system(s), console errors, notes, observations, Logs, CLI, etc, here.
   - type: markdown
     attributes:
       value: |
