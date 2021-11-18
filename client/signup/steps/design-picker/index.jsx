@@ -47,10 +47,12 @@ export default function DesignPickerStep( props ) {
 		getRecommendedThemes( state, 'auto-loading-homepage' )
 	);
 
+	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
+
 	useEffect(
 		() => {
 			dispatch( saveSignupStep( { stepName: props.stepName } ) );
-			if ( ! apiThemes.length ) {
+			if ( ! themesToBeTransformed.length ) {
 				dispatch( fetchRecommendedThemes( 'auto-loading-homepage' ) );
 			}
 		},
@@ -77,8 +79,6 @@ export default function DesignPickerStep( props ) {
 	}, [ props.stepSectionName ] );
 
 	const userLoggedIn = useSelector( isUserLoggedIn );
-
-	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
 	const designs = useMemo( () => {
 		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
