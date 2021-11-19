@@ -2,6 +2,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -12,7 +13,12 @@ import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const TransferPage = () => {
-	return <Main>The page goes here</Main>;
+	return (
+		<Main wideLayout>
+			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+			The page goes heres
+		</Main>
+	);
 };
 
 const transferPageComponent = connect( ( state, ownProps ) => {
