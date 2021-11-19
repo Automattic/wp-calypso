@@ -466,15 +466,12 @@ class PurchaseItem extends Component {
 function BackupPaymentMethodNotice() {
 	const translate = useTranslate();
 	/* translators: Notice that this purchase may use a backup payment method if it fails to renew */
-	const noticeText = translate( 'May use backup' );
-	return (
-		<a
-			className="purchase-item__backup-payment-method-notice"
-			href="https://wordpress.com/support/payment/#manage-payment-methods"
-		>
-			{ noticeText }
-		</a>
-	);
+	const noticeText = translate( 'or a {{link}}backup payment method{{/link}}', {
+		components: {
+			link: <a href="https://wordpress.com/support/payment/#manage-payment-methods" />,
+		},
+	} );
+	return <span className="purchase-item__backup-payment-method-notice">{ noticeText }</span>;
 }
 
 PurchaseItem.propTypes = {
