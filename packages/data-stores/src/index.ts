@@ -30,3 +30,18 @@ export {
  * Helper types
  */
 export * from './mapped-types';
+export * from './auth/types';
+export * from './domain-suggestions/types';
+export * from './i18n/types';
+export * from './launch/types';
+export * from './mapped-types';
+export * from './plans/types';
+export * from './shared-types';
+export * from './site/types';
+export * from './user/types';
+export * from './verticals/types';
+export * from './verticals-templates/types';
+// Cannot export types from wpcom-features because there's a duplicate
+// 'Feature' which is already exported by plans/types. One or the other should
+// probably be renamed.
+// export * from './wpcom-features/types';
