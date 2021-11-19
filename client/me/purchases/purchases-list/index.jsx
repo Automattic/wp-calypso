@@ -140,12 +140,10 @@ PurchasesList.propTypes = {
 	sites: PropTypes.array,
 };
 
-export default connect(
-	( state ) => ( {
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		isFetchingUserPurchases: isFetchingUserPurchases( state ),
-		purchases: getUserPurchases( state ),
-		subscriptions: getAllSubscriptions( state ),
-		sites: getSites( state ),
-	} )
-)( localize( PurchasesList ) );
+export default connect( ( state ) => ( {
+	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+	isFetchingUserPurchases: isFetchingUserPurchases( state ),
+	purchases: getUserPurchases( state ),
+	subscriptions: getAllSubscriptions( state ),
+	sites: getSites( state ),
+} ) )( localize( PurchasesList ) );
