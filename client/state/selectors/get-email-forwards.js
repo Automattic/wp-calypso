@@ -12,6 +12,28 @@ export function getEmailForwards( state, domainName ) {
 }
 
 /**
+ * Determines whether we are in the process of adding a new email forward to the specified domain.
+ *
+ * @param  {object} state    Global state tree
+ * @param  {string} domainName domainName to request email adding forwards state
+ * @returns {boolean}          adding forwards
+ */
+export function isAddingEmailForward( state, domainName ) {
+	return state?.emailForwarding?.[ domainName ]?.addingForward ?? false;
+}
+
+/**
+ * Determines whether adding a new email forward was success or not.
+ *
+ * @param  {object} state    Global state tree
+ * @param  {string} domainName domainName to request email adding forwards state
+ * @returns {boolean}          adding forwards
+ */
+export function addEmailForwardSuccess( state, domainName ) {
+	return state?.emailForwarding?.[ domainName ]?.addEmailForwardSuccess ?? false;
+}
+
+/**
  * Retrieve a list domains that have forwards
  *
  * @param  {object} state   Global state tree

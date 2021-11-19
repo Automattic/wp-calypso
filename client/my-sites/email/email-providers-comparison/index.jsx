@@ -53,21 +53,26 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
+import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
-import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import {
+	getDomainsWithForwards,
+	isAddingEmailForward,
+} from 'calypso/state/selectors/get-email-forwards';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import EmailProviderCard from './email-provider-card';
 
@@ -98,6 +103,7 @@ class EmailProvidersComparison extends Component {
 		gSuiteProduct: PropTypes.object,
 		hasCartDomain: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
+		isSubmittingEmailForward: PropTypes.bool,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
 		titanMailProduct: PropTypes.object,
@@ -117,6 +123,7 @@ class EmailProvidersComparison extends Component {
 			titanMailboxes: [ buildNewTitanMailbox( props.selectedDomainName, false ) ],
 			expanded: this.getDefaultExpandedState( props.source ),
 			addingToCart: false,
+			emailForwardAdded: false,
 			validatedTitanMailboxUuids: [],
 		};
 	}
@@ -160,17 +167,6 @@ class EmailProvidersComparison extends Component {
 		}
 
 		this.setState( { expanded: Object.fromEntries( expandedEntries ) } );
-	};
-
-	goToEmailForwarding = () => {
-		const { currentRoute, selectedDomainName, selectedSite, source } = this.props;
-
-		recordTracksEvent( 'calypso_email_providers_add_click', {
-			provider: 'email-forwarding',
-			source,
-		} );
-
-		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
 
 	isUpgrading = () => {
@@ -262,6 +258,16 @@ class EmailProvidersComparison extends Component {
 		}
 	};
 
+	onForwardingConfirmNewMailboxes = () => {
+		const { comparisonContext, source } = this.props;
+
+		recordTracksEvent( 'calypso_email_providers_add_click', {
+			context: comparisonContext,
+			provider: 'email-forwarding',
+			source,
+		} );
+	};
+
 	onGoogleConfirmNewUsers = () => {
 		const { comparisonContext, domain, gSuiteProduct, hasCartDomain, source } = this.props;
 		const { googleUsers } = this.state;
@@ -309,12 +315,29 @@ class EmailProvidersComparison extends Component {
 			} );
 	};
 
+	onAddEmailForwardSuccess = () => {
+		this.setState( { emailForwardAdded: true } );
+		const { domain, getSiteDomains, requestingSiteDomains, selectedSite } = this.props;
+		if ( ! requestingSiteDomains ) {
+			getSiteDomains( selectedSite.ID );
+		}
+		page( emailManagement( selectedSite.slug, domain.name ) );
+	};
+
 	renderEmailForwardingCard() {
-		const { domain, translate } = this.props;
+		const { domain, selectedDomainName, translate } = this.props;
 
 		if ( this.isUpgrading() ) {
 			return null;
 		}
+
+		const formFields = (
+			<EmailForwardingAddNewCompactList
+				selectedDomainName={ selectedDomainName }
+				onConfirmEmailForwarding={ this.onForwardingConfirmNewMailboxes }
+				onAddEmailForwardSuccess={ this.onAddEmailForwardSuccess }
+			/>
+		);
 
 		return (
 			<EmailProviderCard
@@ -325,11 +348,10 @@ class EmailProvidersComparison extends Component {
 					'Use your custom domain in your email address and forward all your mail to another address.'
 				) }
 				detailsExpanded={ this.state.expanded.forwarding }
+				formFields={ formFields }
 				onExpandedChange={ this.onExpandedStateChange }
-				buttonLabel={ translate( 'Add email forwarding' ) }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ translate( 'Add email forwarding' ) }
-				onButtonClick={ this.goToEmailForwarding }
 				features={ getEmailForwardingFeatures() }
 			/>
 		);
@@ -730,10 +752,18 @@ class EmailProvidersComparison extends Component {
 			domainsWithForwards,
 			hideEmailForwardingCard,
 			isGSuiteSupported,
+			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
 			source,
 		} = this.props;
+
+		// Ensure we hide the warning when any of the conditions are true:
+		// - We're not showing the email forward card
+		// - We're currently submitting/creating an email forward
+		// - We have added an email forward from this component
+		const shouldShowEmailForwardWarning =
+			! hideEmailForwardingCard && ! isSubmittingEmailForward && ! this.state.emailForwardAdded;
 
 		return (
 			<Main wideLayout>
@@ -747,10 +777,12 @@ class EmailProvidersComparison extends Component {
 
 				{ this.renderDomainEligibilityNotice() }
 
-				<EmailExistingForwardsNotice
-					domainsWithForwards={ domainsWithForwards }
-					selectedDomainName={ selectedDomainName }
-				/>
+				{ shouldShowEmailForwardWarning && (
+					<EmailExistingForwardsNotice
+						domainsWithForwards={ domainsWithForwards }
+						selectedDomainName={ selectedDomainName }
+					/>
+				) }
 
 				{ this.renderTitanCard() }
 
@@ -797,8 +829,10 @@ export default connect(
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasCartDomain,
+			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
+			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
@@ -806,6 +840,7 @@ export default connect(
 	( dispatch ) => {
 		return {
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+			getSiteDomains: ( siteId ) => dispatch( fetchSiteDomains( siteId ) ),
 		};
 	}
 )( withCartKey( withShoppingCart( localize( EmailProvidersComparison ) ) ) );
