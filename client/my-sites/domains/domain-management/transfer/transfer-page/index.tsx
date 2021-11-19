@@ -3,11 +3,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import {
-	domainManagementEdit,
-	domainManagementList,
-	domainManagementDns,
-} from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -37,7 +33,7 @@ const TransferPage = (): JSX.Element => {
 				args: { domain: selectedDomainName },
 				comment: 'Link to return to the settings management page of a domain ',
 			} ),
-			href: domainManagementDns( selectedSite.slug, selectedDomainName ),
+			href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
