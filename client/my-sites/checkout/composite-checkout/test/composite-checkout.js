@@ -18,6 +18,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import CompositeCheckout from '../composite-checkout';
@@ -40,6 +41,7 @@ import {
 /* eslint-disable jest/no-conditional-expect */
 
 jest.mock( 'calypso/state/sites/selectors' );
+jest.mock( 'calypso/state/sites/domains/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
@@ -58,6 +60,8 @@ describe( 'CompositeCheckout', () => {
 		getPlansBySiteId.mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
+		hasLoadedSiteDomains.mockImplementation( () => true );
+		getDomainsBySiteId.mockImplementation( () => [] );
 
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
