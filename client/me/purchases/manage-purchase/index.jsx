@@ -743,10 +743,14 @@ class ManagePurchase extends Component {
 						/>
 					) }
 					{ isProductOwner && (
-						<>
+						<div className="manage-purchase__renew-upgrade-buttons">
 							{ preventRenewal && this.renderSelectNewButton() }
-							{ ! preventRenewal && this.renderRenewButton() }
-						</>
+							{ ! preventRenewal && (
+								<>
+									{ this.renderRenewButton() }
+								</>
+							) }
+						</div>
 					) }
 				</Card>
 				<PurchasePlanDetails

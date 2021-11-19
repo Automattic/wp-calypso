@@ -301,16 +301,23 @@
 	}
 }
 
-.manage-purchase__renew-button {
-	@include breakpoint-deprecated( '<660px' ) {
-		margin-top: 16px;
-		width: 100%;
-	}
+.manage-purchase__renew-upgrade-buttons {
+	display: none;
 
 	@include breakpoint-deprecated( '>660px' ) {
+		display: initial;
 		position: absolute;
 		right: 24px;
 		top: 16px;
+
+		> a,
+		> button {
+			margin-inline-end: 8px;
+
+			&:last-child {
+				margin-inline-end: initial;
+			}
+		}
 	}
 }
 
@@ -383,4 +390,3 @@
 		margin-top: 0;
 	}
 }
-
