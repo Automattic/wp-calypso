@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import inherits from 'inherits';
 import WPCOM from 'wpcom';
@@ -103,77 +102,6 @@ UndocumentedMe.prototype.sendVerificationEmail = function ( callback ) {
 	debug( '/me/send-verification-email' );
 
 	return this.wpcom.req.post( { path: '/me/send-verification-email' }, callback );
-};
-
-/**
- * Connect the current account with a social service (e.g. Google/Facebook).
- *
- * @param {object} config Object containing the config.
- * @param {string} config.service Social service associated with token, e.g. google.
- * @param {string} config.access_token OAuth2 Token returned from service.
- * @param {string} config.id_token (Optional) OpenID Connect Token returned from service.
- * @param {string} config.user_name (Optional) The user name associated with this connection, in case it's not part of id_token.
- * @param {string} config.user_email (Optional) The user name associated with this connection, in case it's not part of id_token.
- * @param {string} config.redirect_to - The URL to redirect to after connecting.
- * @param {Function} fn - The callback for the request.
- * @returns {Promise} A promise for the request
- */
-UndocumentedMe.prototype.socialConnect = function (
-	{ service, access_token, id_token, user_name, user_email, redirect_to },
-	fn
-) {
-	const body = {
-		service,
-		access_token,
-		id_token,
-		user_name,
-		user_email,
-		redirect_to,
-
-		// This API call is restricted to these OAuth keys
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	};
-
-	const args = {
-		path: '/me/social-login/connect',
-		body: body,
-	};
-
-	/*
-	 * Before attempting the social connect, we reload the proxy.
-	 * This ensures that the proxy iframe has set the correct API cookie,
-	 * particularly after the user has logged in, but Calypso hasn't
-	 * been reloaded yet.
-	 */
-	require( 'wpcom-proxy-request' ).reloadProxy();
-
-	this.wpcom.req.post( { metaAPI: { accessAllUsersBlogs: true } } );
-
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Disconnect the current account with a social service (e.g. Google/Facebook).
- *
- * @param {string} service - Social service associated with token, e.g. google.
- * @param {Function} fn - callback
- * @returns {Promise} A promise for the request
- */
-UndocumentedMe.prototype.socialDisconnect = function ( service, fn ) {
-	const body = {
-		service,
-		// This API call is restricted to these OAuth keys
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	};
-
-	const args = {
-		path: '/me/social-login/disconnect',
-		body: body,
-	};
-
-	return this.wpcom.req.post( args, fn );
 };
 
 export default UndocumentedMe;
