@@ -990,7 +990,8 @@ const getPlanJetpackCompleteDetails = () => ( {
 // DO NOT import. Use `getPlan` instead.
 /**
  * @typedef {import( "./types").Plan} Plan
- * @type	{Object.<string, Plan>}
+ * @typedef {import( "./types").JetpackPlan} JetpackPlan
+ * @type	{Object.<string, Plan|JetpackPlan>}
  */
 export const PLANS_LIST = {
 	[ PLAN_FREE ]: {
