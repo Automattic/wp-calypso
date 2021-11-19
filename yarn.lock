@@ -210,8 +210,8 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@jest/globals": ^27.2.4
     "@types/config": ^0.0.40
-    "@types/jest": ^27.0.2
-    "@types/node": ^16.11.7
+    "@types/jest": ^27.0.3
+    "@types/node": ^16.11.9
     "@types/node-fetch": ^2.5.12
     "@types/totp-generator": ^0.0.2
     "@wordpress/i18n": ^4.2.2
@@ -6349,13 +6349,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:^27.0.2":
-  version: 27.0.2
-  resolution: "@types/jest@npm:27.0.2"
+"@types/jest@npm:*, @types/jest@npm:^27.0.2, @types/jest@npm:^27.0.3":
+  version: 27.0.3
+  resolution: "@types/jest@npm:27.0.3"
   dependencies:
     jest-diff: ^27.0.0
     pretty-format: ^27.0.0
-  checksum: 5fa123f05bf003fd5fea92878168ea720fbc6dab5ae9648fa883d0b2d427a1dd70a288c1a10e431df83ab4ff8b03e08e2aa4e77b0238c506d044567c994ad72b
+  checksum: 14a28483206cf57a6f2880ec8f4be7e37795cfa57c01e725edf52c551506705d970e3dce1787a9f5cf31e9f4a68eecb33cd684dbfcad69be525b2b603dd0bfe7
   languageName: node
   linkType: hard
 
@@ -6468,10 +6468,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.7":
-  version: 16.11.7
-  resolution: "@types/node@npm:16.11.7"
-  checksum: 9988649cb988b8caa4b1883e994929502c787eda383b8c8c51a1394c4ea6cd5ec36f4dc40972ad5043e124329ba4c5172ebb962e9cc67240d059bbee7c97c0bc
+"@types/node@npm:*, @types/node@npm:^16.11.9":
+  version: 16.11.9
+  resolution: "@types/node@npm:16.11.9"
+  checksum: 704c4ef42a005a22ac5b06554a28a3956a089545891ec949d87e4760de2c8f6d325d5883d449b312e0f54f13495655c1acd6c1bd6deeb677fc6b583ca6423d8a
   languageName: node
   linkType: hard
 
@@ -11934,7 +11934,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.15.0
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": 7.0.2
-    "@types/jest": ^27.0.2
+    "@types/jest": ^27.0.3
     "@wordpress/a11y": ^3.2.3
     "@wordpress/api-fetch": ^5.2.5
     "@wordpress/base-styles": ^4.0.3
@@ -38152,7 +38152,7 @@ testarmada-magellan@11.0.10:
     "@types/enzyme": ^3.10.10
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/lodash": ^4.14.177
-    "@types/node": ^16.11.7
+    "@types/node": ^16.11.9
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^17.0.35
