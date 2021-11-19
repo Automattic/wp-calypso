@@ -83,7 +83,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
 			<RewindFlowNotice
 				gridicon="notice"
-				title={ translate( 'This will override and remove all content after this point' ) }
+				title={ translate( 'Restoring will override and remove all content after this point.' ) }
 				type={ RewindFlowNoticeLevel.WARNING }
 			/>
 			<Button
