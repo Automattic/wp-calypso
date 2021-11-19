@@ -257,7 +257,7 @@ object RunAllUnitTests : BuildType({
 
 				# These have known errors, so we report them as checkstyle
 				(
-					# Enable pipe errors in thsi subshell. After all, we know these will fail.
+					# Enable pipe errors in this subshell. After all, we know these will fail.
 					set +e
 					yarn tsc --build client || true | tee tsc_out
 					cat tsc_out | yarn run typescript-checkstyle > checkstyle.xml
