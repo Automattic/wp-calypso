@@ -9,6 +9,7 @@ import DnsRecordsList from './dns/dns-records-list';
 import DomainConnectMapping from './domain-connect-mapping';
 import Edit from './edit';
 import EditContactInfo from './edit-contact-info';
+import EditContactInfoUpdated from './edit-contact-info-updated';
 import SiteRedirect from './edit/site-redirect';
 import TransferIn from './edit/transfer-in';
 import List from './list';
@@ -32,6 +33,7 @@ export default {
 	DomainConnectMapping,
 	Edit,
 	EditContactInfo,
+	EditContactInfoUpdated,
 	ManageConsent,
 	List,
 	ListAll,
