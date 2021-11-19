@@ -45,6 +45,7 @@ import type {
 	WithCamelCaseSlug,
 	WithSnakeCaseSlug,
 } from './types';
+import type { TranslateResult } from 'i18n-calypso';
 
 export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
@@ -141,26 +142,31 @@ export function planHasAtLeastOneFeature( plan: string | Plan, features: string[
  *
  * Returns an array of all the plan features (may have duplicates)
  */
-export function getAllFeaturesForPlan( plan: Plan | string ): string[] {
-	const planConstantObj = getPlan( plan );
-	if ( ! planConstantObj ) {
+export function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] {
+	const planObj = getPlan( plan );
+	if ( ! planObj ) {
 		return [];
 	}
-
 	return [
-		'getPlanCompareFeatures',
-		'getPromotedFeatures',
-		'getSignupFeatures',
-		'getBlogSignupFeatures',
-		'getPortfolioSignupFeatures',
-		'getIncludedFeatures',
-	].reduce(
-		( featuresArray: string[], featureMethodName: string ) => [
-			...( planConstantObj?.[ featureMethodName ]?.() ?? [] ),
-			...featuresArray,
-		],
-		[]
-	);
+		...( 'getPlanCompareFeatures' in planObj && planObj.getPlanCompareFeatures
+			? planObj.getPlanCompareFeatures()
+			: [] ),
+		...( 'getPromotedFeatures' in planObj && planObj.getPromotedFeatures
+			? planObj.getPromotedFeatures()
+			: [] ),
+		...( 'getSignupFeatures' in planObj && planObj.getSignupFeatures
+			? planObj.getSignupFeatures()
+			: [] ),
+		...( 'getBlogSignupFeatures' in planObj && planObj.getBlogSignupFeatures
+			? planObj.getBlogSignupFeatures()
+			: [] ),
+		...( 'getPortfolioSignupFeatures' in planObj && planObj.getPortfolioSignupFeatures
+			? planObj.getPortfolioSignupFeatures()
+			: [] ),
+		...( 'getIncludedFeatures' in planObj && planObj.getIncludedFeatures
+			? planObj.getIncludedFeatures()
+			: [] ),
+	];
 }
 
 /**
@@ -490,9 +496,7 @@ export function applyTestFiltersToPlansList(
 
 	return {
 		...filteredPlanConstantObj,
-		/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-		getPlanCompareFeatures: ( experiment: string, options: Record< string, unknown > ) =>
-			filteredPlanFeaturesConstantList,
+		getPlanCompareFeatures: () => filteredPlanFeaturesConstantList,
 	};
 }
 
@@ -523,8 +527,7 @@ export function applyTestFiltersToProductsList(
 
 	return {
 		...filteredProductConstantObj,
-		/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-		getPlanCompareFeatures: ( experiment: string, options: Record< string, unknown > ) => [],
+		getPlanCompareFeatures: () => [],
 	};
 }
 

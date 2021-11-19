@@ -29,12 +29,13 @@ export interface WPComPlan extends Plan {
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
 	getPlanCompareFeatures?: (
-		experiment: string,
-		options: Record< string, unknown >
+		experiment?: string,
+		options?: Record< string, unknown >
 	) => TranslateResult[];
 	getSignupFeatures?: () => Feature[];
 	getBlogSignupFeatures?: () => Feature[];
 	getPortfolioSignupFeatures?: () => Feature[];
+	getPromotedFeatures?: () => Feature[];
 }
 
 // Jetpack
