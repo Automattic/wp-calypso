@@ -298,11 +298,9 @@ export default {
 
 	domainManagementTransfer( pageContext, next ) {
 		let component = DomainManagement.Transfer;
-
 		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
 			component = DomainManagement.TransferPage;
 		}
-
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransfer( ':site', ':domain' ) }
