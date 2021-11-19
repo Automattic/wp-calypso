@@ -12,28 +12,24 @@ export default function useSiteDomains( siteId: number | undefined ): SiteDomain
 
 	const [ siteDomains, setSiteDomains ] = useState< SiteDomain[] >( [] );
 
-	const areDomainsLoaded = useSelector(
-		( state ) => siteId && hasLoadedSiteDomains( state, siteId )
-	);
+	const areDomainsLoaded = useSelector( ( state ) => hasLoadedSiteDomains( state, siteId ) );
+	const domains: SiteDomain[] = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 
-	const domains: SiteDomain[] = useSelector( ( state ) => {
-		if ( areDomainsLoaded && siteId ) {
-			return getDomainsBySiteId( state, siteId );
+	useEffect( () => {
+		if ( areDomainsLoaded && domains.length > 0 ) {
+			setSiteDomains( domains );
 		}
-		return [];
-	} );
+	}, [ areDomainsLoaded, domains ] );
 
 	useEffect( () => {
 		if ( areDomainsLoaded ) {
-			debug( 'Setting list of domains', domains );
-
-			setSiteDomains( domains );
-		} else if ( siteId ) {
+			return;
+		}
+		if ( siteId ) {
 			debug( 'Fetching list of domains' );
-
 			dispatch( fetchSiteDomains( siteId ) );
 		}
-	}, [ areDomainsLoaded, dispatch, domains, siteId ] );
+	}, [ areDomainsLoaded, dispatch, siteId ] );
 
 	return siteDomains;
 }
