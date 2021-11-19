@@ -18,9 +18,11 @@ import {
 	isTitanMail,
 	applyTestFiltersToPlansList,
 	isWpComMonthlyPlan,
+	JETPACK_BACKUP_T1_PRODUCTS,
 	JETPACK_PLANS,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_PRODUCTS_LIST,
+	JETPACK_SECURITY_T1_PLANS,
 	isP2Plus,
 	getMonthlyPlanByYearly,
 } from '@automattic/calypso-products';
@@ -225,6 +227,35 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	renderUpgradeButton() {
+		const { purchase, translate } = this.props;
+
+		const isUpgradeablePlan =
+			isPlan( purchase ) &&
+			! isEcommerce( purchase ) &&
+			! isComplete( purchase ) &&
+			! isP2Plus( purchase );
+		const isUpgradeableProduct =
+			! isPlan( purchase ) &&
+			JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug ?? purchase.product_slug );
+
+		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
+			return null;
+		}
+
+		if ( isExpired( purchase ) ) {
+			return null;
+		}
+
+		const upgradeUrl = this.getUpgradeUrl();
+
+		return (
+			<Button primary compact href={ upgradeUrl }>
+				{ translate( 'Upgrade' ) }
+			</Button>
+		);
+	}
+
 	renderSelectNewButton() {
 		const { translate, siteId } = this.props;
 
@@ -297,27 +328,58 @@ class ManagePurchase extends Component {
 		} );
 	};
 
-	renderUpgradeNavItem() {
-		const { purchase, translate, siteId } = this.props;
-		const buttonText = isExpired( purchase )
-			? translate( 'Pick Another Plan' )
-			: translate( 'Upgrade Plan' );
+	getUpgradeUrl() {
+		const { purchase, siteId } = this.props;
 
-		if (
-			! purchase ||
-			! isPlan( purchase ) ||
-			isEcommerce( purchase ) ||
-			isComplete( purchase ) ||
-			isP2Plus( purchase )
-		) {
+		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes(
+			purchase.productSlug ?? purchase.product_slug
+		);
+		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes(
+			purchase.productSlug ?? purchase.product_slug
+		);
+
+		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
+			return `/plans/storage/${ siteId }/`;
+		}
+
+		return `/plans/${ siteId }/`;
+	}
+
+	renderUpgradeNavItem() {
+		const { purchase, translate } = this.props;
+
+		const isUpgradeablePlan =
+			purchase &&
+			isPlan( purchase ) &&
+			! isEcommerce( purchase ) &&
+			! isComplete( purchase ) &&
+			! isP2Plus( purchase );
+
+		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes(
+			purchase.productSlug ?? purchase.product_slug
+		);
+		const isUpgradeableProduct = isUpgradeableBackupProduct;
+
+		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
 		}
+
+		let buttonText;
+		if ( isExpired( purchase ) ) {
+			buttonText = isUpgradeablePlan
+				? translate( 'Pick Another Plan' )
+				: translate( 'Pick Another Product' );
+		} else {
+			buttonText = translate( 'Upgrade' );
+		}
+
+		const upgradeUrl = this.getUpgradeUrl();
 
 		return (
 			<CompactCard
 				tagName="button"
 				displayAsLink
-				href={ `/plans/${ siteId }/` }
+				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
 				{ buttonText }
@@ -747,6 +809,7 @@ class ManagePurchase extends Component {
 							{ preventRenewal && this.renderSelectNewButton() }
 							{ ! preventRenewal && (
 								<>
+									{ this.renderUpgradeButton() }
 									{ this.renderRenewButton() }
 								</>
 							) }
