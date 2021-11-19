@@ -7,7 +7,7 @@ const EMPTY_SITE_DOMAINS = Object.freeze( [] );
  *
  * @param {object} state - global state tree
  * @param {number} siteId - identifier of the site
- * @returns {Array} the list of domains
+ * @returns {import('./types').SiteDomain[]} the list of domains
  */
 export const getDomainsBySiteId = ( state, siteId ) => {
 	if ( ! siteId ) {
