@@ -158,6 +158,7 @@ object RunAllUnitTests : BuildType({
 	artifactRules = """
 		test_results => test_results
 		artifacts => artifacts
+		checkstyle.xml => typescript_checkstyle
 	""".trimIndent()
 
 	vcs {
@@ -250,10 +251,13 @@ object RunAllUnitTests : BuildType({
 			scriptContent = """
 				export NODE_ENV="test"
 
-				# Run type checks
+				# These are not expected to fail
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
-				yarn tsc --project client/landing/gutenboarding
+
+				# These have known errors, so we report them as checkstyle
+				yarn tsc --build client | tee tsc_out
+				cat tsc_out | yarn run typescript-checkstyle > checkstyle.xml
 			"""
 		}
 		bashNodeScript {
@@ -330,6 +334,12 @@ object RunAllUnitTests : BuildType({
 	}
 
 	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle.xml")
+			param("xmlReportParsing.verboseOutput", "true")
+		}
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
