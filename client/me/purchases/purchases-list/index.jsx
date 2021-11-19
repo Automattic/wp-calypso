@@ -13,28 +13,16 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
-import {
-	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
-	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
-	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
-	CONCIERGE_WPCOM_BUSINESS_ID,
-	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
-} from 'calypso/me/concierge/constants';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 } from 'calypso/state/purchases/selectors';
-import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
-import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getSites from 'calypso/state/selectors/get-sites';
-import ConciergeBanner from '../concierge-banner';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
 import PurchasesListHeader from './purchases-list-header';
@@ -46,48 +34,6 @@ class PurchasesList extends Component {
 		}
 
 		return ! this.props.sites.length && ! this.props.subscriptions.length;
-	}
-
-	renderConciergeBanner() {
-		const { nextAppointment, scheduleId, isUserBlocked } = this.props;
-
-		if ( isUserBlocked ) {
-			return;
-		}
-
-		if ( null === scheduleId ) {
-			return (
-				<ConciergeBanner bannerType={ CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION } showPlaceholder />
-			);
-		}
-
-		let bannerType;
-
-		if ( nextAppointment ) {
-			bannerType = CONCIERGE_HAS_UPCOMING_APPOINTMENT;
-		} else if ( scheduleId ) {
-			switch ( scheduleId ) {
-				case CONCIERGE_WPCOM_BUSINESS_ID:
-					bannerType = CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION;
-					break;
-
-				case CONCIERGE_WPCOM_SESSION_PRODUCT_ID:
-					bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
-					break;
-
-				default:
-					bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
-			}
-		} else {
-			return;
-		}
-
-		return (
-			<ConciergeBanner
-				bannerType={ bannerType }
-				recordTracksEvent={ this.props.recordTracksEvent }
-			/>
-		);
 	}
 
 	renderMembershipSubscriptions() {
@@ -113,8 +59,6 @@ class PurchasesList extends Component {
 		if ( purchases && purchases.length ) {
 			content = (
 				<>
-					{ this.renderConciergeBanner() }
-
 					<PurchasesListHeader showSite={ true } />
 
 					{ getPurchasesBySite( purchases, sites ).map( ( site ) => (
@@ -144,8 +88,6 @@ class PurchasesList extends Component {
 			}
 			content = (
 				<>
-					{ this.renderConciergeBanner() }
-
 					<CompactCard className="purchases-list__no-content">
 						<EmptyContent
 							title={ translate( 'Looking to upgrade?' ) }
@@ -205,9 +147,5 @@ export default connect(
 		purchases: getUserPurchases( state ),
 		subscriptions: getAllSubscriptions( state ),
 		sites: getSites( state ),
-		nextAppointment: getConciergeNextAppointment( state ),
-		scheduleId: getConciergeScheduleId( state ),
-		isUserBlocked: getConciergeUserBlocked( state ),
-	} ),
-	{ recordTracksEvent }
+	} )
 )( localize( PurchasesList ) );

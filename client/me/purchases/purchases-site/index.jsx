@@ -14,8 +14,6 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import PurchaseItem from '../purchase-item';
 
-import './style.scss';
-
 const PurchasesSite = ( {
 	getManagePurchaseUrlFor = managePurchase,
 	isPlaceholder,
