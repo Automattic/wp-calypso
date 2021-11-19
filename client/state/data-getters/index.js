@@ -7,6 +7,5 @@ export { default as requestExternalContributorsId } from './request-external-con
 export { default as requestExternalContributors } from './request-external-contributors';
 export { default as requestExternalContributorsAddition } from './request-external-contributors-addition';
 export { default as requestExternalContributorsRemoval } from './request-external-contributors-removal';
-export { default as requestGeoLocation } from './request-geo-location';
 export { default as requestFeedDiscovery } from './request-feed-discovery';
 export { default as requestSiteAlerts } from './request-site-alerts';
