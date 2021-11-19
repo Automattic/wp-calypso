@@ -168,7 +168,7 @@ export default {
 	domainManagementEditContactInfo( pageContext, next ) {
 		let component = DomainManagement.EditContactInfo;
 		if ( config.isEnabled( 'domains/contact-info-redesign' ) ) {
-			component = DomainManagement.EditContactInfoUpdated;
+			component = DomainManagement.EditContactInfoPage;
 		}
 		pageContext.primary = (
 			<DomainManagementData
