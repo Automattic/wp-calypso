@@ -394,9 +394,23 @@ export function planMatches( planKey: string | Plan, query: PlanMatchesQuery = {
 	}
 
 	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
-	const plan = getPlan( planKey ) || {};
-	const match = ( key ) => ! ( key in query ) || plan[ key ] === query[ key ];
-	return match( 'type' ) && match( 'group' ) && match( 'term' );
+	const plan = getPlan( planKey );
+	if ( ! plan ) {
+		return true;
+	}
+	if ( ! plan.type || ! plan.group || ! plan.term ) {
+		return true;
+	}
+	if ( plan.type !== query.type ) {
+		return false;
+	}
+	if ( plan.group !== query.group ) {
+		return false;
+	}
+	if ( plan.term !== query.term ) {
+		return false;
+	}
+	return true;
 }
 
 export function calculateMonthlyPriceForPlan( planSlug: string, termPrice: number ): number {
