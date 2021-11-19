@@ -1,6 +1,6 @@
 # packaged-tour
 
-A React tour library for generating guided tours. It carries a simple API via configuration and allows any contennt to be rendered for step and minimized views. Contains optional effects (like spotlight or overlay) that can be enabled/disabled depending on use.
+A React tour library for generating guided tours. It carries a simple API via configuration and allows any content to be rendered for step and minimized views. Contains optional effects (like spotlight and overlay) that can be enabled/disabled depending on desired use.
 
 ## Usage
 
@@ -62,10 +62,10 @@ function MyTour() {
 
 ### Keyboard Navigation
 
-The following functionality is provided to any implementation:
+The following functionality is provided:
 
-- Minimize or close the tour on ESC key press (depending on configuration - if a minimized step is rendered, then first press will minimize)
-- Go to previous/next step on left/right arrow key press
+- Minimize or close the tour on `ESC` key press (depending on configuration - if a minimized step is rendered, then first press will minimize)
+- Go to previous/next step on `left/right` arrow key press
 
 ## Config
 
@@ -73,32 +73,32 @@ The main API for configuring a tour. See example usage and  [types.ts](./src/typ
 
 `config.steps`: An array of objects that define the content we wish to render on the page. Each step defined by:
 
-- `referenceElements` (optional): An object of deskop & mobile selectors to render the step near.
-- `meta`: Arbitrary object that encloses the content we want to render in each step.
+- `referenceElements` (optional): An object of `deskop` & `mobile` selectors to render the step near.
+- `meta`: Arbitrary object that encloses the content we want to render for each step.
 
 `config.closeHandler`: The function responsible for closing the tour.
 
-`config.renderers`
+`config.renderers`:
 
 - `tourStep`: A React component that will be called to render each step. Gets called with the following parameters:
   - `steps`: The steps defined for the tour.
   - `currentStepIndex`
   - `onDismiss`: Handler that dismissed/closes the tour.
   - `onNext`: Handler that progresses the tour to the next step.
-  - `onPrevious`: Handler that progresses the tour to the previous step.
+  - `onPrevious`: Handler that takes the tour to the previous step.
   - `onMinimize`: Handler that minimizes the tour (passes rendering to `tourMinimized`).
   - `setInitialFocusedElement`: A dispatcher that assigns an element to be initially focused when the step renders (see example).
   - `onGoToStep`: Handler that progresses the tour to a given step index.
 
-- `tourMinimized`: A React component that will be called to render a minimized view for the tour. Accepts the following parameters
+- `tourMinimized`: A React component that will be called to render a minimized view for the tour. Gets called with the following parameters:
   - `steps`: The steps defined for the tour.
   - `currentStepIndex`
   - `onDismiss`: Handler that dismissed/closes the tour.
   - `onMiximize`: Handler that expands the tour (passes rendering to `tourStep`).
 
-    Note: setting this to `() => null` will close out the tour when either ESC is pressed or a call to `onMinimize`.
+    Note: setting this to `() => null` will close the tour when either ESC is pressed or a call to `onMinimize`.
 
-`config.options` (optional): Optional properties.
+`config.options` (optional):
 
 - `className`: Optional CSS class to enclose the main tour frame with.
 
