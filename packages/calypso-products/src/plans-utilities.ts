@@ -9,8 +9,8 @@ import {
 	PLAN_BIENNIAL_PERIOD,
 } from './constants';
 
-export function isBestValue( plan ) {
-	return BEST_VALUE_PLANS.includes( plan );
+export function isBestValue( plan: string ): boolean {
+	return ( BEST_VALUE_PLANS as ReadonlyArray< string > ).includes( plan );
 }
 
 /**
@@ -19,7 +19,7 @@ export function isBestValue( plan ) {
  * @param {string} term TERM_ constant
  * @returns {number} Term duration
  */
-export function getTermDuration( term ) {
+export function getTermDuration( term: string ): number | undefined {
 	switch ( term ) {
 		case TERM_MONTHLY:
 			return PLAN_MONTHLY_PERIOD;
@@ -30,11 +30,6 @@ export function getTermDuration( term ) {
 		case TERM_BIENNIALLY:
 			return PLAN_BIENNIAL_PERIOD;
 	}
-
-	if ( process.env.NODE_ENV === 'development' ) {
-		// eslint-disable-next-line no-console
-		console.error( `Unexpected argument ${ term }, expected one of TERM_ constants` );
-	}
 }
 
-export const redirectCheckoutToWpAdmin = () => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
+export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
