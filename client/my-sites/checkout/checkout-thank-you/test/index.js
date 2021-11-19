@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,

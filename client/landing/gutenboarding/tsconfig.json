@@ -17,5 +17,5 @@
 		}
 	},
 	"files": [ "index.tsx" ],
-	"include": []
+	"include": [ "./types.d.ts" ]
 }
