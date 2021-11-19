@@ -972,8 +972,8 @@ const ConnectedPlanFeatures = connect(
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
 				let features = planConstantObj.getPlanCompareFeatures();
 
-				// TODO: remove this once Quick Start sessions have been removed from Business Plan
-				if ( isWpComBusinessPlan( plan ) ) {
+				// TODO: remove this once Quick Start sessions have been removed from Business & eCommerce Plan
+				if ( isWpComBusinessPlan( plan ) || isWpComEcommercePlan( plan ) ) {
 					features = features.filter( ( feature ) => feature !== FEATURE_BUSINESS_ONBOARDING );
 				}
 
