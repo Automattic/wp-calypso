@@ -26,7 +26,7 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 	const checkboxes = [
 		{
 			name: 'themes',
-			label: translate( '{{strong}}WordPress Themes{{/strong}}', {
+			label: translate( '{{strong}}WordPress themes{{/strong}}', {
 				components: {
 					strong: <strong />,
 				},
@@ -34,7 +34,7 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 		},
 		{
 			name: 'plugins',
-			label: translate( '{{strong}}WordPress Plugins{{/strong}}', {
+			label: translate( '{{strong}}WordPress plugins{{/strong}}', {
 				components: {
 					strong: <strong />,
 				},
@@ -73,7 +73,7 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 		{
 			name: 'uploads',
 			label: translate(
-				'{{strong}}Media Uploads{{/strong}} (you must also select {{em}}Site database{{/em}} for restored media uploads to appear)',
+				'{{strong}}Media uploads{{/strong}} (you must also select {{em}}Site database{{/em}} for restored media uploads to appear)',
 				{
 					components: {
 						strong: <strong />,
