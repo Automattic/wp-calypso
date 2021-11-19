@@ -63,6 +63,7 @@
 		"@github/webauthn-json": "^0.4.1",
 		"@stripe/react-stripe-js": "^1.4.1",
 		"@stripe/stripe-js": "^1.17.1",
+		"@typeform/embed-react": "^1.1.0",
 		"@wordpress/a11y": "^3.2.3",
 		"@wordpress/api-fetch": "^5.2.5",
 		"@wordpress/base-styles": "^4.0.3",
@@ -213,6 +214,8 @@
 		"autoprefixer": "^10.2.5",
 		"component-event": "^0.2.0",
 		"component-query": "^0.0.3",
+		"html-loader": "^0.5.5",
+		"ignore-loader": "^0.1.2",
 		"pkg-dir": "^5.0.0",
 		"react-test-renderer": "^17.0.2",
 		"redux-mock-store": "^1.5.4"
