@@ -104,3 +104,9 @@ export interface Plan {
 
 export type WithSnakeCaseSlug = { product_slug: string };
 export type WithCamelCaseSlug = { productSlug: string };
+
+export interface PlanMatchesQuery {
+	term?: string;
+	group?: string;
+	type?: string;
+}
