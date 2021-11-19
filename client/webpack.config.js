@@ -380,6 +380,10 @@ const webpackConfig = {
 				},
 		  }
 		: {} ),
+
+	experiments: {
+		backCompat: false,
+	},
 };
 
 module.exports = webpackConfig;
