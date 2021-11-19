@@ -3,6 +3,7 @@ import {
 	getUrlParts,
 	getUrlFromParts,
 	determineUrlType,
+	URL_TYPE,
 } from '@automattic/calypso-url';
 import {
 	TERM_MONTHLY,
@@ -35,8 +36,10 @@ import {
 	getProductFromSlug,
 } from '.';
 import type {
+	Product,
 	Plan,
 	JetpackPlan,
+	WPComPlan,
 	PlanMatchesQuery,
 	PlanSlug,
 	WithCamelCaseSlug,
@@ -51,7 +54,7 @@ export function getPlansSlugs(): string[] {
 	return Object.keys( getPlans() );
 }
 
-export function getPlan( planKey: string | Plan ): Plan | JetpackPlan | undefined {
+export function getPlan( planKey: string | Plan ): Plan | JetpackPlan | WPComPlan | undefined {
 	if ( typeof planKey !== 'string' ) {
 		if ( Object.values( PLANS_LIST ).includes( planKey ) ) {
 			return planKey;
@@ -166,7 +169,7 @@ export function getAllFeaturesForPlan( plan: Plan | string ): string[] {
 export function planHasSuperiorFeature( plan: string | Plan, feature: string ): boolean {
 	const planConstantObj = getPlan( plan );
 	const features = planConstantObj?.getInferiorFeatures?.() ?? [];
-	return features.includes( feature );
+	return ( features as ReadonlyArray< string > ).includes( feature );
 }
 
 export function shouldFetchSitePlans( sitePlans: {
@@ -391,7 +394,11 @@ export function planMatches( planKey: string | Plan, query: PlanMatchesQuery = {
 }
 
 export function calculateMonthlyPriceForPlan( planSlug: string, termPrice: number ): number {
-	return calculateMonthlyPrice( getPlan( planSlug ).term, termPrice );
+	const plan = getPlan( planSlug );
+	if ( ! plan ) {
+		throw new Error( `Unknown plan: ${ planSlug }` );
+	}
+	return calculateMonthlyPrice( plan.term, termPrice );
 }
 
 export function calculateMonthlyPrice( term: string, termPrice: number ): number {
@@ -427,6 +434,14 @@ export function plansLink(
 	const originalUrlType = determineUrlType( url );
 	const resultUrl = getUrlParts( url );
 
+	if ( originalUrlType === URL_TYPE.INVALID ) {
+		throw new Error( 'Cannot format an invalid URL.' );
+	}
+
+	if ( originalUrlType === URL_TYPE.PATH_RELATIVE ) {
+		throw new Error( 'Cannot format path-relative URLs.' );
+	}
+
 	if ( 'monthly' === intervalType || forceIntervalType ) {
 		resultUrl.pathname += '/' + intervalType;
 	}
@@ -442,10 +457,22 @@ export function plansLink(
 	return formatUrl( getUrlFromParts( resultUrl ), originalUrlType );
 }
 
-export function applyTestFiltersToPlansList( planName: string, abtest, extraArgs = {} ) {
-	const filteredPlanConstantObj = { ...getPlan( planName ) };
+export function applyTestFiltersToPlansList(
+	planName: string,
+	abtest: string,
+	extraArgs: Record< string, unknown > = {}
+): Plan & Pick< WPComPlan, 'getPlanCompareFeatures' > {
+	const plan = getPlan( planName );
+	if ( ! plan ) {
+		throw new Error( `Unknown plan: ${ planName }` );
+	}
+	const filteredPlanConstantObj = { ...plan };
 	const filteredPlanFeaturesConstantList =
-		getPlan( planName ).getPlanCompareFeatures?.( abtest, extraArgs ) ?? [];
+		'getPlanCompareFeatures' in plan && plan.getPlanCompareFeatures
+			? plan.getPlanCompareFeatures( abtest, extraArgs )
+			: [];
+
+	/* eslint-disable @typescript-eslint/no-empty-function */
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
@@ -455,17 +482,30 @@ export function applyTestFiltersToPlansList( planName: string, abtest, extraArgs
 
 	const updatePlanFeatures = () => {};
 
+	/* eslint-enable */
+
 	removeDisabledFeatures();
 	updatePlanDescriptions();
 	updatePlanFeatures();
 
-	filteredPlanConstantObj.getPlanCompareFeatures = () => filteredPlanFeaturesConstantList;
-
-	return filteredPlanConstantObj;
+	return {
+		...filteredPlanConstantObj,
+		/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+		getPlanCompareFeatures: ( experiment: string, options: Record< string, unknown > ) =>
+			filteredPlanFeaturesConstantList,
+	};
 }
 
-export function applyTestFiltersToProductsList( productName: string ) {
-	const filteredProductConstantObj = { ...getProductFromSlug( productName ) };
+export function applyTestFiltersToProductsList(
+	productName: string
+): Product & Pick< WPComPlan, 'getPlanCompareFeatures' > {
+	const product = getProductFromSlug( productName );
+	if ( typeof product === 'string' ) {
+		throw new Error( `Unknown product ${ productName } ` );
+	}
+	const filteredProductConstantObj = { ...product };
+
+	/* eslint-disable @typescript-eslint/no-empty-function */
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
@@ -475,13 +515,17 @@ export function applyTestFiltersToProductsList( productName: string ) {
 
 	const updatePlanFeatures = () => {};
 
+	/* eslint-enable */
+
 	removeDisabledFeatures();
 	updatePlanDescriptions();
 	updatePlanFeatures();
 
-	filteredProductConstantObj.getPlanCompareFeatures = () => [];
-
-	return filteredProductConstantObj;
+	return {
+		...filteredProductConstantObj,
+		/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+		getPlanCompareFeatures: ( experiment: string, options: Record< string, unknown > ) => [],
+	};
 }
 
 export function getPlanTermLabel(
