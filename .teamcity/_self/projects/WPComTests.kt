@@ -6,7 +6,6 @@ import _self.lib.playwright.prepareEnvironment
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
@@ -14,7 +13,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailu
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -934,13 +932,6 @@ object P2E2ETests : BuildType({
 	}
 
 	triggers {
-		vcs {
-			branchFilter = """
-				+:*
-				-:pull*
-				-:trunk
-			""".trimIndent()
-		}
 		schedule {
 			schedulingPolicy = cron {
 				hours = "*/3"
@@ -964,12 +955,6 @@ object P2E2ETests : BuildType({
 			compareTo = build {
 				buildRule = lastSuccessful()
 			}
-		}
-	}
-
-	dependencies {
-		snapshot(BuildDockerImage) {
-			onDependencyFailure = FailureAction.FAIL_TO_START
 		}
 	}
 })
