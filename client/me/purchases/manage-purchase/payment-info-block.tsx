@@ -25,7 +25,9 @@ export default function PaymentInfoBlock( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const isBackupMethodAvailable = cards.some(
-		( card ) => !! card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
+		( card ) =>
+			card.stored_details_id !== purchase.payment.storedDetailsId &&
+			card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
 	);
 
 	if ( isIncludedWithPlan( purchase ) ) {
