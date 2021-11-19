@@ -158,7 +158,7 @@ object RunAllUnitTests : BuildType({
 	artifactRules = """
 		test_results => test_results
 		artifacts => artifacts
-		checkstyle.xml => typescript_checkstyle
+		checkstyle.xml => typescript_checkstyle.xml
 	""".trimIndent()
 
 	vcs {
