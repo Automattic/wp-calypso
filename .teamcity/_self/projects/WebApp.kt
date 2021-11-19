@@ -259,7 +259,7 @@ object RunAllUnitTests : BuildType({
 				(
 					# Enable pipe errors in this subshell. After all, we know these will fail.
 					set +e
-					yarn tsc --build client || true | tee tsc_out
+					yarn tsc --build client 2>&1 | tee tsc_out
 					cat tsc_out | yarn run typescript-checkstyle > checkstyle.xml
 				)
 			"""
