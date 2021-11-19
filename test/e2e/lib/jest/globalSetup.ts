@@ -66,7 +66,6 @@ export default async (): Promise< void > => {
 		}
 
 		const [ username, password ] = config.get( 'testAccounts' )[ user ];
-		console.log( `${ user }: ${ username }, ${ password }` );
 
 		// This is important!
 		// If the e2e test user agent string is not set, log ins will fail to calypso.live
