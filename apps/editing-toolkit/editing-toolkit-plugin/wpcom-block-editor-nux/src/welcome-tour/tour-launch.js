@@ -50,7 +50,7 @@ function LaunchWpcomWelcomeTour() {
 
 	return (
 		<WelcomeTourContextProvider>
-			<WelcomeTour />
+			<BarTour />
 		</WelcomeTourContextProvider>
 	);
 }
@@ -137,7 +137,7 @@ function FooTour() {
 		steps: [
 			{
 				referenceElements: {
-					desktop: '.render-step-near-me',
+					desktop: '.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
 				},
 				meta: {
 					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
