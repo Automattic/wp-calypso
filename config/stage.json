@@ -58,7 +58,7 @@
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,
-		"jetpack/user-licensing": false,
+		"jetpack/user-licensing": true,
 		"jetpack/userless-checkout": true,
 		"jitms": true,
 		"lasagna": true,
