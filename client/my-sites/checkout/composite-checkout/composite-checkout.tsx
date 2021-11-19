@@ -591,7 +591,7 @@ export default function CompositeCheckout( {
 	const goToPreviousPage = useCallback( () => {
 		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
 
-		reduxDispatch( recordTracksEvent( 'EMPTY_CART_CTA_CLICKED' ) );
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_empty_cart_clicked' ) );
 
 		if ( checkoutBackUrl ) {
 			window.location.href = checkoutBackUrl;

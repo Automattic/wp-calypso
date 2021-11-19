@@ -254,12 +254,10 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 				}
 				case 'THANK_YOU_URL_GENERATED':
-					return logStashEvent( 'thank you url generated', {
-						url: action.payload.url,
-					} );
-				case 'EMPTY_CART_CTA_CLICKED':
 					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_empty_cart_clicked' )
+						logStashEventAction( 'thank you url generated', {
+							url: action.payload.url,
+						} )
 					);
 				default:
 					debug( 'unknown checkout event', action );
