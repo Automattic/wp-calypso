@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getThankYouPageUrl from './get-thank-you-page-url';
-import type { Domain } from '@automattic/data-stores';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
@@ -90,5 +90,5 @@ export interface GetThankYouUrlProps {
 	hideNudge?: boolean;
 	isInEditor?: boolean;
 	isJetpackCheckout?: boolean;
-	domains: Domain[] | undefined;
+	domains: SiteDomain[] | undefined;
 }
