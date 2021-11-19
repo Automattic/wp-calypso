@@ -209,7 +209,7 @@
 		"@testing-library/jest-dom": "^5.15.0",
 		"@testing-library/react": "^12.1.2",
 		"@testing-library/react-hooks": "7.0.2",
-		"@types/jest": "^27.0.2",
+		"@types/jest": "^27.0.3",
 		"autoprefixer": "^10.2.5",
 		"component-event": "^0.2.0",
 		"component-query": "^0.0.3",
