@@ -30,10 +30,6 @@ export function getTermDuration( term: string ): number | undefined {
 		case TERM_BIENNIALLY:
 			return PLAN_BIENNIAL_PERIOD;
 	}
-
-	// Not sure why this function (added in https://github.com/Automattic/wp-calypso/pull/24103) doesn't throw on failure
-	// eslint-disable-next-line no-console
-	console.error( `Unexpected argument ${ term }, expected one of TERM_ constants` );
 }
 
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
