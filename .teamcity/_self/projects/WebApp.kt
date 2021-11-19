@@ -158,7 +158,7 @@ object RunAllUnitTests : BuildType({
 	artifactRules = """
 		test_results => test_results
 		artifacts => artifacts
-		checkstyle.xml => typescript_checkstyle.xml
+		checkstyle_results => checkstyle_results
 	""".trimIndent()
 
 	vcs {
@@ -260,7 +260,8 @@ object RunAllUnitTests : BuildType({
 					# Enable pipe errors in this subshell. After all, we know these will fail.
 					set +e
 					yarn tsc --build client 2>&1 | tee tsc_out
-					cat tsc_out | yarn run typescript-checkstyle > checkstyle.xml
+					cat tsc_out | yarn run typescript-checkstyle > ./checkstyle_results/tsc.xml
+					cat ./checkstyle_results/tsc.xml
 				)
 			"""
 		}
@@ -341,7 +342,7 @@ object RunAllUnitTests : BuildType({
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "checkstyle")
-			param("xmlReportParsing.reportDirs", "checkstyle.xml")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/*.xml")
 			param("xmlReportParsing.verboseOutput", "true")
 		}
 		feature {
