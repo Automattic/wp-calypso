@@ -39,14 +39,14 @@ export default async (): Promise< void > => {
 	const userList = [ 'gutenbergSimpleSiteUser', 'eCommerceUser', 'defaultUser' ];
 
 	for await ( const user of userList ) {
+		const cookiePath = path.join( cookieBasePath, `${ user }.json` );
+
 		/*
 		This section is nearly identical to the snippet in `BrowserManager.setLoginCookie`, but
 		instead of checking that cookies are older than 3 days, this checks whether the cookies
 		are newer than 3 days. If so, presumably the cookies are still good to use and the iteration
-		is skipped.
+		is short-circuited.
 		*/
-		const cookiePath = path.join( cookieBasePath, `${ user }.json` );
-
 		try {
 			await access( cookiePath );
 			const stats = await stat( cookiePath );
