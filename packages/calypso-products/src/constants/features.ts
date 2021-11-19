@@ -87,6 +87,7 @@ export const PREMIUM_DESIGN_FOR_STORES = 'premium-design-for-stores';
 export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
 export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
+export const FEATURE_WOOP = 'woop';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
