@@ -1,8 +1,7 @@
+import { camelOrSnakeSlug } from './camel-or-snake-slug';
 import { WPCOM_DIFM_LITE } from './constants';
-import { formatProduct } from './format-product';
+import type { WithCamelCaseSlug, WithSnakeCaseSlug } from './types';
 
-export function isDIFMProduct( product: { product_slug?: string; productSlug?: string } ): boolean {
-	product = formatProduct( product );
-
-	return product.product_slug === WPCOM_DIFM_LITE;
+export function isDIFMProduct( product: WithCamelCaseSlug | WithSnakeCaseSlug ): boolean {
+	return camelOrSnakeSlug( product ) === WPCOM_DIFM_LITE;
 }
