@@ -449,6 +449,9 @@ export function plansLink(
 		url.pathname += '/' + siteSlug;
 	}
 
+	if ( urlString.startsWith( '/' ) ) {
+		return url.pathname + url.search;
+	}
 	return url.toString();
 }
 
