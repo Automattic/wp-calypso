@@ -1,3 +1,4 @@
+import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
@@ -158,7 +159,12 @@ class ThemeShowcase extends Component {
 	}
 
 	scrollToSearchInput = () => {
-		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
+		if (
+			! this.props.loggedOutComponent &&
+			this.scrollRef &&
+			this.scrollRef.current &&
+			! isMobile()
+		) {
 			this.scrollRef.current.scrollIntoView();
 		}
 	};
@@ -176,7 +182,8 @@ class ThemeShowcase extends Component {
 			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
 		this.setState( { tabFilter: this.tabFilters.ALL } );
-		page( url );
+		// Update the url without moving the window around.
+		window.history.pushState( { path: url }, '', url );
 		this.scrollToSearchInput();
 	};
 
