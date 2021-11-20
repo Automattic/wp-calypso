@@ -6,5 +6,6 @@
 		"declarationDir": "dist/types",
 		"rootDir": "src"
 	},
-	"include": [ "src" ]
+	"include": [ "src" ],
+	"references": [ { "path": "../calypso-config" }, { "path": "../i18n-calypso" } ]
 }
