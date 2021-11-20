@@ -795,5 +795,3 @@ export {
 	shouldRenderExpiringCreditCard,
 	shouldRenderMonthlyRenewalOption,
 };
-
-export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';
