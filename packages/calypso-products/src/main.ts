@@ -1,11 +1,4 @@
 import {
-	format as formatUrl,
-	getUrlParts,
-	getUrlFromParts,
-	determineUrlType,
-	URL_TYPE,
-} from '@automattic/calypso-url';
-import {
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -441,35 +434,22 @@ export function getBillingMonthsForTerm( term: string ): number {
 }
 
 export function plansLink(
-	url: string,
+	urlString: string,
 	siteSlug: string,
 	intervalType: string,
 	forceIntervalType = false
 ): string {
-	const originalUrlType = determineUrlType( url );
-	const resultUrl = getUrlParts( url );
-
-	if ( originalUrlType === URL_TYPE.INVALID ) {
-		throw new Error( 'Cannot format an invalid URL.' );
-	}
-
-	if ( originalUrlType === URL_TYPE.PATH_RELATIVE ) {
-		throw new Error( 'Cannot format path-relative URLs.' );
-	}
+	const url = new URL( urlString, window.location.origin );
 
 	if ( 'monthly' === intervalType || forceIntervalType ) {
-		resultUrl.pathname += '/' + intervalType;
+		url.pathname += '/' + intervalType;
 	}
 
 	if ( siteSlug ) {
-		resultUrl.pathname += '/' + siteSlug;
+		url.pathname += '/' + siteSlug;
 	}
 
-	// getUrlFromParts only works with absolute URLs, so add some dummy data if
-	// needed, and format down to the type of the original url.
-	resultUrl.protocol = resultUrl.protocol || 'https:';
-	resultUrl.hostname = resultUrl.hostname || '__hostname__.invalid';
-	return formatUrl( getUrlFromParts( resultUrl ), originalUrlType );
+	return url.toString();
 }
 
 export function applyTestFiltersToPlansList(
