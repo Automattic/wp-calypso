@@ -396,21 +396,16 @@ export function planMatches( planKey: string | Plan, query: PlanMatchesQuery = {
 	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
 	const plan = getPlan( planKey );
 	if ( ! plan ) {
+		return false;
+	}
+	if (
+		( ! ( 'type' in query ) || plan.type === query.type ) &&
+		( ! ( 'group' in query ) || plan.group === query.group ) &&
+		( ! ( 'term' in query ) || plan.term === query.term )
+	) {
 		return true;
 	}
-	if ( ! plan.type || ! plan.group || ! plan.term ) {
-		return true;
-	}
-	if ( plan.type !== query.type ) {
-		return false;
-	}
-	if ( plan.group !== query.group ) {
-		return false;
-	}
-	if ( plan.term !== query.term ) {
-		return false;
-	}
-	return true;
+	return false;
 }
 
 export function calculateMonthlyPriceForPlan( planSlug: string, termPrice: number ): number {
@@ -612,6 +607,10 @@ export const getPopularPlanSpec = ( {
 	};
 };
 
+function isValueTruthy< T >( value: T ): value is Exclude< T, null | undefined | false | 0 | '' > {
+	return !! value;
+}
+
 export const chooseDefaultCustomerType = ( {
 	currentCustomerType,
 	selectedPlan,
@@ -635,7 +634,8 @@ export const chooseDefaultCustomerType = ( {
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 	]
 		.map( ( planKey ) => getPlan( planKey ) )
-		.map( ( plan ) => plan?.getStoreSlug() ?? '' );
+		.filter( isValueTruthy )
+		.map( ( plan ) => plan.getStoreSlug() );
 
 	if ( selectedPlan ) {
 		return businessPlanSlugs.includes( selectedPlan as PlanSlug ) ? 'business' : 'personal';
