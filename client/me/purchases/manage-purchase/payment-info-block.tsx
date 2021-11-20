@@ -117,5 +117,5 @@ function BackupPaymentMethodNotice() {
 			link: <a href="/me/purchases/payment-methods" />,
 		},
 	} );
-	return <div>{ noticeText }</div>;
+	return <div className="manage-purchase__backup-payment-method-notice">{ noticeText }</div>;
 }
