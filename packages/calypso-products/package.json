@@ -38,13 +38,15 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-products#readme",
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
-		"i18n-calypso": "workspace:^",
-		"react": "^17.0.2"
+		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"chai": "^4.3.4",
 		"typescript": "^4.4.4"
+	},
+	"peerDependencies": {
+		"react": "^17.0.2"
 	},
 	"private": true
 }
