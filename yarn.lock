@@ -250,7 +250,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/calypso-url": "workspace:^"
     chai: ^4.3.4
     i18n-calypso: "workspace:^"
     react: ^17.0.2
