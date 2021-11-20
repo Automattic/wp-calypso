@@ -1,4 +1,3 @@
-import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
@@ -159,13 +158,11 @@ class ThemeShowcase extends Component {
 	}
 
 	scrollToSearchInput = () => {
-		if (
-			! this.props.loggedOutComponent &&
-			this.scrollRef &&
-			this.scrollRef.current &&
-			! isMobile()
-		) {
+		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
+			const yOffset = -55;
 			this.scrollRef.current.scrollIntoView();
+			const y = this.scrollRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+			window.scrollTo( { top: y } );
 		}
 	};
 
@@ -182,8 +179,7 @@ class ThemeShowcase extends Component {
 			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
 		this.setState( { tabFilter: this.tabFilters.ALL } );
-		// Update the url without moving the window around.
-		window.history.pushState( { path: url }, '', url );
+		page( url );
 		this.scrollToSearchInput();
 	};
 
@@ -383,7 +379,7 @@ class ThemeShowcase extends Component {
 						uri={ this.constructUrl() }
 					/>
 				) }
-				<div className="themes__content">
+				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
