@@ -1,42 +1,96 @@
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { startPollAppPushAuth, stopPollAppPushAuth } from 'calypso/state/login/actions';
-import { getTwoFactorPushPollSuccess } from 'calypso/state/login/selectors';
+import config from '@automattic/calypso-config';
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { updateNonce } from 'calypso/state/login/actions';
+import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
+import {
+	getTwoFactorAuthNonce,
+	getTwoFactorPushToken,
+	getTwoFactorUserId,
+} from 'calypso/state/login/selectors';
 
-class PushNotificationApprovalPoller extends Component {
-	static propTypes = {
-		onSuccess: PropTypes.func.isRequired,
-		pushSuccess: PropTypes.bool.isRequired,
-		startPollAppPushAuth: PropTypes.func.isRequired,
-		stopPollAppPushAuth: PropTypes.func.isRequired,
-	};
+const POLL_APP_PUSH_INTERVAL = 5 * 1000;
 
-	componentDidMount() {
-		this.props.startPollAppPushAuth();
-	}
+async function request( state ) {
+	const url = localizeUrl(
+		'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint'
+	);
+	const body = new URLSearchParams( {
+		user_id: getTwoFactorUserId( state ),
+		auth_type: 'push',
+		remember_me: true,
+		two_step_nonce: getTwoFactorAuthNonce( state, 'push' ),
+		two_step_push_token: getTwoFactorPushToken( state ),
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	} );
 
-	componentWillUnmount() {
-		this.props.stopPollAppPushAuth();
-	}
+	const response = await fetch( url, {
+		method: 'POST',
+		credentials: 'include',
+		body,
+	} );
 
-	componentDidUpdate( prevProps ) {
-		if ( ! prevProps.pushSuccess && this.props.pushSuccess ) {
-			this.props.onSuccess();
-		}
-	}
-
-	render() {
-		return null;
-	}
+	return await response.json();
 }
 
-export default connect(
-	( state ) => ( {
-		pushSuccess: getTwoFactorPushPollSuccess( state ),
-	} ),
-	{
-		startPollAppPushAuth,
-		stopPollAppPushAuth,
+const poll = ( signal ) => async ( dispatch, getState ) => {
+	let aborted = false;
+	signal.addEventListener( 'abort', () => {
+		aborted = true;
+	} );
+
+	while ( true ) {
+		try {
+			const response = await request( getState() );
+			if ( response.success ) {
+				const tokenLinks = response.data.token_links;
+				if ( Array.isArray( tokenLinks ) ) {
+					await remoteLoginUser( tokenLinks );
+				}
+				return true;
+			}
+
+			const twoStepNonce = response.data.two_step_nonce;
+			// if there is a `success: false` response without a nonce, that means
+			// we can't do the next iteration of the loop and we need to abort.
+			if ( ! twoStepNonce ) {
+				return false;
+			}
+
+			dispatch( updateNonce( 'push', twoStepNonce ) );
+		} catch {
+			// retry when the request fails for network-ish reasons
+		}
+
+		if ( aborted ) {
+			return false;
+		}
+
+		await new Promise( ( r ) => setTimeout( r, POLL_APP_PUSH_INTERVAL ) );
 	}
-)( PushNotificationApprovalPoller );
+};
+
+export default function PushNotificationApprovalPoller( { onSuccess } ) {
+	const dispatch = useDispatch();
+	const savedOnSuccess = useRef();
+
+	useEffect( () => {
+		savedOnSuccess.current = onSuccess;
+	}, [ onSuccess ] );
+
+	useEffect( () => {
+		const abortController = new AbortController();
+		dispatch( poll( abortController.signal ) )
+			.then( ( success ) => {
+				if ( success ) {
+					savedOnSuccess.current();
+				}
+			} )
+			.catch( () => {} );
+		return () => abortController.abort();
+	}, [ dispatch ] );
+
+	return null;
+}
