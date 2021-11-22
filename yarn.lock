@@ -427,7 +427,7 @@ __metadata:
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.66.2
+    react-native: ^0.66.3
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
@@ -30665,7 +30665,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-native@npm:*, react-native@npm:^0.66.2":
+"react-native@npm:*, react-native@npm:^0.66.3":
   version: 0.66.3
   resolution: "react-native@npm:0.66.3"
   dependencies:
