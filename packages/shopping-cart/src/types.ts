@@ -232,6 +232,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	next_domain_is_free: boolean;
 	next_domain_condition: '' | 'blog';
 	bundled_domain?: string;
+	has_bundle_credit?: boolean;
 	terms_of_service?: TermsOfServiceRecord[];
 }
 
@@ -277,7 +278,6 @@ export interface ResponseCartProduct {
 	currency: string;
 	product_cost_integer: number;
 	product_cost_display: string;
-	has_bundle_credit?: boolean;
 	item_original_cost_integer: number; // without discounts or volume, with quantity
 	item_original_cost_display: string; // without discounts or volume, with quantity
 	item_subtotal_monthly_cost_display: string;
