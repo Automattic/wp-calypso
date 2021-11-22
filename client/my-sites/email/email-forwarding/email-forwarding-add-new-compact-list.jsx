@@ -30,7 +30,6 @@ class EmailForwardingAddNewCompactList extends Component {
 		super( props );
 		this.state = {
 			emailForwards: [ { destination: '', mailbox: '', isValid: false } ],
-			isRedirecting: false,
 			newEmailForwardAdded: false,
 		};
 	}
@@ -71,8 +70,10 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	onAddNewEmailForward = () => {
-		this.setState( {
-			emailForwards: [ ...this.state.emailForwards, { destination: '', mailbox: '' } ],
+		this.setState( ( currentState ) => {
+			return {
+				emailForwards: [ ...currentState.emailForwards, { destination: '', mailbox: '' } ],
+			};
 		} );
 	};
 
@@ -92,14 +93,14 @@ class EmailForwardingAddNewCompactList extends Component {
 	}
 
 	onRemoveEmailForward = ( index ) => {
-		const [ emailForwards ] = this.state;
+		const { emailForwards } = this.state;
 		emailForwards.splice( index, 1 );
 		this.setState( { emailForwards } );
 	};
 
 	onUpdateEmailForward = ( index, name, value ) => {
 		// eslint-disable-next-line prefer-const
-		let emailForwards = this.state.emailForwards;
+		let emailForwards = { ...this.state.emailForwards };
 		emailForwards[ index ][ name ] = value;
 
 		const validEmailForward = validateAllFields( emailForwards[ index ] );
