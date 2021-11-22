@@ -167,7 +167,7 @@ class DomainRow extends PureComponent {
 	}
 
 	renderAutoRenew() {
-		const { site, hasLoadedPurchases, purchase } = this.props;
+		const { site, hasLoadedPurchases, purchase, isManagingAllSites, showCheckbox } = this.props;
 
 		if ( ! this.shouldShowAutoRenewStatus() || ( hasLoadedPurchases && ! purchase ) ) {
 			return <span className="domain-row__auto-renew-cell">-</span>;
@@ -188,6 +188,7 @@ class DomainRow extends PureComponent {
 					planName={ site.plan.product_name_short }
 					siteDomain={ site.domain }
 					purchase={ purchase }
+					shouldDisable={ isManagingAllSites && showCheckbox }
 					withTextStatus={ false }
 					toggleSource="registered-domain-status"
 				/>
@@ -381,10 +382,15 @@ class DomainRow extends PureComponent {
 		);
 	}
 
+	handleDomainSelection = ( event ) => {
+		const { domain } = this.props;
+		return this.props.handleDomainItemToggle( domain, event.target.checked );
+	};
+
 	renderDomainCheckbox() {
 		return (
 			<div className="domain-row__checkbox-cell">
-				<FormCheckbox className="domain-row__checkbox" onChange={ () => {} } onClick={ () => {} } />
+				<FormCheckbox className="domain-row__checkbox" onChange={ this.handleDomainSelection } />
 			</div>
 		);
 	}
