@@ -96,6 +96,11 @@ describe( 'reducer', () => {
 					},
 					'module-b': {
 						active: true,
+						options: {
+							some_option: {
+								current_value: 'test',
+							},
+						},
 					},
 				},
 			};
@@ -105,6 +110,7 @@ describe( 'reducer', () => {
 					setting_123: 'test',
 					'module-a': false,
 					'module-b': true,
+					some_option: 'test',
 				},
 			} );
 		} );

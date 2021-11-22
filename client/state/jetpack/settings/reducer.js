@@ -1,4 +1,3 @@
-import { mapValues, merge } from 'lodash';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
@@ -32,14 +31,21 @@ export const settingsReducer = keyedReducer(
 			}
 			case JETPACK_MODULES_RECEIVE: {
 				const { modules } = action;
-				const modulesActivationState = mapValues( modules, ( module ) => module.active );
+				const modulesActivationState = Object.fromEntries(
+					Object.entries( modules ).map( ( [ key, module ] ) => [ key, module.active ] )
+				);
 				// The need for flattening module options into this moduleSettings is temporary.
 				// Once https://github.com/Automattic/jetpack/pull/6002 is released,
 				// the flattening will be done on the server side for the /jetpack/v4/settings/ endpoint
 				const moduleSettings = Object.keys( modules ).reduce( ( allTheSettings, slug ) => {
 					return {
 						...allTheSettings,
-						...mapValues( modules[ slug ].options, ( option ) => option.current_value ),
+						...Object.fromEntries(
+							Object.entries( modules[ slug ]?.options ?? {} ).map( ( [ key, option ] ) => [
+								key,
+								option.current_value,
+							] )
+						),
 					};
 				}, {} );
 				return {
@@ -58,8 +64,10 @@ export const settingsReducer = keyedReducer(
 				return state;
 			}
 			case JETPACK_SETTINGS_UPDATE: {
-				const { settings } = action;
-				return merge( {}, state, settings );
+				return {
+					...state,
+					...action.settings,
+				};
 			}
 		}
 
