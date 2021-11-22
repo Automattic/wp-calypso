@@ -32,9 +32,11 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
+		"@automattic/typography": "workspace:^",
 		"@wordpress/base-styles": "^4.0.3",
 		"@wordpress/components": "^19.0.1",
 		"@wordpress/compose": "^5.0.5",

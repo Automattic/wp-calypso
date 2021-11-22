@@ -27,6 +27,7 @@
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-polyfills": "workspace:^",
+		"autoprefixer": "^10.2.5",
 		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
 		"debug": "^4.1.1",
@@ -50,6 +51,7 @@
 		"html-webpack-plugin": "^5.0.0-beta.4",
 		"jest": "^27.2.4",
 		"postcss": "^8.3.11",
+		"postcss-custom-properties": "^11.0.0",
 		"webpack": "^5.64.1",
 		"webpack-dev-server": "^4.5.0"
 	}
