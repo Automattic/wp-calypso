@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -10,6 +11,7 @@ import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -70,15 +72,15 @@ class PasswordlessSignupForm extends Component {
 		} );
 
 		try {
-			const response = await wpcom.undocumented().usersNew(
-				{
-					email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
-					is_passwordless: true,
-					signup_flow_name: this.props.flowName,
-					validate: false,
-				},
-				null
-			);
+			const response = await wpcom.req.post( '/users/new', {
+				email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+				is_passwordless: true,
+				signup_flow_name: this.props.flowName,
+				validate: false,
+				locale: getLocaleSlug(),
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
+			} );
 			this.createAccountCallback( null, response );
 		} catch ( err ) {
 			this.createAccountCallback( err );
