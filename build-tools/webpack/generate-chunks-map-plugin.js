@@ -21,7 +21,7 @@ class GenerateChunksMapPlugin {
 			const chunksMap = {};
 			for ( const chunk of chunks ) {
 				const files = chunk.files;
-				const name = files.find( ( file ) => /\.js$/.test( file ) ) || files[ 0 ];
+				const name = Array.from( files ).find( ( file ) => /\.js$/.test( file ) ) || files[ 0 ];
 				const modules = [ ...chunk.modulesIterable ]
 					.reduce( ( acc, item ) => acc.concat( item.modules || item ), [] )
 					.map( ( { userRequest } ) => userRequest && path.relative( '.', userRequest ) )
