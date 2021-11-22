@@ -1,0 +1,51 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.transfer-page {
+	.card {
+		padding: 16px;
+
+		@include break-mobile {
+			padding: 24px;
+		}
+
+		.action-card {
+			padding: 0;
+			box-shadow: none;
+
+			.action-card__heading {
+				margin: 0;
+				font-weight: 600;
+				font-size: $font-body;
+			}
+
+			.action-card__button-container {
+				margin-top: 16px;
+				margin-bottom: 0;
+
+				a {
+					width: initial;
+				}
+
+				@include break-mobile {
+					margin: 0;
+				}
+			}
+
+			p {
+				margin-bottom: 0;
+				font-size: $font-body-small;
+			}
+		}
+	}
+
+	.transfer-page__item-separator {
+		height: 0;
+		margin: 16px 0;
+		border-bottom: 1px solid #dcdcde;
+
+		@include break-mobile {
+			margin: 24px 0;
+		}
+	}
+}
