@@ -98,7 +98,7 @@ export default function useCreatePaymentCompleteCallback( {
 		getJetpackCheckoutRedirectUrl( state, siteId )
 	);
 
-	const domains = useSiteDomains( siteId );
+	const domains = useSiteDomains( siteId ?? undefined );
 
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {

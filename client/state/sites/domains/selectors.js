@@ -6,8 +6,8 @@ const EMPTY_SITE_DOMAINS = Object.freeze( [] );
  * Returns the list of site domains for the specified site identifier.
  *
  * @param {object} state - global state tree
- * @param {number} siteId - identifier of the site
- * @returns {Array} the list of domains
+ * @param {number|undefined} siteId - identifier of the site
+ * @returns {import('./types').SiteDomain[]} the list of domains
  */
 export const getDomainsBySiteId = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -64,10 +64,13 @@ export const getDomainsBySite = ( state, site ) => {
  * Determines whether the list of domains for the specified site has loaded.
  *
  * @param {object} state - global state tree
- * @param {number} siteId - identifier of the site
+ * @param {number| undefined} siteId - identifier of the site
  * @returns {boolean} true if the list of domains has loaded, false otherwise
  */
 export const hasLoadedSiteDomains = ( state, siteId ) => {
+	if ( ! siteId ) {
+		return false;
+	}
 	return Boolean( state?.sites?.domains?.items?.[ siteId ] );
 };
 

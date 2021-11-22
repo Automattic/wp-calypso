@@ -36,8 +36,8 @@ import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/u
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
-import type { Domain } from '@automattic/data-stores';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -83,7 +83,7 @@ export default function getThankYouPageUrl( {
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
-	domains: Domain[] | undefined;
+	domains: SiteDomain[] | undefined;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -319,7 +319,7 @@ function getFallbackDestination( {
 		// Check the cart (since our Thank You modal doesn't support multiple products, we only take the first
 		// one found).
 		const productFromCart = cart?.products?.find( ( { product_slug } ) =>
-			productsWithCustomThankYou.includes( product_slug )
+			( productsWithCustomThankYou as ReadonlyArray< string > ).includes( product_slug )
 		)?.product_slug;
 
 		const purchasedProduct =
@@ -390,9 +390,8 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	const currentPlan = getPlan( currentPlanSlug );
 
 	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
-		return getPlan(
-			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan.term } )
-		)?.getPathSlug();
+		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan.term } );
+		return planKey ? getPlan( planKey )?.getPathSlug() : undefined;
 	}
 
 	return;
@@ -437,7 +436,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
-	domains: Domain[] | undefined;
+	domains: SiteDomain[] | undefined;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -492,7 +491,7 @@ function getProfessionalEmailUpsellUrl( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
-	domains: Domain[] | undefined;
+	domains: SiteDomain[] | undefined;
 } ): string | undefined {
 	if ( orderId || ! cart ) {
 		return;
@@ -522,7 +521,7 @@ function getProfessionalEmailUpsellUrl( {
 	// Uses either a domain being purchased, or the first domain eligible found in site domains
 	if ( domainRegistrations.length > 0 ) {
 		domainName = domainRegistrations[ 0 ].meta;
-	} else {
+	} else if ( siteSlug && domains ) {
 		const domain = getEligibleTitanDomain( siteSlug, domains, true );
 
 		if ( domain ) {
