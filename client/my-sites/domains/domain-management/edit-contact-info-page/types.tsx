@@ -1,8 +1,8 @@
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 export type EditContactInfoPageProps = {
 	domains: ResponseDomain[];
 	selectedDomainName: string;
-	// TODO: We should define the selectedSite object
-	selectedSite: Record< string, unknown > | boolean;
+	selectedSite: SiteData | boolean;
 };
