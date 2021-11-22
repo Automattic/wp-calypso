@@ -260,11 +260,11 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/calypso-url": "workspace:^"
     chai: ^4.3.4
     i18n-calypso: "workspace:^"
-    react: ^17.0.2
     typescript: ^4.4.4
+  peerDependencies:
+    react: ^17.0.2
   languageName: unknown
   linkType: soft
 
