@@ -42,6 +42,8 @@ import {
 	CALYPSO_PLANS_PAGE,
 	CALYPSO_REDIRECTION_PAGE,
 	JETPACK_ADMIN_PATH,
+	JETPACK_COUPON_PARTNERS,
+	JETPACK_COUPON_PRESET_MAPPING,
 	JPC_PATH_CHECKOUT,
 } from './constants';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
@@ -94,26 +96,41 @@ const analyticsPageTitleByType = {
  * upsell logic ready and want to avoid confusion by show full price products
  * on the plan page.
  *
- * @todo Add support for more partners (if needed).
+ * @todo Should we dynamically fetch partners and presets?
  * @todo Should we make a coupon validation request? If the coupon is invalid, we leave the user on the plans page.
- * @todo Dynamically find product slug from coupon preset (dynamically fetch product during coupon validation?).
  */
 export function partnerCouponRedirects( context, next ) {
 	const queryArgs = new URLSearchParams( context?.query?.redirect );
 	const partnerCoupon = queryArgs.get( 'partnerCoupon' );
 
-	if ( partnerCoupon.startsWith( 'IONOS_' ) ) {
-		const product = 'jetpack_backup_daily';
-		const state = context.store.getState();
-		const siteSlug = getSelectedSiteSlug( state );
-
-		return navigate(
-			`${ JPC_PATH_CHECKOUT }/${ siteSlug }/${ product }?coupon=${ partnerCoupon }`
-		);
+	if ( ! partnerCoupon || ! partnerCoupon.includes( '_' ) ) {
+		next();
 	}
 
-	// Display the Jetpack Connect Plans grid.
-	next();
+	// All partner coupons assumes a logic like {PARTNER}_{PRESET}_abc123.
+	// A coupon preset in this context should just be seen as a product but does
+	// technically include other options like purchase type, single use etc.
+	const splitCoupon = partnerCoupon.split( '_' );
+
+	// Simple coupon verification by:
+	//   * Check for 2 underscores in the coupon for partner, preset and unique code.
+	//   * Check for allowed coupon partners.
+	//   * Check for known coupon presets.
+	if (
+		splitCoupon.length !== 3 ||
+		! JETPACK_COUPON_PARTNERS.includes( splitCoupon[ 0 ] ) ||
+		! JETPACK_COUPON_PRESET_MAPPING.hasOwnProperty( splitCoupon[ 1 ] )
+	) {
+		next();
+	}
+
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
+	const productOrPlan = JETPACK_COUPON_PRESET_MAPPING[ splitCoupon[ 1 ] ];
+
+	return navigate(
+		`${ JPC_PATH_CHECKOUT }/${ siteSlug }/${ productOrPlan }?coupon=${ partnerCoupon }`
+	);
 }
 
 export function offerResetRedirects( context, next ) {
