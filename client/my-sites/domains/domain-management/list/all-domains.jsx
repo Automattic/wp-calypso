@@ -12,6 +12,7 @@ import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -374,6 +375,7 @@ class AllDomains extends Component {
 			requestingSiteDomains,
 			hasLoadedUserPurchases,
 			translate,
+			isContactEmailEditContext,
 		} = this.props;
 
 		const selectedFilter = context?.query?.filter;
@@ -454,6 +456,15 @@ class AllDomains extends Component {
 			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
 			{ name: 'action', label: null },
 		];
+
+		if ( isContactEmailEditContext ) {
+			domainsTableColumns.unshift( {
+				name: 'select-domain',
+				label: (
+					<FormCheckbox className="list__checkbox" onChange={ () => {} } onClick={ () => {} } />
+				),
+			} );
+		}
 
 		return (
 			<>
