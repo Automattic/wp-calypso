@@ -36,8 +36,16 @@ export class LoginPage {
 	/**
 	 * Navigates to the /log-in/{locale} endpoint.
 	 */
-	async visitLocale( locale = '' ): Promise< void > {
+	async visitBlueLogin( locale = '' ): Promise< void > {
 		const targetUrl = locale ? `log-in/${ locale }` : 'log-in';
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
+	}
+
+	/**
+	 * Navigates to the /log-in/{locale} endpoint.
+	 */
+	async visitWhiteLogin( locale = '' ): Promise< void > {
+		const targetUrl = locale ? `log-in/new/${ locale }` : 'log-in/new';
 		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
 	}
 

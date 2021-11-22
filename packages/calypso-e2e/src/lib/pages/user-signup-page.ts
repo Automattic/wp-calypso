@@ -39,7 +39,16 @@ export class UserSignupPage {
 	/**
 	 * Navigates to the /log-in endpoint.
 	 */
-	async visitLocale( locale = '' ): Promise< void > {
+	async visitBlueSignup( locale = '' ): Promise< void > {
+		const targetUrl = locale ? `start/premium/${ locale }` : 'start/premium';
+		console.log( targetUrl );
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
+	}
+
+	/**
+	 * Navigates to the /log-in endpoint.
+	 */
+	async visitWhiteSignup( locale = '' ): Promise< void > {
 		const targetUrl = locale ? `start/${ locale }` : 'start';
 		console.log( targetUrl );
 		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );

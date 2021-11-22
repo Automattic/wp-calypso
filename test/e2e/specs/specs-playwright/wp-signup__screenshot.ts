@@ -20,6 +20,13 @@ import fetch from 'node-fetch';
 import { Page } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
+const selectors = {
+	isWhiteLogin: '.is-section-login.is-white-login',
+	isBlueLogin: '.is-section-login:not( .is-white-login )',
+	isWhiteSignup: '.is-white-signup .is-section-signup',
+	isBlueSignup: '.is-section-signup:not( .is-white-signup )',
+};
+
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
@@ -59,26 +66,85 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			'sv',
 		];
 
-		it( 'Screenshot login page in desktop viewport, en and Mag-16 locales', async function () {
+		it( 'Screenshot blue login page in desktop viewport, en and Mag-16 locales', async function () {
 			const loginPage = new LoginPage( page );
 			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
-				await loginPage.visitLocale( locale );
+				await loginPage.visitBlueLogin( locale );
+				page.waitForSelector( selectors.isBlueLogin );
 				await page.screenshot( {
-					path: `tos_login_desktop_${ locale }.png`,
+					path: `tos_blue_login_desktop_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
 				} );
 				page.setViewportSize( { width: 410, height: 820 } );
 				await page.screenshot( {
-					path: `tos_login_mobile_${ locale }.png`,
+					path: `tos_blue_login_mobile_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
 				} );
 				page.setViewportSize( { width: 1024, height: 1366 } );
 				await page.screenshot( {
-					path: `tos_login_tablet_${ locale }.png`,
+					path: `tos_blue_login_tablet_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1280, height: 720 } );
+			}
+		} );
+
+		it( 'Screenshot blue signup page in desktop viewport, en and Mag-16 locales', async function () {
+			const userSignupPage = new UserSignupPage( page );
+			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
+				await userSignupPage.visitBlueSignup( locale );
+				page.waitForSelector( selectors.isBlueSignup );
+				await page.screenshot( {
+					path: `tos_blue_signup_desktop_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 410, height: 820 } );
+				await page.screenshot( {
+					path: `tos_blue_signup_mobile_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1024, height: 1366 } );
+				await page.screenshot( {
+					path: `tos_blue_signup_tablet_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1280, height: 720 } );
+			}
+		} );
+
+		it( 'Screenshot white login page in desktop viewport, en and Mag-16 locales', async function () {
+			const loginPage = new LoginPage( page );
+			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
+				await loginPage.visitWhiteLogin( locale );
+				page.waitForSelector( selectors.isWhiteLogin );
+				await page.screenshot( {
+					path: `tos_white_login_desktop_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 410, height: 820 } );
+				await page.screenshot( {
+					path: `tos_white_login_mobile_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1024, height: 1366 } );
+				await page.screenshot( {
+					path: `tos_white_login_tablet_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
@@ -92,27 +158,27 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			await BrowserManager.setStoreCookie( page, { currency: 'GBP' } );
 		} );
 
-		it( 'Screenshot signup page in desktop viewport, en and Mag-16 locales', async function () {
+		it( 'Screenshot white signup page in desktop viewport, en and Mag-16 locales', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			await page.screenshot( { path: 'tos_signup_desktop_en.png', fullPage: true } );
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-				await userSignupPage.visitLocale( locale );
+				await userSignupPage.visitWhiteSignup( locale );
+				page.waitForSelector( selectors.isWhiteSignup );
 				await page.screenshot( {
-					path: `tos_signup_desktop_${ locale }.png`,
+					path: `tos_white_signup_desktop_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
 				} );
 				page.setViewportSize( { width: 410, height: 820 } );
 				await page.screenshot( {
-					path: `tos_signup_mobile_${ locale }.png`,
+					path: `tos_white_signup_mobile_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
 				} );
 				page.setViewportSize( { width: 1024, height: 1366 } );
 				await page.screenshot( {
-					path: `tos_signup_tablet_${ locale }.png`,
+					path: `tos_white_signup_tablet_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
