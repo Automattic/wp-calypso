@@ -206,6 +206,8 @@ module.exports = {
 		// REST API objects include underscores
 		camelcase: 'off',
 
+		'no-constant-condition': [ 'error', { checkLoops: false } ],
+
 		'no-path-concat': 'error',
 
 		'one-var': [ 'error', 'never' ],
