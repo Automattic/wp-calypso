@@ -1,5 +1,5 @@
 import {
-	formatProduct,
+	camelOrSnakeSlug,
 	isCustomDesign,
 	isDomainMapping,
 	isDomainProduct,
@@ -565,21 +565,20 @@ export function getDomainMappings( cart ) {
 /**
  * Returns a renewal CartItem object with the given properties and product slug.
  *
- * @param {string|object} product - the product object
- * @param {object} [properties] - properties to be included in the new CartItem object
- * @returns {import('@automattic/shopping-cart').ResponseCartProduct} a CartItem object
+ * @param {(import('@automattic/calypso-products').WithCamelCaseSlug|import('@automattic/calypso-products').WithSnakeCaseSlug) & ({is_domain_registration?: boolean; isDomainRegistration?: boolean})} product - the product object
+ * @param {{domain?: string}} properties - properties to be included in the new CartItem object
+ * @returns {import('@automattic/shopping-cart').RequestCartProduct} a CartItem object
  */
 export function getRenewalItemFromProduct( product, properties ) {
-	product = formatProduct( product );
-
+	const slug = camelOrSnakeSlug( product );
 	let cartItem;
 
 	if ( isDomainProduct( product ) ) {
-		cartItem = domainItem( product.product_slug, properties.domain, properties.source );
+		cartItem = domainItem( slug, properties.domain ?? '' );
 	}
 
 	if ( isPlan( product ) ) {
-		cartItem = planItem( product.product_slug );
+		cartItem = planItem( slug );
 	}
 
 	if ( isGSuiteOrGoogleWorkspace( product ) ) {
@@ -615,11 +614,11 @@ export function getRenewalItemFromProduct( product, properties ) {
 	}
 
 	if ( isJetpackProduct( product ) ) {
-		cartItem = jetpackProductItem( product.product_slug );
+		cartItem = jetpackProductItem( slug );
 	}
 
 	if ( isSpaceUpgrade( product ) ) {
-		cartItem = spaceUpgradeItem( product.product_slug );
+		cartItem = spaceUpgradeItem( slug );
 	}
 
 	if ( ! cartItem ) {
