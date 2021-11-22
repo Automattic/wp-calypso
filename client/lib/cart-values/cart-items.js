@@ -310,20 +310,16 @@ export function hasRenewableSubscription( cart ) {
  * Creates a new shopping cart item for a plan.
  *
  * @param {string} productSlug - the unique string that identifies the product
- * @param {object} [properties] - list of properties
- * @returns {import('@automattic/shopping-cart').ResponseCartProduct | null} the new item
+ * @returns {{product_slug: string} | null} the new item
  */
-export function planItem( productSlug, properties ) {
+export function planItem( productSlug ) {
 	// Free plan doesn't have shopping cart.
 	if ( isWpComFreePlan( productSlug ) ) {
 		return null;
 	}
 
-	const domainToBundle = properties?.domainToBundle ?? '';
-
 	return {
 		product_slug: productSlug,
-		...( domainToBundle ? { extra: { domain_to_bundle: domainToBundle } } : {} ),
 	};
 }
 
