@@ -7,20 +7,15 @@ import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
 import { composeAnalytics, withAnalytics } from 'calypso/state/analytics/actions';
 import { addEmailForward } from 'calypso/state/email-forwarding/actions';
-import getEmailForwardingLimit from 'calypso/state/selectors/get-email-forwarding-limit';
 import {
 	addEmailForwardSuccess,
-	getEmailForwards,
 	isAddingEmailForward,
 } from 'calypso/state/selectors/get-email-forwards';
-import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class EmailForwardingAddNewCompactList extends Component {
 	static propTypes = {
-		emailForwards: PropTypes.array,
-		emailForwardingLimit: PropTypes.number,
 		onConfirmEmailForwarding: PropTypes.func.isRequired,
 		onAddEmailForwardSuccess: PropTypes.func,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -157,15 +152,10 @@ class EmailForwardingAddNewCompactList extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = getSelectedSiteId( state );
 		return {
 			emailForwardSuccess: addEmailForwardSuccess( state, ownProps.selectedDomainName ),
 			selectedSiteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
-			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
-			emailForwards: getEmailForwards( state, ownProps.selectedDomainName ),
-			emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
-			siteId,
 		};
 	},
 	{ addEmailForward }
