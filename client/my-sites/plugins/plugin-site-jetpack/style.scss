@@ -36,6 +36,7 @@
 	display: flex;
 	background: var( --studio-white );
 	border: 1px solid var( --studio-gray-5 );
+	border-top: 0;
 	padding: 16px 24px;
 	
 	.plugin-site-jetpack__domain {
