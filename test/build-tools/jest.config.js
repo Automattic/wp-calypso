@@ -15,4 +15,5 @@ module.exports = {
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	timers: 'fake',
 	verbose: false,
+	testPathIgnorePatterns: [ '<rootDir>/dist' ],
 };

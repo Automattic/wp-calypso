@@ -303,6 +303,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@bartekbp/typescript-checkstyle": "^5.0.0",
 		"bunyan": "^1.8.15",
 		"chokidar": "^3.5.2",
 		"eslint-nibble": "^7.0.0",

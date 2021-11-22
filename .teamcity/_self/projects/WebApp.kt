@@ -158,6 +158,7 @@ object RunAllUnitTests : BuildType({
 	artifactRules = """
 		test_results => test_results
 		artifacts => artifacts
+		checkstyle_results => checkstyle_results
 	""".trimIndent()
 
 	vcs {
@@ -250,10 +251,19 @@ object RunAllUnitTests : BuildType({
 			scriptContent = """
 				export NODE_ENV="test"
 
-				# Run type checks
+				# These are not expected to fail
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
-				yarn tsc --project client/landing/gutenboarding
+
+				# These have known errors, so we report them as checkstyle
+				(
+					# Enable pipe errors in this subshell. After all, we know these will fail.
+					set +e
+					yarn tsc --build client 2>&1 | tee tsc_out
+					mkdir -p checkstyle_results
+					yarn run typescript-checkstyle < tsc_out > ./checkstyle_results/tsc.xml
+					cat ./checkstyle_results/tsc.xml
+				)
 			"""
 		}
 		bashNodeScript {
@@ -330,6 +340,12 @@ object RunAllUnitTests : BuildType({
 	}
 
 	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/*.xml")
+			param("xmlReportParsing.verboseOutput", "true")
+		}
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")

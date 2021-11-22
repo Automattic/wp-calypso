@@ -23,6 +23,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aivenio/tsc-output-parser@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@aivenio/tsc-output-parser@npm:2.1.1"
+  bin:
+    tsc-output-parser: dist/cli.js
+  checksum: b2e74b82b312ccf13913647a816301c7e10cbdfcb649b8d98631fbd13c99c52259a5afaad80d52ee5a125e3534a2e4dfc40ad3a474c15fb7935f9eb9c7b23238
+  languageName: node
+  linkType: hard
+
 "@automattic/accessible-focus@workspace:^, @automattic/accessible-focus@workspace:packages/accessible-focus":
   version: 0.0.0-use.local
   resolution: "@automattic/accessible-focus@workspace:packages/accessible-focus"
@@ -2992,6 +3001,21 @@ __metadata:
     "@babel/helper-validator-identifier": ^7.15.7
     to-fast-properties: ^2.0.0
   checksum: 85109116bb5f8a5779b1ce900eb076c9035607cf354173eb9af8cfdaacc4892161f795fd062561f680ab4fd09f792db9529b4515e99c9ace2c844b21c9f5d2b0
+  languageName: node
+  linkType: hard
+
+"@bartekbp/typescript-checkstyle@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@bartekbp/typescript-checkstyle@npm:5.0.0"
+  dependencies:
+    "@aivenio/tsc-output-parser": ^2.1.1
+    checkstyle-formatter: ^1.1.0
+    get-stdin: ^8.0.0
+    lodash: ^4.17.20
+    yargs: ^16.2.0
+  bin:
+    typescript-checkstyle: dist/cli.js
+  checksum: 656f1ea7274d579b76ee635631450881c6344e2635dfe2cc5d4e4c4b6c2316985c01b01f43e6de53e8e8c725ccf9197bf07f988f048e423902c7a1bfed4981ee
   languageName: node
   linkType: hard
 
@@ -12376,6 +12400,15 @@ __metadata:
   bin:
     check-node-version: bin.js
   checksum: fea1a5ed7f4a83ebe43425c1223b7ddae5655a09f974397d1088af3521da0b9b3e1edd14c5c7b8a2590d6d7a4fa22da69ea0347fdde985164f97b847cc78e09f
+  languageName: node
+  linkType: hard
+
+"checkstyle-formatter@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "checkstyle-formatter@npm:1.1.0"
+  dependencies:
+    xml-escape: ^1.0.0
+  checksum: 85e63d281eabb13b12f54db09ca0082800c2fce67a42fdd36b8233d298e48b09bf5888ffd82d8262f0b75daf8fa404c2e6323aec02481fbc21a37c8d6a8a2d1a
   languageName: node
   linkType: hard
 
@@ -38144,6 +38177,7 @@ testarmada-magellan@11.0.10:
     "@babel/eslint-parser": ^7.16.3
     "@babel/register": ^7.16.0
     "@babel/runtime": ^7.16.3
+    "@bartekbp/typescript-checkstyle": ^5.0.0
     "@signal-noise/stylelint-scales": ^2.0.0
     "@storybook/react": ^6.3.12
     "@typeform/embed-react": ^1.1.0
@@ -38657,6 +38691,13 @@ testarmada-magellan@11.0.10:
     parse-headers: ^2.0.0
     xtend: ^4.0.0
   checksum: b73b6413b678846c422559cbc0afb2acb34c3a75b4c3bbee1f258e984255a8b8d65c1749b51691278bbdc28781782950d77a759ef5a9adf7774bed2f5dabc954
+  languageName: node
+  linkType: hard
+
+"xml-escape@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "xml-escape@npm:1.1.0"
+  checksum: 973cef0e383c373d1ccbacbba33ac49e7f2afd60d2710ed1308e153d2aa3b3189477f79315eb10eed43b7221add040a5eab18107170b658559e4d29ce7653a76
   languageName: node
   linkType: hard
 
