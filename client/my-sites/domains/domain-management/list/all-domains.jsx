@@ -52,7 +52,12 @@ import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import ListItemPlaceholder from './item-placeholder';
 import ListHeader from './list-header';
-import { getDomainManagementPath, getSimpleSortFunctionBy, ListAllActions } from './utils';
+import {
+	getDomainManagementPath,
+	getSimpleSortFunctionBy,
+	getReverseSimpleSortFunctionBy,
+	ListAllActions,
+} from './utils';
 
 import './list-all.scss';
 
@@ -435,7 +440,7 @@ class AllDomains extends Component {
 						} );
 						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
 					},
-					getSimpleSortFunctionBy( 'domain' ),
+					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
 			},
 			{
@@ -470,19 +475,6 @@ class AllDomains extends Component {
 				/>
 			</>
 		);
-
-		// let domainListItems = this.filteredDomains().map( ( domain, index ) => {
-		// 	return this.renderDomainItem( domain, index );
-		// } );
-
-		// if ( this.props.isContactEmailEditContext && this.isRequestingSiteDomains() ) {
-		// 	domainListItems = [
-		// 		...domainListItems,
-		// 		<ListItemPlaceholder key="item-is-requesting-site-domains" />,
-		// 	];
-		// }
-
-		// return [ this.renderDomainListHeader(), ...domainListItems ];
 	}
 
 	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
