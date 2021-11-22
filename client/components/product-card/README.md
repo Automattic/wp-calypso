@@ -193,7 +193,6 @@ text (optional) and a button.
 ### How to use the `<ProductCardAction />`
 
 ```jsx
-import React from 'react';
 import ProductCard from 'calypso/components/product-card';
 import ProductCardAction from 'calypso/components/product-card/action';
 
