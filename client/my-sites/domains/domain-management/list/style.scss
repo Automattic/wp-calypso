@@ -26,8 +26,8 @@
 		margin-left: 0;
 
 		@include break-mobile {
-			width: 18px;
-			height: 18px;
+			width: 24px;
+			height: 24px;
 		}
 	}
 }
@@ -306,7 +306,8 @@
 	margin-top: 24px;
 }
 
-.domain-management-list__filter {
+.domain-management-list__filter,
+.all-domains__filter {
 	padding: 0 16px;
 	> .domains-table-filter-button.is-mobile-version {
 		width: 100%;

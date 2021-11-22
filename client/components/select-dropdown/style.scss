@@ -111,6 +111,12 @@ $compact-header-height: 35;
 		}
 	}
 
+	.is-loading & .count,
+	.is-loading & .select-dropdown__header-text {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		color: var( --color-neutral-50 );
+	}
+
 	.select-dropdown.is-open & {
 		border-radius: 2px 2px 0 0;
 		box-shadow: none;

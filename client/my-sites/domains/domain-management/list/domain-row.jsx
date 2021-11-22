@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, home, moreVertical } from '@wordpress/icons';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
@@ -24,6 +25,7 @@ import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-tog
 import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+
 import './domain-row.scss';
 
 class DomainRow extends PureComponent {
@@ -32,6 +34,7 @@ class DomainRow extends PureComponent {
 		currentRoute: PropTypes.string,
 		disabled: PropTypes.bool,
 		domain: PropTypes.object.isRequired,
+		hasLoadedPurchases: PropTypes.bool,
 		isBusy: PropTypes.bool,
 		isLoadingDomainDetails: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
@@ -116,14 +119,18 @@ class DomainRow extends PureComponent {
 	}
 
 	renderDomainStatus() {
-		const { domain, site } = this.props;
+		const { domain, site, isLoadingDomainDetails } = this.props;
 		const { status, statusClass } = resolveDomainStatus( domain, null, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
 		} );
 
+		const domainStatusClass = classnames( 'domain-row__status-cell', {
+			'is-loading': isLoadingDomainDetails,
+		} );
+
 		return (
-			<div className="domain-row__status-cell">
+			<div className={ domainStatusClass }>
 				<span className={ `domain-row__${ statusClass }-dot` }></span> { status }
 			</div>
 		);
@@ -159,13 +166,13 @@ class DomainRow extends PureComponent {
 	}
 
 	renderAutoRenew() {
-		const { site, purchase } = this.props;
+		const { site, hasLoadedPurchases, purchase } = this.props;
 
-		if ( ! this.shouldShowAutoRenewStatus() ) {
+		if ( ! this.shouldShowAutoRenewStatus() || ( hasLoadedPurchases && ! purchase ) ) {
 			return <span className="domain-row__auto-renew-cell">-</span>;
 		}
 
-		if ( ! purchase || ! site ) {
+		if ( ! hasLoadedPurchases ) {
 			return (
 				<span className="domain-row__auto-renew-cell">
 					<p className="domain-row__placeholder" />
@@ -204,7 +211,7 @@ class DomainRow extends PureComponent {
 	renderEmailLabel = () => {
 		const { domain, translate } = this.props;
 
-		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domain.type ) === -1 ) {
+		if ( ! [ domainTypes.MAPPED, domainTypes.REGISTERED ].includes( domain.type ) ) {
 			return null;
 		}
 
