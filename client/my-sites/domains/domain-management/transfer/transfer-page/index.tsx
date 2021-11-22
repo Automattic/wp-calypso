@@ -1,5 +1,3 @@
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -11,12 +9,13 @@ import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-b
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { TransferPageProps } from './types';
 
-const TransferPage = () => {
+const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	return (
-		<Main wideLayout>
+		<Main className="transfer-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			The page goes heres
+			The page goes here
 		</Main>
 	);
 };
@@ -33,10 +32,6 @@ const transferPageComponent = connect( ( state, ownProps ) => {
 		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
 		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
 	};
-} )( localize( TransferPage ) );
-
-transferPageComponent.propTypes = {
-	selectedDomainName: PropTypes.string.isRequired,
-};
+} )( TransferPage );
 
 export default transferPageComponent;
