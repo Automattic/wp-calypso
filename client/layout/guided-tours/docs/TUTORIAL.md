@@ -249,7 +249,6 @@ If neither the code chunk nor the site data required for `/settings` are availab
 _The [fix][pr-10521]:_ We make Guided Tours "subscribe" to the corresponding data requests using its all-purpose [`actionLog`][action-log]: simply add the action type signaling the satisfaction of a data need — _e.g._, `RECEIVE_FOOS` or `REQUEST_FOOS_SUCCESS` — to the log's [white list][relevant-types]. Any change to `actionLog` triggers all of Guided Tours' view layer to update, thereby allowing a correct and timely positioning of steps.
 
 [async-load]: https://github.com/Automattic/wp-calypso/blob/HEAD/client/components/async-load/README.md
-[async-load-usage]: https://github.com/Automattic/wp-calypso/blob/791003963e72c39589073b4de634bf946d1d288f/client/post-editor/editor-sidebar/index.jsx#L43
 [pr-10521]: https://github.com/Automattic/wp-calypso/pull/10521
 [action-log]: https://github.com/Automattic/wp-calypso/tree/791003963e72c39589073b4de634bf946d1d288f/client/state/ui/action-log
 [relevant-types]: https://github.com/Automattic/wp-calypso/blob/791003963e72c39589073b4de634bf946d1d288f/client/state/ui/action-log/reducer.js#L18-L25
