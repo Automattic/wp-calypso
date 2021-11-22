@@ -1,7 +1,6 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Card } from '@automattic/components';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import Main from 'calypso/components/main';
@@ -21,6 +20,7 @@ import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-b
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { TransferPageProps } from './types';
 
 import './style.scss';
 
@@ -69,11 +69,11 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 						selectedDomainName,
 						currentRoute
 					) }
-					buttonText={ translate( 'Continue', { context: 'Verb' } ) }
-					headerText={ translate( 'To another user', {
-						comment: 'Transfer a domain to another user',
-					} ) }
-					mainText={ translate( 'Transfer this domain to any administrator on this site' ) }
+					// translators: Continue is a verb
+					buttonText={ __( 'Continue' ) }
+					// translators: Transfer a domain to another user
+					headerText={ __( 'To another user' ) }
+					mainText={ __( 'Transfer this domain to any administrator on this site' ) }
 				/>
 				<div className="transfer-page__item-separator"></div>
 				<ActionCard
@@ -82,11 +82,11 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 						selectedDomainName,
 						currentRoute
 					) }
-					buttonText={ translate( 'Continue', { context: 'Verb' } ) }
-					headerText={ translate( 'To another WordPress.com site', {
-						comment: 'Transfer a domain to another WordPress.com site',
-					} ) }
-					mainText={ translate( 'Transfer this domain to any site you are an administrator on' ) }
+					// translators: Continue is a verb
+					buttonText={ __( 'Continue' ) }
+					// translators: Transfer a domain to another WordPress.com site
+					headerText={ __( 'To another WordPress.com site' ) }
+					mainText={ __( 'Transfer this domain to any site you are an administrator on' ) }
 				/>
 			</Card>
 		</Main>
