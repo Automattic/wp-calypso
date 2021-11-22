@@ -126,7 +126,7 @@
 	}
 
 	/* Step-specific overrides */
-	.is-p2-get-started {
+	.signup__step.is-p2-get-started {
 		.p2-step-wrapper {
 			@include break-mobile {
 				padding: 48px 20px 0;
@@ -140,6 +140,19 @@
 			@include break-huge {
 				padding: 80px 20px 0;
 			}
+		}
+	}
+
+	.signup__step.is-p2-site {
+		.p2-step-wrapper__header {
+			margin-top: 80px;
+		}
+
+		.p2-step-wrapper__header-text {
+			font-size: var( --p2-font-size-form-s );
+			font-weight: 400;
+			text-align: left;
+			line-height: unset;
 		}
 	}
 }
