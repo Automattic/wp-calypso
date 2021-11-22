@@ -1,4 +1,4 @@
-import { forEach, get, pickBy } from 'lodash';
+import { forEach, pickBy } from 'lodash';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -19,9 +19,9 @@ const createItemsReducer = ( active ) => {
 	return ( state, { siteId, moduleSlug } ) => ( {
 		...state,
 		[ siteId ]: {
-			...state?.[ siteId ],
+			...state[ siteId ],
 			[ moduleSlug ]: {
-				...state?.[ siteId ]?.[ moduleSlug ],
+				...state[ siteId ]?.[ moduleSlug ],
 				active,
 			},
 		},
@@ -39,7 +39,7 @@ const createRequestsReducer = ( data ) => {
 	return ( state, { siteId, moduleSlug } ) => ( {
 		...state,
 		[ siteId ]: {
-			...state?.[ siteId ],
+			...state[ siteId ],
 			[ moduleSlug ]: data,
 		},
 	} );
@@ -58,7 +58,7 @@ const createSettingsItemsReducer = () => {
 	return ( state, { siteId, settings } ) => {
 		let updatedState = state;
 		const moduleActivationState = pickBy( settings, ( settingValue, settingName ) => {
-			return get( state, [ siteId, settingName ] ) !== undefined;
+			return state[ siteId ]?.[ settingName ] !== undefined;
 		} );
 
 		forEach( moduleActivationState, ( active, moduleSlug ) => {
