@@ -3,7 +3,14 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 import './sidebar-banner.scss';
 
-export default function SidebarBannerTemplate( { CTA, message, id, onDismiss, tracks, ...props } ) {
+export default function SidebarBannerTemplate( {
+	CTA,
+	message,
+	id,
+	onDismiss,
+	tracks,
+	isDismissible = false,
+} ) {
 	const clickName = tracks?.click?.name ?? `jitm_nudge_click_${ id }`;
 	const clickProps = tracks?.click?.props;
 
@@ -17,7 +24,7 @@ export default function SidebarBannerTemplate( { CTA, message, id, onDismiss, tr
 
 	let dismissPreferenceName = '';
 	let forceHref = true;
-	if ( props.isDismissible ) {
+	if ( isDismissible ) {
 		// Don't force the whole banner to be a link - the whole thing can't be a link when it has a dismiss and a link
 		forceHref = false;
 		dismissPreferenceName = id;
