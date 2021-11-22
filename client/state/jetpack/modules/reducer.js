@@ -1,4 +1,4 @@
-import { forEach, get, merge, pickBy } from 'lodash';
+import { forEach, get, pickBy } from 'lodash';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -16,43 +16,42 @@ import {
 import { combineReducers } from 'calypso/state/utils';
 
 const createItemsReducer = ( active ) => {
-	return ( state, { siteId, moduleSlug } ) => {
-		return merge( {}, state, {
-			[ siteId ]: {
-				[ moduleSlug ]: {
-					active,
-				},
+	return ( state, { siteId, moduleSlug } ) => ( {
+		...state,
+		[ siteId ]: {
+			...state?.[ siteId ],
+			[ moduleSlug ]: {
+				...state?.[ siteId ]?.[ moduleSlug ],
+				active,
 			},
-		} );
-	};
+		},
+	} );
 };
 
 const createItemsListReducer = () => {
-	return ( state, { siteId, modules } ) => {
-		return merge( {}, state, {
-			[ siteId ]: modules,
-		} );
-	};
+	return ( state, { siteId, modules } ) => ( {
+		...state,
+		[ siteId ]: modules,
+	} );
 };
 
 const createRequestsReducer = ( data ) => {
-	return ( state, { siteId, moduleSlug } ) => {
-		return merge( {}, state, {
-			[ siteId ]: {
-				[ moduleSlug ]: data,
-			},
-		} );
-	};
+	return ( state, { siteId, moduleSlug } ) => ( {
+		...state,
+		[ siteId ]: {
+			...state?.[ siteId ],
+			[ moduleSlug ]: data,
+		},
+	} );
 };
 
 const createModuleListRequestReducer = ( fetchingModules ) => {
-	return ( state, { siteId } ) => {
-		return merge( {}, state, {
-			[ siteId ]: {
-				fetchingModules,
-			},
-		} );
-	};
+	return ( state, { siteId } ) => ( {
+		...state,
+		[ siteId ]: {
+			fetchingModules,
+		},
+	} );
 };
 
 const createSettingsItemsReducer = () => {
