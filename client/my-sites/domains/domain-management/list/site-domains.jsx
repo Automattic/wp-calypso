@@ -50,9 +50,9 @@ import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import DomainOnly from './domain-only';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
+import { filterDomainsByOwner } from './helpers';
 import {
 	filterOutWpcomDomains,
-	filterDomainsByOwner,
 	getDomainManagementPath,
 	showUpdatePrimaryDomainSuccessNotice,
 	showUpdatePrimaryDomainErrorNotice,

@@ -50,10 +50,10 @@ import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainItem from './domain-item';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
+import { filterDomainsByOwner } from './helpers';
 import ListItemPlaceholder from './item-placeholder';
 import ListHeader from './list-header';
 import {
-	filterDomainsByOwner,
 	getDomainManagementPath,
 	getSimpleSortFunctionBy,
 	getReverseSimpleSortFunctionBy,
