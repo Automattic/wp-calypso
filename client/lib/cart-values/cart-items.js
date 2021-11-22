@@ -697,8 +697,13 @@ export function isNextDomainFree( cart, domain = '' ) {
 	return true;
 }
 
+/**
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart Cart
+ * @param {string} domain Domain
+ * @returns {boolean}
+ */
 export function isDomainBundledWithPlan( cart, domain ) {
-	const bundledDomain = cart?.bundledDomain ?? '';
+	const bundledDomain = cart?.bundled_domain ?? '';
 	return '' !== bundledDomain && ( domain ?? '' ).toLowerCase() === bundledDomain.toLowerCase();
 }
 
