@@ -26,6 +26,11 @@ const VideoFooterBar = ( {
 		} );
 	};
 
+	const shouldDisplayFooter = displayBackButton || displaySkipLink | displayCTA;
+	if ( ! shouldDisplayFooter ) {
+		return null;
+	}
+
 	return (
 		<div className={ 'videos-ui__bar videos-ui__is-footer' }>
 			<div
