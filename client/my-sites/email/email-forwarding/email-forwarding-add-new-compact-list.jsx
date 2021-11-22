@@ -88,14 +88,14 @@ class EmailForwardingAddNewCompactList extends Component {
 	}
 
 	onRemoveEmailForward = ( index ) => {
-		const { emailForwards } = this.state;
+		const emailForwards = [ ...this.state.emailForwards ];
 		emailForwards.splice( index, 1 );
 		this.setState( { emailForwards } );
 	};
 
 	onUpdateEmailForward = ( index, name, value ) => {
 		// eslint-disable-next-line prefer-const
-		let emailForwards = { ...this.state.emailForwards };
+		let emailForwards = [ ...this.state.emailForwards ];
 		emailForwards[ index ][ name ] = value;
 
 		const validEmailForward = validateAllFields( emailForwards[ index ] );
@@ -123,13 +123,15 @@ class EmailForwardingAddNewCompactList extends Component {
 	render() {
 		const { selectedDomainName } = this.props;
 
+		const { emailForwards } = this.state;
+
 		return (
 			<>
-				{ this.state.emailForwards?.map( ( fields, index ) => (
+				{ emailForwards.map( ( fields, index ) => (
 					<Fragment key={ `email-forwarding__add-new_fragment__card-${ index }` }>
 						<form className="email-forwarding__add-new">
 							<EmailForwardingAddNewCompact
-								emailForwards={ this.state.emailForwards }
+								emailForwards={ emailForwards }
 								fields={ fields }
 								index={ index }
 								onAddEmailForward={ this.onAddNewEmailForward }
