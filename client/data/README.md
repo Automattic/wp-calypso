@@ -10,7 +10,7 @@ Query results are persisted by default because `react-query` is typically used t
 
 Persistence opt-out when using `react-query` is necessary in some cases. You can achieve that in two ways:
 
-- Dumb opt-out, where you pass a boolean to the `persist` property:
+- Simple opt-out, where you pass a boolean to the `persist` property:
 
 ```js
 function MyComponent() {
