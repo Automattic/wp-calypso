@@ -115,7 +115,8 @@ export class UserStep extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		const { oauth2Signup, initialContext } = this.props;
+		const { oauth2Signup, initialContext, flowName } = this.props;
+
 		const clientId = get( initialContext, 'query.oauth2_client_id', null );
 
 		this.setSubHeaderText( this.props );
@@ -123,13 +124,15 @@ export class UserStep extends Component {
 		if ( oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
 		}
-		const experimentCheck = this.state.isDesktop
-			? 'registration_email_only_desktop'
-			: 'registration_email_only_mobile';
+		if ( flowName === 'onboarding' ) {
+			const experimentCheck = this.state.isDesktop
+				? 'registration_email_only_desktop'
+				: 'registration_email_only_mobile';
 
-		loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
-			this.setState( { experiment: experimentName } );
-		} );
+			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
+				this.setState( { experiment: experimentName } );
+			} );
+		}
 	}
 
 	componentDidMount() {
