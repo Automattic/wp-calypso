@@ -9,6 +9,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { DNS_TXT_RECORD_CHAR_LIMIT } from 'calypso/lib/url/support';
 
 class TxtRecord extends Component {
 	static propTypes = {
@@ -21,16 +22,6 @@ class TxtRecord extends Component {
 	getValidationErrorMessage( value ) {
 		const { translate } = this.props;
 
-		const txtRecordSupportPageLink = (
-			<ExternalLink
-				href={ localizeUrl(
-					'https://wordpress.com/support/domains/custom-dns/#txt-record-character-limit'
-				) }
-				target="_blank"
-				icon={ false }
-			/>
-		);
-
 		if ( value?.length === 0 ) {
 			return translate( 'TXT records may not be empty' );
 		} else if ( value?.length > 255 ) {
@@ -38,7 +29,13 @@ class TxtRecord extends Component {
 				'TXT records may not exceed 255 characters. {{supportLink}}Learn more{{/supportLink}}.',
 				{
 					components: {
-						supportLink: txtRecordSupportPageLink,
+						supportLink: (
+							<ExternalLink
+								href={ localizeUrl( DNS_TXT_RECORD_CHAR_LIMIT ) }
+								target="_blank"
+								icon={ false }
+							/>
+						),
 					},
 				}
 			);
