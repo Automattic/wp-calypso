@@ -1,5 +1,4 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -8,8 +7,8 @@ import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-sl
 import './style-video-bar.scss';
 
 const VideoFooterBar = ( {
-	displayBackButton,
-	displaySkipLink,
+	context,
+	isMobile,
 	displayCTA,
 	descriptionCTA = '',
 	buttonTextCTA = '',
@@ -26,20 +25,21 @@ const VideoFooterBar = ( {
 		} );
 	};
 
-	const shouldDisplayFooter = displayBackButton || displaySkipLink | displayCTA;
-	if ( ! shouldDisplayFooter ) {
+	let displayBackButton = false;
+	const displaySkipLink = false;
+	if ( context === 'modal' && isMobile ) {
+		displayBackButton = true;
+	}
+
+	if ( ! displayBackButton && ! displaySkipLink && ! displayCTA ) {
 		return null;
 	}
 
 	return (
 		<div className={ 'videos-ui__bar videos-ui__is-footer' }>
-			<div
-				className={ classNames( 'videos-ui__bar-content', {
-					mobile: ! displayCTA,
-				} ) }
-			>
+			<div className={ 'videos-ui__bar-content' }>
 				{ displayBackButton && (
-					<div className={ 'videos-ui__mobile' }>
+					<div className={ 'videos-ui__back' }>
 						<a href="/" onClick={ onBackClick }>
 							<Gridicon icon="chevron-left" size={ 24 } />
 							<span>{ translate( 'Back' ) }</span>
@@ -48,14 +48,14 @@ const VideoFooterBar = ( {
 				) }
 				{ displayCTA && (
 					<div className={ 'videos-ui__cta' }>
-						<div className={ 'videos-ui__desktop' }>{ descriptionCTA }</div>
+						<div>{ descriptionCTA }</div>
 						<Button onClick={ onCTAButtonClick } className="videos-ui__button" href={ hrefCTA }>
 							<span>{ buttonTextCTA }</span>
 						</Button>
 					</div>
 				) }
 				{ displaySkipLink && (
-					<div className="videos-ui__bar-skip-link videos-ui__mobile">
+					<div className="videos-ui__bar-skip-link">
 						<a href={ `/post/${ siteSlug }` } onClick={ skipClickHandler }>
 							{ translate( 'Draft your first post' ) }
 						</a>

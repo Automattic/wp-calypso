@@ -37,10 +37,6 @@
         }
     }
 
-    .videos-ui__desktop {
-        display: none;
-    }
-
     .videos-ui__cta {
         display: flex;
         justify-content: flex-end;
@@ -65,18 +61,6 @@
     }
 
 	@include break-small {
-        .videos-ui__desktop {
-            display: block;
-        }
-        .videos-ui__mobile {
-            display: none;
-        }
-
-        .videos-ui__bar-content {
-            &.videos-ui__desktop {
-                display: flex;
-            }
-        }
         .videos-ui__cta {
             justify-content: space-between;
         }

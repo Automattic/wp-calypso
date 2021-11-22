@@ -8,7 +8,7 @@ import VideoHeaderBar from './video-header-bar';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) => {
+const VideosUi = ( { onBackClick = () => {} } ) => {
 	const translate = useTranslate();
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
 	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
@@ -17,6 +17,17 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 	const [ currentVideo, setCurrentVideo ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
 	const videoRef = useRef( null );
+
+	const [ isMobile, setIsMobile ] = useState( window.innerWidth < 600 );
+	useEffect( () => {
+		window.addEventListener(
+			'resize',
+			() => {
+				setIsMobile( window.innerWidth < 600 );
+			},
+			false
+		);
+	}, [ isMobile ] );
 
 	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
@@ -85,11 +96,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 		<div className="videos-ui">
 			<div className="videos-ui__header">
 				<VideoHeaderBar
-					displayIcon={ true }
-					displayLinks={ shouldDisplayTopLinks }
-					displaySkipLink={ false }
-					displayBackLink={ false }
-					displayCloseLink={ true }
+					context={ 'modal' }
 					onBackClick={ onBackClick }
 					skipClickHandler={ skipClickHandler }
 				/>
@@ -199,8 +206,8 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 			</div>
 			{ course && (
 				<VideoFooterBar
-					displayBackButton={ true }
-					displaySkipLink={ true }
+					context={ 'modal' }
+					isMobile={ isMobile }
 					displayCTA={ false }
 					descriptionCTA={ course.cta.description }
 					buttonTextCTA={ course.cta.action }
