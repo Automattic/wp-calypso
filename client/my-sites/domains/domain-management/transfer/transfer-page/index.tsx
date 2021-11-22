@@ -93,7 +93,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	);
 };
 
-const transferPageComponent = connect( ( state, ownProps ) => {
+const transferPageComponent = connect( ( state, ownProps: TransferPageProps ) => {
 	const domain = getSelectedDomain( ownProps );
 	const siteId = getSelectedSiteId( state );
 	return {
