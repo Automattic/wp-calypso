@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
 import Notice from 'calypso/components/notice';
 import { addLocaleToPath, getLanguage } from 'calypso/lib/i18n-utils';
+import { switchLocale } from 'calypso/lib/i18n-utils/switch-locale';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
-import { setLocale } from 'calypso/state/ui/language/actions';
 import LocaleSuggestionsListItem from './list-item';
 
 import './style.scss';
@@ -28,7 +28,7 @@ export class LocaleSuggestions extends Component {
 		dismissed: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		let { locale } = this.props;
 
 		if ( ! locale && typeof navigator === 'object' && 'languages' in navigator ) {
@@ -41,12 +41,12 @@ export class LocaleSuggestions extends Component {
 			}
 		}
 
-		this.props.setLocale( locale );
+		this.props.switchLocale( locale );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.locale !== nextProps.locale ) {
-			this.props.setLocale( nextProps.locale );
+	componentDidUpdate( prevProps ) {
+		if ( this.props.locale !== prevProps.locale ) {
+			this.props.switchLocale( this.props.locale );
 		}
 	}
 
@@ -98,5 +98,5 @@ export default connect(
 	( state ) => ( {
 		localeSuggestions: getLocaleSuggestions( state ),
 	} ),
-	{ setLocale }
+	{ switchLocale }
 )( LocaleSuggestions );

@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import { switchLocale } from 'calypso/lib/i18n-utils/switch-locale';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';
-import { setLocale } from 'calypso/state/ui/language/actions';
 
 const noop = () => {};
 
@@ -55,7 +55,7 @@ export function setLocaleMiddleware( context, next ) {
 			: currentUser.localeSlug;
 	}
 
-	context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );
+	context.store.dispatch( switchLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );
 	next();
 }
 

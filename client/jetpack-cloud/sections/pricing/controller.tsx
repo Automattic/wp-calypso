@@ -1,7 +1,7 @@
 import page from 'page';
+import { switchLocale } from 'calypso/lib/i18n-utils/switch-locale';
 import { addQueryArgs } from 'calypso/lib/route';
 import { hideMasterbar } from 'calypso/state/ui/actions';
-import { setLocale } from 'calypso/state/ui/language/actions';
 import Header from './header';
 import JetpackComFooter from './jpcom-footer';
 import JetpackComMasterbar from './jpcom-masterbar';
@@ -11,7 +11,7 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 	const { locale, site } = context.params;
 
 	if ( locale ) {
-		context.store.dispatch( setLocale( locale ) );
+		context.store.dispatch( switchLocale( locale ) );
 
 		if ( context.pathname.includes( '/pricing/storage' ) ) {
 			page.redirect(

@@ -20,11 +20,11 @@ describe( 'LocaleSuggestions', () => {
 			{ locale: 'fr', name: 'Français', availability_text: 'Également disponible en' },
 			{ locale: 'en', name: 'English', availability_text: 'Also available in' },
 		],
-		setLocale: jest.fn(),
+		switchLocale: jest.fn(),
 	};
 
 	test( 'should not render without suggestions', () => {
-		const wrapper = shallow( <LocaleSuggestions path="" locale="x" setLocale={ () => {} } /> );
+		const wrapper = shallow( <LocaleSuggestions path="" locale="x" switchLocale={ () => {} } /> );
 		expect( wrapper.type() ).toBe( null );
 	} );
 
