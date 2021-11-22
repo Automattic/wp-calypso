@@ -477,6 +477,7 @@ class AllDomains extends Component {
 					) }
 					domainsTableColumns={ domainsTableColumns }
 					isManagingAllSites={ true }
+					isContactEmailEditContext={ isContactEmailEditContext }
 					goToEditDomainRoot={ this.handleDomainItemClick }
 					isLoading={ this.isLoading() }
 					purchases={ purchases }

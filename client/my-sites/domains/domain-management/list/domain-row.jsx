@@ -9,6 +9,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
@@ -380,6 +381,14 @@ class DomainRow extends PureComponent {
 		);
 	}
 
+	renderDomainCheckbox() {
+		return (
+			<div className="domain-row__checkbox-cell">
+				<FormCheckbox className="domain-row__checkbox" onChange={ () => {} } onClick={ () => {} } />
+			</div>
+		);
+	}
+
 	busyMessage() {
 		if ( this.props.isBusy && this.props.busyMessage ) {
 			return <div className="domain-row__busy-message">{ this.props.busyMessage }</div>;
@@ -387,13 +396,14 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, isManagingAllSites, translate } = this.props;
+		const { domain, isManagingAllSites, showCheckbox, translate } = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
 
 		return (
 			<div className="domain-row">
 				<div className="domain-row__mobile-container">
+					{ isManagingAllSites && showCheckbox && this.renderDomainCheckbox() }
 					{ this.renderDomainName( domainTypeText ) }
 					{ isManagingAllSites && this.renderSite() }
 					{ this.renderDomainStatus() }

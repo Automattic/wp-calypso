@@ -100,6 +100,7 @@ class DomainsTable extends PureComponent {
 			shouldUpgradeToMakeDomainPrimary,
 			requestingSiteDomains,
 			sites,
+			isContactEmailEditContext,
 			translate,
 		} = this.props;
 
@@ -149,6 +150,7 @@ class DomainsTable extends PureComponent {
 					<DomainRow
 						key={ `${ domain.name }-${ index }` }
 						currentRoute={ currentRoute }
+						showCheckbox={ isContactEmailEditContext }
 						domain={ domain }
 						site={ selectedSite }
 						isManagingAllSites={ isManagingAllSites }
