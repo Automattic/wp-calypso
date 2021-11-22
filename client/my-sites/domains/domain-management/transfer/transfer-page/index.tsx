@@ -1,3 +1,5 @@
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -11,12 +13,17 @@ import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-b
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { TransferPageProps } from './types';
 
-const TransferPage = (): JSX.Element => {
+const TransferPage = ( props: TransferPageProps ): JSX.Element => {
+	const { __ } = useI18n();
+	const { selectedSite, currentRoute, selectedDomainName } = props;
+
 	const renderBreadcrumbs = () => {
 		const items = [
 			{
-				label: translate( 'Domains', { comment: 'Internet domains, e.g. mygroovydomain.com' } ),
+				// translators: Internet domains, e.g. mygroovydomain.com
+				label: __( 'Domains' ),
 				href: domainManagementList( selectedSite.slug, selectedDomainName ),
 			},
 			{
@@ -24,15 +31,17 @@ const TransferPage = (): JSX.Element => {
 				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
 			},
 			{
-				label: translate( 'Transfer', { comment: 'Verb - Transfer a domain somewhere else' } ),
+				// translators: Verb - Transfer a domain somewhere else
+				label: __( 'Transfer' ),
 			},
 		];
 
 		const mobileItem = {
-			label: translate( 'Back to %(domain)s', {
-				args: { domain: selectedDomainName },
-				comment: 'Link to return to the settings management page of a domain ',
-			} ),
+			label: sprintf(
+				/* translators: Link to return to the settings management page of a specific domain (%s = domain, e.g. example.com) */
+				__( 'Back to %s' ),
+				selectedDomainName
+			),
 			href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
