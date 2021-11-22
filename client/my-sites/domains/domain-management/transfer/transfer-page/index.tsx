@@ -9,8 +9,9 @@ import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-b
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { TransferPageProps } from './types';
 
-const TransferPage = (): JSX.Element => {
+const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	return (
 		<Main className="transfer-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
