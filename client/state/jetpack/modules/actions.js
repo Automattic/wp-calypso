@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import { omit, mapValues } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	JETPACK_MODULE_ACTIVATE,
@@ -145,10 +144,16 @@ export const fetchModuleList = ( siteId ) => {
 				path: '/jetpack/v4/module/all/',
 			} )
 			.then( ( { data } ) => {
-				const modules = mapValues( data, ( module ) => ( {
-					active: module.activated,
-					...omit( module, 'activated' ),
-				} ) );
+				const modules = Object.entries( data ).reduce(
+					( acc, [ key, { activated: active, ...module } ] ) => {
+						acc[ key ] = {
+							active,
+							...module,
+						};
+						return acc;
+					},
+					{}
+				);
 
 				dispatch( receiveJetpackModules( siteId, modules ) );
 				dispatch( {

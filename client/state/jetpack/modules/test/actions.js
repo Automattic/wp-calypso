@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { omit, mapValues } from 'lodash';
 import sinon from 'sinon';
 import {
 	JETPACK_MODULE_ACTIVATE,
@@ -191,14 +190,26 @@ describe( 'actions', () => {
 
 			test( 'should dispatch JETPACK_MODULES_RECEIVE when we get the response from the API', () => {
 				const result = fetchModuleList( siteId )( spy );
+				const modules = {
+					'module-a': {
+						module: 'module-a',
+						active: false,
+					},
+					'module-b': {
+						module: 'module-b',
+						active: true,
+						options: {
+							c: {
+								currentValue: 2,
+							},
+						},
+					},
+				};
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULES_RECEIVE,
 						siteId,
-						modules: mapValues( API_MODULE_LIST_RESPONSE_FIXTURE.data, ( module ) => ( {
-							active: module.activated,
-							...omit( module, 'activated' ),
-						} ) ),
+						modules,
 					} );
 				} );
 			} );
