@@ -1,6 +1,5 @@
 import debugFactory from 'debug';
 import { omit } from 'lodash';
-import { stringify } from 'qs';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import Me from './me';
 
@@ -474,24 +473,6 @@ Undocumented.prototype.updateImporter = function ( siteId, importerStatus ) {
 	return this.wpcom.req.post( {
 		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
 		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
-	} );
-};
-
-Undocumented.prototype.importWithSiteImporter = function (
-	siteId,
-	importerStatus,
-	params,
-	targetUrl
-) {
-	debug( `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }` );
-
-	return this.wpcom.req.post( {
-		path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
-		apiNamespace: 'wpcom/v2',
-		formData: [
-			[ 'import_status', JSON.stringify( importerStatus ) ],
-			[ 'site_url', targetUrl ],
-		],
 	} );
 };
 
