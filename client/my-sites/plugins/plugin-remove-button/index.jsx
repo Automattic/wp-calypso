@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
+import { Button } from '@wordpress/components';
 import { Icon, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -177,16 +178,16 @@ class PluginRemoveButton extends Component {
 
 		return (
 			<PluginAction
-				label={ label }
 				htmlFor={ 'remove-plugin-' + this.props.site.ID }
 				action={ this.removeAction }
 				disabled={ disabled }
 				disabledInfo={ disabledInfo }
 				className="plugin-remove-button__remove-link"
 			>
-				<a onClick={ handleClick } className="plugin-remove-button__remove-icon">
+				<Button onClick={ handleClick } className="plugin-remove-button__remove-icon">
 					<Icon icon={ trash } />
-				</a>
+					{ label }
+				</Button>
 			</PluginAction>
 		);
 	};
