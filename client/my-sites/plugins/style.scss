@@ -378,4 +378,12 @@ $plugin-details-header-padding: 100px;
 .plugin-details__sites-list {
 	max-width: 1040px;
 	margin: auto;
+
+	@media screen and ( max-width: 1400px ) {
+		padding: 0 40px;
+	}
+
+	@media screen and (max-width: 1040px) {
+		padding: 0 48px;
+	}
 }

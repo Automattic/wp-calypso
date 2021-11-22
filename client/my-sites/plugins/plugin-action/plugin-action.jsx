@@ -66,6 +66,7 @@ class PluginAction extends Component {
 				disabled={ this.props.inProgress || this.props.disabled || !! this.props.disabledInfo }
 				id={ this.props.htmlFor }
 				label={ this.renderLabel() }
+				aria-label={ this.props.label }
 			/>
 		);
 	}
