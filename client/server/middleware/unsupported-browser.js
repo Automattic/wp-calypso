@@ -40,13 +40,7 @@ function isUnsupportedBrowser( req ) {
 	// based on the chrome version.
 	const userAgentString = req.useragent.source;
 	const sanitizedUA = userAgentString.replace( / (WordPressDesktop|Electron)\/[.\d]+/g, '' );
-	return matchesUA( sanitizedUA, {
-		env: 'evergreen',
-		ignorePatch: true,
-		ignoreMinor: true,
-		allowHigherVersions: true,
-		browsers: UNSUPPORTED_BROWSERS,
-	} );
+	return matchesUA( sanitizedUA, { ignoreMinor: true, browsers: UNSUPPORTED_BROWSERS } );
 }
 
 // We don't want to redirect some of our public landing pages, so we include them here.
