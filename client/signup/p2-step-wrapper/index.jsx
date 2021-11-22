@@ -43,6 +43,7 @@ function P2StepWrapper( {
 			</div>
 			<StepWrapper
 				hideFormattedHeader
+				shouldHideNavButtons={ true }
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
