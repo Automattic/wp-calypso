@@ -38,7 +38,7 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
-import { getPurchases } from 'calypso/state/purchases/selectors';
+import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -56,6 +56,7 @@ import {
 	showUpdatePrimaryDomainSuccessNotice,
 	showUpdatePrimaryDomainErrorNotice,
 	getSimpleSortFunctionBy,
+	getReverseSimpleSortFunctionBy,
 } from './utils';
 
 import './style.scss';
@@ -89,9 +90,9 @@ export class SiteDomains extends Component {
 	filterDomains( domains, filter ) {
 		return domains.filter( ( domain ) => {
 			if ( 'owned-by-me' === filter ) {
-				return domain.currentUserCanManage;
+				return domain.currentUserIsOwner;
 			} else if ( 'owned-by-others' === filter ) {
-				return ! domain.currentUserCanManage;
+				return ! domain.currentUserIsOwner;
 			}
 			return true;
 		} );
@@ -103,6 +104,7 @@ export class SiteDomains extends Component {
 			domains,
 			hasProductsList,
 			isAtomicSite,
+			isFetchingPurchases,
 			selectedSite,
 			context,
 			translate,
@@ -141,7 +143,7 @@ export class SiteDomains extends Component {
 						} );
 						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
 					},
-					getSimpleSortFunctionBy( 'domain' ),
+					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
 			},
 			{
@@ -173,7 +175,7 @@ export class SiteDomains extends Component {
 
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
-						{ this.renderDomainTableFilterButton( false ) }
+						{ this.renderDomainTableFilterButton() }
 					</div>
 					<DomainsTable
 						currentRoute={ currentRoute }
@@ -187,6 +189,7 @@ export class SiteDomains extends Component {
 						settingPrimaryDomain={ settingPrimaryDomain }
 						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
 						sites={ { [ selectedSite.ID ]: selectedSite } }
+						hasLoadedPurchases={ ! isFetchingPurchases }
 					/>
 				</div>
 
@@ -217,7 +220,7 @@ export class SiteDomains extends Component {
 		);
 	}
 
-	renderDomainTableFilterButton( compact ) {
+	renderDomainTableFilterButton() {
 		const { selectedSite, domains, context } = this.props;
 
 		const selectedFilter = context?.query?.filter;
@@ -260,7 +263,8 @@ export class SiteDomains extends Component {
 				key="breadcrumb_button_2"
 				selectedFilter={ selectedFilter || '' }
 				filterOptions={ filterOptions }
-				compact={ compact }
+				isLoading={ this.isLoading() }
+				disabled={ this.isLoading() }
 			/>
 		);
 	}
@@ -528,6 +532,7 @@ export default connect(
 			userCanManageOptions,
 			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
 			purchases,
+			isFetchingPurchases: isFetchingSitePurchases( state ),
 		};
 	},
 	( dispatch ) => {

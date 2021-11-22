@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -23,10 +24,14 @@ export const disconnectSocialUser = ( socialService ) => ( dispatch ) => {
 		},
 	} );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.socialDisconnect( socialService )
+	return wpcom.req
+		.post( '/me/social-login/disconnect', {
+			service: socialService,
+
+			// This API call is restricted to these OAuth keys
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
 		.then(
 			() => {
 				dispatch( {

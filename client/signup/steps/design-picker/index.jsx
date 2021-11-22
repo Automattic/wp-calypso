@@ -1,7 +1,7 @@
 import DesignPicker, {
 	isBlankCanvasDesign,
 	getDesignUrl,
-	useCategorySelection,
+	useCategorization,
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -43,10 +43,18 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
+	const apiThemes = useSelector( ( state ) =>
+		getRecommendedThemes( state, 'auto-loading-homepage' )
+	);
+
+	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
+
 	useEffect(
 		() => {
 			dispatch( saveSignupStep( { stepName: props.stepName } ) );
-			dispatch( fetchRecommendedThemes( 'auto-loading-homepage' ) );
+			if ( ! themesToBeTransformed.length ) {
+				dispatch( fetchRecommendedThemes( 'auto-loading-homepage' ) );
+			}
 		},
 		// Ignoring dependencies because we only want these actions to run on first mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,12 +79,6 @@ export default function DesignPickerStep( props ) {
 	}, [ props.stepSectionName ] );
 
 	const userLoggedIn = useSelector( isUserLoggedIn );
-
-	const apiThemes = useSelector( ( state ) =>
-		getRecommendedThemes( state, 'auto-loading-homepage' )
-	);
-
-	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
 	const designs = useMemo( () => {
 		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
@@ -111,11 +113,11 @@ export default function DesignPickerStep( props ) {
 		setSelectedDesign( designs.find( ( { theme } ) => theme === props.stepSectionName ) );
 	}, [ designs, props.stepSectionName, setSelectedDesign ] );
 
-	const [ selectedCategory, setSelectedCategory ] = useCategorySelection(
-		designs,
-		props.showDesignPickerCategoriesAllFilter,
-		props.signupDependencies.intent === 'write' ? 'blog' : null
-	);
+	const categorization = useCategorization( designs, {
+		showAllFilter: props.showDesignPickerCategoriesAllFilter,
+		defaultSelection: props.signupDependencies.intent === 'write' ? 'blog' : null,
+		sort: sortBlogToTop,
+	} );
 
 	function pickDesign( _selectedDesign ) {
 		// Design picker preview will submit the defaultDependencies via next button,
@@ -163,17 +165,14 @@ export default function DesignPickerStep( props ) {
 			<DesignPicker
 				designs={ designs }
 				theme={ props.isReskinned ? 'light' : 'dark' }
-				locale={ translate.locale }
+				locale={ translate.localeSlug }
 				onSelect={ pickDesign }
 				onPreview={ previewDesign }
 				className={ classnames( {
 					'design-picker-step__has-categories': props.showDesignPickerCategories,
 				} ) }
 				highResThumbnails
-				showCategoryFilter={ props.showDesignPickerCategories }
-				selectedCategory={ selectedCategory }
-				onSelectedCategoryChange={ setSelectedCategory }
-				showAllFilter={ props.showDesignPickerCategoriesAllFilter }
+				categorization={ props.showDesignPickerCategories ? categorization : undefined }
 				categoriesHeading={
 					<FormattedHeader
 						id={ 'step-header' }
@@ -192,7 +191,7 @@ export default function DesignPickerStep( props ) {
 			hideExternalPreview,
 		} = props;
 
-		const previewUrl = getDesignUrl( selectedDesign, translate.locale, {
+		const previewUrl = getDesignUrl( selectedDesign, translate.localeSlug, {
 			iframe: true,
 			// If the user fills out the site title with write intent, we show it on the design preview
 			// Otherwise, use the title of selected design directly
@@ -238,7 +237,7 @@ export default function DesignPickerStep( props ) {
 
 		const text = translate( 'Choose a starting theme. You can change it later.' );
 
-		if ( englishLocales.includes( translate.locale ) ) {
+		if ( englishLocales.includes( translate.localeSlug ) ) {
 			// An English only trick so the line wraps between sentences.
 			return text
 				.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
@@ -314,8 +313,21 @@ export default function DesignPickerStep( props ) {
 	);
 }
 
-DesignPicker.propTypes = {
+DesignPickerStep.propTypes = {
 	goToNextStep: PropTypes.func.isRequired,
 	signupDependencies: PropTypes.object.isRequired,
 	stepName: PropTypes.string.isRequired,
 };
+
+// Ensures Blog category appears at the top of the design category list
+// (directly below the All Themes category).
+function sortBlogToTop( a, b ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'blog' ) {
+		return -1;
+	} else if ( b.slug === 'blog' ) {
+		return 1;
+	}
+	return 0;
+}

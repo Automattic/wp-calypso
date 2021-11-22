@@ -15,6 +15,8 @@ class DomainsTableFilterButton extends Component {
 			} )
 		),
 		compact: PropTypes.bool.isRequired,
+		isLoading: PropTypes.bool,
+		disabled: PropTypes.bool,
 	};
 
 	getFilterOptions() {
@@ -57,7 +59,7 @@ class DomainsTableFilterButton extends Component {
 	}
 
 	render() {
-		const { compact } = this.props;
+		const { isLoading, disabled, compact } = this.props;
 		return (
 			<SelectDropdown
 				className={ classnames( 'domains-table-filter-button', {
@@ -67,6 +69,8 @@ class DomainsTableFilterButton extends Component {
 				initialSelected="site-domains"
 				selectedText={ this.getSelectedText() }
 				selectedCount={ this.getSelectedCount() }
+				isLoading={ isLoading }
+				disabled={ disabled }
 			>
 				{ this.getFilterItems() }
 			</SelectDropdown>

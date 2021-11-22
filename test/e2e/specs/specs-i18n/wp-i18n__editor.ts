@@ -3,13 +3,13 @@
  */
 
 import {
-	BrowserHelper,
 	ChangeUILanguageFlow,
 	DataHelper,
 	GutenbergEditorPage,
 	LoginPage,
 	NewPostFlow,
 	setupHooks,
+	TestEnvironment,
 } from '@automattic/calypso-e2e';
 import { Page, Frame } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
@@ -214,85 +214,101 @@ const translations: Translations = {
 		],
 	},
 };
-const locale = BrowserHelper.getLocale() as LanguageSlug;
-const localeTranslations = translations[ locale ];
-const describeSkipNoTranslations = localeTranslations ? describe : describe.skip;
 
-describeSkipNoTranslations(
-	DataHelper.createSuiteTitle( `Editor Translations (${ locale })` ),
-	() => {
-		let gutenbergEditorPage: GutenbergEditorPage;
-		let page: Page;
+describe( 'I18N: Editor', function () {
+	let page: Page;
+	// Filter out the locales that do not have valid translation content defined above.
+	const locales = Object.keys( translations ).filter( ( locale ) =>
+		TestEnvironment.LOCALES().includes( locale )
+	);
 
-		setupHooks( ( args ) => {
-			page = args.page;
+	setupHooks( ( args ) => {
+		page = args.page;
+		// Confirm page leave with unsaved changes prompt.
+		page.on( 'dialog', async ( dialog ) => {
+			if ( dialog.type() === 'beforeunload' ) {
+				await dialog.accept();
+			}
+		} );
+	} );
 
-			// Confirm page leave with unsaved changes prompt.
-			page.on( 'dialog', async ( dialog ) => {
-				if ( dialog.type() === 'beforeunload' ) {
-					await dialog.accept();
-				}
+	it( 'Log in', async function () {
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'i18nUser' } );
+	} );
+
+	describe.each( locales )( `Locale: %s`, function ( locale ) {
+		describe( 'Set up', function () {
+			it( `Change UI language to ${ locale }`, async function () {
+				await Promise.all( [
+					page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
+					page.goto( DataHelper.getCalypsoURL( '/' ) ),
+				] );
+
+				const changeUILanguageFlow = new ChangeUILanguageFlow( page );
+				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
+
+				await Promise.all( [
+					page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
+					page.goto( DataHelper.getCalypsoURL( '/' ) ),
+				] );
+			} );
+
+			it( 'Start new post', async function () {
+				const newPostFlow = new NewPostFlow( page );
+				await newPostFlow.newPostFromNavbar();
 			} );
 		} );
 
-		it( 'Log in', async () => {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: 'i18nUser' } );
-		} );
-
-		it( 'Change UI language', async () => {
-			await Promise.all( [
-				page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
-				page.goto( DataHelper.getCalypsoURL( '/' ) ),
-			] );
-
-			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
-			await changeUILanguageFlow.changeUILanguage( locale );
-
-			await Promise.all( [
-				page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
-				page.goto( DataHelper.getCalypsoURL( '/' ) ),
-			] );
-		} );
-
-		it( 'Start new post', async () => {
-			const newPostFlow = new NewPostFlow( page );
-			await newPostFlow.newPostFromNavbar();
-
-			gutenbergEditorPage = new GutenbergEditorPage( page );
-		} );
-
-		describeSkipNoTranslations.each( localeTranslations.blocks )(
+		describe.each( translations[ locale ].blocks )(
 			'Translations for block: $blockName',
-			( block ) => {
+			function ( block ) {
 				let frame: Frame;
+				let gutenbergEditorPage: GutenbergEditorPage;
 
-				beforeAll( async () => {
-					frame = await gutenbergEditorPage.getEditorFrame();
+				const blockTimeout = 10 * 1000;
+
+				it( 'Insert test block', async function () {
+					gutenbergEditorPage = new GutenbergEditorPage( page );
 					await gutenbergEditorPage.addBlock( block.blockName, block.blockEditorSelector );
 				} );
 
-				it( 'Render block content translations', async () => {
+				it( 'Render block content translations', async function () {
+					frame = await gutenbergEditorPage.getEditorFrame();
+					// Ensure block contents are translated as expected.
 					await Promise.all(
-						block.blockEditorContent.map( ( content ) =>
-							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }` )
+						block.blockEditorContent.map( ( content: any ) =>
+							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }`, {
+								timeout: blockTimeout,
+							} )
 						)
 					);
 				} );
 
-				it( 'Render block title translations', async () => {
+				it( 'Render block title translations', async function () {
 					await gutenbergEditorPage.openSettings();
 					await frame.click( block.blockEditorSelector );
-					await Promise.race( [
-						frame.waitForSelector( `${ block.blockEditorSelector }.is-selected` ),
-						frame.click( '.block-editor-block-parent-selector__button' ),
-					] );
 
+					// Ensure the block is highlighted.
 					await frame.waitForSelector(
-						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`
+						`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`,
+						{ timeout: blockTimeout }
+					);
+
+					// If on block insertion, one of the sub-blocks are selected, click on
+					// the first button in the floating toolbar which selects the overall
+					// block.
+					if ( await frame.isVisible( '.block-editor-block-parent-selector__button' ) ) {
+						await frame.click( '.block-editor-block-parent-selector__button' );
+					}
+
+					// Ensure the Settings with the block selected shows the expected title.
+					await frame.waitForSelector(
+						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`,
+						{ timeout: blockTimeout }
 					);
 				} );
 			}
 		);
-	}
-);
+	} );
+} );

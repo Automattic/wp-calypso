@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import page from 'page';
+import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList, domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -26,7 +27,7 @@ export const connectDomainAction = (
 				domain,
 				...verificationData,
 			} )
-			.then( () => {
+			.then( ( result ) => {
 				dispatch(
 					successNotice(
 						__( 'Domain connected! Please make sure to follow the next steps below.' ),
@@ -36,7 +37,8 @@ export const connectDomainAction = (
 						}
 					)
 				);
-				page( domainMappingSetup( selectedSite.slug, domain ) );
+				const step = result.points_to_wpcom ? stepSlug.SUGGESTED_CONNECTED : '';
+				page( domainMappingSetup( selectedSite.slug, domain, step ) );
 			} )
 			.catch( ( error ) => {
 				if ( 'ownership_verification_failed' !== error.error ) {

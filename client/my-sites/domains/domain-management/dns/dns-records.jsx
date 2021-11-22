@@ -12,6 +12,7 @@ import { getSelectedDomain, isRegisteredDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
+import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
 import {
 	domainManagementEdit,
 	domainManagementNameServers,
@@ -37,8 +38,8 @@ class DnsRecords extends Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
-	renderBreadcrumbs() {
-		const { dns, domains, translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+	renderBreadcrumbs = () => {
+		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 		const pointsToWpcom = selectedDomain?.pointsToWpcom ?? false;
 
@@ -82,7 +83,7 @@ class DnsRecords extends Component {
 				mobileButtons={ buttons }
 			/>
 		);
-	}
+	};
 
 	renderMain() {
 		const { dns, selectedDomainName, selectedSite, translate } = this.props;
@@ -100,6 +101,7 @@ class DnsRecords extends Component {
 					selectedSite={ selectedSite }
 					selectedDomainName={ selectedDomainName }
 				/>
+				<EmailSetup selectedDomainName={ selectedDomainName } />
 			</Main>
 		);
 	}
@@ -110,7 +112,11 @@ class DnsRecords extends Component {
 		return (
 			<Fragment>
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? <DomainMainPlaceholder goBack={ this.goBack } /> : this.renderMain() }
+				{ showPlaceholder ? (
+					<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
+				) : (
+					this.renderMain()
+				) }
 			</Fragment>
 		);
 	}

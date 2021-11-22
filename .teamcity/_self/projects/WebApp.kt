@@ -158,6 +158,7 @@ object RunAllUnitTests : BuildType({
 	artifactRules = """
 		test_results => test_results
 		artifacts => artifacts
+		checkstyle_results => checkstyle_results
 	""".trimIndent()
 
 	vcs {
@@ -173,6 +174,38 @@ object RunAllUnitTests : BuildType({
 
 				# Install modules
 				${_self.yarn_install_cmd}
+
+				# The "name" property refers to the code of the message (like YN0002).
+
+				# Generate a JSON array of the errors we care about:
+				# 1. Select warning YN0002 (Unmet peer dependencies.)
+				# 2. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
+				# 3. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
+				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 68 or (.type == "error" and .name != 0)) ]')
+
+				num_errors=${'$'}(jq length <<< "${'$'}yarn_errors")
+				if [ "${'$'}num_errors" -gt 0 ] ; then
+					# Construct warning strings from the JSON array of yarn problems.
+					err_string=${'$'}(jq '.[] | "Yarn error \(.displayName): \(.data)"' <<< "${'$'}yarn_errors")
+
+					# Remove quotes which had to be added in the jq expression:
+					err_string=${'$'}(sed 's/^"//g;s/"${'$'}//g' <<< "${'$'}err_string")
+
+					# Escape values as needed for TeamCity: https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+values
+					# Specifically, add | before every [, ], |, and '.
+					err_string=${'$'}(sed "s/\([][|']\)/|\1/g" <<< "${'$'}err_string")
+
+					# Output each yarn problem as a TeamCity service message for easier debugging.
+					while read -r err ; do
+						echo "##teamcity[message text='${'$'}err' status='ERROR']"
+					done <<< "${'$'}err_string"
+
+					# Quick plural handling because why not.
+					if [ "${'$'}num_errors" -gt 1 ]; then s='s'; else s=''; fi
+
+					echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
+					exit 1
+				fi
 			"""
 		}
 		bashNodeScript {
@@ -218,10 +251,19 @@ object RunAllUnitTests : BuildType({
 			scriptContent = """
 				export NODE_ENV="test"
 
-				# Run type checks
+				# These are not expected to fail
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
-				yarn tsc --project client/landing/gutenboarding
+
+				# These have known errors, so we report them as checkstyle
+				(
+					# Enable pipe errors in this subshell. After all, we know these will fail.
+					set +e
+					yarn tsc --build client 2>&1 | tee tsc_out
+					mkdir -p checkstyle_results
+					yarn run typescript-checkstyle < tsc_out > ./checkstyle_results/tsc.xml
+					cat ./checkstyle_results/tsc.xml
+				)
 			"""
 		}
 		bashNodeScript {
@@ -298,6 +340,12 @@ object RunAllUnitTests : BuildType({
 	}
 
 	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/*.xml")
+			param("xmlReportParsing.verboseOutput", "true")
+		}
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
@@ -781,7 +829,8 @@ object QuarantinedE2ETests: BuildType( {
 	triggers {
 		schedule {
 			schedulingPolicy = cron {
-				minutes = "15"
+				hours = "*/3"
+				dayOfWeek = "2-6"
 			}
 			branchFilter = "+:trunk"
 			triggerBuild = always()

@@ -1,44 +1,27 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 
-class QueryJetpackModules extends Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		requestingModules: PropTypes.bool,
-		fetchModuleList: PropTypes.func,
-	};
-
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( siteId && ! isFetchingJetpackModules( getState(), siteId ) ) {
+		dispatch( fetchModuleList( siteId ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
-		}
-	}
+function QueryJetpackModules( { siteId } ) {
+	const dispatch = useDispatch();
 
-	request( props ) {
-		if ( props.requestingModules ) {
-			return;
-		}
+	useEffect( () => {
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
-		props.fetchModuleList( props.siteId );
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingModules: isFetchingJetpackModules( state, ownProps.siteId ),
-		};
-	},
-	{ fetchModuleList }
-)( QueryJetpackModules );
+QueryJetpackModules.propTypes = {
+	siteId: PropTypes.number.isRequired,
+};
+
+export default QueryJetpackModules;

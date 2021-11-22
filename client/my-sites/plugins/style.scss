@@ -16,7 +16,8 @@ body.is-section-plugins.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
 }
 
-.plugin__installed-on, .plugin-details__installed-on {
+.plugin__installed-on,
+.plugin-details__installed-on {
 	margin-bottom: 16px;
 }
 
@@ -142,6 +143,14 @@ $plugin-details-header-padding: 100px;
 	}
 }
 
+%placeholder {
+	cursor: default;
+	color: transparent;
+	user-select: none;
+	background-color: var( --color-neutral-0 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
 .plugin-details__top-section {
 	border-bottom: 1px solid var( --studio-gray-5 );
 
@@ -150,6 +159,24 @@ $plugin-details-header-padding: 100px;
 
 		@media screen and ( max-width: 1040px ) {
 			display: none;
+		}
+	}
+
+	&.is-placeholder {
+		border-bottom: none;
+
+		.plugin-details__name,
+		.plugin-details__price,
+		.plugin-details__description,
+		.plugin-details__additional-info,
+		.plugin-details__install,
+		.plugin-details__t-and-c {
+			@extend %placeholder;
+		}
+
+		.plugin-details__tags {
+			@extend %placeholder;
+			width: 50%;
 		}
 	}
 }
@@ -178,17 +205,18 @@ $plugin-details-header-padding: 100px;
 	justify-content: center;
 	padding: $plugin-details-header-padding 0;
 
-	.plugin-details__name, .plugin-details__price {
+	.plugin-details__name,
+	.plugin-details__price {
 		font-family: $brand-serif;
 		font-size: $font-title-large;
 		color: var( --studio-gray-100 );
-		padding: 16px 0;
+		margin: 16px 0;
 	}
 
 	.plugin-details__description {
 		font-size: $font-title-small;
 		color: var( --studio-gray-70 );
-		padding-bottom: 30px;
+		margin-bottom: 30px;
 	}
 
 	.plugin-details__additional-info {
@@ -216,7 +244,7 @@ $plugin-details-header-padding: 100px;
 	}
 
 	.plugin-details__install {
-		padding-bottom: 20px;
+		margin-bottom: 20px;
 
 		.plugin-details__install-button {
 			width: 100%;
@@ -225,7 +253,7 @@ $plugin-details-header-padding: 100px;
 			color: var( --studio-white );
 		}
 	}
-	
+
 	.plugin-details__t-and-c {
 		font-size: $font-body-extra-small;
 		color: var( --studio-gray-50 );
@@ -301,7 +329,7 @@ $plugin-details-header-padding: 100px;
 			font-size: $font-body-small;
 			padding-bottom: 16px;
 
-			&.plugin-details__downloads-value {
+			&.plugin-details__active-installs-value {
 				font-size: $font-body;
 			}
 		}
@@ -319,11 +347,11 @@ $plugin-details-header-padding: 100px;
 		.plugin-details__plugin-details-title {
 			display: block;
 		}
-		
+
 		.plugin-details__layout-col-left {
 			order: 2;
 		}
-		
+
 		.plugin-details__layout-col-right {
 			order: 1;
 			margin-top: 0;

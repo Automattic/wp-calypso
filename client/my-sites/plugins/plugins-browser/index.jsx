@@ -32,6 +32,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
+import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -63,7 +64,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 /**
@@ -513,7 +513,7 @@ export class PluginsBrowser extends Component {
 				{ this.renderPageViewTracker() }
 				<DocumentHead title={ translate( 'Plugins' ) } />
 				<SidebarNavigation />
-				{ isEnabled( 'marketplace' ) && (
+				{ isEnabled( 'marketplace-v0.5' ) && (
 					<AnnouncementModal
 						announcementId="plugins-page-revamp"
 						pages={ this.getAnnoncementPages() }
@@ -545,8 +545,9 @@ export class PluginsBrowser extends Component {
 
 /**
  * Filter the popular plugins list.
- * Remove the displayed featured plugins from the popular list to
- * avoid showing them twice
+ *
+ * Remove the incompatible plugins and the displayed featured
+ * plugins from the popular list to avoid showing them twice.
  *
  * @param {Array} popularPlugins
  * @param {Array} featuredPlugins
@@ -558,7 +559,10 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 			.map( ( plugin ) => [ plugin.slug, plugin.slug ] )
 	);
 
-	return popularPlugins.filter( ( plugin ) => ! displayedFeaturedSlugsMap.has( plugin.slug ) );
+	return popularPlugins.filter(
+		( plugin ) =>
+			! displayedFeaturedSlugsMap.has( plugin.slug ) && isCompatiblePlugin( plugin.slug )
+	);
 }
 
 export default flow(

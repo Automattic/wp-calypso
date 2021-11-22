@@ -32,7 +32,7 @@ function renderSinglePlugin( context, siteUrl ) {
 	}
 	// Render single plugin component
 	context.primary = createElement(
-		config.isEnabled( 'marketplace' ) ? PluginDetails : PluginComponent,
+		config.isEnabled( 'marketplace-v0.5' ) ? PluginDetails : PluginComponent,
 		{
 			path: context.path,
 			prevQuerystring: lastPluginsQuerystring,

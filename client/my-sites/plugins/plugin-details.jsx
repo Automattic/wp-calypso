@@ -1,8 +1,4 @@
-import {
-	isWpComBusinessPlan,
-	isWpComEcommercePlan,
-	isEnterprise,
-} from '@automattic/calypso-products';
+import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -20,7 +16,7 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import formatNumberCompact from 'calypso/lib/format-number-compact';
+import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { userCan } from 'calypso/lib/site/utils';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -320,12 +316,12 @@ function PluginDetails( props ) {
 							{ translate( 'Plugin details' ) }
 						</div>
 						<div className="plugin-details__plugin-details-content">
-							<div className="plugin-details__downloads">
-								<div className="plugin-details__downloads-text title">
-									{ translate( 'Downloads' ) }
+							<div className="plugin-details__active-installs">
+								<div className="plugin-details__active-installs-text title">
+									{ translate( 'Active installations' ) }
 								</div>
-								<div className="plugin-details__downloads-value value">
-									{ formatNumberCompact( fullPlugin.downloaded, 'en' ) }
+								<div className="plugin-details__active-installs-value value">
+									{ formatNumberMetric( fullPlugin.active_installs, 'en' ) }
 								</div>
 							</div>
 							<div className="plugin-details__tested">
@@ -374,9 +370,9 @@ function CTA( {
 	}
 
 	const shouldUpgrade = ! (
-		isWpComBusinessPlan( selectedSite.plan ) ||
+		isBusiness( selectedSite.plan ) ||
 		isEnterprise( selectedSite.plan ) ||
-		isWpComEcommercePlan( selectedSite.plan ) ||
+		isEcommerce( selectedSite.plan ) ||
 		isJetpack ||
 		isVip
 	);
@@ -505,7 +501,29 @@ function PluginDoesNotExistView() {
 }
 
 function PluginPlaceholder() {
-	return <MainComponent wideLayout>{ /* TODO: Create Placeholder */ }</MainComponent>;
+	return (
+		<MainComponent wideLayout>
+			<div className="plugin-details__page">
+				<div className="plugin-details__layout plugin-details__top-section is-placeholder">
+					<div className="plugin-details__layout-col plugin-details__layout-col-left">
+						<div className="plugin-details__tags">...</div>
+						<div className="plugin-details__header">
+							<div className="plugin-details__name">...</div>
+							<div className="plugin-details__description">...</div>
+							<div className="plugin-details__additional-info">...</div>
+						</div>
+					</div>
+					<div className="plugin-details__layout-col plugin-details__layout-col-right">
+						<div className="plugin-details__header">
+							<div className="plugin-details__price">...</div>
+							<div className="plugin-details__install">...</div>
+							<div className="plugin-details__t-and-c">...</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</MainComponent>
+	);
 }
 
 export default PluginDetails;

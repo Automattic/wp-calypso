@@ -3,7 +3,7 @@ module.exports = () => ( {
 	sourceType: 'unambiguous',
 	presets: [
 		[
-			'@babel/env',
+			'@babel/preset-env',
 			{
 				modules: false,
 				useBuiltIns: 'entry',

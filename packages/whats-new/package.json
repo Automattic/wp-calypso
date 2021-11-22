@@ -37,17 +37,18 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/components": "^17.0.0",
-		"@wordpress/react-i18n": "^3.0.1",
+		"@automattic/typography": "workspace:^",
+		"@wordpress/components": "^19.0.1",
+		"@wordpress/react-i18n": "^3.0.3",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^6.1.0",
+		"@wordpress/data": "^6.1.3",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"react-native": "^0.66.2",
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2"
 	},
