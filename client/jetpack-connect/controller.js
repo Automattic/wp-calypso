@@ -95,7 +95,8 @@ const analyticsPageTitleByType = {
  * on the plan page.
  *
  * @todo Add support for more partners (if needed).
- * @todo Dynamically find product slug from coupon preset.
+ * @todo Should we make a coupon validation request? If the coupon is invalid, we leave the user on the plans page.
+ * @todo Dynamically find product slug from coupon preset (dynamically fetch product during coupon validation?).
  */
 export function partnerCouponRedirects( context, next ) {
 	const queryArgs = new URLSearchParams( context?.query?.redirect );
