@@ -10,7 +10,6 @@ import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
 	hasGSuiteWithUs,
-	hasPendingGSuiteUsers,
 	isPendingGSuiteTOSAcceptance,
 } from 'calypso/lib/gsuite';
 import {
