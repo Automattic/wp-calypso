@@ -85,6 +85,7 @@ import {
 	getFirstInvalidStep,
 	getStepUrl,
 	isReskinnedFlow,
+	isP2Flow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -112,10 +113,6 @@ function removeLoadingScreenClassNamesFromBody() {
 	}
 
 	document.body.classList.remove( 'has-loading-screen-signup' );
-}
-
-function isP2Flow( flowName ) {
-	return flowName === 'p2' || flowName === 'p2v2';
 }
 
 function showProgressIndicator( flowName ) {

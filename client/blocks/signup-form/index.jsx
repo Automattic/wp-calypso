@@ -43,6 +43,7 @@ import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
+import { isP2Flow } from 'calypso/signup/utils';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -1079,7 +1080,8 @@ export default connect(
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-		isP2Flow: props.flowName === 'p2' || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
+		isP2Flow:
+			isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),

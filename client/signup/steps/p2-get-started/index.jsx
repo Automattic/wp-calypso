@@ -18,8 +18,36 @@ function getLoginLink( { flowName, locale } ) {
 	} );
 }
 
-function P2GetStarted( { flowName, stepName, positionInFlow, locale } ) {
+function P2GetStarted( {
+	flowName,
+	stepName,
+	positionInFlow,
+	locale,
+	submitSignupStep,
+	goToNextStep,
+} ) {
 	const translate = useTranslate();
+
+	const handleNextStepClick = ( option ) => {
+		submitSignupStep( {
+			stepName,
+			option,
+		} );
+
+		goToNextStep();
+	};
+
+	const renderOption = ( title, description ) => {
+		return (
+			<div className="p2-get-started__option">
+				<div className="p2-get-started__option-title">{ title }</div>
+				<div className="p2-get-started__option-description">{ description }</div>
+				<Button className="p2-get-started__button-next" onClick={ handleNextStepClick }>
+					<Icon className="p2-get-started__button-next-icon" icon={ chevronRight } />
+				</Button>
+			</div>
+		);
+	};
 
 	return (
 		<P2StepWrapper
@@ -30,28 +58,16 @@ function P2GetStarted( { flowName, stepName, positionInFlow, locale } ) {
 		>
 			<div className="p2-get-started">
 				<div className="p2-get-started__options">
-					<div className="p2-get-started__option">
-						<div className="p2-get-started__option-title">
-							{ translate( 'Create a new workspace' ) }
-						</div>
-						<div className="p2-get-started__option-description">
-							{ translate( "Start a new P2 and get your team on the same page — it's free!" ) }
-						</div>
-						<Button className="p2-get-started__button-next">
-							<Icon className="p2-get-started__button-next-icon" icon={ chevronRight } />
-						</Button>
-					</div>
-					<div className="p2-get-started__option">
-						<div className="p2-get-started__option-title">
-							{ translate( 'Join an existing workspace' ) }
-						</div>
-						<div className="p2-get-started__option-description">
-							{ translate( 'Is your team already using P2? Sign up to join them.' ) }
-						</div>
-						<Button className="p2-get-started__button-next">
-							<Icon className="p2-get-started__button-next-icon" icon={ chevronRight } />
-						</Button>
-					</div>
+					{ renderOption(
+						translate( 'Create a new workspace' ),
+						translate( "Start a new P2 and get your team on the same page — it's free!" )
+					) }
+
+					{ renderOption(
+						translate( 'Join an existing workspace' ),
+						translate( 'Is your team already using P2? Sign up to join them.' )
+					) }
+
 					<div className="p2-get-started__log-in">
 						{ translate( 'Already have a WordPress.com account? {{a}}Log in.{{/a}}', {
 							components: {

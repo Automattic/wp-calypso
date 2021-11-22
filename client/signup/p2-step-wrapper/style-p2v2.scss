@@ -16,7 +16,7 @@
 
 		@include break-mobile {
 			padding: 48px 20px 0;
-			max-width: 600px;
+			max-width: 440px;
 		}
 
 		@include break-medium {
@@ -122,6 +122,24 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+		}
+	}
+
+	/* Step-specific overrides */
+	.is-p2-get-started {
+		.p2-step-wrapper {
+			@include break-mobile {
+				padding: 48px 20px 0;
+				max-width: 600px;
+			}
+
+			@include break-medium {
+				padding: 64px 20px 0;
+			}
+
+			@include break-huge {
+				padding: 80px 20px 0;
+			}
 		}
 	}
 }
