@@ -1,9 +1,11 @@
 import { Button } from '@wordpress/components';
 import { Icon, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { login } from 'calypso/lib/paths';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
@@ -27,6 +29,7 @@ function P2GetStarted( {
 	goToNextStep,
 } ) {
 	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const handleNextStepClick = ( option ) => {
 		submitSignupStep( {
@@ -54,6 +57,18 @@ function P2GetStarted( {
 		);
 	};
 
+	const renderLoginLink = () => {
+		return (
+			<div className="p2-get-started__log-in">
+				{ translate( 'Already have a WordPress.com account? {{a}}Log in.{{/a}}', {
+					components: {
+						a: <a href={ getLoginLink( { flowName, locale } ) } />,
+					},
+				} ) }
+			</div>
+		);
+	};
+
 	return (
 		<P2StepWrapper
 			flowName={ flowName }
@@ -75,13 +90,7 @@ function P2GetStarted( {
 						translate( 'Is your team already using P2? Sign up to join them.' )
 					) }
 
-					<div className="p2-get-started__log-in">
-						{ translate( 'Already have a WordPress.com account? {{a}}Log in.{{/a}}', {
-							components: {
-								a: <a href={ getLoginLink( { flowName, locale } ) } />,
-							},
-						} ) }
-					</div>
+					{ ! isLoggedIn && renderLoginLink() }
 				</div>
 			</div>
 		</P2StepWrapper>
