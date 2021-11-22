@@ -72,7 +72,7 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 			<CalypsoShoppingCartProvider>
 				<StripeHookProvider
 					fetchStripeConfiguration={ getStripeConfiguration }
-					locale={ translate.locale }
+					locale={ translate.localeSlug }
 				>
 					<CompositeCheckout
 						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)

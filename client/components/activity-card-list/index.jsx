@@ -3,7 +3,7 @@ import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
@@ -37,6 +37,69 @@ class ActivityCardList extends Component {
 		showDateSeparators: true,
 		showFilter: true,
 		showPagination: true,
+	};
+
+	state = {
+		initialFilterBarY: 0,
+		masterBarHeight: 0,
+		scrollTicking: false,
+	};
+
+	filterBarRef = null;
+
+	constructor( props ) {
+		super( props );
+
+		this.onScroll = this.onScroll.bind( this );
+		this.filterBarRef = createRef();
+	}
+
+	componentDidMount() {
+		if ( this.props.isBreakpointActive ) {
+			// Filter bar is only sticky on mobile
+			window.addEventListener( 'scroll', this.onScroll );
+		}
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'scroll', this.onScroll );
+	}
+
+	onScroll = () => {
+		const y = window.scrollY;
+
+		if ( ! this.state.scrollTicking ) {
+			// It's best practice to throttle scroll event for performance
+			window.requestAnimationFrame( () => {
+				this.stickFilterBar( y );
+				this.setState( { scrollTicking: false } );
+			} );
+
+			this.setState( { scrollTicking: true } );
+		}
+	};
+
+	stickFilterBar = ( scrollY ) => {
+		const { initialFilterBarY, masterBarHeight } = this.state;
+		const filterBar = this.filterBarRef.current;
+
+		if ( ! filterBar ) {
+			return;
+		}
+
+		if ( ! initialFilterBarY ) {
+			this.setState( { initialFilterBarY: filterBar.getBoundingClientRect().top } );
+		}
+
+		if ( ! masterBarHeight ) {
+			const masterBar = document.querySelector( '.masterbar' );
+
+			this.setState( { masterBarHeight: masterBar ? masterBar.clientHeight : 0 } );
+		}
+
+		if ( initialFilterBarY && masterBarHeight ) {
+			filterBar.classList.toggle( 'is-sticky', scrollY + masterBarHeight >= initialFilterBarY );
+		}
 	};
 
 	changePage = ( pageNumber ) => {
@@ -152,14 +215,16 @@ class ActivityCardList extends Component {
 		return (
 			<div className="activity-card-list">
 				{ showFilter && (
-					<Filterbar
-						{ ...{
-							siteId,
-							filter,
-							isLoading: false,
-							isVisible: true,
-						} }
-					/>
+					<div className="activity-card-list__filterbar-ctn" ref={ this.filterBarRef }>
+						<Filterbar
+							{ ...{
+								siteId,
+								filter,
+								isLoading: false,
+								isVisible: true,
+							} }
+						/>
+					</div>
 				) }
 				{ showPagination && (
 					<Pagination

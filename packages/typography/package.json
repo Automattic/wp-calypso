@@ -23,6 +23,6 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

@@ -30,6 +30,7 @@ test-results*.xml
 spec-xunit-reporter-0.0.1.tgz
 *xunit_*.xml
 /vendor
+checkstyle.xml
 
 # added during build
 /config/secrets.json
@@ -109,3 +110,4 @@ desktop/.yarn/*
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+yarn-json-output.json

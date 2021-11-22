@@ -8,3 +8,4 @@ export {
 } from './action-buttons';
 export { default as FeatureIcon } from './feature-icon';
 export { default as ScrollToTop } from './scroll-to-top';
+export { default as Progress } from './progress';

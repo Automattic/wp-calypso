@@ -1,4 +1,6 @@
+import { Button } from '@automattic/components';
 import { Icon, home, moreVertical } from '@wordpress/icons';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
@@ -7,6 +9,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
 import {
@@ -19,6 +22,7 @@ import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/ema
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -30,17 +34,17 @@ class DomainRow extends PureComponent {
 		currentRoute: PropTypes.string,
 		disabled: PropTypes.bool,
 		domain: PropTypes.object.isRequired,
-		domainDetails: PropTypes.object,
-		site: PropTypes.object,
-		isManagingAllSites: PropTypes.bool,
+		hasLoadedPurchases: PropTypes.bool,
 		isBusy: PropTypes.bool,
+		isLoadingDomainDetails: PropTypes.bool,
+		isManagingAllSites: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
 		onMakePrimaryClick: PropTypes.func,
-		shouldUpgradeToMakePrimary: PropTypes.bool,
 		purchase: PropTypes.object,
-		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
+		shouldUpgradeToMakePrimary: PropTypes.bool,
 		showDomainDetails: PropTypes.bool,
+		site: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -56,12 +60,12 @@ class DomainRow extends PureComponent {
 	};
 
 	handleClick = () => {
-		const { onClick, domainDetails } = this.props;
-		onClick( domainDetails );
+		const { onClick, domain } = this.props;
+		onClick( domain );
 	};
 
 	renderDomainName( domainTypeText ) {
-		const { domain, domainDetails, isManagingAllSites } = this.props;
+		const { domain, isManagingAllSites } = this.props;
 		return (
 			<div className="domain-row__domain-cell">
 				<div className="domain-row__domain-name">
@@ -72,9 +76,37 @@ class DomainRow extends PureComponent {
 					{ /* eslint-enable jsx-a11y/anchor-is-valid */ }
 				</div>
 				{ domainTypeText && <div className="domain-row__domain-type-text">{ domainTypeText }</div> }
-				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
+				{ domain?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 			</div>
 		);
+	}
+
+	renderSite() {
+		const { site, translate } = this.props;
+		if ( site?.options?.is_domain_only ) {
+			return (
+				<div className="domain-row__site-cell">
+					<Button href={ createSiteFromDomainOnly( site?.slug, site?.siteId ) } plain>
+						{ translate( 'Create site' ) } <MaterialIcon icon="add" />
+					</Button>
+				</div>
+			);
+		}
+		return (
+			<div className="domain-row__site-cell">
+				<Button href={ domainManagementList( site?.slug ) } plain>
+					{ site?.title || site?.slug }
+				</Button>
+			</div>
+		);
+	}
+
+	renderMobileSite() {
+		const { site } = this.props;
+		if ( site?.options?.is_domain_only ) {
+			return null;
+		}
+		return site?.title || site?.slug;
 	}
 
 	renderPrimaryBadge() {
@@ -87,14 +119,18 @@ class DomainRow extends PureComponent {
 	}
 
 	renderDomainStatus() {
-		const { domain, domainDetails, site } = this.props;
-		const { status, statusClass } = resolveDomainStatus( domainDetails || domain, null, {
+		const { domain, site, isLoadingDomainDetails } = this.props;
+		const { status, statusClass } = resolveDomainStatus( domain, null, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
 		} );
 
+		const domainStatusClass = classnames( 'domain-row__status-cell', {
+			'is-loading': isLoadingDomainDetails,
+		} );
+
 		return (
-			<div className="domain-row__status-cell">
+			<div className={ domainStatusClass }>
 				<span className={ `domain-row__${ statusClass }-dot` }></span> { status }
 			</div>
 		);
@@ -102,7 +138,9 @@ class DomainRow extends PureComponent {
 
 	renderExpiryDate( expiryDate ) {
 		return (
-			<div className="domain-row__registered-until-cell">{ expiryDate.format( 'LL' ) || '-' }</div>
+			<div className="domain-row__registered-until-cell">
+				{ expiryDate ? expiryDate.format( 'LL' ) : '-' }
+			</div>
 		);
 	}
 
@@ -113,10 +151,14 @@ class DomainRow extends PureComponent {
 		if ( domainTypeText ) {
 			extraInfo = domainTypeText;
 		} else if ( domain.expired ) {
-			extraInfo = 'Expired on ' + expiryDate.format( 'LL' );
+			if ( expiryDate ) {
+				extraInfo = 'Expired on ' + expiryDate.format( 'LL' );
+			} else {
+				extraInfo = 'Expired';
+			}
 		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
 			extraInfo = 'Renews on ' + moment.utc( domain.autoRenewalDate ).format( 'LL' );
-		} else {
+		} else if ( expiryDate ) {
 			extraInfo = 'Expires on ' + expiryDate.format( 'LL' );
 		}
 
@@ -124,13 +166,13 @@ class DomainRow extends PureComponent {
 	}
 
 	renderAutoRenew() {
-		const { site, purchase } = this.props;
+		const { site, hasLoadedPurchases, purchase } = this.props;
 
-		if ( ! this.shouldShowAutoRenewStatus() ) {
+		if ( ! this.shouldShowAutoRenewStatus() || ( hasLoadedPurchases && ! purchase ) ) {
 			return <span className="domain-row__auto-renew-cell">-</span>;
 		}
 
-		if ( ! purchase ) {
+		if ( ! hasLoadedPurchases ) {
 			return (
 				<span className="domain-row__auto-renew-cell">
 					<p className="domain-row__placeholder" />
@@ -154,14 +196,11 @@ class DomainRow extends PureComponent {
 	}
 
 	shouldShowAutoRenewStatus = () => {
-		const { domainDetails } = this.props;
-		if (
-			domainDetails?.type === domainTypes.WPCOM ||
-			domainDetails?.type === domainTypes.TRANSFER
-		) {
+		const { domain } = this.props;
+		if ( domain?.type === domainTypes.WPCOM || domain?.type === domainTypes.TRANSFER ) {
 			return false;
 		}
-		return ! domainDetails?.bundledPlanSubscriptionId && domainDetails.currentUserCanManage;
+		return ! domain?.bundledPlanSubscriptionId && domain.currentUserCanManage;
 	};
 
 	renderEmail() {
@@ -170,14 +209,14 @@ class DomainRow extends PureComponent {
 
 	/* eslint-disable jsx-a11y/anchor-is-valid */
 	renderEmailLabel = () => {
-		const { domainDetails, translate } = this.props;
+		const { domain, translate } = this.props;
 
-		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
+		if ( ! [ domainTypes.MAPPED, domainTypes.REGISTERED ].includes( domain.type ) ) {
 			return null;
 		}
 
-		if ( hasGSuiteWithUs( domainDetails ) ) {
-			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
+		if ( hasGSuiteWithUs( domain ) ) {
+			const gSuiteMailboxCount = getGSuiteMailboxCount( domain );
 
 			const text = translate(
 				'%(gSuiteMailboxCount)d mailbox',
@@ -197,8 +236,8 @@ class DomainRow extends PureComponent {
 			);
 		}
 
-		if ( hasTitanMailWithUs( domainDetails ) ) {
-			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
+		if ( hasTitanMailWithUs( domain ) ) {
+			const titanMailboxCount = getMaxTitanMailboxCount( domain );
 
 			const text = translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
 				args: {
@@ -214,8 +253,8 @@ class DomainRow extends PureComponent {
 			);
 		}
 
-		if ( hasEmailForwards( domainDetails ) ) {
-			const emailForwardsCount = getEmailForwardsCount( domainDetails );
+		if ( hasEmailForwards( domain ) ) {
+			const emailForwardsCount = getEmailForwardsCount( domain );
 
 			const text = translate( '%(emailForwardsCount)d forward', '%(emailForwardsCount)d forwards', {
 				count: emailForwardsCount,
@@ -231,7 +270,7 @@ class DomainRow extends PureComponent {
 			);
 		}
 
-		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
+		if ( ! canCurrentUserAddEmail( domain ) ) {
 			return null;
 		}
 
@@ -264,7 +303,7 @@ class DomainRow extends PureComponent {
 	renderEllipsisMenu() {
 		const {
 			isLoadingDomainDetails,
-			domainDetails,
+			domain,
 			showDomainDetails,
 			disabled,
 			isBusy,
@@ -275,7 +314,7 @@ class DomainRow extends PureComponent {
 			return <div className="domain-row__action-cell"></div>;
 		}
 
-		if ( isLoadingDomainDetails || ! domainDetails ) {
+		if ( isLoadingDomainDetails || ! domain ) {
 			return (
 				<div className="domain-row__action-cell">
 					<p className="domain-row__placeholder" />
@@ -311,12 +350,12 @@ class DomainRow extends PureComponent {
 	}
 
 	canSetAsPrimary() {
-		const { domainDetails, isManagingAllSites, shouldUpgradeToMakePrimary } = this.props;
+		const { domain, isManagingAllSites, shouldUpgradeToMakePrimary } = this.props;
 		return (
 			! isManagingAllSites &&
-			domainDetails &&
-			domainDetails.canSetAsPrimary &&
-			! domainDetails.isPrimary &&
+			domain &&
+			domain.canSetAsPrimary &&
+			! domain.isPrimary &&
 			! shouldUpgradeToMakePrimary
 		);
 	}
@@ -324,9 +363,9 @@ class DomainRow extends PureComponent {
 	makePrimary = ( event ) => {
 		event.stopPropagation();
 
-		const { domainDetails, selectionIndex, onMakePrimaryClick } = this.props;
+		const { domain, selectionIndex, onMakePrimaryClick } = this.props;
 		if ( onMakePrimaryClick ) {
-			onMakePrimaryClick( selectionIndex, domainDetails );
+			onMakePrimaryClick( selectionIndex, domain );
 		}
 	};
 
@@ -348,25 +387,25 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, domainDetails, translate } = this.props;
-		const domainTypeText = getDomainTypeText(
-			domainDetails,
-			translate,
-			domainInfoContext.DOMAIN_ROW
-		);
-		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry );
+		const { domain, isManagingAllSites, translate } = this.props;
+		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
+		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
 
 		return (
 			<div className="domain-row">
 				<div className="domain-row__mobile-container">
 					{ this.renderDomainName( domainTypeText ) }
+					{ isManagingAllSites && this.renderSite() }
 					{ this.renderDomainStatus() }
 					{ this.renderExpiryDate( expiryDate ) }
 					{ this.renderAutoRenew() }
-					{ this.renderEmail() }
+					{ ! isManagingAllSites && this.renderEmail() }
 					{ this.renderEllipsisMenu() }
 				</div>
 				<div className="domain-row__mobile-container2">
+					{ isManagingAllSites && this.renderMobileSite() }
+				</div>
+				<div className="domain-row__mobile-container3">
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 				</div>

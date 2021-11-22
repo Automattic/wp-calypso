@@ -130,9 +130,15 @@ export const importSite = ( {
 	dispatch( recordTracksEvent( 'calypso_site_importer_start_import_request', trackingParams ) );
 	dispatch( startSiteImporterImport() );
 
-	wpcom
-		.undocumented()
-		.importWithSiteImporter( siteId, toApi( importerStatus ), params, targetSiteUrl )
+	wpcom.req
+		.post( {
+			path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
+			apiNamespace: 'wpcom/v2',
+			formData: [
+				[ 'import_status', JSON.stringify( toApi( importerStatus ) ) ],
+				[ 'site_url', targetSiteUrl ],
+			],
+		} )
 		.then( ( response ) => {
 			dispatch( recordTracksEvent( 'calypso_site_importer_start_import_success', trackingParams ) );
 			dispatch( siteImporterImportSuccessful( response ) );

@@ -30,6 +30,7 @@ object WebApp : Project({
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
+	buildType(QuarantinedE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -86,6 +87,7 @@ object BuildDockerImage : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
 				commandArgs = """
 					--pull
@@ -106,6 +108,7 @@ object BuildDockerImage : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
 			}
 		}
@@ -155,6 +158,7 @@ object RunAllUnitTests : BuildType({
 	artifactRules = """
 		test_results => test_results
 		artifacts => artifacts
+		checkstyle_results => checkstyle_results
 	""".trimIndent()
 
 	vcs {
@@ -170,6 +174,38 @@ object RunAllUnitTests : BuildType({
 
 				# Install modules
 				${_self.yarn_install_cmd}
+
+				# The "name" property refers to the code of the message (like YN0002).
+
+				# Generate a JSON array of the errors we care about:
+				# 1. Select warning YN0002 (Unmet peer dependencies.)
+				# 2. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
+				# 3. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
+				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 68 or (.type == "error" and .name != 0)) ]')
+
+				num_errors=${'$'}(jq length <<< "${'$'}yarn_errors")
+				if [ "${'$'}num_errors" -gt 0 ] ; then
+					# Construct warning strings from the JSON array of yarn problems.
+					err_string=${'$'}(jq '.[] | "Yarn error \(.displayName): \(.data)"' <<< "${'$'}yarn_errors")
+
+					# Remove quotes which had to be added in the jq expression:
+					err_string=${'$'}(sed 's/^"//g;s/"${'$'}//g' <<< "${'$'}err_string")
+
+					# Escape values as needed for TeamCity: https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+values
+					# Specifically, add | before every [, ], |, and '.
+					err_string=${'$'}(sed "s/\([][|']\)/|\1/g" <<< "${'$'}err_string")
+
+					# Output each yarn problem as a TeamCity service message for easier debugging.
+					while read -r err ; do
+						echo "##teamcity[message text='${'$'}err' status='ERROR']"
+					done <<< "${'$'}err_string"
+
+					# Quick plural handling because why not.
+					if [ "${'$'}num_errors" -gt 1 ]; then s='s'; else s=''; fi
+
+					echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
+					exit 1
+				fi
 			"""
 		}
 		bashNodeScript {
@@ -215,10 +251,19 @@ object RunAllUnitTests : BuildType({
 			scriptContent = """
 				export NODE_ENV="test"
 
-				# Run type checks
+				# These are not expected to fail
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
-				yarn tsc --project client/landing/gutenboarding
+
+				# These have known errors, so we report them as checkstyle
+				(
+					# Enable pipe errors in this subshell. After all, we know these will fail.
+					set +e
+					yarn tsc --build client 2>&1 | tee tsc_out
+					mkdir -p checkstyle_results
+					yarn run typescript-checkstyle < tsc_out > ./checkstyle_results/tsc.xml
+					cat ./checkstyle_results/tsc.xml
+				)
 			"""
 		}
 		bashNodeScript {
@@ -295,6 +340,12 @@ object RunAllUnitTests : BuildType({
 	}
 
 	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/*.xml")
+			param("xmlReportParsing.verboseOutput", "true")
+		}
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
@@ -679,11 +730,22 @@ object PreReleaseE2ETests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		nonZeroExitCode = false
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
 	}
 })
 
 object QuarantinedE2ETests: BuildType( {
 	id("Quarantined_E2E_Tests")
+	uuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c"
 	name = "Quarantined E2E Tests"
 	description = "E2E tests quarantined due to intermittent failures."
 	maxRunningBuilds = 1
@@ -767,7 +829,8 @@ object QuarantinedE2ETests: BuildType( {
 	triggers {
 		schedule {
 			schedulingPolicy = cron {
-				minutes = "15"
+				hours = "*/3"
+				dayOfWeek = "2-6"
 			}
 			branchFilter = "+:trunk"
 			triggerBuild = always()
@@ -776,6 +839,7 @@ object QuarantinedE2ETests: BuildType( {
 	}
 
 	failureConditions {
-		executionTimeoutMin = 10
+		executionTimeoutMin = 20
+		nonZeroExitCode = false
 	}
 })

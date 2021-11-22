@@ -44,7 +44,7 @@ export function getPlansSlugs() {
 }
 
 /**
- * @param   {string} planKey - A key that represents a plan.
+ * @param   {string|import( "./types").Plan} planKey - A key that represents a plan.
  * @returns {import("./types.ts").Plan} A Plan object that corresponds to the supplied key.
  */
 export function getPlan( planKey ) {
@@ -409,8 +409,8 @@ export function findPlansKeys( query = {} ) {
  * > planMatches( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
  * false
  *
- * @param {string|object} planKey Plan to match
- * @param {object} query Properties that should match
+ * @param {string|import( "./types").Plan} planKey Plan to match
+ * @param {{term?: string, group?: string, type?: string}} query Properties that should match
  * @returns {boolean} Does `planKey` match?
  */
 export function planMatches( planKey, query = {} ) {

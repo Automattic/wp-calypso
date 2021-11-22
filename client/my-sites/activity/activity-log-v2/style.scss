@@ -12,6 +12,20 @@ main.activity-log-v2 {
 	.filterbar .filterbar__wrap.card {
 		display: flex;
 	}
+
+	.activity-card-list__date-group-date {
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-title-small;
+		}
+	}
+
+	.activity-card-list__date-group-content {
+		.activity-card:last-child {
+			@include breakpoint-deprecated( '<660px' ) {
+				margin-bottom: 48px;
+			}
+		}
+	}
 }
 
 .activity-log-v2__header {
@@ -24,7 +38,7 @@ main.activity-log-v2 {
 	// use sub-section styling at mobile sizes
 	@include breakpoint-deprecated( '<660px' ) {
 		h2 {
-			font-size: $font-body;
+			font-size: $font-title-small;
 			font-weight: 600;
 			line-height: 23px;
 		}

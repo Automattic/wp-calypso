@@ -50,7 +50,7 @@ export default function FreeDomainItem( {
 
 			{ shouldShowManageButton && ! isBusy && (
 				<EllipsisMenu
-					disabled={ isBusy || disabled }
+					disabled={ disabled }
 					toggleTitle={ __( 'Free WordPress address options' ) }
 					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 					popoverClassName="free-domain-item__popover"

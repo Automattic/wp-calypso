@@ -50,10 +50,8 @@ export const accountRecoverySettingsFetchFailed = ( error ) => {
 export const accountRecoverySettingsFetch = () => ( dispatch ) => {
 	dispatch( { type: ACCOUNT_RECOVERY_SETTINGS_FETCH } );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.getAccountRecovery()
+	return wpcom.req
+		.get( '/me/account-recovery' )
 		.then( ( accountRecoverySettings ) =>
 			dispatch( accountRecoverySettingsFetchSuccess( accountRecoverySettings ) )
 		)
@@ -98,10 +96,11 @@ export const updateAccountRecoveryPhone = ( newPhone ) => ( dispatch ) => {
 		target: TARGET_PHONE,
 	} );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.updateAccountRecoveryPhone( newPhone.countryCode, newPhone.number )
+	return wpcom.req
+		.post( '/me/account-recovery/phone', {
+			country: newPhone.countryCode,
+			phone_number: newPhone.number,
+		} )
 		.then( () => {
 			dispatch( updateAccountRecoveryPhoneSuccess( newPhone ) );
 			dispatch( onAccountRecoverySettingsUpdateSuccess( { target: TARGET_PHONE } ) );
@@ -123,10 +122,8 @@ export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
 		target: TARGET_PHONE,
 	} );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.deleteAccountRecoveryPhone()
+	return wpcom.req
+		.post( '/me/account-recovery/phone/delete' )
 		.then( () => {
 			dispatch( deleteAccountRecoveryPhoneSuccess() );
 			dispatch( onAccountRecoverySettingsDeleteSuccess( { target: TARGET_PHONE } ) );
@@ -149,10 +146,8 @@ export const updateAccountRecoveryEmail = ( newEmail ) => ( dispatch ) => {
 		target: TARGET_EMAIL,
 	} );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.updateAccountRecoveryEmail( newEmail )
+	return wpcom.req
+		.post( '/me/account-recovery/email', { email: newEmail } )
 		.then( () => {
 			dispatch( updateAccountRecoveryEmailSuccess( newEmail ) );
 			dispatch( onAccountRecoverySettingsUpdateSuccess( { target: TARGET_EMAIL } ) );
@@ -174,10 +169,8 @@ export const deleteAccountRecoveryEmail = () => ( dispatch ) => {
 		target: TARGET_EMAIL,
 	} );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.deleteAccountRecoveryEmail()
+	return wpcom.req
+		.post( '/me/account-recovery/email/delete' )
 		.then( () => {
 			dispatch( deleteAccountRecoveryEmailSuccess() );
 			dispatch( onAccountRecoverySettingsDeleteSuccess( { target: TARGET_EMAIL } ) );
@@ -209,10 +202,8 @@ export const resendAccountRecoveryEmailValidation = () => ( dispatch ) => {
 		target: TARGET_EMAIL,
 	} );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.newValidationAccountRecoveryEmail()
+	return wpcom.req
+		.post( '/me/account-recovery/email/validation/new' )
 		.then( () => {
 			dispatch( resendAccountRecoveryEmailValidationSuccess() );
 			dispatch( onResentAccountRecoveryEmailValidationSuccess( { target: TARGET_EMAIL } ) );
@@ -244,10 +235,8 @@ export const resendAccountRecoveryPhoneValidation = () => ( dispatch ) => {
 		target: TARGET_PHONE,
 	} );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.newValidationAccountRecoveryPhone()
+	return wpcom.req
+		.post( '/me/account-recovery/phone/validation/new' )
 		.then( () => {
 			dispatch( resendAccountRecoveryPhoneValidationSuccess() );
 			dispatch( onResentAccountRecoveryEmailValidationSuccess( { target: TARGET_PHONE } ) );
@@ -276,10 +265,8 @@ export const validateAccountRecoveryPhone = ( code ) => ( dispatch ) => {
 		type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 	} );
 
-	return wpcom
-		.undocumented()
-		.me()
-		.validateAccountRecoveryPhone( code.replace( /\s/g, '' ) )
+	return wpcom.req
+		.post( '/me/account-recovery/phone/validation', { code: code.replace( /\s/g, '' ) } )
 		.then( () => {
 			dispatch( validateAccountRecoveryPhoneSuccess() );
 			dispatch( onAccountRecoveryPhoneValidationSuccess() );

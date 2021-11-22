@@ -4,7 +4,7 @@
 	justify-content: space-between;
 	align-items: center;
 
-	margin-top: calc( 32px * 3 );
+	margin-top: 32px;
 	padding: 32px;
 
 	border-width: 1px 0;
@@ -15,7 +15,7 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
-		margin-bottom: calc( 32px * 3 );
+		margin-bottom: 32px;
 
 		border-width: 1px;
 		border-radius: calc( 2px * 4 );
@@ -39,13 +39,15 @@
 
 .intro-pricing-banner__header {
 	margin-top: -8px;
-	margin-bottom: 8px;
+	margin-bottom: 1rem;
 
 	text-align: center;
 	font-size: $font-title-small;
 	font-weight: 700;
 
 	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 0.5rem;
+
 		text-align: initial;
 		font-size: $font-title-medium;
 	}
@@ -55,10 +57,12 @@
 	margin-bottom: initial;
 
 	font-size: $font-body-small;
+	text-align: center;
 	color: var( --studio-gray-60 );
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: $font-body;
+		text-align: left;
 	}
 }
 

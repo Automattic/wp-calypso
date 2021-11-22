@@ -61,10 +61,9 @@ const welcomeGuideVariantReducer = ( state = DEFAULT_VARIANT, action ) => {
 	}
 };
 
-const siteHasNeverPublishedPostReducer = ( state = false, action ) => {
+const shouldShowFirstPostPublishedModalReducer = ( state = false, action ) => {
 	switch ( action.type ) {
-		case 'WPCOM_SITE_HAS_NEVER_PUBLISHED_POST_FETCH_SUCCESS':
-		case 'WPCOM_SITE_HAS_NEVER_PUBLISHED_POST_SET':
+		case 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL':
 			return action.value;
 		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
 			return false;
@@ -78,7 +77,7 @@ const reducer = combineReducers( {
 	showWelcomeGuide: showWelcomeGuideReducer,
 	tourRating: tourRatingReducer,
 	welcomeGuideVariant: welcomeGuideVariantReducer,
-	siteHasNeverPublishedPost: siteHasNeverPublishedPostReducer,
+	shouldShowFirstPostPublishedModal: shouldShowFirstPostPublishedModalReducer,
 } );
 
 const actions = {
@@ -90,12 +89,14 @@ const actions = {
 			response,
 		};
 	},
-	*fetchSiteHasNeverPublishedPost() {
-		const response = yield apiFetchControls( { path: '/wpcom/v2/site-has-never-published-post' } );
+	*fetchShouldShowFirstPostPublishedModal() {
+		const response = yield apiFetchControls( {
+			path: '/wpcom/v2/block-editor/should-show-first-post-published-modal',
+		} );
 
 		return {
-			type: 'WPCOM_SITE_HAS_NEVER_PUBLISHED_POST_FETCH_SUCCESS',
-			value: !! response,
+			type: 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL',
+			value: response.should_show_first_post_published_modal,
 		};
 	},
 	setShowWelcomeGuide: ( show, { openedManually } = {} ) => {
@@ -117,8 +118,8 @@ const actions = {
 	setUsedPageOrPatternsModal: () => {
 		return { type: 'WPCOM_HAS_USED_PATTERNS_MODAL' };
 	},
-	setSiteHasNeverPublishedPost: ( value ) => {
-		return { type: 'WPCOM_SITE_HAS_NEVER_PUBLISHED_POST_SET', value };
+	setShouldShowFirstPostPublishedModal: ( value ) => {
+		return { type: 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL', value };
 	},
 	// The `resetStore` action is only used for testing to reset the
 	// store inbetween tests.
@@ -135,7 +136,7 @@ const selectors = {
 	// the 'modal' variant previously used for mobile has been removed but its slug may still be persisted in local storage
 	getWelcomeGuideVariant: ( state ) =>
 		state.welcomeGuideVariant === 'modal' ? DEFAULT_VARIANT : state.welcomeGuideVariant,
-	getSiteHasNeverPublishedPost: ( state ) => state.siteHasNeverPublishedPost,
+	getShouldShowFirstPostPublishedModal: ( state ) => state.shouldShowFirstPostPublishedModal,
 };
 
 export function register() {

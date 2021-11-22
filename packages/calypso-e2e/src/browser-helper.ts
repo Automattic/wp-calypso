@@ -85,6 +85,7 @@ export function getLaunchConfiguration( chromeVersion: string ): BrowserContextO
 	config.userAgent = userAgent;
 	// Explicitly resize captured video resolution to the viewport size.
 	config.recordVideo = { dir: os.tmpdir(), size: config.viewport as ViewportSize };
+
 	return config;
 }
 

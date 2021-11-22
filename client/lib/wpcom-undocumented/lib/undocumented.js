@@ -1,26 +1,10 @@
-import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, snakeCase, set } from 'lodash';
-import { stringify } from 'qs';
-import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { omit } from 'lodash';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import Me from './me';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
-
-/**
- * Some endpoints are restricted by OAuth client IDs and secrets
- * to prevent them being spammed. This adds these keys to the request
- * so that they will be successful. This is not a sufficent measure
- * against spam as these keys are exposed publicly
- *
- * @param { object } query - Add client_id and client_secret to the query.
- */
-function restrictByOauthKeys( query ) {
-	query.client_id = config( 'wpcom_signup_id' );
-	query.client_secret = config( 'wpcom_signup_key' );
-}
 
 /**
  * Create an `Undocumented` instance
@@ -37,28 +21,6 @@ function Undocumented( wpcom ) {
 
 Undocumented.prototype.me = function () {
 	return new Me( this.wpcom );
-};
-
-/**
- * Fetches plugin registration keys for WordPress.org sites with paid services
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.fetchJetpackKeys = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id:/keys query' );
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/keys' }, fn );
-};
-
-/**
- * Test if a Jetpack Site is connected to .com
- *
- * @param {number} [siteId] The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.testConnectionJetpack = function ( siteId, fn ) {
-	debug( '/jetpack-blogs/:site_id:/test-connection query' );
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
 };
 
 Undocumented.prototype.jetpackLogin = function ( siteId, _wp_nonce, redirect_uri, scope, state ) {
@@ -81,20 +43,6 @@ Undocumented.prototype.jetpackAuthorize = function (
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
 	const params = { code, state, redirect_uri, secret, jp_version, from };
 	return this.wpcom.req.post( { path: endpointUrl }, params );
-};
-
-Undocumented.prototype.jetpackValidateSSONonce = function ( siteId, ssoNonce, fn ) {
-	debug( '/jetpack-blogs/:site_id:/sso-validate query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-validate';
-	const params = { sso_nonce: ssoNonce };
-	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
-};
-
-Undocumented.prototype.jetpackAuthorizeSSONonce = function ( siteId, ssoNonce, fn ) {
-	debug( '/jetpack-blogs/:site_id:/sso-authorize query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/sso-authorize';
-	const params = { sso_nonce: ssoNonce };
-	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
 };
 
 Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
@@ -129,18 +77,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
 	}
 
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
-};
-
-Undocumented.prototype._sendRequest = function ( originalParams, fn ) {
-	const { apiVersion, method } = originalParams;
-	const updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
-
-	if ( apiVersion ) {
-		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
-		return this.wpcom.req[ method.toLowerCase() ]( updatedParams, { apiVersion }, fn );
-	}
-
-	return this.wpcom.req[ method.toLowerCase() ]( updatedParams, fn );
 };
 
 /**
@@ -229,32 +165,6 @@ Undocumented.prototype.getAvailableTlds = function ( query = {} ) {
 };
 
 /**
- * Retrieves the domain contact information of the user.
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getDomainContactInformation = function ( fn ) {
-	debug( '/me/domain-contact-information query' );
-
-	return this._sendRequest(
-		{
-			path: '/me/domain-contact-information',
-			method: 'get',
-		},
-		function ( error, data ) {
-			if ( error ) {
-				return fn( error );
-			}
-
-			const newData = mapKeysRecursively( data, function ( key ) {
-				return key === '_headers' ? key : camelCase( key );
-			} );
-
-			fn( null, newData );
-		}
-	);
-};
-/**
  *
  * @param domain {string}
  * @param fn {function}
@@ -267,135 +177,6 @@ Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
 		},
 		fn
 	);
-};
-
-Undocumented.prototype.getDomainRegistrationSupportedStates = function ( countryCode, fn ) {
-	debug( '/domains/supported-states/ query' );
-
-	return this._sendRequest(
-		{
-			path: '/domains/supported-states/' + countryCode,
-			method: 'get',
-		},
-		fn
-	);
-};
-
-function mapKeysRecursively( object, fn ) {
-	return Object.keys( object ).reduce( function ( mapped, key ) {
-		let value = object[ key ];
-		if ( isPlainObject( value ) ) {
-			value = mapKeysRecursively( value, fn );
-		}
-
-		mapped[ fn( key ) ] = value;
-		return mapped;
-	}, {} );
-}
-
-/**
- * Validates the specified domain contact information against a list of domain names.
- *
- * @param {object} contactInformation - user's contact information
- * @param {string[]} domainNames - list of domain names
- * @param {Function} fn The callback function
- * @param {object} query Query object for the call to wpcom.req.post
- */
-Undocumented.prototype.validateDomainContactInformation = function (
-	contactInformation,
-	domainNames,
-	fn,
-	query
-) {
-	let data = {
-		contactInformation: contactInformation,
-		domainNames: domainNames,
-	};
-
-	debug( '/me/domain-contact-information/validate query' );
-	data = mapKeysRecursively( data, snakeCase );
-
-	// Due to backend limitations some versions of this endpoint
-	// serialize a nested object in the response, encoding e.g.
-	//   { foo: { bar: { baz: [ "error" ] } } }
-	// as
-	//   { foo.bar.baz: [ "error" ] }
-	// here we decide whether to rehydrate this.
-	const shouldReshapeResponse = query?.apiVersion === '1.2';
-
-	return this.wpcom.req.post(
-		{ path: '/me/domain-contact-information/validate' },
-		query,
-		data,
-		function ( error, successData ) {
-			if ( error ) {
-				return fn( error );
-			}
-
-			// Reshape the error messages to a nested object
-			if ( successData.messages && shouldReshapeResponse ) {
-				successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
-					set( obj, key, successData.messages[ key ] );
-					return obj;
-				}, {} );
-			}
-
-			const newData = mapKeysRecursively( successData, function ( key ) {
-				return key === '_headers' ? key : camelCase( key );
-			} );
-
-			fn( null, newData );
-		}
-	);
-};
-
-/**
- * Get a site specific details for WordPress.com featurs
- *
- * @param {Function} siteDomain The site slug
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
-	debug( '/sites/:site_domain:/features query' );
-
-	return this._sendRequest(
-		{
-			path: `/sites/${ encodeURIComponent( siteDomain ) }/features`,
-			method: 'get',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
- * Return a list of third-party services that WordPress.com can integrate with for a specific site
- *
- * @param {number|string} siteId The site ID or domain
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete
- */
-
-Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
-	debug( '/sites/:site-id:/external-services query' );
-	return this.wpcom.req.get(
-		{
-			path: '/sites/' + siteId + '/external-services',
-			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
-/**
- * Delete a site
- *
- * @param  {number|string} siteId The site ID or domain
- * @param  {Function} fn Function to invoke when request is complete
- */
-Undocumented.prototype.deleteSite = function ( siteId, fn ) {
-	debug( '/sites/:site_id/delete query' );
-	return this.wpcom.req.post( { path: '/sites/' + siteId + '/delete' }, fn );
 };
 
 function addReaderContentWidth( params ) {
@@ -424,17 +205,6 @@ Undocumented.prototype.readFeedPost = function ( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readTagImages = function ( query, fn ) {
-	const params = omit( query, 'tag' );
-	debug( '/read/tags/' + query.tag + '/images' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get(
-		'/read/tags/' + encodeURIComponent( query.tag ) + '/images',
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readSitePost = function ( query, fn ) {
 	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
@@ -450,154 +220,6 @@ Undocumented.prototype.readSitePostRelated = function ( query, fn ) {
 	return this.wpcom.req.get(
 		'/read/site/' + query.site_id + '/post/' + query.post_id + '/related',
 		params,
-		fn
-	);
-};
-
-Undocumented.prototype.supportAlternates = function ( query, fn ) {
-	const params = omit( query, [ 'site', 'postId' ] );
-	debug( '/support/alternates/:site/posts/:post' );
-	addReaderContentWidth( params );
-	return this.wpcom.req.get(
-		'/support/alternates/' + query.site + '/posts/' + query.postId,
-		params,
-		fn
-	);
-};
-
-/**
- * Sign up for a new user account
- * Create a new user
- *
- * @param {object} query - an object with the following values: email, username, password, first_name (optional), last_name (optional)
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersNew = function ( query, fn ) {
-	debug( '/users/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	// Set the language for the user
-	query.locale = getLocaleSlug();
-	const args = {
-		path: '/users/new',
-		body: query,
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Sign up for a new account with a social service (e.g. Google/Facebook).
- *
- * @param {object} query - an object with the following values: service, access_token, id_token (optional), signup_flow_name
- * @param {Function} fn - callback
- * @returns {Promise} A promise for the request
- */
-Undocumented.prototype.usersSocialNew = function ( query, fn ) {
-	query.locale = getLocaleSlug();
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	const args = {
-		path: '/users/social/new',
-		body: query,
-	};
-
-	return this.wpcom.req.post( args, fn );
-};
-
-Undocumented.prototype.createUserAndSite = function ( query, fn ) {
-	debug( '/users/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	// Set the language for the user
-	query.locale = getLocaleSlug();
-	const args = {
-		path: '/users/new',
-		body: query,
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Verify user for new signups
- *
- * @param {object} data - object containing an email address, username and password
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.validateNewUser = function ( data, fn ) {
-	debug( '/signups/validation/user' );
-
-	data.locale = getLocaleSlug();
-
-	return this.wpcom.req.post( '/signups/validation/user/', null, data, fn );
-};
-
-/**
- * Sign up for a new passwordless user account
- *
- * @param {object} query - an object with the following values: email
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersEmailNew = function ( query, fn ) {
-	debug( '/users/email/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	const args = {
-		path: '/users/email/new',
-		body: query,
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Verify a new passwordless user account
- *
- * @param {object} query - an object with the following values: email, code
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersEmailVerification = function ( query, fn ) {
-	debug( '/users/email/verification' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	const args = {
-		path: '/users/email/verification',
-		body: query,
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Create a new site
- *
- * @param {object} query - object containing an site address
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.sitesNew = function ( query, fn ) {
-	const localeSlug = getLocaleSlug();
-
-	debug( '/sites/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	// Set the language for the user
-	query.lang_id = getLanguage( localeSlug ).value;
-	query.locale = localeSlug;
-
-	return this.wpcom.req.post(
-		{
-			path: '/sites/new',
-			body: query,
-		},
 		fn
 	);
 };
@@ -812,48 +434,6 @@ Undocumented.prototype.transferToSite = function ( siteId, domainName, targetSit
 	);
 };
 
-/**
- * Add domain mapping for eligible clients.
- *
- * @param {number} siteId The site ID
- * @param {string} [domainName] Name of the domain mapping
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.addDomainMapping = function ( siteId, domainName, fn ) {
-	debug( '/site/:site_id/add-domain-mapping' );
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/add-domain-mapping`,
-			body: {
-				domain: domainName,
-			},
-		},
-		fn
-	);
-};
-
-/**
- * Add domain mapping for VIP clients.
- *
- * @param {number} siteId The site ID
- * @param {string} [domainName] Name of the domain mapping
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.addVipDomainMapping = function ( siteId, domainName, fn ) {
-	debug( '/site/:site_id/vip-domain-mapping' );
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/vip-domain-mapping`,
-			body: {
-				domain: domainName,
-			},
-		},
-		fn
-	);
-};
-
 /*
  * Change the theme of a given site.
  *
@@ -867,16 +447,6 @@ Undocumented.prototype.changeTheme = function ( siteSlug, data, fn ) {
 		{
 			path: '/sites/' + siteSlug + '/themes/mine',
 			body: data,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.resetPasswordForMailbox = function ( domainName, mailbox, fn ) {
-	debug( '/domains/:domainName/google-apps/:mailbox/get-new-password' );
-	return this.wpcom.req.post(
-		{
-			path: '/domains/' + domainName + '/google-apps/' + mailbox + '/get-new-password',
 		},
 		fn
 	);
@@ -906,24 +476,6 @@ Undocumented.prototype.updateImporter = function ( siteId, importerStatus ) {
 	} );
 };
 
-Undocumented.prototype.importWithSiteImporter = function (
-	siteId,
-	importerStatus,
-	params,
-	targetUrl
-) {
-	debug( `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }` );
-
-	return this.wpcom.req.post( {
-		path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
-		apiNamespace: 'wpcom/v2',
-		formData: [
-			[ 'import_status', JSON.stringify( importerStatus ) ],
-			[ 'site_url', targetUrl ],
-		],
-	} );
-};
-
 Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 	return new Promise( ( resolve, rejectPromise ) => {
 		const resolver = ( error, data ) => {
@@ -950,60 +502,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 		req.upload.onprogress = params.onprogress;
 		req.onabort = params.onabort;
 	} );
-};
-
-/**
- * Get the available export configuration settings for a site
- *
- * @param {number}       siteId            The site ID
- * @param {Function}  fn                The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getExportSettings = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/exports/settings`,
-		},
-		fn
-	);
-};
-
-/*
- * Start an export
- *
- * @param {number}       siteId            The site ID
- * @param {object}    advancedSettings  Advanced export configuration
- * @param {Function}  fn                The callback function
- * @returns {Promise}                   A promise that resolves when the export started
- */
-Undocumented.prototype.startExport = function ( siteId, advancedSettings, fn ) {
-	return this.wpcom.req.post(
-		{
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/exports/start`,
-		},
-		advancedSettings,
-		fn
-	);
-};
-
-/**
- * Check the status of an export
- *
- * @param {number|string} siteId - The site ID
- * @param {object} exportId - Export ID (for future use)
- * @param {Function} fn - The callback function
- * @returns {Promise}  promise
- */
-Undocumented.prototype.getExport = function ( siteId, exportId, fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/exports/${ exportId }`,
-		},
-		fn
-	);
 };
 
 /**
@@ -1109,84 +607,6 @@ Undocumented.prototype.oauth2ClientId = function ( clientId, fn ) {
 		`/oauth2/client-data/${ clientId }`,
 		{ apiNamespace: 'wpcom/v2' },
 		fn
-	);
-};
-
-/**
- * Fetch a nonce to use in the `updateSiteAddress` call
- *
- * @param {number}   siteId  The ID of the site for which to get a nonce.
- * @returns {Promise}     A promise
- */
-Undocumented.prototype.getRequestSiteAddressChangeNonce = function ( siteId ) {
-	return this.wpcom.req.get( {
-		path: `/sites/${ siteId }/site-address-change/nonce`,
-		apiNamespace: 'wpcom/v2',
-	} );
-};
-
-/**
- * Request server-side validation (including an availibility check) of the given site address.
- *
- * @param {number} siteId The siteId for which to validate
- * @param {object} [siteAddress]	The site address to validate
- * @param {string} [domain] The domain name of the new site address (ex. news.blog, wordpress.com, etc.)
- * @param {string} [type] blog/dotblog - blog for wordpress.com, dotblog for .blog domains
- * @returns {Promise}  A promise
- */
-Undocumented.prototype.checkSiteAddressValidation = function ( siteId, siteAddress, domain, type ) {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/site-address-change/validate`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{},
-		{ blogname: siteAddress, domain, type }
-	);
-};
-
-/**
- * Request a new .wordpress.com or .*.blog address for a site with the option to discard the current.
- *
- * @param {number} siteId The siteId for which to change the address
- * @param {object} [blogname] The desired new site address
- * @param {string} [domain] The domain name of the new site address (ex. news.blog, wordpress.com, etc.)
- * @param {string} [oldDomain] The full domain name of the original site (ex. mysite.news.blog, mysite.wordpress.com, etc.)
- * @param {string} [type] blog/dotblog - blog for wordpress.com->wordpress.com, dotblog if the old and/or new domain is .blog
- * @param {boolean} [discard] Should the old site address name be discarded?
- * @param {string} [nonce] A nonce provided by the API
- * @returns {Promise}  A promise
- */
-Undocumented.prototype.updateSiteAddress = function (
-	siteId,
-	blogname,
-	domain,
-	oldDomain,
-	type,
-	discard,
-	nonce
-) {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/site-address-change`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{},
-		{ blogname, domain, old_domain: oldDomain, type, discard, nonce }
-	);
-};
-
-Undocumented.prototype.requestGdprConsentManagementLink = function ( domain, callback ) {
-	return this.wpcom.req.get(
-		`/domains/${ domain }/request-gdpr-consent-management-link`,
-		function ( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-
-			callback( null, response );
-		}
 	);
 };
 

@@ -354,6 +354,16 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 		},
 		{
+			name: 'from',
+			steps: [ 'importing' ],
+			destination: '/',
+			pageTitle: translate( 'Import your site content' ),
+			description: 'Onboarding - start from importer',
+			lastModified: '2021-11-15',
+			hideFlowProgress: true,
+			enableBranchSteps: true,
+		},
+		{
 			name: 'reader',
 			steps: [ 'reader-landing', 'user' ],
 			destination: '/',
@@ -442,7 +452,7 @@ export function generateFlows( {
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: [ 'confirm', 'transfer', 'install', 'complete' ],
+			steps: [ 'confirm', 'transfer', 'install' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'siteSlug' ],

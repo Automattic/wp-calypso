@@ -6,7 +6,7 @@ import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { find, get, isEmpty, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component, Fragment, createRef } from 'react';
 import { connect } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import VisibleDaysLimitUpsell from 'calypso/components/activity-card-list/visible-days-limit-upsell';
@@ -130,9 +130,33 @@ class ActivityLog extends Component {
 		isJetpackSiteSecondaryNetworkSite: PropTypes.bool,
 	};
 
+	state = {
+		initialFilterBarY: 0,
+		masterBarHeight: 0,
+		scrollTicking: false,
+	};
+
+	filterBarRef = null;
+
+	constructor( props ) {
+		super( props );
+
+		this.onScroll = this.onScroll.bind( this );
+		this.filterBarRef = createRef();
+	}
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 		this.findExistingRewind( this.props );
+
+		if ( isMobile() ) {
+			// Filter bar is only sticky on mobile
+			window.addEventListener( 'scroll', this.onScroll );
+		}
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'scroll', this.onScroll );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -145,6 +169,41 @@ class ActivityLog extends Component {
 		if ( rewindState.rewind && rewindState.rewind.restoreId ) {
 			this.props.getRewindRestoreProgress( siteId, rewindState.rewind.restoreId );
 		}
+	};
+
+	onScroll = () => {
+		const y = window.scrollY;
+
+		if ( ! this.state.scrollTicking ) {
+			// It's best practice to throttle scroll event for performance
+			window.requestAnimationFrame( () => {
+				this.stickFilterBar( y );
+				this.setState( { scrollTicking: false } );
+			} );
+
+			this.setState( { scrollTicking: true } );
+		}
+	};
+
+	stickFilterBar = ( scrollY ) => {
+		const { initialFilterBarY, masterBarHeight } = this.state;
+		const filterBar = this.filterBarRef.current;
+
+		if ( ! filterBar ) {
+			return;
+		}
+
+		if ( ! initialFilterBarY ) {
+			this.setState( { initialFilterBarY: filterBar.getBoundingClientRect().top } );
+		}
+
+		if ( ! masterBarHeight ) {
+			const masterBar = document.querySelector( '.masterbar' );
+
+			this.setState( { masterBarHeight: masterBar ? masterBar.clientHeight : 0 } );
+		}
+
+		filterBar.classList.toggle( 'is-sticky', scrollY + masterBarHeight >= initialFilterBarY );
 	};
 
 	/**
@@ -456,7 +515,7 @@ class ActivityLog extends Component {
 					<div>
 						<Pagination
 							compact={ isMobile() }
-							className="activity-log__pagination"
+							className="activity-log__pagination is-top-pagination"
 							key="activity-list-pagination-top"
 							nextLabel={ translate( 'Older' ) }
 							page={ actualPage }
@@ -524,12 +583,14 @@ class ActivityLog extends Component {
 		}
 
 		return (
-			<Filterbar
-				siteId={ siteId }
-				filter={ filter }
-				isLoading={ logLoadingState !== 'success' }
-				isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
-			/>
+			<div className="activity-log__filterbar-ctn" ref={ this.filterBarRef }>
+				<Filterbar
+					siteId={ siteId }
+					filter={ filter }
+					isLoading={ logLoadingState !== 'success' }
+					isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
+				/>
+			</div>
 		);
 	}
 

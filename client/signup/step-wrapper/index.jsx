@@ -113,6 +113,7 @@ class StepWrapper extends Component {
 			<NavigationLink
 				direction="forward"
 				goToNextStep={ goToNextStep }
+				forwardUrl={ this.props.forwardUrl }
 				defaultDependencies={ defaultDependencies }
 				flowName={ flowName }
 				stepName={ stepName }

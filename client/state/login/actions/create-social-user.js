@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST,
@@ -27,9 +29,14 @@ export const createSocialUser = ( socialInfo, flowName ) => ( dispatch ) => {
 		},
 	} );
 
-	return wpcom
-		.undocumented()
-		.usersSocialNew( { ...socialInfo, signup_flow_name: flowName } )
+	return wpcom.req
+		.post( '/users/social/new', {
+			...socialInfo,
+			signup_flow_name: flowName,
+			locale: getLocaleSlug(),
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
 		.then(
 			( wpcomResponse ) => {
 				const data = {

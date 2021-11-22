@@ -77,6 +77,13 @@
 
 .domain-row__mobile-container2 {
 	display: block;
+	@include break-mobile {
+		display: none;
+	}
+}
+
+.domain-row__mobile-container3 {
+	display: block;
 	margin-top: 4px;
 
 	.domain-row__status-cell {
@@ -147,6 +154,36 @@
 	}
 }
 
+.domain-row__site-cell {
+	display: none;
+
+	@include break-mobile {
+		flex: 70 70 0;
+		display: block;
+		align-items: center;
+		padding-top: 2px;
+		font-size: $font-body-small;
+	}
+
+	a {
+		color: var( --studio-gray-50 );
+
+		svg {
+			width: 18px;
+			height: 18px;
+			vertical-align: text-bottom;
+			fill: var( --studio-gray-50 );
+		}
+
+		&:hover {
+			color: var( --color-link );
+			svg {
+				fill: var( --color-link );
+			}
+		}
+	}
+}
+
 .domain-row__status-cell {
 	display: none;
 
@@ -156,6 +193,10 @@
 		align-items: center;
 		padding-top: 2px;
 		font-size: $font-body-small;
+	}
+
+	&.is-loading {
+		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 

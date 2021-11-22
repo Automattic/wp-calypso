@@ -2,7 +2,8 @@
 	border-left: 3px solid;
 	cursor: default;
 	display: flex;
-	padding: 12px 6px 12px 12px;
+	align-items: flex-start;
+	padding: 12px;
 	line-height: 29px;
 
 	&.is-dismissible {
@@ -22,7 +23,7 @@
 
 	@include banner-color( var( --color-accent ) );
 
-	&.is-jetpack:not(.is-atomic) {
+	&.is-jetpack:not( .is-atomic ) {
 		@include banner-color( var( --color-jetpack ) );
 	}
 
@@ -48,6 +49,8 @@
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
+		align-items: center;
+
 		padding: 12px 16px;
 
 		&.is-dismissible {
@@ -72,7 +75,7 @@
 		border-radius: 50%;
 		flex-shrink: 0;
 		height: 24px;
-		margin-right: 16px;
+		margin-right: 12px;
 		width: 24px;
 		align-items: center;
 		justify-content: center;
@@ -192,7 +195,7 @@
 .banner__action {
 	align-self: center;
 	font-size: $font-body-extra-small;
-	margin: 8px 0 0;
+	margin: 12px 0 0;
 	text-align: left;
 	width: 100%;
 
@@ -211,6 +214,13 @@
 
 		.has-call-to-action & .plan-price {
 			margin-bottom: 8px;
+		}
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		.button {
+			display: block;
+			flex: 1;
 		}
 	}
 

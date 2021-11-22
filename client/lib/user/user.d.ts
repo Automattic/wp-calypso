@@ -21,7 +21,6 @@ export type OptionalUserData = {
 	email_verified: boolean;
 	has_unseen_notes: boolean;
 	is_new_reader: boolean;
-	isRTL: boolean;
 	is_valid_google_apps_country: boolean;
 	localeSlug: string;
 	localeVariant: string;

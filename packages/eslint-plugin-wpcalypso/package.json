@@ -29,10 +29,10 @@
 		"eslint-plugin-react-hooks": "^4.3.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"@babel/core": "^7.16.0",
 		"@babel/eslint-parser": "^7.16.3",
-		"@babel/parser": "^7.16.3",
+		"@babel/parser": "^7.16.4",
 		"eslint": ">=7.32.0"
 	}
 }

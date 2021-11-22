@@ -72,7 +72,12 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 						{ translate( 'Learn more about how to install Jetpack' ) }
 					</ExternalLink>
 				</p>
-				<Button primary disabled={ false } onClick={ onContinue }>
+				<Button
+					className="licensing-thank-you-manual-activation-instructions__button"
+					primary
+					disabled={ false }
+					onClick={ onContinue }
+				>
 					{ translate( 'Continue ' ) }
 				</Button>
 			</LicensingActivation>

@@ -26,9 +26,16 @@
 
 .licensing-activation .button.is-primary,
 .licensing-activation .button.is-primary:visited {
+	font-size: $font-body;
+	font-weight: 400;
+
 	border-radius: 2px;
 	margin-top: 58px;
+
+	min-width: 140px;
+
 	@include jetpack-primary-button;
+
 	&.is-busy {
 		background-image: linear-gradient(
 			-45deg,

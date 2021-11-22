@@ -33,13 +33,13 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/format-currency": "^1.0.0-alpha.0",
-		"@wordpress/api-fetch": "^5.2.2",
-		"@wordpress/data-controls": "^2.2.3",
-		"@wordpress/deprecated": "^3.2.1",
-		"@wordpress/url": "^3.2.2",
+		"@automattic/format-currency": "workspace:^",
+		"@wordpress/api-fetch": "^5.2.5",
+		"@wordpress/data-controls": "^2.2.6",
+		"@wordpress/deprecated": "^3.2.2",
+		"@wordpress/url": "^3.3.0",
 		"fast-json-stable-stringify": "^2.1.0",
-		"i18n-calypso": "^5.0.0",
+		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",
 		"redux": "^4.1.2",
 		"tslib": "^2.3.0",
@@ -48,16 +48,16 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^6",
-		"react": "^17.0.2",
-		"react-native": "^0.66.2"
+		"react": "^17.0.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"@types/validator": "^13.6.5",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@types/validator": "^13.7.0",
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^12.0.3",
+		"regenerator-runtime": "^0.13.9",
 		"typescript": "^4.4.4",
 		"wait-for-expect": "^3.0.2",
-		"wpcom-proxy-request": "^6.0.0"
+		"wpcom-proxy-request": "workspace:^"
 	}
 }

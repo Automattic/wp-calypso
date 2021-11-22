@@ -31,6 +31,7 @@ import {
 	recordSignupComplete,
 	recordSignupStep,
 	recordSignupInvalidStep,
+	recordSignupProcessingScreen,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -240,18 +241,21 @@ class Signup extends Component {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.startTrackingForBusinessSite();
-		recordSignupStart( this.props.flowName, this.props.refParameter );
-		recordSignupStep( this.props.flowName, this.props.stepName );
+		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
+		if ( ! this.state.shouldShowLoadingScreen ) {
+			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+		}
 		this.preloadNextStep();
 		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
 		if (
-			this.props.flowName !== prevProps.flowName ||
-			this.props.stepName !== prevProps.stepName
+			( this.props.flowName !== prevProps.flowName ||
+				this.props.stepName !== prevProps.stepName ) &&
+			! this.state.shouldShowLoadingScreen
 		) {
-			recordSignupStep( this.props.flowName, this.props.stepName );
+			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
 		}
 
 		if (
@@ -267,6 +271,16 @@ class Signup extends Component {
 			// `scrollToTop` here handles cases where the viewport may fall slightly below the top of the page when the next step is rendered
 			this.scrollToTop();
 		}
+	}
+
+	getRecordProps() {
+		const { signupDependencies } = this.props;
+
+		return {
+			theme: get( signupDependencies, 'selectedDesign.theme' ),
+			intent: get( signupDependencies, 'intent' ),
+			starting_point: get( signupDependencies, 'startingPoint' ),
+		};
 	}
 
 	scrollToTop() {
@@ -356,6 +370,12 @@ class Signup extends Component {
 		}
 
 		if ( startLoadingScreen ) {
+			recordSignupProcessingScreen(
+				this.props.flowName,
+				this.props.stepName,
+				this.getRecordProps()
+			);
+
 			this.setState( { shouldShowLoadingScreen: true } );
 			/* Temporary change to add a 10 second delay to the processing screen.
 			 * This is done to allow the user 10 seconds to answer the bizx survey
@@ -517,7 +537,10 @@ class Signup extends Component {
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
-		if ( ! this.isEveryStepSubmitted() ) {
+		// The `stepName` might be undefined after the user finish the last step but the value of
+		// `isEveryStepSubmitted` is still false. Thus, check the `stepName` here to avoid going
+		// to invalid step.
+		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
 		} else if ( this.isEveryStepSubmitted() ) {
@@ -591,7 +614,7 @@ class Signup extends Component {
 		}
 
 		if ( isReskinned ) {
-			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
+			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
 			const destination = this.signupFlowController.getDestination();
 

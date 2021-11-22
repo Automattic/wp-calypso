@@ -1,40 +1,18 @@
-import { useTranslate } from 'i18n-calypso';
-import { FC, useMemo } from 'react';
-import ProductCardWithoutPrice from 'calypso/components/jetpack/card/product-without-price';
-import useJetpackFreeButtonProps from './use-jetpack-free-button-props';
-import type { JetpackFreeProps } from 'calypso/my-sites/plans/jetpack-plans/types';
+import {
+	getForCurrentCROIteration,
+	Iterations,
+} from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import CardWithPrice, { CardWithPriceProps } from './with-price';
+import CardWithoutPrice, { CardWithoutPriceProps } from './without-price';
 
-const JetpackFreeCard: FC< JetpackFreeProps > = ( { fullWidth, siteId, urlQueryArgs } ) => {
-	const translate = useTranslate();
-	const { href: buttonHref, onClick: onButtonClick } = useJetpackFreeButtonProps(
-		siteId,
-		urlQueryArgs
-	);
+const Wrapper: React.FC< CardWithPriceProps | CardWithoutPriceProps > = ( props ) => {
+	return getForCurrentCROIteration( ( iteration: Iterations ) => {
+		if ( iteration === Iterations.ONLY_REALTIME_PRODUCTS ) {
+			return <CardWithPrice { ...props } />;
+		}
 
-	const features = useMemo(
-		() => [
-			translate( 'Brute force attack protection' ),
-			translate( 'Site stats' ),
-			translate( 'Content Delivery Network' ),
-		],
-		[ translate ]
-	);
-
-	return (
-		<ProductCardWithoutPrice
-			fullWidth={ fullWidth }
-			className="jetpack-free-card"
-			productSlug="free"
-			displayName={ translate( 'Jetpack Free' ) }
-			description={ translate(
-				'Power up your WordPress site with essential security and performance features.'
-			) }
-			productFeatures={ features }
-			buttonHref={ buttonHref }
-			onButtonClick={ onButtonClick }
-			buttonLabel={ translate( 'Start for free' ) }
-		/>
-	);
+		return <CardWithoutPrice { ...props } />;
+	} );
 };
 
-export default JetpackFreeCard;
+export default Wrapper;

@@ -19,7 +19,7 @@
 		"@types/mocha": "^9.0.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^4.4.4"
 	},
 	"peerDependencies": {

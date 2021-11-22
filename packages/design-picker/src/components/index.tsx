@@ -5,17 +5,18 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState, ReactNode } from 'react';
+import { useMemo } from 'react';
 import {
 	getAvailableDesigns,
 	getDesignUrl,
 	mShotOptions,
 	isBlankCanvasDesign,
-	gatherCategories,
 	filterDesignsByCategory,
+	sortDesigns,
 } from '../utils';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import MShotsImage from './mshots-image';
+import type { Categorization } from '../hooks/use-categorization';
 export { default as MShotsImage } from './mshots-image';
 import type { Design } from '../types';
 
@@ -203,8 +204,8 @@ export interface DesignPickerProps {
 	theme?: 'dark' | 'light';
 	className?: string;
 	highResThumbnails?: boolean;
-	showCategoryFilter?: boolean;
-	categoriesHeading?: ReactNode;
+	categorization?: Categorization;
+	categoriesHeading?: React.ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -219,35 +220,25 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	theme = 'light',
 	className,
 	highResThumbnails = false,
-	showCategoryFilter = false,
 	categoriesHeading,
+	categorization,
 } ) => {
-	const categories = gatherCategories( designs );
-	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
-		categories[ 0 ]?.slug ?? null
-	);
+	const filteredDesigns = useMemo( () => {
+		const result = categorization?.selection
+			? filterDesignsByCategory( designs, categorization.selection )
+			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
-	useEffect( () => {
-		// When the category list changes check that the current selection
-		// still matches one of the given slugs, and if it doesn't reset
-		// the current selection.
-		const findResult = categories.find( ( { slug } ) => slug === selectedCategory );
-		if ( ! findResult ) {
-			setSelectedCategory( categories[ 0 ]?.slug ?? null );
-		}
-	}, [ categories, selectedCategory ] );
-
-	const filteredDesigns = ! showCategoryFilter
-		? designs
-		: filterDesignsByCategory( designs, selectedCategory );
+		result.sort( sortDesigns );
+		return result;
+	}, [ designs, categorization?.selection ] );
 
 	return (
 		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
-			{ showCategoryFilter && !! categories.length && (
+			{ !! categorization?.categories.length && (
 				<DesignPickerCategoryFilter
-					categories={ categories }
-					selectedCategory={ selectedCategory }
-					onSelect={ setSelectedCategory }
+					categories={ categorization.categories }
+					selectedCategory={ categorization.selection }
+					onSelect={ categorization.onSelect }
 					heading={ categoriesHeading }
 				/>
 			) }

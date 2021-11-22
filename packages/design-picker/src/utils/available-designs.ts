@@ -36,7 +36,7 @@ export const mShotOptions = ( { preview }: Design, highRes: boolean ): MShotsOpt
 		vpw: 1600,
 		vph: preview === 'static' ? 1040 : 1600,
 		// When `w` was 1200 it created a visual glitch on one thumbnail. #57261
-		w: highRes ? 1201 : 600,
+		w: highRes ? 1199 : 600,
 		screen_height: 3600,
 	};
 };

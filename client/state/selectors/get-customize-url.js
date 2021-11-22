@@ -1,5 +1,5 @@
 import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
 /**
@@ -12,8 +12,16 @@ import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
  * @param  {number}   siteId  Site ID to open the customizer or block editor for
  * @returns {string}           Customizer or Block Editor URL
  */
-export default function getCustomizeUrl( state, themeId, siteId ) {
-	return isSiteUsingFullSiteEditing( state, siteId ) || isSiteUsingCoreSiteEditor( state, siteId )
-		? getFrontPageEditorUrl( state, siteId )
-		: getThemeCustomizeUrl( state, themeId, siteId );
+export default function getCustomizeUrl( state, themeId, siteId, isFSEActive = false ) {
+	// Core FSE
+	if ( isFSEActive ) {
+		return getSiteEditorUrl( state, siteId );
+	}
+
+	// Legacy dotcom FSE
+	if ( isSiteUsingFullSiteEditing( state, siteId ) ) {
+		return getFrontPageEditorUrl( state, siteId );
+	}
+
+	return getThemeCustomizeUrl( state, themeId, siteId );
 }

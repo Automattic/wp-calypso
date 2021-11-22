@@ -22,12 +22,12 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"peerDependencies": {
-		"webpack": "^5.63.0"
+		"webpack": "^5.64.1"
 	},
 	"dependencies": {
 		"semver": "^7.0.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

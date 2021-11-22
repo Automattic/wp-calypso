@@ -31,7 +31,7 @@ describe( 'ProductPurchaseFeaturesList basic tests', () => {
 		plan: PLAN_FREE,
 		isPlaceholder: false,
 		selectedSite: {
-			plan: PLAN_FREE,
+			plan: { product_slug: PLAN_FREE },
 		},
 	};
 
@@ -46,7 +46,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		plan: PLAN_FREE,
 		isPlaceholder: false,
 		selectedSite: {
-			plan: PLAN_FREE,
+			plan: { product_slug: PLAN_FREE },
 		},
 	};
 
@@ -270,7 +270,7 @@ describe( 'ProductPurchaseFeaturesList feature functions', () => {
 		plan: PLAN_FREE,
 		isPlaceholder: false,
 		selectedSite: {
-			plan: PLAN_FREE,
+			plan: { product_slug: PLAN_FREE },
 		},
 	};
 
@@ -318,7 +318,7 @@ describe( '<HappinessSupportCard isJetpackFreePlan', () => {
 	const props = {
 		plan: PLAN_JETPACK_FREE,
 		selectedSite: {
-			plan: PLAN_JETPACK_FREE,
+			plan: { product_slug: PLAN_JETPACK_FREE },
 		},
 	};
 	test( 'Should set isJetpackFreePlan for free plan', () => {
@@ -339,7 +339,7 @@ describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
 			plan: plan,
 			isPlaceholder: false,
 			selectedSite: {
-				plan,
+				plan: { product_slug: plan },
 			},
 		};
 		test( `Should be eligible for live chat for ${ plan }`, () => {

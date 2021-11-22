@@ -10,6 +10,9 @@ import {
 	DOMAINS_DNS_FETCH,
 	DOMAINS_DNS_FETCH_COMPLETED,
 	DOMAINS_DNS_FETCH_FAILED,
+	DOMAINS_DNS_UPDATE,
+	DOMAINS_DNS_UPDATE_COMPLETED,
+	DOMAINS_DNS_UPDATE_FAILED,
 } from 'calypso/state/action-types';
 import { getDomainDns } from './selectors';
 
@@ -39,7 +42,7 @@ export const addDns = ( domainName, record ) => ( dispatch ) => {
 	const addResult = wpcom.undocumented().updateDns( domainName, { records_to_add: [ record ] } );
 
 	addResult.then(
-		() => dispatch( { type: DOMAINS_DNS_ADD_COMPLETED, domainName, record } ),
+		( { records } ) => dispatch( { type: DOMAINS_DNS_ADD_COMPLETED, domainName, records } ),
 		() => dispatch( { type: DOMAINS_DNS_ADD_FAILED, domainName, record } )
 	);
 
@@ -54,7 +57,7 @@ export const deleteDns = ( domainName, record ) => ( dispatch ) => {
 		.updateDns( domainName, { records_to_remove: [ record ] } );
 
 	updateResult.then(
-		() => dispatch( { type: DOMAINS_DNS_DELETE_COMPLETED, domainName, record } ),
+		( { records } ) => dispatch( { type: DOMAINS_DNS_DELETE_COMPLETED, domainName, records } ),
 		() => dispatch( { type: DOMAINS_DNS_DELETE_FAILED, domainName, record } )
 	);
 
@@ -73,4 +76,20 @@ export const applyDnsTemplate = ( domainName, provider, service, variables ) => 
 	);
 
 	return applyResult;
+};
+
+export const updateDns = ( domainName, recordsToAdd, recordsToRemove ) => ( dispatch ) => {
+	dispatch( { type: DOMAINS_DNS_UPDATE, recordsToAdd, recordsToRemove } );
+
+	const updateResult = wpcom.undocumented().updateDns( domainName, {
+		records_to_add: recordsToAdd,
+		records_to_remove: recordsToRemove,
+	} );
+
+	updateResult.then(
+		( { records } ) => dispatch( { type: DOMAINS_DNS_UPDATE_COMPLETED, domainName, records } ),
+		() => dispatch( { type: DOMAINS_DNS_UPDATE_FAILED, domainName } )
+	);
+
+	return updateResult;
 };

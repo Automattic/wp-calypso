@@ -325,7 +325,7 @@ export function generateSteps( {
 		},
 		'domain-only': {
 			stepName: 'domain-only',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
@@ -334,7 +334,7 @@ export function generateSteps( {
 
 		'select-domain': {
 			stepName: 'select-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in add-domain flow
 			props: {
 				isAllDomains: true,
 				isDomainOnly: true,
@@ -741,6 +741,7 @@ export function generateSteps( {
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
+				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
 			},
 		},
 		'difm-design-setup-site': {
@@ -755,6 +756,7 @@ export function generateSteps( {
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
+				showDesignPickerCategoriesAllFilter: false,
 			},
 		},
 		'difm-design': {
@@ -778,6 +780,9 @@ export function generateSteps( {
 		ready: {
 			stepName: 'ready',
 		},
+		importing: {
+			stepName: 'importing',
+		},
 
 		// Woocommerce Install steps
 		confirm: {
@@ -788,9 +793,6 @@ export function generateSteps( {
 		},
 		install: {
 			stepName: 'install',
-		},
-		complete: {
-			stepName: 'complete',
 		},
 	};
 }

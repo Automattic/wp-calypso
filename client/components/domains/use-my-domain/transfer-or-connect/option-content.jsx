@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -19,6 +20,7 @@ export default function OptionContent( {
 	titleText,
 	topText,
 } ) {
+	const localizeUrl = useLocalizeUrl();
 	const pricingTextClasses = classNames( 'option-content__pricing-text', {
 		[ 'is-free' ]: pricing?.isFree,
 	} );
@@ -54,7 +56,7 @@ export default function OptionContent( {
 				<a
 					className="option-content__learn-more"
 					target="_blank"
-					href={ learnMoreLink }
+					href={ localizeUrl( learnMoreLink ) }
 					rel="noopener noreferrer"
 				>
 					{ __( 'Learn more' ) }

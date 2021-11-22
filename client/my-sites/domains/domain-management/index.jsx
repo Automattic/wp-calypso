@@ -1,7 +1,9 @@
+import AllDomains from 'calypso/my-sites/domains/domain-management/list/all-domains';
 import SiteDomains from 'calypso/my-sites/domains/domain-management/list/site-domains';
 import ChangeSiteAddress from './change-site-address';
 import ContactsPrivacy from './contacts-privacy';
 import Dns from './dns';
+import AddDnsRecord from './dns/add-dns-record';
 import DnsRecords from './dns/dns-records';
 import DnsRecordsList from './dns/dns-records-list';
 import DomainConnectMapping from './domain-connect-mapping';
@@ -21,6 +23,7 @@ import TransferToOtherSite from './transfer/transfer-to-other-site';
 import TransferToOtherUser from './transfer/transfer-to-other-user';
 
 export default {
+	AddDnsRecord,
 	ChangeSiteAddress,
 	ContactsPrivacy,
 	Dns,
@@ -32,6 +35,7 @@ export default {
 	ManageConsent,
 	List,
 	ListAll,
+	AllDomains,
 	SiteDomains,
 	NameServers,
 	Security,

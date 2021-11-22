@@ -302,6 +302,7 @@ class ManagePurchase extends Component {
 			: translate( 'Upgrade Plan' );
 
 		if (
+			! purchase ||
 			! isPlan( purchase ) ||
 			isEcommerce( purchase ) ||
 			isComplete( purchase ) ||
@@ -690,10 +691,10 @@ class ManagePurchase extends Component {
 
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
-			'is-personal': isPersonal( purchase ),
-			'is-premium': isPremium( purchase ),
-			'is-business': isBusiness( purchase ),
-			'is-jetpack-product': isJetpackProduct( purchase ),
+			'is-personal': purchase && isPersonal( purchase ),
+			'is-premium': purchase && isPremium( purchase ),
+			'is-business': purchase && isBusiness( purchase ),
+			'is-jetpack-product': purchase && isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;

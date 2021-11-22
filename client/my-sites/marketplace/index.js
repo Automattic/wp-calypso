@@ -34,13 +34,6 @@ export default function () {
 			clientRender
 		);
 		page(
-			'/marketplace/:productSlug?/install/:site?',
-			siteSelection,
-			renderPluginsInstallPage,
-			makeLayout,
-			clientRender
-		);
-		page(
 			'/marketplace/product/details/:productGroupSlug/:site?',
 			navigation,
 			siteSelection,
@@ -53,6 +46,16 @@ export default function () {
 			navigation,
 			siteSelection,
 			renderMarketplaceProduct,
+			makeLayout,
+			clientRender
+		);
+	}
+
+	if ( config.isEnabled( 'marketplace-v0.5' ) ) {
+		page(
+			'/marketplace/:productSlug?/install/:site?',
+			siteSelection,
+			renderPluginsInstallPage,
 			makeLayout,
 			clientRender
 		);

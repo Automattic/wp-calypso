@@ -994,6 +994,10 @@
 	height: 28px;
 }
 
+.licensing-activation .licensing-thank-you-manual-activation-instructions__button.button {
+	margin-top: 0;
+}
+
 .licensing-thank-you-manual-activation-license-key__key {
 	margin-top: 40px;
 }
@@ -1004,7 +1008,7 @@
 	margin-top: 8px;
 
 	.licensing-thank-you-manual-activation-license-key__input.form-text-input {
-		margin-right: 16px;
+		margin-right: 8px;
 
 		background-color: var( --studio-gray-0 );
 
@@ -1016,8 +1020,9 @@
 	}
 }
 
-.licensing-thank-you-manual-activation-license-key__button {
-	min-width: 70px;
+.licensing-activation .licensing-thank-you-manual-activation-license-key__button.button {
+	margin-top: 0;
+	min-width: 100px;
 }
 
 .jetpack-checkout-thank-you {

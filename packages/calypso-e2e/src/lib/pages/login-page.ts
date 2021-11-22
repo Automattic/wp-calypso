@@ -24,6 +24,10 @@ const selectors = {
 
 	// Notices
 	errorMessage: 'div.is-error',
+
+	// 2FA
+	mfaInput: 'input[name="twoStepCode"]',
+	continueButton: 'button[type="submit"]',
 };
 
 interface LoginCredentials {
@@ -264,5 +268,31 @@ export class LoginPage {
 			this.page.waitForNavigation(),
 			this.page.click( selectors.magicLinkContinueLoginButton ),
 		] );
+	}
+
+	/* 2FA */
+
+	/**
+	 * Enters the provided 2FA code and submits the form.
+	 *
+	 * @param {string} code Generated TOTP code.
+	 */
+	async enter2FACode( code: string ): Promise< void > {
+		await this.page.fill( selectors.mfaInput, code );
+
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( '**/wp-login.php?action=two-step-authentication-endpoint' ),
+			this.page.click( selectors.continueButton ),
+		] );
+
+		if ( response.status() !== 200 ) {
+			throw new Error(
+				await this.page
+					.waitForSelector( selectors.errorMessage )
+					.then( ( element ) => element.innerText() )
+			);
+		}
+
+		await this.page.waitForNavigation( { waitUntil: 'networkidle' } );
 	}
 }

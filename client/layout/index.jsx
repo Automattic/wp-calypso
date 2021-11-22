@@ -183,6 +183,7 @@ class Layout extends Component {
 		const exemptedRoutes = [ '/log-in/jetpack' ];
 		const exemptedRoutesStartingWith = [
 			'/start/p2',
+			'/start/setup-site',
 			'/plugins/domain',
 			'/plugins/marketplace/setup',
 		];

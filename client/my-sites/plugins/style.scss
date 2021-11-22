@@ -16,7 +16,8 @@ body.is-section-plugins.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
 }
 
-.plugin__installed-on, .plugin-details__installed-on {
+.plugin__installed-on,
+.plugin-details__installed-on {
 	margin-bottom: 16px;
 }
 
@@ -117,6 +118,8 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
+$plugin-details-header-padding: 100px;
+
 .plugin-details__layout {
 	@include grid-row( 4, 1 );
 	@include breakpoint-deprecated( '>1040px' ) {
@@ -126,16 +129,26 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 
 	.plugin-details__layout-col-left {
+		position: relative;
 		@include breakpoint-deprecated( '>1040px' ) {
 			@include grid-column( 1, 8 );
 		}
 	}
 
 	.plugin-details__layout-col-right {
+		position: relative;
 		@include breakpoint-deprecated( '>1040px' ) {
 			@include grid-column( 9, 4 );
 		}
 	}
+}
+
+%placeholder {
+	cursor: default;
+	color: transparent;
+	user-select: none;
+	background-color: var( --color-neutral-0 );
+	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
 .plugin-details__top-section {
@@ -148,6 +161,24 @@ body.is-section-plugins:not( .is-nav-unification ) {
 			display: none;
 		}
 	}
+
+	&.is-placeholder {
+		border-bottom: none;
+
+		.plugin-details__name,
+		.plugin-details__price,
+		.plugin-details__description,
+		.plugin-details__additional-info,
+		.plugin-details__install,
+		.plugin-details__t-and-c {
+			@extend %placeholder;
+		}
+
+		.plugin-details__tags {
+			@extend %placeholder;
+			width: 50%;
+		}
+	}
 }
 
 .plugin-details__page {
@@ -156,28 +187,36 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
+.plugin-details__tags {
+	position: absolute;
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-40 );
+	top: calc( $plugin-details-header-padding - 15px );
+	left: 0;
+
+	@media screen and ( max-width: 1040px ) {
+		top: -5px;
+	}
+}
+
 .plugin-details__header {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	height: 400px;
+	padding: $plugin-details-header-padding 0;
 
-	.plugin-details__tags {
-		font-size: $font-body-extra-small;
-		color: var( --studio-gray-40 );
-	}
-
-	.plugin-details__name, .plugin-details__price {
+	.plugin-details__name,
+	.plugin-details__price {
 		font-family: $brand-serif;
 		font-size: $font-title-large;
 		color: var( --studio-gray-100 );
-		padding: 16px 0;
+		margin: 16px 0;
 	}
 
 	.plugin-details__description {
 		font-size: $font-title-small;
 		color: var( --studio-gray-70 );
-		padding-bottom: 30px;
+		margin-bottom: 30px;
 	}
 
 	.plugin-details__additional-info {
@@ -205,7 +244,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 
 	.plugin-details__install {
-		padding-bottom: 20px;
+		margin-bottom: 20px;
 
 		.plugin-details__install-button {
 			width: 100%;
@@ -214,7 +253,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 			color: var( --studio-white );
 		}
 	}
-	
+
 	.plugin-details__t-and-c {
 		font-size: $font-body-extra-small;
 		color: var( --studio-gray-50 );
@@ -225,7 +264,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 
 	@media screen and ( max-width: 1040px ) {
-		height: 100%;
+		padding: 0;
 	}
 }
 
@@ -246,6 +285,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 
 		.card {
 			box-shadow: none;
+			padding-left: 0;
 		}
 	}
 
@@ -253,6 +293,10 @@ body.is-section-plugins:not( .is-nav-unification ) {
 		&.is-selected,
 		&:hover:not( .is-selected ) {
 			border-bottom-color: transparent;
+		}
+
+		&:first-child .section-nav-tab__link {
+			padding-left: 0;
 		}
 
 		.section-nav-tab__link {
@@ -285,7 +329,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 			font-size: $font-body-small;
 			padding-bottom: 16px;
 
-			&.plugin-details__downloads-value {
+			&.plugin-details__active-installs-value {
 				font-size: $font-body;
 			}
 		}
@@ -303,11 +347,11 @@ body.is-section-plugins:not( .is-nav-unification ) {
 		.plugin-details__plugin-details-title {
 			display: block;
 		}
-		
+
 		.plugin-details__layout-col-left {
 			order: 2;
 		}
-		
+
 		.plugin-details__layout-col-right {
 			order: 1;
 			margin-top: 0;

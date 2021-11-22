@@ -7,9 +7,8 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
-// Total time to perform "loading"
+// Default estimated time to perform "loading"
 const DURATION_IN_MS = 6000;
-const HEADSTART_DURATION_IN_MS = 60000;
 
 const flowsWithDesignPicker = [ 'setup-site', 'do-it-for-me' ];
 
@@ -19,28 +18,30 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 
 	switch ( flowName ) {
 		case 'launch-site':
-			steps = [ __( 'Your site will be live shortly.' ) ]; // copy from 'packages/launch/src/focused-launch/success'
+			steps = [ { title: __( 'Your site will be live shortly.' ) } ]; // copy from 'packages/launch/src/focused-launch/success'
 			break;
 		default:
 			steps = [
-				! isDestinationSetupSiteFlow && __( 'Building your site' ),
-				hasPaidDomain && __( 'Getting your domain' ),
-				! isDestinationSetupSiteFlow && __( 'Applying design' ),
+				! isDestinationSetupSiteFlow && { title: __( 'Building your site' ) },
+				hasPaidDomain && { title: __( 'Getting your domain' ) },
+				! isDestinationSetupSiteFlow && { title: __( 'Applying design' ) },
 			];
 	}
 
 	if ( flowsWithDesignPicker.includes( flowName ) ) {
+		// Custom durations give a more believable loading effect while setting up
+		// the site with headstart. Which can take quite a long time.
 		steps = [
-			__( 'Laying the foundations' ),
-			__( 'Turning on the lights' ),
-			__( 'Making it beautiful' ),
-			__( 'Personalizing your site' ),
-			__( 'Sprinkling some magic' ),
-			__( 'Securing your data' ),
-			__( 'Enabling encryption' ),
-			__( 'Optimizing your content' ),
-			__( 'Applying a shiny top coat' ),
-			__( 'Closing the loop' ),
+			{ title: __( 'Laying the foundations' ), duration: 7000 },
+			{ title: __( 'Turning on the lights' ), duration: 3000 },
+			{ title: __( 'Making it beautiful' ), duration: 4000 },
+			{ title: __( 'Personalizing your site' ), duration: 7000 },
+			{ title: __( 'Sprinkling some magic' ), duration: 4000 },
+			{ title: __( 'Securing your data' ), duration: 9000 },
+			{ title: __( 'Enabling encryption' ), duration: 3000 },
+			{ title: __( 'Optimizing your content' ), duration: 6000 },
+			{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
+			{ title: __( 'Closing the loop' ) },
 		];
 	}
 
@@ -58,10 +59,10 @@ export default function ReskinnedProcessingScreen( props ) {
 	const shouldShowNewSpinner =
 		isDestinationSetupSiteFlow || flowsWithDesignPicker.includes( flowName );
 
-	const duration = flowsWithDesignPicker.includes( flowName )
-		? HEADSTART_DURATION_IN_MS
-		: DURATION_IN_MS;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
+
+	const defaultDuration = DURATION_IN_MS / totalSteps;
+	const duration = steps.current[ currentStep ]?.duration || defaultDuration;
 
 	/**
 	 * Completion progress: 0 <= progress <= 1
@@ -71,8 +72,8 @@ export default function ReskinnedProcessingScreen( props ) {
 
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),
-		// Enable the interval when progress is incomplete
-		isComplete ? null : duration / totalSteps
+		// Enable the interval when progress is incomplete.
+		isComplete ? null : duration
 	);
 
 	// Force animated progress bar to start at 0
@@ -89,7 +90,7 @@ export default function ReskinnedProcessingScreen( props ) {
 			} ) }
 		>
 			<h1 className="reskinned-processing-screen__progress-step">
-				{ steps.current[ currentStep ] }
+				{ steps.current[ currentStep ]?.title }
 			</h1>
 			{ shouldShowNewSpinner && <LoadingEllipsis /> }
 			{ ! shouldShowNewSpinner && (

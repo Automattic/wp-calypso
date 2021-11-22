@@ -34,6 +34,7 @@ interface Props {
 type JetpackSite = {
 	ID: number;
 	URL: string;
+	is_wpcom_atomic: boolean;
 };
 
 type Product = {
@@ -67,6 +68,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	const supportTicketRequestStatus = useSelector( ( state ) =>
 		getSupportTicketRequestStatus( state, receiptId )
 	);
+
 	const destinationSiteId = useSelector( ( state ) =>
 		getJetpackCheckoutSupportTicketDestinationSiteId( state, jetpackTemporarySiteId )
 	);
@@ -77,19 +79,22 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	const [ selectedSite, setSelectedSite ] = useState( '' );
 	const [ error, setError ] = useState< TranslateResult | false >( false );
 
+	const manualActivationUrl = useMemo( () => {
+		return addQueryArgs(
+			{
+				receiptId,
+				source,
+				jetpackTemporarySiteId,
+			},
+			`/checkout/jetpack/thank-you/licensing-manual-activate/${ productSlug }`
+		);
+	}, [ jetpackTemporarySiteId, productSlug, source, receiptId ] );
+
 	const onContinue = useCallback(
 		( e ) => {
 			e.preventDefault();
 			setError( false );
 			if ( selectedSite === 'activate-license-manually' ) {
-				const manualActivationUrl = addQueryArgs(
-					{
-						receiptId,
-						source,
-						jetpackTemporarySiteId,
-					},
-					`/checkout/jetpack/thank-you/licensing-manual-activate/${ productSlug }`
-				);
 				return page( manualActivationUrl );
 			}
 			dispatch(
@@ -110,7 +115,15 @@ const LicensingActivationThankYou: FC< Props > = ( {
 				)
 			);
 		},
-		[ selectedSite, dispatch, productSlug, receiptId, source, jetpackTemporarySiteId ]
+		[
+			dispatch,
+			manualActivationUrl,
+			jetpackTemporarySiteId,
+			productSlug,
+			receiptId,
+			selectedSite,
+			source,
+		]
 	);
 
 	useEffect( () => {
@@ -145,6 +158,24 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					)
 				);
 			}
+
+			if ( destinationSiteId === 0 ) {
+				return setError(
+					translate(
+						'There was a problem activating %(productName)s on {{strong}}%(selectedSite)s{{/strong}}. Try with a different site or {{a}}activate your product manually{{/a}}.',
+						{
+							components: {
+								strong: <strong />,
+								a: <a href={ manualActivationUrl } />,
+							},
+							args: {
+								productName,
+								selectedSite: urlToSlug( selectedSite ),
+							},
+						}
+					)
+				);
+			}
 			// If the destinationSiteId is greater than 0, then the subscription transfer was successful.
 			const thankYouCompletedUrl = addQueryArgs(
 				{
@@ -156,29 +187,32 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		}
 	}, [
 		destinationSiteId,
-		supportTicketRequestStatus,
-		incompatibleProductIds,
-		selectedSite,
 		error,
-		translate,
-		productSlug,
-		productsList,
+		incompatibleProductIds,
+		manualActivationUrl,
 		productName,
+		productsList,
+		productSlug,
+		selectedSite,
+		supportTicketRequestStatus,
+		translate,
 	] );
 
 	const siteSelectOptions = useMemo( () => {
-		return jetpackSites.map( ( site: JetpackSite ) => ( {
-			value: site?.URL,
-			label: site.URL,
-			props: {
-				key: site.ID,
-				selected: site.URL === selectedSite,
-				value: site.URL,
-				onClick: () => {
-					setSelectedSite( site.URL );
+		return jetpackSites
+			.filter( ( site: JetpackSite ) => ! site.is_wpcom_atomic )
+			.map( ( site: JetpackSite ) => ( {
+				value: site?.URL,
+				label: site.URL,
+				props: {
+					key: site.ID,
+					selected: site.URL === selectedSite,
+					value: site.URL,
+					onClick: () => {
+						setSelectedSite( site.URL );
+					},
 				},
-			},
-		} ) );
+			} ) );
 	}, [ jetpackSites, selectedSite ] );
 
 	const lastSelectOption = {
@@ -227,7 +261,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								: 'licensing-thank-you-auto-activation__product-info'
 						}
 					>
-						{ translate( 'Hello %(username)s,', {
+						{ translate( 'Hello %(username)s!', {
 							args: {
 								username: userName,
 							},

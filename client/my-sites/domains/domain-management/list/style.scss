@@ -26,8 +26,8 @@
 		margin-left: 0;
 
 		@include break-mobile {
-			width: 18px;
-			height: 18px;
+			width: 24px;
+			height: 24px;
 		}
 	}
 }
@@ -306,7 +306,8 @@
 	margin-top: 24px;
 }
 
-.domain-management-list__filter {
+.domain-management-list__filter,
+.all-domains__filter {
 	padding: 0 16px;
 	> .domains-table-filter-button.is-mobile-version {
 		width: 100%;
@@ -454,6 +455,9 @@
 
 .list__domain-cell {
 	flex: 83 83 0;
+}
+.list__site-cell {
+	flex: 70 70 0;
 }
 .list__status-cell {
 	flex: 40 40 0;

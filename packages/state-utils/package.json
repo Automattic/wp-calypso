@@ -33,14 +33,14 @@
 	},
 	"dependencies": {
 		"@wordpress/is-shallow-equal": "^4.2.0",
-		"@wordpress/warning": "^2.2.1",
+		"@wordpress/warning": "^2.2.2",
 		"lodash": "^4.17.21",
 		"redux": "^4.1.2",
 		"redux-thunk": "^2.3.0",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^4.4.4"
 	}
 }

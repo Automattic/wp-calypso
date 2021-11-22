@@ -1,8 +1,4 @@
-import {
-	isCredits,
-	isDomainRedemption,
-	allowedProductAttributes,
-} from '@automattic/calypso-products';
+import { isCredits, isDomainRedemption } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { hasRenewalItem } from './cart-items';
 
@@ -20,12 +16,9 @@ export function canRemoveFromCart( cart, cartItem ) {
 
 export function fillInSingleCartItemAttributes( cartItem, products ) {
 	const product = products[ cartItem.product_slug ];
-	if ( ! product ) {
-		return cartItem;
+	if ( ! cartItem.product_id && product?.product_id ) {
+		return { ...cartItem, product_id: product.product_id };
 	}
-	const attributes = allowedProductAttributes( product );
-
-	return { ...cartItem, ...attributes };
 }
 
 /**
