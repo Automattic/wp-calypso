@@ -1,4 +1,4 @@
-import { forEach, pickBy } from 'lodash';
+import { forEach } from 'lodash';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -57,9 +57,12 @@ const createModuleListRequestReducer = ( fetchingModules ) => {
 const createSettingsItemsReducer = () => {
 	return ( state, { siteId, settings } ) => {
 		let updatedState = state;
-		const moduleActivationState = pickBy( settings, ( settingValue, settingName ) => {
-			return state[ siteId ]?.[ settingName ] !== undefined;
-		} );
+
+		const moduleActivationState = Object.fromEntries(
+			Object.entries( settings ).filter(
+				( [ settingName ] ) => state[ siteId ]?.[ settingName ] !== undefined
+			)
+		);
 
 		forEach( moduleActivationState, ( active, moduleSlug ) => {
 			updatedState = Object.assign( {}, updatedState, {
