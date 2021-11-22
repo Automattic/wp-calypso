@@ -1,11 +1,17 @@
+<<<<<<< HEAD
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+=======
+>>>>>>> Convert component to typescript
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+<<<<<<< HEAD
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+=======
+>>>>>>> Convert component to typescript
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -16,6 +22,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { TransferPageProps } from './types';
 
 const TransferPage = ( props: TransferPageProps ): JSX.Element => {
+<<<<<<< HEAD
 	const { __ } = useI18n();
 	const { selectedSite, currentRoute, selectedDomainName } = props;
 
@@ -53,6 +60,11 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		<Main className="transfer-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
+=======
+	return (
+		<Main className="transfer-page" wideLayout>
+			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+>>>>>>> Convert component to typescript
 			The page goes here
 		</Main>
 	);
