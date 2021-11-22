@@ -314,14 +314,14 @@ export function hasTrafficGuide( cart ) {
  * @returns {number} bill period of given cartItem
  */
 export function getCartItemBillPeriod( cartItem ) {
-	const billPeriod = parseInt( cartItem.bill_period, 10 ) || 0;
+	const billPeriod = cartItem.bill_period ? parseInt( cartItem.bill_period, 10 ) : undefined;
 	if ( ! Number.isInteger( billPeriod ) ) {
 		const plan = getPlan( cartItem.product_slug );
 		if ( plan ) {
 			return getTermDuration( plan.term ) ?? 0;
 		}
 	}
-	return billPeriod;
+	return billPeriod ?? 0;
 }
 
 /**
