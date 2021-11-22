@@ -66,20 +66,6 @@
 	text-decoration: underline;
 }
 
-.signup-form__passwordless-form-wrapper {
-	.signup-form__terms-of-service-link {
-		margin: 4px 0;
-	}
-
-	.logged-out-form__footer {
-		margin-top: 0;
-	}
-
-	.validation-fieldset__validation-message {
-		min-height: auto;
-	}
-}
-
 .signup-form__recaptcha-tos {
 	display: none;
 	padding: 20px 10px 10px;
