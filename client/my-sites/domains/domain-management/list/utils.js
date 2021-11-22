@@ -56,8 +56,14 @@ export const getSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder 
 	if ( ! first.hasOwnProperty( column ) || ! second.hasOwnProperty( column ) ) {
 		return -1;
 	}
-	if ( first?.[ column ] === null || second?.[ column ] === null ) {
-		return -1;
+	if ( first?.[ column ] === null && second?.[ column ] === null ) {
+		return 0;
+	}
+	if ( first?.[ column ] === null ) {
+		return -1 * sortOrder;
+	}
+	if ( second?.[ column ] === null ) {
+		return 1 * sortOrder;
 	}
 	if ( first?.[ column ] > second?.[ column ] ) {
 		return 1 * sortOrder;
@@ -67,3 +73,6 @@ export const getSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder 
 	}
 	return 0;
 };
+
+export const getReverseSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder ) =>
+	getSimpleSortFunctionBy( column )( first, second, sortOrder ) * -1;

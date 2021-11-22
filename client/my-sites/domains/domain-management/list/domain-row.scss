@@ -194,6 +194,10 @@
 		padding-top: 2px;
 		font-size: $font-body-small;
 	}
+
+	&.is-loading {
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
 }
 
 .domain-row__registered-until-cell,

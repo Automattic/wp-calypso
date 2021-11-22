@@ -32,7 +32,10 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import {
+	getUserPurchases,
+	hasLoadedUserPurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -49,7 +52,12 @@ import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import ListItemPlaceholder from './item-placeholder';
 import ListHeader from './list-header';
-import { getDomainManagementPath, getSimpleSortFunctionBy, ListAllActions } from './utils';
+import {
+	getDomainManagementPath,
+	getSimpleSortFunctionBy,
+	getReverseSimpleSortFunctionBy,
+	ListAllActions,
+} from './utils';
 
 import './list-all.scss';
 
@@ -358,7 +366,15 @@ class AllDomains extends Component {
 			) );
 		}
 
-		const { purchases, sites, currentRoute, context, translate } = this.props;
+		const {
+			purchases,
+			sites,
+			currentRoute,
+			context,
+			requestingSiteDomains,
+			hasLoadedUserPurchases,
+			translate,
+		} = this.props;
 
 		const selectedFilter = context?.query?.filter;
 
@@ -424,7 +440,7 @@ class AllDomains extends Component {
 						} );
 						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
 					},
-					getSimpleSortFunctionBy( 'domain' ),
+					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
 			},
 			{
@@ -440,33 +456,25 @@ class AllDomains extends Component {
 		];
 
 		return (
-			<DomainsTable
-				currentRoute={ currentRoute }
-				domains={ this.filterDomains(
-					this.mergeFilteredDomainsWithDomainsDetails(),
-					selectedFilter
-				) }
-				domainsTableColumns={ domainsTableColumns }
-				isManagingAllSites={ true }
-				goToEditDomainRoot={ this.handleDomainItemClick }
-				isLoading={ this.isLoading() }
-				purchases={ purchases }
-				sites={ sites }
-			/>
+			<>
+				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
+				<DomainsTable
+					currentRoute={ currentRoute }
+					domains={ this.filterDomains(
+						this.mergeFilteredDomainsWithDomainsDetails(),
+						selectedFilter
+					) }
+					domainsTableColumns={ domainsTableColumns }
+					isManagingAllSites={ true }
+					goToEditDomainRoot={ this.handleDomainItemClick }
+					isLoading={ this.isLoading() }
+					purchases={ purchases }
+					sites={ sites }
+					requestingSiteDomains={ requestingSiteDomains }
+					hasLoadedPurchases={ hasLoadedUserPurchases }
+				/>
+			</>
 		);
-
-		// let domainListItems = this.filteredDomains().map( ( domain, index ) => {
-		// 	return this.renderDomainItem( domain, index );
-		// } );
-
-		// if ( this.props.isContactEmailEditContext && this.isRequestingSiteDomains() ) {
-		// 	domainListItems = [
-		// 		...domainListItems,
-		// 		<ListItemPlaceholder key="item-is-requesting-site-domains" />,
-		// 	];
-		// }
-
-		// return [ this.renderDomainListHeader(), ...domainListItems ];
 	}
 
 	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
@@ -654,6 +662,8 @@ class AllDomains extends Component {
 				key="breadcrumb_button_2"
 				selectedFilter={ selectedFilter || '' }
 				filterOptions={ filterOptions }
+				isLoading={ this.isLoadingDomainDetails() }
+				disabled={ this.isLoadingDomainDetails() }
 			/>
 		);
 	}
@@ -674,8 +684,8 @@ class AllDomains extends Component {
 		};
 
 		const buttons = [
-			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
 			this.renderDomainTableFilterButton(),
+			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
 		];
 
@@ -813,6 +823,7 @@ export default connect(
 			hasAllSitesLoaded: hasAllSitesList( state ),
 			isContactEmailEditContext: ListAllActions.editContactEmail === action,
 			purchases: getUserPurchases( state ) || [],
+			hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
