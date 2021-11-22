@@ -37,7 +37,9 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/typography": "workspace:^",
 		"@wordpress/components": "^19.0.1",
 		"@wordpress/react-i18n": "^3.0.3",
 		"wpcom": "workspace:^",
