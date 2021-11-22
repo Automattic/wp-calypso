@@ -5,7 +5,6 @@ import path from 'path';
 import { getTestNameWithTime } from '../../test-utils';
 
 export const getFreeDisplay = () => {
-	// eslint-disable-next-line no-constant-condition
 	while ( true ) {
 		const i = 99 + Math.round( Math.random() * 100 );
 		try {
