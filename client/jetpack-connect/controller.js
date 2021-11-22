@@ -42,6 +42,7 @@ import {
 	CALYPSO_PLANS_PAGE,
 	CALYPSO_REDIRECTION_PAGE,
 	JETPACK_ADMIN_PATH,
+	JPC_PATH_CHECKOUT,
 } from './constants';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import InstallInstructions from './install-instructions';
@@ -78,23 +79,39 @@ const analyticsPageTitleByType = {
 	antispam: 'Jetpack Anti-spam',
 };
 
+/**
+ * Allow special behavior for Jetpack partner coupons
+ *
+ * Jetpack Avalon (Infinity) has introduced a Jetpack Partner Coupon API
+ * which requires special behavior.
+ * This behavior could be a (not yet developed) upsell plans screen where
+ * we take the partner coupon discount into account. E.g. a 100% discount
+ * for Jetpack Backup, but we want to upsell Security T1 instead, so we
+ * show a price for Security where we take the 100% discounted Backup
+ * product into account (this makes sense because partners pay us for
+ * these coupons).
+ * For now we just redirect directly to checkout since we do not have any
+ * upsell logic ready and want to avoid confusion by show full price products
+ * on the plan page.
+ *
+ * @todo Add support for more partners (if needed).
+ * @todo Dynamically find product slug from coupon preset.
+ */
 export function partnerCouponRedirects( context, next ) {
 	const queryArgs = new URLSearchParams( context?.query?.redirect );
 	const partnerCoupon = queryArgs.get( 'partnerCoupon' );
 
 	if ( partnerCoupon.startsWith( 'IONOS_' ) ) {
+		const product = 'jetpack_backup_daily';
 		const state = context.store.getState();
 		const siteSlug = getSelectedSiteSlug( state );
-		const wpcomUrl =
-			'development' === config( 'env_id' )
-				? 'http://calypso.localhost:3000'
-				: 'https://wordpress.com';
 
 		return navigate(
-			`${ wpcomUrl }/checkout/${ siteSlug }/jetpack_backup_daily?coupon=${ partnerCoupon }`
+			`${ JPC_PATH_CHECKOUT }/${ siteSlug }/${ product }?coupon=${ partnerCoupon }`
 		);
 	}
 
+	// Display the Jetpack Connect Plans grid.
 	next();
 }
 
