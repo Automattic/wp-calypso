@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
@@ -10,6 +11,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -95,6 +97,8 @@ export class UserStep extends Component {
 	state = {
 		subHeaderText: '',
 		recaptchaClientId: null,
+		experiment: null,
+		isDesktop: isDesktop(),
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -108,13 +112,23 @@ export class UserStep extends Component {
 	}
 
 	UNSAFE_componentWillMount() {
-		const { oauth2Signup, initialContext } = this.props;
+		const { oauth2Signup, initialContext, flowName } = this.props;
+
 		const clientId = get( initialContext, 'query.oauth2_client_id', null );
 
 		this.setSubHeaderText( this.props );
 
 		if ( oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
+		}
+		if ( flowName === 'onboarding' ) {
+			const experimentCheck = this.state.isDesktop
+				? 'registration_email_only_desktop'
+				: 'registration_email_only_mobile';
+
+			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
+				this.setState( { experiment: experimentName } );
+			} );
 		}
 	}
 
@@ -428,6 +442,10 @@ export class UserStep extends Component {
 		return translate( 'Create your account' );
 	}
 
+	isPasswordlessExperiment() {
+		return this.state.experiment?.variationName === 'treatment';
+	}
+
 	renderSignupForm() {
 		const { oauth2Client, wccomFrom, isReskinned } = this.props;
 		let socialService;
@@ -459,13 +477,12 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
+					isPasswordlessExperiment={ this.isPasswordlessExperiment() }
+					experimentName={ this.state.experiment }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					showRecaptchaToS={
-						flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha
-					}
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
 				/>
@@ -499,15 +516,17 @@ export class UserStep extends Component {
 		}
 
 		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				headerText={ this.getHeaderText() }
-				subHeaderText={ this.state.subHeaderText }
-				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-				stepContent={ this.renderSignupForm() }
-			/>
+			this.state.experiment?.variationName !== undefined && (
+				<StepWrapper
+					flowName={ this.props.flowName }
+					stepName={ this.props.stepName }
+					headerText={ this.getHeaderText() }
+					subHeaderText={ this.state.subHeaderText }
+					positionInFlow={ this.props.positionInFlow }
+					fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+					stepContent={ this.renderSignupForm() }
+				/>
+			)
 		);
 	}
 }

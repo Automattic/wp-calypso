@@ -50,6 +50,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
+import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 
 import './style.scss';
@@ -84,10 +85,10 @@ class SignupForm extends Component {
 		goToNextStep: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
+		isPasswordlessExperiment: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
-		recaptchaClientId: PropTypes.number,
 		save: PropTypes.func,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
@@ -95,7 +96,6 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		showRecaptchaToS: PropTypes.bool,
 		horizontal: PropTypes.bool,
 
 		// Connected props
@@ -107,8 +107,8 @@ class SignupForm extends Component {
 		displayNameInput: false,
 		displayUsernameInput: true,
 		flowName: '',
+		isPasswordlessExperiment: false,
 		isSocialSignupEnabled: false,
-		showRecaptchaToS: false,
 		horizontal: false,
 	};
 
@@ -879,7 +879,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, showRecaptchaToS, translate } = this.props;
+		const { flowName, translate } = this.props;
 
 		if ( flowName === 'p2' ) {
 			return (
@@ -910,25 +910,6 @@ class SignupForm extends Component {
 							/>
 						) }
 					</LoggedOutFormLinks>
-				) }
-				{ showRecaptchaToS && (
-					<div className="signup-form__recaptcha-tos">
-						<LoggedOutFormLinks>
-							<p>
-								{ translate(
-									'This site is protected by reCAPTCHA and the Google {{a1}}Privacy Policy{{/a1}} and {{a2}}Terms of Service{{/a2}} apply.',
-									{
-										components: {
-											a1: <a href="https://policies.google.com/privacy" />,
-											a2: <a href="https://policies.google.com/terms" />,
-										},
-										comment:
-											'English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed',
-									}
-								) }
-							</p>
-						</LoggedOutFormLinks>
-					</div>
 				) }
 			</>
 		);
@@ -1020,10 +1001,55 @@ class SignupForm extends Component {
 			);
 		}
 
+		/*
+			AB Test: passwordlessSignup
+			`<PasswordlessSignupForm />` is for the `onboarding` flow.
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
+		*/
+		if ( this.props.isPasswordlessExperiment ) {
+			const logInUrl = this.getLoginLink();
+
+			return (
+				<div
+					className={ classNames( 'signup-form', this.props.className, {
+						'is-horizontal': this.props.horizontal,
+					} ) }
+				>
+					{ this.getNotice() }
+					<PasswordlessSignupForm
+						step={ this.props.step }
+						stepName={ this.props.stepName }
+						flowName={ this.props.flowName }
+						goToNextStep={ this.props.goToNextStep }
+						renderTerms={ this.termsOfServiceLink }
+						logInUrl={ logInUrl }
+						disabled={ this.props.disabled }
+						disableSubmitButton={ this.props.disableSubmitButton }
+					/>
+
+					{ ! config.isEnabled( 'desktop' ) &&
+						this.props.horizontal &&
+						! this.userCreationComplete() && (
+							<div className="signup-form__separator">
+								<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
+							</div>
+						) }
+
+					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+						<SocialSignupForm
+							handleResponse={ this.props.handleSocialResponse }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+							isReskinned={ this.props.isReskinned }
+						/>
+					) }
+					{ this.props.footerLink || this.footerLink() }
+				</div>
+			);
+		}
 		return (
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
-					'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
 					'is-horizontal': this.props.horizontal,
 				} ) }
 			>
