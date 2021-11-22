@@ -2,7 +2,7 @@
 
 This directory contains hooks and high-order components related to data fetching. Folders within this directory refer to certain areas of the data that powers Calypso as an application.
 
-Behind the abstraction, they are using `react-query` as the way to query and mutate data from the back-end. This is inline with the new approach on data fetching that Calypso is taking.
+Behind the abstraction, they are using `react-query` as the way to query and mutate data from the back-end.
 
 ## Persistence
 
