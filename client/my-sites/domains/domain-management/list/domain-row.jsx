@@ -211,7 +211,7 @@ class DomainRow extends PureComponent {
 	renderEmailLabel = () => {
 		const { domain, translate } = this.props;
 
-		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domain.type ) === -1 ) {
+		if ( ! [ domainTypes.MAPPED, domainTypes.REGISTERED ].includes( domain.type ) ) {
 			return null;
 		}
 
