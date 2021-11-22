@@ -1,8 +1,12 @@
 import { plansLink } from '../src';
 
 describe( 'plansLink', () => {
-	test( 'should return url unchanged for yearly no-site', () => {
+	test( 'should return relative url unchanged for yearly no-site', () => {
 		expect( plansLink( '/plans' ) ).toBe( '/plans' );
+	} );
+
+	test( 'should return absolute url unchanged for yearly no-site', () => {
+		expect( plansLink( 'https://example.com/plans' ) ).toBe( 'https://example.com/plans' );
 	} );
 
 	test( 'should append monthly to url when required', () => {

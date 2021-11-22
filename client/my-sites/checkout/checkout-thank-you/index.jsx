@@ -145,7 +145,7 @@ export class CheckoutThankYou extends Component {
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite.ID );
-		} else if ( shouldFetchSitePlans( sitePlans, selectedSite ) ) {
+		} else if ( selectedSite && shouldFetchSitePlans( sitePlans ) ) {
 			this.props.fetchSitePlans( selectedSite.ID );
 		}
 
