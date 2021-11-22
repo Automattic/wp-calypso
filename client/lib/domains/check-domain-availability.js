@@ -19,6 +19,6 @@ export function checkDomainAvailability( params, onComplete ) {
 			onComplete( null, data );
 		} )
 		.catch( ( error ) => {
-			onComplete( error );
+			onComplete( error.error );
 		} );
 }
