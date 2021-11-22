@@ -147,7 +147,6 @@ const ProfessionalEmailUpsell = ( {
 						<FormLabel>
 							{ translate( 'Enter email address' ) }
 							<FormTextInputWithAffixes
-								placeholder={ translate( 'Email address' ) }
 								value={ mailboxData.mailbox.value }
 								isError={ hasMailboxError }
 								onChange={ ( event ) => {
@@ -169,7 +168,6 @@ const ProfessionalEmailUpsell = ( {
 							<FormPasswordInput
 								autoCapitalize="off"
 								autoCorrect="off"
-								placeholder={ translate( 'Password' ) }
 								value={ mailboxData.password.value }
 								maxLength={ 100 }
 								isError={ hasPasswordError }
