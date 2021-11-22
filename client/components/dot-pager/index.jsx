@@ -90,22 +90,29 @@ export const DotPager = ( {
 		if ( ! hasDynamicHeight ) {
 			return;
 		}
+		if ( 1 === numPages ) {
+			return;
+		}
 
 		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
+
 		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
-	}, [ hasDynamicHeight, setPagesStyle ] );
+	}, [ hasDynamicHeight, setPagesStyle, numPages ] );
 
 	useEffect( () => {
 		updateLayout();
 	}, [ currentPage, updateLayout ] );
 
 	useEffect( () => {
+		if ( 1 === numPages ) {
+			return;
+		}
 		window.addEventListener( 'resize', updateLayout );
 
 		return () => {
 			window.removeEventListener( 'resize', updateLayout );
 		};
-	}, [ updateLayout ] );
+	}, [ updateLayout, numPages ] );
 
 	useEffect( () => {
 		if ( currentPage >= numPages ) {
