@@ -76,3 +76,14 @@ export const getSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder 
 
 export const getReverseSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder ) =>
 	getSimpleSortFunctionBy( column )( first, second, sortOrder ) * -1;
+
+export const filterDomainsByOwner = ( domains, filter ) => {
+	return domains.filter( ( domain ) => {
+		if ( 'owned-by-me' === filter ) {
+			return domain.currentUserIsOwner;
+		} else if ( 'owned-by-others' === filter ) {
+			return ! domain.currentUserIsOwner;
+		}
+		return true;
+	} );
+};

@@ -53,6 +53,7 @@ import DomainsTableFilterButton from './domains-table-filter-button';
 import ListItemPlaceholder from './item-placeholder';
 import ListHeader from './list-header';
 import {
+	filterDomainsByOwner,
 	getDomainManagementPath,
 	getSimpleSortFunctionBy,
 	getReverseSimpleSortFunctionBy,
@@ -460,7 +461,7 @@ class AllDomains extends Component {
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
 				<DomainsTable
 					currentRoute={ currentRoute }
-					domains={ this.filterDomains(
+					domains={ filterDomainsByOwner(
 						this.mergeFilteredDomainsWithDomainsDetails(),
 						selectedFilter
 					) }
@@ -619,17 +620,6 @@ class AllDomains extends Component {
 		);
 	}
 
-	filterDomains( domains, filter ) {
-		return domains.filter( ( domain ) => {
-			if ( 'owned-by-me' === filter ) {
-				return domain.currentUserCanManage;
-			} else if ( 'owned-by-others' === filter ) {
-				return ! domain.currentUserCanManage;
-			}
-			return true;
-		} );
-	}
-
 	renderDomainTableFilterButton() {
 		const { context } = this.props;
 
@@ -647,13 +637,13 @@ class AllDomains extends Component {
 				label: 'Owned by me',
 				value: 'owned-by-me',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
-				count: this.filterDomains( nonWpcomDomains, 'owned-by-me' )?.length,
+				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
 				label: 'Owned by others',
 				value: 'owned-by-others',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-others' } ),
-				count: this.filterDomains( nonWpcomDomains, 'owned-by-others' )?.length,
+				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
 			},
 		];
 
