@@ -124,10 +124,6 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			return errorStatus;
 		}
 
-		if ( hasPendingGSuiteUsers( domain ) ) {
-			return errorStatus;
-		}
-
 		return activeStatus;
 	}
 

@@ -38,11 +38,9 @@ const EmailPlanHeader = ( {
 				<div>
 					<h2>{ domain.name }</h2>
 
-					{ emailAccount?.warnings?.[ 0 ] && (
-						<span className="email-plan-header__status">
-							<MaterialIcon icon={ icon } /> { text }
-						</span>
-					) }
+					<span className="email-plan-header__status">
+						<MaterialIcon icon={ icon } /> { text }
+					</span>
 				</div>
 
 				{ hasEmailSubscription && emailAccount && (
