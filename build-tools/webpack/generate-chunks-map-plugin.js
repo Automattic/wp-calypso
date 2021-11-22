@@ -18,7 +18,8 @@ class GenerateChunksMapPlugin {
 			// Generate chunks map
 			const { chunks } = compilation;
 
-			const chunksMap = chunks.reduce( ( map, chunk ) => {
+			const chunksMap = {};
+			for ( const chunk of chunks ) {
 				const files = chunk.files;
 				const name = files.find( ( file ) => /\.js$/.test( file ) ) || files[ 0 ];
 				const modules = [ ...chunk.modulesIterable ]
@@ -26,10 +27,8 @@ class GenerateChunksMapPlugin {
 					.map( ( { userRequest } ) => userRequest && path.relative( '.', userRequest ) )
 					.filter( ( module ) => !! module );
 
-				map[ name ] = modules;
-
-				return map;
-			}, {} );
+				chunksMap[ name ] = modules;
+			}
 
 			// Write chunks map
 			fs.writeFileSync( this.output, JSON.stringify( chunksMap ) );
