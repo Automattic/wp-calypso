@@ -37,12 +37,17 @@ function P2GetStarted( {
 		goToNextStep();
 	};
 
-	const renderOption = ( title, description ) => {
+	const renderOption = ( slug, title, description ) => {
 		return (
 			<div className="p2-get-started__option">
 				<div className="p2-get-started__option-title">{ title }</div>
 				<div className="p2-get-started__option-description">{ description }</div>
-				<Button className="p2-get-started__button-next" onClick={ handleNextStepClick }>
+				<Button
+					className="p2-get-started__button-next"
+					onClick={ () => {
+						handleNextStepClick( slug );
+					} }
+				>
 					<Icon className="p2-get-started__button-next-icon" icon={ chevronRight } />
 				</Button>
 			</div>
@@ -59,11 +64,13 @@ function P2GetStarted( {
 			<div className="p2-get-started">
 				<div className="p2-get-started__options">
 					{ renderOption(
+						'create',
 						translate( 'Create a new workspace' ),
 						translate( "Start a new P2 and get your team on the same page — it's free!" )
 					) }
 
 					{ renderOption(
+						'join',
 						translate( 'Join an existing workspace' ),
 						translate( 'Is your team already using P2? Sign up to join them.' )
 					) }
