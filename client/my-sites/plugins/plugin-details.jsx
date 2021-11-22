@@ -447,6 +447,8 @@ function onClickInstallPlugin( { dispatch, selectedSite, slug, upgradeAndInstall
 function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) {
 	const translate = useTranslate();
 
+	const selectedSite = useSelector( getSelectedSite );
+
 	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 
@@ -471,11 +473,7 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 			<div className="plugin-details__sites-list">
 				<PluginSiteList
 					className="plugin-details__installed-on"
-					title={ translate( 'Installed on %d site', 'Installed on %d sites', {
-						args: [ sitesWithPlugin.length ],
-						count: sitesWithPlugin.length,
-						comment: 'header for list of sites a plugin is installed on',
-					} ) }
+					title={ getInstalledOnTitle( { translate, selectedSite, count: sitesWithPlugin.length } ) }
 					sites={ sitesWithPlugin }
 					plugin={ plugin }
 					titlePrimary
@@ -484,11 +482,7 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 				{ plugin.wporg && (
 					<PluginSiteList
 						className="plugin-details__not-installed-on"
-						title={ translate( 'Available on %d site', 'Available on %d sites', {
-							comment: 'header for list of sites a plugin can be installed on',
-							args: [ notInstalledSites.length ],
-							count: notInstalledSites.length,
-						} ) }
+						title={ getAvailabeOnTitle( { translate, selectedSite, count: notInstalledSites.length } ) }
 						sites={ notInstalledSites }
 						plugin={ plugin }
 					/>
@@ -496,6 +490,34 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 			</div>
 		</div>
 	);
+}
+
+function getInstalledOnTitle( { translate, selectedSite, count } ) {
+	const installedOnSingleSiteTitle = translate( 'Installed on', {
+		comment: 'header for list of sites a plugin is installed on',
+	} );
+
+	const installedOnMultiSiteTitle = translate( 'Installed on %d site', 'Installed on %d sites', {
+		comment: 'header for list of sites a plugin is installed on',
+		args: [ count ],
+		count,
+	} );
+
+	return selectedSite ? installedOnSingleSiteTitle : installedOnMultiSiteTitle;
+}
+
+function getAvailabeOnTitle( { translate, selectedSite, count } ) {
+	const availableOnSingleSiteTitle = translate( 'Available sites', {
+		comment: 'header for list of sites a plugin can be installed on',
+	} );
+
+	const availabeOnMultiSiteTitle = translate( 'Available on %d site', 'Available on %d sites', {
+		comment: 'header for list of sites a plugin can be installed on',
+		args: [ count ],
+		count,
+	} );
+
+	return selectedSite ? availableOnSingleSiteTitle : availabeOnMultiSiteTitle;
 }
 
 function PluginDoesNotExistView() {
