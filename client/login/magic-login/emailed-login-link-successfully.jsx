@@ -32,13 +32,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 		this.props.hideMagicLoginRequestForm();
 
-		page(
-			login( {
-				isJetpack: this.props.isJetpackLogin,
-				isWhiteLogin: this.props.isWhiteLogin,
-				locale: this.props.locale,
-			} )
-		);
+		page( login( { isJetpack: this.props.isJetpackLogin, locale: this.props.locale } ) );
 	};
 
 	render() {
@@ -74,7 +68,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 					<a
 						href={ login( {
 							isJetpack: this.props.isJetpackLogin,
-							isWhiteLogin: this.props.isWhiteLogin,
+							isGutenboarding: this.props.isGutenboardingLogin,
 							locale: this.props.locale,
 						} ) }
 						onClick={ this.onClickBackLink }
@@ -91,7 +85,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
-	isWhiteLogin: getCurrentRoute( state )?.startsWith( '/log-in/new/link' ),
+	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/gutenboarding/link' ),
 } );
 
 const mapDispatch = {
