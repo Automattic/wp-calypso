@@ -9,9 +9,6 @@ export const remoteValuesSchema = {
 		},
 	},
 	properties: {
-		mediaModalGalleryInstructionsDismissed: {
-			type: 'boolean',
-		},
 		'guided-tours-history': {
 			type: 'array',
 			items: {
