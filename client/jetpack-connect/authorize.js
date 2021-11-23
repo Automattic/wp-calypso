@@ -702,6 +702,7 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { from } = this.props.authQuery;
+		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
 		if ( this.retryingAuth || isAuthorizing || authorizeSuccess || this.redirecting ) {
 			return null;
@@ -714,19 +715,23 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				{ this.renderBackToWpAdminLink() }
+				{ ! isJetpackMagicLinkSignUpFlow && this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
 					href={ login( { isJetpack: true, redirectTo: window.location.href, from } ) }
 					onClick={ this.handleSignIn }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
-				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
-					{ translate( 'Create a new account' ) }
-				</LoggedOutFormLinkItem>
-				<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
-					<HelpButton />
-				</JetpackConnectHappychatButton>
+				{ ! isJetpackMagicLinkSignUpFlow && (
+					<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
+						{ translate( 'Create a new account' ) }
+					</LoggedOutFormLinkItem>
+				) }
+				{ ! isJetpackMagicLinkSignUpFlow && (
+					<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
+						<HelpButton />
+					</JetpackConnectHappychatButton>
+				) }
 			</LoggedOutFormLinks>
 		);
 	}
@@ -820,9 +825,6 @@ export class JetpackAuthorize extends Component {
 	render() {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
-
-		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
-
 		const authSiteId = this.props.authQuery.clientId;
 
 		return (
@@ -852,7 +854,7 @@ export class JetpackAuthorize extends Component {
 							{ this.renderNotices() }
 							{ this.renderStateAction() }
 						</Card>
-						{ ! isJetpackMagicLinkSignUpFlow && this.renderFooterLinks() }
+						{ this.renderFooterLinks() }
 					</div>
 				</div>
 			</MainWrapper>
