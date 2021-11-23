@@ -8,7 +8,7 @@ import { hasStaticFrontPage } from 'calypso/state/sites/selectors';
  * @param {object} siteId Site ID
  * @returns {boolean} True if the site is using Full Site Editing, otherwise false
  */
-export default function isSiteUsingFullSiteEditing( state, siteId ) {
+export default function isSiteUsingLegacyFSE( state, siteId ) {
 	const site = getRawSite( state, siteId );
 	const isActive = site?.is_fse_active ?? false;
 	return isActive && hasStaticFrontPage( state, siteId );
