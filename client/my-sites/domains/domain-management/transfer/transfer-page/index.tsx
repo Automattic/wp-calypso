@@ -1,6 +1,6 @@
+import { Card } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { Card } from '@automattic/components';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import Main from 'calypso/components/main';
@@ -59,7 +59,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	};
 
 	return (
-		<Main wideLayout className="transfer-page">
+		<Main className="transfer-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<Card>
