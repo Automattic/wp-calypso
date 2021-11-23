@@ -245,11 +245,17 @@ class AllDomains extends Component {
 		);
 	}
 
+	handleSelectAllDomains = ( event ) => {
+		return this.handleDomainListHeaderToggle( event.target.checked );
+	};
+
 	mergeFilteredDomainsWithDomainsDetails() {
 		const { domainsDetails } = this.props;
-		return this.filteredDomains().map(
-			( domain ) => this.findDomainDetails( domainsDetails, domain ) || domain
-		);
+		const { selectedDomains } = this.state;
+		return this.filteredDomains().map( ( domain ) => ( {
+			...( this.findDomainDetails( domainsDetails, domain ) || domain ),
+			selected: selectedDomains[ domain.name ],
+		} ) );
 	}
 
 	renderQuerySiteDomainsOnce( blogId ) {
@@ -460,9 +466,7 @@ class AllDomains extends Component {
 		if ( isContactEmailEditContext ) {
 			domainsTableColumns.unshift( {
 				name: 'select-domain',
-				label: (
-					<FormCheckbox className="list__checkbox" onChange={ () => {} } onClick={ () => {} } />
-				),
+				label: <FormCheckbox className="list__checkbox" onChange={ this.handleSelectAllDomains } />,
 			} );
 		}
 
@@ -475,6 +479,7 @@ class AllDomains extends Component {
 						this.mergeFilteredDomainsWithDomainsDetails(),
 						selectedFilter
 					) }
+					handleDomainItemToggle={ this.handleDomainItemToggle }
 					domainsTableColumns={ domainsTableColumns }
 					isManagingAllSites={ true }
 					isContactEmailEditContext={ isContactEmailEditContext }
@@ -620,9 +625,18 @@ class AllDomains extends Component {
 	}
 
 	filteredDomains() {
-		const { domainsList, canManageSitesMap } = this.props;
+		const {
+			filteredDomainsList,
+			domainsList,
+			canManageSitesMap,
+			isContactEmailEditContext,
+		} = this.props;
 		if ( ! domainsList ) {
 			return [];
+		}
+
+		if ( isContactEmailEditContext ) {
+			return filteredDomainsList;
 		}
 
 		// filter on sites we can manage, that aren't `wpcom` type

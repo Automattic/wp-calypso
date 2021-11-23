@@ -384,13 +384,18 @@ class DomainRow extends PureComponent {
 
 	handleDomainSelection = ( event ) => {
 		const { domain } = this.props;
-		return this.props.handleDomainItemToggle( domain, event.target.checked );
+		return this.props.handleDomainItemToggle( domain.name, event.target.checked );
 	};
 
 	renderDomainCheckbox() {
+		const { domain } = this.props;
 		return (
 			<div className="domain-row__checkbox-cell">
-				<FormCheckbox className="domain-row__checkbox" onChange={ this.handleDomainSelection } />
+				<FormCheckbox
+					className="domain-row__checkbox"
+					onChange={ this.handleDomainSelection }
+					checked={ domain.selected }
+				/>
 			</div>
 		);
 	}

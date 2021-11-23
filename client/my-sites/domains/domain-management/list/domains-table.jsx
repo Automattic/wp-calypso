@@ -101,6 +101,7 @@ class DomainsTable extends PureComponent {
 			requestingSiteDomains,
 			sites,
 			isContactEmailEditContext,
+			handleDomainItemToggle,
 			translate,
 		} = this.props;
 
@@ -155,6 +156,7 @@ class DomainsTable extends PureComponent {
 						site={ selectedSite }
 						isManagingAllSites={ isManagingAllSites }
 						isLoadingDomainDetails={ isLoadingDomainDetails }
+						handleDomainItemToggle={ handleDomainItemToggle }
 						onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
 						isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
 						busyMessage={ translate( 'Setting primary site address…', {
