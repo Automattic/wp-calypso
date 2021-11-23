@@ -473,7 +473,11 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 			<div className="plugin-details__sites-list">
 				<PluginSiteList
 					className="plugin-details__installed-on"
-					title={ getInstalledOnTitle( { translate, selectedSite, count: sitesWithPlugin.length } ) }
+					title={ getInstalledOnTitle( {
+						translate,
+						selectedSite,
+						count: sitesWithPlugin.length,
+					} ) }
 					sites={ sitesWithPlugin }
 					plugin={ plugin }
 					titlePrimary
@@ -482,7 +486,11 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 				{ plugin.wporg && (
 					<PluginSiteList
 						className="plugin-details__not-installed-on"
-						title={ getAvailabeOnTitle( { translate, selectedSite, count: notInstalledSites.length } ) }
+						title={ getAvailabeOnTitle( {
+							translate,
+							selectedSite,
+							count: notInstalledSites.length,
+						} ) }
 						sites={ notInstalledSites }
 						plugin={ plugin }
 					/>
