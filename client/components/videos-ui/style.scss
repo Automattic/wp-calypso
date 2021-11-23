@@ -105,27 +105,49 @@
 				.videos-ui__duration {
 					color: rgba( 255, 255, 255, 0.5 );
 					display: inline-block;
-					margin-left: 10px;
+					margin-right: 10px;
+				}
+
+				.videos-ui__completed-checkmark {
+					text-align: center;
+					background-color: #00a32a;
+					margin-left: auto;
+					width: 22px;
+					height: 22px;
+					border-radius: 50px;
+					flex-shrink: 0;
+
+					svg {
+						margin-top: 5px;
+					}
 				}
 
 				.videos-ui__status-icon {
-					height: 14px;
-					float: right;
 					text-align: center;
-					margin-left: 10px;
+					margin-left: auto;
+					margin-right: 2px;
+					flex-shrink: 0;
 
 					svg {
 						vertical-align: middle;
 					}
 				}
 
+				.videos-ui__video-title {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					margin-right: 10px;
+				}
+
 				.videos-ui__chapter-accordion-toggle {
 					color: #fff;
 					cursor: pointer;
-					display: block;
+					display: flex;
 					width: 100%;
 					text-align: left;
-					padding: 20px;
+					line-height: 22px;
+					padding: 13px 20px;
 				}
 
 				.videos-ui__active-video-content {
