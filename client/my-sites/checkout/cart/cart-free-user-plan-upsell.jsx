@@ -125,7 +125,7 @@ class CartFreeUserPlanUpsell extends Component {
 	}
 
 	addPlanToCart = () => {
-		const planCartItem = planItem( PLAN_PERSONAL, {} );
+		const planCartItem = planItem( PLAN_PERSONAL );
 		if ( planCartItem ) {
 			this.props.addItemToCart( planCartItem );
 			this.props.clickUpsellAddToCart();
