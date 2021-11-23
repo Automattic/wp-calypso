@@ -105,6 +105,7 @@ export function partnerCouponRedirects( context, next ) {
 
 	if ( ! partnerCoupon || ! partnerCoupon.includes( '_' ) ) {
 		next();
+		return;
 	}
 
 	// All partner coupons assumes a logic like {PARTNER}_{PRESET}_abc123.
@@ -122,6 +123,7 @@ export function partnerCouponRedirects( context, next ) {
 		! JETPACK_COUPON_PRESET_MAPPING.hasOwnProperty( splitCoupon[ 1 ] )
 	) {
 		next();
+		return;
 	}
 
 	const state = context.store.getState();
