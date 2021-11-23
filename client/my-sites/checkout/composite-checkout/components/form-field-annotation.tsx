@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { FunctionComponent } from 'react';
+import type { FunctionComponent } from 'react';
 
 type FormFieldWrapperProps = {
 	isError: boolean;
