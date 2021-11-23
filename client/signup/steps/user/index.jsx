@@ -519,17 +519,15 @@ export class UserStep extends Component {
 		}
 
 		return (
-			this.state.experiment?.variationName !== undefined && (
-				<StepWrapper
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					headerText={ this.getHeaderText() }
-					subHeaderText={ this.state.subHeaderText }
-					positionInFlow={ this.props.positionInFlow }
-					fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-					stepContent={ this.renderSignupForm() }
-				/>
-			)
+			<StepWrapper
+				flowName={ this.props.flowName }
+				stepName={ this.props.stepName }
+				headerText={ this.getHeaderText() }
+				subHeaderText={ this.state.subHeaderText }
+				positionInFlow={ this.props.positionInFlow }
+				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+				stepContent={ this.renderSignupForm() }
+			/>
 		);
 	}
 }
