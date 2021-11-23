@@ -178,7 +178,7 @@
 		"@typescript-eslint/parser": "^4.33.0",
 		"@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/components": "^19.0.4",
+		"@wordpress/components": "^19.0.5",
 		"@wordpress/data": "^6.1.4",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/eslint-plugin": "^9.3.0",

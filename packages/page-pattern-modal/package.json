@@ -32,7 +32,7 @@
 		"@automattic/design-picker": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/blocks": "^11.1.4",
-		"@wordpress/components": "^19.0.4",
+		"@wordpress/components": "^19.0.5",
 		"@wordpress/compose": "^5.0.6",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/i18n": "^4.2.4",
