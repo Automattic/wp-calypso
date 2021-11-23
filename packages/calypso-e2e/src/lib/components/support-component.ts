@@ -189,8 +189,7 @@ export class SupportComponent {
 		// `Visit article` launches a new page.
 		const [ newPage ] = await Promise.all( [
 			browserContext.waitForEvent( 'page' ),
-			visitArticleLocator.click(),
-			// this.page.click( selectors.visitArticleButton ),
+			visitArticleLocator.click( { force: true } ),
 		] );
 		await newPage.waitForLoadState( 'domcontentloaded' );
 
