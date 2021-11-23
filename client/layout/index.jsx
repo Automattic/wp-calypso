@@ -219,8 +219,6 @@ class Layout extends Component {
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
-			'is-inline-help-showing': this.shouldLoadInlineHelp(),
-			'is-happychat-button-showing': this.shouldShowHappyChatButton(),
 			'has-docked-chat': this.props.chatIsOpen && this.props.chatIsDocked,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-jetpack-login': this.props.isJetpackLogin,
