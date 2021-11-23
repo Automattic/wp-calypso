@@ -1,6 +1,6 @@
-import { Confetti } from '@automattic/launch';
 import classnames from 'classnames';
 import * as React from 'react';
+import Confetti from '../confetti';
 
 import './style.scss';
 
