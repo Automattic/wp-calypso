@@ -27,7 +27,7 @@ const fetchWPCOMPlugins = ( type: Type, searchTerm?: string ) => {
  *
  * @param {Type} type Optional The query type
  * @param {string} searchTerm Optional The term to search for
- * @param {object} {} Optional options to pass to the underlying query engine
+ * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
 export const useWPCOMPlugins = (
@@ -54,7 +54,7 @@ const fetchWPCOMPlugin = ( slug: string ) => {
  * Returns a marketplace plugin data
  *
  * @param {Type} slug The plugin slug to query
- * @param {object} {} Optional options to pass to the underlying query engine
+ * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
 export const useWPCOMPlugin = (
