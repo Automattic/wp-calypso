@@ -102,7 +102,7 @@ class PurchaseNotice extends Component {
 	 * Returns appropriate warning text for a purchase that is expiring but where the expiration is not imminent.
 	 *
 	 * @param  {object} purchase  The purchase object
-	 * @param  {React.Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
+	 * @param  {Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
 	 * @returns  {string}  Translated text for the warning message.
 	 */
 	getExpiringLaterText( purchase, autoRenewingUpgradesLink = null ) {
