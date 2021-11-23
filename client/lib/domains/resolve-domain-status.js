@@ -189,6 +189,15 @@ export function resolveDomainStatus(
 				};
 			}
 
+			if ( domain.isPendingIcannVerification && domain.isIcannVerificationSuspended ) {
+				return {
+					statusText: translate( 'Suspended' ),
+					statusClass: 'status-error',
+					status: translate( 'Suspended' ),
+					icon: 'info',
+				};
+			}
+
 			if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
 				return {
 					statusText: translate( 'Action required' ),
