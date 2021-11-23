@@ -1,9 +1,11 @@
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
+import CardHeading from 'calypso/components/card-heading';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
@@ -124,13 +126,37 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
 
+	const renderAdvancedTransferOptions = () => {
+		return (
+			<Card>
+				<CardHeading size={ 16 } isBold={ true }>
+					Advanced Options
+				</CardHeading>
+				<ToggleControl
+					// checked={ this.getToggleUiStatus() }
+					disabled={ false }
+					onChange={ null }
+					label={ 'Transfer lock on' }
+				/>
+				<p>
+					We recommend leaving the transfer lock on, unless you want to transfer your domain to
+					another provider.
+				</p>
+				<Button primary={ false }>Get authorization code</Button>
+			</Card>
+		);
+	};
+
 	return (
 		<Main className="transfer-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<FormattedHeader brandFont headerText={ __( 'Transfer' ) } align="left" />
 			<Layout>
-				<Column type="main">{ renderTransferOptions() }</Column>
+				<Column type="main">
+					{ renderTransferOptions() }
+					{ renderAdvancedTransferOptions() }
+				</Column>
 				<Column type="sidebar">
 					<Card className="transfer-page__help-section-card">
 						<p className="transfer-page__help-section-title">{ __( 'How do transfers work?' ) }</p>
