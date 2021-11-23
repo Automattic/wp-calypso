@@ -122,7 +122,7 @@ skipDescribeIf( isStagingOrProd )(
 			} );
 
 			it( 'Make purchase', async function () {
-				await cartCheckoutPage.purchase( { timeout: 90 * 100 } );
+				await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
 			} );
 		} );
 
