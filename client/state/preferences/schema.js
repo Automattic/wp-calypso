@@ -33,10 +33,6 @@ export const remoteValuesSchema = {
 			minimum: 0,
 			maximum: 1,
 		},
-		editorConfirmationDisabledSites: {
-			type: 'array',
-			items: { type: 'number' },
-		},
 		colorScheme: {
 			type: 'string',
 			enum: [
