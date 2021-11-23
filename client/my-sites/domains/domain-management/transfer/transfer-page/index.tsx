@@ -1,11 +1,18 @@
+import { Card } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
+import ActionCard from 'calypso/components/action-card';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainManagementTransferToAnotherUser,
+	domainManagementTransferToOtherSite,
+} from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -14,6 +21,8 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { TransferPageProps } from './types';
+
+import './style.scss';
 
 const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const { __ } = useI18n();
@@ -53,14 +62,40 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		<Main className="transfer-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
-			The page goes here
+			<Card>
+				<ActionCard
+					buttonHref={ domainManagementTransferToAnotherUser(
+						selectedSite.slug,
+						selectedDomainName,
+						currentRoute
+					) }
+					// translators: Continue is a verb
+					buttonText={ __( 'Continue' ) }
+					// translators: Transfer a domain to another user
+					headerText={ __( 'To another user' ) }
+					mainText={ __( 'Transfer this domain to any administrator on this site' ) }
+				/>
+				<div className="transfer-page__item-separator"></div>
+				<ActionCard
+					buttonHref={ domainManagementTransferToOtherSite(
+						selectedSite.slug,
+						selectedDomainName,
+						currentRoute
+					) }
+					// translators: Continue is a verb
+					buttonText={ __( 'Continue' ) }
+					// translators: Transfer a domain to another WordPress.com site
+					headerText={ __( 'To another WordPress.com site' ) }
+					mainText={ __( 'Transfer this domain to any site you are an administrator on' ) }
+				/>
+			</Card>
 		</Main>
 	);
 };
 
-const transferPageComponent = connect( ( state, ownProps ) => {
+const transferPageComponent = connect( ( state, ownProps: TransferPageProps ) => {
 	const domain = getSelectedDomain( ownProps );
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId( state )!;
 	return {
 		currentRoute: getCurrentRoute( state ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
