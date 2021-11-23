@@ -44,8 +44,7 @@ function isUnsupportedBrowser( req ) {
 }
 
 /**
- * These public pages will likely work even in unsupported browsers, so we will
- * not redirect them.
+ * These public pages work even in unsupported browsers, so we do not redirect them.
  */
 function allowPath( path ) {
 	const locales = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
