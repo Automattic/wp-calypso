@@ -8,7 +8,7 @@ A Step is a React component that collects data for flows.
 
 ## Creating a new flow
 
-You can define a new flow from `/client/signup/config/flows-pure.js`, by adding a new property to the `flows` object in the `generateFlows` function.
+You can define a new flow from `/client/signup/config/flows-pure.js`, by adding a new property to the `flows` array in the `generateFlows` function.
 
 A flow is defined by two properties, `steps` and `destination`:
 

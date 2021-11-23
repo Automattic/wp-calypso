@@ -1,10 +1,10 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { ReactElement } from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import Confirm from './confirm';
 import Install from './install';
 import Transfer from './transfer';
 import type { GoToStep } from '../../types';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -12,6 +12,9 @@ interface WooCommerceInstallProps {
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;
+	isReskinned: boolean;
+	headerTitle: string;
+	headerDescription: string;
 	queryObject: {
 		siteSlug: string;
 	};
@@ -19,6 +22,27 @@ interface WooCommerceInstallProps {
 
 export default function WooCommerceInstall( props: WooCommerceInstallProps ): ReactElement | null {
 	const { __ } = useI18n();
+
+	const {
+		stepName,
+		isReskinned,
+		goToStep,
+		stepSectionName,
+		headerTitle,
+		headerDescription,
+	} = props;
+
+	if ( stepName === 'confirm' ) {
+		return (
+			<Confirm
+				goToStep={ goToStep }
+				isReskinned={ isReskinned }
+				stepSectionName={ stepSectionName }
+				headerTitle={ headerTitle }
+				headerDescription={ headerDescription }
+			/>
+		);
+	}
 
 	return (
 		<StepWrapper
@@ -31,11 +55,11 @@ export default function WooCommerceInstall( props: WooCommerceInstallProps ): Re
 			className="woocommerce-install__step-wrapper"
 			stepContent={
 				<div className="woocommerce-install__step-content">
-					{ props.stepName === 'confirm' && <Confirm goToStep={ props.goToStep } /> }
-					{ props.stepName === 'transfer' && <Transfer goToStep={ props.goToStep } /> }
-					{ props.stepName === 'install' && <Install goToStep={ props.goToStep } /> }
+					{ stepName === 'transfer' && <Transfer goToStep={ goToStep } /> }
+					{ stepName === 'install' && <Install goToStep={ goToStep } /> }
 				</div>
 			}
+			isWideLayout={ isReskinned }
 			{ ...props }
 		/>
 	);
