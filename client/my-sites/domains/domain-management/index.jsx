@@ -19,6 +19,7 @@ import Security from './security';
 import SiteRedirectSettings from './site-redirect';
 import Transfer from './transfer';
 import TransferOut from './transfer/transfer-out';
+import TransferPage from './transfer/transfer-page';
 import TransferToOtherSite from './transfer/transfer-to-other-site';
 import TransferToOtherUser from './transfer/transfer-to-other-user';
 
@@ -43,6 +44,7 @@ export default {
 	SiteRedirectSettings,
 	TransferIn,
 	TransferOut,
+	TransferPage,
 	TransferToOtherSite,
 	TransferToOtherUser,
 	Transfer,
