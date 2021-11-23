@@ -12,8 +12,8 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { disableSubmitButton } from './disable-submit-button';
 import validateContactDetails from './fr-validate-contact-details';
-import { disableSubmitButton } from './with-contact-details-validation';
 
 const noop = () => {};
 const identity = ( value ) => value;

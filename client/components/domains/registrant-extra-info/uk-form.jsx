@@ -10,9 +10,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import WithContactDetailsValidation, {
-	disableSubmitButton,
-} from './with-contact-details-validation';
+import { disableSubmitButton } from './disable-submit-button';
 
 const defaultValues = {
 	registrantType: 'IND',
@@ -235,11 +233,6 @@ export class RegistrantExtraInfoUkForm extends PureComponent {
 	}
 }
 
-export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
-	'uk',
-	RegistrantExtraInfoUkForm
-);
-
 export default connect(
 	( state, ownProps ) => {
 		if ( ownProps.isManaged ) {
@@ -258,4 +251,4 @@ export default connect(
 		};
 	},
 	{ updateContactDetailsCache }
-)( localize( ValidatedRegistrantExtraInfoUkForm ) );
+)( localize( RegistrantExtraInfoUkForm ) );

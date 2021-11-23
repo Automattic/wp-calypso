@@ -11,7 +11,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import { disableSubmitButton } from './with-contact-details-validation';
+import { disableSubmitButton } from './disable-submit-button';
 
 const ciraAgreementUrl = 'https://cira.ca/agree';
 const defaultValues = {
