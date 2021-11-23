@@ -251,8 +251,11 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Remove the block from the editor.
 	 *
-	 * @param blockEditorSelector
+	 * This method requires the handle to the block in question to be passed in as parameter.
+	 *
+	 * @param {ElementHandle} blockHandle ElementHandle of the block to be removed.
 	 */
 	async removeBlock( blockHandle: ElementHandle ): Promise< void > {
 		await blockHandle.click();
