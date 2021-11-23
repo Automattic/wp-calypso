@@ -137,7 +137,8 @@ function FooTour() {
 		steps: [
 			{
 				referenceElements: {
-					desktop: '.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
+					desktop:
+						'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
 				},
 				meta: {
 					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',

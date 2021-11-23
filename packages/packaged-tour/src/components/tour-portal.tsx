@@ -8,6 +8,8 @@ import { createPortal, useEffect, useRef } from '@wordpress/element';
 import TourFrame from './tour-frame';
 import type { Config } from '../types';
 
+import '../styles.scss';
+
 interface Props {
 	config: Config;
 }

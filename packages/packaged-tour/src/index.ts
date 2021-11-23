@@ -1,5 +1,2 @@
-import TourPortal from './components/tour-portal';
-import './styles.scss';
-
+export { default } from './components/tour-portal';
 export * from './types';
-export default TourPortal;

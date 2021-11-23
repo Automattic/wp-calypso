@@ -3,10 +3,10 @@
  */
 import { useEffect, useRef, useState } from '@wordpress/element';
 import classnames from 'classnames';
-import { usePopper } from 'react-popper';
 /**
  * Internal Dependencies
  */
+import usePopperHandler from '../hooks/use-popper-handler';
 import KeyboardNavigation from './keyboard-navigation';
 import Overlay from './overlay';
 import Spotlight from './spotlight';
@@ -25,51 +25,46 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const lastStepIndex = config.steps.length - 1;
-	const referenceElementSelector = config.steps[ currentStepIndex ].referenceElements?.desktop;
-	const referenceElement = referenceElementSelector
-		? document.querySelector( referenceElementSelector )
-		: null;
+	const referenceElementSelector =
+		config.steps[ currentStepIndex ].referenceElements?.desktop || null;
 
 	const showArrowIndicator = () => {
 		if ( config.options?.effects?.arrowIndicator === false ) {
 			return false;
 		}
 
-		return !! ( referenceElement && ! isMinimized );
+		return !! ( referenceElementSelector && ! isMinimized );
 	};
 
-	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
-		referenceElement,
-		popperElementRef?.current,
-		{
-			strategy: 'fixed',
-			modifiers: [
-				{
-					name: 'preventOverflow',
-					options: {
-						rootBoundary: 'document',
-						padding: 16, // same as the left/margin of the tour frame
-					},
+	const { styles: popperStyles, attributes: popperAttributes } = usePopperHandler(
+		referenceElementSelector,
+		popperElementRef,
+		[
+			{
+				name: 'preventOverflow',
+				options: {
+					rootBoundary: 'document',
+					padding: 16, // same as the left/margin of the tour frame
 				},
-				{
-					name: 'arrow',
-					options: {
-						padding: 12,
-					},
+			},
+			{
+				name: 'arrow',
+				options: {
+					padding: 12,
 				},
-				{
-					name: 'offset',
-					options: {
-						offset: [ 0, showArrowIndicator() ? 12 : 10 ],
-					},
+			},
+			{
+				name: 'offset',
+				options: {
+					offset: [ 0, showArrowIndicator() ? 12 : 10 ],
 				},
-				...( config.options?.popperModifiers || [] ),
-			],
-		}
+			},
+			...( config.options?.popperModifiers || [] ),
+		]
 	);
 
 	const stepRepositionProps =
-		! isMinimized && referenceElement
+		! isMinimized && referenceElementSelector
 			? {
 					style: popperStyles?.popper,
 					...popperAttributes?.popper,

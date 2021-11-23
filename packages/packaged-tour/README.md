@@ -1,18 +1,44 @@
 # packaged-tour
 
-A React tour library for generating guided tours. It carries a simple API via configuration and allows any content to be rendered for step and minimized views. Contains optional effects (like spotlight and overlay) that can be enabled/disabled depending on desired use.
+A React tour library for generating configurable and reactive guided tours. It carries a simple API via configuration and allows any content to be rendered for step and minimized views.
+
+The main idea has been to keep a minimalist setup for basic usage, but one extensible/configurable to accomodate more complex use cases.
+
+We've kept the initial setup minimal, with very little in the way of styling (not much outside of a basic box-shadow for the steps and arrow indicator). Contains some optional effects (like spotlight and overlay) that can be enabled/disabled depending on desired use.
+
+Uses Popper.js underneath (also customizable via the tour configuration).
 
 ## Usage
 
+### A tour is made up of the following components:
+
+- A number of `steps`, made up of:
+  - some arbitrary metadata
+  - a set of optional reference elements (selectors) for rendering a step near
+- Two renderers (used as render props internally):
+  - a step renderer (React component/function passed a set of properties)
+  - a minimized view renderer (in case we also want to render a minimized view instead of closing)
+- A close handler
+- Some optional props
+
+See [types.ts](./src/types.ts) for the full definition of the various entities.
+
+### A typical expected workflow builds around:
+
+1. Define the criteria for showing a tour.
+2. Define a configuration for the tour, passing along a handler for closing.
+3. Render it (or not).
+
+### Sample
+
 ```
-import { Button, Flex } from '@wordpress/components';
-import { useState } from '@automattic/element';
-import { previous, next, close } from '@wordpress/icons';
 import Tour from '@automattic/packaged-tour';
 
-function MyTour() {
+function FooBar() {
+	// 1. Define the criteria for showing a tour:
 	const [ showTour, setShowTour ] = useState( true );
 
+	// 2. Define a configuration for the tour, passing along a handler for closing.
 	const config = {
 		steps: [
 			{
@@ -20,11 +46,10 @@ function MyTour() {
 					desktop: '.render-step-near-me',
 				},
 				meta: {
-					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+					description: 'Lorem ipsum dolor sit amet.',
 				},
 			},
 		],
-		closeHandler: () => setShowTour( false ),
 		renderers: {
 			tourStep: ( {
 				steps,
@@ -36,40 +61,49 @@ function MyTour() {
 			} ) => {
 				return (
 					<>
-						<Flex justify={ 'right' }>
-							<Button onClick={ onPrevious } icon={ previous } />
-							<Button onClick={ onNext } icon={ next } ref={ setInitialFocusedElement } />
-							<Button onClick={ onDismiss( 'close-btn' ) } icon={ close } />
-						</Flex>
+						<button onClick={ onPrevious }>Previous</button>
+						<button onClick={ onNext } ref={ setInitialFocusedElement }>Next</button>
+						<button onClick={ onDismiss( 'close-btn' ) } icon={ close }>Close</button>
 						<p>{ steps[ currentStepIndex ].meta.description }</p>
 					</>
 				);
 			},
-			tourMinimized: () => null,
+			tourMinimized: ...,
 		},
+		closeHandler: () => setShowTour( false ),
+		options: ...
 	};
+
+	// 3. Render it (or not):
 
 	if ( ! showTour ) {
 		return null;
 	}
 
-	return <PackagedTour config={ config } />;
+	return <Tour config={ config } />;
 }
 
 ```
+
+### Using [Storybook](https://storybook.js.org/)
+
+See it in action:
+
+`yarn run packaged-tour:storybook:start`
 
 ## Accessibility
 
 ### Keyboard Navigation
 
-The following functionality is provided:
+When a tour is rendered and focused, the following functionality is provided:
 
-- Minimize or close the tour on `ESC` key press (depending on configuration - if a minimized step is rendered, then first press will minimize)
-- Go to previous/next step on `left/right` arrow key press
+- Minimize the tour on `ESC` key press (in step view)
+- Close the tour on `ESC` key press (in minimized view)
+- Go to previous/next step on `left/right` arrow key press (in step view)
 
-## Config
+## Configuration
 
-The main API for configuring a tour. See example usage and  [types.ts](./src/types.ts) for the full definition.
+The main API for configuring a tour is the config object. See example usage and  [types.ts](./src/types.ts) for the full definition.
 
 `config.steps`: An array of objects that define the content we wish to render on the page. Each step defined by:
 
@@ -111,4 +145,3 @@ The main API for configuring a tour. See example usage and  [types.ts](./src/typ
 - `callbacks`: An object of callbacks to handle side effects from various interactions (see [types.ts](./src/types.ts)).
 
 - `popperModifiers`: The tour uses Popper to position steps near reference elements (and for other effects). An implementation can pass its own modifiers to tailor the functionality further e.g. more offset or padding from the reference element.
-

@@ -63,3 +63,5 @@ export interface Config {
 		popperModifiers?: PopperModifier[];
 	};
 }
+
+export type Tour = React.FunctionComponent< { config: Config } >;
