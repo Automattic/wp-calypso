@@ -184,20 +184,35 @@ import {
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
 } from './constants';
+import type {
+	BillingTerm,
+	Plan,
+	JetpackPlan,
+	WPComPlan,
+	IncompleteWPcomPlan,
+	IncompleteJetpackPlan,
+} from './types';
+import type { TranslateResult } from 'i18n-calypso';
 
-function compact( elements ) {
-	return elements.filter( Boolean );
+function isValueTruthy< T >( value: T ): value is Exclude< T, null | undefined | false | 0 | '' > {
+	return !! value;
 }
 
-const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
-const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
+function compact( elements: ( string | false | undefined | false )[] ): string[] {
+	return elements.filter( isValueTruthy );
+}
 
-const getAnnualTimeframe = () => ( {
+const WPComGetBillingTimeframe = (): TranslateResult =>
+	i18n.translate( 'per month, billed annually' );
+const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
+	i18n.translate( '/month, billed every two years' );
+
+const getAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_ANNUALLY,
 	getBillingTimeFrame: () => translate( 'per year' ),
 } );
 
-const getMonthlyTimeframe = () => ( {
+const getMonthlyTimeframe = (): BillingTerm => ( {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => translate( 'per month, billed monthly' ),
 } );
@@ -223,7 +238,7 @@ const plansDescriptionHeadingComponent = {
 };
 /* eslint-enable */
 
-const getPlanBloggerDetails = () => ( {
+const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_BLOGGER,
@@ -275,7 +290,7 @@ const getPlanBloggerDetails = () => ( {
 	getInferiorFeatures: () => [],
 } );
 
-const getPlanPersonalDetails = () => ( {
+const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
@@ -336,7 +351,7 @@ const getPlanPersonalDetails = () => ( {
 	getInferiorFeatures: () => [],
 } );
 
-const getPlanEcommerceDetails = () => ( {
+const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
@@ -444,7 +459,7 @@ const getPlanEcommerceDetails = () => ( {
 	getInferiorFeatures: () => [],
 } );
 
-const getPlanPremiumDetails = () => ( {
+const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
@@ -517,7 +532,7 @@ const getPlanPremiumDetails = () => ( {
 	getInferiorFeatures: () => [],
 } );
 
-const getPlanBusinessDetails = () => ( {
+const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
@@ -615,7 +630,7 @@ const getPlanBusinessDetails = () => ( {
 	getInferiorFeatures: () => [],
 } );
 
-const getJetpackPersonalDetails = () => ( {
+const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_PERSONAL,
 	getTitle: () => i18n.translate( 'Personal' ),
@@ -654,7 +669,7 @@ const getJetpackPersonalDetails = () => ( {
 	],
 } );
 
-const getJetpackPremiumDetails = () => ( {
+const getJetpackPremiumDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_PREMIUM,
 	availableFor: ( plan ) =>
@@ -706,7 +721,7 @@ const getJetpackPremiumDetails = () => ( {
 		] ),
 } );
 
-const getJetpackBusinessDetails = () => ( {
+const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_BUSINESS,
 	getTitle: () => i18n.translate( 'Professional' ),
@@ -760,7 +775,7 @@ const getJetpackBusinessDetails = () => ( {
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
-const getPlanJetpackSecurityDailyDetails = () => ( {
+const getPlanJetpackSecurityDailyDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_DAILY,
 	getTitle: () => translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
@@ -793,7 +808,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 	],
 } );
 
-const getPlanJetpackSecurityRealtimeDetails = () => ( {
+const getPlanJetpackSecurityRealtimeDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_REALTIME,
 	getTitle: () =>
@@ -842,7 +857,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	],
 } );
 
-const getPlanJetpackSecurityT1Details = () => ( {
+const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_T1,
 	getTitle: () => translate( 'Security' ),
@@ -876,7 +891,7 @@ const getPlanJetpackSecurityT1Details = () => ( {
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
-const getPlanJetpackSecurityT2Details = () => ( {
+const getPlanJetpackSecurityT2Details = (): IncompleteJetpackPlan => ( {
 	...getPlanJetpackSecurityT1Details(),
 	type: TYPE_SECURITY_T2,
 	getIncludedFeatures: () => [
@@ -903,7 +918,7 @@ const getPlanJetpackSecurityT2Details = () => ( {
 	],
 } );
 
-const getPlanJetpackCompleteDetails = () => ( {
+const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_ALL,
 	getTitle: () =>
@@ -988,13 +1003,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 } );
 
 // DO NOT import. Use `getPlan` instead.
-/**
- * @typedef {import( "./types").Plan} Plan
- * @typedef {import( "./types").JetpackPlan} JetpackPlan
- * @typedef {import( "./types").WPComPlan} WPComPlan
- * @type	{Object.<string, Plan|JetpackPlan|WPComPlan>}
- */
-export const PLANS_LIST = {
+export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_FREE ]: {
 		group: GROUP_WPCOM,
 		type: TYPE_FREE,
