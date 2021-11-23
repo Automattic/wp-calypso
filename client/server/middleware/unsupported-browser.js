@@ -25,11 +25,11 @@ import analytics from 'calypso/server/lib/analytics';
  */
 const UNSUPPORTED_BROWSERS = [
 	'ie <= 11',
-	'edge <= 80',
-	'firefox <= 74',
-	'chrome <= 80',
+	'edge <= 79',
+	'firefox <= 73',
+	'chrome <= 79',
 	'safari <= 13', // Note: 13.1 IS supported. Browserslist considers Safari point releases as new versions.
-	'opera <= 67',
+	'opera <= 66',
 	'ios <= 13.3',
 ];
 
