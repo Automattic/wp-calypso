@@ -464,9 +464,18 @@ class AllDomains extends Component {
 		];
 
 		if ( isContactEmailEditContext ) {
+			const areAllCheckboxesChecked = Object.entries( this.state.selectedDomains ).every(
+				( [ , selected ] ) => selected
+			);
 			domainsTableColumns.unshift( {
 				name: 'select-domain',
-				label: <FormCheckbox className="list__checkbox" onChange={ this.handleSelectAllDomains } />,
+				label: (
+					<FormCheckbox
+						className="list__checkbox"
+						onChange={ this.handleSelectAllDomains }
+						checked={ areAllCheckboxesChecked }
+					/>
+				),
 			} );
 		}
 
