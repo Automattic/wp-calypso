@@ -90,6 +90,7 @@ export function getAllowedPluginData( plugin ) {
 		'slug',
 		'support_URL',
 		'tags',
+		'tested',
 		'update',
 		'updating',
 		'version',
