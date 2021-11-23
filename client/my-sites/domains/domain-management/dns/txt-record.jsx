@@ -8,7 +8,6 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { DNS_TXT_RECORD_CHAR_LIMIT } from 'calypso/lib/url/support';
 
 class TxtRecord extends Component {
@@ -30,11 +29,7 @@ class TxtRecord extends Component {
 				{
 					components: {
 						supportLink: (
-							<ExternalLink
-								href={ localizeUrl( DNS_TXT_RECORD_CHAR_LIMIT ) }
-								target="_blank"
-								icon={ false }
-							/>
+							<ExternalLink href={ DNS_TXT_RECORD_CHAR_LIMIT } target="_blank" icon={ false } />
 						),
 					},
 				}
