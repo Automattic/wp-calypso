@@ -23,8 +23,8 @@
 		"test": "yarn jest"
 	},
 	"dependencies": {
-		"@wordpress/compose": "^5.0.5",
-		"@wordpress/i18n": "^4.2.3",
+		"@wordpress/compose": "^5.0.6",
+		"@wordpress/i18n": "^4.2.4",
 		"react": "^17.0.2",
 		"tslib": "^2.3.0"
 	},

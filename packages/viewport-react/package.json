@@ -19,7 +19,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport-react#readme",
 	"dependencies": {
 		"@automattic/viewport": "workspace:^",
-		"@wordpress/compose": "^5.0.5"
+		"@wordpress/compose": "^5.0.6"
 	},
 	"peerDependencies": {
 		"react": "^17.0.2",
