@@ -8,7 +8,6 @@ Pass a component as a child of `<DomainManagementData />`. `DomainManagementData
 It will handle the data itself thus helping us to decouple concerns: i.e. fetching and displaying data. This pattern is also called [container components](https://medium.com/@learnreact/container-components-c0e67432e005).
 
 ```js
-import React from 'react';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import MyChildComponent from 'calypso/components/my-child-component';
 

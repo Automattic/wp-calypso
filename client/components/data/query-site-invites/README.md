@@ -11,7 +11,6 @@ sibling components which make use of the fetched data made available through
 the global application state.
 
 ```jsx
-import React from 'react';
 import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 

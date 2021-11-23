@@ -247,7 +247,6 @@ Typically, you'd wrap your exported function with `localize`:
 ```jsx
 // greeting.jsx
 import { localize } from 'i18n-calypso';
-import React from 'react';
 
 function Greeting( { translate, className } ) {
 	return <h1 className={ className }>{ translate( 'Hello!' ) }</h1>;
@@ -260,7 +259,6 @@ When the wrapped component is rendered, the render behavior of the original comp
 
 ```jsx
 // index.jsx
-import React from 'react';
 import { render } from 'react-dom';
 import Greeting from './greeting';
 
@@ -289,7 +287,6 @@ The function can be called to return a localized value of a string, and it also 
 
 ```jsx
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 
 function Greeting( { className } ) {
 	const translate = useTranslate();
@@ -318,7 +315,6 @@ Example:
 ```jsx
 import { Gridicon } from '@automattic/components';
 import { useRtl } from 'i18n-calypso';
-import React from 'react';
 
 export default function Header() {
 	const isRtl = useRtl();
@@ -341,7 +337,6 @@ Example:
 ```jsx
 import { Gridicon } from '@automattic/components';
 import { withRtl } from 'i18n-calypso';
-import React from 'react';
 
 function Header( { isRtl } ) {
 	const icon = isRtl ? 'arrow-left' : 'arrow-right';
