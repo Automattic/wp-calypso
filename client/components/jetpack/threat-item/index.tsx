@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
-import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -58,7 +57,6 @@ const ThreatItem: React.FC< Props > = ( {
 			};
 			return (
 				<Button
-					primary
 					className={ classnames( 'threat-item__fix-button', className ) }
 					onClick={ onClickHandler }
 					disabled={ isFixing }
@@ -153,8 +151,6 @@ const ThreatItem: React.FC< Props > = ( {
 				'is-current': threat.status === 'current',
 			} ) }
 			header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
-			subheader={ <ThreatItemSubheader threat={ threat } isFixable={ isFixable } /> }
-			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
 			clickableHeader={ true }
 			onClick={ onOpenTrackEvent }
 		>
@@ -183,7 +179,7 @@ const ThreatItem: React.FC< Props > = ( {
 				) }
 				{ ! threat.fixable && 'current' === threat.status && (
 					<ExternalLinkWithTracking
-						className="button is-primary threat-item__codeable-button"
+						className="button threat-item__codeable-button"
 						href="https://codeable.io/partners/jetpack-scan/"
 						target="_blank"
 						rel="noopener noreferrer"

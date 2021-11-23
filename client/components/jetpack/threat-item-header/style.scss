@@ -1,0 +1,39 @@
+.threat-item-header {
+  &__card-container {
+    flex-direction: column;
+    margin-bottom: auto;
+    margin-top: auto;
+    margin-right: auto;
+		max-width: 435px;
+    @include breakpoint-deprecated( '<960px' ) {
+			max-width: 263px;
+		}
+  }
+
+  &__autofix_badge {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 72px;
+    margin-left: auto;
+    fill: #008710;
+  }
+
+  &__card-top {
+    font-style: normal;
+    font-weight: 600;
+    font-size: $font-body-large;
+    line-height: 24px;
+  }
+
+  &__card-bottom {
+    font-style: normal;
+    font-weight: normal;
+    font-size: $font-body-small;
+    line-height: 21px;
+    color: #50575e;
+
+    &.is-critical {
+      color: #d63638;
+    }
+  }
+}

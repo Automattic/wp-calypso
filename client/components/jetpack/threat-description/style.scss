@@ -2,6 +2,13 @@
 .threat-item .threat-description {
 	overflow: auto;
 	flex: 1;
+	margin-left: 116px;
+	margin-right: 32px;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		padding: 16px;
+		margin: 0;
+	}
 
 	&__section-title {
 		margin-bottom: 20px;

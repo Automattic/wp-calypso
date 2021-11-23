@@ -6,6 +6,7 @@
 		flex-direction: column;
 		align-items: flex-start;
 		margin-top: 4px;
+		margin-left: 52px;
 
 		@include breakpoint-deprecated( '>1040px' ) {
 			flex-direction: row;
@@ -30,7 +31,6 @@
 			margin: 0 12px;
 			width: 4px;
 			height: 4px;
-			border-radius: 50%;
 		}
 	}
 
@@ -54,7 +54,7 @@
 		}
 
 		&.is-auto-fix {
-			margin-top: 0px;
+			margin-top: 0;
 			margin-left: 4px;
 			color: var( --color-success-50 );
 			background-color: var( --color-success-0 );

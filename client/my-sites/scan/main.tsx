@@ -1,4 +1,4 @@
-import { Button, Card, ProgressBar, Gridicon } from '@automattic/components';
+import { Button, ProgressBar, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -290,9 +290,7 @@ class ScanPage extends Component< Props > {
 
 				<QueryJetpackScan siteId={ siteId } />
 				<ScanNavigation section={ 'scanner' } />
-				<Card>
-					<div className="scan__content">{ this.renderScanState() }</div>
-				</Card>
+				<div className="scan__content">{ this.renderScanState() }</div>
 				{ this.renderJetpackReviewPrompt() }
 			</Main>
 		);

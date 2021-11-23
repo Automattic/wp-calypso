@@ -92,7 +92,7 @@ class ThreatDescription extends PureComponent< Props > {
 		return (
 			<div className="threat-description">
 				<p className="threat-description__section-title">
-					<strong>{ translate( 'What was the problem?' ) }</strong>
+					<strong>{ translate( 'What is the problem?' ) }</strong>
 				</p>
 				{ this.renderTextOrNode( <p className="threat-description__section-text">{ problem }</p> ) }
 				{ ( filename || context || diff || rows ) && (
