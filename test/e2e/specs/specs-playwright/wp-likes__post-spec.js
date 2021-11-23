@@ -21,7 +21,7 @@ const quote =
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let page;
-	const postingUser = 'gutenbergSimpleSiteUser';
+	const postingUser = 'simpleSitePersonalPlanUser';
 	const likeUser = 'defaultUser';
 
 	setupHooks( ( args ) => {

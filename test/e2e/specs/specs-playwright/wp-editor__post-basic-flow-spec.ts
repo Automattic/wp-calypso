@@ -30,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let publishedPostPage: PublishedPostPage;
 	const user = BrowserHelper.targetGutenbergEdge()
 		? 'gutenbergSimpleSiteEdgeUser'
-		: 'gutenbergSimpleSiteUser';
+		: 'simpleSitePersonalPlanUser';
 
 	setupHooks( ( args ) => {
 		page = args.page;

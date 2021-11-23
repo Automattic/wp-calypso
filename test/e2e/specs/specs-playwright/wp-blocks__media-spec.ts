@@ -23,7 +23,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	let page: Page;
 	let testFiles: { image: TestFile; image_reserved_name: TestFile; audio: TestFile };
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'gutenbergSimpleSiteUser' } );
+		await loginPage.login( { account: 'simpleSitePersonalPlanUser' } );
 	} );
 
 	it( 'Start new post', async function () {

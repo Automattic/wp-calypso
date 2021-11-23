@@ -28,6 +28,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 
 	describe.each`
 		siteType      | user
+		${ 'Simple' } | ${ 'simpleSitePersonalPlanUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
 	`( 'Edit Image ($siteType)', function ( { user } ) {
 		let mediaPage: MediaPage;
