@@ -64,7 +64,7 @@ export const getDomainsBySite = ( state, site ) => {
  * Determines whether the list of domains for the specified site has loaded.
  *
  * @param {object} state - global state tree
- * @param {number| undefined} siteId - identifier of the site
+ * @param {?number} siteId - identifier of the site
  * @returns {boolean} true if the list of domains has loaded, false otherwise
  */
 export const hasLoadedSiteDomains = ( state, siteId ) => {
