@@ -7,7 +7,7 @@ import { isJetpackSite } from '../../selectors';
 const useSelector = jest.spyOn( redux, 'useSelector' );
 
 describe( 'useSelectedSiteSelector()', () => {
-	test( 'returns selector with selected site added on call', () => {
+	test( 'executes selector with selected site id passed in', () => {
 		const state = {
 			sites: {
 				items: {
