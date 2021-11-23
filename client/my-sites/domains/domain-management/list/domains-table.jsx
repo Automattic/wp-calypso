@@ -162,7 +162,8 @@ class DomainsTable extends PureComponent {
 						busyMessage={ translate( 'Setting primary site address…', {
 							context: 'Shows up when the primary domain is changing and the user is waiting',
 						} ) }
-						disabled={ settingPrimaryDomain }
+						disabled={ settingPrimaryDomain || isContactEmailEditContext }
+						showDomainDetails={ ! isContactEmailEditContext }
 						selectionIndex={ index }
 						onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
 						shouldUpgradeToMakePrimary={
