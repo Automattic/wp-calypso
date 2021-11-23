@@ -43,7 +43,10 @@ function isUnsupportedBrowser( req ) {
 	return matchesUA( sanitizedUA, { ignoreMinor: true, browsers: UNSUPPORTED_BROWSERS } );
 }
 
-// We don't want to redirect some of our public landing pages, so we include them here.
+/**
+ * These public pages will likely work even in unsupported browsers, so we will
+ * not redirect them.
+ */
 function allowPath( path ) {
 	const locales = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
 	const prefixedLocale = locales.find( ( locale ) => path.startsWith( `/${ locale }/` ) );
@@ -53,15 +56,7 @@ function allowPath( path ) {
 		? path.replace( new RegExp( `^/${ prefixedLocale }` ), '' )
 		: path;
 
-	const allowedPaths = [
-		'/browsehappy',
-		'/log-in',
-		'/start',
-		'/new',
-		'/themes',
-		'/theme',
-		'/domains',
-	];
+	const allowedPaths = [ '/browsehappy', '/themes', '/theme' ];
 	// For example, match either exactly "/themes" or "/themes/*"
 	return allowedPaths.some( ( p ) => parsedPath === p || parsedPath.startsWith( p + '/' ) );
 }
