@@ -1,4 +1,5 @@
 import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
+import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -15,6 +16,7 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 } from 'calypso/state/action-types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/domains/init';
 
@@ -164,3 +166,29 @@ export function updateWhois( domain, whoisData ) {
 		whoisData,
 	};
 }
+
+export const showUpdatePrimaryDomainSuccessNotice = ( domainName ) => {
+	return ( dispatch ) => {
+		dispatch(
+			successNotice(
+				translate(
+					'Primary domain changed: all domains will redirect to {{em}}%(domainName)s{{/em}}.',
+					{ args: { domainName }, components: { em: <em /> } }
+				),
+				{ duration: 10000, isPersistent: true }
+			)
+		);
+	};
+};
+
+export const showUpdatePrimaryDomainErrorNotice = ( errorMessage ) => {
+	return ( dispatch ) => {
+		dispatch(
+			errorNotice(
+				errorMessage ||
+					translate( "Something went wrong and we couldn't change your primary domain." ),
+				{ duration: 10000, isPersistent: true }
+			)
+		);
+	};
+};
