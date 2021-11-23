@@ -95,7 +95,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 
 const transferPageComponent = connect( ( state, ownProps: TransferPageProps ) => {
 	const domain = getSelectedDomain( ownProps );
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId( state )!;
 	return {
 		currentRoute: getCurrentRoute( state ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
