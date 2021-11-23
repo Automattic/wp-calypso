@@ -29,7 +29,7 @@ See [types.ts](./src/types.ts) for the full definition of the various entities.
 
 ### Sample
 
-```
+```jsx
 import Tour from '@automattic/packaged-tour';
 
 function FooBar() {
@@ -61,7 +61,7 @@ function FooBar() {
 					<>
 						<button onClick={ onPrevious }>Previous</button>
 						<button onClick={ onNext } ref={ setInitialFocusedElement }>Next</button>
-						<button onClick={ onDismiss( 'close-btn' ) } icon={ close }>Close</button>
+						<button onClick={ onDismiss( 'close-btn' ) }>Close</button>
 						<p>{ steps[ currentStepIndex ].meta.description }</p>
 					</>
 				);
@@ -83,7 +83,7 @@ function FooBar() {
 
 ```
 
-### Using [Storybook](https://storybook.js.org/)
+### Examples Using [Storybook](https://storybook.js.org/)
 
 See it in action with some basic configurations:
 
