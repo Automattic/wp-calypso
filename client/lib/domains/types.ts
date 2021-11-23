@@ -58,6 +58,7 @@ export type ResponseDomain = {
 	currentUserCanCreateSiteFromDomainOnly: boolean;
 	currentUserCanManage: boolean;
 	currentUserCannotAddEmailReason: CannotAddEmailReason | null;
+	currentUserIsOwner: boolean;
 	domain: string;
 	domainLockingAvailable: boolean;
 	domainRegistrationAgreementUrl: string | null;

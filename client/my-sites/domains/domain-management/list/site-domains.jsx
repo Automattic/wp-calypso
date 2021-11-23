@@ -50,6 +50,7 @@ import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import DomainOnly from './domain-only';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
+import { filterDomainsByOwner } from './helpers';
 import {
 	filterOutWpcomDomains,
 	getDomainManagementPath,
@@ -87,17 +88,6 @@ export class SiteDomains extends Component {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
 	}
 
-	filterDomains( domains, filter ) {
-		return domains.filter( ( domain ) => {
-			if ( 'owned-by-me' === filter ) {
-				return domain.currentUserIsOwner;
-			} else if ( 'owned-by-others' === filter ) {
-				return ! domain.currentUserIsOwner;
-			}
-			return true;
-		} );
-	}
-
 	renderNewDesign() {
 		const {
 			currentRoute,
@@ -114,7 +104,10 @@ export class SiteDomains extends Component {
 
 		const selectedFilter = context?.query?.filter;
 
-		const nonWpcomDomains = this.filterDomains( filterOutWpcomDomains( domains ), selectedFilter );
+		const nonWpcomDomains = filterDomainsByOwner(
+			filterOutWpcomDomains( domains ),
+			selectedFilter
+		);
 		const wpcomDomain = domains.find(
 			( domain ) => domain.type === type.WPCOM || domain.isWpcomStagingDomain
 		);
@@ -238,7 +231,7 @@ export class SiteDomains extends Component {
 				value: 'owned-by-me',
 				path:
 					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
-				count: this.filterDomains( nonWpcomDomains, 'owned-by-me' )?.length,
+				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
 				label: 'Owned by others',
@@ -247,7 +240,7 @@ export class SiteDomains extends Component {
 					domainManagementList( selectedSite?.slug ) +
 					'?' +
 					stringify( { filter: 'owned-by-others' } ),
-				count: this.filterDomains( nonWpcomDomains, 'owned-by-others' )?.length,
+				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
 			},
 			null,
 			{
