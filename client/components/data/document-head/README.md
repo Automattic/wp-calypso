@@ -7,7 +7,6 @@
 Render the component, passing `title`, `skipTitleFormatting`, `unreadCount`, `link` or `meta`. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
-import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 
 export default function HomeSection() {

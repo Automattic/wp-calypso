@@ -128,6 +128,7 @@ RUN apt update &&\
 	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg &&\
 	echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php-sury.list &&\
 	apt update &&\
+ 	apt-get upgrade -y &&\
 	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose &&\
 	composer install
 

@@ -153,7 +153,7 @@ function enableStreamModeProcessing( req, onStreamRecord ) {
 		// while we’re working with text that has already been decoded from UTF-8 into a string
 		// that can only be indexed in UTF-16 code units. Reconciling this difference is not
 		// worth the effort, and might even be impossible if there were encoding errors.
-		for (;;) {
+		while ( true ) {
 			const stop = target.response.indexOf( '\n', start );
 
 			if ( stop < 0 ) {

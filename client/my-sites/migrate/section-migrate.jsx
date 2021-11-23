@@ -55,6 +55,10 @@ class SectionMigrate extends Component {
 			return page( `/import/${ this.props.targetSiteSlug }` );
 		}
 
+		if ( this.props.url ) {
+			this.setMigrationState( { url: this.props.url } );
+		}
+
 		if ( true === this.props.startMigration ) {
 			this._startedMigrationFromCart = true;
 			this._timeStartedMigrationFromCart = new Date().getTime();

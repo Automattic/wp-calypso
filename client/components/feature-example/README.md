@@ -5,17 +5,14 @@ Feature Example is a component used to render an mocked example of any feature. 
 ## Usage
 
 ```jsx
-import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import FeatureExample from 'calypso/components/feature-example';
 
-class MyComponent extends React.Component {
-	render() {
-		return (
-			<FeatureExample>
-				<EmptyContent />
-			</FeatureExample>
-		);
-	}
+function MyComponent() {
+	return (
+		<FeatureExample>
+			<EmptyContent />
+		</FeatureExample>
+	);
 }
 ```

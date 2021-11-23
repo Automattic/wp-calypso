@@ -70,7 +70,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	};
 
 	const goToImporterPage = ( platform: string ): void => {
-		const importerUrl = getImporterUrl( signupDependencies.siteSlug, platform );
+		const importerUrl = getImporterUrl( signupDependencies.siteSlug, platform, urlData.url );
 
 		importerUrl.includes( 'wp-admin' )
 			? ( window.location.href = importerUrl )

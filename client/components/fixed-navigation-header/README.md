@@ -1,6 +1,6 @@
 # FixedNavigationHeader (TSX)
 
-This component displays a header with a breadcrumb. 
+This component displays a header with a breadcrumb.
 It can also include children items which will be positioned to the far right.
 
 ## How to use
@@ -14,7 +14,9 @@ const navigationItems = [
 ];
 
 function render() {
-	return <FixedNavigationHeader navigationItems={ navigationItems }>Children Item</FixedNavigationHeader>;
+	return (
+		<FixedNavigationHeader navigationItems={ navigationItems }>Children Item</FixedNavigationHeader>
+	);
 }
 ```
 

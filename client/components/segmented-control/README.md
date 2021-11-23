@@ -13,10 +13,10 @@ The children technique is appropriate when you'd like to define the "selection" 
 A good example for this case is navigation. Sometimes the option that is selected is defined by the route, other times it's a state value, external prop, etc.
 
 ```jsx
-import React from 'react';
+import { Component } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 
-export default class extends React.Component {
+export default class extends Component {
 	// ...
 
 	render() {
@@ -103,7 +103,6 @@ A good example for this case is a form element. You don't want to have to write 
 **NOTE**: _there is still more work here in order to be fully functional as a form element. This is currently experimental._
 
 ```jsx
-import React from 'react';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
 const options = [

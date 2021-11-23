@@ -166,11 +166,15 @@ export default {
 	},
 
 	domainManagementEditContactInfo( pageContext, next ) {
+		let component = DomainManagement.EditContactInfo;
+		if ( config.isEnabled( 'domains/contact-info-redesign' ) ) {
+			component = DomainManagement.EditContactInfoPage;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEditContactInfo( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Contacts and Privacy > Edit Contact Info"
-				component={ DomainManagement.EditContactInfo }
+				component={ component }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
@@ -297,14 +301,15 @@ export default {
 	},
 
 	domainManagementTransfer( pageContext, next ) {
+		let component = DomainManagement.Transfer;
 		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
-			// TODO: set different component for the new transfer page
+			component = DomainManagement.TransferPage;
 		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransfer( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer"
-				component={ DomainManagement.Transfer }
+				component={ component }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
