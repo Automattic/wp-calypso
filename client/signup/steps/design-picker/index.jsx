@@ -133,7 +133,7 @@ export default function DesignPickerStep( props ) {
 			)
 		);
 
-		submitDesign( selectedDesign );
+		submitDesign( _selectedDesign );
 	}
 
 	function previewDesign( _selectedDesign ) {
