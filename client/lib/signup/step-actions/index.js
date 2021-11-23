@@ -442,31 +442,36 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
-		debug( 'adding cart items', newCartItems );
+		debug( 'preparing to add cart items (if any) from', newCartItems );
 		const reduxState = reduxStore.getState();
 		const newCartItemsToAdd = newCartItems
 			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
 			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
 
 		if ( newCartItemsToAdd.length ) {
+			debug( 'adding products to cart', newCartItemsToAdd );
 			cartManagerClient
 				.forCartKey( siteSlug )
 				.actions.addProductsToCart( newCartItemsToAdd )
 				.then( ( updatedCart ) => {
+					debug( 'product add request complete', updatedCart );
 					// Even if the cart request succeeds, there may be errors
 					if ( updatedCart.messages?.errors && updatedCart.messages.errors.length > 0 ) {
-						callback( updatedCart.messages.errors[ 0 ].message, providedDependencies );
-						return;
+						throw new Error( updatedCart.messages.errors[ 0 ].message );
 					}
 					const error = cartManagerClient.forCartKey( siteSlug ).getState().loadingError;
 					if ( error ) {
-						callback( error, providedDependencies );
-						return;
+						throw new Error( error );
 					}
+					debug( 'product add request successful' );
 					callback( undefined, providedDependencies );
 				} )
-				.catch( ( error ) => callback( error, providedDependencies ) );
+				.catch( ( error ) => {
+					debug( 'product add request had an error', error );
+					callback( error, providedDependencies );
+				} );
 		} else {
+			debug( 'no cart items to add' );
 			callback( undefined, providedDependencies );
 		}
 	};
