@@ -1,5 +1,41 @@
 import styled from '@emotion/styled';
-import { FunctionComponent } from 'react';
+import type { FunctionComponent } from 'react';
+
+type FormFieldWrapperProps = {
+	isError: boolean;
+	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+};
+
+const FormFieldWrapper = styled.div< FormFieldWrapperProps >`
+	select {
+		width: 100%;
+	}
+`;
+
+type LabelProps = {
+	isDisabled: boolean;
+	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+};
+
+const Label = styled.label< LabelProps >`
+	display: block;
+	color: ${ ( props ) => props.theme.colors.textColor };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+	font-size: 14px;
+	margin-bottom: 8px;
+
+	:hover {
+		cursor: ${ ( props ) => ( props.isDisabled ? 'default' : 'pointer' ) };
+	}
+`;
+
+const Description = styled.p< DescriptionProps >`
+	margin: 8px 0 0;
+	color: ${ ( props ) =>
+		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
+	font-style: italic;
+	font-size: 14px;
+`;
 
 /**
  * Annotate a form field element with a label, description, and an optional
@@ -59,34 +95,6 @@ const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps > = ( {
 	);
 };
 
-type LabelProps = {
-	isDisabled: boolean;
-	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-};
-
-const Label = styled.label< LabelProps >`
-	display: block;
-	color: ${ ( props ) => props.theme.colors.textColor };
-	font-weight: ${ ( props ) => props.theme.weights.bold };
-	font-size: 14px;
-	margin-bottom: 8px;
-
-	:hover {
-		cursor: ${ ( props ) => ( props.isDisabled ? 'default' : 'pointer' ) };
-	}
-`;
-
-type FormFieldWrapperProps = {
-	isError: boolean;
-	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-};
-
-const FormFieldWrapper = styled.div< FormFieldWrapperProps >`
-	select {
-		width: 100%;
-	}
-`;
-
 function RenderedDescription( {
 	descriptionText,
 	descriptionId,
@@ -114,13 +122,5 @@ type DescriptionProps = {
 	isError?: boolean;
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
-
-const Description = styled.p< DescriptionProps >`
-	margin: 8px 0 0;
-	color: ${ ( props ) =>
-		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
-	font-style: italic;
-	font-size: 14px;
-`;
 
 export default FormFieldAnnotation;

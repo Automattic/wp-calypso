@@ -74,7 +74,7 @@ class AddDnsRecord extends Component {
 		return (
 			<Breadcrumbs items={ items } mobileItem={ mobileItem } buttons={ [] } mobileButtons={ [] } />
 		);
-	};
+	}
 
 	goBack = () => {
 		const { selectedSite, selectedDomainName } = this.props;
