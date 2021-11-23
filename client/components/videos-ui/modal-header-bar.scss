@@ -1,0 +1,7 @@
+.videos-ui__modal-header-bar {
+	@include break-small {
+		span {
+			display: none;
+		}
+	}
+}
