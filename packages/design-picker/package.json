@@ -45,7 +45,7 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^5.15.0",
+		"@testing-library/jest-dom": "^5.15.1",
 		"@testing-library/react": "^12.1.2",
 		"enzyme": "^3.11.0",
 		"jest": "^27.2.4",
