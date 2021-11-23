@@ -26,9 +26,10 @@ import {
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from './constants';
+import type { TranslateResult } from 'i18n-calypso';
 
 // Translatable strings
-export const getJetpackProductsShortNames = () => {
+export const getJetpackProductsShortNames = (): Record< string, TranslateResult > => {
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Backup {{em}}Daily{{/em}}', {
 			components: {
@@ -77,7 +78,7 @@ export const getJetpackProductsShortNames = () => {
 	};
 };
 
-export const getJetpackProductsDisplayNames = () => {
+export const getJetpackProductsDisplayNames = (): Record< string, TranslateResult > => {
 	const backupDaily = translate( 'Backup {{em}}Daily{{/em}}', {
 		components: {
 			em: <em />,
@@ -132,7 +133,7 @@ export const getJetpackProductsDisplayNames = () => {
 	};
 };
 
-export const getJetpackProductsCallToAction = () => {
+export const getJetpackProductsCallToAction = (): Record< string, TranslateResult > => {
 	const backupDaily = translate( 'Get Backup {{em}}Daily{{/em}}', {
 		components: {
 			em: <em />,
@@ -174,10 +175,10 @@ export const getJetpackProductsCallToAction = () => {
 	};
 };
 
-/**
- * @returns {Object.<string, {default: import('i18n-calypso').TranslateResult, owned?: import('i18n-calypso').TranslateResult}>}
- */
-export const getJetpackProductsTaglines = () => {
+export const getJetpackProductsTaglines = (): Record<
+	string,
+	{ default: TranslateResult; owned?: TranslateResult }
+> => {
 	const backupDailyTagline = translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
@@ -240,7 +241,7 @@ export const getJetpackProductsTaglines = () => {
 	};
 };
 
-export const getJetpackProductsDescriptions = () => {
+export const getJetpackProductsDescriptions = (): Record< string, TranslateResult > => {
 	const backupDailyDescription = translate(
 		'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
 	);
@@ -291,7 +292,7 @@ export const getJetpackProductsDescriptions = () => {
 	};
 };
 
-export const useJetpack10GbStorageAmountText = () => {
+export const useJetpack10GbStorageAmountText = (): TranslateResult => {
 	const _translate = useTranslate();
 
 	return useMemo(
@@ -306,7 +307,7 @@ export const useJetpack10GbStorageAmountText = () => {
 	);
 };
 
-export const useJetpack1TbStorageAmountText = () => {
+export const useJetpack1TbStorageAmountText = (): TranslateResult => {
 	const _translate = useTranslate();
 
 	return useMemo(
@@ -321,7 +322,9 @@ export const useJetpack1TbStorageAmountText = () => {
 	);
 };
 
-export const useJetpackStorageAmountTextByProductSlug = ( productSlug ) => {
+export const useJetpackStorageAmountTextByProductSlug = (
+	productSlug: string
+): TranslateResult | undefined => {
 	const TEN_GIGABYTES = useJetpack10GbStorageAmountText();
 	const ONE_TERABYTE = useJetpack1TbStorageAmountText();
 
