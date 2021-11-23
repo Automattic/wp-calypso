@@ -4,10 +4,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import PackagedTour from '@automattic/packaged-tour';
-import { Button, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useMemo, useState } from '@wordpress/element';
-import { previous, next, close } from '@wordpress/icons';
+import { useEffect, useMemo } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
@@ -50,7 +48,7 @@ function LaunchWpcomWelcomeTour() {
 
 	return (
 		<WelcomeTourContextProvider>
-			<BarTour />
+			<WelcomeTour />
 		</WelcomeTourContextProvider>
 	);
 }
@@ -124,124 +122,6 @@ function WelcomeTour() {
 				),
 			],
 			className: 'wpcom-editor-welcome-tour',
-		},
-	};
-
-	return <PackagedTour config={ tourConfig } />;
-}
-
-function FooTour() {
-	const [ showTour, setShowTour ] = useState( true );
-
-	const config = {
-		steps: [
-			{
-				referenceElements: {
-					desktop:
-						'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
-				},
-				meta: {
-					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-				},
-			},
-			{
-				meta: {
-					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-				},
-			},
-		],
-		closeHandler: () => setShowTour( false ),
-		renderers: {
-			tourStep: ( {
-				steps,
-				currentStepIndex,
-				setInitialFocusedElement,
-				onNext,
-				onPrevious,
-				onDismiss,
-			} ) => {
-				return (
-					<>
-						<Flex justify={ 'right' }>
-							<Button onClick={ onPrevious } icon={ previous } />
-							<Button onClick={ onNext } icon={ next } ref={ setInitialFocusedElement } />
-							<Button onClick={ onDismiss( 'close-btn' ) } icon={ close } />
-						</Flex>
-						<p>{ steps[ currentStepIndex ].meta.description }</p>
-					</>
-				);
-			},
-			tourMinimized: () => null,
-		},
-	};
-
-	if ( ! showTour ) {
-		return null;
-	}
-
-	return <PackagedTour config={ config } />;
-}
-
-function BarTour() {
-	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
-
-	const tourConfig = {
-		closeHandler: () => {
-			setShowWelcomeGuide( false, { openedManually: false } );
-		},
-		steps: [
-			{
-				meta: {
-					description: 'I am a step.',
-				},
-			},
-			{
-				referenceElements: {
-					mobile:
-						'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
-					desktop:
-						'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
-				},
-				meta: {
-					description: 'I am a step.',
-				},
-			},
-			{
-				referenceElements: {
-					mobile:
-						'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
-					desktop:
-						'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
-				},
-				meta: {
-					description: 'I am a step.',
-				},
-			},
-		],
-		renderers: {
-			tourStep: function TourStep( { steps, currentStepIndex, setInitialFocusedElement } ) {
-				const styles = {
-					width: '300px',
-					padding: '50px 0',
-					textAlign: 'center',
-				};
-
-				return (
-					<div style={ styles }>
-						<p>{ steps[ currentStepIndex ].meta.description }</p>
-						<button ref={ setInitialFocusedElement }>{ currentStepIndex }</button>
-					</div>
-				);
-			},
-			tourMinimized: () => null,
-		},
-		options: {
-			effects: {
-				arrowIndicator: true,
-				__experimental__spotlight: false,
-				overlay: false,
-			},
-			className: 'foo-tour',
 		},
 	};
 
