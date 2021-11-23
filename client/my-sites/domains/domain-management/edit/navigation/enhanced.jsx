@@ -485,8 +485,13 @@ class DomainManagementNavigationEnhanced extends Component {
 
 		if ( domainTypes.TRANSFER === domainType ) {
 			const status = domain.transferStatus;
+			const currentUserIsOwner = domain.currentUserIsOwner;
 
-			if ( transferStatus.PENDING_OWNER === status || transferStatus.PENDING_REGISTRY === status ) {
+			if (
+				transferStatus.PENDING_OWNER === status ||
+				transferStatus.PENDING_REGISTRY === status ||
+				! currentUserIsOwner
+			) {
 				return null;
 			}
 
