@@ -259,7 +259,7 @@ class ManagePurchase extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }/` } compact>
+			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }` } compact>
 				{ translate( 'Select a new plan' ) }
 			</Button>
 		);
@@ -334,10 +334,10 @@ class ManagePurchase extends Component {
 		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
-			return `/plans/storage/${ siteId }/`;
+			return `/plans/storage/${ siteId }`;
 		}
 
-		return `/plans/${ siteId }/`;
+		return `/plans/${ siteId }`;
 	}
 
 	renderUpgradeNavItem() {
@@ -384,7 +384,7 @@ class ManagePurchase extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }/` }>
+			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }` }>
 				{ translate( 'Select a new plan' ) }
 			</CompactCard>
 		);
