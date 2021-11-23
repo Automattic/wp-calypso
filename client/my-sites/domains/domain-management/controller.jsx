@@ -166,11 +166,15 @@ export default {
 	},
 
 	domainManagementEditContactInfo( pageContext, next ) {
+		let component = DomainManagement.EditContactInfo;
+		if ( config.isEnabled( 'domains/contact-info-redesign' ) ) {
+			component = DomainManagement.EditContactInfoPage;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEditContactInfo( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Contacts and Privacy > Edit Contact Info"
-				component={ DomainManagement.EditContactInfo }
+				component={ component }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
