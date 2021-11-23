@@ -1,8 +1,6 @@
-.is-p2-get-started {
-	&.signup__step {
-		color: var( --p2-color-white );
-		background-color: #000000;
-	}
+.signup__step.is-p2-get-started {
+	color: var( --p2-color-white );
+	background-color: #000000;
 
 	.p2-step-wrapper__header-logo {
 		svg path {
