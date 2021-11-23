@@ -102,4 +102,13 @@
 		}
 	}
 	
+	.transfer-page__transfer-lock-label {
+		display: flex;
+		font-size: $font-body-small;
+		color: var( --studio-gray-80 );
+
+		svg {
+			margin-right: 8px;
+		}
+	}
 }

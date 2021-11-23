@@ -2,6 +2,7 @@ import { Card, Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
+import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
@@ -127,6 +128,12 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	};
 
 	const renderAdvancedTransferOptions = () => {
+		const toggleLabel = (
+			<span className="transfer-page__transfer-lock-label">
+				<Icon icon={ lock } size={ 15 } viewBox="4 0 18 20" /> Transfer lock on
+			</span>
+		);
+
 		return (
 			<Card>
 				<CardHeading size={ 16 } isBold={ true }>
@@ -136,7 +143,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					// checked={ this.getToggleUiStatus() }
 					disabled={ false }
 					onChange={ null }
-					label={ 'Transfer lock on' }
+					label={ toggleLabel }
 				/>
 				<p>
 					We recommend leaving the transfer lock on, unless you want to transfer your domain to
