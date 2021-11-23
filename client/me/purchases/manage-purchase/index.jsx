@@ -236,8 +236,7 @@ class ManagePurchase extends Component {
 			! isComplete( purchase ) &&
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
-			! isPlan( purchase ) &&
-			JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug ?? purchase.product_slug );
+			! isPlan( purchase ) && JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
@@ -331,12 +330,8 @@ class ManagePurchase extends Component {
 	getUpgradeUrl() {
 		const { purchase, siteId } = this.props;
 
-		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes(
-			purchase.productSlug ?? purchase.product_slug
-		);
-		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes(
-			purchase.productSlug ?? purchase.product_slug
-		);
+		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
 			return `/plans/storage/${ siteId }/`;
@@ -355,9 +350,7 @@ class ManagePurchase extends Component {
 			! isComplete( purchase ) &&
 			! isP2Plus( purchase );
 
-		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes(
-			purchase.productSlug ?? purchase.product_slug
-		);
+		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
 		const isUpgradeableProduct = isUpgradeableBackupProduct;
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
