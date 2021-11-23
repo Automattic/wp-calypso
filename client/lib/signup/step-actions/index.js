@@ -452,7 +452,14 @@ function processItemCart(
 			cartManagerClient
 				.forCartKey( siteSlug )
 				.actions.addProductsToCart( newCartItemsToAdd )
-				.then( () => callback( undefined, providedDependencies ) )
+				.then( ( updatedCart ) => {
+					// Even if the cart request succeeds, there may be errors
+					if ( updatedCart.messages?.errors && updatedCart.messages.errors.length > 0 ) {
+						callback( updatedCart.messages.errors[ 0 ].message, providedDependencies );
+						return;
+					}
+					callback( undefined, providedDependencies );
+				} )
 				.catch( ( error ) => callback( error, providedDependencies ) );
 		} else {
 			callback( undefined, providedDependencies );
