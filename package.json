@@ -287,7 +287,7 @@
 		"webpack": "^5.64.1",
 		"webpack-bundle-analyzer": "^4.5.0",
 		"webpack-cli": "^4.9.1",
-		"webpack-dev-middleware": "^5.2.1",
+		"webpack-dev-middleware": "^5.2.2",
 		"whybundled": "^2.0.0",
 		"wpcom": "workspace:^",
 		"yargs": "^17.0.1"
