@@ -29,7 +29,7 @@
 		"evergreen": [
 			"last 2 Chrome versions",
 			"last 1 ChromeAndroid versions",
-			"last 2 Firefox versions",
+			"Firefox >= 73",
 			"last 2 Safari versions",
 			"last 3 iOS versions",
 			"last 2 Edge versions",
