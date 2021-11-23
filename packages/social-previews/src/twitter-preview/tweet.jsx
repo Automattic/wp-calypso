@@ -26,8 +26,7 @@ export class Tweet extends PureComponent {
 	 *
 	 * @param {string} profileImage URL of the Twitter profile image.
 	 * @param {boolean} isLast Whether or not this is the last tweet in the in a thread.
-	 *
-	 * @returns {React.Element} The sidebar.
+	 * @returns {import('react').Element} The sidebar.
 	 */
 	renderSidebar( profileImage, isLast ) {
 		return (
@@ -46,8 +45,7 @@ export class Tweet extends PureComponent {
 	 * @param {string} name The display name of the Twitter account.
 	 * @param {string} screenName The at-name of the Twitter account.
 	 * @param {Date} date The date to be shown for this preview.
-	 *
-	 * @returns {React.Element} The header.
+	 * @returns {import('react').Element} The header.
 	 */
 	renderHeader( name, screenName, date ) {
 		return (
@@ -65,8 +63,7 @@ export class Tweet extends PureComponent {
 	 * @param {string} text The text of the tweet.
 	 * @param {Array} urls Optional. An array of URLs that are in the text.
 	 * @param {object} card Optional. The card data for this tweet.
-	 *
-	 * @returns {React.Element} The text section.
+	 * @returns {import('react').Element} The text section.
 	 */
 	renderText( text, urls = [], card = {} ) {
 		// If the text ends with the card URL, remove it.
@@ -93,8 +90,7 @@ export class Tweet extends PureComponent {
 	 * GIF, or a single video. Any media beyond these limits will be discarded.
 	 *
 	 * @param {Array} media The media to include in this tweet.
-	 *
-	 * @returns {React.Element} The media section.
+	 * @returns {import('react').Element} The media section.
 	 */
 	renderMedia( media ) {
 		if ( ! media ) {
@@ -168,8 +164,7 @@ export class Tweet extends PureComponent {
 	 * Given a tweet URL, renders it as a quoted tweet.
 	 *
 	 * @param {string} tweet The tweet URL.
-	 *
-	 * @returns {React.Element} The quoted tweet.
+	 * @returns {import('react').Element} The quoted tweet.
 	 */
 	renderQuoteTweet( tweet ) {
 		if ( ! tweet ) {
@@ -193,8 +188,7 @@ export class Tweet extends PureComponent {
 	 * Given card data, renders the Twitter-style card.
 	 *
 	 * @param {object} card The card data.
-	 *
-	 * @returns {React.Element} The card tweet.
+	 * @returns {import('react').Element} The card tweet.
 	 */
 	renderCard( card ) {
 		if ( ! card ) {
@@ -233,7 +227,7 @@ export class Tweet extends PureComponent {
 	/**
 	 * Renders the footer section of a single tweet, showing (non-functioning) reply, retweet, etc buttons.
 	 *
-	 * @returns {React.Element} The footer.
+	 * @returns {import('react').Element} The footer.
 	 */
 	renderFooter() {
 		return (

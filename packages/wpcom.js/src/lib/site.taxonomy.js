@@ -48,7 +48,7 @@ class SiteTaxonomy {
 	 * Return `Term` instance
 	 *
 	 * @param {string} [term] - term slug
-	 * @returns {Term} Term instance
+	 * @returns {SiteTaxonomyTerm} Term instance
 	 */
 	term( term ) {
 		return new SiteTaxonomyTerm( term, this._taxonomy, this._siteId, this.wpcom );
