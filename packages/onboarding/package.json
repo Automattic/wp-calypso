@@ -32,7 +32,6 @@
 	},
 	"dependencies": {
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/launch": "workspace:^",
 		"@wordpress/components": "^19.0.4",
 		"@wordpress/data": "^6.1.4",
 		"@wordpress/icons": "^6.1.1",
@@ -54,7 +53,6 @@
 		"typescript": "^4.4.4"
 	},
 	"peerDependencies": {
-		"@wordpress/element": "^4.0.4",
 		"@wordpress/i18n": "^4.2.4",
 		"react": "^17.0.2",
 		"reakit-utils": "^0.15.1"
