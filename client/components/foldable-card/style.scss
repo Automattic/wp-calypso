@@ -123,7 +123,7 @@ button.foldable-card__action {
 	}
 }
 
-.foldable-card.is-expanded .foldable-card__expand .gridicon {
+.foldable-card.is-expanded > .foldable-card__header .foldable-card__expand .gridicon {
 	transform: rotate( 180deg );
 }
 
