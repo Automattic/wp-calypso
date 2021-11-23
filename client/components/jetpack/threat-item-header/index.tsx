@@ -94,6 +94,7 @@ const ThreatItemHeader: React.FC< Props > = ( { threat } ) => {
 				</span>
 			</div>
 			{ threat.fixable && (
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				<Gridicon className="threat-item-header__autofix_badge" icon="checkmark" size={ 18 } />
 			) }
 		</>

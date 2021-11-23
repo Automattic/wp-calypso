@@ -77,7 +77,7 @@ const ThreatItem: React.FC< Props > = ( {
 			return (
 				<>
 					{ ! threat.rows && (
-						<p className="threat-description__section-text">
+						<p className="threat-item threat-description__section-text">
 							{ translate(
 								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
 									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
@@ -86,7 +86,7 @@ const ThreatItem: React.FC< Props > = ( {
 						</p>
 					) }
 					{ threat.rows && (
-						<p className="threat-description__section-text">
+						<p className="threat-item threat-description__section-text">
 							{ translate(
 								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
 									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove or edit ' +
@@ -95,7 +95,7 @@ const ThreatItem: React.FC< Props > = ( {
 						</p>
 					) }
 					{ 'current' === threat.status && (
-						<p className="threat-description__section-text">
+						<p className="threat-item threat-description__section-text">
 							{ translate(
 								'If you need more help to resolve this threat, we recommend {{strong}}Codeable{{/strong}}, a trusted freelancer marketplace of highly vetted WordPress experts. ' +
 									'They have identified a select group of security experts to help with these projects. ' +
@@ -112,7 +112,11 @@ const ThreatItem: React.FC< Props > = ( {
 			);
 		}
 
-		return <p className="threat-description__section-text">{ getThreatFix( threat.fixable ) }</p>;
+		return (
+			<p className="threat-item threat-description__section-text">
+				{ getThreatFix( threat.fixable ) }
+			</p>
+		);
 	}, [ contactSupportUrl, threat ] );
 
 	const isFixable = React.useMemo(
