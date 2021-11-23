@@ -19,7 +19,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 class PostRevisionsDialog extends PureComponent {
 	static propTypes = {
 		/**
-		 * loadRevision is passed through from `post-editor/post-editor.jsx`
+		 * loadRevision is passed through from `gutenberg/editor/calypsoify-iframe.tsx`
 		 *
 		 * TODO untangle & reduxify
 		 */

@@ -37,7 +37,6 @@ function determinePostType( context ) {
 	return context.params.customPostType;
 }
 
-//duplicated from post-editor/controller.js. We should import it from there instead
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
 		return null;
@@ -226,8 +225,6 @@ function showDraftPostModal() {
 }
 
 export const post = ( context, next ) => {
-	// See post-editor/controller.js for reference.
-
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
 	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );

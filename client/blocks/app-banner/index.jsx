@@ -24,7 +24,6 @@ import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-dis
 import { getSectionName, appBannerIsEnabled } from 'calypso/state/ui/selectors';
 import {
 	ALLOWED_SECTIONS,
-	EDITOR,
 	GUTENBERG,
 	NOTES,
 	READER,
@@ -103,7 +102,7 @@ export class AppBanner extends Component {
 
 		// Inside page/post editor, hide the banner until we know that welcome tour has been dimissed to avoid overlapping.
 		if (
-			[ EDITOR, GUTENBERG ].includes( currentSection ) &&
+			currentSection === GUTENBERG &&
 			( ! blockEditorNuxStatus || blockEditorNuxStatus.show_welcome_guide )
 		) {
 			return false;
@@ -144,7 +143,6 @@ export class AppBanner extends Component {
 		if ( this.isAndroid() ) {
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
-				case EDITOR:
 				case GUTENBERG:
 					return 'intent://post/#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case NOTES:
@@ -234,7 +232,6 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 
 	const getFragment = () => {
 		switch ( currentSection ) {
-			case EDITOR:
 			case GUTENBERG:
 				return '/post';
 			case NOTES:

@@ -260,8 +260,8 @@
 	}
 
 	@media only screen and ( max-width: 660px ) {
-		.layout.focus-sites:not( .is-section-post-editor ) .layout__primary .main,
-		.layout.focus-sidebar:not( .is-section-post-editor ) .layout__primary .main {
+		.layout.focus-sites .layout__primary .main,
+		.layout.focus-sidebar .layout__primary .main {
 			transform: translateX( 100% );
 		}
 	}
