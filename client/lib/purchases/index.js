@@ -410,7 +410,6 @@ function isCloseToExpiration( purchase ) {
  * who are likely to be eligible for one.
  *
  * @param {object} purchase - the purchase with which we are concerned
- *
  * @returns {boolean} Whether in refund period.
  */
 function maybeWithinRefundPeriod( purchase ) {
@@ -795,5 +794,3 @@ export {
 	shouldRenderExpiringCreditCard,
 	shouldRenderMonthlyRenewalOption,
 };
-
-export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';
