@@ -800,12 +800,8 @@ class ManagePurchase extends Component {
 					{ isProductOwner && (
 						<div className="manage-purchase__renew-upgrade-buttons">
 							{ preventRenewal && this.renderSelectNewButton() }
-							{ ! preventRenewal && (
-								<>
-									{ this.renderUpgradeButton() }
-									{ this.renderRenewButton() }
-								</>
-							) }
+							{ this.renderUpgradeButton() }
+							{ ! preventRenewal && this.renderRenewButton() }
 						</div>
 					) }
 				</Card>
@@ -820,7 +816,7 @@ class ManagePurchase extends Component {
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ ! preventRenewal && ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
