@@ -221,7 +221,7 @@ __metadata:
     "@jest/globals": ^27.2.4
     "@types/config": ^0.0.40
     "@types/jest": ^27.0.3
-    "@types/node": ^16.11.9
+    "@types/node": ^16.11.10
     "@types/node-fetch": ^2.5.12
     "@types/totp-generator": ^0.0.2
     "@wordpress/i18n": ^4.2.4
@@ -6524,10 +6524,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.9":
-  version: 16.11.9
-  resolution: "@types/node@npm:16.11.9"
-  checksum: 704c4ef42a005a22ac5b06554a28a3956a089545891ec949d87e4760de2c8f6d325d5883d449b312e0f54f13495655c1acd6c1bd6deeb677fc6b583ca6423d8a
+"@types/node@npm:*, @types/node@npm:^16.11.10":
+  version: 16.11.10
+  resolution: "@types/node@npm:16.11.10"
+  checksum: 01c20c34ee96682306245b0144662f9364902d9dac25bd92d559b12b00e2b0a630c6003cb9ec1e4b02cede6e42b5309b258fa0d3eef622583ead9826b4377519
   languageName: node
   linkType: hard
 
@@ -38242,7 +38242,7 @@ testarmada-magellan@11.0.10:
     "@types/enzyme": ^3.10.10
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/lodash": ^4.14.177
-    "@types/node": ^16.11.9
+    "@types/node": ^16.11.10
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^17.0.36
