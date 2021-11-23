@@ -787,6 +787,16 @@ export function generateSteps( {
 		// Woocommerce Install steps
 		confirm: {
 			stepName: 'confirm',
+			props: {
+				headerTitle: i18n.translate( 'Your new store' ),
+				headerDescription: (
+					<>
+						{ i18n.translate( 'This will be your new store domain.' ) }
+						<br />
+						{ i18n.translate( 'You can change it later and get a custom one.' ) }
+					</>
+				),
+			},
 		},
 		transfer: {
 			stepName: 'transfer',
