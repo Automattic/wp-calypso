@@ -13,8 +13,6 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-const userOnPremiumPlan = 'defaultUser';
-
 describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	let page: Page;
 	let plansPage: PlansPage;
@@ -28,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	describe( 'Initial navigation', function () {
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: userOnPremiumPlan } );
+			await loginPage.login( { account: 'defaultUser' } );
 		} );
 
 		it( 'Navigate to Upgrades > Plans', async function () {

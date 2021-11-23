@@ -30,7 +30,7 @@ export default async (): Promise< void > => {
 	// its presence when running each test file.
 	process.env.COOKIES_PATH = cookieBasePath;
 
-	const userList = [ 'gutenbergSimpleSiteUser', 'eCommerceUser', 'defaultUser' ];
+	const userList = [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ];
 
 	for await ( const user of userList ) {
 		const [ username, password ] = config.get( 'testAccounts' )[ user ];
