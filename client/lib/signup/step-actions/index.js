@@ -458,6 +458,11 @@ function processItemCart(
 						callback( updatedCart.messages.errors[ 0 ].message, providedDependencies );
 						return;
 					}
+					const error = cartManagerClient.forCartKey( siteSlug ).getState().loadingError;
+					if ( error ) {
+						callback( error, providedDependencies );
+						return;
+					}
 					callback( undefined, providedDependencies );
 				} )
 				.catch( ( error ) => callback( error, providedDependencies ) );
