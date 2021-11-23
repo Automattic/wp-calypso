@@ -7,7 +7,6 @@ Query Active Theme is a React component used in managing fetching of a given sit
 Render the component, passing `siteId`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { getActiveTheme } from 'calypso/state/themes/selectors';

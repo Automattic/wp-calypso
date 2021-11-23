@@ -120,15 +120,9 @@ The steps below guide you through creating a new flow and step:
 
 3 - add a simple React component to `index.jsx`:
 
-```javascript
-import React from 'react';
-
-export default class extends React.Component {
-	static displayName = 'HelloWorld';
-
-	render() {
-		return <span>Hello world</span>;
-	}
+```jsx
+export default function HelloWorld() {
+	return <span>Hello world</span>;
 }
 ```
 
@@ -167,7 +161,7 @@ the first step of the flow at `/start/hello/hello-world`, where you should see y
 
 8 - now we need a way for users to move to the next step of the flow. Let's add a button and a form to the step's `render` method:
 
-```javascript
+```jsx
 function render() {
 	return (
 		<form onSubmit={ this.handleSubmit }>

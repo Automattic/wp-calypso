@@ -12,14 +12,11 @@ Is a higher-order component (HOC) that provides two props to the wrapped child:
 ### Usage
 
 ```jsx
-import React from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
-class Label extends React.Component {
-	render() {
-		const { moment, date } = this.props;
-		return <span>{ moment( date ).format( 'LLLL' ) }</span>;
-	}
+function Label() {
+	const { moment, date } = this.props;
+	return <span>{ moment( date ).format( 'LLLL' ) }</span>;
 }
 
 export default withLocalizedMoment( Label );
@@ -38,7 +35,6 @@ in `withLocalizedMoment`. It's just a different implementation of the same conce
 ### Usage
 
 ```jsx
-import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 export default function Label( { date } ) {
@@ -62,7 +58,6 @@ locale slug.
 ### Usage
 
 ```jsx
-import React from 'react';
 import ReactDom from 'react-dom';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 
