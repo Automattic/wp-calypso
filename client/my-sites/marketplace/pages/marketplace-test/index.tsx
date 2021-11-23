@@ -109,7 +109,7 @@ export default function MarketplaceTest(): JSX.Element {
 	const allBlockingMessages = getBlockingMessages( translate );
 	const holds = eligibilityDetails.eligibilityHolds || [];
 	const raisedBlockingMessages = holds
-		.filter( ( message: any ) => allBlockingMessages[ message ] )
+		.filter( ( message: string ) => allBlockingMessages[ message ] )
 		.map( ( message: string ) => allBlockingMessages[ message ] );
 	const hardBlockSingleMessages = holds.filter(
 		( message: string ) => message !== 'TRANSFER_ALREADY_EXISTS' || ! allBlockingMessages[ message ]
