@@ -60,6 +60,10 @@
 		cursor: default;
 		flex-direction: row;
 	}
+
+	@media screen and ( max-width: 782px ) {
+		display: block;
+	}
 }
 
 .plugin-action__disabled-info.info-popover {

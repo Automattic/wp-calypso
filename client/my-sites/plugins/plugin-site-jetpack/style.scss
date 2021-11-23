@@ -42,12 +42,16 @@
 	
 	.plugin-site-jetpack__domain {
 		flex: 8 8 0;
-		overflow-wrap: anywhere;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		font-weight: 500;
 	}
 
  	.plugin-action {
 		flex: 4 4 0;
 		margin-top: 0;
+		color: var( --studio-gray-50 );
 	}
 
 	.last-actions {
@@ -56,6 +60,33 @@
 
 		button.ellipsis-menu__toggle {
 			padding: 0;
+		}
+	}
+
+	@media screen and ( max-width: 782px ) {
+		flex-wrap: wrap;
+		border-top: 1px solid var( --studio-gray-5 );
+
+		.plugin-site-jetpack__domain {
+			order: 1;
+			flex: 90%;
+			padding: 7px 0;
+		}
+	
+		 .plugin-action {
+			order: 3;
+			flex: 50%;
+			padding: 7px 0;
+		}
+	
+		.last-actions {
+			order: 2;
+			flex: 10%;
+			justify-content: flex-end;
+
+			.plugin-remove-button__remove-link {
+				display: none;
+			}
 		}
 	}
 }

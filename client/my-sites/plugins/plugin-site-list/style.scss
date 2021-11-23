@@ -31,6 +31,10 @@
 				flex: 8 8 0;
 			}
 		}
+
+		@media screen and ( max-width: 782px ) {
+			display: none;
+		}
 	}	
 
 	.plugin-site-list__header-title {

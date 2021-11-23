@@ -370,9 +370,13 @@ $plugin-details-header-padding: 100px;
 	padding-top: 20px;
 	padding-bottom: 60px;
 	position: relative;
-	transform: translateX(-50%);
+	transform: translateX( -50% );
 	left: 50%;
-	width: calc( 100vw - var( --sidebar-width-max ) - 1px);
+	width: calc( 100vw - var( --sidebar-width-max ) - 1px );
+
+	@media screen and ( max-width: 782px ) {
+		width: 100vw;
+	}
 }
 
 .plugin-details__sites-list {
@@ -383,7 +387,11 @@ $plugin-details-header-padding: 100px;
 		padding: 0 40px;
 	}
 
-	@media screen and (max-width: 1040px) {
+	@media screen and ( max-width: 1040px ) {
 		padding: 0 48px;
+	}
+
+	@media screen and ( max-width: 660px ) {
+		padding: 0 24px;
 	}
 }

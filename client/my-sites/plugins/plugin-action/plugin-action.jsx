@@ -24,6 +24,8 @@ class PluginAction extends Component {
 		}
 
 		return (
+			/* eslint-disable jsx-a11y/click-events-have-key-events */
+			/* eslint-disable jsx-a11y/no-static-element-interactions */
 			<span
 				className="plugin-action__label"
 				ref={ this.disabledInfoLabelRef }
@@ -32,6 +34,8 @@ class PluginAction extends Component {
 				{ this.props.label }
 				{ this.renderDisabledInfo() }
 			</span>
+			/* eslint-enable jsx-a11y/click-events-have-key-events */
+			/* eslint-enable jsx-a11y/no-static-element-interactions */
 		);
 	}
 
