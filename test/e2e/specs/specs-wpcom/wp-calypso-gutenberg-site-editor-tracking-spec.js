@@ -7,6 +7,7 @@ import { By, Key } from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
+import GuideComponent from '../../lib/components/guide-component.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import SiteEditorComponent from '../../lib/components/site-editor-component.js';
 import * as dataHelper from '../../lib/data-helper.js';
@@ -344,6 +345,9 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			await editor.waitForTemplateToLoad();
 			await editor.waitForTemplatePartsToLoad();
 			await deleteTemplatesAndTemplateParts( this.driver );
+
+			const welcomeGuide = new GuideComponent( this.driver );
+			await welcomeGuide.dismiss( 4000 );
 		} );
 
 		it( 'should skip tracking "wpcom_block_editor_nav_sidebar_item_edit" when editor just loaded (no query params)', async function () {
@@ -366,6 +370,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					assert.strictEqual( globalStylesToggleEvents.length, 1 );
 					const [ , eventData ] = globalStylesToggleEvents[ 0 ];
 					assert.strictEqual( eventData.open, true );
+
+					// Dismiss the Global Styles welcome guide if present.
+					const welcomeGuide = new GuideComponent( this.driver );
+					await welcomeGuide.dismiss( 4000 );
 				} );
 
 				it( 'when Global Styles sidebar is closed', async function () {

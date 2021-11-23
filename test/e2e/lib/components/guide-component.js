@@ -15,6 +15,15 @@ export default class GuideComponent extends AsyncBaseContainer {
 				waitOverride
 			)
 		) {
+			// If the guide has a close button, use this to dismiss.
+			const closeButtonSelector = By.css(
+				'.components-guide .components-button[aria-label="Close dialog"]'
+			);
+			if ( await driverHelper.isElementLocated( this.driver, closeButtonSelector ) ) {
+				return await driverHelper.clickWhenClickable( this.driver, closeButtonSelector );
+			}
+
+			// For when there is no close button present.
 			try {
 				// Easiest way to dismiss it, but it might not work in IE.
 				await this.driver.findElement( By.css( selector ) ).sendKeys( Key.ESCAPE );
