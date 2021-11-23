@@ -12,7 +12,7 @@ export default function PublishConfirmation() {
 			<FormSettingExplanation>
 				{ translate(
 					'The Block Editor handles the Publish confirmation setting. ' +
-						'To enable it, go to Options under the Ellipses menu in the Editor ' +
+						'To enable it, go to Options under the Ellipsis menu in the Editor ' +
 						'and check "Enable Pre-publish checks."'
 				) }
 			</FormSettingExplanation>
