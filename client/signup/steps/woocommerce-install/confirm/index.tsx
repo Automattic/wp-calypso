@@ -55,7 +55,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		}
 		dispatch( fetchAutomatedTransferStatusOnce( siteId ) );
 		dispatch( requestEligibility( siteId ) );
-	}, [ siteId, dispatch, goToStep ] );
+	}, [ siteId, dispatch ] );
 
 	// Check whether it's requesting eligibility data.
 	const isFetchingTransferStatus = !! useSelector( ( state ) =>
