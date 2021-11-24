@@ -44,12 +44,6 @@ describe( 'PluginsBrowserList basic tests', () => {
 		const comp = shallow( <PluginsBrowserList { ...props } size={ 2 } /> );
 		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 2 );
 	} );
-
-	test( 'should render empty elements to complete the grid', () => {
-		const comp = shallow( <PluginsBrowserList { ...props } plugins={ plugins.slice( 0, 2 ) } /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 2 );
-		expect( comp.find( '.plugins-browser-item.is-empty' ).length ).toBe( 4 );
-	} );
 } );
 
 describe( 'InfiniteScroll variant', () => {
@@ -72,7 +66,7 @@ describe( 'InfiniteScroll variant', () => {
 	test( 'should not show placeholders if there are plugins and the `showPlaceholders` is not set', () => {
 		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } /> );
 		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 3 );
-		expect( comp.find( '.plugins-browser-item.is-empty' ).length ).toBe( 3 );
+		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 0 );
 	} );
 } );
 
