@@ -190,6 +190,11 @@ const sections = [
 		isomorphic: true,
 	},
 	{
+		name: 'setup',
+		paths: [ '/setup' ],
+		module: 'calypso/setup',
+	},
+	{
 		name: 'stats',
 		paths: [ '/stats' ],
 		module: 'calypso/my-sites/stats',
