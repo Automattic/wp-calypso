@@ -224,7 +224,8 @@ export class PluginsBrowser extends Component {
 
 			const subtitle =
 				pluginsPagination &&
-				this.props.translate( '%(total)s plugins', {
+				this.props.translate( '%(total)s plugin', '%(total)s plugins', {
+					count: pluginsPagination.results,
 					textOnly: true,
 					args: {
 						total: pluginsPagination.results,
