@@ -72,7 +72,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 				title="Checkout > Jetpack Thank You Licensing Manual Activation License Key"
 			/>
 			<LicensingActivation
-				title={ translate( 'Activate your %(productName)s', {
+				title={ translate( 'Activate your %(productName)s plan', {
 					args: { productName },
 				} ) }
 				footerImage={ licensingActivationPluginBanner }
