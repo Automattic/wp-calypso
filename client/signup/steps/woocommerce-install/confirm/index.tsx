@@ -19,26 +19,12 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { GoToStep } from '../../../types';
-import type { AppState } from 'calypso/types';
+import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
 
-interface Props {
-	goToStep: GoToStep;
-	stepSectionName: string;
-	isReskinned: boolean;
-	headerTitle: string;
-	headerDescription: string;
-}
-
-export default function Confirm( {
-	goToStep,
-	isReskinned,
-	stepSectionName,
-	headerTitle,
-	headerDescription,
-}: Props ): ReactElement | null {
+export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
+	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const dispatch = useDispatch();
@@ -73,7 +59,7 @@ export default function Confirm( {
 	);
 
 	// Pick the wpcom subdomain.
-	const wpcomDomain = useSelector( ( state: AppState ) => getSiteDomain( state, siteId ) );
+	const wpcomDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
 	const isProcessing = ! siteId || isFetchingTransferStatus || ! wordPressSubdomainWarning;
 
@@ -173,6 +159,7 @@ export default function Confirm( {
 			align={ isReskinned ? 'left' : 'center' }
 			stepContent={ getContent() }
 			isWideLayout={ isReskinned }
+			{ ...props }
 		/>
 	);
 }
