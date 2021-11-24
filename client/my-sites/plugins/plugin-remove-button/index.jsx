@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import accept from 'calypso/lib/accept';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -175,6 +176,14 @@ class PluginRemoveButton extends Component {
 		}
 
 		const handleClick = disabled ? null : this.removeAction;
+
+		if ( this.props.menuItem ) {
+			return (
+				<PopoverMenuItem onClick={ handleClick } className="plugin-remove-button__remove-icon">
+					{ label }
+				</PopoverMenuItem>
+			);
+		}
 
 		return (
 			<PluginAction

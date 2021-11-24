@@ -1,5 +1,7 @@
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -23,6 +25,22 @@ const PluginSiteJetpack = ( props ) => {
 	const pluginOnSite = useSelector( ( state ) =>
 		getPluginOnSite( state, props.site.ID, props.plugin.slug )
 	);
+	const [ isMobileLayout, setIsMobileLayout ] = useState();
+
+	useEffect( () => {
+		if ( isWithinBreakpoint( '<1040px' ) ) {
+			setIsMobileLayout( true );
+		}
+		const unsubscribe = subscribeIsWithinBreakpoint( '<1040px', ( isMobile ) =>
+			setIsMobileLayout( isMobile )
+		);
+
+		return () => {
+			if ( typeof unsubscribe === 'function' ) {
+				unsubscribe();
+			}
+		};
+	}, [] );
 
 	if ( ! props.site || ! props.plugin ) {
 		return null;
@@ -66,10 +84,17 @@ const PluginSiteJetpack = ( props ) => {
 				<PluginAutoupdateToggle site={ props.site } plugin={ pluginOnSite } wporg={ true } />
 			) }
 			<div className="plugin-site-jetpack__action plugin-action last-actions">
-				{ canToggleRemove && <PluginRemoveButton plugin={ pluginOnSite } site={ props.site } /> }
-				{ settingsLink && (
+				{ ! isMobileLayout && canToggleRemove && (
+					<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } />
+				) }
+				{ ( isMobileLayout || settingsLink ) && (
 					<EllipsisMenu position={ 'bottom' }>
-						<PopoverMenuItem href={ settingsLink }>{ translate( 'Settings' ) }</PopoverMenuItem>
+						{ settingsLink && (
+							<PopoverMenuItem href={ settingsLink }>{ translate( 'Settings' ) }</PopoverMenuItem>
+						) }
+						{ isMobileLayout && (
+							<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } menuItem />
+						) }
 					</EllipsisMenu>
 				) }
 				{ showAutoManagedMessage && (
