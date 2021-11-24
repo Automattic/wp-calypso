@@ -63,6 +63,10 @@
 		}
 	}
 
+	.plugin-site-jetpack__install-button {
+		order: 2;
+	}
+
 	@media screen and ( max-width: 1040px ) {
 		flex-wrap: wrap;
 		border-top: 1px solid var( --studio-gray-5 );

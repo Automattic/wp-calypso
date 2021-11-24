@@ -50,7 +50,7 @@ const PluginSiteJetpack = ( props ) => {
 		return (
 			<div className="plugin-site-jetpack__container">
 				<div className="plugin-site-jetpack__domain">{ props.site.domain }</div>
-				<div>
+				<div className="plugin-site-jetpack__install-button">
 					{
 						<PluginInstallButton
 							isEmbed={ true }
