@@ -7,6 +7,9 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
+	DOMAIN_TRANSFER_CODE_ONLY_REQUEST,
+	DOMAIN_TRANSFER_CODE_ONLY_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_CODE_ONLY_REQUEST_FAILED,
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
@@ -30,6 +33,24 @@ export const saveDomainIpsTag = ( domain, selectedRegistrar ) => ( {
 
 export const updateDomainTransfer = ( domain, options ) => ( {
 	type: DOMAIN_TRANSFER_UPDATE,
+	domain,
+	options,
+} );
+
+export const requestDomainTransferCodeOnly = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_CODE_ONLY_REQUEST,
+	domain,
+	options,
+} );
+
+export const requestDomainTransferCodeOnlyCompleted = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_CODE_ONLY_REQUEST_COMPLETED,
+	domain,
+	options,
+} );
+
+export const requestDomainTransferCodeOnlyFailed = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_CODE_ONLY_REQUEST_FAILED,
 	domain,
 	options,
 } );

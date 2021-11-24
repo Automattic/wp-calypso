@@ -4,6 +4,9 @@ import {
 	DOMAIN_TRANSFER_CANCEL_REQUEST,
 	DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_CANCEL_REQUEST_FAILED,
+	DOMAIN_TRANSFER_CODE_ONLY_REQUEST,
+	DOMAIN_TRANSFER_CODE_ONLY_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_CODE_ONLY_REQUEST_FAILED,
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
@@ -44,6 +47,21 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				...state,
 				[ domain ]: options,
 			};
+		}
+		case DOMAIN_TRANSFER_CODE_ONLY_REQUEST: {
+			return updateDomainState( state, action.domain, {
+				isRequestingTransferCode: true,
+			} );
+		}
+		case DOMAIN_TRANSFER_CODE_ONLY_REQUEST_COMPLETED: {
+			return updateDomainState( state, action.domain, {
+				isRequestingTransferCode: false,
+			} );
+		}
+		case DOMAIN_TRANSFER_CODE_ONLY_REQUEST_FAILED: {
+			return updateDomainState( state, action.domain, {
+				isRequestingTransferCode: false,
+			} );
 		}
 		case DOMAIN_TRANSFER_CODE_REQUEST: {
 			return updateDomainState( state, action.domain, {

@@ -21,6 +21,8 @@ import {
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
+import { requestDomainTransferCodeOnly } from 'calypso/state/domains/transfer/actions';
+import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -36,10 +38,13 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const { __ } = useI18n();
 	const {
 		currentRoute,
+		domain,
 		isAtomic,
 		isDomainOnly,
 		isMapping,
 		isPrimaryDomain,
+		isRequestingTransferCode,
+		requestDomainTransferCodeOnly,
 		selectedDomainName,
 		selectedSite,
 	} = props;
@@ -127,10 +132,28 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
 
+	const requestTransferCode = () => {
+		requestDomainTransferCodeOnly( selectedDomainName );
+	};
+
 	const renderAdvancedTransferOptions = () => {
-		const toggleLabel = (
+		// translators: domain transfer lock
+		const disabledLockLabel = __( 'Transfer lock off' );
+		// translators: domain transfer lock
+		const enabledLockLabel = __( 'Transfer lock on' );
+
+		const toggleLabel = ! domain ? (
+			'loading'
+		) : (
 			<span className="transfer-page__transfer-lock-label">
-				<Icon icon={ lock } size={ 15 } viewBox="4 0 18 20" /> Transfer lock on
+				{ domain.isLocked ? (
+					<>
+						<Icon icon={ lock } size={ 15 } viewBox="4 0 18 20" />
+						{ enabledLockLabel }
+					</>
+				) : (
+					disabledLockLabel
+				) }
 			</span>
 		);
 
@@ -140,16 +163,19 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					Advanced Options
 				</CardHeading>
 				<ToggleControl
-					// checked={ this.getToggleUiStatus() }
+					checked={ domain?.isLocked }
 					disabled={ false }
-					onChange={ null }
+					onChange={ () => null }
 					label={ toggleLabel }
 				/>
 				<p>
-					We recommend leaving the transfer lock on, unless you want to transfer your domain to
-					another provider.
+					{ __(
+						'We recommend leaving the transfer lock on, unless you want to transfer your domain to another provider.'
+					) }
 				</p>
-				<Button primary={ false }>Get authorization code</Button>
+				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
+					{ __( 'Get authorization code' ) }
+				</Button>
 			</Card>
 		);
 	};
@@ -186,18 +212,26 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	);
 };
 
-const transferPageComponent = connect( ( state, ownProps: TransferPageProps ) => {
-	const domain = getSelectedDomain( ownProps );
-	const siteId = getSelectedSiteId( state )!;
-	return {
-		currentRoute: getCurrentRoute( state ),
-		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
-		isAtomic: isSiteAutomatedTransfer( state, siteId ),
-		isDomainOnly: isDomainOnlySite( state, siteId ),
-		isMapping: Boolean( domain ) && isMappedDomain( domain ),
-		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
-		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
-	};
-} )( TransferPage );
+const transferPageComponent = connect(
+	( state, ownProps: TransferPageProps ) => {
+		const domain = getSelectedDomain( ownProps );
+		const siteId = getSelectedSiteId( state )!;
+		const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
+		return {
+			domain,
+			currentRoute: getCurrentRoute( state ),
+			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
+			isAtomic: isSiteAutomatedTransfer( state, siteId ),
+			isDomainOnly: isDomainOnlySite( state, siteId ),
+			isMapping: Boolean( domain ) && isMappedDomain( domain ),
+			isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
+			primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
+			isRequestingTransferCode: !! domainInfo.isRequestingTransferCode,
+		};
+	},
+	{
+		requestDomainTransferCodeOnly,
+	}
+)( TransferPage );
 
 export default transferPageComponent;
