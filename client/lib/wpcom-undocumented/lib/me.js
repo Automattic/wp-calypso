@@ -31,43 +31,6 @@ UndocumentedMe.prototype.getReceipt = function ( receiptId, queryOrCallback ) {
 	);
 };
 
-UndocumentedMe.prototype.sendSMSValidationCode = function ( callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/sms/new',
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.validateTwoStepCode = function ( body, callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/validate',
-		body: body,
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.getTwoStep = function ( callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/',
-	};
-
-	return this.wpcom.req.get( args, callback );
-};
-
-UndocumentedMe.prototype.getAppAuthCodes = function ( callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/app-auth-setup/',
-	};
-
-	return this.wpcom.req.get( args, callback );
-};
-
 UndocumentedMe.prototype.getPeerReferralLink = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
@@ -84,15 +47,6 @@ UndocumentedMe.prototype.setPeerReferralLinkEnable = function ( enable, callback
 		body: {
 			enable,
 		},
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.backupCodes = function ( callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/two-step/backup-codes/new',
 	};
 
 	return this.wpcom.req.post( args, callback );
