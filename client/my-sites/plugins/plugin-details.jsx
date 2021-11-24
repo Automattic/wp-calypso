@@ -270,7 +270,18 @@ function PluginDetails( props ) {
 							</div>
 							<div className="plugin-details__t-and-c">
 								{ translate(
-									'By installing, you agree to WordPress.com’s Terms of Service and the Third-Party plug-in Terms.'
+									'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the Third-Party plugin Terms.',
+									{
+										components: {
+											a: (
+												<a
+													target="_blank"
+													rel="noopener noreferrer"
+													href="https://wordpress.com/tos/"
+												/>
+											),
+										},
+									}
 								) }
 							</div>
 						</div>
