@@ -3,7 +3,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import yourNewStoreImage from 'calypso/assets/images/woocommerce-install/your-new-store.png';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -69,10 +68,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__image-container">
-					{ isProcessing && <LoadingEllipsis /> }
-					<img src={ yourNewStoreImage } alt="" />
-				</div>
 				<div className="confirm__instructions-container">
 					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
 						{ wpcomDomain }
@@ -120,13 +115,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__image-container">
-					{ isProcessing && <LoadingEllipsis /> }
-					<img src={ yourNewStoreImage } alt="" />
-					<div>
-						<BackButton onClick={ () => goToStep( 'confirm', 'wpcom_subdomain_substep' ) } />
-					</div>
-				</div>
+				{isProcessing && <LoadingEllipsis />}
 				<div className="confirm__instructions-container">
 					{ !! eligibilityHolds?.length && (
 						<p>

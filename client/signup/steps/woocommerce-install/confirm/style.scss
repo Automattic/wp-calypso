@@ -13,6 +13,11 @@ body.is-section-signup {
 .is-confirm {
 	margin: 0 0 0 20px;
 	padding: 0 20px;
+
+	.step-wrapper {
+		display: grid;
+    grid-template-columns: 1fr 1fr;
+	}
 }
 
 .confirm__image-container {
