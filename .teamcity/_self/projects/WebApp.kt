@@ -726,7 +726,14 @@ object PreReleaseE2ETests : BuildType({
 		}
 	}
 
-	triggers {}
+	triggers {
+		vcs {
+			branchFilter = """
+					-:*
+				""".trimIndent()
+            perCheckinTriggering = true
+        }
+	}
 
 	failureConditions {
 		executionTimeoutMin = 20
