@@ -42,7 +42,6 @@
 }
 
 .plugin-action__label {
-	display: flex;
 	flex-direction: row-reverse;
 	align-items: center;
 	font-size: $font-body-small;
@@ -61,7 +60,7 @@
 		flex-direction: row;
 	}
 
-	@media screen and ( max-width: 782px ) {
+	@media screen and ( max-width: 1040px ) {
 		display: block;
 	}
 }

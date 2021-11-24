@@ -22,7 +22,7 @@
 		background: var( --studio-white );
 		border: 1px solid var( --studio-gray-5 );
 		padding: 8px 24px;
-		
+
 		.plugin-site-list__header-title {
 			flex: 4 4 0;
 			color: var( --studio-gray-50 );
@@ -32,10 +32,10 @@
 			}
 		}
 
-		@media screen and ( max-width: 782px ) {
+		@media screen and ( max-width: 1040px ) {
 			display: none;
 		}
-	}	
+	}
 
 	.plugin-site-list__header-title {
 		flex-grow: 4;

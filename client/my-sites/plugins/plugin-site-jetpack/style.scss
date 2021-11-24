@@ -39,7 +39,7 @@
 	border: 1px solid var( --studio-gray-5 );
 	border-top: 0;
 	padding: 16px 24px;
-	
+
 	.plugin-site-jetpack__domain {
 		flex: 8 8 0;
 		text-overflow: ellipsis;
@@ -48,7 +48,7 @@
 		font-weight: 500; /* stylelint-disable-line */
 	}
 
- 	.plugin-action {
+	.plugin-action {
 		flex: 4 4 0;
 		margin-top: 0;
 		color: var( --studio-gray-50 );
@@ -63,22 +63,23 @@
 		}
 	}
 
-	@media screen and ( max-width: 782px ) {
+	@media screen and ( max-width: 1040px ) {
 		flex-wrap: wrap;
 		border-top: 1px solid var( --studio-gray-5 );
+		padding: 0 12px;
 
 		.plugin-site-jetpack__domain {
 			order: 1;
 			flex: 90%;
 			padding: 7px 0;
 		}
-	
-		 .plugin-action {
+
+		.plugin-action {
 			order: 3;
 			flex: 50%;
 			padding: 7px 0;
 		}
-	
+
 		.last-actions {
 			order: 2;
 			flex: 10%;
