@@ -35,7 +35,7 @@ export function MasterbarCartButton( {
 		} );
 	};
 	const onClose = () => setIsActive( false );
-	const tooltip = translate( 'View my Shopping Cart' );
+	const tooltip = translate( 'My shopping cart' );
 
 	return (
 		<div className="masterbar-cart-button" ref={ masterbarButtonRef }>
