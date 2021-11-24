@@ -105,17 +105,18 @@
 				.videos-ui__duration {
 					color: rgba( 255, 255, 255, 0.5 );
 					display: inline-block;
-					margin-right: 10px;
+					flex-basis: 34px;
 				}
 
 				.videos-ui__completed-checkmark {
 					text-align: center;
 					background-color: #00a32a;
 					margin-left: auto;
-					width: 22px;
+					flex-basis: 22px;
+					flex-shrink: 0;
+					flex-grow: 0;
 					height: 22px;
 					border-radius: 50px;
-					flex-shrink: 0;
 
 					svg {
 						margin-top: 5px;
@@ -125,7 +126,6 @@
 				.videos-ui__status-icon {
 					text-align: center;
 					margin-left: auto;
-					margin-right: 2px;
 					flex-shrink: 0;
 
 					svg {
