@@ -1,16 +1,15 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useRef } from 'react';
+import { cloneElement, useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
-import VideoFooterBar from './video-footer-bar';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
+const VideosUi = ( { headerBar, footerBar } ) => {
 	const translate = useTranslate();
 
 	const courseSlug = 'blogging-quick-start';
@@ -77,11 +76,6 @@ const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
 			setSelectedVideoIndex( idx );
 		}
 	};
-
-	const skipClickHandler = () =>
-		recordTracksEvent( 'calypso_courses_skip_to_draft', {
-			course: course.slug,
-		} );
 
 	useEffect( () => {
 		if ( course ) {
@@ -206,19 +200,7 @@ const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
 					</div>
 				</div>
 			</div>
-			{ course && (
-				<VideoFooterBar
-					displayBackButton={ true }
-					displaySkipLink={ true }
-					displayCTA={ false }
-					descriptionCTA={ course.cta.description }
-					buttonTextCTA={ course.cta.action }
-					hrefCTA={ course.cta.url }
-					courseSlug={ course.slug }
-					onBackClick={ onBackClick }
-					skipClickHandler={ skipClickHandler }
-				/>
-			) }
+			{ course && cloneElement( footerBar, { course: course, isComplete: false } ) }
 		</div>
 	);
 };
