@@ -17,7 +17,7 @@ import type { WooCommerceInstallProps } from '../';
 import './style.scss';
 
 export default function Transfer( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep } = props;
+	const { goToStep, isReskinned } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -131,6 +131,7 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 			backUrl="/woocommerce-installation"
 			hideFormattedHeader={ true }
 			className="transfer__step-wrapper"
+			isWideLayout={ isReskinned }
 			stepContent={
 				<>
 					<div className="transfer__heading-wrapper woocommerce-install__heading-wrapper">
