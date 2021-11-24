@@ -284,7 +284,7 @@ class MasterbarLoggedIn extends Component {
 							require="./masterbar-cart-wrapper"
 							placeholder={ null }
 							className="masterbar__item-cart"
-							tooltip={ translate( 'View my Shopping Cart' ) }
+							tooltip={ translate( 'My shopping cart' ) }
 							goToCheckout={ this.goToCheckout }
 							selectedSiteSlug={ siteSlug }
 						/>
