@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
@@ -183,7 +184,9 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 											<div>
 												<p>{ videoInfo.description } </p>
 												<Button
-													className="videos-ui__button"
+													className={ classNames( 'videos-ui__button', {
+														'videos-ui__video-completed': isVideoCompleted,
+													} ) }
 													onClick={ () => onVideoPlayClick( data[ 0 ], videoInfo ) }
 												>
 													<svg
@@ -202,7 +205,6 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 															stroke-linejoin="round"
 														/>
 													</svg>
-
 													<span>{ translate( 'Play video' ) }</span>
 												</Button>
 											</div>

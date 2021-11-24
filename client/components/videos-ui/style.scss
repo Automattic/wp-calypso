@@ -191,6 +191,21 @@
 			padding-right: 10px;
 			vertical-align: middle;
 		}
+
+		&.videos-ui__video-completed {
+			background-color: #263135;
+			span {
+				color:rgba( 255, 255, 255, 0.5 );
+			}
+
+			svg {
+				opacity: 0.5;
+				path {
+					fill: #ffffff;
+					stroke: #ffffff;
+				}
+			}
+		}
 	}
 
 	@include break-small {
