@@ -233,9 +233,9 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						/>
 					) }
 				</p>
-				<div className="scan-threats__buttons">
-					{ hasFixableThreats && (
-						<>
+				{ hasFixableThreats && (
+					<>
+						<div className="scan-threats__buttons">
 							<p>{ fixSummary }</p>
 							<Button
 								primary
@@ -245,9 +245,9 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							>
 								{ translate( 'Auto fix all' ) }
 							</Button>
-						</>
-					) }
-				</div>
+						</div>
+					</>
+				) }
 			</Card>
 			<ThreatListHeader />
 			<div className="scan-threats__threats">
