@@ -86,7 +86,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 				source,
 				jetpackTemporarySiteId,
 			},
-			`/checkout/jetpack/thank-you/licensing-manual-activate/${ productSlug }`
+			`/checkout/jetpack/thank-you/licensing-manual-activate-instructions/${ productSlug }`
 		);
 	}, [ jetpackTemporarySiteId, productSlug, source, receiptId ] );
 
