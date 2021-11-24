@@ -124,7 +124,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					{ isProcessing && <LoadingEllipsis /> }
 					<img src={ yourNewStoreImage } alt="" />
 					<div>
-						<BackButton onClick={ () => goToStep( 'confirm', 'wpcom_subdomain_substep' ) } />
+						<BackButton onClick={ () => goToStep( 'select-site' ) } />
 					</div>
 				</div>
 				<div className="confirm__instructions-container">
@@ -151,7 +151,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
-			backUrl="/woocommerce-installation"
+			backUrl="select-site"
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
