@@ -25,15 +25,15 @@ import type { GoToStep } from '../../../types';
 import './style.scss';
 
 function StepPicture( {
-	isProcessing,
+	isLoading,
 	goToStep,
 }: {
-	isProcessing: boolean;
+	isLoading: boolean;
 	goToStep: GoToStep;
 } ): ReactElement {
 	return (
 		<div className="confirm__image-container">
-			{ isProcessing && <LoadingEllipsis /> }
+			{ isLoading && <LoadingEllipsis /> }
 			<img src={ yourNewStoreImage } alt="" />
 			<div>
 				<BackButton onClick={ () => goToStep( 'select-site' ) } />
@@ -80,7 +80,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	// Pick the wpcom subdomain.
 	const wpcomDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
-	const isProcessing = ! siteId || isFetchingTransferStatus || ! wordPressSubdomainWarning;
+	const isLoading = ! siteId || isFetchingTransferStatus;
 
 	function getWPComSubdomainWarningContent() {
 		// Get staging sudomain based on the wpcom subdomain.
@@ -88,7 +88,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<StepPicture isProcessing={ isProcessing } goToStep={ goToStep } />
+				<StepPicture isLoading={ isLoading } goToStep={ goToStep } />
 
 				<div className="confirm__instructions-container">
 					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
@@ -110,7 +110,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					</p>
 
 					<NextButton
-						disabled={ isProcessing }
+						disabled={ isLoading }
 						onClick={ () => {
 							if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
 								return goToStep( 'confirm', 'eligibility_substep' );
@@ -137,7 +137,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<StepPicture isProcessing={ isProcessing } goToStep={ goToStep } />
+				<StepPicture isLoading={ isLoading } goToStep={ goToStep } />
 
 				<div className="confirm__instructions-container">
 					{ !! eligibilityHolds?.length && (
