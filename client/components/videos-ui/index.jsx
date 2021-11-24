@@ -200,7 +200,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 					</div>
 				</div>
 			</div>
-			{ course && cloneElement( footerBar, { course: course, isComplete: false } ) }
+			{ course && cloneElement( footerBar, { course: course } ) }
 		</div>
 	);
 };
