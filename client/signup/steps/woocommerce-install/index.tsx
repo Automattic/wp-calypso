@@ -3,12 +3,11 @@ import { ReactElement } from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import Confirm from './confirm';
 import Install from './install';
-import Transfer from './transfer';
 import type { GoToStep } from '../../types';
 
 import './style.scss';
 
-interface WooCommerceInstallProps {
+export interface WooCommerceInstallProps {
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;
@@ -55,8 +54,8 @@ export default function WooCommerceInstall( props: WooCommerceInstallProps ): Re
 			className="woocommerce-install__step-wrapper"
 			stepContent={
 				<div className="woocommerce-install__step-content">
-					{ stepName === 'transfer' && <Transfer goToStep={ goToStep } /> }
-					{ stepName === 'install' && <Install goToStep={ goToStep } /> }
+					{ stepName === 'confirm' && <Confirm goToStep={ props.goToStep } /> }
+					{ stepName === 'install' && <Install goToStep={ props.goToStep } /> }
 				</div>
 			}
 			isWideLayout={ isReskinned }
