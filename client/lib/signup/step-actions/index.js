@@ -26,6 +26,7 @@ import {
 	getSelectedImportEngine,
 	getNuxUrlInputValue,
 } from 'calypso/state/importer-nux/temp-selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -468,7 +469,8 @@ function processItemCart(
 				} )
 				.catch( ( error ) => {
 					debug( 'product add request had an error', error );
-					callback( error, providedDependencies );
+					reduxStore.dispatch( errorNotice( error.message, { isPersistent: true } ) );
+					callback( error.message, providedDependencies );
 				} );
 		} else {
 			debug( 'no cart items to add' );
