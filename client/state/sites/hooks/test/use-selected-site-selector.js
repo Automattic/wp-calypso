@@ -21,7 +21,7 @@ describe( 'useSelectedSiteSelector()', () => {
 			},
 		};
 		useSelector.mockImplementation( ( selector ) => selector( state ) );
-		expect( useSelectedSiteSelector( isJetpackSite ) ).toEqual( true );
+		expect( useSelectedSiteSelector( isJetpackSite ) ).toBe( true );
 	} );
 
 	test( 'passes through rest params', () => {
