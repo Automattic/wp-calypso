@@ -1,74 +1,21 @@
-# Setup
+# Advanced Setup
 
-This document will cover the environment setup process to run the `wp-calypso` e2e tests.
+Follow the [Quick Start](../README.md) guide to install required software.
 
 ## Table of contents
 
 <!-- TOC -->
 
-- [Setup](#setup)
-  - [Table of contents](#table-of-contents)
-  - [Software Environment](#software-environment)
-    - [Required software](#required-software)
-  - [Environment Variables](#environment-variables)
-  - [Setup steps macOS 10.15 and 11.0](#setup-steps-macos-1015-and-110)
-    - [Intel architecture](#intel-architecture)
+- [Advanced Setup](#advanced-setup)
+    - [Table of contents](#table-of-contents)
     - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
     - [Apple Silicon arm64](#apple-silicon-arm64)
-  - [Credentials](#credentials)
-  - [Configuration](#configuration)
-    - [Overview](#overview)
-    - [Quick start](#quick-start)
-    - [Custom configs](#custom-configs)
+    - [Help](#help)
+        - [The chromium binary is not available for arm64](#the-chromium-binary-is-not-available-for-arm64)
 
 <!-- /TOC -->
 
-## Software Environment
-
-The provided steps are for macOS 11.0 Big Sur.
-It may work for Linux distributions and/or Windows but no guarantees are provided.
-
-### Required software
-
-- [Node.js](https://nodejs.org/en/download/package-manager/#macos)
-- [yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
-- [npm](https://www.npmjs.com/get-npm)
-- (optional) [nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Node.js can also be installed using [Homebrew](https://nodejs.dev/learn/how-to-install-nodejs).
-
-It is strongly recommended to use `nvm` to manage multiple Node.js versions.
-
-## Environment Variables
-
-Environment Variables are values that are defined at the system level to serve as configuration for programs.
-
-For e2e tests, the following are required environment variables:
-
-```
-export NODE_CONFIG_ENV=<name_of_decrypted_config_to_use>
-export CONFIG_KEY=<decryption_key_from_a8c_store>
-```
-
-Each of these variables serve a specific purpose and will be covered in the next sections.
-
-Additionally, see the full list of other environment variables [here](environment_variables.md).
-
-## Setup steps (macOS 10.15 and 11.0)
-
-### Intel architecture
-
-Install the list of software listed under [Required software](#required-software).
-
-Up-to-date instructions on installing individual pieces of required software can be found on their respective sites.
-
-Once installed, open a Terminal instance and execute the following:
-
-```
-yarn install
-```
-
-### Apple Silicon (emulated x86_64)
+## Apple Silicon (emulated x86_64)
 
 1. install i386 Homebrew:
 
@@ -122,7 +69,7 @@ arch -x86_64 yarn install --frozen-lockfile
 
 At any point, run `arch` to verify whether shell is running with Rosetta 2 emulation.
 
-### Apple Silicon (arm64)
+## Apple Silicon (arm64)
 
 Similar to instructions in macOS Intel architecture, install the arm64 variant of the required software, then follow these steps:
 
@@ -139,40 +86,38 @@ CHROMEDRIVER_SKIP_DOWNLOAD=true
 yarn install
 ```
 
-## Credentials
 
-Within `test/e2e/config` is an encrypted file that holds test account credentials. This must be decrypted prior to use. For instructions on how to decrypt this file, please refer to the Field Guide page.
+## Help
 
-**Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
+### The chromium binary is not available for arm64
 
-## Configuration
-
-### Overview
-
-The tests use the node [config](https://www.npmjs.com/package/config) library to automatically load the appropriate configuration file depending on the execution environment.
-
-Under the `tests/e2e/config` directory are JSON files for predefined environments:
-
-- `default.json` contains common values that should persist across environments.
-- `development.json` is for local.
-- `test.json` for CI.
-
-### Quick start
-
-The default configuration will suffice for most purposes. To use the default configuration, nothing needs to be changed.
-
-### Custom configs
-
-> :warning: **ensure username/passwords and other configuration values are not committed by accident!**
-
-Custom config files should be added under `test/e2e/config/` and should follow the naming scheme:
+Problem:
 
 ```
-local-<whatever>.json
+The chromium binary is not available for arm64: 
+If you are on Ubuntu, you can install with: 
+
+ apt-get install chromium-browser
+
+/Calypso/wp-calypso/node_modules/backstopjs/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserFetcher.js:112
+            throw new Error();
+            ^
+
+Error
+    at /Calypso/wp-calypso/node_modules/backstopjs/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserFetcher.js:112:19
+    at FSReqCallback.oncomplete (node:fs:198:21)
+
 ```
 
-The `local-` prefix ensures that custom configurations will not be commited to the repository.
+Solution:
 
-Values found in the local configuration file will override ones found in `default.json`.
+```
+PUPPETEER_SKIP_DOWNLOAD=true
+CHROMEDRIVER_SKIP_DOWNLOAD=true
+```
 
-For the full list of possible configuration values, refer to the following page: [config values](config_values.md).
+Description: 
+This issue occurs for Apple Silicon users. At the time of writing, the version of Puppeteer used in `wp-calypso` pre-dates Apple Silicon. 
+
+This issue should go away once Puppeteer version is bumped to an Apple Silicon-compatible version.
+
