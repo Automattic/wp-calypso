@@ -469,8 +469,8 @@ function processItemCart(
 				} )
 				.catch( ( error ) => {
 					debug( 'product add request had an error', error );
-					reduxStore.dispatch( errorNotice( error.message, { isPersistent: true } ) );
-					callback( error.message, providedDependencies );
+					reduxStore.dispatch( errorNotice( error.message ) );
+					callback( error, providedDependencies );
 				} );
 		} else {
 			debug( 'no cart items to add' );
