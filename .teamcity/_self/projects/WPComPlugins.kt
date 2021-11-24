@@ -1,8 +1,7 @@
 package _self.projects
 
-import _self.PluginBaseBuild
 import _self.bashNodeScript
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import _self.lib.wpcom.WPComPluginBuild
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 
 object WPComPlugins : Project({
@@ -13,11 +12,7 @@ object WPComPlugins : Project({
 	// Default params for WPcom Plugins.
 	params {
 		param("docker_image", "registry.a8c.com/calypso/ci-wpcom:latest")
-		param("release_tag", "%plugin_slug%-release-build")
-		param("with_slack_notify", "false")
 		param("build.prefix", "1")
-		param("normalize_files", "")
-		param("build_env", "production")
 		param("teamcity.git.fetchAllHeads", "true")
 	}
 
@@ -25,9 +20,6 @@ object WPComPlugins : Project({
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
 	buildType(O2Blocks)
-
-	// For some reason, TeamCity needs this to reference the Template.
-	template(PluginBaseBuild())
 
 	cleanup {
 		keepRule {
@@ -38,7 +30,12 @@ object WPComPlugins : Project({
 					branchFilter = patterns("+:<default>")
 				}
 				withStatus = successful()
-				withTags = anyOf("notifications-release-build", "etk-release-build", "wpcom-block-editor-release-build", "o2-blocks-release-build")
+				withTags = anyOf(
+					"notifications-release-build",
+					"etk-release-build",
+					"wpcom-block-editor-release-build",
+					"o2-blocks-release-build"
+				)
 			}
 			dataToKeep = everything()
 			applyPerEachBranch = true
@@ -47,85 +44,76 @@ object WPComPlugins : Project({
 	}
 })
 
-private object EditingToolkit : BuildType({
-	id("WPComPlugins_EditorToolKit")
-	name = "Editing ToolKit"
 
-	templates(PluginBaseBuild())
-	params {
-		param("with_slack_notify", "true")
-		param("plugin_slug", "editing-toolkit")
-		param("archive_dir", "./editing-toolkit-plugin/")
-		param("release_tag", "etk-release-build")
-		param("build.prefix", "3")
-		param("normalize_files", "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" ./release-archive/full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" ./release-archive/readme.txt\n")
-		param("docs_link", "PCYsg-mMA-p2")
-	}
-
-	steps {
+private object EditingToolkit : WPComPluginBuild(
+	buildId = "WPComPlugins_EditorToolKit",
+	buildName = "Editing ToolKit",
+	releaseTag = "etk-release-build",
+	pluginSlug = "editing-toolkit",
+	archiveDir = "./editing-toolkit-plugin/",
+	docsLink = "PCYsg-mMA-p2",
+	normalizeFiles = "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" ./release-archive/full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" ./release-archive/readme.txt\n",
+	withSlackNotify = "false",
+	buildSteps = {
 		bashNodeScript {
 			name = "Update version"
 			scriptContent = """
-				cd apps/editing-toolkit
-				# Update plugin version in the plugin file and readme.txt.
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
-				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
-			"""
+					cd apps/editing-toolkit
+					# Update plugin version in the plugin file and readme.txt.
+					sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
+					sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
+				"""
 		}
 		bashNodeScript {
 			name = "Run JS tests"
 			scriptContent = """
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
+					export JEST_JUNIT_OUTPUT_NAME="results.xml"
+					export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
 
-				cd apps/editing-toolkit
-				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
-			"""
+					cd apps/editing-toolkit
+					yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
+				"""
 		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
 		// code is also formatted correctly.
 		bashNodeScript {
 			name = "Run PHP Lint"
 			scriptContent = """
-				cd apps/editing-toolkit
-				if [ ! -d "./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks" ] ; then
-					echo "Newspack blocks were not built correctly."
-					exit 1
-				fi
-				yarn lint:php
-			"""
+					cd apps/editing-toolkit
+					if [ ! -d "./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks" ] ; then
+						echo "Newspack blocks were not built correctly."
+						exit 1
+					fi
+					yarn lint:php
+				"""
 		}
+	},
+	buildParams = {
+		param("build.prefix", "3")
 	}
-})
+)
 
-private object WpcomBlockEditor : BuildType({
-	templates(PluginBaseBuild())
-	id("WPComPlugins_WpcomBlockEditor")
-	name = "Wpcom Block Editor"
+private object WpcomBlockEditor : WPComPluginBuild(
+	buildId = "WPComPlugins_WpcomBlockEditor",
+	buildName = "Wpcom Block Editor",
+	pluginSlug = "wpcom-block-editor",
+	archiveDir = "./dist/",
+	buildEnv = "development",
+	docsLink = "PCYsg-l4k-p2",
+)
 
-	params {
-		param("plugin_slug", "wpcom-block-editor")
-		param("archive_dir", "./dist/")
-		param("build_env", "development")
-		param("docs_link", "PCYsg-l4k-p2")
-	}
-})
-
-private object Notifications : BuildType({
-	templates(PluginBaseBuild())
-	id("WPComPlugins_Notifications")
-	name = "Notifications"
-
-	params {
-		param("plugin_slug", "notifications")
-		param("archive_dir", "./dist/")
-		param("docs_link", "PCYsg-elI-p2")
-		// This param is executed in bash right before the build script compares
-		// the build with the previous release version. The purpose of this code
-		// is to remove sources of randomness so that the diff operation only
-		// compares legitimate changes.
-		param("normalize_files", """
-			function get_hash {
+private object Notifications : WPComPluginBuild(
+	buildId = "WPComPlugins_Notifications",
+	buildName = "Notifications",
+	pluginSlug = "notifications",
+	archiveDir = "./dist/",
+	docsLink = "PCYsg-elI-p2",
+	// This param is executed in bash right before the build script compares
+	// the build with the previous release version. The purpose of this code
+	// is to remove sources of randomness so that the diff operation only
+	// compares legitimate changes.
+	normalizeFiles = """
+		function get_hash {
 				# If the stylesheet in the HTML file is pointing at "build.min.css?foobar123",
 				# this will just return the "foobar123" portion of the file. This
 				# is a source of randomness which needs to be eliminated.
@@ -142,22 +130,16 @@ private object Notifications : BuildType({
 			new_cache_buster=`cat dist/cache-buster.txt`
 			old_cache_buster=`cat release-archive/cache-buster.txt`
 			sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
-		""".trimIndent())
-	}
-})
+	""".trimIndent(),
+)
 
-private object O2Blocks : BuildType({
-	templates(PluginBaseBuild())
-	id("WPComPlugins_O2Blocks")
-	name = "O2 Blocks"
-
-	params {
-		param("plugin_slug", "o2-blocks")
-		param("archive_dir", "./release-files/")
-		param("docs_link", "PCYsg-r7r-p2")
-	}
-
-	steps {
+private object O2Blocks : WPComPluginBuild(
+	buildId="WPComPlugins_O2Blocks",
+	buildName = "O2 Blocks",
+	pluginSlug = "o2-blocks",
+	archiveDir = "./release-files/",
+	docsLink = "PCYsg-r7r-p2",
+	buildSteps = {
 		bashNodeScript {
 			name = "Create release directory"
 			scriptContent = """
@@ -172,4 +154,4 @@ private object O2Blocks : BuildType({
 			"""
 		}
 	}
-})
+)
