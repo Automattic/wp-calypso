@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import domainRegisteredSuccess from 'calypso/assets/images/illustrations/domain-registration-success.svg';
 import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
-import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import type {
 	DomainThankYouParams,
@@ -41,7 +41,7 @@ const DomainRegistrationThankYouProps = ( {
 						),
 						stepCta: (
 							<FullWidthButton
-								href={ domainMappingSetup( selectedSiteSlug, domain ) }
+								href={ domainManagementList( selectedSiteSlug, null ) }
 								primary
 								busy={ false }
 								disabled={ false }
