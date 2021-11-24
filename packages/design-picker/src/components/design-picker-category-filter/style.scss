@@ -6,9 +6,8 @@ $design-picker-category-filter-text-color: #3c434a;
 $design-picker-category-filter-text-color-active: var( --studio-gray-100 );
 
 .design-picker-category-filter {
-	flex: 0 calc( 307px - 1rem );
-
 	@include break-small {
+		flex: 0 245px;
 		padding-right: 1rem;
 	}
 
