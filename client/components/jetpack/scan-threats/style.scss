@@ -74,7 +74,6 @@
 		border: initial;
 		font-weight: normal;
 		vertical-align: initial;
-		color: #008710;
 		background: inherit;
 
 		&:hover,
@@ -113,7 +112,6 @@
 			font-size: $font-body;
 			font-weight: normal;
 			// line-height: 24px;
-			color: #50575e;
 
 			@include breakpoint-deprecated( '>800px' ) {
 				flex-grow: 1;
@@ -123,11 +121,9 @@
 	}
 
 	&__fix-all-threats-button {
-		background: #069e08;
 		width: 105px;
 		height: 40px;
 		border-radius: 2px;
-		color: #ffffff;
 		font-weight: 600;
 		@include breakpoint-deprecated( '<800px' ) {
 			flex-grow: 1;

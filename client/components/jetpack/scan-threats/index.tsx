@@ -238,6 +238,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						<>
 							<p>{ fixSummary }</p>
 							<Button
+								primary
 								className="scan-threats__fix-all-threats-button"
 								onClick={ openFixAllThreatsDialog }
 								disabled={ ! hasFixableThreats || updatingThreats.length > 0 }

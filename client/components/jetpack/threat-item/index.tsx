@@ -57,6 +57,7 @@ const ThreatItem: React.FC< Props > = ( {
 			};
 			return (
 				<Button
+					primary
 					className={ classnames( 'threat-item__fix-button', className ) }
 					onClick={ onClickHandler }
 					disabled={ isFixing }
@@ -183,7 +184,7 @@ const ThreatItem: React.FC< Props > = ( {
 				) }
 				{ ! threat.fixable && 'current' === threat.status && (
 					<ExternalLinkWithTracking
-						className="button threat-item__codeable-button"
+						className="button is-primary threat-item__codeable-button"
 						href="https://codeable.io/partners/jetpack-scan/"
 						target="_blank"
 						rel="noopener noreferrer"

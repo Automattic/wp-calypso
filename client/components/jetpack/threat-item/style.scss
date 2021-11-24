@@ -59,18 +59,10 @@
 		line-height: 24px;
 	}
 
-	&.threat-item__fix-button,
-	&.threat-item__codeable-button {
-		background-color: #069e08;
-		color: #ffffff;
-	}
-
 	&.threat-item__ignore-button {
 		margin-inline-start: 5px;
 		margin-inline-end: 5px;
 		border-width: 1px;
 		border-style: solid;
-		background-color: #ffffff;
-		color: #000000;
 	}
 }
