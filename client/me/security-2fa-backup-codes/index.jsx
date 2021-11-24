@@ -9,6 +9,7 @@ import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-lis
 import Security2faBackupCodesPrompt from 'calypso/me/security-2fa-backup-codes-prompt';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import Security2faBackupCodesPasswordPrompt from './password-prompt';
 
 import './style.scss';
 
@@ -24,36 +25,56 @@ class Security2faBackupCodes extends Component {
 			showPrompt: ! printed,
 			backupCodes: [],
 			generatingCodes: false,
+			addingPassword: false,
+			lastError: null,
 		};
 	}
 
 	handleGenerateButtonClick = () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
 
+		this.setState( { addingPassword: true, showPrompt: false } );
+	};
+
+	handleGenerateButton = ( userPassword ) => {
 		this.setState( {
 			generatingCodes: true,
 			verified: false,
-			showPrompt: true,
 		} );
 
-		twoStepAuthorization.backupCodes( this.onRequestComplete );
+		twoStepAuthorization.backupCodes( userPassword, this.onRequestComplete );
+	};
+
+	toggleBackupCodePassword = () => {
+		this.setState( ( prevState ) => ( {
+			addingPassword: ! prevState.addingPassword,
+			generatingCodes: false,
+			lastError: null,
+			showPrompt: true,
+		} ) );
+	};
+
+	onDismissClick = () => this.setState( { lastError: null } );
+
+	onNextStep = () => {
+		this.setState( {
+			backupCodes: [],
+			printed: true,
+		} );
 	};
 
 	onRequestComplete = ( error, data ) => {
 		if ( error ) {
+			this.setState( { lastError: error, generatingCodes: false } );
 			return;
 		}
 
 		this.setState( {
 			backupCodes: data.codes,
 			generatingCodes: false,
-		} );
-	};
-
-	onNextStep = () => {
-		this.setState( {
-			backupCodes: [],
-			printed: true,
+			lastError: null,
+			showPrompt: true,
+			addingPassword: false,
 		} );
 	};
 
@@ -92,6 +113,30 @@ class Security2faBackupCodes extends Component {
 				isCompact
 				status="is-success"
 				text={ this.props.translate( 'Backup codes have been verified' ) }
+			/>
+		);
+	}
+
+	renderPasswordPrompt() {
+		const { lastError } = this.state;
+		if ( lastError ) {
+			const friendlyMessage =
+				lastError?.error === 'authentication_failed'
+					? this.props.translate( 'Invalid password' )
+					: this.props.translate(
+							'Unable to generate backup codes right now. Please try again later.'
+					  );
+
+			return (
+				<Notice status="is-error" text={ friendlyMessage } onDismissClick={ this.onDismissClick } />
+			);
+		}
+
+		return (
+			<Security2faBackupCodesPasswordPrompt
+				isDisabled={ ! this.state.addingPassword }
+				onCancel={ this.toggleBackupCodePassword }
+				onSubmit={ this.handleGenerateButton }
 			/>
 		);
 	}
@@ -135,9 +180,11 @@ class Security2faBackupCodes extends Component {
 					</Button>
 				</SectionHeader>
 				<Card>
-					{ this.state.generatingCodes || this.state.backupCodes.length
-						? this.renderList()
-						: this.renderPrompt() }
+					{ this.state.addingPassword && this.renderPasswordPrompt() }
+					{ ! this.state.addingPassword &&
+						( this.state.generatingCodes || this.state.backupCodes.length
+							? this.renderList()
+							: this.renderPrompt() ) }
 				</Card>
 			</div>
 		);

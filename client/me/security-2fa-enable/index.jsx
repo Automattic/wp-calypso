@@ -147,7 +147,6 @@ class Security2faEnable extends Component {
 
 	onValidationResponseReceived = ( error, data ) => {
 		this.setState( { submittingCode: false } );
-
 		if ( error ) {
 			this.setState( {
 				lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
@@ -159,7 +158,7 @@ class Security2faEnable extends Component {
 				lastErrorType: 'is-error',
 			} );
 		} else {
-			this.props.onSuccess();
+			this.props.onSuccess( data.backup_codes );
 		}
 	};
 
