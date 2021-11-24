@@ -7,11 +7,10 @@ import useCourseQuery from 'calypso/data/courses/use-course-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
 import VideoFooterBar from './video-footer-bar';
-import VideoHeaderBar from './video-header-bar';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) => {
+const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
 	const translate = useTranslate();
 
 	const courseSlug = 'blogging-quick-start';
@@ -95,15 +94,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false, onBackClick = () => {} } ) =
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
-				<VideoHeaderBar
-					displayIcon={ true }
-					displayLinks={ shouldDisplayTopLinks }
-					displaySkipLink={ false }
-					displayBackLink={ false }
-					displayCloseLink={ true }
-					onBackClick={ onBackClick }
-					skipClickHandler={ skipClickHandler }
-				/>
+				{ headerBar }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
 						<h2>{ translate( 'Watch five videos.' ) }</h2>

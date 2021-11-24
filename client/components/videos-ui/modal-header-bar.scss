@@ -1,0 +1,14 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.videos-ui__modal-header-bar {
+	span {
+		cursor: pointer;
+		display: none;
+	}
+	@include break-small {
+		span {
+			display: inherit;
+		}
+	}
+}
