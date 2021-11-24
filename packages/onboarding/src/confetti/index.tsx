@@ -3,7 +3,7 @@
 import { SVG, Rect, Circle } from '@wordpress/components';
 import * as React from 'react';
 
-const Confetti: React.FunctionComponent< { className?: string } > = ( { className } ) => (
+const Index: React.FunctionComponent< { className?: string } > = ( { className } ) => (
 	<SVG
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
@@ -92,4 +92,4 @@ const Confetti: React.FunctionComponent< { className?: string } > = ( { classNam
 	</SVG>
 );
 
-export default Confetti;
+export default Index;

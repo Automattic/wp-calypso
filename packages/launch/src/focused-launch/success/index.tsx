@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { Title, SubTitle, NextButton, BackButton } from '@automattic/onboarding';
+import { Title, SubTitle, NextButton, BackButton, Confetti } from '@automattic/onboarding';
 import { ClipboardButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -9,7 +9,6 @@ import * as React from 'react';
 import LaunchContext from '../../context';
 import { useSiteDomains, useHasEcommercePlan } from '../../hooks';
 import { LAUNCH_STORE, SITE_STORE } from '../../stores';
-import Confetti from './confetti';
 
 import './style.scss';
 
