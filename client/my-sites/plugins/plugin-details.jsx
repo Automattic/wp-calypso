@@ -229,9 +229,7 @@ function PluginDetails( props ) {
 								<div className="plugin-details__info">
 									<div className="plugin-details__info-title">{ translate( 'Last updated' ) }</div>
 									<div className="plugin-details__info-value">
-										{ moment
-											.utc( fullPlugin.last_updated, 'YYYY-MM-DD hh:mma' )
-											.format( 'YYYY-MM-DD' ) }
+										{ moment.utc( fullPlugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'LL' ) }
 									</div>
 								</div>
 								<div className="plugin-details__info">
