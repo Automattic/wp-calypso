@@ -89,8 +89,15 @@
 	padding-bottom: 30px;
 
 	.step-wrapper__content {
-		height: calc( 100vh - 256px );
-		max-height: 540px;
+		height: calc( 100vh - 245px );
+
+		@include break-mobile {
+			height: calc( 100vh - 225px );
+		}
+
+		@include break-small {
+			height: calc( 100vh - 128px );
+		}
 	}
 
 	@include break-small {
@@ -100,7 +107,7 @@
 		}
 
 		.step-wrapper__content {
-			max-height: 960px;
+			max-height: 1080px;
 		}
 	}
 }
