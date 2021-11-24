@@ -153,7 +153,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			allowBackFirstStep={ true }
 			backUrl="/woocommerce-installation"
 			headerText={ headerTitle }
+			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
+			fallbackSubHeaderText={ headerDescription }
 			align={ isReskinned ? 'left' : 'center' }
 			stepContent={ getContent() }
 			isWideLayout={ isReskinned }
