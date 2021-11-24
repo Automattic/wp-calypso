@@ -83,7 +83,7 @@ const stepNameToModuleName = {
 	ready: 'import',
 	importing: 'import-from',
 	confirm: 'woocommerce-install',
-	transfer: 'woocommerce-install',
+	transfer: 'woocommerce-install/transfer',
 	install: 'woocommerce-install',
 	complete: 'woocommerce-install',
 };
@@ -95,7 +95,10 @@ export function getStepModuleName( stepName ) {
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(
-		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[0-9a-z-]+\/index.[j|t]sx$/ */ `calypso/signup/steps/${ moduleName }`
+		/* webpackChunkName: "async-load-signup-steps-[request]" */
+		/* webpackInclude: /signup\/steps\/[0-9a-z/-]+\/index\.[j|t]sx$/ */
+		/* webpackExclude: /signup\/steps\/[0-9a-z/-]+\/test\/index\.[j|t]sx$/ */
+		`calypso/signup/steps/${ moduleName }`
 	);
 	return module.default;
 }
