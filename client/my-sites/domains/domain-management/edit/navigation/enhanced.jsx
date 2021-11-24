@@ -476,29 +476,33 @@ class DomainManagementNavigationEnhanced extends Component {
 	getDeleteDomain() {
 		const { domain, isLoadingPurchase, purchase, selectedSite, translate } = this.props;
 		const domainType = domain && domain.type;
+		const currentUserIsOwner = domain.currentUserIsOwner;
 
 		if ( ! domain.currentUserCanManage ) {
 			return null;
 		}
 
 		let title;
+		let description;
 
 		if ( domainTypes.TRANSFER === domainType ) {
 			const status = domain.transferStatus;
-			const currentUserIsOwner = domain.currentUserIsOwner;
 
-			if (
-				transferStatus.PENDING_OWNER === status ||
-				transferStatus.PENDING_REGISTRY === status ||
-				! currentUserIsOwner
-			) {
+			if ( transferStatus.PENDING_OWNER === status || transferStatus.PENDING_REGISTRY === status ) {
 				return null;
 			}
 
 			if ( status === transferStatus.CANCELLED ) {
 				title = translate( 'Remove transfer from your account' );
+				if ( ! currentUserIsOwner ) {
+					title = translate( 'Remove transfer' );
+					description = translate( 'Only the domain owner can remove the transfer' );
+				}
 			} else {
 				title = translate( 'Cancel transfer' );
+				if ( ! currentUserIsOwner ) {
+					description = translate( 'Only the domain owner can cancel the transfer' );
+				}
 			}
 		} else if ( domainTypes.MAPPED === domainType ) {
 			title = translate( 'Delete domain mapping' );
@@ -514,6 +518,12 @@ class DomainManagementNavigationEnhanced extends Component {
 
 		if ( ! selectedSite || ! purchase ) {
 			return null;
+		}
+
+		if ( ! currentUserIsOwner ) {
+			return (
+				<VerticalNavItemEnhanced materialIcon="delete" text={ title } description={ description } />
+			);
 		}
 
 		if ( isCancelable( purchase ) ) {

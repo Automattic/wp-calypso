@@ -50,20 +50,21 @@ class TransferInDomainType extends Component {
 								}
 						  )
 						: translate(
-								'This domain transfer is waiting to be initiated. Please contact the domain owner to start it.',
+								'This domain transfer is waiting to be initiated. Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, to start it.',
 								{
 									args: {
-										domain: domain.name,
+										owner: domain.owner,
+									},
+									components: {
+										strong: <strong />,
 									},
 								}
 						  ) }
 				</p>
 
-				{ currentUserIsOwner && (
-					<Button primary onClick={ this.startTransfer }>
-						{ translate( 'Start transfer' ) }
-					</Button>
-				) }
+				<Button disabled={ ! currentUserIsOwner } primary onClick={ this.startTransfer }>
+					{ translate( 'Start transfer' ) }
+				</Button>
 			</>
 		);
 	}
@@ -111,18 +112,21 @@ class TransferInDomainType extends Component {
 								}
 						  )
 						: translate(
-								'This domain transfer failed to complete. Please contact the domain owner to restart it.',
+								'The domain transfer failed to complete. Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, to restart it.',
 								{
 									args: {
-										domain: domain.name,
+										owner: domain.owner,
+									},
+									components: {
+										strong: <strong />,
 									},
 								}
 						  ) }
 				</p>
 
-				{ currentUserIsOwner && (
-					<Button onClick={ this.startTransfer }>{ translate( 'Start transfer again' ) }</Button>
-				) }
+				<Button disabled={ ! currentUserIsOwner } onClick={ this.startTransfer }>
+					{ translate( 'Start transfer again' ) }
+				</Button>
 			</>
 		);
 	}
