@@ -726,11 +726,7 @@ object PreReleaseE2ETests : BuildType({
 		}
 	}
 
-	triggers {
-		vcs {
-            perCheckinTriggering = true
-        }
-	}
+	triggers {}
 
 	failureConditions {
 		executionTimeoutMin = 20
