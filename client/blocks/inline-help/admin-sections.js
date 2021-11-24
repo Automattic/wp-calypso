@@ -1,6 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import { translate } from 'i18n-calypso';
-import { intersection, words } from 'lodash';
+import { intersection } from 'lodash';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
@@ -416,7 +416,13 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 		return [];
 	}
 
-	const searchTermWords = words( searchTerm ).map( ( word ) => word.toLowerCase() );
+	const searchTermWords = searchTerm
+		// Split to words.
+		.split( /[\W_]+/g )
+		// Eliminate any empty string results.
+		.filter( Boolean )
+		// Lowercase all words.
+		.map( ( word ) => word.toLowerCase() );
 	if ( ! searchTermWords.length ) {
 		return [];
 	}
