@@ -15,6 +15,8 @@ import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
+import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { installPlugin, activatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
@@ -38,6 +40,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
 	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
+	const [ noDirectAccessError, setNoDirectAccessError ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -65,6 +68,11 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 		getStatusForPlugin( state, siteId, productSlug )
 	);
 
+	const marketplacePluginInstallationInProgress = useSelector( ( state ) => {
+		const { pluginInstallationStatus } = getPurchaseFlowState( state );
+		return pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS;
+	} );
+
 	const supportsAtomicUpgrade = useRef< boolean >();
 	useEffect( () => {
 		supportsAtomicUpgrade.current =
@@ -89,6 +97,11 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 				() => ! supportsAtomicUpgrade.current && setNonInstallablePlanError( true )
 			);
 		}
+
+		if ( ! marketplacePluginInstallationInProgress ) {
+			console.log( 'marketplacePluginInstallation state', marketplacePluginInstallationInProgress );
+			setNoDirectAccessError( true );
+		}
 	} );
 
 	// Upload flow startup
@@ -103,7 +116,13 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 
 	// Installing plugin flow startup
 	useEffect( () => {
-		if ( ! isUploadFlow && ! initializeInstallFlow && wporgPlugin && selectedSite ) {
+		if (
+			! noDirectAccessError &&
+			! isUploadFlow &&
+			! initializeInstallFlow &&
+			wporgPlugin &&
+			selectedSite
+		) {
 			const triggerInstallFlow = () => {
 				setInitializeInstallFlow( true );
 				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
@@ -122,7 +141,15 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 				triggerInstallFlow();
 			}
 		}
-	}, [ isUploadFlow, initializeInstallFlow, selectedSite, siteId, wporgPlugin, productSlug ] );
+	}, [
+		noDirectAccessError,
+		isUploadFlow,
+		initializeInstallFlow,
+		selectedSite,
+		siteId,
+		wporgPlugin,
+		productSlug,
+	] );
 
 	// Validate completition of atomic transfer flow
 	useEffect( () => {
@@ -201,6 +228,15 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 						illustration="/calypso/images/illustrations/error.svg"
 						title={ translate(
 							"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
+						) }
+						action={ translate( 'Upgrade to Business Plan' ) }
+						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
+					/>
+				) : noDirectAccessError ? (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/error.svg"
+						title={ translate(
+							'This URL should not be accessed directly. Please click on the plugin install button.'
 						) }
 						action={ translate( 'Upgrade to Business Plan' ) }
 						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
