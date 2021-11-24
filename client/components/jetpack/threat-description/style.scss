@@ -13,12 +13,13 @@
 	&__section-title {
 		margin-bottom: 20px;
 
-		font-size: $font-title-small;
+		font-size: $font-body;
 		line-height: 1.3; /* 24/18 */
 	}
 
 	&__section-title-fix {
 		margin-top: 20px;
+		font-size: $font-body;
 	}
 
 	&__section-text {
@@ -30,5 +31,13 @@
 		@include breakpoint-deprecated( '>660px' ) {
 			margin-bottom: 24px;
 		}
+	}
+
+	&__alert-filename {
+		font-size: $font-body-small;
+	}
+
+	.marked-lines {
+		font-size: $font-body-small;
 	}
 }
