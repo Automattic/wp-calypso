@@ -43,16 +43,18 @@ export const MySitesSidebarUnifiedMenu = ( {
 		( isDesktop && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
 
 	const onClick = ( event ) => {
-		if ( ! canNavigate( link ) ) {
-			event?.preventDefault();
-			return;
-		}
-
 		// Block the navigation on mobile viewports and just toggle the section,
 		// since we don't show the child items on hover and users should have a
 		// chance to see them.
 		if ( isMobile ) {
 			event?.preventDefault();
+			reduxDispatch( toggleSection( sectionId ) );
+			return;
+		}
+
+		if ( ! canNavigate( link ) ) {
+			event?.preventDefault();
+			return;
 		}
 
 		window.scrollTo( 0, 0 );
