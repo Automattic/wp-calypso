@@ -8,6 +8,8 @@ $width-left-panel-card: calc( 60% - 48px );
 	color: var( --studio-gray-20 );
 	display: block;
 	font-size: 0.75rem;
+	font-weight: 400;
+	margin-bottom: 0;
 }
 
 .email-provider-stacked-features__feature {
@@ -97,6 +99,10 @@ $width-left-panel-card: calc( 60% - 48px );
 	margin-bottom: 0.5em;
 	margin-top: 0;
 
+	img {
+		max-width: 36px;
+	}
+
 	&.is-inline-body-text {
 		margin-top: 40px;
 	}
@@ -111,6 +117,10 @@ $width-left-panel-card: calc( 60% - 48px );
 	&.align-right {
 		margin: 0 0 24px 24px;
 	}
+}
+
+.promo-card__title-badge {
+	display: none;
 }
 
 .is-expanded .promo-card__title-badge {

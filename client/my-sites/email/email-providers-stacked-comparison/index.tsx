@@ -41,7 +41,7 @@ type EmailProvidersStackedComparisonProps = {
 };
 
 export interface ProviderCard {
-	additionalPriceInformation?: TranslateResult;
+	additionalPriceInformation?: ReactElement;
 	badge?: ReactElement;
 	buttonLabel?: TranslateResult;
 	children?: ReactElement;
@@ -80,12 +80,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				{ translate( 'Pick an email solution' ) }
 			</h1>
 
-			<EmailProvidersStackedCard
-				discount={ '$42' }
-				additionalPriceInformation={ 'per mailbox' }
-				footerBadge={ professionalEmailCardProps.badge }
-				{ ...professionalEmailCardProps }
-			/>
+			<EmailProvidersStackedCard { ...professionalEmailCardProps } />
 		</Main>
 	);
 };
