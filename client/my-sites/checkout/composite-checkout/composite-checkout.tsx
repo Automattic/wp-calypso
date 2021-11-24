@@ -598,7 +598,7 @@ export default function CompositeCheckout( {
 					reason: String( transactionError ),
 				} )
 			);
-			return reduxDispatch(
+			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
 					error_message: String( transactionError ),
 				} )
