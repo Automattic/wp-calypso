@@ -14,6 +14,7 @@ export interface SiteDomain {
 	hasWpcomNameservers?: boolean;
 	hasZone?: boolean;
 	isPendingIcannVerification?: boolean;
+	isIcannVerificationSuspended?: boolean;
 	isPendingRenewal?: boolean;
 	isPremium?: boolean;
 	isPrimary?: boolean;
