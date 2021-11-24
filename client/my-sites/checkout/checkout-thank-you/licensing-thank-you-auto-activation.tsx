@@ -250,7 +250,9 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					</>
 				}
 				footerImage={ footerCardImg }
-				showProgressIndicator={ false }
+				showProgressIndicator
+				progressIndicatorValue={ 1 }
+				progressIndicatorTotal={ 3 }
 				showContactUs
 			>
 				{ hasProductInfo && ( isProductListFetching || productName ) && (
