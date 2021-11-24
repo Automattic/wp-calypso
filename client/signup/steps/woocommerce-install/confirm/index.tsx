@@ -18,7 +18,6 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { WooCommerceInstallProps } from '../';
 import type { GoToStep } from '../../../types';
 
@@ -43,9 +42,8 @@ function StepPicture( {
 }
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
+	const { siteId, goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
-	const siteId = useSelector( getSelectedSiteId ) as number;
 	const dispatch = useDispatch();
 
 	// Request eligibility data.
