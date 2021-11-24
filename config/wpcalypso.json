@@ -89,6 +89,7 @@
 		"my-sites/checkout/web-payment/basic-card": false,
 		"network-connection": true,
 		"p2/p2-plus": true,
+		"p2/preapproved-domains": true,
 		"perfmon": true,
 		"plans/personal-plan": true,
 		"post-editor/checkout-overlay": true,

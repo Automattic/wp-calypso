@@ -78,6 +78,7 @@
 		"my-sites/checkout/web-payment/apple-pay": true,
 		"my-sites/checkout/web-payment/basic-card": false,
 		"p2/p2-plus": true,
+		"p2/preapproved-domains": true,
 		"page/export": true,
 		"perfmon": true,
 		"plans/personal-plan": true,
