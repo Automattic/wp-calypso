@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.videos-ui__modal-footer-bar {
+.videos-ui .videos-ui__modal-footer-bar {
 	background-color: #101517;
 	border-top: 1px solid rgba( 255, 255, 255, 0.1 );
 	margin-top: auto;
@@ -12,7 +12,7 @@
 }
 
 @include break-small {
-	.videos-ui__modal-footer-bar {
+	.videos-ui .videos-ui__modal-footer-bar {
 		display: none;
 	}
 }
