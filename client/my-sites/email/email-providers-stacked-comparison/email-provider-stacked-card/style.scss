@@ -1,0 +1,278 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.email-provider-stacked-features__whats-included {
+	color: var( --studio-gray-20 );
+	display: block;
+	font-size: 0.75rem;
+	font-weight: 400;
+	margin-bottom: 0;
+}
+
+.email-provider-stacked-features__feature {
+	margin-left: 28px;
+	margin-top: 8px;
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+	&::before {
+		content: '';
+		display: block;
+		height: 1px;
+		margin-bottom: 8px;
+	}
+
+	&:first-child::before {
+		display: none;
+	}
+
+	.gridicon {
+		fill: var( --studio-gray-20 );
+		margin-left: -28px;
+		margin-top: 2px;
+		position: absolute;
+	}
+}
+
+.email-provider-stacked-card__provider__action-panel {
+
+	&.is-primary {
+		flex-direction: column;
+		@include break-mobile {
+			flex-direction: row;
+		}
+	}
+}
+
+.email-provider-stacked-card__provider__provider-card.promo-card {
+	flex-direction: row;
+}
+
+.email-provider-stacked-card__provider__providers {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	.promo-card {
+		width: calc( 33% - 0.5em );
+		margin: 8px 0;
+
+		&.no-gsuite {
+			width: calc( 50% - 0.5em );
+		}
+
+		&.no-titan {
+			width: calc( 50% - 0.5em );
+		}
+
+		&.gsuite .action-panel__figure img {
+			max-width: 24px;
+		}
+
+		&.titan {
+			.promo-card__title-badge {
+				background: none;
+				padding: 0;
+
+				img {
+					max-height: 14px;
+				}
+			}
+		}
+
+		@include breakpoint-deprecated( '<1040px' ) {
+			&,
+			&.no-gsuite {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.action-panel__figure {
+	float: right;
+	max-width: 208px;
+	margin-bottom: 0.5em;
+	margin-top: 0;
+
+	img {
+		max-width: 36px;
+	}
+
+	&.is-inline-body-text {
+		margin-top: 40px;
+	}
+
+	&.align-left {
+		float: left;
+		margin-left: 0;
+		margin-right: 24px;
+		width: unset;
+	}
+
+	&.align-right {
+		margin: 0 0 24px 24px;
+	}
+}
+
+.promo-card__title-badge {
+	display: none;
+}
+
+.is-expanded .promo-card__title-badge {
+	background: none;
+	display: inline-block;
+	padding: 0;
+
+	img {
+		max-height: 18px;
+	}
+}
+
+h2.action-panel__title {
+	margin-top: 8px;
+}
+
+.email-provider-stacked-card__provider__provider-card-main-details {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	margin-bottom: 1em;
+
+	@include break-mobile {
+		align-items: center;
+		flex-direction: row;
+	}
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+.email-provider-stacked-card__provider__provider-price-and-button {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 1em;
+}
+
+.email-provider-stacked-card__provider__provider-expand-cta {
+	margin-top: 1em;
+	overflow: visible;
+	white-space: nowrap;
+
+	@include break-mobile {
+		margin-left: 2em;
+		margin-top: 0;
+	}
+}
+
+.promo-card__price {
+	.price__cost {
+		font-size: $font-body-small;
+
+		span {
+			font-size: $font-title-medium;
+		}
+
+		.price__discounted {
+			text-decoration: line-through;
+		}
+
+		&.price__discounted span {
+			color: var( --color-text-subtle );
+
+			&.email-providers-stacked-comparison__discounted-price {
+				color: var( --studio-gray-100 );
+				text-decoration: none;
+			}
+		}
+	}
+
+	.price__discount {
+		display: block;
+		font-weight: 600;
+		margin-left: 0;
+		margin-top: 0.25em;
+
+		.email-provider-stacked-card__provider__discount-with-renewal span {
+			color: var( --color-text-subtle );
+			font-weight: 400;
+		}
+	}
+}
+
+.email-provider-stacked-card__provider__provider-additional-price-information {
+	color: var( --color-text-subtle );
+	font-size: $font-body-extra-small;
+	font-style: normal;
+	margin-top: 3px;
+}
+
+.email-provider-stacked-card__provider-form-and-features {
+	display: none;
+}
+
+.is-expanded {
+	.email-provider-stacked-card__provider-expand-cta {
+		display: none;
+	}
+
+	.email-provider-stacked-card__provider-form-and-features {
+		display: flex;
+		flex-direction: column-reverse;
+		justify-content: space-between;
+		margin-top: 1em;
+		line-height: 1.5;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			flex-direction: row;
+		}
+	}
+
+	.email-providers-stacked-comparison__provider-form {
+		flex-grow: 1;
+		margin-bottom: 20px;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			margin-top: 0;
+		}
+
+		> .form-fieldset {
+			margin-bottom: 0;
+		}
+
+		.email-providers-stacked-comparison__titan-mailbox-action-continue {
+			@include break-mobile {
+				margin-left: auto;
+			}
+		}
+
+		.email-providers-stacked-comparison__titan-mailbox-action-skip {
+			@include break-mobile {
+				margin-left: 1em;
+			}
+		}
+	}
+
+	.email-provider-features {
+		margin-bottom: 2.5em;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			margin-bottom: 14px;
+			margin-left: 64px;
+			margin-top: 0;
+		}
+	}
+}
+
+.email-provider-stacked-features {
+	margin-right: 20px;
+
+	img {
+		margin-top: 40px;
+	}
+}
