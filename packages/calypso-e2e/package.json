@@ -29,7 +29,7 @@
 		"@jest/globals": "^27.2.4",
 		"@types/config": "^0.0.40",
 		"@types/jest": "^27.0.3",
-		"@types/node": "^16.11.9",
+		"@types/node": "^16.11.10",
 		"@types/node-fetch": "^2.5.12",
 		"@wordpress/i18n": "^4.2.4",
 		"asana-phrase": "^0.0.8",
