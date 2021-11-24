@@ -34,13 +34,18 @@ import {
 } from 'calypso/state/ui/selectors';
 import './style.scss';
 
+enum Errors {
+	NON_INSTALLABLE_PLAN_ERROR,
+	NO_DIRECT_ACCESS_ERROR,
+	NONE,
+}
+
 const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	const isUploadFlow = ! productSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
-	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
-	const [ noDirectAccessError, setNoDirectAccessError ] = useState( false );
+	const [ error, setError ] = useState< Errors >( Errors.NONE );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -94,13 +99,14 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	useEffect( () => {
 		if ( ! supportsAtomicUpgrade.current ) {
 			waitFor( 2 ).then(
-				() => ! supportsAtomicUpgrade.current && setNonInstallablePlanError( true )
+				() => ! supportsAtomicUpgrade.current && setError( Errors.NON_INSTALLABLE_PLAN_ERROR )
 			);
 		}
 
 		if ( ! marketplacePluginInstallationInProgress ) {
-			console.log( 'marketplacePluginInstallation state', marketplacePluginInstallationInProgress );
-			setNoDirectAccessError( true );
+			waitFor( 2 ).then(
+				() => ! marketplacePluginInstallationInProgress && setError( Errors.NO_DIRECT_ACCESS_ERROR )
+			);
 		}
 	} );
 
@@ -116,13 +122,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 
 	// Installing plugin flow startup
 	useEffect( () => {
-		if (
-			! noDirectAccessError &&
-			! isUploadFlow &&
-			! initializeInstallFlow &&
-			wporgPlugin &&
-			selectedSite
-		) {
+		if ( ! error && ! isUploadFlow && ! initializeInstallFlow && wporgPlugin && selectedSite ) {
 			const triggerInstallFlow = () => {
 				setInitializeInstallFlow( true );
 				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
@@ -142,7 +142,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 			}
 		}
 	}, [
-		noDirectAccessError,
+		error,
 		isUploadFlow,
 		initializeInstallFlow,
 		selectedSite,
@@ -197,6 +197,53 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 		translate( 'Activating plugin' ),
 	];
 
+	const renderError = () => {
+		if (
+			pluginUploadError ||
+			pluginInstallStatus.error ||
+			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
+		) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					title={ translate( 'An error occurred while installing the plugin.' ) }
+					action={ translate( 'Back' ) }
+					actionURL={
+						isUploadFlow
+							? `/plugins/upload/${ selectedSiteSlug }`
+							: `/plugins/${ productSlug }/${ selectedSiteSlug }`
+					}
+				/>
+			);
+		}
+		switch ( error ) {
+			case Errors.NON_INSTALLABLE_PLAN_ERROR:
+				return (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/error.svg"
+						title={ translate(
+							"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
+						) }
+						action={ translate( 'Upgrade to Business Plan' ) }
+						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
+					/>
+				);
+			case Errors.NO_DIRECT_ACCESS_ERROR:
+				return (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/error.svg"
+						title={ translate(
+							'This URL should not be accessed directly. Please click on the plugin install button.'
+						) }
+						action={ translate( 'Upgrade to Business Plan' ) }
+						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
+					/>
+				);
+			default:
+				return null;
+		}
+	};
+
 	return (
 		<ThemeProvider theme={ theme }>
 			<PageViewTracker
@@ -209,41 +256,7 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-upload-status__root">
-				{ /* eslint-disable-next-line no-nested-ternary */ }
-				{ pluginUploadError ||
-				pluginInstallStatus.error ||
-				( atomicFlow && automatedTransferStatus === transferStates.FAILURE ) ? (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/error.svg"
-						title={ translate( 'An error occurred while installing the plugin.' ) }
-						action={ translate( 'Back' ) }
-						actionURL={
-							isUploadFlow
-								? `/plugins/upload/${ selectedSiteSlug }`
-								: `/plugins/${ productSlug }/${ selectedSiteSlug }`
-						}
-					/>
-				) : nonInstallablePlanError ? (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/error.svg"
-						title={ translate(
-							"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
-						) }
-						action={ translate( 'Upgrade to Business Plan' ) }
-						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
-					/>
-				) : noDirectAccessError ? (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/error.svg"
-						title={ translate(
-							'This URL should not be accessed directly. Please click on the plugin install button.'
-						) }
-						action={ translate( 'Upgrade to Business Plan' ) }
-						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
-					/>
-				) : (
-					<MarketplaceProgressBar steps={ steps } currentStep={ currentStep } />
-				) }
+				{ renderError() || <MarketplaceProgressBar steps={ steps } currentStep={ currentStep } /> }
 			</div>
 		</ThemeProvider>
 	);
