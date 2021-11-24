@@ -337,7 +337,7 @@ function PluginDetails( props ) {
 								<div className="plugin-details__tested-text title">
 									{ translate( 'Tested up to' ) }
 								</div>
-								<div className="plugin-details__tested-value value">{ fullPlugin.version }</div>
+								<div className="plugin-details__tested-value value">{ fullPlugin.tested }</div>
 							</div>
 						</div>
 					</div>
