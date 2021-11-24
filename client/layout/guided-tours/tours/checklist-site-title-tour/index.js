@@ -32,7 +32,7 @@ export const ChecklistSiteTitleTour = makeTour(
 							{
 								components: {
 									siteTitleButton: <SiteTitleButton />,
-									SiteTaglineButton: <SiteTaglineButton />,
+									siteTaglineButton: <SiteTaglineButton />,
 								},
 							}
 						) }
