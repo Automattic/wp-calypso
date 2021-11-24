@@ -22,7 +22,7 @@ export interface Props {
 	image?: Image | ReactElement;
 	title: string | TranslateResult;
 	isPrimary?: boolean;
-	badge?: string;
+	badge?: string | ReactElement;
 	className?: string;
 }
 

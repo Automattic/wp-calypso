@@ -6,7 +6,7 @@ import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/t
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
-import EmailProvidersComparisonStacked from 'calypso/my-sites/email/email-providers-comparison-stacked';
+import EmailProvidersComparisonStacked from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
