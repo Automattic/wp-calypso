@@ -20,8 +20,27 @@ import {
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { WooCommerceInstallProps } from '../';
+import type { GoToStep } from '../../../types';
 
 import './style.scss';
+
+function StepPicture( {
+	isProcessing,
+	goToStep,
+}: {
+	isProcessing: boolean;
+	goToStep: GoToStep;
+} ): ReactElement {
+	return (
+		<div className="confirm__image-container">
+			{ isProcessing && <LoadingEllipsis /> }
+			<img src={ yourNewStoreImage } alt="" />
+			<div>
+				<BackButton onClick={ () => goToStep( 'select-site' ) } />
+			</div>
+		</div>
+	);
+}
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
 	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
@@ -69,10 +88,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__image-container">
-					{ isProcessing && <LoadingEllipsis /> }
-					<img src={ yourNewStoreImage } alt="" />
-				</div>
+				<StepPicture isProcessing={ isProcessing } goToStep={ goToStep } />
+
 				<div className="confirm__instructions-container">
 					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
 						{ wpcomDomain }
@@ -120,13 +137,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__image-container">
-					{ isProcessing && <LoadingEllipsis /> }
-					<img src={ yourNewStoreImage } alt="" />
-					<div>
-						<BackButton onClick={ () => goToStep( 'select-site' ) } />
-					</div>
-				</div>
+				<StepPicture isProcessing={ isProcessing } goToStep={ goToStep } />
+
 				<div className="confirm__instructions-container">
 					{ !! eligibilityHolds?.length && (
 						<p>
