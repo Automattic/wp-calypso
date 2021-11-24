@@ -72,11 +72,6 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	 * @returns {boolean} Whether the user is allowed to navigate.
 	 */
 	const canNavigate = ( url ) => {
-		// Users contacting support via Happychat should be refrained from visiting
-		// external links in the current browser tab, since that would terminates
-		// the chat. We instead show a modal awaiting for user confirmation to visit
-		// it on a new tab, so the active Happychat session in the current tab is not
-		// affected.
 		if ( isHappychatSessionActive && isExternal( url ) && shouldOpenExternalLinksInCurrentTab ) {
 			setExternalUrl( url );
 			setShowDialog( true );
