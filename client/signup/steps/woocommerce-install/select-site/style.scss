@@ -3,6 +3,16 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
+body.is-section-signup {
+	.signup__step.is-select-site {
+		.is-wide-layout {
+			max-width: 1024px;
+			margin: 0 20px;
+			padding: 0 20px;
+		}
+	}
+}
+
 .select-site__card {
 	padding: 0;
 

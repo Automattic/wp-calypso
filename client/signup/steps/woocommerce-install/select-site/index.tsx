@@ -21,7 +21,7 @@ interface Site {
 }
 
 export default function SelectSite( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep } = props;
+	const { goToStep, isReskinned } = props;
 	const { __ } = useI18n();
 
 	// todo: we should allow any (non jetpack, non p2) site to show up here,
@@ -51,8 +51,9 @@ export default function SelectSite( props: WooCommerceInstallProps ): ReactEleme
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
 			backUrl="/woocommerce-installation"
-			hideFormattedHeader={ true }
 			className="select-site__step-wrapper"
+			align={ isReskinned ? 'left' : 'center' }
+			isWideLayout={ isReskinned }
 			stepContent={
 				<Card className="select-site__card">
 					<SiteSelector filter={ filterSites } onSiteSelect={ setSelectedSiteId } />
