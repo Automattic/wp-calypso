@@ -6,5 +6,10 @@
 		"rootDir": "src"
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/test/*" ]
+	"exclude": [ "**/test/*" ],
+	"references": [
+		{ "path": "../composite-checkout" },
+		{ "path": "../shopping-cart" },
+		{ "path": "../wpcom-checkout" }
+	]
 }
