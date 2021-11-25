@@ -7,6 +7,7 @@ import {
 	isFreePlan,
 } from '@automattic/calypso-products';
 import { get } from 'lodash';
+import { isPurchaseManagementLocked } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -28,6 +29,8 @@ export default function ( state, siteId, planKey ) {
 			: PLAN_FREE;
 	const plan = getCurrentPlan( state, siteId );
 
+	const planUpgradeIsLocked = isPurchaseManagementLocked( state, plan?.id );
+
 	// TODO: seems like expired isn't being set.
 	// This information isn't currently available from the sites/%s/plans endpoint.
 	const currentPlanSlug = get( plan, [ 'expired' ], false )
@@ -37,7 +40,7 @@ export default function ( state, siteId, planKey ) {
 	// Exception for upgrading Atomic v1 sites to eCommerce
 	const isAtomicV1 =
 		isSiteAutomatedTransfer( state, siteId ) && ! isSiteWpcomAtomic( state, siteId );
-	if ( isWpComEcommercePlan( planKey ) && isAtomicV1 ) {
+	if ( ( isWpComEcommercePlan( planKey ) && isAtomicV1 ) || planUpgradeIsLocked ) {
 		return false;
 	}
 
