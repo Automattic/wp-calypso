@@ -50,22 +50,26 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	} );
 
 	useEffect( () => {
-		const videoKeys = Object.keys( course.videos );
-		if ( ! currentVideoKey && course ) {
-			const initialVideoId = 'find-theme';
-			setCurrentVideoKey( initialVideoId );
-			setSelectedVideoIndex( videoKeys.indexOf( initialVideoId ) );
+		if ( ! course ) {
+			return;
 		}
 
-		const viewedVideos = Object.keys( userCourseProgression );
-		if ( viewedVideos.length > 0 ) {
-			const nextVideos = videoKeys.slice(
-				( videoKeys.indexOf( viewedVideos.at( -1 ) ) + 1 ) % videoKeys.length
+		const videoSlugs = Object.keys( course.videos );
+		if ( ! currentVideoKey ) {
+			const initialVideoId = 'find-theme';
+			setCurrentVideoKey( initialVideoId );
+			setSelectedVideoIndex( videoSlugs.indexOf( initialVideoId ) );
+		}
+
+		const viewedSlugs = Object.keys( userCourseProgression );
+		if ( viewedSlugs.length > 0 ) {
+			const nextVideos = videoSlugs.slice(
+				( videoSlugs.indexOf( viewedSlugs.at( -1 ) ) + 1 ) % videoSlugs.length
 			);
-			const nextVideo = nextVideos.find( ( x ) => ! viewedVideos.includes( x ) );
-			if ( nextVideo ) {
-				setCurrentVideoKey( nextVideo );
-				setSelectedVideoIndex( videoKeys.indexOf( nextVideo ) );
+			const nextSlug = nextVideos.find( ( x ) => ! viewedSlugs.includes( x ) );
+			if ( nextSlug ) {
+				setCurrentVideoKey( nextSlug );
+				setSelectedVideoIndex( videoSlugs.indexOf( nextSlug ) );
 			}
 		}
 	}, [ currentVideoKey, course ] );
@@ -137,7 +141,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 							videoRef={ videoRef }
 							videoUrl={ currentVideo.url }
 							isPlaying={ isPlaying }
-							poster={ currentVideo.poster ? currentVideo.poster : false }
+							poster={ currentVideo.poster ? currentVideo.poster : undefined }
 						/>
 					) }
 					<div className="videos-ui__chapters">
