@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { useState, useEffect } from '@wordpress/element';
 import * as React from 'react';
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ interface Props {
 	onDismiss: ( target: string ) => () => void;
 	onNextStepProgression: () => void;
 	onPreviousStepProgression: () => void;
-	tourContainerRef: React.MutableRefObject< null | HTMLElement >;
+	tourContainerElement: HTMLElement | null;
 	isMinimized: boolean;
 }
 
@@ -23,7 +24,7 @@ const KeyboardNavigation: React.FunctionComponent< Props > = ( {
 	onDismiss,
 	onNextStepProgression,
 	onPreviousStepProgression,
-	tourContainerRef,
+	tourContainerElement,
 	isMinimized,
 } ) => {
 	function ExpandedTourNav() {
@@ -32,7 +33,7 @@ const KeyboardNavigation: React.FunctionComponent< Props > = ( {
 			onArrowRight: onNextStepProgression,
 			onArrowLeft: onPreviousStepProgression,
 		} );
-		useFocusTrap( tourContainerRef );
+		useFocusTrap( tourContainerElement );
 
 		return null;
 	}
@@ -43,7 +44,7 @@ const KeyboardNavigation: React.FunctionComponent< Props > = ( {
 		return null;
 	}
 
-	const isTourFocused = useFocusHandler( tourContainerRef );
+	const isTourFocused = useFocusHandler( tourContainerElement );
 
 	if ( ! isTourFocused ) {
 		return null;

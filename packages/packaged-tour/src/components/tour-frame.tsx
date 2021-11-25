@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useState, useCallback } from '@wordpress/element';
 import classnames from 'classnames';
 /**
  * Internal Dependencies
@@ -16,9 +16,13 @@ interface Props {
 	config: Config;
 }
 
+const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
+	typeof callback === 'function' && callback( currentStepIndex );
+};
+
 const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
-	const tourContainerRef = useRef( null );
-	const popperElementRef = useRef( null );
+	const [ tourContainerElement, setTourContainerElement ] = useState< HTMLElement | null >( null );
+	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);
@@ -27,18 +31,21 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const lastStepIndex = config.steps.length - 1;
 	const referenceElementSelector =
 		config.steps[ currentStepIndex ].referenceElements?.desktop || null;
+	const referenceElement = referenceElementSelector
+		? document.querySelector< HTMLElement >( referenceElementSelector )
+		: null;
 
 	const showArrowIndicator = () => {
 		if ( config.options?.effects?.arrowIndicator === false ) {
 			return false;
 		}
 
-		return !! ( referenceElementSelector && ! isMinimized );
+		return !! ( referenceElement && ! isMinimized );
 	};
 
 	const { styles: popperStyles, attributes: popperAttributes } = usePopperHandler(
-		referenceElementSelector,
-		popperElementRef,
+		referenceElement,
+		popperElement,
 		[
 			{
 				name: 'preventOverflow',
@@ -64,7 +71,7 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	);
 
 	const stepRepositionProps =
-		! isMinimized && referenceElementSelector
+		! isMinimized && referenceElement
 			? {
 					style: popperStyles?.popper,
 					...popperAttributes?.popper,
@@ -76,61 +83,63 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		...popperAttributes?.arrow,
 	};
 
-	const showSpotlight = () => {
+	const showSpotlight = useCallback( () => {
 		if ( ! config.options?.effects?.__experimental__spotlight ) {
 			return false;
 		}
 
 		return ! isMinimized;
-	};
+	}, [ config.options?.effects?.__experimental__spotlight, isMinimized ] );
 
-	const showOverlay = () => {
+	const showOverlay = useCallback( () => {
 		if ( showSpotlight() || ! config.options?.effects?.overlay ) {
 			return false;
 		}
 
 		return ! isMinimized;
-	};
+	}, [ config.options?.effects?.overlay, isMinimized, showSpotlight ] );
 
-	const handleCallback = ( callback?: Callback ) => {
-		typeof callback === 'function' && callback( currentStepIndex );
-	};
+	const handleDismiss = useCallback(
+		( source: string ) => {
+			return () => {
+				config.closeHandler( config.steps, currentStepIndex, source );
+			};
+		},
+		[ config, currentStepIndex ]
+	);
 
-	const handleDismiss = ( source: string ) => {
-		return () => {
-			config.closeHandler( config.steps, currentStepIndex, source );
-		};
-	};
-
-	const handleNextStepProgression = () => {
+	const handleNextStepProgression = useCallback( () => {
 		if ( lastStepIndex > currentStepIndex ) {
 			setCurrentStepIndex( currentStepIndex + 1 );
 		}
-		handleCallback( config.options?.callbacks?.onNextStep );
-	};
+		handleCallback( currentStepIndex, config.options?.callbacks?.onNextStep );
+	}, [ config.options?.callbacks?.onNextStep, currentStepIndex, lastStepIndex ] );
 
-	const handlePreviousStepProgression = () => {
+	const handlePreviousStepProgression = useCallback( () => {
 		currentStepIndex && setCurrentStepIndex( currentStepIndex - 1 );
-		handleCallback( config.options?.callbacks?.onPreviousStep );
-	};
+		handleCallback( currentStepIndex, config.options?.callbacks?.onPreviousStep );
+	}, [ config.options?.callbacks?.onPreviousStep, currentStepIndex ] );
 
-	const handleGoToStep = ( stepIndex: number ) => {
-		setCurrentStepIndex( stepIndex );
-		handleCallback( config.options?.callbacks?.onGoToStep );
-	};
+	const handleGoToStep = useCallback(
+		( stepIndex: number ) => {
+			setCurrentStepIndex( stepIndex );
+			handleCallback( currentStepIndex, config.options?.callbacks?.onGoToStep );
+		},
+		[ config.options?.callbacks?.onGoToStep, currentStepIndex ]
+	);
 
-	const handleMinimize = () => {
+	const handleMinimize = useCallback( () => {
 		setIsMinimized( true );
-		handleCallback( config.options?.callbacks?.onMinimize );
-	};
+		handleCallback( currentStepIndex, config.options?.callbacks?.onMinimize );
+	}, [ config.options?.callbacks?.onMinimize, currentStepIndex ] );
 
-	const handleMaximize = () => {
+	const handleMaximize = useCallback( () => {
 		setIsMinimized( false );
-		handleCallback( config.options?.callbacks?.onMaximize );
-	};
+		handleCallback( currentStepIndex, config.options?.callbacks?.onMaximize );
+	}, [ config.options?.callbacks?.onMaximize, currentStepIndex ] );
 
 	useEffect( () => {
-		// focus the Next/Begin button as the first interactive element when tour loads
+		// first interactive element when step renders
 		setTimeout( () => initialFocusedElement?.focus() );
 	}, [ initialFocusedElement ] );
 
@@ -143,13 +152,13 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				onDismiss={ handleDismiss }
 				onNextStepProgression={ handleNextStepProgression }
 				onPreviousStepProgression={ handlePreviousStepProgression }
-				tourContainerRef={ tourContainerRef } // @todo clk rename: tourFrameRef
+				tourContainerElement={ tourContainerElement }
 				isMinimized={ isMinimized }
 			/>
-			<div className={ classNames } ref={ tourContainerRef }>
+			<div className={ classNames } ref={ setTourContainerElement }>
 				{ showOverlay() && <Overlay visible={ true } /> }
-				{ showSpotlight() && <Spotlight referenceElementSelector={ referenceElementSelector } /> }
-				<div className="packaged-tour__frame" ref={ popperElementRef } { ...stepRepositionProps }>
+				{ showSpotlight() && <Spotlight referenceElement={ referenceElement } /> }
+				<div className="packaged-tour__frame" ref={ setPopperElement } { ...stepRepositionProps }>
 					{ showArrowIndicator() && (
 						<div className="packaged-tour__arrow" data-popper-arrow { ...arrowPositionProps } />
 					) }
