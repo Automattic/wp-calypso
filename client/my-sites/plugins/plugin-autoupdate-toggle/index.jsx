@@ -133,7 +133,7 @@ export class PluginAutoUpdateToggle extends Component {
 	}
 
 	render() {
-		const { inProgress, site, plugin, disabled, translate } = this.props;
+		const { inProgress, site, plugin, disabled, translate, hideLabel } = this.props;
 		if ( ! site.jetpack ) {
 			return null;
 		}
@@ -154,7 +154,7 @@ export class PluginAutoUpdateToggle extends Component {
 				inProgress={ inProgress }
 				disabledInfo={ getDisabledInfo }
 				htmlFor={ 'autoupdates-' + plugin.slug + '-' + site.ID }
-				{ ...this.props }
+				hideLabel={ hideLabel }
 			/>
 		);
 	}

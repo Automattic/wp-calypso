@@ -91,7 +91,7 @@ export class PluginActivateToggle extends Component {
 	}
 
 	render() {
-		const { inProgress, site, plugin, disabled, translate } = this.props;
+		const { inProgress, site, plugin, disabled, translate, hideLabel } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -116,7 +116,7 @@ export class PluginActivateToggle extends Component {
 				status={ plugin && plugin.active }
 				action={ this.toggleActivation }
 				htmlFor={ 'activate-' + plugin.slug + '-' + site.ID }
-				{ ...this.props }
+				hideLabel={ hideLabel }
 			/>
 		);
 	}
