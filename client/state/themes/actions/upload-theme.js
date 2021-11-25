@@ -10,9 +10,9 @@ import { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 import 'calypso/state/themes/init';
 
 const performThemeUpload = ( siteId, file, onProgress ) =>
-	new Promise( ( resolve, rejectPromise ) => {
+	new Promise( ( resolve, reject ) => {
 		const resolver = ( error, data ) => {
-			error ? rejectPromise( error ) : resolve( data );
+			error ? reject( error ) : resolve( data );
 		};
 
 		const req = wpcom.req.post(
