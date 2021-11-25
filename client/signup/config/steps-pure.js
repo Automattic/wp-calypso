@@ -813,10 +813,6 @@ export function generateSteps( {
 			stepName: 'transfer',
 			dependencies: [ 'siteId' ],
 		},
-		install: {
-			stepName: 'install',
-			dependencies: [ 'siteId' ],
-		},
 	};
 }
 
