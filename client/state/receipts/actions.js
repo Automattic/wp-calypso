@@ -16,29 +16,21 @@ export function fetchReceipt( receiptId ) {
 			receiptId,
 		} );
 
-		return new Promise( ( resolve, reject ) => {
-			wpcom
-				.undocumented()
-				.me()
-				.getReceipt( receiptId, ( error, data ) => {
-					if ( error ) {
-						const errorMessage =
-							error.message || i18n.translate( 'There was a problem retrieving your receipt.' );
+		return wpcom.req
+			.get( `/me/billing-history/receipt/${ receiptId }` )
+			.then( ( data ) => {
+				dispatch( fetchReceiptCompleted( receiptId, data ) );
+			} )
+			.catch( ( error ) => {
+				const errorMessage =
+					error.message || i18n.translate( 'There was a problem retrieving your receipt.' );
 
-						dispatch( {
-							type: RECEIPT_FETCH_FAILED,
-							receiptId,
-							error: errorMessage,
-						} );
-
-						reject( errorMessage );
-					} else {
-						dispatch( fetchReceiptCompleted( receiptId, data ) );
-
-						resolve();
-					}
+				dispatch( {
+					type: RECEIPT_FETCH_FAILED,
+					receiptId,
+					error: errorMessage,
 				} );
-		} );
+			} );
 	};
 }
 

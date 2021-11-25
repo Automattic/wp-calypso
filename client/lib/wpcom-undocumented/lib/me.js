@@ -22,13 +22,4 @@ function UndocumentedMe( wpcom ) {
  */
 inherits( UndocumentedMe, WPCOM.Me );
 
-UndocumentedMe.prototype.getReceipt = function ( receiptId, queryOrCallback ) {
-	return this.wpcom.req.get(
-		{
-			path: `/me/billing-history/receipt/${ receiptId }`,
-		},
-		queryOrCallback
-	);
-};
-
 export default UndocumentedMe;
