@@ -50,7 +50,7 @@ const useFocusHandler = ( element: HTMLElement | null ): boolean => {
 
 		return () => {
 			document.removeEventListener( 'focusin', handleFocus );
-			document.removeEventListener( 'mnousedown', handleMousedown );
+			document.removeEventListener( 'mousedown', handleMousedown );
 			document.removeEventListener( 'keyup', handleKeyup );
 		};
 	}, [ handleFocus, handleKeyup, handleMousedown ] );
