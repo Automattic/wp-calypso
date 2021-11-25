@@ -129,7 +129,10 @@
 
 .breadcrumbs__help-bubble {
 	margin-left: 7px;
-	color: var( --color-neutral-40 );
+
+	&.info-popover .gridicon {
+			color: var( --studio-gray-30 );
+	}
 }
 
 .breadcrumbs__separator {
