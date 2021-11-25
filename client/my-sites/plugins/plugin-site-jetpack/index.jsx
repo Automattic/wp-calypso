@@ -77,10 +77,19 @@ const PluginSiteJetpack = ( props ) => {
 		<div className="plugin-site-jetpack__container">
 			<div className="plugin-site-jetpack__domain">{ props.site.domain }</div>
 			{ canToggleActivation && (
-				<PluginActivateToggle site={ props.site } plugin={ pluginOnSite } />
+				<PluginActivateToggle
+					site={ props.site }
+					plugin={ pluginOnSite }
+					hideLabel={ ! isMobileLayout }
+				/>
 			) }
 			{ canToggleAutoupdate && (
-				<PluginAutoupdateToggle site={ props.site } plugin={ pluginOnSite } wporg={ true } />
+				<PluginAutoupdateToggle
+					site={ props.site }
+					plugin={ pluginOnSite }
+					wporg={ true }
+					hideLabel={ ! isMobileLayout }
+				/>
 			) }
 			{ isAutoManaged ? (
 				<div className="plugin-site-jetpack__automanage-notice">

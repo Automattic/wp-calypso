@@ -116,6 +116,7 @@ export class PluginActivateToggle extends Component {
 				status={ plugin && plugin.active }
 				action={ this.toggleActivation }
 				htmlFor={ 'activate-' + plugin.slug + '-' + site.ID }
+				{ ...this.props }
 			/>
 		);
 	}

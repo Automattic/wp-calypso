@@ -154,6 +154,7 @@ export class PluginAutoUpdateToggle extends Component {
 				inProgress={ inProgress }
 				disabledInfo={ getDisabledInfo }
 				htmlFor={ 'autoupdates-' + plugin.slug + '-' + site.ID }
+				{ ...this.props }
 			/>
 		);
 	}

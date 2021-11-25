@@ -27,7 +27,7 @@ class PluginAction extends Component {
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
 			/* eslint-disable jsx-a11y/no-static-element-interactions */
 			<span
-				className="plugin-action__label"
+				className={ classNames( 'plugin-action__label', { hide: this.props.hideLabel } ) }
 				ref={ this.disabledInfoLabelRef }
 				onClick={ this.handleAction }
 			>

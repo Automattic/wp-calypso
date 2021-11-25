@@ -48,7 +48,10 @@
 	line-height: 16px;
 	margin-right: 8px;
 	cursor: pointer;
-	display: none;
+
+	&.hide {
+		display: none;
+	}
 
 	.is-disabled & {
 		color: var( --color-neutral-20 );
@@ -58,10 +61,6 @@
 	.has-disabled-info & {
 		cursor: default;
 		flex-direction: row;
-	}
-
-	@media screen and ( max-width: 1040px ) {
-		display: block;
 	}
 }
 
