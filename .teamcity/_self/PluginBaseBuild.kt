@@ -89,7 +89,7 @@ open class PluginBaseBuild : Template({
 			scriptContent = """
 				export NODE_ENV="%build_env%"
 				cd $workingDir
-				yarn build
+				yarn workspaces focus
 			"""
 		}
 
