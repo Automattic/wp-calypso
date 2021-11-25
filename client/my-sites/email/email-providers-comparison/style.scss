@@ -180,6 +180,19 @@
 					color: var( --studio-gray-100 );
 					text-decoration: none;
 				}
+
+				&.email-providers-comparison__keep-main-price {
+					text-decoration: none;
+				}
+
+				&.email-providers-comparison__highlight-main-price {
+					color: var( --studio-green-50 );
+					text-decoration: none;
+				}
+
+				&.email-providers-comparison__titan-trial-with-sale {
+					display: block;
+				}
 			}
 		}
 
@@ -192,6 +205,10 @@
 			.email-providers-comparison__discount-with-renewal span {
 				color: var( --color-text-subtle );
 				font-weight: 400;
+			}
+
+			.email-providers-comparison__discount-and-free-trial {
+				display: block;
 			}
 		}
 	}
