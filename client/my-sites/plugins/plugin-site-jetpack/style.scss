@@ -65,6 +65,10 @@
 
 	.plugin-site-jetpack__install-button {
 		order: 2;
+
+		@media screen and ( max-width: 1040px ) {
+			padding: 10px 0;
+		}
 	}
 
 	@media screen and ( max-width: 1040px ) {

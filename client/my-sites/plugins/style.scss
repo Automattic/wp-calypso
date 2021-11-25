@@ -372,7 +372,7 @@ $plugin-details-header-padding: 100px;
 	position: relative;
 	transform: translateX( -50% );
 	left: 50%;
-	width: calc( 100vw - var( --sidebar-width-max ) - 1px );
+	width: calc( 100vw - var( --sidebar-width-max ) + 1px );
 
 	@media screen and ( max-width: 782px ) {
 		width: 100vw;
