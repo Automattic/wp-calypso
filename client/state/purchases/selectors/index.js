@@ -15,6 +15,8 @@ export { getPurchasesError } from './get-purchases-error';
 export { getRenewableSitePurchases } from './get-renewable-site-purchases';
 export { getSitePurchases } from './get-site-purchases';
 export { getUserPurchases } from './get-user-purchases';
+export { isInAppPurchase } from './is-in-app-purchase';
+export { isPurchaseManagementLocked } from './is-purchase-management-locked';
 export { isUserPaid } from './is-user-paid';
 export { shouldRevertAtomicSiteBeforeDeactivation } from './should-revert-atomic-site-before-deactivation';
 export { siteHasBackupProductPurchase } from './site-has-backup-product-purchase';
