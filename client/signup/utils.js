@@ -216,5 +216,5 @@ export const isReskinnedFlow = ( flowName ) => {
 };
 
 export const isP2Flow = ( flowName ) => {
-	return flowName === 'p2' || flowName === 'p2v2';
+	return flowName === 'p2' || flowName === 'p2-new';
 };

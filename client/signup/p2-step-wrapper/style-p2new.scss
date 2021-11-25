@@ -3,7 +3,7 @@
 @import '@wordpress/base-styles/mixins';
 @import 'calypso/assets/stylesheets/_p2-extends.scss';
 
-.is-p2v2 {
+.is-p-2-new {
 	.p2-step-wrapper {
 		box-sizing: border-box;
 		margin: 0 auto;
@@ -92,7 +92,7 @@
 		}
 	}
 
-	.signup__step.is-p2-get-started {
+	.signup__step.is-p-2-get-started {
 		.p2-step-wrapper {
 			@include break-mobile {
 				padding-left: 20px;
@@ -102,7 +102,7 @@
 		}
 	}
 
-	.signup__step.is-p2-site {
+	.signup__step.is-p-2-site {
 		.p2-step-wrapper__header-text {
 			font-size: var( --p2-font-size-form-s );
 			font-weight: 400;

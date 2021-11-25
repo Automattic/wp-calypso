@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './style.scss';
-import './style-p2v2.scss';
+import './style-p2new.scss';
 
 function P2StepWrapper( {
 	flowName,
