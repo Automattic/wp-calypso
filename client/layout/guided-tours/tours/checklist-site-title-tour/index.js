@@ -27,7 +27,7 @@ export const ChecklistSiteTitleTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Update the {{siteTitleButton/}} and {{SiteTaglineButton/}} fields ' +
+							'Update the {{siteTitleButton/}} and {{siteTaglineButton/}} fields ' +
 								'to let visitors clearly identify your site.',
 							{
 								components: {

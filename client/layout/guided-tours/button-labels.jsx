@@ -25,4 +25,4 @@ export const DoneButton = button( translate( 'Done' ) );
 export const EditButton = button( translate( 'Edit' ) );
 export const EditImageButton = button( translate( 'Edit Image' ), <Gridicon icon="pencil" /> );
 export const SiteTitleButton = button( translate( 'Site Title' ) );
-export const SiteTaglineButton = button( translate( 'Site tagline' ) );
+export const SiteTaglineButton = button( translate( 'Site Tagline' ) );
