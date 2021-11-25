@@ -48,15 +48,17 @@ function P2GetStarted( {
 	const renderOption = ( slug, title, description ) => {
 		return (
 			<div className="p2-get-started__option">
-				<div className="p2-get-started__option-title">{ title }</div>
-				<div className="p2-get-started__option-description">{ description }</div>
 				<Button
-					className="p2-get-started__button-next"
+					className="p2-get-started__option-button"
 					onClick={ () => {
 						handleNextStepClick( slug );
 					} }
 				>
-					<Icon className="p2-get-started__button-next-icon" icon={ chevronRight } />
+					<div className="p2-get-started__option-title">{ title }</div>
+					<div className="p2-get-started__option-description">{ description }</div>
+					<div className="p2-get-started__option-icon">
+						<Icon icon={ chevronRight } />
+					</div>
 				</Button>
 			</div>
 		);
