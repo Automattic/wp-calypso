@@ -219,12 +219,13 @@
 	}
 
 	.videos-ui__bar {
-		padding: 20px 0 15px;
+		padding: 12px 20px;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
 		font-size: $font-body-small;
+		min-height: 64px;
 
 		div,
 		a {
