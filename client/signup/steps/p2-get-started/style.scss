@@ -23,7 +23,11 @@
 
 	.p2-get-started__option-title {
 		font-weight: 700;
-		font-size: 1.25rem;
+		font-size: 19px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	}
+
+	.p2-get-started__option-description {
+		font-size: 15px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	}
 
 	button.p2-get-started__button-next {
