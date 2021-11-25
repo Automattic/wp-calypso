@@ -43,12 +43,12 @@ export default function SelectSite( props: WooCommerceInstallProps ): ReactEleme
 		);
 	};
 
-	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
+	const [ selectedSiteId, setSelectedSiteId ] = useState();
 
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		if ( selectedSiteId === '' ) {
+		if ( ! selectedSiteId ) {
 			return;
 		}
 		dispatch( submitSignupStep( { stepName: 'select-site' }, { siteId: selectedSiteId } ) );
