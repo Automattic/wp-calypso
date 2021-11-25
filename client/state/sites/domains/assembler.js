@@ -79,6 +79,10 @@ export const createSiteDomainObject = ( domain ) => {
 		isRedeemable: Boolean( domain.is_redeemable ),
 		isEligibleForInboundTransfer: Boolean( domain.is_eligible_for_inbound_transfer ),
 		isAutoRenewing: Boolean( domain.auto_renewing ),
+		isIcannVerificationSuspended:
+			typeof domain.is_icann_verification_suspended === 'boolean'
+				? Boolean( domain.is_icann_verification_suspended )
+				: null,
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPendingRenewal: Boolean( domain.pending_renewal ),
 		isPremium: Boolean( domain.is_premium ),
