@@ -129,7 +129,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 						</p>
 					) }
 
-					<NextButton onClick={ () => goToStep( 'transfer' ) }>{ __( 'Confirm' ) }</NextButton>
+					<NextButton disabled={ isLoading } onClick={ () => goToStep( 'transfer' ) }>
+						{ __( 'Confirm' ) }
+					</NextButton>
 				</div>
 			</>
 		);

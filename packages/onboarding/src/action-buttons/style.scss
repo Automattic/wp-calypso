@@ -85,8 +85,8 @@ button.action_buttons__button.components-button {
 		justify-content: flex-start;
 
 		text-decoration: underline;
-		// stylelint-disable-next-line scales/font-weight
-		font-weight: 600;
+		// stylelint-disable-next-line scales/font-weights
+		font-weight: 500;
 		color: var( --mainColor );
 
 		// @TODO: We have to revisit the ArrowButton's padding when we pick up #48568 (https://github.com/Automattic/wp-calypso/issues/48568)
