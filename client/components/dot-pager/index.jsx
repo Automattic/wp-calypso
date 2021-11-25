@@ -2,7 +2,7 @@ import { Icon, arrowRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
-import { Children, useState, useEffect, useRef, useCallback } from 'react';
+import { Children, useState, useEffect, useRef } from 'react';
 
 import './style.scss';
 
@@ -86,26 +86,41 @@ export const DotPager = ( {
 	const [ pagesStyle, setPagesStyle ] = useState();
 	const pagesRef = useRef();
 	const numPages = Children.count( children );
-	const updateLayout = useCallback( () => {
-		if ( ! hasDynamicHeight ) {
-			return;
-		}
 
+	function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
+		// save callback to a ref so that it doesn't need to be a dependency of other hooks
+		const savedUpdateLayout = useRef();
+		useEffect( () => {
+			savedUpdateLayout.current = updateLayout;
+		}, [ updateLayout ] );
+
+		// fire when the `currentPageIndex` parameter changes
+		useEffect( () => {
+			if ( ! enabled ) {
+				return;
+			}
+
+			savedUpdateLayout.current();
+		}, [ enabled, currentPageIndex ] );
+
+		// fire when the window resizes
+		useEffect( () => {
+			if ( ! enabled ) {
+				return;
+			}
+
+			const onResize = () => savedUpdateLayout.current();
+			window.addEventListener( 'resize', onResize );
+			return () => window.removeEventListener( 'resize', onResize );
+		}, [ enabled ] );
+	}
+
+	const updateEnabled = hasDynamicHeight && numPages > 1;
+
+	useUpdateLayout( updateEnabled, currentPage, () => {
 		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
 		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
-	}, [ hasDynamicHeight, setPagesStyle ] );
-
-	useEffect( () => {
-		updateLayout();
-	}, [ currentPage, updateLayout ] );
-
-	useEffect( () => {
-		window.addEventListener( 'resize', updateLayout );
-
-		return () => {
-			window.removeEventListener( 'resize', updateLayout );
-		};
-	}, [ updateLayout ] );
+	} );
 
 	useEffect( () => {
 		if ( currentPage >= numPages ) {
