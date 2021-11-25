@@ -421,6 +421,20 @@ class EmailProvidersComparison extends Component {
 						},
 					}
 				) }
+				<br />
+				<span>
+					<em>
+						{ translate(
+							'Discount is only available for first-time %(googleMailService)s purchases',
+							{
+								args: {
+									googleMailService: getGoogleMailServiceFamily(),
+								},
+								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+							}
+						) }
+					</em>
+				</span>
 			</span>
 		) : null;
 
