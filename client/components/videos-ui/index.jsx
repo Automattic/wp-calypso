@@ -198,9 +198,9 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 															d="M1.9165 1.75L10.0832 7L1.9165 12.25V1.75Z"
 															fill="#101517"
 															stroke="#101517"
-															stroke-width="2"
-															stroke-linecap="round"
-															stroke-linejoin="round"
+															strokeWidth="2"
+															strokeLinecap="round"
+															strokeLinejoin="round"
 														/>
 													</svg>
 													<span>{ translate( 'Play video' ) }</span>
