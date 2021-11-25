@@ -5,4 +5,18 @@
 	.videos-ui .videos-ui__modal-footer-bar {
 		display: none;
 	}
+	.videos-ui .videos-ui__modal-footer-bar.videos-ui__course-completed {
+		display: flex;
+		margin: auto;
+		max-width: 1160px;
+
+		a {
+			display: none;
+		}
+
+		p {
+			font-size: $font-body-large;
+			margin: 0;
+		}
+	}
 }
