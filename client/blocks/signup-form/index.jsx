@@ -431,10 +431,18 @@ class SignupForm extends Component {
 		return 'jetpack-connect' === this.props.sectionName;
 	}
 
+	getLoginLinkFrom() {
+		if ( this.props.isP2Flow ) {
+			return 'p2';
+		}
+
+		return this.props.from;
+	}
+
 	getLoginLink() {
 		return login( {
 			isJetpack: this.isJetpack(),
-			from: this.props.from,
+			from: this.getLoginLinkFrom(),
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
