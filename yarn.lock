@@ -1392,6 +1392,7 @@ __metadata:
     "@wordpress/i18n": ^4.2.4
     "@wordpress/icons": ^6.1.1
     "@wordpress/is-shallow-equal": ^4.2.1
+    "@wordpress/jest-preset-default": ^7.1.3
     "@wordpress/keycodes": ^3.2.4
     "@wordpress/nux": ^5.0.11
     "@wordpress/plugins": ^4.0.6
