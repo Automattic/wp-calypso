@@ -81,7 +81,9 @@ open class PluginBaseBuild : Template({
 				# Update composer
 				composer install
 
-				$yarn_install_cmd
+				cd $workingDir
+				export SKIP_TSC=true
+				yarn workspaces focus
 			"""
 		}
 		bashNodeScript {
@@ -89,7 +91,7 @@ open class PluginBaseBuild : Template({
 			scriptContent = """
 				export NODE_ENV="%build_env%"
 				cd $workingDir
-				yarn workspaces focus
+				yarn build
 			"""
 		}
 
