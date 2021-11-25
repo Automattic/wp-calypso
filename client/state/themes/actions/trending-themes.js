@@ -28,14 +28,12 @@ export function receiveTrendingThemes( themes ) {
 export function getTrendingThemes( filter ) {
 	return async ( dispatch ) => {
 		dispatch( { type: TRENDING_THEMES_FETCH, filter } );
-		const query = {
-			sort: 'trending',
-			number: 50,
-			tier: '',
-			apiVersion: '1.1',
-		};
 		try {
-			const res = await wpcom.req.get( '/themes', query );
+			const res = await wpcom.req.get( '/themes', {
+				sort: 'trending',
+				number: 50,
+				tier: '',
+			} );
 			dispatch( receiveTrendingThemes( res ) );
 		} catch ( error ) {
 			dispatch( { type: TRENDING_THEMES_FAIL } );
