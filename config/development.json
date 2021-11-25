@@ -32,7 +32,6 @@
 		"activity-log/display-rules": true,
 		"ad-tracking": false,
 		"async-payments": false,
-		"automated-transfer": true,
 		"calypsoify/plugins": true,
 		"cloudflare": true,
 		"comments/filters-in-posts": true,

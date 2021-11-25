@@ -16,7 +16,6 @@
 	"difm_signup_typeform_id": "m3s2pdgI",
 	"features": {
 		"activity-log/display-rules": true,
-		"automated-transfer": true,
 		"async-payments": false,
 		"ad-tracking": false,
 		"calypsoify/plugins": true,

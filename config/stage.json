@@ -19,7 +19,6 @@
 		"activity-log/display-rules": true,
 		"ad-tracking": false,
 		"async-payments": false,
-		"automated-transfer": true,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"cloudflare": true,

@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { get } from 'lodash';
 import { userCan } from 'calypso/lib/site/utils';
@@ -18,11 +18,6 @@ export function isATEnabled( site ) {
 	// Site has already been transferred
 	if ( get( site, 'options.is_automated_transfer' ) ) {
 		return true;
-	}
-
-	// Feature must be enabled on environment
-	if ( ! isEnabled( 'automated-transfer' ) ) {
-		return false;
 	}
 
 	// If it's wpcalypso, this is open
