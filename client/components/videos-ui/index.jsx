@@ -63,16 +63,13 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 
 		const viewedSlugs = Object.keys( userCourseProgression );
 		if ( viewedSlugs.length > 0 ) {
-			const nextVideos = videoSlugs.slice(
-				( videoSlugs.indexOf( viewedSlugs.at( -1 ) ) + 1 ) % videoSlugs.length
-			);
-			const nextSlug = nextVideos.find( ( x ) => ! viewedSlugs.includes( x ) );
+			const nextSlug = videoSlugs.find( ( x ) => ! viewedSlugs.includes( x ) );
 			if ( nextSlug ) {
 				setCurrentVideoKey( nextSlug );
 				setSelectedVideoIndex( videoSlugs.indexOf( nextSlug ) );
 			}
 		}
-	}, [ currentVideoKey, course ] );
+	}, [ currentVideoKey, course, userCourseProgression ] );
 
 	useEffect( () => {
 		if ( currentVideoKey && course ) {
