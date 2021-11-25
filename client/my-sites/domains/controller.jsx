@@ -10,7 +10,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isATEnabled } from 'calypso/lib/automated-transfer';
 import { sectionify } from 'calypso/lib/route';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import MapDomain from 'calypso/my-sites/domains/map-domain';
@@ -299,7 +298,7 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 
-	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
+	if ( selectedSite && selectedSite.jetpack && ! selectedSite.options.is_automated_transfer ) {
 		context.primary = (
 			<Main>
 				<PageViewTracker
