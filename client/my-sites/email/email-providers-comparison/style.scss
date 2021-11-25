@@ -193,6 +193,14 @@
 				color: var( --color-text-subtle );
 				font-weight: 400;
 			}
+
+			.badge {
+				font-weight: 400;
+
+				&.discount-and-eligible-for-free-trial {
+					margin-left: 0.5em;
+				}
+			}
 		}
 	}
 
