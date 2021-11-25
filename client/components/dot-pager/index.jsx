@@ -94,15 +94,18 @@ export const DotPager = ( {
 	const pagesRef = useRef();
 	const numPages = Children.count( children );
 
-		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
-		if ( targetHeight && pagesStyle?.height !== targetHeight ) {
-			setPagesStyle( { ...pagesStyle, height: targetHeight } );
-		}
-	}, [ hasDynamicHeight, setPagesStyle, pagesStyle ] );
+	function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
+		// save callback to a ref so that it doesn't need to be a dependency of other hooks
+		const savedUpdateLayout = useRef();
+		useEffect( () => {
+			savedUpdateLayout.current = updateLayout;
+		}, [ updateLayout ] );
 
-	useEffect( () => {
-		updateLayout();
-	}, [ currentPage, updateLayout, pagesStyle ] );
+		// fire when the `currentPageIndex` parameter changes
+		useEffect( () => {
+			if ( ! enabled ) {
+				return;
+			}
 
 			savedUpdateLayout.current();
 		}, [ enabled, currentPageIndex ] );
@@ -123,7 +126,9 @@ export const DotPager = ( {
 
 	useUpdateLayout( updateEnabled, currentPage, () => {
 		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
-		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
+		if ( targetHeight && pagesStyle?.height !== targetHeight ) {
+			setPagesStyle( { ...pagesStyle, height: targetHeight } );
+		}
 	} );
 
 	useEffect( () => {
