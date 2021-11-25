@@ -882,7 +882,7 @@ class SignupForm extends Component {
 	footerLink() {
 		const { flowName, showRecaptchaToS, translate } = this.props;
 
-		if ( flowName === 'p2' ) {
+		if ( this.props.isP2Flow ) {
 			return (
 				<div className="signup-form__p2-footer-link">
 					<div>{ this.props.translate( 'Already have a WordPress.com account?' ) }</div>
