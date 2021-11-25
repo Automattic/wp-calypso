@@ -75,7 +75,7 @@ export function renderTransactionAmount( transaction, { translate, addingTax = f
 	);
 }
 
-function renderTransactionQuantitySummaryForTitanMail(
+function renderTransactionQuantitySummaryForMailboxes(
 	licensed_quantity,
 	new_quantity,
 	isRenewal,
@@ -124,7 +124,7 @@ export function renderTransactionQuantitySummary(
 	const isUpgrade = 'new purchase' === type && new_quantity > 0;
 
 	if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
-		return renderTransactionQuantitySummaryForTitanMail(
+		return renderTransactionQuantitySummaryForMailboxes(
 			licensed_quantity,
 			new_quantity,
 			isRenewal,
