@@ -305,7 +305,6 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'with a Jetpack site', () => {
-			// see lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()

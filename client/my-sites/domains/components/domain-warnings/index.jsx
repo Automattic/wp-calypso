@@ -14,7 +14,7 @@ import {
 	transferStatus,
 	gdprConsentStatus,
 } from 'calypso/lib/domains/constants';
-import { hasPendingGSuiteUsers, isPendingGSuiteTOSAcceptance } from 'calypso/lib/gsuite';
+import { isPendingGSuiteTOSAcceptance } from 'calypso/lib/gsuite';
 import {
 	CHANGE_NAME_SERVERS,
 	DOMAINS,
@@ -811,8 +811,8 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	pendingGSuiteTosAcceptanceDomains = () => {
-		const domains = this.getDomains().filter(
-			( domain ) => hasPendingGSuiteUsers( domain ) || isPendingGSuiteTOSAcceptance( domain )
+		const domains = this.getDomains().filter( ( domain ) =>
+			isPendingGSuiteTOSAcceptance( domain )
 		);
 
 		if ( domains.length === 0 ) {
