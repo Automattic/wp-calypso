@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
 import { Children, useState, useEffect, useRef } from 'react';
+import useResizeAware from 'react-resize-aware';
 
 import './style.scss';
 
@@ -90,46 +91,10 @@ export const DotPager = ( {
 		transitionDuration: `300ms`,
 	} );
 	const [ dragStartData, setDragStartData ] = useState( {} );
+	const [ resizeListener, sizes ] = useResizeAware();
 
 	const pagesRef = useRef();
 	const numPages = Children.count( children );
-
-	function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
-		// save callback to a ref so that it doesn't need to be a dependency of other hooks
-		const savedUpdateLayout = useRef();
-		useEffect( () => {
-			savedUpdateLayout.current = updateLayout;
-		}, [ updateLayout ] );
-
-		// fire when the `currentPageIndex` parameter changes
-		useEffect( () => {
-			if ( ! enabled ) {
-				return;
-			}
-
-			savedUpdateLayout.current();
-		}, [ enabled, currentPageIndex ] );
-
-		// fire when the window resizes
-		useEffect( () => {
-			if ( ! enabled ) {
-				return;
-			}
-
-			const onResize = () => savedUpdateLayout.current();
-			window.addEventListener( 'resize', onResize );
-			return () => window.removeEventListener( 'resize', onResize );
-		}, [ enabled ] );
-	}
-
-	const updateEnabled = hasDynamicHeight && numPages > 1;
-
-	useUpdateLayout( updateEnabled, currentPage, () => {
-		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
-		if ( targetHeight && pagesStyle?.height !== targetHeight ) {
-			setPagesStyle( { ...pagesStyle, height: targetHeight } );
-		}
-	} );
 
 	useEffect( () => {
 		if ( currentPage >= numPages ) {
@@ -138,8 +103,7 @@ export const DotPager = ( {
 	}, [ numPages ] );
 
 	const getPageWidth = () => {
-		return pagesRef.current?.getElementsByClassName( 'is-current' )[ 0 ]?.getBoundingClientRect()
-			.width;
+		return sizes.width;
 	};
 
 	const getOffset = ( index ) => {
@@ -213,8 +177,6 @@ export const DotPager = ( {
 		setIsDragging( false );
 	};
 
-	const width = getPageWidth();
-
 	return (
 		<div className={ className } { ...props }>
 			<Controls
@@ -238,10 +200,14 @@ export const DotPager = ( {
 				onPointerUp={ handleDragEnd }
 				ref={ pagesRef }
 			>
-				<div className="dot-pager__pages" style={ pagesStyle }>
+				{ resizeListener }
+				<div
+					className="dot-pager__pages"
+					style={ { ...pagesStyle, height: hasDynamicHeight ? `${ sizes.height }px` : null } }
+				>
 					{ Children.map( children, ( child, index ) => (
 						<div
-							style={ { width: `${ width }px` } } // Setting the page width is important for iOS browser.
+							style={ { width: `${ sizes.width }px` } } // Setting the page width is important for iOS browser.
 							className={ classnames( 'dot-pager__page', {
 								'is-current': index === currentPage,
 								'is-prev': index < currentPage,

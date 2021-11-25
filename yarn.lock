@@ -30138,7 +30138,14 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-resize-aware@npm:^3.1.0":
+"react-refresh@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "react-refresh@npm:0.8.3"
+  checksum: 74ad7a7e2f29163163b9e13c9aa868faba58d76113acf910f165c18c022086a590750fd93bc8d9468e73cacc3874ad5c061ded7e931ef299aa3dfa3a663fe665
+  languageName: node
+  linkType: hard
+
+"react-resize-aware@npm:^3.1.0, react-resize-aware@npm:^3.1.1":
   version: 3.1.1
   resolution: "react-resize-aware@npm:3.1.1"
   peerDependencies:
@@ -37683,6 +37690,7 @@ testarmada-magellan@11.0.10:
     qs: ^6.9.1
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-resize-aware: ^3.1.1
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.10
