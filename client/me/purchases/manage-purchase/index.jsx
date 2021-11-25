@@ -520,19 +520,23 @@ class ManagePurchase extends Component {
 		return null;
 	}
 
-	renderPurchaseDescription() {
-		const { plan, purchase, site, theme, translate } = this.props;
-
-		let description = purchaseType( purchase );
+	getPurchaseDescription() {
+		const { plan, purchase, theme, translate } = this.props;
 
 		if ( isPlan( purchase ) ) {
-			description = plan.getDescription();
-		} else if ( isTheme( purchase ) && theme ) {
-			description = theme.description;
-		} else if ( isConciergeSession( purchase ) ) {
-			description = purchase.description;
-		} else if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
-			description = translate(
+			return plan.getDescription();
+		}
+
+		if ( isTheme( purchase ) && theme ) {
+			return theme.description;
+		}
+
+		if ( isConciergeSession( purchase ) ) {
+			return purchase.description;
+		}
+
+		if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
+			return translate(
 				"Replaces your site's free address, %(domain)s, with the domain, " +
 					'making it easier to remember and easier to share.',
 				{
@@ -541,41 +545,26 @@ class ManagePurchase extends Component {
 					},
 				}
 			);
-		} else if ( isDomainTransfer( purchase ) ) {
-			description = translate(
+		}
+
+		if ( isDomainTransfer( purchase ) ) {
+			return translate(
 				'Transfers an existing domain from another provider to WordPress.com, ' +
 					'helping you manage your site and domain in one place.'
 			);
-		} else if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
-			description = translate(
-				'Professional email integrated with Google Meet and other collaboration tools from Google.'
-			);
+		}
+
+		if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
+			const description = isTitanMail( purchase )
+				? translate(
+						'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
+				  )
+				: translate(
+						'Professional email integrated with Google Meet and other productivity tools from Google.'
+				  );
 
 			if ( purchase.purchaseRenewalQuantity ) {
-				description = (
-					<>
-						{ description }{ ' ' }
-						{ translate(
-							'This purchase is for %(numberOfUsers)d user for the domain %(domain)s.',
-							'This purchase is for %(numberOfUsers)d users for the domain %(domain)s.',
-							{
-								count: purchase.purchaseRenewalQuantity,
-								args: {
-									numberOfUsers: purchase.purchaseRenewalQuantity,
-									domain: purchase.meta,
-								},
-							}
-						) }
-					</>
-				);
-			}
-		} else if ( isTitanMail( purchase ) ) {
-			description = translate(
-				'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
-			);
-
-			if ( purchase.purchaseRenewalQuantity ) {
-				description = (
+				return (
 					<>
 						{ description }{ ' ' }
 						{ translate(
@@ -592,17 +581,27 @@ class ManagePurchase extends Component {
 					</>
 				);
 			}
+
+			return description;
 		}
+
+		return purchaseType( purchase );
+	}
+
+	renderPurchaseDescription() {
+		const { purchase, site, translate } = this.props;
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
 		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
 
 		return (
 			<div className="manage-purchase__content">
-				<span className="manage-purchase__description">{ description }</span>
+				<span className="manage-purchase__description">{ this.getPurchaseDescription() }</span>
+
 				<span className="manage-purchase__settings-link">
 					{ site && <ProductLink purchase={ purchase } selectedSite={ site } /> }
 				</span>
+
 				{ registrationAgreementUrl && (
 					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
 						{ domainRegistrationAgreementLinkText }
