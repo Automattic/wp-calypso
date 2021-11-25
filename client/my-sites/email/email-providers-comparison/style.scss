@@ -180,6 +180,10 @@
 					color: var( --studio-gray-100 );
 					text-decoration: none;
 				}
+
+				&.no-trial {
+					text-decoration: none;
+				}
 			}
 		}
 

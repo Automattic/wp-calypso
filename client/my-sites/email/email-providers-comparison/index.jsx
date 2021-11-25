@@ -512,14 +512,18 @@ class EmailProvidersComparison extends Component {
 			translate,
 		} = this.props;
 
+		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
+		const formattedPriceClassName = isEligibleForFreeTrial ? null : 'no-trial';
 		const formattedPrice = translate( '{{price/}} /mailbox /month billed monthly', {
 			components: {
-				price: <span>{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }</span>,
+				price: (
+					<span className={ formattedPriceClassName }>
+						{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }
+					</span>
+				),
 			},
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
-
-		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 
 		const blackFridaySaleEndTime = new Date( '2021-12-01T07:59:00Z' ).getTime();
 		const blackFridayDiscountClassName = isEligibleForFreeTrial
