@@ -63,7 +63,7 @@
 	.videos-ui__body {
 		max-width: 1280px;
 		margin: 0 auto;
-		padding: 64px 20px 41px;
+		padding: 64px 20px 97px;
 
 		h3 {
 			font-size: $font-title-medium;
@@ -205,6 +205,23 @@
 					stroke: #ffffff;
 				}
 			}
+		}
+	}
+
+	.videos-ui__bar {
+		padding: 20px;
+		padding-bottom: 15px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		font-size: $font-body-small;
+
+		div,
+		a {
+			display: flex;
+			color: #fff;
+			align-items: center;
 		}
 	}
 
