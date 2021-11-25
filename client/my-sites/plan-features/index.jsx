@@ -9,7 +9,6 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
-	FEATURE_BUSINESS_ONBOARDING,
 	TYPE_P2_PLUS,
 	TYPE_FREE,
 	planMatches,
@@ -18,7 +17,6 @@ import {
 	getPlanPath,
 	isFreePlan,
 	isWpComEcommercePlan,
-	isWpComBusinessPlan,
 	getPlanClass,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
@@ -970,12 +968,7 @@ const ConnectedPlanFeatures = connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
-				let features = planConstantObj.getPlanCompareFeatures();
-
-				// TODO: remove this once Quick Start sessions have been removed from Business Plan
-				if ( isWpComBusinessPlan( plan ) ) {
-					features = features.filter( ( feature ) => feature !== FEATURE_BUSINESS_ONBOARDING );
-				}
+				const features = planConstantObj.getPlanCompareFeatures();
 
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
