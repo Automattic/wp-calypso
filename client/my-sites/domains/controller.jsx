@@ -25,6 +25,8 @@ import {
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -296,13 +298,14 @@ const redirectToUseYourDomainIfVipSite = () => {
 
 const jetpackNoDomainsWarning = ( context, next ) => {
 	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
 
-	if ( selectedSite && selectedSite.jetpack && ! selectedSite.options.is_automated_transfer ) {
+	if ( siteId && isJetpack ) {
 		context.primary = (
 			<Main>
 				<PageViewTracker
-					path={ context.path.indexOf( '/domains/add' ) === 0 ? '/domains/add' : '/domains/manage' }
+					path={ context.path.startsWith( '/domains/add' ) ? '/domains/add' : '/domains/manage' }
 					title="My Sites > Domains > No Domains On Jetpack"
 				/>
 				<EmptyContent
@@ -311,7 +314,7 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 						'You can only purchase domains for sites hosted on WordPress.com at this time.'
 					) }
 					action={ translate( 'View Plans' ) }
-					actionURL={ '/plans/' + ( selectedSite.slug || '' ) }
+					actionURL={ '/plans/' + getSelectedSiteSlug( state ) }
 				/>
 			</Main>
 		);
