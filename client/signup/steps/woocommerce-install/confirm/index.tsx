@@ -1,9 +1,8 @@
-import { BackButton, NextButton } from '@automattic/onboarding';
+import { NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import yourNewStoreImage from 'calypso/assets/images/woocommerce-install/your-new-store.png';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -19,27 +18,8 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import type { WooCommerceInstallProps } from '../';
-import type { GoToStep } from '../../../types';
 
 import './style.scss';
-
-function StepPicture( {
-	isLoading,
-	goToStep,
-}: {
-	isLoading: boolean;
-	goToStep: GoToStep;
-} ): ReactElement {
-	return (
-		<div className="confirm__image-container">
-			{ isLoading && <LoadingEllipsis /> }
-			<img src={ yourNewStoreImage } alt="" />
-			<div>
-				<BackButton onClick={ () => goToStep( 'select-site' ) } />
-			</div>
-		</div>
-	);
-}
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
 	const { siteId, goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
@@ -86,7 +66,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<StepPicture isLoading={ isLoading } goToStep={ goToStep } />
+				<div className="confirm__info-section">{ isLoading && <LoadingEllipsis /> }</div>
 
 				<div className="confirm__instructions-container">
 					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
@@ -135,7 +115,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<StepPicture isLoading={ isLoading } goToStep={ goToStep } />
+				<div className="confirm__info-section">{ isLoading && <LoadingEllipsis /> }</div>
 
 				<div className="confirm__instructions-container">
 					{ !! eligibilityHolds?.length && (
