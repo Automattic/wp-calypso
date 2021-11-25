@@ -107,7 +107,7 @@ EmailProviderCard.propTypes = {
 	badge: PropTypes.object,
 	description: PropTypes.string,
 	formattedPrice: PropTypes.node,
-	discount: PropTypes.string,
+	discount: PropTypes.node,
 	formFields: PropTypes.node,
 	buttonLabel: PropTypes.string,
 	onButtonClick: PropTypes.func,
