@@ -14,13 +14,13 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 		startImportFlow = new StartImportFlow( page );
 	} );
 
-	// Login in default page
+	// Login in default page.
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
 		await loginPage.login( { account: 'defaultUser' } );
 	} );
 
-	// A normal and valid import flow
+	// A normal and valid import flow.
 	describe( 'Follow the import flow', function () {
 		it( 'Navigate to Setup page', async function () {
 			await startImportFlow.startSetup( 'e2eflowtesting4.wordpress.com' );
@@ -34,11 +34,13 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 		} );
 	} );
 
-	// An import flow that redirect to a page that
+	// An import flow that redirect to the "start building" page.
 	describe.each( [
+		// wordpress.com is already a WPCOM site and ever will be.
 		{ url: 'wordpress.com', reason: 'Your site is already on WordPress.com' },
-		{ url: 'example.com', reason: 'Your existing content can\'t be imported' },
-	] )( 'Follow the WordPress can\'t be imported flow', function ( { url, reason } ) {
+		// example.com will never be a WordPress site.
+		{ url: 'example.com', reason: "Your existing content can't be imported" },
+	] )( "Follow the WordPress can't be imported flow", function ( { url, reason } ) {
 		it( `Navigate to Capture page`, async function () {
 			await startImportFlow.startImport( 'e2eflowtesting4.wordpress.com' );
 			await startImportFlow.validateURLCapturePage();
@@ -53,18 +55,22 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 		} );
 	} );
 
-	describe( 'Follow the WordPress domain error flow', function ( ) {
+	// An import flow which show an error below the "Enter your site address" input form.
+	describe( 'Follow the WordPress domain error flow', function () {
 		it( `Navigate to Capture page`, async function () {
 			await startImportFlow.startImport( 'e2eflowtesting4.wordpress.com' );
 			await startImportFlow.validateURLCapturePage();
 		} );
 
-		// One of several errors found on Blogs::get_blog_name_error_code
-		// A deleted wpcom site does generate the same error
+		// One of several errors found on Blogs::get_blog_name_error_code.
+		// A deleted wpcom site does generate the same error.
 		it( `Start an invalid WordPress import typo`, async () => {
+			// 1.example.com is guaranteed never to be a valid DNS
 			await startImportFlow.enterURL( '1.example.com' );
 			await startImportFlow.validateScanningPage();
-			await startImportFlow.validateErrorCapturePage( 'The address you entered is not valid. Please try again.' );
+			await startImportFlow.validateErrorCapturePage(
+				'The address you entered is not valid. Please try again.'
+			);
 		} );
 	} );
 } );

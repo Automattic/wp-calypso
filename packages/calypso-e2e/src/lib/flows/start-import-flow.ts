@@ -20,7 +20,8 @@ const selectors = {
 	// Buttons
 	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
-	startImportButton: 'div.is-intent button.select-items-alt__item-button:text("Import your site content")'
+	startImportButton:
+		'div.is-intent button.select-items-alt__item-button:text("Import your site content")',
 };
 
 /**
@@ -57,7 +58,7 @@ export class StartImportFlow {
 	/**
 	 * Validates that we've landed on the URL capture page with 'typo' error.
 	 */
-	 async validateErrorCapturePage( error: string ): Promise< void > {
+	async validateErrorCapturePage( error: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.analyzeError( error ) );
 	}
 
@@ -72,7 +73,9 @@ export class StartImportFlow {
 	 * Validates that we've landed on the import page.
 	 */
 	async validateImportPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.startBuildingHeader( 'Your content is ready for its brand new home' ) );
+		await this.page.waitForSelector(
+			selectors.startBuildingHeader( 'Your content is ready for its brand new home' )
+		);
 	}
 
 	/**
@@ -80,15 +83,14 @@ export class StartImportFlow {
 	 *
 	 * @param {string} reason The reason shown in main header.
 	 */
-	 async validateBuildingPage( reason: string ): Promise< void > {
-		console.log(selectors.startBuildingHeader( reason ));
+	async validateBuildingPage( reason: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.startBuildingHeader( reason ) );
 	}
 
 	/**
 	 * Validates that we've landed on the design setup page.
 	 */
-	 async validateDesignPage(): Promise< void > {
+	async validateDesignPage(): Promise< void > {
 		await this.page.waitForSelector( selectors.setupHeader );
 	}
 
@@ -107,10 +109,8 @@ export class StartImportFlow {
 	 *
 	 * @param {string} siteSlug The site slug URL.
 	 */
-	 async startImport( siteSlug: string ): Promise< void > {
-		await this.page.goto(
-			DataHelper.getCalypsoURL( '/start/importer', { siteSlug } )
-		);
+	async startImport( siteSlug: string ): Promise< void > {
+		await this.page.goto( DataHelper.getCalypsoURL( '/start/importer', { siteSlug } ) );
 	}
 
 	/**
@@ -118,10 +118,8 @@ export class StartImportFlow {
 	 *
 	 * @param {string} siteSlug The site slug URL.
 	 */
-	 async startSetup( siteSlug: string ): Promise< void > {
-		await this.page.goto(
-			DataHelper.getCalypsoURL( '/start/setup-site/intent', { siteSlug } )
-		);
+	async startSetup( siteSlug: string ): Promise< void > {
+		await this.page.goto( DataHelper.getCalypsoURL( '/start/setup-site/intent', { siteSlug } ) );
 		await this.page.waitForSelector( selectors.startImportButton );
 		await this.page.click( selectors.startImportButton );
 	}
@@ -129,7 +127,7 @@ export class StartImportFlow {
 	/**
 	 * Start the building.
 	 */
-	 async startBuilding(): Promise< void > {
+	async startBuilding(): Promise< void > {
 		await this.page.click( selectors.startBuildingButton );
 	}
 
