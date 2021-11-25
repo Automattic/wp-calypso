@@ -61,19 +61,19 @@ export const lockDomainFailed = ( domain, options ) => ( {
 	options,
 } );
 
-export const unlockDomainAndPrepareForTransferOut = ( domain, options ) => ( {
+export const unlockDomain = ( domain, options ) => ( {
 	type: DOMAIN_TRANSFER_UNLOCK_DOMAIN,
 	domain,
 	options,
 } );
 
-export const unlockDomainAndPrepareForTransferOutCompleted = ( domain, options ) => ( {
+export const unlockDomainCompleted = ( domain, options ) => ( {
 	type: DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED,
 	domain,
 	options,
 } );
 
-export const unlockDomainAndPrepareForTransferOutFailed = ( domain, options ) => ( {
+export const unlockDomainFailed = ( domain, options ) => ( {
 	type: DOMAIN_TRANSFER_UNLOCK_DOMAIN_FAILED,
 	domain,
 	options,

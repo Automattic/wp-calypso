@@ -23,7 +23,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import {
 	lockDomain,
-	unlockDomainAndPrepareForTransferOut,
+	unlockDomain,
 	requestDomainTransferCodeOnly,
 } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
@@ -54,7 +54,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		requestDomainTransferCodeOnly,
 		selectedDomainName,
 		selectedSite,
-		unlockDomainAndPrepareForTransferOut,
+		unlockDomain,
 	} = props;
 
 	const renderBreadcrumbs = () => {
@@ -140,18 +140,15 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
 
-	const unlockDomain = () => {
-		const { privateDomain } = getSelectedDomain( props );
-
+	const unlockDomainHandler = () => {
 		const options = {
 			siteId: selectedSite.ID,
 			unlock: true,
-			disablePrivacy: privateDomain,
 		};
-		unlockDomainAndPrepareForTransferOut( selectedDomainName, options );
+		unlockDomain( selectedDomainName, options );
 	};
 
-	const lockDomainRequest = () => {
+	const lockDomainHandler = () => {
 		const { pendingTransfer, domainLockingAvailable } = getSelectedDomain( props );
 
 		lockDomain( selectedDomainName, {
@@ -194,7 +191,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 				<ToggleControl
 					checked={ locked }
 					disabled={ isRequestingTransferCode || isCancelingTransfer }
-					onChange={ locked ? unlockDomain : lockDomainRequest }
+					onChange={ locked ? unlockDomainHandler : lockDomainHandler }
 					label={ toggleLabel }
 				/>
 				<p>
@@ -269,7 +266,7 @@ const transferPageComponent = connect(
 	{
 		lockDomain,
 		requestDomainTransferCodeOnly,
-		unlockDomainAndPrepareForTransferOut,
+		unlockDomain,
 	}
 )( TransferPage );
 

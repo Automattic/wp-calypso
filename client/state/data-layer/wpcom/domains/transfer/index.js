@@ -25,8 +25,8 @@ import {
 	requestDomainTransferCodeCompleted,
 	requestDomainTransferCodeFailed,
 	updateDomainTransfer,
-	unlockDomainAndPrepareForTransferOutCompleted,
-	unlockDomainAndPrepareForTransferOutFailed,
+	unlockDomainCompleted,
+	unlockDomainFailed,
 } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -135,7 +135,7 @@ export const unlockDomain = ( action ) =>
 	);
 
 export const unlockDomainSuccess = ( action ) => ( dispatch ) => {
-	dispatch( unlockDomainAndPrepareForTransferOutCompleted( action.domain, action.options ) );
+	dispatch( unlockDomainCompleted( action.domain, action.options ) );
 	dispatch( fetchWapiDomainInfo( action.domain ) );
 	dispatch(
 		successNotice( translate( 'Domain unlocked successfully!' ), getNoticeOptions( action.domain ) )
@@ -143,7 +143,7 @@ export const unlockDomainSuccess = ( action ) => ( dispatch ) => {
 };
 
 export const unlockDomainFailure = ( action, error ) => [
-	unlockDomainAndPrepareForTransferOutFailed( action.domain ),
+	unlockDomainFailed( action.domain ),
 	errorNotice( getDomainTransferCodeError( error.error ), getNoticeOptions( action.domain ) ),
 	fetchWapiDomainInfo( action.domain ),
 ];
