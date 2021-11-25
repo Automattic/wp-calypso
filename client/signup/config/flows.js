@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import { get, includes, reject } from 'lodash';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
@@ -197,11 +198,11 @@ const Flows = {
 		}
 
 		if ( isUserLoggedIn ) {
-			// Remove the user step unless the user has just completed the step
-			// and then clicked the back button.
 			const urlParams = new URLSearchParams( window.location.search );
 			const param = urlParams.get( 'user_completed' );
-			if ( ! param ) {
+			// Remove the user step unless the user has just completed the step
+			// and then clicked the back button.
+			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() ) {
 				flow = removeUserStepFromFlow( flow );
 			}
 		}
