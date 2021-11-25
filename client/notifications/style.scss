@@ -134,7 +134,7 @@
 			background: transparent;
 		}
 		ul,
-		ol {
+		ol:not( .wpnc__ol--outside ) {
 			margin-left: 1.5em;
 			list-style-position: inside;
 		}

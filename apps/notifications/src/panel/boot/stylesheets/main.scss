@@ -745,6 +745,18 @@
 				border-radius: 3px; /* stylelint-disable-line scales/radii */
 				padding: 0 2px;
 			}
+
+			ol.wpnc__ol--outside {
+				list-style-position: outside;
+				margin-left: 1.2em;
+				overflow: visible;
+			}
+
+			hr.wpnc__hr-separator {
+				width: 100px;
+				height: 2px;
+				margin: 4px auto;
+			}
 		}
 
 		.wpnc__paragraph:first-of-type {
