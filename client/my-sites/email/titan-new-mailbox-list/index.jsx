@@ -22,7 +22,6 @@ const TitanNewMailboxList = ( {
 	onMailboxesChange,
 	onReturnKeyPress = noop,
 	showAddAnotherMailboxButton = true,
-	showLabels = true,
 	validatedMailboxUuids = [],
 } ) => {
 	const translate = useTranslate();
@@ -86,7 +85,6 @@ const TitanNewMailboxList = ( {
 						mailbox={ mailbox }
 						onReturnKeyPress={ onReturnKeyPress }
 						showAllErrors={ validatedMailboxUuids.includes( mailbox.uuid ) }
-						showLabels={ showLabels }
 					/>
 
 					<div className="titan-new-mailbox-list__actions">
@@ -125,7 +123,6 @@ TitanNewMailboxList.propTypes = {
 	onMailboxesChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func,
 	showAddAnotherMailboxButton: PropTypes.bool,
-	showLabels: PropTypes.bool,
 };
 
 export default TitanNewMailboxList;
