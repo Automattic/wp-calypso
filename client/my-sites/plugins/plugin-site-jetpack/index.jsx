@@ -70,8 +70,7 @@ const PluginSiteJetpack = ( props ) => {
 		remove: canToggleRemove = true,
 	} = props?.allowedActions;
 
-	const showAutoManagedMessage = props.isAutoManaged || false;
-
+	const { isAutoManaged = false } = props;
 	const settingsLink = pluginOnSite?.action_links?.Settings ?? null;
 
 	return (
@@ -83,26 +82,27 @@ const PluginSiteJetpack = ( props ) => {
 			{ canToggleAutoupdate && (
 				<PluginAutoupdateToggle site={ props.site } plugin={ pluginOnSite } wporg={ true } />
 			) }
-			<div className="plugin-site-jetpack__action plugin-action last-actions">
-				{ ! isMobileLayout && canToggleRemove && (
-					<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } />
-				) }
-				{ ( isMobileLayout || settingsLink ) && (
-					<EllipsisMenu position={ 'bottom' }>
-						{ settingsLink && (
-							<PopoverMenuItem href={ settingsLink }>{ translate( 'Settings' ) }</PopoverMenuItem>
-						) }
-						{ isMobileLayout && (
-							<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } menuItem />
-						) }
-					</EllipsisMenu>
-				) }
-				{ showAutoManagedMessage && (
-					<div className="plugin-site-jetpack__automanage-notice">
-						{ translate( 'Auto-managed on this site' ) }
-					</div>
-				) }
-			</div>
+			{ isAutoManaged ? (
+				<div className="plugin-site-jetpack__automanage-notice">
+					{ translate( 'Auto-managed on this site' ) }
+				</div>
+			) : (
+				<div className="plugin-site-jetpack__action plugin-action last-actions">
+					{ ! isMobileLayout && canToggleRemove && (
+						<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } />
+					) }
+					{ ( isMobileLayout || settingsLink ) && (
+						<EllipsisMenu position={ 'bottom' }>
+							{ settingsLink && (
+								<PopoverMenuItem href={ settingsLink }>{ translate( 'Settings' ) }</PopoverMenuItem>
+							) }
+							{ isMobileLayout && (
+								<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } menuItem />
+							) }
+						</EllipsisMenu>
+					) }
+				</div>
+			) }
 		</div>
 	);
 };

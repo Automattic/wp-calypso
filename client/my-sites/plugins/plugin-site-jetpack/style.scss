@@ -25,13 +25,6 @@
 	}
 }
 
-.plugin-site-jetpack__automanage-notice {
-	color: var( --color-neutral-light );
-	font-size: $font-body-extra-small;
-	line-height: 1;
-	padding: 6px 0;
-}
-
 .plugin-site-jetpack__container {
 	display: flex;
 	align-items: center;
@@ -61,6 +54,14 @@
 		button.ellipsis-menu__toggle {
 			padding: 0;
 		}
+	}
+
+	.plugin-site-jetpack__automanage-notice {
+		flex: 4 4 0;
+		color: var( --color-neutral-light );
+		font-size: $font-body-extra-small;
+		line-height: 1;
+		text-align: center;
 	}
 
 	.plugin-site-jetpack__install-button {
@@ -97,6 +98,13 @@
 			.plugin-remove-button__remove-link {
 				display: none;
 			}
+		}
+
+		.plugin-site-jetpack__automanage-notice {
+			order: 2;
+			flex: 90%;
+			text-align: left;
+			padding-bottom: 10px;
 		}
 	}
 }
