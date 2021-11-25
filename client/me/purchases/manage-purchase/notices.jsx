@@ -997,7 +997,7 @@ class PurchaseNotice extends Component {
 				showDismiss={ false }
 				status="is-info"
 				text={ translate(
-					'This product is an in-app purchase, it can only be managed via the app store.'
+					'This product is an in-app purchase. You can manage it from within the app store.'
 				) }
 			></Notice>
 		);
