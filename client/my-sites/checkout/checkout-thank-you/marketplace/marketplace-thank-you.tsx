@@ -11,6 +11,8 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
+import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -38,6 +40,15 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 	const plugin = useSelector( ( state ) => getPluginOnSite( state, siteId, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const [ retries, setRetries ] = useState( 0 );
+
+	useEffect( () => {
+		dispatch(
+			pluginInstallationStateChange(
+				MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED,
+				'deauthorize plugin installation URL'
+			)
+		);
+	}, [] );
 
 	useEffect( () => {
 		if ( ! isRequestingPlugins && ! plugin && retries < 10 ) {
