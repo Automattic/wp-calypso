@@ -113,7 +113,6 @@
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"jest-junit": "^9.0.0",
 		"@testing-library/jest-dom": "^5.15.1",
 		"@testing-library/react": "^12.1.2",
 		"@types/node": "^15.0.2",
