@@ -14,7 +14,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () => {
+describe( DataHelper.createSuiteTitle( 'CoBlocks Extensions: Gutter Control' ), () => {
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let page: Page;

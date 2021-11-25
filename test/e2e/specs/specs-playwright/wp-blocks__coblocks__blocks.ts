@@ -21,7 +21,7 @@ import {
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
+describe( DataHelper.createSuiteTitle( 'CoBlocks Blocks' ), function () {
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let page: Page;
