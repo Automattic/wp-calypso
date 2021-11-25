@@ -542,7 +542,9 @@ class Signup extends Component {
 		// to invalid step.
 		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
+			const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
+			const siteSlugOrId = pick( queryObject, [ 'siteSlug', 'siteId' ] );
+			page( getStepUrl( flowName, stepName, stepSectionName, locale, siteSlugOrId ) );
 		} else if ( this.isEveryStepSubmitted() ) {
 			this.goToFirstInvalidStep();
 		}
@@ -570,6 +572,7 @@ class Signup extends Component {
 			progress,
 			this.props.isLoggedIn
 		);
+		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
 		if ( firstInvalidStep ) {
 			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
@@ -582,7 +585,8 @@ class Signup extends Component {
 
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
-			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale ) );
+			const siteSlugOrId = pick( queryObject, [ 'siteSlug', 'siteId' ] );
+			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale, siteSlugOrId ) );
 		}
 	};
 
