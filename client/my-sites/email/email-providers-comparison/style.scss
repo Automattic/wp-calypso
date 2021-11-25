@@ -181,8 +181,17 @@
 					text-decoration: none;
 				}
 
-				&.no-trial {
+				&.email-providers-comparison__keep-main-price {
 					text-decoration: none;
+				}
+
+				&.email-providers-comparison__highlight-main-price {
+					color: var( --studio-green-50 );
+					text-decoration: none;
+				}
+
+				&.email-providers-comparison__titan-trial-with-sale {
+					display: block;
 				}
 			}
 		}
@@ -198,8 +207,8 @@
 				font-weight: 400;
 			}
 
-			.discount-and-eligible-for-free-trial::before {
-				content: '; ';
+			.email-providers-comparison__discount-and-free-trial {
+				display: block;
 			}
 		}
 	}

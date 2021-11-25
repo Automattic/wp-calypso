@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -512,7 +513,16 @@ class EmailProvidersComparison extends Component {
 		} = this.props;
 
 		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
-		const formattedPriceClassName = isEligibleForFreeTrial ? null : 'no-trial';
+
+		const now = Date.now();
+		const showBlackFridaySale =
+			new Date( '2021-11-25T00:05:00Z' ) < now &&
+			now < new Date( '2021-12-01T07:55:00Z' ).getTime();
+
+		const formattedPriceClassName = classNames( {
+			'email-providers-comparison__highlight-main-price': showBlackFridaySale,
+			'email-providers-comparison__keep-main-price': ! isEligibleForFreeTrial,
+		} );
 		const formattedPrice = translate( '{{price/}} /mailbox /month billed monthly', {
 			components: {
 				price: (
@@ -524,21 +534,20 @@ class EmailProvidersComparison extends Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const blackFridaySaleEndTime = new Date( '2021-12-01T07:59:00Z' ).getTime();
-		const blackFridayDiscountClassName = isEligibleForFreeTrial
-			? 'discount-and-eligible-for-free-trial'
-			: null;
-		const blackFridayDiscountBadge =
-			Date.now() >= blackFridaySaleEndTime ? null : (
-				<span className={ blackFridayDiscountClassName }>
-					{ translate( '30% discount for all renewals' ) }
-				</span>
-			);
+		const blackFridayDiscount = showBlackFridaySale ? (
+			<span
+				className={ classNames( {
+					'email-providers-comparison__discount-and-free-trial': isEligibleForFreeTrial,
+				} ) }
+			>
+				{ translate( '30% off applied for all renewals' ) }
+			</span>
+		) : null;
 
 		const discount = (
 			<>
 				{ isEligibleForFreeTrial ? translate( '3 months free' ) : null }
-				{ blackFridayDiscountBadge }
+				{ blackFridayDiscount }
 			</>
 		);
 
