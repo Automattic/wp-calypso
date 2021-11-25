@@ -2,6 +2,7 @@
 @import '@wordpress/base-styles/mixins';
 
 $width-right-panel-card: 40%;
+$width-left-panel-card: calc( 60% - 48px );
 
 .email-provider-stacked-features__whats-included {
 	color: var( --studio-gray-20 );
@@ -220,9 +221,9 @@ div.email-provider-stacked-card__price-badge {
 		}
 	}
 
-	.email-providers-stacked-comparison__provider-form {
-		flex-grow: 1;
+	.email-provider-stacked-card__provider-form {
 		margin-bottom: 20px;
+		width: $width-left-panel-card;
 
 		@include breakpoint-deprecated( '>1040px' ) {
 			margin-top: 0;
@@ -283,6 +284,7 @@ div.email-provider-stacked-card__price-badge {
 }
 
 .email-provider-stacked-card__title-container {
+	width: $width-left-panel-card;
 	display:flex;
 	flex-direction: column;
 }
