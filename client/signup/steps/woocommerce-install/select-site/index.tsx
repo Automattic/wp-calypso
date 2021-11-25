@@ -1,4 +1,10 @@
-import { isBusinessPlan } from '@automattic/calypso-products';
+import {
+	isFreePlan,
+	isPremiumPlan,
+	isPersonalPlan,
+	isEcommercePlan,
+	isBusinessPlan,
+} from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useState, useEffect } from 'react';
@@ -28,7 +34,12 @@ export default function SelectSite( props: WooCommerceInstallProps ): ReactEleme
 	// and push people through the checkout step as needed
 	const filterSites = ( site: Site ) => {
 		return (
-			isBusinessPlan( site.plan.product_slug ) && site.capabilities.manage_options && ! site.jetpack
+			site.capabilities.manage_options &&
+			( isFreePlan( site.plan.product_slug ) ||
+				isPersonalPlan( site.plan.product_slug ) ||
+				isPremiumPlan( site.plan.product_slug ) ||
+				isBusinessPlan( site.plan.product_slug ) ||
+				isEcommercePlan( site.plan.product_slug ) )
 		);
 	};
 
