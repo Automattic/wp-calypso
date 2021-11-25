@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const VideoPlayer = ( { videoRef, videoUrl, isPlaying, poster = false } ) => {
+const VideoPlayer = ( { videoRef, videoUrl, isPlaying, poster = undefined } ) => {
 	useEffect( () => {
 		if ( isPlaying ) {
 			videoRef.current.play();

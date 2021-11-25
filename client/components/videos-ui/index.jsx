@@ -50,13 +50,26 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	} );
 
 	useEffect( () => {
-		if ( ! currentVideoKey && course ) {
-			// @TODO add logic to pick the first unseen video
+		if ( ! course ) {
+			return;
+		}
+
+		const videoSlugs = Object.keys( course.videos );
+		if ( ! currentVideoKey ) {
 			const initialVideoId = 'find-theme';
 			setCurrentVideoKey( initialVideoId );
-			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( initialVideoId ) );
+			setSelectedVideoIndex( videoSlugs.indexOf( initialVideoId ) );
 		}
-	}, [ currentVideoKey, course ] );
+
+		const viewedSlugs = Object.keys( userCourseProgression );
+		if ( viewedSlugs.length > 0 ) {
+			const nextSlug = videoSlugs.find( ( slug ) => ! viewedSlugs.includes( slug ) );
+			if ( nextSlug ) {
+				setCurrentVideoKey( nextSlug );
+				setSelectedVideoIndex( videoSlugs.indexOf( nextSlug ) );
+			}
+		}
+	}, [ currentVideoKey, course, userCourseProgression ] );
 
 	useEffect( () => {
 		if ( currentVideoKey && course ) {
@@ -125,7 +138,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 							videoRef={ videoRef }
 							videoUrl={ currentVideo.url }
 							isPlaying={ isPlaying }
-							poster={ currentVideo.poster ? currentVideo.poster : false }
+							poster={ currentVideo.poster ? currentVideo.poster : undefined }
 						/>
 					) }
 					<div className="videos-ui__chapters">
