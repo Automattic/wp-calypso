@@ -58,9 +58,8 @@ export function requestTheme( themeId, siteId ) {
 		}
 
 		if ( siteId === 'wpcom' ) {
-			return wpcom
-				.undocumented()
-				.themeDetails( themeId )
+			return wpcom.req
+				.get( `/themes/${ themeId }`, { apiVersion: '1.2' } )
 				.then( ( theme ) => {
 					dispatch( receiveTheme( normalizeWpcomTheme( theme ), siteId ) );
 					dispatch( {
@@ -79,11 +78,13 @@ export function requestTheme( themeId, siteId ) {
 				} );
 		}
 
-		// See comment next to lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails() why we can't
-		// the regular themeDetails() method for Jetpack sites yet.
-		return wpcom
-			.undocumented()
-			.jetpackThemeDetails( themeId, siteId )
+		/*
+		 * Hack! Calling the theme modify endpoint without specifying an action will return the full details for a theme.
+		 * FIXME In the long run, we should try to enable the /sites/${ siteId }/themes/${ theme } endpoint for Jetpack
+		 * sites so we can delete this workaround and use the same endpoint for Jetpack sites, too.
+		 */
+		return wpcom.req
+			.post( `/sites/${ siteId }/themes`, { themes: themeId } )
 			.then( ( { themes } ) => {
 				dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
 				dispatch( {

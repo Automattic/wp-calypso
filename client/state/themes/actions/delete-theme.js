@@ -14,7 +14,6 @@ import 'calypso/state/themes/init';
  *
  * @param {string} themeId -- Theme to delete
  * @param {number} siteId -- Site to delete theme from
- *
  * @returns {Function} Action thunk
  */
 export function deleteTheme( themeId, siteId ) {
@@ -24,9 +23,8 @@ export function deleteTheme( themeId, siteId ) {
 			themeId,
 			siteId,
 		} );
-		return wpcom
-			.undocumented()
-			.deleteThemeFromJetpack( siteId, themeId )
+		return wpcom.req
+			.post( `/sites/${ siteId }/themes/${ themeId }/delete` )
 			.then( ( { name: themeName } ) => {
 				dispatch( {
 					type: THEME_DELETE_SUCCESS,

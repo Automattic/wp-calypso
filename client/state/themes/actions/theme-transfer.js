@@ -12,13 +12,34 @@ import {
 
 import 'calypso/state/themes/init';
 
+function initiateTransfer( siteId, plugin, theme, onProgress ) {
+	return new Promise( ( resolve, rejectPromise ) => {
+		const resolver = ( error, data ) => {
+			error ? rejectPromise( error ) : resolve( data );
+		};
+
+		const post = {
+			path: `/sites/${ siteId }/automated-transfers/initiate`,
+		};
+
+		if ( plugin ) {
+			post.body = { plugin };
+		}
+		if ( theme ) {
+			post.formData = [ [ 'theme', theme ] ];
+		}
+
+		const req = wpcom.req.post( post, resolver );
+		req && ( req.upload.onprogress = onProgress );
+	} );
+}
+
 /**
  * Start an Automated Transfer with an uploaded theme.
  *
  * @param {number} siteId -- the site to transfer
  * @param {window.File} file -- theme zip to upload
  * @param {string} plugin -- plugin slug
- *
  * @returns {Promise} for testing purposes only
  */
 export function initiateThemeTransfer( siteId, file, plugin ) {
@@ -39,16 +60,14 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 				themeInitiateRequest
 			)
 		);
-		return wpcom
-			.undocumented()
-			.initiateTransfer( siteId, plugin, file, ( event ) => {
-				dispatch( {
-					type: THEME_TRANSFER_INITIATE_PROGRESS,
-					siteId,
-					loaded: event.loaded,
-					total: event.total,
-				} );
-			} )
+		return initiateTransfer( siteId, plugin, file, ( event ) => {
+			dispatch( {
+				type: THEME_TRANSFER_INITIATE_PROGRESS,
+				siteId,
+				loaded: event.loaded,
+				total: event.total,
+			} );
+		} )
 			.then( ( { transfer_id } ) => {
 				if ( ! transfer_id ) {
 					return dispatch(
@@ -124,7 +143,6 @@ function transferInitiateFailure( siteId, error, plugin, context ) {
  * @param {string} context -- from which the transfer was initiated
  * @param {number} [interval] -- time between poll attempts
  * @param {number} [timeout] -- time to wait for 'complete' status before bailing
- *
  * @returns {Promise} for testing purposes only
  */
 export function pollThemeTransferStatus(
