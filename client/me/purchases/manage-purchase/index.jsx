@@ -89,6 +89,8 @@ import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
+	isInAppPurchase,
+	isPurchaseManagementLocked,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
@@ -754,6 +756,7 @@ class ManagePurchase extends Component {
 			siteSlug,
 			getChangePaymentMethodUrlFor,
 			hasLoadedPurchasesFromServer,
+			purchaseManagementIsLocked,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
@@ -808,7 +811,7 @@ class ManagePurchase extends Component {
 							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
-					{ isProductOwner && (
+					{ isProductOwner && ! purchaseManagementIsLocked && (
 						<div className="manage-purchase__renew-upgrade-buttons">
 							{ preventRenewal && this.renderSelectNewButton() }
 							{ this.renderUpgradeButton() }
@@ -821,7 +824,7 @@ class ManagePurchase extends Component {
 					isProductOwner={ isProductOwner }
 				/>
 
-				{ isProductOwner && (
+				{ isProductOwner && ! purchaseManagementIsLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
@@ -854,6 +857,8 @@ class ManagePurchase extends Component {
 			getAddNewPaymentMethodUrlFor,
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
+			purchaseIsInAppPurchase,
+			purchaseManagementIsLocked,
 		} = this.props;
 		let changePaymentMethodPath = false;
 		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
@@ -905,6 +910,8 @@ class ManagePurchase extends Component {
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						isProductOwner={ isProductOwner }
 						getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
+						purchaseIsInAppPurchase={ purchaseIsInAppPurchase }
+						purchaseManagementIsLocked={ purchaseManagementIsLocked }
 					/>
 				) }
 				<AsyncLoad
@@ -978,5 +985,7 @@ export default connect( ( state, props ) => {
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
 		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
+		purchaseIsInAppPurchase: isInAppPurchase( state, purchase?.id ),
+		purchaseManagementIsLocked: isPurchaseManagementLocked( state, purchase?.id ),
 	};
 } )( localize( ManagePurchase ) );
