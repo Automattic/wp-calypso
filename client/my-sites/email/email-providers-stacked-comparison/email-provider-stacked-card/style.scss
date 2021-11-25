@@ -1,6 +1,8 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+$width-right-panel-card: 40%;
+
 .email-provider-stacked-features__whats-included {
 	color: var( --studio-gray-20 );
 	display: block;
@@ -118,10 +120,6 @@
 	}
 }
 
-.promo-card__title-badge {
-	display: none;
-}
-
 .is-expanded .promo-card__title-badge {
 	background: none;
 	display: inline-block;
@@ -170,49 +168,38 @@ h2.action-panel__title {
 	}
 }
 
-.promo-card__price {
-	.price__cost {
-		font-size: $font-body-small;
+.email-providers-stacked-comparison__provider-card {
+	padding-top: 36px;
+	.action-panel__title {
+		.promo-card__title-badge {
+			width: $width-right-panel-card;
+			display: flex;
+			background-color: initial;
+			margin: 0;
+		}
+	}
+}
 
-		span {
+div.email-provider-stacked-card__price-badge {
+	width: $width-right-panel-card;
+	.promo-card__price {
+		margin-top: 12px;
+		span.price__cost {
 			font-size: $font-title-medium;
 		}
-
-		.price__discounted {
+		span.price__discount {
 			text-decoration: line-through;
-		}
-
-		&.price__discounted span {
-			color: var( --color-text-subtle );
-
-			&.email-providers-stacked-comparison__discounted-price {
-				color: var( --studio-gray-100 );
-				text-decoration: none;
-			}
-		}
-	}
-
-	.price__discount {
-		display: block;
-		font-weight: 600;
-		margin-left: 0;
-		margin-top: 0.25em;
-
-		.email-provider-stacked-card__provider__discount-with-renewal span {
-			color: var( --color-text-subtle );
-			font-weight: 400;
+			color: var( --studio-gray-60 );
 		}
 	}
 }
 
-.email-provider-stacked-card__provider__provider-additional-price-information {
-	color: var( --color-text-subtle );
-	font-size: $font-body-extra-small;
-	font-style: normal;
-	margin-top: 3px;
+.email-provider-stacked-card__provider-additional-price-information {
+	color: var( --studio-gray-60 );
+	margin-left: 4px;
 }
 
-.email-provider-stacked-card__provider-form-and-features {
+.email-provider-stacked-card__provider-form-and-right-panel {
 	display: none;
 }
 
@@ -221,7 +208,7 @@ h2.action-panel__title {
 		display: none;
 	}
 
-	.email-provider-stacked-card__provider-form-and-features {
+	.email-provider-stacked-card__provider-form-and-right-panel {
 		display: flex;
 		flex-direction: column-reverse;
 		justify-content: space-between;
@@ -269,10 +256,33 @@ h2.action-panel__title {
 	}
 }
 
-.email-provider-stacked-features {
-	margin-right: 20px;
+.email-provider-stacked-card__provider-right-panel {
+	width: $width-right-panel-card;
 
 	img {
 		margin-top: 40px;
 	}
+}
+
+.action-panel__body {
+	margin-left: 24px;
+}
+
+.email-provider-stacked-card__title {
+	margin-top: 4px;
+	font-size: 1.25rem;
+	line-height: 24px;
+	color: var( --color-neutral-70 );
+}
+
+.email-provider-stacked-card__header {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.email-provider-stacked-card__title-container {
+	display:flex;
+	flex-direction: column;
 }

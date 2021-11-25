@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { FunctionComponent, ReactElement } from 'react';
+import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
@@ -26,7 +26,7 @@ export interface EmailProviderStackedFeatureProps {
 const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeaturesProps > = (
 	props
 ) => {
-	const { features, badge = null } = props;
+	const { features } = props;
 	const translate = useTranslate();
 
 	if ( ! features ) {
@@ -34,21 +34,19 @@ const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeatu
 	}
 
 	return (
-		<div className="email-provider-stacked-features">
+		<>
 			<span className={ 'email-provider-stacked-features__whats-included' }>
 				{ translate( "What's included:" ) }
 			</span>
 			{ features.map( ( feature, index ) => (
 				<EmailProviderStackedFeature key={ index } title={ feature } />
 			) ) }
-			{ badge }
-		</div>
+		</>
 	);
 };
 
 export interface EmailProviderStackedFeaturesProps {
 	features: TranslateResult[];
-	badge: ReactElement;
 }
 
 export default EmailProviderStackedFeatures;

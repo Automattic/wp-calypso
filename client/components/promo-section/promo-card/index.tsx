@@ -20,7 +20,8 @@ export interface Image {
 export interface Props {
 	icon: string;
 	image?: Image | ReactElement;
-	title: string | TranslateResult;
+	title?: string | TranslateResult;
+	titleComponent?: ReactElement;
 	isPrimary?: boolean;
 	badge?: string | ReactElement;
 	className?: string;
@@ -30,6 +31,7 @@ const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnP
 
 const PromoCard: FunctionComponent< Props > = ( {
 	title,
+	titleComponent,
 	icon,
 	image,
 	isPrimary,
@@ -57,10 +59,18 @@ const PromoCard: FunctionComponent< Props > = ( {
 				</ActionPanelFigure>
 			) }
 			<ActionPanelBody>
-				<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
-					{ title }
-					{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
-				</ActionPanelTitle>
+				{ title && (
+					<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
+						{ title }
+						{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
+					</ActionPanelTitle>
+				) }
+				{ titleComponent && (
+					<>
+						{ titleComponent }
+						{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
+					</>
+				) }
 				{ isPrimary
 					? Children.map( children, ( child ) => {
 							return child && PromoCardCta === child.type
