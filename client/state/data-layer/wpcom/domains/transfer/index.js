@@ -6,6 +6,7 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
+	DOMAIN_TRANSFER_UNLOCK_DOMAIN,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -21,6 +22,8 @@ import {
 	requestDomainTransferCodeCompleted,
 	requestDomainTransferCodeFailed,
 	updateDomainTransfer,
+	unlockDomainAndPrepareForTransferOutCompleted,
+	unlockDomainAndPrepareForTransferOutFailed,
 } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -109,6 +112,35 @@ export const requestDomainTransferCodeOnlySuccess = ( action ) => ( dispatch ) =
 
 export const requestDomainTransferCodeOnlyFailure = ( action, error ) => [
 	requestDomainTransferCodeOnlyFailed( action.domain ),
+	errorNotice( getDomainTransferCodeError( error.error ), getNoticeOptions( action.domain ) ),
+	fetchWapiDomainInfo( action.domain ),
+];
+
+export const unlockDomain = ( action ) =>
+	http(
+		{
+			apiVersion: '1.1',
+			method: 'POST',
+			path: '/domains/' + action.domain + '/transfer/',
+			body: {
+				domainStatus: JSON.stringify( {
+					command: 'unlock',
+				} ),
+			},
+		},
+		action
+	);
+
+export const unlockDomainSuccess = ( action ) => ( dispatch ) => {
+	dispatch( unlockDomainAndPrepareForTransferOutCompleted( action.domain, action.options ) );
+	dispatch( fetchWapiDomainInfo( action.domain ) );
+	dispatch(
+		successNotice( translate( 'Domain unlocked successfully!' ), getNoticeOptions( action.domain ) )
+	);
+};
+
+export const unlockDomainFailure = ( action, error ) => [
+	unlockDomainAndPrepareForTransferOutFailed( action.domain ),
 	errorNotice( getDomainTransferCodeError( error.error ), getNoticeOptions( action.domain ) ),
 	fetchWapiDomainInfo( action.domain ),
 ];
@@ -253,6 +285,13 @@ registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 			fetch: saveDomainIpsTag,
 			onSuccess: handleIpsTagSaveSuccess,
 			onError: handleIpsTagSaveFailure,
+		} ),
+	],
+	[ DOMAIN_TRANSFER_UNLOCK_DOMAIN ]: [
+		dispatchRequest( {
+			fetch: unlockDomain,
+			onSuccess: unlockDomainSuccess,
+			onError: unlockDomainFailure,
 		} ),
 	],
 	[ DOMAIN_TRANSFER_CODE_ONLY_REQUEST ]: [

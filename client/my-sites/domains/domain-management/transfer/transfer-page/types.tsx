@@ -10,6 +10,8 @@ export type TransferPageProps = {
 	isMapping: boolean;
 	isPrimaryDomain: boolean;
 	isRequestingTransferCode: boolean;
+	isCancelingTransfer: boolean;
+	unlockDomainAndPrepareForTransferOut: any; // TODO: Fix this
 	requestDomainTransferCodeOnly: any; // TODO: Fix this
 	selectedDomainName: string;
 	selectedSite: SiteData;

@@ -21,7 +21,11 @@ import {
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
-import { requestDomainTransferCodeOnly } from 'calypso/state/domains/transfer/actions';
+import {
+	cancelDomainTransferRequest,
+	unlockDomainAndPrepareForTransferOut,
+	requestDomainTransferCodeOnly,
+} from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -37,13 +41,18 @@ import './style.scss';
 const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const { __ } = useI18n();
 	const {
+		cancelDomainTransferRequest,
 		currentRoute,
 		domain,
 		isAtomic,
+		isCancelingTransfer,
 		isDomainOnly,
+		isLoading,
 		isMapping,
 		isPrimaryDomain,
 		isRequestingTransferCode,
+		locked,
+		unlockDomainAndPrepareForTransferOut,
 		requestDomainTransferCodeOnly,
 		selectedDomainName,
 		selectedSite,
@@ -132,6 +141,30 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
 
+	const unlockDomain = () => {
+		const { privateDomain } = getSelectedDomain( props );
+
+		const options = {
+			siteId: selectedSite.ID,
+			unlock: true,
+			disablePrivacy: privateDomain,
+		};
+		unlockDomainAndPrepareForTransferOut( selectedDomainName, options );
+	};
+
+	const lockDomain = () => {
+		const { privateDomain, pendingTransfer, domainLockingAvailable } = getSelectedDomain( props );
+		const enablePrivacy = ! privateDomain;
+		const lockDomain = domainLockingAvailable;
+
+		cancelDomainTransferRequest( selectedDomainName, {
+			declineTransfer: pendingTransfer,
+			siteId: selectedSite.ID,
+			enablePrivacy,
+			lockDomain,
+		} );
+	};
+
 	const requestTransferCode = () => {
 		requestDomainTransferCodeOnly( selectedDomainName );
 	};
@@ -163,9 +196,9 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					Advanced Options
 				</CardHeading>
 				<ToggleControl
-					checked={ domain?.isLocked }
-					disabled={ false }
-					onChange={ () => null }
+					checked={ locked }
+					disabled={ isLoading || isRequestingTransferCode || isCancelingTransfer }
+					onChange={ locked ? unlockDomain : lockDomain }
 					label={ toggleLabel }
 				/>
 				<p>
@@ -173,7 +206,11 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 						'We recommend leaving the transfer lock on, unless you want to transfer your domain to another provider.'
 					) }
 				</p>
-				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
+				<Button
+					primary={ false }
+					busy={ isRequestingTransferCode || isCancelingTransfer }
+					onClick={ requestTransferCode }
+				>
 					{ __( 'Get authorization code' ) }
 				</Button>
 			</Card>
@@ -218,6 +255,7 @@ const transferPageComponent = connect(
 		const siteId = getSelectedSiteId( state )!;
 		const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
 		return {
+			isLoading: ! domainInfo.hasLoadedFromServer,
 			domain,
 			currentRoute: getCurrentRoute( state ),
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
@@ -227,10 +265,15 @@ const transferPageComponent = connect(
 			isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
 			primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
 			isRequestingTransferCode: !! domainInfo.isRequestingTransferCode,
+			isCancelingTransfer: !! domainInfo.isCancelingTransfer,
+			isDomainPendingTransfer: !! domainInfo.data?.pendingTransfer,
+			locked: domainInfo.data.locked,
 		};
 	},
 	{
+		cancelDomainTransferRequest,
 		requestDomainTransferCodeOnly,
+		unlockDomainAndPrepareForTransferOut,
 	}
 )( TransferPage );
 

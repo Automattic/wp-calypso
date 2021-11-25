@@ -14,6 +14,9 @@ import {
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
 	DOMAIN_TRANSFER_UPDATE,
+	DOMAIN_TRANSFER_UNLOCK_DOMAIN,
+	DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED,
+	DOMAIN_TRANSFER_UNLOCK_DOMAIN_FAILED,
 	DOMAIN_WAPI_INFO_FETCH,
 	DOMAIN_WAPI_INFO_FETCH_FAILURE,
 	DOMAIN_WAPI_INFO_FETCH_SUCCESS,
@@ -33,6 +36,24 @@ export const saveDomainIpsTag = ( domain, selectedRegistrar ) => ( {
 
 export const updateDomainTransfer = ( domain, options ) => ( {
 	type: DOMAIN_TRANSFER_UPDATE,
+	domain,
+	options,
+} );
+
+export const unlockDomainAndPrepareForTransferOut = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_UNLOCK_DOMAIN,
+	domain,
+	options,
+} );
+
+export const unlockDomainAndPrepareForTransferOutCompleted = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED,
+	domain,
+	options,
+} );
+
+export const unlockDomainAndPrepareForTransferOutFailed = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_UNLOCK_DOMAIN_FAILED,
 	domain,
 	options,
 } );
