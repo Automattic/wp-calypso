@@ -27,8 +27,8 @@
 
 	@include break-medium {
 		position: sticky;
-		top: -44px;
-		margin-top: -44px;
+		top: -47px;
+		margin-top: -47px;
 	}
 }
 
@@ -36,15 +36,15 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 16px;
+	padding: 15px;
 	min-height: 40px;
 
 	@include break-mobile {
-		padding: 16px 0;
+		padding: 15px 0;
 	}
 
 	@include breakpoint-deprecated( '480px-660px' ) {
-		padding: 16px;
+		padding: 15px;
 	}
 }
 
