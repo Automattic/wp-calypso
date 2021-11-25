@@ -83,22 +83,26 @@ export const DotPager = ( {
 	...props
 } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
-	const [ pagesStyle, setPagesStyle ] = useState();
+	const [ isDragging, setIsDragging ] = useState( false );
+
+	const [ pagesStyle, setPagesStyle ] = useState( {
+		transform: `translate3d(0px, 0px, 0px)`,
+		transitionDuration: `300ms`,
+	} );
+	const [ dragStartData, setDragStartData ] = useState( {} );
+
 	const pagesRef = useRef();
 	const numPages = Children.count( children );
 
-	function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
-		// save callback to a ref so that it doesn't need to be a dependency of other hooks
-		const savedUpdateLayout = useRef();
-		useEffect( () => {
-			savedUpdateLayout.current = updateLayout;
-		}, [ updateLayout ] );
+		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
+		if ( targetHeight && pagesStyle?.height !== targetHeight ) {
+			setPagesStyle( { ...pagesStyle, height: targetHeight } );
+		}
+	}, [ hasDynamicHeight, setPagesStyle, pagesStyle ] );
 
-		// fire when the `currentPageIndex` parameter changes
-		useEffect( () => {
-			if ( ! enabled ) {
-				return;
-			}
+	useEffect( () => {
+		updateLayout();
+	}, [ currentPage, updateLayout, pagesStyle ] );
 
 			savedUpdateLayout.current();
 		}, [ enabled, currentPageIndex ] );
@@ -128,6 +132,84 @@ export const DotPager = ( {
 		}
 	}, [ numPages ] );
 
+	const getPageWidth = () => {
+		return pagesRef.current?.getElementsByClassName( 'is-current' )[ 0 ]?.getBoundingClientRect()
+			.width;
+	};
+
+	const getOffset = ( index ) => {
+		return -( getPageWidth() * index );
+	};
+
+	const getDragPosition = ( event ) => {
+		if ( event.hasOwnProperty( 'clientX' ) ) {
+			return { x: event.clientX, y: event.clientY };
+		}
+
+		if ( event.targetTouches[ 0 ] ) {
+			return { x: event.targetTouches[ 0 ].clientX, y: event.targetTouches[ 0 ].clientY };
+		}
+
+		const touch = event.changedTouches[ 0 ];
+		return { x: touch.clientX, y: touch.clientY };
+	};
+
+	const handleDragStart = ( event ) => {
+		const position = getDragPosition( event );
+		setDragStartData( position );
+		setPagesStyle( { ...pagesStyle, transitionDuration: `0ms` } ); // Set transition Duration to 0 for smooth dragging.
+		setIsDragging( true );
+	};
+
+	const handleDrag = ( event ) => {
+		if ( ! isDragging ) {
+			return;
+		}
+		const dragPosition = getDragPosition( event );
+		const delta = dragPosition.x - dragStartData.x;
+
+		const offset = getOffset( currentPage ) + delta;
+		// Allow for swipe left
+		if ( numPages !== currentPage + 1 && delta < 0 ) {
+			setPagesStyle( {
+				...pagesStyle,
+				transform: `translate3d(${ offset }px, 0px, 0px)`,
+			} );
+		} else if ( currentPage !== 0 && delta > 0 ) {
+			setPagesStyle( {
+				...pagesStyle,
+				transform: `translate3d(${ offset }px, 0px, 0px)`,
+			} );
+		}
+	};
+
+	const handleDragEnd = ( event ) => {
+		const THRESHOLD_OFFSET = 100; // Number of pixels to travel before we trigger the slider to move to the desired slide.
+		const dragPosition = getDragPosition( event );
+		const delta = dragPosition.x - dragStartData.x;
+
+		const hasMetThreshold = Math.abs( delta ) > THRESHOLD_OFFSET;
+
+		let newIndex = currentPage;
+		if ( delta < 0 && hasMetThreshold && numPages !== currentPage + 1 ) {
+			newIndex = currentPage + 1;
+		}
+
+		if ( delta > 0 && hasMetThreshold && currentPage !== 0 ) {
+			newIndex = currentPage - 1;
+		}
+		const offset = getOffset( newIndex );
+		setPagesStyle( {
+			transform: `translate3d(${ offset }px, 0px, 0px)`,
+			transitionDuration: `300ms`,
+		} );
+		setCurrentPage( newIndex );
+		setDragStartData( {} );
+		setIsDragging( false );
+	};
+
+	const width = getPageWidth();
+
 	return (
 		<div className={ className } { ...props }>
 			<Controls
@@ -136,22 +218,36 @@ export const DotPager = ( {
 				numberOfPages={ numPages }
 				setCurrentPage={ ( index ) => {
 					onPageSelected && onPageSelected( index );
+					const offset = getOffset( index );
+					setPagesStyle( { ...pagesStyle, transform: `translate3d(${ offset }px, 0px, 0px)` } );
 					setCurrentPage( index );
 				} }
 			/>
-			<div className="dot-pager__pages" ref={ pagesRef } style={ pagesStyle }>
-				{ Children.map( children, ( child, index ) => (
-					<div
-						className={ classnames( 'dot-pager__page', {
-							'is-current': index === currentPage,
-							'is-prev': index < currentPage,
-							'is-next': index > currentPage,
-						} ) }
-						key={ `page-${ index }` }
-					>
-						{ child }
-					</div>
-				) ) }
+			<div
+				className="dot-pager__container"
+				onDragStart={ handleDragStart }
+				onPointerDown={ handleDragStart }
+				onDrag={ handleDrag }
+				onPointerMove={ handleDrag }
+				onDragEnd={ handleDragEnd }
+				onPointerUp={ handleDragEnd }
+				ref={ pagesRef }
+			>
+				<div className="dot-pager__pages" style={ pagesStyle }>
+					{ Children.map( children, ( child, index ) => (
+						<div
+							style={ { width: `${ width }px` } } // Setting the page width is important for iOS browser.
+							className={ classnames( 'dot-pager__page', {
+								'is-current': index === currentPage,
+								'is-prev': index < currentPage,
+								'is-next': index > currentPage,
+							} ) }
+							key={ `page-${ index }` }
+						>
+							{ child }
+						</div>
+					) ) }
+				</div>
 			</div>
 		</div>
 	);
