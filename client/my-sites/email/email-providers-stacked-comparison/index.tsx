@@ -30,6 +30,11 @@ import type { ReactElement } from 'react';
 
 import './style.scss';
 
+type Site = {
+	ID: number;
+	slug: string;
+};
+
 type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
 	selectedDomainName: string;
