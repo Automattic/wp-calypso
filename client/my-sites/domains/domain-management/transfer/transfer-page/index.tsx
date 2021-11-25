@@ -45,12 +45,12 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		currentRoute,
 		isAtomic,
 		isDomainInfoLoading,
+		isDomainLocked,
 		isDomainOnly,
 		isLockingOrUnlockingDomain,
 		isMapping,
 		isPrimaryDomain,
 		lockDomain,
-		locked,
 		requestDomainTransferCodeOnly,
 		selectedDomainName,
 		selectedSite,
@@ -172,7 +172,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			'loading'
 		) : (
 			<span className="transfer-page__transfer-lock-label">
-				{ locked ? (
+				{ isDomainLocked ? (
 					<>
 						<Icon icon={ lock } size={ 15 } viewBox="4 0 18 20" />
 						{ enabledLockLabel }
@@ -189,9 +189,9 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					Advanced Options
 				</CardHeading>
 				<ToggleControl
-					checked={ locked }
+					checked={ isDomainLocked }
 					disabled={ isDomainInfoLoading || isLockingOrUnlockingDomain }
-					onChange={ locked ? unlockDomainHandler : lockDomainHandler }
+					onChange={ isDomainLocked ? unlockDomainHandler : lockDomainHandler }
 					label={ toggleLabel }
 				/>
 				<p>
@@ -249,7 +249,6 @@ const transferPageComponent = connect(
 		const siteId = getSelectedSiteId( state )!;
 		const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
 		return {
-			isDomainInfoLoading: ! domainInfo.hasLoadedFromServer,
 			currentRoute: getCurrentRoute( state ),
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 			isAtomic: isSiteAutomatedTransfer( state, siteId ),
@@ -257,9 +256,10 @@ const transferPageComponent = connect(
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
 			primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
+			isDomainInfoLoading: ! domainInfo.hasLoadedFromServer,
 			isLockingOrUnlockingDomain: !! domainInfo.isLockingOrUnlockingDomain,
 			isDomainPendingTransfer: !! domainInfo.data?.pendingTransfer,
-			locked: domainInfo.data?.locked,
+			isDomainLocked: domainInfo.data?.locked,
 		};
 	},
 	{
