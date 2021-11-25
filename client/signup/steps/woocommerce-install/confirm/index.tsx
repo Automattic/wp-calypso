@@ -5,7 +5,6 @@ import { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	fetchAutomatedTransferStatusOnce,
@@ -66,7 +65,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__info-section">{ isLoading && <LoadingEllipsis /> }</div>
+				<div className="confirm__info-section" />
 
 				<div className="confirm__instructions-container">
 					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
@@ -88,6 +87,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					</p>
 
 					<NextButton
+						isBusy={ isLoading }
 						disabled={ isLoading }
 						onClick={ () => {
 							if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
@@ -115,7 +115,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__info-section">{ isLoading && <LoadingEllipsis /> }</div>
+				<div className="confirm__info-section" />
 
 				<div className="confirm__instructions-container">
 					{ !! eligibilityHolds?.length && (
@@ -129,7 +129,11 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 						</p>
 					) }
 
-					<NextButton disabled={ isLoading } onClick={ () => goToStep( 'transfer' ) }>
+					<NextButton
+						isBusy={ isLoading }
+						disabled={ isLoading }
+						onClick={ () => goToStep( 'transfer' ) }
+					>
 						{ __( 'Confirm' ) }
 					</NextButton>
 				</div>
