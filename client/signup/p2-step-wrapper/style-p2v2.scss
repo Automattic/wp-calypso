@@ -19,14 +19,6 @@
 			padding-right: 20px;
 			max-width: 440px;
 		}
-
-		input {
-			font-family: var( --p2-font-inter );
-		}
-
-		a {
-			@extend %p2-link;
-		}
 	}
 
 	.p2-step-wrapper__header-text {
