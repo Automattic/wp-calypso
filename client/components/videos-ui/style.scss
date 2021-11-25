@@ -103,12 +103,12 @@
 				border-bottom: 1px solid #343c3f;
 
 				&:first-child {
-					border-radius: 2px 2px 0 0;
+					border-radius: 4px 4px 0 0; /* stylelint-disable-line scales/radii */
 				}
 
 				&:last-child {
 					border-bottom: none;
-					border-radius: 0 0 2px 2px;
+					border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
 				}
 
 				.videos-ui__duration {
@@ -125,7 +125,7 @@
 					flex-shrink: 0;
 					flex-grow: 0;
 					height: 22px;
-					border-radius: 50px;
+					border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 
 					svg {
 						margin-top: 5px;
