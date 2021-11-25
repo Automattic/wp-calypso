@@ -34,7 +34,7 @@
 		"build:wpcom-block-editor-nux": "calypso-build --env source='wpcom-block-editor-nux'",
 		"build:wpcom-site-editor-nux": "calypso-build --env source='wpcom-site-editor'",
 		"clean": "npx rimraf dist 'editing-toolkit-plugin/*/dist'",
-		"dev": "node ../../bin/build-calypso-app.mjs --localPath editing-toolkit-plugin --remotePath /home/wpcom/public_html/wp-content/plugins/editing-toolkit-plugin/dev",
+		"dev": "yarn run calypso-apps-builder --localPath editing-toolkit-plugin --remotePath /home/wpcom/public_html/wp-content/plugins/editing-toolkit-plugin/dev",
 		"lint:php": "../../vendor/bin/phpcs --standard=../phpcs.xml ./ ",
 		"lint:php:fix": "../../vendor/bin/phpcbf --standard=../phpcs.xml ./ ",
 		"sync:newspack-blocks": "./bin/sync-newspack-blocks.sh",
@@ -110,6 +110,7 @@
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@testing-library/jest-dom": "^5.15.1",
 		"@testing-library/react": "^12.1.2",
