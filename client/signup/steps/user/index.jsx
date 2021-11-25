@@ -10,6 +10,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -115,6 +116,20 @@ export class UserStep extends Component {
 
 		if ( oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
+		}
+	}
+
+	componentDidUpdate() {
+		if ( this.userCreationCompletedWithAndHasHistory( this.props ) ) {
+			// It looks like the user just completed the User Registartion Step
+			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
+			const url = new URL( window.location );
+			const search_params = url.searchParams;
+			search_params.set( 'user_completed', true );
+			url.search = search_params.toString();
+			// Redirect to itself and append ?user_completed
+			window.location.replace( url.toString() );
+			return;
 		}
 	}
 
@@ -354,6 +369,12 @@ export class UserStep extends Component {
 		return this.props.step && 'completed' === this.props.step.status;
 	}
 
+	userCreationCompletedWithAndHasHistory( props ) {
+		return (
+			props.step && 'completed' === props.step.status && detectHistoryNavigation.loadedViaHistory()
+		);
+	}
+
 	userCreationPending() {
 		return this.props.step && 'pending' === this.props.step.status;
 	}
@@ -451,17 +472,6 @@ export class UserStep extends Component {
 			isSocialSignupEnabled = true;
 		}
 
-		if ( this.props.step && 'completed' === this.props.step.status ) {
-			// It looks like the user just completed the User Registartion Step
-			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
-			const url = new URL( window.location );
-			const search_params = url.searchParams;
-			search_params.set( 'user_completed', true );
-			url.search = search_params.toString();
-			// redirect to itself and append ?user_completed
-			window.location.replace( url.toString() );
-		}
-
 		return (
 			<>
 				<SignupForm
@@ -511,6 +521,10 @@ export class UserStep extends Component {
 	render() {
 		if ( this.props.flowName === 'p2' ) {
 			return this.renderP2SignupStep();
+		}
+
+		if ( this.userCreationCompletedWithAndHasHistory( this.props ) ) {
+			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
 		return (
