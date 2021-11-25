@@ -1222,7 +1222,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/whats-new@workspace:packages/whats-new":
+"@automattic/whats-new@workspace:^, @automattic/whats-new@workspace:packages/whats-new":
   version: 0.0.0-use.local
   resolution: "@automattic/whats-new@workspace:packages/whats-new"
   dependencies:
@@ -1362,6 +1362,7 @@ __metadata:
     "@automattic/plans-grid": "workspace:^"
     "@automattic/tour-kit": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@automattic/whats-new": "workspace:^"
     "@babel/core": ^7.16.0
     "@emotion/react": ^11.4.1
     "@popperjs/core": ^2.10.2
