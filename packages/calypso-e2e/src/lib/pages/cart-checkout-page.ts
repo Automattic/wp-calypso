@@ -42,6 +42,7 @@ const selectors = {
 		'[data-testid="contact-form--visible"] button.checkout-button.is-status-primary',
 
 	// Payment field
+	paymentMethod: '[data-testid="payment-method-step--visible"]',
 	cardholderName: `input[id="cardholder-name"]`,
 	cardNumberFrame: 'iframe[title="Secure card number input frame"]',
 	cardNumberInput: 'input[data-elements-stable-field-name="cardNumber"]',
@@ -126,6 +127,10 @@ export class CartCheckoutPage {
 	async getPaymentButtonText(): Promise< string > {
 		const elementHandle = await this.page.waitForSelector( selectors.paymentButton );
 		return await elementHandle.innerText();
+	}
+
+	async validatePaymentMethod(): Promise< void > {
+		await this.page.waitForSelector( selectors.paymentMethod );
 	}
 
 	/**
