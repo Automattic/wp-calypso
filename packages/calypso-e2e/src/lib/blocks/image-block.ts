@@ -6,8 +6,7 @@ const selectors = {
 	// Use the attribute CSS selector to perform partial match, beginning with the filename.
 	// If a file with the same name already exists in the Media Gallery, WPCOM resolves this clash
 	// by appending a numerical postfix (eg. <original-filename>-2).
-	imageTitleData: ( filename: string ) =>
-		`${ selectors.block } img[data-image-title*="${ filename }" i]`,
+	image: ( filename: string ) => `${ selectors.block } img[data-image-title*="${ filename }" i]`,
 };
 
 /**
@@ -28,14 +27,16 @@ export class ImageBlock {
 	}
 
 	/**
-	 * Uplaods the target file at the supplied path to WPCOM.
-	 *
-	 * @param {string} filePath Path to the file on disk.
+	 * @returns The image element
 	 */
-	async upload( filePath: string ): Promise< void > {
-		const input = await this.block.waitForSelector( selectors.fileInput, { state: 'attached' } );
-		await input.setInputFiles( filePath );
+	async getImage(): Promise< ElementHandle > {
+		return this.block.waitForSelector( 'img' );
+	}
 
+	/**
+	 * Waits for the image to be uploaded.
+	 */
+	async waitUntilUploaded(): Promise< void > {
 		await Promise.all( [
 			// Checking spinner isn't enough sometimes, as can be observed with the
 			// Logos block: While the spinner has already disappeared, the image is
@@ -49,6 +50,20 @@ export class ImageBlock {
 	}
 
 	/**
+	 * Uplaods the target file at the supplied path to WPCOM.
+	 *
+	 * @param {string} path Path to the file on disk.
+	 * @returns The uploaded image element handle.
+	 */
+	async upload( path: string ): Promise< ElementHandle > {
+		const input = await this.block.waitForSelector( 'input[type="file"]', { state: 'attached' } );
+		await input.setInputFiles( path );
+		await this.waitUntilUploaded();
+
+		return await this.getImage();
+	}
+
+	/**
 	 * Validates block on the page.
 	 *
 	 * @param {Page} page Page on which to verify the presence of the block.
@@ -57,7 +72,7 @@ export class ImageBlock {
 	 */
 	static async validatePublishedContent( page: Page, contents: string[] ): Promise< void > {
 		for await ( const content of contents ) {
-			await page.waitForSelector( selectors.imageTitleData( content ) );
+			await page.waitForSelector( selectors.image( content ) );
 		}
 	}
 }
