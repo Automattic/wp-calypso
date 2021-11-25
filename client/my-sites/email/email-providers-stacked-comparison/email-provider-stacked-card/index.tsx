@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
@@ -16,7 +17,6 @@ const noop = () => {};
 const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) => {
 	const {
 		additionalPriceInformation,
-		badge,
 		buttonLabel,
 		children,
 		description,
@@ -35,6 +35,8 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		showExpandButton = true,
 	} = props;
 
+	const translate = useTranslate();
+
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
 	const isViewportSizeLowerThan1040px = useBreakpoint( '<1040px' );
@@ -49,20 +51,48 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 
 	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;
 
+	const price = (
+		<div className="email-provider-stacked-card__price-badge">
+			<div className="email-provider-stacked-card__discount badge badge--info-green">
+				{ translate( '3-Months free' ) }
+			</div>
+			<PromoCardPrice
+				formattedPrice={ formattedPrice }
+				discount={ discount }
+				additionalPriceInformation={
+					<span className="email-provider-stacked-card__provider-additional-price-information">
+						{ additionalPriceInformation }
+					</span>
+				}
+			/>
+		</div>
+	);
+
+	const title = (
+		<div className="email-provider-stacked-card__title-container">
+			<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
+			<p>{ description }</p>
+		</div>
+	);
+
+	const header = (
+		<div className="email-provider-stacked-card__header">
+			{ title }
+			{ price }
+		</div>
+	);
+
 	return (
 		<PromoCard
-			className={ classnames( 'email-providers-comparison__provider-card', {
+			className={ classnames( 'email-providers-stacked-comparison__provider-card', {
 				'is-expanded': detailsExpanded,
 				'is-forwarding': providerKey === 'forwarding',
 			} ) }
 			image={ logo }
-			title={ productName }
-			badge={ badge }
+			titleComponent={ header }
 			icon={ '' }
 		>
 			<div className="email-provider-stacked-card__provider-card-main-details">
-				<p>{ description }</p>
-
 				{ showExpandButton && (
 					<Button
 						primary={ false }
@@ -75,16 +105,6 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 			</div>
 
 			<div className="email-provider-stacked-card__provider-price-and-button">
-				<div>
-					<PromoCardPrice formattedPrice={ formattedPrice } discount={ discount } />
-
-					{ additionalPriceInformation && (
-						<div className="email-provider-stacked-card__provider-additional-price-information">
-							{ additionalPriceInformation }
-						</div>
-					) }
-				</div>
-
 				{ showFeaturesToggleButton && (
 					<EmailProviderFeaturesToggleButton
 						handleClick={ () => setFeaturesExpanded( ! areFeaturesExpanded ) }
@@ -93,7 +113,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 				) }
 			</div>
 
-			<div className="email-provider-stacked-card__provider-form-and-features">
+			<div className="email-provider-stacked-card__provider-form-and-right-panel">
 				<div className="email-provider-stacked-card__provider-form">
 					{ formFields }
 
@@ -103,10 +123,13 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 						</Button>
 					) }
 				</div>
-
-				{ ( ! showFeaturesToggleButton || areFeaturesExpanded ) && (
-					<EmailProviderStackedFeatures features={ features } badge={ footerBadge } />
-				) }
+				<div className="email-provider-stacked-card__provider-right-panel">
+					{ ( ! showFeaturesToggleButton || areFeaturesExpanded ) && (
+						<>
+							<EmailProviderStackedFeatures features={ features } /> { footerBadge }
+						</>
+					) }
+				</div>
 			</div>
 
 			{ children }
