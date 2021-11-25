@@ -178,6 +178,10 @@
 				&.selected .videos-ui__active-video-content {
 					max-height: 250px;
 				}
+
+				.videos-ui__button {
+					width: 100%;
+				}
 			}
 		}
 	}
@@ -187,9 +191,10 @@
 	}
 
 	.videos-ui__button {
-		width: 100%;
 		border: 0;
-		border-radius: 2px;
+		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		color: #101517;
+		padding: 10px 28px;
 		span {
 			font-weight: 400;
 			color: #101517;
