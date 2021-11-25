@@ -50,11 +50,23 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	} );
 
 	useEffect( () => {
+		const videoKeys = Object.keys( course.videos );
 		if ( ! currentVideoKey && course ) {
-			// @TODO add logic to pick the first unseen video
 			const initialVideoId = 'find-theme';
 			setCurrentVideoKey( initialVideoId );
-			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( initialVideoId ) );
+			setSelectedVideoIndex( videoKeys.indexOf( initialVideoId ) );
+		}
+
+		const viewedVideos = Object.keys( userCourseProgression );
+		if ( viewedVideos.length > 0 ) {
+			const nextVideos = videoKeys.slice(
+				( videoKeys.indexOf( viewedVideos.at( -1 ) ) + 1 ) % videoKeys.length
+			);
+			const nextVideo = nextVideos.find( ( x ) => ! viewedVideos.includes( x ) );
+			if ( nextVideo ) {
+				setCurrentVideoKey( nextVideo );
+				setSelectedVideoIndex( videoKeys.indexOf( nextVideo ) );
+			}
 		}
 	}, [ currentVideoKey, course ] );
 
