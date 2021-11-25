@@ -19,7 +19,6 @@ function EmailProviderCard( {
 	description,
 	formattedPrice,
 	discount,
-	additionalPriceInformation,
 	detailsExpanded = false,
 	onExpandedChange = noop,
 	formFields,
@@ -70,12 +69,6 @@ function EmailProviderCard( {
 			<div className="email-providers-comparison__provider-price-and-button">
 				<div>
 					<PromoCardPrice formattedPrice={ formattedPrice } discount={ discount } />
-
-					{ additionalPriceInformation && (
-						<div className="email-providers-comparison__provider-additional-price-information">
-							{ additionalPriceInformation }
-						</div>
-					) }
 				</div>
 
 				{ showFeaturesToggleButton && (
@@ -115,7 +108,6 @@ EmailProviderCard.propTypes = {
 	description: PropTypes.string,
 	formattedPrice: PropTypes.node,
 	discount: PropTypes.string,
-	additionalPriceInformation: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	formFields: PropTypes.node,
 	buttonLabel: PropTypes.string,
 	onButtonClick: PropTypes.func,
