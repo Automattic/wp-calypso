@@ -2,57 +2,35 @@
 @import '@wordpress/base-styles/mixins';
 
 .breadcrumbs {
-	position: relative;
+	position: fixed;
 	margin: 0;
 	z-index: 10;
-
-	@include break-mobile {
-		position: sticky;
-		top: 0;
-		margin-top: 0;
+	background-color: white;
+	top: var( --masterbar-height );
+	padding: 0 24px;
+	left: 0;
+	right: 0px;
+	border-bottom: 1px solid #dcdcde;
+	
+	@media screen and ( min-width: 783px ) {
+		left: var( --sidebar-width-min );
+	}
+	
+	@include break-large {
+		left: var( --sidebar-width-max );
+		padding: 0 32px;
 	}
 
-	@include breakpoint-deprecated( '480px-660px' ) {
-		position: sticky;
-		top: 0;
-		margin-top: -22px;
-	}
-
-	@include breakpoint-deprecated( '>660px' ) {
-		position: sticky;
-		/* hack to make the breadcrumbs closer to the top of the content area */
-		top: -22px;
-		margin-top: -22px;
-	}
-
-	@include break-medium {
-		position: sticky;
-		top: -47px;
-		margin-top: -47px;
-	}
 }
 
 .breadcrumbs__content {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 15px;
+	padding: 15px 0;
 	min-height: 40px;
-
-	@include break-mobile {
-		padding: 15px 0;
-	}
-
-	@include breakpoint-deprecated( '480px-660px' ) {
-		padding: 15px;
-	}
-}
-
-.breadcrumbs__bottom-border {
-	height: 0;
-	/* hack to make the border line cover the entire width of the content area */
-	margin: 0 -1000px 32px;
-	border-bottom: 1px solid #dcdcde;
+	max-width: 1040px;
+	margin: 0 auto;
 }
 
 .breadcrumbs__items {
@@ -131,7 +109,7 @@
 	margin-left: 7px;
 
 	&.info-popover .gridicon {
-			color: var( --studio-gray-30 );
+		color: var( --studio-gray-30 );
 	}
 }
 
@@ -191,5 +169,13 @@
 
 	@include break-mobile {
 		display: flex;
+	}
+}
+
+.breadcrumbs__spacer {
+	height: 93px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		height: 57px;
 	}
 }
