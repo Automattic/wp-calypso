@@ -9,7 +9,7 @@
 	}
 
 	.p2-get-started__option {
-		border-bottom: 1px solid #808080;
+		border-bottom: 1px solid var( --p2-color-separator-light );
 		padding: 2em 1em;
 		display: grid;
 		grid-template-columns: auto max-content;
@@ -17,7 +17,7 @@
 		align-items: center;
 
 		&:first-of-type {
-			border-top: 1px solid #808080;
+			border-top: 1px solid var( --p2-color-separator-light );
 		}
 	}
 
