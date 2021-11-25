@@ -1,5 +1,5 @@
 /**
- * @group calypso-release
+ * @group legal
  */
 import fs from 'fs';
 import {
@@ -11,6 +11,7 @@ import {
 	CartCheckoutPage,
 	setupHooks,
 	SidebarComponent,
+	UserSignupPage,
 	BrowserManager,
 } from '@automattic/calypso-e2e';
 import archiver from 'archiver';
@@ -27,17 +28,10 @@ const selectors = {
 };
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
-	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
-	const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
-	const email = DataHelper.getTestEmailAddress( {
-		inboxId: inboxId,
-		prefix: username,
-	} );
-	const blogName = DataHelper.getBlogName();
+	const blogName = 'e2eflowtestingtos1.wordpress.com';
 	const cartItemForBusinessPlan = 'WordPress.com Business';
 
 	let page: Page;
-	let selectedDomain: string;
 	let plansPage: PlansPage;
 
 	setupHooks( ( args ) => {
@@ -66,92 +60,92 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			'sv',
 		];
 
-		// it( 'Screenshot blue signup page in desktop viewport, en and Mag-16 locales', async function () {
-		// 	const userSignupPage = new UserSignupPage( page );
-		// 	for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-		// 		await userSignupPage.visit( `premium/${ locale }` );
-		// 		page.waitForSelector( selectors.isBlueSignup );
-		// 		await page.screenshot( {
-		// 			path: `tos_blue_signup_desktop_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 410, height: 820 } );
-		// 		await page.screenshot( {
-		// 			path: `tos_blue_signup_mobile_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 1024, height: 1366 } );
-		// 		await page.screenshot( {
-		// 			path: `tos_blue_signup_tablet_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 1280, height: 720 } );
-		// 	}
-		// } );
+		it( 'Screenshot blue signup page in desktop viewport, en and Mag-16 locales', async function () {
+			const userSignupPage = new UserSignupPage( page );
+			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
+				await userSignupPage.visit( `premium/${ locale }` );
+				page.waitForSelector( selectors.isBlueSignup );
+				await page.screenshot( {
+					path: `tos_blue_signup_desktop_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 410, height: 820 } );
+				await page.screenshot( {
+					path: `tos_blue_signup_mobile_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1024, height: 1366 } );
+				await page.screenshot( {
+					path: `tos_blue_signup_tablet_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1280, height: 720 } );
+			}
+		} );
 
-		// it( 'Screenshot white signup page in desktop viewport, en and Mag-16 locales', async function () {
-		// 	const userSignupPage = new UserSignupPage( page );
-		// 	for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-		// 		await userSignupPage.visit( locale );
-		// 		page.waitForSelector( selectors.isWhiteSignup );
-		// 		await page.screenshot( {
-		// 			path: `tos_white_signup_desktop_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 410, height: 820 } );
-		// 		await page.screenshot( {
-		// 			path: `tos_white_signup_mobile_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 1024, height: 1366 } );
-		// 		await page.screenshot( {
-		// 			path: `tos_white_signup_tablet_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 1280, height: 720 } );
-		// 	}
-		// } );
+		it( 'Screenshot white signup page in desktop viewport, en and Mag-16 locales', async function () {
+			const userSignupPage = new UserSignupPage( page );
+			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
+				await userSignupPage.visit( locale );
+				page.waitForSelector( selectors.isWhiteSignup );
+				await page.screenshot( {
+					path: `tos_white_signup_desktop_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 410, height: 820 } );
+				await page.screenshot( {
+					path: `tos_white_signup_mobile_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1024, height: 1366 } );
+				await page.screenshot( {
+					path: `tos_white_signup_tablet_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1280, height: 720 } );
+			}
+		} );
 
-		// it( 'Screenshot blue login page in desktop viewport, en and Mag-16 locales', async function () {
-		// 	const loginPage = new LoginPage( page );
-		// 	for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
-		// 		await loginPage.visit( locale );
-		// 		page.waitForSelector( selectors.isBlueLogin );
-		// 		await page.screenshot( {
-		// 			path: `tos_blue_login_desktop_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 410, height: 820 } );
-		// 		await page.screenshot( {
-		// 			path: `tos_blue_login_mobile_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 1024, height: 1366 } );
-		// 		await page.screenshot( {
-		// 			path: `tos_blue_login_tablet_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 1280, height: 720 } );
-		// 	}
-		// } );
+		it( 'Screenshot blue login page in desktop viewport, en and Mag-16 locales', async function () {
+			const loginPage = new LoginPage( page );
+			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
+				await loginPage.visit( locale );
+				page.waitForSelector( selectors.isBlueLogin );
+				await page.screenshot( {
+					path: `tos_blue_login_desktop_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 410, height: 820 } );
+				await page.screenshot( {
+					path: `tos_blue_login_mobile_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1024, height: 1366 } );
+				await page.screenshot( {
+					path: `tos_blue_login_tablet_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1280, height: 720 } );
+			}
+		} );
 
 		it( 'Screenshot white login page in desktop viewport, en and Mag-16 locales', async function () {
 			const loginPage = new LoginPage( page );
@@ -181,7 +175,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 				} );
 				page.setViewportSize( { width: 1280, height: 720 } );
 			}
-			await loginPage.login( { account: 'defaultUser' } );
+			await loginPage.login( { account: 'martechToSUser' } );
 		} );
 
 		it( 'Set store cookie', async function () {
@@ -214,8 +208,13 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			await cartCheckoutPage.validateCartItem( cartItemForBusinessPlan );
 		} );
 
+		it( 'Enter billing and payment details', async function () {
+			const paymentDetails = DataHelper.getTestPaymentDetails();
+			await cartCheckoutPage.enterBillingDetails( paymentDetails );
+			await cartCheckoutPage.enterCardholderName( paymentDetails );
+		} );
+
 		it( 'Screenshot checkout page in desktop, en locale', async function () {
-			await cartCheckoutPage.validatePaymentMethod();
 			await page.screenshot( {
 				path: 'tos_checkout_desktop_en.png',
 				fullPage: true,
@@ -239,42 +238,42 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			page.setViewportSize( { width: 1280, height: 720 } );
 		} );
 
-		// it( 'Close checkout and change UI language', async function () {
-		// 	const changeUILanguageFlow = new ChangeUILanguageFlow( page );
-		// 	for ( const locale of magnificientNonEnLocales ) {
-		// 		await cartCheckoutPage.clickCloseCheckout();
-		// 		await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
-		// 		cartCheckoutPage.visit();
-		// 		const paymentDetails = DataHelper.getTestPaymentDetails();
-		// 		await cartCheckoutPage.enterBillingDetails( paymentDetails );
-		// 		await cartCheckoutPage.enterCardholderName( paymentDetails );
-		// 		await page.screenshot( {
-		// 			path: `tos_checkout_desktop_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 410, height: 820 } );
-		// 		await page.screenshot( {
-		// 			path: `tos_checkout_mobile_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 1024, height: 1366 } );
-		// 		await page.screenshot( {
-		// 			path: `tos_checkout_tablet_${ locale }.png`,
-		// 			fullPage: true,
-		// 			type: 'jpeg',
-		// 			quality: 20,
-		// 		} );
-		// 		page.setViewportSize( { width: 1280, height: 720 } );
-		// 	}
-		// } );
+		it( 'Close checkout and change UI language', async function () {
+			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
+			for ( const locale of magnificientNonEnLocales ) {
+				await cartCheckoutPage.clickCloseCheckout();
+				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
+				await cartCheckoutPage.visit( blogName );
+				const paymentDetails = DataHelper.getTestPaymentDetails();
+				await cartCheckoutPage.enterBillingDetails( paymentDetails );
+				await cartCheckoutPage.enterCardholderName( paymentDetails );
+				await page.screenshot( {
+					path: `tos_checkout_desktop_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 410, height: 820 } );
+				await page.screenshot( {
+					path: `tos_checkout_mobile_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1024, height: 1366 } );
+				await page.screenshot( {
+					path: `tos_checkout_tablet_${ locale }.png`,
+					fullPage: true,
+					type: 'jpeg',
+					quality: 20,
+				} );
+				page.setViewportSize( { width: 1280, height: 720 } );
+			}
+		} );
 
-		// it( 'Remove WordPress.com Business from cart', async function () {
-		// 	await cartCheckoutPage.removeCartItem( cartItemForBusinessPlan );
-		// } );
+		it( 'Remove WordPress.com Business from cart', async function () {
+			await cartCheckoutPage.removeCartItem( cartItemForBusinessPlan );
+		} );
 
 		it( 'Zip screenshots and upload', async function () {
 			const archive = archiver( 'zip', {
