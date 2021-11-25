@@ -11,7 +11,6 @@ import emailIllustration from 'calypso/assets/images/email-providers/email-illus
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
-import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -531,9 +530,9 @@ class EmailProvidersComparison extends Component {
 			: null;
 		const blackFridayDiscountBadge =
 			Date.now() >= blackFridaySaleEndTime ? null : (
-				<Badge type="info-blue" className={ blackFridayDiscountClassName }>
-					{ translate( 'Lifetime 30% discount' ) }
-				</Badge>
+				<span className={ blackFridayDiscountClassName }>
+					{ translate( '30% discount for all renewals' ) }
+				</span>
 			);
 
 		const discount = (
