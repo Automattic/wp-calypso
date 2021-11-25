@@ -126,6 +126,10 @@ function getImportDestination( { importSiteEngine, importSiteUrl, siteSlug } ) {
 	);
 }
 
+function getDIFMSignupDestination( { siteSlug } ) {
+	return `/home/${ siteSlug }`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -136,6 +140,7 @@ const flows = generateFlows( {
 	getEditorDestination,
 	getImportDestination,
 	getDestinationFromIntent,
+	getDIFMSignupDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

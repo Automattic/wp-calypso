@@ -12,6 +12,7 @@ export function generateFlows( {
 	getChecklistThemeDestination = noop,
 	getImportDestination = noop,
 	getDestinationFromIntent = noop,
+	getDIFMSignupDestination = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -445,7 +446,7 @@ export function generateFlows( {
 		{
 			name: 'do-it-for-me',
 			steps: [ 'user', 'difm-design-setup-site', 'site-info-collection', 'domains' ],
-			destination: getSignupDestination,
+			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			lastModified: '2021-09-30',
 		},
