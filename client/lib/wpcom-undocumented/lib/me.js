@@ -31,27 +31,6 @@ UndocumentedMe.prototype.getReceipt = function ( receiptId, queryOrCallback ) {
 	);
 };
 
-UndocumentedMe.prototype.getPeerReferralLink = function ( callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/peer-referral-link',
-	};
-
-	return this.wpcom.req.get( args, callback );
-};
-
-UndocumentedMe.prototype.setPeerReferralLinkEnable = function ( enable, callback ) {
-	const args = {
-		apiVersion: '1.1',
-		path: '/me/peer-referral-link-enable',
-		body: {
-			enable,
-		},
-	};
-
-	return this.wpcom.req.post( args, callback );
-};
-
 UndocumentedMe.prototype.sendVerificationEmail = function ( callback ) {
 	debug( '/me/send-verification-email' );
 
