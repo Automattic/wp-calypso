@@ -299,7 +299,8 @@
 }
 
 .domain-management-list__items + .empty-domains-list-card {
-	margin-top: 24px;
+	margin-top: 32px;
+	margin-bottom: 32px;
 }
 
 .domain-management-list__filter,
@@ -349,10 +350,15 @@
 
 	.empty-domains-list-card__actions {
 		display: inline-flex;
-		justify-content: center;
+		justify-content: flex-start;
 		flex-wrap: wrap;
 		& > .button {
 			margin: 16px 8px 0;
+		}
+		@include break-small {
+			& > .button:first-child {
+				margin-left: 0;
+			}
 		}
 	}
 
