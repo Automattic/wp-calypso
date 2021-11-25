@@ -25,7 +25,7 @@
 	},
 	"scripts": {
 		"clean": "npx rimraf js css src/__color-studio",
-		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
+		"postinstall": "node bin/prepare-sass-assets.js && node bin/build-css.js"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
