@@ -11,7 +11,7 @@ const BloggingQuickStartModal = ( props ) => {
 		isVisible && (
 			<BlankCanvas className={ 'blogging-quick-start-modal' }>
 				<BlankCanvas.Content>
-					<VideosUi headerBar={ <ModalHeaderBar onClose={ onClose } /> } />
+					<VideosUi headerBar={ <ModalHeaderBar onClose={ onClose } /> } onBackClick={ onClose } />
 				</BlankCanvas.Content>
 			</BlankCanvas>
 		)
