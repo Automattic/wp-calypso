@@ -34,7 +34,7 @@
 	padding: 16px 24px;
 
 	.plugin-site-jetpack__domain {
-		flex: 8 8 0;
+		flex: 2 2 0;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
@@ -42,7 +42,7 @@
 	}
 
 	.plugin-action {
-		flex: 4 4 0;
+		flex: 1 1 0;
 		margin-top: 0;
 		color: var( --studio-gray-50 );
 	}
@@ -57,7 +57,7 @@
 	}
 
 	.plugin-site-jetpack__automanage-notice {
-		flex: 4 4 0;
+		flex: 1 1 0;
 		color: var( --color-neutral-light );
 		font-size: $font-body-extra-small;
 		line-height: 1;
