@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { isDesktop } from '@automattic/viewport';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 /**
  * Internal dependencies
  */
@@ -16,3 +16,11 @@ import type { TourAsset } from './types';
 export const getImageSrcForView = ( asset: TourAsset ): string => {
 	return ! isDesktop() && asset.mobile ? asset.mobile.src : asset.desktop.src;
 };
+
+export function useImageSrcForView( asset: TourAsset ): string {
+	const isMobile = useMobileBreakpoint();
+
+	useEffect( () => {
+		return isMobile && asset.mobile ? asset.mobile.src : asset.desktop.src;
+	}, [ asset, isMobile ] );
+}
