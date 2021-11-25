@@ -86,7 +86,11 @@ export default {
 				source={ pageContext.query.source }
 			/>
 		) : (
-			<EmailProvidersComparisonStacked />
+			<EmailProvidersComparisonStacked
+				comparisonContext="email-purchase"
+				selectedDomainName={ pageContext.params.domain }
+				source={ pageContext.query.source }
+			/>
 		);
 
 		pageContext.primary = (
