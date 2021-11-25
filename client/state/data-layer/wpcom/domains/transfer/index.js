@@ -6,6 +6,7 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
+	DOMAIN_TRANSFER_LOCK_DOMAIN,
 	DOMAIN_TRANSFER_UNLOCK_DOMAIN,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -17,6 +18,8 @@ import {
 	cancelDomainTransferRequestFailed,
 	declineDomainTransferCompleted,
 	fetchWapiDomainInfo,
+	lockDomainCompleted,
+	lockDomainFailed,
 	requestDomainTransferCodeOnlyCompleted,
 	requestDomainTransferCodeOnlyFailed,
 	requestDomainTransferCodeCompleted,
@@ -141,6 +144,35 @@ export const unlockDomainSuccess = ( action ) => ( dispatch ) => {
 
 export const unlockDomainFailure = ( action, error ) => [
 	unlockDomainAndPrepareForTransferOutFailed( action.domain ),
+	errorNotice( getDomainTransferCodeError( error.error ), getNoticeOptions( action.domain ) ),
+	fetchWapiDomainInfo( action.domain ),
+];
+
+export const lockDomain = ( action ) =>
+	http(
+		{
+			apiVersion: '1.1',
+			method: 'POST',
+			path: '/domains/' + action.domain + '/transfer/',
+			body: {
+				domainStatus: JSON.stringify( {
+					command: 'lock',
+				} ),
+			},
+		},
+		action
+	);
+
+export const lockDomainSuccess = ( action ) => ( dispatch ) => {
+	dispatch( lockDomainCompleted( action.domain, action.options ) );
+	dispatch( fetchWapiDomainInfo( action.domain ) );
+	dispatch(
+		successNotice( translate( 'Domain locked successfully!' ), getNoticeOptions( action.domain ) )
+	);
+};
+
+export const lockDomainFailure = ( action, error ) => [
+	lockDomainFailed( action.domain ),
 	errorNotice( getDomainTransferCodeError( error.error ), getNoticeOptions( action.domain ) ),
 	fetchWapiDomainInfo( action.domain ),
 ];
@@ -285,6 +317,13 @@ registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 			fetch: saveDomainIpsTag,
 			onSuccess: handleIpsTagSaveSuccess,
 			onError: handleIpsTagSaveFailure,
+		} ),
+	],
+	[ DOMAIN_TRANSFER_LOCK_DOMAIN ]: [
+		dispatchRequest( {
+			fetch: lockDomain,
+			onSuccess: lockDomainSuccess,
+			onError: lockDomainFailure,
 		} ),
 	],
 	[ DOMAIN_TRANSFER_UNLOCK_DOMAIN ]: [

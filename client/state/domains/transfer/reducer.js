@@ -11,6 +11,9 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
+	DOMAIN_TRANSFER_LOCK_DOMAIN,
+	DOMAIN_TRANSFER_LOCK_DOMAIN_COMPLETED,
+	DOMAIN_TRANSFER_LOCK_DOMAIN_FAILED,
 	DOMAIN_TRANSFER_UPDATE,
 	DOMAIN_TRANSFER_UNLOCK_DOMAIN,
 	DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED,
@@ -50,6 +53,27 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				...state,
 				[ domain ]: options,
 			};
+		}
+		case DOMAIN_TRANSFER_LOCK_DOMAIN: {
+			return updateDomainState( state, action.domain, {
+				isRequestingTransferCode: true,
+			} );
+		}
+		case DOMAIN_TRANSFER_LOCK_DOMAIN_COMPLETED: {
+			const { data } = state[ action.domain ];
+			const locked = ! action.options.unlock && data.locked;
+
+			return updateDomainState( state, action.domain, {
+				data: Object.assign( {}, state[ action.domain ].data, {
+					locked,
+				} ),
+				isRequestingTransferCode: false,
+			} );
+		}
+		case DOMAIN_TRANSFER_LOCK_DOMAIN_FAILED: {
+			return updateDomainState( state, action.domain, {
+				isRequestingTransferCode: false,
+			} );
 		}
 		case DOMAIN_TRANSFER_UNLOCK_DOMAIN: {
 			return updateDomainState( state, action.domain, {

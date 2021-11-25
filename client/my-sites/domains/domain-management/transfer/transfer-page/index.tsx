@@ -22,7 +22,7 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
 import {
-	cancelDomainTransferRequest,
+	lockDomain,
 	unlockDomainAndPrepareForTransferOut,
 	requestDomainTransferCodeOnly,
 } from 'calypso/state/domains/transfer/actions';
@@ -41,9 +41,7 @@ import './style.scss';
 const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const { __ } = useI18n();
 	const {
-		cancelDomainTransferRequest,
 		currentRoute,
-		domain,
 		isAtomic,
 		isCancelingTransfer,
 		isDomainOnly,
@@ -51,11 +49,12 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		isMapping,
 		isPrimaryDomain,
 		isRequestingTransferCode,
+		lockDomain,
 		locked,
-		unlockDomainAndPrepareForTransferOut,
 		requestDomainTransferCodeOnly,
 		selectedDomainName,
 		selectedSite,
+		unlockDomainAndPrepareForTransferOut,
 	} = props;
 
 	const renderBreadcrumbs = () => {
@@ -152,16 +151,13 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		unlockDomainAndPrepareForTransferOut( selectedDomainName, options );
 	};
 
-	const lockDomain = () => {
-		const { privateDomain, pendingTransfer, domainLockingAvailable } = getSelectedDomain( props );
-		const enablePrivacy = ! privateDomain;
-		const lockDomain = domainLockingAvailable;
+	const lockDomainRequest = () => {
+		const { pendingTransfer, domainLockingAvailable } = getSelectedDomain( props );
 
-		cancelDomainTransferRequest( selectedDomainName, {
+		lockDomain( selectedDomainName, {
 			declineTransfer: pendingTransfer,
 			siteId: selectedSite.ID,
-			enablePrivacy,
-			lockDomain,
+			lockDomain: domainLockingAvailable,
 		} );
 	};
 
@@ -175,11 +171,11 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		// translators: domain transfer lock
 		const enabledLockLabel = __( 'Transfer lock on' );
 
-		const toggleLabel = ! domain ? (
+		const toggleLabel = isLoading ? (
 			'loading'
 		) : (
 			<span className="transfer-page__transfer-lock-label">
-				{ domain.isLocked ? (
+				{ locked ? (
 					<>
 						<Icon icon={ lock } size={ 15 } viewBox="4 0 18 20" />
 						{ enabledLockLabel }
@@ -197,8 +193,8 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 				</CardHeading>
 				<ToggleControl
 					checked={ locked }
-					disabled={ isLoading || isRequestingTransferCode || isCancelingTransfer }
-					onChange={ locked ? unlockDomain : lockDomain }
+					disabled={ isRequestingTransferCode || isCancelingTransfer }
+					onChange={ locked ? unlockDomain : lockDomainRequest }
 					label={ toggleLabel }
 				/>
 				<p>
@@ -255,7 +251,7 @@ const transferPageComponent = connect(
 		const siteId = getSelectedSiteId( state )!;
 		const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
 		return {
-			isLoading: ! domainInfo.hasLoadedFromServer,
+			isLoading: false, // ! domainInfo.hasLoadedFromServer,
 			domain,
 			currentRoute: getCurrentRoute( state ),
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
@@ -267,11 +263,11 @@ const transferPageComponent = connect(
 			isRequestingTransferCode: !! domainInfo.isRequestingTransferCode,
 			isCancelingTransfer: !! domainInfo.isCancelingTransfer,
 			isDomainPendingTransfer: !! domainInfo.data?.pendingTransfer,
-			locked: domainInfo.data.locked,
+			locked: domainInfo.data?.locked,
 		};
 	},
 	{
-		cancelDomainTransferRequest,
+		lockDomain,
 		requestDomainTransferCodeOnly,
 		unlockDomainAndPrepareForTransferOut,
 	}

@@ -13,6 +13,9 @@ import {
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
+	DOMAIN_TRANSFER_LOCK_DOMAIN,
+	DOMAIN_TRANSFER_LOCK_DOMAIN_COMPLETED,
+	DOMAIN_TRANSFER_LOCK_DOMAIN_FAILED,
 	DOMAIN_TRANSFER_UPDATE,
 	DOMAIN_TRANSFER_UNLOCK_DOMAIN,
 	DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED,
@@ -36,6 +39,24 @@ export const saveDomainIpsTag = ( domain, selectedRegistrar ) => ( {
 
 export const updateDomainTransfer = ( domain, options ) => ( {
 	type: DOMAIN_TRANSFER_UPDATE,
+	domain,
+	options,
+} );
+
+export const lockDomain = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_LOCK_DOMAIN,
+	domain,
+	options,
+} );
+
+export const lockDomainCompleted = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_LOCK_DOMAIN_COMPLETED,
+	domain,
+	options,
+} );
+
+export const lockDomainFailed = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_LOCK_DOMAIN_FAILED,
 	domain,
 	options,
 } );
