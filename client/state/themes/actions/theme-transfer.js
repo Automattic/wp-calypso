@@ -30,7 +30,7 @@ function initiateTransfer( siteId, plugin, theme, onProgress ) {
 		}
 
 		const req = wpcom.req.post( post, resolver );
-		req && ( req.upload.onprogress = onProgress );
+		req.upload.onprogress = onProgress;
 	} );
 }
 
