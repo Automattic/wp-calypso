@@ -97,19 +97,19 @@ const MarketplacePluginInstall = ( {
 		}
 	}, [ isWporgPluginFetched, productSlug ] );
 
-	// Check if the user plan is enough for installation
+	// Check if
+	//   - the user plan is enough for installation
+	//   - the user is coming from the plugin install page
 	// if not, check again in 2s and show an error message
 	useEffect( () => {
-		if ( ! supportsAtomicUpgrade.current ) {
-			waitFor( 2 ).then(
-				() => ! supportsAtomicUpgrade.current && setError( Errors.NON_INSTALLABLE_PLAN_ERROR )
-			);
-		}
-
-		if ( ! marketplacePluginInstallationInProgress ) {
-			waitFor( 2 ).then(
-				() => ! marketplacePluginInstallationInProgress && setError( Errors.NO_DIRECT_ACCESS_ERROR )
-			);
+		if ( ! supportsAtomicUpgrade.current || ! marketplacePluginInstallationInProgress ) {
+			waitFor( 2 ).then( () => {
+				if ( ! supportsAtomicUpgrade.current ) {
+					setError( Errors.NON_INSTALLABLE_PLAN_ERROR );
+				} else if ( ! marketplacePluginInstallationInProgress ) {
+					setError( Errors.NO_DIRECT_ACCESS_ERROR );
+				}
+			} );
 		}
 	} );
 
@@ -201,38 +201,18 @@ const MarketplacePluginInstall = ( {
 	];
 
 	const renderError = () => {
-		if ( ! marketplacePluginInstallationInProgress ) {
-			return (
-				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate(
-						'This URL should not be accessed directly. Please click the Install button on the plugin page.'
-					) }
-					action={ translate( 'Go to the plugin page' ) }
-					actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
-				/>
-			);
-		}
-
-		if (
-			pluginUploadError ||
-			pluginInstallStatus.error ||
-			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
-		) {
-			return (
-				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate( 'An error occurred while installing the plugin.' ) }
-					action={ translate( 'Back' ) }
-					actionURL={
-						isUploadFlow
-							? `/plugins/upload/${ selectedSiteSlug }`
-							: `/plugins/${ productSlug }/${ selectedSiteSlug }`
-					}
-				/>
-			);
-		}
 		switch ( error ) {
+			case Errors.NO_DIRECT_ACCESS_ERROR:
+				return (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/error.svg"
+						title={ translate(
+							'This URL should not be accessed directly. Please click the Install button on the plugin page.'
+						) }
+						action={ translate( 'Go to the plugin page' ) }
+						actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
+					/>
+				);
 			case Errors.NON_INSTALLABLE_PLAN_ERROR:
 				return (
 					<EmptyContent
@@ -244,9 +224,25 @@ const MarketplacePluginInstall = ( {
 						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
 					/>
 				);
-			case Errors.NO_DIRECT_ACCESS_ERROR:
 			default:
-				return null;
+				if (
+					pluginUploadError ||
+					pluginInstallStatus.error ||
+					( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
+				) {
+					return (
+						<EmptyContent
+							illustration="/calypso/images/illustrations/error.svg"
+							title={ translate( 'An error occurred while installing the plugin.' ) }
+							action={ translate( 'Back' ) }
+							actionURL={
+								isUploadFlow
+									? `/plugins/upload/${ selectedSiteSlug }`
+									: `/plugins/${ productSlug }/${ selectedSiteSlug }`
+							}
+						/>
+					);
+				}
 		}
 	};
 
