@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { useEffect, useState, useCallback } from '@wordpress/element';
+import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 /**
  * Internal Dependencies
@@ -21,8 +21,8 @@ const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
 };
 
 const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
-	const [ tourContainerElement, setTourContainerElement ] = useState< HTMLElement | null >( null );
-	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
+	const tourContainerRef = useRef( null );
+	const popperElementRef = useRef( null );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);
@@ -45,7 +45,7 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 
 	const { styles: popperStyles, attributes: popperAttributes } = usePopperHandler(
 		referenceElement,
-		popperElement,
+		popperElementRef.current,
 		[
 			{
 				name: 'preventOverflow',
@@ -152,13 +152,13 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				onDismiss={ handleDismiss }
 				onNextStepProgression={ handleNextStepProgression }
 				onPreviousStepProgression={ handlePreviousStepProgression }
-				tourContainerElement={ tourContainerElement }
+				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
-			<div className={ classNames } ref={ setTourContainerElement }>
+			<div className={ classNames } ref={ tourContainerRef }>
 				{ showOverlay() && <Overlay visible={ true } /> }
 				{ showSpotlight() && <Spotlight referenceElement={ referenceElement } /> }
-				<div className="packaged-tour__frame" ref={ setPopperElement } { ...stepRepositionProps }>
+				<div className="packaged-tour__frame" ref={ popperElementRef } { ...stepRepositionProps }>
 					{ showArrowIndicator() && (
 						<div className="packaged-tour__arrow" data-popper-arrow { ...arrowPositionProps } />
 					) }

@@ -1,4 +1,4 @@
-import { useMemo, useState } from '@wordpress/element';
+import { useMemo, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 import usePopperHandler from '../hooks/use-popper-handler';
 import Overlay from './overlay';
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const Spotlight: React.FunctionComponent< Props > = ( { referenceElement } ) => {
-	const [ popperElement, setPopperElement ] = useState< HTMLDivElement | null >( null );
+	const popperElementRef = useRef( null );
 	const modifiers = [
 		useMemo(
 			() => ( {
@@ -37,7 +37,7 @@ const Spotlight: React.FunctionComponent< Props > = ( { referenceElement } ) => 
 
 	const { styles: popperStyles, attributes: popperAttributes } = usePopperHandler(
 		referenceElement,
-		popperElement,
+		popperElementRef.current,
 		modifiers
 	);
 
@@ -55,7 +55,7 @@ const Spotlight: React.FunctionComponent< Props > = ( { referenceElement } ) => 
 				className={ classnames( 'packaged-tour__spotlight', {
 					'--visible': !! clipRepositionProps,
 				} ) }
-				ref={ setPopperElement }
+				ref={ popperElementRef }
 				{ ...clipRepositionProps }
 			/>
 		</>

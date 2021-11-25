@@ -4,11 +4,11 @@
 import { useEffect, useCallback, useState } from '@wordpress/element';
 
 /**
- * A hook that constraints tabbing/focus on focuable elements in the given element.
+ * A hook that constraints tabbing/focus on focuable elements in the given element ref.
  *
- * @param element HTMLElement | null
+ * @param ref React.MutableRefObject< null | HTMLElement >
  */
-const useFocusTrap = ( element: HTMLElement | null ): void => {
+const useFocusTrap = ( ref: React.MutableRefObject< null | HTMLElement > ): void => {
 	const [ firstFocusableElement, setFirstFocusableElement ] = useState< HTMLElement | undefined >();
 	const [ lastFocusableElement, setLastFocusableElement ] = useState< HTMLElement | undefined >();
 
@@ -49,7 +49,7 @@ const useFocusTrap = ( element: HTMLElement | null ): void => {
 			'select:not([disabled])',
 		];
 
-		const focusableElements = element?.querySelectorAll< HTMLElement >(
+		const focusableElements = ref.current?.querySelectorAll< HTMLElement >(
 			focusableElementSelectors.toString()
 		);
 
@@ -63,7 +63,7 @@ const useFocusTrap = ( element: HTMLElement | null ): void => {
 		return () => {
 			document.removeEventListener( 'keydown', handleTrapFocus );
 		};
-	}, [ element, handleTrapFocus ] );
+	}, [ ref, handleTrapFocus ] );
 };
 
 export default useFocusTrap;

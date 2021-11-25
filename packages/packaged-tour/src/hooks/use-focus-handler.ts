@@ -6,41 +6,41 @@ import { useEffect, useCallback, useState } from '@wordpress/element';
 /**
  * A hook that returns true/false if ref node receives focus by either tabbing or clicking into any of its children.
  *
- * @param element HTMLElement | null
+ * @param ref React.MutableRefObject< null | HTMLElement >
  */
-const useFocusHandler = ( element: HTMLElement | null ): boolean => {
+const useFocusHandler = ( ref: React.MutableRefObject< null | HTMLElement > ): boolean => {
 	const [ hasFocus, setHasFocus ] = useState( false );
 
 	const handleFocus = useCallback( () => {
-		if ( document.hasFocus() && element?.contains( document.activeElement ) ) {
+		if ( document.hasFocus() && ref.current?.contains( document.activeElement ) ) {
 			setHasFocus( true );
 		} else {
 			setHasFocus( false );
 		}
-	}, [ element ] );
+	}, [ ref ] );
 
 	const handleMousedown = useCallback(
 		( event ) => {
-			if ( element?.contains( event.target ) ) {
+			if ( ref.current?.contains( event.target ) ) {
 				setHasFocus( true );
 			} else {
 				setHasFocus( false );
 			}
 		},
-		[ element ]
+		[ ref ]
 	);
 
 	const handleKeyup = useCallback(
 		( event ) => {
 			if ( event.key === 'Tab' ) {
-				if ( element?.contains( event.target ) ) {
+				if ( ref.current?.contains( event.target ) ) {
 					setHasFocus( true );
 				} else {
 					setHasFocus( false );
 				}
 			}
 		},
-		[ element ]
+		[ ref ]
 	);
 
 	useEffect( () => {
@@ -53,7 +53,7 @@ const useFocusHandler = ( element: HTMLElement | null ): boolean => {
 			document.removeEventListener( 'mousedown', handleMousedown );
 			document.removeEventListener( 'keyup', handleKeyup );
 		};
-	}, [ handleFocus, handleKeyup, handleMousedown ] );
+	}, [ ref, handleFocus, handleKeyup, handleMousedown ] );
 
 	return hasFocus;
 };
