@@ -33,6 +33,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './style.scss';
+import { MarketplacePluginInstallProps } from './types';
 
 enum Errors {
 	NON_INSTALLABLE_PLAN_ERROR,
@@ -40,7 +41,9 @@ enum Errors {
 	NONE,
 }
 
-const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
+const MarketplacePluginInstall = ( {
+	productSlug,
+}: MarketplacePluginInstallProps ): JSX.Element => {
 	const isUploadFlow = ! productSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
@@ -198,6 +201,19 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 	];
 
 	const renderError = () => {
+		if ( ! marketplacePluginInstallationInProgress ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					title={ translate(
+						'This URL should not be accessed directly. Please click the Install button on the plugin page.'
+					) }
+					action={ translate( 'Go to the plugin page' ) }
+					actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
+				/>
+			);
+		}
+
 		if (
 			pluginUploadError ||
 			pluginInstallStatus.error ||
@@ -229,16 +245,6 @@ const MarketplacePluginInstall = ( { productSlug } ): JSX.Element => {
 					/>
 				);
 			case Errors.NO_DIRECT_ACCESS_ERROR:
-				return (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/error.svg"
-						title={ translate(
-							'This URL should not be accessed directly. Please click on the plugin install button.'
-						) }
-						action={ translate( 'Upgrade to Business Plan' ) }
-						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
-					/>
-				);
 			default:
 				return null;
 		}
