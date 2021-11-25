@@ -88,7 +88,6 @@
 		"privacy-policy": true,
 		"reader": true,
 		"reader/list-management": true,
-		"republicize": true,
 		"safari-idb-mitigation": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

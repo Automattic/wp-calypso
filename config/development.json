@@ -138,7 +138,6 @@
 		"reader/list-management": true,
 		"recommend-plugins": true,
 		"redirect-fallback-browsers": true,
-		"republicize": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
 		"security/security-checkup": false,
