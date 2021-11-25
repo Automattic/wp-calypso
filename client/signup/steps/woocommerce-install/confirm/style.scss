@@ -2,6 +2,7 @@ body.is-section-signup {
 	.signup__step.is-confirm {
 		.is-wide-layout {
 			max-width: 1024px;
+			align-items: baseline;
 		}
 
 		.step-wrapper__content {
@@ -13,8 +14,13 @@ body.is-section-signup {
 .is-confirm {
 	margin: 0 0 0 20px;
 	padding: 0 20px;
+	display: flex;
+  justify-content: center;
+	align-items: center;
+	min-height: 94vh;
 
 	.step-wrapper {
+		margin-top: -60px; // remnove the space that the navigation bar took to properly vertically center the content
 		display: grid;
     grid-template-columns: 1fr 1fr;
 	}

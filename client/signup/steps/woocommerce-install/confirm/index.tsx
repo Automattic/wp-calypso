@@ -81,6 +81,19 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 						) }
 					</p>
 
+					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
+						{wpcomDomain}
+					</div>
+
+					<div className="confirm__instructions-title">{stagingDomain}</div>
+
+					<p>
+						{__(
+							'By installing this product your subdomain will change. You can change it later to a custom domain and we will pick up the tab for a year.'
+						)}
+					</p>
+
+
 					<p>
 						{ createInterpolateElement( __( '<a>Contact support</a> for help and questions.' ), {
 							a: <a href="#support-link" />,
