@@ -17,6 +17,7 @@ declare global {
 		_currentSiteId: number;
 		calypsoifyGutenberg?: {
 			isGutenboarding?: boolean;
+			isAppBannerVisible?: boolean;
 			currentCalypsoUrl?: string;
 			closeUrl?: string;
 			closeButtonLabel?: string;

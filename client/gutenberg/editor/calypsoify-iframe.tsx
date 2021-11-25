@@ -36,6 +36,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import isAppBannerVisible from 'calypso/state/selectors/is-app-banner-visible';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
@@ -121,6 +122,7 @@ enum EditorActions {
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
 	SendSiteEditorBetaFeedback = 'sendSiteEditorBetaFeedback',
+	GetIsAppBannerVisible = 'getIsAppBannerVisible',
 }
 
 type ComponentProps = Props &
@@ -494,6 +496,14 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				() => ports[ 0 ].postMessage( 'error' )
 			);
 		}
+
+		if ( EditorActions.GetIsAppBannerVisible === action ) {
+			const isAppBannerVisible = this.props.isAppBannerVisible;
+
+			ports[ 0 ].postMessage( {
+				isAppBannerVisible,
+			} );
+		}
 	};
 
 	handlePostStatusChange = ( status: string ) => {
@@ -857,6 +867,7 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ?? 0 ),
 		parentPostId,
+		isAppBannerVisible: isAppBannerVisible( state ),
 	};
 };
 

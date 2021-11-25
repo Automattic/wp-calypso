@@ -1087,6 +1087,26 @@ function handleInlineHelpButton( calypsoPort ) {
 	);
 }
 
+/**
+ * Check if the App Banner is visible and place it on the calypsoifyGutenberg object.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function getIsAppBannerVisible( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getIsAppBannerVisible',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		const { isAppBannerVisible } = data;
+		calypsoifyGutenberg.isAppBannerVisible = isAppBannerVisible;
+	};
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1191,6 +1211,8 @@ function initPort( message ) {
 		handleInlineHelpButton( calypsoPort );
 
 		handleSiteEditorFeedbackPlugin( calypsoPort );
+
+		getIsAppBannerVisible( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
