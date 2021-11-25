@@ -516,7 +516,7 @@ class EmailProvidersComparison extends Component {
 
 		const now = Date.now();
 		const showBlackFridaySale =
-			new Date( '2021-11-25T00:05:00Z' ) < now &&
+			new Date( '2021-11-26T00:05:00Z' ) < now &&
 			now < new Date( '2021-12-01T07:55:00Z' ).getTime();
 
 		const formattedPriceClassName = classNames( {
