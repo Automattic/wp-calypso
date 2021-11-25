@@ -1,18 +1,43 @@
-body.is-section-signup {
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+body.is-section-signup .is-woocommerce-install {
 	.signup__step.is-confirm {
+		// Two columns layout
+		.step-wrapper {
+			display: flex;
+			align-items: flex-start;
+			padding-top: 100px;
+
+			.step-wrapper__header {
+				.formatted-header {
+					text-align: inherit;
+
+					.formatted-header__title {
+						text-align: inherit;
+					}
+
+					.formatted-header__subtitle {
+						text-align: inherit;
+					}
+				}
+			}
+		}
+
 		.is-wide-layout {
 			max-width: 1024px;
 		}
 
 		.step-wrapper__content {
 			display: flex;
+			margin: 24px 20px;
+
+			@include break-large {
+				margin: 48px 0 40px;
+			}
 		}
 	}
-}
-
-.is-confirm {
-	margin: 0 0 0 20px;
-	padding: 0 20px;
 }
 
 .confirm__info-section {

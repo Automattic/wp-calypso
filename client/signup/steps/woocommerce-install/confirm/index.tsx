@@ -152,7 +152,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
 			fallbackSubHeaderText={ headerDescription }
-			align={ isReskinned ? 'left' : 'center' }
 			stepContent={ getContent() }
 			isWideLayout={ isReskinned }
 			{ ...props }
