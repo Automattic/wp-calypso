@@ -92,7 +92,12 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	};
 
 	return (
-		<div className="screen-options-tab" ref={ ref } data-testid="screen-options-tab">
+		<div
+			className="screen-options-tab"
+			id="screen-options-tab-id"
+			ref={ ref }
+			data-testid="screen-options-tab"
+		>
 			<button className="screen-options-tab__button" onClick={ handleToggle }>
 				<span className="screen-options-tab__label">{ __( 'Screen Options' ) }</span>
 				<span

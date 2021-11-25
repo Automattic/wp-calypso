@@ -159,9 +159,19 @@ class ThemeShowcase extends Component {
 
 	scrollToSearchInput = () => {
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
-			const yOffset = -55; // A number that takes the Adminbar as well as the screen options into account on mobile view ports.
-			this.scrollRef.current.scrollIntoView();
-			const y = this.scrollRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+			// If you are a larger screen where the theme info is displayed horizontally.
+			if ( window.innerWidth > 600 ) {
+				return;
+			}
+			const headerHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
+			const screenOptionTab = document
+				.getElementById( 'screen-options-tab-id' )
+				?.getBoundingClientRect().height;
+
+			const yOffset = -( headerHeight + screenOptionTab ); // A number that takes the Adminbar as well as the screen options into account on mobile view ports.
+			const elementBoundary = this.scrollRef.current.getBoundingClientRect();
+
+			const y = elementBoundary.top + window.pageYOffset + yOffset;
 			window.scrollTo( { top: y } );
 		}
 	};
