@@ -41,7 +41,7 @@ type EmailProvidersStackedComparisonProps = {
 };
 
 export interface ProviderCard {
-	additionalPriceInformation?: ReactElement;
+	additionalPriceInformation?: TranslateResult;
 	badge?: ReactElement;
 	buttonLabel?: TranslateResult;
 	children?: ReactElement;

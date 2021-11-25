@@ -119,10 +119,6 @@ $width-left-panel-card: calc( 60% - 48px );
 	}
 }
 
-.promo-card__title-badge {
-	display: none;
-}
-
 .is-expanded .promo-card__title-badge {
 	background: none;
 	display: inline-block;

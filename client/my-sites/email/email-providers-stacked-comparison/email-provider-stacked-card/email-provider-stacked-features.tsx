@@ -39,14 +39,14 @@ const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeatu
 	}
 
 	return (
-		<div className="email-provider-stacked-features">
+		<>
 			<span className={ 'email-provider-stacked-features__whats-included' }>
 				{ translate( "What's included:" ) }
 			</span>
 			{ features.map( ( feature, index ) => (
 				<EmailProviderStackedFeature key={ index } title={ feature } />
 			) ) }
-		</div>
+		</>
 	);
 };
 

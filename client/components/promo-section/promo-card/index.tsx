@@ -68,13 +68,13 @@ const PromoCard: FunctionComponent< Props > = ( {
 				{ title && (
 					<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
 						{ title }
-						{ badgeComponent }
+						{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
 					</ActionPanelTitle>
 				) }
 				{ titleComponent && (
 					<>
 						{ titleComponent }
-						{ badgeComponent }
+						{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
 					</>
 				) }
 				{ isPrimary
