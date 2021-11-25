@@ -1,3 +1,4 @@
+import { pick } from '@automattic/js-utils';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
@@ -14,6 +15,7 @@ interface Props {
 	isReskinned: boolean;
 	signupDependencies: any;
 	stepName: string;
+	initialContext: any;
 }
 
 // TODO: Adding take the masterclass
@@ -26,12 +28,14 @@ const EXCLUDE_STEPS: { [ key in StartingPointFlag ]: string[] } = {
 export default function StartingPointStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { goToNextStep, stepName } = props;
+	const { goToNextStep, stepName, initialContext } = props;
 	const headerText = translate( 'Nice job! Now it’s{{br}}{{/br}} time to get creative.', {
 		components: { br: <br /> },
 	} );
 	const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
 	const branchSteps = useBranchSteps( stepName );
+	const queryObject = initialContext && initialContext.query;
+	const siteSlugOrId = pick( queryObject, [ 'siteId', 'siteSlug' ] );
 
 	const submitStartingPoint = ( startingPoint: StartingPointFlag ) => {
 		branchSteps( EXCLUDE_STEPS[ startingPoint ] );
@@ -59,6 +63,7 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 			skipLabelText={ translate( 'Skip to My Home' ) }
 			// We need to redirect user to My Home and apply the default theme if the user skips this step
 			goToNextStep={ () => submitStartingPoint( 'skip-to-my-home' ) }
+			queryParams={ siteSlugOrId }
 			isHorizontalLayout={ true }
 		/>
 	);

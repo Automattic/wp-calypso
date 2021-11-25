@@ -310,6 +310,7 @@ export default function DesignPickerStep( props ) {
 			stepContent={ renderDesignPicker() }
 			align={ isReskinned ? 'left' : 'center' }
 			skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
+			queryParams={ siteSlugOrId }
 			skipLabelText={ skipLabelText() }
 		/>
 	);

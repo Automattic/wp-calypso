@@ -1,3 +1,4 @@
+import { pick } from '@automattic/js-utils';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
@@ -14,14 +15,18 @@ interface Props {
 	isReskinned: boolean;
 	signupDependencies: any;
 	stepName: string;
+	initialContext: any;
 }
 
 export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const headerText = translate( "First, let's give your blog a name" );
-	const { stepName, signupDependencies, goToNextStep } = props;
+	const { stepName, signupDependencies, initialContext, goToNextStep } = props;
 	const { siteTitle, tagline } = signupDependencies;
+	const queryObject = initialContext && initialContext.query;
+	const siteSlugOrId = pick( queryObject, [ 'siteId', 'siteSlug' ] );
+
 	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
 			has_site_title: !! siteTitle,
@@ -58,6 +63,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 				siteTitle: '',
 				tagline: '',
 			} }
+			queryParams={ siteSlugOrId }
 			{ ...props }
 		/>
 	);
