@@ -234,6 +234,20 @@
 		}
 	}
 
+	.videos-ui__header-bar {
+		padding-top: 20px;
+	}
+
+	.videos-ui__footer-bar {
+		background-color: #101517;
+		border-top: 1px solid rgba( 255, 255, 255, 0.1 );
+		margin-top: auto;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+
 	@include break-small {
 		.videos-ui__button {
 			max-width: 300px;
