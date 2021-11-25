@@ -38,6 +38,8 @@ export class UserSignupPage {
 
 	/**
 	 * Navigates to the /start endpoint.
+	 *
+	 * @param {string} path The path to be appended to /start. E.g. /start/premium is the premium plan signup flow.
 	 */
 	async visit( path = '' ): Promise< void > {
 		const targetUrl = path ? `start/${ path }` : 'start';

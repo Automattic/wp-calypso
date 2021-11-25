@@ -30,7 +30,6 @@ const selectors = {
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
 	const blogName = 'e2eflowtestingtos1.wordpress.com';
 	const cartItemForBusinessPlan = 'WordPress.com Business';
-
 	let page: Page;
 	let plansPage: PlansPage;
 
