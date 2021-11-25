@@ -227,6 +227,25 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	return domainManagementPaths.indexOf( path ) > -1;
 }
 
+/**
+ * The paths allowed for domain-only sites and DIFM in-progress sites are the same
+ * with one exception - /domains/add should be allowed for DIFM in-progress sites.
+ *
+ * @param {*} path The path to be checked
+ * @param {*} slug The site slug
+ * @param {*} primaryDomain The primary domain if it exists
+ * @param {*} contextParams Context parameters
+ * @returns {boolean} true if the path is allowed, false otherwise
+ */
+function isPathAllowedForDIFMInProgressSite( path, slug, primaryDomain, contextParams ) {
+	const domainAdditionPath = '/domains/add';
+
+	return (
+		isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) ||
+		path.startsWith( domainAdditionPath )
+	);
+}
+
 function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
@@ -254,12 +273,11 @@ function onSelectedSiteAvailable( context ) {
 	}
 
 	/**
-	 * The paths allowed for domain-only sites and DIFM in-progress sites are the same.
 	 * Ignore this check if we are inside a support session.
 	 */
 	if (
 		isDIFMLiteInProgress( state, selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite(
+		! isPathAllowedForDIFMInProgressSite(
 			context.pathname,
 			selectedSite.slug,
 			primaryDomain,
