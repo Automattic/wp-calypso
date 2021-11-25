@@ -56,7 +56,7 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 		}
 		case DOMAIN_TRANSFER_LOCK_DOMAIN: {
 			return updateDomainState( state, action.domain, {
-				isRequestingTransferCode: true,
+				isLockingOrUnlockingDomain: true,
 			} );
 		}
 		case DOMAIN_TRANSFER_LOCK_DOMAIN_COMPLETED: {
@@ -67,17 +67,17 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				data: Object.assign( {}, state[ action.domain ].data, {
 					locked,
 				} ),
-				isRequestingTransferCode: false,
+				isLockingOrUnlockingDomain: false,
 			} );
 		}
 		case DOMAIN_TRANSFER_LOCK_DOMAIN_FAILED: {
 			return updateDomainState( state, action.domain, {
-				isRequestingTransferCode: false,
+				isLockingOrUnlockingDomain: false,
 			} );
 		}
 		case DOMAIN_TRANSFER_UNLOCK_DOMAIN: {
 			return updateDomainState( state, action.domain, {
-				isRequestingTransferCode: true,
+				isLockingOrUnlockingDomain: true,
 			} );
 		}
 		case DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED: {
@@ -88,12 +88,12 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				data: Object.assign( {}, state[ action.domain ].data, {
 					locked,
 				} ),
-				isRequestingTransferCode: false,
+				isLockingOrUnlockingDomain: false,
 			} );
 		}
 		case DOMAIN_TRANSFER_UNLOCK_DOMAIN_FAILED: {
 			return updateDomainState( state, action.domain, {
-				isRequestingTransferCode: false,
+				isLockingOrUnlockingDomain: false,
 			} );
 		}
 		case DOMAIN_TRANSFER_CODE_ONLY_REQUEST: {
