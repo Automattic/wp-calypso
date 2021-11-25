@@ -63,7 +63,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 
 		const viewedSlugs = Object.keys( userCourseProgression );
 		if ( viewedSlugs.length > 0 ) {
-			const nextSlug = videoSlugs.find( ( x ) => ! viewedSlugs.includes( x ) );
+			const nextSlug = videoSlugs.find( ( slug ) => ! viewedSlugs.includes( slug ) );
 			if ( nextSlug ) {
 				setCurrentVideoKey( nextSlug );
 				setSelectedVideoIndex( videoSlugs.indexOf( nextSlug ) );
