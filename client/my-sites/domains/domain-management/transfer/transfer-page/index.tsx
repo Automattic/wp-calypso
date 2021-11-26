@@ -50,6 +50,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		isLockingOrUnlockingDomain,
 		isMapping,
 		isPrimaryDomain,
+		isRequestingTransferCode,
 		lockDomain,
 		requestDomainTransferCodeOnly,
 		selectedDomainName,
@@ -207,11 +208,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 						'We recommend leaving the transfer lock on, unless you want to transfer your domain to another provider.'
 					) }
 				</p>
-				<Button
-					primary={ false }
-					busy={ isLockingOrUnlockingDomain }
-					onClick={ requestTransferCode }
-				>
+				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
 					{ __( 'Get authorization code' ) }
 				</Button>
 			</Card>
