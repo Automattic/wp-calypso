@@ -51,7 +51,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 		dependency = signupDependencies
 	): string => {
 		const queryParams = dependency && dependency.siteSlug ? { siteSlug: dependency.siteSlug } : {};
-		return getStepUrl( flowName, stepName, stepSectionName, queryParams );
+		return getStepUrl( flowName, stepName, stepSectionName, '', queryParams );
 	};
 
 	const goToStepWithDependencies: GoToStep = function (

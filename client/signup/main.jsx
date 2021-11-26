@@ -586,7 +586,9 @@ class Signup extends Component {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
 			const siteIdOrSlug = pick( queryObject, [ 'siteSlug', 'siteId' ] );
-			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale, siteIdOrSlug ) );
+			page(
+				getStepUrl( this.props.flowName, firstInvalidStep.stepName, '', locale, siteIdOrSlug )
+			);
 		}
 	};
 
