@@ -12,8 +12,8 @@ import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
 
 import './style.scss';
 
-export const FULL_NAME_TITAN_FIELD = 'FULL_NAME';
-export const PASSWORD_RESET_TITAN_FIELD = 'PASSWORD_RESET';
+export const FULL_NAME_TITAN_FIELD = 'name';
+export const PASSWORD_RESET_TITAN_FIELD = 'alternativeEmail';
 
 const noop = () => {};
 
@@ -52,9 +52,14 @@ const TitanNewMailbox = ( {
 	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
 
 	const hasAlternativeEmailError =
-		( alternativeEmailFieldTouched || showAllErrors ) && null !== alternativeEmailError;
+		( alternativeEmailFieldTouched || showAllErrors ) &&
+		null !== alternativeEmailError &&
+		! hiddenFields.includes( PASSWORD_RESET_TITAN_FIELD );
 	const hasMailboxError = ( mailboxFieldTouched || showAllErrors ) && null !== mailboxError;
-	const hasNameError = ( nameFieldTouched || showAllErrors ) && null !== nameError;
+	const hasNameError =
+		( nameFieldTouched || showAllErrors ) &&
+		null !== nameError &&
+		! hiddenFields.includes( FULL_NAME_TITAN_FIELD );
 	const hasPasswordError = ( passwordFieldTouched || showAllErrors ) && null !== passwordError;
 
 	const showIsAdminToggle = false;

@@ -12,6 +12,10 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { buildNewTitanMailbox } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import {
+	PASSWORD_RESET_TITAN_FIELD,
+	FULL_NAME_TITAN_FIELD,
+} from 'calypso/my-sites/email/titan-new-mailbox';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -24,9 +28,9 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { PASSWORD_RESET_TITAN_FIELD, FULL_NAME_TITAN_FIELD } from '../titan-new-mailbox';
 import EmailProvidersStackedCard from './email-provider-stacked-card';
 import { professionalEmailCard } from './provider-cards/professional-email-card';
+import type { Domain } from '@automattic/data-stores/dist/types/site';
 
 import './style.scss';
 
@@ -51,6 +55,17 @@ type EmailProvidersStackedComparisonProps = {
 	source: string;
 	cartDomainName?: string;
 	selectedSite?: Site;
+	currencyCode?: string;
+	currentRoute?: string;
+	domain?: Domain;
+	domainName?: string;
+	domainsWithForwards?: Domain[];
+	gSuiteProduct?: string;
+	hasCartDomain?: boolean;
+	isGSuiteSupported?: boolean;
+	productsList?: string[];
+	requestingSiteDomains?: boolean;
+	titanMailProduct?: string;
 };
 
 export interface ProviderCard {
@@ -81,17 +96,18 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 	const professionalEmail: ProviderCard = professionalEmailCard;
 	const { selectedSite, selectedDomainName } = props;
 
-	const onTitanMailboxesChange = noop;
 	const onTitanFormReturnKeyPress = noop;
 	const validatedTitanMailboxUuids: TitanMailbox[] = [];
 	const onTitanConfirmNewMailboxes = noop;
 
-	const [ titanMailbox ] = useState( [ buildNewTitanMailbox( selectedDomainName, false ) ] );
+	const [ titanMailbox, setTitanMailbox ] = useState( [
+		buildNewTitanMailbox( selectedDomainName, false ),
+	] );
 	const [ addingToCart ] = useState( false );
 
 	const formFields = (
 		<TitanNewMailboxList
-			onMailboxesChange={ onTitanMailboxesChange }
+			onMailboxesChange={ setTitanMailbox }
 			mailboxes={ titanMailbox }
 			selectedDomainName={ selectedDomainName }
 			onReturnKeyPress={ onTitanFormReturnKeyPress }
