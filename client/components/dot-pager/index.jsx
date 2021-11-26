@@ -92,7 +92,20 @@ export const DotPager = ( {
 	const [ dragStartData, setDragStartData ] = useState( {} );
 
 	const pagesRef = useRef();
+	const resizeObserverRef = useRef();
 	const numPages = Children.count( children );
+
+	const getWidth = () => {
+		return resizeObserverRef.current?.getBoundingClientRect().width;
+	};
+
+	const getPagesWidth = () => {
+		return getWidth() * numPages;
+	};
+
+	const getOffset = ( index ) => {
+		return -( getWidth() * index );
+	};
 
 	function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
 		// save callback to a ref so that it doesn't need to be a dependency of other hooks
@@ -118,17 +131,30 @@ export const DotPager = ( {
 
 			const onResize = () => savedUpdateLayout.current();
 			window.addEventListener( 'resize', onResize );
-			return () => window.removeEventListener( 'resize', onResize );
+			window.addEventListener( 'orientationchange', onResize );
+			return () => {
+				window.removeEventListener( 'resize', onResize );
+				window.removeEventListener( 'orientationchange', onResize );
+			};
 		}, [ enabled ] );
 	}
 
 	const updateEnabled = hasDynamicHeight && numPages > 1;
 
 	useUpdateLayout( updateEnabled, currentPage, () => {
+		const offset = getOffset( currentPage );
+		const transform = {
+			transform: `translate3d(${ offset }px, 0px, 0px)`,
+			transitionDuration: `0ms`,
+		};
+		let height = { height: null };
 		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
+
 		if ( targetHeight && pagesStyle?.height !== targetHeight ) {
-			setPagesStyle( { ...pagesStyle, height: targetHeight } );
+			height = { height: null };
 		}
+
+		setPagesStyle( { ...pagesStyle, ...height, ...transform } );
 	} );
 
 	useEffect( () => {
@@ -136,15 +162,6 @@ export const DotPager = ( {
 			setCurrentPage( numPages - 1 );
 		}
 	}, [ numPages ] );
-
-	const getPageWidth = () => {
-		return pagesRef.current?.getElementsByClassName( 'is-current' )[ 0 ]?.getBoundingClientRect()
-			.width;
-	};
-
-	const getOffset = ( index ) => {
-		return -( getPageWidth() * index );
-	};
 
 	const getDragPosition = ( event ) => {
 		if ( event.hasOwnProperty( 'clientX' ) ) {
@@ -206,17 +223,14 @@ export const DotPager = ( {
 		const offset = getOffset( newIndex );
 		setPagesStyle( {
 			transform: `translate3d(${ offset }px, 0px, 0px)`,
-			transitionDuration: `300ms`,
 		} );
 		setCurrentPage( newIndex );
 		setDragStartData( {} );
 		setIsDragging( false );
 	};
 
-	const width = getPageWidth();
-
 	return (
-		<div className={ className } { ...props }>
+		<div className={ classnames( 'dot-pager', className ) } { ...props }>
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
@@ -224,7 +238,11 @@ export const DotPager = ( {
 				setCurrentPage={ ( index ) => {
 					onPageSelected && onPageSelected( index );
 					const offset = getOffset( index );
-					setPagesStyle( { ...pagesStyle, transform: `translate3d(${ offset }px, 0px, 0px)` } );
+					setPagesStyle( {
+						...pagesStyle,
+						transform: `translate3d(${ offset }px, 0px, 0px)`,
+						transitionDuration: `300ms`,
+					} );
 					setCurrentPage( index );
 				} }
 			/>
@@ -238,10 +256,10 @@ export const DotPager = ( {
 				onPointerUp={ handleDragEnd }
 				ref={ pagesRef }
 			>
-				<div className="dot-pager__pages" style={ pagesStyle }>
+				<div className="dot-pager__pages" style={ { ...pagesStyle, width: getPagesWidth() } }>
 					{ Children.map( children, ( child, index ) => (
 						<div
-							style={ { width: `${ width }px` } } // Setting the page width is important for iOS browser.
+							style={ { width: `${ getWidth() }px` } } // Setting the page width is important for iOS browser.
 							className={ classnames( 'dot-pager__page', {
 								'is-current': index === currentPage,
 								'is-prev': index < currentPage,
@@ -254,6 +272,7 @@ export const DotPager = ( {
 					) ) }
 				</div>
 			</div>
+			<div ref={ resizeObserverRef } className="dot-pager__resize-observer"></div>
 		</div>
 	);
 };
