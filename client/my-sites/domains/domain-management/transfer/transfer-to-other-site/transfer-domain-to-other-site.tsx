@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { find, get, omit } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -20,7 +19,11 @@ import { requestSites } from 'calypso/state/sites/actions';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TransferConfirmationDialog from './confirmation-dialog';
-import type { TransferDomainToOtherSitePassedProps, TransferDomainToOtherSiteProps } from './types';
+import type {
+	TransferDomainToOtherSitePassedProps,
+	TransferDomainToOtherSiteProps,
+	TransferDomainToOtherSiteStateProps,
+} from './types';
 
 const wpcom = wp.undocumented();
 
@@ -37,12 +40,12 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 	isSiteEligible = ( site: TransferDomainToOtherSiteProps[ 'selectedSite' ] ): boolean => {
 		// check if it's an Atomic site from the site options
-		const isAtomic = get( site, 'options.is_automated_transfer', false );
+		const isAtomic = site?.options?.is_automated_transfer ?? false;
 
 		return (
 			site.capabilities.manage_options &&
 			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
-			! get( site, 'options.is_domain_only', false ) &&
+			! ( site?.options?.is_domain_only ?? false ) &&
 			site.ID !== this.props.selectedSite.ID
 		);
 	};
@@ -79,8 +82,8 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 					this.props.successNotice( successMessage, { duration: 10000, isPersistent: true } );
 					if ( this.props.isDomainOnly ) {
 						this.props.requestSites();
-						const transferedTo = find( this.props.sites, { ID: targetSite.ID } );
-						page( domainManagementList( ( transferedTo! as Record< string, unknown > ).slug ) );
+						const transferedTo = this.props.sites!.find( ( site ) => site!.ID === targetSite.ID );
+						page( domainManagementList( transferedTo!.slug ) );
 					} else {
 						page( domainManagementList( this.props.selectedSite.slug ) );
 					}
@@ -144,8 +147,9 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 	renderSection(): JSX.Element {
 		const { currentUserCanManage, selectedDomainName } = this.props;
+		const { children, ...propsWithoutChildren } = this.props;
 		if ( ! currentUserCanManage ) {
-			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
+			return <NonOwnerCard { ...propsWithoutChildren } />;
 		}
 
 		return (
@@ -184,7 +188,7 @@ export default connect(
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
-			sites: getSites( state ),
+			sites: getSites( state ) as TransferDomainToOtherSiteStateProps[ 'sites' ],
 		};
 	},
 	{

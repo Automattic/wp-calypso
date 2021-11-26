@@ -8,6 +8,10 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 type Maybe< T > = T | null;
 // TODO: remove this once the checkout types are further described
 type SiteDataExtraInfo = SiteData & {
+	options: {
+		is_automated_transfer: boolean;
+		is_domain_only: boolean;
+	};
 	title: string;
 	capabilities: Record< string, boolean >;
 };
@@ -28,7 +32,7 @@ export type TransferDomainToOtherSiteStateProps = {
 	isDomainOnly: Maybe< boolean >;
 	isMapping: boolean;
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	sites: Maybe< object >[];
+	sites: Maybe< Maybe< SiteData >[] >;
 };
 // state props added by redux connect
 export type TransferDomainToOtherSiteStateToProps = (
