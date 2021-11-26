@@ -13,14 +13,17 @@
 }
 
 .dot-pager__pages {
-	display: flex;
-	align-items: flex-start;
 	position: relative;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	display: flex;
+
 	transition: all 0.5s ease-in-out;
 	transition-property: transform, height;
 	@include reduce-motion( 'transition' );
-	width: 100%;
 }
+.dot-pager__resize-observer {} /* stylelint-disable-line block-no-empty */
 
 .dot-pager__page {
 	width: 100%;
