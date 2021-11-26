@@ -4,7 +4,7 @@ import DesignPicker, {
 	useCategorization,
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
-import { shuffle, pick } from '@automattic/js-utils';
+import { shuffle } from '@automattic/js-utils';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
@@ -35,9 +35,7 @@ const EXCLUDED_THEMES = [
 ];
 
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned, initialContext } = props;
-	const queryObject = ( initialContext && initialContext.query ) || {};
-	const siteSlugOrId = pick( queryObject, [ 'siteId', 'siteSlug' ] );
+	const { flowName, stepName, isReskinned, queryParams } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -147,7 +145,7 @@ export default function DesignPickerStep( props ) {
 			intent: props.signupDependencies.intent,
 		} );
 		page(
-			getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, siteSlugOrId )
+			getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
 		);
 	}
 
@@ -284,7 +282,7 @@ export default function DesignPickerStep( props ) {
 					args: { designTitle },
 				} ) }
 				defaultDependencies={ defaultDependencies }
-				backUrl={ getStepUrl( flowName, stepName, '', locale, siteSlugOrId ) }
+				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
 				goToNextStep={ submitDesign }
 				stepSectionName={ designTitle }
 			/>
@@ -310,7 +308,6 @@ export default function DesignPickerStep( props ) {
 			stepContent={ renderDesignPicker() }
 			align={ isReskinned ? 'left' : 'center' }
 			skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
-			queryParams={ siteSlugOrId }
 			skipLabelText={ skipLabelText() }
 		/>
 	);

@@ -542,9 +542,9 @@ class Signup extends Component {
 		// to invalid step.
 		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
-			const siteSlugOrId = pick( queryObject, [ 'siteSlug', 'siteId' ] );
-			page( getStepUrl( flowName, stepName, stepSectionName, locale, siteSlugOrId ) );
+			const queryObject = this.props.initialContext && this.props.initialContext.query;
+			const siteIdOrSlug = pick( queryObject, [ 'siteSlug', 'siteId' ] );
+			page( getStepUrl( flowName, stepName, stepSectionName, locale, siteIdOrSlug ) );
 		} else if ( this.isEveryStepSubmitted() ) {
 			this.goToFirstInvalidStep();
 		}
@@ -572,7 +572,7 @@ class Signup extends Component {
 			progress,
 			this.props.isLoggedIn
 		);
-		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
+		const queryObject = this.props.initialContext && this.props.initialContext.query;
 
 		if ( firstInvalidStep ) {
 			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
@@ -585,8 +585,8 @@ class Signup extends Component {
 
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
-			const siteSlugOrId = pick( queryObject, [ 'siteSlug', 'siteId' ] );
-			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale, siteSlugOrId ) );
+			const siteIdOrSlug = pick( queryObject, [ 'siteSlug', 'siteId' ] );
+			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale, siteIdOrSlug ) );
 		}
 	};
 
@@ -656,6 +656,9 @@ class Signup extends Component {
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
 
+		const queryObject = this.props.initialContext && this.props.initialContext.query;
+		const siteIdOrSlug = pick( queryObject, [ 'siteSlug', 'siteId' ] );
+
 		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
@@ -696,6 +699,7 @@ class Signup extends Component {
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
+							queryParams={ siteIdOrSlug }
 							{ ...propsForCurrentStep }
 						/>
 					) }
