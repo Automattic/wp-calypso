@@ -1,0 +1,35 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.signup-card {
+	.signup-card__title {
+		display: flex;
+		height: 40px;
+		align-items: center;
+		.gridicon {
+			width: 24px;
+			margin-right: 24px;
+			color: var( --studio-gray-40 );
+		}
+
+		h2 {
+			font-size: 1.25rem;
+			letter-spacing: 0.2px;
+			color: var( --studio-gray-90 );
+		}
+	}
+
+	.signup-card__body {
+		padding: 0 0 0 48px;
+		min-width: 300px;
+
+		p {
+			color: var( --studio-gray-60 );
+			font-size: $font-body-small;
+			letter-spacing: -0.16px;
+			line-height: 1.25rem;
+			margin-top: 30px;
+		}
+	}
+}
