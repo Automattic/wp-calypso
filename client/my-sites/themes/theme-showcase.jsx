@@ -168,7 +168,7 @@ class ThemeShowcase extends Component {
 				.getElementById( 'screen-options-tab-id' )
 				?.getBoundingClientRect().height;
 
-			const yOffset = -( headerHeight + screenOptionTab ); // A number that takes the Adminbar as well as the screen options into account on mobile view ports.
+			const yOffset = -( headerHeight + screenOptionTab ); // Total height of admin bar and screen options on mobile.
 			const elementBoundary = this.scrollRef.current.getBoundingClientRect();
 
 			const y = elementBoundary.top + window.pageYOffset + yOffset;
