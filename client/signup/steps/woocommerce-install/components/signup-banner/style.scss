@@ -1,0 +1,28 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.signup-banner {
+	color: var( --studio-gray-90 );
+	background-color: var( --studio-gray-0 );
+	display: flex;
+	align-items: center;
+	height: 40px;
+	box-sizing: border-box;
+	padding: 0 16px;
+
+	.signup-banner__content {
+		flex-grow: 2;
+	}
+
+	.signup-banner__label {
+		font-size: $font-body-small;
+		height: 20px;
+		line-height: 20px;
+		padding: 0 10px;
+		background-color: var( --color-success-10 );
+		border-radius: 4px; /* stylelint-disable-line */
+		margin-left: 10px;
+	}
+}
+
