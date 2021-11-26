@@ -1,9 +1,8 @@
-import { BackButton, NextButton } from '@automattic/onboarding';
+import { NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import yourNewStoreImage from 'calypso/assets/images/woocommerce-install/your-new-store.png';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -18,15 +17,13 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
+	const { siteId, goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
-	const siteId = useSelector( getSelectedSiteId ) as number;
 	const dispatch = useDispatch();
 
 	// Request eligibility data.
@@ -36,7 +33,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		}
 		dispatch( fetchAutomatedTransferStatusOnce( siteId ) );
 		dispatch( requestEligibility( siteId ) );
-	}, [ siteId, dispatch, goToStep ] );
+	}, [ siteId, dispatch ] );
 
 	// Check whether it's requesting eligibility data.
 	const isFetchingTransferStatus = !! useSelector( ( state ) =>
@@ -61,7 +58,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	// Pick the wpcom subdomain.
 	const wpcomDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
-	const isProcessing = ! siteId || isFetchingTransferStatus || ! wordPressSubdomainWarning;
+	const isLoading = ! siteId || isFetchingTransferStatus;
 
 	function getWPComSubdomainWarningContent() {
 		// Get staging sudomain based on the wpcom subdomain.
@@ -69,10 +66,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__image-container">
-					{ isProcessing && <LoadingEllipsis /> }
-					<img src={ yourNewStoreImage } alt="" />
-				</div>
+				<div className="confirm__info-section">{ isLoading && <LoadingEllipsis /> }</div>
+
 				<div className="confirm__instructions-container">
 					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
 						{ wpcomDomain }
@@ -93,7 +88,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					</p>
 
 					<NextButton
-						disabled={ isProcessing }
+						disabled={ isLoading }
 						onClick={ () => {
 							if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
 								return goToStep( 'confirm', 'eligibility_substep' );
@@ -120,13 +115,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__image-container">
-					{ isProcessing && <LoadingEllipsis /> }
-					<img src={ yourNewStoreImage } alt="" />
-					<div>
-						<BackButton onClick={ () => goToStep( 'confirm', 'wpcom_subdomain_substep' ) } />
-					</div>
-				</div>
+				<div className="confirm__info-section">{ isLoading && <LoadingEllipsis /> }</div>
+
 				<div className="confirm__instructions-container">
 					{ !! eligibilityHolds?.length && (
 						<p>
@@ -151,7 +141,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
-			backUrl="/woocommerce-installation"
+			backUrl="select-site"
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
