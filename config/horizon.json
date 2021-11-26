@@ -49,7 +49,6 @@
 		"i18n/translation-scanner": true,
 		"jetpack/api-cache": true,
 		"jetpack/concierge-sessions": false,
-		"jetpack/happychat": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,

@@ -51,7 +51,6 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
-		"jetpack/happychat": true,
 		"jetpack/magic-link-signup": true,
 		"jetpack/only-realtime-products": true,
 		"jetpack/redirect-legacy-plans": true,

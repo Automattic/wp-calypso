@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'calypso/state/happychat/constants';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -14,7 +13,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 export default ( state, siteId ) => {
 	// For Jetpack Connect we need to direct chat users to the JPOP group, to account for cases
 	// when the user does not have a site yet, or their primary site is not a Jetpack site.
-	if ( isEnabled( 'jetpack/happychat' ) && getSectionName( state ) === 'jetpack-connect' ) {
+	if ( getSectionName( state ) === 'jetpack-connect' ) {
 		return [ HAPPYCHAT_GROUP_JPOP ];
 	}
 
