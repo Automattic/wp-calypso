@@ -231,10 +231,10 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
  * The paths allowed for domain-only sites and DIFM in-progress sites are the same
  * with one exception - /domains/add should be allowed for DIFM in-progress sites.
  *
- * @param {*} path The path to be checked
- * @param {*} slug The site slug
- * @param {*} primaryDomain The primary domain if it exists
- * @param {*} contextParams Context parameters
+ * @param {string} path The path to be checked
+ * @param {string} slug The site slug
+ * @param {object} primaryDomain The primary domain if it exists
+ * @param {object} contextParams Context parameters
  * @returns {boolean} true if the path is allowed, false otherwise
  */
 function isPathAllowedForDIFMInProgressSite( path, slug, primaryDomain, contextParams ) {
@@ -273,17 +273,19 @@ function onSelectedSiteAvailable( context ) {
 	}
 
 	/**
+	 * For DIFM in-progress sites, render the in-progress screen for all
+	 * paths except those in the allow-list defined in `isPathAllowedForDIFMInProgressSite`.
 	 * Ignore this check if we are inside a support session.
 	 */
 	if (
 		isDIFMLiteInProgress( state, selectedSite.ID ) &&
+		! isSupportSession( state ) &&
 		! isPathAllowedForDIFMInProgressSite(
 			context.pathname,
 			selectedSite.slug,
 			primaryDomain,
 			context.params
-		) &&
-		! isSupportSession( state )
+		)
 	) {
 		renderSelectedSiteIsDIFMLiteInProgress( context, selectedSite );
 		return false;
