@@ -50,7 +50,6 @@ describe( 'reducer', () => {
 			'socialAccount',
 			'socialAccountLink',
 			'twoFactorAuth',
-			'twoFactorAuthPushPoll',
 			'twoFactorAuthRequestError',
 		] );
 	} );
