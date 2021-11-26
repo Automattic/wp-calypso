@@ -9,6 +9,8 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { submitDIFMLiteForm } from 'calypso/state/signup/steps/difm-lite/actions';
+import { getSelectedCategory } from 'calypso/state/signup/steps/difm-lite/selectors';
 
 import './style.scss';
 
@@ -30,18 +32,16 @@ function SiteInformationCollection( {
 	submitSignupStep,
 	goToNextStep,
 } ) {
+	const { username: signupUsername } = useSelector( getSignupDependencyStore );
+	const selectedVertical = useSelector( getSelectedCategory );
 	const dispatch = useDispatch();
-
-	const { selectedDesign, username: signupUsername } = useSelector( getSignupDependencyStore );
 	const loggedInUsername = useSelector( getCurrentUserName );
-
-	const selectedVertical = selectedDesign?.categories[ 0 ]?.name;
-
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [ dispatch, stepName ] );
 
-	const nextStep = () => {
+	const onTypeformSubmission = async ( typeformSubmissionId ) => {
+		dispatch( submitDIFMLiteForm( typeformSubmissionId ) );
 		const cartItem = { product_slug: WPCOM_DIFM_LITE };
 		const step = {
 			stepName,
@@ -69,7 +69,7 @@ function SiteInformationCollection( {
 					padding: '0',
 					marginTop: '50px',
 				} }
-				onSubmit={ nextStep }
+				onSubmit={ ( { responseId } ) => onTypeformSubmission( responseId ) }
 				disableAutoFocus={ true }
 			/>
 		</Container>

@@ -764,12 +764,13 @@ export function generateSteps( {
 			},
 		},
 		'difm-design': {
+			// TODO: Temporary step to be deleted
 			stepName: 'difm-design',
 			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug', 'selectedDesign' ],
+			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
 		},
