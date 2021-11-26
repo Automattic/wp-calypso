@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import {
 	fetchAutomatedTransferStatusOnce,
 	requestEligibility,
