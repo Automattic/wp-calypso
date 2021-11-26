@@ -1,31 +1,32 @@
-import * as redux from 'react-redux';
+import { renderHook } from '@testing-library/react-hooks';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import { useSiteOptions } from '../';
 
-const useSelector = jest.spyOn( redux, 'useSelector' );
+const createDummyStore = ( initialState ) => createStore( ( state ) => state, initialState );
 
 describe( '#useSiteOptions()', () => {
-	afterEach( () => {
-		useSelector.mockReset();
-	} );
-
-	test( 'should return null if the site is not known', () => {
-		const state = {
+	it( 'should return null if the site is not known', () => {
+		const store = createDummyStore( {
 			sites: {
 				items: {},
 			},
 			ui: {},
-		};
+		} );
 
-		useSelector.mockImplementation( ( selector ) => selector( state ) );
+		const { result } = renderHook( () => useSiteOptions( [ 'site_intent' ] ), {
+			wrapper: Provider,
+			initialProps: { store },
+		} );
 
-		expect( useSiteOptions( [ 'site_intent' ] ) ).toEqual( {
+		expect( result.current ).toEqual( {
 			siteIntent: null,
 		} );
 	} );
 
-	test( 'executes selector with selected site id passed in', () => {
+	it( 'should return the site intent of the selected site', () => {
 		const siteIntent = 'site_intent';
-		const state = {
+		const store = createDummyStore( {
 			sites: {
 				items: {
 					123: {
@@ -38,11 +39,14 @@ describe( '#useSiteOptions()', () => {
 			ui: {
 				selectedSiteId: 123,
 			},
-		};
+		} );
 
-		useSelector.mockImplementation( ( selector ) => selector( state ) );
+		const { result } = renderHook( () => useSiteOptions( [ 'site_intent' ] ), {
+			wrapper: Provider,
+			initialProps: { store },
+		} );
 
-		expect( useSiteOptions( [ 'site_intent' ] ) ).toEqual( {
+		expect( result.current ).toEqual( {
 			siteIntent,
 		} );
 	} );
