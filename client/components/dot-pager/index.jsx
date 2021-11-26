@@ -183,29 +183,11 @@ export const DotPager = ( {
 		setIsDragging( true );
 	};
 
-	const handleDrag = ( event ) => {
-		if ( ! isDragging ) {
-			return;
-		}
-		const dragPosition = getDragPosition( event );
-		const delta = dragPosition.x - dragStartData.x;
-
-		const offset = getOffset( currentPage ) + delta;
-		// Allow for swipe left
-		if ( numPages !== currentPage + 1 && delta < 0 ) {
-			setPagesStyle( {
-				...pagesStyle,
-				transform: `translate3d(${ offset }px, 0px, 0px)`,
-			} );
-		} else if ( currentPage !== 0 && delta > 0 ) {
-			setPagesStyle( {
-				...pagesStyle,
-				transform: `translate3d(${ offset }px, 0px, 0px)`,
-			} );
-		}
-	};
-
 	const handleDragEnd = ( event ) => {
+		if ( ! isDragging ) {
+			return; // End early if we are not dragging any more.
+		}
+
 		const THRESHOLD_OFFSET = 100; // Number of pixels to travel before we trigger the slider to move to the desired slide.
 		const dragPosition = getDragPosition( event );
 		const delta = dragPosition.x - dragStartData.x;
@@ -227,6 +209,39 @@ export const DotPager = ( {
 		setCurrentPage( newIndex );
 		setDragStartData( {} );
 		setIsDragging( false );
+	};
+
+	const handleDrag = ( event ) => {
+		if ( ! isDragging ) {
+			return;
+		}
+		const dragPosition = getDragPosition( event );
+		const delta = dragPosition.x - dragStartData.x;
+
+		const offset = getOffset( currentPage ) + delta;
+
+		// Allow for swipe left or right
+		if ( ( numPages !== currentPage + 1 && delta < 0 ) || ( currentPage !== 0 && delta > 0 ) ) {
+			setPagesStyle( {
+				...pagesStyle,
+				transform: `translate3d(${ offset }px, 0px, 0px)`,
+			} );
+		}
+
+		const swipeableArea = pagesRef.current?.getBoundingClientRect();
+		if ( ! swipeableArea ) {
+			return;
+		}
+
+		// Did the user swipe out of the swipable area?
+		if (
+			dragPosition.x < swipeableArea.left ||
+			dragPosition.x > swipeableArea.right ||
+			dragPosition.y > swipeableArea.bottom ||
+			dragPosition.y < swipeableArea.top
+		) {
+			handleDragEnd( event );
+		}
 	};
 
 	return (
@@ -254,6 +269,8 @@ export const DotPager = ( {
 				onPointerMove={ handleDrag }
 				onDragEnd={ handleDragEnd }
 				onPointerUp={ handleDragEnd }
+				onDragLeave={ handleDragEnd }
+				onPointerCancel={ handleDragEnd }
 				ref={ pagesRef }
 			>
 				<div className="dot-pager__pages" style={ { ...pagesStyle, width: getPagesWidth() } }>
