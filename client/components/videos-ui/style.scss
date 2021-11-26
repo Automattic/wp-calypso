@@ -9,14 +9,23 @@
 	display: flex;
 	flex-direction: column;
 
+	* {
+		box-sizing: border-box;
+	}
+
+	svg {
+		box-sizing: content-box;
+	}
+
 	.videos-ui__header {
 		background: #151b1e;
+		padding: 0 20px;
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.1 );
 
 		.videos-ui__header-content {
 			display: flex;
 			flex-direction: column;
-			padding: 20px;
+			padding: 20px 0;
 			padding-top: 21px;
 
 			ul {
@@ -209,8 +218,7 @@
 	}
 
 	.videos-ui__bar {
-		padding: 20px;
-		padding-bottom: 15px;
+		padding: 20px 0 15px;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -234,11 +242,10 @@
 	@include break-medium {
 		.videos-ui__header {
 			.videos-ui__header-content {
-				max-width: 1160px;
 				margin: auto;
 				flex-direction: row;
 				justify-content: space-between;
-				padding: 60px;
+				padding: 60px 0;
 
 				.videos-ui__titles {
 					flex-basis: auto;
@@ -259,6 +266,9 @@
 	@include break-xlarge {
 		.videos-ui__header {
 			.videos-ui__header-content {
+				max-width: 1160px;
+				padding: 60px 0;
+
 				.videos-ui__titles {
 					h2 {
 						font-size: $font-headline-medium;
@@ -273,14 +283,17 @@
 		}
 
 		.videos-ui__body {
-			max-width: 1160px;
-
-			padding: 0 80px 80px;
+			padding: 0 20px 80px;
 			h3 {
 				margin: 80px 0 20px;
 			}
 
+			.videos-ui__body-title {
+				max-width: 1160px;
+			}
+
 			.videos-ui__video-content {
+				max-width: 1160px;
 				flex-direction: row;
 				justify-content: space-between;
 
