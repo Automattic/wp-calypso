@@ -1,23 +1,13 @@
 import { NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { ReactElement } from 'react';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import {
-	fetchAutomatedTransferStatusOnce,
-	requestEligibility,
-} from 'calypso/state/automated-transfer/actions';
-import {
-	isFetchingAutomatedTransferStatus,
-	getEligibility,
-	EligibilityData,
-} from 'calypso/state/automated-transfer/selectors';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
 import SignupBanner from '../components/signup-banner';
 import SignupCard from '../components/signup-card';
+import useEligibility from '../hooks/use-eligibility';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
@@ -25,46 +15,18 @@ import './style.scss';
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
 	const { siteId, goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
-	const dispatch = useDispatch();
 
-	// Request eligibility data.
-	useEffect( () => {
-		if ( ! siteId ) {
-			return;
-		}
-		dispatch( fetchAutomatedTransferStatusOnce( siteId ) );
-		dispatch( requestEligibility( siteId ) );
-	}, [ siteId, dispatch ] );
-
-	// Check whether it's requesting eligibility data.
-	const isFetchingTransferStatus = !! useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
-	);
-
-	// Get eligibility data.
 	const {
 		eligibilityHolds,
-		eligibilityWarnings: allEligibilityWarnings,
-	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
-
-	// Check whether the wpcom.com subdomain warning is present.
-	const wordPressSubdomainWarning = allEligibilityWarnings?.find(
-		( { id } ) => id === 'wordpress_subdomain'
-	);
-
-	const eligibilityWarnings = allEligibilityWarnings?.filter(
-		( { id } ) => id !== 'wordpress_subdomain'
-	);
-
-	// Pick the wpcom subdomain.
-	const wpcomDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+		eligibilityWarnings,
+		isFetchingTransferStatus,
+		wpcomSubdomainWarning,
+		stagingDomain,
+	} = useEligibility( siteId );
 
 	const isLoading = ! siteId || isFetchingTransferStatus;
 
 	function getWPComSubdomainWarningContent() {
-		// Get staging sudomain based on the wpcom subdomain.
-		const stagingDomain = wpcomDomain?.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' );
-
 		return (
 			<>
 				<div className="confirm__info-section" />
@@ -106,7 +68,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	function getContent() {
 		// wpcom subdomain warning.
 		if (
-			wordPressSubdomainWarning &&
+			wpcomSubdomainWarning &&
 			( stepSectionName === 'wpcom_subdomain_substep' || typeof stepSectionName === 'undefined' )
 		) {
 			return getWPComSubdomainWarningContent();
