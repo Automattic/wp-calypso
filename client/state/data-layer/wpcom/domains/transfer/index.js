@@ -33,6 +33,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	getCancelTransferErrorMessage,
 	getCancelTransferSuccessMessage,
+	getDomainLockUnlockError,
 	getDomainTransferCodeError,
 	getNoticeOptions,
 } from './notices';
@@ -142,9 +143,9 @@ export const unlockDomainSuccess = ( action ) => ( dispatch ) => {
 	);
 };
 
-export const unlockDomainFailure = ( action, error ) => [
+export const unlockDomainFailure = ( action ) => [
 	unlockDomainFailed( action.domain ),
-	errorNotice( getDomainTransferCodeError( error.error ), getNoticeOptions( action.domain ) ),
+	errorNotice( getDomainLockUnlockError( true ), getNoticeOptions( action.domain ) ),
 	fetchWapiDomainInfo( action.domain ),
 ];
 
@@ -171,9 +172,9 @@ export const lockDomainSuccess = ( action ) => ( dispatch ) => {
 	);
 };
 
-export const lockDomainFailure = ( action, error ) => [
+export const lockDomainFailure = ( action ) => [
 	lockDomainFailed( action.domain ),
-	errorNotice( getDomainTransferCodeError( error.error ), getNoticeOptions( action.domain ) ),
+	errorNotice( getDomainLockUnlockError( false ), getNoticeOptions( action.domain ) ),
 	fetchWapiDomainInfo( action.domain ),
 ];
 

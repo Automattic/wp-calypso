@@ -34,6 +34,25 @@ const cancelTransferErrorMessages = {
 	),
 };
 
+export const getDomainLockUnlockError = ( isUnlocking ) => {
+	const options = {
+		components: {
+			a: contactLink,
+		},
+	};
+	return isUnlocking
+		? translate(
+				'The domain could not be unlocked.' +
+					'Please try again or {{a}}Contact Support{{/a}} if you continue to have trouble.',
+				options
+		  )
+		: translate(
+				'The domain could not be locked.' +
+					'Please try again or {{a}}Contact Support{{/a}} if you continue to have trouble.',
+				options
+		  );
+};
+
 export const getDomainTransferCodeError = ( errorCode ) => {
 	if ( errorCode && transferCodeErrorMessages.hasOwnProperty( errorCode ) ) {
 		return translate(
