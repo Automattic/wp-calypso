@@ -54,6 +54,7 @@ import { filterDomainsByOwner } from './helpers';
 import ListItemPlaceholder from './item-placeholder';
 import ListHeader from './list-header';
 import {
+	countDomainsInOrangeStatus,
 	getDomainManagementPath,
 	getSimpleSortFunctionBy,
 	getReverseSimpleSortFunctionBy,
@@ -443,6 +444,14 @@ class AllDomains extends Component {
 					},
 					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
+				bubble: countDomainsInOrangeStatus(
+					filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter ).map(
+						( domain ) =>
+							resolveDomainStatus( domain, null, {
+								getMappingErrors: true,
+							} )
+					)
+				),
 			},
 			{
 				name: 'registered-until',
