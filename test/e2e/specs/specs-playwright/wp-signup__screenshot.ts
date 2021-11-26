@@ -148,8 +148,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 
 		it( 'Screenshot white login page in desktop viewport, en and Mag-16 locales', async function () {
 			const loginPage = new LoginPage( page );
-			// for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
-			for ( const locale of [ 'en' ] ) {
+			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
 				await loginPage.visit( `new/${ locale }` );
 				page.waitForSelector( selectors.isWhiteLogin );
 				await page.screenshot( {
@@ -174,7 +173,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 				} );
 				page.setViewportSize( { width: 1280, height: 720 } );
 			}
-			await loginPage.login( { account: 'martechToSUser' } );
+			await loginPage.login( { account: 'martechTosUser' } );
 		} );
 
 		it( 'Set store cookie', async function () {
