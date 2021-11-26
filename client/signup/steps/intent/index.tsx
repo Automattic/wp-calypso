@@ -1,3 +1,4 @@
+import { pick } from '@automattic/js-utils';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
@@ -17,7 +18,8 @@ interface Props {
 	signupDependencies: any;
 	stepName: string;
 	queryObject: {
-		siteSlug: string;
+		siteSlug?: string;
+		siteId?: string;
 	};
 }
 
@@ -42,7 +44,8 @@ export default function IntentStep( props: Props ): React.ReactNode {
 		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
 
 		if ( EXTERNAL_FLOW[ intent ] ) {
-			page( getStepUrl( EXTERNAL_FLOW[ intent ] ) + '?siteSlug=' + queryObject.siteSlug );
+			const queryParams = pick( queryObject, [ 'siteSlug', 'siteId' ] );
+			page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryParams ) );
 		} else {
 			branchSteps( EXCLUDE_STEPS[ intent ] );
 			dispatch( submitSignupStep( { stepName }, { intent } ) );
