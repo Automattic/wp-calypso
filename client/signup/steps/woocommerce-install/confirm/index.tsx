@@ -61,7 +61,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 	function getWPComSubdomainWarningContent() {
 		// Get staging sudomain based on the wpcom subdomain.
-		const stagingDomain = wpcomDomain?.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+		const stagingDomain = wpcomDomain?.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' );
 
 		return (
 			<>
