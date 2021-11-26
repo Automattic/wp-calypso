@@ -73,7 +73,6 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
-		"republicize": true,
 		"rum-tracking/logstash": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
