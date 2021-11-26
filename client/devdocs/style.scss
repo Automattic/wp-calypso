@@ -155,7 +155,6 @@ $devdocs-max-width: 720px;
 		// A wrapper inside a wrapper to help reliably center
 		// component and block examples.
 		.docs-example__wrapper-content-centering {
-			display: table;
 			margin: auto;
 			min-width: ( $devdocs-max-width * 0.5 );
 			width: 100%;
