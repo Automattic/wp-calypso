@@ -1,5 +1,6 @@
 import { NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,6 +8,7 @@ import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-li
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
+import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
 import {
 	fetchAutomatedTransferStatusOnce,
 	requestEligibility,
@@ -22,6 +24,20 @@ import SignupCard from '../components/signup-card';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
+
+const SupportLink = styled.a`
+	/* Gray / Gray 100 - have to find the var value for this color */
+	color: #101517 !important;
+	text-decoration: underline;
+	font-weight: bold;
+`;
+
+const ActionSection = styled.div`
+	display: flex;
+	justify-content: space-between;
+	margin-top: 40px;
+	align-items: baseline;
+`;
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
 	const { siteId, goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
@@ -53,9 +69,23 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		( { id } ) => id === 'wordpress_subdomain'
 	);
 
-	const eligibilityWarnings = allEligibilityWarnings?.filter(
+	/*const eligibilityWarnings = allEligibilityWarnings?.filter(
 		( { id } ) => id !== 'wordpress_subdomain'
-	);
+	);*/
+
+	// remove this before sending to production
+	const eligibilityWarnings = [
+		{
+			name: 'Warning #1',
+			description: 'This is a warning.',
+			supportUrl: '/',
+		},
+		{
+			name: 'Warning #2',
+			description: 'This is a warning that may need attention.',
+			supportUrl: '/',
+		},
+	];
 
 	// Pick the wpcom subdomain.
 	const wpcomDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
@@ -78,27 +108,26 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 								'By installing this product your subdomain will change. Your old subdomain (sitename.wordpress.com) will no longer work. You can change it to a custom domain on us at anytime in future.'
 							) }
 						</p>
-
+					</SignupCard>
+					{ !! eligibilityWarnings?.length && (
+						<SignupCard icon="notice-outline" title={ __( 'Things you should be aware of' ) }>
+							<EligibilityWarningsList warnings={ eligibilityWarnings } />
+						</SignupCard>
+					) }
+					<ActionSection>
 						<p>
-							{ createInterpolateElement( __( '<a>Contact support</a> for help and questions.' ), {
-								a: <a href="#support-link" />,
+							{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
+								a: <SupportLink href="#support-link" />,
 							} ) }
 						</p>
-
 						<NextButton
 							isBusy={ isLoading }
 							disabled={ isLoading }
-							onClick={ () => {
-								if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
-									return goToStep( 'confirm', 'eligibility_substep' );
-								}
-
-								return goToStep( 'transfer' );
-							} }
+							onClick={ () => goToStep( 'transfer' ) }
 						>
-							{ __( 'Sounds good' ) }
+							{ __( 'Create my Store' ) }
 						</NextButton>
-					</SignupCard>
+					</ActionSection>
 				</div>
 			</>
 		);

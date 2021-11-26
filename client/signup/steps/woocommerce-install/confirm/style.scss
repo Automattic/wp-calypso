@@ -4,13 +4,16 @@
 
 body.is-section-signup .is-woocommerce-install {
 	.signup__step.is-confirm {
+		min-height: 95vh;
+		display: flex;
+		align-items: center;
 		// Two columns layout
 		.step-wrapper {
 			display: flex;
-			align-items: flex-start;
-			padding-top: 100px;
 
 			.step-wrapper__header {
+				margin-top: 0px !important;
+
 				.formatted-header {
 					text-align: inherit;
 
@@ -19,7 +22,9 @@ body.is-section-signup .is-woocommerce-install {
 					}
 
 					.formatted-header__subtitle {
+						margin-top: 20px;
 						text-align: inherit;
+						max-width: 448px;
 					}
 				}
 			}
@@ -27,21 +32,33 @@ body.is-section-signup .is-woocommerce-install {
 
 		.is-wide-layout {
 			max-width: 1024px;
-			align-items: baseline;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			align-items: flex-start;
+			justify-content: center;
+			column-gap: 2%;
 		}
 
 		.step-wrapper__content {
 			display: flex;
-			margin: 24px 20px;
+			margin: 0px 24px;
+
+			.confirm__instructions-container {
+				font-size: 0.875rem;
+				letter-spacing: -0.16px;
+				color: var(--studio-gray-60);
+				line-height: 2rem;
+				flex-direction: column;
+				max-width: 520px;
+			
+				p {
+					margin-top: 16px;
+				}
+			}
 		}
 	}
 }
 
 .confirm__info-section {
 	flex: 1;
-}
-
-.confirm__instructions-container {
-	flex-direction: column;
-	max-width: 520px;
 }
