@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -22,7 +21,7 @@ const JetpackConnectHappychatButton = ( {
 	translate,
 	eventName,
 } ) => {
-	if ( ! isEnabled( 'jetpack/happychat' ) || ! isLoggedIn ) {
+	if ( ! isLoggedIn ) {
 		return <div>{ children }</div>;
 	}
 
