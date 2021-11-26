@@ -16,6 +16,8 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
+import SignupBanner from '../components/signup-banner';
+import SignupCard from '../components/signup-card';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
@@ -66,39 +68,36 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		return (
 			<>
 				<div className="confirm__info-section" />
-
 				<div className="confirm__instructions-container">
-					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
-						{ wpcomDomain }
-					</div>
+					<SignupCard title={ __( 'New Store Domain' ) }>
+						<SignupBanner label={ __( 'New' ) }>{ stagingDomain }</SignupBanner>
 
-					<div className="confirm__instructions-title">{ stagingDomain }</div>
+						<p>
+							{ __(
+								'By installing this product your subdomain will change. Your old subdomain (sitename.wordpress.com) will no longer work. You can change it to a custom domain on us at anytime in future.'
+							) }
+						</p>
 
-					<p>
-						{ __(
-							'By installing this product your subdomain will change. You can change it later to a custom domain and we will pick up the tab for a year.'
-						) }
-					</p>
+						<p>
+							{ createInterpolateElement( __( '<a>Contact support</a> for help and questions.' ), {
+								a: <a href="#support-link" />,
+							} ) }
+						</p>
 
-					<p>
-						{ createInterpolateElement( __( '<a>Contact support</a> for help and questions.' ), {
-							a: <a href="#support-link" />,
-						} ) }
-					</p>
+						<NextButton
+							isBusy={ isLoading }
+							disabled={ isLoading }
+							onClick={ () => {
+								if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
+									return goToStep( 'confirm', 'eligibility_substep' );
+								}
 
-					<NextButton
-						isBusy={ isLoading }
-						disabled={ isLoading }
-						onClick={ () => {
-							if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
-								return goToStep( 'confirm', 'eligibility_substep' );
-							}
-
-							return goToStep( 'transfer' );
-						} }
-					>
-						{ __( 'Sounds good' ) }
-					</NextButton>
+								return goToStep( 'transfer' );
+							} }
+						>
+							{ __( 'Sounds good' ) }
+						</NextButton>
+					</SignupCard>
 				</div>
 			</>
 		);

@@ -32,10 +32,6 @@ body.is-section-signup .is-woocommerce-install {
 		.step-wrapper__content {
 			display: flex;
 			margin: 24px 20px;
-
-			@include break-large {
-				margin: 48px 0 40px;
-			}
 		}
 	}
 }
@@ -45,28 +41,6 @@ body.is-section-signup .is-woocommerce-install {
 }
 
 .confirm__instructions-container {
-	width: 40vw;
-	max-width: 500px;
-	padding: 0 50px;
 	flex-direction: column;
-
-	p {
-		color: var( --studio-gray-60 );
-		line-height: 1.25rem;
-		letter-spacing: -0.16px;
-		margin-top: 30px;
-		font-size: 0.875rem;
-	}
-}
-
-.confirm__instructions-title {
-	font-size: 1.5rem;
-	letter-spacing: 0.2px;
-	line-height: 2.5rem;
-	color: var( --studio-gray-90 );
-}
-
-.confirm__instructions-wpcom-domain {
-	text-decoration: line-through;
-	color: var( --studio-gray-20 );
+	max-width: 520px;
 }
