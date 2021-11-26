@@ -31,10 +31,4 @@ UndocumentedMe.prototype.getReceipt = function ( receiptId, queryOrCallback ) {
 	);
 };
 
-UndocumentedMe.prototype.sendVerificationEmail = function ( callback ) {
-	debug( '/me/send-verification-email' );
-
-	return this.wpcom.req.post( { path: '/me/send-verification-email' }, callback );
-};
-
 export default UndocumentedMe;
