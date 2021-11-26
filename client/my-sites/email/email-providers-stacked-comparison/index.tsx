@@ -13,6 +13,10 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { buildNewTitanMailbox } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import {
+	PASSWORD_RESET_TITAN_FIELD,
+	FULL_NAME_TITAN_FIELD,
+} from 'calypso/my-sites/email/titan-new-mailbox';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { Site } from 'calypso/reader/list-manage/types';
@@ -26,7 +30,6 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { PASSWORD_RESET_TITAN_FIELD, FULL_NAME_TITAN_FIELD } from '../titan-new-mailbox';
 import EmailProvidersStackedCard from './email-provider-stacked-card';
 import { professionalEmailCard } from './provider-cards/professional-email-card';
 import type { TranslateResult } from 'i18n-calypso';
@@ -50,8 +53,17 @@ type EmailProvidersStackedComparisonProps = {
 	source: string;
 	cartDomainName?: string;
 	selectedSite?: Site;
-	titanMailMonthlyProduct?: any;
-	gSuiteAnnualProduct?: any;
+	currencyCode?: string;
+	currentRoute?: string;
+	domain?: Domain;
+	domainName?: string;
+	domainsWithForwards?: Domain[];
+	gSuiteProduct?: string;
+	hasCartDomain?: boolean;
+	isGSuiteSupported?: boolean;
+	productsList?: string[];
+	requestingSiteDomains?: boolean;
+	titanMailProduct?: string;
 };
 
 export interface ProviderCard {

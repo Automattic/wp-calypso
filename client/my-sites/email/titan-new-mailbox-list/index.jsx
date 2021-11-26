@@ -20,7 +20,7 @@ const noop = () => {};
 
 const TitanNewMailboxList = ( {
 	children,
-	hiddenFields,
+	hiddenFields = [],
 	selectedDomainName,
 	mailboxes,
 	onMailboxesChange,
@@ -48,7 +48,7 @@ const TitanNewMailboxList = ( {
 			return updatedMailbox;
 		} );
 
-		onMailboxesChange( validateMailboxes( updatedMailboxes ) );
+		onMailboxesChange( validateMailboxes( updatedMailboxes, hiddenFields ) );
 	};
 
 	const onMailboxAdd = () => {
