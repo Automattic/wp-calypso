@@ -20,6 +20,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import HeaderCake from 'calypso/components/header-cake';
+import InfoPopover from 'calypso/components/info-popover';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -380,7 +381,7 @@ class EmailProvidersComparison extends Component {
 		const productIsDiscounted = hasDiscount( gSuiteProduct );
 		const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
 		const formattedPrice = productIsDiscounted
-			? translate( '{{fullPrice/}} {{discountedPrice/}} /mailbox /month billed annually', {
+			? translate( '{{fullPrice/}} {{discountedPrice/}} /mailbox /month (billed annually)', {
 					components: {
 						fullPrice: <span>{ monthlyPrice }</span>,
 						discountedPrice: (
@@ -405,7 +406,7 @@ class EmailProvidersComparison extends Component {
 		const discount = productIsDiscounted ? (
 			<span className="email-providers-comparison__discount-with-renewal">
 				{ translate(
-					'%(discount)d% Off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
+					'%(discount)d% off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
 					{
 						args: {
 							discount: gSuiteProduct.sale_coupon.discount,
@@ -421,6 +422,18 @@ class EmailProvidersComparison extends Component {
 						},
 					}
 				) }
+
+				<InfoPopover position="right" showOnHover>
+					{ translate(
+						'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
+						{
+							args: {
+								googleMailService: getGoogleMailServiceFamily(),
+							},
+							comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+						}
+					) }
+				</InfoPopover>
 			</span>
 		) : null;
 
@@ -523,7 +536,7 @@ class EmailProvidersComparison extends Component {
 			'email-providers-comparison__highlight-main-price': showBlackFridaySale,
 			'email-providers-comparison__keep-main-price': ! isEligibleForFreeTrial,
 		} );
-		const formattedPrice = translate( '{{price/}} /mailbox /month billed monthly', {
+		const formattedPrice = translate( '{{price/}} /mailbox /month (billed monthly)', {
 			components: {
 				price: (
 					<span className={ formattedPriceClassName }>
