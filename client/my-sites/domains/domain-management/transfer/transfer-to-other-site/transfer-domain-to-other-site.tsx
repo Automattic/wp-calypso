@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find, get, omit } from 'lodash';
 import page from 'page';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
@@ -13,7 +12,7 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import { domainManagementList, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -21,31 +20,22 @@ import { requestSites } from 'calypso/state/sites/actions';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TransferConfirmationDialog from './confirmation-dialog';
+import type { TransferDomainToOtherSitePassedProps, TransferDomainToOtherSiteProps } from './types';
 
 const wpcom = wp.undocumented();
 
-export class TransferDomainToOtherSite extends Component {
-	static propTypes = {
-		currentUserCanManage: PropTypes.bool.isRequired,
-		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
-		isDomainOnly: PropTypes.bool.isRequired,
-		isMapping: PropTypes.bool.isRequired,
-		isRequestingSiteDomains: PropTypes.bool.isRequired,
-		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.object.isRequired,
-	};
-
+export class TransferDomainToOtherSite extends Component< TransferDomainToOtherSiteProps > {
 	state = {
 		targetSiteId: null,
 		showConfirmationDialog: false,
 		disableDialogButtons: false,
 	};
 
-	isDataReady() {
+	isDataReady(): boolean {
 		return ! this.props.isRequestingSiteDomains && this.props.hasSiteDomainsLoaded;
 	}
 
-	isSiteEligible = ( site ) => {
+	isSiteEligible = ( site: TransferDomainToOtherSiteProps[ 'selectedSite' ] ): boolean => {
 		// check if it's an Atomic site from the site options
 		const isAtomic = get( site, 'options.is_automated_transfer', false );
 
@@ -57,14 +47,17 @@ export class TransferDomainToOtherSite extends Component {
 		);
 	};
 
-	handleSiteSelect = ( targetSiteId ) => {
+	handleSiteSelect = ( targetSiteId: number ): void => {
 		this.setState( {
 			targetSiteId,
 			showConfirmationDialog: true,
 		} );
 	};
 
-	handleConfirmTransfer = ( targetSite, closeDialog ) => {
+	handleConfirmTransfer = (
+		targetSite: TransferDomainToOtherSiteProps[ 'selectedSite' ],
+		closeDialog: () => void
+	): void => {
 		const { selectedDomainName } = this.props;
 		const targetSiteTitle = targetSite.title;
 		const successMessage = this.props.translate(
@@ -87,12 +80,12 @@ export class TransferDomainToOtherSite extends Component {
 					if ( this.props.isDomainOnly ) {
 						this.props.requestSites();
 						const transferedTo = find( this.props.sites, { ID: targetSite.ID } );
-						page( domainManagementList( transferedTo.slug ) );
+						page( domainManagementList( ( transferedTo! as Record< string, unknown > ).slug ) );
 					} else {
 						page( domainManagementList( this.props.selectedSite.slug ) );
 					}
 				},
-				( error ) => {
+				( error: Error ) => {
 					this.setState( { disableDialogButtons: false } );
 					closeDialog();
 					this.props.errorNotice( error.message || defaultErrorMessage );
@@ -100,13 +93,13 @@ export class TransferDomainToOtherSite extends Component {
 			);
 	};
 
-	handleDialogClose = () => {
+	handleDialogClose = (): void => {
 		if ( ! this.state.disableDialogButtons ) {
 			this.setState( { showConfirmationDialog: false } );
 		}
 	};
 
-	getMessage() {
+	getMessage(): i18nCalypso.TranslateResult {
 		const { selectedDomainName: domainName, isMapping, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 
@@ -123,7 +116,7 @@ export class TransferDomainToOtherSite extends Component {
 		);
 	}
 
-	render() {
+	render(): JSX.Element {
 		const { selectedSite, selectedDomainName, currentRoute, isMapping } = this.props;
 		const { slug } = selectedSite;
 		if ( ! this.isDataReady() ) {
@@ -149,7 +142,7 @@ export class TransferDomainToOtherSite extends Component {
 		);
 	}
 
-	renderSection() {
+	renderSection(): JSX.Element {
 		const { currentUserCanManage, selectedDomainName } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
@@ -182,7 +175,7 @@ export class TransferDomainToOtherSite extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	( state, ownProps: TransferDomainToOtherSitePassedProps ) => {
 		const domain = ! ownProps.isRequestingSiteDomains && getSelectedDomain( ownProps );
 		const siteId = getSelectedSiteId( state );
 		return {
