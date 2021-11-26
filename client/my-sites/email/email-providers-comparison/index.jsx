@@ -536,7 +536,7 @@ class EmailProvidersComparison extends Component {
 			'email-providers-comparison__highlight-main-price': showBlackFridaySale,
 			'email-providers-comparison__keep-main-price': ! isEligibleForFreeTrial,
 		} );
-		const formattedPrice = translate( '{{price/}} /mailbox /month', {
+		const formattedPrice = translate( '{{price/}} /mailbox /month (billed monthly)', {
 			components: {
 				price: (
 					<span className={ formattedPriceClassName }>
