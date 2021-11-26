@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { get, omit } from 'lodash';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { lostPassword } from 'calypso/lib/paths';
 
 export function getSMSMessageFromResponse( response ) {

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { getLanguageSlugs } from '@automattic/languages';
 import { getLocaleSlug } from 'i18n-calypso';
-import { getLanguageSlugs } from 'calypso/lib/i18n-utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 

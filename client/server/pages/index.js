@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import config from '@automattic/calypso-config';
+import { getLanguage, getLanguageSlugs } from '@automattic/languages';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
@@ -13,7 +14,6 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
-import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -239,6 +239,20 @@ function setUpLoggedOutRoute( req, res, next ) {
 	Promise.all( setupRequests )
 		.then( () => next() )
 		.catch( ( error ) => next( error ) );
+}
+/**
+ * Filter out unexpected values from the given language revisions object.
+ */
+function filterLanguageRevisions( languageRevisions ) {
+	const langSlugs = getLanguageSlugs();
+
+	// Since there is no strong guarantee that the passed-in revisions map will have the identical set of languages as we define in calypso,
+	// simply filtering against what we have here should be sufficient.
+	return Object.fromEntries(
+		Object.entries( languageRevisions ).filter(
+			( [ slug, revision ] ) => typeof revision !== 'number' && langSlugs.includes( slug )
+		)
+	);
 }
 
 function setUpLoggedInRoute( req, res, next ) {

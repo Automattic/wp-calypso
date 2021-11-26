@@ -9,7 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InfiniteList from 'calypso/components/infinite-list';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 import {

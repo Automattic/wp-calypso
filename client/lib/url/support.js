@@ -1,4 +1,4 @@
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 
 const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
 

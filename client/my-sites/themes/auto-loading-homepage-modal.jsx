@@ -11,7 +11,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
 	acceptAutoLoadingHomepageWarning,

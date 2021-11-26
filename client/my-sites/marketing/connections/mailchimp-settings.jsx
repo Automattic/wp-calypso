@@ -6,7 +6,7 @@ import QueryMailchimpSettings from 'calypso/components/data/query-mailchimp-sett
 import FormSelect from 'calypso/components/forms/form-select';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { getAllLists } from 'calypso/state/mailchimp/lists/selectors';
 import { requestSettingsUpdate } from 'calypso/state/mailchimp/settings/actions';
 import { getListId } from 'calypso/state/mailchimp/settings/selectors';

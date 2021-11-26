@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { getLanguage } from '@automattic/languages';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { debounce, isEmpty } from 'lodash';
@@ -8,7 +9,7 @@ import { connect } from 'react-redux';
 import QueryVerticals from 'calypso/components/data/query-verticals';
 import SignupSitePreview from 'calypso/components/signup-site-preview';
 import { getPreviewParamClass } from 'calypso/components/signup-site-preview/utils';
-import { getLocaleSlug, getLanguage } from 'calypso/lib/i18n-utils';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'calypso/lib/signup/site-theme';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

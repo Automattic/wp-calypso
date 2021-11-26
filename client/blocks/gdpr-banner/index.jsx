@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { isCurrentUserMaybeInGdprZone } from 'calypso/lib/analytics/utils';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 

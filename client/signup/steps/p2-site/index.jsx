@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getLanguage } from '@automattic/languages';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map, deburr, get } from 'lodash';
@@ -9,7 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
-import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';

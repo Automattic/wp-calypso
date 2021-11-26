@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import FAQ from 'calypso/components/faq';
 import FAQItem from 'calypso/components/faq/faq-item';
 import HappychatButton from 'calypso/components/happychat/button';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';

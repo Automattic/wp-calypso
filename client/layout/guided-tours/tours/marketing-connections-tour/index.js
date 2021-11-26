@@ -6,7 +6,7 @@ import {
 	Step,
 	Tour,
 } from 'calypso/layout/guided-tours/config-elements';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import meta from './meta';
 
 const CONNECT_BUTTON_SELECTOR = '.sharing-service.not-connected .button.is-compact';

@@ -22,7 +22,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import SpinnerButton from 'calypso/components/spinner-button';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';

@@ -1,4 +1,5 @@
-import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { getLanguage } from '@automattic/languages';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { LOGIN_EMAIL_SEND } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/auth/send-login-email';
 

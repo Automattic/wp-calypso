@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 
 const postId = 143180;

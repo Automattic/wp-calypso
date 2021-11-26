@@ -12,7 +12,7 @@ import {
 	Link,
 } from 'calypso/layout/guided-tours/config-elements';
 import { and } from 'calypso/layout/guided-tours/utils';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
 
 export const SimplePaymentsEndOfYearGuide = makeTour(

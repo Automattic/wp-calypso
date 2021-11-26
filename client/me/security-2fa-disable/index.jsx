@@ -4,7 +4,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import Security2faCodePrompt from 'calypso/me/security-2fa-code-prompt';
 import Security2faStatus from 'calypso/me/security-2fa-status';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

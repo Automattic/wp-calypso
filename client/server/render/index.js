@@ -1,13 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import config from '@automattic/calypso-config';
+import { getLanguage, isTranslatedIncompletely } from '@automattic/languages';
 import debugFactory from 'debug';
 import { get, pick } from 'lodash';
 import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
+import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -146,6 +147,19 @@ const getLanguageManifest = ( langSlug ) => {
 	}
 	return cachedLanguageManifest[ key ];
 };
+
+function isLocaleRtl( langSlug ) {
+	if ( typeof langSlug !== 'string' ) {
+		return null;
+	}
+
+	const language = getLanguage( langSlug );
+	if ( ! language ) {
+		return null;
+	}
+
+	return language.rtl ?? false;
+}
 
 export function attachI18n( context ) {
 	let localeSlug = getCurrentLocaleVariant( context.store.getState() ) || context.lang;

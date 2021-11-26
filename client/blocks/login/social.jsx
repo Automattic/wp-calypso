@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { InfoNotice } from 'calypso/blocks/global-notice';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleLoginButton from 'calypso/components/social-buttons/google';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { login } from 'calypso/lib/paths';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';

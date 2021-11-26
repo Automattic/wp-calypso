@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { makeLayout, setLocaleMiddleware } from 'calypso/controller';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils/path';
 import webRouter from './index.web';
 import redirectLoggedIn from './redirect-logged-in';
 

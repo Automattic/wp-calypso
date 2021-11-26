@@ -16,7 +16,7 @@ import Gravatar from 'calypso/components/gravatar';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import User from 'calypso/components/user';
 import accept from 'calypso/lib/accept';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {

@@ -25,7 +25,7 @@ import Debug from 'debug';
 import { get, some } from 'lodash';
 import page from 'page';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
+import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils/path';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';

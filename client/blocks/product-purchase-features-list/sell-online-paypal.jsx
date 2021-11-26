@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import paymentsImage from 'calypso/assets/images/illustrations/payments.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 
 export default localize( ( { isJetpack, translate } ) => {
 	const supportDocLink = localizeUrl(

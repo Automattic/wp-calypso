@@ -1,24 +1,5 @@
 import config from '@automattic/calypso-config';
-import { getUrlParts } from '@automattic/calypso-url';
-import { localizeUrl as _localizeUrl } from '@automattic/i18n-utils';
-import languages from '@automattic/languages';
-import i18n, { getLocaleSlug } from 'i18n-calypso';
-import { find, map, pickBy, includes } from 'lodash';
-
-/**
- * a locale can consist of three component
- * aa: language code
- * -bb: regional code
- * _cc: variant suffix
- * while the language code is mandatory, the other two are optional.
- */
-const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,6})?$/i;
-
-export function getPathParts( path ) {
-	// Remove trailing slash then split. If there is a trailing slash,
-	// then the end of the array could contain an empty string.
-	return path.replace( /\/$/, '' ).split( '/' );
-}
+import i18n from 'i18n-calypso';
 
 /**
  * Checks if provided locale is a default one.
@@ -28,32 +9,6 @@ export function getPathParts( path ) {
  */
 export function isDefaultLocale( locale ) {
 	return locale === config( 'i18n_default_locale_slug' );
-}
-
-/**
- * Checks if provided locale has a parentLangSlug and is therefore a locale variant
- *
- * @param {string} locale - locale slug (eg: 'fr')
- * @returns {boolean} true when the locale has a parentLangSlug
- */
-export function isLocaleVariant( locale ) {
-	if ( typeof locale !== 'string' ) {
-		return false;
-	}
-	const language = getLanguage( locale );
-	return !! language && typeof language.parentLangSlug === 'string';
-}
-
-export function isLocaleRtl( locale ) {
-	if ( typeof locale !== 'string' ) {
-		return null;
-	}
-	const language = getLanguage( locale );
-	if ( ! language ) {
-		return null;
-	}
-
-	return Boolean( language.rtl );
 }
 
 /**
@@ -77,127 +32,9 @@ export function canBeTranslated( locale ) {
  *
  * @returns {boolean} true when a user would see text they can read.
  */
-export function translationExists() {
-	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
-	return isDefaultLocale( localeSlug ) || i18n.hasTranslation( ...arguments );
-}
-
-/**
- * Return a list of all supported language slugs
- *
- * @returns {Array} A list of all supported language slugs
- */
-export function getLanguageSlugs() {
-	return map( languages, 'langSlug' );
-}
-
-/**
- * Return a specifier for page.js/Express route param that enumerates all supported languages.
- *
- * @param {string} name of the parameter. By default it's `lang`, some routes use `locale`.
- * @param {boolean} optional whether to put the `?` character at the end, making the param optional
- * @returns {string} Router param specifier that looks like `:lang(cs|de|fr|pl)`
- */
-export function getLanguageRouteParam( name = 'lang', optional = true ) {
-	return `:${ name }(${ getLanguageSlugs().join( '|' ) })${ optional ? '?' : '' }`;
-}
-
-/**
- * Matches and returns language from config.languages based on the given localeSlug
- *
- * @param   {string} langSlug locale slug of the language to match
- * @returns {object|undefined} An object containing the locale data or undefined.
- */
-export function getLanguage( langSlug ) {
-	if ( localeRegex.test( langSlug ) ) {
-		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
-		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.
-		return (
-			find( languages, { langSlug } ) ||
-			find( languages, { langSlug: langSlug.split( /[-_]/ )[ 0 ] } )
-		);
-	}
-
-	return undefined;
-}
-
-/**
- * Assuming that locale is adding at the end of path, retrieves the locale if present.
- *
- * @param {string} path - original path
- * @returns {string|undefined} The locale slug if present or undefined
- */
-export function getLocaleFromPath( path ) {
-	const urlParts = getUrlParts( path );
-	const locale = getPathParts( urlParts.pathname ).pop();
-
-	return 'undefined' === typeof getLanguage( locale ) ? undefined : locale;
-}
-
-/**
- * Adds a locale slug to the current path.
- *
- * Will replace existing locale slug, if present.
- *
- * @param {string} path - original path
- * @param {string} locale - locale slug (eg: 'fr')
- * @returns {string} original path with new locale slug
- */
-export function addLocaleToPath( path, locale ) {
-	const urlParts = getUrlParts( path );
-	const queryString = urlParts.search || '';
-
-	return removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
-}
-
-export function localizeUrl( fullUrl, locale ) {
-	const localeSlug = locale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en' );
-	return _localizeUrl( fullUrl, localeSlug );
-}
-
-/**
- * Removes the trailing locale slug from the path, if it is present.
- * '/start/en' => '/start', '/start' => '/start', '/start/flow/fr' => '/start/flow', '/start/flow' => '/start/flow'
- *
- * @param {string} path - original path
- * @returns {string} original path minus locale slug
- */
-export function removeLocaleFromPath( path ) {
-	const urlParts = getUrlParts( path );
-	const queryString = urlParts.search || '';
-	const parts = getPathParts( urlParts.pathname );
-	const locale = parts.pop();
-
-	if ( 'undefined' === typeof getLanguage( locale ) ) {
-		parts.push( locale );
-	}
-
-	return parts.join( '/' ) + queryString;
-}
-
-/**
- * Filter out unexpected values from the given language revisions object.
- *
- * @param {object} languageRevisions A candidate language revisions object for filtering.
- *
- * @returns {object} A valid language revisions object derived from the given one.
- */
-export function filterLanguageRevisions( languageRevisions ) {
-	const langSlugs = getLanguageSlugs();
-
-	// Since there is no strong guarantee that the passed-in revisions map will have the identical set of languages as we define in calypso,
-	// simply filtering against what we have here should be sufficient.
-	return pickBy( languageRevisions, ( revision, slug ) => {
-		if ( typeof revision !== 'number' ) {
-			return false;
-		}
-
-		if ( ! includes( langSlugs, slug ) ) {
-			return false;
-		}
-
-		return true;
-	} );
+export function translationExists( ...args ) {
+	const localeSlug = i18n.getLocaleSlug();
+	return isDefaultLocale( localeSlug ) || i18n.hasTranslation( ...args );
 }
 
 /**
@@ -208,14 +45,4 @@ export function filterLanguageRevisions( languageRevisions ) {
  */
 export function isMagnificentLocale( locale ) {
 	return config( 'magnificent_non_en_locales' ).includes( locale );
-}
-
-/**
- * Checks if provided locale is translated incompletely (is missing essential translations).
- *
- * @param   {string}  locale Locale slug
- * @returns {boolean} Whether provided locale is flagged as translated incompletely.
- */
-export function isTranslatedIncompletely( locale ) {
-	return getLanguage( locale )?.isTranslatedIncompletely === true;
 }

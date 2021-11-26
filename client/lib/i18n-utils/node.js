@@ -6,23 +6,6 @@ import config from '@automattic/calypso-config';
 // to an issue with Babel faking a default export
 //
 // export * from './utils';
-export {
-	addLocaleToPath,
-	getLanguage,
-	getLanguageRouteParam,
-	getLanguageSlugs,
-	getLocaleFromPath,
-	isDefaultLocale,
-	isLocaleVariant,
-	isLocaleRtl,
-	localizeUrl,
-	canBeTranslated,
-	removeLocaleFromPath,
-	getPathParts,
-	filterLanguageRevisions,
-	translationExists,
-	isMagnificentLocale,
-	isTranslatedIncompletely,
-} from './utils';
+export { isDefaultLocale, canBeTranslated, translationExists, isMagnificentLocale } from './utils';
 
 export const getLocaleSlug = () => config( 'i18n_default_locale_slug' );

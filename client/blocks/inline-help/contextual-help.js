@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils/localize-url';
 import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 
 /**
