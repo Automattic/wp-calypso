@@ -1,7 +1,6 @@
 import debugFactory from 'debug';
 import { omit } from 'lodash';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import Me from './me';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -18,10 +17,6 @@ function Undocumented( wpcom ) {
 	}
 	this.wpcom = wpcom;
 }
-
-Undocumented.prototype.me = function () {
-	return new Me( this.wpcom );
-};
 
 Undocumented.prototype.jetpackLogin = function ( siteId, _wp_nonce, redirect_uri, scope, state ) {
 	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
