@@ -163,9 +163,11 @@ class ThemeShowcase extends Component {
 			if ( window.innerWidth > 600 ) {
 				return;
 			}
-			const headerHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
+			const headerHeight = document
+				.getElementsByClassName( 'masterbar' )[ 0 ]
+				?.getBoundingClientRect().height;
 			const screenOptionTab = document
-				.getElementById( 'screen-options-tab-id' )
+				.getElementsByClassName( 'screen-options-tab__button' )[ 0 ]
 				?.getBoundingClientRect().height;
 
 			const yOffset = -( headerHeight + screenOptionTab ); // Total height of admin bar and screen options on mobile.
