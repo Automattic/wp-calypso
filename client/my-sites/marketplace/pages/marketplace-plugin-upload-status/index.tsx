@@ -35,12 +35,6 @@ import {
 import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 
-enum Errors {
-	NON_INSTALLABLE_PLAN_ERROR,
-	NO_DIRECT_ACCESS_ERROR,
-	NONE,
-}
-
 const MarketplacePluginInstall = ( {
 	productSlug,
 }: MarketplacePluginInstallProps ): JSX.Element => {
@@ -48,7 +42,7 @@ const MarketplacePluginInstall = ( {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
-	const [ error, setError ] = useState< Errors >( Errors.NONE );
+	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -97,19 +91,13 @@ const MarketplacePluginInstall = ( {
 		}
 	}, [ isWporgPluginFetched, productSlug ] );
 
-	// Check if
-	//   - the user plan is enough for installation
-	//   - the user is coming from the plugin install page
+	// Check if the user plan is enough for installation
 	// if not, check again in 2s and show an error message
 	useEffect( () => {
-		if ( ! supportsAtomicUpgrade.current || ! marketplacePluginInstallationInProgress ) {
-			waitFor( 2 ).then( () => {
-				if ( ! supportsAtomicUpgrade.current ) {
-					setError( Errors.NON_INSTALLABLE_PLAN_ERROR );
-				} else if ( ! marketplacePluginInstallationInProgress ) {
-					setError( Errors.NO_DIRECT_ACCESS_ERROR );
-				}
-			} );
+		if ( ! supportsAtomicUpgrade.current ) {
+			waitFor( 2 ).then(
+				() => ! supportsAtomicUpgrade.current && setNonInstallablePlanError( true )
+			);
 		}
 	} );
 
@@ -125,7 +113,13 @@ const MarketplacePluginInstall = ( {
 
 	// Installing plugin flow startup
 	useEffect( () => {
-		if ( ! error && ! isUploadFlow && ! initializeInstallFlow && wporgPlugin && selectedSite ) {
+		if (
+			marketplacePluginInstallationInProgress &&
+			! isUploadFlow &&
+			! initializeInstallFlow &&
+			wporgPlugin &&
+			selectedSite
+		) {
 			const triggerInstallFlow = () => {
 				setInitializeInstallFlow( true );
 				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
@@ -145,7 +139,7 @@ const MarketplacePluginInstall = ( {
 			}
 		}
 	}, [
-		error,
+		marketplacePluginInstallationInProgress,
 		isUploadFlow,
 		initializeInstallFlow,
 		selectedSite,
@@ -201,48 +195,47 @@ const MarketplacePluginInstall = ( {
 	];
 
 	const renderError = () => {
-		switch ( error ) {
-			case Errors.NO_DIRECT_ACCESS_ERROR:
-				return (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/error.svg"
-						title={ translate(
-							'This URL should not be accessed directly. Please click the Install button on the plugin page.'
-						) }
-						action={ translate( 'Go to the plugin page' ) }
-						actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
-					/>
-				);
-			case Errors.NON_INSTALLABLE_PLAN_ERROR:
-				return (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/error.svg"
-						title={ translate(
-							"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
-						) }
-						action={ translate( 'Upgrade to Business Plan' ) }
-						actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
-					/>
-				);
-			default:
-				if (
-					pluginUploadError ||
-					pluginInstallStatus.error ||
-					( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
-				) {
-					return (
-						<EmptyContent
-							illustration="/calypso/images/illustrations/error.svg"
-							title={ translate( 'An error occurred while installing the plugin.' ) }
-							action={ translate( 'Back' ) }
-							actionURL={
-								isUploadFlow
-									? `/plugins/upload/${ selectedSiteSlug }`
-									: `/plugins/${ productSlug }/${ selectedSiteSlug }`
-							}
-						/>
-					);
-				}
+		if ( ! marketplacePluginInstallationInProgress ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					title={ translate(
+						'This URL should not be accessed directly. Please click the Install button on the plugin page.'
+					) }
+					action={ translate( 'Go to the plugin page' ) }
+					actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
+				/>
+			);
+		}
+		if ( nonInstallablePlanError ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					title={ translate(
+						'This URL should not be accessed directly. Please click the Install button on the plugin page.'
+					) }
+					action={ translate( 'Go to the plugin page' ) }
+					actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
+				/>
+			);
+		}
+		if (
+			pluginUploadError ||
+			pluginInstallStatus.error ||
+			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
+		) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					title={ translate( 'An error occurred while installing the plugin.' ) }
+					action={ translate( 'Back' ) }
+					actionURL={
+						isUploadFlow
+							? `/plugins/upload/${ selectedSiteSlug }`
+							: `/plugins/${ productSlug }/${ selectedSiteSlug }`
+					}
+				/>
+			);
 		}
 	};
 
