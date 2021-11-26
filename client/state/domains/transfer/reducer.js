@@ -11,13 +11,10 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
-	DOMAIN_TRANSFER_LOCK_DOMAIN,
-	DOMAIN_TRANSFER_LOCK_DOMAIN_COMPLETED,
-	DOMAIN_TRANSFER_LOCK_DOMAIN_FAILED,
 	DOMAIN_TRANSFER_UPDATE,
-	DOMAIN_TRANSFER_UNLOCK_DOMAIN,
-	DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED,
-	DOMAIN_TRANSFER_UNLOCK_DOMAIN_FAILED,
+	DOMAIN_TRANSFER_LOCK_TOGGLE,
+	DOMAIN_TRANSFER_LOCK_TOGGLE_COMPLETED,
+	DOMAIN_TRANSFER_LOCK_TOGGLE_FAILED,
 	DOMAIN_WAPI_INFO_FETCH,
 	DOMAIN_WAPI_INFO_FETCH_FAILURE,
 	DOMAIN_WAPI_INFO_FETCH_SUCCESS,
@@ -54,12 +51,12 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				[ domain ]: options,
 			};
 		}
-		case DOMAIN_TRANSFER_LOCK_DOMAIN: {
+		case DOMAIN_TRANSFER_LOCK_TOGGLE: {
 			return updateDomainState( state, action.domain, {
 				isLockingOrUnlockingDomain: true,
 			} );
 		}
-		case DOMAIN_TRANSFER_LOCK_DOMAIN_COMPLETED: {
+		case DOMAIN_TRANSFER_LOCK_TOGGLE_COMPLETED: {
 			const { data } = state[ action.domain ];
 			const locked = ! action.options.unlock && data.locked;
 
@@ -70,28 +67,7 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				isLockingOrUnlockingDomain: false,
 			} );
 		}
-		case DOMAIN_TRANSFER_LOCK_DOMAIN_FAILED: {
-			return updateDomainState( state, action.domain, {
-				isLockingOrUnlockingDomain: false,
-			} );
-		}
-		case DOMAIN_TRANSFER_UNLOCK_DOMAIN: {
-			return updateDomainState( state, action.domain, {
-				isLockingOrUnlockingDomain: true,
-			} );
-		}
-		case DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED: {
-			const { data } = state[ action.domain ];
-			const locked = ! action.options.unlock && data.locked;
-
-			return updateDomainState( state, action.domain, {
-				data: Object.assign( {}, state[ action.domain ].data, {
-					locked,
-				} ),
-				isLockingOrUnlockingDomain: false,
-			} );
-		}
-		case DOMAIN_TRANSFER_UNLOCK_DOMAIN_FAILED: {
+		case DOMAIN_TRANSFER_LOCK_TOGGLE_FAILED: {
 			return updateDomainState( state, action.domain, {
 				isLockingOrUnlockingDomain: false,
 			} );

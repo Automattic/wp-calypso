@@ -13,13 +13,10 @@ import {
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
-	DOMAIN_TRANSFER_LOCK_DOMAIN,
-	DOMAIN_TRANSFER_LOCK_DOMAIN_COMPLETED,
-	DOMAIN_TRANSFER_LOCK_DOMAIN_FAILED,
+	DOMAIN_TRANSFER_LOCK_TOGGLE,
+	DOMAIN_TRANSFER_LOCK_TOGGLE_COMPLETED,
+	DOMAIN_TRANSFER_LOCK_TOGGLE_FAILED,
 	DOMAIN_TRANSFER_UPDATE,
-	DOMAIN_TRANSFER_UNLOCK_DOMAIN,
-	DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED,
-	DOMAIN_TRANSFER_UNLOCK_DOMAIN_FAILED,
 	DOMAIN_WAPI_INFO_FETCH,
 	DOMAIN_WAPI_INFO_FETCH_FAILURE,
 	DOMAIN_WAPI_INFO_FETCH_SUCCESS,
@@ -43,38 +40,20 @@ export const updateDomainTransfer = ( domain, options ) => ( {
 	options,
 } );
 
-export const lockDomain = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_LOCK_DOMAIN,
+export const toggleDomainLock = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_LOCK_TOGGLE,
 	domain,
 	options,
 } );
 
-export const lockDomainCompleted = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_LOCK_DOMAIN_COMPLETED,
+export const toggleDomainLockCompleted = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_LOCK_TOGGLE_COMPLETED,
 	domain,
 	options,
 } );
 
-export const lockDomainFailed = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_LOCK_DOMAIN_FAILED,
-	domain,
-	options,
-} );
-
-export const unlockDomain = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_UNLOCK_DOMAIN,
-	domain,
-	options,
-} );
-
-export const unlockDomainCompleted = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_UNLOCK_DOMAIN_COMPLETED,
-	domain,
-	options,
-} );
-
-export const unlockDomainFailed = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_UNLOCK_DOMAIN_FAILED,
+export const toggleDomainLockFailed = ( domain, options ) => ( {
+	type: DOMAIN_TRANSFER_LOCK_TOGGLE_FAILED,
 	domain,
 	options,
 } );

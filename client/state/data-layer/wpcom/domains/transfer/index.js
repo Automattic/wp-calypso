@@ -6,8 +6,7 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
-	DOMAIN_TRANSFER_LOCK_DOMAIN,
-	DOMAIN_TRANSFER_UNLOCK_DOMAIN,
+	DOMAIN_TRANSFER_LOCK_TOGGLE,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -18,15 +17,13 @@ import {
 	cancelDomainTransferRequestFailed,
 	declineDomainTransferCompleted,
 	fetchWapiDomainInfo,
-	lockDomainCompleted,
-	lockDomainFailed,
 	requestDomainTransferCodeCompleted,
 	requestDomainTransferCodeFailed,
 	requestDomainTransferCodeOnlyCompleted,
 	requestDomainTransferCodeOnlyFailed,
+	toggleDomainLockCompleted,
+	toggleDomainLockFailed,
 	updateDomainTransfer,
-	unlockDomainCompleted,
-	unlockDomainFailed,
 } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -120,7 +117,7 @@ export const requestDomainTransferCodeOnlyFailure = ( action, error ) => [
 	fetchWapiDomainInfo( action.domain ),
 ];
 
-export const unlockDomain = ( action ) =>
+export const toggleDomainLock = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -128,53 +125,32 @@ export const unlockDomain = ( action ) =>
 			path: '/domains/' + action.domain + '/transfer/',
 			body: {
 				domainStatus: JSON.stringify( {
-					command: 'unlock',
+					command: action.options.unlock ? 'unlock' : 'lock',
 				} ),
 			},
 		},
 		action
 	);
 
-export const unlockDomainSuccess = ( action ) => ( dispatch ) => {
-	dispatch( unlockDomainCompleted( action.domain, action.options ) );
+export const toggleDomainLockSuccess = ( action ) => ( dispatch ) => {
+	dispatch( toggleDomainLockCompleted( action.domain, action.options ) );
 	dispatch( fetchWapiDomainInfo( action.domain ) );
 	dispatch(
-		successNotice( translate( 'Domain unlocked successfully!' ), getNoticeOptions( action.domain ) )
+		successNotice(
+			action.options.unlock
+				? translate( 'Domain unlocked successfully!' )
+				: translate( 'Domain locked successfully!' ),
+			getNoticeOptions( action.domain )
+		)
 	);
 };
 
-export const unlockDomainFailure = ( action ) => [
-	unlockDomainFailed( action.domain ),
-	errorNotice( getDomainLockUnlockError( true ), getNoticeOptions( action.domain ) ),
-	fetchWapiDomainInfo( action.domain ),
-];
-
-export const lockDomain = ( action ) =>
-	http(
-		{
-			apiVersion: '1.1',
-			method: 'POST',
-			path: '/domains/' + action.domain + '/transfer/',
-			body: {
-				domainStatus: JSON.stringify( {
-					command: 'lock',
-				} ),
-			},
-		},
-		action
-	);
-
-export const lockDomainSuccess = ( action ) => ( dispatch ) => {
-	dispatch( lockDomainCompleted( action.domain, action.options ) );
-	dispatch( fetchWapiDomainInfo( action.domain ) );
-	dispatch(
-		successNotice( translate( 'Domain locked successfully!' ), getNoticeOptions( action.domain ) )
-	);
-};
-
-export const lockDomainFailure = ( action ) => [
-	lockDomainFailed( action.domain ),
-	errorNotice( getDomainLockUnlockError( false ), getNoticeOptions( action.domain ) ),
+export const toggleDomainLockFailure = ( action ) => [
+	toggleDomainLockFailed( action.domain ),
+	errorNotice(
+		getDomainLockUnlockError( action.options.unlock ),
+		getNoticeOptions( action.domain )
+	),
 	fetchWapiDomainInfo( action.domain ),
 ];
 
@@ -320,18 +296,11 @@ registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 			onError: handleIpsTagSaveFailure,
 		} ),
 	],
-	[ DOMAIN_TRANSFER_LOCK_DOMAIN ]: [
+	[ DOMAIN_TRANSFER_LOCK_TOGGLE ]: [
 		dispatchRequest( {
-			fetch: lockDomain,
-			onSuccess: lockDomainSuccess,
-			onError: lockDomainFailure,
-		} ),
-	],
-	[ DOMAIN_TRANSFER_UNLOCK_DOMAIN ]: [
-		dispatchRequest( {
-			fetch: unlockDomain,
-			onSuccess: unlockDomainSuccess,
-			onError: unlockDomainFailure,
+			fetch: toggleDomainLock,
+			onSuccess: toggleDomainLockSuccess,
+			onError: toggleDomainLockFailure,
 		} ),
 	],
 	[ DOMAIN_TRANSFER_CODE_ONLY_REQUEST ]: [
