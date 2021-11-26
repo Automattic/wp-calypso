@@ -198,7 +198,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 
 	const renderAdvancedTransferOptions = () => {
 		return (
-			<Card>
+			<Card className="transfer-page__advanced-transfer-options">
 				<CardHeading size={ 16 } isBold={ true }>
 					Advanced Options
 				</CardHeading>
