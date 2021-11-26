@@ -152,7 +152,7 @@ export class JetpackAuthorize extends Component {
 		const { alreadyAuthorized, redirectAfterAuth, site } = nextProps.authQuery;
 
 		if ( this.isJetpackPartnerCoupon( nextProps ) && ( siteReceived || authorizeSuccess ) ) {
-			// The current implementation of the paThe current implementation of the partner coupon URL is supposed to
+			// The current implementation of the partner coupon URL is supposed to
 			// just take over the entire flow and send directly to checkout.
 			// This will happen by the partnerCouponRedirects controller logic if we just
 			// redirect the customer without any special conditions.
