@@ -746,9 +746,11 @@
 				padding: 0 2px;
 			}
 
+			// Use important to overwrite the styles as the priority of #wpnc-panel selector is too high
+			// See: client/notifications/style.scss
 			ol.wpnc__ol--outside {
-				list-style-position: outside;
-				margin-left: 1.2em;
+				margin-left: 1.2em !important;
+				list-style-position: outside !important;
 				overflow: visible;
 			}
 
