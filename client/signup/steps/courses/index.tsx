@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import VideosUi from 'calypso/components/videos-ui';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import Footer from './footer';
 import './style.scss';
 
 interface Props {
@@ -23,7 +24,7 @@ export default function CoursesStep( props: Props ): React.ReactNode {
 		<StepWrapper
 			className="courses"
 			hideFormattedHeader
-			stepContent={ <VideosUi /> }
+			stepContent={ <VideosUi headerBar={ null } footerBar={ <Footer /> } /> }
 			skipLabelText={ translate( 'Draft your first post' ) }
 			skipButtonAlign="top"
 			{ ...props }
