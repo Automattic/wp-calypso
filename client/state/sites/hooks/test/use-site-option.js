@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { useSiteOptions } from '../';
+import { useSiteOption } from '../';
 
 const createDummyStore = ( initialState ) => createStore( ( state ) => state, initialState );
 
-describe( '#useSiteOptions()', () => {
+describe( '#useSiteOption()', () => {
 	it( 'should return null if the site is not known', () => {
 		const store = createDummyStore( {
 			sites: {
@@ -14,14 +14,12 @@ describe( '#useSiteOptions()', () => {
 			ui: {},
 		} );
 
-		const { result } = renderHook( () => useSiteOptions( [ 'site_intent' ] ), {
+		const { result } = renderHook( () => useSiteOption( 'site_intent' ), {
 			wrapper: Provider,
 			initialProps: { store },
 		} );
 
-		expect( result.current ).toEqual( {
-			siteIntent: null,
-		} );
+		expect( result.current ).toBe( null );
 	} );
 
 	it( 'should return the site intent of the selected site', () => {
@@ -41,13 +39,11 @@ describe( '#useSiteOptions()', () => {
 			},
 		} );
 
-		const { result } = renderHook( () => useSiteOptions( [ 'site_intent' ] ), {
+		const { result } = renderHook( () => useSiteOption( 'site_intent' ), {
 			wrapper: Provider,
 			initialProps: { store },
 		} );
 
-		expect( result.current ).toEqual( {
-			siteIntent,
-		} );
+		expect( result.current ).toBe( siteIntent );
 	} );
 } );

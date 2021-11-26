@@ -1,2 +1,2 @@
 export { default as useSelectedSiteSelector } from './use-selected-site-selector';
-export { default as useSiteOptions } from './use-site-options';
+export { default as useSiteOption } from './use-site-option';
