@@ -111,4 +111,11 @@
 			margin-right: 8px;
 		}
 	}
+
+	.transfer-page__transfer-lock-placeholder {
+		display: block;
+		width: 120px;
+		margin-bottom: 8px;
+		@include placeholder();
+	}
 }

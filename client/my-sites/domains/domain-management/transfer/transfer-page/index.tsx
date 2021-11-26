@@ -148,11 +148,11 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		unlockDomain( selectedDomainName, options );
 	};
 
+	// TODO: Should we show a modal if there's a pending transfer and the user locks the domain?
 	const lockDomainHandler = () => {
-		const { pendingTransfer, domainLockingAvailable } = getSelectedDomain( props );
+		const { domainLockingAvailable } = getSelectedDomain( props );
 
 		lockDomain( selectedDomainName, {
-			declineTransfer: pendingTransfer,
 			siteId: selectedSite.ID,
 			lockDomain: domainLockingAvailable,
 		} );
@@ -162,15 +162,17 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		requestDomainTransferCodeOnly( selectedDomainName );
 	};
 
-	const renderAdvancedTransferOptions = () => {
+	const renderTransferLock = () => {
+		if ( isDomainInfoLoading ) {
+			return <span className="transfer-page__transfer-lock-placeholder"></span>;
+		}
+
 		// translators: domain transfer lock
 		const disabledLockLabel = __( 'Transfer lock off' );
 		// translators: domain transfer lock
 		const enabledLockLabel = __( 'Transfer lock on' );
 
-		const toggleLabel = isDomainInfoLoading ? (
-			'loading'
-		) : (
+		const label = (
 			<span className="transfer-page__transfer-lock-label">
 				{ isDomainLocked ? (
 					<>
@@ -184,16 +186,22 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		);
 
 		return (
+			<ToggleControl
+				checked={ isDomainLocked }
+				disabled={ isLockingOrUnlockingDomain }
+				onChange={ isDomainLocked ? unlockDomainHandler : lockDomainHandler }
+				label={ label }
+			/>
+		);
+	};
+
+	const renderAdvancedTransferOptions = () => {
+		return (
 			<Card>
 				<CardHeading size={ 16 } isBold={ true }>
 					Advanced Options
 				</CardHeading>
-				<ToggleControl
-					checked={ isDomainLocked }
-					disabled={ isDomainInfoLoading || isLockingOrUnlockingDomain }
-					onChange={ isDomainLocked ? unlockDomainHandler : lockDomainHandler }
-					label={ toggleLabel }
-				/>
+				{ renderTransferLock() }
 				<p>
 					{ __(
 						'We recommend leaving the transfer lock on, unless you want to transfer your domain to another provider.'
