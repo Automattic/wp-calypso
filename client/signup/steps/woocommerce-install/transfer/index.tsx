@@ -90,6 +90,7 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 		) {
 			setProgress( 1 );
 			setError( { transferFailed, transferStatus } );
+			goToStep( 'confirm' );
 		}
 	}, [ siteId, goToStep, fetchingTransferStatus, transferStatus, transferFailed, wcAdmin, __ ] );
 
