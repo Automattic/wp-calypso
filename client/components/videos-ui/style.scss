@@ -216,7 +216,6 @@
 	}
 
 	.videos-ui__bar {
-		padding: 12px 20px;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -241,6 +240,7 @@
 	}
 
 	.videos-ui__footer-bar {
+		padding: 0 20px;
 		background-color: #101517;
 		border-top: 1px solid rgba( 255, 255, 255, 0.1 );
 		position: fixed;
