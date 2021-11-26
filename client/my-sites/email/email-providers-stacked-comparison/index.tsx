@@ -4,13 +4,16 @@ import {
 } from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, ReactElement } from 'react';
+import React, { FunctionComponent, ReactElement, useState, Validator } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
+import { buildNewTitanMailbox } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
+import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
@@ -21,6 +24,7 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { PASSWORD_RESET_TITAN_FIELD, FULL_NAME_TITAN_FIELD } from '../titan-new-mailbox';
 import EmailProvidersStackedCard from './email-provider-stacked-card';
 import { professionalEmailCard } from './provider-cards/professional-email-card';
 
@@ -30,6 +34,16 @@ type Site = {
 	ID: number;
 	slug: string;
 };
+
+type TitanMailbox = {
+	uuid: Validator< string >;
+	domain: Validator< string >;
+	mailbox: Validator< string >;
+	password: Validator< string >;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
@@ -65,9 +79,37 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 ) => {
 	const translate = useTranslate();
 	const professionalEmail: ProviderCard = professionalEmailCard;
-	const { selectedSite } = props;
+	const { selectedSite, selectedDomainName } = props;
 
-	const formFields = <p>Placeholder</p>;
+	const onTitanMailboxesChange = noop;
+	const onTitanFormReturnKeyPress = noop;
+	const validatedTitanMailboxUuids: TitanMailbox[] = [];
+	const onTitanConfirmNewMailboxes = noop;
+
+	const [ titanMailbox ] = useState( [ buildNewTitanMailbox( selectedDomainName, false ) ] );
+	const [ addingToCart ] = useState( false );
+
+	const formFields = (
+		<TitanNewMailboxList
+			onMailboxesChange={ onTitanMailboxesChange }
+			mailboxes={ titanMailbox }
+			selectedDomainName={ selectedDomainName }
+			onReturnKeyPress={ onTitanFormReturnKeyPress }
+			showLabels={ true }
+			validatedMailboxUuids={ validatedTitanMailboxUuids }
+			showAddAnotherMailboxButton={ false }
+			hiddenFields={ [ FULL_NAME_TITAN_FIELD, PASSWORD_RESET_TITAN_FIELD ] }
+		>
+			<FullWidthButton
+				className="email-providers-stacked-comparison__continue"
+				primary
+				busy={ addingToCart }
+				onClick={ onTitanConfirmNewMailboxes }
+			>
+				{ translate( 'Create your mailbox' ) }
+			</FullWidthButton>
+		</TitanNewMailboxList>
+	);
 
 	return (
 		<>
