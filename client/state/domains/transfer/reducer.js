@@ -12,9 +12,9 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_UPDATE,
-	DOMAIN_TRANSFER_LOCK_TOGGLE,
-	DOMAIN_TRANSFER_LOCK_TOGGLE_COMPLETED,
-	DOMAIN_TRANSFER_LOCK_TOGGLE_FAILED,
+	DOMAIN_TRANSFER_TOGGLE_LOCK,
+	DOMAIN_TRANSFER_TOGGLE_LOCK_COMPLETED,
+	DOMAIN_TRANSFER_TOGGLE_LOCK_FAILED,
 	DOMAIN_WAPI_INFO_FETCH,
 	DOMAIN_WAPI_INFO_FETCH_FAILURE,
 	DOMAIN_WAPI_INFO_FETCH_SUCCESS,
@@ -51,12 +51,12 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				[ domain ]: options,
 			};
 		}
-		case DOMAIN_TRANSFER_LOCK_TOGGLE: {
+		case DOMAIN_TRANSFER_TOGGLE_LOCK: {
 			return updateDomainState( state, action.domain, {
 				isLockingOrUnlockingDomain: true,
 			} );
 		}
-		case DOMAIN_TRANSFER_LOCK_TOGGLE_COMPLETED: {
+		case DOMAIN_TRANSFER_TOGGLE_LOCK_COMPLETED: {
 			const { data } = state[ action.domain ];
 			const locked = ! action.options.unlock && data.locked;
 
@@ -67,7 +67,7 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				isLockingOrUnlockingDomain: false,
 			} );
 		}
-		case DOMAIN_TRANSFER_LOCK_TOGGLE_FAILED: {
+		case DOMAIN_TRANSFER_TOGGLE_LOCK_FAILED: {
 			return updateDomainState( state, action.domain, {
 				isLockingOrUnlockingDomain: false,
 			} );

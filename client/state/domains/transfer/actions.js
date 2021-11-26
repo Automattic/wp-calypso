@@ -13,9 +13,9 @@ import {
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
-	DOMAIN_TRANSFER_LOCK_TOGGLE,
-	DOMAIN_TRANSFER_LOCK_TOGGLE_COMPLETED,
-	DOMAIN_TRANSFER_LOCK_TOGGLE_FAILED,
+	DOMAIN_TRANSFER_TOGGLE_LOCK,
+	DOMAIN_TRANSFER_TOGGLE_LOCK_COMPLETED,
+	DOMAIN_TRANSFER_TOGGLE_LOCK_FAILED,
 	DOMAIN_TRANSFER_UPDATE,
 	DOMAIN_WAPI_INFO_FETCH,
 	DOMAIN_WAPI_INFO_FETCH_FAILURE,
@@ -41,19 +41,19 @@ export const updateDomainTransfer = ( domain, options ) => ( {
 } );
 
 export const toggleDomainLock = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_LOCK_TOGGLE,
+	type: DOMAIN_TRANSFER_TOGGLE_LOCK,
 	domain,
 	options,
 } );
 
 export const toggleDomainLockCompleted = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_LOCK_TOGGLE_COMPLETED,
+	type: DOMAIN_TRANSFER_TOGGLE_LOCK_COMPLETED,
 	domain,
 	options,
 } );
 
 export const toggleDomainLockFailed = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_LOCK_TOGGLE_FAILED,
+	type: DOMAIN_TRANSFER_TOGGLE_LOCK_FAILED,
 	domain,
 	options,
 } );

@@ -6,7 +6,7 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
-	DOMAIN_TRANSFER_LOCK_TOGGLE,
+	DOMAIN_TRANSFER_TOGGLE_LOCK,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -296,7 +296,7 @@ registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 			onError: handleIpsTagSaveFailure,
 		} ),
 	],
-	[ DOMAIN_TRANSFER_LOCK_TOGGLE ]: [
+	[ DOMAIN_TRANSFER_TOGGLE_LOCK ]: [
 		dispatchRequest( {
 			fetch: toggleDomainLock,
 			onSuccess: toggleDomainLockSuccess,
