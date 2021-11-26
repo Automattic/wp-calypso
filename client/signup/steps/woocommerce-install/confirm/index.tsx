@@ -7,6 +7,7 @@ import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-li
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import {
 	fetchAutomatedTransferStatusOnce,
 	requestEligibility,
@@ -63,87 +64,44 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	const isProcessing = ! siteId || isFetchingTransferStatus || ! wordPressSubdomainWarning;
 
 	function getWPComSubdomainWarningContent() {
-		// Get staging sudomain based on the wpcom subdomain.
-		const stagingDomain = wpcomDomain?.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+		// Get sitename from the wpcom domain.
+		const sitename = wpcomDomain?.replace( /\b.wordpress.com/, '' );
 
 		return (
+			<DomainEligibilityWarning sitename={sitename} />
+		);
+	}
+
+	function getOtherElegibiliytContent() {
+		return (
 			<>
-				<div className="confirm__instructions-container">
-					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
-						{ wpcomDomain }
-					</div>
-
-					<div className="confirm__instructions-title">{ stagingDomain }</div>
-
+				{ !! eligibilityHolds?.length && (
 					<p>
-						{ __(
-							'By installing this product your subdomain will change. You can change it later to a custom domain and we will pick up the tab for a year.'
-						) }
+						<HoldList holds={ eligibilityHolds } context={ 'plugins' } isPlaceholder={ false } />
 					</p>
-
-					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
-						{wpcomDomain}
-					</div>
-
-					<div className="confirm__instructions-title">{stagingDomain}</div>
-
+				) }
+				{ !! eligibilityWarnings?.length && (
 					<p>
-						{__(
-							'By installing this product your subdomain will change. You can change it later to a custom domain and we will pick up the tab for a year.'
-						)}
+						<WarningList warnings={ eligibilityWarnings } context={ 'plugins' } />
 					</p>
-
-
-					<p>
-						{ createInterpolateElement( __( '<a>Contact support</a> for help and questions.' ), {
-							a: <a href="#support-link" />,
-						} ) }
-					</p>
-
-					<NextButton
-						disabled={ isProcessing }
-						onClick={ () => {
-							if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
-								return goToStep( 'confirm', 'eligibility_substep' );
-							}
-
-							return goToStep( 'transfer' );
-						} }
-					>
-						{ __( 'Sounds good' ) }
-					</NextButton>
-				</div>
+				) }
 			</>
 		);
 	}
 
 	function getContent() {
-		// wpcom subdomain warning.
-		if (
-			wordPressSubdomainWarning &&
-			( stepSectionName === 'wpcom_subdomain_substep' || typeof stepSectionName === 'undefined' )
-		) {
-			return getWPComSubdomainWarningContent();
-		}
-
-		return (
-			<>
-				{isProcessing && <LoadingEllipsis />}
-				<div className="confirm__instructions-container">
-					{ !! eligibilityHolds?.length && (
-						<p>
-							<HoldList holds={ eligibilityHolds } context={ 'plugins' } isPlaceholder={ false } />
-						</p>
-					) }
-					{ !! eligibilityWarnings?.length && (
-						<p>
-							<WarningList warnings={ eligibilityWarnings } context={ 'plugins' } />
-						</p>
-					) }
-
-					<NextButton onClick={ () => goToStep( 'transfer' ) }>{ __( 'Confirm' ) }</NextButton>
-				</div>
-			</>
+		return(
+			<div className="confirm__instructions-container">
+			{isProcessing && <LoadingEllipsis />}
+			{ wordPressSubdomainWarning && getWPComSubdomainWarningContent() }
+			{ getOtherElegibiliytContent() }
+			<p>
+						{ createInterpolateElement( __( '<a>Contact support</a> for help and questions.' ), {
+							a: <a href="#support-link" />,
+						} ) }
+					</p>
+			<NextButton onClick={ () => goToStep( 'transfer' ) }>{ __( 'Confirm' ) }</NextButton>
+		</div>
 		);
 	}
 
