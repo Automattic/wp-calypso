@@ -3,6 +3,12 @@
 @import '@wordpress/base-styles/colors';
 
 .transfer-page {
+	h1,
+	h2 {
+		color: var( --studio-gray-80 );
+		font-weight: 600;
+	}
+
 	header.formatted-header {
 		margin-bottom: 24px;
 
@@ -17,6 +23,7 @@
 	}
 
 	.card {
+		color: var( --studio-gray-50 );
 		padding: 16px;
 
 		@include break-mobile {
@@ -91,17 +98,15 @@
 			}
 		}
 	}
-
-	@include breakpoint-deprecated( '>1280px' ) {
-		.layout__column--main {
-			padding-right: 24px;
-		}
 	
-		.layout__column--sidebar {
-			padding-left: 24px;
+	.transfer-page__transfer-lock {
+		margin-top: 8px;
+
+		@include break-mobile {
+			margin-top: 16px;
 		}
 	}
-	
+
 	.transfer-page__transfer-lock-label {
 		display: flex;
 		font-size: $font-body-small;
@@ -114,6 +119,14 @@
 
 	.transfer-page__advanced-transfer-options {
 		margin-top: 24px;
+
+		p {
+			font-size: $font-body-small;
+		}
+
+		.card-heading {
+			margin: 0;
+		}
 	}
 
 	.transfer-page__transfer-lock-placeholder {
@@ -121,5 +134,15 @@
 		width: 120px;
 		margin-bottom: 8px;
 		@include placeholder();
+	}
+
+	@include breakpoint-deprecated( '>1280px' ) {
+		.layout__column--main {
+			padding-right: 24px;
+		}
+	
+		.layout__column--sidebar {
+			padding-left: 24px;
+		}
 	}
 }

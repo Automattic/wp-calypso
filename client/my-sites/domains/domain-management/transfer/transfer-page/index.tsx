@@ -188,6 +188,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 
 		return (
 			<ToggleControl
+				className="transfer-page__transfer-lock"
 				checked={ isDomainLocked }
 				disabled={ isLockingOrUnlockingDomain }
 				onChange={ isDomainLocked ? unlockDomainHandler : lockDomainHandler }
@@ -199,9 +200,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const renderAdvancedTransferOptions = () => {
 		return (
 			<Card className="transfer-page__advanced-transfer-options">
-				<CardHeading size={ 16 } isBold={ true }>
-					Advanced Options
-				</CardHeading>
+				<CardHeading size={ 16 }>Advanced Options</CardHeading>
 				{ renderTransferLock() }
 				<p>
 					{ __(
