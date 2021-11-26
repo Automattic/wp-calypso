@@ -457,6 +457,19 @@
 }
 .list__status-cell {
 	flex: 40 40 0;
+	&__bubble {
+		display: flex;
+		width: 20px;
+		background: #d67709;
+		border-radius: 16px;
+		justify-content: center;
+		align-items: center;
+		color: #ffffff;
+		font-size: 12px;
+		height: 18px;
+		margin: 0 4px;
+		line-height: 20px;
+	}
 }
 .list__registered-until-cell {
 	flex: 50 50 0;
