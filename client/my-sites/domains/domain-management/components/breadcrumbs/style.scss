@@ -12,7 +12,7 @@
 	right: 0px;
 	border-bottom: 1px solid #dcdcde;
 	
-	@media screen and ( min-width: 783px ) {
+	@media screen and ( min-width: $break-medium + 1 ) {
 		left: var( --sidebar-width-min );
 	}
 	
@@ -173,7 +173,7 @@
 }
 
 .breadcrumbs__spacer {
-	height: 93px;
+	height: 85px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		height: 57px;
