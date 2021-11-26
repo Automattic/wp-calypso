@@ -20,7 +20,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 	};
 
 	return (
-		<div class="videos-ui__footer-bar">
+		<div className="videos-ui__footer-bar">
 			<div
 				className={ classNames( 'videos-ui__bar videos-ui__modal-footer-bar', {
 					'videos-ui__course-completed': isCourseComplete,
