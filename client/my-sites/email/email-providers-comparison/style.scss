@@ -177,7 +177,7 @@
 				color: var( --color-text-subtle );
 
 				&.email-providers-comparison__discounted-price {
-					color: var( --studio-gray-100 );
+					color: var( --studio-green-50 );
 					text-decoration: none;
 				}
 
@@ -209,6 +209,11 @@
 
 			.email-providers-comparison__discount-and-free-trial {
 				display: block;
+			}
+
+			.email-providers-comparison__discount-with-renewal .info-popover {
+				margin-left: 2px;
+				vertical-align: text-top;
 			}
 		}
 	}
