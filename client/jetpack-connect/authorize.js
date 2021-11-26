@@ -154,8 +154,8 @@ export class JetpackAuthorize extends Component {
 		if ( this.isJetpackPartnerCoupon( nextProps ) && ( siteReceived || authorizeSuccess ) ) {
 			// The current implementation of the partner coupon URL is supposed to
 			// just take over the entire flow and send directly to checkout.
-			// This will happen by the partnerCouponRedirects controller logic if we just
-			// redirect the customer without any special conditions.
+			// This will happen by the partnerCouponRedirects controller logic if we
+			// just redirect the customer to the plans page.
 			// The reason we have to do this is because e.g. "shouldRedirectJetpackStart" has
 			// logic that will always go straight to the redirect URI after authorization which
 			// means we never hit the "plans" page where our partner coupon logic takes over.
@@ -217,7 +217,13 @@ export class JetpackAuthorize extends Component {
 
 	redirect() {
 		const { isMobileAppFlow, mobileAppRedirect } = this.props;
-		const { from, redirectAfterAuth, scope, closeWindowAfterAuthorize } = this.props.authQuery;
+		const {
+			from,
+			homeUrl,
+			redirectAfterAuth,
+			scope,
+			closeWindowAfterAuthorize,
+		} = this.props.authQuery;
 		const { isRedirecting } = this.state;
 
 		if ( isRedirecting ) {
@@ -241,12 +247,15 @@ export class JetpackAuthorize extends Component {
 		if ( this.isJetpackPartnerCoupon() ) {
 			// The current implementation of the partner coupon URL is supposed to
 			// just take over the entire flow and send directly to checkout.
-			// This will happen by the partnerCouponRedirects controller logic if we just
-			// redirect the customer without any special conditions.
+			// This will happen by the partnerCouponRedirects controller logic if we
+			// just redirect the customer to the plans page.
 			// The reason we have to do this is because e.g. "shouldRedirectJetpackStart" has
 			// logic that will always go straight to the redirect URI after authorization which
 			// means we never hit the "plans" page where our partner coupon logic takes over.
-			const redirectionTarget = this.getRedirectionTarget();
+			const redirectionTarget = addQueryArgs(
+				{ redirect: redirectAfterAuth },
+				`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+			);
 			debug( `Jetpack Partner Coupon Redirecting to: ${ redirectionTarget }` );
 			navigate( redirectionTarget );
 		} else if (
