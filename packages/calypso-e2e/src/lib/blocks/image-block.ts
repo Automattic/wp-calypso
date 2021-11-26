@@ -3,8 +3,6 @@ import { Page, ElementHandle } from 'playwright';
 const selectors = {
 	block: '.wp-block-image',
 	fileInput: '.components-form-file-upload input[type="file"]',
-	spinner: '.components-spinner',
-
 	// Use the attribute CSS selector to perform partial match, beginning with the filename.
 	// If a file with the same name already exists in the Media Gallery, WPCOM resolves this clash
 	// by appending a numerical postfix (eg. <original-filename>-2).
@@ -32,13 +30,14 @@ export class ImageBlock {
 	/**
 	 * Uplaods the target file at the supplied path to WPCOM.
 	 *
-	 * @param {string} path Path to the file on disk.
+	 * @param {string} filePath Path to the file on disk.
 	 */
-	async upload( path: string ): Promise< void > {
+	async upload( filePath: string ): Promise< void > {
 		const input = await this.block.waitForSelector( selectors.fileInput, { state: 'attached' } );
-		await input.setInputFiles( path );
+		await input.setInputFiles( filePath );
+
 		await Promise.all( [
-			this.block.waitForSelector( selectors.spinner, { state: 'hidden' } ),
+			this.block.waitForSelector( 'img:not([src^="blob:"])' ),
 			this.block.waitForElementState( 'stable' ),
 		] );
 	}
