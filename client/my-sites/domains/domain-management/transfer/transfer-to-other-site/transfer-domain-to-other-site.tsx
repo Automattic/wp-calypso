@@ -111,18 +111,10 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	};
 
 	getMessage(): i18nCalypso.TranslateResult {
-		const { selectedDomainName: domainName, isMapping, translate } = this.props;
+		const { selectedDomainName: domainName, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
-
-		if ( isMapping ) {
-			return translate(
-				"Please choose a site you're an administrator on to transfer domain mapping for {{strong}}%(domainName)s{{/strong}} to:",
-				translateArgs
-			);
-		}
-
 		return translate(
-			"Please choose a site you're an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:",
+			"Transfer {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
 			translateArgs
 		);
 	}
