@@ -9,6 +9,7 @@
 		.site-selector {
 			.search {
 				margin: 0;
+				min-height: 40px;
 			}
 
 			&__sites {
@@ -35,6 +36,14 @@
 					}
 				}
 			}
+		}
+	}
+
+	&__container {
+		margin: 16px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin: 0;
 		}
 	}
 
