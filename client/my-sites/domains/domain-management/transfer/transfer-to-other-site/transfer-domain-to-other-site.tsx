@@ -3,14 +3,20 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import wp from 'calypso/lib/wp';
+import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import { domainManagementList, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainManagementTransfer,
+} from 'calypso/my-sites/domains/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -24,6 +30,8 @@ import type {
 	TransferDomainToOtherSiteProps,
 	TransferDomainToOtherSiteStateProps,
 } from './types';
+
+import './style.scss';
 
 const wpcom = wp.undocumented();
 
@@ -120,30 +128,66 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	}
 
 	render(): JSX.Element {
-		const { selectedSite, selectedDomainName, currentRoute, isMapping } = this.props;
+		const { selectedSite, selectedDomainName, currentRoute, translate } = this.props;
 		const { slug } = selectedSite;
+		const componentClassName = 'transfer-to-other-site';
 		if ( ! this.isDataReady() ) {
 			return (
 				<DomainMainPlaceholder
+					breadcrumbs={ this.renderBreadcrumbs }
 					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				/>
 			);
 		}
 
 		return (
-			<Main className="transfer-to-other-site">
-				<Header
-					selectedDomainName={ selectedDomainName }
-					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
-				>
-					{ isMapping
-						? this.props.translate( 'Transfer Domain Mapping To Another Site' )
-						: this.props.translate( 'Transfer Domain To Another Site' ) }
-				</Header>
-				{ this.renderSection() }
+			<Main wideLayout className={ componentClassName }>
+				<BodySectionCssClass
+					bodyClass={ [ componentClassName ] }
+					group={ componentClassName }
+					section={ componentClassName }
+				/>
+				{ this.renderBreadcrumbs() }
+				<FormattedHeader
+					hasScreenOptions={ false }
+					brandFont
+					headerText={ translate( 'Transfer to another WordPress.com site' ) }
+					align="left"
+				/>
+				<div className={ `${ componentClassName }__container` }>
+					<div className={ `${ componentClassName }__main` }>{ this.renderSection() }</div>
+				</div>
 			</Main>
 		);
 	}
+
+	renderBreadcrumbs = (): JSX.Element => {
+		const { translate, selectedSite, selectedDomainName, currentRoute } = this.props;
+
+		const items = [
+			{
+				label: translate( 'Domains' ),
+				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+			},
+			{
+				label: selectedDomainName,
+				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+			},
+			{
+				label: translate( 'Transfer' ),
+				href: domainManagementTransfer( selectedSite.slug, selectedDomainName, currentRoute ),
+			},
+			{ label: translate( 'To another WordPress.com site' ) },
+		];
+
+		const mobileItem = {
+			label: translate( 'Back to Transfer' ),
+			href: domainManagementTransfer( selectedSite.slug, selectedDomainName, currentRoute ),
+			showBackArrow: true,
+		};
+
+		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+	};
 
 	renderSection(): JSX.Element {
 		const { currentUserCanManage, selectedDomainName } = this.props;
@@ -157,6 +201,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				<Card className="transfer-to-other-site__card">
 					<p>{ this.getMessage() }</p>
 					<SiteSelector
+						className={ 'transfer-to-other-site__site-selector' }
 						filter={ this.isSiteEligible }
 						sites={ this.props.sites }
 						onSiteSelect={ this.handleSiteSelect }

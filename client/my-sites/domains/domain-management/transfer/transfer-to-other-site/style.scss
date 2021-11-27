@@ -1,0 +1,44 @@
+@import '@wordpress/base-styles/colors';
+
+.transfer-to-other-site {
+	&__card {
+		padding: 0;
+		box-shadow: none;
+		background: transparent;
+
+		.site-selector {
+			.search {
+				margin: 0;
+			}
+
+			&__sites {
+				border-top: none;
+			}
+
+			&__sites {
+				background: transparent;
+				margin: 0;
+
+				.site {
+					padding: 24px 16px;
+
+					&__content {
+						padding: 0;
+					}
+
+					& ~ .site {
+						border-top: 1px solid var( --studio-gray-5 );
+					}
+
+					&__title::after, &__domain::after {
+						background: none;
+					}
+				}
+			}
+		}
+	}
+
+	.site-selector.is-large .site-selector__sites {
+		border-top: none;
+	}
+}
