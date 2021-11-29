@@ -388,7 +388,7 @@ export class UserStep extends Component {
 
 	userCreationCompletedWithAndHasHistory( props ) {
 		return (
-			props.step && 'completed' === props.step.status && detectHistoryNavigation.loadedViaHistory()
+			'completed' === props.step?.status && detectHistoryNavigation.loadedViaHistory()
 		);
 	}
 
