@@ -115,7 +115,7 @@ This is the longest and most arduous portion of the process.
 
 In some cases, this will be straightforward - all required methods would have been implemented in page objects already. In other cases, it may be required to implement new page objects from scratch.
 
-For guide on how writing page objects, components and flows please refer to the [PLACEHOLDER]() page.
+For guide on how writing page objects, components and flows please refer to the [Library Objects](library_objects.md) page.
 
 ## Top-level `describe` block
 

@@ -16,7 +16,6 @@
         - [Avoid modla verbs](#avoid-modla-verbs)
         - [Prefer smaller steps](#prefer-smaller-steps)
     - [Destructure parameters](#destructure-parameters)
-    - [](#)
 
 <!-- /TOC -->
 
@@ -295,5 +294,3 @@ constructor( selector: string, { visit = true, culture = 'en', flow = '', domain
 
 const startPage = new StartPage( selector, { visit: true, domainFirst: true } ).displayed();
 ```
-
----
