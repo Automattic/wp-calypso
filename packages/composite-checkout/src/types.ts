@@ -108,6 +108,7 @@ export interface CheckoutProviderProps {
 	onPaymentRedirect?: PaymentEventCallback;
 	onPaymentError?: PaymentErrorCallback;
 	onPageLoadError?: CheckoutPageErrorCallback;
+	onStepChanged?: StepChangedCallback;
 	onEvent?: ( event: ReactStandardAction ) => void;
 	isLoading?: boolean;
 	redirectToUrl?: ( url: string ) => void;
@@ -121,6 +122,7 @@ export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
+export type StepChangedCallback = ( args: StepChangedEventArguments ) => void;
 export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
 export type PaymentErrorCallback = ( args: {
 	paymentMethodId: string | null;
@@ -131,6 +133,12 @@ export type CheckoutPageErrorCallback = (
 	errorMessage: string,
 	errorData?: Record< string, string | number | undefined >
 ) => void;
+
+export type StepChangedEventArguments = {
+	stepNumber: number | null;
+	previousStepNumber: number;
+	paymentMethodId: string;
+};
 
 export type PaymentEventCallbackArguments = {
 	paymentMethodId: string | null;
