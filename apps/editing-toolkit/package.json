@@ -58,6 +58,7 @@
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/page-pattern-modal": "workspace:^",
 		"@automattic/plans-grid": "workspace:^",
+		"@automattic/tour-kit": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@babel/core": "^7.16.0",
 		"@emotion/react": "^11.4.1",
