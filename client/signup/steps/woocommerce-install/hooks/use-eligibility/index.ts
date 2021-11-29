@@ -11,7 +11,6 @@ import {
 	EligibilityWarning,
 } from 'calypso/state/automated-transfer/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
-// import { eligibilityHolds } from 'calypso/state/automated-transfer/constants';
 
 type EligibilityHook = {
 	eligibilityHolds?: string[];
@@ -38,10 +37,9 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	}, [ siteId, dispatch ] );
 
 	// Get eligibility data.
-	const {
-		eligibilityHolds,
-		eligibilityWarnings: allEligibilityWarnings,
-	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
+	const { eligibilityHolds, eligibilityWarnings }: EligibilityData = useSelector( ( state ) =>
+		getEligibility( state, siteId )
+	);
 
 	// Pick the wpcom subdomain.
 	const wpcomDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
@@ -55,20 +53,15 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	);
 
 	// Check whether the wpcom.com subdomain warning is present.
-	const wpcomSubdomainWarning = allEligibilityWarnings?.find(
+	const wpcomSubdomainWarning = eligibilityWarnings?.find(
 		( { id } ) => id === 'wordpress_subdomain'
 	);
 
 	// Plugins warnings
-	const pluginsWarning = allEligibilityWarnings?.filter( ( { type } ) => type === 'plugins' ) || [];
+	const pluginsWarning = eligibilityWarnings?.filter( ( { type } ) => type === 'plugins' ) || [];
 
 	// Widgets warnings
-	const widgetsWarning = allEligibilityWarnings?.filter( ( { type } ) => type === 'widgets' ) || [];
-
-	// Remove warnings.
-	const eligibilityWarnings = allEligibilityWarnings?.filter(
-		( { id } ) => id !== 'wordpress_subdomain'
-	);
+	const widgetsWarning = eligibilityWarnings?.filter( ( { type } ) => type === 'widgets' ) || [];
 
 	return {
 		isFetching,
