@@ -1,11 +1,14 @@
+import path from 'path';
 import { Page } from 'playwright';
+import { DataHelper } from '../..';
 import { NavbarComponent, SidebarComponent } from '../components';
-import { GutenbergEditorPage } from '../pages';
+import { GutenbergEditorPage, LoginPage } from '../pages';
 
 /**
  * Handles all sorts of flows related to starting a new post.
  */
 export class NewPostFlow {
+	private isLoggedIn: boolean;
 	page: Page;
 
 	/**
@@ -15,6 +18,28 @@ export class NewPostFlow {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.isLoggedIn = false;
+	}
+
+	/**
+	 * Starts a new post by directly going to the default site of the given
+	 * account. Logs in if necessary.
+	 *
+	 * @param user The username of the account to start the post with
+	 * @returns An instance of the GutenbergEditorPage class
+	 */
+	async startImmediately( user: string ): Promise< GutenbergEditorPage > {
+		const calypsoURL = DataHelper.getCalypsoURL();
+		const siteHost = DataHelper.getAccountSiteURL( user, { protocol: false } );
+
+		await this.page.goto( path.join( calypsoURL, 'post', siteHost ) );
+
+		if ( ! this.isLoggedIn ) {
+			await new LoginPage( this.page ).fillAndSubmit( { account: user } );
+			this.isLoggedIn = true;
+		}
+
+		return new GutenbergEditorPage( this.page );
 	}
 
 	/**

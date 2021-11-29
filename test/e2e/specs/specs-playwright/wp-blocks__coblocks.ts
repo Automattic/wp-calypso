@@ -1,13 +1,11 @@
 /**
  * @group gutenberg
  */
-import path from 'path';
 import {
 	setupHooks,
 	BrowserHelper,
 	DataHelper,
 	MediaHelper,
-	LoginPage,
 	GutenbergEditorPage,
 	TestFile,
 	ClicktoTweetBlock,
@@ -16,6 +14,7 @@ import {
 	ImageBlock,
 	LogosBlock,
 	PricingTableBlock,
+	NewPostFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
@@ -24,27 +23,17 @@ const user = BrowserHelper.targetCoBlocksEdge()
 	? 'coBlocksSimpleSiteEdgeUser'
 	: 'gutenbergSimpleSiteUser';
 
-const siteHost = DataHelper.getAccountSiteURL( user, { protocol: false } );
-const calypsoURL = DataHelper.getCalypsoURL();
-
-async function startNewPost( page: Page ): Promise< GutenbergEditorPage > {
-	await page.goto( path.join( calypsoURL, 'post', siteHost ) );
-	return new GutenbergEditorPage( page );
-}
-
 describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
-	let gutenbergEditorPage: GutenbergEditorPage;
 	let page: Page;
+	let newPostFlow: NewPostFlow;
+	let gutenbergEditorPage: GutenbergEditorPage;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 		page.on( 'dialog', async ( dialog ) => {
 			await dialog.accept();
 		} );
-	} );
-
-	beforeAll( async () => {
-		await new LoginPage( page ).login( { account: user } );
+		newPostFlow = new NewPostFlow( page );
 	} );
 
 	afterEach( async () => {
@@ -61,12 +50,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 		// Test data
 		const pricingTableBlockPrice = 888;
 		const heroBlockHeading = 'Hero heading';
-		const clicktoTweetBlockTweet =
-			'The foolish man seeks happiness in the distance. The wise grows it under his feet. — James Oppenheim';
+		const clicktoTweetBlockTweet = 'Tweet text';
 
 		beforeAll( async () => {
 			logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-			gutenbergEditorPage = await startNewPost( page );
+			gutenbergEditorPage = await newPostFlow.startImmediately( user );
 		} );
 
 		it( `Insert ${ PricingTableBlock.blockName } block and enter price to left table`, async function () {
@@ -116,7 +104,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 			// Must save as draft first to bypass issue with post-publish panel being auto-dismissed when
 			// ClickToTweet and Logos blocks are present.
 			// See https://github.com/Automattic/wp-calypso/issues/54421.
-			await gutenbergEditorPage.publish( { visit: true, saveDraft: true } );
+			await gutenbergEditorPage.publish( { visit: true } );
 		} );
 
 		// Pass in a 1D array of values or text strings to validate each block.
@@ -144,7 +132,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 			let pricingTableBlock: PricingTableBlock;
 
 			beforeAll( async () => {
-				gutenbergEditorPage = await startNewPost( page );
+				gutenbergEditorPage = await newPostFlow.startImmediately( user );
 			} );
 
 			it( 'Insert Pricing Table block', async function () {
@@ -171,7 +159,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 
 			beforeAll( async () => {
 				imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-				gutenbergEditorPage = await startNewPost( page );
+				gutenbergEditorPage = await newPostFlow.startImmediately( user );
 			} );
 
 			it( `Insert ${ ImageBlock.blockName } block and upload image`, async () => {
