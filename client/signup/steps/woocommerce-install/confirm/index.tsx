@@ -1,7 +1,7 @@
 import { NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
@@ -27,7 +27,20 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		eligibilityHolds,
 		eligibilityWarnings,
 		wpcomSubdomainWarning,
+		siteNeedUpgrade,
 	} = useEligibility( siteId );
+
+	useEffect( () => {
+		if ( isFetching ) {
+			return;
+		}
+
+		if ( ! siteNeedUpgrade ) {
+			return;
+		}
+
+		window.location.href = siteNeedUpgrade;
+	}, [ siteNeedUpgrade, isFetching, wpcomDomain ] );
 
 	const isLoading = ! siteId || isFetching;
 
