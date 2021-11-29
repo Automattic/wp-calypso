@@ -35,12 +35,12 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	const {
 		eligibilityHolds,
 		eligibilityWarnings,
-		isFetchingTransferStatus,
+		isFetching,
 		wpcomSubdomainWarning,
 		stagingDomain,
 	} = useEligibility( siteId );
 
-	const isLoading = ! siteId || isFetchingTransferStatus;
+	const isLoading = ! siteId || isFetching;
 
 	function getWPComSubdomainWarningContent() {
 		return (
