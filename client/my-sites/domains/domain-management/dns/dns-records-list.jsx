@@ -31,7 +31,7 @@ class DnsRecordsList extends Component {
 			<MaterialIcon
 				icon="do_not_disturb"
 				className="gridicon dns-records-list__action-menu-item"
-				viewBox="2 2 20 20"
+				viewBox="0 0 20 20"
 			/>
 		),
 		title: this.props.translate( 'Disable' ),
