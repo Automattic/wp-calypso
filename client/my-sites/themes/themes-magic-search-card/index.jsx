@@ -389,7 +389,6 @@ class ThemesMagicSearchCard extends Component {
 							/>
 						) }
 					</div>
-					{ config.isEnabled( 'themes/premium' ) && <div>Premium Themes Enabled</div> }
 				</StickyPanel>
 			</div>
 		);
