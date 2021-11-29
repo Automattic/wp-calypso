@@ -38,6 +38,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		isFetching,
 		wpcomSubdomainWarning,
 		stagingDomain,
+		pluginsWarning,
+		hasBlockers,
 	} = useEligibility( siteId );
 
 	const isLoading = ! siteId || isFetching;
@@ -61,6 +63,19 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 							<EligibilityWarningsList warnings={ eligibilityWarnings } />
 						</SignupCard>
 					) }
+
+					{ !! pluginsWarning.length && (
+						<p>{ __( 'There are some plugins that would be affected their functionallity.' ) }</p>
+					) }
+
+					{ hasBlockers && (
+						<p>
+							{ __(
+								'This is an erro that is stopping the user from proceeding of the reason why the install failed.'
+							) }
+						</p>
+					) }
+
 					<ActionSection>
 						<p>
 							{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
@@ -69,7 +84,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 						</p>
 						<NextButton
 							isBusy={ isLoading }
-							disabled={ isLoading }
+							disabled={ isLoading || hasBlockers }
 							onClick={ () => goToStep( 'transfer' ) }
 						>
 							{ __( 'Create my Store' ) }
