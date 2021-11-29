@@ -12,8 +12,8 @@ export const useDeleteMediaMutation = ( siteId, queryOptions = {} ) => {
 
 	const deleteMedia = useCallback(
 		( items ) => {
-			items = Array.isArray( items ) ? items : [ items ];
-			items
+			const mediaItems = Array.isArray( items ) ? items : [ items ];
+			mediaItems
 				.filter( ( item ) => typeof item.ID === 'number' )
 				.forEach( ( item ) => mutate( { mediaId: item.ID } ) );
 		},
