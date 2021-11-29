@@ -50,10 +50,10 @@ const useFocusHandler = ( ref: React.MutableRefObject< null | HTMLElement > ): b
 
 		return () => {
 			document.removeEventListener( 'focusin', handleFocus );
-			document.removeEventListener( 'mnousedown', handleMousedown );
+			document.removeEventListener( 'mousedown', handleMousedown );
 			document.removeEventListener( 'keyup', handleKeyup );
 		};
-	}, [ ref.current, handleFocus, handleMousedown, handleKeyup ] );
+	}, [ ref, handleFocus, handleKeyup, handleMousedown ] );
 
 	return hasFocus;
 };
