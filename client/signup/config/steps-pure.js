@@ -797,11 +797,11 @@ export function generateSteps( {
 					</>
 				),
 			},
-			dependencies: [ 'siteId' ],
+			dependencies: [ 'siteSlug' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-			dependencies: [ 'siteId' ],
+			dependencies: [ 'siteSlug' ],
 		},
 	};
 }

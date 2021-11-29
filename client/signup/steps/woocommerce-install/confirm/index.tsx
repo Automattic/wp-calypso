@@ -17,14 +17,18 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { siteId, goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
+	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
+
+	// selectedSiteId is set by the controller whenever a siteSlug or siteId is provided as a query param.
+	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	// Request eligibility data.
 	useEffect( () => {
@@ -62,7 +66,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 	function getWPComSubdomainWarningContent() {
 		// Get staging sudomain based on the wpcom subdomain.
-		const stagingDomain = wpcomDomain?.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+		const stagingDomain = wpcomDomain?.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' );
 
 		return (
 			<>
