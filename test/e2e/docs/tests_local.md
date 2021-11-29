@@ -3,17 +3,17 @@
 <!-- TOC -->
 
 - [Running tests on your machine](#running-tests-on-your-machine)
-    - [Prerequisites](#prerequisites)
-    - [Running tests](#running-tests)
-        - [Individual spec files](#individual-spec-files)
-        - [Group](#group)
+  - [Prerequisites](#prerequisites)
+  - [Running tests](#running-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Group](#group)
 - [Advanced](#advanced)
-    - [Save authentication cookies](#save-authentication-cookies)
-        - [Enable](#enable)
-        - [Disable](#disable)
-    - [Target local webapp](#target-local-webapp)
-    - [Debug mode](#debug-mode)
-    - [Other Notes on TypeScript Test Scripts](#other-notes-on-typescript-test-scripts)
+  - [Save authentication cookies](#save-authentication-cookies)
+    - [Enable](#enable)
+    - [Disable](#disable)
+  - [Target local webapp](#target-local-webapp)
+  - [Debug mode](#debug-mode)
+  - [Other Notes on TypeScript Test Scripts](#other-notes-on-typescript-test-scripts)
 
 <!-- /TOC -->
 

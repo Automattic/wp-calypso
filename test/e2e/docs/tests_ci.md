@@ -3,9 +3,9 @@
 <!-- TOC -->
 
 - [Running tests on CI](#running-tests-on-ci)
-    - [Feature branch](#feature-branch)
-    - [Trunk](#trunk)
-    - [Manually trigger a run](#manually-trigger-a-run)
+  - [Feature branch](#feature-branch)
+  - [Trunk](#trunk)
+  - [Manually trigger a run](#manually-trigger-a-run)
 
 <!-- /TOC -->
 
@@ -37,7 +37,7 @@ The Pre-Release E2E tests are connected directly to the Calypso Deploy page (int
 
 ## Manually trigger a run
 
-Note the `Run` button beside every available build configuration. This is the quickest way to manually trigger a new run. 
+Note the `Run` button beside every available build configuration. This is the quickest way to manually trigger a new run.
 
 Some reasons to trigger a manual run:
 

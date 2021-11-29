@@ -5,9 +5,9 @@ The Playwright [project page](https://playwright.dev/docs/debug/) has in-depth c
 <!-- TOC -->
 
 - [Debugging](#debugging)
-    - [Debug instance](#debug-instance)
-    - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
-    - [Additional notes](#additional-notes)
+  - [Debug instance](#debug-instance)
+  - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
+  - [Additional notes](#additional-notes)
 
 <!-- /TOC -->
 

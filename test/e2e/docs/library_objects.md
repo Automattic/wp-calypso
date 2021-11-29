@@ -7,10 +7,10 @@ For a brief introduction to Page Object Models, please refer to [this page](http
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Distinction](#distinction)
-    - [Components](#components)
-    - [Page](#page)
-    - [Flows](#flows)
+  - [Distinction](#distinction)
+  - [Components](#components)
+  - [Page](#page)
+  - [Flows](#flows)
 
 <!-- /TOC -->
 
@@ -20,7 +20,7 @@ There exists clear distinction between pages and components.
 
 **Components** - these form the smallest unit of functionality in a Page Object Model based library. Components represent functionality that are often embedded across distinct pages. For instance, if a search bar is embedded on multiple pages, the search bar functionality is best abstracted as a SearchBarComponent.
 
-**Pages** - these are the most common objects in a Page Object Model. Each Page contains methods to interact with the page and any necessary helper methods. Selectors to support the methods should also be located in the file, but not as part of the Page object itself. 
+**Pages** - these are the most common objects in a Page Object Model. Each Page contains methods to interact with the page and any necessary helper methods. Selectors to support the methods should also be located in the file, but not as part of the Page object itself.
 
 There is less clear distinction between Pages and Flows and the general recommendation is to prefer Pages unless Flows absolutely make sense.
 
@@ -138,9 +138,9 @@ export class SignupFlow {
 	/**
 	 * JSDoc is expected for methods.
 	 */
-	async signup({user: string, email: string, password: string}): Promise< void > {
+	async signup( { user: string, email: string, password: string } ): Promise< void > {
 		const componentA = new ComponentA( page );
-		await componentA.fillSignupForm(user, email, password);
+		await componentA.fillSignupForm( user, email, password );
 		const pageB = new PageB( page );
 		await pageB.agreeToEULA();
 		await pageB.submit();
@@ -152,5 +152,5 @@ export class SignupFlow {
 // Then in a test file...
 
 const signupFlow = new SignupFlow( page );
-await signupFlow.signup(...params);
+await signupFlow.signup( ...params );
 ```

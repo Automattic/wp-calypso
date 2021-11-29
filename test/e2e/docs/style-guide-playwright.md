@@ -3,19 +3,19 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Variable naming](#variable-naming)
-    - [Use async/await](#use-asyncawait)
-    - [Selectors](#selectors)
-        - [No selectors in class](#no-selectors-in-class)
-        - [Move repetitive selectors out](#move-repetitive-selectors-out)
-        - [Prefer user-facing selectors](#prefer-user-facing-selectors)
-        - [Naming](#naming)
-        - [Aim for stability](#aim-for-stability)
-        - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
-    - [Test steps](#test-steps)
-        - [Avoid modla verbs](#avoid-modla-verbs)
-        - [Prefer smaller steps](#prefer-smaller-steps)
-    - [Destructure parameters](#destructure-parameters)
+  - [Variable naming](#variable-naming)
+  - [Use async/await](#use-asyncawait)
+  - [Selectors](#selectors)
+    - [No selectors in class](#no-selectors-in-class)
+    - [Move repetitive selectors out](#move-repetitive-selectors-out)
+    - [Prefer user-facing selectors](#prefer-user-facing-selectors)
+    - [Naming](#naming)
+    - [Aim for stability](#aim-for-stability)
+    - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
+  - [Test steps](#test-steps)
+    - [Avoid modla verbs](#avoid-modla-verbs)
+    - [Prefer smaller steps](#prefer-smaller-steps)
+  - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
 
@@ -69,7 +69,7 @@ async function openModal() {
 
 ## Selectors
 
-Selectors are the core of automated e2e testing. The Playwright project has an excellent documentation page on [selectors](https://playwright.dev/docs/selectors) and [best practices](https://playwright.dev/docs/selectors#best-practices). 
+Selectors are the core of automated e2e testing. The Playwright project has an excellent documentation page on [selectors](https://playwright.dev/docs/selectors) and [best practices](https://playwright.dev/docs/selectors#best-practices).
 
 Ideally, a selector satisfies all of the following:
 
@@ -96,7 +96,7 @@ class SomeObject() {
 ```typescript
 const selectors = {
 	submitButton: 'button[type="submit"]',
-}
+};
 ```
 
 ### Move repetitive selectors out
@@ -211,15 +211,15 @@ const selectors = {
 	submitButton: ':text("Submit")',
 	cancelButton: ':text("Cancel")',
 	pauseButton: ':text("Pause")',
-}
+};
 ```
 
 **Instead**:
 
 ```typescript
 const selectors = {
-	button: (action: string) => `:text("${action}")`,
-}
+	button: ( action: string ) => `:text("${ action }")`,
+};
 ```
 
 ---
@@ -254,7 +254,7 @@ Prefer more of smaller steps.
 **Avoid**:
 
 ```typescript
-it( 'Log in, select home page and start a search', async function() {
+it( 'Log in, select home page and start a search', async function () {
 	// too many things done here.
 } );
 ```

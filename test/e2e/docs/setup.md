@@ -5,10 +5,10 @@ Follow the [Quick Start](../README.md) guide to install required software.
 <!-- TOC -->
 
 - [Advanced Setup](#advanced-setup)
-    - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
-    - [Apple Silicon arm64](#apple-silicon-arm64)
-    - [Help](#help)
-        - [The chromium binary is not available for arm64](#the-chromium-binary-is-not-available-for-arm64)
+  - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
+  - [Apple Silicon arm64](#apple-silicon-arm64)
+  - [Help](#help)
+    - [The chromium binary is not available for arm64](#the-chromium-binary-is-not-available-for-arm64)
 
 <!-- /TOC -->
 
@@ -83,7 +83,6 @@ CHROMEDRIVER_SKIP_DOWNLOAD=true
 yarn install
 ```
 
-
 ## Help
 
 ### The chromium binary is not available for arm64
@@ -91,8 +90,8 @@ yarn install
 Problem:
 
 ```
-The chromium binary is not available for arm64: 
-If you are on Ubuntu, you can install with: 
+The chromium binary is not available for arm64:
+If you are on Ubuntu, you can install with:
 
  apt-get install chromium-browser
 
@@ -113,8 +112,7 @@ PUPPETEER_SKIP_DOWNLOAD=true
 CHROMEDRIVER_SKIP_DOWNLOAD=true
 ```
 
-Description: 
-This issue occurs for Apple Silicon users. At the time of writing, the version of Puppeteer used in `wp-calypso` pre-dates Apple Silicon. 
+Description:
+This issue occurs for Apple Silicon users. At the time of writing, the version of Puppeteer used in `wp-calypso` pre-dates Apple Silicon.
 
 This issue should go away once Puppeteer version is bumped to an Apple Silicon-compatible version.
-

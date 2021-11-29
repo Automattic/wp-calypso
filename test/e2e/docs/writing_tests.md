@@ -3,16 +3,16 @@
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-    - [Example](#example)
-    - [Quick start](#quick-start)
-    - [Top-level describe block](#top-level-describe-block)
-    - [Child-level describe blocks](#child-level-describe-blocks)
-    - [Test step](#test-step)
-    - [Hooks](#hooks)
-    - [Block Smoke Testing](#block-smoke-testing)
-        - [Overview](#overview)
-        - [How To](#how-to)
-        - [Examples](#examples)
+  - [Example](#example)
+  - [Quick start](#quick-start)
+  - [Top-level describe block](#top-level-describe-block)
+  - [Child-level describe blocks](#child-level-describe-blocks)
+  - [Test step](#test-step)
+  - [Hooks](#hooks)
+  - [Block Smoke Testing](#block-smoke-testing)
+    - [Overview](#overview)
+    - [How To](#how-to)
+    - [Examples](#examples)
 
 <!-- /TOC -->
 
@@ -111,7 +111,7 @@ The current suites used are...
 
 4. Populate test steps.
 
-This is the longest and most arduous portion of the process. 
+This is the longest and most arduous portion of the process.
 
 In some cases, this will be straightforward - all required methods would have been implemented in page objects already. In other cases, it may be required to implement new page objects from scratch.
 

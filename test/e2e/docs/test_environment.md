@@ -3,11 +3,11 @@
 <!-- TOC -->
 
 - [Test Environment](#test-environment)
-    - [Environment Variables](#environment-variables)
-    - [Secrets file](#secrets-file)
-    - [Non-secret configuration file](#non-secret-configuration-file)
-        - [Default config](#default-config)
-        - [Custom configs](#custom-configs)
+  - [Environment Variables](#environment-variables)
+  - [Secrets file](#secrets-file)
+  - [Non-secret configuration file](#non-secret-configuration-file)
+    - [Default config](#default-config)
+    - [Custom configs](#custom-configs)
 
 <!-- /TOC -->
 
@@ -21,6 +21,7 @@ export CONFIG_KEY=<decryption_key_from_a8c_store>
 ```
 
 Optional:
+
 ```
 export SAVE_AUTH_COOKIES=<true/false>
 ```
@@ -29,7 +30,7 @@ For a list of supported environment variables, please refer to [this page](envir
 
 ## Secrets file
 
-Within `test/e2e/config` is an encrypted file that holds test account credentials. This must be decrypted prior to use. 
+Within `test/e2e/config` is an encrypted file that holds test account credentials. This must be decrypted prior to use.
 
 **Automatticians**: please refer to the Field Guide page for instructions on decrypting this file.
 
@@ -59,7 +60,7 @@ Custom config files should be added under `test/e2e/config/` and should follow t
 local-<whatever>.json
 ```
 
-The `local-` prefix ensures that custom configurations [will be ignored][https://github.com/Automattic/wp-calypso/blob/trunk/test/e2e/.gitignore#L12].
+The `local-` prefix ensures that custom configurations [will be ignored][https://github.com/automattic/wp-calypso/blob/trunk/test/e2e/.gitignore#l12].
 
 Values found in the local configuration file will override ones found in `default.json`.
 
