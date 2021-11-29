@@ -49,4 +49,18 @@
 		margin-top: -0.05em;
 		text-transform: uppercase;
 	}
+
+	.designs__has-categories {
+		@include onboarding-heading-padding;
+		margin-bottom: 0;
+
+		.designs__header {
+			margin-top: 24px;
+			margin-bottom: 40px;
+		}
+
+		.designs__heading-title {
+			margin-bottom: 12px;
+		}
+	}
 }
