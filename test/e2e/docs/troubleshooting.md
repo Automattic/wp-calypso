@@ -1,7 +1,5 @@
 # Troubleshooting & Debugging
 
-## Table of contents
-
 <!-- TOC -->
 
 - [Troubleshooting & Debugging](#troubleshooting--debugging)

@@ -1,11 +1,8 @@
 # Overview
 
-## Table of contents
-
 <!-- TOC -->
 
 - [Overview](#overview)
-    - [Table of contents](#table-of-contents)
     - [What is this?](#what-is-this)
     - [Our Goals](#our-goals)
     - [What is tested?](#what-is-tested)

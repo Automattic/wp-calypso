@@ -1,11 +1,8 @@
 # Test Environment
 
-## Table of contents
-
 <!-- TOC -->
 
 - [Test Environment](#test-environment)
-    - [Table of contents](#table-of-contents)
     - [Environment Variables](#environment-variables)
     - [Secrets file](#secrets-file)
     - [Non-secret configuration file](#non-secret-configuration-file)
@@ -27,6 +24,8 @@ Optional:
 ```
 export SAVE_AUTH_COOKIES=<true/false>
 ```
+
+For a list of supported environment variables, please refer to [this page](environment_variables.md).
 
 ## Secrets file
 
