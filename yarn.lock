@@ -165,7 +165,7 @@ __metadata:
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   bin:
     calypso-build: ./bin/calypso-build.js
     copy-assets: ./bin/copy-assets.js
@@ -325,7 +325,7 @@ __metadata:
     style-loader: ^1.2.1
     typescript: ^4.4.4
     utility-types: ^3.10.0
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -357,7 +357,7 @@ __metadata:
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
     typescript: ^4.4.4
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -432,7 +432,7 @@ __metadata:
     tslib: ^2.3.0
     typescript: ^4.4.4
     utility-types: ^3.10.0
-    webpack: ^5.63.0
+    webpack: ^5.64.4
   peerDependencies:
     "@wordpress/data": ^6.1.4
     "@wordpress/element": ^4.0.4
@@ -680,7 +680,7 @@ __metadata:
     redux: ^4.1.2
     tslib: ^2.3.0
     typescript: ^4.4.4
-    webpack: ^5.63.0
+    webpack: ^5.64.4
   languageName: unknown
   linkType: soft
 
@@ -820,7 +820,7 @@ __metadata:
     react-redux: ^7.2.6
     redux: ^4.1.2
     redux-thunk: ^2.3.0
-    webpack: ^5.64.1
+    webpack: ^5.64.4
     webpack-dev-server: ^4.5.0
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -857,7 +857,7 @@ __metadata:
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
     redux: ^4.1.2
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   languageName: unknown
   linkType: soft
 
@@ -1018,7 +1018,7 @@ __metadata:
     style-loader: ^1.2.1
     tslib: ^2.3.0
     typescript: ^4.4.4
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -1141,7 +1141,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: ^3.0.0
   peerDependencies:
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   languageName: unknown
   linkType: soft
 
@@ -1152,7 +1152,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     semver: ^7.0.0
   peerDependencies:
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   languageName: unknown
   linkType: soft
 
@@ -1163,9 +1163,9 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: ^3.0.0
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   peerDependencies:
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   languageName: unknown
   linkType: soft
 
@@ -1178,9 +1178,9 @@ __metadata:
     css-loader: ^5.2.7
     mini-css-extract-plugin: ^1.6.0
     rtlcss: ^3.1.2
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   peerDependencies:
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   languageName: unknown
   linkType: soft
 
@@ -1271,7 +1271,7 @@ __metadata:
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tinymce: ^5.0.0
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   languageName: unknown
   linkType: soft
 
@@ -1377,7 +1377,7 @@ __metadata:
     redux: ^4.1.2
     utility-types: ^3.10.0
     wait-for-expect: ^3.0.2
-    webpack: ^5.64.1
+    webpack: ^5.64.4
   languageName: unknown
   linkType: soft
 
@@ -9453,7 +9453,7 @@ __metadata:
     react-dom: ^17.0.2
     semver: ^7.3.2
     superagent: ^3.8.3
-    webpack: ^5.64.1
+    webpack: ^5.64.4
     webpack-cli: ^4.9.1
     winston: ^3.3.3
     wpcom-xhr-request: "workspace:^"
@@ -12141,7 +12141,7 @@ __metadata:
     utility-types: ^3.10.0
     uuid: ^8.3.2
     valid-url: ^1.0.9
-    webpack: ^5.64.1
+    webpack: ^5.64.4
     webpack-bundle-analyzer: ^4.5.0
     webpack-dev-middleware: ^5.2.2
     webpack-hot-middleware: ^2.25.1
@@ -37549,13 +37549,13 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"watchpack@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "watchpack@npm:2.2.0"
+"watchpack@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "watchpack@npm:2.3.0"
   dependencies:
     glob-to-regexp: ^0.4.1
     graceful-fs: ^4.1.2
-  checksum: 4ea76d262f5f3110fdcb71a26c2ca0be39e7e7b566d30215f6a8f5a59501e2143a35bb075526848177aac29d04952f27272724e9342adbd4751e609ad4768124
+  checksum: 74d6de0a60efcdf01139faa8cec2280bb2d03f61b59256a7da8e4699374dee5438bf9a45a918651ca68e87063ae5350c447195917149fa3458418d2006257726
   languageName: node
   linkType: hard
 
@@ -37893,9 +37893,9 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.47.1, webpack@npm:^5.63.0, webpack@npm:^5.64.1, webpack@npm:^5.9.0":
-  version: 5.64.1
-  resolution: "webpack@npm:5.64.1"
+"webpack@npm:^5.47.1, webpack@npm:^5.63.0, webpack@npm:^5.64.4, webpack@npm:^5.9.0":
+  version: 5.64.4
+  resolution: "webpack@npm:5.64.4"
   dependencies:
     "@types/eslint-scope": ^3.7.0
     "@types/estree": ^0.0.50
@@ -37919,14 +37919,14 @@ testarmada-magellan@11.0.10:
     schema-utils: ^3.1.0
     tapable: ^2.1.1
     terser-webpack-plugin: ^5.1.3
-    watchpack: ^2.2.0
+    watchpack: ^2.3.0
     webpack-sources: ^3.2.2
   peerDependenciesMeta:
     webpack-cli:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 9021a2d4de3596374175284f1d3ac0bf7e742895de6f308f80f82e4b3866864ad0d3f0384167c281396189e8b7dece20374f6b57b828f80e1e8019745212445a
+  checksum: b79c0125ea252e27bbf45c73887f0ecff179c905b343a20ff5927d10006fa1162b289b9a9a8b0b81a7eae69ba9a79c7a1971547b19c07f65ac31494fffefbe4e
   languageName: node
   linkType: hard
 
@@ -38377,7 +38377,7 @@ testarmada-magellan@11.0.10:
     tree-kill: ^1.2.2
     tslib: ^2.3.0
     typescript: ^4.4.4
-    webpack: ^5.64.1
+    webpack: ^5.64.4
     webpack-bundle-analyzer: ^4.5.0
     webpack-cli: ^4.9.1
     webpack-dev-middleware: ^5.2.2
@@ -38509,7 +38509,7 @@ testarmada-magellan@11.0.10:
     debug: ^4.1.1
     npm-run-all: ^4.1.5
     qs: ^6.5.2
-    webpack: ^5.64.1
+    webpack: ^5.64.4
     webpack-cli: ^4.9.1
     wpcom-oauth-cors: ^1.0.2-beta
     wpcom-proxy-request: "workspace:^"
