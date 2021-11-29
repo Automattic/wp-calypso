@@ -1,3 +1,4 @@
+import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -11,6 +12,8 @@ import {
 	EligibilityData,
 	EligibilityWarning,
 } from 'calypso/state/automated-transfer/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 const TRANSFERRING_NOT_BLOCKERS = [
@@ -29,6 +32,7 @@ type EligibilityHook = {
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
 	transferringBlockers: string[];
 	hasBlockers: boolean;
+	siteNeedUpgrade: string | false;
 };
 
 export default function useEligibility( siteId: number ): EligibilityHook {
@@ -75,6 +79,31 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const transferringBlockers =
 		eligibilityHolds?.filter( ( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold ) ) || [];
 
+	/*
+	 * Plan site and `woop` site feature.
+	 * If the eligibility holds contains `NO_BUSINESS_PLAN`,
+	 * if the site doesn't have the `woop` feature,
+	 * and if the site has the `woop` feature upgradaable,
+	 * then the site needs to be upgraded.
+	 */
+	const eligibilityNoProperPlan = eligibilityHolds?.includes(
+		eligibilityHoldsConstants.NO_BUSINESS_PLAN
+	);
+	const isWoopFeatureActive = useSelector( ( state ) =>
+		hasActiveSiteFeature( state, siteId, FEATURE_WOOP )
+	);
+	const hasWoopFeatureAvailable = useSelector( ( state ) =>
+		hasAvailableSiteFeature( state, siteId, FEATURE_WOOP )
+	);
+
+	const siteNeedUpgrade = ! (
+		eligibilityNoProperPlan &&
+		! isWoopFeatureActive &&
+		hasWoopFeatureAvailable
+	)
+		? false
+		: `/woocommerce-installation/${ wpcomDomain }`;
+
 	return {
 		isFetching,
 		eligibilityHolds,
@@ -87,5 +116,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 
 		transferringBlockers,
 		hasBlockers: !! transferringBlockers.length,
+		siteNeedUpgrade,
 	};
 }
