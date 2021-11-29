@@ -218,10 +218,10 @@ const MarketplacePluginInstall = ( {
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
 					title={ translate(
-						'This URL should not be accessed directly. Please click the Install button on the plugin page.'
+						"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
 					) }
-					action={ translate( 'Go to the plugin page' ) }
-					actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
+					action={ translate( 'Upgrade to Business Plan' ) }
+					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
 				/>
 			);
 		}
