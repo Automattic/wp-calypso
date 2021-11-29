@@ -214,3 +214,7 @@ export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 export const isReskinnedFlow = ( flowName ) => {
 	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
 };
+
+export const isP2Flow = ( flowName ) => {
+	return flowName === 'p2' || flowName === 'p2-new';
+};

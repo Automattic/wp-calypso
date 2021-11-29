@@ -28,8 +28,6 @@ import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/ac
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import getPreviousPath from '../../../../state/selectors/get-previous-path';
 
-const wpcom = wp.undocumented();
-
 import './style.scss';
 
 class EditContactInfoFormCard extends Component {
@@ -283,8 +281,7 @@ class EditContactInfoFormCard extends Component {
 
 		const { email } = newContactDetails;
 		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
-			wpcom
-				.me()
+			wp.me()
 				.settings()
 				.update( { user_email: email } )
 				.then( ( data ) => {

@@ -2,6 +2,7 @@ import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	isFetchingAutomatedTransferStatus,
@@ -11,15 +12,12 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { hasUploadFailed } from 'calypso/state/themes/upload-theme/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { GoToStep } from '../../../types';
+import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
 
-interface Props {
-	goToStep: GoToStep;
-}
-
-export default function Transfer( { goToStep }: Props ): ReactElement | null {
+export default function Transfer( props: WooCommerceInstallProps ): ReactElement | null {
+	const { goToStep, isReskinned } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -99,12 +97,12 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 	const [ simulatedProgress, setSimulatedProgress ] = useState( 0.01 );
 	useEffect( () => {
 		const timeOutReference = setTimeout( () => {
-			if ( progress > simulatedProgress ) {
+			if ( progress > simulatedProgress || progress === 1 ) {
 				setSimulatedProgress( progress );
-			} else if ( simulatedProgress <= 1 ) {
+			} else if ( simulatedProgress < 1 ) {
 				setSimulatedProgress( ( previousProgress ) => {
-					// Stall at 95%, allow complete to finish up
 					let newProgress = previousProgress + Math.random() * 0.05;
+					// Stall at 95%, allow complete to finish up
 					if ( newProgress >= 0.95 ) {
 						newProgress = 0.95;
 					}
@@ -125,20 +123,33 @@ export default function Transfer( { goToStep }: Props ): ReactElement | null {
 	}, [ simulatedProgress, progress, __ ] );
 
 	return (
-		<div className="transfer__step-wrapper">
-			<div className="transfer__heading-wrapper woocommerce-install__heading-wrapper">
-				<div className="transfer__heading woocommerce-install__heading">
-					<Title>{ step }</Title>
-				</div>
-			</div>
-			<div className="transfer__content woocommerce-install__content">
-				{ error.transferFailed && 'error...' /* todo */ }
-				{ error.transferFailed && error.transferStatus }
-				<div
-					className="transfer__progress-bar"
-					style={ { '--progress': simulatedProgress } as React.CSSProperties }
-				/>
-			</div>
-		</div>
+		<StepWrapper
+			flowName="woocommerce-install"
+			hideSkip={ true }
+			nextLabelText={ __( 'Confirm' ) }
+			allowBackFirstStep={ true }
+			backUrl="/woocommerce-installation"
+			hideFormattedHeader={ true }
+			className="transfer__step-wrapper"
+			isWideLayout={ isReskinned }
+			stepContent={
+				<>
+					<div className="transfer__heading-wrapper woocommerce-install__heading-wrapper">
+						<div className="transfer__heading woocommerce-install__heading">
+							<Title>{ step }</Title>
+						</div>
+					</div>
+					<div className="transfer__content woocommerce-install__content">
+						{ error.transferFailed && 'error...' /* todo */ }
+						{ error.transferFailed && error.transferStatus }
+						<div
+							className="transfer__progress-bar"
+							style={ { '--progress': simulatedProgress } as React.CSSProperties }
+						/>
+					</div>
+				</>
+			}
+			{ ...props }
+		/>
 	);
 }

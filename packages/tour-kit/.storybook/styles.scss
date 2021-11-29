@@ -1,0 +1,40 @@
+.storybook-tour {
+    .storybook-tour__step {
+        padding: 10px;
+    }
+
+    .storybook-tour__step-controls {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+}
+
+.storybook-tour__references {
+    display: flex;
+    margin-bottom: 30px;
+    row-gap: 10px;
+    column-gap: 1em;
+    flex-wrap: wrap;
+
+    .storybook-tour__references-a,
+    .storybook-tour__references-b,
+    .storybook-tour__references-c {
+        width: 120px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .storybook-tour__references-a {
+        background-color: orange;
+    }
+
+    .storybook-tour__references-b {
+        background-color: silver;
+    }
+
+    .storybook-tour__references-c {
+        background-color: palevioletred;
+    }
+}

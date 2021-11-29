@@ -28,11 +28,14 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
+import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -123,6 +126,7 @@ export default function CompositeCheckout( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 } ): JSX.Element {
+	const previousPath = useSelector( getPreviousPath );
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
 		useSelector(
@@ -580,6 +584,59 @@ export default function CompositeCheckout( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
+	// The goToPreviousPage function and subsequent conditional statement controls the 'back' button functionality on the empty cart page
+
+	const checkoutBackUrl = useValidCheckoutBackUrl( updatedSiteSlug );
+
+	const goToPreviousPage = useCallback( () => {
+		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
+
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_empty_cart_clicked' ) );
+
+		if ( checkoutBackUrl ) {
+			window.location.href = checkoutBackUrl;
+			return;
+		}
+
+		if (
+			previousPath &&
+			'' !== previousPath &&
+			previousPath !== window.location.href &&
+			! previousPath.includes( '/checkout/' )
+		) {
+			closeUrl = previousPath;
+		}
+
+		try {
+			const searchParams = new URLSearchParams( window.location.search );
+
+			if ( searchParams.has( 'signup' ) ) {
+				clearSignupDestinationCookie();
+			}
+
+			// Some places that open checkout (eg: purchase page renewals) return the
+			// user there after checkout by putting the previous page's path in the
+			// `redirect_to` query param. When leaving checkout via the close button,
+			// we probably want to return to that location also.
+			if ( searchParams.has( 'redirect_to' ) ) {
+				const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
+				// Only allow redirecting to relative paths.
+				if ( redirectPath.startsWith( '/' ) ) {
+					page( redirectPath );
+					return;
+				}
+			}
+		} catch ( error ) {
+			// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
+			console.error( 'Error getting query string in close button' ); // eslint-disable-line no-console
+		}
+		if ( closeUrl.startsWith( '/' ) ) {
+			page( closeUrl );
+			return;
+		}
+		window.location.href = closeUrl;
+	}, [ siteSlug, checkoutBackUrl, previousPath, reduxDispatch ] );
+
 	if (
 		shouldShowEmptyCartPage( {
 			responseCart,
@@ -590,16 +647,7 @@ export default function CompositeCheckout( {
 		} )
 	) {
 		debug( 'rendering empty cart page' );
-		const goToPlans = () => {
-			recordEvent( {
-				type: 'EMPTY_CART_CTA_CLICKED',
-			} );
-			if ( updatedSiteSlug ) {
-				page( `/plans/${ updatedSiteSlug }` );
-			} else {
-				page( '/plans' );
-			}
-		};
+
 		return (
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
@@ -608,8 +656,8 @@ export default function CompositeCheckout( {
 						<CheckoutStepAreaWrapper>
 							<EmptyCart />
 							<SubmitButtonWrapper>
-								<Button buttonType="primary" fullWidth onClick={ goToPlans }>
-									{ translate( 'Browse our plans' ) }
+								<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
+									{ translate( 'Go back' ) }
 								</Button>
 							</SubmitButtonWrapper>
 						</CheckoutStepAreaWrapper>

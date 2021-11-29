@@ -24,14 +24,18 @@ class PluginAction extends Component {
 		}
 
 		return (
+			/* eslint-disable jsx-a11y/click-events-have-key-events */
+			/* eslint-disable jsx-a11y/no-static-element-interactions */
 			<span
-				className="plugin-action__label"
+				className={ classNames( 'plugin-action__label', { hide: this.props.hideLabel } ) }
 				ref={ this.disabledInfoLabelRef }
 				onClick={ this.handleAction }
 			>
 				{ this.props.label }
 				{ this.renderDisabledInfo() }
 			</span>
+			/* eslint-enable jsx-a11y/click-events-have-key-events */
+			/* eslint-enable jsx-a11y/no-static-element-interactions */
 		);
 	}
 
@@ -66,6 +70,7 @@ class PluginAction extends Component {
 				disabled={ this.props.inProgress || this.props.disabled || !! this.props.disabledInfo }
 				id={ this.props.htmlFor }
 				label={ this.renderLabel() }
+				aria-label={ this.props.label }
 			/>
 		);
 	}

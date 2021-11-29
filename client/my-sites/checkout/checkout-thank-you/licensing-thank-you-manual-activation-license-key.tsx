@@ -72,7 +72,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 				title="Checkout > Jetpack Thank You Licensing Manual Activation License Key"
 			/>
 			<LicensingActivation
-				title={ translate( 'Activate your %(productName)s', {
+				title={ translate( 'Activate your %(productName)s plan', {
 					args: { productName },
 				} ) }
 				footerImage={ licensingActivationPluginBanner }
@@ -84,7 +84,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 			>
 				<p>
 					{ translate(
-						'Use your license key to activate your product after installing Jetpack. You can also find the activation link on your {{strong}}WP Admin Jetpack Dashboard > My Plan{{/strong}} page.',
+						'Go to your {{strong}}WP Admin Jetpack Dashboard > My Plan{{/strong}} page after Jetpack is installed, and use this license key to activate your product.',
 						{
 							components: {
 								strong: <strong />,

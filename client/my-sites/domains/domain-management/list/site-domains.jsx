@@ -36,6 +36,10 @@ import {
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	showUpdatePrimaryDomainSuccessNotice,
+	showUpdatePrimaryDomainErrorNotice,
+} from 'calypso/state/domains/management/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
@@ -54,8 +58,6 @@ import { filterDomainsByOwner } from './helpers';
 import {
 	filterOutWpcomDomains,
 	getDomainManagementPath,
-	showUpdatePrimaryDomainSuccessNotice,
-	showUpdatePrimaryDomainErrorNotice,
 	getSimpleSortFunctionBy,
 	getReverseSimpleSortFunctionBy,
 } from './utils';
@@ -408,10 +410,10 @@ export class SiteDomains extends Component {
 			.then(
 				() => {
 					this.setState( { primaryDomainIndex: -1 } );
-					showUpdatePrimaryDomainSuccessNotice( domainName );
+					this.props.showUpdatePrimaryDomainSuccessNotice( domainName );
 				},
 				( error ) => {
-					showUpdatePrimaryDomainErrorNotice( error.message );
+					this.props.showUpdatePrimaryDomainErrorNotice( error.message );
 					this.setState( { primaryDomainIndex: currentPrimaryIndex } );
 				}
 			)
@@ -447,14 +449,14 @@ export class SiteDomains extends Component {
 					settingPrimaryDomain: false,
 				} );
 
-				showUpdatePrimaryDomainSuccessNotice( domain.name );
+				this.props.showUpdatePrimaryDomainSuccessNotice( domain.name );
 			},
 			( error ) => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
 				} );
-				showUpdatePrimaryDomainErrorNotice( error.message );
+				this.props.showUpdatePrimaryDomainErrorNotice( error.message );
 			}
 		);
 	};
@@ -528,12 +530,12 @@ export default connect(
 			isFetchingPurchases: isFetchingSitePurchases( state ),
 		};
 	},
-	( dispatch ) => {
-		return {
-			setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch ),
-			changePrimary: ( domain, mode ) => dispatch( changePrimary( domain, mode ) ),
-			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
-			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
-		};
+	{
+		changePrimary,
+		errorNotice,
+		setPrimaryDomain,
+		showUpdatePrimaryDomainErrorNotice,
+		showUpdatePrimaryDomainSuccessNotice,
+		successNotice,
 	}
 )( localize( withLocalizedMoment( SiteDomains ) ) );

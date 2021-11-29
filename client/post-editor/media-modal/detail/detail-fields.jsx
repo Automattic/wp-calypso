@@ -38,6 +38,7 @@ class EditorMediaModalDetailFields extends Component {
 		this.delayedSaveChange = debounce( this.saveChange, 1000 );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
 			this.updateChange( true );

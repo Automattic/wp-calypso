@@ -30,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: 'gutenbergSimpleSiteUser' } );
+			await loginPage.login( { account: 'simpleSitePersonalPlanUser' } );
 		} );
 
 		it( 'Start new post', async function () {

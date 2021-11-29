@@ -21,6 +21,7 @@ class CheckoutPending extends PureComponent {
 		redirectTo: PropTypes.string,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { transaction, error } = nextProps;
 		const { translate, showErrorNotice, siteSlug } = this.props;

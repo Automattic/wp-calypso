@@ -1,5 +1,7 @@
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import VideosUi from 'calypso/components/videos-ui';
+import ModalFooterBar from 'calypso/components/videos-ui/modal-footer-bar';
+import ModalHeaderBar from 'calypso/components/videos-ui/modal-header-bar';
 
 import './style.scss';
 
@@ -10,7 +12,10 @@ const BloggingQuickStartModal = ( props ) => {
 		isVisible && (
 			<BlankCanvas className={ 'blogging-quick-start-modal' }>
 				<BlankCanvas.Content>
-					<VideosUi shouldDisplayTopLinks={ true } onBackClick={ onClose } />
+					<VideosUi
+						headerBar={ <ModalHeaderBar onClose={ onClose } /> }
+						footerBar={ <ModalFooterBar onBackClick={ onClose } /> }
+					/>
 				</BlankCanvas.Content>
 			</BlankCanvas>
 		)

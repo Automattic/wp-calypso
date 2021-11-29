@@ -1,7 +1,6 @@
 import debugFactory from 'debug';
 import { omit } from 'lodash';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import Me from './me';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -18,10 +17,6 @@ function Undocumented( wpcom ) {
 	}
 	this.wpcom = wpcom;
 }
-
-Undocumented.prototype.me = function () {
-	return new Me( this.wpcom );
-};
 
 Undocumented.prototype.jetpackLogin = function ( siteId, _wp_nonce, redirect_uri, scope, state ) {
 	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
@@ -236,121 +231,6 @@ Undocumented.prototype.launchSite = function ( siteIdOrSlug, fn ) {
 	return this.wpcom.req.post( path, fn );
 };
 
-Undocumented.prototype.themes = function ( siteId, query, fn ) {
-	const path = siteId ? '/sites/' + siteId + '/themes' : '/themes';
-	debug( path );
-	return this.wpcom.req.get( path, query, fn );
-};
-
-Undocumented.prototype.themeDetails = function ( themeId, siteId, fn ) {
-	const sitePath = siteId ? `/sites/${ siteId }` : '';
-	const path = `${ sitePath }/themes/${ themeId }`;
-	debug( path );
-
-	return this.wpcom.req.get(
-		path,
-		{
-			apiVersion: '1.2',
-		},
-		fn
-	);
-};
-
-/*
- * Hack! Calling the theme modify endpoint without specifying an action will return the full details for a theme.
- * FIXME In the long run, we should try to enable the /sites/${ siteId }/themes/${ theme } endpoint for Jetpack
- * sites so we can delete this method and use the regular `themeDetails` for Jetpack sites, too.
- */
-Undocumented.prototype.jetpackThemeDetails = function ( themeId, siteId, fn ) {
-	const path = `/sites/${ siteId }/themes`;
-	debug( path );
-
-	return this.wpcom.req.post(
-		{
-			path,
-			body: {
-				themes: themeId,
-			},
-		},
-		fn
-	);
-};
-
-/**
- * Install a theme from WordPress.org or WordPress.com on the given Jetpack site.
- * Whether the theme is installed from .com or .org is controlled by the themeId string
- * if it has a -wpcom suffix, .com is used.
- *
- * @param {string}    siteId   The site ID
- * @param {string}    themeId  WordPress.com theme with -wpcom suffix, WordPress.org otherwise
- * @param {Function}  fn       The callback function
- * @returns {Promise} promise
- */
-Undocumented.prototype.installThemeOnJetpack = function ( siteId, themeId, fn ) {
-	const path = `/sites/${ siteId }/themes/${ themeId }/install`;
-	debug( path );
-
-	return this.wpcom.req.post(
-		{
-			path,
-		},
-		fn
-	);
-};
-
-/**
- * Delete a theme from Jetpack site.
- *
- * @param {number}    siteId   The site ID
- * @param {string}    themeId  The theme ID
- * @param {Function}  fn       The callback function
- * @returns {Promise} promise
- */
-Undocumented.prototype.deleteThemeFromJetpack = function ( siteId, themeId, fn ) {
-	const path = `/sites/${ siteId }/themes/${ themeId }/delete`;
-	debug( path );
-
-	return this.wpcom.req.post(
-		{
-			path,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.activateTheme = function ( themeId, siteId, dontChangeHomepage, fn ) {
-	debug( '/sites/:site_id/themes/mine' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + siteId + '/themes/mine',
-			body: {
-				theme: themeId,
-				...( dontChangeHomepage && { dont_change_homepage: true } ),
-			},
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.uploadTheme = function ( siteId, file, onProgress ) {
-	debug( '/sites/:site_id/themes/new' );
-	return new Promise( ( resolve, rejectPromise ) => {
-		const resolver = ( error, data ) => {
-			error ? rejectPromise( error ) : resolve( data );
-		};
-
-		const req = this.wpcom.req.post(
-			{
-				path: '/sites/' + siteId + '/themes/new',
-				formData: [ [ 'zip[]', file ] ],
-			},
-			resolver
-		);
-
-		req.upload.onprogress = onProgress;
-	} );
-};
-
 Undocumented.prototype.resendIcannVerification = function ( domain, callback ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/resend-icann/', callback );
 };
@@ -461,49 +341,6 @@ Undocumented.prototype.isSiteImportable = function ( site_url ) {
 	);
 };
 
-Undocumented.prototype.fetchImporterState = function ( siteId ) {
-	debug( `/sites/${ siteId }/importer/` );
-
-	return this.wpcom.req.get( { path: `/sites/${ siteId }/imports/` } );
-};
-
-Undocumented.prototype.updateImporter = function ( siteId, importerStatus ) {
-	debug( `/sites/${ siteId }/imports/${ importerStatus.importId }` );
-
-	return this.wpcom.req.post( {
-		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
-		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
-	} );
-};
-
-Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
-	return new Promise( ( resolve, rejectPromise ) => {
-		const resolver = ( error, data ) => {
-			error ? rejectPromise( error ) : resolve( data );
-		};
-
-		const formData = [
-			[ 'importStatus', JSON.stringify( params.importStatus ) ],
-			[ 'import', params.file ],
-		];
-
-		if ( params.url ) {
-			formData.push( [ 'url', params.url ] );
-		}
-
-		const req = this.wpcom.req.post(
-			{
-				path: `/sites/${ siteId }/imports/new`,
-				formData,
-			},
-			resolver
-		);
-
-		req.upload.onprogress = params.onprogress;
-		req.onabort = params.onabort;
-	} );
-};
-
 /**
  * Check different info about WordPress and Jetpack status on a url
  *
@@ -546,39 +383,6 @@ Undocumented.prototype.importReaderFeed = function ( file, fn ) {
 Undocumented.prototype.wordAdsApprove = function ( siteId ) {
 	debug( '/sites/:site:/wordads/approve' );
 	return this.wpcom.req.post( '/sites/' + siteId + '/wordads/approve' );
-};
-
-/**
- * Initiate the Automated Transfer process, uploading a theme and/or selecting
- * a community plugin.
- *
- * @param {number} siteId -- the ID of the site
- * @param {string} [plugin] -- .org plugin slug
- * @param {globalThis.File} [theme] -- theme zip to upload
- * @param {Function} [onProgress] -- called with upload progress status
- * @returns {Promise} promise for handling result
- */
-Undocumented.prototype.initiateTransfer = function ( siteId, plugin, theme, onProgress ) {
-	debug( '/sites/:site_id/automated-transfers/initiate' );
-	return new Promise( ( resolve, rejectPromise ) => {
-		const resolver = ( error, data ) => {
-			error ? rejectPromise( error ) : resolve( data );
-		};
-
-		const post = {
-			path: `/sites/${ siteId }/automated-transfers/initiate`,
-		};
-
-		if ( plugin ) {
-			post.body = { plugin };
-		}
-		if ( theme ) {
-			post.formData = [ [ 'theme', theme ] ];
-		}
-
-		const req = this.wpcom.req.post( post, resolver );
-		req && ( req.upload.onprogress = onProgress );
-	} );
 };
 
 /**

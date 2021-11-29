@@ -63,7 +63,7 @@
 	.videos-ui__body {
 		max-width: 1280px;
 		margin: 0 auto;
-		padding: 64px 20px 41px;
+		padding: 64px 20px 97px;
 
 		h3 {
 			font-size: $font-title-medium;
@@ -105,27 +105,49 @@
 				.videos-ui__duration {
 					color: rgba( 255, 255, 255, 0.5 );
 					display: inline-block;
-					margin-left: 10px;
+					flex-basis: 34px;
+				}
+
+				.videos-ui__completed-checkmark {
+					text-align: center;
+					background-color: #00a32a;
+					margin-left: auto;
+					flex-basis: 22px;
+					flex-shrink: 0;
+					flex-grow: 0;
+					height: 22px;
+					border-radius: 50px;
+
+					svg {
+						margin-top: 5px;
+					}
 				}
 
 				.videos-ui__status-icon {
-					height: 14px;
-					float: right;
 					text-align: center;
-					margin-left: 10px;
+					margin-left: auto;
+					flex-shrink: 0;
 
 					svg {
 						vertical-align: middle;
 					}
 				}
 
+				.videos-ui__video-title {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					margin-right: 10px;
+				}
+
 				.videos-ui__chapter-accordion-toggle {
 					color: #fff;
 					cursor: pointer;
-					display: block;
+					display: flex;
 					width: 100%;
 					text-align: left;
-					padding: 20px;
+					line-height: 22px;
+					padding: 13px 20px;
 				}
 
 				.videos-ui__active-video-content {
@@ -168,6 +190,38 @@
 		svg {
 			padding-right: 10px;
 			vertical-align: middle;
+		}
+
+		&.videos-ui__video-completed {
+			background-color: #263135;
+			span {
+				color:rgba( 255, 255, 255, 0.5 );
+			}
+
+			svg {
+				opacity: 0.5;
+				path {
+					fill: #ffffff;
+					stroke: #ffffff;
+				}
+			}
+		}
+	}
+
+	.videos-ui__bar {
+		padding: 20px;
+		padding-bottom: 15px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		font-size: $font-body-small;
+
+		div,
+		a {
+			display: flex;
+			color: #fff;
+			align-items: center;
 		}
 	}
 

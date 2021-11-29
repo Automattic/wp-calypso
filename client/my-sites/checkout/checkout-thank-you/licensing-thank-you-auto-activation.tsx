@@ -86,7 +86,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 				source,
 				jetpackTemporarySiteId,
 			},
-			`/checkout/jetpack/thank-you/licensing-manual-activate/${ productSlug }`
+			`/checkout/jetpack/thank-you/licensing-manual-activate-instructions/${ productSlug }`
 		);
 	}, [ jetpackTemporarySiteId, productSlug, source, receiptId ] );
 
@@ -250,7 +250,9 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					</>
 				}
 				footerImage={ footerCardImg }
-				showProgressIndicator={ false }
+				showProgressIndicator
+				progressIndicatorValue={ 1 }
+				progressIndicatorTotal={ 3 }
 				showContactUs
 			>
 				{ hasProductInfo && ( isProductListFetching || productName ) && (

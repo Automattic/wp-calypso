@@ -26,6 +26,7 @@ import {
 	getNextStepName,
 	getPreviousStepName,
 	getStepUrl,
+	isP2Flow,
 } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -97,6 +98,7 @@ export class UserStep extends Component {
 		recaptchaClientId: null,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			this.props.flowName !== nextProps.flowName ||
@@ -107,6 +109,7 @@ export class UserStep extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { oauth2Signup, initialContext } = this.props;
 		const clientId = get( initialContext, 'query.oauth2_client_id', null );
@@ -413,7 +416,7 @@ export class UserStep extends Component {
 	submitButtonText() {
 		const { translate, flowName } = this.props;
 
-		if ( flowName === 'p2' ) {
+		if ( isP2Flow( flowName ) ) {
 			return translate( 'Continue' );
 		}
 
@@ -494,7 +497,7 @@ export class UserStep extends Component {
 	}
 
 	render() {
-		if ( this.props.flowName === 'p2' ) {
+		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
 		}
 

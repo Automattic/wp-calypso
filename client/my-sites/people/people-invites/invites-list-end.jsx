@@ -18,6 +18,7 @@ class InvitesListEnd extends PureComponent {
 		this.bumpedStat = false;
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.found > nextProps.shown && ! this.bumpedStat ) {
 			this.props.bumpStat( 'calypso_people_invite_list', 'displayed_max' );

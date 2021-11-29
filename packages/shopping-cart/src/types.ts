@@ -230,6 +230,9 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
 	next_domain_is_free: boolean;
+	next_domain_condition: '' | 'blog';
+	bundled_domain?: string;
+	has_bundle_credit?: boolean;
 	terms_of_service?: TermsOfServiceRecord[];
 }
 

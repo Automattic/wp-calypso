@@ -26,11 +26,11 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@wordpress/api-fetch": "^5.2.6",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/block-editor": "^8.0.4",
+		"@wordpress/block-editor": "^8.0.5",
 		"@wordpress/blocks": "^11.1.4",
-		"@wordpress/components": "^19.0.4",
+		"@wordpress/components": "^19.0.5",
 		"@wordpress/data": "^6.1.4",
-		"@wordpress/editor": "^12.0.7",
+		"@wordpress/editor": "^12.0.8",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/hooks": "^3.2.2",
 		"@wordpress/i18n": "^4.2.4",
@@ -48,8 +48,8 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"enzyme": "^3.11.0",
-		"jest": "^27.2.4",
+		"jest": "^27.3.1",
 		"postcss": "^8.3.11",
-		"webpack": "^5.64.1"
+		"webpack": "^5.64.4"
 	}
 }

@@ -11,6 +11,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import MarketingMessage from 'calypso/components/marketing-message';
+import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
@@ -136,8 +137,20 @@ export class PlansStep extends Component {
 			isReskinned,
 		} = this.props;
 
+		let errorDisplay;
+		if ( 'invalid' === this.props.step?.status ) {
+			errorDisplay = (
+				<div>
+					<Notice status="is-error" showDismiss={ false }>
+						{ this.props.step.errors.message }
+					</Notice>
+				</div>
+			);
+		}
+
 		return (
 			<div>
+				{ errorDisplay }
 				<QueryPlans />
 				<PlansFeaturesMain
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided

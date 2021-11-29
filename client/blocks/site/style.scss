@@ -108,6 +108,7 @@
 .site__info {
 	width: 0; // Firefox needs explicit width (even 0)
 	flex: 1 0 auto;
+	text-align: initial;
 }
 
 .site__title {
@@ -190,7 +191,7 @@
 	}
 
 	.site__badge {
-		background: var(--color-sidebar-menu-hover-background);
-    	color: var(--color-sidebar-menu-hover-text);
+		background: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover-text );
 	}
 }

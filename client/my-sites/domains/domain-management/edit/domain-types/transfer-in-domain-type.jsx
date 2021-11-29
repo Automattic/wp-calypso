@@ -33,23 +33,36 @@ class TransferInDomainType extends Component {
 
 	renderPendingStart() {
 		const { domain, translate } = this.props;
+		const { currentUserIsOwner } = domain;
 
 		return (
 			<>
 				<p>
-					{ translate(
-						'We need you to complete a couple of steps before we can transfer %(domain)s from your ' +
-							'current domain provider to WordPress.com. Your domain will stay at your current provider ' +
-							'until the transfer is completed.',
-						{
-							args: {
-								domain: domain.name,
-							},
-						}
-					) }
+					{ currentUserIsOwner
+						? translate(
+								'We need you to complete a couple of steps before we can transfer %(domain)s from your ' +
+									'current domain provider to WordPress.com. Your domain will stay at your current provider ' +
+									'until the transfer is completed.',
+								{
+									args: {
+										domain: domain.name,
+									},
+								}
+						  )
+						: translate(
+								'This domain transfer is waiting to be initiated. Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, to start it.',
+								{
+									args: {
+										owner: domain.owner,
+									},
+									components: {
+										strong: <strong />,
+									},
+								}
+						  ) }
 				</p>
 
-				<Button primary onClick={ this.startTransfer }>
+				<Button disabled={ ! currentUserIsOwner } primary onClick={ this.startTransfer }>
 					{ translate( 'Start transfer' ) }
 				</Button>
 			</>
@@ -72,33 +85,48 @@ class TransferInDomainType extends Component {
 
 	renderTransferFailed() {
 		const { domain, translate } = this.props;
+		const { currentUserIsOwner } = domain;
 
 		return (
 			<>
 				<p>
-					{ translate(
-						'We were unable to complete the transfer of {{strong}}%(domain)s{{/strong}}. ' +
-							'You can remove the transfer from your account or try to start the transfer again. ' +
-							'{{a}}Learn more{{/a}}',
-						{
-							args: {
-								domain: domain.name,
-							},
-							components: {
-								strong: <strong />,
-								a: (
-									<a
-										href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
+					{ currentUserIsOwner
+						? translate(
+								'We were unable to complete the transfer of {{strong}}%(domain)s{{/strong}}. ' +
+									'You can remove the transfer from your account or try to start the transfer again. ' +
+									'{{a}}Learn more{{/a}}',
+								{
+									args: {
+										domain: domain.name,
+									},
+									components: {
+										strong: <strong />,
+										a: (
+											<a
+												href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+						  )
+						: translate(
+								'The domain transfer failed to complete. Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, to restart it.',
+								{
+									args: {
+										owner: domain.owner,
+									},
+									components: {
+										strong: <strong />,
+									},
+								}
+						  ) }
 				</p>
 
-				<Button onClick={ this.startTransfer }>{ translate( 'Start transfer again' ) }</Button>
+				<Button disabled={ ! currentUserIsOwner } onClick={ this.startTransfer }>
+					{ translate( 'Start transfer again' ) }
+				</Button>
 			</>
 		);
 	}
