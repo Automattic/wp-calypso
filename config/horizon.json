@@ -99,6 +99,7 @@
 		"signup/hero-flow": true,
 		"site-indicator": true,
 		"support-user": true,
+		"themes/premium": false,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,
