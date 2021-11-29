@@ -196,7 +196,7 @@
 		"utility-types": "^3.10.0",
 		"uuid": "^8.3.2",
 		"valid-url": "^1.0.9",
-		"webpack": "^5.64.1",
+		"webpack": "^5.64.4",
 		"webpack-bundle-analyzer": "^4.5.0",
 		"webpack-dev-middleware": "^5.2.2",
 		"webpack-hot-middleware": "^2.25.1",
