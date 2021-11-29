@@ -17,9 +17,11 @@ type EligibilityHook = {
 	eligibilityHolds?: string[];
 	eligibilityWarnings?: EligibilityWarning[];
 	isFetching: boolean;
-	wpcomSubdomainWarning: EligibilityWarning | undefined;
 	wpcomDomain: string | null;
 	stagingDomain: string | null;
+	pluginsWarning: EligibilityWarning[];
+	widgetsWarning: EligibilityWarning[];
+	wpcomSubdomainWarning: EligibilityWarning | undefined;
 };
 
 export default function useEligibility( siteId: number ): EligibilityHook {
@@ -53,9 +55,15 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	);
 
 	// Check whether the wpcom.com subdomain warning is present.
-	const wpcomSubdomainWarning: EligibilityWarning | undefined = allEligibilityWarnings?.find(
+	const wpcomSubdomainWarning = allEligibilityWarnings?.find(
 		( { id } ) => id === 'wordpress_subdomain'
 	);
+
+	// Plugins warnings
+	const pluginsWarning = allEligibilityWarnings?.filter( ( { type } ) => type === 'plugins' ) || [];
+
+	// Widgets warnings
+	const widgetsWarning = allEligibilityWarnings?.filter( ( { type } ) => type === 'widgets' ) || [];
 
 	// Remove warnings.
 	const eligibilityWarnings = allEligibilityWarnings?.filter(
@@ -63,11 +71,13 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	);
 
 	return {
+		isFetching,
 		eligibilityHolds,
 		eligibilityWarnings,
-		isFetching,
-		wpcomSubdomainWarning,
 		wpcomDomain,
 		stagingDomain,
+		pluginsWarning,
+		widgetsWarning,
+		wpcomSubdomainWarning,
 	};
 }
