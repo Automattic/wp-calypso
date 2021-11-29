@@ -2,12 +2,9 @@
 
 Follow the [Quick Start](../README.md) guide to install required software.
 
-## Table of contents
-
 <!-- TOC -->
 
 - [Advanced Setup](#advanced-setup)
-    - [Table of contents](#table-of-contents)
     - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
     - [Apple Silicon arm64](#apple-silicon-arm64)
     - [Help](#help)

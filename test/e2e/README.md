@@ -9,10 +9,10 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 - [Overview](docs/overview.md)
 - [Setup](docs/setup.md)
 - [Test Environment](docs/test_environment.md)
-- [Running tests](docs/running-tests.md)
+- [Running tests on your machine](docs/tests_local.md)
+- [Running tests on CI](docs/tests_ci.md)
 - [Writing tests](docs/writing_tests.md)
-- [Style Guide - Selenium](docs/style-guide-selenium.md)
-- [Style Guide - Playwright](docs/style-guide-playwright.md)
+- [Style Guide](docs/style-guide-playwright.md)
 - [Debugging](docs/debugging.md)
 - [Troubleshooting](docs/troubleshooting.md)
 
@@ -69,7 +69,7 @@ yarn workspace @automattic/calypso-e2e build
 ```
 11. run test.
 ```
-yarn jest specs/specs-playwright/wp-signup__free.ts
+yarn jest specs/specs-playwright/<spec_name>
 ```
 
 ## Advanced setup
