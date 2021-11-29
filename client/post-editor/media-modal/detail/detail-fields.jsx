@@ -4,18 +4,17 @@ import { debounce, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import TrackInputChanges from 'calypso/components/track-input-changes';
+import { withUpdateMedia } from 'calypso/data/media/with-update-media';
 import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
-import { updateMedia } from 'calypso/state/media/thunks';
 import EditorMediaModalFieldset from '../fieldset';
 
 const noop = () => {};
@@ -89,14 +88,14 @@ class EditorMediaModalDetailFields extends Component {
 
 		// Save changes immediately or after a delay
 		if ( saveImmediately ) {
-			this.saveChange( siteId, modifiedChanges );
+			this.saveChange( itemId, modifiedChanges );
 		} else {
-			this.delayedSaveChange( siteId, modifiedChanges );
+			this.delayedSaveChange( itemId, modifiedChanges );
 		}
 	}
 
-	saveChange( siteId, modifiedChanges ) {
-		this.props.updateMedia( siteId, modifiedChanges );
+	saveChange( mediaId, modifiedChanges ) {
+		this.props.updateMedia( mediaId, modifiedChanges );
 	}
 
 	setFieldByName = ( name, value ) => {
@@ -289,4 +288,4 @@ class EditorMediaModalDetailFields extends Component {
 	}
 }
 
-export default localize( connect( null, { updateMedia } )( EditorMediaModalDetailFields ) );
+export default localize( withUpdateMedia( EditorMediaModalDetailFields ) );

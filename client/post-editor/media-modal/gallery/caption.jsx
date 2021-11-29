@@ -1,9 +1,8 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { updateMedia } from 'calypso/state/media/thunks';
+import { withUpdateMedia } from 'calypso/data/media/with-update-media';
 
 class EditorMediaModalGalleryCaption extends Component {
 	static displayName = 'EditorMediaModalGalleryCaption';
@@ -45,7 +44,7 @@ class EditorMediaModalGalleryCaption extends Component {
 			return;
 		}
 
-		this.props.updateMedia( siteId, Object.assign( {}, item, { caption } ) );
+		this.props.updateMedia( item.ID, { caption } );
 	};
 
 	render() {
@@ -63,4 +62,4 @@ class EditorMediaModalGalleryCaption extends Component {
 	}
 }
 
-export default localize( connect( null, { updateMedia } )( EditorMediaModalGalleryCaption ) );
+export default localize( withUpdateMedia( EditorMediaModalGalleryCaption ) );
