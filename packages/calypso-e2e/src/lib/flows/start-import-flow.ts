@@ -9,6 +9,8 @@ const selectors = {
 
 	// Inputs
 	urlInput: 'input.capture__input',
+	migrationInput: ( value: string ) =>
+		`input#sites-block__faux-site-selector-url-input[value="${ value }"]`,
 
 	// Errors
 	analyzeError: ( text: string ) => `div.capture__input-error-msg:text("${ text }")`,
@@ -102,6 +104,13 @@ export class StartImportFlow {
 	 */
 	async validateDesignPage(): Promise< void > {
 		await this.page.waitForSelector( selectors.setupHeader );
+	}
+
+	/**
+	 * Validates that we've landed on the migration page.
+	 */
+	async validateMigrationPage( siteSlug: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.migrationInput( siteSlug ) );
 	}
 
 	/**

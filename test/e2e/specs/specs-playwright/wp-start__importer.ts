@@ -40,6 +40,10 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
 			await startImportFlow.validateScanningPage();
 			await startImportFlow.validateImportPage();
+			await startImportFlow.clickButton( 'Import your content' );
+
+			// When the new flows will be created this check will need to be replaced
+			await startImportFlow.validateMigrationPage( 'https://make.wordpress.org/' );
 		} );
 	} );
 
