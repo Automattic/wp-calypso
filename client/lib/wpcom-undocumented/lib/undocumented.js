@@ -150,16 +150,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
 };
 
 /**
- * Fetches a list of available top-level domain names ordered by popularity.
- *
- * @param {object} query Optional query parameters
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getAvailableTlds = function ( query = {} ) {
-	return this.wpcom.req.get( '/domains/suggestions/tlds', query );
-};
-
-/**
  *
  * @param domain {string}
  * @param fn {function}
