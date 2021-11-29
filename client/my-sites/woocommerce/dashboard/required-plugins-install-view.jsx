@@ -80,6 +80,7 @@ class RequiredPluginsInstallView extends Component {
 		skipConfirmation: PropTypes.bool,
 		isFeatureActive: PropTypes.bool,
 		upgradingPlan: PropTypes.object,
+		isAtomicSite: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -581,6 +582,7 @@ class RequiredPluginsInstallView extends Component {
 			translate,
 			isFeatureActive,
 			upgradingPlan,
+			isAtomicSite,
 			siteSlug,
 		} = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
@@ -593,6 +595,7 @@ class RequiredPluginsInstallView extends Component {
 						startSetup={ this.startSetup }
 						isFeatureActive={ isFeatureActive }
 						upgradingPlan={ upgradingPlan }
+						isAtomicSite={ isAtomicSite }
 						siteSlug={ siteSlug }
 					/>
 				</>

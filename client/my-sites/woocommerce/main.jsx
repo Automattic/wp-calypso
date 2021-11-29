@@ -9,6 +9,7 @@ import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/se
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
@@ -28,6 +29,8 @@ function WooCommerce() {
 	const hasWoopFeatureAvailable = useSelector( ( state ) =>
 		hasAvailableSiteFeature( state, siteId, FEATURE_WOOP )
 	);
+
+	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 
 	/*
 	 * We pick the first plan from the available plans list.
@@ -52,6 +55,7 @@ function WooCommerce() {
 						siteSlug={ siteSlug }
 						isFeatureActive={ isWoopFeatureActive }
 						upgradingPlan={ upgradingPlan }
+						isAtomicSite={ isAtomicSite }
 					/>
 				) }
 			</Main>

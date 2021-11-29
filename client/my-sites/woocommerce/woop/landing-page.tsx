@@ -16,6 +16,7 @@ interface Props {
 	startSetup: () => void;
 	isFeatureActive: boolean;
 	upgradingPlan: Record< string, unknown >;
+	isAtomicSite: boolean;
 	siteSlug: string;
 }
 
@@ -26,12 +27,18 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( {
 	siteSlug,
 	isFeatureActive,
 	upgradingPlan,
+	isAtomicSite,
 } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
 	function onCTAHandler() {
+		if ( ! isAtomicSite ) {
+			// Redirect to to the new woo onboarding flow for Atomic transfer.
+			return ( window.location.href = `/start/woocommerce-install/confirm?siteSlug=${ siteSlug }` );
+		}
+
 		if ( ! isFeatureActive && upgradingPlan?.product_slug ) {
 			return ( window.location.href = addQueryArgs(
 				{ redirect_to: window.location.href },
