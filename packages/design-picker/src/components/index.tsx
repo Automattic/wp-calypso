@@ -17,9 +17,7 @@ import {
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import MShotsImage from './mshots-image';
 import type { Categorization } from '../hooks/use-categorization';
-export { default as MShotsImage } from './mshots-image';
 import type { Design } from '../types';
-
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;

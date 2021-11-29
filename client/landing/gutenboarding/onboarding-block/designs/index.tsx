@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import DesignPicker, { getAvailableDesigns, useCategorization } from '@automattic/design-picker';
+import DesignPicker, {
+	FeaturedPicksButtons,
+	getAvailableDesigns,
+	useCategorization,
+} from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -85,6 +89,7 @@ const Designs: React.FunctionComponent = () => {
 	const selectedDesign = getSelectedDesign();
 	const isFse = isEnrollingInFseBeta();
 	const isDesignPickerCategoriesEnabled = isEnabled( 'signup/design-picker-categories' );
+	const useFeaturedPicksButtons = isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 	const designs = getRandomizedDesigns().featured.filter(
 		( design ) =>
 			// TODO Add finalized design templates to available designs config
@@ -105,6 +110,18 @@ const Designs: React.FunctionComponent = () => {
 	} ) );
 
 	const [ userHasSelectedDesign, setUserHasSelectedDesign ] = React.useState( false );
+
+	const onSelect = ( design: Design ) => {
+		setSelectedDesign( design );
+		setUserHasSelectedDesign( true );
+
+		if ( design.fonts ) {
+			setFonts( design.fonts );
+		} else {
+			// Some designs may not specify font pairings
+			resetFonts();
+		}
+	};
 
 	useEffect( () => {
 		if ( selectedDesign && userHasSelectedDesign ) {
@@ -133,20 +150,14 @@ const Designs: React.FunctionComponent = () => {
 				className={ classnames( {
 					'designs__has-categories': isDesignPickerCategoriesEnabled,
 				} ) }
-				designs={ designs }
+				designs={
+					useFeaturedPicksButtons
+						? designs.filter( ( design ) => ! design.is_featured_picks )
+						: designs
+				}
 				isGridMinimal={ isAnchorFmSignup }
 				locale={ locale }
-				onSelect={ ( design: Design ) => {
-					setSelectedDesign( design );
-					setUserHasSelectedDesign( true );
-
-					if ( design.fonts ) {
-						setFonts( design.fonts );
-					} else {
-						// Some designs may not specify font pairings
-						resetFonts();
-					}
-				} }
+				onSelect={ onSelect }
 				premiumBadge={
 					<Badge className="designs__premium-badge">
 						<JetpackLogo className="designs__premium-badge-logo" size={ 20 } />
@@ -155,6 +166,14 @@ const Designs: React.FunctionComponent = () => {
 				}
 				categorization={ isDesignPickerCategoriesEnabled ? categorization : undefined }
 				categoriesHeading={ isDesignPickerCategoriesEnabled && <Header /> }
+				categoriesFooter={
+					useFeaturedPicksButtons && (
+						<FeaturedPicksButtons
+							designs={ designs.filter( ( design ) => design.is_featured_picks ) }
+							onSelect={ onSelect }
+						/>
+					)
+				}
 			/>
 		</div>
 	);
