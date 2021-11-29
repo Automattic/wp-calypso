@@ -87,7 +87,6 @@ class PostCommentList extends Component {
 
 	state = {
 		amountOfCommentsToTake: this.props.initialSize,
-		commentsFilter: 'all',
 	};
 
 	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
