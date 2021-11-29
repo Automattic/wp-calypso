@@ -4,6 +4,7 @@ import {
 	fetchAutomatedTransferStatusOnce,
 	requestEligibility,
 } from 'calypso/state/automated-transfer/actions';
+import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import {
 	isFetchingAutomatedTransferStatus,
 	getEligibility,
@@ -11,6 +12,11 @@ import {
 	EligibilityWarning,
 } from 'calypso/state/automated-transfer/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
+
+const TRANSFERRING_NOT_BLOCKERS = [
+	eligibilityHoldsConstants.NO_BUSINESS_PLAN, // let's redirect to checkout page
+	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // let's handle it in transferring endpoint.
+];
 
 type EligibilityHook = {
 	eligibilityHolds?: string[];
@@ -21,6 +27,8 @@ type EligibilityHook = {
 	pluginsWarning: EligibilityWarning[];
 	widgetsWarning: EligibilityWarning[];
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
+	transferringBlockers: string[];
+	hasBlockers: boolean;
 };
 
 export default function useEligibility( siteId: number ): EligibilityHook {
@@ -63,6 +71,10 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	// Widgets warnings
 	const widgetsWarning = eligibilityWarnings?.filter( ( { type } ) => type === 'widgets' ) || [];
 
+	// Trasferring blockers
+	const transferringBlockers =
+		eligibilityHolds?.filter( ( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold ) ) || [];
+
 	return {
 		isFetching,
 		eligibilityHolds,
@@ -72,5 +84,8 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		pluginsWarning,
 		widgetsWarning,
 		wpcomSubdomainWarning,
+
+		transferringBlockers,
+		hasBlockers: !! transferringBlockers.length,
 	};
 }
