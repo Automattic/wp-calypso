@@ -42,6 +42,7 @@ class FacebookLoginButton extends Component {
 		this.handleClick = this.handleClick.bind( this );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.initialize();
 	}

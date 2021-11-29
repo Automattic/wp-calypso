@@ -12,6 +12,7 @@ export default class Image extends Component {
 		isError: false,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// reset the error state if we switch images
 		// TODO: support srcsets?

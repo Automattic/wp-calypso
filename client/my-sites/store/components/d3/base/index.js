@@ -22,6 +22,7 @@ export default class D3Base extends Component {
 		this.updateParams();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.updateParams( nextProps );
 	}

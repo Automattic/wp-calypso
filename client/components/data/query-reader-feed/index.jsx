@@ -5,12 +5,14 @@ import { requestFeed } from 'calypso/state/reader/feeds/actions';
 import { shouldFeedBeFetched } from 'calypso/state/reader/feeds/selectors';
 
 class QueryReaderFeed extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( this.props.shouldFeedBeFetched ) {
 			this.props.requestFeed( this.props.feedId );
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.shouldFeedBeFetched || this.props.feedId === nextProps.feedId ) {
 			return;

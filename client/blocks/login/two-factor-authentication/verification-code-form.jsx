@@ -56,6 +56,7 @@ class VerificationCodeForm extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps = ( nextProps ) => {
 		// Resets the verification code input field when switching pages
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {

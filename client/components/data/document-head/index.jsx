@@ -13,6 +13,7 @@ import { getDocumentHeadFormattedTitle } from 'calypso/state/document-head/selec
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 
 class DocumentHead extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { title, unreadCount } = this.props;
 
@@ -37,6 +38,7 @@ class DocumentHead extends Component {
 		this.setFormattedTitle( this.props.formattedTitle );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// The `title` prop is commonly receiving its value as a result from a `translate` call
 		// and in some cases it returns a React component instead of string.

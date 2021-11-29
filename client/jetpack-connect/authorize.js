@@ -119,6 +119,7 @@ export class JetpackAuthorize extends Component {
 		isRedirecting: false,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
@@ -146,6 +147,7 @@ export class JetpackAuthorize extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { retryAuth } = nextProps;
 		const { authorizeError, authorizeSuccess, siteReceived } = nextProps.authorizationData;

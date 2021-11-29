@@ -5,6 +5,7 @@ import { requestPlans } from 'calypso/state/plans/actions';
 import { isRequestingPlans } from 'calypso/state/plans/selectors';
 
 class QueryPlans extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( ! this.props.requestingPlans ) {
 			this.props.requestPlans();

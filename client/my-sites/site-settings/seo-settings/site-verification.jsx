@@ -41,6 +41,7 @@ class SiteVerification extends Component {
 		this.refreshSite();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId: prevSiteId, translate } = this.props;
 		const { site: nextSite, siteId: nextSiteId } = nextProps;

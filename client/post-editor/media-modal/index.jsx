@@ -91,6 +91,7 @@ export class EditorMediaModal extends Component {
 		this.state = this.getDefaultState( props );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
 			this.props.selectMediaItems( nextProps.site.ID, [] );
@@ -116,6 +117,7 @@ export class EditorMediaModal extends Component {
 		this.statsTracking = {};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { view, selectedItems, site, single } = this.props;
 		if ( ! isEmpty( selectedItems ) && ( view === ModalViews.LIST || single ) ) {

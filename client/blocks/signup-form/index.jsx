@@ -148,6 +148,7 @@ class SignupForm extends Component {
 		recordTracksEvent( 'calypso_signup_back_link_click' );
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		debug( 'Mounting the SignupForm React component.' );
 		this.formStateController = new formState.Controller( {
@@ -201,6 +202,7 @@ class SignupForm extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.step && nextProps.step && this.props.step.status !== nextProps.step.status ) {
 			this.maybeRedirectToSocialConnect( nextProps );

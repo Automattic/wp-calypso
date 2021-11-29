@@ -117,6 +117,7 @@ class RequiredPluginsInstallView extends Component {
 		this.destroyTimeoutTimer();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { automatedTransferStatus: currentATStatus, siteId, hasPendingAT } = this.props;
 		const { automatedTransferStatus: nextATStatus } = nextProps;
