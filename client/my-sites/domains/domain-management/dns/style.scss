@@ -195,6 +195,12 @@ body.dns__body-white {
 		svg {
 			fill: var( --studio-gray-90 );
 		}
+
+		&:disabled, &:disabled:hover {
+			svg {
+				fill: var( --color-neutral-20 );
+			}
+		}
 	}
 
 	.popover__menu-item.is-selected,

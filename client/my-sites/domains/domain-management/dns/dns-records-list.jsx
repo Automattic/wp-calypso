@@ -184,10 +184,6 @@ class DnsRecordsList extends Component {
 	}
 
 	getActionsForDnsRecord( record ) {
-		if ( record.protected_field ) {
-			return [];
-		}
-
 		if ( this.isDomainConnectRecord( record ) ) {
 			return [
 				record.enabled ? this.disableRecordAction : this.enableRecordAction,
