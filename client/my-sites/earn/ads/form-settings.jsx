@@ -12,11 +12,9 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import StateSelector from 'calypso/components/forms/us-state-selector';
 import SectionHeader from 'calypso/components/section-header';
 import SupportInfo from 'calypso/components/support-info';
 import { protectForm } from 'calypso/lib/protect-form';
@@ -79,15 +77,6 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleResidentCheckbox = () => {
-		const isResident = ! this.state.us_checked;
-
-		this.setState( {
-			us_checked: isResident,
-			us_resident: isResident ? 'yes' : 'no',
-		} );
-	};
-
 	handleSubmit = ( event ) => {
 		const { site } = this.props;
 		event.preventDefault();
@@ -99,20 +88,10 @@ class AdsFormSettings extends Component {
 
 	defaultSettings() {
 		return {
-			addr1: '',
-			addr2: '',
-			city: '',
-			name: '',
 			optimized_ads: false,
 			paypal: '',
 			show_to_logged_in: 'yes',
-			state: 'AL',
-			taxid_last4: '',
 			tos: 'signed',
-			us_resident: 'no',
-			us_checked: false,
-			who_owns: 'person',
-			zip: '',
 			display_options: {},
 			ccpa_enabled: false,
 			ccpa_privacy_policy_url: '',
@@ -124,19 +103,10 @@ class AdsFormSettings extends Component {
 
 	packageState() {
 		return {
-			addr1: this.state.addr1,
-			addr2: this.state.addr2,
-			city: this.state.city,
-			name: this.state.name,
 			optimized_ads: this.state.optimized_ads,
 			paypal: this.state.paypal,
 			show_to_logged_in: this.state.show_to_logged_in,
-			state: this.state.state,
-			taxid: this.state.taxid || '',
 			tos: this.state.tos ? 'signed' : '',
-			us_resident: this.state.us_resident,
-			who_owns: this.state.who_owns,
-			zip: this.state.zip,
 			display_options: this.state.display_options,
 			ccpa_enabled: this.state.ccpa_enabled,
 			ccpa_privacy_policy_url: this.state.ccpa_privacy_policy_url,
@@ -285,147 +255,36 @@ class AdsFormSettings extends Component {
 		);
 	}
 
-	siteOwnerOptions() {
+	paymentOptions() {
 		const { translate } = this.props;
 
 		return (
-			<div>
-				<FormFieldset>
-					<FormLabel htmlFor="paypal">{ translate( 'PayPal E-mail Address' ) }</FormLabel>
-					<FormTextInput
-						name="paypal"
-						id="paypal"
-						value={ this.state.paypal || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="who_owns">{ translate( 'Who owns this site?' ) }</FormLabel>
-					<FormSelect
-						name="who_owns"
-						id="who_owns"
-						value={ this.state.who_owns || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
-					>
-						<option value="">{ translate( 'Select who owns this site' ) }</option>
-						<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
-						<option value="corp">{ translate( 'A Corporation' ) }</option>
-						<option value="partnership">{ translate( 'A Partnership' ) }</option>
-						<option value="llc">{ translate( 'An LLC' ) }</option>
-						<option value="tax_exempt">{ translate( 'A Tax-Exempt Entity' ) }</option>
-					</FormSelect>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel>
-						<FormCheckbox
-							name="us_resident"
-							checked={ !! this.state.us_checked }
-							disabled={ this.props.isLoading }
-							onChange={ this.handleResidentCheckbox }
-						/>
-						<span>{ translate( 'US Resident or based in the US' ) }</span>
-					</FormLabel>
-				</FormFieldset>
-			</div>
-		);
-	}
-
-	taxOptions() {
-		const { translate } = this.props;
-
-		return (
-			<div>
-				<FormSectionHeading>{ translate( 'Tax Reporting Information' ) }</FormSectionHeading>
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="taxid">
-						{ translate( 'Social Security Number or US Tax ID' ) }
-					</FormLabel>
-					<FormTextInput
-						name="taxid"
-						id="taxid"
-						placeholder={
-							this.state.taxid_last4
-								? 'On file. Last Four Digits: '.concat( this.state.taxid_last4 )
-								: ''
+			<FormFieldset>
+				<FormLabel htmlFor="paypal">{ translate( 'PayPal E-mail Address' ) }</FormLabel>
+				<FormTextInput
+					name="paypal"
+					id="paypal"
+					value={ this.state.paypal || '' }
+					onChange={ this.handleChange }
+					disabled={ this.props.isLoading }
+				/>
+				<FormSettingExplanation>
+					{ translate(
+						'Earnings will be paid to the PayPal account on file. A PayPal account in good standing with the ability to accept funds must be maintained in order to receive earnings. You can verify which PayPal features are available to you by looking up your country on the {{a}}PayPal website{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://www.paypal.com/us/webapps/mpp/country-worldwide"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
 						}
-						value={ this.state.taxid || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
-					/>
-				</FormFieldset>
-
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="name">
-						{ translate( 'Full Name or Business / Non-profit Name' ) }
-					</FormLabel>
-					<FormTextInput
-						name="name"
-						id="name"
-						value={ this.state.name || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
-					/>
-				</FormFieldset>
-
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="addr1">{ translate( 'Postal Address' ) }</FormLabel>
-					<FormTextInput
-						name="addr1"
-						id="addr1"
-						placeholder="Address Line 1"
-						value={ this.state.addr1 || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
-					/>
-				</FormFieldset>
-
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormTextInput
-						name="addr2"
-						id="addr2"
-						placeholder="Address Line 2"
-						value={ this.state.addr2 || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
-					/>
-				</FormFieldset>
-
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
-					<FormTextInput
-						name="city"
-						id="city"
-						value={ this.state.city || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
-					/>
-				</FormFieldset>
-
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="state">{ translate( 'State / Territory' ) }</FormLabel>
-					<StateSelector
-						name="state"
-						id="state"
-						className="ads__settings-state"
-						value={ this.state.state || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
-					/>
-				</FormFieldset>
-
-				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="zip">{ translate( 'Zip Code' ) }</FormLabel>
-					<FormTextInput
-						name="zip"
-						id="zip"
-						value={ this.state.zip || '' }
-						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
-					/>
-				</FormFieldset>
-			</div>
+					) }
+				</FormSettingExplanation>
+			</FormFieldset>
 		);
 	}
 
@@ -661,9 +520,8 @@ class AdsFormSettings extends Component {
 
 						{ this.props.siteIsJetpack ? this.adstxt() : null }
 
-						<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
-						{ this.siteOwnerOptions() }
-						{ this.state.us_checked ? this.taxOptions() : null }
+						<FormSectionHeading>{ translate( 'Payment Information' ) }</FormSectionHeading>
+						{ this.paymentOptions() }
 
 						<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
 						{ this.acceptCheckbox() }
