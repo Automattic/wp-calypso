@@ -254,7 +254,7 @@ class PostCommentList extends Component {
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
-			comment_id: this.state.activeReplyCommentId,
+			comment_id: this.props.activeReplyCommentId,
 		} );
 		this.resetActiveReplyComment();
 	};
