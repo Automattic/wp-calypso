@@ -461,10 +461,12 @@ export function generateFlows( {
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: [ 'confirm', 'transfer' ],
+			steps: [ 'confirm', 'transfer', 'select-site' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'site' ],
+			optionalDependenciesInQuery: [ 'site' ],
+			disallowResume: false,
 			lastModified: '2021-11-11',
 		},
 	];

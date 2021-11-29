@@ -8,16 +8,19 @@ import {
 	isFetchingAutomatedTransferStatus,
 	getAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
-import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
+import { getSiteWooCommerceUrl, getSiteId } from 'calypso/state/sites/selectors';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { hasUploadFailed } from 'calypso/state/themes/upload-theme/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
 
 export default function Transfer( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned } = props;
+	const {
+		goToStep,
+		isReskinned,
+		signupDependencies: { siteConfirmed },
+	} = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -25,8 +28,8 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 	const [ error, setError ] = useState( { transferFailed: false, transferStatus: null } );
 	const [ step, setStep ] = useState( __( 'Building your store' ) );
 
-	// selectedSiteId is set by the controller whenever site is provided as a query param.
-	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteId = useSelector( ( state ) => getSiteId( state, siteConfirmed ) ) as number;
+
 	const fetchingTransferStatus = !! useSelector( ( state ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )
 	);

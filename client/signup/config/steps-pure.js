@@ -789,6 +789,10 @@ export function generateSteps( {
 		},
 
 		// Woocommerce Install steps
+		'select-site': {
+			stepName: 'select-site',
+			providesDependencies: [ 'site' ],
+		},
 		confirm: {
 			stepName: 'confirm',
 			props: {
@@ -802,10 +806,11 @@ export function generateSteps( {
 				),
 			},
 			dependencies: [ 'site' ],
+			providesDependencies: [ 'siteConfirmed' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-			dependencies: [ 'site' ],
+			dependencies: [ 'siteConfirmed' ],
 		},
 	};
 }

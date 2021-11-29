@@ -330,6 +330,7 @@ export default {
 			return;
 		}
 		const siteId = getSiteId( getState(), siteIdOrSlug );
+
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
 			next();
@@ -338,6 +339,7 @@ export default {
 			dispatch( requestSite( siteIdOrSlug ) )
 				.catch( () => {
 					next();
+
 					return null;
 				} )
 				.then( () => {

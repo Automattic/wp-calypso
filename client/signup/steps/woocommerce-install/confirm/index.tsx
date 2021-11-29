@@ -16,6 +16,7 @@ import {
 	getEligibility,
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { WooCommerceInstallProps } from '../';
@@ -23,21 +24,29 @@ import type { WooCommerceInstallProps } from '../';
 import './style.scss';
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
+	const {
+		goToStep,
+		isReskinned,
+		stepSectionName,
+		headerTitle,
+		headerDescription,
+		queryObject,
+	} = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
-	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	// Request eligibility data.
 	useEffect( () => {
 		if ( ! siteId ) {
+			goToStep( 'select-site' );
 			return;
 		}
+
 		dispatch( fetchAutomatedTransferStatusOnce( siteId ) );
 		dispatch( requestEligibility( siteId ) );
-	}, [ siteId, dispatch ] );
+	}, [ siteId, goToStep, dispatch ] );
 
 	// Check whether it's requesting eligibility data.
 	const isFetchingTransferStatus = !! useSelector( ( state ) =>
@@ -98,6 +107,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 								return goToStep( 'confirm', 'eligibility_substep' );
 							}
 
+							dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
 							return goToStep( 'transfer' );
 						} }
 					>
@@ -133,7 +143,14 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 						</p>
 					) }
 
-					<NextButton onClick={ () => goToStep( 'transfer' ) }>{ __( 'Confirm' ) }</NextButton>
+					<NextButton
+						onClick={ () => {
+							dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
+							goToStep( 'transfer' );
+						} }
+					>
+						{ __( 'Confirm' ) }
+					</NextButton>
 				</div>
 			</>
 		);
@@ -145,7 +162,11 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ wpcomDomain }` }
+			backUrl={
+				queryObject.site
+					? `/woocommerce-installation/${ wpcomDomain }`
+					: '/start/woocommerce-install/select-site'
+			}
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
