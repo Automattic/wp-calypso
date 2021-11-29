@@ -1,8 +1,5 @@
 import debugFactory from 'debug';
-import {
-	translateCheckoutPaymentMethodToWpcomPaymentMethod,
-	translateCheckoutPaymentMethodToTracksPaymentMethod,
-} from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import { translateCheckoutPaymentMethodToTracksPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { logStashEvent, recordCompositeCheckoutErrorDuringAnalytics } from './lib/analytics';
 
@@ -91,22 +88,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_add_coupon_clicked', {} )
 					);
-				case 'STEP_NUMBER_CHANGED':
-					if ( action.payload.stepNumber === 2 && action.payload.previousStepNumber === 1 ) {
-						reduxDispatch(
-							recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
-								payment_method:
-									translateCheckoutPaymentMethodToWpcomPaymentMethod(
-										action.payload.paymentMethodId
-									) || '',
-							} )
-						);
-					}
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_step_changed', {
-							step: action.payload.stepNumber,
-						} )
-					);
 				case 'STRIPE_TRANSACTION_BEGIN': {
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_form_submit', {
@@ -141,29 +122,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
-					);
-				}
-				case 'TRANSACTION_ERROR': {
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_payment_error', {
-							error_code: null,
-							reason: String( action.payload.message ),
-						} )
-					);
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_payment_error', {
-							error_code: null,
-							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod(
-									action.payload.paymentMethodId
-								) || '',
-							reason: String( action.payload.message ),
-						} )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
-							error_message: String( action.payload.message ),
-						} )
 					);
 				}
 				case 'FREE_TRANSACTION_BEGIN': {

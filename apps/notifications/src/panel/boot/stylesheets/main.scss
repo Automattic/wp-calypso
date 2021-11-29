@@ -745,6 +745,20 @@
 				border-radius: 3px; /* stylelint-disable-line scales/radii */
 				padding: 0 2px;
 			}
+
+			// Use important to overwrite the styles as the priority of #wpnc-panel selector is too high
+			// See: client/notifications/style.scss
+			ol.wpnc__ol--outside {
+				margin-left: 1.2em !important;
+				list-style-position: outside !important;
+				overflow: visible;
+			}
+
+			hr.wpnc__hr-separator {
+				width: 100px;
+				height: 2px;
+				margin: 4px auto;
+			}
 		}
 
 		.wpnc__paragraph:first-of-type {

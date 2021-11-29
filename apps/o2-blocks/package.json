@@ -48,8 +48,8 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"enzyme": "^3.11.0",
-		"jest": "^27.2.4",
+		"jest": "^27.3.1",
 		"postcss": "^8.3.11",
-		"webpack": "^5.64.1"
+		"webpack": "^5.64.4"
 	}
 }

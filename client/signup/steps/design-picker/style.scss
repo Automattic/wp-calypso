@@ -1,7 +1,8 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.signup__step.is-design-setup-site, .signup__step.is-difm-design-setup-site {
+.signup__step.is-design-setup-site,
+.signup__step.is-difm-design-setup-site {
 	.step-wrapper {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -61,8 +62,13 @@
 	.design-picker__has-categories {
 		.design-picker__grid {
 			@include break-medium {
+				grid-template-columns: 1fr;
 				column-gap: 24px;
 				row-gap: 36px;
+			}
+
+			@include break-large {
+				grid-template-columns: 1fr 1fr;
 			}
 		}
 
@@ -83,8 +89,15 @@
 	padding-bottom: 30px;
 
 	.step-wrapper__content {
-		height: calc( 100vh - 256px );
-		max-height: 540px;
+		height: calc( 100vh - 245px );
+
+		@include break-mobile {
+			height: calc( 100vh - 225px );
+		}
+
+		@include break-small {
+			height: calc( 100vh - 128px );
+		}
 	}
 
 	@include break-small {
@@ -94,7 +107,7 @@
 		}
 
 		.step-wrapper__content {
-			max-height: 960px;
+			max-height: 1080px;
 		}
 	}
 }

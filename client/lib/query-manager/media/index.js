@@ -1,4 +1,3 @@
-import { includes } from 'lodash';
 import moment from 'moment';
 import PaginatedQueryManager from '../paginated';
 import { DEFAULT_MEDIA_QUERY } from './constants';
@@ -27,7 +26,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 						return true;
 					}
 
-					return media.title && includes( media.title.toLowerCase(), value.toLowerCase() );
+					return media.title && media.title.toLowerCase().includes( value.toLowerCase() );
 
 				case 'mime_type':
 					if ( ! value ) {

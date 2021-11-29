@@ -246,6 +246,7 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.search !== this.props.search ||

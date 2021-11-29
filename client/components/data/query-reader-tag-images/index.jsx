@@ -5,6 +5,7 @@ import { requestTagImages } from 'calypso/state/reader/tags/images/actions';
 import { shouldRequestTagImages } from 'calypso/state/reader/tags/images/selectors';
 
 class QueryReaderTagImages extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( ! this.props.shouldRequestTagImages || ! this.props.tag ) {
 			return;
@@ -13,6 +14,7 @@ class QueryReaderTagImages extends Component {
 		this.props.requestTagImages( this.props.tag );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.shouldRequestTagImages ) {
 			return;

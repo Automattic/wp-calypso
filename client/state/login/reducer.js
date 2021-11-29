@@ -27,9 +27,6 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -369,27 +366,6 @@ export const twoFactorAuthRequestError = ( state = null, action ) => {
 	return state;
 };
 
-export const twoFactorAuthPushPoll = ( state = { inProgress: false, success: false }, action ) => {
-	switch ( action.type ) {
-		case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START:
-			return {
-				...state,
-				inProgress: true,
-				success: false,
-			};
-		case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP:
-			return { ...state, inProgress: false };
-		case TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED:
-			return {
-				...state,
-				inProgress: false,
-				success: true,
-			};
-	}
-
-	return state;
-};
-
 export const socialAccount = ( state = { isCreating: false, createError: null }, action ) => {
 	switch ( action.type ) {
 		case SOCIAL_CREATE_ACCOUNT_REQUEST:
@@ -509,7 +485,6 @@ const combinedReducer = combineReducers( {
 	socialAccount,
 	socialAccountLink,
 	twoFactorAuth,
-	twoFactorAuthPushPoll,
 	twoFactorAuthRequestError,
 } );
 

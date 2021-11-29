@@ -1,6 +1,7 @@
 import type { GoToStep } from '../../types';
 
 export interface WooCommerceInstallProps {
+	siteId: number;
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;

@@ -58,6 +58,7 @@
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/page-pattern-modal": "workspace:^",
 		"@automattic/plans-grid": "workspace:^",
+		"@automattic/tour-kit": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@babel/core": "^7.16.0",
 		"@emotion/react": "^11.4.1",
@@ -96,7 +97,7 @@
 		"classnames": "^2.3.1",
 		"enzyme": "^3.11.0",
 		"eslint": "^7.32.0",
-		"jest": "^27.2.4",
+		"jest": "^27.3.1",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
 		"npm-run-all": "^4.1.5",
@@ -118,6 +119,6 @@
 		"@wordpress/eslint-plugin": "^9.3.0",
 		"babel-jest": "^26.6.3",
 		"wait-for-expect": "^3.0.2",
-		"webpack": "^5.64.1"
+		"webpack": "^5.64.4"
 	}
 }

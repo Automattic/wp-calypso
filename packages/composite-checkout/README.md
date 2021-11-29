@@ -155,6 +155,7 @@ It has the following props.
 - `onPaymentRedirect?: ({paymentMethodId: string | null, transactionLastResponse: unknown }) => null`. A function to call for redirect payment methods when payment begins to redirect. Passed the current payment method id and the transaction response as set by the payment processor function.
 - `onPaymentError?: ({paymentMethodId: string | null, transactionError: string | null }) => null`. A function to call for payment methods when payment is not successful.
 - `onPageLoadError?: ( errorType: string, errorMessage: string, errorData?: Record< string, string | number | undefined > ) => void`. A function to call when an internal error boundary triggered.
+- `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
 - `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
 - `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods).
 - `paymentProcessors: object`. A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
@@ -168,9 +169,9 @@ The line items are for display purposes only. They should also include subtotals
 In addition, `CheckoutProvider` monitors the [transaction status](#useTransactionStatus) and will take actions when it changes.
 
 - If the `transactionStatus` changes to [`.PENDING`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.SUBMITTING`](#FormStatus).
-- If the `transactionStatus` changes to [`.ERROR`](#TransactionStatus), the transaction status will be set to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus), and the error message will be displayed.
+- If the `transactionStatus` changes to [`.ERROR`](#TransactionStatus), the transaction status will be set to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus), and the error message will be sent to the `onPaymentError` handler.
 - If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.COMPLETE`](#FormStatus) (which will cause the `onPaymentComplete` function to be called).
-- If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will display an error as above if there is no url).
+- If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will register an error as above if there is no url).
 - If the `transactionStatus` changes to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus).
 
 ### CheckoutReviewOrder

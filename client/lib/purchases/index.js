@@ -5,7 +5,7 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isMonthlyProduct,
 	isPlan,
@@ -671,8 +671,8 @@ function purchaseType( purchase ) {
 		return purchase.productName;
 	}
 
-	if ( isGoogleWorkspace( purchase ) ) {
-		return i18n.translate( 'Productivity and Collaboration Tools at %(domain)s', {
+	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
+		return i18n.translate( 'Productivity Tools and Mailboxes at %(domain)s', {
 			args: {
 				domain: purchase.meta,
 			},

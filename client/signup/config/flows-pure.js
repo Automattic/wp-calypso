@@ -12,6 +12,7 @@ export function generateFlows( {
 	getChecklistThemeDestination = noop,
 	getImportDestination = noop,
 	getDestinationFromIntent = noop,
+	getDIFMSignupDestination = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -274,6 +275,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'p2-new',
+			steps: [ 'p2-get-started', 'user', 'p2-site' ],
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+			description: 'New P2 signup flow',
+			lastModified: '2021-11-15',
+			showRecaptcha: true,
+		},
+		{
 			name: 'domain',
 			steps: [
 				'domain-only',
@@ -445,17 +454,18 @@ export function generateFlows( {
 		{
 			name: 'do-it-for-me',
 			steps: [ 'user', 'difm-design-setup-site', 'site-info-collection', 'domains' ],
-			destination: getSignupDestination,
+			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			lastModified: '2021-09-30',
 		},
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: [ 'confirm', 'transfer' ],
+			steps: [ 'select-site', 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'siteSlug' ],
+			optionalDependenciesInQuery: [ 'siteSlug' ],
 			disallowResume: true,
 			lastModified: '2021-11-11',
 		},

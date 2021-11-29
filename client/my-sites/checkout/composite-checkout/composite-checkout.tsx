@@ -29,6 +29,7 @@ import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -563,6 +564,33 @@ export default function CompositeCheckout( {
 		checkoutFlow,
 	} );
 
+	const handleStepChanged = useCallback(
+		( {
+			stepNumber,
+			previousStepNumber,
+			paymentMethodId,
+		}: {
+			stepNumber: number | null;
+			previousStepNumber: number;
+			paymentMethodId: string;
+		} ) => {
+			if ( stepNumber === 2 && previousStepNumber === 1 ) {
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+					} )
+				);
+			}
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_step_changed', {
+					step: stepNumber,
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
+
 	const handlePaymentComplete = useCallback(
 		( args ) => {
 			onPaymentComplete?.( args );
@@ -572,9 +600,35 @@ export default function CompositeCheckout( {
 	);
 
 	const handlePaymentError = useCallback(
-		( { transactionError }: { transactionError: string | null } ) => {
+		( {
+			transactionError,
+			paymentMethodId,
+		}: {
+			transactionError: string | null;
+			paymentMethodId: string | null;
+		} ) => {
 			reduxDispatch(
 				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			);
+
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_payment_error', {
+					error_code: null,
+					reason: String( transactionError ),
+				} )
+			);
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_payment_error', {
+					error_code: null,
+					payment_method:
+						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ?? '' ) || '',
+					reason: String( transactionError ),
+				} )
+			);
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
+					error_message: String( transactionError ),
+				} )
 			);
 		},
 		[ reduxDispatch, translate ]
@@ -688,6 +742,7 @@ export default function CompositeCheckout( {
 				onPaymentError={ handlePaymentError }
 				onPaymentRedirect={ handlePaymentRedirect }
 				onPageLoadError={ onPageLoadError }
+				onStepChanged={ handleStepChanged }
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }

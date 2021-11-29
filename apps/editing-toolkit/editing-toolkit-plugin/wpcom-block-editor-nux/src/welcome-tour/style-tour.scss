@@ -6,45 +6,6 @@
 
 $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
 
-.wpcom-editor-welcome-tour-frame {
-	background-color: $white;
-	border-radius: 2px;
-	bottom: 44px;
-	display: inline;
-	left: 16px;
-	position: fixed;
-	z-index: 9999;
-	// Avoid the text cursor when the text is not selectable
-	cursor: default;
-}
-
-.wpcom-editor-welcome-tour__spotlight-overlay {
-	position: fixed;
-	width: 100vw;
-	height: 100vh;
-	top: 0;
-	left: 0;
-	background:rgba( 0, 0, 0 );
-	opacity: 0;
-
-	&.--visible {
-		opacity: 0.5;
-	}
-}
-
-.wpcom-editor-welcome-tour__spotlight-clip {
-	&.--visible {
-		position: fixed;
-		width: 50px;
-		height: 50px;
-		overflow: hidden;
-		// box-shadow: 0 0 0 9999px rgba(0, 0, 255, 0.2);
-		outline: 99999px solid rgba( 0, 0, 0, 0.5 );
-		border-radius: 2px;
-		z-index: 1;
-	}
-}
-
 .welcome-tour-card__heading {
 	font-size: 1.125rem; /* stylelint-disable-line */
 	margin: 0.5rem 0;
@@ -105,17 +66,23 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
+.wpcom-editor-welcome-tour > .tour-kit__frame {
+	box-shadow: none;
+}
+
 .welcome-tour-card {
 	width: 400px;
 	max-width: 92vw;
 
 	&.welcome-tour-card.is-elevated {
+		box-shadow: none;
 		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
 	}
 
 	&.components-card {
 		border: none;
 		border-radius: 4px; /* stylelint-disable-line */
+		box-shadow: none;
 	}
 
 	.components-card__body {
@@ -217,8 +184,8 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 			opacity: 0;
 		}
 
-		.wpcom-editor-welcome-tour-frame:hover &,
-		.wpcom-editor-welcome-tour-frame:focus-within & {
+		.tour-kit__frame:hover &,
+		.tour-kit__frame:focus-within & {
 			.components-button {
 				opacity: 0.7;
 
