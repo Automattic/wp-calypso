@@ -43,6 +43,7 @@ import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
+import { isP2Flow } from 'calypso/signup/utils';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -432,10 +433,18 @@ class SignupForm extends Component {
 		return 'jetpack-connect' === this.props.sectionName;
 	}
 
+	getLoginLinkFrom() {
+		if ( this.props.isP2Flow ) {
+			return 'p2';
+		}
+
+		return this.props.from;
+	}
+
 	getLoginLink() {
 		return login( {
 			isJetpack: this.isJetpack(),
-			from: this.props.from,
+			from: this.getLoginLinkFrom(),
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
@@ -883,7 +892,7 @@ class SignupForm extends Component {
 	footerLink() {
 		const { flowName, showRecaptchaToS, translate } = this.props;
 
-		if ( flowName === 'p2' ) {
+		if ( this.props.isP2Flow ) {
 			return (
 				<div className="signup-form__p2-footer-link">
 					<div>{ this.props.translate( 'Already have a WordPress.com account?' ) }</div>
@@ -1081,7 +1090,8 @@ export default connect(
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-		isP2Flow: props.flowName === 'p2' || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
+		isP2Flow:
+			isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),

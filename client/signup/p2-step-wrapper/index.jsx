@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './style.scss';
+import './style-p2new.scss';
 
 function P2StepWrapper( {
 	flowName,
@@ -42,6 +43,7 @@ function P2StepWrapper( {
 			</div>
 			<StepWrapper
 				hideFormattedHeader
+				shouldHideNavButtons={ true }
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
