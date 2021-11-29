@@ -656,13 +656,9 @@ export function isDomainBeingUsedForPlan( cart?: ResponseCart, domain?: string )
 }
 
 function hasSomeSlug( data: unknown ): data is WithSnakeCaseSlug | WithCamelCaseSlug {
-	if ( ( data as WithSnakeCaseSlug ).product_slug ) {
-		return true;
-	}
-	if ( ( data as WithCamelCaseSlug ).productSlug ) {
-		return true;
-	}
-	return false;
+	return Boolean(
+		( data as WithSnakeCaseSlug ).product_slug || ( data as WithCamelCaseSlug ).productSlug
+	);
 }
 
 export function shouldBundleDomainWithPlan(
