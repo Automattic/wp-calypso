@@ -341,49 +341,6 @@ Undocumented.prototype.isSiteImportable = function ( site_url ) {
 	);
 };
 
-Undocumented.prototype.fetchImporterState = function ( siteId ) {
-	debug( `/sites/${ siteId }/importer/` );
-
-	return this.wpcom.req.get( { path: `/sites/${ siteId }/imports/` } );
-};
-
-Undocumented.prototype.updateImporter = function ( siteId, importerStatus ) {
-	debug( `/sites/${ siteId }/imports/${ importerStatus.importId }` );
-
-	return this.wpcom.req.post( {
-		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
-		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
-	} );
-};
-
-Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
-	return new Promise( ( resolve, rejectPromise ) => {
-		const resolver = ( error, data ) => {
-			error ? rejectPromise( error ) : resolve( data );
-		};
-
-		const formData = [
-			[ 'importStatus', JSON.stringify( params.importStatus ) ],
-			[ 'import', params.file ],
-		];
-
-		if ( params.url ) {
-			formData.push( [ 'url', params.url ] );
-		}
-
-		const req = this.wpcom.req.post(
-			{
-				path: `/sites/${ siteId }/imports/new`,
-				formData,
-			},
-			resolver
-		);
-
-		req.upload.onprogress = params.onprogress;
-		req.onabort = params.onabort;
-	} );
-};
-
 /**
  * Check different info about WordPress and Jetpack status on a url
  *
