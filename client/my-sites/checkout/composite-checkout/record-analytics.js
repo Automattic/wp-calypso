@@ -143,29 +143,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
 					);
 				}
-				case 'TRANSACTION_ERROR': {
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_payment_error', {
-							error_code: null,
-							reason: String( action.payload.message ),
-						} )
-					);
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_payment_error', {
-							error_code: null,
-							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod(
-									action.payload.paymentMethodId
-								) || '',
-							reason: String( action.payload.message ),
-						} )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
-							error_message: String( action.payload.message ),
-						} )
-					);
-				}
 				case 'FREE_TRANSACTION_BEGIN': {
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_form_submit', {

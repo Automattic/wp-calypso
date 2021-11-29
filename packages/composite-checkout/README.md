@@ -168,9 +168,9 @@ The line items are for display purposes only. They should also include subtotals
 In addition, `CheckoutProvider` monitors the [transaction status](#useTransactionStatus) and will take actions when it changes.
 
 - If the `transactionStatus` changes to [`.PENDING`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.SUBMITTING`](#FormStatus).
-- If the `transactionStatus` changes to [`.ERROR`](#TransactionStatus), the transaction status will be set to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus), and the error message will be displayed.
+- If the `transactionStatus` changes to [`.ERROR`](#TransactionStatus), the transaction status will be set to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus), and the error message will be sent to the `onPaymentError` handler.
 - If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.COMPLETE`](#FormStatus) (which will cause the `onPaymentComplete` function to be called).
-- If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will display an error as above if there is no url).
+- If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will register an error as above if there is no url).
 - If the `transactionStatus` changes to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus).
 
 ### CheckoutReviewOrder
