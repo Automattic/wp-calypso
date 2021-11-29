@@ -1,3 +1,4 @@
+import { createSelector } from '@automattic/state-utils';
 import { isMobile } from '@automattic/viewport';
 import { includes } from 'lodash';
 import {
@@ -14,39 +15,51 @@ import { getSectionName, appBannerIsEnabled } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 
 /**
- * Returns true if the App Banner has been dismissed
+ * Returns true if the App Banner is visible
  *
  * @param {object} state Global state tree
- * @returns {boolean} True if App Banner has been dismissed
+ * @returns {boolean} True if App Banner is visible
  */
-export default function isAppBannerVisible( state: AppState ): boolean | null {
-	// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
-	// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
-	// be displayed.
-	if ( shouldDisplayTosUpdateBanner( state ) ) {
-		return false;
-	}
+const isAppBannerVisible = createSelector(
+	( state: AppState ): boolean | null => {
+		// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
+		// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
+		// be displayed.
+		if ( shouldDisplayTosUpdateBanner( state ) ) {
+			return false;
+		}
 
-	// In some cases such as error we want to hide the app banner completely.
-	if ( ! appBannerIsEnabled( state ) ) {
-		return false;
-	}
+		// In some cases such as error we want to hide the app banner completely.
+		if ( ! appBannerIsEnabled( state ) ) {
+			return false;
+		}
 
-	if ( isFetchingPreferences( state ) ) {
-		return false;
-	}
+		if ( isFetchingPreferences( state ) ) {
+			return false;
+		}
 
-	const sectionName = getSectionName( state );
-	const isNotesOpen = isNotificationsOpen( state );
-	const currentSection = getCurrentSection( sectionName, isNotesOpen );
+		const sectionName = getSectionName( state );
+		const isNotesOpen = isNotificationsOpen( state );
+		const currentSection = getCurrentSection( sectionName, isNotesOpen );
 
-	if ( ! includes( ALLOWED_SECTIONS, currentSection ) ) {
-		return null;
-	}
+		if ( ! includes( ALLOWED_SECTIONS, currentSection ) ) {
+			return false;
+		}
 
-	const dismissedUntil = getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE );
+		const dismissedUntil = getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE );
 
-	const dismissed = isDismissed( dismissedUntil, currentSection );
+		const dismissed = isDismissed( dismissedUntil, currentSection );
 
-	return isMobile() && ! isWpMobileApp() && ! dismissed;
-}
+		return isMobile() && ! isWpMobileApp() && ! dismissed;
+	},
+	[
+		shouldDisplayTosUpdateBanner,
+		appBannerIsEnabled,
+		isFetchingPreferences,
+		getSectionName,
+		isNotificationsOpen,
+		( state: AppState ) => getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
+	]
+);
+
+export default isAppBannerVisible;
