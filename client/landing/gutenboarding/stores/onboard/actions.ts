@@ -12,7 +12,7 @@ import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { SITE_STORE } from '../site';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import type { State } from '.';
-import type { SiteVertical } from './types';
+import type { SiteIntent, SiteVertical } from './types';
 import type { Design, FontPair } from '@automattic/design-picker';
 
 type CreateSiteParams = Site.CreateSiteParams;
@@ -229,6 +229,11 @@ export const enrollInFseBeta = ( enrollInFseBeta: boolean ) => ( {
 	enrollInFseBeta,
 } );
 
+export const setSiteIntent = ( siteIntent: SiteIntent ) => ( {
+	type: 'SET_SITE_INTENT' as const,
+	siteIntent,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -254,4 +259,5 @@ export type OnboardAction = ReturnType<
 	| typeof togglePageLayout
 	| typeof startOnboarding
 	| typeof enrollInFseBeta
+	| typeof setSiteIntent
 >;

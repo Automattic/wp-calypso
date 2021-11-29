@@ -23,3 +23,5 @@ export interface SiteVertical {
 	 */
 	slug?: string;
 }
+
+export type SiteIntent = 'write' | 'build' | 'import';

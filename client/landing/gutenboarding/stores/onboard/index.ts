@@ -34,6 +34,7 @@ registerStore< State >( STORE_KEY, {
 		'siteVertical',
 		'wasVerticalSkipped',
 		'isEnrollingInFseBeta',
+		'siteIntent',
 	],
 } );
 

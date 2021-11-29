@@ -36,6 +36,11 @@ export const Step = {
 	DomainsModal: 'domains-modal',
 	PlansModal: 'plans-modal',
 	LanguageModal: 'language-modal',
+
+	HeroIntentGathering: 'intent',
+	HeroThemeSelection: 'select-theme',
+	HeroSiteOptions: 'site-options',
+	HeroStartingPoint: 'starting-point',
 } as const;
 
 // We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
@@ -45,6 +50,7 @@ const routeFragments = {
 	// We add the possibility of an empty step fragment through the `?` question mark at the end of that fragment.
 	step: `:step(${ steps.join( '|' ) })?`,
 	plan: `:plan(${ plansPaths.join( '|' ) })?`,
+	siteSlug: `:siteSlug?`,
 	lang: `:lang(${ languages.map( ( lang ) => lang.langSlug ).join( '|' ) })?`,
 };
 
@@ -66,14 +72,16 @@ export type GutenLocationStateKeyType = keyof GutenLocationStateType;
 export function usePath() {
 	const langParam = useLangRouteParam();
 	const planParam = usePlanRouteParam();
+	const siteSlugParam = useSiteSlugRouteParam();
 
-	return ( step?: StepType, lang?: string, plan?: string ): string => {
+	return ( step?: StepType, lang?: string, plan?: string, siteSlug?: string ): string => {
 		// When lang is null, remove lang.
 		// When lang is empty or undefined, get lang from route param.
 		lang = lang === null ? '' : lang || langParam;
 		plan = plan === null ? '' : plan || planParam;
+		siteSlug = siteSlug === null ? '' : siteSlug || siteSlugParam;
 
-		if ( ! step && ! lang && ! plan ) {
+		if ( ! step && ! lang && ! plan && ! siteSlug ) {
 			return '/';
 		}
 
@@ -82,10 +90,11 @@ export function usePath() {
 				step,
 				plan,
 				lang,
+				siteSlug,
 			} );
 		} catch {
 			// If we get an invalid lang or plan, `generatePath` throws a TypeError.
-			return generatePath( path, { step } );
+			return generatePath( path, { step, siteSlug } );
 		}
 	};
 }
@@ -103,6 +112,11 @@ export function useStepRouteParam() {
 export function usePlanRouteParam() {
 	const match = useRouteMatch< { plan?: PlanPath } >( path );
 	return match?.params.plan;
+}
+
+export function useSiteSlugRouteParam(): string | undefined {
+	const match = useRouteMatch< { siteSlug?: string } >( path );
+	return match?.params.siteSlug;
 }
 
 export function useCurrentStep(): StepNameType {

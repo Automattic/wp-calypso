@@ -6,6 +6,7 @@ import { getAvailableDesigns } from '@automattic/design-picker';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { isEqual } from 'lodash';
 import ReactDom from 'react-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { LocaleContext } from './components/locale-context';
@@ -58,17 +59,19 @@ window.AppBoot = async () => {
 
 	ReactDom.render(
 		<LocaleContext>
-			<WindowLocaleEffectManager />
-			<BrowserRouter basename="new">
-				<Switch>
-					<Route exact path={ path }>
-						<Gutenboard />
-					</Route>
-					<Route>
-						<Redirect to="/" />
-					</Route>
-				</Switch>
-			</BrowserRouter>
+			<QueryClientProvider client={ new QueryClient() }>
+				<WindowLocaleEffectManager />
+				<BrowserRouter basename="new">
+					<Switch>
+						<Route exact path={ path }>
+							<Gutenboard />
+						</Route>
+						<Route>
+							<Redirect to="/" />
+						</Route>
+					</Switch>
+				</BrowserRouter>
+			</QueryClientProvider>
 		</LocaleContext>,
 		document.getElementById( 'wpcom' )
 	);

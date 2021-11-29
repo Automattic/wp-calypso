@@ -3,9 +3,11 @@ import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import '@wordpress/format-library';
+import { Icon, wordpress } from '@wordpress/icons';
 import { ShortcutProvider } from '@wordpress/keyboard-shortcuts';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { Route, Switch } from 'react-router-dom';
 import Header from './components/header';
 import SignupForm from './components/signup-form';
 import { useFontPairings } from './fonts';
@@ -17,6 +19,7 @@ import useSignup from './hooks/use-signup';
 import useSiteTitle from './hooks/use-site-title';
 import useTrackOnboardingStart from './hooks/use-track-onboarding-start';
 import { name, settings } from './onboarding-block';
+import { Step, usePath } from './path';
 import './style.scss';
 import '@wordpress/components/build-style/style.css';
 
@@ -72,12 +75,28 @@ const Gutenboard: React.FunctionComponent = () => {
 	// (and would lead to weird mounting/unmounting behavior).
 	const onboardingBlock = React.useRef( createBlock( name, {} ) );
 
+	const makePath = usePath();
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="block-editor__container">
 			<DropZoneProvider>
 				<div className="gutenboarding__layout edit-post-layout">
-					<Header />
+					<Switch>
+						<Route
+							path={ [
+								makePath( Step.HeroIntentGathering ),
+								makePath( Step.HeroThemeSelection ),
+								makePath( Step.HeroSiteOptions ),
+								makePath( Step.HeroStartingPoint ),
+							] }
+						>
+							<Icon icon={ wordpress } size={ 28 } />
+						</Route>
+						<Route>
+							<Header />
+						</Route>
+					</Switch>
 					{ showSignupDialog && <SignupForm onRequestClose={ onSignupDialogClose } /> }
 					<ShortcutProvider>
 						<BlockEditorProvider

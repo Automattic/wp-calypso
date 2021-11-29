@@ -1,5 +1,6 @@
 import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
 import type { State } from './reducer';
+import type { SiteIntent } from './types';
 
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
@@ -40,3 +41,5 @@ export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 	hasSelectedDesign( state ) && ! state.selectedFonts;
 
 export const isEnrollingInFseBeta = ( state: State ): boolean => state.isEnrollingInFseBeta;
+
+export const getSiteIntent = ( state: State ): SiteIntent | '' => state.siteIntent;

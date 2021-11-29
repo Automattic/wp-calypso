@@ -25,6 +25,10 @@ import Designs from './designs';
 import Domains from './domains';
 import Features from './features';
 import FseBetaOptIn from './fse-beta-opt-in';
+import { HeroFlowIntentGathering } from './hero-flow/intent-gathering';
+import { HeroFlowSiteOptions } from './hero-flow/site-options';
+import { HeroFlowStaringPoint } from './hero-flow/starting-point';
+import { HeroFlowThemePicker } from './hero-flow/theme-picker';
 import Language from './language';
 import Plans from './plans';
 import StylePreview from './style-preview';
@@ -260,6 +264,22 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>{ createSiteOrError() }</Route>
+
+				<Route path={ makePath( Step.HeroIntentGathering ) }>
+					<HeroFlowIntentGathering />
+				</Route>
+
+				<Route path={ makePath( Step.HeroThemeSelection ) }>
+					<HeroFlowThemePicker />
+				</Route>
+
+				<Route path={ makePath( Step.HeroSiteOptions ) }>
+					<HeroFlowSiteOptions />
+				</Route>
+
+				<Route path={ makePath( Step.HeroStartingPoint ) }>
+					<HeroFlowStaringPoint />
+				</Route>
 			</Switch>
 		</div>
 	);

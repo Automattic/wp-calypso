@@ -1,6 +1,6 @@
 import { combineReducers } from '@wordpress/data';
 import type { OnboardAction } from './actions';
-import type { SiteVertical } from './types';
+import type { SiteIntent, SiteVertical } from './types';
 import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 import type { Design, FontPair } from '@automattic/design-picker';
 import type { Reducer } from 'redux';
@@ -236,6 +236,16 @@ const isEnrollingInFseBeta: Reducer< boolean, OnboardAction > = ( state = false,
 	return state;
 };
 
+const siteIntent: Reducer< SiteIntent | '', OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_INTENT' ) {
+		return action.siteIntent;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -257,6 +267,7 @@ const reducer = combineReducers( {
 	hasOnboardingStarted,
 	lastLocation,
 	isEnrollingInFseBeta,
+	siteIntent,
 } );
 
 export type State = ReturnType< typeof reducer >;
