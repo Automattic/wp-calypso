@@ -30,6 +30,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		currentRoute,
 		isAtomic,
 		isDomainOnly,
+		isMapping,
 		isPrimaryDomain,
 		selectedDomainName,
 		selectedSite,
@@ -69,6 +70,10 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		const options = [];
 
 		if ( ! isDomainOnly ) {
+			const mainText = isMapping
+				? __( 'Transfer this domain connection to any administrator on this site' )
+				: __( 'Transfer this domain to any administrator on this site' );
+
 			options.push(
 				<ActionCard
 					key="transfer-to-another-user"
@@ -81,7 +86,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					buttonText={ __( 'Continue' ) }
 					// translators: Transfer a domain to another user
 					headerText={ __( 'To another user' ) }
-					mainText={ __( 'Transfer this domain to any administrator on this site' ) }
+					mainText={ mainText }
 				/>
 			);
 		}
@@ -90,6 +95,9 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			if ( options.length > 0 ) {
 				options.push( <div key="separator" className="transfer-page__item-separator"></div> );
 			}
+			const mainText = isMapping
+				? __( 'Transfer this domain connection to any site you are an administrator on' )
+				: __( 'Transfer this domain to any site you are an administrator on' );
 
 			options.push(
 				<ActionCard
@@ -103,7 +111,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					buttonText={ __( 'Continue' ) }
 					// translators: Transfer a domain to another WordPress.com site
 					headerText={ __( 'To another WordPress.com site' ) }
-					mainText={ __( 'Transfer this domain to any site you are an administrator on' ) }
+					mainText={ mainText }
 				/>
 			);
 		}

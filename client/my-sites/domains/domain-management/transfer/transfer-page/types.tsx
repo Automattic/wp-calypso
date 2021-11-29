@@ -6,6 +6,7 @@ export type TransferPageProps = {
 	domains: ResponseDomain[];
 	isAtomic: boolean;
 	isDomainOnly: boolean;
+	isMapping: boolean;
 	isPrimaryDomain: boolean;
 	selectedDomainName: string;
 	selectedSite: SiteData;
