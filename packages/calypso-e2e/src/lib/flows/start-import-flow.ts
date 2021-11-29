@@ -48,6 +48,13 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that we've landed on the setup page.
+	 */
+	async validateSetupPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.startImportButton );
+	}
+
+	/**
 	 * Validates that we've landed on the URL capture page.
 	 */
 	async validateURLCapturePage(): Promise< void > {
@@ -128,7 +135,7 @@ export class StartImportFlow {
 	 */
 	async startSetup( siteSlug: string ): Promise< void > {
 		await this.page.goto( DataHelper.getCalypsoURL( '/start/setup-site/intent', { siteSlug } ) );
-		await this.page.waitForSelector( selectors.startImportButton );
+		await this.validateSetupPage();
 		await this.page.click( selectors.startImportButton );
 	}
 

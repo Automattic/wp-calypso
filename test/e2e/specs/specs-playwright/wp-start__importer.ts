@@ -87,4 +87,26 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 			await startImportFlow.selectImporterFromList( 0 );
 		} );
 	} );
+
+	// Go back through pages
+	describe( 'Go back to first page', () => {
+		navigateToSetup();
+
+		it( 'Go to Import page', async () => {
+			await startImportFlow.enterURL( 'make.wordpress.org' );
+			await startImportFlow.validateImportPage();
+		} );
+
+		// Back one page
+		it( 'Back to URL capture page', async () => {
+			await startImportFlow.goBackOneScreen();
+			await startImportFlow.validateURLCapturePage();
+		} );
+
+		// Back one page
+		it( 'Back to Setup page', async () => {
+			await startImportFlow.goBackOneScreen();
+			await startImportFlow.validateSetupPage();
+		} );
+	} );
 } );
