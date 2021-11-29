@@ -469,11 +469,11 @@ export function getGoogleApps( cart ) {
  * @returns {import('@automattic/shopping-cart').RequestCartProduct} the new item
  */
 export function googleApps( properties ) {
-	const { domain, meta, product_slug, quantity, new_quantity, users } = properties;
+	const { domain, meta, quantity, new_quantity, users } = properties;
 
 	const domainName = meta ?? domain;
 
-	const productSlug = product_slug || GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
+	const productSlug = camelOrSnakeSlug( properties ) || GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
 
 	const extra = {
 		google_apps_users: users,
