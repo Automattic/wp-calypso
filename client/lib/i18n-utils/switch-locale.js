@@ -3,6 +3,7 @@ import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
+import { setLocale } from 'calypso/state/ui/language/actions';
 import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
@@ -305,17 +306,11 @@ function removeRequireChunkTranslationsHandler() {
 }
 
 let lastRequestedLocale = null;
-export default async function switchLocale( localeSlug ) {
+async function doSwitchLocale( localeSlug ) {
 	// check if the language exists in config.languages
 	const language = getLanguage( localeSlug );
 
 	if ( ! language ) {
-		return;
-	}
-
-	// Note: i18n is a singleton that will be shared between all server requests!
-	// Disable switching locale on the server
-	if ( typeof document === 'undefined' ) {
 		return;
 	}
 
@@ -423,6 +418,13 @@ export default async function switchLocale( localeSlug ) {
 			}
 		);
 	}
+}
+
+export function switchLocale( localeSlug, localeVariant = null ) {
+	return ( dispatch ) => {
+		doSwitchLocale( localeVariant || localeSlug );
+		dispatch( setLocale( localeSlug, localeVariant ) );
+	};
 }
 
 export function loadUserUndeployedTranslations( currentLocaleSlug ) {

@@ -17,13 +17,13 @@ import {
 	getLanguageEmpathyModeActive,
 	toggleLanguageEmpathyMode,
 } from 'calypso/lib/i18n-utils/empathy-mode';
+import { switchLocale } from 'calypso/lib/i18n-utils/switch-locale';
 import { TranslationScanner } from 'calypso/lib/i18n-utils/translation-scanner';
 import translator, { trackTranslatorStatus } from 'calypso/lib/translator-jumpstart';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { setLocale } from 'calypso/state/ui/language/actions';
 import './style.scss';
 
 class TranslatorLauncher extends Component {
@@ -246,11 +246,11 @@ class TranslatorLauncher extends Component {
 					this.selectedLanguageSlug = this.props.selectedLanguageSlug;
 
 					const DEFAULT_LANGUAGE = 'en';
-					setLocale( DEFAULT_LANGUAGE );
+					this.props.switchLocale( DEFAULT_LANGUAGE );
 				} else {
 					window.removeEventListener( 'scroll', this.handleWindowScroll );
 
-					this.selectedLanguageSlug && this.props.setLocale( this.selectedLanguageSlug );
+					this.selectedLanguageSlug && this.props.switchLocale( this.selectedLanguageSlug );
 				}
 			}
 		);
@@ -407,5 +407,5 @@ export default connect(
 			getOriginalUserSetting( state, 'i18n_empathy_mode' ),
 		selectedLanguageSlug: getCurrentLocaleSlug( state ),
 	} ),
-	{ setLocale }
+	{ switchLocale }
 )( localize( TranslatorLauncher ) );
