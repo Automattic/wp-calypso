@@ -197,6 +197,10 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	};
 
 	const renderAdvancedTransferOptions = () => {
+		if ( isMapping ) {
+			return null;
+		}
+
 		return (
 			<Card className="transfer-page__advanced-transfer-options">
 				<CardHeading size={ 16 }>Advanced Options</CardHeading>
