@@ -16,6 +16,7 @@ export interface EligibilityWarning {
 	description: string;
 	name: string;
 	id: string;
+	type: string;
 	supportUrl?: string;
 }
 
