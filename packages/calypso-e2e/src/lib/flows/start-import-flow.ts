@@ -5,6 +5,7 @@ const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
 	backLink: 'a:text("Back")',
+	dontHaveASiteButton: 'a:text("I don\'t have a site address")',
 
 	// Inputs
 	urlInput: 'input.capture__input',
@@ -22,6 +23,8 @@ const selectors = {
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
 	startImportButton:
 		'div.is-intent button.select-items-alt__item-button:text("Import your site content")',
+	importerListButton: ( index: number ) =>
+		`div.list__importers-primary:nth-child(${ index + 1 }) .action-card__button-container button`,
 };
 
 /**
@@ -95,6 +98,15 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that we've landed on the importer list page.
+	 */
+	async validateImporterListPage(): Promise< void > {
+		await this.page.waitForSelector(
+			selectors.startBuildingHeader( 'Import your content from another platform' )
+		);
+	}
+
+	/**
 	 * Enter the URL to import from on the "Enter your site address" input form.
 	 *
 	 * @param {string} url The source URL.
@@ -129,6 +141,25 @@ export class StartImportFlow {
 	 */
 	async startBuilding(): Promise< void > {
 		await this.page.click( selectors.startBuildingButton );
+	}
+
+	/**
+	 * Open the importer list page.
+	 */
+	async startImporterList(): Promise< void > {
+		await this.page.click( selectors.dontHaveASiteButton );
+	}
+
+	/**
+	 * An entry from the list of importers.
+	 *
+	 * @param index the desired importer
+	 */
+	async selectImporterFromList( index: number ): Promise< void > {
+		await this.page.click( selectors.importerListButton( index ) );
+		await this.page.waitForSelector(
+			selectors.startBuildingHeader( 'Your content is ready for its new home' )
+		);
 	}
 
 	/**
