@@ -34,10 +34,7 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 	const renderItemLabel = ( item ) => {
 		if ( item.href ) {
 			return (
-				<a
-					className="breadcrumbs__item-label breadcrumbs__item-label--clickable"
-					href={ item.href }
-				>
+				<a className="breadcrumbs__item-label is-clickable" href={ item.href }>
 					{ item.label }
 				</a>
 			);
