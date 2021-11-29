@@ -82,7 +82,7 @@ const MarketplacePluginInstall = ( {
 			primaryDomain === selectedSiteSlug
 		);
 	} );
-  
+
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ?? null ) );
 	const isAtomic = useSelector( ( state ) =>
 		isSiteAutomatedTransfer( state, selectedSite?.ID ?? null )
