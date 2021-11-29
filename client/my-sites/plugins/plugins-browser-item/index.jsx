@@ -58,10 +58,12 @@ class PluginsBrowserListElement extends Component {
 		const { sitesWithPlugin, translate } = this.props;
 		if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || this.isWpcomPreinstalled() ) {
 			return (
+				/* eslint-disable wpcalypso/jsx-gridicon-size */
 				<div className="plugins-browser-item__installed">
-					<Gridicon icon="checkmark" size={ 18 } />
+					<Gridicon icon="checkmark" size={ 14 } />
 					{ this.props.translate( 'Installed' ) }
 				</div>
+				/* eslint-enable wpcalypso/jsx-gridicon-size */
 			);
 		}
 
