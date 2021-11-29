@@ -4,7 +4,7 @@ import wp from 'calypso/lib/wp';
 
 export const useDeleteMediaMutation = ( siteId, queryOptions = {} ) => {
 	const mutation = useMutation(
-		async ( { mediaId } ) => wp.req.post( `/sites/${ siteId }/media/${ mediaId }/delete` ),
+		( { mediaId } ) => wp.req.post( `/sites/${ siteId }/media/${ mediaId }/delete` ),
 		{ ...queryOptions }
 	);
 
