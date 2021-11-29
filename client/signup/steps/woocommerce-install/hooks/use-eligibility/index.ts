@@ -84,7 +84,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		pluginsWarning,
 		widgetsWarning,
 		wpcomSubdomainWarning,
-
 		transferringBlockers,
 		hasBlockers: !! transferringBlockers.length,
 	};

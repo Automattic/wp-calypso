@@ -3,9 +3,8 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
-import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
-import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
+import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import SignupBanner from '../components/signup-banner';
 import SignupCard from '../components/signup-card';
@@ -24,58 +23,93 @@ const SupportLink = styled.a`
 const ActionSection = styled.div`
 	display: flex;
 	justify-content: space-between;
-	margin-top: 40px;
 	align-items: baseline;
 `;
 
+const Divider = styled.hr`
+	border-top: 1px solid #eee;
+	background: none;
+	margin-bottom: 40px;
+`;
+
+const DomainWarningSection = styled.div`
+	margin-bottom: 40px;
+`;
+
+const WarningsOrHoldsSection = styled.div`
+	margin-bottom: 40px;
+`;
+
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { siteId, goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
+	const { siteId, goToStep, isReskinned, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
 
 	const {
-		eligibilityHolds,
-		eligibilityWarnings,
 		isFetching,
 		wpcomSubdomainWarning,
 		stagingDomain,
 		pluginsWarning,
+		widgetsWarning,
 		hasBlockers,
 	} = useEligibility( siteId );
 
 	const isLoading = ! siteId || isFetching;
+	const warnings: string[] = [];
 
-	function getWPComSubdomainWarningContent() {
+	if ( pluginsWarning.length ) {
+		warnings.push( __( 'Some plugins behavior would be affected when installing this product.' ) );
+	}
+
+	if ( widgetsWarning.length ) {
+		warnings.push( __( 'Some widgets behavior would be affected when installing this product.' ) );
+	}
+
+	function getWarningsOrHoldsSection() {
+		if ( hasBlockers ) {
+			return (
+				<WarningsOrHoldsSection>
+					<Divider />
+					<WarningCard
+						message={ __(
+							'There is an error that is stopping us from being able to install this product, please contact support.'
+						) }
+					/>
+				</WarningsOrHoldsSection>
+			);
+		}
+
+		if ( warnings.length ) {
+			return (
+				<WarningsOrHoldsSection>
+					<Divider />
+					<SignupCard icon="notice-outline" title={ __( 'Things you should be aware of' ) }>
+						<EligibilityWarningsList warnings={ warnings } />
+					</SignupCard>
+				</WarningsOrHoldsSection>
+			);
+		}
+
+		return null;
+	}
+
+	function getContent() {
 		return (
 			<>
 				<div className="confirm__info-section" />
 				<div className="confirm__instructions-container">
-					<SignupCard title={ __( 'New Store Domain' ) }>
-						<SignupBanner label={ __( 'New' ) }>{ stagingDomain }</SignupBanner>
-
-						<p>
-							{ __(
-								'By installing this product your subdomain will change. Your old subdomain (sitename.wordpress.com) will no longer work. You can change it to a custom domain on us at anytime in future.'
-							) }
-						</p>
-					</SignupCard>
-					{ !! eligibilityWarnings?.length && (
-						<SignupCard icon="notice-outline" title={ __( 'Things you should be aware of' ) }>
-							<EligibilityWarningsList warnings={ eligibilityWarnings } />
-						</SignupCard>
+					{ wpcomSubdomainWarning && (
+						<DomainWarningSection>
+							<SignupCard title={ __( 'New Store Domain' ) }>
+								<SignupBanner label={ __( 'New' ) }>{ stagingDomain }</SignupBanner>
+								<p>
+									{ __(
+										'By installing this product your subdomain will change. Your old subdomain (sitename.wordpress.com) will no longer work. You can change it to a custom domain on us at anytime in future.'
+									) }
+								</p>
+							</SignupCard>
+						</DomainWarningSection>
 					) }
-
-					{ !! pluginsWarning.length && (
-						<p>{ __( 'There are some plugins that would be affected their functionallity.' ) }</p>
-					) }
-
-					{ hasBlockers && (
-						<p>
-							{ __(
-								'This is an erro that is stopping the user from proceeding of the reason why the install failed.'
-							) }
-						</p>
-					) }
-
+					{ getWarningsOrHoldsSection() }
 					<ActionSection>
 						<p>
 							{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
@@ -90,43 +124,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 							{ __( 'Create my Store' ) }
 						</NextButton>
 					</ActionSection>
-				</div>
-			</>
-		);
-	}
-
-	function getContent() {
-		// wpcom subdomain warning.
-		if (
-			wpcomSubdomainWarning &&
-			( stepSectionName === 'wpcom_subdomain_substep' || typeof stepSectionName === 'undefined' )
-		) {
-			return getWPComSubdomainWarningContent();
-		}
-
-		return (
-			<>
-				<div className="confirm__info-section" />
-
-				<div className="confirm__instructions-container">
-					{ !! eligibilityHolds?.length && (
-						<p>
-							<HoldList holds={ eligibilityHolds } context={ 'plugins' } isPlaceholder={ false } />
-						</p>
-					) }
-					{ !! eligibilityWarnings?.length && (
-						<p>
-							<WarningList warnings={ eligibilityWarnings } context={ 'plugins' } />
-						</p>
-					) }
-
-					<NextButton
-						isBusy={ isLoading }
-						disabled={ isLoading }
-						onClick={ () => goToStep( 'transfer' ) }
-					>
-						{ __( 'Confirm' ) }
-					</NextButton>
 				</div>
 			</>
 		);
