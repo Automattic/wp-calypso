@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Popover, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
@@ -364,6 +365,7 @@ class ThemesMagicSearchCard extends Component {
 					>
 						{ searchField }
 					</div>
+					{ config.isEnabled( 'themes/premium' ) && <div>Premium Themes Enabled</div> }
 				</StickyPanel>
 			</div>
 		);

@@ -105,6 +105,7 @@
 		"site-indicator": true,
 		"ssr/sample-log-cache-misses": true,
 		"support-user": true,
+		"themes/premium": false,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
