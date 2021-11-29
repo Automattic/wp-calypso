@@ -4882,7 +4882,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinonjs/fake-timers@npm:^7.0.4, @sinonjs/fake-timers@npm:^7.1.2":
+"@sinonjs/fake-timers@npm:^7.0.4":
   version: 7.1.2
   resolution: "@sinonjs/fake-timers@npm:7.1.2"
   dependencies:
@@ -4891,12 +4891,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinonjs/fake-timers@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "@sinonjs/fake-timers@npm:8.0.1"
+"@sinonjs/fake-timers@npm:^8.0.1, @sinonjs/fake-timers@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "@sinonjs/fake-timers@npm:8.1.0"
   dependencies:
     "@sinonjs/commons": ^1.7.0
-  checksum: 77c4dccc60bce6dcf5fcf342fe19dff7b693056cb3ee4a683babbc4790037f4ece2a971bf5a2ced00214bcce2c58d299c532d2a23140e722629251ab6d4b03dc
+  checksum: d6b795f9ddaf044daf184c151555ca557ccd23636f2ee3d2f76a9d128329f81fc1aac412f6f67239ab92cb9390aad9955b71df93cf4bd442c68b1f341e381ab6
   languageName: node
   linkType: hard
 
@@ -12123,7 +12123,7 @@ __metadata:
     redux-mock-store: ^1.5.4
     redux-thunk: ^2.3.0
     regenerator-runtime: ^0.13.9
-    sinon: ^11.1.2
+    sinon: ^12.0.1
     social-logos: ^2.4.0
     socket.io-client: ^2.3.0
     source-map-support: ^0.5.19
@@ -33803,17 +33803,17 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"sinon@npm:^11.1.2":
-  version: 11.1.2
-  resolution: "sinon@npm:11.1.2"
+"sinon@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "sinon@npm:12.0.1"
   dependencies:
     "@sinonjs/commons": ^1.8.3
-    "@sinonjs/fake-timers": ^7.1.2
+    "@sinonjs/fake-timers": ^8.1.0
     "@sinonjs/samsam": ^6.0.2
     diff: ^5.0.0
     nise: ^5.1.0
     supports-color: ^7.2.0
-  checksum: c4f2507bb252dc07df476d52461b54533cf9f7c27078dc44202dfd0b466d0c7043c58861b4e46c6c06329bac79c4929cd7c7be38e7481922bad722655dd1dfb9
+  checksum: 35536057d9f4f38a16008e8463c41ba14f84cbc5ad9399da71c0490a242fd0fd34fb194ecc7092ed7d6b494e0cde8ae26050b3ab957703fb22147d9de1a3de2e
   languageName: node
   linkType: hard
 
@@ -38365,7 +38365,7 @@ testarmada-magellan@11.0.10:
     sass: ^1.37.5
     sass-loader: ^12.1.0
     sharp: ^0.28
-    sinon: ^11.1.2
+    sinon: ^12.0.1
     sinon-chai: ^3.7.0
     source-map: ^0.7.3
     stackframe: ^1.1.1
