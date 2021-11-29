@@ -256,6 +256,10 @@
 		.videos-ui__button {
 			max-width: 300px;
 		}
+
+		.videos-ui__bar {
+			min-height: 72px;
+		}
 	}
 
 	@include break-medium {
