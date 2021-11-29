@@ -465,15 +465,16 @@ export function getGoogleApps( cart ) {
 /**
  * Creates a new shopping cart item for G Suite or Google Workspace.
  *
- * @param {object} properties - list of properties
+ * @typedef {import('@automattic/shopping-cart').GSuiteProductUser} GSuiteProductUser
+ * @param {{domain: string, meta?: string, new_quantity?: number, productSlug: string, quantity?: number, users: GSuiteProductUser[] }} properties - list of properties
  * @returns {import('@automattic/shopping-cart').RequestCartProduct} the new item
  */
 export function googleApps( properties ) {
-	const { domain, meta, product_slug, quantity, new_quantity, users } = properties;
+	const { domain, meta, quantity, new_quantity, users } = properties;
 
 	const domainName = meta ?? domain;
 
-	const productSlug = product_slug || GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
+	const productSlug = camelOrSnakeSlug( properties ) || GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
 
 	const extra = {
 		google_apps_users: users,
