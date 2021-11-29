@@ -152,6 +152,7 @@
 		"signup/hero-flow": true,
 		"site-indicator": true,
 		"support-user": true,
+		"themes/premium": false,
 		"titan/iframe-control-panel": false,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
