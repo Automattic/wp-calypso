@@ -31,16 +31,12 @@ const selectors = {
  * Class encapsulating the flow when starting a new start importer ('/start/importer')
  */
 export class StartImportFlow {
-	private page: Page;
-
 	/**
 	 * Constructs an instance of the flow.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
-	constructor( page: Page ) {
-		this.page = page;
-	}
+	constructor( private page: Page ) {}
 
 	/**
 	 * Given text, clicks on the first instance of the button with the text.

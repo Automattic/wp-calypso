@@ -20,12 +20,21 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		await loginPage.login( { account: 'defaultUser' } );
 	} );
 
-	// A normal and valid import flow.
-	describe( 'Follow the import flow', () => {
-		it( 'Navigate to Setup page', async () => {
-			await startImportFlow.startSetup( 'e2eflowtesting4.wordpress.com' );
+	/**
+	 * Navigate to initial setup page
+	 *
+	 * @param siteSlug The site slug URL.
+	 */
+	const navigateToSetup = ( siteSlug = 'e2eflowtesting4.wordpress.com' ) => {
+		it( `Navigate to Setup page as ${ siteSlug }`, async () => {
+			await startImportFlow.startSetup( siteSlug );
 			await startImportFlow.validateURLCapturePage();
 		} );
+	};
+
+	// A normal and valid import flow.
+	describe( 'Follow the import flow', () => {
+		navigateToSetup();
 
 		it( 'Start a WordPress import', async () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
@@ -41,10 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		// example.com will never be a WordPress site.
 		{ url: 'example.com', reason: "Your existing content can't be imported" },
 	] )( "Follow the WordPress can't be imported flow", ( { url, reason } ) => {
-		it( 'Navigate to Capture page', async () => {
-			await startImportFlow.startImport( 'e2eflowtesting4.wordpress.com' );
-			await startImportFlow.validateURLCapturePage();
-		} );
+		navigateToSetup();
 
 		it( `Start an invalid WordPress import (${ reason })`, async () => {
 			await startImportFlow.enterURL( url );
@@ -57,10 +63,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 
 	// An import flow which show an error below the "Enter your site address" input form.
 	describe( 'Follow the WordPress domain error flow', () => {
-		it( 'Navigate to Capture page', async () => {
-			await startImportFlow.startImport( 'e2eflowtesting4.wordpress.com' );
-			await startImportFlow.validateURLCapturePage();
-		} );
+		navigateToSetup();
 
 		// One of several errors found on Blogs::get_blog_name_error_code.
 		// A deleted wpcom site does generate the same error.
@@ -74,12 +77,9 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		} );
 	} );
 
-	// The "I don't have a site address" flow
+	// The "I don't have a site address" flow.
 	describe( "I don't have a site flow", () => {
-		it( 'Navigate to Capture page', async () => {
-			await startImportFlow.startImport( 'e2eflowtesting4.wordpress.com' );
-			await startImportFlow.validateURLCapturePage();
-		} );
+		navigateToSetup();
 
 		it( 'Select that there is no site', async () => {
 			await startImportFlow.startImporterList();
