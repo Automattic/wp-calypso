@@ -359,6 +359,12 @@ $plugin-details-header-padding: 100px;
 			border-bottom: 1px solid var( --studio-gray-5 );
 		}
 	}
+
+	@media screen and ( max-width: 480px ) {
+		.section-nav-tab:first-child .section-nav-tab__link {
+			padding-left: 15px;
+		}
+	}
 }
 
 .plugin-details__sites-list-background + .plugin-details__body {
