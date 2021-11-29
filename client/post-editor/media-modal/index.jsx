@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
 import CloseOnEscape from 'calypso/components/close-on-escape';
-import withDeleteMedia from 'calypso/data/media/with-delete-media';
+import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
 import * as MediaUtils from 'calypso/lib/media/utils';

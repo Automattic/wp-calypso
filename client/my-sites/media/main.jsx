@@ -10,7 +10,7 @@ import QueryMedia from 'calypso/components/data/query-media';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import withDeleteMedia from 'calypso/data/media/with-delete-media';
+import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getMimeType } from 'calypso/lib/media/utils';
