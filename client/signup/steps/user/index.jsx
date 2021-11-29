@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -10,6 +10,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import formState from 'calypso/lib/form-state';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -17,6 +18,7 @@ import {
 	isJetpackCloudOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 import { WPCC } from 'calypso/lib/url/support';
 import flows from 'calypso/signup/config/flows';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
@@ -93,25 +95,12 @@ export class UserStep extends Component {
 	};
 
 	state = {
-		subHeaderText: '',
 		recaptchaClientId: null,
 	};
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			this.props.flowName !== nextProps.flowName ||
-			this.props.locale !== nextProps.locale ||
-			this.props.subHeaderText !== nextProps.subHeaderText
-		) {
-			this.setSubHeaderText( nextProps );
-		}
-	}
 
 	UNSAFE_componentWillMount() {
 		const { oauth2Signup, initialContext } = this.props;
 		const clientId = get( initialContext, 'query.oauth2_client_id', null );
-
-		this.setSubHeaderText( this.props );
 
 		if ( oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
@@ -124,33 +113,27 @@ export class UserStep extends Component {
 		}
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
-
-		i18n.on( 'change', this.handleI18nChange );
 	}
 
-	componentWillUnmount() {
-		i18n.off( 'change', this.handleI18nChange );
-	}
-
-	handleI18nChange = () => {
-		this.setSubHeaderText( this.props );
-	};
-
-	setSubHeaderText( props ) {
+	getSubHeaderText() {
 		const {
 			flowName,
+			initialContext,
 			oauth2Client,
+			oauth2Signup,
 			positionInFlow,
 			translate,
 			userLoggedIn,
 			wccomFrom,
 			isReskinned,
 			sectionName,
+			stepName,
 			from,
 			locale,
-		} = props;
+			step,
+		} = this.props;
 
-		let subHeaderText = props.subHeaderText;
+		let subHeaderText = this.props.subHeaderText;
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
@@ -207,16 +190,27 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'First, create your WordPress.com account.' );
 
 			if ( isReskinned ) {
-				const loginUrl = login( {
+				let loginUrl = login( {
 					isJetpack: 'jetpack-connect' === sectionName,
 					from,
-					redirectTo: getRedirectToAfterLoginUrl( props ),
+					redirectTo: getRedirectToAfterLoginUrl( {
+						oauth2Signup,
+						initialContext,
+						flowName,
+						stepName,
+						userLoggedIn,
+					} ),
 					locale,
 					oauth2ClientId: oauth2Client?.id,
 					wccomFrom,
 					isWhiteLogin: isReskinned,
 					signupUrl: window.location.pathname + window.location.search,
 				} );
+
+				if ( step?.form ) {
+					const email = formState.getFieldValue( step.form, 'email' );
+					loginUrl = addQueryArgs( { email_address: email }, loginUrl );
+				}
 
 				subHeaderText = translate(
 					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
@@ -227,7 +221,7 @@ export class UserStep extends Component {
 			}
 		}
 
-		this.setState( { subHeaderText } );
+		return subHeaderText;
 	}
 
 	initGoogleRecaptcha() {
@@ -503,7 +497,7 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }
-				subHeaderText={ this.state.subHeaderText }
+				subHeaderText={ this.getSubHeaderText() }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
