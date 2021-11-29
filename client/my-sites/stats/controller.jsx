@@ -211,7 +211,7 @@ export function site( context, next ) {
 		store,
 	} = context;
 
-	const filters = getSiteFilters( givenSiteId, context );
+	const filters = getSiteFilters( givenSiteId );
 	const state = store.getState();
 	const currentSite = getSite( state, givenSiteId );
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
@@ -401,7 +401,7 @@ export function wordAds( context, next ) {
 
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
-	const filters = getSiteFilters( siteId, context );
+	const filters = getSiteFilters( siteId );
 
 	const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
 
