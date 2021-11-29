@@ -207,18 +207,6 @@ Undocumented.prototype.readSitePost = function ( query, fn ) {
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
 };
 
-Undocumented.prototype.readSitePostRelated = function ( query, fn ) {
-	debug( '/read/site/:site/post/:post/related' );
-	const params = omit( query, [ 'site_id', 'post_id' ] );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-	return this.wpcom.req.get(
-		'/read/site/' + query.site_id + '/post/' + query.post_id + '/related',
-		params,
-		fn
-	);
-};
-
 /**
  * Launches a private site
  *
