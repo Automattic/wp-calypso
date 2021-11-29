@@ -23,6 +23,7 @@ import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/site
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
+import MobileAppDownload from './mobile-app-download';
 import NavItem from './nav-item';
 
 /**
@@ -264,7 +265,7 @@ const SiteSetupList = ( {
 						const isCompleted = task.isCompleted;
 
 						return (
-							<li key={ task.id }>
+							<li key={ task.id } className={ `site-setup-list__task-${ task.id }` }>
 								<NavItem
 									key={ task.id }
 									taskId={ task.id }
@@ -318,6 +319,7 @@ const SiteSetupList = ( {
 						);
 					} ) }
 				</ul>
+				<MobileAppDownload />
 			</div>
 		</Card>
 	);
