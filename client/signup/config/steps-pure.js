@@ -677,6 +677,10 @@ export function generateSteps( {
 			stepName: 'p2-get-started',
 		},
 
+		'p2-confirm-email': {
+			stepName: 'p2-confirm-email',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
