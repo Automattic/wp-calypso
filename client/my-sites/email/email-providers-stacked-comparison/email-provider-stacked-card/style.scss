@@ -231,12 +231,6 @@ div.email-provider-stacked-card__price-badge {
 			margin-bottom: 0;
 		}
 
-		.email-providers-stacked-comparison__titan-mailbox-action-continue {
-			@include break-mobile {
-				margin-left: auto;
-			}
-		}
-
 		.email-providers-stacked-comparison__titan-mailbox-action-skip {
 			@include break-mobile {
 				margin-left: 1em;
