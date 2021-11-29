@@ -50,6 +50,8 @@
 	.last-actions {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
 
 		button.ellipsis-menu__toggle {
 			padding: 0;

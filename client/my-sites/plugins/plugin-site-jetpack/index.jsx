@@ -10,6 +10,7 @@ import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
+import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
 import {
 	getPluginOnSite,
 	isPluginActionInProgress,
@@ -97,8 +98,13 @@ const PluginSiteJetpack = ( props ) => {
 				</div>
 			) : (
 				<div className="plugin-site-jetpack__action plugin-action last-actions">
-					{ ! isMobileLayout && canToggleRemove && (
-						<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } />
+					{ ! isMobileLayout && (
+						<>
+							<PluginUpdateIndicator site={ props.site } plugin={ props.plugin } expanded />
+							{ canToggleRemove && (
+								<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } />
+							) }
+						</>
 					) }
 					{ ( isMobileLayout || settingsLink ) && (
 						<EllipsisMenu position={ 'bottom' }>
@@ -106,7 +112,15 @@ const PluginSiteJetpack = ( props ) => {
 								<PopoverMenuItem href={ settingsLink }>{ translate( 'Settings' ) }</PopoverMenuItem>
 							) }
 							{ isMobileLayout && (
-								<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } menuItem />
+								<>
+									<PluginUpdateIndicator
+										site={ props.site }
+										plugin={ props.plugin }
+										expanded
+										menuItem
+									/>
+									<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } menuItem />
+								</>
 							) }
 						</EllipsisMenu>
 					) }
