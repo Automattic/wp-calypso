@@ -126,8 +126,8 @@ export class UserStep extends Component {
 		}
 		if ( flowName === 'onboarding' ) {
 			const experimentCheck = this.state.isDesktop
-				? 'registration_email_only_desktop'
-				: 'registration_email_only_mobile';
+				? 'registration_email_only_desktop_relaunch'
+				: 'registration_email_only_mobile_relaunch';
 
 			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
 				this.setState( { experiment: experimentName } );
