@@ -131,7 +131,6 @@ body.dns__body-white {
 					}
 
 					&.dns-records-list-item__type {
-						color: $gray-900;
 						overflow-wrap: break-word;
 
 						@include break-mobile {
