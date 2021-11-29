@@ -16,7 +16,7 @@ import { getSiteDomain } from 'calypso/state/sites/selectors';
 type EligibilityHook = {
 	eligibilityHolds?: string[];
 	eligibilityWarnings?: EligibilityWarning[];
-	isFetchingTransferStatus: boolean;
+	isFetching: boolean;
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
 	wpcomDomain: string | null;
 	stagingDomain: string | null;
@@ -48,7 +48,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const stagingDomain = wpcomDomain?.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ) || null;
 
 	// Check whether it's requesting eligibility data.
-	const isFetchingTransferStatus = !! useSelector( ( state ) =>
+	const isFetching = !! useSelector( ( state ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )
 	);
 
@@ -65,7 +65,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	return {
 		eligibilityHolds,
 		eligibilityWarnings,
-		isFetchingTransferStatus,
+		isFetching,
 		wpcomSubdomainWarning,
 		wpcomDomain,
 		stagingDomain,
