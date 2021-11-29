@@ -1,9 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
+import ExternalLink from 'calypso/components/external-link';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
@@ -18,6 +21,8 @@ import EditContactInfoFormCard from '../edit-contact-info/form-card';
 import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
 import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
 import { EditContactInfoPageProps } from './types';
+
+import './style.scss';
 
 const EditContactInfoPage = ( {
 	currentRoute,
@@ -85,13 +90,53 @@ const EditContactInfoPage = ( {
 		}
 
 		return (
-			<div>
-				<EditContactInfoFormCard
-					domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
-					selectedDomain={ domain }
-					selectedSite={ selectedSite }
-					showContactInfoNote={ true }
-				/>
+			<EditContactInfoFormCard
+				domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
+				selectedDomain={ domain }
+				selectedSite={ selectedSite }
+				showContactInfoNote={ true }
+			/>
+		);
+	};
+
+	const renderSidebar = () => {
+		const supportLink = (
+			<ExternalLink
+				href={ localizeUrl(
+					'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection'
+				) }
+				target="_blank"
+				icon={ false }
+			/>
+		);
+		const icannLink = <ExternalLink href="https://www.icann.org/" target="_blank" icon={ false } />;
+		const explanationText1 = translate(
+			'{{icannLinkComponent}}ICANN{{/icannLinkComponent}} requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.',
+			{
+				components: {
+					icannLinkComponent: icannLink,
+				},
+			}
+		);
+		const explanationText2 = translate(
+			'Domain privacy service is included for free on applicable domains. {{supportLinkComponent}}Learn more{{/supportLinkComponent}}.',
+			{
+				components: {
+					supportLinkComponent: supportLink,
+				},
+			}
+		);
+		return (
+			<div className="edit-contact-info-page__sidebar">
+				<div className="edit-contact-info-page__sidebar__title">
+					<p>
+						<strong>{ translate( 'Provide accurate contact information' ) }</strong>
+					</p>
+				</div>
+				<div className="edit-contact-info-page__sidebar__content">
+					<p>{ explanationText1 }</p>
+					<p>{ explanationText2 }</p>
+				</div>
 			</div>
 		);
 	};
@@ -104,7 +149,15 @@ const EditContactInfoPage = ( {
 		<Main className="edit-contact-info-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
-			<TwoColumnsLayout content={ renderContent() } sidebar={ <div>SIDEBAR HERE</div> } />
+			<FormattedHeader
+				brandFont
+				headerText={ translate( 'Edit contact information' ) }
+				subHeaderText={ translate(
+					'Domain owners are required to provide correct contact information'
+				) }
+				align="left"
+			/>
+			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 		</Main>
 	);
 };

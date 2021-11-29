@@ -1,0 +1,19 @@
+.edit-contact-info-page {
+	&__sidebar {
+		padding: 24px 16px;
+		background-color: var( --studio-gray-0 );
+		&__content {
+			p {
+				margin: 0 0 1em;
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+		&__title {
+			p {
+				margin-bottom: 0.5em;
+			}
+		}
+	}
+}
