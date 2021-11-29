@@ -26,7 +26,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 					'videos-ui__course-completed': isCourseComplete,
 				} ) }
 			>
-				<a href="/" onClick={ onBackLinkClick }>
+				<a href="/" className={ 'videos-ui__back-button' } onClick={ onBackLinkClick }>
 					<Gridicon icon="chevron-left" size={ 24 } />
 					<span>{ translate( 'Back' ) }</span>
 				</a>
@@ -39,8 +39,12 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 				) }
 
 				{ isCourseComplete && (
-					<Button onClick={ onStartWritingClick } className="videos-ui__button">
-						{ translate( 'Start writing' ) }
+					<Button
+						onClick={ onStartWritingClick }
+						className="videos-ui__button"
+						href={ course?.cta.url }
+					>
+						{ course?.cta.action }
 					</Button>
 				) }
 			</div>
