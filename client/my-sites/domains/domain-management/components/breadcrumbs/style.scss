@@ -26,10 +26,14 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 15px 0;
+	padding: 10px 0;
 	min-height: 40px;
 	max-width: 1040px;
 	margin: 0 auto;
+
+	@include break-mobile {
+		padding: 15px 0;
+	}
 }
 
 .breadcrumbs__items {
