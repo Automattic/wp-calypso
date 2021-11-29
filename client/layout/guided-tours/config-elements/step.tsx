@@ -96,6 +96,7 @@ export default class Step extends Component< Props, State > {
 	 */
 	isUpdatingPosition = false;
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.wait( this.props, this.context ).then( () => {
 			this.start();
@@ -117,6 +118,7 @@ export default class Step extends Component< Props, State > {
 		} );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
 		// Scrolling must happen only once
 		const shouldScrollTo = nextProps.shouldScrollTo && ! this.state.hasScrolled;

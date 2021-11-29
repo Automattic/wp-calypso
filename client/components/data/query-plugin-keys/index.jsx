@@ -5,12 +5,14 @@ import { fetchInstallInstructions } from 'calypso/state/plugins/premium/actions'
 import { hasRequested } from 'calypso/state/plugins/premium/selectors';
 
 class QueryPluginKeys extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( this.props.siteId && ! this.props.hasRequested ) {
 			this.props.fetchInstallInstructions( this.props.siteId );
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId === this.props.siteId ) {
 			return;
