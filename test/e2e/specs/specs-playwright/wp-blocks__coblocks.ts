@@ -1,5 +1,6 @@
 /**
  * @group gutenberg
+ * @group coblocks
  */
 import {
 	setupHooks,
