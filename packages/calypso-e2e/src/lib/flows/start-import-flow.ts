@@ -23,6 +23,7 @@ const selectors = {
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
 	startImportButton:
 		'div.is-intent button.select-items-alt__item-button:text("Import your site content")',
+	// And entry of the list of selectable importers
 	importerListButton: ( index: number ) =>
 		`div.list__importers-primary:nth-child(${ index + 1 }) .action-card__button-container button`,
 };
@@ -44,7 +45,10 @@ export class StartImportFlow {
 	 * @param {string} text User-visible text on the button.
 	 */
 	async clickButton( text: string ): Promise< void > {
-		await this.page.click( selectors.button( text ) );
+		const selector = selectors.button( text );
+
+		await this.page.waitForSelector( selector );
+		await this.page.click( selector );
 	}
 
 	/**
