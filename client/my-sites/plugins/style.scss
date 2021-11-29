@@ -190,7 +190,7 @@ $plugin-details-header-padding: 100px;
 .plugin-details__tags {
 	position: absolute;
 	font-size: $font-body-extra-small;
-	color: var( --studio-gray-40 );
+	color: var( --studio-gray-60 );
 	top: calc( $plugin-details-header-padding - 15px );
 	left: 0;
 
@@ -234,12 +234,12 @@ $plugin-details-header-padding: 100px;
 		.plugin-details__info-title {
 			font-size: $font-body-extra-small;
 			font-weight: 400;
-			color: var( --studio-gray-40 );
+			color: var( --studio-gray-60 );
 		}
 
 		.plugin-details__info-value {
 			font-size: $font-body;
-			color: var( --studio-gray-70 );
+			color: var( --studio-gray-90 );
 		}
 	}
 
@@ -320,12 +320,12 @@ $plugin-details-header-padding: 100px;
 		margin-top: 100px;
 
 		.title {
-			color: var( --studio-gray-40 );
+			color: var( --studio-gray-60 );
 			font-size: $font-body-extra-small;
 		}
 
 		.value {
-			color: var( --studio-gray-70 );
+			color: var( --studio-gray-90 );
 			font-size: $font-body-small;
 			padding-bottom: 16px;
 
