@@ -167,7 +167,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				);
 				imageBlock = new ImageBlock( blockHandle );
 				const uploadedImage = await imageBlock.upload( imageFile.fullpath );
-				uploadedImagePath = await uploadedImage.getAttribute( 'src' );
+				uploadedImagePath = ( await uploadedImage.getAttribute( 'src' ) ) as string;
 			} );
 
 			it( `Replace uploaded image`, async () => {
