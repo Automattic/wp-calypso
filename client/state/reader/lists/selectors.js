@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { filter, find, has, includes } from 'lodash';
+import { filter, find } from 'lodash';
 import { withoutHttp } from 'calypso/lib/url';
 import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import 'calypso/state/reader/init';
@@ -78,10 +78,7 @@ export const getSubscribedLists = createSelector(
  * @returns {boolean}        Whether lists are being requested
  */
 export function isUpdatedList( state, listId ) {
-	if ( ! has( state, 'reader.lists.updatedLists' ) ) {
-		return false;
-	}
-	return includes( state.reader.lists.updatedLists, listId );
+	return state.reader.lists.updatedLists.includes( listId );
 }
 
 /**
@@ -92,11 +89,7 @@ export function isUpdatedList( state, listId ) {
  * @returns {boolean}        Whether list has an error
  */
 export function hasError( state, listId ) {
-	if ( ! has( state, 'reader.lists.errors' ) ) {
-		return false;
-	}
-
-	return listId in state.reader.lists.errors;
+	return Object.hasOwn( state.reader.lists.errors, listId );
 }
 
 /**
@@ -108,7 +101,7 @@ export function hasError( state, listId ) {
  * @returns {?object}        Reader list
  */
 export function getListByOwnerAndSlug( state, owner, slug ) {
-	if ( ! has( state, 'reader.lists.items' ) || ! owner || ! slug ) {
+	if ( ! owner || ! slug ) {
 		return;
 	}
 
@@ -121,7 +114,7 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
 }
 
 export function getListItems( state, listId ) {
-	return state.reader?.lists?.listItems?.[ listId ];
+	return state.reader.lists.listItems[ listId ];
 }
 
 export function getMatchingItem( state, { feedUrl, feedId, listId, siteId, tagId } ) {
@@ -137,7 +130,7 @@ export function getMatchingItem( state, { feedUrl, feedId, listId, siteId, tagId
 		}
 	}
 
-	const list = state.reader?.lists?.listItems?.[ listId ]?.filter( ( item ) => {
+	const list = state.reader.lists.listItems[ listId ]?.filter( ( item ) => {
 		if ( feedId && item.feed_ID ) {
 			return +item.feed_ID === +feedId;
 		} else if ( siteId && item.site_ID ) {
@@ -163,7 +156,7 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
 	if ( ! list ) {
 		return false;
 	}
-	return includes( state.reader.lists.subscribedLists, list.ID );
+	return state.reader.lists.subscribedLists.includes( list.ID );
 }
 
 /**

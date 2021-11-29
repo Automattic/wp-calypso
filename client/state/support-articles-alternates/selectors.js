@@ -1,4 +1,4 @@
-import { get, has, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { keyToString } from 'calypso/reader/post-key';
 
 import 'calypso/state/support-articles-alternates/init';
@@ -14,7 +14,7 @@ export const isRequestingSupportArticleAlternates = ( state, postKeySegments ) =
 	const postKey = keyToString( postKeySegments );
 
 	return (
-		has( state.supportArticlesAlternates.requests, [ postKey ] ) &&
+		Object.hasOwn( state.supportArticlesAlternates.requests, postKey ) &&
 		isEmpty( get( state.supportArticlesAlternates.requests, [ postKey ] ) )
 	);
 };
@@ -55,7 +55,7 @@ export const isRequestingSupportArticleAlternatesFailed = ( state, postKeySegmen
 export const shouldRequestSupportArticleAlternates = ( state, postKeySegments ) => {
 	const postKey = keyToString( postKeySegments );
 
-	return ! has( state.supportArticlesAlternates.requests, [ postKey ] );
+	return ! Object.hasOwn( state.supportArticlesAlternates.requests, postKey );
 };
 
 /**

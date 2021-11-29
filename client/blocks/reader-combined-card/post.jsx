@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { has } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
@@ -98,7 +97,8 @@ class ReaderCombinedCardPost extends Component {
 			);
 		}
 
-		const hasAuthorName = has( post, 'author.name' ) && ! isAuthorNameBlocked( post.author.name );
+		const hasAuthorName =
+			Object.hasOwn( post.author, 'name' ) && ! isAuthorNameBlocked( post.author.name );
 		let featuredAsset = null;
 		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = (

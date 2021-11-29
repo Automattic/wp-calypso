@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { has, keyBy, get, omit } from 'lodash';
+import { keyBy, get, omit } from 'lodash';
 import stepsConfig from 'calypso/signup/config/steps-pure';
 import {
 	SIGNUP_COMPLETE_RESET,
@@ -83,7 +83,7 @@ const completeStep = ( state, { step } ) => updateStep( state, { ...step, status
 const invalidateStep = ( state, { step, errors } ) => {
 	const newStepState = { ...step, errors, status: 'invalid' };
 
-	return has( state, step.stepName )
+	return Object.hasOwn( state, step.stepName )
 		? updateStep( state, newStepState )
 		: addStep( state, newStepState );
 };
@@ -93,7 +93,7 @@ const processStep = ( state, { step } ) => updateStep( state, { ...step, status:
 const saveStep = ( state, { step } ) => {
 	const status = get( state, [ step.stepName, 'status' ] );
 
-	return has( state, step.stepName )
+	return Object.hasOwn( state, step.stepName )
 		? updateStep( state, {
 				...step,
 				// The pending status means this step needs to delay api requests until the setup-site flow completes
@@ -109,7 +109,7 @@ const submitStep = ( state, { step } ) => {
 	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
-	return has( state, step.stepName )
+	return Object.hasOwn( state, step.stepName )
 		? updateStep( state, { ...step, status } )
 		: addStep( state, { ...step, status } );
 };

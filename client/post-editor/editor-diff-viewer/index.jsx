@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { debounce, filter, get, has, last, map, throttle } from 'lodash';
+import { debounce, get, last, map, throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -162,19 +162,18 @@ class EditorDiffViewer extends PureComponent {
 	render() {
 		const { diff, diffView } = this.props;
 		const classes = classNames( 'editor-diff-viewer', {
-			'is-loading': ! has( diff, 'post_content' ) && ! has( diff, 'post_title' ),
+			'is-loading':
+				! Object.hasOwn( diff, 'post_content' ) && ! Object.hasOwn( diff, 'post_title' ),
 			'is-split': diffView === 'split',
 		} );
 
 		const bottomBoundary = this.state.scrollTop + this.state.viewportHeight;
 
 		// saving to `this` so we can access if from `scrollAbove` and `scrollBelow`
-		this.changesAboveViewport = filter(
-			this.state.changeOffsets,
+		this.changesAboveViewport = this.state.changeOffsets.filter(
 			( offset ) => offset < this.state.scrollTop
 		);
-		this.changesBelowViewport = filter(
-			this.state.changeOffsets,
+		this.changesBelowViewport = this.state.changeOffsets.filter(
 			( offset ) => offset > bottomBoundary
 		);
 

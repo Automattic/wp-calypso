@@ -1,7 +1,7 @@
 import { ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
-import { has, omit } from 'lodash';
+import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -62,16 +62,14 @@ const hasProgressInfo = ( progress ) => {
 		return false;
 	}
 
-	const types = Object.keys( progress )
-		.map( ( k ) => progress[ k ] )
-		.filter( ( { total } ) => total > 0 );
+	const types = Object.values( progress ).filter( ( { total } ) => total > 0 );
 
 	if ( ! types.length ) {
 		return false;
 	}
 
 	const firstType = types.shift();
-	if ( ! has( firstType, 'completed' ) ) {
+	if ( ! Object.hasOwn( firstType, 'completed' ) ) {
 		return false;
 	}
 

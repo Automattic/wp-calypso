@@ -1,4 +1,4 @@
-import { get, includes, map, without, has } from 'lodash';
+import { get, includes, map, without } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
@@ -98,7 +98,7 @@ export const pendingActions = function ( state = [], action ) {
 		case COMMENTS_CHANGE_STATUS:
 		case COMMENTS_DELETE: {
 			const key = getRequestKey( action );
-			if ( has( action, 'meta.dataLayer.trackRequest' ) && state.indexOf( key ) === -1 ) {
+			if ( action.meta?.dataLayer?.trackRequest && ! state.includes( key ) ) {
 				return [ ...state, key ];
 			}
 			return state;
