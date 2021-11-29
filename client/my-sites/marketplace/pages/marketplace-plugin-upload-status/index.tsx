@@ -71,8 +71,14 @@ const MarketplacePluginInstall = ( {
 	);
 
 	const marketplacePluginInstallationInProgress = useSelector( ( state ) => {
-		const { pluginInstallationStatus } = getPurchaseFlowState( state );
-		return pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS;
+		const { pluginInstallationStatus, productSlugInstalled, primaryDomain } = getPurchaseFlowState(
+			state
+		);
+		return (
+			pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS &&
+			productSlugInstalled === productSlug &&
+			primaryDomain === selectedSiteSlug
+		);
 	} );
 
 	const supportsAtomicUpgrade = useRef< boolean >();
