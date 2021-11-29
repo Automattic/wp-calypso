@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import DesignPicker, {
 	isBlankCanvasDesign,
 	getDesignUrl,
@@ -30,7 +31,8 @@ import './style.scss';
 const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
 
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned, queryParams } = props;
+	const { flowName, stepName, isReskinned, queryParams, useBlankCanvasButton } = props;
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -156,8 +158,12 @@ export default function DesignPickerStep( props ) {
 	function renderDesignPicker() {
 		return (
 			<DesignPicker
-				designs={ designs }
-				theme={ props.isReskinned ? 'light' : 'dark' }
+				designs={
+					useBlankCanvasButton
+						? designs.filter( ( design ) => ! isBlankCanvasDesign( design ) )
+						: designs
+				}
+				theme={ isReskinned ? 'light' : 'dark' }
 				locale={ translate.localeSlug }
 				onSelect={ pickDesign }
 				onPreview={ previewDesign }
@@ -173,6 +179,21 @@ export default function DesignPickerStep( props ) {
 						subHeaderText={ subHeaderText() }
 						align="left"
 					/>
+				}
+				categoriesFooter={
+					useBlankCanvasButton && (
+						<div className="design-picker__categories-footer">
+							<Button
+								className="design-picker__categories-footer-button"
+								isSecondary
+								onClick={ () =>
+									pickDesign( designs.find( ( design ) => isBlankCanvasDesign( design ) ) )
+								}
+							>
+								{ translate( 'Use Blank Canvas' ) }
+							</Button>
+						</div>
+					)
 				}
 			/>
 		);
@@ -310,6 +331,7 @@ DesignPickerStep.propTypes = {
 	goToNextStep: PropTypes.func.isRequired,
 	signupDependencies: PropTypes.object.isRequired,
 	stepName: PropTypes.string.isRequired,
+	useBlankCanvasButton: PropTypes.bool,
 };
 
 // Ensures Blog category appears at the top of the design category list
