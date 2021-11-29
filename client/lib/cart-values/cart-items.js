@@ -465,7 +465,8 @@ export function getGoogleApps( cart ) {
 /**
  * Creates a new shopping cart item for G Suite or Google Workspace.
  *
- * @param {object} properties - list of properties
+ * @typedef {import('@automattic/shopping-cart').GSuiteProductUser} GSuiteProductUser
+ * @param {{domain: string, meta?: string, new_quantity?: number, productSlug: string, quantity?: number, users: GSuiteProductUser[] }} properties - list of properties
  * @returns {import('@automattic/shopping-cart').RequestCartProduct} the new item
  */
 export function googleApps( properties ) {
