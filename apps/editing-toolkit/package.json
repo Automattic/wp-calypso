@@ -56,7 +56,7 @@
 		"@automattic/launch": "workspace:^",
 		"@automattic/newspack-blocks": "^1.37.1",
 		"@automattic/onboarding": "workspace:^",
-		"@automattic/packaged-tour": "workspace:^",
+		"@automattic/tour-kit": "workspace:^",
 		"@automattic/page-pattern-modal": "workspace:^",
 		"@automattic/plans-grid": "workspace:^",
 		"@automattic/typography": "workspace:^",

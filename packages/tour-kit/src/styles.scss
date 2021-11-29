@@ -1,4 +1,4 @@
-.packaged-tour__frame {
+.tour-kit__frame {
 	border-radius: 2px;
 	bottom: 44px;
 	display: inline;
@@ -11,7 +11,7 @@
 	background: white;
 }
 
-.packaged-tour__overlay {
+.tour-kit__overlay {
 	position: fixed;
 	width: 100vw;
 	height: 100vh;
@@ -25,7 +25,7 @@
 	}
 }
 
-.packaged-tour__spotlight {
+.tour-kit__spotlight {
 	&.--visible {
 		position: fixed;
 		width: 50px;
@@ -38,12 +38,12 @@
 	}
 }
 
-.packaged-tour__arrow {
+.tour-kit__arrow {
     visibility: hidden;
 }
 
-.packaged-tour__arrow,
-.packaged-tour__arrow::before {
+.tour-kit__arrow,
+.tour-kit__arrow::before {
     position: absolute;
     width: 12px;
     height: 12px;
@@ -51,34 +51,34 @@
     z-index: -1;
 }
 
-.packaged-tour__arrow::before {
+.tour-kit__arrow::before {
     visibility: visible;
     content: '';
     transform: rotate(45deg);
 }
 
-.packaged-tour__frame[data-popper-placement^='top'] > .packaged-tour__arrow {
+.tour-kit__frame[data-popper-placement^='top'] > .tour-kit__arrow {
     bottom: -6px;
     &::before {
         box-shadow: 1px 1px 2px -1px rgb( 0 0 0 / 25% );
     }
 }
 
-.packaged-tour__frame[data-popper-placement^='bottom'] > .packaged-tour__arrow {
+.tour-kit__frame[data-popper-placement^='bottom'] > .tour-kit__arrow {
     top: -6px;
     &::before {
         box-shadow: -1px -1px 2px -1px rgb( 0 0 0 / 25% );
     }
 }
 
-.packaged-tour__frame[data-popper-placement^='left'] > .packaged-tour__arrow {
+.tour-kit__frame[data-popper-placement^='left'] > .tour-kit__arrow {
     right: -6px;
     &::before {
         box-shadow: -1px 1px 2px -1px rgb( 0 0 0 / 25% );
     }
 }
 
-.packaged-tour__frame[data-popper-placement^='right'] > .packaged-tour__arrow {
+.tour-kit__frame[data-popper-placement^='right'] > .tour-kit__arrow {
     left: -6px;
     &::before {
         box-shadow: 1px -1px 2px -1px rgb( 0 0 0 / 25% );

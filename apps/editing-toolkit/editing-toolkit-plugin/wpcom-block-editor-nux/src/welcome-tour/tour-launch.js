@@ -3,7 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
-import PackagedTour from '@automattic/packaged-tour';
+import TourKit from '@automattic/tour-kit';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 /**
@@ -125,7 +125,7 @@ function WelcomeTour() {
 		},
 	};
 
-	return <PackagedTour config={ tourConfig } />;
+	return <TourKit config={ tourConfig } />;
 }
 
 export default LaunchWpcomWelcomeTour;

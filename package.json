@@ -128,7 +128,7 @@
 		"components:storybook:start": "start-storybook -c packages/components/.storybook",
 		"search:storybook:start": "start-storybook -c packages/search/.storybook",
 		"composite-checkout:storybook:start": "start-storybook -c packages/composite-checkout/.storybook",
-		"packaged-tour:storybook:start": "start-storybook -c packages/packaged-tour/.storybook"
+		"tour-kit:storybook:start": "start-storybook -c packages/tour-kit/.storybook"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",

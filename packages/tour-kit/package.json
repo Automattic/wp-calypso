@@ -1,5 +1,5 @@
 {
-	"name": "@automattic/packaged-tour",
+	"name": "@automattic/tour-kit",
 	"version": "1.0.0",
 	"description": "Tour lib for guided walkthroughs",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -15,7 +15,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/packaged-tour"
+		"directory": "packages/tour-kit"
 	},
 	"publishConfig": {
 		"access": "public"

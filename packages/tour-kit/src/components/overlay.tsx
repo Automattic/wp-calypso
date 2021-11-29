@@ -10,7 +10,7 @@ interface Props {
 const Overlay: React.FunctionComponent< Props > = ( { visible } ) => {
 	return (
 		<div
-			className={ classnames( 'packaged-tour__overlay', {
+			className={ classnames( 'tour-kit__overlay', {
 				'--visible': visible,
 			} ) }
 		/>

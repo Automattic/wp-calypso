@@ -66,7 +66,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
-.wpcom-editor-welcome-tour > .packaged-tour__frame {
+.wpcom-editor-welcome-tour > .tour-kit__frame {
 	box-shadow: none;
 }
 
@@ -184,8 +184,8 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 			opacity: 0;
 		}
 
-		.packaged-tour__frame:hover &,
-		.packaged-tour__frame:focus-within & {
+		.tour-kit__frame:hover &,
+		.tour-kit__frame:focus-within & {
 			.components-button {
 				opacity: 0.7;
 

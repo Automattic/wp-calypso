@@ -52,7 +52,7 @@ const Spotlight: React.FunctionComponent< Props > = ( { referenceElement } ) => 
 		<>
 			<Overlay visible={ ! clipRepositionProps } />
 			<div
-				className={ classnames( 'packaged-tour__spotlight', {
+				className={ classnames( 'tour-kit__spotlight', {
 					'--visible': !! clipRepositionProps,
 				} ) }
 				ref={ popperElementRef }

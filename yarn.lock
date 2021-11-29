@@ -890,9 +890,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/packaged-tour@workspace:^, @automattic/packaged-tour@workspace:packages/packaged-tour":
+"@automattic/tour-kit@workspace:^, @automattic/tour-kit@workspace:packages/tour-kit":
   version: 0.0.0-use.local
-  resolution: "@automattic/packaged-tour@workspace:packages/packaged-tour"
+  resolution: "@automattic/tour-kit@workspace:packages/tour-kit"
   dependencies:
     "@popperjs/core": ^2.10.2
     "@storybook/preset-scss": ^1.0.3
@@ -1338,7 +1338,7 @@ __metadata:
     "@automattic/launch": "workspace:^"
     "@automattic/newspack-blocks": ^1.37.1
     "@automattic/onboarding": "workspace:^"
-    "@automattic/packaged-tour": "workspace:^"
+    "@automattic/tour-kit": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
     "@automattic/typography": "workspace:^"

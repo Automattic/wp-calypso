@@ -143,7 +143,7 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		setTimeout( () => initialFocusedElement?.focus() );
 	}, [ initialFocusedElement ] );
 
-	const classNames = classnames( 'packaged-tour', config.options?.className );
+	const classNames = classnames( 'tour-kit', config.options?.className );
 
 	return (
 		<>
@@ -158,9 +158,9 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 			<div className={ classNames } ref={ tourContainerRef }>
 				{ showOverlay() && <Overlay visible={ true } /> }
 				{ showSpotlight() && <Spotlight referenceElement={ referenceElement } /> }
-				<div className="packaged-tour__frame" ref={ popperElementRef } { ...stepRepositionProps }>
+				<div className="tour-kit__frame" ref={ popperElementRef } { ...stepRepositionProps }>
 					{ showArrowIndicator() && (
-						<div className="packaged-tour__arrow" data-popper-arrow { ...arrowPositionProps } />
+						<div className="tour-kit__arrow" data-popper-arrow { ...arrowPositionProps } />
 					) }
 					{ ! isMinimized ? (
 						<>

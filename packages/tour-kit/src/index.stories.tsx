@@ -1,8 +1,8 @@
 import { useState } from '@wordpress/element';
-import PackagedTour from '.';
+import TourKit from '.';
 import type { Config } from '.';
 
-export default { title: 'packaged-tour' };
+export default { title: 'tour-kit' };
 
 const References = () => {
 	return (
@@ -95,7 +95,7 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 		},
 	};
 
-	return <PackagedTour config={ config } />;
+	return <TourKit config={ config } />;
 };
 const StoryTour = ( { options = {} }: { options?: Config[ 'options' ] } ) => {
 	const [ showTour, setShowTour ] = useState( false );

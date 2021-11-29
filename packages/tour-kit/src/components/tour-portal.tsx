@@ -18,8 +18,8 @@ const TourPortal: React.FunctionComponent< Props > = ( { config } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
 	useEffect( () => {
-		// @todo clk "packaged-tour"
-		portalParent.classList.add( 'packaged-tour__portal-parent' );
+		// @todo clk "tour-kit"
+		portalParent.classList.add( 'tour-kit__portal-parent' );
 		document.body.appendChild( portalParent );
 
 		return () => {

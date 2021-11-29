@@ -3,7 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import maximize from './icons/maximize';
-import type { MinimizedTourRenderer } from '@automattic/packaged-tour';
+import type { MinimizedTourRenderer } from '@automattic/tour-kit';
 
 const WelcomeTourMinimized: MinimizedTourRenderer = ( {
 	steps,

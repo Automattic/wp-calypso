@@ -1,6 +1,6 @@
 import WelcomeTourCard from './tour-card';
 import { useWelcomeTourContext } from './tour-context';
-import type { TourStepRenderer } from '@automattic/packaged-tour';
+import type { TourStepRenderer } from '@automattic/tour-kit';
 
 const WelcomeTourStep: TourStepRenderer = ( {
 	steps,
