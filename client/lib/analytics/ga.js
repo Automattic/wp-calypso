@@ -5,7 +5,6 @@ import {
 	isGoogleAnalyticsAllowed,
 	fireGoogleAnalyticsPageView,
 	fireGoogleAnalyticsEvent,
-	fireGoogleAnalyticsTiming,
 } from 'calypso/lib/analytics/ad-tracking';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
@@ -77,17 +76,6 @@ export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction( function recor
 	gaDebug( debugText );
 
 	fireGoogleAnalyticsEvent( category, action, label, value );
-} );
-
-export const gaRecordTiming = makeGoogleAnalyticsTrackingFunction( function recordTiming(
-	urlPath,
-	eventType,
-	duration,
-	triggerName
-) {
-	gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
-
-	fireGoogleAnalyticsTiming( eventType, duration, urlPath, triggerName );
 } );
 
 /**

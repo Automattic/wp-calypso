@@ -4,7 +4,6 @@ export { adTrackSignupStart } from './ad-track-signup-start';
 export {
 	fireGoogleAnalyticsEvent,
 	fireGoogleAnalyticsPageView,
-	fireGoogleAnalyticsTiming,
 	getGoogleAnalyticsDefaultConfig,
 	isGoogleAnalyticsAllowed,
 	setupGoogleAnalyticsGtag,
