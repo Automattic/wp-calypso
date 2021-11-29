@@ -26,7 +26,14 @@ import './style.scss';
 
 const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const { __ } = useI18n();
-	const { selectedSite, currentRoute, selectedDomainName } = props;
+	const {
+		currentRoute,
+		isAtomic,
+		isDomainOnly,
+		isPrimaryDomain,
+		selectedDomainName,
+		selectedSite,
+	} = props;
 
 	const renderBreadcrumbs = () => {
 		const items = [
@@ -58,12 +65,13 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
 	};
 
-	return (
-		<Main className="transfer-page" wideLayout>
-			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
-			<Card>
+	const renderTransferOptions = () => {
+		const options = [];
+
+		if ( ! isDomainOnly ) {
+			options.push(
 				<ActionCard
+					key="transfer-to-another-user"
 					buttonHref={ domainManagementTransferToAnotherUser(
 						selectedSite.slug,
 						selectedDomainName,
@@ -75,8 +83,17 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					headerText={ __( 'To another user' ) }
 					mainText={ __( 'Transfer this domain to any administrator on this site' ) }
 				/>
-				<div className="transfer-page__item-separator"></div>
+			);
+		}
+
+		if ( ! ( isPrimaryDomain && isAtomic ) ) {
+			if ( options.length > 0 ) {
+				options.push( <div key="separator" className="transfer-page__item-separator"></div> );
+			}
+
+			options.push(
 				<ActionCard
+					key="transfer-to-another-site"
 					buttonHref={ domainManagementTransferToOtherSite(
 						selectedSite.slug,
 						selectedDomainName,
@@ -88,7 +105,17 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					headerText={ __( 'To another WordPress.com site' ) }
 					mainText={ __( 'Transfer this domain to any site you are an administrator on' ) }
 				/>
-			</Card>
+			);
+		}
+
+		return options.length > 0 ? <Card>{ options }</Card> : null;
+	};
+
+	return (
+		<Main className="transfer-page" wideLayout>
+			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+			{ renderBreadcrumbs() }
+			{ renderTransferOptions() }
 		</Main>
 	);
 };
