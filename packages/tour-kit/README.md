@@ -1,4 +1,4 @@
-# packaged-tour
+# tour-kit
 
 A React tour library for generating configurable guided tours. Carries a minimalist setup for basic usage, but  extensible/configurable enough to accomodate more complex use cases.
 
@@ -30,7 +30,7 @@ See [types.ts](./src/types.ts) for the full definition of the various entities.
 ### Sample
 
 ```jsx
-import Tour from '@automattic/packaged-tour';
+import Tour from '@automattic/tour-kit';
 
 function FooBar() {
 	// 1. Define the criteria for showing a tour:
@@ -87,7 +87,7 @@ function FooBar() {
 
 See it in action with some basic configurations:
 
-`yarn run packaged-tour:storybook:start`
+`yarn run tour-kit:storybook:start`
 
 ## Accessibility
 

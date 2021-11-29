@@ -890,26 +890,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/tour-kit@workspace:^, @automattic/tour-kit@workspace:packages/tour-kit":
-  version: 0.0.0-use.local
-  resolution: "@automattic/tour-kit@workspace:packages/tour-kit"
-  dependencies:
-    "@popperjs/core": ^2.10.2
-    "@storybook/preset-scss": ^1.0.3
-    classnames: ^2.3.1
-    css-loader: ^3.6.0
-    react: ^17.0.2
-    react-popper: ^2.2.5
-    sass-loader: ^10.1.1
-    style-loader: ^1.2.1
-    typescript: ^4.4.4
-    use-debounce: ^3.1.0
-    webpack: ^5.63.0
-  peerDependencies:
-    "@wordpress/element": ^4.0.1
-  languageName: unknown
-  linkType: soft
-
 "@automattic/page-pattern-modal@workspace:^, @automattic/page-pattern-modal@workspace:packages/page-pattern-modal":
   version: 0.0.0-use.local
   resolution: "@automattic/page-pattern-modal@workspace:packages/page-pattern-modal"
@@ -1110,6 +1090,26 @@ __metadata:
     mock-fs: ^5.0.0
     pkg-up: ^3.1.0
     testarmada-logger: 1.2.2
+  languageName: unknown
+  linkType: soft
+
+"@automattic/tour-kit@workspace:^, @automattic/tour-kit@workspace:packages/tour-kit":
+  version: 0.0.0-use.local
+  resolution: "@automattic/tour-kit@workspace:packages/tour-kit"
+  dependencies:
+    "@popperjs/core": ^2.10.2
+    "@storybook/preset-scss": ^1.0.3
+    classnames: ^2.3.1
+    css-loader: ^3.6.0
+    react: ^17.0.2
+    react-popper: ^2.2.5
+    sass-loader: ^10.1.1
+    style-loader: ^1.2.1
+    typescript: ^4.4.4
+    use-debounce: ^3.1.0
+    webpack: ^5.63.0
+  peerDependencies:
+    "@wordpress/element": ^4.0.1
   languageName: unknown
   linkType: soft
 
@@ -1338,9 +1338,9 @@ __metadata:
     "@automattic/launch": "workspace:^"
     "@automattic/newspack-blocks": ^1.37.1
     "@automattic/onboarding": "workspace:^"
-    "@automattic/tour-kit": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
+    "@automattic/tour-kit": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@babel/core": ^7.16.0
     "@emotion/react": ^11.4.1
