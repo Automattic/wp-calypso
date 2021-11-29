@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
@@ -75,9 +76,18 @@ class PluginSiteUpdateIndicator extends Component {
 				args: { version: this.props.pluginOnSite.update.new_version },
 			} );
 		}
+
+		if ( this.props.menuItem ) {
+			return <PopoverMenuItem onClick={ this.updatePlugin }>{ message }</PopoverMenuItem>;
+		}
+
 		return (
-			<div className="plugin-site-update-indicator__button">
-				<button className="button" onClick={ this.updatePlugin } disabled={ isUpdating }>
+			<div className="plugin-site-update-indicator__button-container">
+				<button
+					className="plugin-site-update-indicator__button button"
+					onClick={ this.updatePlugin }
+					disabled={ isUpdating }
+				>
 					{ message }
 				</button>
 			</div>
@@ -96,7 +106,7 @@ class PluginSiteUpdateIndicator extends Component {
 			if ( ! this.props.expanded ) {
 				/* eslint-disable wpcalypso/jsx-gridicon-size */
 				return (
-					<span className="plugin-site-update-indicator">
+					<span className="plugin-site-update-indicator__icon">
 						<Gridicon icon="sync" size={ 20 } />
 					</span>
 				);

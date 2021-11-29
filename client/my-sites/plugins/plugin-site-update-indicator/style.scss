@@ -1,4 +1,4 @@
-.plugin-site-update-indicator {
+.plugin-site-update-indicator__icon {
 	line-height: 32px;
 	vertical-align: bottom;
 
@@ -7,6 +7,7 @@
 	}
 }
 
-.plugin-site-update-indicator__button {
+.plugin-site-update-indicator__button-container {
 	margin-top: 8px;
+	flex: 40%;
 }

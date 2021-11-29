@@ -1,10 +1,10 @@
-import { Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import Site from 'calypso/blocks/site';
-import FoldableCard from 'calypso/components/foldable-card';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
@@ -18,124 +18,136 @@ import {
 
 import './style.scss';
 
-class PluginSiteJetpack extends Component {
-	static propTypes = {
-		site: PropTypes.object,
-		plugin: PropTypes.object,
-		allowedActions: PropTypes.shape( {
-			activation: PropTypes.bool,
-			autoupdate: PropTypes.bool,
-			remove: PropTypes.bool,
-		} ),
-		isAutoManaged: PropTypes.bool,
-	};
+const PluginSiteJetpack = ( props ) => {
+	const translate = useTranslate();
+	const installInProgress = useSelector( ( state ) =>
+		isPluginActionInProgress( state, props.site.ID, props.plugin.id, INSTALL_PLUGIN )
+	);
+	const pluginOnSite = useSelector( ( state ) =>
+		getPluginOnSite( state, props.site.ID, props.plugin.slug )
+	);
+	const [ isMobileLayout, setIsMobileLayout ] = useState();
 
-	static defaultProps = {
-		allowedActions: {
-			activation: true,
-			autoupdate: true,
-			remove: true,
-		},
-		isAutoManaged: false,
-	};
-
-	renderInstallButton = () => {
-		return (
-			<PluginInstallButton
-				isEmbed={ true }
-				selectedSite={ this.props.site }
-				plugin={ this.props.plugin }
-				isInstalling={ this.props.installInProgress }
-			/>
+	useEffect( () => {
+		if ( isWithinBreakpoint( '<1040px' ) ) {
+			setIsMobileLayout( true );
+		}
+		const unsubscribe = subscribeIsWithinBreakpoint( '<1040px', ( isMobile ) =>
+			setIsMobileLayout( isMobile )
 		);
-	};
 
-	renderInstallPlugin = () => {
+		return () => {
+			if ( typeof unsubscribe === 'function' ) {
+				unsubscribe();
+			}
+		};
+	}, [] );
+
+	if ( ! props.site || ! props.plugin ) {
+		return null;
+	}
+
+	if ( ! pluginOnSite ) {
 		return (
-			<FoldableCard
-				compact
-				className="plugin-site-jetpack"
-				header={ <Site site={ this.props.site } indicator={ false } /> }
-				actionButton={ this.renderInstallButton() }
-			/>
-		);
-	};
-
-	renderPluginSite = () => {
-		const {
-			activation: canToggleActivation,
-			autoupdate: canToggleAutoupdate,
-			remove: canToggleRemove,
-		} = this.props.allowedActions;
-
-		const showAutoManagedMessage = this.props.isAutoManaged;
-
-		const settingsLink = this.props?.pluginOnSite?.action_links?.Settings ?? null;
-
-		return (
-			<FoldableCard
-				compact
-				clickableHeader
-				className="plugin-site-jetpack"
-				header={ <Site site={ this.props.site } indicator={ false } /> }
-				summary={
-					<PluginUpdateIndicator
-						site={ this.props.site }
-						plugin={ this.props.plugin }
-						expanded={ false }
-					/>
-				}
-				expandedSummary={
-					<PluginUpdateIndicator
-						site={ this.props.site }
-						plugin={ this.props.plugin }
-						expanded={ true }
-					/>
-				}
-			>
-				<div>
-					{ canToggleActivation && (
-						<PluginActivateToggle site={ this.props.site } plugin={ this.props.pluginOnSite } />
-					) }
-					{ canToggleAutoupdate && (
-						<PluginAutoupdateToggle
-							site={ this.props.site }
-							plugin={ this.props.pluginOnSite }
-							wporg={ true }
+			<div className="plugin-site-jetpack__container">
+				<div className="plugin-site-jetpack__domain">{ props.site.domain }</div>
+				<div className="plugin-site-jetpack__install-button">
+					{
+						<PluginInstallButton
+							isEmbed={ true }
+							selectedSite={ props.site }
+							plugin={ props.plugin }
+							isInstalling={ installInProgress }
 						/>
+					}
+				</div>
+			</div>
+		);
+	}
+
+	const {
+		activation: canToggleActivation = true,
+		autoupdate: canToggleAutoupdate = true,
+		remove: canToggleRemove = true,
+	} = props?.allowedActions;
+
+	const { isAutoManaged = false } = props;
+	const settingsLink = pluginOnSite?.action_links?.Settings ?? null;
+
+	return (
+		<div className="plugin-site-jetpack__container">
+			<div className="plugin-site-jetpack__domain">{ props.site.domain }</div>
+			{ canToggleActivation && (
+				<PluginActivateToggle
+					site={ props.site }
+					plugin={ pluginOnSite }
+					hideLabel={ ! isMobileLayout }
+				/>
+			) }
+			{ canToggleAutoupdate && (
+				<PluginAutoupdateToggle
+					site={ props.site }
+					plugin={ pluginOnSite }
+					wporg={ true }
+					hideLabel={ ! isMobileLayout }
+				/>
+			) }
+			{ isAutoManaged ? (
+				<div className="plugin-site-jetpack__automanage-notice">
+					{ translate( 'Auto-managed on this site' ) }
+				</div>
+			) : (
+				<div className="plugin-site-jetpack__action plugin-action last-actions">
+					{ ! isMobileLayout && (
+						<>
+							<PluginUpdateIndicator site={ props.site } plugin={ props.plugin } expanded />
+							{ canToggleRemove && (
+								<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } />
+							) }
+						</>
 					) }
-					{ canToggleRemove && (
-						<PluginRemoveButton plugin={ this.props.pluginOnSite } site={ this.props.site } />
-					) }
-					{ settingsLink && (
-						<Button compact href={ settingsLink }>
-							{ this.props.translate( `Settings` ) }
-						</Button>
-					) }
-					{ showAutoManagedMessage && (
-						<div className="plugin-site-jetpack__automanage-notice">
-							{ this.props.translate( 'Auto-managed on this site' ) }
-						</div>
+					{ ( isMobileLayout || settingsLink ) && (
+						<EllipsisMenu position={ 'bottom' }>
+							{ settingsLink && (
+								<PopoverMenuItem href={ settingsLink }>{ translate( 'Settings' ) }</PopoverMenuItem>
+							) }
+							{ isMobileLayout && (
+								<>
+									<PluginUpdateIndicator
+										site={ props.site }
+										plugin={ props.plugin }
+										expanded
+										menuItem
+									/>
+									<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } menuItem />
+								</>
+							) }
+						</EllipsisMenu>
 					) }
 				</div>
-			</FoldableCard>
-		);
-	};
+			) }
+		</div>
+	);
+};
 
-	render() {
-		if ( ! this.props.site || ! this.props.plugin ) {
-			return null;
-		}
+PluginSiteJetpack.propTypes = {
+	site: PropTypes.object,
+	plugin: PropTypes.object,
+	allowedActions: PropTypes.shape( {
+		activation: PropTypes.bool,
+		autoupdate: PropTypes.bool,
+		remove: PropTypes.bool,
+	} ),
+	isAutoManaged: PropTypes.bool,
+};
 
-		if ( ! this.props.pluginOnSite ) {
-			return this.renderInstallPlugin();
-		}
+PluginSiteJetpack.defaultProps = {
+	allowedActions: {
+		activation: true,
+		autoupdate: true,
+		remove: true,
+	},
+	isAutoManaged: false,
+};
 
-		return this.renderPluginSite();
-	}
-}
-
-export default connect( ( state, { site, plugin } ) => ( {
-	installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, INSTALL_PLUGIN ),
-	pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),
-} ) )( localize( PluginSiteJetpack ) );
+export default PluginSiteJetpack;
