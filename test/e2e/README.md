@@ -13,7 +13,7 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 - [Running tests on CI](docs/tests_ci.md)
 - [Writing tests](docs/writing_tests.md)
 - [Library objects](docs/library_objects.md)
-- [Style Guide](docs/style-guide-playwright.md)
+- [Style Guide](docs/style_guide.md)
 - [Debugging](docs/debugging.md)
 - [Troubleshooting](docs/troubleshooting.md)
 

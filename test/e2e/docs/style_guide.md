@@ -10,10 +10,10 @@
     - [Move repetitive selectors out](#move-repetitive-selectors-out)
     - [Prefer user-facing selectors](#prefer-user-facing-selectors)
     - [Naming](#naming)
-    - [Aim for stability](#aim-for-stability)
+    - [Involve minimal selectors](#involve-minimal-selectors)
     - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
   - [Test steps](#test-steps)
-    - [Avoid modla verbs](#avoid-modla-verbs)
+    - [Avoid modal verbs](#avoid-modal-verbs)
     - [Prefer smaller steps](#prefer-smaller-steps)
   - [Destructure parameters](#destructure-parameters)
 
@@ -97,6 +97,12 @@ class SomeObject() {
 const selectors = {
 	submitButton: 'button[type="submit"]',
 };
+
+class SomeObject() {
+	async someMethod(): {
+		await this.page.click( selectors.submitButton )
+	}
+}
 ```
 
 ### Move repetitive selectors out
@@ -142,18 +148,16 @@ Where possible, use text, CSS or user-facing attributes (like an `aria-label` in
 
 **Avoid**:
 
-```
+```typescript
 await page.click( 'xpath=//button' );
-```
-
-```
-await page.click( 'div.someclass .yet-another-class .attribute .very-long-attrbute');
+await page.click( 'div.someclass .yet-another-class .attribute .very-long-attribute)
 ```
 
 **Instead**:
 
-```
-await page.click( 'button:text("Contact us")' );
+```typescript
+await page.click( 'button:has-text("Submit")' );
+await page.click( 'button[aria-label="Some Class"]' );
 ```
 
 ### Naming
@@ -168,8 +172,7 @@ Do not append the term 'Selector' or similar to the selector name. It is redunda
 const selectors = {
 	contactButtonOnHeaderPane: '.button contact-us',
 	secondButtonOnPopupSelector: '.button send-form',
-	...
-}
+};
 ```
 
 **Instead**:
@@ -178,13 +181,12 @@ const selectors = {
 const selectors = {
 	contactUsButton: '.button contact-us',
 	submitFormButton: '.button send-form',
-	...
-}
+};
 ```
 
-### Aim for stability
+### Involve minimal selectors
 
-Only involve selectors that are required for the test flow.
+Only involve selectors that are required for the test flow. Do not wait on unrelated selectors.
 
 **Avoid**:
 
@@ -226,7 +228,7 @@ const selectors = {
 
 ## Test steps
 
-### Avoid modla verbs
+### Avoid modal verbs
 
 Avoid the use of modal verbs such as `can`, `should`, `could` or `must`.
 Instead state the action contained in the step using plain terms.
@@ -262,11 +264,11 @@ it( 'Log in, select home page and start a search', async function () {
 **Instead**:
 
 ```typescript
-it( 'Log In' );
+it( 'Log In', async function () {} );
 
-it( 'Navigate to home page' );
+it( 'Navigate to home page', async function () {} );
 
-it( 'Search for ${string}' );
+it( 'Search for ${string}', async function () {} );
 ```
 
 ---

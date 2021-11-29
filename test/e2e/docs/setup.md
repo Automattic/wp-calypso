@@ -1,16 +1,21 @@
-# Advanced Setup
-
-Follow the [Quick Start](../README.md) guide to install required software.
+# Setup
 
 <!-- TOC -->
 
+- [Setup](#setup)
+  - [Regular setup](#regular-setup)
 - [Advanced Setup](#advanced-setup)
   - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
   - [Apple Silicon arm64](#apple-silicon-arm64)
   - [Help](#help)
-    - [The chromium binary is not available for arm64](#the-chromium-binary-is-not-available-for-arm64)
 
 <!-- /TOC -->
+
+## Regular setup
+
+Follow the [Quick Start](../README.md) guide to install required software.
+
+# Advanced Setup
 
 ## Apple Silicon (emulated x86_64)
 
@@ -26,7 +31,7 @@ arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebr
 arch -x86_64 /usr/local/bin/brew install nvm
 ```
 
-**This is critical! If nvm is installed using ARM64 Homebrew, installed Node versions will also be the ARM64 variant and nothing will work!**
+**This is critical! If nvm is installed using ARM64 Homebrew, installed Node versions will also be the ARM64 variant and there will be problems!**
 
 3. using `nvm`, install the current version of NodeJS used in `wp-calypso`:
 
@@ -70,7 +75,7 @@ At any point, run `arch` to verify whether shell is running with Rosetta 2 emula
 
 Similar to instructions in macOS Intel architecture, install the arm64 variant of the required software, then follow these steps:
 
-1. export required environment variables:
+1. set the following environment variables:
 
 ```
 PUPPETEER_SKIP_DOWNLOAD=true
@@ -85,34 +90,4 @@ yarn install
 
 ## Help
 
-### The chromium binary is not available for arm64
-
-Problem:
-
-```
-The chromium binary is not available for arm64:
-If you are on Ubuntu, you can install with:
-
- apt-get install chromium-browser
-
-/Calypso/wp-calypso/node_modules/backstopjs/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserFetcher.js:112
-            throw new Error();
-            ^
-
-Error
-    at /Calypso/wp-calypso/node_modules/backstopjs/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserFetcher.js:112:19
-    at FSReqCallback.oncomplete (node:fs:198:21)
-
-```
-
-Solution:
-
-```
-PUPPETEER_SKIP_DOWNLOAD=true
-CHROMEDRIVER_SKIP_DOWNLOAD=true
-```
-
-Description:
-This issue occurs for Apple Silicon users. At the time of writing, the version of Puppeteer used in `wp-calypso` pre-dates Apple Silicon.
-
-This issue should go away once Puppeteer version is bumped to an Apple Silicon-compatible version.
+See the [Troubleshooting](troubleshooting.md) section.
