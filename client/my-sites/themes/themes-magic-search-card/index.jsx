@@ -280,7 +280,7 @@ class ThemesMagicSearchCard extends Component {
 	render() {
 		const { translate, filters, showTierThemesControl } = this.props;
 		const { isPopoverVisible } = this.state;
-		const isPremiumThemesEnabled = true || config.isEnabled( 'themes/premium' );
+		const isPremiumThemesEnabled = config.isEnabled( 'themes/premium' );
 
 		const tiers = [
 			{ value: 'all', label: translate( 'All' ) },
