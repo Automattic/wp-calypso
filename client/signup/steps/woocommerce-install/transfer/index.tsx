@@ -25,6 +25,7 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 	const [ error, setError ] = useState( { transferFailed: false, transferStatus: null } );
 	const [ step, setStep ] = useState( __( 'Building your store' ) );
 
+	// selectedSiteId is set by the controller whenever a siteSlug or siteId is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const fetchingTransferStatus = !! useSelector( ( state ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )

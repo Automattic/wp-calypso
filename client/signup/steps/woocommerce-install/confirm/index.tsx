@@ -2,18 +2,22 @@ import { NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
+import { useSelector } from 'react-redux';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { siteId, goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
+	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
+
+	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	const {
 		isFetching,
