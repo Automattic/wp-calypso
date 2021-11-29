@@ -159,7 +159,22 @@ class ThemeShowcase extends Component {
 
 	scrollToSearchInput = () => {
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
-			this.scrollRef.current.scrollIntoView();
+			// If you are a larger screen where the theme info is displayed horizontally.
+			if ( window.innerWidth > 600 ) {
+				return;
+			}
+			const headerHeight = document
+				.getElementsByClassName( 'masterbar' )[ 0 ]
+				?.getBoundingClientRect().height;
+			const screenOptionTab = document
+				.getElementsByClassName( 'screen-options-tab__button' )[ 0 ]
+				?.getBoundingClientRect().height;
+
+			const yOffset = -( headerHeight + screenOptionTab ); // Total height of admin bar and screen options on mobile.
+			const elementBoundary = this.scrollRef.current.getBoundingClientRect();
+
+			const y = elementBoundary.top + window.pageYOffset + yOffset;
+			window.scrollTo( { top: y } );
 		}
 	};
 
@@ -376,7 +391,7 @@ class ThemeShowcase extends Component {
 						uri={ this.constructUrl() }
 					/>
 				) }
-				<div className="themes__content">
+				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
