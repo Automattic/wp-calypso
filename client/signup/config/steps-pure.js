@@ -679,6 +679,10 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
+		'p2-get-started': {
+			stepName: 'p2-get-started',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,

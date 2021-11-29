@@ -85,6 +85,7 @@ import {
 	getFirstInvalidStep,
 	getStepUrl,
 	isReskinnedFlow,
+	isP2Flow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -112,10 +113,6 @@ function removeLoadingScreenClassNamesFromBody() {
 	}
 
 	document.body.classList.remove( 'has-loading-screen-signup' );
-}
-
-function isWPForTeamsFlow( flowName ) {
-	return flowName === 'p2';
 }
 
 function showProgressIndicator( flowName ) {
@@ -386,7 +383,7 @@ class Signup extends Component {
 				this.bizxSurveyTimerComplete = new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
 			}
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isP2Flow( this.props.flowName ) ) {
 				addLoadingScreenClassNamesToBody();
 
 				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
@@ -397,7 +394,7 @@ class Signup extends Component {
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isP2Flow( this.props.flowName ) ) {
 				removeLoadingScreenClassNamesFromBody();
 			}
 		}
@@ -611,7 +608,7 @@ class Signup extends Component {
 	}
 
 	renderProcessingScreen( isReskinned ) {
-		if ( isWPForTeamsFlow( this.props.flowName ) ) {
+		if ( isP2Flow( this.props.flowName ) ) {
 			return <P2SignupProcessingScreen />;
 		}
 
@@ -743,7 +740,7 @@ class Signup extends Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ this.props.pageTitle } />
-				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+				{ ! isP2Flow( this.props.flowName ) && (
 					<SignupHeader
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }

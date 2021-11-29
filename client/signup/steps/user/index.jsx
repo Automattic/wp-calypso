@@ -26,6 +26,7 @@ import {
 	getNextStepName,
 	getPreviousStepName,
 	getStepUrl,
+	isP2Flow,
 } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -415,7 +416,7 @@ export class UserStep extends Component {
 	submitButtonText() {
 		const { translate, flowName } = this.props;
 
-		if ( flowName === 'p2' ) {
+		if ( isP2Flow( flowName ) ) {
 			return translate( 'Continue' );
 		}
 
@@ -496,7 +497,7 @@ export class UserStep extends Component {
 	}
 
 	render() {
-		if ( this.props.flowName === 'p2' ) {
+		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
 		}
 

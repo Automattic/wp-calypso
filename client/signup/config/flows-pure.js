@@ -275,6 +275,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'p2-new',
+			steps: [ 'p2-get-started', 'user', 'p2-site' ],
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+			description: 'New P2 signup flow',
+			lastModified: '2021-11-15',
+			showRecaptcha: true,
+		},
+		{
 			name: 'domain',
 			steps: [
 				'domain-only',
