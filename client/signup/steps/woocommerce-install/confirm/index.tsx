@@ -32,23 +32,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	const { siteId, goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
 
-	// @ToDo: remove this before sending to production
-	const eligibilityWarnings = [
-		{
-			name: 'Warning #1',
-			description: 'This is a warning.',
-			supportUrl: '/',
-		},
-		{
-			name: 'Warning #2',
-			description: 'This is a warning that may need attention.',
-			supportUrl: '/',
-		},
-	];
-
 	const {
 		eligibilityHolds,
-		// eligibilityWarnings,
+		eligibilityWarnings,
 		isFetchingTransferStatus,
 		wpcomSubdomainWarning,
 		stagingDomain,
