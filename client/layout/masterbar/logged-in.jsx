@@ -211,8 +211,6 @@ class MasterbarLoggedIn extends Component {
 			title,
 		} = this.props;
 
-		const shouldShowCartIcon = true;
-
 		const { isActionSearchVisible } = this.state;
 
 		if ( isCheckout ) {
@@ -279,16 +277,14 @@ class MasterbarLoggedIn extends Component {
 							{ translate( 'Write' ) }
 						</AsyncLoad>
 					) }
-					{ shouldShowCartIcon && (
-						<AsyncLoad
-							require="./masterbar-cart-wrapper"
-							placeholder={ null }
-							className="masterbar__item-cart"
-							tooltip={ translate( 'My shopping cart' ) }
-							goToCheckout={ this.goToCheckout }
-							selectedSiteSlug={ siteSlug }
-						/>
-					) }
+					<AsyncLoad
+						require="./masterbar-cart-wrapper"
+						placeholder={ null }
+						className="masterbar__item-cart"
+						tooltip={ translate( 'My shopping cart' ) }
+						goToCheckout={ this.goToCheckout }
+						selectedSiteSlug={ siteSlug }
+					/>
 					<Item
 						tipTarget="me"
 						url="/me"
