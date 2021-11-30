@@ -172,13 +172,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				case 'SHOW_MODAL_AUTHORIZATION': {
 					return reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
 				}
-				case 'CART_CHANGE_PLAN_LENGTH': {
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
-							new_product_slug: action.payload?.newProductSlug,
-						} )
-					);
-				}
 				case 'THANK_YOU_URL_GENERATED':
 					return logStashEvent( 'thank you url generated', {
 						url: action.payload.url,

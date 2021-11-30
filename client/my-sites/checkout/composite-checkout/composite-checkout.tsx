@@ -397,16 +397,17 @@ export default function CompositeCheckout( {
 
 	const changePlanLength = useCallback(
 		( uuidToReplace, newProductSlug, newProductId ) => {
-			recordEvent( {
-				type: 'CART_CHANGE_PLAN_LENGTH',
-				payload: { newProductSlug },
-			} );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
+					new_product_slug: newProductSlug,
+				} )
+			);
 			replaceProductInCart( uuidToReplace, {
 				product_slug: newProductSlug,
 				product_id: newProductId,
 			} );
 		},
-		[ replaceProductInCart, recordEvent ]
+		[ replaceProductInCart, reduxDispatch ]
 	);
 
 	// Often products are added using just the product_slug but missing the
