@@ -1,14 +1,14 @@
-# useEligibility
+# useWooCommerceOnPlansEligibility
 
 Custom React hook to process eligibility data to provide a clear object to deal with the woocommerce-install flow.
 
 ## Usage
 
 ```es6
-import useEligibility from '../hooks/use-eligibility';
+import useWooCommerceOnPlansEligibility from '../hooks/use-eligibility';
 
 function WordPressSubdomainWarningCard() {
-	const { wpcomSubdomainWarning, stagingDomain } = useEligibility( siteId );
+	const { wpcomSubdomainWarning, stagingDomain } = useWooCommerceOnPlansEligibility( siteId );
 
 	if ( ! wpcomSubdomainWarning ) {
 		return null;
