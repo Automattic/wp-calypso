@@ -824,8 +824,6 @@ export default connect(
 		const backPath = getBackPath( state );
 		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, id );
-		//@TODO: This is only for test purposes, remove next line before deploying.
-		theme.retired = false;
 		const siteIdOrWpcom = siteId || 'wpcom';
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, id );
