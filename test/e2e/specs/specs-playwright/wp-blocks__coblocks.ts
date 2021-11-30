@@ -50,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 		let logoImage: TestFile;
 
 		// Test data
-		const pricingTableBlockPrice = 888;
+		const pricingTableBlockPrices = [ 4.99, 9.99 ];
 		const heroBlockHeading = 'Hero heading';
 		const clicktoTweetBlockTweet = 'Tweet text';
 
@@ -65,7 +65,8 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				PricingTableBlock.blockEditorSelector
 			);
 			pricingTableBlock = new PricingTableBlock( blockHandle );
-			await pricingTableBlock.enterPrice( 1, pricingTableBlockPrice );
+			await pricingTableBlock.enterPrice( 1, pricingTableBlockPrices[ 0 ] );
+			await pricingTableBlock.enterPrice( 2, pricingTableBlockPrices[ 1 ] );
 		} );
 
 		it( `Insert ${ DynamicHRBlock.blockName } block`, async function () {
@@ -102,14 +103,14 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 			await logosBlock.upload( logoImage.fullpath );
 		} );
 
-		it( 'Publish and visit post', async function () {
+		it( 'Publish and visit the post', async function () {
 			await gutenbergEditorPage.publish( { visit: true } );
 		} );
 
 		// Pass in a 1D array of values or text strings to validate each block.
 		it.each`
 			block                  | content
-			${ PricingTableBlock } | ${ [ pricingTableBlockPrice ] }
+			${ PricingTableBlock } | ${ pricingTableBlockPrices }
 			${ DynamicHRBlock }    | ${ null }
 			${ HeroBlock }         | ${ [ heroBlockHeading ] }
 			${ ClicktoTweetBlock } | ${ [ clicktoTweetBlockTweet ] }
@@ -129,9 +130,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 	describe( 'Extensions', () => {
 		describe( 'Gutter Control', () => {
 			let pricingTableBlock: PricingTableBlock;
+			let editorFrame: Frame;
 
 			beforeAll( async () => {
 				gutenbergEditorPage = await newPostFlow.startImmediately( user );
+				editorFrame = await gutenbergEditorPage.getEditorFrame();
 			} );
 
 			it( 'Insert Pricing Table block', async function () {
@@ -146,15 +149,36 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				await gutenbergEditorPage.openSettings();
 			} );
 
-			it.each( PricingTableBlock.gutterValues )( 'Set gutter value to %s', async ( value ) => {
-				await pricingTableBlock.setGutter( value );
+			it.each( PricingTableBlock.gutterValues )(
+				'Verify "%s" gutter button is present',
+				async ( value ) => {
+					await editorFrame.waitForSelector( `button[aria-label="${ value }"]` );
+				}
+			);
+
+			it( 'Set gutter to "Huge"', async () => {
+				await pricingTableBlock.setGutter( 'Huge' );
+			} );
+
+			it( 'Fill the price fields so the block is visible', async () => {
+				await pricingTableBlock.enterPrice( 1, 4.99 );
+				await pricingTableBlock.enterPrice( 2, 9.99 );
+			} );
+
+			it( 'Publish and visit the post', async () => {
+				await gutenbergEditorPage.publish( { visit: true } );
+			} );
+
+			it( 'Verify the class for "Huge" gutter is present', async () => {
+				await page.waitForSelector( '.wp-block-coblocks-pricing-table .has-huge-gutter' );
 			} );
 		} );
 
 		describe( 'Replace Image', () => {
 			let imageBlock: ImageBlock;
 			let imageFile: TestFile;
-			let uploadedImagePath: string;
+			let uploadedImageURL: string;
+			let newImageURL: string;
 
 			beforeAll( async () => {
 				imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
@@ -168,7 +192,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				);
 				imageBlock = new ImageBlock( blockHandle );
 				const uploadedImage = await imageBlock.upload( imageFile.fullpath );
-				uploadedImagePath = ( await uploadedImage.getAttribute( 'src' ) ) as string;
+				uploadedImageURL = ( await uploadedImage.getAttribute( 'src' ) ) as string;
+			} );
+
+			it( 'Publish the post', async () => {
+				await gutenbergEditorPage.publish();
 			} );
 
 			it( `Replace uploaded image`, async () => {
@@ -181,9 +209,17 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				);
 				await imageBlock.waitUntilUploaded();
 				const newImage = await imageBlock.getImage();
-				const newImagePath = await newImage.getAttribute( 'src' );
+				newImageURL = ( await newImage.getAttribute( 'src' ) ) as string;
 
-				expect( uploadedImagePath ).not.toBe( newImagePath );
+				expect( uploadedImageURL ).not.toBe( newImageURL );
+			} );
+
+			it( 'Update and visit the post', async () => {
+				await gutenbergEditorPage.publish( { update: true, visit: true } );
+			} );
+
+			it( 'Verify the new image was published', async () => {
+				await page.waitForSelector( `img[src="${ newImageURL }"]` );
 			} );
 		} );
 
@@ -213,8 +249,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				await editorFrame.click( '[aria-label="Select Cover"]' );
 			} );
 
-			it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
+			it( 'Open settings sidebar', async function () {
 				await gutenbergEditorPage.openSettings();
+			} );
+
+			it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
 				await editorFrame.waitForSelector( `button[aria-label="${ style }"]` );
 			} );
 
@@ -222,7 +261,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				await coverBlock.setCoverStyle( 'Bottom Wave' );
 			} );
 
-			it( 'Publish post', async () => {
+			it( 'Publish and visit the post', async () => {
 				await gutenbergEditorPage.publish( { visit: true } );
 			} );
 
