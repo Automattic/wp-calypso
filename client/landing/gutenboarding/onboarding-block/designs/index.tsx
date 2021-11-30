@@ -89,7 +89,9 @@ const Designs: React.FunctionComponent = () => {
 	const selectedDesign = getSelectedDesign();
 	const isFse = isEnrollingInFseBeta();
 	const isDesignPickerCategoriesEnabled = isEnabled( 'signup/design-picker-categories' );
-	const useFeaturedPicksButtons = isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
+	const useFeaturedPicksButtons =
+		isDesignPickerCategoriesEnabled &&
+		isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 	const designs = getRandomizedDesigns().featured.filter(
 		( design ) =>
 			// TODO Add finalized design templates to available designs config
