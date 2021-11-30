@@ -8,14 +8,14 @@ This component is used to add horizontal swipe controls to a list of elements (p
 import Swipable from 'calypso/components/swipable';
 
 function Pager() {
-    const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ currentPage, setCurrentPage ] = useState( 0 );
 	return ( 
-        <Swipable onPageSelect={ (index) => { setCurrentPage( index ) } } currentPage pageClassName="" >
-            <div>Page 1</div>
-            <div>Page 2</div>
-            <div>Page 3</div>
-        </Swipable>
-    );
+		<Swipable onPageSelect={ (index) => { setCurrentPage( index ) } } currentPage pageClassName="" >
+			<div>Page 1</div>
+			<div>Page 2</div>
+			<div>Page 3</div>
+		</Swipable>
+	);
 }
 ```
 
