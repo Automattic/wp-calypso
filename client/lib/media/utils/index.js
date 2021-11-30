@@ -1,5 +1,4 @@
 export { canUserDeleteItem } from 'calypso/lib/media/utils/can-user-delete-item';
-export { canvasToBlob } from 'calypso/lib/media/utils/canvas-to-blob';
 export { createTransientMedia } from 'calypso/lib/media/utils/create-transient-media';
 export { filterItemsByMimePrefix } from 'calypso/lib/media/utils/filter-items-by-mime-prefix';
 export { generateGalleryShortcode } from 'calypso/lib/media/utils/generate-gallery-shortcode';

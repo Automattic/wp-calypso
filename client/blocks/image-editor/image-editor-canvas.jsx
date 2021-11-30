@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import { mediaURLToProxyConfig, canvasToBlob } from 'calypso/lib/media/utils';
+import { mediaURLToProxyConfig } from 'calypso/lib/media/utils';
 import wpcom from 'calypso/lib/wp';
 import {
 	setImageEditorCropBounds,
@@ -26,7 +26,6 @@ const noop = () => {};
 export class ImageEditorCanvas extends Component {
 	static propTypes = {
 		src: PropTypes.string,
-		mimeType: PropTypes.string,
 		transform: PropTypes.shape( {
 			degrees: PropTypes.number,
 			scaleX: PropTypes.number,
@@ -157,34 +156,6 @@ export class ImageEditorCanvas extends Component {
 		this.updateCanvasPosition();
 	}
 
-	toBlob( callback ) {
-		const { leftRatio, topRatio, widthRatio, heightRatio } = this.props.crop;
-
-		const { mimeType, transform } = this.props;
-
-		const canvas = this.canvasRef.current;
-		const context = canvas.getContext( '2d' );
-		const rotated = transform.degrees % 180 !== 0;
-		const imageWidth = rotated ? this.image.height : this.image.width;
-		const imageHeight = rotated ? this.image.width : this.image.height;
-		const croppedLeft = leftRatio * imageWidth;
-		const croppedTop = topRatio * imageHeight;
-		const croppedWidth = widthRatio * imageWidth;
-		const croppedHeight = heightRatio * imageHeight;
-
-		const imageData = context.getImageData( croppedLeft, croppedTop, croppedWidth, croppedHeight );
-
-		const newCanvas = document.createElement( 'canvas' );
-
-		newCanvas.width = croppedWidth;
-		newCanvas.height = croppedHeight;
-
-		const newContext = newCanvas.getContext( '2d' );
-		newContext.putImageData( imageData, 0, 0 );
-
-		canvasToBlob( newCanvas, callback, mimeType, 1 );
-	}
-
 	drawImage() {
 		if ( ! this.image ) {
 			return;
@@ -291,7 +262,7 @@ export default connect(
 			isPrivateSite( state, siteId ) && isSiteAutomatedTransfer( state, siteId );
 
 		const transform = getImageEditorTransform( state );
-		const { src, mimeType } = getImageEditorFileInfo( state );
+		const { src } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
 		const isImageLoaded = isImageEditorImageLoaded( state );
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
@@ -300,7 +271,6 @@ export default connect(
 			siteSlug,
 			isPrivateAtomic,
 			src,
-			mimeType,
 			transform,
 			crop,
 			isImageLoaded,
