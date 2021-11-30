@@ -124,7 +124,8 @@ export const PLAN_1008 = {
 	product_name_short: 'Business',
 	product_slug: 'business-bundle',
 	tagline: 'Take it to the next level',
-	shortdesc: 'Everything included with Premium, as well as live chat support.',
+	shortdesc:
+		'Everything included with Premium, as well as live chat support, and unlimited access to our premium themes.',
 	description:
 		'All you need to build a great website:' +
 		'<ul><li>Chat live with a WordPress.com specialist, ' +

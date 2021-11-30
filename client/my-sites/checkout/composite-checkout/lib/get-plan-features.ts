@@ -54,6 +54,7 @@ export default function getPlanFeatures(
 		return [
 			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
 			isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
+			String( translate( 'Unlimited access to our library of Premium Themes' ) ),
 			isEnabled( 'earn/pay-with-paypal' )
 				? String( translate( 'Subscriber-only content and Pay with PayPal buttons' ) )
 				: String( translate( 'Subscriber-only content and payment buttons' ) ),

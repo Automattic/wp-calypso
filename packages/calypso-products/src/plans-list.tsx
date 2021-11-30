@@ -104,6 +104,7 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
+	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -438,6 +439,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		FEATURE_EARN_AD,
+		FEATURE_PREMIUM_THEMES,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_INSTALL_PLUGINS,
 		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
@@ -512,9 +514,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ADVANCED_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
-	getBlogSignupFeatures: () => [ FEATURE_MONETISE, FEATURE_ALL_PERSONAL_FEATURES ],
+	getBlogSignupFeatures: () => [
+		FEATURE_MONETISE,
+		FEATURE_PREMIUM_THEMES,
+		FEATURE_ALL_PERSONAL_FEATURES,
+	],
 	getPortfolioSignupFeatures: () => [
 		FEATURE_ADVANCED_CUSTOMIZATION,
+		FEATURE_PREMIUM_THEMES,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
 	getSignupCompareAvailableFeatures: () => [
@@ -525,6 +532,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_EARN_AD,
+		FEATURE_PREMIUM_THEMES,
 		FEATURE_GOOGLE_ANALYTICS,
 	],
 	// Features not displayed but used for checking plan abilities
@@ -613,6 +621,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		FEATURE_EARN_AD,
+		FEATURE_PREMIUM_THEMES,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_INSTALL_PLUGINS,
 		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
@@ -735,7 +744,8 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 		].includes( plan ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites.',
+			'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
+				'and unlimited premium themes.',
 			plansDescriptionHeadingComponent
 		),
 	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),

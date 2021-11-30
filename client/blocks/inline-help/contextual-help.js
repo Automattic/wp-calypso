@@ -1120,6 +1120,21 @@ const contextLinksForSection = {
 		},
 		{
 			get link() {
+				return localizeUrl( 'https://wordpress.com/support/premium-themes/' );
+			},
+			post_id: 12112,
+			get title() {
+				return translate( 'Premium Themes' );
+			},
+			get description() {
+				return translate(
+					'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
+						'no extra cost, as many times as you’d like.'
+				);
+			},
+		},
+		{
+			get link() {
 				return localizeUrl(
 					'https://wordpress.com/support/themes/uploading-setting-up-custom-themes/child-themes/'
 				);
@@ -1149,6 +1164,21 @@ const contextLinksForSection = {
 				return translate(
 					'A theme controls the general look and feel of your site including things like ' +
 						'page layout, widget locations, and default font.'
+				);
+			},
+		},
+		{
+			get link() {
+				return localizeUrl( 'https://wordpress.com/support/premium-themes/' );
+			},
+			post_id: 12112,
+			get title() {
+				return translate( 'Premium Themes' );
+			},
+			get description() {
+				return translate(
+					'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
+						'no extra cost, as many times as you’d like.'
 				);
 			},
 		},

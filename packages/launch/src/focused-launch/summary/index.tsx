@@ -496,6 +496,10 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							</li>
 							<li className="focused-launch-summary__side-commentary-list-item">
 								<Icon icon={ check } />
+								{ __( 'Unlimited premium themes', __i18n_text_domain__ ) }
+							</li>
+							<li className="focused-launch-summary__side-commentary-list-item">
+								<Icon icon={ check } />
 								{ __( 'Accept payments', __i18n_text_domain__ ) }
 							</li>
 						</ul>

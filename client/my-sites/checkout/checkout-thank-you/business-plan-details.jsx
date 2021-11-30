@@ -6,6 +6,7 @@ import { connect, useSelector } from 'react-redux';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
 import jetpackBackupImage from 'calypso/assets/images/illustrations/jetpack-backup.svg';
+import themeImage from 'calypso/assets/images/illustrations/themes.svg';
 import updatesImage from 'calypso/assets/images/illustrations/updates.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import PurchaseDetail from 'calypso/components/purchase-detail';
@@ -77,6 +78,18 @@ const BusinessPlanDetails = ( {
 					) }
 					buttonText={ i18n.translate( 'Upload a plugin now' ) }
 					href={ '/plugins/manage/' + selectedSite.slug }
+				/>
+			) }
+
+			{ ! selectedFeature && (
+				<PurchaseDetail
+					icon={ <img alt="" src={ themeImage } /> }
+					title={ i18n.translate( 'Try a New Theme' ) }
+					description={ i18n.translate(
+						"You've now got access to every premium theme, at no extra cost. Give one a try!"
+					) }
+					buttonText={ i18n.translate( 'Browse premium themes' ) }
+					href={ '/themes/' + selectedSite.slug }
 				/>
 			) }
 
