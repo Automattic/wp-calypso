@@ -7,21 +7,35 @@ body.is-section-signup .is-woocommerce-install {
 		min-height: 95vh;
 		display: flex;
 		align-items: center;
+
+		@media ( max-width: 660px ) {
+			min-height: 0px;
+		}
 		// Two columns layout
 		.step-wrapper {
 			display: flex;
 
 			.step-wrapper__header {
-				margin-top: 0px !important;
+				@media ( min-width: 660px ) {
+					margin-top: 0px !important;
+				}
 
 				.formatted-header {
 					text-align: inherit;
 
 					.formatted-header__title {
 						text-align: inherit;
+						@media ( max-width: 660px ) {
+							padding: 0 10px;
+						}
 					}
 
 					.formatted-header__subtitle {
+						@media ( max-width: 660px ) {
+							margin-top: 8px;
+							padding: 0 10px;
+						}
+
 						margin-top: 20px;
 						text-align: inherit;
 						max-width: 448px;
@@ -37,6 +51,10 @@ body.is-section-signup .is-woocommerce-install {
 			align-items: flex-start;
 			justify-content: center;
 			column-gap: 2%;
+
+			@media ( max-width: 660px ) {
+				grid-template-columns: 1fr;
+			}
 		}
 
 		.step-wrapper__content {
