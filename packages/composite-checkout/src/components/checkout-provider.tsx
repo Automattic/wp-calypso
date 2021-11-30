@@ -45,6 +45,7 @@ export function CheckoutProvider( {
 	onPaymentError,
 	onPageLoadError,
 	onStepChanged,
+	onPaymentMethodChanged,
 	redirectToUrl,
 	theme,
 	paymentMethods,
@@ -120,6 +121,7 @@ export function CheckoutProvider( {
 			paymentProcessors,
 			onPageLoadError,
 			onStepChanged,
+			onPaymentMethodChanged,
 		} ),
 		[
 			formStatus,
@@ -131,6 +133,7 @@ export function CheckoutProvider( {
 			paymentProcessors,
 			onPageLoadError,
 			onStepChanged,
+			onPaymentMethodChanged,
 		]
 	);
 
