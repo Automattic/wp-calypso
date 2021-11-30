@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { translateCheckoutPaymentMethodToTracksPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { logStashEvent, recordCompositeCheckoutErrorDuringAnalytics } from './lib/analytics';
 
@@ -17,19 +16,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
-				case 'PAYMENT_METHOD_SELECT': {
-					logStashEvent( 'payment_method_select', {
-						newMethodId: String( action.payload ),
-					} );
-					// Need to convert to the slug format used in old checkout so events are comparable
-					const rawPaymentMethodSlug = String( action.payload );
-					const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
-						rawPaymentMethodSlug
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug )
-					);
-				}
 				case 'STORED_CARD_ERROR':
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {
