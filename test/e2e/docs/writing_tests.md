@@ -3,16 +3,16 @@
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-    - [Example](#example)
-    - [Quick start](#quick-start)
-    - [Top-level describe block](#top-level-describe-block)
-    - [Child-level describe blocks](#child-level-describe-blocks)
-    - [Test step](#test-step)
-    - [Hooks](#hooks)
-    - [Block Smoke Testing](#block-smoke-testing)
-        - [Overview](#overview)
-        - [How To](#how-to)
-        - [Examples](#examples)
+  - [Example](#example)
+  - [Quick start](#quick-start)
+  - [Top-level describe block](#top-level-describe-block)
+  - [Child-level describe blocks](#child-level-describe-blocks)
+  - [Test step](#test-step)
+  - [Hooks](#hooks)
+  - [Block Smoke Testing](#block-smoke-testing)
+    - [Overview](#overview)
+    - [How To](#how-to)
+    - [Examples](#examples)
 
 <!-- /TOC -->
 

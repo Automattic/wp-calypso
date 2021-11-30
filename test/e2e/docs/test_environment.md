@@ -3,11 +3,11 @@
 <!-- TOC -->
 
 - [Test Environment](#test-environment)
-    - [Environment Variables](#environment-variables)
-    - [Secrets file](#secrets-file)
-    - [Non-secret configuration file](#non-secret-configuration-file)
-        - [Default config](#default-config)
-        - [Custom configs](#custom-configs)
+  - [Environment Variables](#environment-variables)
+  - [Secrets file](#secrets-file)
+  - [Non-secret configuration file](#non-secret-configuration-file)
+    - [Default config](#default-config)
+    - [Custom configs](#custom-configs)
 
 <!-- /TOC -->
 

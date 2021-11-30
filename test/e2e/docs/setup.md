@@ -3,11 +3,11 @@
 <!-- TOC -->
 
 - [Setup](#setup)
-    - [Regular setup](#regular-setup)
+  - [Regular setup](#regular-setup)
 - [Advanced Setup](#advanced-setup)
-    - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
-    - [Apple Silicon arm64](#apple-silicon-arm64)
-    - [Help](#help)
+  - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
+  - [Apple Silicon arm64](#apple-silicon-arm64)
+  - [Help](#help)
 
 <!-- /TOC -->
 

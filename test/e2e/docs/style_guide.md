@@ -3,19 +3,19 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Variable naming](#variable-naming)
-    - [Use async/await](#use-asyncawait)
-    - [Selectors](#selectors)
-        - [No selectors in class](#no-selectors-in-class)
-        - [Move repetitive selectors out](#move-repetitive-selectors-out)
-        - [Prefer user-facing selectors](#prefer-user-facing-selectors)
-        - [Naming](#naming)
-        - [Involve minimal selectors](#involve-minimal-selectors)
-        - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
-    - [Test steps](#test-steps)
-        - [Avoid modal verbs](#avoid-modal-verbs)
-        - [Prefer smaller steps](#prefer-smaller-steps)
-    - [Destructure parameters](#destructure-parameters)
+  - [Variable naming](#variable-naming)
+  - [Use async/await](#use-asyncawait)
+  - [Selectors](#selectors)
+    - [No selectors in class](#no-selectors-in-class)
+    - [Move repetitive selectors out](#move-repetitive-selectors-out)
+    - [Prefer user-facing selectors](#prefer-user-facing-selectors)
+    - [Naming](#naming)
+    - [Involve minimal selectors](#involve-minimal-selectors)
+    - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
+  - [Test steps](#test-steps)
+    - [Avoid modal verbs](#avoid-modal-verbs)
+    - [Prefer smaller steps](#prefer-smaller-steps)
+  - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
 

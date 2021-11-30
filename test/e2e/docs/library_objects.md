@@ -7,10 +7,10 @@ For a brief introduction to Page Object Models, please refer to [this page](http
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Distinction](#distinction)
-    - [Components](#components)
-    - [Page](#page)
-    - [Flows](#flows)
+  - [Distinction](#distinction)
+  - [Components](#components)
+  - [Page](#page)
+  - [Flows](#flows)
 
 <!-- /TOC -->
 
