@@ -76,6 +76,12 @@ const MarketplacePluginInstall = ( {
 		const { pluginInstallationStatus, productSlugInstalled, primaryDomain } = getPurchaseFlowState(
 			state
 		);
+		if ( isUploadFlow ) {
+			return (
+				pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS &&
+				primaryDomain === selectedSiteSlug
+			);
+		}
 		return (
 			pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS &&
 			productSlugInstalled === productSlug &&
