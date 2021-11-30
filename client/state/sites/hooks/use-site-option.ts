@@ -5,8 +5,8 @@ import getSiteOption from '../selectors/get-site-option';
 /**
  * Returns a site option for a site
  *
- * @param {string} optionName The option you want to query
- * @returns {*} The value of that option or null
+ * @param optionName The option you want to query
+ * @returns The value of that option or null
  */
 const useSiteOption = < T >( optionName: string ): T | null => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
