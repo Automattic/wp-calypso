@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 /**
@@ -29,8 +30,9 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const lastStepIndex = config.steps.length - 1;
+	const isMobile = useMobileBreakpoint();
 	const referenceElementSelector =
-		config.steps[ currentStepIndex ].referenceElements?.desktop || null;
+		config.steps[ currentStepIndex ].referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || null;
 	const referenceElement = referenceElementSelector
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;
