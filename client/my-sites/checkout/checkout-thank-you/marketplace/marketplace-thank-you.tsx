@@ -13,6 +13,8 @@ import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -21,6 +23,7 @@ const ThankYouContainer = styled.div`
 		margin-top: 72px;
 		img {
 			height: auto;
+			max-height: 74px;
 		}
 	}
 
@@ -79,26 +82,36 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
-	const plugin = useSelector( ( state ) => getPluginOnSite( state, siteId, productSlug ) );
+	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, siteId, productSlug ) );
+	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
+	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
 	const [ retries, setRetries ] = useState( 0 );
 
+	// retrieve wporg plugin data if not available
 	useEffect( () => {
-		if ( ! isRequestingPlugins && ! plugin && retries < 10 ) {
+		if ( ! isWporgPluginFetched ) {
+			dispatch( wporgFetchPluginData( productSlug ) );
+		}
+	}, [ isWporgPluginFetched, productSlug, dispatch ] );
+
+	useEffect( () => {
+		if ( ! isRequestingPlugins && ! pluginOnSite && retries < 10 ) {
 			setRetries( retries + 1 );
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
 		// Do not add retries in dependencies to avoid infinite loop.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isRequestingPlugins, plugin, dispatch, siteId ] );
+	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId ] );
 
 	const thankYouImage = {
 		alt: '',
-		src: successImage,
+		src: wporgPlugin?.icon ? wporgPlugin.icon : successImage,
 	};
 
-	const setupURL = plugin?.action_links?.Settings
-		? plugin.action_links.Settings
+	const setupURL = pluginOnSite?.action_links?.Settings
+		? pluginOnSite.action_links.Settings
 		: `${ siteAdminUrl }plugins.php`;
 
 	const setupSection = {
@@ -112,7 +125,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					'Get to know your plugin and customize it, so you can hit the ground running.'
 				),
 				stepCta: (
-					<FullWidthButton href={ setupURL } primary busy={ ! plugin && retries < 10 }>
+					<FullWidthButton href={ setupURL } primary busy={ ! pluginOnSite && retries < 10 }>
 						{ translate( 'Manage plugin' ) }
 					</FullWidthButton>
 				),
@@ -138,7 +151,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	};
 
 	const thankYouSubtitle = translate( '%(pluginName)s has been installed.', {
-		args: { pluginName: plugin?.name },
+		args: { pluginName: pluginOnSite?.name },
 	} );
 
 	return (
@@ -161,7 +174,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					showSupportSection={ true }
 					thankYouImage={ thankYouImage }
 					thankYouTitle={ translate( 'All ready to go!' ) }
-					thankYouSubtitle={ plugin && thankYouSubtitle }
+					thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
 					headerBackgroundColor="#fff"
 					headerTextColor="#000"
 				/>
