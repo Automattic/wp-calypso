@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
+import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps-pure';
-
 const { defaultFlowName } = flows;
 
 function getDefaultFlowName() {
@@ -41,18 +41,18 @@ function isStepSectionName( pathFragment ) {
 	return ! isStepName( pathFragment );
 }
 
-export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
+export function getStepUrl( flowName, stepName, stepSectionName, localeSlug, params = {} ) {
 	const flow = flowName ? `/${ flowName }` : '';
 	const step = stepName ? `/${ stepName }` : '';
 	const section = stepSectionName ? `/${ stepSectionName }` : '';
 	const locale = localeSlug ? `/${ localeSlug }` : '';
 
-	if ( flowName === defaultFlowName ) {
-		// we don't include the default flow name in the route
-		return '/start' + step + section + locale;
-	}
-
-	return '/start' + flow + step + section + locale;
+	const url =
+		flowName === defaultFlowName
+			? // we don't include the default flow name in the route
+			  '/start' + step + section + locale
+			: '/start' + flow + step + section + locale;
+	return addQueryArgs( params, url );
 }
 
 export function getValidPath( parameters, isUserLoggedIn ) {

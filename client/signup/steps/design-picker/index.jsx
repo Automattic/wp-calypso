@@ -30,8 +30,7 @@ import './style.scss';
 const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
 
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned } = props;
-
+	const { flowName, stepName, isReskinned, queryParams } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -138,8 +137,9 @@ export default function DesignPickerStep( props ) {
 			flow: props.flowName,
 			intent: props.signupDependencies.intent,
 		} );
-
-		page( getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale ) );
+		page(
+			getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
+		);
 	}
 
 	function submitDesign( _selectedDesign = selectedDesign ) {
@@ -275,7 +275,7 @@ export default function DesignPickerStep( props ) {
 					args: { designTitle },
 				} ) }
 				defaultDependencies={ defaultDependencies }
-				backUrl={ getStepUrl( flowName, stepName, '', locale ) }
+				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
 				goToNextStep={ submitDesign }
 				stepSectionName={ designTitle }
 			/>
