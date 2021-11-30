@@ -10,6 +10,7 @@ import {
 	GutenbergEditorPage,
 	TestFile,
 	ClicktoTweetBlock,
+	CoverBlock,
 	DynamicHRBlock,
 	HeroBlock,
 	ImageBlock,
@@ -17,7 +18,7 @@ import {
 	PricingTableBlock,
 	NewPostFlow,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Frame, Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
 const user = BrowserHelper.targetCoBlocksEdge()
@@ -183,6 +184,50 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				const newImagePath = await newImage.getAttribute( 'src' );
 
 				expect( uploadedImagePath ).not.toBe( newImagePath );
+			} );
+		} );
+
+		describe( 'Cover Styles', () => {
+			let imageFile: TestFile;
+			let coverBlock: CoverBlock;
+			let editorFrame: Frame;
+
+			beforeAll( async () => {
+				imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
+				gutenbergEditorPage = await newPostFlow.startImmediately( user );
+				editorFrame = await gutenbergEditorPage.getEditorFrame();
+			} );
+
+			it( 'Insert Cover block', async () => {
+				const blockHandle = await gutenbergEditorPage.addBlock(
+					CoverBlock.blockName,
+					CoverBlock.blockEditorSelector
+				);
+				coverBlock = new CoverBlock( blockHandle );
+			} );
+
+			it( 'Upload image', async () => {
+				await coverBlock.upload( imageFile.fullpath );
+				// After uploading the image the focus is switched to the inner
+				// paragraph block (Cover title), so we need to switch it back outside.
+				await editorFrame.click( '[aria-label="Select Cover"]' );
+			} );
+
+			it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
+				await gutenbergEditorPage.openSettings();
+				await editorFrame.waitForSelector( `button[aria-label="${ style }"]` );
+			} );
+
+			it( 'Set "Bottom Wave" style', async () => {
+				await coverBlock.setCoverStyle( 'Bottom Wave' );
+			} );
+
+			it( 'Publish post', async () => {
+				await gutenbergEditorPage.publish( { visit: true } );
+			} );
+
+			it( 'Verify the class for "Bottom Wave" style is present', async () => {
+				await page.waitForSelector( '.wp-block-cover.is-style-bottom-wave' );
 			} );
 		} );
 	} );
