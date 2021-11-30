@@ -9,6 +9,8 @@ import Main from 'calypso/components/main';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
+import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -16,7 +18,6 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ProfessionalEmailCard from './provider-cards/professional-email-card';
 import type { Site } from './provider-cards/provider-card-props';
 
 import './style.scss';
@@ -63,7 +64,13 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				source={ source }
 			/>
 
-			{ isGSuiteSupported && <> Google Workspace Component Placeholder </> }
+			{ isGSuiteSupported && (
+				<GoogleWorkspaceCard
+					comparisonContext={ comparisonContext }
+					selectedDomainName={ selectedDomainName }
+					source={ source }
+				/>
+			) }
 		</Main>
 	);
 };

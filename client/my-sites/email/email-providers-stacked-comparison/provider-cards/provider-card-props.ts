@@ -21,7 +21,7 @@ export interface ProviderCard {
 	formattedPrice?: TranslateResult;
 	formFields?: ReactElement;
 	isDomainEligibleForTitanFreeTrial?: boolean;
-	logo: ReactElement;
+	logo: ReactElement | { path: string };
 	onExpandedChange: ( providerKey: string, expanded: boolean ) => void;
 	onButtonClick?: ( event: React.MouseEvent ) => void;
 	productName: TranslateResult;
@@ -39,7 +39,7 @@ export type EmailProvidersStackedCardProps = {
 	domain?: any;
 	domainName?: string;
 	domainsWithForwards?: Domain[];
-	gSuiteProduct?: string;
+	gSuiteProduct?: any;
 	hasCartDomain?: boolean;
 	isGSuiteSupported?: boolean;
 	productsList?: string[];

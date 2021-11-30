@@ -77,7 +77,7 @@ const professionalEmailCardInformation: ProviderCard = {
 	detailsExpanded: true,
 	expandButtonLabel: translate( 'Expand' ),
 	onExpandedChange: noop,
-	providerKey: '',
+	providerKey: 'titan',
 	showExpandButton: false,
 	description: translate( 'Integrated email solution for your WordPress.com site.' ),
 	logo,
