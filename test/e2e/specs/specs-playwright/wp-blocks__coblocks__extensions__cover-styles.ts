@@ -21,7 +21,6 @@ const user = BrowserHelper.targetCoBlocksEdge()
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
 	let page: Page;
-	let newPostFlow: NewPostFlow;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let imageFile: TestFile;
 	let coverBlock: CoverBlock;
@@ -29,12 +28,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 
 	setupHooks( ( args ) => {
 		page = args.page;
-		newPostFlow = new NewPostFlow( page );
 	} );
 
 	beforeAll( async () => {
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		gutenbergEditorPage = await newPostFlow.startImmediately( user );
+		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
 		editorFrame = await gutenbergEditorPage.getEditorFrame();
 	} );
 

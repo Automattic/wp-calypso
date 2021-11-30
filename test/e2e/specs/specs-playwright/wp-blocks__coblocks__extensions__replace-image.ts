@@ -21,7 +21,6 @@ const user = BrowserHelper.targetCoBlocksEdge()
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), () => {
 	let page: Page;
-	let newPostFlow: NewPostFlow;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let imageBlock: ImageBlock;
 	let imageFile: TestFile;
@@ -30,12 +29,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 
 	setupHooks( ( args ) => {
 		page = args.page;
-		newPostFlow = new NewPostFlow( page );
 	} );
 
 	beforeAll( async () => {
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		gutenbergEditorPage = await newPostFlow.startImmediately( user );
+		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
 	} );
 
 	it( `Insert ${ ImageBlock.blockName } block and upload image`, async () => {

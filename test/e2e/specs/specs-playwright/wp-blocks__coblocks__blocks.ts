@@ -25,14 +25,12 @@ const user = BrowserHelper.targetCoBlocksEdge()
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	let page: Page;
-	let newPostFlow: NewPostFlow;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let logoImage: TestFile;
 
 	setupHooks( ( args ) => {
 		page = args.page;
-		newPostFlow = new NewPostFlow( page );
 	} );
 
 	// Test data
@@ -42,7 +40,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 
 	beforeAll( async () => {
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		gutenbergEditorPage = await newPostFlow.startImmediately( user );
+		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {

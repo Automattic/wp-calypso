@@ -18,18 +18,16 @@ const user = BrowserHelper.targetCoBlocksEdge()
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	let page: Page;
-	let newPostFlow: NewPostFlow;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorFrame: Frame;
 	let pricingTableBlock: PricingTableBlock;
 
 	setupHooks( ( args ) => {
 		page = args.page;
-		newPostFlow = new NewPostFlow( page );
 	} );
 
 	beforeAll( async () => {
-		gutenbergEditorPage = await newPostFlow.startImmediately( user );
+		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
 		editorFrame = await gutenbergEditorPage.getEditorFrame();
 	} );
 
