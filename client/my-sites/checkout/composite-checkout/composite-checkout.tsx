@@ -281,9 +281,18 @@ export default function CompositeCheckout( {
 	} );
 
 	useActOnceOnStrings( [ cartLoadingError ].filter( isValueTruthy ), ( messages ) => {
-		messages.forEach( ( message ) =>
-			recordEvent( { type: 'CART_ERROR', payload: { type: cartLoadingErrorType, message } } )
-		);
+		messages.forEach( ( message ) => {
+			logStashEvent( 'calypso_checkout_composite_cart_error', {
+				type: cartLoadingErrorType ?? '',
+				message,
+			} );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_cart_error', {
+					error_type: cartLoadingErrorType,
+					error_message: String( message ),
+				} )
+			);
+		} );
 	} );
 
 	// Display errors. Note that we display all errors if any of them change,

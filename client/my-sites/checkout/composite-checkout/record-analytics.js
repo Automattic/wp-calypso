@@ -37,17 +37,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 							error_message: String( action.payload ),
 						} )
 					);
-				case 'CART_ERROR':
-					logStashEvent( 'calypso_checkout_composite_cart_error', {
-						type: action.payload.type,
-						message: action.payload.message,
-					} );
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_cart_error', {
-							error_type: action.payload.type,
-							error_message: String( action.payload.message ),
-						} )
-					);
 				case 'a8c_checkout_stripe_field_invalid_error':
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_stripe_field_invalid_error', {
