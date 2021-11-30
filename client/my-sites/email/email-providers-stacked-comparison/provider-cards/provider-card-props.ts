@@ -19,6 +19,7 @@ export interface ProviderCard {
 	features: TranslateResult[];
 	footerBadge?: ReactElement;
 	formattedPrice?: TranslateResult;
+	formFields: ReactElement;
 	logo: ReactElement;
 	onExpandedChange: ( providerKey: string, expanded: boolean ) => void;
 	onButtonClick?: ( event: React.MouseEvent ) => void;

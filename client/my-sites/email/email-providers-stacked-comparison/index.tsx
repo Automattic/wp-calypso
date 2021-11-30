@@ -38,6 +38,9 @@ type EmailProvidersStackedComparisonProps = {
 	productsList?: string[];
 	requestingSiteDomains?: boolean;
 	shoppingCartManager?: any;
+	selectedSite?: Site | null;
+	selectedDomainName: string;
+	source: string;
 	titanMailProduct?: any;
 };
 

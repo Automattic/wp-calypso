@@ -7,7 +7,7 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import EmailProviderFeaturesToggleButton from 'calypso/my-sites/email/email-provider-features/toggle-button';
 import EmailProviderStackedFeatures from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
-import { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/index';
+import { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 
 import './style.scss';
 

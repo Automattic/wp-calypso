@@ -123,16 +123,14 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	] );
 	const [ addingToCart, setAddingToCart ] = useState( false );
 	const [ validatedTitanMailboxUuids, setValidatedTitanMailboxUuids ] = useState( [ '' ] );
+	const optionalFields = [ PASSWORD_RESET_TITAN_FIELD, FULL_NAME_TITAN_FIELD ];
 
 	const onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, domainName, hasCartDomain, source } = props;
+		const { comparisonContext, domain, selectedDomainName, hasCartDomain, source } = props;
 
-		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox );
+		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
 
-		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes, [
-			PASSWORD_RESET_TITAN_FIELD,
-			FULL_NAME_TITAN_FIELD,
-		] );
+		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes, optionalFields );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 		const userCannotAddEmailReason = userCanAddEmail
 			? null
@@ -160,7 +158,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		const { productsList, selectedSite, shoppingCartManager } = props;
 
 		const cartItem = titanMailMonthly( {
-			domain: domainName,
+			domain: selectedDomainName,
 			quantity: validatedTitanMailboxes.length,
 			extra: {
 				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
