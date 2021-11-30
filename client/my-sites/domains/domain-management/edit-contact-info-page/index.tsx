@@ -94,7 +94,7 @@ const EditContactInfoPage = ( {
 				domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
 				selectedDomain={ domain }
 				selectedSite={ selectedSite }
-				showContactInfoNote={ true }
+				showContactInfoNote={ false }
 			/>
 		);
 	};
@@ -128,11 +128,13 @@ const EditContactInfoPage = ( {
 		);
 		return (
 			<div className="edit-contact-info-page__sidebar">
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="edit-contact-info-page__sidebar__title">
 					<p>
 						<strong>{ translate( 'Provide accurate contact information' ) }</strong>
 					</p>
 				</div>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="edit-contact-info-page__sidebar__content">
 					<p>{ explanationText1 }</p>
 					<p>{ explanationText2 }</p>
