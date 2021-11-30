@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"build:o2-blocks": "calypso-build",
-		"dev": "node ../../bin/build-calypso-app.mjs --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/a8c-blocks",
+		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/a8c-blocks",
 		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
@@ -46,6 +46,7 @@
 		"redux": "^4.1.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"enzyme": "^3.11.0",
 		"jest": "^27.3.1",
