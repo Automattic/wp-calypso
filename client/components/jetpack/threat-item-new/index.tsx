@@ -4,14 +4,13 @@ import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
-import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader';
-import { Threat } from 'calypso/components/jetpack/threat-item/types';
-import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
+import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header-new';
+import { Threat } from 'calypso/components/jetpack/threat-item-new-new/types';
+import { getThreatFix } from 'calypso/components/jetpack/threat-item-new/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import LogItem from '../log-item';
-import ThreatDescription from '../threat-description';
+import ThreatDescription from '../threat-description-new';
 
 import './style.scss';
 interface Props {
@@ -25,7 +24,7 @@ interface Props {
 
 export const ThreatItemPlaceholder: React.FC = () => (
 	<LogItem
-		className={ classnames( 'threat-item', 'is-placeholder' ) }
+		className={ classnames( 'threat-item-new', 'is-placeholder' ) }
 		header="Placeholder threat"
 		subheader="Placeholder sub header"
 	/>
@@ -59,7 +58,7 @@ const ThreatItem: React.FC< Props > = ( {
 			return (
 				<Button
 					primary
-					className={ classnames( 'threat-item__fix-button', className ) }
+					className={ classnames( 'threat-item-new__fix-button', className ) }
 					onClick={ onClickHandler }
 					disabled={ isFixing }
 				>
@@ -70,7 +69,6 @@ const ThreatItem: React.FC< Props > = ( {
 		[ isFixing, onFixThreat, threat ]
 	);
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const getFix = React.useCallback( (): i18nCalypso.TranslateResult | undefined => {
 		if ( threat.status === 'fixed' ) {
 			return;
@@ -80,7 +78,7 @@ const ThreatItem: React.FC< Props > = ( {
 			return (
 				<>
 					{ ! threat.rows && (
-						<p className="threat-description__section-text">
+						<p className="threat-item-new threat-description__section-text">
 							{ translate(
 								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
 									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
@@ -89,7 +87,7 @@ const ThreatItem: React.FC< Props > = ( {
 						</p>
 					) }
 					{ threat.rows && (
-						<p className="threat-description__section-text">
+						<p className="threat-item-new threat-description__section-text">
 							{ translate(
 								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
 									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove or edit ' +
@@ -98,7 +96,7 @@ const ThreatItem: React.FC< Props > = ( {
 						</p>
 					) }
 					{ 'current' === threat.status && (
-						<p className="threat-description__section-text">
+						<p className="threat-item-new threat-description__section-text">
 							{ translate(
 								'If you need more help to resolve this threat, we recommend {{strong}}Codeable{{/strong}}, a trusted freelancer marketplace of highly vetted WordPress experts. ' +
 									'They have identified a select group of security experts to help with these projects. ' +
@@ -115,9 +113,12 @@ const ThreatItem: React.FC< Props > = ( {
 			);
 		}
 
-		return <p className="threat-description__section-text">{ getThreatFix( threat.fixable ) }</p>;
+		return (
+			<p className="threat-item-new threat-description__section-text">
+				{ getThreatFix( threat.fixable ) }
+			</p>
+		);
 	}, [ contactSupportUrl, threat ] );
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	const isFixable = React.useMemo(
 		() => threat.fixable && ( threat.status === 'current' || threat.status === 'ignored' ),
@@ -149,14 +150,12 @@ const ThreatItem: React.FC< Props > = ( {
 	return (
 		<LogItem
 			key={ threat.id }
-			className={ classnames( 'threat-item', {
+			className={ classnames( 'threat-item-new', {
 				'is-fixed': threat.status === 'fixed',
 				'is-ignored': threat.status === 'ignored',
 				'is-current': threat.status === 'current',
 			} ) }
 			header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
-			subheader={ <ThreatItemSubheader threat={ threat } isFixable={ isFixable } /> }
-			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
 			clickableHeader={ true }
 			onClick={ onOpenTrackEvent }
 		>
@@ -172,11 +171,11 @@ const ThreatItem: React.FC< Props > = ( {
 				isFixable={ isFixable }
 			/>
 
-			<div className="threat-item__buttons">
+			<div className="threat-item-new__buttons">
 				{ threat.status === 'current' && (
 					<Button
 						scary
-						className="threat-item__ignore-button"
+						className="threat-item-new__ignore-button"
 						onClick={ onIgnoreThreat }
 						disabled={ isFixing }
 					>
@@ -185,7 +184,7 @@ const ThreatItem: React.FC< Props > = ( {
 				) }
 				{ ! threat.fixable && 'current' === threat.status && (
 					<ExternalLinkWithTracking
-						className="button is-primary threat-item__codeable-button"
+						className="button is-primary threat-item-new__codeable-button"
 						href="https://codeable.io/partners/jetpack-scan/"
 						target="_blank"
 						rel="noopener noreferrer"

@@ -1,6 +1,30 @@
-.scan-threats {
+.scan-threats-new {
+	display: flex;
+
 	&__threats {
-		margin: 16px 0;
+		margin: 0;
+	}
+
+	&__header-message {
+		display: flex;
+	}
+
+	&__low-risk {
+		margin-top: 16px;
+	}
+
+	&__threats {
+		.foldable-card {
+			margin-bottom: 0;
+		}
+
+		.foldable-card.card.is-expanded {
+			margin: 0;
+		}
+
+		.foldable-card.is-expanded .foldable-card__content {
+				padding: 0;
+		}
 	}
 
 	&__error {
@@ -20,17 +44,25 @@
 			flex-direction: row;
 		}
 
-		.scan-threats__rerun-help {
+		.scan-threats-new__rerun-help {
 			font-size: $font-body-small;
-			line-height: 20px;
-			color: var( --studio-gray-40 );
+			line-height: 21px;
+			font-style: normal;
+			font-weight: normal;
+			color: var( --studio-gray-60 );
+			text-align: center;
+			letter-spacing: -0.01em;
+			max-width: 576px;
+			height: 42px;
+			margin-left: 72px;
+			margin-right: 72px;
 
 			@include breakpoint-deprecated( '>800px' ) {
 				margin-bottom: 0;
 			}
 		}
 
-		.scan-threats__run-scan-main-button {
+		.scan-threats-new__run-scan-main-button {
 			flex: 1 1 40%;
 			padding: 10px 30px;
 
@@ -41,12 +73,11 @@
 		}
 	}
 
-	&__run-scan-button.scan-threats__run-scan-button {
+	&__run-scan-button.scan-threats-new__run-scan-button {
 		padding: initial;
 		border: initial;
 		font-weight: normal;
 		vertical-align: initial;
-		color: var( --color-link );
 		background: inherit;
 
 		&:hover,
@@ -70,33 +101,36 @@
 
 	&__buttons {
 		display: flex;
-		margin-bottom: 16px;
+		margin-bottom: 8px;
 		border-top: 1px solid var( --studio-gray-5 );
-		padding-top: 16px;
-		flex-direction: column;
+		padding-top: 32px;
+		flex-direction: space-between;
+		flex-wrap: wrap;
+		align-items: center;
 
 		@include breakpoint-deprecated( '>800px' ) {
 			flex-direction: row;
 		}
 
 		> p {
-			padding-top: 8px;
-			font-weight: bold;
+			font-size: $font-body;
+			font-weight: normal;
+			// line-height: 24px;
 
 			@include breakpoint-deprecated( '>800px' ) {
 				flex-grow: 1;
-				padding-top: 10px;
 				margin: 0 !important;
 			}
 		}
 	}
 
 	&__fix-all-threats-button {
-		flex: 1 1 40%;
-		padding: 10px 30px;
-
-		@include breakpoint-deprecated( '>800px' ) {
-			flex: 0 0 170px;
+		width: 105px;
+		height: 40px;
+		border-radius: 2px;
+		font-weight: 600;
+		@include breakpoint-deprecated( '<800px' ) {
+			flex-grow: 1;
 		}
 	}
 

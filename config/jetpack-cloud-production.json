@@ -36,6 +36,7 @@
 		"i18n/community-translator": false,
 		"jetpack-cloud": true,
 		"jetpack/backups-date-picker": true,
+		"jetpack/more-informative-scan": false,
 		"jetpack/only-realtime-products": true,
 		"jetpack/pricing-page": true,
 		"jetpack/redirect-legacy-plans": true,

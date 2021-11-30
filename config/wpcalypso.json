@@ -62,6 +62,7 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/happychat": true,
+		"jetpack/more-informative-scan": false,
 		"jetpack/only-realtime-products": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,

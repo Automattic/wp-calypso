@@ -1,16 +1,12 @@
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { numberFormat, translate } from 'i18n-calypso';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import FoldableCard from 'calypso/components/foldable-card';
 import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
 import ThreatItem from 'calypso/components/jetpack/threat-item';
 import { FixableThreat, Threat, ThreatAction } from 'calypso/components/jetpack/threat-item/types';
-import ThreatListHeader from 'calypso/components/jetpack/threat-list-header';
-import ThreatLowRiskItemHeader from 'calypso/components/jetpack/threat-low-risk-item-header';
-import SupportInfo from 'calypso/components/support-info';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
 import { useThreats } from 'calypso/lib/jetpack/use-threats';
@@ -53,58 +49,6 @@ const ScanError: React.FC< { site: Site } > = ( { site } ) => {
 			) }
 		</div>
 	);
-};
-
-const getThreatCountMessage = (
-	countHighSeverity: number,
-	countLowSeverity: number,
-	prefix: string | null,
-	suffix: string | null
-) => {
-	let lowThreatsSummary = '';
-	if ( countLowSeverity ) {
-		lowThreatsSummary = translate( '%(lowCount)s low risk item', '%(lowCount)s low risk items', {
-			args: {
-				lowCount: numberFormat( countLowSeverity, 0 ),
-			},
-			comment: '$(lowCount)s is the number of low severity items found.',
-			count: countLowSeverity,
-		} );
-	}
-
-	let highThreatsSummary = '';
-	if ( countHighSeverity ) {
-		highThreatsSummary = translate( '%(threatCount)s threat', '%(threatCount)s threats', {
-			args: {
-				threatCount: numberFormat( countHighSeverity, 0 ),
-			},
-			comment: '%(threatCount)s represents the number of higher severity threats found.',
-			count: countHighSeverity,
-		} );
-	}
-
-	let headerSummary = '';
-	if ( highThreatsSummary && lowThreatsSummary ) {
-		headerSummary = translate( '%(highThreatsSummary)s and %(lowThreatsSummary)s', {
-			args: {
-				highThreatsSummary: highThreatsSummary,
-				lowThreatsSummary: lowThreatsSummary,
-			},
-		} );
-	} else if ( highThreatsSummary ) {
-		headerSummary = highThreatsSummary;
-	} else if ( lowThreatsSummary ) {
-		headerSummary = lowThreatsSummary;
-	}
-
-	if ( prefix ) {
-		headerSummary = prefix + ' ' + headerSummary;
-	}
-	if ( suffix ) {
-		headerSummary += ' ' + suffix;
-	}
-
-	return headerSummary;
 };
 
 const ScanThreats = ( { error, site, threats }: Props ) => {
@@ -181,125 +125,88 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		[ updatingThreats ]
 	);
 
-	const maxSeverity = threats.reduce( ( max, threat ) => Math.max( max, threat.severity ), 0 );
-	const countMap = {
-		low: threats.filter( ( threat ) => threat.severity < 3 ).length,
-		high: threats.filter( ( threat ) => threat.severity >= 3 ).length,
-	};
-	const countMapFixable = {
-		low: allFixableThreats.filter( ( threat ) => threat.severity < 3 ).length,
-		high: allFixableThreats.filter( ( threat ) => threat.severity >= 3 ).length,
-	};
-
-	const headerSummary = getThreatCountMessage(
-		countMap.high,
-		countMap.low,
-		null,
-		translate( 'found' )
-	);
-	const fixSummary = getThreatCountMessage(
-		countMapFixable.high,
-		countMapFixable.low,
-		translate( 'Jetpack can auto fix' ),
-		null
-	);
-
-	let headerMessage = translate( 'Your site is at risk' );
-	let securityIcon = 'error';
-
-	if ( maxSeverity < 3 ) {
-		headerMessage = translate( 'Your site it not at risk' );
-		securityIcon = 'okay';
-	}
-
-	const highSeverityThreats = threats
-		.filter( ( threat ) => threat.severity >= 3 )
-		.sort( ( a, b ) => b.severity - a.severity );
-	const lowSeverityThreats = threats.filter( ( threat ) => threat.severity < 3 );
-
+	/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 	return (
 		<>
-			<Card>
-				<SecurityIcon icon={ securityIcon } />
-				<h1 className="scan-threats scan__header">{ headerMessage }</h1>
-				<p className="scan-threats__header-message">
-					{ headerSummary }{ ' ' }
-					{ maxSeverity < 3 && (
-						<SupportInfo
-							position="top"
-							text={ translate(
-								"Low risk items don't have a negative impact on your site and can be safely ignored."
-							) }
-						/>
-					) }
-				</p>
-				{ hasFixableThreats && (
-					<>
-						<div className="scan-threats__buttons">
-							<p>{ fixSummary }</p>
+			<SecurityIcon icon="error" />
+			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
+			<p>
+				{ translate(
+					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threat on {{strong}}%(siteName)s{{/strong}}. Please review the threat and take action.',
+					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threats on {{strong}}%(siteName)s{{/strong}}. Please review each threat and take action.',
+					{
+						args: {
+							siteName: site.name,
+							threatCount: numberFormat( threats.length, 0 ),
+						},
+						components: {
+							strong: <strong />,
+						},
+						comment:
+							'%(threatCount)s represents the number of threats currently identified on the site, and $(siteName)s is the name of the site. The {{a}} tag is a link that goes to a contact support page.',
+						count: threats.length,
+					}
+				) }
+			</p>
+			<div className="scan-threats__threats">
+				<div className="scan-threats__buttons">
+					{ hasFixableThreats && (
+						<>
+							<p>
+								{ translate(
+									'Jetpack can auto fix 1 found threat.',
+									'Jetpack can auto fix %(fixableCount)s of %(threatCount)s found threats.',
+									{
+										args: {
+											fixableCount: numberFormat( allFixableThreats.length, 0 ),
+											threatCount: numberFormat( threats.length, 0 ),
+										},
+										comment:
+											'%(fixableCount)s represents the number of auto fixable threats, %(threatCount)s represents the number of threats currently identified on the site',
+										count: allFixableThreats.length,
+									}
+								) }
+							</p>
 							<Button
 								primary
 								className="scan-threats__fix-all-threats-button"
 								onClick={ openFixAllThreatsDialog }
 								disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
 							>
-								{ translate( 'Auto fix all' ) }
+								{ translate(
+									'Auto fix %(fixableCount)s threat',
+									'Auto fix %(fixableCount)s threats',
+									{
+										args: {
+											fixableCount: numberFormat( allFixableThreats.length, 0 ),
+										},
+										comment:
+											'%(fixableCount)s represents the number of auto fixable threats on the site',
+										count: allFixableThreats.length,
+									}
+								) }
 							</Button>
-						</div>
-					</>
-				) }
-			</Card>
-			<ThreatListHeader />
-			<div className="scan-threats__threats">
-				{ highSeverityThreats &&
-					highSeverityThreats.map( ( threat ) => (
-						<ThreatItem
-							key={ threat.id }
-							threat={ threat }
-							onFixThreat={ () => openDialog( 'fix', threat ) }
-							onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-							isFixing={ isFixing( threat ) }
-							contactSupportUrl={ contactSupportUrl( site.URL ) }
-							isPlaceholder={ false }
-						/>
-					) ) }
-				{ ! highSeverityThreats &&
-					lowSeverityThreats &&
-					lowSeverityThreats.map( ( threat ) => (
-						<ThreatItem
-							key={ threat.id }
-							threat={ threat }
-							onFixThreat={ () => openDialog( 'fix', threat ) }
-							onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-							isFixing={ isFixing( threat ) }
-							contactSupportUrl={ contactSupportUrl( site.URL ) }
-							isPlaceholder={ false }
-						/>
-					) ) }
-				<div class="scan-threats__low-risk">
-					<FoldableCard header={ <ThreatLowRiskItemHeader threatCount={ countMap.low } /> }>
-						{ highSeverityThreats &&
-							lowSeverityThreats &&
-							lowSeverityThreats.map( ( threat ) => (
-								<ThreatItem
-									key={ threat.id }
-									threat={ threat }
-									onFixThreat={ () => openDialog( 'fix', threat ) }
-									onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-									isFixing={ isFixing( threat ) }
-									contactSupportUrl={ contactSupportUrl( site.URL ) }
-									isPlaceholder={ false }
-								/>
-							) ) }
-					</FoldableCard>
+						</>
+					) }
 				</div>
+				{ threats.map( ( threat ) => (
+					<ThreatItem
+						key={ threat.id }
+						threat={ threat }
+						onFixThreat={ () => openDialog( 'fix', threat ) }
+						onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
+						isFixing={ isFixing( threat ) }
+						contactSupportUrl={ contactSupportUrl( site.URL ) }
+						isPlaceholder={ false }
+					/>
+				) ) }
 			</div>
 
 			{ ! error && (
 				<div className="scan-threats__rerun">
 					<p className="scan-threats__rerun-help">
 						{ translate(
-							'If you have manually fixed any of the threats listed above, you can {{button}}run a manual scan now{{/button}} or wait for Jetpack to scan your site later today.',
+							'If you have manually fixed any of the threats above, you can {{button}}run a scan now{{/button}} or wait for Jetpack to scan your site later today.',
 							{
 								components: {
 									button: (
@@ -309,6 +216,9 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							}
 						) }
 					</p>
+					<Button className="scan-threats__run-scan-main-button" onClick={ dispatchScanRun }>
+						{ translate( 'Scan again' ) }
+					</Button>
 				</div>
 			) }
 
@@ -333,5 +243,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		</>
 	);
 };
+/* eslint-enable wpcalypso/i18n-mismatched-placeholders */
 
 export default ScanThreats;

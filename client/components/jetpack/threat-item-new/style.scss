@@ -1,0 +1,68 @@
+.threat-item-new {
+	.foldable-card__main {
+		flex: unset;
+		max-width: 100%;
+		width: 100%;
+	}
+	&.is-placeholder .card-heading,
+	&.is-placeholder .log-item__subheader {
+		margin-bottom: 2px;
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.log-item__header-wrapper {
+		flex-grow: 1;
+	}
+
+	.card-heading {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: column;
+		height: 121px;
+		flex-grow: 1;
+
+		@include breakpoint-deprecated( '>960px' ) {
+			flex-wrap: nowrap;
+			flex-direction: row;
+			height: 65px;
+		}
+	}
+
+	.log-item__subheader {
+		color: var( --studio-gray-60 );
+		font-size: $font-body-small;
+	}
+
+	&__buttons {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.foldable-card__action.foldable-card__expand {
+		border: none;
+	}
+}
+
+.button {
+	&.threat-item-new__fix-button,
+	&.threat-item-new__codeable-button,
+	&.threat-item-new__ignore-button {
+		margin-inline-start: 5px;
+		margin-inline-end: 5px;
+		border-width: 1px;
+		margin-right: 32px;
+		margin-bottom: 24px;
+		border-style: solid;
+		font-style: normal;
+		font-weight: 600;
+		font-size: $font-body-small;
+		line-height: 24px;
+	}
+
+	&.threat-item-new__ignore-button {
+		margin-inline-start: 5px;
+		margin-inline-end: 5px;
+		border-width: 1px;
+		border-style: solid;
+	}
+}

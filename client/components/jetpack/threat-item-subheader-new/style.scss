@@ -1,4 +1,4 @@
-.threat-item-subheader {
+.threat-item-subheader-new {
 	&__subheader {
 		color: var( --studio-gray-50 );
 		font-size: $font-body-small;
@@ -6,6 +6,7 @@
 		flex-direction: column;
 		align-items: flex-start;
 		margin-top: 4px;
+		margin-left: 52px;
 
 		@include breakpoint-deprecated( '>1040px' ) {
 			flex-direction: row;
@@ -30,7 +31,6 @@
 			margin: 0 12px;
 			width: 4px;
 			height: 4px;
-			border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 	}
 

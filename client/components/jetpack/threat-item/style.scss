@@ -1,8 +1,6 @@
 .threat-item {
 	.foldable-card__main {
-		flex: unset;
-		max-width: 100%;
-		width: 100%;
+		flex: auto;
 	}
 	&.is-placeholder .card-heading,
 	&.is-placeholder .log-item__subheader {
@@ -10,27 +8,36 @@
 		@include placeholder( --color-neutral-10 );
 	}
 
-	.log-item__header-wrapper {
-		flex-grow: 1;
+	.card-heading,
+	.threat-item-header__alert-filename {
+		font-size: $font-body;
+		line-height: 24px;
+		word-break: break-all;
+
+		@include breakpoint-deprecated( '>800px' ) {
+			font-size: $font-title-small;
+		}
 	}
 
-	.card-heading {
-		display: flex;
-		flex-wrap: wrap;
-		flex-direction: column;
-		height: 121px;
-		flex-grow: 1;
-
-		@include breakpoint-deprecated( '>960px' ) {
-			flex-wrap: nowrap;
-			flex-direction: row;
-			height: 65px;
-		}
+	.threat-item-header__alert-filename {
+		word-break: break-all;
 	}
 
 	.log-item__subheader {
 		color: var( --studio-gray-60 );
 		font-size: $font-body-small;
+	}
+
+	&.is-current {
+		border-left: 3px solid var( --color-error-50 );
+	}
+
+	&.is-fixed {
+		border-left: 3px solid var( --color-success-50 );
+	}
+
+	&.is-ignored {
+		border-left: 3px solid var( --studio-gray-50 );
 	}
 
 	&__buttons {
@@ -50,19 +57,7 @@
 		margin-inline-start: 5px;
 		margin-inline-end: 5px;
 		border-width: 1px;
-		margin-right: 32px;
-		margin-bottom: 24px;
 		border-style: solid;
-		font-style: normal;
-		font-weight: 600;
-		font-size: $font-body-small;
-		line-height: 24px;
-	}
-
-	&.threat-item__ignore-button {
-		margin-inline-start: 5px;
-		margin-inline-end: 5px;
-		border-width: 1px;
-		border-style: solid;
+		border-radius: var( --jetpack-corners-soft );
 	}
 }

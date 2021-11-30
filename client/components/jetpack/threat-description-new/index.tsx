@@ -1,7 +1,7 @@
 import { translate, TranslateResult } from 'i18n-calypso';
 import { PureComponent, ReactNode } from 'react';
 import DiffViewer from 'calypso/components/diff-viewer';
-import { ThreatStatus } from 'calypso/components/jetpack/threat-item/types';
+import { ThreatStatus } from 'calypso/components/jetpack/threat-item-new/types';
 import MarkedLines from 'calypso/components/marked-lines';
 
 import './style.scss';
@@ -54,12 +54,12 @@ class ThreatDescription extends PureComponent< Props > {
 
 		return (
 			<>
-				<p className="threat-description__section-text">
+				<p className="threat-description-new__section-text">
 					{ translate( 'Threat found in file:', {
 						comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
 					} ) }
 				</p>
-				<pre className="threat-description__alert-filename">{ filename }</pre>
+				<pre className="threat-description-new__alert-filename">{ filename }</pre>
 			</>
 		);
 	}
@@ -74,14 +74,14 @@ class ThreatDescription extends PureComponent< Props > {
 
 		return (
 			<>
-				<p className="threat-description__section-text">
+				<p className="threat-description-new__section-text">
 					{ translate( 'Threat found in the table %(threatTable)s, in the following rows:', {
 						args: {
 							threatTable: table,
 						},
 					} ) }
 				</p>
-				<pre className="threat-description__alert-filename">{ content }</pre>
+				<pre className="threat-description-new__alert-filename">{ content }</pre>
 			</>
 		);
 	}
@@ -90,13 +90,15 @@ class ThreatDescription extends PureComponent< Props > {
 		const { children, problem, fix, diff, rows, context, filename } = this.props;
 
 		return (
-			<div className="threat-description">
-				<p className="threat-description__section-title">
-					<strong>{ translate( 'What was the problem?' ) }</strong>
+			<div className="threat-description-new">
+				<p className="threat-description-new__section-title">
+					<strong>{ translate( 'What is the problem?' ) }</strong>
 				</p>
-				{ this.renderTextOrNode( <p className="threat-description__section-text">{ problem }</p> ) }
+				{ this.renderTextOrNode(
+					<p className="threat-description-new__section-text">{ problem }</p>
+				) }
 				{ ( filename || context || diff || rows ) && (
-					<p className="threat-description__section-title">
+					<p className="threat-description-new__section-title">
 						<strong>{ translate( 'The technical details' ) }</strong>
 					</p>
 				) }
@@ -105,7 +107,7 @@ class ThreatDescription extends PureComponent< Props > {
 				{ context && <MarkedLines context={ context } /> }
 				{ diff && <DiffViewer diff={ diff } /> }
 				{ fix && (
-					<p className="threat-description__section-title threat-description__section-title-fix">
+					<p className="threat-description-new__section-title threat-description-new__section-title-fix">
 						<strong>{ this.renderFixTitle() }</strong>
 					</p>
 				) }

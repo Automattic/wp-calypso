@@ -49,6 +49,7 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/happychat": true,
+		"jetpack/more-informative-scan": true,
 		"jetpack/only-realtime-products": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jitms": true,

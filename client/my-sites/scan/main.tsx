@@ -1,4 +1,5 @@
-import { Button, ProgressBar, Gridicon } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -11,6 +12,7 @@ import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
+import ScanThreatsNew from 'calypso/components/jetpack/scan-threats-new';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -238,7 +240,9 @@ class ScanPage extends Component< Props > {
 		const errorFound = !! mostRecent?.error;
 
 		// If we found threats, show them whether or not Scan encountered an error
-		if ( threatsFound ) {
+		if ( threatsFound && isEnabled( 'jetpack/more-informative-scan' ) ) {
+			return <ScanThreatsNew threats={ threats } error={ errorFound } site={ site } />;
+		} else if ( threatsFound ) {
 			return <ScanThreats threats={ threats } error={ errorFound } site={ site } />;
 		}
 
@@ -290,7 +294,14 @@ class ScanPage extends Component< Props > {
 
 				<QueryJetpackScan siteId={ siteId } />
 				<ScanNavigation section={ 'scanner' } />
-				<div className="scan__content">{ this.renderScanState() }</div>
+				{ isEnabled( 'jetpack/more-informative-scan' ) && (
+					<div className="scan__content">{ this.renderScanState() }</div>
+				) }
+				{ ! isEnabled( 'jetpack/more-informative-scan' ) && (
+					<Card>
+						<div className="scan__content">{ this.renderScanState() }</div>
+					</Card>
+				) }
 				{ this.renderJetpackReviewPrompt() }
 			</Main>
 		);

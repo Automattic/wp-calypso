@@ -89,6 +89,7 @@
 		"jetpack/features-section/simple": true,
 		"jetpack/happychat": true,
 		"jetpack/magic-link-signup": true,
+		"jetpack/more-informative-scan": true,
 		"jetpack/only-realtime-products": true,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/simplify-pricing-structure": false,

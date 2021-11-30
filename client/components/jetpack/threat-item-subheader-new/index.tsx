@@ -13,7 +13,6 @@ import './style.scss';
 
 interface Props {
 	threat: Threat;
-	isFixable: bool;
 }
 
 const entryActionClassNames = ( threat: Threat ) => {
@@ -57,20 +56,9 @@ const getThreatStatusMessage = ( translate, threat: Threat ) => {
 	return null;
 };
 
-const getAutoFixBadge = ( translate, threat: Threat, isFixable ) => {
-	if ( isFixable && threat.status !== 'fixed' ) {
-		return (
-			<Badge className={ classnames( 'threat-item-subheader__badge', 'is-auto-fix' ) }>
-				<small>{ translate( 'Auto fix' ) }</small>
-			</Badge>
-		);
-	}
-	return null;
-};
-
 // This renders two different kind of sub-headers. One is for current threats (displayed
 // in the Scanner section), and the other for threats in the History section.
-const ThreatItemSubheader: React.FC< Props > = ( { threat, isFixable } ) => {
+const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
 	const translate = useTranslate();
 	if ( threat.status === 'current' ) {
 		switch ( getThreatType( threat ) ) {
@@ -80,40 +68,34 @@ const ThreatItemSubheader: React.FC< Props > = ( { threat, isFixable } ) => {
 						{ translate( 'Threat found ({{signature/}})', {
 							components: {
 								signature: (
-									<span className="threat-item-subheader__alert-signature">
+									<span className="threat-item-subheader-new__alert-signature">
 										{ threat.signature }
 									</span>
 								),
 							},
 						} ) }
-						{ getAutoFixBadge( translate, threat, isFixable ) }
 					</>
 				);
 			default:
-				return (
-					<>
-						{ getThreatVulnerability( threat ) }
-						{ getAutoFixBadge( translate, threat, isFixable ) }
-					</>
-				);
+				return <>{ getThreatVulnerability( threat ) }</>;
 		}
 	} else {
 		const threatStatusMessage = getThreatStatusMessage( translate, threat );
 
 		return (
 			<>
-				<div className="threat-item-subheader__subheader">
-					<span className="threat-item-subheader__status">
+				<div className="threat-item-subheader-new__subheader">
+					<span className="threat-item-subheader-new__status">
 						{ translate( 'Threat found on %s', {
 							args: formatDate( threat.firstDetected ),
 						} ) }
 					</span>
 					{ threatStatusMessage && (
 						<>
-							<span className="threat-item-subheader__status-separator"></span>
+							<span className="threat-item-subheader-new__status-separator"></span>
 							<span
 								className={ classnames(
-									'threat-item-subheader__status',
+									'threat-item-subheader-new__status',
 									entryActionClassNames( threat )
 								) }
 							>
@@ -124,7 +106,7 @@ const ThreatItemSubheader: React.FC< Props > = ( { threat, isFixable } ) => {
 				</div>
 				<Badge
 					className={ classnames(
-						'threat-item-subheader__badge',
+						'threat-item-subheader-new__badge',
 						entryActionClassNames( threat )
 					) }
 				>
