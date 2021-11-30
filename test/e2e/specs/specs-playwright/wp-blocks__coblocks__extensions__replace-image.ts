@@ -52,10 +52,6 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 		uploadedImageURL = uploadedImageURL.split( '?' )[ 0 ];
 	} );
 
-	it( 'Publish the post', async () => {
-		await gutenbergEditorPage.publish();
-	} );
-
 	it( `Replace uploaded image`, async () => {
 		const editorFrame = await gutenbergEditorPage.getEditorFrame();
 
@@ -72,8 +68,8 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 		expect( newImageURL ).not.toEqual( uploadedImageURL );
 	} );
 
-	it( 'Update and visit the post', async () => {
-		await gutenbergEditorPage.publish( { update: true, visit: true } );
+	it( 'Publish the post', async () => {
+		await gutenbergEditorPage.publish();
 	} );
 
 	it( 'Verify the new image was published', async () => {
