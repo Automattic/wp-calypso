@@ -3,14 +3,16 @@ import {
 	TITAN_MAIL_MONTHLY_SLUG,
 } from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, ReactElement } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import Main from 'calypso/components/main';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { Site } from 'calypso/reader/list-manage/types';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
@@ -23,13 +25,10 @@ import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import EmailProvidersStackedCard from './email-provider-stacked-card';
 import { professionalEmailCard } from './provider-cards/professional-email-card';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ReactElement } from 'react';
 
 import './style.scss';
-
-type Site = {
-	ID: number;
-	slug: string;
-};
 
 type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
@@ -37,6 +36,8 @@ type EmailProvidersStackedComparisonProps = {
 	source: string;
 	cartDomainName?: string;
 	selectedSite?: Site;
+	titanMailMonthlyProduct?: any;
+	gSuiteAnnualProduct?: any;
 };
 
 export interface ProviderCard {
@@ -64,38 +65,28 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 	props
 ) => {
 	const translate = useTranslate();
-	const professionalEmail: ProviderCard = professionalEmailCard;
+	const professionalEmailCardProps: ProviderCard = professionalEmailCard;
 	const { selectedSite } = props;
 
-	const formFields = <p>Placeholder</p>;
+	professionalEmailCardProps.formFields = <p>Placeholder</p>;
 
 	return (
-		<>
+		<Main className={ 'email-providers-stacked-comparison__main' } wideLayout>
 			<QueryProductsList />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 			<h1 className="email-providers-stacked-comparison__header wp-brand-font">
-				{ translate( 'Pick and email solution' ) }
+				{ translate( 'Pick an email solution' ) }
 			</h1>
 
 			<EmailProvidersStackedCard
-				providerKey={ professionalEmail.providerKey }
-				logo={ professionalEmail.logo }
-				productName={ professionalEmail.productName }
-				description={ professionalEmail.description }
-				detailsExpanded={ professionalEmail.detailsExpanded }
 				discount={ '$42' }
 				additionalPriceInformation={ 'per mailbox' }
-				onExpandedChange={ professionalEmail.onExpandedChange }
-				formattedPrice={ professionalEmail.formattedPrice }
-				formFields={ formFields }
-				showExpandButton={ professionalEmail.showExpandButton }
-				expandButtonLabel={ professionalEmail.expandButtonLabel }
-				features={ professionalEmail.features }
-				footerBadge={ professionalEmail.badge }
+				footerBadge={ professionalEmailCardProps.badge }
+				{ ...professionalEmailCardProps }
 			/>
-		</>
+		</Main>
 	);
 };
 
@@ -122,13 +113,13 @@ export default connect(
 			domain,
 			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
-			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
+			gSuiteAnnualProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasCartDomain,
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
-			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
+			titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},
 	( dispatch ) => {
