@@ -47,7 +47,7 @@
 		"webpack": "^5.63.0"
 	},
 	"peerDependencies": {
-		"@wordpress/element": "^4.0.1"
+		"@wordpress/element": "^4.0.4"
 	},
 	"private": true
 }

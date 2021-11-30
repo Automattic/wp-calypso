@@ -38,7 +38,7 @@
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/components": "^19.0.5",
+		"@wordpress/components": "^19.1.1",
 		"@wordpress/compose": "^5.0.6",
 		"@wordpress/icons": "^6.1.1",
 		"@wordpress/react-i18n": "^3.0.4",
