@@ -22,7 +22,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		eligibilityHolds,
 		eligibilityWarnings,
 		wpcomSubdomainWarning,
-		siteNeedUpgrade,
+		siteUpgrading,
 	} = useWoopHandling( siteId );
 
 	useEffect( () => {
@@ -30,12 +30,12 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			return;
 		}
 
-		if ( ! siteNeedUpgrade ) {
+		if ( ! siteUpgrading.required ) {
 			return;
 		}
 
-		window.location.href = siteNeedUpgrade;
-	}, [ siteNeedUpgrade, isFetching, wpcomDomain ] );
+		window.location.href = siteUpgrading.checkoutUrl;
+	}, [ siteUpgrading, isFetching, wpcomDomain ] );
 
 	const isLoading = ! siteId || isFetching;
 
