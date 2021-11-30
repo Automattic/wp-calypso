@@ -306,11 +306,23 @@ export class GutenbergEditorPage {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {Promise<void} No return value.
 	 */
-	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
+	async publish( {
+		visit = false,
+		update = false,
+	}: { visit?: boolean; update?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
 
-		await frame.click( selectors.publishButton( selectors.postToolbar ) );
-		await frame.click( selectors.publishButton( selectors.publishPanel ) );
+		if ( update ) {
+			await frame.click( 'button:text("Update")' );
+			const updatingButton = await frame.waitForSelector( 'button:text("Updating")' );
+			await frame.waitForFunction(
+				async ( button ) => button.textContent === 'Update',
+				updatingButton
+			);
+		} else {
+			await frame.click( selectors.publishButton( selectors.postToolbar ) );
+			await frame.click( selectors.publishButton( selectors.publishPanel ) );
+		}
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
