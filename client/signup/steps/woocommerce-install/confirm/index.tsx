@@ -1,6 +1,7 @@
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
 import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
@@ -50,6 +51,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		stagingDomain,
 		eligibilityWarnings,
 		hasBlockers,
+		wpcomDomain,
 	} = useEligibility( siteId );
 
 	const isLoading = ! siteId || isFetching;
@@ -92,8 +94,12 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 							<SignupCard title={ __( 'New Store Domain' ) }>
 								<SignupBanner label={ __( 'New' ) }>{ stagingDomain }</SignupBanner>
 								<p>
-									{ __(
-										'By installing this product your subdomain will change. Your old subdomain (sitename.wordpress.com) will no longer work. You can change it to a custom domain on us at anytime in future.'
+									{ sprintf(
+										/* translators: %s: The old site wordpress subdomain (ex.: sitename.wordpress.com) */
+										__(
+											'By installing this product your subdomain will change. Your old subdomain (%s) will no longer work. You can change it to a custom domain on us at anytime in future.'
+										),
+										wpcomDomain
 									) }
 								</p>
 							</SignupCard>
