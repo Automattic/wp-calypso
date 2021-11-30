@@ -8,7 +8,7 @@ import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useEligibility from '../hooks/use-eligibility';
+import useWoopHandling from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
@@ -28,7 +28,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		eligibilityWarnings,
 		wpcomSubdomainWarning,
 		siteNeedUpgrade,
-	} = useEligibility( siteId );
+	} = useWoopHandling( siteId );
 
 	useEffect( () => {
 		if ( isFetching ) {
