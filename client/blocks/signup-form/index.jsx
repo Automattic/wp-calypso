@@ -933,6 +933,11 @@ class SignupForm extends Component {
 		return this.props.step && 'completed' === this.props.step.status;
 	}
 
+	handleOnChangeAccount = () => {
+		recordTracksEvent( 'calypso_signup_click_on_change_account' );
+		this.props.redirectToLogout( window.location.href );
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) ) {
 			return null;
@@ -964,10 +969,7 @@ class SignupForm extends Component {
 			return (
 				<ContinueAsUser
 					redirectPath={ this.props.redirectToAfterLoginUrl }
-					onChangeAccount={ () => {
-						// todo: Add track this event!
-						this.props.redirectToLogout( window.location.href );
-					} }
+					onChangeAccount={ this.handleOnChangeAccount }
 				/>
 			);
 		}
