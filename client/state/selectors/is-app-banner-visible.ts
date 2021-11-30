@@ -47,7 +47,6 @@ const isAppBannerVisible = createSelector(
 		}
 
 		const dismissedUntil = getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE );
-
 		const dismissed = isDismissed( dismissedUntil, currentSection );
 
 		return isMobile() && ! isWpMobileApp() && ! dismissed;

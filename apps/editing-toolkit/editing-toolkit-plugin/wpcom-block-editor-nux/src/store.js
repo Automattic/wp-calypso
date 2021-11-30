@@ -72,12 +72,22 @@ const shouldShowFirstPostPublishedModalReducer = ( state = false, action ) => {
 	}
 };
 
+const welcomeGuideEnabledReducer = ( state = null, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_SET_WELCOME_GUIDE_ENABLED':
+			return action.value;
+		default:
+			return state;
+	}
+};
+
 const reducer = combineReducers( {
 	welcomeGuideManuallyOpened: welcomeGuideManuallyOpenedReducer,
 	showWelcomeGuide: showWelcomeGuideReducer,
 	tourRating: tourRatingReducer,
 	welcomeGuideVariant: welcomeGuideVariantReducer,
 	shouldShowFirstPostPublishedModal: shouldShowFirstPostPublishedModalReducer,
+	welcomeGuideEnabled: welcomeGuideEnabledReducer,
 } );
 
 const actions = {
@@ -121,6 +131,9 @@ const actions = {
 	setShouldShowFirstPostPublishedModal: ( value ) => {
 		return { type: 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL', value };
 	},
+	setWelcomeGuideEnabled: ( value ) => {
+		return { type: 'WPCOM_SET_WELCOME_GUIDE_ENABLED', value };
+	},
 	// The `resetStore` action is only used for testing to reset the
 	// store inbetween tests.
 	resetStore: () => ( {
@@ -137,6 +150,7 @@ const selectors = {
 	getWelcomeGuideVariant: ( state ) =>
 		state.welcomeGuideVariant === 'modal' ? DEFAULT_VARIANT : state.welcomeGuideVariant,
 	getShouldShowFirstPostPublishedModal: ( state ) => state.shouldShowFirstPostPublishedModal,
+	isWelcomeGuideEnabled: ( state ) => !! state.welcomeGuideEnabled,
 };
 
 export function register() {

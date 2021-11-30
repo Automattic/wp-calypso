@@ -20,6 +20,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isAppBannerVisible from 'calypso/state/selectors/is-app-banner-visible';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
+import { dismissAppBanner } from 'calypso/state/ui/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
 	EDITOR,
@@ -42,6 +43,7 @@ const noop = () => {};
 export class AppBanner extends Component {
 	static propTypes = {
 		saveDismissTime: PropTypes.func,
+		dismissAppBanner: PropTypes.func,
 		translate: PropTypes.func,
 		recordAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
@@ -54,6 +56,7 @@ export class AppBanner extends Component {
 
 	static defaultProps = {
 		saveDismissTime: noop,
+		dismissAppBanner: noop,
 		recordAppBannerOpen: noop,
 		userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
 	};
@@ -97,6 +100,7 @@ export class AppBanner extends Component {
 		const { currentSection, dismissedUntil } = this.props;
 
 		this.props.saveDismissTime( currentSection, dismissedUntil );
+		this.props.dismissAppBanner();
 	};
 
 	openApp = () => {
@@ -246,6 +250,7 @@ const mapDispatchToProps = {
 				getNewDismissTimes( sectionName, currentDimissTimes )
 			)
 		),
+	dismissAppBanner,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );
