@@ -5,6 +5,7 @@ import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import Main from 'calypso/components/main';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
@@ -47,7 +48,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 	const { comparisonContext, isGSuiteSupported, selectedSite, selectedDomainName, source } = props;
 
 	return (
-		<>
+		<Main wideLayout>
 			<QueryProductsList />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
@@ -63,7 +64,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			/>
 
 			{ isGSuiteSupported && <> Google Workspace Component Placeholder </> }
-		</>
+		</Main>
 	);
 };
 

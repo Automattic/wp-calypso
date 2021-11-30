@@ -14,12 +14,13 @@ export interface ProviderCard {
 	children?: ReactElement;
 	description: TranslateResult;
 	detailsExpanded: boolean;
-	discount?: ReactElement;
+	discount?: ReactElement | null;
 	expandButtonLabel: TranslateResult;
 	features: TranslateResult[];
 	footerBadge?: ReactElement;
 	formattedPrice?: TranslateResult;
-	formFields: ReactElement;
+	formFields?: ReactElement;
+	isDomainEligibleForTitanFreeTrial?: boolean;
 	logo: ReactElement;
 	onExpandedChange: ( providerKey: string, expanded: boolean ) => void;
 	onButtonClick?: ( event: React.MouseEvent ) => void;

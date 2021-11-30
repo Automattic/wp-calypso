@@ -27,6 +27,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		footerBadge,
 		formattedPrice,
 		formFields,
+		isDomainEligibleForTitanFreeTrial,
 		logo,
 		onButtonClick = noop,
 		onExpandedChange = noop,
@@ -53,9 +54,11 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 
 	const price = (
 		<div className="email-provider-stacked-card__price-badge">
-			<div className="email-provider-stacked-card__discount badge badge--info-green">
-				{ translate( '3-Months free' ) }
-			</div>
+			{ isDomainEligibleForTitanFreeTrial && (
+				<div className="email-provider-stacked-card__discount badge badge--info-green">
+					{ translate( '3 months free' ) }
+				</div>
+			) }
 			<PromoCardPrice
 				formattedPrice={ formattedPrice }
 				discount={ discount }

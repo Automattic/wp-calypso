@@ -26,6 +26,11 @@ import {
 	validateMailboxes as validateTitanMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
+import {
+	EmailProvidersStackedCardProps,
+	ProviderCard,
+} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import {
 	PASSWORD_RESET_TITAN_FIELD,
 	FULL_NAME_TITAN_FIELD,
@@ -36,8 +41,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import EmailProvidersStackedCard from '../email-provider-stacked-card';
-import { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
 
 import './professional-email-card.scss';
 
@@ -58,7 +61,7 @@ const professionalEmailFormattedPrice = (
 	cost: number,
 	currencyCode: string
 ) => {
-	return translate( '{{price/}} /mailbox /month (billed monthly)', {
+	return translate( '{{price/}} /mailbox', {
 		components: {
 			price: (
 				<span className={ formattedPriceClassName }>
@@ -81,7 +84,6 @@ const professionalEmailCardInformation: ProviderCard = {
 	productName: getTitanProductName(),
 	badge,
 	features: getTitanFeatures(),
-	additionalPriceInformation: translate( 'per mailbox' ),
 };
 
 const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
@@ -97,10 +99,11 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	};
 
 	const formattedPriceClassName = classNames( {
-		'email-providers-comparison__keep-main-price': ! isEligibleForFreeTrial,
+		'professional-email-card__keep-main-price': ! isEligibleForFreeTrial,
+		'professional-email-card__discounted-price': isEligibleForFreeTrial,
 	} );
 
-	const discount = <>{ isEligibleForFreeTrial ? translate( '3 months free' ) : null }</>;
+	const discount = isEligibleForFreeTrial ? <> translate( '3 months free' ) ) </> : null;
 
 	const expandButtonLabel = isUpgrading()
 		? translate( 'Upgrade to %(titanProductName)s', {
@@ -222,6 +225,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 				currencyCode
 			) }
 			formFields={ formFields }
+			isDomainEligibleForTitanFreeTrial={ isDomainEligibleForTitanFreeTrial( domain ) }
 			showExpandButton={ professionalEmail.showExpandButton }
 			expandButtonLabel={ expandButtonLabel }
 			features={ professionalEmail.features }
@@ -237,12 +241,14 @@ export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
 		domains,
 		selectedDomainName: ownProps.selectedDomainName,
 	} );
+	const resolvedDomainName = domain ? domain.name : ownProps.selectedDomainName;
 
 	const hasCartDomain = Boolean( ownProps.cartDomainName );
 
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		domain,
+		domainName: resolvedDomainName,
 		hasCartDomain,
 		productsList: getProductsList( state ),
 		selectedSite,
