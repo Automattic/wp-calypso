@@ -34,7 +34,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
-		"@wordpress/components": "^19.0.5",
+		"@wordpress/components": "^19.1.1",
 		"@wordpress/compose": "^5.0.6",
 		"@wordpress/icons": "^6.1.1",
 		"@wordpress/primitives": "^3.0.4",
