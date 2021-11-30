@@ -56,7 +56,8 @@ class DnsRecords extends Component {
 		];
 
 		const mobileItem = {
-			label: translate( 'Back' ),
+			// translators: %(domain)s is the domain name (e.g. example.com) to which settings page the user will return to when pressing the link
+			label: translate( 'Back to %(domain)s', { args: { domain: selectedDomainName } } ),
 			href: domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
@@ -75,12 +76,20 @@ class DnsRecords extends Component {
 			/>,
 		];
 
+		const mobileButtons = [
+			<DnsAddNewRecordButton
+				site={ selectedSite.slug }
+				domain={ selectedDomainName }
+				isMobile={ true }
+			/>,
+		];
+
 		return (
 			<Breadcrumbs
 				items={ items }
 				mobileItem={ mobileItem }
 				buttons={ buttons }
-				mobileButtons={ buttons }
+				mobileButtons={ mobileButtons }
 			/>
 		);
 	};

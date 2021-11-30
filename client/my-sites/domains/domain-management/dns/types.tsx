@@ -43,4 +43,5 @@ export type RestoreDialogResult = {
 export type DndAddNewRecordButtonProps = {
 	site: string;
 	domain: string;
+	isMobile?: boolean;
 };

@@ -207,3 +207,38 @@ body.dns__body-white {
 		max-width: 600px;
 	}
 }
+
+a.dns__breadcrumb-button {
+	display: flex;
+	align-items: center;
+
+	&.add-record {
+		margin-right: 12px;
+	}
+
+	@include break-mobile {
+		&.add-record {
+			margin-right: 0;
+		}
+
+		svg {
+			margin-right: 8px;
+			fill: var( --color-neutral-70 );
+		}
+	}
+}
+
+.dns__breadcrumb-button {
+	.popover__menu-item[disabled] {
+		svg.gridicon {
+			fill: var( --color-neutral-20 );
+		}
+	}
+
+	&.is-borderless.ellipsis {
+		svg.gridicon {
+			top: 0;
+			margin-top: 0;
+		}
+	}
+}
