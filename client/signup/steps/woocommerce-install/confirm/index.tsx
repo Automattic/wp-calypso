@@ -16,7 +16,7 @@ import {
 	getEligibility,
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { WooCommerceInstallProps } from '../';
 
@@ -60,7 +60,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	);
 
 	// Pick the wpcom subdomain.
-	const wpcomDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const wpcomDomain = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const isLoading = ! siteId || isFetchingTransferStatus;
 
@@ -145,7 +145,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
-			backUrl="select-site"
+			backUrl={ `/woocommerce-installation/${ wpcomDomain }` }
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
