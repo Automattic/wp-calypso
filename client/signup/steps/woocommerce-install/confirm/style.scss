@@ -9,7 +9,7 @@ body.is-section-signup .is-woocommerce-install {
 		align-items: center;
 
 		@media ( max-width: 660px ) {
-			min-height: 0px;
+			min-height: 0;
 		}
 		// Two columns layout
 		.step-wrapper {
@@ -17,7 +17,7 @@ body.is-section-signup .is-woocommerce-install {
 
 			.step-wrapper__header {
 				@media ( min-width: 660px ) {
-					margin-top: 0px !important;
+					margin-top: 0 !important;
 				}
 
 				.formatted-header {
@@ -59,12 +59,12 @@ body.is-section-signup .is-woocommerce-install {
 
 		.step-wrapper__content {
 			display: flex;
-			margin: 0px 24px;
+			margin: 0 24px;
 
 			.confirm__instructions-container {
 				font-size: 0.875rem;
 				letter-spacing: -0.16px;
-				color: var(--studio-gray-60);
+				color: var( --studio-gray-60 );
 				line-height: 2rem;
 				flex-direction: column;
 				max-width: 520px;
