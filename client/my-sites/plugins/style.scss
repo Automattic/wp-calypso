@@ -125,7 +125,7 @@ $plugin-details-header-padding: 100px;
 	@include breakpoint-deprecated( '>1040px' ) {
 		@include display-grid;
 		@include grid-template-columns( 12, 24px, 1fr );
-		grid-gap: 24px;
+		grid-gap: 80px;
 	}
 
 	.plugin-details__layout-col-left {
