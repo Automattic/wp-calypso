@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import successImage from 'calypso/assets/images/marketplace/success.png';
+import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
-import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -18,18 +18,62 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 
 const ThankYouContainer = styled.div`
 	.marketplace-thank-you {
-		margin-top: var( --masterbar-height );
+		margin-top: 72px;
 		img {
 			height: auto;
 		}
 	}
+
+	.thank-you__header-title {
+		font-size: 44px;
+	}
+
+	.thank-you__header-subtitle {
+		font-size: 16px;
+		color: var( --studio-gray-60 );
+	}
 `;
 
-const WordPressWordmarkStyled = styled( WordPressWordmark )`
+const MasterbarStyled = styled( Masterbar )`
+	--color-masterbar-background: var( --studio-white );
+	--color-masterbar-text: var( --studio-gray-60 );
+	--masterbar-height: 72px;
+	border-bottom: 0;
+`;
+
+const WordPressLogoStyled = styled( WordPressLogo )`
+	max-height: calc( 100% - 47px );
 	align-self: center;
+	fill: rgb( 54, 54, 54 );
 `;
 
-const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
+const ItemStyled = styled( Item )`
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	padding: 0;
+
+	.gridicon {
+		height: 17px;
+		fill: var( --studio-black );
+
+		@media ( max-width: 480px ) {
+			margin: 0;
+		}
+	}
+
+	@media ( max-width: 480px ) {
+		.masterbar__item-content {
+			display: block;
+		}
+	}
+`;
+
+interface IProps {
+	productSlug: string;
+}
+
+const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -99,17 +143,17 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 
 	return (
 		<ThemeProvider theme={ theme }>
-			<Masterbar>
-				<Item
-					icon="cross"
+			<MasterbarStyled>
+				<WordPressLogoStyled />
+				<ItemStyled
+					icon="chevron-left"
 					onClick={ () =>
 						( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
 					} // Force reload the page.
-					tooltip={ translate( 'Go to home' ) }
-					tipTarget="close"
-				/>
-				<WordPressWordmarkStyled />
-			</Masterbar>
+				>
+					{ translate( 'Back to marketplace' ) }
+				</ItemStyled>
+			</MasterbarStyled>
 			<ThankYouContainer>
 				<ThankYou
 					containerClassName="marketplace-thank-you"
@@ -118,6 +162,8 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 					thankYouImage={ thankYouImage }
 					thankYouTitle={ translate( 'All ready to go!' ) }
 					thankYouSubtitle={ plugin && thankYouSubtitle }
+					headerBackgroundColor="#fff"
+					headerTextColor="#000"
 				/>
 			</ThankYouContainer>
 		</ThemeProvider>
