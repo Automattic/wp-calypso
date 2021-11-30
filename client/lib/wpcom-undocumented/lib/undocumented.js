@@ -1,6 +1,5 @@
 import debugFactory from 'debug';
 import { omit } from 'lodash';
-import readerContentWidth from 'calypso/reader/lib/content-width';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -119,39 +118,6 @@ Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
 		},
 		fn
 	);
-};
-
-function addReaderContentWidth( params ) {
-	if ( params.content_width ) {
-		return;
-	}
-	const contentWidth = readerContentWidth();
-	if ( contentWidth ) {
-		params.content_width = contentWidth;
-	}
-}
-
-Undocumented.prototype.readFeedPost = function ( query, fn ) {
-	const params = omit( query, [ 'feedId', 'postId' ] );
-	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-
-	return this.wpcom.req.get(
-		'/read/feed/' +
-			encodeURIComponent( query.feedId ) +
-			'/posts/' +
-			encodeURIComponent( query.postId ),
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.readSitePost = function ( query, fn ) {
-	const params = omit( query, [ 'site', 'postId' ] );
-	debug( '/read/sites/:site/post/:post' );
-	addReaderContentWidth( params );
-	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
 };
 
 /**
