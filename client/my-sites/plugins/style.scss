@@ -247,6 +247,10 @@ $plugin-details-header-padding: 100px;
 			padding: 12px 16px;
 			background-color: var( --studio-pink-50 );
 			color: var( --studio-white );
+
+			&:focus, &:hover {
+				background-color: var( --studio-pink-60 );
+			}
 		}
 	}
 
