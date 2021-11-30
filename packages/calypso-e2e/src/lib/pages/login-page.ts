@@ -149,6 +149,7 @@ export class LoginPage {
 	}
 
 	/**
+	 * Fills and submits the login form with given credentials.
 	 *
 	 * @param {LoginCredentials | TestAccount} credentials
 	 */

@@ -315,6 +315,7 @@ export class GutenbergEditorPage {
 		if ( update ) {
 			await frame.click( 'button:text("Update")' );
 			const updatingButton = await frame.waitForSelector( 'button:text("Updating")' );
+			// Wait until updating is done.
 			await frame.waitForFunction(
 				async ( button ) => button.textContent === 'Update',
 				updatingButton
