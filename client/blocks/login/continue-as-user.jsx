@@ -56,34 +56,26 @@ function ContinueAsUser( {
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
 	// the user can notice.
 
+	const translationComponents = {
+		br: <br />,
+		link: (
+			<button
+				type="button"
+				id="loginAsAnotherUser"
+				className="continue-as-user__change-user-link"
+				onClick={ onChangeAccount }
+			/>
+		),
+	};
+
 	const notYouText = isSignUpFlow
 		? translate( 'Not you?{{br/}} Sign out or log in with {{link}}another account{{/link}}', {
-				components: {
-					br: <br />,
-					link: (
-						<button
-							type="button"
-							id="loginAsAnotherUser"
-							className="continue-as-user__change-user-link"
-							onClick={ onChangeAccount }
-						/>
-					),
-				},
+				components: translationComponents,
 				args: { userName },
 				comment: 'Link to continue login as different user',
 		  } )
 		: translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
-				components: {
-					br: <br />,
-					link: (
-						<button
-							type="button"
-							id="loginAsAnotherUser"
-							className="continue-as-user__change-user-link"
-							onClick={ onChangeAccount }
-						/>
-					),
-				},
+				components: translationComponents,
 				args: { userName },
 				comment: 'Link to continue login as different user',
 		  } );
