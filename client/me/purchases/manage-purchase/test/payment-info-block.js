@@ -276,11 +276,11 @@ describe( 'PaymentInfoBlock', () => {
 					render( <PaymentInfoBlock purchase={ purchase } cards={ [ mockBackupCard ] } /> );
 					if ( autoRenewStatus === 'enabled' ) {
 						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
-							'or a backup payment method'
+							'If the renewal fails, a backup payment method may be used.'
 						);
 					} else {
 						expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
-							'or a backup payment method'
+							'If the renewal fails, a backup payment method may be used.'
 						);
 					}
 				}
@@ -305,7 +305,7 @@ describe( 'PaymentInfoBlock', () => {
 				};
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [ mockNonBackupCard ] } /> );
 				expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
-					'or a backup payment method'
+					'If the renewal fails, a backup payment method may be used.'
 				);
 			} );
 		} );
