@@ -5,7 +5,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 import './modal-footer-bar.scss';
 
-const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete = true } ) => {
+const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete = false } ) => {
 	const translate = useTranslate();
 	const onBackLinkClick = ( event ) => {
 		recordTracksEvent( 'calypso_courses_mobile_back_click', {
