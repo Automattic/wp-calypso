@@ -135,6 +135,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 				<div className="videos-ui__video-content">
 					{ currentVideo && (
 						<VideoPlayer
+							completedSeconds={ currentVideo.completed_seconds }
 							videoRef={ videoRef }
 							videoUrl={ currentVideo.url }
 							isPlaying={ isPlaying }

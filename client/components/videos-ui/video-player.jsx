@@ -1,6 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const VideoPlayer = ( { videoRef, videoUrl, isPlaying, poster = undefined } ) => {
+const VideoPlayer = ( { completedSeconds, videoRef, videoUrl, isPlaying, poster = undefined } ) => {
+	const [ addTimeUpdateHandler, setAddTimeUpdateHandler ] = useState( true );
+
+	const markVideoAsComplete = () => {
+		if ( videoRef.current.currentTime < completedSeconds ) {
+			return;
+		}
+		setAddTimeUpdateHandler( false );
+	};
+
 	useEffect( () => {
 		if ( isPlaying ) {
 			videoRef.current.play();
@@ -9,7 +18,13 @@ const VideoPlayer = ( { videoRef, videoUrl, isPlaying, poster = undefined } ) =>
 
 	return (
 		<div key={ videoUrl } className="videos-ui__video">
-			<video controls ref={ videoRef } poster={ poster } autoPlay={ isPlaying }>
+			<video
+				controls
+				ref={ videoRef }
+				poster={ poster }
+				autoPlay={ isPlaying }
+				onTimeUpdate={ addTimeUpdateHandler ? markVideoAsComplete : undefined }
+			>
 				<source src={ videoUrl } />{ ' ' }
 				{ /* @TODO: check if tracks are available, the linter demands one */ }
 				<track src="caption.vtt" kind="captions" srcLang="en" label="english_captions" />
