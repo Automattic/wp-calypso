@@ -34,6 +34,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		} );
 
 		setCurrentVideo( videoInfo );
+		setCurrentVideoKey( videoSlug );
 		setIsPlaying( true );
 	};
 
@@ -135,11 +136,10 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 				<div className="videos-ui__video-content">
 					{ currentVideo && (
 						<VideoPlayer
-							completedSeconds={ currentVideo.completed_seconds }
+							videoData={ { ...currentVideo, ...{ slug: currentVideoKey } } }
 							videoRef={ videoRef }
-							videoUrl={ currentVideo.url }
 							isPlaying={ isPlaying }
-							poster={ currentVideo.poster ? currentVideo.poster : undefined }
+							course={ course }
 						/>
 					) }
 					<div className="videos-ui__chapters">
