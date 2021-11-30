@@ -31,8 +31,6 @@ type EligibilityHook = {
 	isFetching: boolean;
 	wpcomDomain: string | null;
 	stagingDomain: string | null;
-	pluginsWarning: EligibilityWarning[];
-	widgetsWarning: EligibilityWarning[];
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
 	transferringBlockers: string[];
 	hasBlockers: boolean;
@@ -79,12 +77,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const wpcomSubdomainWarning = eligibilityWarnings?.find(
 		( { id } ) => id === 'wordpress_subdomain'
 	);
-
-	// Plugins warnings
-	const pluginsWarning = eligibilityWarnings?.filter( ( { type } ) => type === 'plugins' ) || [];
-
-	// Widgets warnings
-	const widgetsWarning = eligibilityWarnings?.filter( ( { type } ) => type === 'widgets' ) || [];
 
 	// Trasferring blockers
 	const transferringBlockers =
@@ -149,8 +141,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		eligibilityWarnings,
 		wpcomDomain,
 		stagingDomain,
-		pluginsWarning,
-		widgetsWarning,
 		wpcomSubdomainWarning,
 
 		transferringBlockers,

@@ -35,10 +35,6 @@ The hook returns an object with the following properties:
 
 ### stagingDomain
 
-### pluginsWarning
-
-### widgetsWarning
-
 ### wpcomSubdomainWarning
 
 ### transferringBlockers
