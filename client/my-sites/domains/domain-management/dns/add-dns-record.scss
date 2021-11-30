@@ -60,7 +60,7 @@
 		@include grid-column( 1, 12 );
 		@include display-grid;
 		@include grid-template-columns( 12, 24px, 1fr );
-		grid-gap: 24px;
+		grid-gap: 24px 48px;
 		.add-dns-record__main {
 			@include grid-column( 1, 8 );
 
