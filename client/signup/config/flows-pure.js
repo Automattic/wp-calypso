@@ -456,8 +456,7 @@ export function generateFlows( {
 			steps: [ 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
-			providesDependenciesInQuery: [ 'siteSlug' ],
-			disallowResume: true,
+			providesDependenciesInQuery: [ 'site' ],
 			lastModified: '2021-11-11',
 		},
 	];

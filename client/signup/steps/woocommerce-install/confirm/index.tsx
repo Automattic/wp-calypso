@@ -27,7 +27,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
-	// selectedSiteId is set by the controller whenever a siteSlug or siteId is provided as a query param.
+	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	// Request eligibility data.
