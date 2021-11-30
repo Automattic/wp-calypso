@@ -141,9 +141,9 @@ export class UserStep extends Component {
 			// It looks like the user just completed the User Registartion Step
 			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
 			const url = new URL( window.location );
-			const search_params = url.searchParams;
-			search_params.set( 'user_completed', true );
-			url.search = search_params.toString();
+			const searchParams = url.searchParams;
+			searchParams.set( 'user_completed', true );
+			url.search = searchParams.toString();
 			// Redirect to itself and append ?user_completed
 			window.location.replace( url.toString() );
 		}
