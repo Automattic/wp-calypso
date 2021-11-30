@@ -1,3 +1,4 @@
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -119,8 +120,15 @@ class EmailSetup extends Component {
 				<span>{ translate( 'Set up an existing email service for this domain' ) }</span>
 			</span>
 		);
+
 		return (
-			<FoldableCard header={ header } clickableHeader className="email-setup">
+			<FoldableCard
+				header={ header }
+				clickableHeader
+				className="email-setup"
+				actionButton={ <Icon icon={ chevronDown } viewBox="6 4 12 14" size={ 16 } /> }
+				actionButtonExpanded={ <Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } /> }
+			>
 				{ this.renderProviderTabs() }
 				{ this.renderConfigurationForm() }
 			</FoldableCard>
