@@ -109,7 +109,13 @@ const EditContactInfoPage = ( {
 				icon={ false }
 			/>
 		);
-		const icannLink = <ExternalLink href="https://www.icann.org/" target="_blank" icon={ false } />;
+		const icannLink = (
+			<ExternalLink
+				href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
+				target="_blank"
+				icon={ false }
+			/>
+		);
 		const explanationText1 = translate(
 			'{{icannLinkComponent}}ICANN{{/icannLinkComponent}} requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.',
 			{
