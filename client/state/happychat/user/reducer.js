@@ -3,7 +3,8 @@ import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	geoLocationSchema,
 	isEligibleSchema,
-	isPresalesPrecancellationEligible as isPresalesPrecancellationEligibleSchema,
+	availabilitySchema,
+	supportLevelSchema,
 } from './schema';
 
 /**
@@ -36,33 +37,30 @@ export const isEligible = withSchemaValidation( isEligibleSchema, ( state = null
 	return state;
 } );
 
-export const isPresalesPrecancellationEligible = withSchemaValidation(
-	isPresalesPrecancellationEligibleSchema,
-	( state = null, action ) => {
-		switch ( action.type ) {
-			case HAPPYCHAT_SET_USER_CONFIG:
-				return action.config.availability;
-		}
-
-		return state;
+export const availability = withSchemaValidation( availabilitySchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_SET_USER_CONFIG:
+			return action.config.availability;
 	}
-);
+
+	return state;
+} );
 
 /**
  * The level of support we're offering to this user (represents their highest paid plan).
  */
-export const supportLevel = ( state = null, action ) => {
+export const supportLevel = withSchemaValidation( supportLevelSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_SET_USER_CONFIG:
 			return action.config.supportLevel;
 		default:
 			return state;
 	}
-};
+} );
 
 export default combineReducers( {
 	geoLocation,
 	isEligible,
-	isPresalesPrecancellationEligible,
+	availability,
 	supportLevel,
 } );
