@@ -746,9 +746,9 @@ export function generateSteps( {
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
-				useFeaturedPicksButtons: config.isEnabled(
-					'signup/design-picker-use-featured-picks-buttons'
-				),
+				useFeaturedPicksButtons:
+					config.isEnabled( 'signup/design-picker-categories' ) &&
+					config.isEnabled( 'signup/design-picker-use-featured-picks-buttons' ),
 			},
 		},
 		'difm-design-setup-site': {
