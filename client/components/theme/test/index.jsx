@@ -74,13 +74,6 @@ describe( 'Theme', () => {
 				assert( props.onScreenshotClick.calledOnce, 'onClick did not trigger onScreenshotClick' );
 			} );
 
-			test( 'should not show a price when there is none', () => {
-				assert(
-					themeNode.getElementsByClassName( 'price' ).length === 0,
-					'price should not appear'
-				);
-			} );
-
 			test( 'should render a More button', () => {
 				const more = themeNode.getElementsByClassName( 'theme__more-button' );
 
@@ -124,19 +117,6 @@ describe( 'Theme', () => {
 		test( 'should render a <div> with an is-placeholder class', () => {
 			assert( themeNode.nodeName === 'DIV', 'nodeName doesn\'t equal "DIV"' );
 			assert.include( themeNode.className, 'is-placeholder', 'no is-placeholder' );
-		} );
-	} );
-
-	describe( 'when the theme has a price', () => {
-		beforeEach( () => {
-			const themeElement = TestUtils.renderIntoDocument(
-				createElement( Theme, { ...props, price: '$50' } )
-			);
-			themeNode = ReactDom.findDOMNode( themeElement );
-		} );
-
-		test( 'should show a price', () => {
-			assert( themeNode.getElementsByClassName( 'theme__badge-price' )[ 0 ].textContent === '$50' );
 		} );
 	} );
 } );
