@@ -3,16 +3,16 @@
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-  - [Example](#example)
-  - [Quick start](#quick-start)
-  - [Top-level describe block](#top-level-describe-block)
-  - [Child-level describe blocks](#child-level-describe-blocks)
-  - [Test step](#test-step)
-  - [Hooks](#hooks)
-  - [Block Smoke Testing](#block-smoke-testing)
-    - [Overview](#overview)
-    - [How To](#how-to)
-    - [Examples](#examples)
+    - [Example](#example)
+    - [Quick start](#quick-start)
+    - [Top-level describe block](#top-level-describe-block)
+    - [Child-level describe blocks](#child-level-describe-blocks)
+    - [Test step](#test-step)
+    - [Hooks](#hooks)
+    - [Block Smoke Testing](#block-smoke-testing)
+        - [Overview](#overview)
+        - [How To](#how-to)
+        - [Examples](#examples)
 
 <!-- /TOC -->
 
@@ -90,7 +90,7 @@ import { setupHooks, DataHelper, LoginPage } from '@automattic/calypso-e2e';
 3. Assign a test group.
 
 Specs are grouped into suites using [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups). **Specs must be explicitly added to suites to be run as part of CI pipelines.**  
-To add your spec file to suites, add a jsdoc block at the top of the file, and use the `@group` tag. Multiple suites are supported.
+To add your spec file to suites, add a JSDoc block at the top of the file, and use the `@group` tag. Multiple suites are supported.
 
 ```typescript
 /**

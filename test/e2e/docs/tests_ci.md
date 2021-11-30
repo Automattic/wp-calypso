@@ -3,9 +3,9 @@
 <!-- TOC -->
 
 - [Running tests on CI](#running-tests-on-ci)
-  - [Feature branch](#feature-branch)
-  - [Trunk](#trunk)
-  - [Manually trigger a run](#manually-trigger-a-run)
+    - [Feature branch](#feature-branch)
+    - [Trunk](#trunk)
+    - [Manually trigger a run](#manually-trigger-a-run)
 
 <!-- /TOC -->
 

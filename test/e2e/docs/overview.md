@@ -3,9 +3,9 @@
 <!-- TOC -->
 
 - [Overview](#overview)
-  - [What is this?](#what-is-this)
-  - [Our Goals](#our-goals)
-  - [What is tested?](#what-is-tested)
+    - [What is this?](#what-is-this)
+    - [Our Goals](#our-goals)
+    - [What is tested?](#what-is-tested)
 
 <!-- /TOC -->
 

@@ -7,10 +7,10 @@ For a brief introduction to Page Object Models, please refer to [this page](http
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-  - [Distinction](#distinction)
-  - [Components](#components)
-  - [Page](#page)
-  - [Flows](#flows)
+    - [Distinction](#distinction)
+    - [Components](#components)
+    - [Page](#page)
+    - [Flows](#flows)
 
 <!-- /TOC -->
 
@@ -24,7 +24,7 @@ There exists clear distinction between pages and components.
 
 There is less clear distinction between Pages and Flows and the general recommendation is to prefer Pages unless Flows absolutely make sense.
 
-**Flows** - these encapsulate interations that span multiple pages or components, or start at one location and end at another. Interactions for each page of the flow can be implemented directly in the Flow object, or by importing relevant Page/Component objects and calling their methods.
+**Flows** - these encapsulate interactions that span multiple pages or components, or start at one location and end at another. Interactions for each page of the flow can be implemented directly in the Flow object, or by importing relevant Page/Component objects and calling their methods.
 
 ## Components
 
