@@ -45,5 +45,5 @@ The hook returns an object with the following properties:
 
 ### hasBlockers
 
-### siteNeedUpgrade
+### siteUpgrading
 

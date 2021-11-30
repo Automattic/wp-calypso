@@ -32,7 +32,10 @@ type EligibilityHook = {
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
 	transferringBlockers: string[];
 	hasBlockers: boolean;
-	siteNeedUpgrade: string | false;
+	siteUpgrading: {
+		required: boolean;
+		checkoutUrl: string;
+	};
 };
 
 export default function useEligibility( siteId: number ): EligibilityHook {
@@ -96,13 +99,14 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		hasAvailableSiteFeature( state, siteId, FEATURE_WOOP )
 	);
 
-	const siteNeedUpgrade = ! (
-		eligibilityNoProperPlan &&
-		! isWoopFeatureActive &&
-		hasWoopFeatureAvailable
-	)
-		? false
-		: `/woocommerce-installation/${ wpcomDomain }`;
+	const requiresUpgrade = Boolean(
+		eligibilityNoProperPlan && ! isWoopFeatureActive && hasWoopFeatureAvailable
+	);
+
+	const siteUpgrading = {
+		required: requiresUpgrade,
+		checkoutUrl: `/woocommerce-installation/${ wpcomDomain }`,
+	};
 
 	return {
 		isFetching,
@@ -116,6 +120,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 
 		transferringBlockers,
 		hasBlockers: !! transferringBlockers.length,
-		siteNeedUpgrade,
+		siteUpgrading,
 	};
 }
