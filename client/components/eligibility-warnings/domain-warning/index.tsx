@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 
 const Title = styled.span``;
@@ -11,7 +10,7 @@ const DomainEliibilityWarning: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<Container>
-			<Title className="DomainEligibilityWarning__title">New Store Domain</Title>
+			<Title>New Store Domain</Title>
 			<Content>
 				<NewDomainSection>
 					<span>{ `${ sitename }.wpstaging.com` }</span>

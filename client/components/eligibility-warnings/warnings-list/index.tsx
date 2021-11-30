@@ -15,11 +15,17 @@ const WarningListItem = styled.li`
 
 const WarningDescription = styled.span``;
 
+const WarningTitle = styled.span`
+	font-weight: bold;
+`;
+
 const WarningList = ( { warnings } ): ReactElement => (
 	<WarningsList>
-		{ warnings?.map( ( warning: string, index: number ) => (
+		{ warnings?.map( ( { name, description }, index ) => (
 			<WarningListItem key={ index }>
-				<WarningDescription>{ warning }</WarningDescription>
+				<WarningTitle>{ name }</WarningTitle>
+				:&nbsp;
+				<WarningDescription>{ description }</WarningDescription>
 			</WarningListItem>
 		) ) }
 	</WarningsList>

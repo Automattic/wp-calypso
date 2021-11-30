@@ -48,27 +48,17 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		isFetching,
 		wpcomSubdomainWarning,
 		stagingDomain,
-		pluginsWarning,
-		widgetsWarning,
+		eligibilityWarnings,
 		hasBlockers,
 	} = useEligibility( siteId );
 
 	const isLoading = ! siteId || isFetching;
-	const warnings: string[] = [];
-
-	if ( pluginsWarning.length ) {
-		warnings.push( __( 'Some plugins behavior would be affected when installing this product.' ) );
-	}
-
-	if ( widgetsWarning.length ) {
-		warnings.push( __( 'Some widgets behavior would be affected when installing this product.' ) );
-	}
+	const warnings = eligibilityWarnings?.filter( ( { id } ) => id !== 'wordpress_subdomain' ) ?? [];
 
 	function getWarningsOrHoldsSection() {
 		if ( hasBlockers ) {
 			return (
 				<WarningsOrHoldsSection>
-					<Divider />
 					<WarningCard
 						message={ __(
 							'There is an error that is stopping us from being able to install this product, please contact support.'
