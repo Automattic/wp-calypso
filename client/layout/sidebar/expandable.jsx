@@ -113,9 +113,9 @@ export const ExpandableSidebarMenu = ( {
 				<ExpandableSidebarHeading
 					title={ title }
 					count={ count }
-					onClick={ () => {
+					onClick={ ( event ) => {
 						setSubmenuHovered( false );
-						onClick();
+						onClick( event );
 					} }
 					customIcon={ customIcon }
 					icon={ icon }
