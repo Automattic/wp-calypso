@@ -124,23 +124,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
 					);
 				}
-				case 'FREE_TRANSACTION_BEGIN': {
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_form_submit', {
-							credits: null,
-							payment_method: 'WPCOM_Billing_WPCOM',
-						} )
-					);
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_form_submit', {
-							credits: null,
-							payment_method: 'WPCOM_Billing_WPCOM',
-						} )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_free_purchase_submit_clicked', {} )
-					);
-				}
 				case 'EXISTING_CARD_TRANSACTION_BEGIN': {
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_form_submit', {
