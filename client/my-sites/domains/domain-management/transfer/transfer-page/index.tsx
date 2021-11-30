@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
@@ -9,6 +10,7 @@ import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import {
 	domainManagementEdit,
@@ -135,8 +137,13 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 						<span className="transfer-page__help-section-text">
 							{ __( 'Transferring a domain within WordPress.com is immediate.' ) }
 							<br />
-							{ __(
-								'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read this important information before starting a transfer.'
+							{ createInterpolateElement(
+								__(
+									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <a>this important information</a> before starting a transfer.'
+								),
+								{
+									a: createElement( 'a', { href: TRANSFER_DOMAIN_REGISTRATION } ),
+								}
 							) }
 						</span>
 					</Card>
