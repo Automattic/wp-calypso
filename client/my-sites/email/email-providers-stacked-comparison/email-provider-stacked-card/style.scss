@@ -8,8 +8,6 @@ $width-left-panel-card: calc( 60% - 48px );
 	color: var( --studio-gray-20 );
 	display: block;
 	font-size: 0.75rem;
-	font-weight: 400;
-	margin-bottom: 0;
 }
 
 .email-provider-stacked-features__feature {
@@ -39,13 +37,10 @@ $width-left-panel-card: calc( 60% - 48px );
 	}
 }
 
-.email-provider-stacked-card__provider__action-panel {
-
-	&.is-primary {
-		flex-direction: column;
-		@include break-mobile {
-			flex-direction: row;
-		}
+.email-provider-stacked-card__provider__action-panel.is-primary {
+	flex-direction: column;
+	@include break-mobile {
+		flex-direction: row;
 	}
 }
 

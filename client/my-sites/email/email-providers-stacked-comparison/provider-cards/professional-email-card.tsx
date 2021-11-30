@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import React from 'react';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import { getTitanProductName } from 'calypso/lib/titan';
-import { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison';
 
 import './professional-email-card.scss';
 
@@ -25,7 +25,7 @@ export const professionalEmailCard: ProviderCard = {
 	formFields: <form> Placeholder </form>,
 	formattedPrice: '3.5$',
 	onExpandedChange: noop,
-	providerKey: '',
+	providerKey: 'titan',
 	showExpandButton: false,
 	description: translate( 'Integrated email solution for your WordPress.com site.' ),
 	logo,
