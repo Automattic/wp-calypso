@@ -12152,7 +12152,7 @@ __metadata:
     store: ^2.0.12
     striptags: ^3.1.1
     superagent: ^3.8.3
-    supertest: ^4.0.2
+    supertest: ^6.1.6
     textarea-caret: ^3.1.0
     to-title-case: ^1.0.0
     tracekit: ^0.4.5
@@ -13303,10 +13303,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"component-emitter@npm:1.2.1, component-emitter@npm:^1.2.0, component-emitter@npm:^1.2.1":
+"component-emitter@npm:1.2.1":
   version: 1.2.1
   resolution: "component-emitter@npm:1.2.1"
   checksum: 6c27bd7bba028776464cee6c1686c8e02cb9a576a11df93f1fc211ae3eb2de234ae90952d0b7fb3acc9c92c8baa389fa7389681b2e8689d2ca463e94f3ad30b2
+  languageName: node
+  linkType: hard
+
+"component-emitter@npm:^1.2.0, component-emitter@npm:^1.2.1, component-emitter@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "component-emitter@npm:1.3.0"
+  checksum: 68774a0a3754fb6c0ba53c2e88886dfbd0c773931066abb1d7fd1b0c893b2a838d8f088ab4dca1f18cc1a4fc2e6932019eba3ded2d931b5ba2241ce40e93a24f
   languageName: node
   linkType: hard
 
@@ -13605,10 +13612,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookiejar@npm:^2.1.0":
-  version: 2.1.2
-  resolution: "cookiejar@npm:2.1.2"
-  checksum: 01b6ef3e41c57ca71bced1a0dcf027814d92216e7b9e0975d2ae29869bc15d0865a6111ef1b39b7e0dbd2f16f06a9c85579466b72209fd80aa742be21a1c3079
+"cookiejar@npm:^2.1.0, cookiejar@npm:^2.1.2":
+  version: 2.1.3
+  resolution: "cookiejar@npm:2.1.3"
+  checksum: 32f4e2ee8156dc0c3674fbe03cf5b23560215c3cb6047dd37d37e7c7bfa77c7232fe26d3bc5108e846819f04393dfdf6a75f9b000165c49652d669ab2a23044e
   languageName: node
   linkType: hard
 
@@ -17741,7 +17748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-safe-stringify@npm:^2.0.4":
+"fast-safe-stringify@npm:^2.0.4, fast-safe-stringify@npm:^2.0.7":
   version: 2.1.1
   resolution: "fast-safe-stringify@npm:2.1.1"
   checksum: d90ec1c963394919828872f21edaa3ad6f1dddd288d2bd4e977027afff09f5db40f94e39536d4646f7e01761d704d72d51dce5af1b93717f3489ef808f5f4e4d
@@ -18402,10 +18409,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"formidable@npm:^1.2.0":
-  version: 1.2.1
-  resolution: "formidable@npm:1.2.1"
-  checksum: ea0e53492150f16da80401c6aeaca534e37246eabf9a181215e3fb79a126e3631810fc045fe297797156a032ce0fbd5abd17971c3d585f30bf29f62d19bcfe51
+"formidable@npm:^1.2.0, formidable@npm:^1.2.2":
+  version: 1.2.6
+  resolution: "formidable@npm:1.2.6"
+  checksum: 9ebc45f434785051d4ecab28be3356c7a172a112119f5dd7aafc393ab7f6a6f3baa2446e5215ce21bf094c4c24dfb4bf483117d07961862e04ad11a25b9b577b
   languageName: node
   linkType: hard
 
@@ -30129,7 +30136,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.1.0, qs@npm:^6.10.0, qs@npm:^6.4.0, qs@npm:^6.5.1, qs@npm:^6.5.2, qs@npm:^6.9.1, qs@npm:^6.9.6":
+"qs@npm:^6.1.0, qs@npm:^6.10.0, qs@npm:^6.4.0, qs@npm:^6.5.1, qs@npm:^6.5.2, qs@npm:^6.9.1, qs@npm:^6.9.4, qs@npm:^6.9.6":
   version: 6.10.1
   resolution: "qs@npm:6.10.1"
   dependencies:
@@ -35125,13 +35132,32 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"supertest@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "supertest@npm:4.0.2"
+"superagent@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "superagent@npm:6.1.0"
+  dependencies:
+    component-emitter: ^1.3.0
+    cookiejar: ^2.1.2
+    debug: ^4.1.1
+    fast-safe-stringify: ^2.0.7
+    form-data: ^3.0.0
+    formidable: ^1.2.2
+    methods: ^1.1.2
+    mime: ^2.4.6
+    qs: ^6.9.4
+    readable-stream: ^3.6.0
+    semver: ^7.3.2
+  checksum: 4376c82cdeabc9e2a54ae21f7bba6f0255964b123f54c7ca6e66ca1075c2d1b99c6e53848d86633a045884088f9be2c8f01d5e5ca14c6fbd37dbb1df479d7209
+  languageName: node
+  linkType: hard
+
+"supertest@npm:^6.1.6":
+  version: 6.1.6
+  resolution: "supertest@npm:6.1.6"
   dependencies:
     methods: ^1.1.2
-    superagent: ^3.8.3
-  checksum: 436ab991ae9242e695374d0006bf2dd16fbbab287966d0176c92eaf8f9a124a839a0ff6db22f46d1de0faeec3752ff8ebfbe051681c050032acab9f4af192399
+    superagent: ^6.1.0
+  checksum: eea11d577ec989fa3caa476ed71266d06606d8b064b3f78219cadc24051a348ddb2dd1d4767eebd5d9913e3d93c37ccab6d310aa49f20ced030c27eaee3bd32a
   languageName: node
   linkType: hard
 
