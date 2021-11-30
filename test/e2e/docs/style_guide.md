@@ -15,6 +15,7 @@
   - [Test steps](#test-steps)
     - [Avoid modal verbs](#avoid-modal-verbs)
     - [Prefer smaller steps](#prefer-smaller-steps)
+  - [Focused function](#focused-function)
   - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
@@ -272,6 +273,8 @@ it( 'Search for ${string}', async function () {} );
 ```
 
 ---
+
+## Focused function
 
 ## Destructure parameters
 

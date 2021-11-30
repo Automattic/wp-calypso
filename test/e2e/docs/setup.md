@@ -4,7 +4,6 @@
 
 - [Setup](#setup)
   - [Regular setup](#regular-setup)
-- [Advanced Setup](#advanced-setup)
   - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
   - [Apple Silicon arm64](#apple-silicon-arm64)
   - [Help](#help)
@@ -14,8 +13,6 @@
 ## Regular setup
 
 Follow the [Quick Start](../README.md) guide to install required software.
-
-# Advanced Setup
 
 ## Apple Silicon (emulated x86_64)
 
