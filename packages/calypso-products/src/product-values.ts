@@ -1,4 +1,3 @@
-export { formatProduct } from './format-product';
 export { getDomain } from './get-domain';
 export * from './get-jetpack-item-term-variants';
 export { getJetpackProductCallToAction } from './get-jetpack-product-call-to-action';

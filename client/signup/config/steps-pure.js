@@ -679,6 +679,10 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
+		'p2-get-started': {
+			stepName: 'p2-get-started',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
@@ -785,14 +789,33 @@ export function generateSteps( {
 		},
 
 		// Woocommerce Install steps
+		'select-site': {
+			stepName: 'select-site',
+			providesDependencies: [ 'siteId' ],
+			props: {
+				headerText: i18n.translate( 'Select a site' ),
+				subHeaderText: i18n.translate(
+					'Pick which site you would like to use to set up your new store.'
+				),
+			},
+		},
 		confirm: {
 			stepName: 'confirm',
+			props: {
+				headerTitle: i18n.translate( 'Your new store' ),
+				headerDescription: (
+					<>
+						{ i18n.translate( 'This will be your new store domain.' ) }
+						<br />
+						{ i18n.translate( 'You can change it later and get a custom one.' ) }
+					</>
+				),
+			},
+			dependencies: [ 'siteId' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-		},
-		install: {
-			stepName: 'install',
+			dependencies: [ 'siteId' ],
 		},
 	};
 }

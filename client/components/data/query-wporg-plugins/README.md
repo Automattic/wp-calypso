@@ -12,7 +12,6 @@ Pagination is currently supported only for category queries in the API, so you c
 It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
-import React from 'react';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import { getPluginsListByCategory } from 'calypso/state/plugins/wporg/selectors';
 

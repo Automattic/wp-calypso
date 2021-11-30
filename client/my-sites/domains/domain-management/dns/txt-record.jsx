@@ -2,11 +2,13 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import { DNS_TXT_RECORD_CHAR_LIMIT } from 'calypso/lib/url/support';
 
 class TxtRecord extends Component {
 	static propTypes = {
@@ -22,7 +24,16 @@ class TxtRecord extends Component {
 		if ( value?.length === 0 ) {
 			return translate( 'TXT records may not be empty' );
 		} else if ( value?.length > 255 ) {
-			return translate( 'TXT records may not exceed 255 characters' );
+			return translate(
+				'TXT records may not exceed 255 characters. {{supportLink}}Learn more{{/supportLink}}.',
+				{
+					components: {
+						supportLink: (
+							<ExternalLink href={ DNS_TXT_RECORD_CHAR_LIMIT } target="_blank" icon={ false } />
+						),
+					},
+				}
+			);
 		}
 
 		return null;

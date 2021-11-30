@@ -7,20 +7,15 @@ import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
 import { composeAnalytics, withAnalytics } from 'calypso/state/analytics/actions';
 import { addEmailForward } from 'calypso/state/email-forwarding/actions';
-import getEmailForwardingLimit from 'calypso/state/selectors/get-email-forwarding-limit';
 import {
 	addEmailForwardSuccess,
-	getEmailForwards,
 	isAddingEmailForward,
 } from 'calypso/state/selectors/get-email-forwards';
-import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class EmailForwardingAddNewCompactList extends Component {
 	static propTypes = {
-		emailForwards: PropTypes.array,
-		emailForwardingLimit: PropTypes.number,
 		onConfirmEmailForwarding: PropTypes.func.isRequired,
 		onAddEmailForwardSuccess: PropTypes.func,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -30,7 +25,6 @@ class EmailForwardingAddNewCompactList extends Component {
 		super( props );
 		this.state = {
 			emailForwards: [ { destination: '', mailbox: '', isValid: false } ],
-			isRedirecting: false,
 			newEmailForwardAdded: false,
 		};
 	}
@@ -71,8 +65,10 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	onAddNewEmailForward = () => {
-		this.setState( {
-			emailForwards: [ ...this.state.emailForwards, { destination: '', mailbox: '' } ],
+		this.setState( ( currentState ) => {
+			return {
+				emailForwards: [ ...currentState.emailForwards, { destination: '', mailbox: '' } ],
+			};
 		} );
 	};
 
@@ -92,14 +88,14 @@ class EmailForwardingAddNewCompactList extends Component {
 	}
 
 	onRemoveEmailForward = ( index ) => {
-		const [ emailForwards ] = this.state;
+		const emailForwards = [ ...this.state.emailForwards ];
 		emailForwards.splice( index, 1 );
 		this.setState( { emailForwards } );
 	};
 
 	onUpdateEmailForward = ( index, name, value ) => {
 		// eslint-disable-next-line prefer-const
-		let emailForwards = this.state.emailForwards;
+		let emailForwards = [ ...this.state.emailForwards ];
 		emailForwards[ index ][ name ] = value;
 
 		const validEmailForward = validateAllFields( emailForwards[ index ] );
@@ -127,13 +123,15 @@ class EmailForwardingAddNewCompactList extends Component {
 	render() {
 		const { selectedDomainName } = this.props;
 
+		const { emailForwards } = this.state;
+
 		return (
 			<>
-				{ this.state.emailForwards?.map( ( fields, index ) => (
+				{ emailForwards.map( ( fields, index ) => (
 					<Fragment key={ `email-forwarding__add-new_fragment__card-${ index }` }>
 						<form className="email-forwarding__add-new">
 							<EmailForwardingAddNewCompact
-								emailForwards={ this.state.emailForwards }
+								emailForwards={ emailForwards }
 								fields={ fields }
 								index={ index }
 								onAddEmailForward={ this.onAddNewEmailForward }
@@ -156,15 +154,10 @@ class EmailForwardingAddNewCompactList extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = getSelectedSiteId( state );
 		return {
 			emailForwardSuccess: addEmailForwardSuccess( state, ownProps.selectedDomainName ),
 			selectedSiteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
-			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
-			emailForwards: getEmailForwards( state, ownProps.selectedDomainName ),
-			emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
-			siteId,
 		};
 	},
 	{ addEmailForward }

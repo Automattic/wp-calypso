@@ -1243,66 +1243,6 @@ const contextLinksForSection = {
 			},
 		},
 	],
-	'post-editor': [
-		{
-			get link() {
-				return localizeUrl( 'https://wordpress.com/support/editors/' );
-			},
-			post_id: 3347,
-			get title() {
-				return translate( 'The Visual Editor and the HTML Editor' );
-			},
-			get description() {
-				return translate(
-					'When creating a post or page on your WordPress.com blog, you have two editing modes ' +
-						'available to you: the Visual Editor and the HTML Editor.'
-				);
-			},
-		},
-		{
-			get link() {
-				return localizeUrl( 'https://wordpress.com/support/visual-editor/' );
-			},
-			post_id: 3644,
-			get title() {
-				return translate( 'The Visual Editor' );
-			},
-			get description() {
-				return translate(
-					'The visual editor provides a semi-WYSIWYG (What You See is What You Get) content editor that ' +
-						'allows you to easily create, edit, and format your content in a view similar to that of a word processor.'
-				);
-			},
-		},
-		{
-			get link() {
-				return localizeUrl( 'https://wordpress.com/support/xml-rpc/' );
-			},
-			post_id: 3595,
-			get title() {
-				return translate( 'Offline Editing' );
-			},
-			get description() {
-				return translate(
-					'Learn how to create and edit content for your WordPress.com site even without being connected to the internet!'
-				);
-			},
-		},
-		{
-			get link() {
-				return localizeUrl( 'https://wordpress.com/support/adding-users/' );
-			},
-			post_id: 2160,
-			get title() {
-				return translate( 'Inviting Contributors, Followers, and Viewers' );
-			},
-			get description() {
-				return translate(
-					'Invite contributors, followers, and viewers to collaborate with others and grow your audience!'
-				);
-			},
-		},
-	],
 	'gutenberg-editor': [
 		{
 			get link() {
@@ -1956,65 +1896,6 @@ const videosForSection = {
 				return translate(
 					'Find out how to activate free email forwarding from an address using a custom domain registered through WordPress.com.'
 				);
-			},
-		},
-	],
-	'post-editor': [
-		{
-			type: RESULT_VIDEO,
-			link: 'https://www.youtube.com/watch?v=hNg1rrkiAjg',
-			get title() {
-				return translate( 'Set a Featured Image for a Post or Page' );
-			},
-			get description() {
-				return translate(
-					'Find out how to add a featured image where available on your WordPress.com or Jetpack-enabled WordPress site.'
-				);
-			},
-		},
-		{
-			type: RESULT_VIDEO,
-			link: 'https://www.youtube.com/watch?v=dAcEBKXPlyA',
-			get title() {
-				return translate( 'Add a Contact Form to Your Website' );
-			},
-			get description() {
-				return translate( 'Find out how to add a contact form to your WordPress.com site.' );
-			},
-		},
-		{
-			type: RESULT_VIDEO,
-			link: 'https://www.youtube.com/watch?v=ssfHW5lwFZg',
-			get title() {
-				return translate( 'Embed a YouTube Video in Your Website' );
-			},
-			get description() {
-				return translate(
-					'Find out how to embed a YouTube video in your content (including posts, pages, and even comments) ' +
-						'on your WordPress.com or Jetpack-enabled WordPress website or blog.'
-				);
-			},
-		},
-		{
-			type: RESULT_VIDEO,
-			link: 'https://www.youtube.com/watch?v=_tpcHN6ZtKM',
-			get title() {
-				return translate( 'Schedule a Post' );
-			},
-			get description() {
-				return translate(
-					'Find out how to schedule a post on your WordPress.com website or blog.'
-				);
-			},
-		},
-		{
-			type: RESULT_VIDEO,
-			link: 'https://www.youtube.com/watch?v=V8UToJoSf4Q',
-			get title() {
-				return translate( 'Add a Pay with PayPal button' );
-			},
-			get description() {
-				return translate( 'Find out how to add a payment button to your WordPress.com website.' );
 			},
 		},
 	],

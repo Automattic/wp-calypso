@@ -29,14 +29,8 @@ import './style.scss';
 // themes? e.g. `link-in-bio` or `no-fold`
 const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
 
-const EXCLUDED_THEMES = [
-	// The Ryu theme doesn't currently have any annotations
-	'ryu',
-];
-
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned } = props;
-
+	const { flowName, stepName, isReskinned, queryParams } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -85,21 +79,19 @@ export default function DesignPickerStep( props ) {
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		const allThemes = themesToBeTransformed
-			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
-			.map( ( { id, name, taxonomies } ) => ( {
-				categories: taxonomies?.theme_subject ?? [],
-				// Blank Canvas uses the theme_picks taxonomy with a "featured" term in order to
-				// appear prominently in theme galleries.
-				showFirst: !! taxonomies?.theme_picks?.find( ( { slug } ) => slug === 'featured' ),
-				features: [],
-				is_premium: false,
-				slug: id,
-				template: id,
-				theme: id,
-				title: name,
-				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-			} ) );
+		const allThemes = themesToBeTransformed.map( ( { id, name, taxonomies } ) => ( {
+			categories: taxonomies?.theme_subject ?? [],
+			// Blank Canvas uses the theme_picks taxonomy with a "featured" term in order to
+			// appear prominently in theme galleries.
+			showFirst: !! taxonomies?.theme_picks?.find( ( { slug } ) => slug === 'featured' ),
+			features: [],
+			is_premium: false,
+			slug: id,
+			template: id,
+			theme: id,
+			title: name,
+			...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+		} ) );
 
 		if ( allThemes.length === 0 ) {
 			return [];
@@ -133,7 +125,7 @@ export default function DesignPickerStep( props ) {
 			)
 		);
 
-		submitDesign( selectedDesign );
+		submitDesign( _selectedDesign );
 	}
 
 	function previewDesign( _selectedDesign ) {
@@ -145,8 +137,9 @@ export default function DesignPickerStep( props ) {
 			flow: props.flowName,
 			intent: props.signupDependencies.intent,
 		} );
-
-		page( getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale ) );
+		page(
+			getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
+		);
 	}
 
 	function submitDesign( _selectedDesign = selectedDesign ) {
@@ -282,7 +275,7 @@ export default function DesignPickerStep( props ) {
 					args: { designTitle },
 				} ) }
 				defaultDependencies={ defaultDependencies }
-				backUrl={ getStepUrl( flowName, stepName, '', locale ) }
+				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
 				goToNextStep={ submitDesign }
 				stepSectionName={ designTitle }
 			/>

@@ -13,7 +13,6 @@
 
 .plugin-remove-button__remove-link .plugin-action__children {
 	display: inline-flex;
-	flex-direction: row-reverse;
 }
 
 .plugin-site__actions .plugin-remove-button__remove {
@@ -22,17 +21,8 @@
 }
 
 .plugin-remove-button__remove-icon {
-	display: block;
-	margin: -2px 3px 0;
-
-	.gridicons-trash {
-		display: block;
-		color: var( --color-neutral-light );
-		cursor: pointer;
-		&:hover {
-			color: var( --color-error );
-		}
-	}
+	color: var( --studio-gray-80 );
+	font-size: $font-body-small;
 }
 
 .plugin-remove-button__remove-link.is-disabled .plugin-remove-button__remove-icon .gridicons-trash {

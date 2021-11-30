@@ -11,8 +11,7 @@
 	border: 1px solid var( --studio-gray-5 );
 	border-radius: 5px; /* stylelint-disable-line scales/radii */
 
-	&.is-placeholder,
-	&.is-empty {
+	&.is-placeholder {
 		cursor: default;
 	}
 
@@ -57,10 +56,6 @@
 
 	@include breakpoint-deprecated( '<960px' ) {
 		width: 100%;
-
-		&.is-empty {
-			display: none;
-		}
 	}
 }
 
@@ -107,7 +102,6 @@
 .plugins-browser-item__pricing,
 .plugins-browser-item__installed {
 	margin-top: auto;
-	font-weight: 600;
 	font-size: $font-body;
 	color: $studio-black;
 }
@@ -115,12 +109,12 @@
 .plugins-browser-item__installed {
 	display: flex;
 	align-items: center;
-	color: var( --color-success );
+	color: var( --studio-green-30 );
 	animation: appear 0.15s ease-in;
 
 	.gridicon {
-		margin-right: 3px;
-		border: 2px solid var( --color-success );
+		margin-right: 6px;
+		border: 2px solid var( --studio-green-30 );
 		border-radius: 50%; /* stylelint-disable-line */
 	}
 }

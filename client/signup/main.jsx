@@ -85,6 +85,7 @@ import {
 	getFirstInvalidStep,
 	getStepUrl,
 	isReskinnedFlow,
+	isP2Flow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -112,10 +113,6 @@ function removeLoadingScreenClassNamesFromBody() {
 	}
 
 	document.body.classList.remove( 'has-loading-screen-signup' );
-}
-
-function isWPForTeamsFlow( flowName ) {
-	return flowName === 'p2';
 }
 
 function showProgressIndicator( flowName ) {
@@ -152,9 +149,10 @@ class Signup extends Component {
 		previousFlowName: null,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
+		const queryObject = this.props.initialContext?.query ?? {};
 
 		let providedDependencies;
 
@@ -206,6 +204,7 @@ class Signup extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { stepName, flowName, progress } = nextProps;
 
@@ -384,7 +383,7 @@ class Signup extends Component {
 				this.bizxSurveyTimerComplete = new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
 			}
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isP2Flow( this.props.flowName ) ) {
 				addLoadingScreenClassNamesToBody();
 
 				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
@@ -395,7 +394,7 @@ class Signup extends Component {
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isP2Flow( this.props.flowName ) ) {
 				removeLoadingScreenClassNamesFromBody();
 			}
 		}
@@ -542,7 +541,8 @@ class Signup extends Component {
 		// to invalid step.
 		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
+			const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
+			page( getStepUrl( flowName, stepName, stepSectionName, locale, { siteId, siteSlug } ) );
 		} else if ( this.isEveryStepSubmitted() ) {
 			this.goToFirstInvalidStep();
 		}
@@ -570,6 +570,7 @@ class Signup extends Component {
 			progress,
 			this.props.isLoggedIn
 		);
+		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
 
 		if ( firstInvalidStep ) {
 			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
@@ -582,7 +583,12 @@ class Signup extends Component {
 
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
-			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale ) );
+			page(
+				getStepUrl( this.props.flowName, firstInvalidStep.stepName, '', locale, {
+					siteId,
+					siteSlug,
+				} )
+			);
 		}
 	};
 
@@ -609,7 +615,7 @@ class Signup extends Component {
 	}
 
 	renderProcessingScreen( isReskinned ) {
-		if ( isWPForTeamsFlow( this.props.flowName ) ) {
+		if ( isP2Flow( this.props.flowName ) ) {
 			return <P2SignupProcessingScreen />;
 		}
 
@@ -652,6 +658,8 @@ class Signup extends Component {
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
 
+		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
+
 		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
@@ -692,6 +700,7 @@ class Signup extends Component {
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
+							queryParams={ { siteId, siteSlug } }
 							{ ...propsForCurrentStep }
 						/>
 					) }
@@ -741,7 +750,7 @@ class Signup extends Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ this.props.pageTitle } />
-				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+				{ ! isP2Flow( this.props.flowName ) && (
 					<SignupHeader
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }

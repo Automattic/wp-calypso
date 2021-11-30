@@ -918,6 +918,27 @@ object P2E2ETests : BuildType({
 				}
 			}
 		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-p2"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = "trunk"
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			buildFailedToStart = true
+			buildProbablyHanging = true
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#happytools-alerts"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = "trunk"
+			buildFailed = true
+		}
 	}
 
 	triggers {

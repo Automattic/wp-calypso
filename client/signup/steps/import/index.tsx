@@ -1,6 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import { stringify } from 'qs';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -51,13 +50,8 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 		flowName = 'importer',
 		dependency = signupDependencies
 	): string => {
-		let stepUrl = getStepUrl( flowName, stepName, stepSectionName );
-
-		if ( typeof dependency?.siteSlug !== 'undefined' ) {
-			stepUrl += '?' + stringify( { siteSlug: dependency.siteSlug } );
-		}
-
-		return stepUrl;
+		const queryParams = dependency && dependency.siteSlug ? { siteSlug: dependency.siteSlug } : {};
+		return getStepUrl( flowName, stepName, stepSectionName, '', queryParams );
 	};
 
 	const goToStepWithDependencies: GoToStep = function (
@@ -70,7 +64,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	};
 
 	const goToImporterPage = ( platform: string ): void => {
-		const importerUrl = getImporterUrl( signupDependencies.siteSlug, platform );
+		const importerUrl = getImporterUrl( signupDependencies.siteSlug, platform, urlData.url );
 
 		importerUrl.includes( 'wp-admin' )
 			? ( window.location.href = importerUrl )

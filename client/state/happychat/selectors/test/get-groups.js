@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'calypso/state/happychat/constants';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
@@ -111,24 +110,22 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		if ( isEnabled( 'jetpack/happychat' ) ) {
-			test( 'should return JPOP group if within the jetpack-connect section', () => {
-				const state = {
-					...userState,
-					sites: {
-						items: {
-							1: {},
-						},
+		test( 'should return JPOP group if within the jetpack-connect section', () => {
+			const state = {
+				...userState,
+				sites: {
+					items: {
+						1: {},
 					},
-					ui: {
-						section: {
-							name: 'jetpack-connect',
-						},
+				},
+				ui: {
+					section: {
+						name: 'jetpack-connect',
 					},
-				};
+				},
+			};
 
-				expect( getGroups( state ) ).toMatchObject( [ HAPPYCHAT_GROUP_JPOP ] );
-			} );
-		}
+			expect( getGroups( state ) ).toMatchObject( [ HAPPYCHAT_GROUP_JPOP ] );
+		} );
 	} );
 } );

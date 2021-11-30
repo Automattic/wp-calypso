@@ -203,26 +203,6 @@ class Domain {
 			fn
 		);
 	};
-
-	/**
-	 * Determine whether a domain name is available for registration
-	 *
-	 * @param {number} blogId - Optional blogId to determine if domain is used on another site.
-	 * @param {boolean} isCartPreCheck - specifies whether this availability check is for a domain about to be added to the cart.
-	 * @param {Function} fn The callback function
-	 * @returns {Promise} A promise that resolves when the request completes
-	 */
-	isDomainAvailable = function ( blogId, isCartPreCheck, fn ) {
-		return this.wpcom.req.get(
-			`${ root + encodeURIComponent( this._id ) }/is-available`,
-			{
-				blog_id: blogId,
-				apiVersion: '1.3',
-				is_cart_pre_check: isCartPreCheck,
-			},
-			fn
-		);
-	};
 }
 
 /**

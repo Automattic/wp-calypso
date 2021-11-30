@@ -7,15 +7,13 @@ This component is used to represent a list `PluginItem`s, with a `PluginsListHea
 ```jsx
 import PluginsList from 'calypso/my-sites/plugins/plugins-list';
 
-return (
-	<PluginsList
-		header={ this.props.translate( 'Plugins' ) }
-		plugins={ this.getPlugins() }
-		sites={ this.props.sites }
-		selectedSite={ this.props.selectedSite }
-		isPlaceholder={ this.showPluginListPlaceholders( true ) }
-	/>
-);
+<PluginsList
+	header={ this.props.translate( 'Plugins' ) }
+	plugins={ this.getPlugins() }
+	sites={ this.props.sites }
+	selectedSite={ this.props.selectedSite }
+	isPlaceholder={ this.showPluginListPlaceholders( true ) }
+/>;
 ```
 
 ## Props

@@ -8,7 +8,6 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import { map } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
 import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';

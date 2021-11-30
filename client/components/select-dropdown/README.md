@@ -12,25 +12,20 @@ The children technique is appropriate when you'd like to define the "selection" 
 
 A good example for this case is navigation. Sometimes the option that is selected is defined by the route, other times it's a state value, external prop, etc.
 
-```js
-import React from 'react';
+```jsx
 import SelectDropdown from 'calypso/components/select-dropdown';
 
-export default class extends React.Component {
-	// ...
-
-	render() {
-		return (
-			<SelectDropdown selectedText="Published">
-				<SelectDropdown.Item selected path="/published">
-					Published
-				</SelectDropdown.Item>
-				<SelectDropdown.Item path="/scheduled">Scheduled</SelectDropdown.Item>
-				<SelectDropdown.Item path="/drafts">Drafts</SelectDropdown.Item>
-				<SelectDropdown.Item path="/trashed">Trashed</SelectDropdown.Item>
-			</SelectDropdown>
-		);
-	}
+export default function MyComponent() {
+	return (
+		<SelectDropdown selectedText="Published">
+			<SelectDropdown.Item selected path="/published">
+				Published
+			</SelectDropdown.Item>
+			<SelectDropdown.Item path="/scheduled">Scheduled</SelectDropdown.Item>
+			<SelectDropdown.Item path="/drafts">Drafts</SelectDropdown.Item>
+			<SelectDropdown.Item path="/trashed">Trashed</SelectDropdown.Item>
+		</SelectDropdown>
+	);
 }
 ```
 

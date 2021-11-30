@@ -15,6 +15,7 @@ export { default as isFetchingAutomatedTransferStatus } from 'calypso/state/auto
 export interface EligibilityWarning {
 	description: string;
 	name: string;
+	id: string;
 	supportUrl?: string;
 }
 

@@ -10,10 +10,13 @@ import './style.scss';
 interface Props {
 	stepName: string;
 	stepSectionName: string;
+	queryObject: {
+		temp: string;
+	};
 }
 
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
-	const { stepSectionName } = props;
+	const { stepSectionName, queryObject } = props;
 	return (
 		<StepWrapper
 			flowName={ 'import-from' }
@@ -24,7 +27,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 			stepContent={
 				<div className="import__onboarding-page">
 					{ stepSectionName === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) && (
-						<WixImporter />
+						<WixImporter queryObject={ queryObject } />
 					) }
 				</div>
 			}

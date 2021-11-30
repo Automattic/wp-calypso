@@ -4,12 +4,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
-import { isATEnabled } from 'calypso/lib/automated-transfer';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Protect from './protect';
 import SpamFilteringSettings from './spam-filtering-settings';
 import Sso from './sso';
@@ -96,7 +96,7 @@ class SiteSettingsFormSecurity extends Component {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const selectedSite = getSelectedSite( state );
+	const isAtomic = isSiteAutomatedTransfer( siteId );
 	const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
 	const protectIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
@@ -111,7 +111,7 @@ const connectComponent = connect( ( state ) => {
 	);
 
 	return {
-		isAtomic: isATEnabled( selectedSite ),
+		isAtomic,
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
 		akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,

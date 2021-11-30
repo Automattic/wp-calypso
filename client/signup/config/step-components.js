@@ -69,6 +69,7 @@ const stepNameToModuleName = {
 	passwordless: 'passwordless',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
+	'p2-get-started': 'p2-get-started',
 	'plans-business-monthly': 'plans',
 	'plans-ecommerce-monthly': 'plans',
 	'plans-personal-monthly': 'plans',
@@ -82,10 +83,9 @@ const stepNameToModuleName = {
 	capture: 'import',
 	ready: 'import',
 	importing: 'import-from',
-	confirm: 'woocommerce-install',
-	transfer: 'woocommerce-install',
-	install: 'woocommerce-install',
-	complete: 'woocommerce-install',
+	'select-site': 'woocommerce-install/select-site',
+	confirm: 'woocommerce-install/confirm',
+	transfer: 'woocommerce-install/transfer',
 };
 
 export function getStepModuleName( stepName ) {
@@ -95,7 +95,10 @@ export function getStepModuleName( stepName ) {
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(
-		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[0-9a-z-]+\/index.[j|t]sx$/ */ `calypso/signup/steps/${ moduleName }`
+		/* webpackChunkName: "async-load-signup-steps-[request]" */
+		/* webpackInclude: /signup\/steps\/[0-9a-z/-]+\/index\.[j|t]sx$/ */
+		/* webpackExclude: /signup\/steps\/[0-9a-z/-]+\/test\/index\.[j|t]sx$/ */
+		`calypso/signup/steps/${ moduleName }`
 	);
 	return module.default;
 }

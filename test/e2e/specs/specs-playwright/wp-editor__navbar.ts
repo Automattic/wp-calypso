@@ -14,7 +14,6 @@ import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 	let page: Page;
-	const mainUser = 'gutenbergSimpleSiteUser';
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -22,7 +21,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: mainUser } );
+		await loginPage.login( { account: 'simpleSitePersonalPlanUser' } );
 	} );
 
 	it( 'Start new post', async function () {

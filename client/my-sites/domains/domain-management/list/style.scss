@@ -14,10 +14,6 @@
 
 	button.options-domain-button.ellipsis {
 		padding: 4px 0;
-
-		@include break-mobile {
-			padding: 7px;
-		}
 	}
 
 	svg.options-domain-button__ellipsis {

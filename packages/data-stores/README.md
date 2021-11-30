@@ -11,7 +11,6 @@ To use stores from the package, import and register the relevant store to obtain
 ```tsx
 import { Verticals } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
-import React from 'react';
 
 const VERTICALS_STORE = Verticals.register();
 

@@ -50,6 +50,24 @@ export class ThemesPage {
 	}
 
 	/**
+	 * Filters the themes on page according to the pricing structure.
+	 *
+	 * @param {string} type Pre-defined types of themes.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
+		await this.pageSettled();
+
+		const selector = `a[role="radio"]:has-text("${ type }")`;
+		await this.page.click( selector );
+		const button = await this.page.waitForSelector( selector );
+
+		// Wait for placeholder to disappear (indicating load is completed).
+		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
+		await this.page.waitForFunction( ( element: any ) => element.ariaChecked === 'true', button );
+	}
+
+	/**
 	 * Given a keyword, perform a search in the Themes toolbar.
 	 *
 	 * @param {string} keyword Theme name to search for. Can be a partial match.

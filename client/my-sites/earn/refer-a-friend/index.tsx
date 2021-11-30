@@ -26,8 +26,6 @@ interface ConnectedProps {
 	trackCtaButton: ( feature: string ) => void;
 }
 
-const wpcom = wp.undocumented();
-
 const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 	isJetpack,
 	isAtomicSite,
@@ -38,16 +36,20 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 
 	useEffect( () => {
 		if ( peerReferralLink ) return;
-		wpcom.me().getPeerReferralLink( ( error: string, data: string ) => {
+		wp.req.get( '/me/peer-referral-link', ( error: string, data: string ) => {
 			setPeerReferralLink( ! error && data ? data : '' );
 		} );
 	}, [ peerReferralLink ] );
 
 	const onPeerReferralCtaClick = () => {
 		if ( peerReferralLink ) return;
-		wpcom.me().setPeerReferralLinkEnable( true, ( error: string, data: string ) => {
-			setPeerReferralLink( ! error && data ? data : '' );
-		} );
+		wp.req.post(
+			'/me/peer-referral-link-enable',
+			{ enable: true },
+			( error: string, data: string ) => {
+				setPeerReferralLink( ! error && data ? data : '' );
+			}
+		);
 	};
 
 	const getPeerReferralsCard = () => {
