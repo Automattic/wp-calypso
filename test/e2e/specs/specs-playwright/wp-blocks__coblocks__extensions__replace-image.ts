@@ -69,7 +69,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	} );
 
 	it( 'Publish the post', async () => {
-		await gutenbergEditorPage.publish();
+		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 
 	it( 'Verify the new image was published', async () => {
