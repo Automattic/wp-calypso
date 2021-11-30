@@ -193,6 +193,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				imageBlock = new ImageBlock( blockHandle );
 				const uploadedImage = await imageBlock.upload( imageFile.fullpath );
 				uploadedImageURL = ( await uploadedImage.getAttribute( 'src' ) ) as string;
+				uploadedImageURL = uploadedImageURL.split( '?' )[ 0 ];
 			} );
 
 			it( 'Publish the post', async () => {
@@ -210,8 +211,9 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 				await imageBlock.waitUntilUploaded();
 				const newImage = await imageBlock.getImage();
 				newImageURL = ( await newImage.getAttribute( 'src' ) ) as string;
+				newImageURL = newImageURL.split( '?' )[ 0 ];
 
-				expect( uploadedImageURL ).not.toBe( newImageURL );
+				expect( newImageURL ).not.toEqual( uploadedImageURL );
 			} );
 
 			it( 'Update and visit the post', async () => {
@@ -219,7 +221,27 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks' ), () => {
 			} );
 
 			it( 'Verify the new image was published', async () => {
-				await page.waitForSelector( `img[src="${ newImageURL }"]` );
+				// Image is not always immediately available on a published site, so
+				// we need to refresh and check again until timeout or condition met.
+				const timeout = 10000;
+				const startTime = Date.now();
+
+				async function verify(): Promise< void > {
+					const publishedImage = await page.waitForSelector( '.wp-block-image img' );
+					const publishedImageURL = ( await publishedImage.getAttribute( 'src' ) ) as string;
+
+					try {
+						expect( publishedImageURL.split( '?' )[ 0 ] ).toEqual( newImageURL );
+					} catch ( error ) {
+						if ( Date.now() - timeout >= startTime ) {
+							throw error;
+						}
+						await page.reload();
+						return await verify();
+					}
+				}
+
+				await verify();
 			} );
 		} );
 
