@@ -17,8 +17,7 @@ interface Props {
 	signupDependencies: any;
 	stepName: string;
 	queryObject: {
-		siteSlug?: string;
-		siteId?: string;
+		siteSlug: string;
 	};
 }
 
@@ -43,7 +42,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
 
 		if ( EXTERNAL_FLOW[ intent ] ) {
-			page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryObject ) );
+			page( getStepUrl( EXTERNAL_FLOW[ intent ] ) + '?siteSlug=' + queryObject.siteSlug );
 		} else {
 			branchSteps( EXCLUDE_STEPS[ intent ] );
 			dispatch( submitSignupStep( { stepName }, { intent } ) );

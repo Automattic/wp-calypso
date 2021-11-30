@@ -152,7 +152,7 @@ class Signup extends Component {
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const queryObject = this.props.initialContext?.query ?? {};
+		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
 		let providedDependencies;
 
@@ -541,8 +541,7 @@ class Signup extends Component {
 		// to invalid step.
 		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
-			page( getStepUrl( flowName, stepName, stepSectionName, locale, { siteId, siteSlug } ) );
+			page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
 		} else if ( this.isEveryStepSubmitted() ) {
 			this.goToFirstInvalidStep();
 		}
@@ -570,7 +569,6 @@ class Signup extends Component {
 			progress,
 			this.props.isLoggedIn
 		);
-		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
 
 		if ( firstInvalidStep ) {
 			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
@@ -583,12 +581,7 @@ class Signup extends Component {
 
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
-			page(
-				getStepUrl( this.props.flowName, firstInvalidStep.stepName, '', locale, {
-					siteId,
-					siteSlug,
-				} )
-			);
+			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale ) );
 		}
 	};
 
@@ -658,8 +651,6 @@ class Signup extends Component {
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
 
-		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
-
 		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
@@ -700,7 +691,6 @@ class Signup extends Component {
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
-							queryParams={ { siteId, siteSlug } }
 							{ ...propsForCurrentStep }
 						/>
 					) }

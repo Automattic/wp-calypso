@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { parse } from 'qs';
+import { parse, stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -703,7 +703,12 @@ class DomainsStep extends Component {
 
 	getPreviousStepUrl() {
 		if ( 'use-your-domain' !== this.props.stepSectionName ) return null;
-
+		const basePath = getStepUrl(
+			this.props.flowName,
+			this.props.stepName,
+			'use-your-domain',
+			this.getLocale()
+		);
 		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
 		const currentStep = step ?? this.state?.currentStep;
 
@@ -722,15 +727,9 @@ class DomainsStep extends Component {
 				mode = inputMode.transferOrConnect;
 				break;
 		}
-		return getStepUrl(
-			this.props.flowName,
-			this.props.stepName,
-			'use-your-domain',
-			this.getLocale(),
-			{
-				step: mode,
-				...queryValues,
-			}
+		return (
+			`${ basePath }?step=${ mode }` +
+			( Object.keys( queryValues ).length ? `&${ stringify( { ...queryValues } ) }` : '' )
 		);
 	}
 

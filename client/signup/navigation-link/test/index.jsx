@@ -85,13 +85,7 @@ describe( 'NavigationLink', () => {
 
 		// It should call getStepUrl()
 		expect( getStepUrl ).toHaveBeenCalled();
-		expect( getStepUrl ).toHaveBeenCalledWith(
-			'test:flow',
-			'test:step1',
-			'test:section1',
-			'en',
-			undefined
-		);
+		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', 'test:step1', 'test:section1', 'en' );
 
 		// when it is the first step
 		getStepUrl.mockReset();
@@ -102,7 +96,7 @@ describe( 'NavigationLink', () => {
 		] );
 		wrapper.setProps( { stepName: 'test:step1' } ); // set the first step
 		expect( getStepUrl ).toHaveBeenCalled();
-		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', null, '', 'en', undefined );
+		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', null, '', 'en' );
 
 		// The href should be backUrl when exist.
 		wrapper.setProps( { backUrl: 'test:back-url' } );

@@ -61,11 +61,10 @@ function getRedirectToAfterLoginUrl( {
 	const stepAfterRedirect =
 		getNextStepName( flowName, stepName, userLoggedIn ) ||
 		getPreviousStepName( flowName, stepName, userLoggedIn );
+	const queryArgs = new URLSearchParams( initialContext?.query );
+	const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
 
-	return (
-		window.location.origin +
-		getStepUrl( flowName, stepAfterRedirect, '', '', initialContext?.query )
-	);
+	return window.location.origin + getStepUrl( flowName, stepAfterRedirect ) + queryArgsString;
 }
 
 function isOauth2RedirectValid( oauth2Redirect ) {

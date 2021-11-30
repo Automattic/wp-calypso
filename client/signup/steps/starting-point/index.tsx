@@ -14,7 +14,6 @@ interface Props {
 	isReskinned: boolean;
 	signupDependencies: any;
 	stepName: string;
-	initialContext: any;
 }
 
 // TODO: Adding take the masterclass
