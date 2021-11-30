@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { compact, isEqual, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -190,7 +191,16 @@ function bindGetPremiumThemePrice( state, siteId ) {
 export const ConnectedThemesSelection = connect(
 	(
 		state,
-		{ filter, page, search, vertical, siteId, source, isLoading: isCustomizedThemeListLoading }
+		{
+			filter,
+			page,
+			search,
+			tier,
+			vertical,
+			siteId,
+			source,
+			isLoading: isCustomizedThemeListLoading,
+		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
@@ -208,7 +218,7 @@ export const ConnectedThemesSelection = connect(
 		const query = {
 			search,
 			page,
-			tier: '',
+			tier: config.isEnabled( 'themes/premium' ) ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};

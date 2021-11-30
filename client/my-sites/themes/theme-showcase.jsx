@@ -302,6 +302,7 @@ class ThemeShowcase extends Component {
 			pathName,
 			title,
 			filterString,
+			isMultisite,
 			locale,
 		} = this.props;
 		const tier = '';
@@ -397,6 +398,7 @@ class ThemeShowcase extends Component {
 						onSearch={ this.doSearch }
 						search={ filterString + search }
 						tier={ tier }
+						showTierThemesControl={ ! isMultisite }
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (
