@@ -1,17 +1,19 @@
 import { Domain } from '@automattic/data-stores/dist/types/site';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { Site } from 'calypso/reader/list-manage/types';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
@@ -23,10 +25,7 @@ import './style.scss';
 
 type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
-	selectedDomainName: string;
-	source: string;
 	cartDomainName?: string;
-	selectedSite?: Site;
 	currencyCode?: string;
 	currentRoute?: string;
 	domain?: any;
@@ -48,7 +47,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 	props
 ) => {
 	const translate = useTranslate();
-	const { comparisonContext, isGSuiteSupported, selectedSite, selectedDomainName, source } = props;
+	const { comparisonContext, selectedDomainName, selectedSite, source } = props;
 
 	return (
 		<Main className={ 'email-providers-stacked-comparison__main' } wideLayout>
@@ -66,7 +65,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				source={ source }
 			/>
 
-			{ isGSuiteSupported && <> Google Workspace Component Placeholder </> }
+			<> Google Workspace Component Placeholder </>
 		</Main>
 	);
 };
@@ -98,6 +97,7 @@ export default connect(
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
 			source: ownProps.source,
+			titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},
 	( dispatch ) => {

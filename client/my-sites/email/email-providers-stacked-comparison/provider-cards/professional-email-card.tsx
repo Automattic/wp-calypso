@@ -28,8 +28,7 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
-	EmailProvidersStackedCardProps,
-	ProviderCard,
+	EmailProvidersStackedCardProps
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import {
 	PASSWORD_RESET_TITAN_FIELD,
@@ -41,6 +40,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison';
 
 import './professional-email-card.scss';
 
@@ -77,7 +77,7 @@ const professionalEmailCardInformation: ProviderCard = {
 	detailsExpanded: true,
 	expandButtonLabel: translate( 'Expand' ),
 	onExpandedChange: noop,
-	providerKey: '',
+	providerKey: 'titan',
 	showExpandButton: false,
 	description: translate( 'Integrated email solution for your WordPress.com site.' ),
 	logo,
