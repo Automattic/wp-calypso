@@ -17,6 +17,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
 
+	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	const {
