@@ -84,12 +84,6 @@ body:
         ---
 
         <br>
-
-        # Additional context
-
-        Please provide whatever additional context/information you have available to you in this section.
-
-        <br>
   - type: dropdown
     id: site-type
     attributes:
