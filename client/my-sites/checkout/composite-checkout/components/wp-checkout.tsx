@@ -8,7 +8,6 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
-	useEvents,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -46,6 +45,7 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
+import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -123,6 +123,7 @@ export default function WPCheckout( {
 	isLoggedOutCart,
 	infoMessage,
 	createUserAndSiteBeforeTransaction,
+	onPageLoadError,
 }: {
 	removeProductFromCart: RemoveProductFromCart;
 	changePlanLength: OnChangeItemVariant;
@@ -134,6 +135,7 @@ export default function WPCheckout( {
 	isLoggedOutCart: boolean;
 	infoMessage?: JSX.Element;
 	createUserAndSiteBeforeTransaction: boolean;
+	onPageLoadError: CheckoutPageErrorCallback;
 } ): JSX.Element {
 	const cartKey = useCartKey();
 	const {
@@ -146,7 +148,6 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
-	const onEvent = useEvents();
 	const reduxDispatch = useReduxDispatch();
 
 	const areThereDomainProductsInCart =
@@ -238,26 +239,18 @@ export default function WPCheckout( {
 
 	const onReviewError = useCallback(
 		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'review',
-				},
+			onPageLoadError( 'step_load', String( error ), {
+				stepId: 'review',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const onSummaryError = useCallback(
 		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'summary',
-				},
+			onPageLoadError( 'step_load', String( error ), {
+				stepId: 'summary',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const validatingButtonText = isCartPendingUpdate
