@@ -293,10 +293,6 @@ $plugin-details-header-padding: 100px;
 			border-bottom-color: transparent;
 		}
 
-		&:first-child .section-nav-tab__link {
-			padding-left: 0;
-		}
-
 		.section-nav-tab__link {
 			font-size: $font-body-small;
 
@@ -357,9 +353,9 @@ $plugin-details-header-padding: 100px;
 		}
 	}
 
-	@media screen and ( max-width: 480px ) {
+	@media screen and ( min-width: 481px ) {
 		.section-nav-tab:first-child .section-nav-tab__link {
-			padding-left: 15px;
+			padding-left: 0;
 		}
 	}
 }
