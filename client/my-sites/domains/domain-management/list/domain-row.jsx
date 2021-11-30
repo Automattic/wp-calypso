@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, home, moreVertical } from '@wordpress/icons';
+import { Icon, home, moreVertical, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -22,7 +22,11 @@ import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/ema
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
-import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementList,
+	createSiteFromDomainOnly,
+	domainTransferIn,
+} from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -303,6 +307,7 @@ class DomainRow extends PureComponent {
 	renderEllipsisMenu() {
 		const {
 			isLoadingDomainDetails,
+			site,
 			domain,
 			showDomainDetails,
 			disabled,
@@ -314,7 +319,7 @@ class DomainRow extends PureComponent {
 			return <div className="domain-row__action-cell"></div>;
 		}
 
-		if ( isLoadingDomainDetails || ! domain ) {
+		if ( isLoadingDomainDetails || ! domain || ! site ) {
 			return (
 				<div className="domain-row__action-cell">
 					<p className="domain-row__placeholder" />
@@ -322,31 +327,44 @@ class DomainRow extends PureComponent {
 			);
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="domain-row__action-cell">
+				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<EllipsisMenu
 					disabled={ disabled || isBusy }
 					onClick={ this.stopPropagation }
 					toggleTitle={ translate( 'Options' ) }
 					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 					popoverClassName="domain-row__popover"
+					position="bottom"
 				>
 					<PopoverMenuItem icon="domains" onClick={ this.handleClick }>
-						{ translate( 'View settings' ) }
+						{ domain.type === domainTypes.TRANSFER
+							? translate( 'View transfer' )
+							: translate( 'View settings' ) }
 					</PopoverMenuItem>
 					{ this.canSetAsPrimary() && (
 						<PopoverMenuItem onClick={ this.makePrimary }>
-							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 							<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-							{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 							{ translate( 'Make primary site address' ) }
 						</PopoverMenuItem>
 					) }
+					{ domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer && (
+						<PopoverMenuItem href={ domainTransferIn( site.slug, domain.name, true ) }>
+							<Icon icon={ redo } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+							{ translate( 'Transfer to WordPress.com' ) }
+						</PopoverMenuItem>
+					) }
+					{ site.options?.is_domain_only && (
+						<PopoverMenuItem href={ createSiteFromDomainOnly( site.slug, site.siteId ) }>
+							<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+							{ translate( 'Create site' ) }
+						</PopoverMenuItem>
+					) }
 				</EllipsisMenu>
+				{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 			</div>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	canSetAsPrimary() {
