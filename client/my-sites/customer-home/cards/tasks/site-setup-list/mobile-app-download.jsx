@@ -1,25 +1,23 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import userAgent from 'calypso/lib/user-agent';
 
 const MobileAppDownload = () => {
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 
-	const appLink = 'https://apps.wordpress.com/mobile';
+	let appLink = 'https://apps.wordpress.com/mobile';
 	let linkType = 'general';
-	let showIosBadge = false;
-	let showAndroidBadge = false;
 
+	const utm_source = 'calypso-customer-home-site-setup';
 	if ( isiPad || isiPod || isiPhone ) {
-		showIosBadge = true;
+		appLink = `https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=${ utm_source }&mt=8`;
 		linkType = 'ios';
 	}
 
 	if ( isAndroid ) {
-		showAndroidBadge = true;
-		linkType = 'ios';
+		appLink = `https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3D%${ utm_source }`;
+		linkType = 'android';
 	}
 
 	return (
@@ -32,27 +30,19 @@ const MobileAppDownload = () => {
 				<p className="mobile-app-download__description">
 					{ translate( 'Make updates on the go.' ) }
 				</p>
-				{ ! showIosBadge && ! showAndroidBadge && (
-					<a
-						className="mobile-app-download__link"
-						href={ appLink }
-						target="_blank"
-						onClick={ () => {
-							recordTracksEvent( 'calypso_mobile_app_download_link_click', {
-								type_of_link: linkType,
-							} );
-						} }
-						rel="noreferrer"
-					>
-						{ translate( 'Learn more' ) }
-					</a>
-				) }
-				{ showIosBadge && (
-					<AppsBadge storeName={ 'ios' } utm_source={ 'calypso-customer-home' }></AppsBadge>
-				) }
-				{ showAndroidBadge && (
-					<AppsBadge storeName={ 'android' } utm_source={ 'calypso-customer-home' }></AppsBadge>
-				) }
+				<a
+					className="mobile-app-download__link"
+					href={ appLink }
+					target="_blank"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_mobile_app_download_link_click', {
+							type_of_link: linkType,
+						} );
+					} }
+					rel="noopener noreferrer"
+				>
+					{ translate( 'Download' ) }
+				</a>
 			</div>
 		</div>
 	);
