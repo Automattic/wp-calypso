@@ -1,7 +1,7 @@
 import { NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
@@ -30,23 +30,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		siteUpgrading,
 	} = useWoopHandling( siteId );
 
-	useEffect( () => {
-		if ( isFetching ) {
-			return;
-		}
-
-		if ( ! siteUpgrading.required ) {
-			return;
-		}
-
-		window.location.href = siteUpgrading.checkoutUrl;
-	}, [ siteUpgrading, isFetching, wpcomDomain ] );
-
 	const isLoading = ! siteId || isFetching;
 
 	function getWPComSubdomainWarningContent() {
-		// Get staging sudomain based on the wpcom subdomain.
-
 		return (
 			<>
 				<div className="confirm__info-section">{ isLoading && <LoadingEllipsis /> }</div>
@@ -73,14 +59,33 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					<NextButton
 						disabled={ isLoading }
 						onClick={ () => {
-							if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
-								return goToStep( 'confirm', 'eligibility_substep' );
-							}
-
-							return goToStep( 'transfer' );
+							return goToStep( 'confirm', 'plan' );
 						} }
 					>
 						{ __( 'Sounds good' ) }
+					</NextButton>
+				</div>
+			</>
+		);
+	}
+
+	function getCheckoutContent() {
+		return (
+			<>
+				<div className="confirm__info-section">{ isLoading && <LoadingEllipsis /> }</div>
+
+				<div className="confirm__instructions-container">
+					<div className="confirm__instructions-title">{ __( 'Upgrading is required' ) }</div>
+
+					<p>{ siteUpgrading.description }</p>
+
+					<NextButton
+						disabled={ isLoading }
+						onClick={ () => {
+							window.location.href = siteUpgrading.checkoutUrl;
+						} }
+					>
+						{ siteUpgrading.checkoutText }
 					</NextButton>
 				</div>
 			</>
@@ -94,6 +99,11 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			( stepSectionName === 'wpcom_subdomain_substep' || typeof stepSectionName === 'undefined' )
 		) {
 			return getWPComSubdomainWarningContent();
+		}
+
+		// Check/confirm checkout site plan.
+		if ( siteUpgrading.required && stepSectionName === 'plan' ) {
+			return getCheckoutContent();
 		}
 
 		return (
