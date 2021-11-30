@@ -16,7 +16,7 @@ import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProfessionalEmailCard from './provider-cards/professional-email-card';
-import { Site } from './provider-cards/provider-card-props';
+import type { Site } from './provider-cards/provider-card-props';
 
 import './style.scss';
 
@@ -34,7 +34,7 @@ type EmailProvidersStackedComparisonProps = {
 	productsList?: string[];
 	requestingSiteDomains?: boolean;
 	shoppingCartManager?: any;
-	selectedSite?: Site;
+	selectedSite?: Site | null;
 	selectedDomainName: string;
 	source: string;
 	titanMailProduct?: any;
