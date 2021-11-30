@@ -79,7 +79,7 @@ private object EditingToolkit : BuildType({
 				export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
 
 				cd apps/editing-toolkit
-				yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
+				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
 			"""
 		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
