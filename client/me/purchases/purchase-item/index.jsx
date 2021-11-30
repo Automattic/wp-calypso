@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
+import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
@@ -465,13 +466,19 @@ class PurchaseItem extends Component {
 
 function BackupPaymentMethodNotice() {
 	const translate = useTranslate();
-	/* translators: Notice that this purchase may use a backup payment method if it fails to renew */
-	const noticeText = translate( 'or a {{link}}backup payment method{{/link}}', {
-		components: {
-			link: <a href="/me/purchases/payment-methods" />,
-		},
-	} );
-	return <span className="purchase-item__backup-payment-method-notice">{ noticeText }</span>;
+	const noticeText = translate(
+		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
+		{
+			components: {
+				link: <a href="/me/purchases/payment-methods" />,
+			},
+		}
+	);
+	return (
+		<InfoPopover position="bottom left" className="purchase-item__backup-payment-method-notice">
+			{ noticeText }
+		</InfoPopover>
+	);
 }
 
 PurchaseItem.propTypes = {
