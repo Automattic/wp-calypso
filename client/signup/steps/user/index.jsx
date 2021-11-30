@@ -146,7 +146,6 @@ export class UserStep extends Component {
 			url.search = search_params.toString();
 			// Redirect to itself and append ?user_completed
 			window.location.replace( url.toString() );
-			return;
 		}
 	}
 
