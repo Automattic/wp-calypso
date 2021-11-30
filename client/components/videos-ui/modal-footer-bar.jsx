@@ -1,12 +1,15 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './modal-footer-bar.scss';
 
 const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete = false } ) => {
 	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
 	const onBackLinkClick = ( event ) => {
 		recordTracksEvent( 'calypso_courses_mobile_back_click', {
 			course: course?.slug,
@@ -17,6 +20,13 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 		recordTracksEvent( 'calypso_courses_cta_click', {
 			course: course?.slug,
 		} );
+	};
+
+	const getStartWritingUrl = () => {
+		if ( ! course?.cta?.url || ! selectedSite?.domain ) {
+			return 'https://wordpress.com/post/';
+		}
+		return `${ course.cta.url }/${ selectedSite.domain }`;
 	};
 
 	return (
@@ -42,7 +52,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 					<Button
 						onClick={ onStartWritingClick }
 						className="videos-ui__button"
-						href={ course?.cta.url }
+						href={ getStartWritingUrl() }
 					>
 						{ course?.cta.action }
 					</Button>
