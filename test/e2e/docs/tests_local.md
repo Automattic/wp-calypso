@@ -7,13 +7,10 @@
   - [Running tests](#running-tests)
     - [Individual spec files](#individual-spec-files)
     - [Group](#group)
-- [Advanced](#advanced)
-  - [Save authentication cookies](#save-authentication-cookies)
-    - [Enable](#enable)
-    - [Disable](#disable)
-  - [Target local webapp](#target-local-webapp)
-  - [Debug mode](#debug-mode)
-  - [Notes on TypeScript](#notes-on-typescript)
+  - [Advanced techniques](#advanced-techniques)
+    - [Save authentication cookies](#save-authentication-cookies)
+    - [Target local webapp](#target-local-webapp)
+    - [Debug mode](#debug-mode)
 
 <!-- /TOC -->
 
@@ -51,13 +48,13 @@ Use the `--group` arg to provide a suite to test `Jest`. For example, to run all
 yarn jest --group=calypso-pr
 ```
 
-# Advanced
+## Advanced techniques
 
-## Save authentication cookies
+### Save authentication cookies
 
 Implemented in [#58082](https://github.com/Automattic/wp-calypso/pull/58082), this allows the storage of authenticated cookies of the users listed [here](https://github.com/Automattic/wp-calypso/blob/trunk/test/e2e/lib/jest/globalSetup.ts#L33). These cookies are valid for up to a day.
 
-### Enable
+**Enable**
 
 ```
 export SAVE_AUTH_COOKIES=true
@@ -73,7 +70,7 @@ The result should look like this:
 
 ![saved_auth_cookie](resources/saved_auth_cookies.gif)
 
-### Disable
+**Disable**
 
 ```
 unset SAVE_AUTH_COOKIES
@@ -85,7 +82,7 @@ or
 SAVE_AUTH_COOKIES=false
 ```
 
-## Target local webapp
+### Target local webapp
 
 Local development environment refers to a locally served instance of the `wp-calypso` frontend.
 
@@ -107,11 +104,11 @@ yarn start
 
 The local environment is now ready for testing. When a test is run, it will hit the local development server instead of the WordPress.com staging environment.
 
-## Debug mode
+### Debug mode
 
 Refer to the [Debugging](debugging.md) page for techniques on running a test in debug mode.
 
-## Notes on TypeScript
+#0## Notes on TypeScript
 
 Because Jest, the test runner, is already to configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs/specs-playwright` directory, and it will automatically take care of running both `.js` and `.ts` files.
 
