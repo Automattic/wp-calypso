@@ -48,6 +48,9 @@ open class WPComPluginBuild(
 
 		params.buildParams()
 
+		artifactRules = "$pluginSlug.zip"
+		buildNumberPattern = "%build.prefix%.%build.counter%"
+
 		triggers {
 			vcs {
 				branchFilter = """
