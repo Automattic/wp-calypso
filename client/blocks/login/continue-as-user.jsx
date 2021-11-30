@@ -31,7 +31,13 @@ async function validateUrl( redirectUrl ) {
 	}
 }
 
-function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount, redirectPath } ) {
+function ContinueAsUser( {
+	currentUser,
+	redirectUrlFromQuery,
+	onChangeAccount,
+	redirectPath,
+	isSignUpFlow,
+} ) {
 	const translate = useTranslate();
 	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
 	const [ isLoading, setIsLoading ] = useState( true );
@@ -49,6 +55,38 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount, r
 	// This helps avoid jarring layout shifts. It's not ideal that the link URL changes transparently
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
 	// the user can notice.
+
+	const notYouText = isSignUpFlow
+		? translate( 'Not you?{{br/}} Sign out or log in with {{link}}another account{{/link}}', {
+				components: {
+					br: <br />,
+					link: (
+						<button
+							type="button"
+							id="loginAsAnotherUser"
+							className="continue-as-user__change-user-link"
+							onClick={ onChangeAccount }
+						/>
+					),
+				},
+				args: { userName },
+				comment: 'Link to continue login as different user',
+		  } )
+		: translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
+				components: {
+					br: <br />,
+					link: (
+						<button
+							type="button"
+							id="loginAsAnotherUser"
+							className="continue-as-user__change-user-link"
+							onClick={ onChangeAccount }
+						/>
+					),
+				},
+				args: { userName },
+				comment: 'Link to continue login as different user',
+		  } );
 
 	return (
 		<div className="continue-as-user">
@@ -71,23 +109,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount, r
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
-			<div className="continue-as-user__not-you">
-				{ translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
-					components: {
-						br: <br />,
-						link: (
-							<button
-								type="button"
-								id="loginAsAnotherUser"
-								className="continue-as-user__change-user-link"
-								onClick={ onChangeAccount }
-							/>
-						),
-					},
-					args: { userName },
-					comment: 'Link to continue login as different user',
-				} ) }
-			</div>
+			<div className="continue-as-user__not-you">{ notYouText }</div>
 		</div>
 	);
 }
