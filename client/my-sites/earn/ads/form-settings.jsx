@@ -270,7 +270,8 @@ class AdsFormSettings extends Component {
 				/>
 				<FormSettingExplanation>
 					{ translate(
-						'Earnings will be paid to the PayPal account on file. A PayPal account in good standing with the ability to accept funds must be maintained in order to receive earnings. You can verify which PayPal features are available to you by looking up your country on the {{a}}PayPal website{{/a}}.',
+						'Earnings will be paid to the PayPal account on file. A PayPal account in good standing with the ability to accept funds must be maintained in order to receive earnings.' +
+							' You can verify which PayPal features are available to you by looking up your country on the {{a}}PayPal website{{/a}}.',
 						{
 							components: {
 								a: (
