@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 		gutenbergEditorPage = await newPostFlow.startImmediately( user );
 	} );
 
-	it( `Insert ${ PricingTableBlock.blockName } block and enter price to left table`, async function () {
+	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {
 		const blockHandle = await gutenbergEditorPage.addBlock(
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
