@@ -762,6 +762,7 @@ export default function CompositeCheckout( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
+					onPageLoadError={ onPageLoadError }
 				/>
 			</CheckoutProvider>
 		</Fragment>
