@@ -6,7 +6,6 @@ import {
 	isPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { useEvents } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -140,9 +139,8 @@ export default function CheckoutHelpLink(): JSX.Element {
 	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
 	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
 
-	const onEvent = useEvents();
 	const handleHelpButtonClicked = () => {
-		onEvent( { type: 'calypso_checkout_composite_summary_help_click', payload: {} } );
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_summary_help_click' ) );
 		reduxDispatch( showInlineHelpPopover() );
 	};
 
