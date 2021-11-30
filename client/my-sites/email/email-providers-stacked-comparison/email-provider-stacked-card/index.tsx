@@ -71,16 +71,12 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		</div>
 	);
 
-	const title = (
-		<div className="email-provider-stacked-card__title-container">
-			<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
-			<p>{ description }</p>
-		</div>
-	);
-
 	const header = (
 		<div className="email-provider-stacked-card__header">
-			{ title }
+			<div className="email-provider-stacked-card__title-container">
+				<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
+				<p>{ description }</p>
+			</div>
 			{ price }
 		</div>
 	);

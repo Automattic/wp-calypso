@@ -1,13 +1,14 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
-import { Children, cloneElement, FunctionComponent, ReactElement } from 'react';
+import { Children, cloneElement, FunctionComponent } from 'react';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
 import Badge from 'calypso/components/badge';
 import PromoCardCta from './cta';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -46,6 +47,11 @@ const PromoCard: FunctionComponent< Props > = ( {
 		},
 		className
 	);
+
+	const badgeComponent = badge ? (
+		<Badge className="promo-card__title-badge">{ badge }</Badge>
+	) : null;
+
 	return (
 		<ActionPanel className={ classes }>
 			{ image && (
@@ -62,13 +68,13 @@ const PromoCard: FunctionComponent< Props > = ( {
 				{ title && (
 					<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
 						{ title }
-						{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
+						{ badgeComponent }
 					</ActionPanelTitle>
 				) }
 				{ titleComponent && (
 					<>
 						{ titleComponent }
-						{ badge && <Badge className="promo-card__title-badge">{ badge }</Badge> }
+						{ badgeComponent }
 					</>
 				) }
 				{ isPrimary
