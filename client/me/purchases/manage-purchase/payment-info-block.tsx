@@ -111,11 +111,13 @@ function PaymentInfoBlockWrapper( {
 
 function BackupPaymentMethodNotice() {
 	const translate = useTranslate();
-	/* translators: Notice that this purchase may use a backup payment method if it fails to renew */
-	const noticeText = translate( 'or a {{link}}backup payment method{{/link}}', {
-		components: {
-			link: <a href="/me/purchases/payment-methods" />,
-		},
-	} );
+	const noticeText = translate(
+		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
+		{
+			components: {
+				link: <a href="/me/purchases/payment-methods" />,
+			},
+		}
+	);
 	return <div className="manage-purchase__backup-payment-method-notice">{ noticeText }</div>;
 }
