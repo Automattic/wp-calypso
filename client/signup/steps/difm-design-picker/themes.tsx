@@ -36,52 +36,9 @@ export default [
 		name: 'Geologist',
 	},
 	{
-		taxonomies: {
-			theme_subject: [
-				{
-					name: 'Professional Services',
-					slug: 'professional-services',
-				},
-			],
-		},
-		id: 'bantry',
-		name: 'Bantry',
-	},
-	{
-		taxonomies: {
-			theme_subject: [
-				{
-					name: 'Professional Services',
-					slug: 'professional-services',
-				},
-			],
-		},
-		id: 'laporte',
-		name: 'Laporte',
-	},
-	{
-		taxonomies: {
-			theme_subject: [ { name: 'Professional Services', slug: 'professional-services' } ],
-		},
-		id: 'sigler',
-		name: 'Sigler',
-	},
-	{
 		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
 		id: 'antin',
 		name: 'Antin',
-	},
-	{
-		taxonomies: {
-			theme_subject: [
-				{
-					name: 'Creative Arts',
-					slug: 'creative-arts',
-				},
-			],
-		},
-		id: 'bingley',
-		name: 'Bingley',
 	},
 	{
 		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
@@ -90,45 +47,8 @@ export default [
 	},
 	{
 		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
-		id: 'miller',
-		name: 'Miller',
-	},
-	{
-		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
-		id: 'pollard',
-		name: 'Pollard',
-	},
-	{
-		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
-		id: 'paxton',
-		name: 'Paxton',
-	},
-	{
-		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
-		id: 'jones',
-		name: 'Jones',
-	},
-	{
-		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
 		id: 'bradford',
 		name: 'Bradford',
-	},
-	{
-		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
-		id: 'baker',
-		name: 'Baker',
-	},
-	{
-		taxonomies: {
-			theme_subject: [
-				{
-					name: 'Creative Arts',
-					slug: 'creative-arts',
-				},
-			],
-		},
-		id: 'blockbase',
-		name: 'Blockbase',
 	},
 	{
 		taxonomies: {
