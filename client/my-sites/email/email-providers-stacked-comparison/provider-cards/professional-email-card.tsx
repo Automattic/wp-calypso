@@ -28,10 +28,6 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
-	EmailProvidersStackedCardProps,
-	ProviderCard,
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
-import {
 	PASSWORD_RESET_TITAN_FIELD,
 	FULL_NAME_TITAN_FIELD,
 } from 'calypso/my-sites/email/titan-new-mailbox';
@@ -41,6 +37,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
 
 import './professional-email-card.scss';
 
@@ -129,7 +126,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	const optionalFields = [ PASSWORD_RESET_TITAN_FIELD, FULL_NAME_TITAN_FIELD ];
 
 	const onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, domainName, hasCartDomain, source } = props;
+		const { comparisonContext, domain, hasCartDomain, source } = props;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
 
@@ -158,10 +155,10 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			return;
 		}
 
-		const { productsList, selectedSite, shoppingCartManager } = props;
+		const { productsList, selectedDomainName, selectedSite, shoppingCartManager } = props;
 
 		const cartItem = titanMailMonthly( {
-			domain: domainName,
+			domain: selectedDomainName,
 			quantity: validatedTitanMailboxes.length,
 			extra: {
 				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
@@ -248,7 +245,7 @@ export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		domain,
-		domainName: resolvedDomainName,
+		selectedDomainName: resolvedDomainName,
 		hasCartDomain,
 		productsList: getProductsList( state ),
 		selectedSite,

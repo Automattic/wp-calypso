@@ -1,9 +1,14 @@
 import { Gridicon } from '@automattic/components';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
+
+export interface EmailProviderStackedFeatureProps {
+	title: TranslateResult;
+}
 
 const EmailProviderStackedFeature: FunctionComponent< EmailProviderStackedFeatureProps > = (
 	props
@@ -18,10 +23,6 @@ const EmailProviderStackedFeature: FunctionComponent< EmailProviderStackedFeatur
 		</div>
 	);
 };
-
-export interface EmailProviderStackedFeatureProps {
-	title: TranslateResult;
-}
 
 const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeaturesProps > = (
 	props
