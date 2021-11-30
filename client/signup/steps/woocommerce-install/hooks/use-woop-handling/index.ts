@@ -1,6 +1,8 @@
 import { FEATURE_WOOP } from '@automattic/calypso-products';
+import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	fetchAutomatedTransferStatusOnce,
 	requestEligibility,
@@ -12,6 +14,8 @@ import {
 	EligibilityData,
 	EligibilityWarning,
 } from 'calypso/state/automated-transfer/selectors';
+import { requestProductsList } from 'calypso/state/products-list/actions';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
@@ -35,6 +39,9 @@ type EligibilityHook = {
 	siteUpgrading: {
 		required: boolean;
 		checkoutUrl: string;
+		checkoutText: string;
+		productName: string;
+		description: string;
 	};
 };
 
@@ -49,6 +56,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 
 		dispatch( fetchAutomatedTransferStatusOnce( siteId ) );
 		dispatch( requestEligibility( siteId ) );
+		dispatch( requestProductsList() );
 	}, [ siteId, dispatch ] );
 
 	// Get eligibility data.
@@ -103,9 +111,36 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		eligibilityNoProperPlan && ! isWoopFeatureActive && hasWoopFeatureAvailable
 	);
 
+	/*
+	 * We pick the first plan from the available plans list.
+	 * The priority is defined by the store products list.
+	 */
+	const upgradingPlan =
+		useSelector( ( state ) => getProductBySlug( state, hasWoopFeatureAvailable?.[ 0 ] ) ) || {};
+
+	const productName = upgradingPlan.product_name;
+
 	const siteUpgrading = {
 		required: requiresUpgrade,
-		checkoutUrl: `/woocommerce-installation/${ wpcomDomain }`,
+		checkoutUrl: addQueryArgs(
+			{ redirect_to: window.location.href },
+			`/checkout/${ wpcomDomain }/${ upgradingPlan.product_slug }`
+		),
+		productName,
+		description: productName
+			? sprintf(
+					/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
+					__( 'Upgrade to the %s plan and set up your WooCommerce store.' ),
+					productName
+			  )
+			: __( 'Upgrade to set up your WooCommerce store.' ),
+		checkoutText: productName
+			? sprintf(
+					/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
+					__( 'Upgrade to %s' ),
+					productName
+			  )
+			: __( 'Upgrade' ),
 	};
 
 	return {
