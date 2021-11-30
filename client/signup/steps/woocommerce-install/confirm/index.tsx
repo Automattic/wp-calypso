@@ -6,7 +6,7 @@ import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-li
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import useWoopHandling from '../hooks/use-woop-handling';
+import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
@@ -23,7 +23,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		eligibilityWarnings,
 		wpcomSubdomainWarning,
 		siteUpgrading,
-	} = useWoopHandling( siteId );
+	} = useWooCommerceOnPlansEligibility( siteId );
 
 	const isLoading = ! siteId || isFetching;
 

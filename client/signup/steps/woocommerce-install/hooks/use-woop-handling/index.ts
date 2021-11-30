@@ -78,7 +78,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		( { id } ) => id === 'wordpress_subdomain'
 	);
 
-	// Trasferring blockers
+	// Transferring blockers
 	const transferringBlockers =
 		eligibilityHolds?.filter( ( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold ) ) || [];
 
