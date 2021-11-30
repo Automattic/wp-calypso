@@ -29,17 +29,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 
 	setupHooks( ( args ) => {
 		page = args.page;
-		page.on( 'dialog', async ( dialog ) => {
-			await dialog.accept();
-		} );
 		newPostFlow = new NewPostFlow( page );
-	} );
-
-	afterEach( async () => {
-		// Prevents the autosave so we don't see the "restore from autosave" message.
-		await page.evaluate( () => {
-			window.sessionStorage.clear();
-		} );
 	} );
 
 	beforeAll( async () => {
