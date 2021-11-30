@@ -18,7 +18,7 @@ export function MasterbarCartButton( {
 	goToCheckout,
 }: MasterbarCartButtonProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart( selectedSiteSlug );
-	const masterbarButtonRef = useRef( null );
+	const cartButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
 	const translate = useTranslate();
 
@@ -38,14 +38,14 @@ export function MasterbarCartButton( {
 	const tooltip = translate( 'My shopping cart' );
 
 	return (
-		<div className="masterbar-cart-button" ref={ masterbarButtonRef }>
+		<div className="masterbar-cart-button" ref={ cartButtonRef }>
 			<CheckoutErrorBoundary errorMessage="Error">
 				<MasterbarItem icon="cart" tooltip={ tooltip } onClick={ onClick } />
 				<MasterbarCartCount productsInCart={ responseCart.products.length } />
 				<Popover
 					isVisible={ isActive }
 					onClose={ onClose }
-					context={ masterbarButtonRef.current }
+					context={ cartButtonRef.current }
 					position="bottom left"
 				>
 					<MiniCart selectedSiteSlug={ selectedSiteSlug } goToCheckout={ goToCheckout } />
