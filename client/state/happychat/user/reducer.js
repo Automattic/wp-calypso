@@ -2,6 +2,7 @@ import {
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_ELIGIBILITY_SET,
 	PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
+	SUPPORT_LEVEL_SET,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
@@ -54,4 +55,21 @@ export const isPresalesPrecancellationEligible = withSchemaValidation(
 	}
 );
 
-export default combineReducers( { geoLocation, isEligible, isPresalesPrecancellationEligible } );
+/**
+ * The level of support we're offering to this user (represents their highest paid plan).
+ */
+export const supportLevel = ( state = null, { type, level } ) => {
+	switch ( type ) {
+		case SUPPORT_LEVEL_SET:
+			return level;
+		default:
+			return state;
+	}
+};
+
+export default combineReducers( {
+	geoLocation,
+	isEligible,
+	isPresalesPrecancellationEligible,
+	supportLevel,
+} );

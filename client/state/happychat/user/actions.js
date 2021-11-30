@@ -3,8 +3,8 @@ import wpcom from 'calypso/lib/wp';
 import {
 	HAPPYCHAT_ELIGIBILITY_SET,
 	PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
+	SUPPORT_LEVEL_SET,
 } from 'calypso/state/action-types';
-import { setSupportLevel } from 'calypso/state/help/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/happychat/init';
@@ -17,6 +17,11 @@ export const setHappyChatEligibility = ( isEligible ) => ( {
 export const setPresalePrecancellationAvailability = ( availability ) => ( {
 	type: PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
 	availability,
+} );
+
+export const setSupportLevel = ( level ) => ( {
+	type: SUPPORT_LEVEL_SET,
+	level,
 } );
 
 export const requestHappychatEligibility = () => ( dispatch ) => {
