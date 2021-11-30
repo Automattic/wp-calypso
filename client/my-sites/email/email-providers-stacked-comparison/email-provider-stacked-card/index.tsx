@@ -27,6 +27,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		footerBadge,
 		formattedPrice,
 		formFields,
+		isDomainEligibleForTitanFreeTrial,
 		logo,
 		onButtonClick = noop,
 		onExpandedChange = noop,

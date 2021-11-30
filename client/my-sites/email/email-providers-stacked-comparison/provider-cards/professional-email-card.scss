@@ -3,3 +3,16 @@
 	height: 48px;
 	width: 48px;
 }
+
+.professional-email-card__keep-main-price {
+	color: var( --studio-green-50 );
+	text-decoration: none;
+}
+
+.email-provider-stacked-card__price-badge {
+	.promo-card__price {
+		price__cost {
+			color: var( --studio-gray-50 );
+		}
+	}
+}
