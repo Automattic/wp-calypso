@@ -125,24 +125,3 @@
 		box-sizing: border-box;
 	}
 }
-
-.design-picker__categories-footer {
-	margin-bottom: 40px;
-
-	&-button {
-		width: 100%;
-		height: 40px;
-		border-radius: 4px;
-		box-shadow: 0 1px 2px rgb( 0 0 0 / 5% );
-		font-size: 0.875rem !important; /* Overwrite style at L46 */
-		font-weight: 500;
-	}
-
-	@include break-small {
-		margin-top: 40px;
-
-		&-button {
-			width: auto;
-		}
-	}
-}

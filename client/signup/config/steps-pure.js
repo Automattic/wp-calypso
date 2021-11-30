@@ -746,7 +746,9 @@ export function generateSteps( {
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
-				useBlankCanvasButton: config.isEnabled( 'signup/design-picker-use-blank-canvas-button' ),
+				useFeaturedPicksButtons: config.isEnabled(
+					'signup/design-picker-use-featured-picks-buttons'
+				),
 			},
 		},
 		'difm-design-setup-site': {
@@ -762,7 +764,7 @@ export function generateSteps( {
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
 				showDesignPickerCategoriesAllFilter: false,
-				useBlankCanvasButton: false,
+				useFeaturedPicksButtons: false,
 			},
 		},
 		'difm-design': {

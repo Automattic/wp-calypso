@@ -95,7 +95,7 @@
 		"signup/reskin": true,
 		"signup/social": true,
 		"signup/design-picker-categories": true,
-		"signup/design-picker-use-blank-canvas-button": false,
+		"signup/design-picker-use-featured-picks-buttons": false,
 		"signup/setup-site-after-checkout": true,
 		"signup/hero-flow": true,
 		"site-indicator": true,

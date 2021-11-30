@@ -510,6 +510,7 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": false,
+			"is_featured_picks": true,
 			"features": []
 		}
 	]

@@ -1,5 +1,5 @@
-import { Button } from '@automattic/components';
 import DesignPicker, {
+	FeaturedPicksButtons,
 	isBlankCanvasDesign,
 	getDesignUrl,
 	useCategorization,
@@ -31,7 +31,7 @@ import './style.scss';
 const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
 
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned, queryParams, useBlankCanvasButton } = props;
+	const { flowName, stepName, isReskinned, queryParams, useFeaturedPicksButtons } = props;
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -76,30 +76,37 @@ export default function DesignPickerStep( props ) {
 
 	const userLoggedIn = useSelector( isUserLoggedIn );
 
-	const designs = useMemo( () => {
+	const { designs, featuredPicksDesigns } = useMemo( () => {
 		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		const allThemes = themesToBeTransformed.map( ( { id, name, taxonomies } ) => ( {
-			categories: taxonomies?.theme_subject ?? [],
-			// Blank Canvas uses the theme_picks taxonomy with a "featured" term in order to
-			// appear prominently in theme galleries.
-			showFirst: !! taxonomies?.theme_picks?.find( ( { slug } ) => slug === 'featured' ),
-			features: [],
-			is_premium: false,
-			slug: id,
-			template: id,
-			theme: id,
-			title: name,
-			...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-		} ) );
+		const allThemes = themesToBeTransformed.map( ( { id, name, taxonomies } ) => {
+			// Designs use a "featured" term in the theme_picks taxonomy. For example: Blank Canvas
+			const isFeaturedPicks = !! taxonomies?.theme_picks?.find(
+				( { slug } ) => slug === 'featured'
+			);
 
-		if ( allThemes.length === 0 ) {
-			return [];
-		}
+			return {
+				categories: taxonomies?.theme_subject ?? [],
+				// Designs in order to appear prominently in theme galleries.
+				showFirst: isFeaturedPicks,
+				features: [],
+				is_premium: false,
+				// Designs in order to appear at the below of the theme categories.
+				is_featured_picks: isFeaturedPicks,
+				slug: id,
+				template: id,
+				theme: id,
+				title: name,
+				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+			};
+		} );
 
-		return [ allThemes[ 0 ], ...shuffle( allThemes.slice( 1 ) ) ];
+		return {
+			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
+			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
+		};
 	}, [ themesToBeTransformed ] );
 
 	// Update the selected design when the section changes
@@ -158,11 +165,7 @@ export default function DesignPickerStep( props ) {
 	function renderDesignPicker() {
 		return (
 			<DesignPicker
-				designs={
-					useBlankCanvasButton
-						? designs.filter( ( design ) => ! isBlankCanvasDesign( design ) )
-						: designs
-				}
+				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
 				theme={ isReskinned ? 'light' : 'dark' }
 				locale={ translate.localeSlug }
 				onSelect={ pickDesign }
@@ -181,18 +184,8 @@ export default function DesignPickerStep( props ) {
 					/>
 				}
 				categoriesFooter={
-					useBlankCanvasButton && (
-						<div className="design-picker__categories-footer">
-							<Button
-								className="design-picker__categories-footer-button"
-								isSecondary
-								onClick={ () =>
-									pickDesign( designs.find( ( design ) => isBlankCanvasDesign( design ) ) )
-								}
-							>
-								{ translate( 'Use Blank Canvas' ) }
-							</Button>
-						</div>
+					useFeaturedPicksButtons && (
+						<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
 					)
 				}
 			/>
@@ -331,7 +324,8 @@ DesignPickerStep.propTypes = {
 	goToNextStep: PropTypes.func.isRequired,
 	signupDependencies: PropTypes.object.isRequired,
 	stepName: PropTypes.string.isRequired,
-	useBlankCanvasButton: PropTypes.bool,
+	/** Enable designs with a "featured" term in the theme_picks taxonomy staying at the below of categories filter */
+	useFeaturedPicksButtons: PropTypes.bool,
 };
 
 // Ensures Blog category appears at the top of the design category list
