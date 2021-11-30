@@ -32,6 +32,11 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 	const isLoading = ! siteId || isFetching;
 
+	const backUrl =
+		stepSectionName === 'info' || typeof stepSectionName === 'undefined'
+			? `/woocommerce-installation/${ wpcomDomain }`
+			: 'info';
+
 	function getWPComSubdomainWarningContent() {
 		return (
 			<>
@@ -96,7 +101,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		// wpcom subdomain warning.
 		if (
 			wpcomSubdomainWarning &&
-			( stepSectionName === 'wpcom_subdomain_substep' || typeof stepSectionName === 'undefined' )
+			( stepSectionName === 'info' || typeof stepSectionName === 'undefined' )
 		) {
 			return getWPComSubdomainWarningContent();
 		}
@@ -134,7 +139,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ wpcomDomain }` }
+			backUrl={ backUrl }
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
