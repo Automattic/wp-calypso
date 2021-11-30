@@ -4,7 +4,7 @@ import { MiniCart } from '@automattic/mini-cart';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import MasterbarItem from './item';
+import MasterbarItem from '../item';
 
 import './masterbar-cart-button-style.scss';
 
