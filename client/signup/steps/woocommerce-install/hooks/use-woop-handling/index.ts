@@ -123,7 +123,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const siteUpgrading = {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
-			{ redirect_to: window.location.href },
+			{ redirect_to: addQueryArgs( { siteSlug: wpcomDomain }, window.location.href ) },
 			`/checkout/${ wpcomDomain }/${ upgradingPlan.product_slug }`
 		),
 		productName,
