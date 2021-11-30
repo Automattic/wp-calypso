@@ -18,28 +18,6 @@ function Undocumented( wpcom ) {
 	this.wpcom = wpcom;
 }
 
-Undocumented.prototype.jetpackLogin = function ( siteId, _wp_nonce, redirect_uri, scope, state ) {
-	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/jetpack-login';
-	const params = { _wp_nonce, redirect_uri, scope, state };
-	return this.wpcom.req.get( { path: endpointUrl }, params );
-};
-
-Undocumented.prototype.jetpackAuthorize = function (
-	siteId,
-	code,
-	state,
-	redirect_uri,
-	secret,
-	jp_version,
-	from
-) {
-	debug( '/jetpack-blogs/:site_id:/authorize query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
-	const params = { code, state, redirect_uri, secret, jp_version, from };
-	return this.wpcom.req.post( { path: endpointUrl }, params );
-};
-
 Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
 	debug( '/sites/:site_id:/jetpack-connect/is-user-connected query' );
 	const endpointUrl = '/sites/' + siteId + '/jetpack-connect/is-user-connected';
