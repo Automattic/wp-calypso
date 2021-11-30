@@ -169,10 +169,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_composite_apple_pay_submit_clicked', {} )
 					);
 				}
-				case 'VALIDATE_DOMAIN_CONTACT_INFO': {
-					// TODO: Decide what to do here
-					return;
-				}
 				case 'SHOW_MODAL_AUTHORIZATION': {
 					return reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
 				}
