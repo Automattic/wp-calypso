@@ -12,9 +12,14 @@ import {
 } from '@automattic/calypso-e2e';
 import { Frame, Page } from 'playwright';
 
-const user = BrowserHelper.targetCoBlocksEdge()
-	? 'coBlocksSimpleSiteEdgeUser'
-	: 'gutenbergSimpleSiteUser';
+let user: string;
+if ( BrowserHelper.targetCoBlocksEdge() ) {
+	user = 'coBlocksSimpleSiteEdgeUser';
+} else if ( BrowserHelper.targetGutenbergEdge() ) {
+	user = 'gutenbergSimpleSiteEdgeUser';
+} else {
+	user = 'gutenbergSimpleSiteUser';
+}
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	let page: Page;

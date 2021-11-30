@@ -15,9 +15,14 @@ import {
 import { Frame, Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-const user = BrowserHelper.targetCoBlocksEdge()
-	? 'coBlocksSimpleSiteEdgeUser'
-	: 'gutenbergSimpleSiteUser';
+let user: string;
+if ( BrowserHelper.targetCoBlocksEdge() ) {
+	user = 'coBlocksSimpleSiteEdgeUser';
+} else if ( BrowserHelper.targetGutenbergEdge() ) {
+	user = 'gutenbergSimpleSiteEdgeUser';
+} else {
+	user = 'gutenbergSimpleSiteUser';
+}
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
 	let page: Page;
