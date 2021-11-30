@@ -265,7 +265,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     core-js: ^3.6.3
     isomorphic-fetch: ^2.2.1
-    regenerator-runtime: ^0.13.9
   languageName: unknown
   linkType: soft
 
@@ -407,7 +406,6 @@ __metadata:
     nock: ^12.0.3
     qs: ^6.9.1
     redux: ^4.1.2
-    regenerator-runtime: ^0.13.9
     tslib: ^2.3.0
     typescript: ^4.4.4
     utility-types: ^3.10.0
@@ -1155,7 +1153,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@wordpress/compose": ^5.0.6
-    regenerator-runtime: ^0.13.9
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -1167,7 +1164,6 @@ __metadata:
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    regenerator-runtime: ^0.13.9
   languageName: unknown
   linkType: soft
 
@@ -38359,7 +38355,6 @@ testarmada-magellan@11.0.10:
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
     exports-loader: ^0.7.0
-    fake-indexeddb: ^3.1.3
     fsevents: ^2.1.2
     gettext-parser: ^4.0.3
     glob: ^7.1.6
@@ -38400,7 +38395,6 @@ testarmada-magellan@11.0.10:
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.10
     redux: ^4.1.2
-    regenerator-runtime: ^0.13.9
     replace: ^1.1.5
     request: ^2.88.2
     sass: ^1.37.5
