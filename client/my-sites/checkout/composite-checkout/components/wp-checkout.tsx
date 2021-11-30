@@ -240,7 +240,7 @@ export default function WPCheckout( {
 	const onReviewError = useCallback(
 		( error ) =>
 			onPageLoadError( 'step_load', String( error ), {
-				stepId: 'review',
+				step_id: 'review',
 			} ),
 		[ onPageLoadError ]
 	);
@@ -248,7 +248,7 @@ export default function WPCheckout( {
 	const onSummaryError = useCallback(
 		( error ) =>
 			onPageLoadError( 'step_load', String( error ), {
-				stepId: 'summary',
+				step_id: 'summary',
 			} ),
 		[ onPageLoadError ]
 	);
