@@ -55,13 +55,6 @@ function getWebpackConfig(
 			// disable module concatenation so that instances of `__()` are not renamed
 			concatenateModules: false,
 		},
-		resolve: {
-			...webpackConfig.resolve,
-			fallback: {
-				...webpackConfig.resolve?.fallback,
-				url: require.resolve( 'url' ),
-			},
-		},
 		plugins: [
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'

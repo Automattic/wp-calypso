@@ -1310,7 +1310,6 @@ __metadata:
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tinymce: ^5.0.0
-    url: ^0.11.0
     webpack: ^5.64.4
   languageName: unknown
   linkType: soft
