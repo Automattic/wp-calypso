@@ -342,9 +342,7 @@ export default function WPCheckout( {
 								return validateContactDetails(
 									contactInfo,
 									isLoggedOutCart,
-									activePaymentMethod,
 									responseCart,
-									onEvent,
 									showErrorMessageBriefly,
 									applyDomainContactValidationResults,
 									clearDomainContactErrorMessages,
@@ -363,9 +361,7 @@ export default function WPCheckout( {
 										validateContactDetails(
 											contactInfo,
 											isLoggedOutCart,
-											activePaymentMethod,
 											responseCart,
-											onEvent,
 											showErrorMessageBriefly,
 											applyDomainContactValidationResults,
 											clearDomainContactErrorMessages,
