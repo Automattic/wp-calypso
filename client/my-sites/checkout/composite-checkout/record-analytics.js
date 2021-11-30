@@ -56,12 +56,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 							error_message: action.payload.message,
 						} )
 					);
-				case 'a8c_checkout_add_coupon':
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_coupon_add_submit', {
-							coupon: action.payload.coupon,
-						} )
-					);
 				case 'a8c_checkout_cancel_delete_product':
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' )
@@ -76,12 +70,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_delete_product_press', {
 							product_name: action.payload.product_name,
-						} )
-					);
-				case 'a8c_checkout_add_coupon_error':
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_coupon_add_error', {
-							error_type: action.payload.type,
 						} )
 					);
 				case 'a8c_checkout_add_coupon_button_clicked':
