@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
 import './style.scss';
 import Image01 from 'calypso/assets/images/woocommerce/woop-cta-image01.jpeg';
 import Image02 from 'calypso/assets/images/woocommerce/woop-cta-image02.jpeg';
@@ -23,12 +25,22 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
-	const { hasBlockers } = useWooCommerceOnPlansEligibility( siteId );
+	const { hasBlockers, wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
+
+	function onCTAClickHandler() {
+		if ( ! config.isEnabled( 'woop' ) ) {
+			// Trigger the current flow.
+			startSetup();
+		}
+
+		// Rolling on the new woocommerce-on-plans flow.
+		page( `/start/woocommerce-install/confirm?site=${ wpcomDomain }` );
+	}
 
 	return (
 		<div className="woop__landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
-				<Button onClick={ startSetup } primary disabled={ hasBlockers }>
+				<Button onClick={ onCTAClickHandler } primary disabled={ hasBlockers }>
 					{ __( 'Set up my store!' ) }
 				</Button>
 			</FixedNavigationHeader>
@@ -36,7 +48,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 				title={ __( 'Have something to sell?' ) }
 				headline={ __( 'Build exactly the eCommerce website you want.' ) }
 				buttonText={ __( 'Set up my store!' ) }
-				buttonAction={ startSetup }
+				buttonAction={ onCTAClickHandler }
 				buttonDisabled={ hasBlockers }
 				ctaRef={ ctaRef }
 			>
