@@ -2,23 +2,25 @@
 @import '@wordpress/base-styles/mixins';
 
 .breadcrumbs {
-	position: fixed;
-	margin: 0;
-	z-index: 10;
-	background-color: white;
-	top: var( --masterbar-height );
-	padding: 0 24px;
-	left: 0;
-	right: 0px;
-	border-bottom: 1px solid var( --studio-gray-5 );
-
-	@media screen and ( min-width: #{ ($break-medium + 1) } ) {
-		left: var( --sidebar-width-min );
-	}
-
-	@include break-large {
-		left: var( --sidebar-width-max );
-		padding: 0 32px;
+	> div:first-child {
+		position: fixed;
+		margin: 0;
+		z-index: 10;
+		background-color: white;
+		top: var( --masterbar-height );
+		padding: 0 24px;
+		left: 0;
+		right: 0px;
+		border-bottom: 1px solid var( --studio-gray-5 );
+	
+		@media screen and ( min-width: #{ ($break-medium + 1) } ) {
+			left: var( --sidebar-width-min );
+		}
+	
+		@include break-large {
+			left: var( --sidebar-width-max );
+			padding: 0 32px;
+		}
 	}
 
 	.select-dropdown__separator {
