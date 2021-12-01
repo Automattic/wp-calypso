@@ -136,6 +136,19 @@ export class UserStep extends Component {
 		}
 	}
 
+	componentDidUpdate() {
+		if ( this.userCreationCompletedWithAndHasHistory( this.props ) ) {
+			// It looks like the user just completed the User Registartion Step
+			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
+			const url = new URL( window.location );
+			const searchParams = url.searchParams;
+			searchParams.set( 'user_completed', true );
+			url.search = searchParams.toString();
+			// Redirect to itself and append ?user_completed
+			window.location.replace( url.toString() );
+		}
+	}
+
 	componentDidMount() {
 		if ( flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha ) {
 			this.initGoogleRecaptcha();
@@ -144,17 +157,6 @@ export class UserStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
 		i18n.on( 'change', this.handleI18nChange );
-
-		if ( 'completed' === this.props.step?.status && detectHistoryNavigation.loadedViaHistory() ) {
-			// It looks like the user just completed the User Registration Step and clicked the browser back button.
-			// Lets redirect them to the this page but this time they will be logged in with a cookie.
-			const url = new URL( window.location );
-			const searchParams = url.searchParams;
-			searchParams.set( 'user_completed', true );
-			url.search = searchParams.toString();
-			// Redirect to itself and append ?user_completed
-			window.location.replace( url.toString() );
-		}
 	}
 
 	componentWillUnmount() {
@@ -383,6 +385,10 @@ export class UserStep extends Component {
 		return this.props.step && 'completed' === this.props.step.status;
 	}
 
+	userCreationCompletedWithAndHasHistory( props ) {
+		return 'completed' === props.step?.status && detectHistoryNavigation.loadedViaHistory();
+	}
+
 	userCreationPending() {
 		return this.props.step && 'pending' === this.props.step.status;
 	}
@@ -532,6 +538,10 @@ export class UserStep extends Component {
 	render() {
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
+		}
+
+		if ( this.userCreationCompletedWithAndHasHistory( this.props ) ) {
+			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
 		return (
