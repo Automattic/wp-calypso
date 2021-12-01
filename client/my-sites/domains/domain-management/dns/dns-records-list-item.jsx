@@ -23,7 +23,7 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 					<PopoverMenuItem
 						disabled={ record.protected_field }
 						key={ key++ }
-						onClick={ () => ! record.protected_field && action.callback( record ) }
+						onClick={ () => action.callback( record ) }
 					>
 						{ action.icon }
 						{ action.title }
