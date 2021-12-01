@@ -214,13 +214,10 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		let toDelete = selectedItems;
-		if ( ModalViews.DETAIL === this.props.view ) {
-			toDelete = toDelete[ this.getDetailSelectedIndex() ];
-			this.setNextAvailableDetailView();
-		}
-
-		this.props.deleteMedia( site.ID, toDelete );
+		this.props.deleteMedia(
+			site.ID,
+			selectedItems.map( ( { ID } ) => ID )
+		);
 		mcBumpStat( 'editor_media_actions', 'delete_media' );
 	};
 

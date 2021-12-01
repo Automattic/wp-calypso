@@ -11,12 +11,7 @@ export const useDeleteMediaMutation = ( queryOptions = {} ) => {
 	const { mutate } = mutation;
 
 	const deleteMedia = useCallback(
-		( siteId, items ) => {
-			const mediaItems = Array.isArray( items ) ? items : [ items ];
-			mediaItems
-				.filter( ( item ) => typeof item.ID === 'number' )
-				.forEach( ( item ) => mutate( { siteId, mediaId: item.ID } ) );
-		},
+		( siteId, mediaIds ) => mediaIds.forEach( ( mediaId ) => mutate( { siteId, mediaId } ) ),
 		[ mutate ]
 	);
 
