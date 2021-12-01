@@ -13,6 +13,8 @@ $width-left-panel-card: calc( 60% - 48px );
 .email-provider-stacked-features__feature {
 	margin-left: 28px;
 	margin-top: 8px;
+	display: flex;
+	align-items: center;
 
 	&:first-child {
 		margin-top: 0;
@@ -32,8 +34,7 @@ $width-left-panel-card: calc( 60% - 48px );
 	.gridicon {
 		fill: var( --studio-gray-20 );
 		margin-left: -28px;
-		margin-top: 2px;
-		position: absolute;
+		margin-right: 10px;
 	}
 }
 
