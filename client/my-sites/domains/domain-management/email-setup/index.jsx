@@ -117,7 +117,9 @@ class EmailSetup extends Component {
 			<span>
 				<strong>{ translate( 'Email setup' ) }</strong>
 				<br />
-				<span>{ translate( 'Set up an existing email service for this domain' ) }</span>
+				<span className="email-setup__subtitle">
+					{ translate( 'Set up an existing email service for this domain' ) }
+				</span>
 			</span>
 		);
 
