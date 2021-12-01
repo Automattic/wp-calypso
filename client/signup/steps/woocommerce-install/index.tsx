@@ -11,4 +11,7 @@ export interface WooCommerceInstallProps {
 	queryObject: {
 		siteSlug: string;
 	};
+	signupDependencies: {
+		siteSlug: string;
+	};
 }
