@@ -9,7 +9,7 @@ import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboardi
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import * as React from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import Badge from '../../components/badge';
@@ -90,12 +90,21 @@ const Designs: React.FunctionComponent = () => {
 	const useFeaturedPicksButtons =
 		isDesignPickerCategoriesEnabled &&
 		isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
-	const designs = getRandomizedDesigns().featured.filter(
+
+	const allDesigns = getRandomizedDesigns().featured.filter(
 		( design ) =>
 			// TODO Add finalized design templates to available designs config
 			// along with `is_anchorfm` prop (config is stored in the
 			// `@automattic/design-picker` package)
 			isAnchorFmSignup === design.features.includes( 'anchorfm' )
+	);
+
+	const { designs, featuredPicksDesigns } = useMemo(
+		() => ( {
+			designs: allDesigns.filter( ( theme ) => ! theme.is_featured_picks ),
+			featuredPicksDesigns: allDesigns.filter( ( theme ) => theme.is_featured_picks ),
+		} ),
+		[ allDesigns ]
 	);
 
 	const categorization = useCategorization( designs, {
@@ -150,11 +159,7 @@ const Designs: React.FunctionComponent = () => {
 				className={ classnames( {
 					'designs__has-categories': isDesignPickerCategoriesEnabled,
 				} ) }
-				designs={
-					useFeaturedPicksButtons
-						? designs.filter( ( design ) => ! design.is_featured_picks )
-						: designs
-				}
+				designs={ useFeaturedPicksButtons ? designs : allDesigns }
 				isGridMinimal={ isAnchorFmSignup }
 				locale={ locale }
 				onSelect={ onSelect }
@@ -170,7 +175,7 @@ const Designs: React.FunctionComponent = () => {
 					useFeaturedPicksButtons && (
 						<FeaturedPicksButtons
 							className="designs__featured-picks-buttons"
-							designs={ designs.filter( ( design ) => design.is_featured_picks ) }
+							designs={ featuredPicksDesigns }
 							onSelect={ onSelect }
 						/>
 					)
