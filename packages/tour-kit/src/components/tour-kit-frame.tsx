@@ -21,7 +21,7 @@ const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
 	typeof callback === 'function' && callback( currentStepIndex );
 };
 
-const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
+const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const tourContainerRef = useRef( null );
 	const popperElementRef = useRef( null );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
@@ -145,7 +145,7 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		setTimeout( () => initialFocusedElement?.focus() );
 	}, [ initialFocusedElement ] );
 
-	const classNames = classnames( 'tour-kit', config.options?.className );
+	const classNames = classnames( 'tour-kit-frame', config.options?.className );
 
 	return (
 		<>
@@ -160,9 +160,13 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 			<div className={ classNames } ref={ tourContainerRef }>
 				{ showOverlay() && <Overlay visible={ true } /> }
 				{ showSpotlight() && <Spotlight referenceElement={ referenceElement } /> }
-				<div className="tour-kit__frame" ref={ popperElementRef } { ...stepRepositionProps }>
+				<div
+					className="tour-kit-frame__container"
+					ref={ popperElementRef }
+					{ ...stepRepositionProps }
+				>
 					{ showArrowIndicator() && (
-						<div className="tour-kit__arrow" data-popper-arrow { ...arrowPositionProps } />
+						<div className="tour-kit-frame__arrow" data-popper-arrow { ...arrowPositionProps } />
 					) }
 					{ ! isMinimized ? (
 						<>
@@ -193,4 +197,4 @@ const TourFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	);
 };
 
-export default TourFrame;
+export default TourKitFrame;
