@@ -1114,6 +1114,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/viewport-react": "workspace:^"
     "@popperjs/core": ^2.10.2
     "@storybook/preset-scss": ^1.0.3
     classnames: ^2.3.1

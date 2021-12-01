@@ -31,6 +31,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.10.2",
 		"classnames": "^2.3.1",
 		"react": "^17.0.2",
