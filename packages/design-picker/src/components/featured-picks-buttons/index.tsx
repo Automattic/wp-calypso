@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -25,6 +25,7 @@ const FeaturedPicksButtons: React.FC< Props > = ( { className, designs, onSelect
 				<Button
 					key={ design.slug }
 					className={ classnames( 'featured-picks-buttons__button', className ) }
+					isSecondary
 					onClick={ () => onSelect( design ) }
 				>
 					{
