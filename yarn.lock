@@ -1120,6 +1120,7 @@ __metadata:
     classnames: ^2.3.1
     css-loader: ^3.6.0
     react: ^17.0.2
+    react-dom: ^17.0.2
     react-popper: ^2.2.5
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
