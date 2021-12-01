@@ -110,10 +110,16 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		const elementHandle = await this.page.waitForSelector( selectors.editorFrame, {
+		const locator = this.page.locator( selectors.editorFrame );
+
+		const elementHandle = await locator.elementHandle( {
 			timeout: 105 * 1000,
-			state: 'attached',
 		} );
+
+		if ( ! elementHandle ) {
+			throw new Error( 'Could not locate editor iframe.' );
+		}
+
 		return ( await elementHandle.contentFrame() ) as Frame;
 	}
 
