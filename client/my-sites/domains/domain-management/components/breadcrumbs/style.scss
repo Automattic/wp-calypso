@@ -10,7 +10,7 @@
 	padding: 0 24px;
 	left: 0;
 	right: 0px;
-	border-bottom: 1px solid #dcdcde;
+	border-bottom: 1px solid var( --studio-gray-5 );
 
 	@media screen and ( min-width: #{ ($break-medium + 1) } ) {
 		left: var( --sidebar-width-min );
