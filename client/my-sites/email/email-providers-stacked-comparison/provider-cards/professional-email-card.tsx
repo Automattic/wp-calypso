@@ -9,7 +9,6 @@ import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-stacked.svg';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -19,7 +18,6 @@ import {
 } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
-import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
@@ -28,9 +26,7 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import {
-	EmailProvidersStackedCardProps
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
+import { EmailProvidersStackedCardProps } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import {
 	TITAN_PASSWORD_RESET_FIELD,
 	TITAN_FULL_NAME_FIELD,
@@ -41,7 +37,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import type ProviderCard from 'calypso/my-sites/email/email-providers-stacked-comparison';
 
 import './professional-email-card.scss';
 
@@ -89,7 +85,7 @@ const professionalEmailCardInformation: ProviderCard = {
 
 const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
 	const { currencyCode = '', hasCartDomain, domain, selectedDomainName, titanMailProduct } = props;
-	const professionalEmail: ProviderCard = professionalEmailCardInformation;
+	const professionalEmail = professionalEmailCardInformation;
 
 	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 
@@ -130,7 +126,14 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	const optionalFields = [ TITAN_PASSWORD_RESET_FIELD, TITAN_FULL_NAME_FIELD ];
 
 	const onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, selectedDomainName, hasCartDomain, source } = props;
+		const {
+			comparisonContext,
+			domain,
+			selectedDomainName,
+			hasCartDomain,
+			recordTracksEventAddToCartClick = noop,
+			source,
+		} = props;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
 
@@ -141,16 +144,14 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			: getCurrentUserCannotAddEmailReason( domain );
 
 		const validatedMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
-
-		recordTracksEvent( 'calypso_email_providers_add_click', {
-			context: comparisonContext,
-			mailbox_count: validatedMailboxUuids.length,
-			mailboxes_valid: mailboxesAreValid ? 1 : 0,
-			provider: TITAN_PROVIDER_NAME,
+		recordTracksEventAddToCartClick(
+			comparisonContext,
+			validatedMailboxUuids,
+			mailboxesAreValid,
 			source,
-			user_can_add_email: userCanAddEmail,
-			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
-		} );
+			userCanAddEmail,
+			userCannotAddEmailReason
+		);
 
 		setTitanMailbox( titanMailbox );
 		setValidatedTitanMailboxUuids( validatedMailboxUuids );

@@ -5,9 +5,10 @@ import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { Site } from 'calypso/reader/list-manage/types';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -42,6 +43,25 @@ type EmailProvidersStackedComparisonProps = {
 	titanMailProduct?: any;
 };
 
+const recordTracksEventAddToCartClick = (
+	comparisonContext: string,
+	validatedMailboxUuids: string[],
+	mailboxesAreValid: boolean,
+	source: string,
+	userCanAddEmail: boolean,
+	userCannotAddEmailReason: any
+) => {
+	recordTracksEvent( 'calypso_email_providers_add_click', {
+		context: comparisonContext,
+		mailbox_count: validatedMailboxUuids.length,
+		mailboxes_valid: mailboxesAreValid ? 1 : 0,
+		provider: TITAN_PROVIDER_NAME,
+		source,
+		user_can_add_email: userCanAddEmail,
+		user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
+	} );
+};
+
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
 	props
 ) => {
@@ -60,6 +80,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
+				recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
 			/>

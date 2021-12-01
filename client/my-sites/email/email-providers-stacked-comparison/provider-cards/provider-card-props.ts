@@ -44,6 +44,14 @@ export type EmailProvidersStackedCardProps = {
 	shoppingCartManager?: any;
 	source: string;
 	titanMailProduct?: any;
+	recordTracksEventAddToCartClick?: (
+		comparisonContext: string,
+		validatedMailboxUuids: string[],
+		mailboxesAreValid: boolean,
+		source: string,
+		userCanAddEmail: boolean,
+		userCannotAddEmailReason: any
+	) => void;
 };
 
 type ValueError = {
