@@ -23,7 +23,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
-	const currentVideo = currentVideoKey ? course.videos[ currentVideoKey ] : course.videos[ 0 ];
+	const currentVideo = currentVideoKey ? course?.videos[ currentVideoKey ] : course?.videos[ 0 ];
 
 	const onVideoPlayClick = ( videoSlug ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
@@ -39,7 +39,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		if ( ! course ) {
 			return;
 		}
-		const videoSlugs = Object.keys( course.videos );
+		const videoSlugs = Object.keys( course?.videos ?? [] );
 		const viewedSlugs = Object.keys( userCourseProgression );
 		if ( viewedSlugs.length > 0 ) {
 			const nextSlug = videoSlugs.find( ( slug ) => ! viewedSlugs.includes( slug ) );
@@ -118,7 +118,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 					) }
 					<div className="videos-ui__chapters">
 						{ course &&
-							Object.entries( course.videos ).map( ( data, i ) => {
+							Object.entries( course?.videos ).map( ( data, i ) => {
 								const isVideoCompleted =
 									data[ 0 ] in userCourseProgression && userCourseProgression[ data[ 0 ] ];
 								const videoInfo = data[ 1 ];
