@@ -137,7 +137,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.userCreationCompletedWithAndHasHistory( this.props ) ) {
+		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			// It looks like the user just completed the User Registartion Step
 			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
 			const url = new URL( window.location );
@@ -385,7 +385,7 @@ export class UserStep extends Component {
 		return this.props.step && 'completed' === this.props.step.status;
 	}
 
-	userCreationCompletedWithAndHasHistory( props ) {
+	userCreationCompletedAndHasHistory( props ) {
 		return 'completed' === props.step?.status && detectHistoryNavigation.loadedViaHistory();
 	}
 
@@ -540,7 +540,7 @@ export class UserStep extends Component {
 			return this.renderP2SignupStep();
 		}
 
-		if ( this.userCreationCompletedWithAndHasHistory( this.props ) ) {
+		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
