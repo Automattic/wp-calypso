@@ -95,9 +95,11 @@ export class GutenbergEditorPage {
 	 */
 	async dismissWelcomeTourIfPresent(): Promise< void > {
 		const frame = await this.getEditorFrame();
+		const locator = frame.locator( selectors.welcomeTourCloseButton );
+
 		try {
-			await frame.click( selectors.welcomeTourCloseButton, { timeout: 5 * 1000 } );
-		} catch ( err ) {
+			await locator.click( { timeout: 5 * 1000, force: true } );
+		} catch {
 			// noop - welcome tour was not found, which is great.
 		}
 	}
