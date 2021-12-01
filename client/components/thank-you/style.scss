@@ -14,7 +14,6 @@
 	text-align: center;
 	align-items: center;
 	width: auto;
-	background-color: var( --studio-blue-50 );
 	padding-top: calc( -33px + var( --masterbar-height ) );
 	padding-right: 20px;
 	padding-left: 20px;
@@ -25,28 +24,15 @@
 	img {
 		max-width: 260px;
 	}
-
-	.thank-you__container-header-content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding-top: 30px;
-		color: var( --studio-white );
-
-		thank-you__container-header-content-title {
-			font-size: 2rem;
-		}
-	}
 }
 
-thank-you__notice {
+.thank-you__notice {
 	@include breakpoint-deprecated( '<480px' ) {
 		padding: 14px 24px;
 		align-items: flex-start;
 		height: auto;
 	}
 }
-
 
 .thank-you__step-cta {
 	margin-left: auto;
@@ -84,7 +70,7 @@ thank-you__notice {
 		padding-top: 3px;
 		margin-left: 4px;
 	}
-	+.thank-you__help-link {
+	+ .thank-you__help-link {
 		margin-top: 0.25em;
 	}
 }
