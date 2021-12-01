@@ -53,7 +53,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 		await coverBlock.upload( imageFile.fullpath );
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
-		await editorFrame.click( '[aria-label="Select Cover"]' );
+		await editorFrame.click( '.wp-block-cover', { position: { x: 1, y: 1 } } );
 	} );
 
 	it( 'Open settings sidebar', async function () {
@@ -66,6 +66,10 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 
 	it( 'Set "Bottom Wave" style', async () => {
 		await coverBlock.setCoverStyle( 'Bottom Wave' );
+	} );
+
+	it( 'Close settings sidebar', async () => {
+		await gutenbergEditorPage.closeSettings();
 	} );
 
 	it( 'Publish and visit the post', async () => {
