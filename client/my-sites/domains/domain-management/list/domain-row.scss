@@ -77,7 +77,7 @@
 
 .domain-row__mobile-container2 {
 	display: block;
-	font-size: $font-body-extra-small;
+	font-size: $font-body-small;
 	@include break-mobile {
 		display: none;
 	}
