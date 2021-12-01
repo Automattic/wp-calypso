@@ -24,14 +24,20 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"storybook": "start-storybook"
 	},
 	"dependencies": {
+		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.10.2",
+		"@wordpress/base-styles": "^4.1.0",
+		"@wordpress/components": "^19.3.0",
+		"@wordpress/i18n": "^4.3.0",
+		"@wordpress/icons": "^6.2.0",
+		"@wordpress/primitives": "^3.0.4",
 		"classnames": "^2.3.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",

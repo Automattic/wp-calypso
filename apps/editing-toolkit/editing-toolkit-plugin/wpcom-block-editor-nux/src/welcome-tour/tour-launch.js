@@ -3,16 +3,13 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
-import TourKit from '@automattic/tour-kit';
+import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
 import { isMobile } from '@automattic/viewport';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import { usePrefetchTourAssets } from './hooks';
-import WelcomeTourMinimized from './tour-minimized-renderer';
-import WelcomeTourStep from './tour-step-renderer';
 import getTourSteps from './tour-steps';
 import './style-tour.scss';
 
@@ -60,15 +57,8 @@ function WelcomeTour() {
 		( step ) => ! ( step.meta.isDesktopOnly && isMobile() )
 	);
 
-	// Preload card images
-	usePrefetchTourAssets( tourSteps );
-
 	const tourConfig = {
 		steps: tourSteps,
-		renderers: {
-			tourStep: WelcomeTourStep,
-			tourMinimized: WelcomeTourMinimized,
-		},
 		closeHandler: ( steps, currentStepIndex, source ) => {
 			recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 				is_gutenboarding: isGutenboarding,
@@ -140,7 +130,7 @@ function WelcomeTour() {
 		},
 	};
 
-	return <TourKit config={ tourConfig } />;
+	return <WpcomTourKit config={ tourConfig } />;
 }
 
 export default LaunchWpcomWelcomeTour;

@@ -2,10 +2,10 @@ import { Button, Flex } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
-import maximize from './icons/maximize';
-import type { MinimizedTourRenderer } from '@automattic/tour-kit';
+import maximize from '../icons/maximize';
+import type { MinimizedTourRendererProps } from '../../../types';
 
-const WelcomeTourMinimized: MinimizedTourRenderer = ( {
+const WpcomTourKitMinimized: React.FunctionComponent< MinimizedTourRendererProps > = ( {
 	steps,
 	onMaximize,
 	onDismiss,
@@ -16,7 +16,7 @@ const WelcomeTourMinimized: MinimizedTourRenderer = ( {
 	const numberOfPages = lastStepIndex + 1;
 
 	return (
-		<Flex gap={ 0 } className="wpcom-editor-welcome-tour__minimized">
+		<Flex gap={ 0 } className="wpcom-tour-kit-minimized">
 			<Button onClick={ onMaximize } aria-label={ __( 'Resume Tour', 'full-site-editing' ) }>
 				<Flex gap={ 13 }>
 					<p>
@@ -28,7 +28,7 @@ const WelcomeTourMinimized: MinimizedTourRenderer = ( {
 								numberOfPages
 							),
 							{
-								span: <span className="wpcom-editor-welcome-tour__minimized-tour-index" />,
+								span: <span className="wpcom-tour-kit-minimized__tour-index" />,
 							}
 						) }
 					</p>
@@ -45,4 +45,4 @@ const WelcomeTourMinimized: MinimizedTourRenderer = ( {
 	);
 };
 
-export default WelcomeTourMinimized;
+export default WpcomTourKitMinimized;
