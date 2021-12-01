@@ -55,12 +55,24 @@
 		margin-bottom: 0;
 
 		.designs__header {
-			margin-top: 24px;
+			flex-direction: column;
+			align-items: flex-start;
+			margin-top: 0;
 			margin-bottom: 40px;
 		}
 
 		.designs__heading-title {
 			margin-bottom: 12px;
+		}
+
+		.action-buttons {
+			margin-left: 0;
+
+			.components-button {
+				@include break-small {
+					padding: 0;
+				}
+			}
 		}
 	}
 
