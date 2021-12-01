@@ -1,8 +1,7 @@
-import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
+import { isBusiness, isEcommerce } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
@@ -197,10 +196,6 @@ class Help extends PureComponent {
 	);
 
 	getCoursesTeaser = () => {
-		if ( ! this.props.showCoursesTeaser ) {
-			return null;
-		}
-
 		return (
 			<CompactCard
 				className="help__support-link"
@@ -286,20 +281,15 @@ class Help extends PureComponent {
 	}
 }
 
-function planHasOnboarding( { productSlug } ) {
-	return planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING );
-}
-
 export const mapStateToProps = ( state ) => {
 	const isEmailVerified = isCurrentUserEmailVerified( state );
 	const purchases = getUserPurchases( state );
 	const isLoading = isFetchingUserPurchases( state );
-	const isBusinessPlanUser = some( purchases, planHasOnboarding );
-	const showCoursesTeaser = isBusinessPlanUser;
+	const isBusinessPlanUser =
+		purchases && ( purchases.some( isBusiness ) || purchases.some( isEcommerce ) );
 
 	return {
 		isBusinessPlanUser,
-		showCoursesTeaser,
 		isLoading,
 		isEmailVerified,
 	};

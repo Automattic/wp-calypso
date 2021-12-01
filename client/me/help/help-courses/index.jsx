@@ -1,4 +1,4 @@
-import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
+import { isBusiness, isEcommerce } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -59,10 +59,7 @@ class Courses extends Component {
 export function mapStateToProps( state ) {
 	const purchases = getUserPurchases( state );
 	const isBusinessPlanUser =
-		purchases &&
-		purchases.some( ( { productSlug } ) =>
-			planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING )
-		);
+		purchases && ( purchases.some( isBusiness ) || purchases.some( isEcommerce ) );
 	const courses = getHelpCourses( state );
 	const isLoading =
 		isFetchingUserPurchases( state ) || ! courses || ! hasLoadedUserPurchasesFromServer( state );
