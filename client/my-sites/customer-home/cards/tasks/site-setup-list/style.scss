@@ -66,9 +66,18 @@
 			}
 		}
 
-		.site-setup-list__emailstyle {
-			color: var( --studio-gray-20 );
+		.site-setup-list__email {
+			display: none;
+			@include break-mobile {
+				color: var( --studio-gray-20 );
+				display: block;
+			}
+		}
+
+		.site-setup-list__emailbold {
+			font-weight: bolder;
 			display: block;
+			padding-top: 30px;
 		}
 	}
 
