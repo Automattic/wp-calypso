@@ -1,17 +1,12 @@
 import { useEffect, useState } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const VideoPlayer = ( { videoData, videoRef, isPlaying, course } ) => {
+const VideoPlayer = ( { completedSeconds, videoRef, videoUrl, isPlaying, poster = undefined } ) => {
 	const [ addTimeUpdateHandler, setAddTimeUpdateHandler ] = useState( true );
 
 	const markVideoAsComplete = () => {
-		if ( videoRef.current.currentTime < videoData.completed_seconds ) {
+		if ( videoRef.current.currentTime < completedSeconds ) {
 			return;
 		}
-		recordTracksEvent( 'calypso_courses_video_completed', {
-			course: course.slug,
-			video: videoData.slug,
-		} );
 		setAddTimeUpdateHandler( false );
 	};
 
@@ -21,20 +16,16 @@ const VideoPlayer = ( { videoData, videoRef, isPlaying, course } ) => {
 		}
 	} );
 
-	useEffect( () => {
-		setAddTimeUpdateHandler( true );
-	}, [ course?.slug, videoData?.slug ] );
-
 	return (
-		<div key={ videoData.url } className="videos-ui__video">
+		<div key={ videoUrl } className="videos-ui__video">
 			<video
 				controls
 				ref={ videoRef }
-				poster={ videoData.poster }
+				poster={ poster }
 				autoPlay={ isPlaying }
 				onTimeUpdate={ addTimeUpdateHandler ? markVideoAsComplete : undefined }
 			>
-				<source src={ videoData.url } />{ ' ' }
+				<source src={ videoUrl } />{ ' ' }
 				{ /* @TODO: check if tracks are available, the linter demands one */ }
 				<track src="caption.vtt" kind="captions" srcLang="en" label="english_captions" />
 			</video>
