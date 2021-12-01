@@ -36,7 +36,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 		editorFrame = await gutenbergEditorPage.getEditorFrame();
 	} );
 
-	it( 'Insert Pricing Table block', async function () {
+	it( 'Insert Pricing Table block', async () => {
 		const blockHandle = await gutenbergEditorPage.addBlock(
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
@@ -44,7 +44,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 		pricingTableBlock = new PricingTableBlock( blockHandle );
 	} );
 
-	it( 'Open settings sidebar', async function () {
+	it( 'Open settings sidebar', async () => {
 		await gutenbergEditorPage.openSettings();
 	} );
 
@@ -57,6 +57,10 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 
 	it( 'Set gutter to "Huge"', async () => {
 		await pricingTableBlock.setGutter( 'Huge' );
+	} );
+
+	it( 'Close settings sidebar', async () => {
+		await gutenbergEditorPage.closeSettings();
 	} );
 
 	it( 'Fill the price fields so the block is visible', async () => {

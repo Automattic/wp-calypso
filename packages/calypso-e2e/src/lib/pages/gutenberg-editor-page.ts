@@ -26,6 +26,7 @@ const selectors = {
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
 	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
+	closeSettingsButton: 'button[aria-label="Close settings"]',
 	saveDraftButton: '.editor-post-save-draft',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
@@ -280,16 +281,20 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Opens the settings sidebar.
-	 *
-	 * @returns {Promise<void>} No return value.
+	 * @returns Whether the Settings sidebar is open or not.
+	 */
+	async isSettingsSidebarOpen(): Promise< boolean > {
+		const frame = await this.getEditorFrame();
+		return await frame.isVisible( selectors.closeSettingsButton );
+	}
+
+	/**
+	 * Opens the Settings sidebar.
 	 */
 	async openSettings(): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		const isSidebarOpen = await frame.$eval( selectors.settingsToggle, ( element ) =>
-			element.classList.contains( 'is-pressed' )
-		);
+		const isSidebarOpen = await this.isSettingsSidebarOpen();
 		if ( ! isSidebarOpen ) {
 			await frame.click( selectors.settingsToggle );
 		}
@@ -300,6 +305,17 @@ export class GutenbergEditorPage {
 		);
 	}
 
+	/**
+	 * Closes the Settings sidebar.
+	 */
+	async closeSettings(): Promise< void > {
+		const isSidebarOpen = await this.isSettingsSidebarOpen();
+		if ( ! isSidebarOpen ) {
+			return;
+		}
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.closeSettingsButton );
+	}
 	/**
 	 * Publishes the post or page.
 	 *
