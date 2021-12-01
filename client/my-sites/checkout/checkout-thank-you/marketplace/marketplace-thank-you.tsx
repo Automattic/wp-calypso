@@ -56,6 +56,11 @@ const ItemStyled = styled( Item )`
 	font-weight: 500;
 	padding: 0;
 
+	&:hover {
+		background: var( --studio-white );
+		text-decoration: underline;
+	}
+
 	.gridicon {
 		height: 17px;
 		fill: var( --studio-black );
