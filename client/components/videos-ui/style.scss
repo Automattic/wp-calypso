@@ -9,14 +9,6 @@
 	display: flex;
 	flex-direction: column;
 
-	* {
-		box-sizing: border-box;
-	}
-
-	svg {
-		box-sizing: content-box;
-	}
-
 	.videos-ui__header {
 		background: #151b1e;
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.1 );
@@ -103,12 +95,12 @@
 				border-bottom: 1px solid #343c3f;
 
 				&:first-child {
-					border-radius: 2px 2px 0 0;
+					border-radius: 4px 4px 0 0; /* stylelint-disable-line scales/radii */
 				}
 
 				&:last-child {
 					border-bottom: none;
-					border-radius: 0 0 2px 2px;
+					border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
 				}
 
 				.videos-ui__duration {
@@ -125,7 +117,7 @@
 					flex-shrink: 0;
 					flex-grow: 0;
 					height: 22px;
-					border-radius: 50px;
+					border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 
 					svg {
 						margin-top: 5px;
@@ -178,6 +170,10 @@
 				&.selected .videos-ui__active-video-content {
 					max-height: 250px;
 				}
+
+				.videos-ui__button {
+					width: 100%;
+				}
 			}
 		}
 	}
@@ -187,9 +183,10 @@
 	}
 
 	.videos-ui__button {
-		width: 100%;
 		border: 0;
-		border-radius: 2px;
+		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		color: #101517;
+		padding: 10px 28px;
 		span {
 			font-weight: 400;
 			color: #101517;
@@ -219,24 +216,45 @@
 	}
 
 	.videos-ui__bar {
-		padding: 20px 0 15px;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
 		font-size: $font-body-small;
+		min-height: 64px;
 
 		div,
 		a {
 			display: flex;
-			color: #fff;
 			align-items: center;
 		}
+
+		.videos-ui__back-button {
+			color: #fff;
+		}
+
+		* {
+			line-height: 20px;
+		}
+	}
+
+	.videos-ui__footer-bar {
+		padding: 0 20px;
+		background-color: #101517;
+		border-top: 1px solid rgba( 255, 255, 255, 0.1 );
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
 	}
 
 	@include break-small {
 		.videos-ui__button {
 			max-width: 300px;
+		}
+
+		.videos-ui__bar {
+			min-height: 72px;
 		}
 	}
 
@@ -283,6 +301,7 @@
 		}
 
 		.videos-ui__body {
+			max-width: 1160px;
 			padding: 0 20px 80px;
 			h3 {
 				margin: 80px 0 20px;
