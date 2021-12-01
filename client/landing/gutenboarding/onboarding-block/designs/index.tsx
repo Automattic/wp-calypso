@@ -171,6 +171,7 @@ const Designs: React.FunctionComponent = () => {
 				categoriesFooter={
 					useFeaturedPicksButtons && (
 						<FeaturedPicksButtons
+							className="designs__featured-picks-buttons"
 							designs={ designs.filter( ( design ) => design.is_featured_picks ) }
 							onSelect={ onSelect }
 						/>
