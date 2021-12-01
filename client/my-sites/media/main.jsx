@@ -293,7 +293,7 @@ class Media extends Component {
 		const selected =
 			selectedItems && selectedItems.length ? selectedItems : this.props.selectedItems;
 
-		this.props.deleteMedia( selected );
+		this.props.deleteMedia( site.ID, selected );
 	};
 
 	getAnalyticsPath = () => {

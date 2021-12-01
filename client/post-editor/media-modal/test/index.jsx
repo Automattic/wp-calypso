@@ -102,7 +102,7 @@ describe( 'EditorMediaModal', () => {
 		);
 		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith( media );
+				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 				resolve();
 			} );
 		} );
@@ -120,7 +120,7 @@ describe( 'EditorMediaModal', () => {
 
 		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith( DUMMY_MEDIA );
+				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
 				resolve();
 			} );
 		} );
@@ -140,7 +140,7 @@ describe( 'EditorMediaModal', () => {
 		);
 		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith( media );
+				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 				resolve();
 			} );
 		} );
@@ -160,7 +160,7 @@ describe( 'EditorMediaModal', () => {
 
 		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith( DUMMY_MEDIA[ 0 ] );
+				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
 				resolve();
 			} );
 		} );

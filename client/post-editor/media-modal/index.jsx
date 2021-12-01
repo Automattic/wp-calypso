@@ -220,7 +220,7 @@ export class EditorMediaModal extends Component {
 			this.setNextAvailableDetailView();
 		}
 
-		this.props.deleteMedia( toDelete );
+		this.props.deleteMedia( site.ID, toDelete );
 		mcBumpStat( 'editor_media_actions', 'delete_media' );
 	};
 

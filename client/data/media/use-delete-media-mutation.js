@@ -2,20 +2,20 @@ import { useCallback } from 'react';
 import { useMutation } from 'react-query';
 import wp from 'calypso/lib/wp';
 
-export const useDeleteMediaMutation = ( siteId, queryOptions = {} ) => {
+export const useDeleteMediaMutation = ( queryOptions = {} ) => {
 	const mutation = useMutation(
-		( { mediaId } ) => wp.req.post( `/sites/${ siteId }/media/${ mediaId }/delete` ),
+		( { siteId, mediaId } ) => wp.req.post( `/sites/${ siteId }/media/${ mediaId }/delete` ),
 		{ ...queryOptions }
 	);
 
 	const { mutate } = mutation;
 
 	const deleteMedia = useCallback(
-		( items ) => {
+		( siteId, items ) => {
 			const mediaItems = Array.isArray( items ) ? items : [ items ];
 			mediaItems
 				.filter( ( item ) => typeof item.ID === 'number' )
-				.forEach( ( item ) => mutate( { mediaId: item.ID } ) );
+				.forEach( ( item ) => mutate( { siteId, mediaId: item.ID } ) );
 		},
 		[ mutate ]
 	);
