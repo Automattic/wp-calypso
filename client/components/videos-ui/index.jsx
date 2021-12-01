@@ -2,8 +2,9 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { cloneElement, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
+import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
 import VideoPlayer from './video-player';
@@ -14,11 +15,12 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 
 	const courseSlug = 'blogging-quick-start';
 	const { data: course } = useCourseQuery( courseSlug, { retry: false } );
+	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
 
 	const initialUserCourseProgression = useSelector( ( state ) => {
 		const courses = getOriginalUserSetting( state, 'courses' );
 		return courses !== null && courseSlug in courses ? courses[ courseSlug ] : [];
-	} );
+	}, shallowEqual );
 	const [ userCourseProgression, setUserCourseProgression ] = useState( [] );
 	useEffect( () => {
 		setUserCourseProgression( initialUserCourseProgression );
@@ -40,11 +42,11 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	};
 
 	useEffect( () => {
-		if ( ! course ) {
+		if ( ! course || ! initialUserCourseProgression ) {
 			return;
 		}
 		const videoSlugs = Object.keys( course?.videos ?? [] );
-		const viewedSlugs = Object.keys( userCourseProgression );
+		const viewedSlugs = Object.keys( initialUserCourseProgression );
 		if ( viewedSlugs.length > 0 ) {
 			const nextSlug = videoSlugs.find( ( slug ) => ! viewedSlugs.includes( slug ) );
 			if ( nextSlug ) {
@@ -56,7 +58,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		const initialVideoId = 'find-theme';
 		setCurrentVideoKey( initialVideoId );
 		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoId ) );
-	}, [ course, userCourseProgression ] );
+	}, [ course, initialUserCourseProgression ] );
 
 	const isChapterSelected = ( idx ) => {
 		return selectedChapterIndex === idx;
@@ -73,6 +75,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		const updatedUserCourseProgression = { ...userCourseProgression };
 		updatedUserCourseProgression[ videoData.slug ] = true;
 		setUserCourseProgression( updatedUserCourseProgression );
+		updateUserCourseProgression( courseSlug, videoData.slug );
 	};
 
 	useEffect( () => {
