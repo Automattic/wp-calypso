@@ -50,7 +50,7 @@ function SupportLink() {
 }
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
+	const { goToStep, isReskinned, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
 
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
@@ -65,34 +65,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		warnings,
 	} = useWooCommerceOnPlansEligibility( siteId );
 
-	function onNextButtonClickHandler() {
-		// confirm -> confirm/info
-		if (
-			wpcomSubdomainWarning &&
-			( stepSectionName === 'info' || typeof stepSectionName === 'undefined' )
-		) {
-			return goToStep( 'confirm', 'plan' );
-		}
-
-		// confirm/info -> checkout page
-		if ( siteUpgrading.required && stepSectionName === 'plan' ) {
-			return ( window.location.href = siteUpgrading.checkoutUrl );
-		}
-
-		// confirm/info -> transfer
-		return goToStep( 'transfer' );
-	}
-
-	const backUrl =
-		stepSectionName === 'info' || typeof stepSectionName === 'undefined'
-			? `/woocommerce-installation/${ wpcomDomain }`
-			: 'info';
-
 	function getWPComSubdomainWarningContent() {
-		if (
-			! wpcomSubdomainWarning ||
-			! ( stepSectionName === 'info' || typeof stepSectionName === 'undefined' )
-		) {
+		if ( ! wpcomSubdomainWarning ) {
 			return null;
 		}
 
@@ -100,7 +74,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	}
 
 	function getCheckoutContent() {
-		if ( ! siteUpgrading.required || stepSectionName !== 'plan' ) {
+		if ( ! siteUpgrading.required ) {
 			return null;
 		}
 
@@ -139,11 +113,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			return null;
 		}
 
-		const buttonText =
-			siteUpgrading.required && stepSectionName === 'plan'
-				? siteUpgrading.checkoutText
-				: __( 'Sounds good' );
-
 		return (
 			<>
 				<div className="confirm__info-section" />
@@ -153,8 +122,16 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					{ getWarningsOrHoldsSection() }
 					<ActionSection>
 						<SupportLink />
-						<NextButton disabled={ hasBlockers } onClick={ onNextButtonClickHandler }>
-							{ buttonText }
+						<NextButton
+							disabled={ hasBlockers }
+							onClick={ () => {
+								if ( siteUpgrading.required ) {
+									return ( window.location.href = siteUpgrading.checkoutUrl );
+								}
+								goToStep( 'transfer' );
+							} }
+						>
+							{ __( 'Sounds good' ) }
 						</NextButton>
 					</ActionSection>
 				</div>
@@ -168,7 +145,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
-			backUrl={ backUrl }
+			backUrl={ `/woocommerce-installation/${ wpcomDomain }` }
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
