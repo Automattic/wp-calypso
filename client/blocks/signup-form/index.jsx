@@ -970,7 +970,7 @@ class SignupForm extends Component {
 				<ContinueAsUser
 					redirectPath={ this.props.redirectToAfterLoginUrl }
 					onChangeAccount={ this.handleOnChangeAccount }
-					isSignUpFlow={ true }
+					isSignUpFlow
 				/>
 			);
 		}
