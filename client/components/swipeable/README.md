@@ -9,7 +9,7 @@ import Swipable from 'calypso/components/swipable';
 
 function Pager() {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
-	return ( 
+	return (
 		<Swipable
 			onPageSelect={ ( index ) => {
 				setCurrentPage( index );
