@@ -12,6 +12,7 @@ import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -245,11 +246,17 @@ class AllDomains extends Component {
 		);
 	}
 
+	handleSelectAllDomains = ( event ) => {
+		return this.handleDomainListHeaderToggle( event.target.checked );
+	};
+
 	mergeFilteredDomainsWithDomainsDetails() {
 		const { domainsDetails } = this.props;
-		return this.filteredDomains().map(
-			( domain ) => this.findDomainDetails( domainsDetails, domain ) || domain
-		);
+		const { selectedDomains } = this.state;
+		return this.filteredDomains().map( ( domain ) => ( {
+			...( this.findDomainDetails( domainsDetails, domain ) || domain ),
+			selected: selectedDomains[ domain.name ],
+		} ) );
 	}
 
 	renderQuerySiteDomainsOnce( blogId ) {
@@ -375,7 +382,10 @@ class AllDomains extends Component {
 			requestingSiteDomains,
 			hasLoadedUserPurchases,
 			translate,
+			isContactEmailEditContext,
 		} = this.props;
+
+		const { isSavingContactInfo } = this.state;
 
 		const selectedFilter = context?.query?.filter;
 
@@ -456,6 +466,23 @@ class AllDomains extends Component {
 			{ name: 'action', label: null },
 		];
 
+		if ( isContactEmailEditContext ) {
+			const areAllCheckboxesChecked = Object.entries( this.state.selectedDomains ).every(
+				( [ , selected ] ) => selected
+			);
+			domainsTableColumns.unshift( {
+				name: 'select-domain',
+				label: (
+					<FormCheckbox
+						className="list__checkbox"
+						onChange={ this.handleSelectAllDomains }
+						checked={ areAllCheckboxesChecked }
+						disabled={ this.state.isSavingContactInfo }
+					/>
+				),
+			} );
+		}
+
 		return (
 			<>
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
@@ -465,14 +492,17 @@ class AllDomains extends Component {
 						this.mergeFilteredDomainsWithDomainsDetails(),
 						selectedFilter
 					) }
+					handleDomainItemToggle={ this.handleDomainItemToggle }
 					domainsTableColumns={ domainsTableColumns }
 					isManagingAllSites={ true }
+					isContactEmailEditContext={ isContactEmailEditContext }
 					goToEditDomainRoot={ this.handleDomainItemClick }
 					isLoading={ this.isLoading() }
 					purchases={ purchases }
 					sites={ sites }
 					requestingSiteDomains={ requestingSiteDomains }
 					hasLoadedPurchases={ hasLoadedUserPurchases }
+					isSavingContactInfo={ isSavingContactInfo }
 				/>
 			</>
 		);
@@ -609,9 +639,18 @@ class AllDomains extends Component {
 	}
 
 	filteredDomains() {
-		const { domainsList, canManageSitesMap } = this.props;
+		const {
+			filteredDomainsList,
+			domainsList,
+			canManageSitesMap,
+			isContactEmailEditContext,
+		} = this.props;
 		if ( ! domainsList ) {
 			return [];
+		}
+
+		if ( isContactEmailEditContext ) {
+			return filteredDomainsList;
 		}
 
 		// filter on sites we can manage, that aren't `wpcom` type

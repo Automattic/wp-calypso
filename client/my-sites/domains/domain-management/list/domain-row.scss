@@ -115,6 +115,18 @@
 	}
 }
 
+.domain-row__checkbox-cell {
+	overflow: hidden;
+	flex: 1;
+
+	@include break-mobile {
+		flex: 10 10 0;
+		align-self: center;
+		font-size: $font-body-small;
+		padding-top: 2px;
+	}
+}
+
 .domain-row__domain-cell {
 	overflow: hidden;
 	flex: 1;
