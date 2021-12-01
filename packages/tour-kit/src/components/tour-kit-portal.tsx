@@ -14,7 +14,7 @@ interface Props {
 	config: Config;
 }
 
-const TourPortal: React.FunctionComponent< Props > = ( { config } ) => {
+const TourKitPortal: React.FunctionComponent< Props > = ( { config } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
 	useEffect( () => {
@@ -30,4 +30,4 @@ const TourPortal: React.FunctionComponent< Props > = ( { config } ) => {
 	return <div>{ createPortal( <TourKitFrame config={ config } />, portalParent ) }</div>;
 };
 
-export default TourPortal;
+export default TourKitPortal;
