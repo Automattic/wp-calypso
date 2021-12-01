@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { cloneElement, useEffect, useState, useRef } from 'react';
+import { cloneElement, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -25,8 +25,6 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	const [ currentVideo, setCurrentVideo ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
 
-	const videoRef = useRef( null );
-
 	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
@@ -36,18 +34,6 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		setCurrentVideo( videoInfo );
 		setIsPlaying( true );
 	};
-
-	useEffect( () => {
-		if ( videoRef.current ) {
-			videoRef.current.onplay = () => {
-				setIsPlaying( true );
-			};
-
-			videoRef.current.onpause = () => {
-				setIsPlaying( false );
-			};
-		}
-	} );
 
 	useEffect( () => {
 		if ( ! course ) {
@@ -136,8 +122,8 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 					{ currentVideo && (
 						<VideoPlayer
 							completedSeconds={ currentVideo.completed_seconds }
-							videoRef={ videoRef }
 							videoUrl={ currentVideo.url }
+							onVideoPlayStatusChanged={ ( isVideoPlaying ) => setIsPlaying( isVideoPlaying ) }
 							isPlaying={ isPlaying }
 							poster={ currentVideo.poster ? currentVideo.poster : undefined }
 						/>

@@ -1,7 +1,15 @@
-import { useEffect, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 
-const VideoPlayer = ( { completedSeconds, videoRef, videoUrl, isPlaying, poster = undefined } ) => {
+const VideoPlayer = ( {
+	completedSeconds,
+	videoUrl,
+	onVideoPlayStatusChanged,
+	isPlaying,
+	poster = undefined,
+} ) => {
 	const [ addTimeUpdateHandler, setAddTimeUpdateHandler ] = useState( true );
+
+	const videoRef = createRef();
 
 	const markVideoAsComplete = () => {
 		if ( videoRef.current.currentTime < completedSeconds ) {
@@ -9,6 +17,18 @@ const VideoPlayer = ( { completedSeconds, videoRef, videoUrl, isPlaying, poster 
 		}
 		setAddTimeUpdateHandler( false );
 	};
+
+	useEffect( () => {
+		if ( videoRef.current ) {
+			videoRef.current.onplay = () => {
+				onVideoPlayStatusChanged( true );
+			};
+
+			videoRef.current.onpause = () => {
+				onVideoPlayStatusChanged( false );
+			};
+		}
+	} );
 
 	useEffect( () => {
 		if ( isPlaying ) {
