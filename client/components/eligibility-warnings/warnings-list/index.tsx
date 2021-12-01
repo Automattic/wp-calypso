@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
+import { __ } from '@wordpress/i18n';
 import { ReactElement } from 'react';
+import Card from '../card';
 
 const WarningsList = styled.ul`
 	margin: 10px 0 10px 20px;
@@ -27,15 +29,17 @@ type WarningListProps = {
 };
 
 const WarningList = ( { warnings }: WarningListProps ): ReactElement => (
-	<WarningsList>
-		{ warnings?.map( ( { name, description }, index ) => (
-			<WarningListItem key={ index }>
-				<WarningTitle>{ name }</WarningTitle>
-				:&nbsp;
-				<WarningDescription>{ description }</WarningDescription>
-			</WarningListItem>
-		) ) }
-	</WarningsList>
+	<Card icon="notice-outline" title={ __( 'Things you should be aware of' ) }>
+		<WarningsList>
+			{ warnings?.map( ( { name, description }, index ) => (
+				<WarningListItem key={ index }>
+					<WarningTitle>{ name }</WarningTitle>
+					:&nbsp;
+					<WarningDescription>{ description }</WarningDescription>
+				</WarningListItem>
+			) ) }
+		</WarningsList>
+	</Card>
 );
 
 export default WarningList;
