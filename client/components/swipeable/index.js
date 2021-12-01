@@ -209,4 +209,4 @@ export const Swipeable = ( {
 	);
 };
 
-export default Swipable;
+export default Swipeable;

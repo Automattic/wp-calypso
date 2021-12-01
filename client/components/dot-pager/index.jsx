@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
 import { Children, useState, useEffect } from 'react';
-import Swipable from '../swipeable';
+import Swipeable from '../swipeable';
 
 import './style.scss';
 
@@ -106,14 +106,14 @@ export const DotPager = ( {
 				numberOfPages={ numPages }
 				setCurrentPage={ handleSelectPage }
 			/>
-			<Swipable
+			<Swipeable
 				hasDynamicHeight={ hasDynamicHeight }
 				onPageSelect={ handleSelectPage }
 				currentPage={ currentPage }
 				pageClassName="dot-pager__page"
 			>
 				{ children }
-			</Swipable>
+			</Swipeable>
 		</div>
 	);
 };

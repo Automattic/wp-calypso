@@ -5,12 +5,12 @@ This component is used to add horizontal swipe controls to a list of elements (p
 ## Example Usage
 
 ```js
-import Swipable from 'calypso/components/swipable';
+import Swipeable from 'calypso/components/swipeable';
 
 function Pager() {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	return (
-		<Swipable
+		<Swipeable
 			onPageSelect={ ( index ) => {
 				setCurrentPage( index );
 			} }
@@ -20,7 +20,7 @@ function Pager() {
 			<div>Page 1</div>
 			<div>Page 2</div>
 			<div>Page 3</div>
-		</Swipable>
+		</Swipeable>
 	);
 }
 ```
