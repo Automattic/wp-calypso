@@ -69,7 +69,7 @@ const hasProgressInfo = ( progress ) => {
 	}
 
 	const firstType = types.shift();
-	if ( ! Object.hasOwn( firstType, 'completed' ) ) {
+	if ( ! firstType.hasOwnProperty( 'completed' ) ) {
 		return false;
 	}
 

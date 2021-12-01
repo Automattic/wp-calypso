@@ -14,8 +14,8 @@ export const isRequestingSupportArticleAlternates = ( state, postKeySegments ) =
 	const postKey = keyToString( postKeySegments );
 
 	return (
-		Object.hasOwn( state.supportArticlesAlternates.requests, postKey ) &&
-		isEmpty( get( state.supportArticlesAlternates.requests, [ postKey ] ) )
+		state.supportArticlesAlternates.requests.hasOwnProperty( postKey ) &&
+		isEmpty( state.supportArticlesAlternates.requests[ postKey ] )
 	);
 };
 
@@ -55,7 +55,7 @@ export const isRequestingSupportArticleAlternatesFailed = ( state, postKeySegmen
 export const shouldRequestSupportArticleAlternates = ( state, postKeySegments ) => {
 	const postKey = keyToString( postKeySegments );
 
-	return ! Object.hasOwn( state.supportArticlesAlternates.requests, postKey );
+	return ! state.supportArticlesAlternates.requests.hasOwnProperty( postKey );
 };
 
 /**

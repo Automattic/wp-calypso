@@ -137,7 +137,7 @@ class SiteImporterInputPane extends Component {
 		if ( this.state.selectedEndpoint ) {
 			params.force_endpoint = this.state.selectedEndpoint;
 		}
-		if ( Object.hasOwn( this.props.importerData, 'engine' ) ) {
+		if ( this.props.importerData.hasOwnProperty( 'engine' ) ) {
 			params.engine = this.props.importerData.engine;
 		}
 		return params;

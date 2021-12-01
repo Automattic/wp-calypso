@@ -44,7 +44,7 @@ class AuthorCompactProfile extends Component {
 			return <AuthorCompactProfilePlaceholder />;
 		}
 
-		const hasAuthorName = Object.hasOwn( author, 'name' );
+		const hasAuthorName = author.hasOwnProperty( 'name' );
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
 		const classes = classnames( {

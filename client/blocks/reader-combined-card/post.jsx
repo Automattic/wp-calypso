@@ -98,7 +98,7 @@ class ReaderCombinedCardPost extends Component {
 		}
 
 		const hasAuthorName =
-			Object.hasOwn( post.author, 'name' ) && ! isAuthorNameBlocked( post.author.name );
+			post.author.hasOwnProperty( 'name' ) && ! isAuthorNameBlocked( post.author.name );
 		let featuredAsset = null;
 		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = (

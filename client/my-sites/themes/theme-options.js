@@ -248,7 +248,7 @@ const connectOptionsHoc = connect(
 	( options, actions, ownProps ) => {
 		const { defaultOption, secondaryOption, getScreenshotOption } = ownProps;
 		options = mapValues( options, ( option, name ) => {
-			if ( Object.hasOwn( option, 'action' ) ) {
+			if ( option.hasOwnProperty( 'action' ) ) {
 				return { ...option, action: actions[ name ] };
 			}
 			return option;

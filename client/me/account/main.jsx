@@ -142,7 +142,7 @@ class Account extends Component {
 	}
 
 	hasUnsavedUserSetting( settingName ) {
-		return Object.hasOwn( this.props.unsavedUserSettings, settingName );
+		return this.props.unsavedUserSettings.hasOwnProperty( settingName );
 	}
 
 	hasUnsavedUserSettings( settingNames ) {

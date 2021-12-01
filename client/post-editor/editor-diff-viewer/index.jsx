@@ -163,7 +163,7 @@ class EditorDiffViewer extends PureComponent {
 		const { diff, diffView } = this.props;
 		const classes = classNames( 'editor-diff-viewer', {
 			'is-loading':
-				! Object.hasOwn( diff, 'post_content' ) && ! Object.hasOwn( diff, 'post_title' ),
+				! diff.hasOwnProperty( 'post_content' ) && ! diff.hasOwnProperty( 'post_title' ),
 			'is-split': diffView === 'split',
 		} );
 

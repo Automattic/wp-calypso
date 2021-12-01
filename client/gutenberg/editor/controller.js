@@ -254,7 +254,7 @@ export const post = ( context, next ) => {
 			anchorFmData={ anchorFmData }
 			fseParentPageId={ fseParentPageId }
 			parentPostId={ parentPostId }
-			creatingNewHomepage={ postType === 'page' && Object.hasOwn( context.query, 'new-homepage' ) }
+			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }
 			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
 			showDraftPostModal={ showDraftPostModal() }
 		/>

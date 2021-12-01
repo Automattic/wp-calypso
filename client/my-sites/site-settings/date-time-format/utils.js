@@ -135,7 +135,7 @@ export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 			}
 
 			// Check if character is a recognized mapping token
-			if ( Object.hasOwn( phpToMomentMapping, c ) ) {
+			if ( phpToMomentMapping.hasOwnProperty( c ) ) {
 				return phpToMomentMapping[ c ];
 			}
 

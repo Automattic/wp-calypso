@@ -21,7 +21,7 @@ const hasRelevantAnalytics = ( action ) =>
 	);
 
 const isRelevantActionType = ( action ) =>
-	Object.hasOwn( relevantTypes, action.type ) &&
+	relevantTypes.hasOwnProperty( action.type ) &&
 	( typeof relevantTypes[ action.type ] !== 'function' || relevantTypes[ action.type ]( action ) );
 
 const overSome = ( checks ) => ( item ) => checks.some( ( check ) => check( item ) );

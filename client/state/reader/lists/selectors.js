@@ -89,7 +89,7 @@ export function isUpdatedList( state, listId ) {
  * @returns {boolean}        Whether list has an error
  */
 export function hasError( state, listId ) {
-	return Object.hasOwn( state.reader.lists.errors, listId );
+	return state.reader.lists.errors.hasOwnProperty( listId );
 }
 
 /**
