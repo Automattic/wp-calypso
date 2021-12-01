@@ -1,4 +1,4 @@
-@import '@automattic/onboarding/styles/variables';
+@use '@automattic/onboarding/styles/variables' as variables2;
 
 .nux-launch-step__input {
 	position: relative;
@@ -7,7 +7,7 @@
 	input[type='text'].components-text-control__input {
 		padding: 6px 40px 6px 16px;
 		height: 38px;
-		background: $gray-100;
+		background: variables2.$gray-100;
 		border: none;
 
 		&::placeholder {
@@ -31,7 +31,7 @@
 	display: flex;
 	align-items: center;
 	color: var( --studio-gray-50 );
-	font-family: $default-font;
+	font-family: variables2.$default-font;
 	font-size: 14px;
 	line-height: 14px;
 

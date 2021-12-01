@@ -1,8 +1,8 @@
 // @TODO: remove the ignore rule and replace font sizes accordingly
 /* stylelint-disable scales/font-size */
 
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/onboarding/styles/mixins';
+@use '@automattic/typography/styles/fonts';
+@use '@automattic/onboarding/styles/mixins';
 
 $wpcom-modal-breakpoint: 660px;
 
@@ -151,7 +151,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 }
 
 .wpcom-block-editor-nux__heading {
-	@include onboarding-font-recoleta;
+	@include mixins.onboarding-font-recoleta;
 	/* Gray / Gray 90 */
 	color: #1d2327;
 

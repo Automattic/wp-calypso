@@ -1,4 +1,4 @@
-@import '@automattic/onboarding/styles/mixins';
+@use '@automattic/onboarding/styles/mixins' as styles-mixins;
 
 .nux-launch-menu {
 	h4 {
@@ -12,7 +12,7 @@
 }
 
 .nux-launch-menu__item.components-button.is-link {
-	@include onboarding-medium-text;
+	@include styles-mixins.onboarding-medium-text;
 	display: flex;
 	color: var( --studio-gray-30 );
 	width: 100%;
@@ -38,7 +38,7 @@
 	}
 
 	// This is only highlighted when sidebar is not fullscreen
-	@include break-medium {
+	@include styles-mixins.break-medium {
 		&.is-current {
 			background: var( --studio-blue-0 );
 			color: initial;

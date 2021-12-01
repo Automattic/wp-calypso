@@ -1,4 +1,4 @@
-@import '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/colors';
 
 // TODO: This is former light-gray-900 from @wordpress/base-styles.
 // Replace with a color from the standard palette.
@@ -13,8 +13,8 @@ $create-page-text-color: #a2aab2;
 	min-height: 45px;
 
 	&:focus {
-		color: $white;
-		border: 1px solid $white;
+		color: colors.$white;
+		border: 1px solid colors.$white;
 		box-shadow: none !important;
 		outline: none !important;
 		border-radius: 0;

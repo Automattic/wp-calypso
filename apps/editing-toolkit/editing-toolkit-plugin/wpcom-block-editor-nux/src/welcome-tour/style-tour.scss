@@ -1,8 +1,8 @@
 @use 'sass:math';
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/z-index';
+@use '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables';
+@use '@wordpress/base-styles/z-index';
 
 $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
 
@@ -28,14 +28,14 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	border-radius: 2px;
 	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
 		0 1px 1px rgba( 0, 0, 0, 0.08 );
-	background-color: $white;
-	color: $black;
+	background-color: colors.$white;
+	color: colors.$black;
 
 	.components-button {
 		height: 44px;
 
 		.wpcom-editor-welcome-tour__minimized-tour-index {
-			color: $gray-600;
+			color: colors.$gray-600;
 		}
 
 		svg {
@@ -56,7 +56,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 
 	.components-guide__page-control {
 		bottom: 0;
-		left: $grid-unit-20;
+		left: variables.$grid-unit-20;
 		margin: 0;
 		position: absolute;
 
@@ -92,12 +92,12 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	.components-card__body,
 	.components-card__footer {
 		border-top: none;
-		padding: $grid-unit-20 !important;
+		padding: variables.$grid-unit-20 !important;
 	}
 
 	.components-card__footer {
 		.welcome-tour__end-text {
-			color: $gray-600;
+			color: colors.$gray-600;
 			font-size: 0.875rem;
 			font-style: italic;
 		}
@@ -105,19 +105,19 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 		.welcome-tour__end-icon.components-button.has-icon {
 			background-color: #f6f7f7;
 			border-radius: 50%; /* stylelint-disable-line */
-			color: $gray-600;
+			color: colors.$gray-600;
 			margin-left: 8px;
 
 			path {
-				fill: $gray-600;
+				fill: colors.$gray-600;
 			}
 
 			&.active {
-				background-color: $black;
+				background-color: colors.$black;
 				opacity: 1;
 
 				path {
-					fill: $white;
+					fill: colors.$white;
 				}
 			}
 		}
@@ -160,7 +160,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 
 .welcome-tour-card__overlay-controls {
 	left: 0;
-	padding: $grid-unit-15;
+	padding: variables.$grid-unit-15;
 	position: absolute;
 	right: 0;
 	z-index: 1; // z-index is needed because overlay controls are written before components-card__media, and so ends up under the image
@@ -199,7 +199,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 }
 
 .welcome-tour-card__next-btn {
-	margin-left: $grid-unit-15;
+	margin-left: variables.$grid-unit-15;
 	justify-content: center;
 	min-width: 85px;
 }

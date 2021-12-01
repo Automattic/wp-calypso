@@ -1,4 +1,4 @@
-@import '../../sass/mixins';
+@use '../../sass/mixins';
 
 .block-editor {
 	.wp-block-a8c-site-title:focus {
@@ -7,6 +7,6 @@
 	}
 
 	.wp-block.is-selected .wp-block-a8c-site-title {
-		@include hide-input-placeholder;
+		@include mixins.hide-input-placeholder;
 	}
 }

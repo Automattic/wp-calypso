@@ -1,5 +1,5 @@
-@import '@automattic/typography/styles/variables';
-@import '@automattic/onboarding/styles/mixins';
+@use '@automattic/typography/styles/variables';
+@use '@automattic/onboarding/styles/mixins';
 
 // TODO: This is former dark-gray-500 from @wordpress/base-styles.
 // Replace with a color from the standard palette.
@@ -21,7 +21,7 @@ ul.nux-launch__feature-item-group {
 	margin: 0;
 }
 .nux-launch__feature-item {
-	font-size: $font-body-small;
+	font-size: variables.$font-body-small;
 	line-height: 20px;
 	letter-spacing: 0.2px;
 	margin: 4px 0;
@@ -55,7 +55,7 @@ ul.nux-launch__feature-item-group {
 	}
 
 	&:disabled {
-		color: $white;
+		color: mixins.$white;
 		opacity: 0.5;
 
 		&:hover {
@@ -83,10 +83,10 @@ ul.nux-launch__feature-item-group {
 		font-weight: 600;
 
 		&.is-loading {
-			@include onboarding-placeholder();
+			@include mixins.onboarding-placeholder();
 		}
 	}
 	&__domain-price {
-		font-size: $font-body-small;
+		font-size: variables.$font-body-small;
 	}
 }

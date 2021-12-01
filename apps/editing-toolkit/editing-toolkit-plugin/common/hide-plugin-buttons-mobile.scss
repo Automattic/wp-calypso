@@ -1,9 +1,9 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/breakpoints';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables';
+@use '@wordpress/base-styles/breakpoints';
 
 .interface-pinned-items > button:not( :first-child ) {
-	@media ( max-width: $break-medium ) {
+	@media ( max-width: breakpoints.$break-medium ) {
 		display: none;
 	}
 }

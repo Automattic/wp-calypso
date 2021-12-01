@@ -1,9 +1,9 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/breakpoints';
+@use '@wordpress/base-styles/mixins';
 
 .wpcom-block-editor-post-published-modal {
 	.components-modal__content {
-		@include break-small {
+		@include mixins.break-small {
 			padding: 48px 90px;
 		}
 	}

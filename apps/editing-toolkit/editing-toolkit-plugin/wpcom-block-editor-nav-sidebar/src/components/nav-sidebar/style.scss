@@ -1,9 +1,9 @@
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/z-index';
+@use '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables';
+@use '@wordpress/base-styles/z-index';
 
-$sidebar-width: 272px;
+variables.$sidebar-width: 272px;
 $sidebar-transition-period: 100ms;
 $sidebar-background-color: #23282e; // WP-admin gray to match the close button background color
 $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the close button background hover color
@@ -17,24 +17,24 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	right: 0;
 	bottom: 0;
 	// Use the same z-index as the edit-post-layout header
-	z-index: z-index( '.interface-interface-skeleton__header' );
+	z-index: z-index.z-index( '.interface-interface-skeleton__header' );
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-out
 		forwards;
-	@include reduce-motion( 'animation' );
+	@include mixins.reduce-motion( 'animation' );
 
 	&.is-fading-out {
 		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-in
 			reverse;
-		@include reduce-motion( 'animation' );
+		@include mixins.reduce-motion( 'animation' );
 	}
 }
 
 @keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__fade {
 	0% {
-		background-color: rgba( $black, 0 );
+		background-color: rgba( colors.$black, 0 );
 	}
 	100% {
-		background-color: rgba( $black, 0.7 );
+		background-color: rgba( colors.$black, 0.7 );
 	}
 }
 
@@ -43,24 +43,24 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	position: fixed;
 	top: 0;
 	bottom: 0;
-	width: $sidebar-width;
+	width: variables.$sidebar-width;
 	background: $sidebar-background-color;
 	display: flex;
 	flex-direction: column;
-	box-shadow: -5px 0 20px $black;
+	box-shadow: -5px 0 20px colors.$black;
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-out;
-	@include reduce-motion( 'animation' );
+	@include mixins.reduce-motion( 'animation' );
 
 	&.is-sliding-left {
 		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-in
 			reverse;
-		@include reduce-motion( 'animation' );
+		@include mixins.reduce-motion( 'animation' );
 	}
 }
 
 @keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__slide {
 	0% {
-		left: -$sidebar-width;
+		left: -(variables.$sidebar-width);
 	}
 	100% {
 		left: 0;
@@ -74,16 +74,16 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
-	margin-left: $grid-unit-10;
+	margin-left: variables.$grid-unit-10;
 	align-items: center;
 	display: flex;
 	min-height: 60px;
 
 	h2 {
-		color: $white;
+		color: colors.$white;
 		margin: 0;
-		font-size: $text-editor-font-size;
-		line-height: $default-line-height;
+		font-size: variables.$text-editor-font-size;
+		line-height: variables.$default-line-height;
 		word-wrap: break-word;
 		font-weight: normal;
 		display: flex;
@@ -98,13 +98,13 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 		&:active,
 		&:focus,
 		&:hover {
-			color: $white;
+			color: colors.$white;
 		}
 	}
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
-	height: $header-height !important;
+	height: variables.$header-height !important;
 	background-color: $sidebar-nav-header-background-color !important;
 	// Prevents the icon button from shrinking when the site title goes on 2+ lines
 	flex-shrink: 0;
@@ -114,19 +114,19 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	width: 100%;
 	border: none !important;
 	box-shadow: none !important;
-	color: $white;
+	color: colors.$white;
 	flex-shrink: 0;
 	padding: 8px 11px !important;
 	margin: 12px 0;
 
 	&:hover,
 	&:not( [aria-disabled='true'] ):active {
-		color: $white;
+		color: colors.$white;
 	}
 
 	&:focus {
-		color: $white;
-		border: 1px solid $white !important;
+		color: colors.$white;
+		border: 1px solid colors.$white !important;
 		box-shadow: none !important;
 		outline: none !important;
 		border-radius: 0;
@@ -136,15 +136,15 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading,
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
-	padding: $grid-unit-05 $grid-unit-20;
+	padding: variables.$grid-unit-05 variables.$grid-unit-20;
 	/* stylelint-disable-next-line scales/font-size, declaration-property-unit-allowed-list */
 	font-size: 18px;
-	color: $white;
+	color: colors.$white;
 	margin: 0 0 8px;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
-	font-size: $default-font-size;
+	font-size: variables.$default-font-size;
 	font-weight: normal;
 }
 
@@ -161,7 +161,7 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	}
 
 	.is-selected {
-		color: $white;
+		color: colors.$white;
 	}
 	/*
 	@TODO Work out how we're going to handle overflow

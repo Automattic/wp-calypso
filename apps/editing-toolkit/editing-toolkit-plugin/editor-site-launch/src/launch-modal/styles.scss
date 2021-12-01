@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/z-index';
-@import '@automattic/typography/styles/variables';
-@import '@automattic/onboarding/styles/variables';
-@import '@automattic/onboarding/styles/mixins';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables' as variables3;
+@use '@wordpress/base-styles/breakpoints';
+@use '@wordpress/base-styles/z-index';
+@use '@automattic/typography/styles/variables' as variables2;
+@use '@automattic/onboarding/styles/variables';
+@use '@automattic/onboarding/styles/mixins' as styles-mixins;
 
 body.has-nux-launch-modal {
 	overflow: hidden;
@@ -36,7 +36,7 @@ body.has-nux-launch-modal {
 }
 
 .nux-launch-modal-header {
-	@include onboarding-block-edge2edge;
+	@include styles-mixins.onboarding-block-edge2edge;
 	display: flex;
 
 	// Modal header uses position: fixed instead of position: sticky because:
@@ -45,21 +45,21 @@ body.has-nux-launch-modal {
 	position: fixed;
 	top: 0;
 	width: 100%;
-	height: $onboarding-header-height;
-	border-bottom: 1px solid $gray-200;
+	height: variables.$onboarding-header-height;
+	border-bottom: 1px solid variables3.$gray-200;
 	background: var( --studio-white );
-	z-index: z-index( '.components-modal__header' );
+	z-index: z-index.z-index( '.components-modal__header' );
 
 	// On desktop, do not show bottom border.
-	@include break-medium {
+	@include mixins.break-medium {
 		position: relative;
 		border-bottom: none;
 	}
 
 	.nux-launch-progress {
-		height: $onboarding-header-height;
+		height: variables.$onboarding-header-height;
 
-		@include break-medium {
+		@include mixins.break-medium {
 			display: none;
 		}
 	}
@@ -79,7 +79,7 @@ body.has-nux-launch-modal {
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
-	@include onboarding-block-margin;
+	@include styles-mixins.onboarding-block-margin;
 
 	.nux-launch-step__body {
 		flex-grow: 1;
@@ -94,9 +94,9 @@ body.has-nux-launch-modal {
 	}
 
 	// To accomodate fixed .nux-launch-modal-header
-	padding-top: $onboarding-header-height;
+	padding-top: variables.$onboarding-header-height;
 
-	@include break-medium {
+	@include mixins.break-medium {
 		// Modal header is not sticky on desktop.
 		padding-top: 0;
 	}
@@ -113,25 +113,25 @@ body.has-nux-launch-modal {
 	width: 100%;
 	height: 100%;
 	background: var( --studio-white );
-	z-index: z-index( '.components-modal__header' ) + 2;
+	z-index: z-index.z-index( '.components-modal__header' ) + 2;
 
-	@media ( max-width: $break-medium ) {
+	@media ( max-width: breakpoints.$break-medium ) {
 		// This brings the sidebar that is hiding offscreen into view.
 		.is-sidebar-fullscreen & {
 			left: 0;
 		}
 	}
 
-	@include break-medium {
+	@include mixins.break-medium {
 		// Use sticky or relative positioning because fixed or absolute
 		// positioning causes the vertical scrollbar from the parent element
 		// to overlap the content on the sidebar.
 		position: sticky;
 		top: 0;
 		left: auto;
-		width: $sidebar-width;
-		min-width: $sidebar-width;
-		max-width: $sidebar-width;
+		width: variables3.$sidebar-width;
+		min-width: variables3.$sidebar-width;
+		max-width: variables3.$sidebar-width;
 		border-left: 1px solid var( --studio-gray-5 );
 	}
 }
@@ -140,7 +140,7 @@ body.has-nux-launch-modal {
 	// This keeps the button on the top right corner even when scrolled down
 	position: sticky;
 	top: 0;
-	z-index: z-index( '.components-modal__header' ) + 3;
+	z-index: z-index.z-index( '.components-modal__header' ) + 3;
 
 	// Give it no dimension so it doesn't take any flex space
 	// but overflow it so the close button is visible
@@ -161,12 +161,12 @@ body.has-nux-launch-modal {
 	> span {
 		// Push the icon back out from the right side
 		position: relative;
-		right: $onboarding-header-height;
+		right: variables.$onboarding-header-height;
 
 		// Use padding to create width
 		// (18px left padding + 24px icon width + 18px right padding = 60px width)
-		padding: 0 #{( $onboarding-header-height - 24px ) * 0.5};
-		height: $onboarding-header-height;
+		padding: 0 #{( variables.$onboarding-header-height - 24px ) * 0.5};
+		height: variables.$onboarding-header-height;
 
 		// Vertically align icon
 		display: flex;
@@ -183,5 +183,5 @@ body.has-nux-launch-modal {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	font-size: $font-body;
+	font-size: variables2.$font-body;
 }
