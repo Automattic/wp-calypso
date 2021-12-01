@@ -973,6 +973,9 @@
 	a.select-dropdown__item {
 		padding: 0 16px;
 		text-decoration: none;
+		&:hover {
+			color: var( --studio-jetpack-green );
+		}
 		.select-dropdown__item-text {
 			display: block;
 			position: static;
