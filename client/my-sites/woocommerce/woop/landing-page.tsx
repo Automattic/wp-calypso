@@ -34,7 +34,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 		}
 
 		// Rolling on the new woocommerce-on-plans flow.
-		page( `/start/woocommerce-install/confirm?site=${ wpcomDomain }` );
+		page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
 	}
 
 	return (
