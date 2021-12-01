@@ -3,6 +3,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
@@ -123,6 +124,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		<Main className="transfer-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
+			<FormattedHeader brandFont headerText={ __( 'Transfer' ) } align="left" />
 			{ renderTransferOptions() }
 		</Main>
 	);
