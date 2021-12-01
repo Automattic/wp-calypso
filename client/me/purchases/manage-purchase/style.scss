@@ -1,3 +1,22 @@
+.purchases.manage-purchase > button.card,
+.purchases.manage-purchase > a.card {
+	padding-inline-start: 16px;
+	padding-inline-end: 16px;
+
+	.card__link-indicator {
+		right: 16px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			right: 24px;
+		}
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-inline-start: 24px;
+		padding-inline-end: 24px;
+	}
+}
+
 .manage-purchase__info {
 	font-size: $font-body-small;
 	padding: 0;
