@@ -35,6 +35,12 @@ type JetpackSite = {
 	ID: number;
 	URL: string;
 	is_wpcom_atomic: boolean;
+	plan: {
+		product_slug: string;
+	};
+	products: Array< {
+		product_slug: string;
+	} >;
 };
 
 type Product = {
@@ -45,6 +51,15 @@ type Product = {
 interface ProductsList {
 	[ P: string ]: Product;
 }
+
+// Check whether a site owns the purchased product as a plan or as a product.
+const siteOwnsPurchasedItem = ( site: JetpackSite, purchasedItemSlug: string ) => {
+	return (
+		site.plan.product_slug === purchasedItemSlug ||
+		( site.products.length > 0 &&
+			!! site.products.filter( ( { product_slug } ) => product_slug === purchasedItemSlug ) )
+	);
+};
 
 const LicensingActivationThankYou: FC< Props > = ( {
 	productSlug,
@@ -200,7 +215,10 @@ const LicensingActivationThankYou: FC< Props > = ( {
 
 	const siteSelectOptions = useMemo( () => {
 		return jetpackSites
-			.filter( ( site: JetpackSite ) => ! site.is_wpcom_atomic )
+			.filter(
+				( site: JetpackSite ) =>
+					! site.is_wpcom_atomic && ! siteOwnsPurchasedItem( site, productSlug )
+			)
 			.map( ( site: JetpackSite ) => ( {
 				value: site?.URL,
 				label: site.URL,
@@ -213,7 +231,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					},
 				},
 			} ) );
-	}, [ jetpackSites, selectedSite ] );
+	}, [ jetpackSites, productSlug, selectedSite ] );
 
 	const lastSelectOption = {
 		value: 'activate-license-manually',
