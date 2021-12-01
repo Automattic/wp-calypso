@@ -20,6 +20,12 @@
 		left: var( --sidebar-width-max );
 		padding: 0 32px;
 	}
+
+	.select-dropdown__separator {
+		border-top: 1px solid var( --color-neutral-10 );
+		display: block;
+		margin: 8px 0;
+	}
 }
 
 .breadcrumbs__content {
