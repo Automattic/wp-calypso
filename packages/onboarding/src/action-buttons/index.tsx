@@ -59,7 +59,7 @@ export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
 
 	return (
 		<Button
-			className={ classnames( 'action_buttons__button action-buttons__next', className ) }
+			className={ classnames( 'button action_buttons__button action-buttons__next', className ) }
 			isPrimary
 			{ ...buttonProps }
 		>

@@ -28,6 +28,7 @@ const TRANSFERRING_NOT_BLOCKERS = [
 type EligibilityHook = {
 	eligibilityHolds?: string[];
 	eligibilityWarnings?: EligibilityWarning[];
+	warnings: EligibilityWarning[];
 	isFetching: boolean;
 	wpcomDomain: string | null;
 	stagingDomain: string | null;
@@ -61,6 +62,12 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const { eligibilityHolds, eligibilityWarnings }: EligibilityData = useSelector( ( state ) =>
 		getEligibility( state, siteId )
 	);
+
+	/*
+	 * Filter warnings:
+	 * - wordpress_subdomain: it will be addressed in the wpcom subdomain warning step.
+	 */
+	const warnings = eligibilityWarnings?.filter( ( { id } ) => id !== 'wordpress_subdomain' ) ?? [];
 
 	// Pick the wpcom subdomain.
 	const wpcomDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
@@ -144,6 +151,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		isFetching,
 		eligibilityHolds,
 		eligibilityWarnings,
+		warnings,
 		wpcomDomain,
 		stagingDomain,
 		wpcomSubdomainWarning,
