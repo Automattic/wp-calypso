@@ -48,6 +48,7 @@ export type EmailProvidersStackedCardProps = {
 		comparisonContext: string,
 		validatedMailboxUuids: string[],
 		mailboxesAreValid: boolean,
+		provider: string,
 		source: string,
 		userCanAddEmail: boolean,
 		userCannotAddEmailReason: any

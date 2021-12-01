@@ -47,6 +47,7 @@ const recordTracksEventAddToCartClick = (
 	comparisonContext: string,
 	validatedMailboxUuids: string[],
 	mailboxesAreValid: boolean,
+	provider: string,
 	source: string,
 	userCanAddEmail: boolean,
 	userCannotAddEmailReason: any
@@ -55,7 +56,7 @@ const recordTracksEventAddToCartClick = (
 		context: comparisonContext,
 		mailbox_count: validatedMailboxUuids.length,
 		mailboxes_valid: mailboxesAreValid ? 1 : 0,
-		provider: TITAN_PROVIDER_NAME,
+		provider: provider,
 		source,
 		user_can_add_email: userCanAddEmail,
 		user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
