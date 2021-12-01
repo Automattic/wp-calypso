@@ -393,7 +393,7 @@ class EmailProvidersComparison extends Component {
 					comment:
 						'{{fullPrice/}} is the formatted full price, e.g. $20; {{discountedPrice/}} is the discounted, formatted price, e.g. $10',
 			  } )
-			: translate( '{{price/}} /mailbox /month billed annually', {
+			: translate( '{{price/}} /mailbox /month (billed annually)', {
 					components: {
 						price: <span>{ monthlyPrice }</span>,
 					},
