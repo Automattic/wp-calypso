@@ -11,6 +11,16 @@
 			"features": []
 		},
 		{
+			"title": "Arbutus",
+			"slug": "arbutus",
+			"template": "arbutus",
+			"theme": "arbutus",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": false,
+			"features": []
+		},
+		{
 			"title": "Russell",
 			"slug": "russell",
 			"template": "russell",
@@ -18,6 +28,16 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Russell",
+			"slug": "russell",
+			"template": "russell",
+			"theme": "russell",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": false,
 			"features": []
 		},
 		{
