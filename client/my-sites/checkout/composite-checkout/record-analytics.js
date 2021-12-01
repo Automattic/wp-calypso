@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { logStashEvent, recordCompositeCheckoutErrorDuringAnalytics } from './lib/analytics';
+import { recordCompositeCheckoutErrorDuringAnalytics } from './lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );
 
@@ -121,10 +121,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_composite_apple_pay_submit_clicked', {} )
 					);
 				}
-				case 'THANK_YOU_URL_GENERATED':
-					return logStashEvent( 'thank you url generated', {
-						url: action.payload.url,
-					} );
 				default:
 					debug( 'unknown checkout event', action );
 					return reduxDispatch(
