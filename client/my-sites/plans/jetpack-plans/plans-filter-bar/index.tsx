@@ -1,20 +1,14 @@
-import {
-	JETPACK_PRODUCTS_BY_TERM,
-	JETPACK_RESET_PLANS_BY_TERM,
-	TERM_MONTHLY,
-	TERM_ANNUALLY,
-} from '@automattic/calypso-products';
+import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
-import getHighestAnnualDiscount from './get-highest-annual-discount';
 import type { Duration, DurationChangeCallback } from '../types';
 
 import './style.scss';
@@ -34,19 +28,6 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) 
 	const translate = useTranslate();
 	const isMobile: boolean = useMobileBreakpoint();
 
-	const slugsToCheck = [
-		...JETPACK_PRODUCTS_BY_TERM.map( ( s ) => s.yearly ),
-		...JETPACK_RESET_PLANS_BY_TERM.map( ( s ) => s.yearly ),
-	];
-
-	const highestAnnualDiscount = useSelector( ( state ) =>
-		getHighestAnnualDiscount( state, slugsToCheck )
-	);
-
-	if ( ! highestAnnualDiscount ) {
-		return null;
-	}
-
 	return toggleChecked ? (
 		<div
 			className={ classNames( 'plans-filter-bar__discount-message', {
@@ -54,18 +35,18 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) 
 			} ) }
 		>
 			<div>
+				{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
 				<span className="plans-filter-bar__discount-message-text">
 					{ isMobile
-						? translate( 'Save %(discount)s by paying yearly', {
-								args: { discount: highestAnnualDiscount },
-								comment: 'Discount is either a currency-formatted number or percentage',
+						? translate( 'Get %(discount)s%% off by paying yearly', {
+								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								comment: 'Discount is a percentage',
 						  } )
-						: translate( 'Save %(discount)s', {
-								args: { discount: highestAnnualDiscount },
-								comment: 'Discount is either a currency-formatted number or percentage',
+						: translate( 'Get %(discount)s%% off*', {
+								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								comment: 'Discount is a percentage. * is a clause describing the price adjustment.',
 						  } ) }
 				</span>
-				{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
 			</div>
 		</div>
 	) : null;
@@ -80,6 +61,8 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 
 	const CALYPSO_MASTERBAR_HEIGHT = 47;
 	const CLOUD_MASTERBAR_HEIGHT = 0;
+
+	const isMobile: boolean = useMobileBreakpoint();
 
 	const windowBoundaryOffset = useMemo( () => {
 		if ( isJetpackCloud() || isConnectStore() ) {
@@ -121,8 +104,13 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 						<span className="plans-filter-bar__toggle-on-label">
 							{ translate( 'Bill yearly' ) }
 						</span>
+						{ ! isMobile && showDiscountMessage && (
+							<DiscountMessage toggleChecked={ durationChecked } />
+						) }
 					</div>
-					{ showDiscountMessage && <DiscountMessage toggleChecked={ durationChecked } /> }
+					{ isMobile && showDiscountMessage && (
+						<DiscountMessage toggleChecked={ durationChecked } />
+					) }
 				</div>
 			</div>
 		</>

@@ -83,18 +83,13 @@
 }
 
 .plans-filter-bar__discount-message {
-	font-size: 0.8125rem;
-	font-weight: 600;
 	padding-top: 2px;
 	color: var( --color-primary );
 	white-space: nowrap;
 	text-align: center;
-
-	@include breakpoint-deprecated( '>480px' ) {
-		position: absolute;
-		left: calc( 100% + 12px );
-		top: 3px;
-	}
+	font-weight: 700;
+	font-size: 16;
+	padding-left: 10px;
 
 	.plans-filter-bar__discount-message-text {
 		padding-right: 6px;

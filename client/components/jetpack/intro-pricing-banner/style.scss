@@ -29,7 +29,7 @@
 .intro-pricing-banner__copy {
 	order: 2;
 	min-width: 50%;
-	max-width: 30rem;
+	max-width: 40rem;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		order: initial;

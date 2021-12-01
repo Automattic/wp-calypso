@@ -57,7 +57,8 @@
 	}
 
 	&__you-save,
-	&__get-started {
+	&__get-started,
+	&__no-savings {
 		display: inline-block;
 		margin-block-start: 24px;
 		border-radius: 4px; /* stylelint-disable-line scales/radii */
@@ -79,6 +80,11 @@
 
 	&__you-save {
 		background-color: var( --studio-yellow-10 );
+	}
+
+	&__no-savings {
+		background-color: var( --studio-gray-5 );
+		font-weight: 400;
 	}
 
 	&__get-started {
