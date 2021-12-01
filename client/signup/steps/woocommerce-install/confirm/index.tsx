@@ -62,6 +62,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		wpcomSubdomainWarning,
 		siteUpgrading,
 		hasBlockers,
+		isFetching,
 		warnings,
 		isReadyForTransfer,
 	} = useWooCommerceOnPlansEligibility( siteId );
@@ -123,7 +124,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__info-section" />
+				<div className="confirm__info-section">{ isFetching && <LoadingEllipsis /> }</div>
 				<div className="confirm__instructions-container">
 					{ getWPComSubdomainWarningContent() }
 					{ getCheckoutContent() }
