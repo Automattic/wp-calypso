@@ -285,7 +285,9 @@ export class GutenbergEditorPage {
 	 */
 	async isSettingsSidebarOpen(): Promise< boolean > {
 		const frame = await this.getEditorFrame();
-		return await frame.isVisible( selectors.closeSettingsButton );
+		return await frame.$eval( selectors.settingsToggle, ( element ) =>
+			element.classList.contains( 'is-pressed' )
+		);
 	}
 
 	/**
