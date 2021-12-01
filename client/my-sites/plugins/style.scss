@@ -245,11 +245,11 @@ $plugin-details-header-padding: 100px;
 		.plugin-details__install-button {
 			width: 100%;
 			padding: 12px 16px;
-			background-color: var( --studio-pink-50 );
+			background-color: var( --color-accent-50 );
 			color: var( --studio-white );
 
 			&:focus, &:hover {
-				background-color: var( --studio-pink-60 );
+				background-color: var( --color-accent-60 );
 			}
 		}
 	}
