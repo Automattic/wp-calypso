@@ -573,14 +573,14 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	render() {
-		const { hasPendingAT, fixMode, translate } = this.props;
+		const { hasPendingAT, fixMode, translate, siteId } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
 			return (
 				<>
 					<SetupNotices />
-					<WoopLandingPage startSetup={ this.startSetup } />
+					<WoopLandingPage siteId={ siteId } startSetup={ this.startSetup } />
 				</>
 			);
 		}

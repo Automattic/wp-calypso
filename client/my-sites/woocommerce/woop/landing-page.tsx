@@ -9,22 +9,26 @@ import Image04 from 'calypso/assets/images/woocommerce/woop-cta-image04.jpeg';
 import CtaSection from 'calypso/components/cta-section';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import MasonryWave from 'calypso/components/masonry-wave';
+import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
 
 interface Props {
 	startSetup: () => void;
+	siteId: number;
 }
 
 const images = [ { src: Image01 }, { src: Image02 }, { src: Image03 }, { src: Image04 } ];
 
-const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup } ) => {
+const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
+	const { hasBlockers } = useWooCommerceOnPlansEligibility( siteId );
+
 	return (
 		<div className="woop__landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
-				<Button onClick={ startSetup } primary>
+				<Button onClick={ startSetup } primary disabled={ hasBlockers }>
 					{ __( 'Set up my store!' ) }
 				</Button>
 			</FixedNavigationHeader>
@@ -33,6 +37,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup } ) => 
 				headline={ __( 'Build exactly the eCommerce website you want.' ) }
 				buttonText={ __( 'Set up my store!' ) }
 				buttonAction={ startSetup }
+				buttonDisabled={ hasBlockers }
 				ctaRef={ ctaRef }
 			>
 				<MasonryWave images={ images } />
