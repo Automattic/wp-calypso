@@ -1,13 +1,10 @@
 .masterbar-cart-button {
 	display: flex;
+	position: relative;
 }
 
 .masterbar-cart-button button {
 	cursor: pointer;
-}
-
-.masterbar-cart-button__count-wrapper {
-	position: relative;
 }
 
 .masterbar-cart-button__count-container {

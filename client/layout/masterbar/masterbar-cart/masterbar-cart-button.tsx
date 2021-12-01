@@ -40,8 +40,9 @@ export function MasterbarCartButton( {
 	return (
 		<div className="masterbar-cart-button" ref={ cartButtonRef }>
 			<CheckoutErrorBoundary errorMessage="Error">
-				<MasterbarItem icon="cart" tooltip={ tooltip } onClick={ onClick } />
-				<MasterbarCartCount productsInCart={ responseCart.products.length } />
+				<MasterbarItem icon="cart" tooltip={ tooltip } onClick={ onClick }>
+					<MasterbarCartCount productsInCart={ responseCart.products.length } />
+				</MasterbarItem>
 				<Popover
 					isVisible={ isActive }
 					onClose={ onClose }
@@ -56,9 +57,5 @@ export function MasterbarCartButton( {
 }
 
 function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): JSX.Element {
-	return (
-		<div className="masterbar-cart-button__count-wrapper">
-			<span className="masterbar-cart-button__count-container">{ productsInCart }</span>
-		</div>
-	);
+	return <span className="masterbar-cart-button__count-container">{ productsInCart }</span>;
 }
