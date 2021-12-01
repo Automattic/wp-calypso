@@ -73,7 +73,7 @@
 				}
 			}
 
-			&:last-child {
+			&.is-last-item {
 				.breadcrumbs__item-label {
 					font-weight: 500; /* stylelint-disable-line */
 					color: var( --color-neutral-80 );
@@ -94,7 +94,12 @@
 		align-items: center;
 
 		.breadcrumbs__item-label {
-			color: var( --color-neutral-50 );
+			color: var( --color-neutral-80 );
+		}
+
+		/* This rule applies when there's no back arrow present */
+		span:first-child {
+			font-weight: 600;
 		}
 	}
 
