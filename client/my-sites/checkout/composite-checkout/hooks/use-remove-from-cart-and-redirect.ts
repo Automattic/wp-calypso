@@ -2,10 +2,8 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import page from 'page';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useValidCheckoutBackUrl from './use-valid-checkout-back-url';
 import type { RemoveProductFromCart, ResponseCart } from '@automattic/shopping-cart';
 
@@ -19,8 +17,7 @@ export default function useRemoveFromCartAndRedirect(
 	removeProductFromCartAndMaybeRedirect: RemoveProductFromCart;
 } {
 	const cartKey = useCartKey();
-	const reduxDispatch = useDispatch();
-	const { responseCart, removeProductFromCart } = useShoppingCart( cartKey );
+	const { removeProductFromCart } = useShoppingCart( cartKey );
 
 	// In some cases, the cloud.jetpack.com/pricing page sends a `checkoutBackUrl` url query param to checkout.
 	const checkoutBackUrl = useValidCheckoutBackUrl( siteSlug );
@@ -67,12 +64,6 @@ export default function useRemoveFromCartAndRedirect(
 	const removeProductFromCartAndMaybeRedirect = useCallback(
 		( uuid: string ) => {
 			setIsRemovingFromCart( true );
-			const product = responseCart.products.find( ( product ) => product.uuid === uuid );
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_delete_product', {
-					product_name: product?.product_slug,
-				} )
-			);
 			return removeProductFromCart( uuid ).then( ( cart: ResponseCart ) => {
 				if ( cart.products.length === 0 ) {
 					redirectDueToEmptyCart();
@@ -83,7 +74,7 @@ export default function useRemoveFromCartAndRedirect(
 				return cart;
 			} );
 		},
-		[ redirectDueToEmptyCart, removeProductFromCart, responseCart, reduxDispatch ]
+		[ redirectDueToEmptyCart, removeProductFromCart ]
 	);
 
 	return {
