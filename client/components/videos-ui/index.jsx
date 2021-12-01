@@ -20,17 +20,17 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		return courses !== null && courseSlug in courses ? courses[ courseSlug ] : [];
 	} );
 
+	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
-	const [ currentVideo, setCurrentVideo ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
+	const currentVideo = currentVideoKey ? course.videos[ currentVideoKey ] : course.videos[ 0 ];
 
-	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
+	const onVideoPlayClick = ( videoSlug ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
 			video: videoSlug,
 		} );
 
-		setCurrentVideo( videoInfo );
 		setCurrentVideoKey( videoSlug );
 		setIsPlaying( true );
 	};
@@ -54,17 +54,15 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoId ) );
 	}, [ course, userCourseProgression ] );
 
-	const isVideoSelected = ( idx ) => {
-		return Object.keys( course.videos ).indexOf( currentVideoKey ) === idx;
+	const isChapterSelected = ( idx ) => {
+		return selectedChapterIndex === idx;
 	};
 
-	const onVideoSelected = ( idx ) => {
-		if ( isVideoSelected( idx ) ) {
-			setCurrentVideoKey( null );
-		} else {
-			const selectedVideoKey = Object.keys( course.videos )[ idx ];
-			setCurrentVideoKey( selectedVideoKey );
+	const onChapterSelected = ( idx ) => {
+		if ( isChapterSelected( idx ) ) {
+			return;
 		}
+		setSelectedChapterIndex( idx );
 	};
 
 	useEffect( () => {
@@ -128,12 +126,12 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 								return (
 									<div
 										key={ i }
-										className={ `${ isVideoSelected( i ) ? 'selected ' : '' }videos-ui__chapter` }
+										className={ `${ isChapterSelected( i ) ? 'selected ' : '' }videos-ui__chapter` }
 									>
 										<button
 											type="button"
 											className="videos-ui__chapter-accordion-toggle"
-											onClick={ () => onVideoSelected( i ) }
+											onClick={ () => onChapterSelected( i ) }
 										>
 											<span className="videos-ui__video-title">
 												{ i + 1 }. { videoInfo.title }{ ' ' }
@@ -144,12 +142,12 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 													<Gridicon icon="checkmark" size={ 12 } />
 												</span>
 											) }
-											{ isVideoSelected( i ) && ! isVideoCompleted && (
+											{ isChapterSelected( i ) && ! isVideoCompleted && (
 												<span className="videos-ui__status-icon">
 													<Gridicon icon="chevron-up" size={ 18 } />
 												</span>
 											) }
-											{ ! isVideoSelected( i ) && ! isVideoCompleted && (
+											{ ! isChapterSelected( i ) && ! isVideoCompleted && (
 												<span className="videos-ui__status-icon">
 													<Gridicon icon="chevron-down" size={ 18 } />
 												</span>
