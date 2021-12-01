@@ -272,6 +272,10 @@
 
 	.components-toggle-control {
 		display: inline-block;
+
+		.components-form-toggle {
+			margin-right: initial;
+		}
 	}
 
 	.payment-logo {
