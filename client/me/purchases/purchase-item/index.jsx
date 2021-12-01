@@ -475,9 +475,9 @@ function BackupPaymentMethodNotice() {
 		}
 	);
 	return (
-		<InfoPopover position="bottom left" className="purchase-item__backup-payment-method-notice">
-			{ noticeText }
-		</InfoPopover>
+		<span className="purchase-item__backup-payment-method-notice">
+			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
+		</span>
 	);
 }
 
