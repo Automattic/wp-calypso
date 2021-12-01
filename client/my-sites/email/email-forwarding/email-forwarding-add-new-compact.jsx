@@ -159,17 +159,17 @@ class EmailForwardingAddNewCompact extends Component {
 
 		if ( fieldName === 'mailbox' ) {
 			if ( errorMessage.filter( ( t ) => t === 'Invalid' ).length === 1 ) {
-				return translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' );
+				return translate( 'Only numbers, letters, dashes, underscores, and periods are allowed.' );
 			}
 
 			if ( errorMessage.filter( ( t ) => t === 'Duplicated' ).length === 1 ) {
-				return translate( 'Invalid mailbox - Duplicated' );
+				return translate( 'Please use unique mailboxes' );
 			}
 		}
 
 		if ( fieldName === 'destination' ) {
 			if ( errorMessage.filter( ( t ) => t === 'Invalid' ).length === 1 ) {
-				return translate( 'Invalid destination address' );
+				return translate( 'Invalid email address' );
 			}
 		}
 
