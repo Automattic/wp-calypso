@@ -10,8 +10,8 @@ import {
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
 import TitanNewMailbox, {
-	FULL_NAME_TITAN_FIELD,
-	PASSWORD_RESET_TITAN_FIELD,
+	TITAN_FULL_NAME_FIELD,
+	TITAN_PASSWORD_RESET_FIELD,
 } from 'calypso/my-sites/email/titan-new-mailbox';
 
 import './style.scss';
@@ -129,7 +129,7 @@ TitanNewMailboxList.propTypes = {
 	onReturnKeyPress: PropTypes.func,
 	showAddAnotherMailboxButton: PropTypes.bool,
 	hiddenFieldNames: PropTypes.arrayOf(
-		PropTypes.oneOf( [ FULL_NAME_TITAN_FIELD, PASSWORD_RESET_TITAN_FIELD ] )
+		PropTypes.oneOf( [ TITAN_FULL_NAME_FIELD, TITAN_PASSWORD_RESET_FIELD ] )
 	),
 };
 
