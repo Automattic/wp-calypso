@@ -445,14 +445,6 @@ function PurchaseMetaExpiration( {
 		return (
 			<li>
 				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-				{ ! hideAutoRenew && <span className="manage-purchase__detail">{ subsRenewText }</span> }
-				<span
-					className={ classNames( 'manage-purchase__detail', {
-						'is-expiring': isCloseToExpiration( purchase ),
-					} ) }
-				>
-					{ subsBillingText }
-				</span>
 				{ site && ! hideAutoRenew && isProductOwner && (
 					<span className="manage-purchase__detail">
 						<AutoRenewToggle
@@ -465,6 +457,14 @@ function PurchaseMetaExpiration( {
 						/>
 					</span>
 				) }
+				{ ! hideAutoRenew && <span className="manage-purchase__detail">{ subsRenewText }</span> }
+				<span
+					className={ classNames( 'manage-purchase__detail', {
+						'is-expiring': isCloseToExpiration( purchase ),
+					} ) }
+				>
+					{ subsBillingText }
+				</span>
 			</li>
 		);
 	}
