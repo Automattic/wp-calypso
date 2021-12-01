@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { parse } from 'url';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import { createElement } from 'react';
@@ -61,11 +60,10 @@ describe( 'Theme', () => {
 			test( 'should include photon parameters', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
 				const src = imgNode.getAttribute( 'src' );
-				const { query } = parse( src, true );
-
-				expect( query ).toMatchObject( {
-					fit: expect.stringMatching( /\d+,\d+/ ),
-				} );
+				const url = new URL( src );
+				const params = new URLSearchParams( url.search );
+				const fitParam = params.get( 'fit' );
+				expect( fitParam ).toEqual( expect.stringMatching( /\d+,\d+/ ) );
 			} );
 
 			test( 'should call onScreenshotClick() on click on screenshot', () => {
