@@ -136,8 +136,8 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 						{ renderButtons() }
 					</div>
 				</div>
+				<div className="breadcrumbs__spacer"></div>
 			</div>
-			<div className="breadcrumbs__spacer"></div>
 		</React.Fragment>
 	);
 };
