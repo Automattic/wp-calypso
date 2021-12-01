@@ -107,12 +107,10 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 
 	const thankYouImage = {
 		alt: '',
-		src: wporgPlugin?.icon ? wporgPlugin.icon : successImage,
+		src: wporgPlugin?.icon || successImage,
 	};
 
-	const setupURL = pluginOnSite?.action_links?.Settings
-		? pluginOnSite.action_links.Settings
-		: `${ siteAdminUrl }plugins.php`;
+	const setupURL = pluginOnSite?.action_links?.Settings || `${ siteAdminUrl }plugins.php`;
 
 	const setupSection = {
 		sectionKey: 'setup_whats_next',
