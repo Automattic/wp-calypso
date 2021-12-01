@@ -695,6 +695,9 @@ function WPLineItem( {
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	isPwpoUser,
+	onRemoveProduct,
+	onRemoveProductClick,
+	onRemoveProductCancel,
 }: {
 	children?: React.ReactNode;
 	product: ResponseCartProduct;
@@ -705,6 +708,9 @@ function WPLineItem( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser?: boolean;
+	onRemoveProduct?: ( label: string ) => void;
+	onRemoveProductClick?: ( label: string ) => void;
+	onRemoveProductCancel?: ( label: string ) => void;
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -775,6 +781,7 @@ function WPLineItem( {
 							disabled={ isDisabled }
 							onClick={ () => {
 								setIsModalVisible( true );
+								onRemoveProductClick?.( label );
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
@@ -788,6 +795,10 @@ function WPLineItem( {
 						} }
 						primaryAction={ () => {
 							removeProductFromCart( product.uuid );
+							onRemoveProduct?.( label );
+						} }
+						cancelAction={ () => {
+							onRemoveProductCancel?.( label );
 						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
