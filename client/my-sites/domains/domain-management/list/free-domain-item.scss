@@ -14,7 +14,7 @@
 	@include break-mobile {
 		margin: 24px 0;
 		align-items: center;
-		padding: 12px 16px;
+		padding: 12px 0 12px 16px;
 	}
 
 	& > * + * {

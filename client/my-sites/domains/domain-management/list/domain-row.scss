@@ -257,6 +257,10 @@
 	height: 20px;
 	margin-left: 20px;
 
+	.ellipsis-menu {
+		float: right;
+	}
+
 	.ellipsis-menu__toggle {
 		transform: translateY( -4px );
 		padding: 0;
