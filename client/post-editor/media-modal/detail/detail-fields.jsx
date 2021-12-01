@@ -88,14 +88,14 @@ class EditorMediaModalDetailFields extends Component {
 
 		// Save changes immediately or after a delay
 		if ( saveImmediately ) {
-			this.saveChange( itemId, modifiedChanges );
+			this.saveChange( siteId, itemId, modifiedChanges );
 		} else {
-			this.delayedSaveChange( itemId, modifiedChanges );
+			this.delayedSaveChange( siteId, itemId, modifiedChanges );
 		}
 	}
 
-	saveChange( mediaId, modifiedChanges ) {
-		this.props.updateMedia( mediaId, modifiedChanges );
+	saveChange( siteId, mediaId, modifiedChanges ) {
+		this.props.updateMedia( siteId, mediaId, modifiedChanges );
 	}
 
 	setFieldByName = ( name, value ) => {

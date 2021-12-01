@@ -44,7 +44,7 @@ class EditorMediaModalGalleryCaption extends Component {
 			return;
 		}
 
-		this.props.updateMedia( item.ID, { caption } );
+		this.props.updateMedia( siteId, item.ID, { caption } );
 	};
 
 	render() {
