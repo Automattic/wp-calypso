@@ -21,6 +21,10 @@ const VideoPlayer = ( { videoData, videoRef, isPlaying, course } ) => {
 		}
 	} );
 
+	useEffect( () => {
+		setAddTimeUpdateHandler( true );
+	}, [ course?.slug, videoData?.slug ] );
+
 	return (
 		<div key={ videoData.url } className="videos-ui__video">
 			<video
