@@ -210,7 +210,7 @@ const sections = [
 		module: 'calypso/my-sites/themes',
 		enableLoggedOut: true,
 		group: 'sites',
-		isomorphic: false,
+		isomorphic: true,
 		title: 'Themes',
 	},
 	{
