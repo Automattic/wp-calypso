@@ -81,13 +81,6 @@ class EmailForwardingAddNewCompact extends Component {
 
 	renderFormFields() {
 		const { translate, selectedDomainName, index, fields } = this.props;
-		const contactText = translate( 'contact', {
-			context: 'part of e-mail address',
-			comment: 'As it would be part of an e-mail address contact@example.com',
-		} );
-		const exampleEmailText = translate( 'e.g. %(example)s', {
-			args: { example: contactText },
-		} );
 		const isValidMailbox = this.isValid( 'mailbox' );
 		const isValidDestination = this.isValid( 'destination' );
 		const { mailbox, destination } = fields;
@@ -97,13 +90,12 @@ class EmailForwardingAddNewCompact extends Component {
 		return (
 			<div className="email-forwarding__form-content">
 				<FormFieldset>
-					<FormLabel>{ translate( 'Emails Sent To' ) }</FormLabel>
+					<FormLabel>{ translate( 'Emails sent to' ) }</FormLabel>
 					<FormTextInputWithAffixes
 						disabled={ this.state.formSubmitting }
 						name="mailbox"
 						onChange={ ( event ) => this.onChange( event, index ) }
 						isError={ ! isValidMailbox }
-						placeholder={ exampleEmailText }
 						suffix={ '@' + selectedDomainName }
 						value={ mailbox }
 					/>
@@ -111,13 +103,12 @@ class EmailForwardingAddNewCompact extends Component {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ translate( 'Will Be Forwarded To' ) }</FormLabel>
+					<FormLabel>{ translate( 'Will be forwarded to this email address' ) }</FormLabel>
 					<FormTextInput
 						disabled={ this.state.formSubmitting }
 						name="destination"
 						onChange={ ( event ) => this.onChange( event, index ) }
 						isError={ ! isValidDestination }
-						placeholder={ translate( 'Your Existing Email Address' ) }
 						value={ destination }
 					/>
 					{ ! isValidDestination && (
