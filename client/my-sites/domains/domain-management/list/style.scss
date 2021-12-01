@@ -350,20 +350,16 @@
 
 	.empty-domains-list-card__actions {
 		display: inline-flex;
-		justify-content: flex-start;
+		justify-content: center;
 		flex-wrap: wrap;
-		flex-direction: column;
-		align-items: flex-start;
-		align-self: flex-start;
-
 		& > .button {
 			margin: 16px 8px 0;
 		}
 		@include break-small {
+			justify-content: flex-start;
 			& > .button:first-child {
 				margin-left: 0;
 			}
-			flex-direction: row;
 		}
 	}
 
