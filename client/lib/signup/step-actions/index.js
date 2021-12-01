@@ -173,8 +173,10 @@ function getNewSiteParams( {
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
-			difm_lite_site_category: selectedDIFMCategory || undefined,
-			difm_lite_typeform_response_id: typeformResponseId || undefined,
+			difm_lite_site_options: {
+				difm_lite_site_category: selectedDIFMCategory || undefined,
+				difm_lite_typeform_response_id: typeformResponseId || undefined,
+			},
 		},
 		validate: false,
 	};

@@ -127,6 +127,7 @@ export default function DesignPickerStep( props ) {
 	} );
 
 	useEffect( () => {
+		// Sets the category selection which is important for the difm flow
 		dispatch( selectDesignCategory( categorization.selection ) );
 	}, [ categorization.selection, dispatch ] );
 
