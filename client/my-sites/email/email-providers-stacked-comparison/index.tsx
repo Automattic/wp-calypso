@@ -12,7 +12,6 @@ import Main from 'calypso/components/main';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
-import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -52,6 +51,7 @@ const recordTracksEventAddToCartClick = (
 	comparisonContext: string,
 	validatedMailboxUuids: string[],
 	mailboxesAreValid: boolean,
+	provider: string,
 	source: string,
 	userCanAddEmail: boolean,
 	userCannotAddEmailReason: any
@@ -60,7 +60,7 @@ const recordTracksEventAddToCartClick = (
 		context: comparisonContext,
 		mailbox_count: validatedMailboxUuids.length,
 		mailboxes_valid: mailboxesAreValid ? 1 : 0,
-		provider: TITAN_PROVIDER_NAME,
+		provider: provider,
 		source,
 		user_can_add_email: userCanAddEmail,
 		user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',

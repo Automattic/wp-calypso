@@ -18,6 +18,7 @@ import {
 } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
+import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
@@ -125,7 +126,13 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	const optionalFields = [ TITAN_PASSWORD_RESET_FIELD, TITAN_FULL_NAME_FIELD ];
 
 	const onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, hasCartDomain, recordTracksEventAddToCartClick = noop, source } = props;
+		const {
+			comparisonContext,
+			domain,
+			hasCartDomain,
+			recordTracksEventAddToCartClick = noop,
+			source,
+		} = props;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
 
@@ -140,6 +147,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			comparisonContext,
 			validatedMailboxUuids,
 			mailboxesAreValid,
+			TITAN_PROVIDER_NAME,
 			source,
 			userCanAddEmail,
 			userCannotAddEmailReason
