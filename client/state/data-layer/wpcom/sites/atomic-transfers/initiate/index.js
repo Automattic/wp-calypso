@@ -1,4 +1,4 @@
-import { INITIATE_ATOMIC_TRANSFER_WITH_PLUGIN_INSTALL } from 'calypso/state/action-types';
+import { ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -25,7 +25,7 @@ export const receiveResponse = ( action, { success } ) => {
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites-atomic-transfers/initiate', {
-	[ INITIATE_ATOMIC_TRANSFER_WITH_PLUGIN_INSTALL ]: [
+	[ ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER ]: [
 		dispatchRequest( {
 			fetch: initiateAtomicTransferandInstall,
 			onSuccess: receiveResponse,
