@@ -217,10 +217,11 @@ $plugin-details-header-padding: 100px;
 
 	.plugin-details__additional-info {
 		display: flex;
-		justify-content: space-between;
 		flex-wrap: wrap;
 
 		.plugin-details__info {
+			width: 25%;
+
 			@media screen and ( max-width: 1040px ) {
 				width: 50%;
 				padding-bottom: 12px;
