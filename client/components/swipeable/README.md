@@ -14,8 +14,8 @@ function Pager() {
 			onPageSelect={ ( index ) => {
 				setCurrentPage( index );
 			} }
-			currentPage
-			pageClassName=""
+			currentPage={ 1 }
+			pageClassName="example-page-component-class"
 		>
 			<div>Page 1</div>
 			<div>Page 2</div>
@@ -27,7 +27,7 @@ function Pager() {
 
 ## Props
 
-- `onPageSelect` - (function) Function that .
+- `onPageSelect` - (function) Function that runs when the page is selected on using a swipe. Useful for updating the current page.
 - `pageClassName` - _optional_ (string) A URL leading to an overview of a feature. If `false`, no link will be displayed.
-- `currentPage` - (int) Index of a selected page.
-- `hasDynamicHeight` - (bool) Whether height should be changed dynamically
+- `currentPage` - (int) Index of a current page.
+- `hasDynamicHeight` - (bool) Whether height should be changed dynamically.
