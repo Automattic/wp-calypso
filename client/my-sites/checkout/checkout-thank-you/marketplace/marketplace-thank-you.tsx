@@ -22,8 +22,7 @@ const ThankYouContainer = styled.div`
 	.marketplace-thank-you {
 		margin-top: 72px;
 		img {
-			height: auto;
-			max-height: 74px;
+			height: 74px;
 		}
 	}
 
@@ -91,6 +90,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const [ pluginIcon, setPluginIcon ] = useState( null );
 
 	const [ retries, setRetries ] = useState( 0 );
 
@@ -99,7 +99,18 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		if ( ! isWporgPluginFetched ) {
 			dispatch( wporgFetchPluginData( productSlug ) );
 		}
-	}, [ isWporgPluginFetched, productSlug, dispatch ] );
+		if ( isWporgPluginFetched ) {
+			// wporgPlugin exists in the wporg directory.
+			setPluginIcon( wporgPlugin?.icon || successImage );
+		}
+	}, [ isWporgPluginFetched, productSlug, setPluginIcon, dispatch ] );
+
+	useEffect( () => {
+		if ( wporgPlugin?.wporg === false ) {
+			// wporgPlugin exists and plugin doesn't exist in wporg directory.
+			setPluginIcon( successImage );
+		}
+	}, [ wporgPlugin ] );
 
 	useEffect( () => {
 		if ( ! isRequestingPlugins && ! pluginOnSite && retries < 10 ) {
@@ -112,7 +123,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 
 	const thankYouImage = {
 		alt: '',
-		src: wporgPlugin?.icon || successImage,
+		src: pluginIcon,
 	};
 
 	const setupURL = pluginOnSite?.action_links?.Settings || `${ siteAdminUrl }plugins.php`;
