@@ -9,9 +9,12 @@ import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
+import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -20,8 +23,7 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ProfessionalEmailCard from './provider-cards/professional-email-card';
-import type { ProviderCard } from './provider-cards/provider-card-props';
+import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import type { Site } from 'calypso/reader/list-manage/types';
 
 import './style.scss';
@@ -46,6 +48,25 @@ type EmailProvidersStackedComparisonProps = {
 	gSuiteAnnualProduct?: any;
 };
 
+const recordTracksEventAddToCartClick = (
+	comparisonContext: string,
+	validatedMailboxUuids: string[],
+	mailboxesAreValid: boolean,
+	source: string,
+	userCanAddEmail: boolean,
+	userCannotAddEmailReason: any
+) => {
+	recordTracksEvent( 'calypso_email_providers_add_click', {
+		context: comparisonContext,
+		mailbox_count: validatedMailboxUuids.length,
+		mailboxes_valid: mailboxesAreValid ? 1 : 0,
+		provider: TITAN_PROVIDER_NAME,
+		source,
+		user_can_add_email: userCanAddEmail,
+		user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
+	} );
+};
+
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
 	props
 ) => {
@@ -66,6 +87,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
+				recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
 				{ ...professionalEmailCardProps }

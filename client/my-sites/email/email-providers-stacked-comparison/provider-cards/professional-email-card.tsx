@@ -9,7 +9,6 @@ import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-stacked.svg';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -19,7 +18,6 @@ import {
 } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
-import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
@@ -127,7 +125,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	const optionalFields = [ TITAN_PASSWORD_RESET_TITAN_FIELD, TITAN_FULL_NAME_TITAN_FIELD ];
 
 	const onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, hasCartDomain, source } = props;
+		const { comparisonContext, domain, hasCartDomain, recordTracksEventAddToCartClick = noop, source } = props;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
 
@@ -138,16 +136,14 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			: getCurrentUserCannotAddEmailReason( domain );
 
 		const validatedMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
-
-		recordTracksEvent( 'calypso_email_providers_add_click', {
-			context: comparisonContext,
-			mailbox_count: validatedMailboxUuids.length,
-			mailboxes_valid: mailboxesAreValid ? 1 : 0,
-			provider: TITAN_PROVIDER_NAME,
+		recordTracksEventAddToCartClick(
+			comparisonContext,
+			validatedMailboxUuids,
+			mailboxesAreValid,
 			source,
-			user_can_add_email: userCanAddEmail,
-			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
-		} );
+			userCanAddEmail,
+			userCannotAddEmailReason
+		);
 
 		setTitanMailbox( titanMailbox );
 		setValidatedTitanMailboxUuids( validatedMailboxUuids );
