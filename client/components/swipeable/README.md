@@ -30,4 +30,4 @@ function Pager() {
 - `onPageSelect` - (function) Function that .
 - `pageClassName` - _optional_ (string) A URL leading to an overview of a feature. If `false`, no link will be displayed.
 - `currentPage` - (int) Index of a selected page.
-- `hasDynamicHeight` - (bool) should height by dynamically changed.
+- `hasDynamicHeight` - (bool) Whether height should be changed dynamically
