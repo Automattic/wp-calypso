@@ -26,7 +26,7 @@ const selectors = {
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
 	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
-	closeSettingsButton: 'button[aria-label="Close settings"]',
+	closeSettingsButton: 'button[aria-label="Close settings"]:visible',
 	saveDraftButton: '.editor-post-save-draft',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
