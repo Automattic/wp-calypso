@@ -58,13 +58,13 @@ const Header: React.FunctionComponent = () => {
 
 	return (
 		<div className="designs__header">
-			<ActionButtons>
-				<BackButton onClick={ goBack } />
-			</ActionButtons>
 			<div className="designs__heading">
 				<Title className="designs__heading-title">{ title }</Title>
 				<SubTitle>{ subTitle }</SubTitle>
 			</div>
+			<ActionButtons>
+				<BackButton onClick={ goBack } />
+			</ActionButtons>
 		</div>
 	);
 };
