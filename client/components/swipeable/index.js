@@ -11,6 +11,7 @@ export const Swipeable = ( {
 	pageClassName,
 } ) => {
 	const [ isDragging, setIsDragging ] = useState( false );
+	const [ pageWidth, setPageWidth ] = useState();
 
 	const [ pagesStyle, setPagesStyle ] = useState( {
 		transform: `translate3d(0px, 0px, 0px)`,
@@ -27,11 +28,11 @@ export const Swipeable = ( {
 	};
 
 	const getPagesWidth = () => {
-		return getWidth() * numPages;
+		return pageWidth * numPages;
 	};
 
 	const getOffset = ( index ) => {
-		return -( getWidth() * index );
+		return -( pageWidth * index );
 	};
 
 	function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
@@ -81,6 +82,8 @@ export const Swipeable = ( {
 		if ( targetHeight && pagesStyle?.height !== targetHeight ) {
 			height = { height: null };
 		}
+
+		setPageWidth( getWidth() );
 
 		setPagesStyle( { ...pagesStyle, ...height, ...transform } );
 	} );
@@ -191,7 +194,7 @@ export const Swipeable = ( {
 				<div className="swipeable__pages" style={ { ...pagesStyle, width: getPagesWidth() } }>
 					{ Children.map( children, ( child, index ) => (
 						<div
-							style={ { width: `${ getWidth() }px` } } // Setting the page width is important for iOS browser.
+							style={ { width: `${ pageWidth }px` } } // Setting the page width is important for iOS browser.
 							className={ classnames( 'swipeable__page', pageClassName, {
 								'is-current': index === currentPage,
 								'is-prev': index < currentPage,
