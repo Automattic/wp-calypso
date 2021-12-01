@@ -1,8 +1,14 @@
 import { createRef, useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const VideoPlayer = ( { videoData, isPlaying, course, onVideoPlayStatusChanged } ) => {
-	const [ addTimeUpdateHandler, setAddTimeUpdateHandler ] = useState( true );
+const VideoPlayer = ( {
+	videoData,
+	isPlaying,
+	course,
+	onVideoPlayStatusChanged,
+	onVideoCompleted,
+} ) => {
+	const [ shouldCheckForVideoComplete, setShouldCheckForVideoComplete ] = useState( true );
 
 	const videoRef = createRef();
 
@@ -14,7 +20,8 @@ const VideoPlayer = ( { videoData, isPlaying, course, onVideoPlayStatusChanged }
 			course: course.slug,
 			video: videoData.slug,
 		} );
-		setAddTimeUpdateHandler( false );
+		onVideoCompleted( videoData );
+		setShouldCheckForVideoComplete( false );
 	};
 
 	useEffect( () => {
@@ -36,7 +43,7 @@ const VideoPlayer = ( { videoData, isPlaying, course, onVideoPlayStatusChanged }
 	} );
 
 	useEffect( () => {
-		setAddTimeUpdateHandler( true );
+		setShouldCheckForVideoComplete( true );
 	}, [ course?.slug, videoData?.slug ] );
 
 	return (
@@ -46,7 +53,7 @@ const VideoPlayer = ( { videoData, isPlaying, course, onVideoPlayStatusChanged }
 				ref={ videoRef }
 				poster={ videoData.poster }
 				autoPlay={ isPlaying }
-				onTimeUpdate={ addTimeUpdateHandler ? markVideoAsComplete : undefined }
+				onTimeUpdate={ shouldCheckForVideoComplete ? markVideoAsComplete : undefined }
 			>
 				<source src={ videoData.url } />{ ' ' }
 				{ /* @TODO: check if tracks are available, the linter demands one */ }

@@ -15,10 +15,14 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	const courseSlug = 'blogging-quick-start';
 	const { data: course } = useCourseQuery( courseSlug, { retry: false } );
 
-	const userCourseProgression = useSelector( ( state ) => {
+	const initialUserCourseProgression = useSelector( ( state ) => {
 		const courses = getOriginalUserSetting( state, 'courses' );
 		return courses !== null && courseSlug in courses ? courses[ courseSlug ] : [];
 	} );
+	const [ userCourseProgression, setUserCourseProgression ] = useState( [] );
+	useEffect( () => {
+		setUserCourseProgression( initialUserCourseProgression );
+	}, [ initialUserCourseProgression ] );
 
 	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
@@ -63,6 +67,12 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 			return;
 		}
 		setSelectedChapterIndex( idx );
+	};
+
+	const markVideoCompleted = ( videoData ) => {
+		const updatedUserCourseProgression = { ...userCourseProgression };
+		updatedUserCourseProgression[ videoData.slug ] = true;
+		setUserCourseProgression( updatedUserCourseProgression );
 	};
 
 	useEffect( () => {
@@ -114,6 +124,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 							onVideoPlayStatusChanged={ ( isVideoPlaying ) => setIsPlaying( isVideoPlaying ) }
 							isPlaying={ isPlaying }
 							course={ course }
+							onVideoCompleted={ markVideoCompleted }
 						/>
 					) }
 					<div className="videos-ui__chapters">
