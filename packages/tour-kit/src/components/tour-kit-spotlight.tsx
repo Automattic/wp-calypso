@@ -48,6 +48,15 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement 
 		  }
 		: null;
 
+	const referenceRect = referenceElement?.getBoundingClientRect();
+
+	const clipStyle = referenceRect
+		? {
+				width: '',
+				height: '',
+		  }
+		: undefined;
+
 	return (
 		<>
 			<Overlay visible={ ! clipRepositionProps } />
@@ -56,6 +65,7 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement 
 					'--visible': !! clipRepositionProps,
 				} ) }
 				ref={ popperElementRef }
+				style={ clipStyle }
 				{ ...clipRepositionProps }
 			/>
 		</>
