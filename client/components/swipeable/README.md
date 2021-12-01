@@ -1,4 +1,4 @@
-# Support Info
+# Swipeable
 
 This component is used to add horizontal swipe controls to a list of elements (pages).
 
