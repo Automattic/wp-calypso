@@ -3,6 +3,7 @@ import { useRef } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import './style.scss';
+import { useSelector } from 'react-redux';
 import Image01 from 'calypso/assets/images/woocommerce/woop-cta-image01.jpeg';
 import Image02 from 'calypso/assets/images/woocommerce/woop-cta-image02.jpeg';
 import Image03 from 'calypso/assets/images/woocommerce/woop-cta-image03.jpeg';
@@ -11,6 +12,8 @@ import CtaSection from 'calypso/components/cta-section';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import MasonryWave from 'calypso/components/masonry-wave';
 import { addQueryArgs } from 'calypso/lib/url';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 interface Props {
 	startSetup: () => void;
@@ -31,12 +34,19 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( {
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const isAtomic = !! useSelector( ( state ) => isAtomicSite( state, siteId ) );
+
 	function onCTAHandler() {
 		if ( ! isFeatureActive && upgradingPlan?.product_slug ) {
 			return ( window.location.href = addQueryArgs(
 				{ redirect_to: `/start/woocommerce-install/?site=${ siteSlug }` },
 				`/checkout/${ siteSlug }/business`
 			) );
+		}
+
+		if ( ! isAtomic ) {
+			return ( window.location.href = `/start/woocommerce-install/?site=${ siteSlug }` );
 		}
 
 		startSetup();
