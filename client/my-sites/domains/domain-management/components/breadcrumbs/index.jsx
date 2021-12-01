@@ -69,8 +69,8 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 
 	const renderItem = ( item, index ) => {
 		const classes = classNames( 'breadcrumbs__item', {
-			// We don't use the last-child selector here because there might be a help bubble after this element
 			'is-last-item': index === items.length - 1,
+			'is-only-item': items.length === 1,
 		} );
 		return (
 			<React.Fragment key={ `breadcrumb${ index }` }>

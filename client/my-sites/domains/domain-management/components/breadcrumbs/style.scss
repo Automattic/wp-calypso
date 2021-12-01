@@ -79,6 +79,13 @@
 					color: var( --color-neutral-80 );
 				}
 			}
+
+			&.is-only-item {
+				.breadcrumbs__item-label {
+					font-weight: 600;
+					color: var( --color-neutral-80 );
+				}
+			}
 		}
 	}
 }
