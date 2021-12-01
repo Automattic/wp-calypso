@@ -85,7 +85,7 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( ( productSlug ) => {
 		test( `True for plan ${ productSlug }`, () => {
-			getUserPurchases.mockImplementation( () => [ { productSlug } ] );
+			getUserPurchases.mockImplementation( () => [ { type: productSlug, group: 'GROUP_WPCOM' } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
 		} );
 	} );
