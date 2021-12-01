@@ -13,13 +13,7 @@ import {
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackProductSlug,
 } from '@automattic/calypso-products';
-import {
-	CheckoutModal,
-	FormStatus,
-	useFormStatus,
-	useEvents,
-	Button,
-} from '@automattic/composite-checkout';
+import { CheckoutModal, FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -727,7 +721,6 @@ function WPLineItem( {
 		createUserAndSiteBeforeTransaction || false,
 		isPwpoUser || false
 	);
-	const onEvent = useEvents();
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	const isRenewal = isWpComProductRenewal( product );
@@ -782,12 +775,6 @@ function WPLineItem( {
 							disabled={ isDisabled }
 							onClick={ () => {
 								setIsModalVisible( true );
-								onEvent( {
-									type: 'a8c_checkout_delete_product_press',
-									payload: {
-										product_name: label,
-									},
-								} );
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
@@ -801,17 +788,6 @@ function WPLineItem( {
 						} }
 						primaryAction={ () => {
 							removeProductFromCart( product.uuid );
-							onEvent( {
-								type: 'a8c_checkout_delete_product',
-								payload: {
-									product_name: label,
-								},
-							} );
-						} }
-						cancelAction={ () => {
-							onEvent( {
-								type: 'a8c_checkout_cancel_delete_product',
-							} );
 						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
