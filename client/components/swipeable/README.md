@@ -14,7 +14,7 @@ function Pager() {
 			onPageSelect={ ( index ) => {
 				setCurrentPage( index );
 			} }
-			currentPage={ 1 }
+			currentPage={ currentPage }
 			pageClassName="example-page-component-class"
 		>
 			<div>Page 1</div>
