@@ -11,7 +11,7 @@
 	background: white;
 }
 
-.tour-kit__overlay {
+.tour-kit-overlay {
 	position: fixed;
 	width: 100vw;
 	height: 100vh;
@@ -25,7 +25,7 @@
 	}
 }
 
-.tour-kit__spotlight {
+.tour-kit-spotlight {
 	&.--visible {
 		position: fixed;
 		width: 50px;

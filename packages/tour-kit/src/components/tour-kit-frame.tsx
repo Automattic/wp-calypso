@@ -9,8 +9,8 @@ import classnames from 'classnames';
  */
 import usePopperHandler from '../hooks/use-popper-handler';
 import KeyboardNavigation from './keyboard-navigation';
-import Overlay from './overlay';
-import Spotlight from './spotlight';
+import Overlay from './tour-kit-overlay';
+import Spotlight from './tour-kit-spotlight';
 import type { Config, Callback } from '../types';
 
 interface Props {
