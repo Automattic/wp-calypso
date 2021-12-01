@@ -115,7 +115,12 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const siteUpgrading = {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
-			{ redirect_to: addQueryArgs( { siteSlug: wpcomDomain }, window.location.href ) },
+			{
+				redirect_to: addQueryArgs(
+					{ site: wpcomDomain },
+					'/start/woocommerce-install/confirm/plan'
+				),
+			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan.product_slug }`
 		),
 		productName,
