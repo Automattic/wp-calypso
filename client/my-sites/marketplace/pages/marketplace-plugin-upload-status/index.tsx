@@ -218,6 +218,18 @@ const MarketplacePluginInstall = ( {
 	];
 
 	const renderError = () => {
+		if ( isUploadFlow && ! marketplacePluginInstallationInProgress ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					title={ translate(
+						'This URL should not be accessed directly. Please try to upload the plugin again.'
+					) }
+					action={ translate( 'Go to the upload page' ) }
+					actionURL={ `/plugins/upload/${ selectedSite?.slug }` }
+				/>
+			);
+		}
 		if ( ! marketplacePluginInstallationInProgress ) {
 			return (
 				<EmptyContent
