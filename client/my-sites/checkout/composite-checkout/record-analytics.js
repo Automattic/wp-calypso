@@ -121,9 +121,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_composite_apple_pay_submit_clicked', {} )
 					);
 				}
-				case 'SHOW_MODAL_AUTHORIZATION': {
-					return reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
-				}
 				case 'THANK_YOU_URL_GENERATED':
 					return logStashEvent( 'thank you url generated', {
 						url: action.payload.url,
