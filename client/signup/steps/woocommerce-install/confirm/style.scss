@@ -1,47 +1,82 @@
-body.is-section-signup {
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+body.is-section-signup .is-woocommerce-install {
 	.signup__step.is-confirm {
+		min-height: 95vh;
+		display: flex;
+		align-items: center;
+
+		@media ( max-width: 660px ) {
+			min-height: 0;
+		}
+		// Two columns layout
+		.step-wrapper {
+			display: flex;
+
+			.step-wrapper__header {
+				@media ( min-width: 660px ) {
+					margin-top: 0 !important;
+				}
+
+				.formatted-header {
+					text-align: inherit;
+
+					.formatted-header__title {
+						text-align: inherit;
+						@media ( max-width: 660px ) {
+							padding: 0 10px;
+						}
+					}
+
+					.formatted-header__subtitle {
+						@media ( max-width: 660px ) {
+							margin-top: 8px;
+							padding: 0 10px;
+						}
+
+						margin-top: 20px;
+						text-align: inherit;
+						max-width: 448px;
+					}
+				}
+			}
+		}
+
 		.is-wide-layout {
 			max-width: 1024px;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			align-items: flex-start;
+			justify-content: center;
+			column-gap: 2%;
+
+			@media ( max-width: 660px ) {
+				grid-template-columns: 1fr;
+			}
 		}
 
 		.step-wrapper__content {
 			display: flex;
+			margin: 0 24px;
+
+			.confirm__instructions-container {
+				font-size: 0.875rem;
+				letter-spacing: -0.16px;
+				color: var( --studio-gray-60 );
+				line-height: 2rem;
+				flex-direction: column;
+				max-width: 520px;
+			
+				p {
+					margin-top: 16px;
+				}
+			}
 		}
 	}
 }
 
-.is-confirm {
-	margin: 0 0 0 20px;
-	padding: 0 20px;
-}
-
 .confirm__info-section {
 	flex: 1;
-}
-
-.confirm__instructions-container {
-	width: 40vw;
-	max-width: 500px;
-	padding: 0 50px;
-	flex-direction: column;
-
-	p {
-		color: var( --studio-gray-60 );
-		line-height: 1.25rem;
-		letter-spacing: -0.16px;
-		margin-top: 30px;
-		font-size: 0.875rem;
-	}
-}
-
-.confirm__instructions-title {
-	font-size: 1.5rem;
-	letter-spacing: 0.2px;
-	line-height: 2.5rem;
-	color: var( --studio-gray-90 );
-}
-
-.confirm__instructions-wpcom-domain {
-	text-decoration: line-through;
-	color: var( --studio-gray-20 );
 }
