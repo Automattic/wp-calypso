@@ -11,9 +11,9 @@ import EligibilityWarningsList from 'calypso/components/eligibility-warnings/war
 import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import SignupCard from '../components/signup-card';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
+
 import './style.scss';
 
 const SupportLinkStyle = styled.a`
@@ -126,9 +126,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			return (
 				<WarningsOrHoldsSection>
 					<Divider />
-					<SignupCard icon="notice-outline" title={ __( 'Things you should be aware of' ) }>
-						<EligibilityWarningsList warnings={ warnings } />
-					</SignupCard>
+					<EligibilityWarningsList warnings={ warnings } />
 				</WarningsOrHoldsSection>
 			);
 		}
