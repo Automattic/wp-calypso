@@ -62,18 +62,22 @@ class DnsRecords extends Component {
 			showBackArrow: true,
 		};
 
+		const optionsButton = (
+			<DnsMenuOptionsButton
+				key="menu-options-button"
+				domain={ selectedDomainName }
+				dns={ dns }
+				pointsToWpcom={ pointsToWpcom }
+			/>
+		);
+
 		const buttons = [
 			<DnsAddNewRecordButton
 				key="add-new-record-button"
 				site={ selectedSite.slug }
 				domain={ selectedDomainName }
 			/>,
-			<DnsMenuOptionsButton
-				key="menu-options-button"
-				domain={ selectedDomainName }
-				dns={ dns }
-				pointsToWpcom={ pointsToWpcom }
-			/>,
+			optionsButton,
 		];
 
 		const mobileButtons = [
@@ -82,6 +86,7 @@ class DnsRecords extends Component {
 				domain={ selectedDomainName }
 				isMobile={ true }
 			/>,
+			optionsButton,
 		];
 
 		return (

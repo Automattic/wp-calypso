@@ -213,22 +213,24 @@ a.dns__breadcrumb-button {
 	align-items: center;
 
 	&.add-record {
-		margin-right: 12px;
+		@include break-mobile {
+			svg {
+				margin-right: 8px;
+			}
+		}
 	}
-
-	@include break-mobile {
-		&.add-record {
-			margin-right: 0;
-		}
-
-		svg {
-			margin-right: 8px;
-			fill: var( --color-neutral-70 );
-		}
+	&.add-record.is-icon-button {
+		width: 40px;
+		display: flex;
+		justify-content: center;
 	}
 }
 
 .dns__breadcrumb-button {
+	color: var( --color-neutral-80 );
+	fill: var( --color-neutral-80 );
+	height: 40px;
+
 	.popover__menu-item[disabled] {
 		svg.gridicon {
 			fill: var( --color-neutral-20 );
@@ -236,9 +238,12 @@ a.dns__breadcrumb-button {
 	}
 
 	&.is-borderless.ellipsis {
+		width: 40px;
+
 		svg.gridicon {
 			top: 0;
 			margin-top: 0;
+			fill: var( --color-neutral-80 );
 		}
 	}
 }
