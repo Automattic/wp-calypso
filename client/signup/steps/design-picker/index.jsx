@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, {
 	FeaturedPicksButtons,
 	isBlankCanvasDesign,
@@ -31,7 +32,11 @@ import './style.scss';
 const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
 
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned, queryParams, useFeaturedPicksButtons } = props;
+	const { flowName, stepName, isReskinned, queryParams, showDesignPickerCategories } = props;
+
+	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
+	const useFeaturedPicksButtons =
+		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -171,10 +176,10 @@ export default function DesignPickerStep( props ) {
 				onSelect={ pickDesign }
 				onPreview={ previewDesign }
 				className={ classnames( {
-					'design-picker-step__has-categories': props.showDesignPickerCategories,
+					'design-picker-step__has-categories': showDesignPickerCategories,
 				} ) }
 				highResThumbnails
-				categorization={ props.showDesignPickerCategories ? categorization : undefined }
+				categorization={ showDesignPickerCategories ? categorization : undefined }
 				categoriesHeading={
 					<FormattedHeader
 						id={ 'step-header' }
@@ -224,8 +229,6 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function headerText() {
-		const { showDesignPickerCategories } = props;
-
 		if ( showDesignPickerCategories ) {
 			return translate( 'Themes' );
 		}
@@ -234,8 +237,6 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function subHeaderText() {
-		const { showDesignPickerCategories } = props;
-
 		if ( ! showDesignPickerCategories ) {
 			return translate(
 				'Pick your favorite homepage layout. You can customize or change it later.'
@@ -296,7 +297,7 @@ export default function DesignPickerStep( props ) {
 		);
 	}
 
-	const headerProps = props.showDesignPickerCategories
+	const headerProps = showDesignPickerCategories
 		? { hideFormattedHeader: true }
 		: {
 				fallbackHeaderText: headerText(),
@@ -309,7 +310,7 @@ export default function DesignPickerStep( props ) {
 		<StepWrapper
 			{ ...props }
 			className={ classnames( {
-				'design-picker__has-categories': props.showDesignPickerCategories,
+				'design-picker__has-categories': showDesignPickerCategories,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }
@@ -324,8 +325,6 @@ DesignPickerStep.propTypes = {
 	goToNextStep: PropTypes.func.isRequired,
 	signupDependencies: PropTypes.object.isRequired,
 	stepName: PropTypes.string.isRequired,
-	/** Enable designs with a "featured" term in the theme_picks taxonomy staying at the below of categories filter */
-	useFeaturedPicksButtons: PropTypes.bool,
 };
 
 // Ensures Blog category appears at the top of the design category list
