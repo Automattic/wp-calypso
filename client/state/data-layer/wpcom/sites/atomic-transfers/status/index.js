@@ -1,14 +1,14 @@
-import { ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS } from 'calypso/state/action-types';
+import { ATOMIC_PLUGIN_INSTALL_REQUEST_TRANSFER_STATUS } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
-const requestSoftwareInstallStatus = ( action ) =>
+const requestTransferToAtomicStatus = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			path: `/sites/${ action.siteId }/atomic/software/${ action.softwareSet }`,
+			method: 'GET',
+			path: `/sites/${ action.siteId }/atomic/transfers/`,
 		},
 		action
 	);
@@ -21,10 +21,10 @@ export const receiveResponse = ( action, { success } ) => {
 	return success;
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/atomic-software/status', {
-	[ ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS ]: [
+registerHandlers( 'state/data-layer/wpcom/sites/atomic-transfers/status', {
+	[ ATOMIC_PLUGIN_INSTALL_REQUEST_TRANSFER_STATUS ]: [
 		dispatchRequest( {
-			fetch: requestSoftwareInstallStatus,
+			fetch: requestTransferToAtomicStatus,
 			onSuccess: receiveResponse,
 			onError: receiveError,
 		} ),
