@@ -9,6 +9,11 @@
 	display: flex;
 	flex-direction: column;
 
+	a,
+	a:visited {
+		color: #fff;
+	}
+
 	.videos-ui__header {
 		background: #151b1e;
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.1 );
