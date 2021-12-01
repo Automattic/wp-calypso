@@ -34,8 +34,8 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( {
 	function onCTAHandler() {
 		if ( ! isFeatureActive && upgradingPlan?.product_slug ) {
 			return ( window.location.href = addQueryArgs(
-				{ redirect_to: window.location.href },
-				`/checkout/${ siteSlug }/${ upgradingPlan.product_slug }`
+				{ redirect_to: `/start/woocommerce-install/?site=${ siteSlug }` },
+				`/checkout/${ siteSlug }/business`
 			) );
 		}
 
