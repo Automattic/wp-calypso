@@ -1,4 +1,4 @@
-import { isBusiness, isEcommerce } from '@automattic/calypso-products';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -215,9 +215,9 @@ class Help extends PureComponent {
 	};
 
 	trackCoursesButtonClick = () => {
-		const { isBusinessPlanUser } = this.props;
+		const { isBusinessOrEcomPlanUser } = this.props;
 		recordTracksEvent( 'calypso_help_courses_click', {
-			is_business_plan_user: isBusinessPlanUser,
+			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 		} );
 	};
 
@@ -281,15 +281,20 @@ class Help extends PureComponent {
 	}
 }
 
+const getProductSlugs = ( purchases ) => purchases.map( ( purchase ) => purchase.productSlug );
+
 export const mapStateToProps = ( state ) => {
 	const isEmailVerified = isCurrentUserEmailVerified( state );
 	const purchases = getUserPurchases( state );
+	const purchaseSlugs = purchases && getProductSlugs( purchases );
 	const isLoading = isFetchingUserPurchases( state );
-	const isBusinessPlanUser =
-		purchases && ( purchases.some( isBusiness ) || purchases.some( isEcommerce ) );
+	const isBusinessOrEcomPlanUser = !! (
+		purchaseSlugs &&
+		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
+	);
 
 	return {
-		isBusinessPlanUser,
+		isBusinessOrEcomPlanUser,
 		isLoading,
 		isEmailVerified,
 	};
