@@ -3,7 +3,7 @@ import { Children, useState, useEffect, useRef } from 'react';
 
 import './style.scss';
 
-export const Swipable = ( {
+export const Swipeable = ( {
 	hasDynamicHeight = false,
 	children,
 	currentPage = 0,
