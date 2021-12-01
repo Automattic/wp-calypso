@@ -162,7 +162,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 						( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
 					} // Force reload the page.
 				>
-					{ translate( 'Back to marketplace' ) }
+					{ translate( 'Back to plugins' ) }
 				</ItemStyled>
 			</MasterbarStyled>
 			<ThankYouContainer>
