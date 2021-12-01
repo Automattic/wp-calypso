@@ -177,15 +177,8 @@ h2.action-panel__title {
 	}
 }
 
-div.email-provider-stacked-card__price-badge {
+.email-provider-stacked-card__header > div:nth-child( 2 ) {
 	width: $width-right-panel-card;
-	.promo-card__price {
-		margin-top: 12px;
-		span.price__discount {
-			text-decoration: line-through;
-			color: var( --studio-gray-60 );
-		}
-	}
 }
 
 .email-provider-stacked-card__provider-additional-price-information {

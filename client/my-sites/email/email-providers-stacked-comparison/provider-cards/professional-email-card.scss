@@ -9,10 +9,12 @@
 	text-decoration: none;
 }
 
-.email-provider-stacked-card__price-badge {
+div.professional-email-card__price-badge {
 	.promo-card__price {
-		price__cost {
-			color: var( --studio-gray-50 );
+		margin-top: 12px;
+		span.price__discount {
+			text-decoration: line-through;
+			color: var( --studio-gray-60 );
 		}
 	}
 }

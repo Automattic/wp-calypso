@@ -1,4 +1,3 @@
-import { Domain } from '@automattic/data-stores/dist/types/site';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
@@ -30,7 +29,7 @@ type EmailProvidersStackedComparisonProps = {
 	currentRoute?: string;
 	domain?: any;
 	domainName?: string;
-	domainsWithForwards?: Domain[];
+	domainsWithForwards?: any[];
 	gSuiteProduct?: string;
 	hasCartDomain?: boolean;
 	isGSuiteSupported?: boolean;
