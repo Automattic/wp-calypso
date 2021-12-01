@@ -20,7 +20,6 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		return courses !== null && courseSlug in courses ? courses[ courseSlug ] : [];
 	} );
 
-	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ currentVideo, setCurrentVideo ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
@@ -51,43 +50,36 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	} );
 
 	useEffect( () => {
-		if ( ! course ) {
-			return;
-		}
-
-		const videoSlugs = Object.keys( course.videos );
 		if ( ! currentVideoKey ) {
 			const initialVideoId = 'find-theme';
-			setCurrentVideoKey( initialVideoId );
-			setSelectedVideoIndex( videoSlugs.indexOf( initialVideoId ) );
+			setCurrentVideo( course.videos[ initialVideoId ] );
 		}
+		if ( currentVideoKey && course ) {
+			setCurrentVideo( course.videos[ currentVideoKey ] );
+		}
+	}, [ currentVideoKey, course ] );
 
+	useEffect( () => {
+		const videoSlugs = Object.keys( course.videos );
 		const viewedSlugs = Object.keys( userCourseProgression );
 		if ( viewedSlugs.length > 0 ) {
 			const nextSlug = videoSlugs.find( ( slug ) => ! viewedSlugs.includes( slug ) );
 			if ( nextSlug ) {
 				setCurrentVideoKey( nextSlug );
-				setSelectedVideoIndex( videoSlugs.indexOf( nextSlug ) );
 			}
 		}
-	}, [ currentVideoKey, course, userCourseProgression ] );
-
-	useEffect( () => {
-		if ( currentVideoKey && course ) {
-			setCurrentVideo( course.videos[ currentVideoKey ] );
-			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( currentVideoKey ) );
-		}
-	}, [ currentVideoKey, course ] );
+	}, [ course, userCourseProgression ] );
 
 	const isVideoSelected = ( idx ) => {
-		return selectedVideoIndex === idx;
+		return Object.keys( course.videos ).indexOf( currentVideoKey ) === idx;
 	};
 
 	const onVideoSelected = ( idx ) => {
 		if ( isVideoSelected( idx ) ) {
-			setSelectedVideoIndex( null );
+			setCurrentVideoKey( null );
 		} else {
-			setSelectedVideoIndex( idx );
+			const selectedVideoKey = Object.keys( course.videos )[ idx ];
+			setCurrentVideoKey( selectedVideoKey );
 		}
 	};
 
