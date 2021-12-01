@@ -384,6 +384,8 @@ class AllDomains extends Component {
 			isContactEmailEditContext,
 		} = this.props;
 
+		const { isSavingContactInfo } = this.state;
+
 		const selectedFilter = context?.query?.filter;
 
 		const domainsTableColumns = [
@@ -474,6 +476,7 @@ class AllDomains extends Component {
 						className="list__checkbox"
 						onChange={ this.handleSelectAllDomains }
 						checked={ areAllCheckboxesChecked }
+						disabled={ this.state.isSavingContactInfo }
 					/>
 				),
 			} );
@@ -498,6 +501,7 @@ class AllDomains extends Component {
 					sites={ sites }
 					requestingSiteDomains={ requestingSiteDomains }
 					hasLoadedPurchases={ hasLoadedUserPurchases }
+					isSavingContactInfo={ isSavingContactInfo }
 				/>
 			</>
 		);

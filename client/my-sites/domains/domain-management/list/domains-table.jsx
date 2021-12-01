@@ -20,6 +20,7 @@ class DomainsTable extends PureComponent {
 		hasLoadedPurchases: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
+		isSavingContactInfo: PropTypes.bool,
 		primaryDomainIndex: PropTypes.number,
 		purchases: PropTypes.array,
 		settingPrimaryDomain: PropTypes.bool,
@@ -101,6 +102,7 @@ class DomainsTable extends PureComponent {
 			requestingSiteDomains,
 			sites,
 			isContactEmailEditContext,
+			isSavingContactInfo,
 			handleDomainItemToggle,
 			translate,
 		} = this.props;
@@ -152,6 +154,7 @@ class DomainsTable extends PureComponent {
 						key={ `${ domain.name }-${ index }` }
 						currentRoute={ currentRoute }
 						showCheckbox={ isContactEmailEditContext }
+						isSavingContactInfo={ isSavingContactInfo }
 						domain={ domain }
 						site={ selectedSite }
 						isManagingAllSites={ isManagingAllSites }

@@ -39,6 +39,7 @@ class DomainRow extends PureComponent {
 		isBusy: PropTypes.bool,
 		isLoadingDomainDetails: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
+		isSavingContactInfo: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
 		onMakePrimaryClick: PropTypes.func,
 		purchase: PropTypes.object,
@@ -51,6 +52,7 @@ class DomainRow extends PureComponent {
 	static defaultProps = {
 		disabled: false,
 		isManagingAllSites: false,
+		isSavingContactInfo: false,
 		isLoadingDomainDetails: false,
 		isBusy: false,
 		showDomainDetails: true,
@@ -388,13 +390,14 @@ class DomainRow extends PureComponent {
 	};
 
 	renderDomainCheckbox() {
-		const { domain } = this.props;
+		const { domain, isSavingContactInfo } = this.props;
 		return (
 			<div className="domain-row__checkbox-cell">
 				<FormCheckbox
 					className="domain-row__checkbox"
 					onChange={ this.handleDomainSelection }
 					checked={ domain.selected }
+					disabled={ isSavingContactInfo }
 				/>
 			</div>
 		);
