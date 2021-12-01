@@ -20,7 +20,7 @@ const noop = () => {};
 
 const TitanNewMailboxList = ( {
 	children,
-	hiddenFields = [],
+	hiddenFieldNames = [],
 	selectedDomainName,
 	mailboxes,
 	onMailboxesChange,
@@ -48,7 +48,7 @@ const TitanNewMailboxList = ( {
 			return updatedMailbox;
 		} );
 
-		onMailboxesChange( validateMailboxes( updatedMailboxes, hiddenFields ) );
+		onMailboxesChange( validateMailboxes( updatedMailboxes, hiddenFieldNames ) );
 	};
 
 	const onMailboxAdd = () => {
@@ -89,7 +89,7 @@ const TitanNewMailboxList = ( {
 						mailbox={ mailbox }
 						onReturnKeyPress={ onReturnKeyPress }
 						showAllErrors={ validatedMailboxUuids.includes( mailbox.uuid ) }
-						hiddenFields={ hiddenFields }
+						hiddenFieldNames={ hiddenFieldNames }
 					/>
 
 					<div className="titan-new-mailbox-list__actions">
@@ -128,7 +128,7 @@ TitanNewMailboxList.propTypes = {
 	onMailboxesChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func,
 	showAddAnotherMailboxButton: PropTypes.bool,
-	hiddenFields: PropTypes.arrayOf(
+	hiddenFieldNames: PropTypes.arrayOf(
 		PropTypes.oneOf( [ FULL_NAME_TITAN_FIELD, PASSWORD_RESET_TITAN_FIELD ] )
 	),
 };

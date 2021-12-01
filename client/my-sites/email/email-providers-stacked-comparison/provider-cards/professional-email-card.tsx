@@ -8,6 +8,7 @@ import page from 'page';
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-stacked.svg';
+import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
@@ -28,8 +29,8 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
-	PASSWORD_RESET_TITAN_FIELD,
-	FULL_NAME_TITAN_FIELD,
+	TITAN_PASSWORD_RESET_TITAN_FIELD,
+	TITAN_FULL_NAME_TITAN_FIELD,
 } from 'calypso/my-sites/email/titan-new-mailbox';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -37,7 +38,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
+import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
 
 import './professional-email-card.scss';
 
@@ -123,7 +124,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	] );
 	const [ addingToCart, setAddingToCart ] = useState( false );
 	const [ validatedTitanMailboxUuids, setValidatedTitanMailboxUuids ] = useState( [ '' ] );
-	const optionalFields = [ PASSWORD_RESET_TITAN_FIELD, FULL_NAME_TITAN_FIELD ];
+	const optionalFields = [ TITAN_PASSWORD_RESET_TITAN_FIELD, TITAN_FULL_NAME_TITAN_FIELD ];
 
 	const onTitanConfirmNewMailboxes = () => {
 		const { comparisonContext, domain, hasCartDomain, source } = props;
@@ -184,6 +185,31 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 
 	const onTitanFormReturnKeyPress = noop;
 
+	const formattedPrice = professionalEmailFormattedPrice(
+		formattedPriceClassName,
+		titanMailProduct?.cost ?? 0,
+		currencyCode
+	);
+
+	const priceBadge = (
+		<div className="professional-email-card__price-badge">
+			{ isDomainEligibleForTitanFreeTrial( domain ) && (
+				<div className="professional-email-card__discount badge badge--info-green">
+					{ translate( '3 months free' ) }
+				</div>
+			) }
+			<PromoCardPrice
+				formattedPrice={ formattedPrice }
+				discount={ discount }
+				additionalPriceInformation={
+					<span className="professional-email-card__provider-additional-price-information">
+						{ professionalEmail.additionalPriceInformation }
+					</span>
+				}
+			/>
+		</div>
+	);
+
 	const formFields = (
 		<TitanNewMailboxList
 			onMailboxesChange={ setTitanMailbox }
@@ -193,7 +219,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			showLabels={ true }
 			validatedMailboxUuids={ validatedTitanMailboxUuids }
 			showAddAnotherMailboxButton={ false }
-			hiddenFields={ [ FULL_NAME_TITAN_FIELD, PASSWORD_RESET_TITAN_FIELD ] }
+			hiddenFieldNames={ [ TITAN_FULL_NAME_TITAN_FIELD, TITAN_PASSWORD_RESET_TITAN_FIELD ] }
 		>
 			<FullWidthButton
 				className="professional-email-card__continue"
@@ -210,17 +236,14 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		<EmailProvidersStackedCard
 			providerKey={ professionalEmail.providerKey }
 			logo={ professionalEmail.logo }
+			priceBadge={ priceBadge }
 			productName={ professionalEmail.productName }
 			description={ professionalEmail.description }
 			detailsExpanded={ professionalEmail.detailsExpanded }
 			discount={ discount }
 			additionalPriceInformation={ professionalEmail.additionalPriceInformation }
 			onExpandedChange={ professionalEmail.onExpandedChange }
-			formattedPrice={ professionalEmailFormattedPrice(
-				formattedPriceClassName,
-				titanMailProduct?.cost ?? 0,
-				currencyCode
-			) }
+			formattedPrice={ formattedPrice }
 			formFields={ formFields }
 			isDomainEligibleForTitanFreeTrial={ isDomainEligibleForTitanFreeTrial( domain ) }
 			showExpandButton={ professionalEmail.showExpandButton }

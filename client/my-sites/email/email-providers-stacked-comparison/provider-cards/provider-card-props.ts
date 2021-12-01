@@ -1,11 +1,6 @@
-import { Domain } from '@automattic/data-stores/dist/types/site';
-import { TranslateResult } from 'i18n-calypso';
 import { ReactElement } from 'react';
-
-export type Site = {
-	ID: number;
-	slug: string;
-};
+import type { Site } from 'calypso/my-sites/scan/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 export interface ProviderCard {
 	additionalPriceInformation?: TranslateResult;
@@ -24,6 +19,7 @@ export interface ProviderCard {
 	logo: ReactElement;
 	onExpandedChange: ( providerKey: string, expanded: boolean ) => void;
 	onButtonClick?: ( event: React.MouseEvent ) => void;
+	priceBadge?: ReactElement;
 	productName: TranslateResult;
 	providerKey: string;
 	showExpandButton: boolean;
@@ -38,7 +34,7 @@ export type EmailProvidersStackedCardProps = {
 	currentRoute?: string;
 	domain?: any;
 	domainName?: string;
-	domainsWithForwards?: Domain[];
+	domainsWithForwards?: any[];
 	gSuiteProduct?: string;
 	hasCartDomain?: boolean;
 	isGSuiteSupported?: boolean;

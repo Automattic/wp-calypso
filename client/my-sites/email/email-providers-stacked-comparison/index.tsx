@@ -2,7 +2,6 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	TITAN_MAIL_MONTHLY_SLUG,
 } from '@automattic/calypso-products';
-import { Domain } from '@automattic/data-stores/dist/types/site';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
@@ -34,7 +33,7 @@ type EmailProvidersStackedComparisonProps = {
 	currentRoute?: string;
 	domain?: any;
 	domainName?: string;
-	domainsWithForwards?: Domain[];
+	domainsWithForwards?: any[];
 	hasCartDomain?: boolean;
 	isGSuiteSupported?: boolean;
 	productsList?: string[];
