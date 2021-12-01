@@ -1,7 +1,21 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/colors';
 
 .transfer-page {
+	header.formatted-header {
+		margin-bottom: 24px;
+
+		h1.formatted-header__title {
+			color: $gray-900;
+			font-size: $font-title-medium;
+
+			@include break-mobile {
+				font-size: $font-title-large;
+			}
+		}
+	}
+
 	.card {
 		padding: 16px;
 
