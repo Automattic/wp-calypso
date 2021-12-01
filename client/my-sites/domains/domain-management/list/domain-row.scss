@@ -77,6 +77,7 @@
 
 .domain-row__mobile-container2 {
 	display: block;
+	font-size: $font-body-extra-small;
 	@include break-mobile {
 		display: none;
 	}
@@ -129,7 +130,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		font-size: $font-body-large;
+		font-size: $font-body;
 		font-weight: 500; /* stylelint-disable-line */
 
 		a {
