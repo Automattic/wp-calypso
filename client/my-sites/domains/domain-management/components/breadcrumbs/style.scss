@@ -67,11 +67,15 @@
 		& .breadcrumbs__item {
 			.breadcrumbs__item-label {
 				color: var( --color-neutral-50 );
+
+				&:hover {
+					color: var( --color-neutral-80 );
+				}
 			}
 
 			&:last-child {
 				.breadcrumbs__item-label {
-					font-weight: 600;
+					font-weight: 500; /* stylelint-disable-line */
 					color: var( --color-neutral-80 );
 				}
 			}
