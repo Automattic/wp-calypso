@@ -27,8 +27,8 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
-	TITAN_PASSWORD_RESET_TITAN_FIELD,
-	TITAN_FULL_NAME_TITAN_FIELD,
+	TITAN_PASSWORD_RESET_FIELD,
+	TITAN_FULL_NAME_FIELD,
 } from 'calypso/my-sites/email/titan-new-mailbox';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -122,7 +122,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	] );
 	const [ addingToCart, setAddingToCart ] = useState( false );
 	const [ validatedTitanMailboxUuids, setValidatedTitanMailboxUuids ] = useState( [ '' ] );
-	const optionalFields = [ TITAN_PASSWORD_RESET_TITAN_FIELD, TITAN_FULL_NAME_TITAN_FIELD ];
+	const optionalFields = [ TITAN_PASSWORD_RESET_FIELD, TITAN_FULL_NAME_FIELD ];
 
 	const onTitanConfirmNewMailboxes = () => {
 		const { comparisonContext, domain, hasCartDomain, recordTracksEventAddToCartClick = noop, source } = props;
@@ -215,7 +215,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			showLabels={ true }
 			validatedMailboxUuids={ validatedTitanMailboxUuids }
 			showAddAnotherMailboxButton={ false }
-			hiddenFieldNames={ [ TITAN_FULL_NAME_TITAN_FIELD, TITAN_PASSWORD_RESET_TITAN_FIELD ] }
+			hiddenFieldNames={ [ TITAN_FULL_NAME_FIELD, TITAN_PASSWORD_RESET_FIELD ] }
 		>
 			<FullWidthButton
 				className="professional-email-card__continue"

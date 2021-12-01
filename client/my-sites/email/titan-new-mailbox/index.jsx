@@ -12,8 +12,8 @@ import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
 
 import './style.scss';
 
-export const TITAN_FULL_NAME_TITAN_FIELD = 'name';
-export const TITAN_PASSWORD_RESET_TITAN_FIELD = 'alternativeEmail';
+export const TITAN_FULL_NAME_FIELD = 'name';
+export const TITAN_PASSWORD_RESET_FIELD = 'alternativeEmail';
 
 const noop = () => {};
 
@@ -54,12 +54,12 @@ const TitanNewMailbox = ( {
 	const hasAlternativeEmailError =
 		( alternativeEmailFieldTouched || showAllErrors ) &&
 		null !== alternativeEmailError &&
-		! hiddenFieldNames.includes( TITAN_PASSWORD_RESET_TITAN_FIELD );
+		! hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD );
 	const hasMailboxError = ( mailboxFieldTouched || showAllErrors ) && null !== mailboxError;
 	const hasNameError =
 		( nameFieldTouched || showAllErrors ) &&
 		null !== nameError &&
-		! hiddenFieldNames.includes( TITAN_FULL_NAME_TITAN_FIELD );
+		! hiddenFieldNames.includes( TITAN_FULL_NAME_FIELD );
 	const hasPasswordError = ( passwordFieldTouched || showAllErrors ) && null !== passwordError;
 
 	const showIsAdminToggle = false;
@@ -67,7 +67,7 @@ const TitanNewMailbox = ( {
 	return (
 		<>
 			<div className="titan-new-mailbox">
-				{ ! hiddenFieldNames.includes( TITAN_FULL_NAME_TITAN_FIELD ) && (
+				{ ! hiddenFieldNames.includes( TITAN_FULL_NAME_FIELD ) && (
 					<div className="titan-new-mailbox__name-and-remove">
 						<FormFieldset>
 							<FormLabel>
@@ -140,7 +140,7 @@ const TitanNewMailbox = ( {
 						/>
 					</FormFieldset>
 				) }
-				{ ! hiddenFieldNames.includes( TITAN_PASSWORD_RESET_TITAN_FIELD ) && (
+				{ ! hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) && (
 					<FormFieldset>
 						<FormLabel>
 							{ translate( 'Password reset email address', {
