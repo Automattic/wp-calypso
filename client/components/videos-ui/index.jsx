@@ -20,7 +20,6 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		return courses !== null && courseSlug in courses ? courses[ courseSlug ] : [];
 	} );
 
-	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ currentVideo, setCurrentVideo ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
@@ -32,6 +31,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		} );
 
 		setCurrentVideo( videoInfo );
+		setCurrentVideoKey( videoSlug );
 		setIsPlaying( true );
 	};
 
@@ -39,40 +39,31 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		if ( ! course ) {
 			return;
 		}
-
 		const videoSlugs = Object.keys( course.videos );
-		if ( ! currentVideoKey ) {
-			const initialVideoId = 'find-theme';
-			setCurrentVideoKey( initialVideoId );
-			setSelectedVideoIndex( videoSlugs.indexOf( initialVideoId ) );
-		}
-
 		const viewedSlugs = Object.keys( userCourseProgression );
 		if ( viewedSlugs.length > 0 ) {
 			const nextSlug = videoSlugs.find( ( slug ) => ! viewedSlugs.includes( slug ) );
 			if ( nextSlug ) {
 				setCurrentVideoKey( nextSlug );
-				setSelectedVideoIndex( videoSlugs.indexOf( nextSlug ) );
+				setSelectedChapterIndex( videoSlugs.indexOf( nextSlug ) );
+				return;
 			}
 		}
-	}, [ currentVideoKey, course, userCourseProgression ] );
-
-	useEffect( () => {
-		if ( currentVideoKey && course ) {
-			setCurrentVideo( course.videos[ currentVideoKey ] );
-			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( currentVideoKey ) );
-		}
-	}, [ currentVideoKey, course ] );
+		const initialVideoId = 'find-theme';
+		setCurrentVideoKey( initialVideoId );
+		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoId ) );
+	}, [ course, userCourseProgression ] );
 
 	const isVideoSelected = ( idx ) => {
-		return selectedVideoIndex === idx;
+		return Object.keys( course.videos ).indexOf( currentVideoKey ) === idx;
 	};
 
 	const onVideoSelected = ( idx ) => {
 		if ( isVideoSelected( idx ) ) {
-			setSelectedVideoIndex( null );
+			setCurrentVideoKey( null );
 		} else {
-			setSelectedVideoIndex( idx );
+			const selectedVideoKey = Object.keys( course.videos )[ idx ];
+			setCurrentVideoKey( selectedVideoKey );
 		}
 	};
 
@@ -121,11 +112,10 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 				<div className="videos-ui__video-content">
 					{ currentVideo && (
 						<VideoPlayer
-							completedSeconds={ currentVideo.completed_seconds }
-							videoUrl={ currentVideo.url }
+							videoData={ { ...currentVideo, ...{ slug: currentVideoKey } } }
 							onVideoPlayStatusChanged={ ( isVideoPlaying ) => setIsPlaying( isVideoPlaying ) }
 							isPlaying={ isPlaying }
-							poster={ currentVideo.poster ? currentVideo.poster : undefined }
+							course={ course }
 						/>
 					) }
 					<div className="videos-ui__chapters">
