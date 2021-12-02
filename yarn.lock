@@ -1405,6 +1405,7 @@ __metadata:
     enzyme: ^3.11.0
     eslint: ^7.32.0
     jest: ^27.3.1
+    jest-teamcity: ^1.9.0
     lodash: ^4.17.21
     moment: ^2.26.0
     npm-run-all: ^4.1.5
@@ -38374,6 +38375,7 @@ testarmada-magellan@11.0.10:
     jest-environment-jsdom: ^27.3.1
     jest-enzyme: ^7.1.2
     jest-junit: ^9.0.0
+    jest-teamcity: ^1.9.0
     loader-utils: ^1.2.3
     lodash: ^4.17.21
     lunr: ^2.3.8
