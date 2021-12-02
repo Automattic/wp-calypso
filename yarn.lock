@@ -13288,13 +13288,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"compare-versions@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "compare-versions@npm:3.6.0"
-  checksum: 11d4cad6f8da9e246d1d7b02912fdd38f33c7167257c1860defbe8a0ea846f774c1e17da081afb277c54549ba5cb2bef4e4350449ba2749f7b721f0203ba0cc7
-  languageName: node
-  linkType: hard
-
 "component-bind@npm:1.0.0":
   version: 1.0.0
   resolution: "component-bind@npm:1.0.0"
@@ -18154,15 +18147,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-versions@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "find-versions@npm:3.2.0"
-  dependencies:
-    semver-regex: ^2.0.0
-  checksum: 9aac46e727fdb737270fb1152dea9c673c2fc2747aba8c978beeccc57f22fc052362451f7b014a7d9460c59e36c4c2a9ec93fc61642d29fbed98ca9cb2dcec99
-  languageName: node
-  linkType: hard
-
 "flag-icon-css@npm:^3.4.5":
   version: 3.4.5
   resolution: "flag-icon-css@npm:3.4.5"
@@ -20328,24 +20312,12 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"husky@npm:^4.2.5":
-  version: 4.2.5
-  resolution: "husky@npm:4.2.5"
-  dependencies:
-    chalk: ^4.0.0
-    ci-info: ^2.0.0
-    compare-versions: ^3.6.0
-    cosmiconfig: ^6.0.0
-    find-versions: ^3.2.0
-    opencollective-postinstall: ^2.0.2
-    pkg-dir: ^4.2.0
-    please-upgrade-node: ^3.2.0
-    slash: ^3.0.0
-    which-pm-runs: ^1.0.0
+"husky@npm:^7.0.4":
+  version: 7.0.4
+  resolution: "husky@npm:7.0.4"
   bin:
-    husky-run: bin/run.js
-    husky-upgrade: lib/upgrader/bin.js
-  checksum: f66904116d10db43010403518800f62d674a0c2a9b0c2ed6e13be70a2cfbe9d2c6b056e14e7e44004a51cd55937e24ffc5ad4bbc98dd8f950897d9bbd0bc79c4
+    husky: lib/bin.js
+  checksum: aacb2b8fbfed0ec161f94e9b08d422c51fec073def4e165e57da42f47c10f520a5f0a88b42efc667784e314a1af83cf1994b582cd6f4b0333739921a601c6187
   languageName: node
   linkType: hard
 
@@ -27345,7 +27317,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"opencollective-postinstall@npm:2.0.2, opencollective-postinstall@npm:^2.0.2":
+"opencollective-postinstall@npm:2.0.2":
   version: 2.0.2
   resolution: "opencollective-postinstall@npm:2.0.2"
   bin:
@@ -28394,15 +28366,6 @@ fsevents@~2.1.2:
   bin:
     playwright: lib/cli/cli.js
   checksum: 12241c08c121ccfebd913de3d923e8edcf07a5f0c720a6a9aaf1c4ff8fd3578e8450adad832488c3208b0d9627a4990ac25e90fc9ef55840a672208b842b418e
-  languageName: node
-  linkType: hard
-
-"please-upgrade-node@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "please-upgrade-node@npm:3.2.0"
-  dependencies:
-    semver-compare: ^1.0.0
-  checksum: 222514d2841022be4b843f38d415beadcc6409c0545d6d153778d71c601bba7bbf1cd5827d650c7fae6a9a2ba7cf00f4b6729b40d015a3a5ba2937e57bc1c435
   languageName: node
   linkType: hard
 
@@ -33401,13 +33364,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"semver-regex@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "semver-regex@npm:2.0.0"
-  checksum: 6b02b142ecfe4162d35ada5665c3e3b884e88268a7be6547fe9a47e7e0968596886e74d2ac0b193d1fed539cf07c313a73c9ba9fc7858f5fd169cb2c1cbe8d69
-  languageName: node
-  linkType: hard
-
 "semver@npm:2 || 3 || 4 || 5, semver@npm:^5.3.0, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.6.0":
   version: 5.7.1
   resolution: "semver@npm:5.7.1"
@@ -38087,13 +38043,6 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"which-pm-runs@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "which-pm-runs@npm:1.0.0"
-  checksum: 7308fab13f8f502de845ab78955d8a26f93dd4a3c446845ae3de5f65c0f18535e991982bc3935a2a470d1dc7a246da359534b9afbce5cabfad5aa08ea6373382
-  languageName: node
-  linkType: hard
-
 "which-typed-array@npm:^1.1.2":
   version: 1.1.4
   resolution: "which-typed-array@npm:1.1.4"
@@ -38362,7 +38311,7 @@ testarmada-magellan@11.0.10:
     globby: ^10.0.1
     gzip-size: ^6.0.0
     html-loader: ^0.5.5
-    husky: ^4.2.5
+    husky: ^7.0.4
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"
     ignore-loader: ^0.1.2
