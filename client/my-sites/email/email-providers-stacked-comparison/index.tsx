@@ -111,11 +111,11 @@ export default connect(
 		return {
 			comparisonContext: ownProps.comparisonContext,
 			domain,
-			selectedDomainName: domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			hasCartDomain,
 			isGSuiteSupported,
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
+			selectedDomainName: domainName,
 			selectedSite,
 			source: ownProps.source,
 			titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
