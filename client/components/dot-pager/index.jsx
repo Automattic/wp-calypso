@@ -111,6 +111,7 @@ export const DotPager = ( {
 				onPageSelect={ handleSelectPage }
 				currentPage={ currentPage }
 				pageClassName="dot-pager__page"
+				containerClassName="dot-pager__pages"
 			>
 				{ children }
 			</Swipeable>

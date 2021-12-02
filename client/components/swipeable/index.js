@@ -10,6 +10,7 @@ export const Swipeable = ( {
 	currentPage = 0,
 	onPageSelect,
 	pageClassName,
+	containerClassName,
 } ) => {
 	const [ pageWidth, setPageWidth ] = useState( null );
 	const [ swipeableArea, setSwipeableArea ] = useState();
@@ -221,7 +222,10 @@ export const Swipeable = ( {
 	return (
 		<div>
 			<div { ...getTouchEvents() } className="swipeable__container" ref={ pagesRef }>
-				<div className="swipeable__pages" style={ { ...pagesStyle, width: getPagesWidth() } }>
+				<div
+					className={ classnames( 'swipeable__pages', containerClassName ) }
+					style={ { ...pagesStyle, width: getPagesWidth() } }
+				>
 					{ Children.map( children, ( child, index ) => (
 						<div
 							style={ { width: `${ pageWidth }px` } } // Setting the page width is important for iOS browser.
