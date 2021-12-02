@@ -145,56 +145,51 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
 
-	const toggleDomainLock = () => {
+	const toggleDomainLock = async () => {
 		setIsLockingOrUnlockingDomain( true );
 		const lock = ! isDomainLocked;
 
-		wpcom.req
-			.post( `/domains/${ selectedDomainName }/transfer/`, {
+		try {
+			await wpcom.req.post( `/domains/${ selectedDomainName }/transfer/`, {
 				domainStatus: JSON.stringify( {
 					command: lock ? 'lock' : 'unlock',
 				} ),
-			} )
-			.then( () => {
-				updateDomainLock( selectedDomainName, lock );
-				successNotice(
-					lock ? __( 'Domain locked successfully!' ) : __( 'Domain unlocked successfully!' ),
-					getNoticeOptions( selectedDomainName )
-				);
-				setIsLockingOrUnlockingDomain( false );
-			} )
-			.catch( () => {
-				errorNotice( getDomainLockUnlockError( lock ), getNoticeOptions( selectedDomainName ) );
-				setIsLockingOrUnlockingDomain( false );
 			} );
+
+			updateDomainLock( selectedDomainName, lock );
+			successNotice(
+				lock ? __( 'Domain locked successfully!' ) : __( 'Domain unlocked successfully!' ),
+				getNoticeOptions( selectedDomainName )
+			);
+		} catch {
+			errorNotice( getDomainLockUnlockError( lock ), getNoticeOptions( selectedDomainName ) );
+		} finally {
+			setIsLockingOrUnlockingDomain( false );
+		}
 	};
 
-	const requestTransferCode = () => {
+	const requestTransferCode = async () => {
 		setIsRequestingTransferCode( true );
 
-		wpcom.req
-			.post( `/domains/${ selectedDomainName }/transfer/`, {
+		try {
+			await wpcom.req.post( `/domains/${ selectedDomainName }/transfer/`, {
 				domainStatus: JSON.stringify( {
 					command: 'only-send-code',
 				} ),
-			} )
-			.then( () => {
-				successNotice(
-					__(
-						"We have sent the transfer authorization code to the domain registrant's email address. " +
-							"If you don't receive the email shortly, please check your spam folder."
-					),
-					getNoticeOptions( selectedDomainName )
-				);
-				setIsRequestingTransferCode( false );
-			} )
-			.catch( ( error ) => {
-				errorNotice(
-					getDomainTransferCodeError( error.error ),
-					getNoticeOptions( selectedDomainName )
-				);
-				setIsRequestingTransferCode( false );
 			} );
+
+			successNotice(
+				__(
+					"We have sent the transfer authorization code to the domain registrant's email address. " +
+						"If you don't receive the email shortly, please check your spam folder."
+				),
+				getNoticeOptions( selectedDomainName )
+			);
+		} catch ( { error } ) {
+			errorNotice( getDomainTransferCodeError( error ), getNoticeOptions( selectedDomainName ) );
+		} finally {
+			setIsRequestingTransferCode( false );
+		}
 	};
 
 	const renderTransferLock = () => {
