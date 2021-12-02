@@ -7,7 +7,6 @@ import { Component } from 'react';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import { PluginsBrowserListVariant } from './types';
-import { trim } from 'lodash';
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
