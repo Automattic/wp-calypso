@@ -3,13 +3,9 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
-import {
-	fetchAutomatedTransferStatusOnce,
-	requestEligibility,
-} from 'calypso/state/automated-transfer/actions';
+import { requestEligibility } from 'calypso/state/automated-transfer/actions';
 import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import {
-	isFetchingAutomatedTransferStatus,
 	getEligibility,
 	EligibilityData,
 	EligibilityWarning,
@@ -29,7 +25,6 @@ type EligibilityHook = {
 	eligibilityHolds?: string[];
 	eligibilityWarnings?: EligibilityWarning[];
 	warnings: EligibilityWarning[];
-	isFetching: boolean;
 	wpcomDomain: string | null;
 	stagingDomain: string | null;
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
@@ -53,7 +48,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 			return;
 		}
 
-		dispatch( fetchAutomatedTransferStatusOnce( siteId ) );
 		dispatch( requestEligibility( siteId ) );
 		dispatch( requestProductsList() );
 	}, [ siteId, dispatch ] );
@@ -74,11 +68,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 
 	// Get staging sudomain based on the wpcom subdomain.
 	const stagingDomain = wpcomDomain?.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ) || null;
-
-	// Check whether it's requesting eligibility data.
-	const isFetching = !! useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
-	);
 
 	// Check whether the wpcom.com subdomain warning is present.
 	const wpcomSubdomainWarning = eligibilityWarnings?.find(
@@ -123,10 +112,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
 			{
-				redirect_to: addQueryArgs(
-					{ site: wpcomDomain },
-					'/start/woocommerce-install/confirm/plan'
-				),
+				redirect_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/confirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan.product_slug }`
 		),
@@ -148,7 +134,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	};
 
 	return {
-		isFetching,
 		eligibilityHolds,
 		eligibilityWarnings,
 		warnings,
