@@ -4,6 +4,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import CardHeading from 'calypso/components/card-heading';
@@ -15,6 +16,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import {
 	domainManagementEdit,
@@ -23,10 +25,12 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
 import {
-	requestDomainTransferCodeOnly,
-	toggleDomainLock,
-} from 'calypso/state/domains/transfer/actions';
+	getDomainTransferCodeError,
+	getNoticeOptions,
+} from 'calypso/state/data-layer/wpcom/domains/transfer/notices';
+import { toggleDomainLock } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -42,6 +46,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const { __ } = useI18n();
 	const {
 		currentRoute,
+		errorNotice,
 		isAtomic,
 		isDomainInfoLoading,
 		isDomainLocked,
@@ -49,12 +54,12 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		isLockingOrUnlockingDomain,
 		isMapping,
 		isPrimaryDomain,
-		isRequestingTransferCode,
-		requestDomainTransferCodeOnly,
 		selectedDomainName,
 		selectedSite,
+		successNotice,
 		toggleDomainLock,
 	} = props;
+	const [ isRequestingTransferCode, setIsRequestingTransferCode ] = useState( false );
 
 	const renderBreadcrumbs = () => {
 		const items = [
@@ -159,7 +164,31 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	};
 
 	const requestTransferCode = () => {
-		requestDomainTransferCodeOnly( selectedDomainName );
+		setIsRequestingTransferCode( true );
+
+		wpcom.req
+			.post( `/domains/${ selectedDomainName }/transfer/`, {
+				domainStatus: JSON.stringify( {
+					command: 'only-send-code',
+				} ),
+			} )
+			.then( () => {
+				successNotice(
+					__(
+						"We have sent the transfer authorization code to the domain registrant's email address. " +
+							"If you don't receive the email shortly, please check your spam folder."
+					),
+					getNoticeOptions( selectedDomainName )
+				);
+				setIsRequestingTransferCode( false );
+			} )
+			.catch( ( error ) => {
+				errorNotice(
+					getDomainTransferCodeError( error.error ),
+					getNoticeOptions( selectedDomainName )
+				);
+				setIsRequestingTransferCode( false );
+			} );
 	};
 
 	const renderTransferLock = () => {
@@ -266,13 +295,13 @@ const transferPageComponent = connect(
 			isLockingOrUnlockingDomain: !! domainInfo.isLockingOrUnlockingDomain,
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
-			isRequestingTransferCode: !! domainInfo.isRequestingTransferCode,
 			primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
 		};
 	},
 	{
-		requestDomainTransferCodeOnly,
+		errorNotice,
 		toggleDomainLock,
+		successNotice,
 	}
 )( TransferPage );
 

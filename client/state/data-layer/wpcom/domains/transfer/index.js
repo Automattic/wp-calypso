@@ -2,7 +2,6 @@ import { translate } from 'i18n-calypso';
 import {
 	DOMAIN_TRANSFER_ACCEPT,
 	DOMAIN_TRANSFER_CANCEL_REQUEST,
-	DOMAIN_TRANSFER_CODE_ONLY_REQUEST,
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
@@ -19,8 +18,6 @@ import {
 	fetchWapiDomainInfo,
 	requestDomainTransferCodeCompleted,
 	requestDomainTransferCodeFailed,
-	requestDomainTransferCodeOnlyCompleted,
-	requestDomainTransferCodeOnlyFailed,
 	toggleDomainLockCompleted,
 	toggleDomainLockFailed,
 	updateDomainTransfer,
@@ -80,41 +77,6 @@ export const handleIpsTagSaveFailure = ( { domain, selectedRegistrar } ) => [
 		button: 'Get Help',
 		showDismiss: false,
 	} ),
-];
-
-export const requestDomainTransferCodeOnly = ( action ) =>
-	http(
-		{
-			apiVersion: '1.1',
-			method: 'POST',
-			path: '/domains/' + action.domain + '/transfer/',
-			body: {
-				domainStatus: JSON.stringify( {
-					command: 'only-send-code',
-				} ),
-			},
-		},
-		action
-	);
-
-export const requestDomainTransferCodeOnlySuccess = ( action ) => ( dispatch ) => {
-	dispatch( requestDomainTransferCodeOnlyCompleted( action.domain, action.options ) );
-	dispatch( fetchWapiDomainInfo( action.domain ) );
-	dispatch(
-		successNotice(
-			translate(
-				"We have sent the transfer authorization code to the domain registrant's email address. " +
-					"If you don't receive the email shortly, please check your spam folder."
-			),
-			getNoticeOptions( action.domain )
-		)
-	);
-};
-
-export const requestDomainTransferCodeOnlyFailure = ( action, error ) => [
-	requestDomainTransferCodeOnlyFailed( action.domain ),
-	errorNotice( getDomainTransferCodeError( error.error ), getNoticeOptions( action.domain ) ),
-	fetchWapiDomainInfo( action.domain ),
 ];
 
 export const toggleDomainLock = ( action ) =>
@@ -301,13 +263,6 @@ registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 			fetch: toggleDomainLock,
 			onSuccess: toggleDomainLockSuccess,
 			onError: toggleDomainLockFailure,
-		} ),
-	],
-	[ DOMAIN_TRANSFER_CODE_ONLY_REQUEST ]: [
-		dispatchRequest( {
-			fetch: requestDomainTransferCodeOnly,
-			onSuccess: requestDomainTransferCodeOnlySuccess,
-			onError: requestDomainTransferCodeOnlyFailure,
 		} ),
 	],
 	[ DOMAIN_TRANSFER_CODE_REQUEST ]: [

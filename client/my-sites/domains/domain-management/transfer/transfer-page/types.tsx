@@ -4,6 +4,7 @@ import { SiteData } from 'calypso/state/ui/selectors/site-data';
 export type TransferPageProps = {
 	currentRoute: string;
 	domains: ResponseDomain[];
+	errorNotice: any;
 	isAtomic: boolean;
 	isDomainInfoLoading: boolean;
 	isDomainLocked: boolean;
@@ -11,9 +12,8 @@ export type TransferPageProps = {
 	isLockingOrUnlockingDomain: boolean;
 	isMapping: boolean;
 	isPrimaryDomain: boolean;
-	isRequestingTransferCode: boolean;
-	requestDomainTransferCodeOnly: ( selectedDomainName: string ) => void;
 	selectedDomainName: string;
 	selectedSite: SiteData;
+	successNotice: any;
 	toggleDomainLock: ( selectedDomainName: string, options: Record< string, unknown > ) => void;
 };
