@@ -26,6 +26,10 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 		setUserCourseProgression( initialUserCourseProgression );
 	}, [ initialUserCourseProgression ] );
 
+	const completedVideoCount = Object.keys( userCourseProgression ).length;
+	const courseChapterCount = course ? Object.keys( course.videos ).length : 0;
+	const isCourseComplete = completedVideoCount > 0 && courseChapterCount === completedVideoCount;
+
 	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
@@ -202,7 +206,8 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 					</div>
 				</div>
 			</div>
-			{ course && cloneElement( footerBar, { course: course } ) }
+			{ course &&
+				cloneElement( footerBar, { course: course, isCourseComplete: isCourseComplete } ) }
 		</div>
 	);
 };
