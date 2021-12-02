@@ -10,6 +10,9 @@ const selectors = {
 	// Banner
 	dismissBanner: `button[aria-label="Dismiss"]`,
 
+	// Loading
+	cartLoading: ( state: boolean ) => `div[data-e2e-cart-is-loading="${ state }"]`,
+
 	// Cart item
 	cartItem: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
@@ -76,6 +79,20 @@ export class CartCheckoutPage {
 	}
 
 	/**
+	 * Waits until the cart is fully loaded.
+	 *
+	 * By fully loaded, this implies:
+	 * 	- network requests have been completed.
+	 * 	- cart total is fully rendered to the user.
+	 */
+	private async waitUntilCartLoaded(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForLoadState( 'networkidle' ),
+			this.page.waitForSelector( selectors.cartLoading( false ) ),
+		] );
+	}
+
+	/**
 	 * Validates that an item is in the cart with the expected text. Throws if it isn't.
 	 *
 	 * @param {string} expectedCartItemName Expected text for the name of the item in the cart.
@@ -116,6 +133,7 @@ export class CartCheckoutPage {
 	 * @param {string} coupon Coupon code.
 	 */
 	async enterCouponCode( coupon: string ): Promise< void > {
+		await this.waitUntilCartLoaded();
 		await this.page.click( selectors.couponCodeInputButton );
 
 		await this.page.fill( selectors.couponCodeInput, coupon );
@@ -163,6 +181,8 @@ export class CartCheckoutPage {
 	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
 		number | string
 	> {
+		await this.waitUntilCartLoaded();
+
 		const elementHandle = await this.page.waitForSelector(
 			selectors.totalAmount( getTargetDeviceName() )
 		);
