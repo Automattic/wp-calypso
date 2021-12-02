@@ -1,4 +1,4 @@
-import { readFile, access } from 'fs/promises';
+import { readFile, access, stat } from 'fs/promises';
 import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
@@ -198,6 +198,21 @@ export async function setLoginCookie( page: Page, accountType: string ): Promise
 		await access( cookiePath );
 	} catch {
 		throw new Error( `Cookie file ${ cookiePath } not found on disk.` );
+	}
+
+	/*
+	Check the creation time of the cookie.
+	WordPress.com cookies are valid for a limited time, typically less than 3 days.
+	So if a cookie file is found, but the creation time is older than 3 days, pretend that
+	a cookie file did not exist.
+	This is only an issue when running the tests locally.
+	*/
+	const stats = await stat( cookiePath );
+	const createdTime = Math.trunc( stats.birthtimeMs );
+	const currentTime = new Date();
+
+	if ( createdTime < currentTime.setDate( currentTime.getDate() - 3 ) ) {
+		throw new Error( `Cookie file is stale: created time is ${ stats.birthtime }` );
 	}
 
 	const cookie = JSON.parse( await readFile( cookiePath, 'utf8' ) );
