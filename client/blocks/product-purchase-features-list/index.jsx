@@ -290,7 +290,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
-				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 
 				{ isEnabled( 'jetpack/concierge-sessions' ) && (
 					<BusinessOnboarding
@@ -318,7 +317,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
@@ -339,7 +337,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
