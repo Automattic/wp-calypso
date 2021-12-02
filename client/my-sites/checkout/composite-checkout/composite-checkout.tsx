@@ -259,12 +259,11 @@ export default function CompositeCheckout( {
 
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
-		recordEvent( {
-			type: 'THANK_YOU_URL_GENERATED',
-			payload: { url },
+		logStashEvent( 'thank you url generated', {
+			url,
 		} );
 		return url;
-	}, [ getThankYouUrlBase, recordEvent ] );
+	}, [ getThankYouUrlBase ] );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
