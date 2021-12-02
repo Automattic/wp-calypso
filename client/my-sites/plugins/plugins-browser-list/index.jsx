@@ -7,6 +7,7 @@ import { Component } from 'react';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import { PluginsBrowserListVariant } from './types';
+import { trim } from 'lodash';
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
@@ -83,7 +84,12 @@ class PluginsBrowserList extends Component {
 		return (
 			<div className="plugins-browser-list">
 				<div className="plugins-browser-list__header">
-					<div className={ classnames( 'plugins-browser-list__title', this.props.listName ) }>
+					<div
+						className={ classnames(
+							'plugins-browser-list__title',
+							this.props.listName.replace( /\s/g, '' )
+						) }
+					>
 						{ this.props.title }
 					</div>
 					<div className="plugins-browser-list__subtitle">{ this.props.subtitle }</div>
