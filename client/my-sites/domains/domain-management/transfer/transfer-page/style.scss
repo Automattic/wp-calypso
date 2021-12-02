@@ -3,12 +3,6 @@
 @import '@wordpress/base-styles/colors';
 
 .transfer-page {
-	h1,
-	h2 {
-		color: var( --studio-gray-80 );
-		font-weight: 600;
-	}
-
 	header.formatted-header {
 		margin-bottom: 24px;
 
@@ -30,15 +24,17 @@
 			padding: 24px;
 		}
 
+		.card-heading,
+		.action-card__heading {
+			margin: 0;
+			font-weight: 600;
+			font-size: $font-body;
+			color: var( --studio-gray-80 );
+		}
+
 		.action-card {
 			padding: 0;
 			box-shadow: none;
-
-			.action-card__heading {
-				margin: 0;
-				font-weight: 600;
-				font-size: $font-body;
-			}
 
 			.action-card__button-container {
 				margin-top: 16px;
