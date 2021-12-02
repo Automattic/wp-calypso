@@ -1,43 +1,19 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
-import { isRequestingMediaStorage } from 'calypso/state/sites/media-storage/selectors';
 
-class QueryMediaStorage extends Component {
-	componentDidMount() {
-		this.props.requestMediaStorage( this.props.siteId );
-	}
+function QueryMediaStorage( { siteId } ) {
+	const dispatch = useDispatch();
+	useEffect( () => {
+		dispatch( requestMediaStorage( siteId ) );
+	}, [ dispatch, siteId ] );
 
-	componentDidUpdate( prevProps ) {
-		if (
-			this.props.requestingMediaStorage ||
-			! this.props.siteId ||
-			this.props.siteId === prevProps.siteId
-		) {
-			return;
-		}
-
-		this.props.requestMediaStorage( this.props.siteId );
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryMediaStorage.propTypes = {
 	siteId: PropTypes.number,
-	requestingMediaStorage: PropTypes.bool,
-	requestMediaStorage: PropTypes.func,
 };
 
-QueryMediaStorage.defaultProps = {
-	requestMediaStorage: () => {},
-};
-
-const mapStateToProps = ( state, ownProps ) => ( {
-	requestingMediaStorage: isRequestingMediaStorage( state, ownProps.siteId ),
-} );
-
-export default connect( mapStateToProps, { requestMediaStorage } )( QueryMediaStorage );
+export default QueryMediaStorage;
