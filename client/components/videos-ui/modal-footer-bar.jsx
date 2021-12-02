@@ -7,7 +7,12 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './modal-footer-bar.scss';
 
-const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete = false } ) => {
+const ModalFooterBar = ( {
+	onBackClick = () => {},
+	course = {},
+	isCourseComplete = false,
+	showDraftFirstPostLink = false,
+} ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const onBackLinkClick = ( event ) => {
@@ -23,10 +28,21 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 	};
 
 	const getStartWritingUrl = () => {
-		if ( ! course?.cta?.url || ! selectedSite?.domain ) {
+		if ( ! course?.cta?.url && ! selectedSite?.domain ) {
 			return 'https://wordpress.com/post/';
 		}
+
+		if ( ! course?.cta?.url && selectedSite?.domain ) {
+			return `https://wordpress.com/post/${ selectedSite.domain }`;
+		}
+
 		return `${ course.cta.url }/${ selectedSite.domain }`;
+	};
+
+	const onDraftFirstPostClick = () => {
+		recordTracksEvent( 'calypso_courses_draft_first_post_click', {
+			course: course?.slug,
+		} );
 	};
 
 	return (
@@ -40,6 +56,15 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 					<Gridicon icon="chevron-left" size={ 24 } />
 					<span>{ translate( 'Back' ) }</span>
 				</a>
+				{ ! isCourseComplete && showDraftFirstPostLink && (
+					<a
+						href={ getStartWritingUrl() }
+						className="videos-ui__draft-first-post-link"
+						onClick={ onDraftFirstPostClick }
+					>
+						{ translate( 'Draft your first post' ) }
+					</a>
+				) }
 				{ isCourseComplete && (
 					<p>
 						{ translate(

@@ -4,6 +4,10 @@
 .videos-ui .videos-ui__modal-footer-bar {
 	display: flex;
 	padding: 0;
+
+	.videos-ui__draft-first-post-link {
+		text-decoration: underline;
+	}
 }
 
 .videos-ui .videos-ui__modal-footer-bar.videos-ui__course-completed {
