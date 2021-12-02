@@ -143,7 +143,6 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
 
-	// TODO: Should we show a modal if there's a pending transfer and the user tries to lock the domain?
 	const toggleDomainLock = async () => {
 		setIsLockingOrUnlockingDomain( true );
 		const lock = ! isDomainLocked;
