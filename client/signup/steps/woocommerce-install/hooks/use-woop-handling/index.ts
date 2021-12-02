@@ -80,9 +80,10 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
+	const transferringDataIsAvailable = typeof transferringBlockers !== 'undefined';
+
 	// Check whether the site has transferring blockers. True as default.
-	const hasBlockers =
-		typeof transferringBlockers === 'undefined' || transferringBlockers?.length > 0;
+	const hasBlockers = ! transferringDataIsAvailable || transferringBlockers?.length > 0;
 
 	/*
 	 * Plan site and `woop` site feature.
@@ -150,6 +151,8 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		transferringBlockers: transferringBlockers || [],
 		hasBlockers,
 		siteUpgrading,
-		isReadyForTransfer: ! hasBlockers && ! ( eligibilityWarnings && eligibilityWarnings.length ),
+		isReadyForTransfer: transferringDataIsAvailable
+			? ! hasBlockers && ! ( eligibilityWarnings && eligibilityWarnings.length )
+			: false,
 	};
 }
