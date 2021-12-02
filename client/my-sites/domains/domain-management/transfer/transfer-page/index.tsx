@@ -33,11 +33,9 @@ import { updateDomainLock } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-by-site-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { TransferPageProps } from './types';
 
@@ -294,7 +292,6 @@ const transferPageComponent = connect(
 		const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
 		return {
 			currentRoute: getCurrentRoute( state ),
-			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 			isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			isDomainInfoLoading: ! domainInfo.hasLoadedFromServer,
 			isDomainLocked: domainInfo.data?.locked,
@@ -302,7 +299,6 @@ const transferPageComponent = connect(
 			isDomainPendingTransfer: !! domainInfo.data?.pendingTransfer,
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
-			primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
 		};
 	},
 	{
