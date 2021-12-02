@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -83,14 +82,7 @@ class PluginsBrowserList extends Component {
 		return (
 			<div className="plugins-browser-list">
 				<div className="plugins-browser-list__header">
-					<div
-						className={ classnames(
-							'plugins-browser-list__title',
-							this.props.listName.replace( /\s/g, '' )
-						) }
-					>
-						{ this.props.title }
-					</div>
+					<div className="plugins-browser-list__title">{ this.props.title }</div>
 					<div className="plugins-browser-list__subtitle">{ this.props.subtitle }</div>
 				</div>
 				<Card className="plugins-browser-list__elements">{ this.renderViews() }</Card>
