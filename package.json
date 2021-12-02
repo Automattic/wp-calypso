@@ -237,7 +237,7 @@
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
 		"ignore-loader": "^0.1.2",
-		"imports-loader": "^0.8.0",
+		"imports-loader": "^3.1.1",
 		"jest": "^27.3.1",
 		"jest-environment-jsdom": "^27.3.1",
 		"jest-enzyme": "^7.1.2",

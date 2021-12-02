@@ -20581,13 +20581,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"imports-loader@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "imports-loader@npm:0.8.0"
+"imports-loader@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "imports-loader@npm:3.1.1"
   dependencies:
-    loader-utils: ^1.0.2
     source-map: ^0.6.1
-  checksum: 83dab0559c64caefa8c7ee4995b16d48251cbc90daac4d3936bf0295c29be5c4072ddcfc92f5dc304c359c79eaa1eb64a4f5313b5a950cd56cc1e717f98f3d6e
+    strip-comments: ^2.0.1
+  peerDependencies:
+    webpack: ^5.0.0
+  checksum: e161ae6e94f35c2dcae28565dead68dc002ac6fa4303edfbdfb8e289178c1ccec21554ca2748bd997f1c87aed34af48185e353d7cb1decbc066a0b8f1f08be1d
   languageName: node
   linkType: hard
 
@@ -24076,7 +24078,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^1.0.2, loader-utils@npm:^1.1.0, loader-utils@npm:^1.2.3, loader-utils@npm:^1.4.0":
+"loader-utils@npm:^1.1.0, loader-utils@npm:^1.2.3, loader-utils@npm:^1.4.0":
   version: 1.4.0
   resolution: "loader-utils@npm:1.4.0"
   dependencies:
@@ -34790,6 +34792,13 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"strip-comments@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "strip-comments@npm:2.0.1"
+  checksum: 984321b1ec47a531bdcfddd87f217590934e2d2f142198a080ec88588280239a5b58a81ca780730679b6195e52afef83673c6d6466c07c2277f71f44d7d9553d
+  languageName: node
+  linkType: hard
+
 "strip-eof@npm:^1.0.0":
   version: 1.0.0
   resolution: "strip-eof@npm:1.0.0"
@@ -38366,7 +38375,7 @@ testarmada-magellan@11.0.10:
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"
     ignore-loader: ^0.1.2
-    imports-loader: ^0.8.0
+    imports-loader: ^3.1.1
     jest: ^27.3.1
     jest-environment-jsdom: ^27.3.1
     jest-enzyme: ^7.1.2
