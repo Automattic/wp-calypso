@@ -81,8 +81,11 @@ open class PluginBaseBuild : Template({
 				# Update composer
 				composer install
 
+				# Prepare required packages in the monorepo
+				yarn workspaces focus @automattic/calypso-color-schemes
+				yarn workspace @automattic/calypso-color-schemes prepare
+
 				cd $workingDir
-				export SKIP_TSC=true
 				yarn workspaces focus
 			"""
 		}
