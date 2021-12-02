@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
@@ -11,10 +12,15 @@ import Image04 from 'calypso/assets/images/woocommerce/woop-cta-image04.jpeg';
 import CtaSection from 'calypso/components/cta-section';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import MasonryWave from 'calypso/components/masonry-wave';
+import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 import './style.scss';
+
+const WarningsOrHoldsSection = styled.div`
+	margin-bottom: 40px;
+`;
 
 interface Props {
 	startSetup: () => void;
@@ -39,6 +45,22 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 		return startSetup();
 	}
 
+	function renderWarningNotice() {
+		if ( ! hasBlockers ) {
+			return null;
+		}
+
+		return (
+			<WarningsOrHoldsSection>
+				<WarningCard
+					message={ __(
+						'There is an error that is stopping us from being able to install this product, please contact support.'
+					) }
+				/>
+			</WarningsOrHoldsSection>
+		);
+	}
+
 	return (
 		<div className="woop__landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
@@ -53,6 +75,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 				buttonAction={ onCTAClickHandler }
 				buttonDisabled={ hasBlockers }
 				ctaRef={ ctaRef }
+				notice={ renderWarningNotice() }
 			>
 				<MasonryWave images={ images } />
 			</CtaSection>
