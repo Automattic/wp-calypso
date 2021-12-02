@@ -79,14 +79,28 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		await this.page.waitForLoadState( 'load' );
+		// `page.on` construct is used here instead of the more common `page.waitForResponse`.
+		// Using the latter causes this method to hang until the timeout is reached, since
+		// the `waitForResponse` method begins observing the network requests after the
+		// `nux?_envelope=1` request has been completed.
+		// On the other hand, `page.on` is able to monitor every request, including the
+		// one to the `nux` endpoint.
+		this.page.on( 'response', async ( response ) => {
+			if ( ! response.url().includes( 'nux?_envelope=1' ) ) {
+				return;
+			}
+
+			const body: { [ index: string ]: never } = await response.json();
+			if ( body[ 'body' ][ 'show_welcome_guide' ] === true ) {
+				await this.dismissWelcomeTourIfPresent();
+			}
+		} );
 
 		const frame = await this.getEditorFrame();
 		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
 		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
 		await frame.waitForSelector( selectors.editorTitle );
 
-		await this.dismissWelcomeTourIfPresent();
 		return frame;
 	}
 
@@ -97,11 +111,7 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 		const locator = frame.locator( selectors.welcomeTourCloseButton );
 
-		try {
-			await locator.click( { timeout: 5 * 1000, force: true } );
-		} catch {
-			// noop - welcome tour was not found, which is great.
-		}
+		await locator.click( { timeout: 10 * 1000 } );
 	}
 
 	/**
