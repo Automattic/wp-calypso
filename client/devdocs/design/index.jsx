@@ -191,7 +191,7 @@ export default class DesignAssets extends Component {
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
 					<DotPager readmeFilePath="dot-pager" />
-					<Swipeable readmeFilePath="swipeabel" />
+					<Swipeable readmeFilePath="swipeable" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmptyContent readmeFilePath="empty-content" />
