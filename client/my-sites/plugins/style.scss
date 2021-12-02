@@ -152,14 +152,6 @@ $plugin-details-header-padding: 100px;
 }
 
 .plugin-details__top-section {
-	.plugin-details__layout-col-right.no-cta {
-		visibility: hidden;
-
-		@media screen and ( max-width: 1040px ) {
-			display: none;
-		}
-	}
-
 	&.is-placeholder {
 		.plugin-details__name,
 		.plugin-details__price,
@@ -249,7 +241,8 @@ $plugin-details-header-padding: 100px;
 			background-color: var( --color-accent-50 );
 			color: var( --studio-white );
 
-			&:focus, &:hover {
+			&:focus,
+			&:hover {
 				background-color: var( --color-accent-60 );
 			}
 		}

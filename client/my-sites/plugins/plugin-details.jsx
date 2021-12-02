@@ -194,15 +194,7 @@ function PluginDetails( props ) {
 					<div
 						className={ classNames(
 							'plugin-details__layout-col',
-							'plugin-details__layout-col-left',
-							{
-								'no-cta ': ! shouldDisplayCTA(
-									selectedSite,
-									props.pluginSlug,
-									isPluginInstalledOnsite,
-									isJetpackSelfHosted
-								),
-							}
+							'plugin-details__layout-col-left'
 						) }
 					>
 						<div className="plugin-details__tags">{ tags }</div>
@@ -239,51 +231,51 @@ function PluginDetails( props ) {
 							</div>
 						</div>
 					</div>
-					<div
-						className={ classNames(
-							'plugin-details__layout-col',
-							'plugin-details__layout-col-right',
-							{
-								'no-cta': ! shouldDisplayCTA(
-									selectedSite,
-									props.pluginSlug,
-									isPluginInstalledOnsite,
-									isJetpackSelfHosted
-								),
-							}
-						) }
-					>
-						<div className="plugin-details__header">
-							<div className="plugin-details__price">{ translate( 'Free' ) }</div>
-							<div className="plugin-details__install">
-								<CTA
-									slug={ props.pluginSlug }
-									isPluginInstalledOnsite={ isPluginInstalledOnsite }
-									isJetpackSelfHosted={ isJetpackSelfHosted }
-									selectedSite={ selectedSite }
-									isJetpack={ isJetpack }
-									isVip={ isVip }
-									hasEligibilityMessages={ hasEligibilityMessages }
-								/>
-							</div>
-							<div className="plugin-details__t-and-c">
-								{ translate(
-									'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the Third-Party plugin Terms.',
-									{
-										components: {
-											a: (
-												<a
-													target="_blank"
-													rel="noopener noreferrer"
-													href="https://wordpress.com/tos/"
-												/>
-											),
-										},
-									}
-								) }
+					{ shouldDisplayCTA(
+						selectedSite,
+						props.pluginSlug,
+						isPluginInstalledOnsite,
+						isJetpackSelfHosted,
+						requestingPluginsForSites
+					) && (
+						<div
+							className={ classNames(
+								'plugin-details__layout-col',
+								'plugin-details__layout-col-right'
+							) }
+						>
+							<div className="plugin-details__header">
+								<div className="plugin-details__price">{ translate( 'Free' ) }</div>
+								<div className="plugin-details__install">
+									<CTA
+										slug={ props.pluginSlug }
+										isPluginInstalledOnsite={ isPluginInstalledOnsite }
+										isJetpackSelfHosted={ isJetpackSelfHosted }
+										selectedSite={ selectedSite }
+										isJetpack={ isJetpack }
+										isVip={ isVip }
+										hasEligibilityMessages={ hasEligibilityMessages }
+									/>
+								</div>
+								<div className="plugin-details__t-and-c">
+									{ translate(
+										'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the Third-Party plugin Terms.',
+										{
+											components: {
+												a: (
+													<a
+														target="_blank"
+														rel="noopener noreferrer"
+														href="https://wordpress.com/tos/"
+													/>
+												),
+											},
+										}
+									) }
+								</div>
 							</div>
 						</div>
-					</div>
+					) }
 				</div>
 
 				{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
@@ -347,7 +339,17 @@ function PluginDetails( props ) {
 	);
 }
 
-function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpackSelfHosted ) {
+function shouldDisplayCTA(
+	selectedSite,
+	slug,
+	isPluginInstalledOnsite,
+	isJetpackSelfHosted,
+	requestingPluginsForSites
+) {
+	if ( requestingPluginsForSites ) {
+		// Display nothing if we are still requesting the plugin status.
+		return false;
+	}
 	if ( ! isJetpackSelfHosted && ! isCompatiblePlugin( slug ) ) {
 		// Check for WordPress.com compatibility.
 		return false;
@@ -361,22 +363,10 @@ function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpac
 	return ! isPluginInstalledOnsite;
 }
 
-function CTA( {
-	slug,
-	isPluginInstalledOnsite,
-	isJetpackSelfHosted,
-	selectedSite,
-	isJetpack,
-	isVip,
-	hasEligibilityMessages,
-} ) {
+function CTA( { slug, selectedSite, isJetpack, isVip, hasEligibilityMessages } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
-
-	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpackSelfHosted ) ) {
-		return null;
-	}
 
 	const shouldUpgrade = ! (
 		isBusiness( selectedSite.plan ) ||
