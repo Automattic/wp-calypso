@@ -83,53 +83,6 @@ $theme-info-height: 54px;
 	}
 }
 
-.theme__badge-price {
-	flex: 0 0 auto;
-	padding: 18px 10px 0;
-	color: var( --color-success );
-	font-size: $font-body-small;
-	font-weight: 600;
-}
-
-.theme__badge-price-test {
-	padding: 18px 5px;
-}
-
-.theme__upsell {
-	flex: 0 0 auto;
-	padding: 16px 10px 0 0;
-	color: var( --color-neutral-light );
-}
-
-.theme__upsell-icon svg {
-	transform: scale( 0.8 );
-	border: 2px solid var( --color-neutral-20 );
-	border-radius: 100%;
-	display: inline-block;
-	width: 22px;
-	height: 22px;
-	z-index: 0;
-	padding: 0 1px 1px 0;
-	box-sizing: border-box;
-
-	&:hover {
-		border-color: #000;
-	}
-}
-
-.theme__upsell-popover {
-	text-align: center;
-}
-
-.theme__upsell-cta {
-	margin-top: 10px;
-}
-
-.theme__badge-price-upgrade {
-	text-transform: uppercase;
-	font-size: 80%;
-}
-
 .theme__badge-active {
 	flex: 0 0 auto;
 	padding: 18px 10px 0;
