@@ -17,6 +17,7 @@ export default class extends PureComponent {
 				} }
 				currentPage={ this.state.currentPage }
 				pageClassName="example-page-component-class"
+				hasDynamicHeight={ true }
 			>
 				<div>Page 1</div>
 				<div>Page 2</div>
