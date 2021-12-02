@@ -5,7 +5,6 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
-	DOMAIN_TRANSFER_TOGGLE_LOCK,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -18,8 +17,6 @@ import {
 	fetchWapiDomainInfo,
 	requestDomainTransferCodeCompleted,
 	requestDomainTransferCodeFailed,
-	toggleDomainLockCompleted,
-	toggleDomainLockFailed,
 	updateDomainTransfer,
 } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
@@ -27,7 +24,6 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	getCancelTransferErrorMessage,
 	getCancelTransferSuccessMessage,
-	getDomainLockUnlockError,
 	getDomainTransferCodeError,
 	getNoticeOptions,
 } from './notices';
@@ -77,43 +73,6 @@ export const handleIpsTagSaveFailure = ( { domain, selectedRegistrar } ) => [
 		button: 'Get Help',
 		showDismiss: false,
 	} ),
-];
-
-export const toggleDomainLock = ( action ) =>
-	http(
-		{
-			apiVersion: '1.1',
-			method: 'POST',
-			path: '/domains/' + action.domain + '/transfer/',
-			body: {
-				domainStatus: JSON.stringify( {
-					command: action.options.unlock ? 'unlock' : 'lock',
-				} ),
-			},
-		},
-		action
-	);
-
-export const toggleDomainLockSuccess = ( action ) => ( dispatch ) => {
-	dispatch( toggleDomainLockCompleted( action.domain, action.options ) );
-	dispatch( fetchWapiDomainInfo( action.domain ) );
-	dispatch(
-		successNotice(
-			action.options.unlock
-				? translate( 'Domain unlocked successfully!' )
-				: translate( 'Domain locked successfully!' ),
-			getNoticeOptions( action.domain )
-		)
-	);
-};
-
-export const toggleDomainLockFailure = ( action ) => [
-	toggleDomainLockFailed( action.domain ),
-	errorNotice(
-		getDomainLockUnlockError( action.options.unlock ),
-		getNoticeOptions( action.domain )
-	),
-	fetchWapiDomainInfo( action.domain ),
 ];
 
 export const requestDomainTransferCode = ( action ) =>
@@ -258,13 +217,7 @@ registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 			onError: handleIpsTagSaveFailure,
 		} ),
 	],
-	[ DOMAIN_TRANSFER_TOGGLE_LOCK ]: [
-		dispatchRequest( {
-			fetch: toggleDomainLock,
-			onSuccess: toggleDomainLockSuccess,
-			onError: toggleDomainLockFailure,
-		} ),
-	],
+	// TODO: Remove this and related code after the redesigned transfer pages are deployed
 	[ DOMAIN_TRANSFER_CODE_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestDomainTransferCode,

@@ -9,11 +9,9 @@ export type TransferPageProps = {
 	isDomainInfoLoading: boolean;
 	isDomainLocked: boolean;
 	isDomainOnly: boolean;
-	isLockingOrUnlockingDomain: boolean;
 	isMapping: boolean;
 	isPrimaryDomain: boolean;
 	selectedDomainName: string;
 	selectedSite: SiteData;
 	successNotice: any;
-	toggleDomainLock: ( selectedDomainName: string, options: Record< string, unknown > ) => void;
 };
