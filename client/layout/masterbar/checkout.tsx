@@ -1,8 +1,9 @@
+import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FunctionComponent, useCallback, useState } from 'react';
-import ReactModal from 'react-modal';
 import { useDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
@@ -102,7 +103,6 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const clearCartAndLeave = () => {
 		replaceProductsInCart( [] );
 		leaveCheckout();
-		// No need to close the modal since we will be redirected
 	};
 	return (
 		<Masterbar>
@@ -120,17 +120,16 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			<Item className="masterbar__item-title">{ title }</Item>
-			<ReactModal
-				isOpen={ isModalVisible }
-				onRequestClose={ () => {
-					setIsModalVisible( false );
-				} }
-			>
-				<h2>{ modalTitleText }</h2>
-				<div>{ modalBodyText }</div>
-				<button onClick={ clearCartAndLeave }>{ modalSecondaryText }</button>
-				<button onClick={ leaveCheckout }>{ modalPrimaryText }</button>
-			</ReactModal>
+			<CheckoutModal
+				title={ modalTitleText }
+				copy={ modalBodyText }
+				closeModal={ () => setIsModalVisible( false ) }
+				isVisible={ isModalVisible }
+				buttonCTA={ modalPrimaryText }
+				primaryAction={ leaveCheckout }
+				secondaryButtonCTA={ modalSecondaryText }
+				secondaryAction={ clearCartAndLeave }
+			/>
 		</Masterbar>
 	);
 };
@@ -138,7 +137,9 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 export default function CheckoutMasterbarWrapper( props: Props ): JSX.Element {
 	return (
 		<CalypsoShoppingCartProvider>
-			<CheckoutMasterbar { ...props } />
+			<ThemeProvider theme={ checkoutTheme }>
+				<CheckoutMasterbar { ...props } />
+			</ThemeProvider>
 		</CalypsoShoppingCartProvider>
 	);
 }
