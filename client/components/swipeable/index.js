@@ -10,14 +10,13 @@ export const Swipeable = ( {
 	onPageSelect,
 	pageClassName,
 } ) => {
-	const [ isDragging, setIsDragging ] = useState( false );
 	const [ pageWidth, setPageWidth ] = useState();
 
 	const [ pagesStyle, setPagesStyle ] = useState( {
 		transform: `translate3d(0px, 0px, 0px)`,
 		transitionDuration: `300ms`,
 	} );
-	const [ dragStartData, setDragStartData ] = useState( {} );
+	const [ dragStartData, setDragStartData ] = useState();
 
 	const pagesRef = useRef();
 	const resizeObserverRef = useRef();
@@ -82,9 +81,7 @@ export const Swipeable = ( {
 		if ( targetHeight && pagesStyle?.height !== targetHeight ) {
 			height = { height: null };
 		}
-
 		setPageWidth( getWidth() );
-
 		setPagesStyle( { ...pagesStyle, ...height, ...transform } );
 	} );
 
@@ -111,11 +108,10 @@ export const Swipeable = ( {
 		const position = getDragPosition( event );
 		setDragStartData( position );
 		setPagesStyle( { ...pagesStyle, transitionDuration: `0ms` } ); // Set transition Duration to 0 for smooth dragging.
-		setIsDragging( true );
 	};
 
 	const handleDragEnd = ( event ) => {
-		if ( ! isDragging ) {
+		if ( ! dragStartData ) {
 			return; // End early if we are not dragging any more.
 		}
 
@@ -139,12 +135,11 @@ export const Swipeable = ( {
 			transitionDuration: `300ms`,
 		} );
 		onPageSelect( newIndex );
-		setDragStartData( {} );
-		setIsDragging( false );
+		setDragStartData( null );
 	};
 
 	const handleDrag = ( event ) => {
-		if ( ! isDragging ) {
+		if ( ! dragStartData ) {
 			return;
 		}
 		const dragPosition = getDragPosition( event );
