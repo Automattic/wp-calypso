@@ -243,7 +243,7 @@ export const FEATURES_LIST = {
 		getDescription: () => {
 			return isEnabled( 'themes/premium' )
 				? i18n.translate(
-						'Including unlimited premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+						'Including premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
 				  )
 				: i18n.translate(
 						'Including advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'

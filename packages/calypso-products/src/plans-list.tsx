@@ -755,7 +755,7 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			  )
 			: i18n.translate(
 					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
-						'and unlimited premium themes.',
+						'and premium themes.',
 					plansDescriptionHeadingComponent
 			  ),
 	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),
