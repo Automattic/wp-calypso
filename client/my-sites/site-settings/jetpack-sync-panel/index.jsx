@@ -26,6 +26,12 @@ class JetpackSyncPanel extends Component {
 		this.fetchSyncStatus();
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteId !== this.props.siteId ) {
+			this.fetchSyncStatus();
+		}
+	}
+
 	fetchSyncStatus = () => {
 		this.props.getSyncStatus( this.props.siteId );
 	};
