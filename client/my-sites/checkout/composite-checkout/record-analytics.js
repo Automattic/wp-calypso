@@ -31,10 +31,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 							error_message: action.payload.message,
 						} )
 					);
-				case 'a8c_checkout_add_coupon_button_clicked':
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_add_coupon_clicked', {} )
-					);
 				case 'STRIPE_TRANSACTION_BEGIN': {
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_form_submit', {
