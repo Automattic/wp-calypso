@@ -112,7 +112,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		'professional-email-card__discounted-price': isEligibleForFreeTrial,
 	} );
 
-	const expandButtonLabel = isUpgrading()
+	professionalEmail.expandButtonLabel = isUpgrading()
 		? translate( 'Upgrade to %(titanProductName)s', {
 				args: {
 					titanProductName: getTitanProductName(),
