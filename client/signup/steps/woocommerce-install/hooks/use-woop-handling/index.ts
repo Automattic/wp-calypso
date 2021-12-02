@@ -29,6 +29,7 @@ type EligibilityHook = {
 	stagingDomain: string | null;
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
 	transferringBlockers: string[];
+	isDataReady: boolean;
 	hasBlockers: boolean;
 	siteUpgrading: {
 		required: boolean;
@@ -151,6 +152,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		transferringBlockers: transferringBlockers || [],
 		hasBlockers,
 		siteUpgrading,
+		isDataReady: transferringDataIsAvailable,
 		isReadyForTransfer: transferringDataIsAvailable
 			? ! hasBlockers && ! ( eligibilityWarnings && eligibilityWarnings.length )
 			: false,
