@@ -68,11 +68,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 	// Skip to transfer step if the site is ready for transfer.
 	useEffect( () => {
-		if ( ! isReadyForTransfer ) {
-			return;
+		if ( isReadyForTransfer ) {
+			goToStep( 'transfer' );
 		}
-
-		goToStep( 'transfer' );
 	}, [ goToStep, isReadyForTransfer ] );
 
 	function getWPComSubdomainWarningContent() {
