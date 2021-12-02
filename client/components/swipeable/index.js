@@ -11,6 +11,7 @@ export const Swipeable = ( {
 	pageClassName,
 } ) => {
 	const [ pageWidth, setPageWidth ] = useState();
+	const [ swipeableArea, setSwipeableArea ] = useState();
 
 	const [ pagesStyle, setPagesStyle ] = useState( {
 		transform: `translate3d(0px, 0px, 0px)`,
@@ -82,6 +83,7 @@ export const Swipeable = ( {
 			height = { height: null };
 		}
 		setPageWidth( getWidth() );
+		setSwipeableArea( pagesRef.current?.getBoundingClientRect() );
 		setPagesStyle( { ...pagesStyle, ...height, ...transform } );
 	} );
 
@@ -156,7 +158,6 @@ export const Swipeable = ( {
 			} );
 		}
 
-		const swipeableArea = pagesRef.current?.getBoundingClientRect();
 		if ( ! swipeableArea ) {
 			return;
 		}
