@@ -199,21 +199,30 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					} ) }
 					ref={ gridRef }
 				>
-					{ popularItems.map( ( product ) => (
-						<li key={ product.iconSlug }>
-							<ProductCard
-								item={ product }
-								onClick={ onSelectProduct }
-								siteId={ siteId }
-								currencyCode={ currencyCode }
-								selectedTerm={ duration }
-								isAligned={ ! shouldWrapGrid }
-								featuredPlans={ featuredPlans }
-								scrollCardIntoView={ scrollCardIntoView }
-								createButtonURL={ createButtonURL }
-							/>
-						</li>
-					) ) }
+					{ popularItems.map( ( product ) => {
+						const isFeatured = featuredPlans && featuredPlans.includes( product.productSlug );
+
+						return (
+							<li
+								className={ classNames( {
+									'is-featured': isFeatured,
+								} ) }
+								key={ product.iconSlug }
+							>
+								<ProductCard
+									item={ product }
+									onClick={ onSelectProduct }
+									siteId={ siteId }
+									currencyCode={ currencyCode }
+									selectedTerm={ duration }
+									isAligned={ ! shouldWrapGrid }
+									isFeatured={ isFeatured }
+									scrollCardIntoView={ scrollCardIntoView }
+									createButtonURL={ createButtonURL }
+								/>
+							</li>
+						);
+					} ) }
 				</ul>
 				<div
 					className={ classNames( 'product-grid__more', {
