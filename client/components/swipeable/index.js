@@ -11,7 +11,7 @@ export const Swipeable = ( {
 	onPageSelect,
 	pageClassName,
 } ) => {
-	const [ pageWidth, setPageWidth ] = useState();
+	const [ pageWidth, setPageWidth ] = useState( null );
 	const [ swipeableArea, setSwipeableArea ] = useState();
 	const isRtl = useRtl();
 
@@ -198,10 +198,7 @@ export const Swipeable = ( {
 				onPointerDown={ handleDragStart }
 				onDrag={ handleDrag }
 				onPointerMove={ handleDrag }
-				onDragEnd={ handleDragEnd }
-				onPointerUp={ handleDragEnd }
-				ref={ pagesRef }
-			>
+			<div { ...getTouchEvents() } className="swipeable__container" ref={ pagesRef }>
 				<div className="swipeable__pages" style={ { ...pagesStyle, width: getPagesWidth() } }>
 					{ Children.map( children, ( child, index ) => (
 						<div
