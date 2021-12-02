@@ -31,6 +31,7 @@ spec-xunit-reporter-0.0.1.tgz
 *xunit_*.xml
 /vendor
 checkstyle.xml
+/apps/notifications/stats.json
 
 # added during build
 /config/secrets.json

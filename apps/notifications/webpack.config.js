@@ -5,7 +5,11 @@
 const spawnSync = require( 'child_process' ).spawnSync;
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
+
+const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 
 /**
  * Return a webpack config object
@@ -47,6 +51,9 @@ function getWebpackConfig(
 
 	return {
 		...webpackConfig,
+		optimization: {
+			concatenateModules: ! shouldEmitStats,
+		},
 		devServer: {
 			host: 'calypso.localhost',
 			port: 3000,
@@ -83,6 +90,20 @@ function getWebpackConfig(
 				templateContent: () => pageMeta.gitDescribe,
 				inject: false,
 			} ),
+			shouldEmitStats &&
+				new BundleAnalyzerPlugin( {
+					analyzerMode: 'disabled', // just write the stats.json file
+					generateStatsFile: true,
+					statsFilename: path.join( __dirname, 'stats.json' ),
+					statsOptions: {
+						source: false,
+						reasons: true,
+						optimizationBailout: false,
+						chunkOrigins: false,
+						chunkGroups: true,
+					},
+				} ),
+			new ExtensiveLodashReplacementPlugin(),
 		],
 	};
 }

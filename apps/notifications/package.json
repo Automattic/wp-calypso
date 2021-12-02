@@ -17,6 +17,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
+		"analyze-bundles": "EMIT_STATS=true yarn run build && webpack-bundle-analyzer stats.json dist -h 127.0.0.1 -p 9898 -s gzip",
 		"clean": "rm -rf dist",
 		"build:notifications": "calypso-build",
 		"dev-server": "NODE_ENV=development webpack serve",
@@ -27,6 +28,7 @@
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-polyfills": "workspace:^",
+		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"autoprefixer": "^10.2.5",
 		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
@@ -40,6 +42,7 @@
 		"react-redux": "^7.2.6",
 		"redux": "^4.1.2",
 		"redux-thunk": "^2.3.0",
+		"webpack-bundle-analyzer": "^4.5.0",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^",
 		"wpcom-xhr-request": "workspace:^"
