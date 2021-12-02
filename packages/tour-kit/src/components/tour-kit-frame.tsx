@@ -4,10 +4,10 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
 import classnames from 'classnames';
+import { usePopper } from 'react-popper';
 /**
  * Internal Dependencies
  */
-import usePopperHandler from '../hooks/use-popper-handler';
 import KeyboardNavigation from './keyboard-navigation';
 import TourKitMinimized from './tour-kit-minimized';
 import Overlay from './tour-kit-overlay';
@@ -47,31 +47,35 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		return !! ( referenceElement && ! isMinimized );
 	};
 
-	const { styles: popperStyles, attributes: popperAttributes } = usePopperHandler(
+	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
 		referenceElement,
 		popperElementRef.current,
-		[
-			{
-				name: 'preventOverflow',
-				options: {
-					rootBoundary: 'document',
-					padding: 16, // same as the left/margin of the tour frame
+		{
+			strategy: 'fixed',
+			placement: 'auto',
+			modifiers: [
+				{
+					name: 'preventOverflow',
+					options: {
+						rootBoundary: 'document',
+						padding: 16, // same as the left/margin of the tour frame
+					},
 				},
-			},
-			{
-				name: 'arrow',
-				options: {
-					padding: 12,
+				{
+					name: 'arrow',
+					options: {
+						padding: 12,
+					},
 				},
-			},
-			{
-				name: 'offset',
-				options: {
-					offset: [ 0, showArrowIndicator() ? 12 : 10 ],
+				{
+					name: 'offset',
+					options: {
+						offset: [ 0, showArrowIndicator() ? 12 : 10 ],
+					},
 				},
-			},
-			...( config.options?.popperModifiers || [] ),
-		]
+				...( config.options?.popperModifiers || [] ),
+			],
+		}
 	);
 
 	const stepRepositionProps =

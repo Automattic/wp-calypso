@@ -1,6 +1,6 @@
 import { useMemo, useRef } from '@wordpress/element';
 import classnames from 'classnames';
-import usePopperHandler from '../hooks/use-popper-handler';
+import { usePopper } from 'react-popper';
 import Overlay from './tour-kit-overlay';
 import type { Rect, Placement } from '@popperjs/core';
 
@@ -37,10 +37,13 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement,
 		),
 	];
 
-	const { styles: popperStyles, attributes: popperAttributes } = usePopperHandler(
+	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
 		referenceElement,
 		popperElementRef.current,
-		modifiers
+		{
+			strategy: 'fixed',
+			modifiers,
+		}
 	);
 
 	const clipDimensions = referenceRect
