@@ -16,13 +16,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
-				case 'STORED_CARD_ERROR':
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {
-							error_type: action.payload.type,
-							error_message: String( action.payload ),
-						} )
-					);
 				case 'STRIPE_TRANSACTION_BEGIN': {
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_form_submit', {
