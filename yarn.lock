@@ -9658,12 +9658,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"agent-base@npm:6":
-  version: 6.0.1
-  resolution: "agent-base@npm:6.0.1"
+"agent-base@npm:6, agent-base@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "agent-base@npm:6.0.2"
   dependencies:
     debug: 4
-  checksum: fe25d6bdc5767ed7483587cc74e7b6b5d15c765d5d73c8f37709e34dd4311b952b8db839d768d7128c272c2beb81687311017fc4b366ab4b6010c8f9de00081d
+  checksum: dc4f757e40b5f3e3d674bc9beb4f1048f4ee83af189bae39be99f57bf1f48dde166a8b0a5342a84b5944ee8e6ed1e5a9d801858f4ad44764e84957122fe46261
   languageName: node
   linkType: hard
 
@@ -9673,15 +9673,6 @@ __metadata:
   dependencies:
     es6-promisify: ^5.0.0
   checksum: a618d4e4ca7c0c2023b2664346570773455c501a930718764f65016a8a9eea6d2ab5ba54255589e46de529bab4026a088523dce17f94e34ba385af1f644febe1
-  languageName: node
-  linkType: hard
-
-"agent-base@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "agent-base@npm:6.0.2"
-  dependencies:
-    debug: 4
-  checksum: dc4f757e40b5f3e3d674bc9beb4f1048f4ee83af189bae39be99f57bf1f48dde166a8b0a5342a84b5944ee8e6ed1e5a9d801858f4ad44764e84957122fe46261
   languageName: node
   linkType: hard
 
@@ -34096,17 +34087,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"socks@npm:^2.3.3":
-  version: 2.5.1
-  resolution: "socks@npm:2.5.1"
-  dependencies:
-    ip: ^1.1.5
-    smart-buffer: ^4.1.0
-  checksum: db7bb7072196b2233a80a706d0cb247341bc592f354073a3224a2d813b5dab0d73d3327247a094ccf61aa77ccf2186bec73d3b71ffb9f672563b726300156d39
-  languageName: node
-  linkType: hard
-
-"socks@npm:^2.6.1":
+"socks@npm:^2.3.3, socks@npm:^2.6.1":
   version: 2.6.1
   resolution: "socks@npm:2.6.1"
   dependencies:
