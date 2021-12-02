@@ -62,20 +62,10 @@
 		display: inline-block;
 		margin-block-start: 24px;
 		border-radius: 4px; /* stylelint-disable-line scales/radii */
-		padding: 4px 24px 4px 8px;
+		padding: 4px 8px;
 
 		font-size: $font-body-small;
 		font-weight: 700;
-
-		/* To make the slanted right edge */
-		clip-path: polygon(
-			0 0,
-			calc( 100% + 1px ) 0,
-			calc( 100% - 6px ) calc( 100% - 4px ),
-			calc( 100% - 8px ) calc( 100% - 1px ),
-			calc( 100% - 10px ) 100%,
-			0 100%
-		);
 	}
 
 	&__you-save {
