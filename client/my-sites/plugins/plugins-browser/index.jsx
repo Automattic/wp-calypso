@@ -237,7 +237,7 @@ export class PluginsBrowser extends Component {
 				<>
 					<PluginsBrowserList
 						plugins={ pluginsBySearchTerm }
-						listName={ 'search-' + searchTerm }
+						listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 						title={ searchTitle }
 						subtitle={ subtitle }
 						site={ this.props.siteSlug }
