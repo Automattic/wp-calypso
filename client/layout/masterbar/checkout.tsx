@@ -78,6 +78,10 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			console.error( 'Error getting query string in close button' );
 		}
 
+		if ( closeUrl.startsWith( '/' ) ) {
+			page( closeUrl );
+			return;
+		}
 		window.location.href = closeUrl;
 	}, [ siteSlug, checkoutBackUrl, previousPath, dispatch ] );
 
