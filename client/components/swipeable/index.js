@@ -190,14 +190,36 @@ export const Swipeable = ( {
 		}
 	};
 
+	const getTouchEvents = () => {
+		if ( 'onpointerup' in document ) {
+			return {
+				onPointerDown: handleDragStart,
+				onPointerMove: handleDrag,
+				onPointerUp: handleDragEnd,
+			};
+		}
+
+		if ( 'ondragend' in document ) {
+			return {
+				onDragStart: handleDragStart,
+				onDrag: handleDrag,
+				onDragEnd: handleDragEnd,
+			};
+		}
+
+		if ( 'ontouchend' in document ) {
+			return {
+				onTouchStart: handleDragStart,
+				onTouchMove: handleDrag,
+				onTouchEnd: handleDragEnd,
+			};
+		}
+
+		return null;
+	};
+
 	return (
 		<div>
-			<div
-				className="swipeable__container"
-				onDragStart={ handleDragStart }
-				onPointerDown={ handleDragStart }
-				onDrag={ handleDrag }
-				onPointerMove={ handleDrag }
 			<div { ...getTouchEvents() } className="swipeable__container" ref={ pagesRef }>
 				<div className="swipeable__pages" style={ { ...pagesStyle, width: getPagesWidth() } }>
 					{ Children.map( children, ( child, index ) => (
