@@ -31,6 +31,9 @@ export const Swipeable = ( {
 	};
 
 	const getPagesWidth = () => {
+		if ( ! pageWidth ) {
+			return null;
+		}
 		return pageWidth * numPages;
 	};
 
