@@ -1088,7 +1088,8 @@ function handleInlineHelpButton( calypsoPort ) {
 }
 
 /**
- * Check if the App Banner is visible set the welcome guide enabled if the app banner is not visible
+ * Check if the App Banner is visible.
+ * Set the Editor Welcome Guide enabled if the app banner is not visible, not enabled otherwise.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
