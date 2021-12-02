@@ -19,7 +19,6 @@ module.exports = {
 		'^@automattic/calypso-config/(.*)$': 'calypso/server/config/$1',
 	},
 	testMatch: [ '<rootDir>/server/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
-	setupFiles: [ 'regenerator-runtime/runtime' ], // some NPM-published packages depend on the global
 	setupFilesAfterEnv: [ '<rootDir>/../test/server/setup-test-framework.js' ],
 	verbose: false,
 };
