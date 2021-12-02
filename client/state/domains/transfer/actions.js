@@ -10,7 +10,7 @@ import {
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
-	DOMAIN_TRANSFER_TOGGLE_LOCK,
+	DOMAIN_TRANSFER_UPDATE_LOCK,
 	DOMAIN_TRANSFER_UPDATE,
 	DOMAIN_WAPI_INFO_FETCH,
 	DOMAIN_WAPI_INFO_FETCH_FAILURE,
@@ -35,10 +35,10 @@ export const updateDomainTransfer = ( domain, options ) => ( {
 	options,
 } );
 
-export const toggleDomainLock = ( domain, options ) => ( {
-	type: DOMAIN_TRANSFER_TOGGLE_LOCK,
+export const updateDomainLock = ( domain, lock ) => ( {
+	type: DOMAIN_TRANSFER_UPDATE_LOCK,
 	domain,
-	options,
+	lock,
 } );
 
 export const requestDomainTransferCode = ( domain, options ) => ( {

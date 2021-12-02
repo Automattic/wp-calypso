@@ -14,4 +14,5 @@ export type TransferPageProps = {
 	selectedDomainName: string;
 	selectedSite: SiteData;
 	successNotice: any;
+	updateDomainLock: ( selectedDomainName: string, lock: boolean ) => void;
 };
