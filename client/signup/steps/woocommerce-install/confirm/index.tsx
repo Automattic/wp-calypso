@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
@@ -63,7 +63,15 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		siteUpgrading,
 		hasBlockers,
 		warnings,
+		isReadyForTransfer,
 	} = useWooCommerceOnPlansEligibility( siteId );
+
+	// Skip to transfer step if the site is ready for transfer.
+	useEffect( () => {
+		if ( isReadyForTransfer ) {
+			goToStep( 'transfer' );
+		}
+	}, [ goToStep, isReadyForTransfer ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
