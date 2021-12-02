@@ -3,7 +3,7 @@ import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/caly
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import languages from '@automattic/languages';
 import classNames from 'classnames';
-import { flowRight, get, has } from 'lodash';
+import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
@@ -273,21 +273,20 @@ export class SiteSettingsFormGeneral extends Component {
 			},
 		};
 		const noticeContent = errors[ langId ];
+		if ( ! noticeContent ) {
+			return null;
+		}
 
 		return (
-			has( noticeContent, 'text' ) && (
-				<Notice
-					text={ noticeContent.text }
-					className="site-settings__language-picker-notice"
-					isCompact
-				>
-					{ has( noticeContent, 'link' ) && (
-						<NoticeAction href={ noticeContent.link } external>
-							{ noticeContent.linkText }
-						</NoticeAction>
-					) }
-				</Notice>
-			)
+			<Notice
+				text={ noticeContent.text }
+				className="site-settings__language-picker-notice"
+				isCompact
+			>
+				<NoticeAction href={ noticeContent.link } external>
+					{ noticeContent.linkText }
+				</NoticeAction>
+			</Notice>
 		);
 	};
 

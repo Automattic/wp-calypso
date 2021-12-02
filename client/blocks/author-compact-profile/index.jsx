@@ -1,6 +1,5 @@
 import classnames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
-import { has } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
@@ -45,13 +44,13 @@ class AuthorCompactProfile extends Component {
 			return <AuthorCompactProfilePlaceholder />;
 		}
 
-		const hasAuthorName = has( author, 'name' );
+		const hasAuthorName = author.hasOwnProperty( 'name' );
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
 		const classes = classnames( {
 			'author-compact-profile': true,
 			'has-author-link': ! hasMatchingAuthorAndSiteNames,
-			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar ),
+			'has-author-icon': siteIcon || feedIcon || author.has_avatar,
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
 
