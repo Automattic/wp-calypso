@@ -275,7 +275,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Run client tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
@@ -287,7 +287,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Run server tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
@@ -299,7 +299,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Run packages tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
@@ -311,7 +311,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Run build-tools tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
@@ -345,11 +345,6 @@ object RunAllUnitTests : BuildType({
 			param("xmlReportParsing.reportType", "checkstyle")
 			param("xmlReportParsing.reportDirs", "checkstyle_results/*.xml")
 			param("xmlReportParsing.verboseOutput", "true")
-		}
-		feature {
-			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "test_results/**/*.xml")
 		}
 		perfmon {
 		}
