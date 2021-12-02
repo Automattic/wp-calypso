@@ -31,4 +31,4 @@ function Pager() {
 - `currentPage` - (int) Index of the currently selected/shown page.
 - `hasDynamicHeight` - (bool) Whether height should be changed dynamically.
 - `pageClassName` - _optional_ (string) Optional class attribute of the page component.
-- `containerClassName` - _optional_ (string) Optional class attrbitue of the page container component.
+- `containerClassName` - _optional_ (string) Optional class attribute of the page container component.
