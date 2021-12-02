@@ -234,6 +234,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	bundled_domain?: string;
 	has_bundle_credit?: boolean;
 	terms_of_service?: TermsOfServiceRecord[];
+	has_pending_payment?: boolean;
 }
 
 export interface ResponseCartTaxData {
