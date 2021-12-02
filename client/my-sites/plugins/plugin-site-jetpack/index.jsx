@@ -90,6 +90,11 @@ const PluginSiteJetpack = ( props ) => {
 					plugin={ pluginOnSite }
 					wporg={ true }
 					hideLabel={ ! isMobileLayout }
+					toggleExtraContent={
+						! isMobileLayout && (
+							<PluginUpdateIndicator site={ props.site } plugin={ props.plugin } expanded />
+						)
+					}
 				/>
 			) }
 			{ isAutoManaged ? (
@@ -98,13 +103,8 @@ const PluginSiteJetpack = ( props ) => {
 				</div>
 			) : (
 				<div className="plugin-site-jetpack__action plugin-action last-actions">
-					{ ! isMobileLayout && (
-						<>
-							<PluginUpdateIndicator site={ props.site } plugin={ props.plugin } expanded />
-							{ canToggleRemove && (
-								<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } />
-							) }
-						</>
+					{ ! isMobileLayout && canToggleRemove && (
+						<PluginRemoveButton plugin={ pluginOnSite } site={ props.site } />
 					) }
 					{ ( isMobileLayout || settingsLink ) && (
 						<EllipsisMenu position={ 'bottom' }>
