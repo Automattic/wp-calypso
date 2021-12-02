@@ -112,5 +112,5 @@ const StoryTour = ( { options = {} }: { options?: Config[ 'options' ] } ) => {
 export const Default = (): JSX.Element => <StoryTour />;
 export const Overlay = (): JSX.Element => <StoryTour options={ { effects: { overlay: true } } } />;
 export const Spotlight__Experimental = (): JSX.Element => (
-	<StoryTour options={ { effects: { __experimental__spotlight: true } } } />
+	<StoryTour options={ { effects: { spotlight: {} } } } />
 );

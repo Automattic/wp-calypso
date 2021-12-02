@@ -88,12 +88,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	};
 
 	const showSpotlight = useCallback( () => {
-		if ( ! config.options?.effects?.__experimental__spotlight ) {
+		if ( ! config.options?.effects?.spotlight ) {
 			return false;
 		}
 
 		return ! isMinimized;
-	}, [ config.options?.effects?.__experimental__spotlight, isMinimized ] );
+	}, [ config.options?.effects?.spotlight, isMinimized ] );
 
 	const showOverlay = useCallback( () => {
 		if ( showSpotlight() || ! config.options?.effects?.overlay ) {
@@ -164,7 +164,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 			/>
 			<div className={ classNames } ref={ tourContainerRef }>
 				{ showOverlay() && <Overlay visible={ true } /> }
-				{ showSpotlight() && <Spotlight referenceElement={ referenceElement } /> }
+				{ showSpotlight() && (
+					<Spotlight
+						referenceElement={ referenceElement }
+						styles={ config.options?.effects?.spotlight?.styles }
+					/>
+				) }
 				<div
 					className="tour-kit-frame__container"
 					ref={ popperElementRef }

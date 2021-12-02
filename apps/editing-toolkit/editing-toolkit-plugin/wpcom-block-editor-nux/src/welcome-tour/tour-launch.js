@@ -101,7 +101,15 @@ function WelcomeTour() {
 				},
 			},
 			effects: {
-				__experimental__spotlight: isWelcomeTourNext(),
+				spotlight: isWelcomeTourNext()
+					? {
+							styles: {
+								minWidth: '50px',
+								minHeight: '50px',
+								borderRadius: '2px',
+							},
+					  }
+					: undefined,
 				arrowIndicator: false,
 			},
 			popperModifiers: [

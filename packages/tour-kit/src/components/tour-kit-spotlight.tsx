@@ -6,10 +6,12 @@ import type { Rect, Placement } from '@popperjs/core';
 
 interface Props {
 	referenceElement: HTMLElement | null;
+	styles?: React.CSSProperties;
 }
 
-const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement } ) => {
+const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement, styles } ) => {
 	const popperElementRef = useRef( null );
+	const referenceRect = referenceElement?.getBoundingClientRect();
 	const modifiers = [
 		useMemo(
 			() => ( {
@@ -41,21 +43,23 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement 
 		modifiers
 	);
 
-	const clipRepositionProps = referenceElement
+	const clipDimensions = referenceRect
 		? {
-				style: popperStyles?.popper,
-				...popperAttributes?.popper,
+				width: `${ referenceRect.width }px`,
+				height: `${ referenceRect.height }px`,
 		  }
 		: null;
 
-	const referenceRect = referenceElement?.getBoundingClientRect();
-
-	const clipStyle = referenceRect
+	const clipRepositionProps = referenceElement
 		? {
-				width: '',
-				height: '',
+				style: {
+					...( clipDimensions && clipDimensions ),
+					...popperStyles?.popper,
+					...( styles && styles ),
+				},
+				...popperAttributes?.popper,
 		  }
-		: undefined;
+		: null;
 
 	return (
 		<>
@@ -65,7 +69,6 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement 
 					'--visible': !! clipRepositionProps,
 				} ) }
 				ref={ popperElementRef }
-				style={ clipStyle }
 				{ ...clipRepositionProps }
 			/>
 		</>
