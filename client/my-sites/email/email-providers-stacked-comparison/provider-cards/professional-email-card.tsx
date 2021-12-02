@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
-import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-stacked.svg';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
@@ -112,11 +112,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		'professional-email-card__discounted-price': isEligibleForFreeTrial,
 	} );
 
-	professionalEmail.discount = isEligibleForFreeTrial ? (
-		<> translate( '3 months free' ) ) </>
-	) : null;
-	professionalEmail.isDomainEligibleForTitanFreeTrial = isDomainEligibleForTitanFreeTrial( domain );
-	professionalEmail.expandButtonLabel = isUpgrading()
+	const expandButtonLabel = isUpgrading()
 		? translate( 'Upgrade to %(titanProductName)s', {
 				args: {
 					titanProductName: getTitanProductName(),
@@ -211,7 +207,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	);
 
 	professionalEmail.priceBadge = (
-		<div className="professional-email-card__price-badge">
+		<>
 			{ isDomainEligibleForTitanFreeTrial( domain ) && (
 				<div className="professional-email-card__discount badge badge--info-green">
 					{ translate( '3 months free' ) }
@@ -219,14 +215,13 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			) }
 			<PromoCardPrice
 				formattedPrice={ formattedPrice }
-				discount={ professionalEmail.discount }
 				additionalPriceInformation={
 					<span className="professional-email-card__provider-additional-price-information">
 						{ professionalEmail.additionalPriceInformation }
 					</span>
 				}
 			/>
-		</div>
+		</>
 	);
 
 	professionalEmail.formFields = (

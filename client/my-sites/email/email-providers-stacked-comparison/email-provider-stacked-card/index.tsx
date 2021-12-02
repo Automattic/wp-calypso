@@ -51,7 +51,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 				<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
 				<p>{ description }</p>
 			</div>
-			{ priceBadge }
+			<div className="email-provider-stacked-card__title-price-badge">{ priceBadge }</div>
 		</div>
 	);
 
