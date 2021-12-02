@@ -314,6 +314,28 @@
 	margin-right: 0;
 }
 
+@include breakpoint-deprecated( '>660px' ) {
+	.manage-purchase__auto-renew {
+		display: flex;
+		flex-wrap: wrap-reverse;
+		justify-content: space-between;
+		gap: 8px;
+
+		.manage-purchase__auto-renew-text {
+			white-space: nowrap;
+			line-height: 1.5rem;
+		}
+
+		.manage-purchase__auto-renew-toggle {
+			order: 2;
+
+			.components-base-control__field {
+				margin: initial;
+			}
+		}
+	}
+}
+
 .manage-purchase__expiring-credit-card-notice.notice,
 .manage-purchase__purchase-expiring-notice.notice {
 	margin-bottom: 10px;
