@@ -119,14 +119,12 @@ const EditContactInfoPage = ( {
 
 		return (
 			<div className="edit-contact-info-page__sidebar">
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<div className="edit-contact-info-page__sidebar__title">
+				<div className="edit-contact-info-page__sidebar-title">
 					<p>
 						<strong>{ translate( 'Provide accurate contact information' ) }</strong>
 					</p>
 				</div>
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<div className="edit-contact-info-page__sidebar__content">
+				<div className="edit-contact-info-page__sidebar-content">
 					<p>
 						{ translate(
 							'{{icannLinkComponent}}ICANN{{/icannLinkComponent}} requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.',

@@ -1,8 +1,8 @@
 .edit-contact-info-page {
 	&__sidebar {
-		padding: 24px 16px;
+		padding: 24px;
 		background-color: var( --studio-gray-0 );
-		&__content {
+		&-content {
 			p {
 				margin: 0 0 1em;
 				&:last-child {
@@ -10,7 +10,7 @@
 				}
 			}
 		}
-		&__title {
+		&-title {
 			p {
 				margin-bottom: 0.5em;
 			}
