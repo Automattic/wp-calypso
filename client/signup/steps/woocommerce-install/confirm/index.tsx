@@ -119,14 +119,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	}
 
 	function getContent() {
-		if ( ! siteId || ! isDataReady ) {
-			return (
-				<div className="confirm__info-section">
-					<LoadingEllipsis />
-				</div>
-			);
-		}
-
 		return (
 			<>
 				<div className="confirm__info-section" />
@@ -150,6 +142,14 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					</ActionSection>
 				</div>
 			</>
+		);
+	}
+
+	if ( ! siteId || ! isDataReady ) {
+		return (
+			<div className="confirm__info-section">
+				<LoadingEllipsis />
+			</div>
 		);
 	}
 
