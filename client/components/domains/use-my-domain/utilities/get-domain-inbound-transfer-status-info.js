@@ -1,9 +1,9 @@
 import wpcom from 'calypso/lib/wp';
 
 export async function getDomainInboundTransferStatusInfo( domainName ) {
-	const inboundTransferStatusResult = await wpcom
-		.undocumented()
-		.getInboundTransferStatus( domainName );
+	const inboundTransferStatusResult = await wpcom.req.get( {
+		path: `/domains/${ encodeURIComponent( domainName ) }/inbound-transfer-status`,
+	} );
 
 	return {
 		creationDate: inboundTransferStatusResult.creation_date,
