@@ -23,7 +23,6 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import type { Site } from 'calypso/reader/list-manage/types';
 
 import './style.scss';
@@ -83,14 +82,12 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				{ translate( 'Pick an email solution' ) }
 			</h1>
 
-			{ true && (
-				<ProfessionalEmailCard
-					comparisonContext={ comparisonContext }
-					recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
-					selectedDomainName={ selectedDomainName }
-					source={ source }
-				/>
-			) }
+			<ProfessionalEmailCard
+				comparisonContext={ comparisonContext }
+				recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
+			/>
 
 			{ isGSuiteSupported && (
 				<GoogleWorkspaceCard
