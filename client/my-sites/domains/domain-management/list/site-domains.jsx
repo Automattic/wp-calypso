@@ -56,6 +56,7 @@ import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import { filterDomainsByOwner } from './helpers';
 import {
+	countDomainsInOrangeStatus,
 	filterOutWpcomDomains,
 	getDomainManagementPath,
 	getSimpleSortFunctionBy,
@@ -140,6 +141,13 @@ export class SiteDomains extends Component {
 					},
 					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
+				bubble: countDomainsInOrangeStatus(
+					nonWpcomDomains.map( ( domain ) =>
+						resolveDomainStatus( domain, null, {
+							getMappingErrors: true,
+						} )
+					)
+				),
 			},
 			{
 				name: 'registered-until',
