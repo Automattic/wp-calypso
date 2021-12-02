@@ -20,7 +20,7 @@ export const Swipeable = ( {
 		transform: `translate3d(0px, 0px, 0px)`,
 		transitionDuration: `300ms`,
 	} );
-	const [ dragStartData, setDragStartData ] = useState();
+	const [ dragStartData, setDragStartData ] = useState( null );
 
 	const pagesRef = useRef();
 	const resizeObserverRef = useRef();
