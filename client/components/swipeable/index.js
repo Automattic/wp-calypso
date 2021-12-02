@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+import { useRtl } from 'i18n-calypso';
 import { Children, useState, useEffect, useRef } from 'react';
 
 import './style.scss';
@@ -12,6 +13,7 @@ export const Swipeable = ( {
 } ) => {
 	const [ pageWidth, setPageWidth ] = useState();
 	const [ swipeableArea, setSwipeableArea ] = useState();
+	const isRtl = useRtl();
 
 	const [ pagesStyle, setPagesStyle ] = useState( {
 		transform: `translate3d(0px, 0px, 0px)`,
@@ -32,7 +34,8 @@ export const Swipeable = ( {
 	};
 
 	const getOffset = ( index ) => {
-		return -( pageWidth * index );
+		const offset = pageWidth * index;
+		return isRtl ? offset : -offset;
 	};
 
 	function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
@@ -117,6 +120,9 @@ export const Swipeable = ( {
 		setPagesStyle( { ...pagesStyle, transitionDuration: `0ms` } ); // Set transition Duration to 0 for smooth dragging.
 	};
 
+	const hasSwipedToNextPage = ( delta ) => ( isRtl ? delta > 0 : delta < 0 );
+	const hasSwipedToPreviousPage = ( delta ) => ( isRtl ? delta < 0 : delta > 0 );
+
 	const handleDragEnd = ( event ) => {
 		if ( ! dragStartData ) {
 			return; // End early if we are not dragging any more.
@@ -132,11 +138,11 @@ export const Swipeable = ( {
 		const hasMetThreshold = absoluteDelta > OFFSET_THRESHOLD || velocity > VELOCITY_THRESHOLD;
 
 		let newIndex = currentPage;
-		if ( delta < 0 && hasMetThreshold && numPages !== currentPage + 1 ) {
+		if ( hasSwipedToNextPage( delta ) && hasMetThreshold && numPages !== currentPage + 1 ) {
 			newIndex = currentPage + 1;
 		}
 
-		if ( delta > 0 && hasMetThreshold && currentPage !== 0 ) {
+		if ( hasSwipedToPreviousPage( delta ) && hasMetThreshold && currentPage !== 0 ) {
 			newIndex = currentPage - 1;
 		}
 		const offset = getOffset( newIndex );
@@ -158,7 +164,10 @@ export const Swipeable = ( {
 		const offset = getOffset( currentPage ) + delta;
 
 		// Allow for swipe left or right
-		if ( ( numPages !== currentPage + 1 && delta < 0 ) || ( currentPage !== 0 && delta > 0 ) ) {
+		if (
+			( numPages !== currentPage + 1 && hasSwipedToNextPage( delta ) ) ||
+			( currentPage !== 0 && hasSwipedToPreviousPage( delta ) )
+		) {
 			setPagesStyle( {
 				...pagesStyle,
 				transform: `translate3d(${ offset }px, 0px, 0px)`,
@@ -191,8 +200,6 @@ export const Swipeable = ( {
 				onPointerMove={ handleDrag }
 				onDragEnd={ handleDragEnd }
 				onPointerUp={ handleDragEnd }
-				onDragLeave={ handleDragEnd }
-				onPointerCancel={ handleDragEnd }
 				ref={ pagesRef }
 			>
 				<div className="swipeable__pages" style={ { ...pagesStyle, width: getPagesWidth() } }>
