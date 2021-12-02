@@ -180,7 +180,7 @@ export const Swipeable = ( {
 			return;
 		}
 
-		// Did the user swipe out of the swipable area?
+		// Did the user swipe out of the swipeable area?
 		if (
 			dragPosition.x < swipeableArea.left ||
 			dragPosition.x > swipeableArea.right ||
