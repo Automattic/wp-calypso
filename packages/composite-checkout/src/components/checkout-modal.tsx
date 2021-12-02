@@ -14,11 +14,13 @@ export default function CheckoutModal( {
 	title,
 	copy,
 	primaryAction,
+	secondaryAction,
 	cancelAction = noop,
 	closeModal,
 	isVisible,
 	buttonCTA,
 	cancelButtonCTA,
+	secondaryButtonCTA,
 }: CheckoutModalProps ): JSX.Element | null {
 	const { __ } = useI18n();
 	useModalScreen( isVisible, closeModal );
@@ -34,7 +36,7 @@ export default function CheckoutModal( {
 			role="dialog"
 			aria-labelledby={ titleId }
 			className={ joinClasses( [ className, 'checkout-modal' ] ) }
-			onClick={ () => handleCancelAction( cancelAction, closeModal ) }
+			onClick={ () => handleActionAndClose( cancelAction, closeModal ) }
 		>
 			<CheckoutModalContent className="checkout-modal__content" onClick={ preventClose }>
 				<CheckoutModalTitle id={ titleId } className="checkout-modal__title">
@@ -43,13 +45,22 @@ export default function CheckoutModal( {
 				<CheckoutModalCopy className="checkout-modal__copy">{ copy }</CheckoutModalCopy>
 
 				<CheckoutModalActions>
-					<Button onClick={ () => handleCancelAction( cancelAction, closeModal ) }>
+					<Button onClick={ () => handleActionAndClose( cancelAction, closeModal ) }>
 						{ cancelButtonCTA || __( 'Cancel' ) }
 					</Button>
+					{ secondaryAction && secondaryButtonCTA && (
+						<Button
+							onClick={ () => {
+								handleActionAndClose( secondaryAction, closeModal );
+							} }
+						>
+							{ secondaryButtonCTA }
+						</Button>
+					) }
 					<Button
 						buttonType="primary"
 						onClick={ () => {
-							handlePrimaryAction( primaryAction, closeModal );
+							handleActionAndClose( primaryAction, closeModal );
 						} }
 					>
 						{ buttonCTA || __( 'Continue' ) }
@@ -79,11 +90,13 @@ interface CheckoutModalProps {
 	title: string;
 	copy: string;
 	primaryAction: Callback;
+	secondaryAction?: Callback;
 	cancelAction?: Callback;
 	isVisible: boolean;
 	className?: string;
 	buttonCTA?: string;
 	cancelButtonCTA?: string;
+	secondaryButtonCTA?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -160,25 +173,12 @@ const CheckoutModalCopy = styled.p`
 const CheckoutModalActions = styled.div`
 	display: flex;
 	justify-content: flex-end;
+	gap: 8px;
 	margin-top: 24px;
-
-	button:first-of-type {
-		margin-right: 8px;
-
-		.rtl & {
-			margin-right: 0;
-			margin-left: 8px;
-		}
-	}
 `;
 
-function handlePrimaryAction( primaryAction: Callback, closeModal: Callback ) {
-	primaryAction();
-	closeModal();
-}
-
-function handleCancelAction( cancelAction: Callback, closeModal: Callback ) {
-	cancelAction();
+function handleActionAndClose( action: Callback, closeModal: Callback ) {
+	action();
 	closeModal();
 }
 
