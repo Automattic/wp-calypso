@@ -223,7 +223,7 @@ export const Swipeable = ( {
 	};
 
 	return (
-		<div>
+		<>
 			<div { ...getTouchEvents() } className="swipeable__container" ref={ pagesRef }>
 				<div
 					className={ classnames( 'swipeable__pages', containerClassName ) }
@@ -245,7 +245,7 @@ export const Swipeable = ( {
 				</div>
 			</div>
 			<div ref={ resizeObserverRef } className="swipeable__resize-observer"></div>
-		</div>
+		</>
 	);
 };
 
