@@ -23,14 +23,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 							error_message: String( action.payload ),
 						} )
 					);
-				case 'a8c_checkout_stripe_field_invalid_error':
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_stripe_field_invalid_error', {
-							error_type: action.payload.type,
-							error_field: action.payload.field,
-							error_message: action.payload.message,
-						} )
-					);
 				case 'STRIPE_TRANSACTION_BEGIN': {
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_form_submit', {
