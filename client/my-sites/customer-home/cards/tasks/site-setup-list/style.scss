@@ -255,21 +255,6 @@
 	}
 }
 
-.mobile-app-download__app-icon {
-	background: #0675c4;
-	color: #fff;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 10px;
-	width: 44px;
-	height: 44px;
-
-	.gridicon {
-		margin: 3px;
-		width: 38px;
-		height: 38px;
-	}
-}
-
 .mobile-app-download__title {
 	font-style: normal;
 	font-weight: 600;
@@ -308,9 +293,6 @@
 
 	/* Blue / Blue 50 */
 	color: #0675c4;
-}
-.mobile-app-download__text {
-	margin-left: 16px;
 }
 
 .site-setup-list .site-setup-list__list li:last-child {
