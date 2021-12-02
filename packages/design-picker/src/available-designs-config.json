@@ -21,26 +21,6 @@
 			"features": []
 		},
 		{
-			"title": "Russell",
-			"slug": "russell",
-			"template": "russell",
-			"theme": "russell",
-			"categories": [ { "slug": "featured", "name": "Featured" } ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
-		},
-		{
-			"title": "Russell",
-			"slug": "russell",
-			"template": "russell",
-			"theme": "russell",
-			"categories": [ { "slug": "featured", "name": "Featured" } ],
-			"is_premium": false,
-			"is_fse": false,
-			"features": []
-		},
-		{
 			"title": "Quadrat",
 			"slug": "quadrat",
 			"template": "quadrat",
