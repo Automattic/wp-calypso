@@ -137,7 +137,6 @@ function BankSelector( {
 	isError: boolean;
 	errorMessage: string | null;
 	disabled?: boolean;
-	className: string;
 } ) {
 	const { __ } = useI18n();
 	const bankOptions = getBankOptions( __ );
