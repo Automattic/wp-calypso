@@ -20,45 +20,42 @@ import { AppState } from 'calypso/types';
  * @param {object} state Global state tree
  * @returns {boolean} True if App Banner is visible
  */
-const isAppBannerVisible = createSelector(
-	( state: AppState ): boolean | null => {
-		// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
-		// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
-		// be displayed.
-		if ( shouldDisplayTosUpdateBanner( state ) ) {
-			return false;
-		}
+export const isAppBannerVisible = ( state: AppState ): boolean | null => {
+	// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
+	// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
+	// be displayed.
+	if ( shouldDisplayTosUpdateBanner( state ) ) {
+		return false;
+	}
 
-		// In some cases such as error we want to hide the app banner completely.
-		if ( ! appBannerIsEnabled( state ) ) {
-			return false;
-		}
+	// In some cases such as error we want to hide the app banner completely.
+	if ( ! appBannerIsEnabled( state ) ) {
+		return false;
+	}
 
-		if ( isFetchingPreferences( state ) ) {
-			return false;
-		}
+	if ( isFetchingPreferences( state ) ) {
+		return false;
+	}
 
-		const sectionName = getSectionName( state );
-		const isNotesOpen = isNotificationsOpen( state );
-		const currentSection = getCurrentSection( sectionName, isNotesOpen );
+	const sectionName = getSectionName( state );
+	const isNotesOpen = isNotificationsOpen( state );
+	const currentSection = getCurrentSection( sectionName, isNotesOpen );
 
-		if ( ! includes( ALLOWED_SECTIONS, currentSection ) ) {
-			return false;
-		}
+	if ( ! includes( ALLOWED_SECTIONS, currentSection ) ) {
+		return false;
+	}
 
-		const dismissedUntil = getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE );
-		const dismissed = isDismissed( dismissedUntil, currentSection );
+	const dismissedUntil = getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE );
+	const dismissed = isDismissed( dismissedUntil, currentSection );
 
-		return isMobile() && ! isWpMobileApp() && ! dismissed;
-	},
-	[
-		shouldDisplayTosUpdateBanner,
-		appBannerIsEnabled,
-		isFetchingPreferences,
-		getSectionName,
-		isNotificationsOpen,
-		( state: AppState ) => getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
-	]
-);
+	return isMobile() && ! isWpMobileApp() && ! dismissed;
+};
 
-export default isAppBannerVisible;
+export default createSelector( isAppBannerVisible, [
+	shouldDisplayTosUpdateBanner,
+	appBannerIsEnabled,
+	isFetchingPreferences,
+	getSectionName,
+	isNotificationsOpen,
+	( state: AppState ) => getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
+] );

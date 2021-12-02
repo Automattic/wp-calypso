@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import isAppBannerVisible from 'calypso/state/selectors/is-app-banner-visible';
+import { isAppBannerVisible } from 'calypso/state/selectors/is-app-banner-visible';
 
 describe( 'isAppBannerVisible()', () => {
 	test( 'should return false if Terms or Service update banner is displayed', () => {
@@ -11,7 +11,7 @@ describe( 'isAppBannerVisible()', () => {
 			},
 		};
 		const output = isAppBannerVisible( state );
-		expect( output ).toBe( false );
+		expect( output ).to.be.false;
 	} );
 
 	test( 'should return false if the app banner is not enabled', () => {
@@ -24,7 +24,7 @@ describe( 'isAppBannerVisible()', () => {
 			},
 		};
 		const output = isAppBannerVisible( state );
-		expect( output ).toBe( false );
+		expect( output ).to.be.false;
 	} );
 
 	test( 'should return false if current layout focus is sidebar', () => {
@@ -37,7 +37,7 @@ describe( 'isAppBannerVisible()', () => {
 			},
 		};
 		const output = isAppBannerVisible( state );
-		expect( output ).toBe( false );
+		expect( output ).to.be.false;
 	} );
 
 	test( 'should return false is fetching preferences', () => {
@@ -53,7 +53,7 @@ describe( 'isAppBannerVisible()', () => {
 			},
 		};
 		const output = isAppBannerVisible( state );
-		expect( output ).toBe( false );
+		expect( output ).to.be.false;
 	} );
 
 	test( 'should return false if in section not allowed', () => {
@@ -72,6 +72,6 @@ describe( 'isAppBannerVisible()', () => {
 			},
 		};
 		const output = isAppBannerVisible( state );
-		expect( output ).toBe( false );
+		expect( output ).to.be.false;
 	} );
 } );
