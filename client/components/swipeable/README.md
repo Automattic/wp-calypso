@@ -30,5 +30,5 @@ function Pager() {
 - `onPageSelect` - (function) Function that runs when the page is selected on using a swipe. Useful for updating the current page.
 - `currentPage` - (int) Index of the currently selected/shown page.
 - `hasDynamicHeight` - (bool) Whether height should be changed dynamically.
-- `pageClassName` - _optional_ (string) Optional class attrbitue of the page component.
+- `pageClassName` - _optional_ (string) Optional class attribute of the page component.
 - `containerClassName` - _optional_ (string) Optional class attrbitue of the page container component.
