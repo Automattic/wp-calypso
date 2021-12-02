@@ -1,9 +1,8 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import './style.scss';
+import { useSelector } from 'react-redux';
 import Image01 from 'calypso/assets/images/woocommerce/woop-cta-image01.jpeg';
 import Image02 from 'calypso/assets/images/woocommerce/woop-cta-image02.jpeg';
 import Image03 from 'calypso/assets/images/woocommerce/woop-cta-image03.jpeg';
@@ -12,6 +11,9 @@ import CtaSection from 'calypso/components/cta-section';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import MasonryWave from 'calypso/components/masonry-wave';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+
+import './style.scss';
 
 interface Props {
 	startSetup: () => void;
@@ -26,15 +28,14 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	const ctaRef = useRef( null );
 
 	const { hasBlockers, wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
+	const isAtomic = !! useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	function onCTAClickHandler() {
-		if ( ! config.isEnabled( 'woop' ) ) {
-			// Trigger the current flow.
-			startSetup();
+		if ( ! isAtomic ) {
+			return page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
 		}
 
-		// Rolling on the new woocommerce-on-plans flow.
-		page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
+		return startSetup();
 	}
 
 	return (
