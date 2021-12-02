@@ -11,6 +11,7 @@ import { createElement } from 'react';
 import { makeLayout } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import {
@@ -38,10 +39,11 @@ function setup( context, next ) {
 	const siteId = site ? site.ID : null;
 
 	if ( isEnabled( 'woop' ) ) {
-		// Landing page access requires non p2 site on any plan.
+		// Limit access to the landing page
 		if (
 			! site ||
 			isSiteWPForTeams( state, site.ID ) ||
+			isDomainOnlySite( state, site.ID ) ||
 			! (
 				isFreePlan( site.plan.product_slug ) ||
 				isPersonalPlan( site.plan.product_slug ) ||
