@@ -168,6 +168,7 @@ const CheckoutModalTitle = styled.h1`
 
 const CheckoutModalCopy = styled.p`
 	margin: 0;
+	color: ${ ( props ) => props.theme.colors.textColor };
 `;
 
 const CheckoutModalActions = styled.div`
