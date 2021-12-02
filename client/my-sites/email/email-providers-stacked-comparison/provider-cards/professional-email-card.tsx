@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
-import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-stacked.svg';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
@@ -85,7 +85,7 @@ const professionalEmailCardInformation: ProviderCard = {
 
 const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
 	const { currencyCode = '', hasCartDomain, domain, selectedDomainName, titanMailProduct } = props;
-	const professionalEmail: ProviderCard = professionalEmailCardInformation;
+	const professionalEmail = professionalEmailCardInformation;
 
 	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 
@@ -99,8 +99,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		'professional-email-card__keep-main-price': ! isEligibleForFreeTrial,
 		'professional-email-card__discounted-price': isEligibleForFreeTrial,
 	} );
-
-	const discount = isEligibleForFreeTrial ? <> translate( '3 months free' ) ) </> : null;
 
 	const expandButtonLabel = isUpgrading()
 		? translate( 'Upgrade to %(titanProductName)s', {
@@ -196,7 +194,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	);
 
 	const priceBadge = (
-		<div className="professional-email-card__price-badge">
+		<>
 			{ isDomainEligibleForTitanFreeTrial( domain ) && (
 				<div className="professional-email-card__discount badge badge--info-green">
 					{ translate( '3 months free' ) }
@@ -204,14 +202,13 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			) }
 			<PromoCardPrice
 				formattedPrice={ formattedPrice }
-				discount={ discount }
 				additionalPriceInformation={
 					<span className="professional-email-card__provider-additional-price-information">
 						{ professionalEmail.additionalPriceInformation }
 					</span>
 				}
 			/>
-		</div>
+		</>
 	);
 
 	const formFields = (
@@ -244,7 +241,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			productName={ professionalEmail.productName }
 			description={ professionalEmail.description }
 			detailsExpanded={ professionalEmail.detailsExpanded }
-			discount={ discount }
 			additionalPriceInformation={ professionalEmail.additionalPriceInformation }
 			onExpandedChange={ professionalEmail.onExpandedChange }
 			formattedPrice={ formattedPrice }
