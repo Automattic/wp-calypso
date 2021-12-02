@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 import debugFactory from 'debug';
 import { Fragment } from 'react';
 import Field from '../field';
@@ -136,14 +137,19 @@ function BankSelector( {
 	isError: boolean;
 	errorMessage: string | null;
 	disabled?: boolean;
+	className: string;
 } ) {
 	const { __ } = useI18n();
 	const bankOptions = getBankOptions( __ );
+	const classes = classNames( 'form-select', {
+		'is-error': isError,
+	} );
 	return (
 		<SelectWrapper>
 			<label htmlFor={ id }>{ label }</label>
 			<select
 				id={ id }
+				className={ classes }
 				value={ value }
 				onChange={ ( event ) => onChange( event.target.value ) }
 				disabled={ disabled }
