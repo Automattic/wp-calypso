@@ -200,6 +200,7 @@ export const Swipeable = ( {
 				onPointerDown: handleDragStart,
 				onPointerMove: handleDrag,
 				onPointerUp: handleDragEnd,
+				onPointerCancel: handleDragEnd,
 			};
 		}
 
@@ -208,6 +209,7 @@ export const Swipeable = ( {
 				onDragStart: handleDragStart,
 				onDrag: handleDrag,
 				onDragEnd: handleDragEnd,
+				onDragExit: handleDragEnd,
 			};
 		}
 
@@ -216,6 +218,7 @@ export const Swipeable = ( {
 				onTouchStart: handleDragStart,
 				onTouchMove: handleDrag,
 				onTouchEnd: handleDragEnd,
+				onTouchCancel: handleDragEnd,
 			};
 		}
 
