@@ -344,11 +344,11 @@ export function generateFlows( {
 		// when switching from the onboarding flow.
 		{
 			name: 'import-onboarding',
-			steps: [ 'user', 'site-type', 'import-url', 'import-preview', 'domains', 'plans-import' ],
+			steps: [ 'user', 'site-type', 'import-url', 'domains', 'plans-import' ],
 			destination: getImportDestination,
 			description: 'Import flow that can be used from the onboarding flow',
 			disallowResume: true,
-			lastModified: '2020-08-11',
+			lastModified: '2021-12-02',
 			showRecaptcha: true,
 		},
 		{
