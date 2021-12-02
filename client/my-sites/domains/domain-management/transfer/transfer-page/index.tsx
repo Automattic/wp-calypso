@@ -145,6 +145,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
 
+	// TODO: Should we show a modal if there's a pending transfer and the user tries to lock the domain?
 	const toggleDomainLock = async () => {
 		setIsLockingOrUnlockingDomain( true );
 		const lock = ! isDomainLocked;
@@ -215,15 +216,13 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			</span>
 		);
 
-		// TODO: Maybe if this is true, we can disable the domain lock toggle?
-		// const { domainLockingAvailable } = getSelectedDomain( props );
-		// TODO: Should we show a modal if there's a pending transfer and the user tries to lock the domain?
+		const domain = getSelectedDomain( props );
 
 		return (
 			<ToggleControl
 				className="transfer-page__transfer-lock"
 				checked={ isDomainLocked }
-				disabled={ isLockingOrUnlockingDomain }
+				disabled={ ! domain.domainLockingAvailable || isLockingOrUnlockingDomain }
 				onChange={ toggleDomainLock }
 				label={ label }
 			/>
@@ -235,15 +234,19 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			return null;
 		}
 
+		const domain = getSelectedDomain( props );
+		const description =
+			isDomainInfoLoading || domain.domainLockingAvailable
+				? __(
+						'We recommend leaving the transfer lock on, unless you want to transfer your domain to another provider.'
+				  )
+				: __( 'This domain cannot be transfer locked.' );
+
 		return (
 			<Card className="transfer-page__advanced-transfer-options">
 				<CardHeading size={ 16 }>Advanced Options</CardHeading>
 				{ renderTransferLock() }
-				<p>
-					{ __(
-						'We recommend leaving the transfer lock on, unless you want to transfer your domain to another provider.'
-					) }
-				</p>
+				<p>{ description }</p>
 				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
 					{ __( 'Get authorization code' ) }
 				</Button>
