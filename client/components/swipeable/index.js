@@ -93,21 +93,26 @@ export const Swipeable = ( {
 		}
 	}, [ numPages, currentPage, onPageSelect ] );
 
-	const getDragPosition = ( event ) => {
+	const getDragPositionAndTime = ( event ) => {
+		const { timeStamp } = event;
 		if ( event.hasOwnProperty( 'clientX' ) ) {
-			return { x: event.clientX, y: event.clientY };
+			return { x: event.clientX, y: event.clientY, timeStamp };
 		}
 
 		if ( event.targetTouches[ 0 ] ) {
-			return { x: event.targetTouches[ 0 ].clientX, y: event.targetTouches[ 0 ].clientY };
+			return {
+				x: event.targetTouches[ 0 ].clientX,
+				y: event.targetTouches[ 0 ].clientY,
+				timeStamp,
+			};
 		}
 
 		const touch = event.changedTouches[ 0 ];
-		return { x: touch.clientX, y: touch.clientY };
+		return { x: touch.clientX, y: touch.clientY, timeStamp };
 	};
 
 	const handleDragStart = ( event ) => {
-		const position = getDragPosition( event );
+		const position = getDragPositionAndTime( event );
 		setDragStartData( position );
 		setPagesStyle( { ...pagesStyle, transitionDuration: `0ms` } ); // Set transition Duration to 0 for smooth dragging.
 	};
@@ -117,11 +122,14 @@ export const Swipeable = ( {
 			return; // End early if we are not dragging any more.
 		}
 
-		const THRESHOLD_OFFSET = 100; // Number of pixels to travel before we trigger the slider to move to the desired slide.
-		const dragPosition = getDragPosition( event );
+		const OFFSET_THRESHOLD = 100; // Number of pixels to travel before we trigger the slider to move to the desired slide.
+		const VELOCITY_THRESHOLD = 0.5;
+		const dragPosition = getDragPositionAndTime( event );
 		const delta = dragPosition.x - dragStartData.x;
+		const absoluteDelta = Math.abs( delta );
+		const velocity = absoluteDelta / ( dragPosition.timeStamp - dragStartData.timeStamp );
 
-		const hasMetThreshold = Math.abs( delta ) > THRESHOLD_OFFSET;
+		const hasMetThreshold = absoluteDelta > OFFSET_THRESHOLD || velocity > VELOCITY_THRESHOLD;
 
 		let newIndex = currentPage;
 		if ( delta < 0 && hasMetThreshold && numPages !== currentPage + 1 ) {
@@ -144,7 +152,7 @@ export const Swipeable = ( {
 		if ( ! dragStartData ) {
 			return;
 		}
-		const dragPosition = getDragPosition( event );
+		const dragPosition = getDragPositionAndTime( event );
 		const delta = dragPosition.x - dragStartData.x;
 
 		const offset = getOffset( currentPage ) + delta;
