@@ -6,7 +6,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 import main from './main';
 
-export function checkPrerequisites( context, next ) {
+export function setup( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
@@ -16,10 +16,6 @@ export function checkPrerequisites( context, next ) {
 		return page.redirect( `/home/${ site.slug }` );
 	}
 
-	next();
-}
-
-export function setup( context, next ) {
 	// Invalid site, redirect to select site.
 	if ( ! getSiteFragment( context.path ) ) {
 		return page.redirect( '/woocommerce-installation' );
