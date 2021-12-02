@@ -162,7 +162,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	const onGoogleUsersChange = noop;
 	const onGoogleFormReturnKeyPress = noop;
 
-	const domainList = domain ? [ domain ] : null;
+	const domainList = domain ? [ domain ] : [];
 
 	const formFields = (
 		<FormFieldset>
