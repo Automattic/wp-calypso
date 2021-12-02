@@ -121,12 +121,12 @@ export default connect(
 		return {
 			comparisonContext: ownProps.comparisonContext,
 			domain,
-			selectedDomainName: domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gSuiteAnnualProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasCartDomain,
 			isGSuiteSupported,
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
+			selectedDomainName: domainName,
 			selectedSite,
 			titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};

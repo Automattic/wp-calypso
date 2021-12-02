@@ -279,11 +279,8 @@ const validateMailboxName = ( { value, error }, { value: domainName, error: doma
 	return { value, error };
 };
 
-const validateName = ( { value, error }, allowEmpty = false ) => {
+const validateName = ( { value, error } ) => {
 	// TODO: validate the user's name
-	if ( allowEmpty && value === '' ) {
-		return { value, error };
-	}
 	return { value, error };
 };
 
@@ -321,7 +318,7 @@ const validateMailbox = ( mailbox, optionalFields = [] ) => {
 		domain,
 		isAdmin: mailbox.isAdmin,
 		mailbox: validateMailboxName( mailboxName, domain ),
-		name: validateName( name, optionalFields.includes( 'name' ) ),
+		name: validateName( name ),
 		password: validatePassword( password ),
 	};
 };
