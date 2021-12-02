@@ -28,7 +28,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
-	const { isFetching, hasBlockers, wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
+	const { hasBlockers, wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 	const isAtomic = !! useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	function onCTAClickHandler() {
@@ -51,7 +51,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 				headline={ __( 'Build exactly the eCommerce website you want.' ) }
 				buttonText={ __( 'Set up my store!' ) }
 				buttonAction={ onCTAClickHandler }
-				buttonDisabled={ isFetching || hasBlockers }
+				buttonDisabled={ hasBlockers }
 				ctaRef={ ctaRef }
 			>
 				<MasonryWave images={ images } />
