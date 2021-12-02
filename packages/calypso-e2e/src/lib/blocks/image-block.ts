@@ -37,6 +37,12 @@ export class ImageBlock {
 		await input.setInputFiles( filePath );
 
 		await Promise.all( [
+			// Checking spinner isn't enough sometimes, as can be observed with the
+			// Logos block: While the spinner has already disappeared, the image is
+			// still being uploaded and the block gets refreshed when it's done. Only
+			// when the image is properly uploaded, its source is updated (refreshed)
+			// from the initial "blob:*" to "https:*". This is what we're checking now
+			// to make sure the block is valid and ready to be published.
 			this.block.waitForSelector( 'img:not([src^="blob:"])' ),
 			this.block.waitForElementState( 'stable' ),
 		] );
