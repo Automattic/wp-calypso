@@ -11,10 +11,8 @@ export default async (): Promise< void > => {
 
 	// If configuration file is not found, log a message and exit this setup.
 	if ( config.util.equalsDeep( config.util.toObject(), {} ) ) {
-		/*
-		Must use a `console.error` here. Throwing an error would halt Jest execution
-		and throw a wall of red text at the user.
-		*/
+		// Must use a `console.error` here. Throwing an error would halt Jest execution
+		// and throw a wall of red text at the user and halt Jest execution entirely.
 		console.error( 'No decrypted configuration file was found.' );
 		return;
 	}
@@ -41,12 +39,10 @@ export default async (): Promise< void > => {
 	for await ( const user of userList ) {
 		const cookiePath = path.join( cookieBasePath, `${ user }.json` );
 
-		/*
-		This section is nearly identical to the snippet in `BrowserManager.setLoginCookie`, but
-		instead of checking that cookies are older than 3 days, this checks whether the cookies
-		are newer than 3 days. If so, presumably the cookies are still good to use and the iteration
-		is short-circuited.
-		*/
+		// This section is nearly identical to the snippet in `BrowserManager.setLoginCookie`, but
+		// instead of checking that cookies are older than 3 days, this checks whether the cookies
+		// are newer than 3 days. If so, presumably the cookies are still good to use and the iteration
+		// is short-circuited.
 		try {
 			await access( cookiePath );
 			const stats = await stat( cookiePath );
@@ -63,11 +59,13 @@ export default async (): Promise< void > => {
 			}
 		} catch {
 			// noop
+			// Do not re-throw the error here, as doing so would halt Jest entirely.
+			// A previous cookie file not having been found is perfectly accpetable
+			// eg. running tests for the first time.
 		}
 
 		const [ username, password ] = config.get( 'testAccounts' )[ user ];
 
-		// This is important!
 		// If the e2e test user agent string is not set, log ins will fail to calypso.live
 		// and wpcalypso.wordpress.com environments.
 		const browserContext = await browser.newContext( {
