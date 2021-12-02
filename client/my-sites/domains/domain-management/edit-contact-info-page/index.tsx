@@ -84,7 +84,7 @@ const EditContactInfoPage = ( {
 			return (
 				<EditContactInfoPrivacyEnabledCard
 					selectedDomainName={ selectedDomainName }
-					selectedSiteSlug={ selectedSite?.slug as string }
+					selectedSiteSlug={ selectedSite!.slug }
 				/>
 			);
 		}
