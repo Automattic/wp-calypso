@@ -1,10 +1,16 @@
-import config from '@automattic/calypso-config';
+import {
+	isFreePlan,
+	isPremiumPlan,
+	isPersonalPlan,
+	isEcommercePlan,
+	isBusinessPlan,
+} from '@automattic/calypso-products';
 import page from 'page';
 import { createElement } from 'react';
 import { makeLayout } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 import main from './main';
 
@@ -18,16 +24,25 @@ export default function ( router ) {
 function setup( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSiteWithFallback( state );
-	const siteId = site ? site.ID : null;
 
-	// Only allow AT sites to access, unless the woop feature flag is enabled.
-	if ( ! config.isEnabled( 'woop' ) && ! isAtomicSite( state, siteId ) ) {
-		return page.redirect( `/home/${ site.slug }` );
-	}
-
-	// Invalid site, redirect to select site.
+	// Invalid site fragement, redirect to site selector leveraging the fallback
 	if ( ! getSiteFragment( context.path ) ) {
 		return page.redirect( '/woocommerce-installation' );
+	}
+
+	// Landing page access requires non p2 site on any plan.
+	if (
+		! site ||
+		isSiteWPForTeams( state, site.ID ) ||
+		! (
+			isFreePlan( site.plan.product_slug ) ||
+			isPersonalPlan( site.plan.product_slug ) ||
+			isPremiumPlan( site.plan.product_slug ) ||
+			isBusinessPlan( site.plan.product_slug ) ||
+			isEcommercePlan( site.plan.product_slug )
+		)
+	) {
+		return page.redirect( `/home/${ site.slug }` );
 	}
 
 	context.primary = createElement( main );
