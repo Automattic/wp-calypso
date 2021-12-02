@@ -393,10 +393,14 @@
 	display: flex;
 	justify-content: space-between;
 	padding: 8px 0;
-	border-bottom: 1px solid var( --color-neutral-20 );
 	font-size: $font-body-small;
 	font-weight: 600;
 	color: var( --color-neutral-50 );
+
+	border-bottom: 1px solid var( --color-neutral-5 );
+	@include break-mobile {
+		border-bottom: 1px solid var( --color-neutral-20 );
+	}
 
 	.button-plain {
 		text-align: left;
@@ -417,7 +421,7 @@
 			fill: var( --color-neutral-50 );
 		}
 		&:hover > svg {
-			fill: var( --color-neutral-10 );
+			fill: var( --color-neutral-30 );
 		}
 	}
 
