@@ -77,6 +77,7 @@
 
 .domain-row__mobile-container2 {
 	display: block;
+	font-size: $font-body-small;
 	@include break-mobile {
 		display: none;
 	}
@@ -141,7 +142,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		font-size: $font-body-large;
+		font-size: $font-body;
 		font-weight: 500; /* stylelint-disable-line */
 
 		a {
@@ -268,6 +269,10 @@
 .domain-row__action-cell {
 	height: 20px;
 	margin-left: 20px;
+
+	.ellipsis-menu {
+		float: right;
+	}
 
 	.ellipsis-menu__toggle {
 		transform: translateY( -4px );
