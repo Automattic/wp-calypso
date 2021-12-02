@@ -3,11 +3,7 @@ import page from 'page';
 import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import {
-	getSelectedSiteWithFallback,
-	getSiteOption,
-	getSiteWooCommerceUrl,
-} from 'calypso/state/sites/selectors';
+import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 import main from './main';
 
 export function checkPrerequisites( context, next ) {
@@ -18,13 +14,6 @@ export function checkPrerequisites( context, next ) {
 	// Only allow AT sites to access, unless the woop feature flag is enabled.
 	if ( ! config.isEnabled( 'woop' ) && ! isAtomicSite( state, siteId ) ) {
 		return page.redirect( `/home/${ site.slug }` );
-	}
-
-	// WooCommerce plugin is already installed, redirect to Woo.
-	if ( getSiteOption( state, siteId, 'is_wpcom_store' ) ) {
-		const redirectUrl = getSiteWooCommerceUrl( state, siteId );
-		window.location.href = redirectUrl;
-		return;
 	}
 
 	next();
