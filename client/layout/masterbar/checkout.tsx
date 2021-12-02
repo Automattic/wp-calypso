@@ -1,10 +1,14 @@
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { FunctionComponent, useCallback } from 'react';
+import { FunctionComponent, useCallback, useState } from 'react';
+import ReactModal from 'react-modal';
 import { useDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Item from './item';
@@ -29,7 +33,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
 	const isJetpack = isJetpackCheckout || isJetpackNotAtomic;
 
-	const clickClose = useCallback( () => {
+	const leaveCheckout = useCallback( () => {
 		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
 
 		dispatch( recordTracksEvent( 'calypso_masterbar_close_clicked' ) );
@@ -76,6 +80,30 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 		window.location.href = closeUrl;
 	}, [ siteSlug, checkoutBackUrl, previousPath, dispatch ] );
 
+	const cartKey = useCartKey();
+	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
+	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const clickClose = () => {
+		if ( responseCart.products.length > 0 ) {
+			setIsModalVisible( true );
+			return;
+		}
+		leaveCheckout();
+	};
+
+	const modalTitleText = String(
+		translate( 'You are about to leave Checkout with items in your cart' )
+	);
+	const modalBodyText = String(
+		translate( 'You can leave the items in the cart or clear your cart.' )
+	);
+	const modalPrimaryText = String( translate( 'Leave items in cart' ) );
+	const modalSecondaryText = String( translate( 'Clear cart' ) );
+	const clearCartAndLeave = () => {
+		replaceProductsInCart( [] );
+		leaveCheckout();
+		// No need to close the modal since we will be redirected
+	};
 	return (
 		<Masterbar>
 			<div className="masterbar__secure-checkout">
@@ -92,8 +120,25 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			<Item className="masterbar__item-title">{ title }</Item>
+			<ReactModal
+				isOpen={ isModalVisible }
+				onRequestClose={ () => {
+					setIsModalVisible( false );
+				} }
+			>
+				<h2>{ modalTitleText }</h2>
+				<div>{ modalBodyText }</div>
+				<button onClick={ clearCartAndLeave }>{ modalSecondaryText }</button>
+				<button onClick={ leaveCheckout }>{ modalPrimaryText }</button>
+			</ReactModal>
 		</Masterbar>
 	);
 };
 
-export default CheckoutMasterbar;
+export default function CheckoutMasterbarWrapper( props: Props ): JSX.Element {
+	return (
+		<CalypsoShoppingCartProvider>
+			<CheckoutMasterbar { ...props } />
+		</CalypsoShoppingCartProvider>
+	);
+}
