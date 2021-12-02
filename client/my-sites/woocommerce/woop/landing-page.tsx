@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -31,7 +32,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	const isAtomic = !! useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	function onCTAClickHandler() {
-		if ( ! isAtomic ) {
+		if ( isEnabled( 'woop' ) && ! isAtomic ) {
 			return page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
 		}
 

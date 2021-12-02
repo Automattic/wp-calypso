@@ -13,7 +13,11 @@ import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
+import {
+	getSelectedSiteWithFallback,
+	getSiteOption,
+	getSiteWooCommerceUrl,
+} from 'calypso/state/sites/selectors';
 import main from './main';
 
 import './style.scss';
@@ -24,13 +28,14 @@ export default function ( router ) {
 }
 
 function setup( context, next ) {
-	// Invalid site fragement, redirect to site selector leveraging the fallback
+	// Invalid site fragement, redirect to site selector
 	if ( ! getSiteFragment( context.path ) ) {
 		return page.redirect( '/woocommerce-installation' );
 	}
 
 	const state = context.store.getState();
 	const site = getSelectedSiteWithFallback( state );
+	const siteId = site ? site.ID : null;
 
 	if ( isEnabled( 'woop' ) ) {
 		// Landing page access requires non p2 site on any plan.
@@ -47,11 +52,20 @@ function setup( context, next ) {
 		) {
 			return page.redirect( `/home/${ site.slug }` );
 		}
-	} else if ( ! site ) {
+	} else {
 		// Only allow AT sites to access, unless the woop feature flag is enabled.
-		return page.redirect( '/home' );
-	} else if ( ! isAtomicSite( state, site.ID || null ) ) {
-		return page.redirect( `/home/${ site.slug || '' }` );
+		if ( ! isAtomicSite( state, siteId ) ) {
+			return page.redirect( `/home/${ site.slug }` );
+		}
+
+		// WooCommerce plugin is already installed, redirect to Woo.
+		// todo: replace with a plugin check that replaces the cta with a link to wc-admin
+		// instead of passive redirect.
+		if ( getSiteOption( state, siteId, 'is_wpcom_store' ) ) {
+			const redirectUrl = getSiteWooCommerceUrl( state, siteId );
+			window.location.href = redirectUrl;
+			return;
+		}
 	}
 
 	context.primary = createElement( main );
