@@ -3,7 +3,8 @@ import {
 	isDomainTransfer,
 	isDomainProduct,
 	isDotComPlan,
-	isGSuiteOrGoogleWorkspace,
+	isGSuiteOrExtraLicenseProductSlug,
+	isGoogleWorkspace,
 	isTitanMail,
 	isP2Plus,
 	isJetpackSearch,
@@ -22,7 +23,7 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 		return '';
 	}
 
-	if ( isDotComPlan( serverCartItem ) || ( ! isRenewalItem && isTitanMail( serverCartItem ) ) ) {
+	if ( isDotComPlan( serverCartItem ) ) {
 		if ( isRenewalItem ) {
 			return String( translate( 'Plan Renewal' ) );
 		}
@@ -38,12 +39,20 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 			: String( translate( 'Plan Subscription' ) );
 	}
 
-	if ( isGSuiteOrGoogleWorkspace( serverCartItem ) ) {
+	if ( isGSuiteOrExtraLicenseProductSlug || isGoogleWorkspace( serverCartItem ) ) {
 		if ( isRenewalItem ) {
-			return String( translate( 'Productivity and Collaboration Tools Renewal' ) );
+			return String( translate( 'Productivity Tools and Mailboxes Renewal' ) );
 		}
 
-		return String( translate( 'Productivity and Collaboration Tools' ) );
+		return String( translate( 'Productivity Tools and Mailboxes' ) );
+	}
+
+	if ( isTitanMail( serverCartItem ) ) {
+		if ( isRenewalItem ) {
+			return String( translate( 'Mailboxes Renewal' ) );
+		}
+
+		return String( translate( 'Mailboxes' ) );
 	}
 
 	if ( meta && ( isDomainProduct( serverCartItem ) || isDomainTransfer( serverCartItem ) ) ) {

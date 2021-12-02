@@ -12,6 +12,7 @@ import {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackProductSlug,
+	isTitanMail,
 } from '@automattic/calypso-products';
 import { CheckoutModal, FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
@@ -228,6 +229,7 @@ function WPNonProductLineItem( {
 
 function GSuiteUsersList( { product }: { product: ResponseCartProduct } ) {
 	const users = product.extra?.google_apps_users ?? [];
+
 	return (
 		<>
 			{ users.map( ( user, index ) => {
@@ -492,8 +494,6 @@ function LineItemSublabelAndPrice( {
 	const productSlug = product.product_slug;
 	const sublabel = getSublabel( product );
 
-	const isGSuite =
-		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 	// This is the price for one item for products with a quantity (eg. seats in a license).
 	const itemPrice = product.item_original_cost_for_quantity_one_display;
 
@@ -539,9 +539,39 @@ function LineItemSublabelAndPrice( {
 	}
 
 	if (
-		( isDomainRegistration || isDomainMap || isGSuite ) &&
-		product.months_per_bill_period === 12
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
+		isGoogleWorkspaceProductSlug( productSlug ) ||
+		isTitanMail( product )
 	) {
+		let interval = null;
+
+		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
+			interval = translate( 'billed annually' );
+		}
+
+		if ( product.months_per_bill_period === 1 ) {
+			interval = translate( 'billed monthly' );
+		}
+
+		if ( interval === null ) {
+			return sublabel;
+		}
+
+		return (
+			<>
+				{ translate( '%(productType)s: %(interval)s', {
+					args: {
+						productType: sublabel,
+						interval,
+					},
+					comment:
+						"Product type and billing interval separated by a colon (e.g. 'Productivity Tools and Mailboxes: billed annually')",
+				} ) }
+			</>
+		);
+	}
+
+	if ( ( isDomainRegistration || isDomainMap ) && product.months_per_bill_period === 12 ) {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
 		return (
 			<>
@@ -557,6 +587,7 @@ function LineItemSublabelAndPrice( {
 			</>
 		);
 	}
+
 	return <>{ sublabel || null }</>;
 }
 
@@ -673,10 +704,8 @@ function GSuiteDiscountCallout( {
 } ): JSX.Element | null {
 	const translate = useTranslate();
 
-	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug );
-
 	if (
-		isGSuite &&
+		isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug ) &&
 		product.item_original_subtotal_integer < product.item_original_subtotal_integer &&
 		product.is_sale_coupon_applied
 	) {
