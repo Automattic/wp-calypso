@@ -104,7 +104,7 @@ function getWebpackConfig(
 					},
 				} ),
 			new ExtensiveLodashReplacementPlugin(),
-		],
+		].filter( Boolean ),
 	};
 }
 
