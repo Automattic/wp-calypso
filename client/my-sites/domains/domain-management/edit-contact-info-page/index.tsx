@@ -116,22 +116,7 @@ const EditContactInfoPage = ( {
 				icon={ false }
 			/>
 		);
-		const explanationText1 = translate(
-			'{{icannLinkComponent}}ICANN{{/icannLinkComponent}} requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.',
-			{
-				components: {
-					icannLinkComponent: icannLink,
-				},
-			}
-		);
-		const explanationText2 = translate(
-			'Domain privacy service is included for free on applicable domains. {{supportLinkComponent}}Learn more{{/supportLinkComponent}}.',
-			{
-				components: {
-					supportLinkComponent: supportLink,
-				},
-			}
-		);
+
 		return (
 			<div className="edit-contact-info-page__sidebar">
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
@@ -142,8 +127,26 @@ const EditContactInfoPage = ( {
 				</div>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="edit-contact-info-page__sidebar__content">
-					<p>{ explanationText1 }</p>
-					<p>{ explanationText2 }</p>
+					<p>
+						{ translate(
+							'{{icannLinkComponent}}ICANN{{/icannLinkComponent}} requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.',
+							{
+								components: {
+									icannLinkComponent: icannLink,
+								},
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Domain privacy service is included for free on applicable domains. {{supportLinkComponent}}Learn more{{/supportLinkComponent}}.',
+							{
+								components: {
+									supportLinkComponent: supportLink,
+								},
+							}
+						) }
+					</p>
 				</div>
 			</div>
 		);
