@@ -570,10 +570,13 @@ __metadata:
   resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@types/react": ^17.0.37
     react-dom: ^17.0.2
   peerDependencies:
+    "@types/react": ">=16.1.0"
     react: ">=16.2.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
   languageName: unknown
   linkType: soft
 
