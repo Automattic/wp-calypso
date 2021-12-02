@@ -34,7 +34,7 @@ const cancelTransferErrorMessages = {
 	),
 };
 
-export const getDomainLockUnlockError = ( isLocking ) => {
+export const getDomainLockError = ( isLocking ) => {
 	const options = {
 		components: {
 			a: contactLink,
