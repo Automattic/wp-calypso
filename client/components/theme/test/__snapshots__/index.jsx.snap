@@ -33,9 +33,6 @@ exports[`Theme rendering with default display buttonContents should match snapsh
       >
         Twenty Seventeen
       </h2>
-      <span
-        className="theme__badge-price theme__badge-price-upgrade"
-      />
       <ThemeMoreButton
         active={false}
         onMoreButtonClick={[Function]}
