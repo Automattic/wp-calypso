@@ -25,8 +25,6 @@ function WordPressSubdomainWarningCard() {
 
 The hook returns an object with the following properties:
 
-### isFetching
-
 ### eligibilityHolds
 
 ### eligibilityWarnings
@@ -40,6 +38,8 @@ The hook returns an object with the following properties:
 ### transferringBlockers
 
 ### hasBlockers
+
+### isReadyForTransfer
 
 ### siteUpgrading
 

@@ -18,7 +18,7 @@ import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 const TRANSFERRING_NOT_BLOCKERS = [
 	eligibilityHoldsConstants.NO_BUSINESS_PLAN, // let's redirect to checkout page
-	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // let's handle it in transferring endpoint.
+	// eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // ToDo: let's handle it in transferring endpoint.
 ];
 
 type EligibilityHook = {
@@ -37,6 +37,7 @@ type EligibilityHook = {
 		productName: string;
 		description: string;
 	};
+	isReadyForTransfer: boolean;
 };
 
 export default function useEligibility( siteId: number ): EligibilityHook {
@@ -75,8 +76,14 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	);
 
 	// Transferring blockers
-	const transferringBlockers =
-		eligibilityHolds?.filter( ( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold ) ) || [];
+	const transferringBlockers = eligibilityHolds?.filter(
+		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
+	);
+
+	const transferringDataIsAvailable = typeof transferringBlockers !== 'undefined';
+
+	// Check whether the site has transferring blockers. True as default.
+	const hasBlockers = ! transferringDataIsAvailable || transferringBlockers?.length > 0;
 
 	/*
 	 * Plan site and `woop` site feature.
@@ -141,8 +148,11 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		stagingDomain,
 		wpcomSubdomainWarning,
 
-		transferringBlockers,
-		hasBlockers: !! transferringBlockers.length,
+		transferringBlockers: transferringBlockers || [],
+		hasBlockers,
 		siteUpgrading,
+		isReadyForTransfer: transferringDataIsAvailable
+			? ! hasBlockers && ! ( eligibilityWarnings && eligibilityWarnings.length )
+			: false,
 	};
 }
