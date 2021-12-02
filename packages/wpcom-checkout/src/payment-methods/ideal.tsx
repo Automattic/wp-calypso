@@ -325,7 +325,7 @@ function IdealLabel() {
 }
 
 const IdealLogo = styled( IdealLogoSvg )`
-	width: 28px;
+	height: 20px;
 `;
 
 function IdealLogoSvg( { className }: { className?: string } ) {
