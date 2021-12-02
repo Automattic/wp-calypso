@@ -92,6 +92,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			{ isGSuiteSupported && (
 				<GoogleWorkspaceCard
 					comparisonContext={ comparisonContext }
+					recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
 				/>

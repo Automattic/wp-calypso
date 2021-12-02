@@ -337,7 +337,7 @@ const transformUserForCart = ( {
 } );
 
 const getItemsForCart = (
-	domains: { name: string },
+	domains: { name: string }[],
 	productSlug: string,
 	users: GSuiteNewUser[]
 ): MinimalRequestCartProduct => {
