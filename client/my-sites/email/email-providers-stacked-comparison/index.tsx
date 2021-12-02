@@ -72,10 +72,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 	props
 ) => {
 	const translate = useTranslate();
-	const professionalEmailCardProps: ProviderCard = ProfessionalEmailCard;
 	const { comparisonContext, isGSuiteSupported, selectedDomainName, selectedSite, source } = props;
-
-	professionalEmailCardProps.formFields = <p>Placeholder</p>;
 	return (
 		<Main wideLayout>
 			<QueryProductsList />
@@ -86,12 +83,14 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				{ translate( 'Pick an email solution' ) }
 			</h1>
 
-			<ProfessionalEmailCard
-				comparisonContext={ comparisonContext }
-				recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
-			/>
+			{ true && (
+				<ProfessionalEmailCard
+					comparisonContext={ comparisonContext }
+					recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
+					selectedDomainName={ selectedDomainName }
+					source={ source }
+				/>
+			) }
 
 			{ isGSuiteSupported && (
 				<GoogleWorkspaceCard

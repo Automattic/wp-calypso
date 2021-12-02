@@ -4,37 +4,25 @@
 	width: 48px;
 }
 
+
 .google-workspace-card__keep-main-price {
 	color: var( --studio-green-50 );
 	text-decoration: none;
 }
 
-.email-provider-stacked-card__price-badge {
-	.promo-card__price {
-		price__cost {
-			color: var( --studio-gray-50 );
-		}
-	}
-}
-
-.google-workspace-card__discount-with-renewal span {
-	color: var( --color-text-subtle );
-}
-
-div.email-provider-stacked-card__price-badge {
+div.google-workspace-card__price-badge {
 	.promo-card__price {
 		margin-top: 12px;
 		span.price__discount {
-			font-weight: 400;
-			text-decoration: none;
+			text-decoration: line-through;
+			color: var( --studio-gray-60 );
 		}
 	}
 }
 
-.google-workspace-card__discount-with-renewal {
-	color: var( --studio-green-50 );
-	text-decoration: none;
-	display: block;
+
+.google-workspace-icon {
+	max-width: 36px;
 }
 
 

@@ -8,6 +8,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
+import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getAnnualPrice, getGoogleMailServiceFamily, getMonthlyPrice } from 'calypso/lib/gsuite';
@@ -41,33 +42,6 @@ const getGoogleFeatures = () => {
 	];
 };
 
-const formattedPrice = (
-	productIsDiscounted: boolean,
-	monthlyPrice: string,
-	saleCost: number,
-	currencyCode: string
-) => {
-	return productIsDiscounted
-		? translate( '{{fullPrice/}} {{discountedPrice/}} /mailbox /month (billed annually)', {
-				components: {
-					fullPrice: <span>{ monthlyPrice }</span>,
-					discountedPrice: (
-						<span className="google-workspace-card__discounted-price">
-							{ getMonthlyPrice( saleCost, currencyCode ) }
-						</span>
-					),
-				},
-				comment:
-					'{{fullPrice/}} is the formatted full price, e.g. $20; {{discountedPrice/}} is the discounted, formatted price, e.g. $10',
-		  } )
-		: translate( '{{price/}} /mailbox /month billed annually', {
-				components: {
-					price: <span>{ monthlyPrice }</span>,
-				},
-				comment: '{{price/}} is the formatted price, e.g. $20',
-		  } );
-};
-
 const googleWorkspaceCardInformation: ProviderCard = {
 	detailsExpanded: true,
 	expandButtonLabel: translate( 'Expand' ),
@@ -77,7 +51,7 @@ const googleWorkspaceCardInformation: ProviderCard = {
 	description: translate(
 		'Professional email integrated with Google Meet and other productivity tools from Google.'
 	),
-	logo: { path: googleWorkspaceIcon },
+	logo: { path: googleWorkspaceIcon, className: 'google-workspace-icon' },
 	productName: getGoogleMailServiceFamily(),
 	features: getGoogleFeatures(),
 };
@@ -93,8 +67,28 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	};
 
 	const productIsDiscounted = hasDiscount( gSuiteProduct );
-	//const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
-	const standardPrice = getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
+
+	const monthlyPrice = translate( '{{price/}} /mailbox', {
+		components: {
+			price: (
+				<span className={ 'google-workspace-card__keep-main-price' }>
+					{ getMonthlyPrice( gSuiteProduct?.cost ?? 0, currencyCode ) }
+				</span>
+			),
+		},
+		comment: '{{price/}} is the formatted price, e.g. $20',
+	} );
+
+	const standardPrice = translate( '{{price/}} /mailbox', {
+		components: {
+			price: (
+				<span className={ 'google-workspace-card__keep-main-price' }>
+					{ getAnnualPrice( gSuiteProduct?.cost ?? 0, currencyCode ) }
+				</span>
+			),
+		},
+		comment: '{{price/}} is the formatted price, e.g. $20',
+	} );
 
 	const expandButtonLabel = isUpgrading()
 		? translate( 'Upgrade to %(googleMailService)s', {
@@ -144,6 +138,26 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		</span>
 	) : null;
 
+	const priceBadge = (
+		<div className="google-workspace-card__price-badge">
+			<PromoCardPrice
+				formattedPrice={ monthlyPrice }
+				discount={
+					productIsDiscounted && (
+						<span className="google-workspace-card__discounted-price">
+							{ getMonthlyPrice( gSuiteProduct.sale_cost, currencyCode ) }
+						</span>
+					)
+				}
+				additionalPriceInformation={
+					<span className="google-workspace-card__provider-additional-price-information">
+						{ googleWorkspace.additionalPriceInformation }
+					</span>
+				}
+			/>
+		</div>
+	);
+
 	const onGoogleConfirmNewMailboxes = noop;
 	const onGoogleUsersChange = noop;
 	const onGoogleFormReturnKeyPress = noop;
@@ -183,12 +197,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			discount={ discount }
 			additionalPriceInformation={ googleWorkspace.additionalPriceInformation }
 			onExpandedChange={ googleWorkspace.onExpandedChange }
-			formattedPrice={ formattedPrice(
-				productIsDiscounted,
-				getMonthlyPrice( gSuiteProduct.cost, currencyCode ),
-				gSuiteProduct?.sale_cost,
-				currencyCode
-			) }
+			priceBadge={ priceBadge }
 			formFields={ formFields }
 			isDomainEligibleForTitanFreeTrial={ false }
 			showExpandButton={ googleWorkspace.showExpandButton }
