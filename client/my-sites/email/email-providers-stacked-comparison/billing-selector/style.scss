@@ -1,0 +1,60 @@
+.billing-selector__wrapper {
+	align-content: space-between;
+
+	> .segmented-control.is-compact:not( .is-signup ) {
+		margin: 8px auto 16px;
+		max-width: 480px;
+
+		.segmented-control__link {
+			padding: 8px 12px;
+		}
+	}
+
+	> .segmented-control.is-signup {
+		margin: 0 auto;
+		border: solid 1px var( --color-neutral-10 );
+
+		.segmented-control__item {
+			--color-primary: var( --color-neutral-100 );
+			--color-text-inverted: var( --color-neutral-0 );
+			--color-primary-light: var( --color-neutral-80 );
+			--color-primary-dark: var( --color-neutral-80 );
+			--item-padding: 3px;
+
+			padding: var( --item-padding ) 0;
+
+			&:first-of-type {
+				padding-left: var( --item-padding );
+
+				.rtl & {
+					padding-right: var( --item-padding );
+				}
+			}
+
+			&:last-of-type {
+				padding-right: var( --item-padding );
+
+				.rtl & {
+					padding-left: var( --item-padding );
+				}
+			}
+
+			&:last-of-type .segmented-control__link {
+				border-right: none;
+			}
+		}
+
+		.segmented-control__link {
+			border: none;
+			padding-top: 6px;
+			padding-bottom: 6px;
+			color: var( --color-neutral-80 );
+		}
+
+		.segmented-control__item:not( .is-selected ) {
+			.segmented-control__link:hover {
+				background-color: var( --color-neutral-5 );
+			}
+		}
+	}
+}

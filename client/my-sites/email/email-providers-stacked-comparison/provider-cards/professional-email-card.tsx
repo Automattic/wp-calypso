@@ -38,6 +38,7 @@ import { getProductBySlug, getProductsList } from 'calypso/state/products-list/s
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './professional-email-card.scss';
 
@@ -56,17 +57,21 @@ const getTitanFeatures = () => {
 const professionalEmailFormattedPrice = (
 	formattedPriceClassName: string,
 	cost: number,
-	currencyCode: string
+	currencyCode: string,
+	termLength: TranslateResult
 ) => {
-	return translate( '{{price/}} /mailbox', {
+	return translate( '{{price/}} /mailbox {{termLength/}}', {
 		components: {
 			price: (
 				<span className={ formattedPriceClassName }>
 					{ formatCurrency( cost ?? 0, currencyCode ) }
 				</span>
 			),
+			termLength: <span className="professional-email-card__term">/{ termLength }</span>,
 		},
-		comment: '{{price/}} is the formatted price, e.g. $20',
+		comment:
+			'{{price/}} is the formatted price, e.g. $20' +
+			'{{termLength/}} is already translated and it is either annually or monthly',
 	} );
 };
 
@@ -84,7 +89,14 @@ const professionalEmailCardInformation: ProviderCard = {
 };
 
 const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
-	const { currencyCode = '', hasCartDomain, domain, selectedDomainName, titanMailProduct } = props;
+	const {
+		currencyCode = '',
+		hasCartDomain,
+		domain,
+		selectedDomainName,
+		termLength,
+		titanMailProduct,
+	} = props;
 	const professionalEmail: ProviderCard = professionalEmailCardInformation;
 
 	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
@@ -100,9 +112,11 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		'professional-email-card__discounted-price': isEligibleForFreeTrial,
 	} );
 
-	const discount = isEligibleForFreeTrial ? <> translate( '3 months free' ) ) </> : null;
-
-	const expandButtonLabel = isUpgrading()
+	professionalEmail.discount = isEligibleForFreeTrial ? (
+		<> translate( '3 months free' ) ) </>
+	) : null;
+	professionalEmail.isDomainEligibleForTitanFreeTrial = isDomainEligibleForTitanFreeTrial( domain );
+	professionalEmail.expandButtonLabel = isUpgrading()
 		? translate( 'Upgrade to %(titanProductName)s', {
 				args: {
 					titanProductName: getTitanProductName(),
@@ -192,10 +206,11 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	const formattedPrice = professionalEmailFormattedPrice(
 		formattedPriceClassName,
 		titanMailProduct?.cost ?? 0,
-		currencyCode
+		currencyCode,
+		termLength
 	);
 
-	const priceBadge = (
+	professionalEmail.priceBadge = (
 		<div className="professional-email-card__price-badge">
 			{ isDomainEligibleForTitanFreeTrial( domain ) && (
 				<div className="professional-email-card__discount badge badge--info-green">
@@ -204,7 +219,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			) }
 			<PromoCardPrice
 				formattedPrice={ formattedPrice }
-				discount={ discount }
+				discount={ professionalEmail.discount }
 				additionalPriceInformation={
 					<span className="professional-email-card__provider-additional-price-information">
 						{ professionalEmail.additionalPriceInformation }
@@ -214,7 +229,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		</div>
 	);
 
-	const formFields = (
+	professionalEmail.formFields = (
 		<TitanNewMailboxList
 			onMailboxesChange={ setTitanMailbox }
 			mailboxes={ titanMailbox }
@@ -236,26 +251,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		</TitanNewMailboxList>
 	);
 
-	return (
-		<EmailProvidersStackedCard
-			providerKey={ professionalEmail.providerKey }
-			logo={ professionalEmail.logo }
-			priceBadge={ priceBadge }
-			productName={ professionalEmail.productName }
-			description={ professionalEmail.description }
-			detailsExpanded={ professionalEmail.detailsExpanded }
-			discount={ discount }
-			additionalPriceInformation={ professionalEmail.additionalPriceInformation }
-			onExpandedChange={ professionalEmail.onExpandedChange }
-			formattedPrice={ formattedPrice }
-			formFields={ formFields }
-			isDomainEligibleForTitanFreeTrial={ isDomainEligibleForTitanFreeTrial( domain ) }
-			showExpandButton={ professionalEmail.showExpandButton }
-			expandButtonLabel={ expandButtonLabel }
-			features={ professionalEmail.features }
-			footerBadge={ professionalEmail.badge }
-		/>
-	);
+	return <EmailProvidersStackedCard { ...professionalEmail } />;
 };
 
 export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {

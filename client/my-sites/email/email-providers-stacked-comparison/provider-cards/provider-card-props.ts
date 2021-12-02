@@ -5,6 +5,7 @@ import type { TranslateResult } from 'i18n-calypso';
 export interface ProviderCard {
 	additionalPriceInformation?: TranslateResult;
 	badge?: ReactElement;
+	billingPeriod?: TranslateResult;
 	buttonLabel?: TranslateResult;
 	children?: ReactElement;
 	description?: TranslateResult;
@@ -43,6 +44,7 @@ export type EmailProvidersStackedCardProps = {
 	selectedDomainName: string;
 	shoppingCartManager?: any;
 	source: string;
+	termLength: TranslateResult;
 	titanMailProduct?: any;
 	recordTracksEventAddToCartClick?: (
 		comparisonContext: string,

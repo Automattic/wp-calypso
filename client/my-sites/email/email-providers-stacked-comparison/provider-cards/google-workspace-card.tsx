@@ -65,7 +65,7 @@ const googleWorkspaceCardInformation: ProviderCard = {
 };
 
 const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
-	const { currencyCode = '', domain, gSuiteProduct, selectedDomainName } = props;
+	const { currencyCode = '', domain, gSuiteProduct, selectedDomainName, termLength } = props;
 	const googleWorkspace: ProviderCard = googleWorkspaceCardInformation;
 
 	const isUpgrading = () => {
@@ -76,15 +76,18 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 
 	const productIsDiscounted = hasDiscount( gSuiteProduct );
 
-	const monthlyPrice = translate( '{{price/}} /mailbox', {
+	const monthlyPrice = translate( '{{price/}} /mailbox {{termLength/}}', {
 		components: {
 			price: (
 				<span className={ 'google-workspace-card__keep-main-price' }>
 					{ getMonthlyPrice( gSuiteProduct?.cost ?? 0, currencyCode ?? '' ) }
 				</span>
 			),
+			termLength: <span className="google-workspace-card__term">/{ termLength }</span>,
 		},
-		comment: '{{price/}} is the formatted price, e.g. $20',
+		comment:
+			'{{price/}} is the formatted price, e.g. $20' +
+			'{{termLength/}} is already translated and it is either annually or monthly',
 	} );
 
 	const standardPrice = translate( '{{price/}} /mailbox', {

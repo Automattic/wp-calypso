@@ -40,7 +40,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 	const toggleVisibility = ( event: React.MouseEvent ): void => {
 		event.preventDefault();
 
-		onExpandedChange( providerKey, ! detailsExpanded );
+		onExpandedChange( providerKey ?? '', ! detailsExpanded );
 	};
 
 	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;

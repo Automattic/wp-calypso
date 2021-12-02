@@ -4,7 +4,7 @@ import {
 } from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { BillingSelector } from 'calypso/my-sites/email/email-providers-stacked-comparison//billing-selector/billing-selector';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -71,7 +72,15 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 	props
 ) => {
 	const translate = useTranslate();
+	const [ billingPeriod, setBillingPeriod ] = useState( translate( 'monthly' ) );
 	const { comparisonContext, isGSuiteSupported, selectedDomainName, selectedSite, source } = props;
+	const onTermTypeChange = ( termLength: string ) => {
+		if ( termLength === 'monthly' ) {
+			setBillingPeriod( translate( 'monthly' ) );
+			return;
+		}
+		setBillingPeriod( translate( 'annually' ) );
+	};
 	return (
 		<Main wideLayout>
 			<QueryProductsList />
@@ -81,12 +90,13 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			<h1 className="email-providers-stacked-comparison__header wp-brand-font">
 				{ translate( 'Pick an email solution' ) }
 			</h1>
-
+			<BillingSelector onTermTypeChange={ onTermTypeChange } />
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
 				recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
+				termLength={ billingPeriod }
 			/>
 
 			{ isGSuiteSupported && (
@@ -95,6 +105,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 					recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
+					termLength={ billingPeriod }
 				/>
 			) }
 		</Main>

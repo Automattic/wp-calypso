@@ -18,3 +18,14 @@ div.professional-email-card__price-badge {
 		}
 	}
 }
+
+.professional-email-card__price-badge {
+	.promo-card__price {
+		.price__cost {
+			span.professional-email-card__term {
+				font-size: 0.875rem;
+				color: var( --studio-gray-80 );
+			}
+		}
+	}
+}
