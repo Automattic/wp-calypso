@@ -41,7 +41,6 @@ const identityMap = ( item: any ) => item;
 
 const getGoogleFeatures = () => {
 	return [
-		translate( 'Annual billing' ),
 		translate( 'Send and receive from your custom domain' ),
 		translate( '30GB storage' ),
 		translate( 'Email, calendars, and contacts' ),
