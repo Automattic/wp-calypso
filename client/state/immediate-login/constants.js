@@ -5,6 +5,7 @@ export const REASONS_FOR_MANUAL_RENEWAL = [
 	'bd_card-expiring',
 	'bd_missing-payment',
 	'bd_renewal-failure',
+	'bd_autorenew-disabled',
 	'expired-domain-notice',
 	'plan-expired',
 	'renew-domain-expiration-notice',
