@@ -41,7 +41,7 @@ export class UserSignupPage {
 	 *
 	 * @param {string} path The path to be appended to /start. E.g. /start/premium is the premium plan signup flow.
 	 */
-	async visit( path = '' ): Promise< void > {
+	async visit( path: { path?: string } = {} ): Promise< void > {
 		const targetUrl = path ? `start/${ path }` : 'start';
 		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
 	}

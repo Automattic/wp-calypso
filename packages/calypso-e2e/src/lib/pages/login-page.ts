@@ -19,8 +19,9 @@ export class LoginPage {
 	 *
 	 * Example: {@link https://wordpress.com/log-in}
 	 */
-	async visit(): Promise< Response | null > {
-		return await this.page.goto( getCalypsoURL( 'log-in' ) );
+	async visit( path: { path?: string } = {} ): Promise< Response | null > {
+		const targetUrl = path ? `log-in/${ path }` : 'log-in';
+		return await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
 	}
 
 	/**
@@ -31,22 +32,6 @@ export class LoginPage {
 		await this.clickSubmit();
 		await this.fillPassword( password );
 		await Promise.all( [ this.page.waitForNavigation(), this.clickSubmit() ] );
-	}
-
-	/**
-	 * Navigates to the /log-in/{locale} endpoint.
-	 */
-	async visitBlueLogin( locale = '' ): Promise< void > {
-		const targetUrl = locale ? `log-in/${ locale }` : 'log-in';
-		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
-	}
-
-	/**
-	 * Navigates to the /log-in/{locale} endpoint.
-	 */
-	async visitWhiteLogin( locale = '' ): Promise< void > {
-		const targetUrl = locale ? `log-in/new/${ locale }` : 'log-in/new';
-		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
 	}
 
 	/**
