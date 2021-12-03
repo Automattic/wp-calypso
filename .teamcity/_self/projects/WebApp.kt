@@ -551,7 +551,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
+					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr --runInBand
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}

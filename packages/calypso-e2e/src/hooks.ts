@@ -55,11 +55,13 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 	} );
 
 	afterAll( async () => {
+		console.log("After all");
 		if ( ! browser ) {
 			throw new Error( 'No browser instance found.' );
 		}
 
 		// Take screenshot for failed test.
+		console.log("__STEP_FAILED__", __STEP_FAILED__);
 		if ( __STEP_FAILED__ ) {
 			const fileName = path.join(
 				artifactPath,
