@@ -18,7 +18,7 @@ const DomainEligibilityWarning = ( {
 			{ sprintf(
 				/* translators: %s: The wordpress domain (ex.: myawesomeblog.wordpress.com) */
 				__(
-					'By installing this product your subdomain will change. Your old subdomain (%s) will no longer work. You can change it to a custom domain on us at anytime in future.'
+					'By installing this product your subdomain will change. Your old subdomain (%s) will no longer work. You can change it to a custom domain at anytime in future.'
 				),
 				wpcomDomain
 			) }
