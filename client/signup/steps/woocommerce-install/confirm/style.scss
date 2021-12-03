@@ -22,18 +22,23 @@ body.is-section-signup .is-woocommerce-install {
 
 				.formatted-header {
 					text-align: inherit;
+					@media ( min-width: 1024px ) {
+						margin-left: 24px;
+					}
 
 					.formatted-header__title {
 						text-align: inherit;
 						@media ( max-width: 660px ) {
-							padding: 0 10px;
+							padding: 0 10px 0 0;
+							
 						}
+
 					}
 
 					.formatted-header__subtitle {
 						@media ( max-width: 660px ) {
 							margin-top: 8px;
-							padding: 0 10px;
+							padding: 0 10px 0 0;
 						}
 
 						margin-top: 20px;
@@ -53,6 +58,7 @@ body.is-section-signup .is-woocommerce-install {
 			column-gap: 2%;
 
 			@media ( max-width: 660px ) {
+				max-width: 90vw;
 				grid-template-columns: 1fr;
 			}
 		}
@@ -68,6 +74,10 @@ body.is-section-signup .is-woocommerce-install {
 				line-height: 2rem;
 				flex-direction: column;
 				max-width: 520px;
+
+				@media ( max-width: 660px ) {
+					max-width: 90vw;
+				}
 			
 				p {
 					margin-top: 16px;
