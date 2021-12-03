@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
@@ -27,7 +28,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
-import { recordTracksEvent } from "../../../lib/analytics/tracks";
 
 type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
