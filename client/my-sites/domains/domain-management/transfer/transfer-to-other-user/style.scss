@@ -1,3 +1,10 @@
+@import '../../../../customer-home/grid-mixins.scss';
+@import '@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/colors.native';
+
 .transfer-to-other-user__select {
 	margin-top: 20px;
 	width: 100%;
@@ -10,5 +17,44 @@
 
 	@include breakpoint-deprecated( '>480px' ) {
 		max-width: 500px;
+	}
+}
+
+body.transfer-to-other-user.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
+}
+
+body.transfer-to-other-user {
+	.formatted-header {
+		&.is-left-align,
+		&.is-right-align {
+			margin-bottom: 24px;
+
+			h1.formatted-header__title {
+				color: $gray-900;
+				font-size: $font-title-medium;
+
+				@include break-mobile {
+					font-size: $font-title-large;
+				}
+			}
+		}
+	}
+
+	.transfer-to-other-user__container {
+		.transfer-to-other-user__main {
+			margin: 16px;
+		}
+		@include break-xlarge {
+			@include grid-row( 1, 1 );
+			@include grid-column( 1, 12 );
+			@include display-grid;
+			@include grid-template-columns( 12, 24px, 1fr );
+			grid-gap: 24px;
+			.transfer-to-other-user__main {
+				@include grid-column( 1, 8 );
+				margin: 0;
+			}
+		}
 	}
 }

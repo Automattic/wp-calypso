@@ -125,7 +125,7 @@ $plugin-details-header-padding: 100px;
 	@include breakpoint-deprecated( '>1040px' ) {
 		@include display-grid;
 		@include grid-template-columns( 12, 24px, 1fr );
-		grid-gap: 24px;
+		grid-gap: 80px;
 	}
 
 	.plugin-details__layout-col-left {
@@ -152,14 +152,6 @@ $plugin-details-header-padding: 100px;
 }
 
 .plugin-details__top-section {
-	.plugin-details__layout-col-right.no-cta {
-		visibility: hidden;
-
-		@media screen and ( max-width: 1040px ) {
-			display: none;
-		}
-	}
-
 	&.is-placeholder {
 		.plugin-details__name,
 		.plugin-details__price,
@@ -217,10 +209,11 @@ $plugin-details-header-padding: 100px;
 
 	.plugin-details__additional-info {
 		display: flex;
-		justify-content: space-between;
 		flex-wrap: wrap;
 
 		.plugin-details__info {
+			width: 25%;
+
 			@media screen and ( max-width: 1040px ) {
 				width: 50%;
 				padding-bottom: 12px;
@@ -245,8 +238,13 @@ $plugin-details-header-padding: 100px;
 		.plugin-details__install-button {
 			width: 100%;
 			padding: 12px 16px;
-			background-color: var( --studio-pink-50 );
+			background-color: var( --color-accent-50 );
 			color: var( --studio-white );
+
+			&:focus,
+			&:hover {
+				background-color: var( --color-accent-60 );
+			}
 		}
 	}
 
@@ -284,6 +282,7 @@ $plugin-details-header-padding: 100px;
 		.card {
 			box-shadow: none;
 			padding-left: 0;
+			padding-right: 0;
 		}
 	}
 
@@ -293,22 +292,15 @@ $plugin-details-header-padding: 100px;
 			border-bottom-color: transparent;
 		}
 
-		&:first-child .section-nav-tab__link {
-			padding-left: 0;
-		}
-
 		.section-nav-tab__link {
 			font-size: $font-body-small;
-			color: var( --studio-gray-60 );
 
 			&:hover {
 				background-color: transparent;
-				color: var( --studio-black );
 			}
 		}
 
 		&.is-selected .section-nav-tab__link {
-			color: var( --studio-black );
 			font-weight: bold;
 			border-bottom: none;
 		}
@@ -357,6 +349,12 @@ $plugin-details-header-padding: 100px;
 			display: flex;
 			flex-direction: column;
 			border-bottom: 1px solid var( --studio-gray-5 );
+		}
+	}
+
+	@media screen and ( min-width: 481px ) {
+		.section-nav-tab:first-child .section-nav-tab__link {
+			padding-left: 0;
 		}
 	}
 }

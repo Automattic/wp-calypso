@@ -6,6 +6,7 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -66,10 +67,10 @@ async function stripeCardProcessor(
 	const {
 		includeDomainDetails,
 		includeGSuiteDetails,
-		recordEvent: onEvent,
 		responseCart,
 		siteId,
 		contactDetails,
+		reduxDispatch,
 	} = transactionOptions;
 
 	let paymentMethodToken;
@@ -112,7 +113,7 @@ async function stripeCardProcessor(
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
-				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
 				return confirmStripePaymentIntent(
 					submitData.stripe,
 					stripeResponse?.message?.payment_intent_client_secret

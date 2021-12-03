@@ -182,7 +182,7 @@ const GoogleAnalyticsSimpleForm = ( {
 							<ToggleControl
 								checked={ displayForm }
 								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ () => handleFormToggle( ! displayForm ) }
+								onChange={ handleFormToggle }
 								label={ translate( 'Add Google' ) }
 							/>
 						</div>

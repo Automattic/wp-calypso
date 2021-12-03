@@ -79,6 +79,7 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"support-user": true,
+		"themes/premium": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,

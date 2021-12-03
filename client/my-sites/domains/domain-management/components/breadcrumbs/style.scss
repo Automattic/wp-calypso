@@ -51,8 +51,11 @@
 .breadcrumbs__bottom-border {
 	height: 0;
 	/* hack to make the border line cover the entire width of the content area */
-	margin: 0 -1000px 32px;
+	margin: 0 -1000px 16px;
 	border-bottom: 1px solid #dcdcde;
+	@include break-mobile {
+		margin-bottom: 32px;
+	}
 }
 
 .breadcrumbs__items {

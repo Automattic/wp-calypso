@@ -59,8 +59,10 @@ class Referrers extends Component {
 				queryParams: { referrer, ...queryParams },
 			} = this.props;
 			const widgetPath = getWidgetPath( unit, slug, queryParams );
-			this.state.filter = '';
-			this.state.selectedReferrer = {};
+			this.setState( {
+				filter: '',
+				selectedReferrer: {},
+			} );
 			page( `${ basePath }${ widgetPath }` );
 		}
 		this.setData( this.props, trimmedStr );

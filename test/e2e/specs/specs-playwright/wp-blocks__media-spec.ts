@@ -89,10 +89,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	} );
 
 	it( 'Publish and visit post', async function () {
-		// Must save as draft first to bypass issue with post-publish panel being auto-dismissed
-		// after publishing. May be related to the following issue?
-		// See https://github.com/Automattic/wp-calypso/issues/54421.
-		await gutenbergEditorPage.publish( { visit: true, saveDraft: true } );
+		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 
 	it( `Confirm Image block is visible in published post`, async function () {

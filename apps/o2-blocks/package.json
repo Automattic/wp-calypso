@@ -19,18 +19,18 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"build:o2-blocks": "calypso-build",
-		"dev": "node ../../bin/build-calypso-app.mjs --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/a8c-blocks",
+		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/a8c-blocks",
 		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@wordpress/api-fetch": "^5.2.6",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/block-editor": "^8.0.5",
+		"@wordpress/block-editor": "^8.0.7",
 		"@wordpress/blocks": "^11.1.4",
-		"@wordpress/components": "^19.0.5",
+		"@wordpress/components": "^19.1.1",
 		"@wordpress/data": "^6.1.4",
-		"@wordpress/editor": "^12.0.8",
+		"@wordpress/editor": "^12.0.10",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/hooks": "^3.2.2",
 		"@wordpress/i18n": "^4.2.4",
@@ -46,6 +46,7 @@
 		"redux": "^4.1.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"enzyme": "^3.11.0",
 		"jest": "^27.3.1",

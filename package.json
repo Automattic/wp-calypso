@@ -92,7 +92,7 @@
 		"docker-jetpack-cloud": "docker run -it --env CALYPSO_ENV=jetpack-cloud-production --name wp-calypso --rm -p 80:3000 wp-calypso",
 		"eslint-branch": "node bin/eslint-branch.js",
 		"install-if-no-packages": "node bin/install-if-no-packages.js",
-		"postinstall": "yarn run build-packages",
+		"postinstall": "yarn run build-packages && husky install",
 		"lint": "run-s -s 'lint:*'",
 		"lint:config-defaults": "node bin/validate-config-keys.js",
 		"lint:css": "stylelint \"**/*.scss\" --syntax scss",
@@ -179,7 +179,7 @@
 		"@typescript-eslint/parser": "^4.33.0",
 		"@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/components": "^19.0.5",
+		"@wordpress/components": "^19.1.1",
 		"@wordpress/data": "^6.1.4",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/eslint-plugin": "^9.3.0",
@@ -228,14 +228,12 @@
 		"eslint-plugin-wpcalypso": "workspace:^",
 		"eslint-plugin-you-dont-need-lodash-underscore": "^6.12.0",
 		"exports-loader": "^0.7.0",
-		"fake-indexeddb": "^3.1.3",
-		"fork-ts-checker-webpack-plugin": "^3.1.1",
 		"gettext-parser": "^4.0.3",
 		"glob": "^7.1.6",
 		"globby": "^10.0.1",
 		"gzip-size": "^6.0.0",
 		"html-loader": "^0.5.5",
-		"husky": "^4.2.5",
+		"husky": "^7.0.4",
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
 		"ignore-loader": "^0.1.2",
@@ -244,6 +242,7 @@
 		"jest-environment-jsdom": "^27.3.1",
 		"jest-enzyme": "^7.1.2",
 		"jest-junit": "^9.0.0",
+		"jest-teamcity": "^1.9.0",
 		"loader-utils": "^1.2.3",
 		"lodash": "^4.17.21",
 		"lunr": "^2.3.8",
@@ -268,7 +267,6 @@
 		"reakit-utils": "^0.15.1",
 		"recursive-copy": "^2.0.10",
 		"redux": "^4.1.2",
-		"regenerator-runtime": "^0.13.9",
 		"replace": "^1.1.5",
 		"request": "^2.88.2",
 		"sass": "^1.37.5",
@@ -296,19 +294,12 @@
 	"optionalDependencies": {
 		"fsevents": "^2.1.2"
 	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "yarn run install-if-no-packages && node bin/pre-commit-hook.js",
-			"pre-push": "yarn run install-if-no-packages && node bin/pre-push-hook.js"
-		}
-	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@bartekbp/typescript-checkstyle": "^5.0.0",
 		"bunyan": "^1.8.15",
-		"chokidar": "^3.5.2",
 		"eslint-nibble": "^7.0.0",
-		"tree-kill": "^1.2.2"
+		"husky": "^7.0.0"
 	},
 	"resolutions": {
 		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
