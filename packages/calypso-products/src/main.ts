@@ -150,6 +150,9 @@ export function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] 
 		...( 'getSignupFeatures' in planObj && planObj.getSignupFeatures
 			? planObj.getSignupFeatures()
 			: [] ),
+		...( 'getSignupCompareAvailableFeatures' in planObj && planObj.getSignupCompareAvailableFeatures
+			? planObj.getSignupCompareAvailableFeatures()
+			: [] ),
 		...( 'getBlogSignupFeatures' in planObj && planObj.getBlogSignupFeatures
 			? planObj.getBlogSignupFeatures()
 			: [] ),
