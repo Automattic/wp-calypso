@@ -69,7 +69,9 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 				`${ getFileName( __FAILED_STEP_NAME__ ) }.png`
 			);
 			await mkdir( path.dirname( fileName ), { recursive: true } );
+			console.log(2, fileName)
 			await page.screenshot( { path: fileName } );
+			console.log(3)
 		}
 		// Close the page. This needs to be called before trying to access
 		// the video recording.
