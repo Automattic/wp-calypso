@@ -80,7 +80,6 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 				break;
 			case transferStates.COMPLETE:
 				setProgress( 1 );
-				window.location.href = wcAdmin;
 				break;
 		}
 
@@ -124,6 +123,23 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 
 		return () => clearTimeout( timeOutReference );
 	}, [ simulatedProgress, progress, __ ] );
+
+	useEffect( () => {
+		if ( simulatedProgress < 1 ) {
+			return;
+		}
+
+		const timer = setTimeout( () => {
+			window.location.href = wcAdmin;
+		}, 5000 );
+
+		return function () {
+			if ( ! timer ) {
+				return;
+			}
+			window.clearTimeout( timer );
+		};
+	}, [ simulatedProgress, wcAdmin ] );
 
 	return (
 		<StepWrapper
