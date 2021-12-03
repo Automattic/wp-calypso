@@ -24,8 +24,9 @@ const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
 };
 
 const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
+	const [ tourReady, setTourReady ] = useState( false );
 	const tourContainerRef = useRef( null );
-	const popperElementRef = useRef( null );
+	const [ popperElement, sePopperElement ] = useState< HTMLElement | null >( null );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);
@@ -39,20 +40,36 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;
 
-	const showArrowIndicator = () => {
+	const showArrowIndicator = useCallback( () => {
 		if ( config.options?.effects?.arrowIndicator === false ) {
 			return false;
 		}
 
-		return !! ( referenceElement && ! isMinimized );
-	};
+		return !! ( referenceElement && ! isMinimized && tourReady );
+	}, [ config.options?.effects?.arrowIndicator, isMinimized, referenceElement, tourReady ] );
 
-	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
+	const showSpotlight = useCallback( () => {
+		if ( ! config.options?.effects?.spotlight ) {
+			return false;
+		}
+
+		return ! isMinimized && tourReady;
+	}, [ config.options?.effects?.spotlight, isMinimized, tourReady ] );
+
+	const showOverlay = useCallback( () => {
+		if ( showSpotlight() || ! config.options?.effects?.overlay ) {
+			return false;
+		}
+
+		return ! isMinimized && tourReady;
+	}, [ config.options?.effects?.overlay, isMinimized, showSpotlight, tourReady ] );
+
+	const { styles: popperStyles, attributes: popperAttributes, update } = usePopper(
 		referenceElement,
-		popperElementRef.current,
+		popperElement,
 		{
 			strategy: 'fixed',
-			placement: 'auto',
+			placement: 'bottom',
 			modifiers: [
 				{
 					name: 'preventOverflow',
@@ -73,6 +90,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 						offset: [ 0, showArrowIndicator() ? 12 : 10 ],
 					},
 				},
+				{
+					name: 'flip',
+					options: {
+						fallbackPlacements: [ 'top', 'left', 'right' ],
+					},
+				},
 				...( config.options?.popperModifiers || [] ),
 			],
 		}
@@ -86,26 +109,13 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 			  }
 			: null;
 
-	const arrowPositionProps = {
-		style: popperStyles?.arrow,
-		...popperAttributes?.arrow,
-	};
-
-	const showSpotlight = useCallback( () => {
-		if ( ! config.options?.effects?.spotlight ) {
-			return false;
-		}
-
-		return ! isMinimized;
-	}, [ config.options?.effects?.spotlight, isMinimized ] );
-
-	const showOverlay = useCallback( () => {
-		if ( showSpotlight() || ! config.options?.effects?.overlay ) {
-			return false;
-		}
-
-		return ! isMinimized;
-	}, [ config.options?.effects?.overlay, isMinimized, showSpotlight ] );
+	const arrowPositionProps =
+		! isMinimized && referenceElement
+			? {
+					style: popperStyles?.arrow,
+					...popperAttributes?.arrow,
+			  }
+			: null;
 
 	const handleDismiss = useCallback(
 		( source: string ) => {
@@ -147,15 +157,28 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	}, [ config.options?.callbacks?.onMaximize, currentStepIndex ] );
 
 	useEffect( () => {
-		// first interactive element when step renders
+		/*
+		 * First interactive element when step renders
+		 */
 		setTimeout( () => initialFocusedElement?.focus() );
 	}, [ initialFocusedElement ] );
+
+	useEffect( () => {
+		/*
+		 * Fixes issue with Popper misplacing the instance on mount
+		 * See: https://stackoverflow.com/questions/65585859/react-popper-incorrect-position-on-mount
+		 */
+		update && update();
+		setTimeout( () => setTourReady( true ) );
+	}, [ update ] );
 
 	const classNames = classnames(
 		'tour-kit-frame',
 		config.options?.className,
-		isMobile ? 'is-mobile' : 'is-desktop'
+		isMobile ? 'is-mobile' : 'is-desktop',
+		{ '--visible': tourReady }
 	);
+
 	return (
 		<>
 			<KeyboardNavigation
@@ -176,7 +199,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				) }
 				<div
 					className="tour-kit-frame__container"
-					ref={ popperElementRef }
+					ref={ sePopperElement }
 					{ ...stepRepositionProps }
 				>
 					{ showArrowIndicator() && (

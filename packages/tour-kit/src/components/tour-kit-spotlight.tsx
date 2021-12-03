@@ -1,4 +1,4 @@
-import { useMemo, useRef } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import classnames from 'classnames';
 import { usePopper } from 'react-popper';
 import Overlay from './tour-kit-overlay';
@@ -10,9 +10,13 @@ interface Props {
 }
 
 const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement, styles } ) => {
-	const popperElementRef = useRef( null );
+	const [ popperElement, sePopperElement ] = useState< HTMLElement | null >( null );
 	const referenceRect = referenceElement?.getBoundingClientRect();
 	const modifiers = [
+		{
+			name: 'flip',
+			enabled: false,
+		},
 		useMemo(
 			() => ( {
 				name: 'offset',
@@ -39,9 +43,10 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement,
 
 	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
 		referenceElement,
-		popperElementRef.current,
+		popperElement,
 		{
 			strategy: 'fixed',
+			placement: 'bottom',
 			modifiers,
 		}
 	);
@@ -71,7 +76,7 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement,
 				className={ classnames( 'tour-kit-spotlight', {
 					'--visible': !! clipRepositionProps,
 				} ) }
-				ref={ popperElementRef }
+				ref={ sePopperElement }
 				{ ...clipRepositionProps }
 			/>
 		</>
