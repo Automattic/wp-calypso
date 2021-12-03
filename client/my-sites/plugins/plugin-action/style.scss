@@ -85,6 +85,7 @@
 
 .plugin-activate-toggle, .plugin-autoupdate-toggle {
 	.components-toggle-control {
+		display: flex;
 		.components-base-control__field {
 			display: flex;
 

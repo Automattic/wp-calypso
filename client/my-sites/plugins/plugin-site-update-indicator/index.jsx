@@ -82,15 +82,21 @@ class PluginSiteUpdateIndicator extends Component {
 		}
 
 		return (
-			<div className="plugin-site-update-indicator__button-container">
-				<button
-					className="plugin-site-update-indicator__button button"
+			/* eslint-disable jsx-a11y/click-events-have-key-events */
+			/* eslint-disable jsx-a11y/anchor-is-valid */
+			<div className="plugin-site-update-indicator__link-container">
+				<a
+					className="plugin-site-update-indicator__link"
 					onClick={ this.updatePlugin }
 					disabled={ isUpdating }
+					role="button"
+					tabIndex="0"
 				>
 					{ message }
-				</button>
+				</a>
 			</div>
+			/* eslint-enable jsx-a11y/click-events-have-key-events */
+			/* eslint-enable jsx-a11y/anchor-is-valid */
 		);
 	};
 
