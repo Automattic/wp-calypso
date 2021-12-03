@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -83,10 +82,13 @@ function PluginDetails( props ) {
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 
-	const fullPlugin = {
-		...plugin,
-		...wporgPlugin,
-	};
+	const fullPlugin = useMemo(
+		() => ( {
+			...plugin,
+			...wporgPlugin,
+		} ),
+		[ plugin, wporgPlugin ]
+	);
 
 	useEffect( () => {
 		if ( ! isFetched ) {

@@ -1,26 +1,26 @@
 import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import page from 'page';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { userCan } from 'calypso/lib/site/utils';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
-import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
-import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 const PluginDetailsCTA = ( props ) => {
-    const translate = useTranslate();
+	const translate = useTranslate();
 	const { pluginSlug, selectedSite, isPluginInstalledOnsite, siteIds } = props;
 
 	const requestingPluginsForSites = useSelector( ( state ) =>
