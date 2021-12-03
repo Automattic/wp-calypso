@@ -7,6 +7,38 @@ import './style.scss';
 const OFFSET_THRESHOLD = 100; // Number of pixels to travel before we trigger the slider to move to the desired slide.
 const VELOCITY_THRESHOLD = 0.5; // Speed of drag above, before we trigger the slider to move to the desired slide.
 
+function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
+	// save callback to a ref so that it doesn't need to be a dependency of other hooks
+	const savedUpdateLayout = useRef();
+	useEffect( () => {
+		savedUpdateLayout.current = updateLayout;
+	}, [ updateLayout ] );
+
+	// fire when the `currentPageIndex` parameter changes
+	useEffect( () => {
+		if ( ! enabled ) {
+			return;
+		}
+
+		savedUpdateLayout.current();
+	}, [ enabled, currentPageIndex ] );
+
+	// fire when the window resizes
+	useEffect( () => {
+		if ( ! enabled ) {
+			return;
+		}
+
+		const onResize = () => savedUpdateLayout.current( false );
+		window.addEventListener( 'resize', onResize );
+		window.addEventListener( 'orientationchange', onResize );
+		return () => {
+			window.removeEventListener( 'resize', onResize );
+			window.removeEventListener( 'orientationchange', onResize );
+		};
+	}, [ enabled ] );
+}
+
 export const Swipeable = ( {
 	hasDynamicHeight = false,
 	children,
@@ -45,38 +77,6 @@ export const Swipeable = ( {
 		const offset = pageWidth * index;
 		return isRtl ? offset : -offset;
 	};
-
-	function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
-		// save callback to a ref so that it doesn't need to be a dependency of other hooks
-		const savedUpdateLayout = useRef();
-		useEffect( () => {
-			savedUpdateLayout.current = updateLayout;
-		}, [ updateLayout ] );
-
-		// fire when the `currentPageIndex` parameter changes
-		useEffect( () => {
-			if ( ! enabled ) {
-				return;
-			}
-
-			savedUpdateLayout.current();
-		}, [ enabled, currentPageIndex ] );
-
-		// fire when the window resizes
-		useEffect( () => {
-			if ( ! enabled ) {
-				return;
-			}
-
-			const onResize = () => savedUpdateLayout.current( false );
-			window.addEventListener( 'resize', onResize );
-			window.addEventListener( 'orientationchange', onResize );
-			return () => {
-				window.removeEventListener( 'resize', onResize );
-				window.removeEventListener( 'orientationchange', onResize );
-			};
-		}, [ enabled ] );
-	}
 
 	const updateEnabled = hasDynamicHeight && numPages > 1;
 
