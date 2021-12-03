@@ -31,6 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		} );
 
 		it( 'Enter new site name', async function () {
+			throw new Error( 'FAKE ERROR' );
 			gutenboardingFlow = new GutenboardingFlow( page );
 			await gutenboardingFlow.enterSiteTitle( siteTitle );
 			await gutenboardingFlow.clickButton( 'Continue' );
