@@ -124,6 +124,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
+				<div className="confirm__info-section" />
 				<div className="confirm__instructions-container">
 					{ getWPComSubdomainWarningContent() }
 					{ getCheckoutContent() }
