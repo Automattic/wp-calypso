@@ -1112,13 +1112,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/tour-kit@workspace:packages/tour-kit"
   dependencies:
-    "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/viewport-react": "workspace:^"
     "@popperjs/core": ^2.10.2
     "@storybook/preset-scss": ^1.0.3
     classnames: ^2.3.1
     css-loader: ^3.6.0
     react: ^17.0.2
+    react-dom: ^17.0.2
     react-popper: ^2.2.5
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
