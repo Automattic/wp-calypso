@@ -19,7 +19,7 @@ export class LoginPage {
 	 *
 	 * Example: {@link https://wordpress.com/log-in}
 	 */
-	async visit( path: { path?: string } = {} ): Promise< Response | null > {
+	async visit( path?: string ): Promise< Response | null > {
 		const targetUrl = path ? `log-in/${ path }` : 'log-in';
 		return await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
 	}

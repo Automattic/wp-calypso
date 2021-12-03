@@ -85,7 +85,7 @@ export class CartCheckoutPage {
 	 *
 	 * @param {string} blogName Blog name for which the checkout page is to be loaded.
 	 */
-	async visit( blogName = '' ): Promise< void > {
+	async visit( blogName?: string ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `checkout/${ blogName }` ), { waitUntil: 'networkidle' } );
 	}
 
