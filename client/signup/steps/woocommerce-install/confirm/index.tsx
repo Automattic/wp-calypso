@@ -62,6 +62,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		wpcomSubdomainWarning,
 		siteUpgrading,
 		hasBlockers,
+
 		warnings,
 		isReadyForTransfer,
 	} = useWooCommerceOnPlansEligibility( siteId );
