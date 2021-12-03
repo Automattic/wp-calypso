@@ -330,9 +330,13 @@ export default function CompositeCheckout( {
 	);
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
-		messages.forEach( ( message ) =>
-			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
-		);
+		messages.forEach( ( message ) => {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {
+					error_message: String( message ),
+				} )
+			);
+		} );
 	} );
 
 	const {
