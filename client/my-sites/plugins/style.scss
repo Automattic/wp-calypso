@@ -162,7 +162,7 @@ $plugin-details-header-padding: 100px;
 			@extend %placeholder;
 		}
 
-		.plugin-details__tags {
+		.plugin-details-header__tags {
 			@extend %placeholder;
 			width: 50%;
 		}
@@ -175,87 +175,44 @@ $plugin-details-header-padding: 100px;
 	}
 }
 
-.plugin-details__tags {
-	position: absolute;
-	font-size: $font-body-extra-small;
-	color: var( --studio-gray-60 );
-	top: calc( $plugin-details-header-padding - 15px );
-	left: 0;
+.plugin-details__price {
+	font-family: $brand-serif;
+	font-size: $font-title-large;
+	color: var( --studio-gray-100 );
+	margin: 16px 0;
+}
 
-	@media screen and ( max-width: 1040px ) {
-		top: -5px;
+.plugin-details__install {
+	margin-bottom: 20px;
+
+	.plugin-details__install-button {
+		width: 100%;
+		padding: 12px 16px;
+		background-color: var( --color-accent-50 );
+		color: var( --studio-white );
+
+		&:focus,
+		&:hover {
+			background-color: var( --color-accent-60 );
+		}
 	}
 }
+
+.plugin-details__t-and-c {
+    font-size: $font-body-extra-small;
+    color: var( --studio-gray-50 );
+
+    @media screen and ( max-width: 1040px ) {
+        padding-bottom: 40px;
+    }
+}
+
 
 .plugin-details__header {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	padding: $plugin-details-header-padding 0;
-
-	.plugin-details__name,
-	.plugin-details__price {
-		font-family: $brand-serif;
-		font-size: $font-title-large;
-		color: var( --studio-gray-100 );
-		margin: 16px 0;
-	}
-
-	.plugin-details__description {
-		font-size: $font-title-small;
-		color: var( --studio-gray-70 );
-		margin-bottom: 30px;
-	}
-
-	.plugin-details__additional-info {
-		display: flex;
-		flex-wrap: wrap;
-
-		.plugin-details__info {
-			width: 25%;
-
-			@media screen and ( max-width: 1040px ) {
-				width: 50%;
-				padding-bottom: 12px;
-			}
-		}
-
-		.plugin-details__info-title {
-			font-size: $font-body-extra-small;
-			font-weight: 400;
-			color: var( --studio-gray-60 );
-		}
-
-		.plugin-details__info-value {
-			font-size: $font-body;
-			color: var( --studio-gray-90 );
-		}
-	}
-
-	.plugin-details__install {
-		margin-bottom: 20px;
-
-		.plugin-details__install-button {
-			width: 100%;
-			padding: 12px 16px;
-			background-color: var( --color-accent-50 );
-			color: var( --studio-white );
-
-			&:focus,
-			&:hover {
-				background-color: var( --color-accent-60 );
-			}
-		}
-	}
-
-	.plugin-details__t-and-c {
-		font-size: $font-body-extra-small;
-		color: var( --studio-gray-50 );
-
-		@media screen and ( max-width: 1040px ) {
-			padding-bottom: 40px;
-		}
-	}
 
 	@media screen and ( max-width: 1040px ) {
 		padding: 0;

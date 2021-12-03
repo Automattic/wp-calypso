@@ -11,7 +11,6 @@ import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -20,7 +19,7 @@ import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { userCan } from 'calypso/lib/site/utils';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
-import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
+import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
@@ -60,7 +59,6 @@ import NoPermissionsError from './no-permissions-error';
 
 function PluginDetails( props ) {
 	const dispatch = useDispatch();
-	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	// Site information.
@@ -112,10 +110,6 @@ function PluginDetails( props ) {
 		...plugin,
 		...wporgPlugin,
 	};
-
-	const tags = Object.values( fullPlugin?.tags || {} )
-		.slice( 0, 3 )
-		.join( ' · ' );
 
 	useEffect( () => {
 		if ( ! isFetched ) {
@@ -198,39 +192,7 @@ function PluginDetails( props ) {
 							'plugin-details__layout-col-left'
 						) }
 					>
-						<div className="plugin-details__tags">{ tags }</div>
-						<div className="plugin-details__header">
-							<div className="plugin-details__name">{ fullPlugin.name }</div>
-							<div className="plugin-details__description">
-								{ fullPlugin.short_description || fullPlugin.description }
-							</div>
-							<div className="plugin-details__additional-info">
-								<div className="plugin-details__info">
-									<div className="plugin-details__info-title">{ translate( 'Developer' ) }</div>
-									<div className="plugin-details__info-value">
-										<a href={ fullPlugin.author_url }>{ fullPlugin.author_name }</a>
-									</div>
-								</div>
-								{ !! fullPlugin.rating && (
-									<div className="plugin-details__info">
-										<div className="plugin-details__info-title">{ translate( 'Ratings' ) }</div>
-										<div className="plugin-details__info-value">
-											<PluginRatings rating={ fullPlugin.rating } />
-										</div>
-									</div>
-								) }
-								<div className="plugin-details__info">
-									<div className="plugin-details__info-title">{ translate( 'Last updated' ) }</div>
-									<div className="plugin-details__info-value">
-										{ moment.utc( fullPlugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'LL' ) }
-									</div>
-								</div>
-								<div className="plugin-details__info">
-									<div className="plugin-details__info-title">{ translate( 'Version' ) }</div>
-									<div className="plugin-details__info-value">{ fullPlugin.version }</div>
-								</div>
-							</div>
-						</div>
+						<PluginDetailsHeader plugin={ fullPlugin } />
 					</div>
 					{ shouldDisplayCTA(
 						selectedSite,
