@@ -227,6 +227,19 @@ const MarketplacePluginInstall = ( {
 	];
 
 	const renderError = () => {
+		// Evaluate error causes in priority order
+		if ( nonInstallablePlanError ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					title={ translate(
+						"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
+					) }
+					action={ translate( 'Upgrade to Business Plan' ) }
+					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
+				/>
+			);
+		}
 		if ( isUploadFlow && noDirectAccessError ) {
 			return (
 				<EmptyContent
@@ -248,18 +261,6 @@ const MarketplacePluginInstall = ( {
 					) }
 					action={ translate( 'Go to the plugin page' ) }
 					actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
-				/>
-			);
-		}
-		if ( nonInstallablePlanError ) {
-			return (
-				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate(
-						"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
-					) }
-					action={ translate( 'Upgrade to Business Plan' ) }
-					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
 				/>
 			);
 		}
