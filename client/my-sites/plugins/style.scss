@@ -189,13 +189,6 @@ $plugin-details-header-padding: 100px;
 .plugin-details__body {
 	border-top: 1px solid var( --studio-gray-5 );
 
-	.plugin-details__plugin-details-title {
-		padding: 15px 0;
-		display: none;
-		color: var( --studio-gray-100 );
-		font-size: $font-body-small;
-	}
-
 	.plugin-sections {
 		margin-top: 20px;
 
@@ -252,15 +245,6 @@ $plugin-details-header-padding: 100px;
 	@media screen and ( max-width: 1040px ) {
 		display: flex;
 		flex-direction: column;
-
-		.plugin-details__plugin-details-content {
-			display: flex;
-			justify-content: space-between;
-		}
-
-		.plugin-details__plugin-details-title {
-			display: block;
-		}
 
 		.plugin-details__layout-col-left {
 			order: 2;

@@ -11,11 +11,11 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
+import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
@@ -222,25 +222,7 @@ function PluginDetails( props ) {
 						) }
 					</div>
 					<div className="plugin-details__layout-col plugin-details__layout-col-right">
-						<div className="plugin-details__plugin-details-title">
-							{ translate( 'Plugin details' ) }
-						</div>
-						<div className="plugin-details__plugin-details-content">
-							<div className="plugin-details__active-installs">
-								<div className="plugin-details__active-installs-text title">
-									{ translate( 'Active installations' ) }
-								</div>
-								<div className="plugin-details__active-installs-value value">
-									{ formatNumberMetric( fullPlugin.active_installs, 'en' ) }
-								</div>
-							</div>
-							<div className="plugin-details__tested">
-								<div className="plugin-details__tested-text title">
-									{ translate( 'Tested up to' ) }
-								</div>
-								<div className="plugin-details__tested-value value">{ fullPlugin.tested }</div>
-							</div>
-						</div>
+						<PluginDetailsSidebar plugin={ fullPlugin } />
 					</div>
 				</div>
 			</div>
