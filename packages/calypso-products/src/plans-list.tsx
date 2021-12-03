@@ -636,14 +636,15 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SFTP_DATABASE,
 		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: () => [
-		FEATURE_AUDIO_UPLOADS,
-		FEATURE_GOOGLE_MY_BUSINESS,
-		isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-		FEATURE_CLOUDFLARE_ANALYTICS,
-		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
-		FEATURE_SEO_PREVIEW_TOOLS,
-	],
+	getIncludedFeatures: () =>
+		[
+			FEATURE_AUDIO_UPLOADS,
+			FEATURE_GOOGLE_MY_BUSINESS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_CLOUDFLARE_ANALYTICS,
+			FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+			FEATURE_SEO_PREVIEW_TOOLS,
+		].filter( isValueTruthy ),
 	getInferiorFeatures: () => [],
 } );
 
