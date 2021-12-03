@@ -741,7 +741,10 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! isBusiness( site.plan ) || ! canUserUseWooCommerceCoreStore ) {
+		if (
+			( ! isBusiness( site.plan ) || ! canUserUseWooCommerceCoreStore ) &&
+			! isEnabled( 'woop' )
+		) {
 			// Right now, we only use the "WooCommerce" label for Business plan sites.
 			// eCommerce sites continue to use the "Store" label for now
 			// (see handling in `store()` above.
