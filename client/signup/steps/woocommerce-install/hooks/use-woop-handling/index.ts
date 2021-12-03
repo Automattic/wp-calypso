@@ -17,8 +17,8 @@ import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 const TRANSFERRING_NOT_BLOCKERS = [
-	eligibilityHoldsConstants.NO_BUSINESS_PLAN, // let's redirect to checkout page
-	// eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // ToDo: let's handle it in transferring endpoint.
+	eligibilityHoldsConstants.NO_BUSINESS_PLAN, // Plans are upgraded in the install flow.
+	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // Already Atomic sites are handled in the install flow.
 ];
 
 type EligibilityHook = {
