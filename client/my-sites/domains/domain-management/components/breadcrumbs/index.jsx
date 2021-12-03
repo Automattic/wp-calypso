@@ -128,17 +128,15 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 	);
 
 	return (
-		<React.Fragment>
-			<div className={ classNames( 'breadcrumbs', className ) }>
-				<div>
-					<div className="breadcrumbs__content">
-						{ renderItems() }
-						{ renderButtons() }
-					</div>
+		<div className={ classNames( 'breadcrumbs', className ) }>
+			<div>
+				<div className="breadcrumbs__content">
+					{ renderItems() }
+					{ renderButtons() }
 				</div>
-				<div className="breadcrumbs__spacer"></div>
 			</div>
-		</React.Fragment>
+			<div className="breadcrumbs__spacer"></div>
+		</div>
 	);
 };
 
