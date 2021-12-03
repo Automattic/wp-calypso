@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getMediaStorage, isRequestingMediaStorage, isOverMediaLimit } from '../selectors';
+import { getMediaStorage, isOverMediaLimit } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getMediaStorage()', () => {
@@ -26,24 +26,6 @@ describe( 'selectors', () => {
 				max_storage_bytes: 3221225472,
 				storage_used_bytes: 56000,
 			} );
-		} );
-	} );
-	describe( '#isRequestingMediaStorage()', () => {
-		test( 'should return fetching media storage state for a given site ID', () => {
-			const state = {
-				sites: {
-					mediaStorage: {
-						fetchingItems: {
-							2916284: true,
-							77203074: false,
-						},
-					},
-				},
-			};
-
-			expect( isRequestingMediaStorage( state, 2916284 ) ).to.equal( true );
-			expect( isRequestingMediaStorage( state, 77203074 ) ).to.equal( false );
-			expect( isRequestingMediaStorage( state, 'not-defined' ) ).to.equal( false );
 		} );
 	} );
 	describe( '#isOverMediaLimit()', () => {
