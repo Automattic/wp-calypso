@@ -28,7 +28,7 @@ function LaunchWpcomWelcomeTour() {
 
 	const localeSlug = useLocale();
 	// Preload first card image (others preloaded after open state confirmed)
-	new window.Image().src = getTourSteps( localeSlug )[ 0 ].meta.imgSrc;
+	new window.Image().src = usePrefetchTourAssets( getTourSteps( localeSlug )[ 0 ] );
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
@@ -64,7 +64,7 @@ function WelcomeTour() {
 	const { setJustMaximized } = useWelcomeTourContext();
 
 	// Preload card images
-	usePrefetchTourAssets();
+	usePrefetchTourAssets( tourSteps );
 
 	const tourConfig = {
 		steps: tourSteps,

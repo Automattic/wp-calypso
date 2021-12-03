@@ -2,15 +2,16 @@
  * External Dependencies
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-/**
- * Internal dependencies
- */
-import type { TourAsset } from './types';
+import type { Step, Steps } from '@automattic/tour-kit';
 
-export function usePrefetchTourAssets( tourAssets: TourAsset[] ): void {
+export function usePrefetchTourAssets( steps: Step | Steps ): void {
 	const isMobile = useMobileBreakpoint();
 
-	tourAssets.forEach( ( asset: TourAsset ) => {
-		new window.Image().src = isMobile && asset.mobile ? asset.mobile.src : asset.desktop.src;
+	const convertStepsToArray = ( steps: Step | Steps ): Steps =>
+		Array.isArray( steps ) ? steps : [ steps ];
+
+	convertStepsToArray( steps ).forEach( ( step: Step ) => {
+		const imgSrc = step.meta.imgSrc;
+		new window.Image().src = isMobile && imgSrc.mobile ? imgSrc.mobile.src : imgSrc.desktop.src;
 	} );
 }
