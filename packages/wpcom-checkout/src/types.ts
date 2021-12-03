@@ -239,6 +239,7 @@ export type CheckoutPaymentMethodSlug =
  */
 export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_WPCOM'
+	| 'WPCOM_Billing_MoneyPress_Stored'
 	| 'WPCOM_Billing_Ebanx'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef'
 	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
