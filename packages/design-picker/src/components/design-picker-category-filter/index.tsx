@@ -10,6 +10,7 @@ interface Props {
 	onSelect: ( selectedSlug: string | null ) => void;
 	selectedCategory: string | null;
 	heading?: ReactNode;
+	footer?: ReactNode;
 }
 
 export function DesignPickerCategoryFilter( {
@@ -17,6 +18,7 @@ export function DesignPickerCategoryFilter( {
 	onSelect,
 	selectedCategory,
 	heading,
+	footer,
 }: Props ): ReactElement | null {
 	const instanceId = useInstanceId( DesignPickerCategoryFilter );
 	const { __ } = useI18n();
@@ -62,6 +64,7 @@ export function DesignPickerCategoryFilter( {
 					</MenuItem>
 				) ) }
 			</NavigableMenu>
+			{ footer }
 		</div>
 	);
 }

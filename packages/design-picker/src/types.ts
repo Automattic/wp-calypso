@@ -37,6 +37,9 @@ export interface Design {
 	 * `@automattic/design-picker` package)
 	 */
 	hide?: boolean;
+
+	// designs with a "featured" term in the theme_picks taxonomy
+	is_featured_picks?: boolean;
 }
 
 export interface DesignUrlOptions {
