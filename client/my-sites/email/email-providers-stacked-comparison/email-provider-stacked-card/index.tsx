@@ -14,7 +14,6 @@ const noop = () => {};
 
 const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) => {
 	const {
-		buttonLabel,
 		children,
 		description,
 		detailsExpanded,
@@ -23,7 +22,6 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		footerBadge,
 		formFields,
 		logo,
-		onButtonClick = noop,
 		onExpandedChange = noop,
 		priceBadge = null,
 		productName,
@@ -40,10 +38,8 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 	const toggleVisibility = ( event: React.MouseEvent ): void => {
 		event.preventDefault();
 
-		onExpandedChange( providerKey ?? '', ! detailsExpanded );
+		onExpandedChange( providerKey, ! detailsExpanded );
 	};
-
-	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;
 
 	const header = (
 		<div className="email-provider-stacked-card__header">
@@ -52,19 +48,6 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 				<p>{ description }</p>
 			</div>
 			<div className="email-provider-stacked-card__title-price-badge">{ priceBadge }</div>
-		</div>
-	);
-
-	return (
-		<PromoCard
-			className={ classnames( 'email-providers-stacked-comparison__provider-card', {
-				'is-expanded': detailsExpanded,
-				'is-forwarding': providerKey === 'forwarding',
-			} ) }
-			image={ logo }
-			titleComponent={ header }
-			icon={ '' }
-		>
 			<div className="email-provider-stacked-card__provider-card-main-details">
 				{ showExpandButton && (
 					<Button
@@ -72,11 +55,22 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 						onClick={ toggleVisibility }
 						className="email-provider-stacked-card__provider-expand-cta"
 					>
-						{ labelForExpandButton }
+						{ expandButtonLabel }
 					</Button>
 				) }
 			</div>
+		</div>
+	);
 
+	return (
+		<PromoCard
+			className={ classnames( 'email-providers-stacked-comparison__provider-card', {
+				'is-expanded': detailsExpanded,
+			} ) }
+			image={ logo }
+			titleComponent={ header }
+			icon={ '' }
+		>
 			<div className="email-provider-stacked-card__provider-price-and-button">
 				{ showFeaturesToggleButton && (
 					<EmailProviderFeaturesToggleButton
@@ -87,15 +81,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 			</div>
 
 			<div className="email-provider-stacked-card__provider-form-and-right-panel">
-				<div className="email-provider-stacked-card__provider-form">
-					{ formFields }
-
-					{ buttonLabel && (
-						<Button primary onClick={ onButtonClick }>
-							{ buttonLabel }
-						</Button>
-					) }
-				</div>
+				<div className="email-provider-stacked-card__provider-form">{ formFields }</div>
 				<div className="email-provider-stacked-card__provider-right-panel">
 					{ ( ! showFeaturesToggleButton || areFeaturesExpanded ) && (
 						<>

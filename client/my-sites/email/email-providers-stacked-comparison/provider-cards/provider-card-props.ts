@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { TermLength } from './utils';
 import type { Site } from 'calypso/my-sites/scan/types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -6,23 +7,18 @@ export interface ProviderCard {
 	additionalPriceInformation?: TranslateResult;
 	badge?: ReactElement;
 	billingPeriod?: TranslateResult;
-	buttonLabel?: TranslateResult;
-	children?: ReactElement;
-	description?: TranslateResult;
+	description: TranslateResult;
 	detailsExpanded?: boolean;
 	discount?: ReactElement | null;
-	expandButtonLabel?: TranslateResult;
-	features?: TranslateResult[];
-	footerBadge?: ReactElement;
-	formattedPrice?: TranslateResult;
+	footerBadge?: ReactElement | null;
+	expandButtonLabel: TranslateResult;
+	features: TranslateResult[];
 	formFields?: ReactElement;
-	isDomainEligibleForTitanFreeTrial?: boolean;
 	logo?: ReactElement | { path: string; className?: string };
 	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
-	onButtonClick?: ( event: React.MouseEvent ) => void;
 	priceBadge?: ReactElement | TranslateResult;
-	productName?: TranslateResult;
-	providerKey?: string;
+	productName: TranslateResult;
+	providerKey: string;
 	showExpandButton?: boolean;
 }
 
@@ -33,10 +29,12 @@ export type EmailProvidersStackedCardProps = {
 	selectedSite?: Site | null;
 	currencyCode?: string | null;
 	currentRoute?: string;
+	detailsExpanded: boolean;
 	domain?: any;
 	domainName?: string;
 	domainsWithForwards?: any[];
-	gSuiteProduct?: any;
+	gSuiteProductMonthly?: any;
+	gSuiteProductYearly?: any;
 	hasCartDomain?: boolean;
 	isGSuiteSupported?: boolean;
 	productsList?: string[];
@@ -44,17 +42,10 @@ export type EmailProvidersStackedCardProps = {
 	selectedDomainName: string;
 	shoppingCartManager?: any;
 	source: string;
-	termLength: TranslateResult;
-	titanMailProduct?: any;
-	recordTracksEventAddToCartClick?: (
-		comparisonContext: string,
-		validatedMailboxUuids: string[],
-		mailboxesAreValid: boolean,
-		provider: string,
-		source: string,
-		userCanAddEmail: boolean,
-		userCannotAddEmailReason: any
-	) => void;
+	termLength: TermLength;
+	titanMailMonthlyProduct?: any;
+	titanMailAnnuallyProduct?: any;
+	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
 };
 
 type ValueError = {

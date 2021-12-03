@@ -28,9 +28,12 @@ div.google-workspace-card__price-badge {
 .google-workspace-card__price-badge {
 	.promo-card__price {
 		.price__cost {
-			span.google-workspace-card__term {
+			.google-workspace-card__term, .google-workspace-card__mailbox {
 				font-size: 0.875rem;
 				color: var( --studio-gray-80 );
+			}
+			.google-workspace-card__sale {
+				color: var( --studio-green-50 );
 			}
 		}
 	}

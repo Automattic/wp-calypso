@@ -9,13 +9,13 @@ import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { BillingSelector } from 'calypso/my-sites/email/email-providers-stacked-comparison//billing-selector/billing-selector';
+import { BillingSelector } from 'calypso/my-sites/email/email-providers-stacked-comparison/billing-selector/billing-selector';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
+import { TermLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -24,9 +24,10 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { Site } from 'calypso/reader/list-manage/types';
+import { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
+import { recordTracksEvent } from "../../../lib/analytics/tracks";
 
 type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
@@ -41,48 +42,44 @@ type EmailProvidersStackedComparisonProps = {
 	productsList?: string[];
 	requestingSiteDomains?: boolean;
 	shoppingCartManager?: any;
-	selectedSite?: Site | null;
+	selectedSite?: SiteData | null;
 	selectedDomainName: string;
 	source: string;
 	titanMailMonthlyProduct?: any;
 	gSuiteAnnualProduct?: any;
 };
 
-const recordTracksEventAddToCartClick = (
-	comparisonContext: string,
-	validatedMailboxUuids: string[],
-	mailboxesAreValid: boolean,
-	provider: string,
-	source: string,
-	userCanAddEmail: boolean,
-	userCannotAddEmailReason: any
-) => {
-	recordTracksEvent( 'calypso_email_providers_add_click', {
-		context: comparisonContext,
-		mailbox_count: validatedMailboxUuids.length,
-		mailboxes_valid: mailboxesAreValid ? 1 : 0,
-		provider: provider,
-		source,
-		user_can_add_email: userCanAddEmail,
-		user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
-	} );
-};
-
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
 	props
 ) => {
 	const translate = useTranslate();
-	const [ billingPeriod, setBillingPeriod ] = useState( translate( 'monthly' ) );
+	const [ billingPeriod, setBillingPeriod ] = useState( TermLength.MONTHLY );
 	const { comparisonContext, isGSuiteSupported, selectedDomainName, selectedSite, source } = props;
-	const onTermTypeChange = ( termLength: string ) => {
-		if ( termLength === 'monthly' ) {
-			setBillingPeriod( translate( 'monthly' ) );
-			return;
+	const [ expanded, setExpanded ] = useState( {
+		titan: true,
+		google: false,
+	} );
+
+	const onExpandedStateChange = ( providerKey: string, isExpanded: boolean ) => {
+		const expandedEntries = Object.entries( expanded ).map( ( entry ) => {
+			const [ key, currentExpanded ] = entry;
+			if ( isExpanded ) {
+				return [ key, key === providerKey ];
+			}
+			return [ key, key === providerKey ? isExpanded : currentExpanded ];
+		} );
+
+		if ( isExpanded ) {
+			recordTracksEvent( 'calypso_email_providers_expand_section_click', {
+				provider: providerKey,
+			} );
 		}
-		setBillingPeriod( translate( 'annually' ) );
+
+		setExpanded( Object.fromEntries( expandedEntries ) );
 	};
+
 	return (
-		<Main wideLayout>
+		<Main className="email-providers-stacked-comparison__main" wideLayout>
 			<QueryProductsList />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
@@ -90,22 +87,24 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			<h1 className="email-providers-stacked-comparison__header wp-brand-font">
 				{ translate( 'Pick an email solution' ) }
 			</h1>
-			<BillingSelector onTermTypeChange={ onTermTypeChange } />
+			<BillingSelector onTermTypeChange={ setBillingPeriod } termLength={ billingPeriod } />
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
-				recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
+				detailsExpanded={ expanded.titan }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
 				termLength={ billingPeriod }
+				onExpandedChange={ onExpandedStateChange }
 			/>
 
 			{ isGSuiteSupported && (
 				<GoogleWorkspaceCard
 					comparisonContext={ comparisonContext }
-					recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
+					detailsExpanded={ expanded.google }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
 					termLength={ billingPeriod }
+					onExpandedChange={ onExpandedStateChange }
 				/>
 			) }
 		</Main>

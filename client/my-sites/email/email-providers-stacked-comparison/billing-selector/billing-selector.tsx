@@ -1,38 +1,36 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { TermLength } from '../provider-cards/utils';
 
 import './style.scss';
 
 interface BillingSelectorProps {
-	onTermTypeChange: ( term: string ) => void;
+	termLength: TermLength;
+	onTermTypeChange: ( term: TermLength ) => void;
 }
 
 export const BillingSelector: FunctionComponent< BillingSelectorProps > = ( props ) => {
-	const [ termLength, setTermLength ] = useState( 'monthly' );
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	const { onTermTypeChange = () => {} } = props;
+	const { onTermTypeChange = () => {}, termLength } = props;
 	const translate = useTranslate();
-	const termChange = ( termLength: string ) => {
-		return () => {
-			setTermLength( termLength );
-			onTermTypeChange( termLength );
-		};
+	const onTermClick = ( termLength: TermLength ) => {
+		return () => onTermTypeChange( termLength );
 	};
 
 	return (
 		<div className="billing-selector__wrapper">
 			<SegmentedControl compact className={ 'billing-selector__wrapper' } primary={ true }>
 				<SegmentedControl.Item
-					selected={ termLength === 'monthly' }
-					onClick={ termChange( 'monthly' ) }
+					selected={ termLength === TermLength.MONTHLY }
+					onClick={ onTermClick( TermLength.MONTHLY ) }
 				>
 					<span>{ translate( 'Pay monthly' ) }</span>
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
-					selected={ termLength === 'yearly' }
-					onClick={ termChange( 'yearly' ) }
+					selected={ termLength === TermLength.ANNUALLY }
+					onClick={ onTermClick( TermLength.ANNUALLY ) }
 				>
 					<span>{ translate( 'Pay annually' ) }</span>
 				</SegmentedControl.Item>

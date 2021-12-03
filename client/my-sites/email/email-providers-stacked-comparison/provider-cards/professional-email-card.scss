@@ -22,9 +22,12 @@
 .email-provider-stacked-card__title-price-badge {
 	.promo-card__price {
 		.price__cost {
-			.professional-email-card__term {
+			.professional-email-card__term, .professional-email-card__mailbox {
 				font-size: 0.875rem;
 				color: var( --studio-gray-80 );
+			}
+			.professional-email-card__sale {
+				color: var( --studio-green-50 );
 			}
 		}
 	}

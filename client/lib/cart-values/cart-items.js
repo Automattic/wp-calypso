@@ -42,7 +42,7 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from 'calypso/lib/gsuite/constants';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_ANNUALLY_SLUG, TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 
 /**
  * Retrieves all the items in the specified shopping cart.
@@ -506,6 +506,24 @@ export function titanMailMonthly( properties ) {
 	return {
 		...domainItem(
 			TITAN_MAIL_MONTHLY_SLUG,
+			properties.meta ?? properties.domain,
+			properties.source
+		),
+		quantity: properties.quantity,
+		extra: properties.extra,
+	};
+}
+
+/**
+ * Creates a new shopping cart item for Titan Mail Annually.
+ *
+ * @param {object} properties - list of properties
+ * @returns {import('@automattic/shopping-cart').RequestCartProduct} the new item
+ */
+export function titanMailAnnually( properties ) {
+	return {
+		...domainItem(
+			TITAN_MAIL_ANNUALLY_SLUG,
 			properties.meta ?? properties.domain,
 			properties.source
 		),

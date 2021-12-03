@@ -24,6 +24,10 @@ const EmailProviderStackedFeature: FunctionComponent< EmailProviderStackedFeatur
 	);
 };
 
+export interface EmailProviderStackedFeaturesProps {
+	features: TranslateResult[];
+}
+
 const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeaturesProps > = (
 	props
 ) => {
@@ -45,9 +49,5 @@ const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeatu
 		</>
 	);
 };
-
-export interface EmailProviderStackedFeaturesProps {
-	features: TranslateResult[];
-}
 
 export default EmailProviderStackedFeatures;
