@@ -244,7 +244,7 @@ __metadata:
     config: ^3.3.6
     mailosaur: ^7.3.1
     node-fetch: ^2.6.1
-    playwright: ^1.17
+    playwright: ~1.16.3
     totp-generator: ^0.0.12
     typescript: ^4.4.4
   languageName: unknown
@@ -9488,7 +9488,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.17
+    playwright: ~1.16.3
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -28380,9 +28380,9 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:=1.17.1":
-  version: 1.17.1
-  resolution: "playwright-core@npm:1.17.1"
+"playwright-core@npm:=1.16.3":
+  version: 1.16.3
+  resolution: "playwright-core@npm:1.16.3"
   dependencies:
     commander: ^8.2.0
     debug: ^4.1.1
@@ -28402,18 +28402,18 @@ fsevents@~2.1.2:
     yazl: ^2.5.1
   bin:
     playwright: cli.js
-  checksum: 9356bf82a936c7fbbce3d880f7d53a9f48fd5667f13a4cf049c5d50530427e4fa67b0cea7bc8d273704c2156314ae3be820571c36265768f3d6eb2e315aa6719
+  checksum: 9ae0cc2714d24fc464ab29cd9c9f4ed2b6d6cf0d88ed1034d40763501f4a9c5094bdff2008c1eb23123671eb61590b0c71af1971714d3b0b7541e42d3ba0d519
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.17":
-  version: 1.17.1
-  resolution: "playwright@npm:1.17.1"
+"playwright@npm:~1.16.3":
+  version: 1.16.3
+  resolution: "playwright@npm:1.16.3"
   dependencies:
-    playwright-core: =1.17.1
+    playwright-core: =1.16.3
   bin:
     playwright: cli.js
-  checksum: 9f616070e24b0e0af171f32459fa6148b4daf0ebb5654f67c397a0474730a4384867d7e4d22a1189b3ab4206468c8006046ade7a9e58eb822a6852a9a3037d03
+  checksum: dff5dd835a6d0a61d15b03dd2626971274c839babbc6533c6d0716129ec470fc3b95f3996d4e6f4a794c55e3380c20c97049a13d4fe8b06cc6a32fa418e4c0e2
   languageName: node
   linkType: hard
 
@@ -38499,7 +38499,7 @@ testarmada-magellan@11.0.10:
     mocha-junit-reporter: ^2.0.0
     mocha-multi-reporters: ^1.5.1
     mocha-teamcity-reporter: ^3.0.0
-    playwright: ^1.17
+    playwright: ~1.16.3
     png-itxt: ^1.3.0
     postcss: ^8.3.11
     push-receiver: ^2.0.0
