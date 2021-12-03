@@ -76,19 +76,25 @@ cd wp-calypso
 yarn install
 ```
 
-9. naviagate to e2e directory.
+9. [decrypt](docs/test_environment.md) the secrets file.
+
+```
+npm run decryptconfig
+```
+
+10. navigate to e2e directory.
 
 ```
 cd test/e2e
 ```
 
-10. transpile the `@automattic/calypso-e2e` package.
+11. transpile the `@automattic/calypso-e2e` package.
 
 ```
 yarn workspace @automattic/calypso-e2e build
 ```
 
-11. run test.
+12. run test.
 
 ```
 yarn jest specs/specs-playwright/<spec_name>
