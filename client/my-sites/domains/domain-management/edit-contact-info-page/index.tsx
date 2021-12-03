@@ -162,7 +162,7 @@ const EditContactInfoPage = ( {
 				brandFont
 				headerText={ translate( 'Edit contact information' ) }
 				subHeaderText={ translate(
-					'Domain owners are required to provide correct contact information'
+					'Domain owners are required to provide correct contact information.'
 				) }
 				align="left"
 			/>
