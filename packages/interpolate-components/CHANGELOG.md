@@ -30,6 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 under `interpolate-components`.
 
 [unreleased]: https://github.com/Automattic/wp-calypso/tree/HEAD/packages/interpolate-components
-[1.2.0]: https://github.com/Automattic/wp-calypso/tree/%40automattic/interpolate-components%401.2.0
-[1.1.2]: https://github.com/Automattic/wp-calypso/tree/%40automattic/interpolate-components%401.1.2
+[1.2.0]: https://github.com/Automattic/wp-calypso/tree/%40automattic/interpolate-components%401.2.0/packages/interpolate-components
+[1.1.2]: https://github.com/Automattic/wp-calypso/tree/%40automattic/interpolate-components%401.1.2/packages/interpolate-components
 [older releases]: https://github.com/Automattic/interpolate-components
