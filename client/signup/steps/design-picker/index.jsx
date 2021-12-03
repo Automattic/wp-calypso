@@ -1,4 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, {
+	FeaturedPicksButtons,
 	isBlankCanvasDesign,
 	getDesignUrl,
 	useCategorization,
@@ -30,7 +32,12 @@ import './style.scss';
 const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
 
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned, queryParams } = props;
+	const { flowName, stepName, isReskinned, queryParams, showDesignPickerCategories } = props;
+
+	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
+	const useFeaturedPicksButtons =
+		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -74,30 +81,37 @@ export default function DesignPickerStep( props ) {
 
 	const userLoggedIn = useSelector( isUserLoggedIn );
 
-	const designs = useMemo( () => {
+	const { designs, featuredPicksDesigns } = useMemo( () => {
 		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		const allThemes = themesToBeTransformed.map( ( { id, name, taxonomies } ) => ( {
-			categories: taxonomies?.theme_subject ?? [],
-			// Blank Canvas uses the theme_picks taxonomy with a "featured" term in order to
-			// appear prominently in theme galleries.
-			showFirst: !! taxonomies?.theme_picks?.find( ( { slug } ) => slug === 'featured' ),
-			features: [],
-			is_premium: false,
-			slug: id,
-			template: id,
-			theme: id,
-			title: name,
-			...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-		} ) );
+		const allThemes = themesToBeTransformed.map( ( { id, name, taxonomies } ) => {
+			// Designs use a "featured" term in the theme_picks taxonomy. For example: Blank Canvas
+			const isFeaturedPicks = !! taxonomies?.theme_picks?.find(
+				( { slug } ) => slug === 'featured'
+			);
 
-		if ( allThemes.length === 0 ) {
-			return [];
-		}
+			return {
+				categories: taxonomies?.theme_subject ?? [],
+				// Designs in order to appear prominently in theme galleries.
+				showFirst: isFeaturedPicks,
+				features: [],
+				is_premium: false,
+				// Designs in order to appear at the below of the theme categories.
+				is_featured_picks: isFeaturedPicks,
+				slug: id,
+				template: id,
+				theme: id,
+				title: name,
+				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+			};
+		} );
 
-		return [ allThemes[ 0 ], ...shuffle( allThemes.slice( 1 ) ) ];
+		return {
+			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
+			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
+		};
 	}, [ themesToBeTransformed ] );
 
 	// Update the selected design when the section changes
@@ -156,16 +170,16 @@ export default function DesignPickerStep( props ) {
 	function renderDesignPicker() {
 		return (
 			<DesignPicker
-				designs={ designs }
-				theme={ props.isReskinned ? 'light' : 'dark' }
+				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+				theme={ isReskinned ? 'light' : 'dark' }
 				locale={ translate.localeSlug }
 				onSelect={ pickDesign }
 				onPreview={ previewDesign }
 				className={ classnames( {
-					'design-picker-step__has-categories': props.showDesignPickerCategories,
+					'design-picker-step__has-categories': showDesignPickerCategories,
 				} ) }
 				highResThumbnails
-				categorization={ props.showDesignPickerCategories ? categorization : undefined }
+				categorization={ showDesignPickerCategories ? categorization : undefined }
 				categoriesHeading={
 					<FormattedHeader
 						id={ 'step-header' }
@@ -173,6 +187,11 @@ export default function DesignPickerStep( props ) {
 						subHeaderText={ subHeaderText() }
 						align="left"
 					/>
+				}
+				categoriesFooter={
+					useFeaturedPicksButtons && (
+						<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
+					)
 				}
 			/>
 		);
@@ -210,8 +229,6 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function headerText() {
-		const { showDesignPickerCategories } = props;
-
 		if ( showDesignPickerCategories ) {
 			return translate( 'Themes' );
 		}
@@ -220,8 +237,6 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function subHeaderText() {
-		const { showDesignPickerCategories } = props;
-
 		if ( ! showDesignPickerCategories ) {
 			return translate(
 				'Pick your favorite homepage layout. You can customize or change it later.'
@@ -282,7 +297,7 @@ export default function DesignPickerStep( props ) {
 		);
 	}
 
-	const headerProps = props.showDesignPickerCategories
+	const headerProps = showDesignPickerCategories
 		? { hideFormattedHeader: true }
 		: {
 				fallbackHeaderText: headerText(),
@@ -295,7 +310,7 @@ export default function DesignPickerStep( props ) {
 		<StepWrapper
 			{ ...props }
 			className={ classnames( {
-				'design-picker__has-categories': props.showDesignPickerCategories,
+				'design-picker__has-categories': showDesignPickerCategories,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }
