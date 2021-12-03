@@ -20312,7 +20312,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"husky@npm:^7.0.4":
+"husky@npm:^7.0.0":
   version: 7.0.4
   resolution: "husky@npm:7.0.4"
   bin:
@@ -38311,7 +38311,7 @@ testarmada-magellan@11.0.10:
     globby: ^10.0.1
     gzip-size: ^6.0.0
     html-loader: ^0.5.5
-    husky: ^7.0.4
+    husky: ^7.0.0
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"
     ignore-loader: ^0.1.2
