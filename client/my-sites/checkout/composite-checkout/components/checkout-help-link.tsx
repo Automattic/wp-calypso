@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import { HappychatButton as HappychatButtonUnstyled } from 'calypso/components/happychat/button';
+import HappychatButtonUnstyled from 'calypso/components/happychat/button';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
