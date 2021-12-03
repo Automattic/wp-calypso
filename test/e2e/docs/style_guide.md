@@ -232,7 +232,7 @@ const selectors = {
 ### Avoid modal verbs
 
 Avoid the use of modal verbs such as `can`, `should`, `could` or `must`.
-Instead state the action contained in the step using plain terms.
+Instead state the action(s) the step is expected to perform.
 
 **Avoid**:
 
@@ -252,7 +252,7 @@ it( 'Start new post' );
 
 ### Prefer smaller steps
 
-Prefer more of smaller steps.
+Use more of smaller steps over monolithic step.
 
 **Avoid**:
 
@@ -275,6 +275,44 @@ it( 'Search for ${string}', async function () {} );
 ---
 
 ## Focused function
+
+Each function should focus on one or two purposes only.
+Avoid overloading the function to perform increasing number of tasks.
+
+**Avoid**
+
+```typescript
+async function publish(
+	tags = '',
+	saveFirst = false,
+	visitAfter = false,
+	setDate = ''
+): Promise< void > {
+	// This function is responsible for too many tasks.
+	// The first clue is the long list of parameters.
+	// A publishing function should publish and only publish, and do that well.
+}
+```
+
+**Instead**
+
+```typescript
+async function publish( { visitAfter }: { visitAfter: boolean } = {} ): Promise< void > {
+	// Publish post, and possibly visit the post after publishing.
+}
+
+async function saveDraft(): Promise< void > {
+	// Saves post as draft first.
+}
+
+async function applyTags( tags: string[] ): Promise< void > {
+	// Applies tags.
+}
+
+async function setPublishDate( date: string ): Promise< void > {
+	// Sets the publish date.
+}
+```
 
 ## Destructure parameters
 
