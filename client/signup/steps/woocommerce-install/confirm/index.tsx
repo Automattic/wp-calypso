@@ -147,7 +147,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		);
 	}
 
-	if ( ! siteId || ! isDataReady ) {
+	if ( ! siteId || ! isDataReady || isAtomicSite ) {
 		return (
 			<div className="confirm__info-section">
 				<LoadingEllipsis />
