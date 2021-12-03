@@ -16,6 +16,7 @@ open class PluginBaseBuild : Template({
 	val workingDir = "apps/$pluginSlug"
 	val archiveDir = "%archive_dir%"
 	val releaseTag = "%release_tag%"
+	val packageName = "%package_name%"
 
 	artifactRules = "$pluginSlug.zip"
 	buildNumberPattern = "%build.prefix%.%build.counter%"
@@ -81,12 +82,11 @@ open class PluginBaseBuild : Template({
 				# Update composer
 				composer install
 
-				# Prepare required packages in the monorepo
-				yarn workspaces focus @automattic/calypso-color-schemes
-				yarn workspace @automattic/calypso-color-schemes prepare
+				# Focus on the app workspace. This will also install all dependant workspaces
+				yarn workspaces focus $packageName
 
-				cd $workingDir
-				yarn workspaces focus
+				# Run the script 'prepare' in all dependant workspaces
+				yarn workspaces foreach -R --from="$packageName" run prepare
 			"""
 		}
 		bashNodeScript {
