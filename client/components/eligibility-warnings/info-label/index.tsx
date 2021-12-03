@@ -13,6 +13,11 @@ const Banner = styled.div`
 
 const Content = styled.div`
 	flex-grow: 2;
+	@media ( max-width: 660px ) {
+		max-width: 80%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 `;
 
 const Label = styled.div`
