@@ -55,24 +55,24 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 	} );
 
 	afterAll( async () => {
-		console.log("After all");
+		console.log( 'After all' );
 		if ( ! browser ) {
 			throw new Error( 'No browser instance found.' );
 		}
 
 		// Take screenshot for failed test.
-		console.log("__STEP_FAILED__", __STEP_FAILED__);
-		if ( __STEP_FAILED__ ) {
-			const fileName = path.join(
-				artifactPath,
-				'screenshots',
-				`${ getFileName( __FAILED_STEP_NAME__ ) }.png`
-			);
-			await mkdir( path.dirname( fileName ), { recursive: true } );
-			console.log(2, fileName)
-			await page.screenshot( { path: fileName } );
-			console.log(3)
-		}
+		// console.log("__STEP_FAILED__", __STEP_FAILED__);
+		// if ( __STEP_FAILED__ ) {
+		// 	const fileName = path.join(
+		// 		artifactPath,
+		// 		'screenshots',
+		// 		`${ getFileName( __FAILED_STEP_NAME__ ) }.png`
+		// 	);
+		// 	await mkdir( path.dirname( fileName ), { recursive: true } );
+		// 	console.log(2, fileName)
+		// 	await page.screenshot( { path: fileName } );
+		// 	console.log(3)
+		// }
 		// Close the page. This needs to be called before trying to access
 		// the video recording.
 		await page.close();
