@@ -228,9 +228,9 @@ export type CheckoutPaymentMethodSlug =
 	| 'full-credits'
 	| 'stripe-three-d-secure'
 	| 'wechat'
-	| `existingCard-${ string }`
-	| 'apple-pay'
-	| 'google-pay';
+	| `existingCard-${ string }` // a synonym for 'card'
+	| 'apple-pay' // a synonym for 'web-pay'
+	| 'google-pay'; // a synonym for 'web-pay'
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
