@@ -1,0 +1,31 @@
+.plugin-details-CTA__price {
+	font-family: $brand-serif;
+	font-size: $font-title-large;
+	color: var( --studio-gray-100 );
+	margin: 16px 0;
+}
+
+.plugin-details-CTA__install {
+	margin-bottom: 20px;
+
+	.plugin-details-CTA__install-button {
+		width: 100%;
+		padding: 12px 16px;
+		background-color: var( --color-accent-50 );
+		color: var( --studio-white );
+
+		&:focus,
+		&:hover {
+			background-color: var( --color-accent-60 );
+		}
+	}
+}
+
+.plugin-details-CTA__t-and-c {
+    font-size: $font-body-extra-small;
+    color: var( --studio-gray-50 );
+
+    @media screen and ( max-width: 1040px ) {
+        padding-bottom: 40px;
+    }
+}
