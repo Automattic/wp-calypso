@@ -1,4 +1,39 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .courses {
+	&:before {
+		content: '';
+		position: fixed;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		background-color: #101517;
+	}
+
+	&__header {
+		position: absolute;
+		top: -60px;
+		left: 0;
+		right: 0;
+		height: 60px;
+		display: flex;
+		align-items: center;
+		padding: 0 20px;
+		background-color: #151b1e;
+
+		.courses__header-logo {
+			margin-top: 4px;
+			fill: #fff;
+			stroke: #fff;
+		}
+
+		@include break-small {
+			padding: 0 24px;
+		}
+	}
+
 	.action-buttons {
 		border: 0;
 		box-shadow: 0 -1px 0 #2c3234;
@@ -6,18 +41,20 @@
 
 		.button.navigation-link.is-borderless {
 			color: #fff !important;
+
+			svg {
+				fill: #fff !important;
+			}
 		}
 
-		.button.navigation-link.is-borderless svg {
-			fill: #fff !important;
+		@include break-small {
+			box-shadow: none;
 		}
 	}
 
 	.videos-ui {
-		position: fixed;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
+		position: relative;
+		width: 100%;
+		margin-top: 12px;
 	}
 }
