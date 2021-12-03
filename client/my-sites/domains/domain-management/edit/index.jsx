@@ -37,8 +37,8 @@ class Edit extends Component {
 		}
 
 		return (
-			<Main>
-				{ ! config.isEnabled ? (
+			<Main wideLayout={ config.isEnabled( 'domains/settings-page-redesign' ) }>
+				{ ! config.isEnabled( 'domains/settings-page-redesign' ) ? (
 					<Header onClick={ this.goToDomainManagement }>
 						{ this.props.translate( '%(domainType)s Settings', {
 							args: {
