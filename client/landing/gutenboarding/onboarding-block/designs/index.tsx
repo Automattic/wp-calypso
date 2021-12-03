@@ -37,8 +37,10 @@ const sortBlogToTop = ( a: Category, b: Category ) => {
 const Header: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
-	const isDesignPickerCategoriesEnabled = isEnabled( 'signup/design-picker-categories' );
 	const isAnchorFmSignup = useIsAnchorFm();
+	const isDesignPickerCategoriesEnabled =
+		isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
+
 	const { goBack } = useStepNavigation();
 	const title = isDesignPickerCategoriesEnabled ? __( 'Themes' ) : __( 'Choose a design' );
 	let subTitle = isAnchorFmSignup
@@ -86,7 +88,11 @@ const Designs: React.FunctionComponent = () => {
 
 	const selectedDesign = getSelectedDesign();
 	const isFse = isEnrollingInFseBeta();
-	const isDesignPickerCategoriesEnabled = isEnabled( 'signup/design-picker-categories' );
+
+	// As the amount of the anchorfm related designs is little, we don't need to enable categories filter
+	const isDesignPickerCategoriesEnabled =
+		isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
+
 	const useFeaturedPicksButtons =
 		isDesignPickerCategoriesEnabled &&
 		isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
