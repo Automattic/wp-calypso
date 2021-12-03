@@ -79,4 +79,9 @@ body.is-section-signup .is-woocommerce-install {
 
 .confirm__info-section {
 	flex: 1;
+
+	.wpcom__loading-ellipsis {
+		display: block;
+		margin: 0 auto;
+	}
 }
