@@ -46,6 +46,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 
 		it( 'Start new post', async function () {
+			throw new Error( 'FAKE' );
 			const newPostFlow = new NewPostFlow( page );
 			await newPostFlow.newPostFromNavbar();
 		} );
