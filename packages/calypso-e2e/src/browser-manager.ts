@@ -84,7 +84,7 @@ export async function startBrowser( browserType: BrowserType ): Promise< Browser
 	}
 
 	browser = await browserType.launch( {
-		channel: 'chrome',
+		// channel: 'chrome',
 		headless: getHeadless(),
 		args: [ '--window-position=0,0' ],
 	} );
