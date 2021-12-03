@@ -65,15 +65,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		hasBlockers,
 		isDataReady,
 		warnings,
-		isReadyForTransfer,
+		isAtomicSite,
 	} = useWooCommerceOnPlansEligibility( siteId );
-
-	// Skip to transfer step if the site is ready for transfer.
-	useEffect( () => {
-		if ( isReadyForTransfer ) {
-			goToStep( 'transfer' );
-		}
-	}, [ goToStep, isReadyForTransfer ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
@@ -94,7 +87,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	}
 
 	function getWarningsOrHoldsSection() {
-		if ( hasBlockers ) {
+		if ( hasBlockers || isAtomicSite ) {
 			return (
 				<WarningsOrHoldsSection>
 					<WarningCard
@@ -129,7 +122,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					<ActionSection>
 						<SupportLink />
 						<NextButton
-							disabled={ hasBlockers || ! isDataReady }
+							disabled={ hasBlockers || ! isDataReady || isAtomicSite }
 							onClick={ () => {
 								if ( siteUpgrading.required ) {
 									return ( window.location.href = siteUpgrading.checkoutUrl );
