@@ -86,15 +86,21 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		isDataReady,
 		warnings,
 		isAtomicSite,
+		isReadyForTransfer,
 	} = useWooCommerceOnPlansEligibility( siteId );
 
 	useEffect( () => {
 		if ( ! isAtomicSite ) {
+			// Automatically start the transfer process when it's ready.
+			if ( isReadyForTransfer ) {
+				return goToStep( 'transfer' );
+			}
+
 			return;
 		}
 
 		page.redirect( `/woocommerce-installation/${ wpcomDomain }` );
-	}, [ isAtomicSite, wpcomDomain ] );
+	}, [ goToStep, isAtomicSite, isReadyForTransfer, wpcomDomain ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
