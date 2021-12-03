@@ -163,21 +163,11 @@ function PluginDetails( props ) {
 
 			<div className="plugin-details__page">
 				<div className="plugin-details__layout plugin-details__top-section">
-					<div
-						className={ classNames(
-							'plugin-details__layout-col',
-							'plugin-details__layout-col-left'
-						) }
-					>
+					<div className="plugin-details__layout-col-left">
 						<PluginDetailsHeader plugin={ fullPlugin } />
 					</div>
 
-					<div
-						className={ classNames(
-							'plugin-details__layout-col',
-							'plugin-details__layout-col-right'
-						) }
-					>
+					<div className="plugin-details__layout-col-right">
 						<PluginDetailsCTA
 							pluginSlug={ props.pluginSlug }
 							siteIds={ siteIds }
@@ -208,7 +198,7 @@ function PluginDetails( props ) {
 				/>
 
 				<div className="plugin-details__layout plugin-details__body">
-					<div className="plugin-details__layout-col plugin-details__layout-col-left">
+					<div className="plugin-details__layout-col-left">
 						{ fullPlugin.wporg ? (
 							<PluginSections
 								className="plugin-details__plugins-sections"
@@ -221,7 +211,7 @@ function PluginDetails( props ) {
 							<PluginSectionsCustom plugin={ fullPlugin } />
 						) }
 					</div>
-					<div className="plugin-details__layout-col plugin-details__layout-col-right">
+					<div className="plugin-details__layout-col-right">
 						<PluginDetailsSidebar plugin={ fullPlugin } />
 					</div>
 				</div>
@@ -338,7 +328,7 @@ function PluginPlaceholder() {
 		<MainComponent wideLayout>
 			<div className="plugin-details__page">
 				<div className="plugin-details__layout plugin-details__top-section is-placeholder">
-					<div className="plugin-details__layout-col plugin-details__layout-col-left">
+					<div className="plugin-details__layout-col-left">
 						<div className="plugin-details__tags">...</div>
 						<div className="plugin-details__header">
 							<div className="plugin-details__name">...</div>
@@ -346,7 +336,7 @@ function PluginPlaceholder() {
 							<div className="plugin-details__additional-info">...</div>
 						</div>
 					</div>
-					<div className="plugin-details__layout-col plugin-details__layout-col-right">
+					<div className="plugin-details__layout-col-right">
 						<div className="plugin-details__header">
 							<div className="plugin-details__price">...</div>
 							<div className="plugin-details__install">...</div>
