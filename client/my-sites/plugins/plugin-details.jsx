@@ -31,11 +31,7 @@ import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
-import {
-	pluginInstallationStateChange,
-	productToBeInstalled,
-} from 'calypso/state/marketplace/purchase-flow/actions';
-import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -442,13 +438,6 @@ function onClickInstallPlugin( { dispatch, selectedSite, slug, upgradeAndInstall
 	);
 
 	dispatch( productToBeInstalled( null, slug, selectedSite.slug ) );
-
-	dispatch(
-		pluginInstallationStateChange(
-			MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS,
-			'preauthorize plugin installation URL'
-		)
-	);
 
 	const installPluginURL = `/marketplace/${ slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {

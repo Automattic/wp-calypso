@@ -45,6 +45,7 @@ const MarketplacePluginInstall = ( {
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
 	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
+	const [ noDirectAccessError, setNoDirectAccessError ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -78,12 +79,12 @@ const MarketplacePluginInstall = ( {
 		);
 		if ( isUploadFlow ) {
 			return (
-				pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS &&
+				pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
 				primaryDomain === selectedSiteSlug
 			);
 		}
 		return (
-			pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS &&
+			pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
 			productSlugInstalled === productSlug &&
 			primaryDomain === selectedSiteSlug
 		);
@@ -115,14 +116,22 @@ const MarketplacePluginInstall = ( {
 	// if not, check again in 2s and show an error message
 	useEffect( () => {
 		if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
-			waitFor( 2 ).then(
-				() =>
-					! supportsAtomicUpgrade.current &&
-					! isJetpackSelfHosted &&
-					setNonInstallablePlanError( true )
-			);
+			waitFor( 2 ).then( () => {
+				if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
+					setNonInstallablePlanError( true );
+				}
+			} );
 		}
 	} );
+
+	// Check that the site URL and the plugin slug are the same which were selected on the plugin page
+	useEffect( () => {
+		if ( ! marketplacePluginInstallationInProgress ) {
+			waitFor( 2 ).then( () => {
+				! marketplacePluginInstallationInProgress && setNoDirectAccessError( true );
+			} );
+		}
+	}, [ marketplacePluginInstallationInProgress ] );
 
 	// Upload flow startup
 	useEffect( () => {
@@ -218,7 +227,7 @@ const MarketplacePluginInstall = ( {
 	];
 
 	const renderError = () => {
-		if ( isUploadFlow && ! marketplacePluginInstallationInProgress ) {
+		if ( isUploadFlow && noDirectAccessError ) {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
@@ -230,7 +239,7 @@ const MarketplacePluginInstall = ( {
 				/>
 			);
 		}
-		if ( ! marketplacePluginInstallationInProgress ) {
+		if ( noDirectAccessError ) {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
