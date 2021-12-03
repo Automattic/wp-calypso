@@ -228,7 +228,7 @@ export type CheckoutPaymentMethodSlug =
 	| 'full-credits'
 	| 'stripe-three-d-secure'
 	| 'wechat'
-	| `existingCard-${ string }`
+	| `existingCard${ string }`
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay'; // a synonym for 'web-pay'
 
