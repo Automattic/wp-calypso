@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { debounce, get } from 'lodash';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -30,11 +30,14 @@ class EditorMediaModalDetailFields extends Component {
 		onUpdate: noop,
 	};
 
-	constructor() {
-		super( ...arguments );
+	constructor( props ) {
+		super( props );
 
 		// Save changes to server after 1 second delay
 		this.delayedSaveChange = debounce( this.saveChange, 1000 );
+		this.state = {
+			modifiedChanges: null,
+		};
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -76,7 +79,7 @@ class EditorMediaModalDetailFields extends Component {
 	updateChange( saveImmediately = false ) {
 		const siteId = this.props.site?.ID;
 		const itemId = this.props.item?.ID;
-		const modifiedChanges = this.state?.modifiedChanges;
+		const modifiedChanges = this.state.modifiedChanges;
 		const hasChanges = siteId && itemId && modifiedChanges;
 
 		if ( ! hasChanges ) {
@@ -99,13 +102,12 @@ class EditorMediaModalDetailFields extends Component {
 	}
 
 	setFieldByName = ( name, value ) => {
-		const modifiedChanges = Object.assign(
-			{ ID: this.props.item.ID },
-			get( this.state, 'modifiedChanges', {} ),
-			{ [ name ]: value }
+		this.setState(
+			( state ) => ( {
+				modifiedChanges: { ...state.modifiedChanges, [ name ]: value },
+			} ),
+			this.updateChange
 		);
-
-		this.setState( { modifiedChanges }, this.updateChange );
 	};
 
 	setFieldValue = ( { target } ) => {
@@ -123,14 +125,7 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	getItemValue( attribute ) {
-		const modifiedValue = get( this.state, [ 'modifiedChanges', attribute ], null );
-		if ( modifiedValue !== null ) {
-			return modifiedValue;
-		}
-
-		if ( this.props.item ) {
-			return this.props.item[ attribute ];
-		}
+		return this.state.modifiedChanges?.[ attribute ] ?? this.props.item?.[ attribute ];
 	}
 
 	scrollToShowVisibleDropdown = ( event ) => {
