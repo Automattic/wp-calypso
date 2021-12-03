@@ -1,0 +1,25 @@
+.category-filter {
+	display: flex;
+
+	margin: 1rem 0;
+
+	list-style-type: none;
+
+	font-weight: 700;
+
+	> li {
+		margin: 1rem;
+	}
+}
+
+.category-filter__link {
+	&:any-link {
+		color: var( --color-text );
+
+		text-decoration: none;
+	}
+
+	&.is-selected {
+		text-decoration: underline;
+	}
+}
