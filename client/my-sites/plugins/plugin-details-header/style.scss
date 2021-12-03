@@ -19,6 +19,8 @@ $plugin-details-header-padding: 100px;
 
     .plugin-details-header__info {
         width: 25%;
+        box-sizing: border-box;
+        padding: 0 5px;
 
         @media screen and ( max-width: 1040px ) {
             width: 50%;
