@@ -14,6 +14,7 @@ import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 const TRANSFERRING_NOT_BLOCKERS = [
@@ -29,6 +30,7 @@ type EligibilityHook = {
 	stagingDomain: string | null;
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
 	transferringBlockers: string[];
+	isDataReady: boolean;
 	hasBlockers: boolean;
 	siteUpgrading: {
 		required: boolean;
@@ -38,6 +40,7 @@ type EligibilityHook = {
 		description: string;
 	};
 	isReadyForTransfer: boolean;
+	isAtomicSite: boolean;
 };
 
 export default function useEligibility( siteId: number ): EligibilityHook {
@@ -151,8 +154,10 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		transferringBlockers: transferringBlockers || [],
 		hasBlockers,
 		siteUpgrading,
+		isDataReady: transferringDataIsAvailable,
 		isReadyForTransfer: transferringDataIsAvailable
 			? ! hasBlockers && ! ( eligibilityWarnings && eligibilityWarnings.length )
 			: false,
+		isAtomicSite: !! useSelector( ( state ) => isAtomicSite( state, siteId ) ),
 	};
 }

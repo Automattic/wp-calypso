@@ -3,11 +3,13 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
 import { ReactElement, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
 import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -62,17 +64,18 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		wpcomSubdomainWarning,
 		siteUpgrading,
 		hasBlockers,
-
+		isDataReady,
 		warnings,
-		isReadyForTransfer,
+		isAtomicSite,
 	} = useWooCommerceOnPlansEligibility( siteId );
 
-	// Skip to transfer step if the site is ready for transfer.
 	useEffect( () => {
-		if ( isReadyForTransfer ) {
-			goToStep( 'transfer' );
+		if ( ! isAtomicSite ) {
+			return;
 		}
-	}, [ goToStep, isReadyForTransfer ] );
+
+		page.redirect( `/woocommerce-installation/${ wpcomDomain }` );
+	}, [ isAtomicSite, wpcomDomain ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
@@ -105,7 +108,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			);
 		}
 
-		if ( warnings.length ) {
+		if ( warnings.length || isAtomicSite ) {
 			return (
 				<WarningsOrHoldsSection>
 					<Divider />
@@ -118,10 +121,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	}
 
 	function getContent() {
-		if ( ! siteId ) {
-			return null;
-		}
-
 		return (
 			<>
 				<div className="confirm__info-section" />
@@ -132,7 +131,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					<ActionSection>
 						<SupportLink />
 						<NextButton
-							disabled={ hasBlockers }
+							disabled={ hasBlockers || ! isDataReady || isAtomicSite }
 							onClick={ () => {
 								if ( siteUpgrading.required ) {
 									return ( window.location.href = siteUpgrading.checkoutUrl );
@@ -145,6 +144,14 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					</ActionSection>
 				</div>
 			</>
+		);
+	}
+
+	if ( ! siteId || ! isDataReady || isAtomicSite ) {
+		return (
+			<div className="confirm__info-section">
+				<LoadingEllipsis />
+			</div>
 		);
 	}
 
