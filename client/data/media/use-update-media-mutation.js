@@ -6,7 +6,7 @@ export const useUpdateMediaMutation = ( queryOptions = {} ) => {
 	const mutation = useMutation(
 		( { siteId, mediaId, updates } ) =>
 			wp.req.post( `/sites/${ siteId }/media/${ mediaId }`, updates ),
-		{ ...queryOptions }
+		queryOptions
 	);
 
 	const { mutate } = mutation;
