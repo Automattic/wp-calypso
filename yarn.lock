@@ -207,6 +207,8 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
+    "@types/cookie": ^0.4.1
+    "@types/node": ^16.11.10
     cookie: ^0.4.0
     tslib: ^2.3.0
     typescript: ^4.4.4
