@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
 import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -63,7 +62,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		wpcomSubdomainWarning,
 		siteUpgrading,
 		hasBlockers,
-		isFetching,
+
 		warnings,
 		isReadyForTransfer,
 	} = useWooCommerceOnPlansEligibility( siteId );
@@ -125,7 +124,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 		return (
 			<>
-				<div className="confirm__info-section">{ isFetching && <LoadingEllipsis /> }</div>
 				<div className="confirm__instructions-container">
 					{ getWPComSubdomainWarningContent() }
 					{ getCheckoutContent() }
