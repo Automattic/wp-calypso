@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
@@ -13,6 +14,7 @@ import { getWpcomDomain } from 'calypso/lib/domains/get-wpcom-domain';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import MaintenanceCard from 'calypso/my-sites/domains/domain-management/components/domain/maintenance-card';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import DomainManagementHeader from 'calypso/my-sites/domains/domain-management/components/header/domain-management-header';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -36,13 +38,17 @@ class Edit extends Component {
 
 		return (
 			<Main>
-				<Header onClick={ this.goToDomainManagement }>
-					{ this.props.translate( '%(domainType)s Settings', {
-						args: {
-							domainType: this.getDomainTypeText( domain ),
-						},
-					} ) }
-				</Header>
+				{ ! config.isEnabled ? (
+					<Header onClick={ this.goToDomainManagement }>
+						{ this.props.translate( '%(domainType)s Settings', {
+							args: {
+								domainType: this.getDomainTypeText( domain ),
+							},
+						} ) }
+					</Header>
+				) : (
+					<DomainManagementHeader { ...this.props }></DomainManagementHeader>
+				) }
 				{ this.renderDetails( domain, Details ) }
 			</Main>
 		);
