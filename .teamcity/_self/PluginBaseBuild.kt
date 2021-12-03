@@ -61,6 +61,7 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
+				set -x
 				# Merge the trunk branch first. This way, our builds and tests
 				# include the latest merged version of the plugin being built.
 				# Otherwise, we can get into a situation where the current plugin
@@ -86,7 +87,7 @@ open class PluginBaseBuild : Template({
 				yarn workspaces focus $packageName
 
 				# Run the script 'prepare' in all dependant workspaces
-				yarn workspaces foreach -R --from="$packageName" run prepare
+				yarn workspaces foreach --recursive --verbose --from="$packageName" --parallel run prepare
 			"""
 		}
 		bashNodeScript {
