@@ -523,7 +523,7 @@
 			"features": [ "anchorfm" ]
 		},
 		{
-			"title": "Start with an empty page",
+			"title": "Blank Canvas",
 			"slug": "blank-canvas",
 			"template": "blank-canvas",
 			"theme": "blank-canvas",
