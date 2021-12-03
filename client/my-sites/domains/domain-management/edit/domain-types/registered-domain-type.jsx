@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
@@ -309,38 +310,40 @@ class RegisteredDomainType extends Component {
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				{ this.planUpsellForNonPrimaryDomain() }
 				{ this.domainWarnings() }
-				<DomainStatus
-					header={ domain_name }
-					statusText={ statusText }
-					statusClass={ statusClass }
-					icon={ icon }
-					premium={ domain.isPremium }
-				>
-					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
-						<IcannVerificationCard
-							selectedDomainName={ domain.name }
-							selectedSiteSlug={ this.props.selectedSite.slug }
-							explanationContext="new-status"
-							compact={ true }
+				{ ! config.isEnabled( 'domains/settings-page-redesign' ) && (
+					<DomainStatus
+						header={ domain_name }
+						statusText={ statusText }
+						statusClass={ statusClass }
+						icon={ icon }
+						premium={ domain.isPremium }
+					>
+						{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
+							<IcannVerificationCard
+								selectedDomainName={ domain.name }
+								selectedSiteSlug={ this.props.selectedSite.slug }
+								explanationContext="new-status"
+								compact={ true }
+							/>
+						) }
+						<ExpiringCreditCard
+							selectedSite={ selectedSite }
+							purchase={ purchase }
+							domain={ domain }
 						/>
-					) }
-					<ExpiringCreditCard
-						selectedSite={ selectedSite }
-						purchase={ purchase }
-						domain={ domain }
-					/>
-					<ExpiringSoon
-						selectedSite={ selectedSite }
-						purchase={ purchase }
-						isLoadingPurchase={ isLoadingPurchase }
-						domain={ domain }
-					/>
-					{ this.renderExpired() }
-					{ this.renderRecentlyRegistered() }
-					{ this.renderOutboundTransferInProgress() }
-					{ this.renderDomainOnlyNotice() }
-					{ this.renderPendingGSuiteTosNotice() }
-				</DomainStatus>
+						<ExpiringSoon
+							selectedSite={ selectedSite }
+							purchase={ purchase }
+							isLoadingPurchase={ isLoadingPurchase }
+							domain={ domain }
+						/>
+						{ this.renderExpired() }
+						{ this.renderRecentlyRegistered() }
+						{ this.renderOutboundTransferInProgress() }
+						{ this.renderDomainOnlyNotice() }
+						{ this.renderPendingGSuiteTosNotice() }
+					</DomainStatus>
+				) }
 				<Card compact={ true } className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
