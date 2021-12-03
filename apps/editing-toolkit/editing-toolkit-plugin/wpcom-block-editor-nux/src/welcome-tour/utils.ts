@@ -7,10 +7,13 @@ import type { Step, Steps } from '@automattic/tour-kit';
 export function usePrefetchTourAssets( steps: Step | Steps ): void {
 	const isMobile = useMobileBreakpoint();
 
-	const convertStepsToArray = ( steps: Step | Steps ): Steps =>
-		Array.isArray( steps ) ? steps : [ steps ];
+	if ( ! Array.isArray( steps ) ) {
+		const imgSrc = steps.meta.imgSrc;
+		new window.Image().src = isMobile && imgSrc.mobile ? imgSrc.mobile.src : imgSrc.desktop.src;
+		return;
+	}
 
-	convertStepsToArray( steps ).forEach( ( step: Step ) => {
+	steps.forEach( ( step: Step ) => {
 		const imgSrc = step.meta.imgSrc;
 		new window.Image().src = isMobile && imgSrc.mobile ? imgSrc.mobile.src : imgSrc.desktop.src;
 	} );
