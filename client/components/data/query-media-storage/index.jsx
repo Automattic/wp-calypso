@@ -13,7 +13,7 @@ function QueryMediaStorage( { siteId } ) {
 }
 
 QueryMediaStorage.propTypes = {
-	siteId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
 };
 
 export default QueryMediaStorage;
