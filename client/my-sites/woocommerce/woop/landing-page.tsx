@@ -34,7 +34,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
-	const { hasBlockers, wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
+	const { hasBlockers, wpcomDomain, isDataReady } = useWooCommerceOnPlansEligibility( siteId );
 	const isAtomic = !! useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	function onCTAClickHandler() {
@@ -46,7 +46,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	}
 
 	function renderWarningNotice() {
-		if ( ! hasBlockers ) {
+		if ( ! hasBlockers || ! isDataReady ) {
 			return null;
 		}
 

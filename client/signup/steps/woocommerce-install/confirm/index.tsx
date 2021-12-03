@@ -96,7 +96,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	}
 
 	function getWarningsOrHoldsSection() {
-		if ( hasBlockers || isAtomicSite ) {
+		if ( hasBlockers ) {
 			return (
 				<WarningsOrHoldsSection>
 					<WarningCard
@@ -108,7 +108,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			);
 		}
 
-		if ( warnings.length ) {
+		if ( warnings.length || isAtomicSite ) {
 			return (
 				<WarningsOrHoldsSection>
 					<Divider />
