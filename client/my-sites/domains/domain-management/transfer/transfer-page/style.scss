@@ -91,4 +91,15 @@
 			}
 		}
 	}
+
+	@include breakpoint-deprecated( '>1280px' ) {
+		.layout__column--main {
+			padding-right: 24px;
+		}
+	
+		.layout__column--sidebar {
+			padding-left: 24px;
+		}
+	}
+	
 }
