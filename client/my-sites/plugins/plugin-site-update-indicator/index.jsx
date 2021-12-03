@@ -82,7 +82,6 @@ class PluginSiteUpdateIndicator extends Component {
 		}
 
 		return (
-			/* eslint-disable jsx-a11y/click-events-have-key-events */
 			/* eslint-disable jsx-a11y/anchor-is-valid */
 			<div className="plugin-site-update-indicator__link-container">
 				<a
@@ -91,11 +90,11 @@ class PluginSiteUpdateIndicator extends Component {
 					disabled={ isUpdating }
 					role="button"
 					tabIndex="0"
+					onKeyDown={ ( e ) => e.key === 'Enter' && this.updatePlugin( e ) }
 				>
 					{ message }
 				</a>
 			</div>
-			/* eslint-enable jsx-a11y/click-events-have-key-events */
 			/* eslint-enable jsx-a11y/anchor-is-valid */
 		);
 	};
