@@ -77,11 +77,17 @@
 
 	.step-wrapper__navigation-link {
 		font-size: 0.875rem;
-		font-weight: 500; /* stylelint-disable-line */
+		font-weight: 500;
 
 		&.button.is-primary {
-			border-radius: 4px; /* stylelint-disable-line scales/radii */
+			border-radius: 4px;
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+
+			.signup__step.is-courses & {
+				color: #101517;
+				background-color: #ffffff;
+				border-color: transparent;
+			}
 		}
 
 		&.has-underline {

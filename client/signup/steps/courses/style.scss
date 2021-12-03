@@ -2,7 +2,8 @@
 @import '@wordpress/base-styles/_mixins.scss';
 
 .courses {
-	&:before {
+	// Not good but this way can easily change the background color for courses step
+	&::before {
 		content: '';
 		position: fixed;
 		left: 0;
@@ -12,7 +13,7 @@
 		background-color: #101517;
 	}
 
-	&__header {
+	.courses__header {
 		position: absolute;
 		top: -60px;
 		left: 0;
@@ -55,6 +56,48 @@
 	.videos-ui {
 		position: relative;
 		width: 100%;
+		min-height: calc( 100vh - 60px );
 		margin-top: 12px;
+	}
+
+	.courses__footer {
+		display: none;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding: 0 20px;
+		box-shadow: 0 -1px 0 #2c3234;
+		background-color: #101517;
+		animation: appear 0.3s ease-in-out;
+		@include reduce-motion( 'animation' );
+
+		.courses__footer-content {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			height: 72px;
+			max-width: 1160px;
+			margin: 0 auto;
+		}
+
+		.courses__footer-button {
+			flex-shrink: 0;
+			margin-left: 20px;
+			border-radius: 4px;
+			border-color: transparent;
+			color: #101517;
+			font-weight: 500;
+			transition: opacity 0.2s ease-out;
+
+			&:hover {
+				opacity: 0.9;
+			}
+		}
+
+		@include break-small {
+			display: block;
+		}
 	}
 }
