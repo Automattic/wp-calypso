@@ -5,7 +5,7 @@ import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import TourFrame from './tour-frame';
+import TourKitFrame from './tour-kit-frame';
 import type { Config } from '../types';
 
 import '../styles.scss';
@@ -14,12 +14,12 @@ interface Props {
 	config: Config;
 }
 
-const TourPortal: React.FunctionComponent< Props > = ( { config } ) => {
+const TourKitPortal: React.FunctionComponent< Props > = ( { config } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
 	useEffect( () => {
 		// @todo clk "tour-kit"
-		portalParent.classList.add( 'tour-kit__portal-parent' );
+		portalParent.classList.add( 'tour-kit-portal' );
 		document.body.appendChild( portalParent );
 
 		return () => {
@@ -27,7 +27,7 @@ const TourPortal: React.FunctionComponent< Props > = ( { config } ) => {
 		};
 	}, [ portalParent ] );
 
-	return <div>{ createPortal( <TourFrame config={ config } />, portalParent ) }</div>;
+	return <div>{ createPortal( <TourKitFrame config={ config } />, portalParent ) }</div>;
 };
 
-export default TourPortal;
+export default TourKitPortal;
