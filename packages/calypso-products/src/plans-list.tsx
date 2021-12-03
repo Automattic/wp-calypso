@@ -451,14 +451,16 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			PREMIUM_DESIGN_FOR_STORES,
 		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: () => [
-		FEATURE_AUDIO_UPLOADS,
-		FEATURE_GOOGLE_MY_BUSINESS,
-		FEATURE_CLOUDFLARE_ANALYTICS,
-		FEATURE_UPLOAD_THEMES_PLUGINS,
-		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
-		FEATURE_SEO_PREVIEW_TOOLS,
-	],
+	getIncludedFeatures: () =>
+		[
+			FEATURE_AUDIO_UPLOADS,
+			FEATURE_GOOGLE_MY_BUSINESS,
+			FEATURE_CLOUDFLARE_ANALYTICS,
+			FEATURE_UPLOAD_THEMES_PLUGINS,
+			FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+			FEATURE_SEO_PREVIEW_TOOLS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+		].filter( isValueTruthy ),
 	getInferiorFeatures: () => [],
 } );
 
@@ -637,6 +639,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
 		FEATURE_GOOGLE_MY_BUSINESS,
+		isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 		FEATURE_CLOUDFLARE_ANALYTICS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
