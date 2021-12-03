@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/interpolate-components",
-	"version": "1.1.2",
+	"version": "1.2.0",
 	"description": "Convert strings into structured React components",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
