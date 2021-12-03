@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { useRtl } from 'i18n-calypso';
-import { Children, useState, useEffect, useRef } from 'react';
+import { Children, useState, useEffect, useRef, useCallback } from 'react';
 
 import './style.scss';
 
@@ -39,6 +39,24 @@ function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
 	}, [ enabled ] );
 }
 
+function getDragPositionAndTime( event ) {
+	const { timeStamp } = event;
+	if ( event.hasOwnProperty( 'clientX' ) ) {
+		return { x: event.clientX, y: event.clientY, timeStamp };
+	}
+
+	if ( event.targetTouches[ 0 ] ) {
+		return {
+			x: event.targetTouches[ 0 ].clientX,
+			y: event.targetTouches[ 0 ].clientY,
+			timeStamp,
+		};
+	}
+
+	const touch = event.changedTouches[ 0 ];
+	return { x: touch.clientX, y: touch.clientY, timeStamp };
+}
+
 export const Swipeable = ( {
 	hasDynamicHeight = false,
 	children,
@@ -62,21 +80,24 @@ export const Swipeable = ( {
 	const resizeObserverRef = useRef();
 	const numPages = Children.count( children );
 
-	const getWidth = () => {
+	const getWidth = useCallback( () => {
 		return resizeObserverRef.current?.getBoundingClientRect().width;
-	};
+	}, [ resizeObserverRef ] );
 
-	const getPagesWidth = () => {
+	const getPagesWidth = useCallback( () => {
 		if ( ! pageWidth ) {
 			return null;
 		}
 		return pageWidth * numPages;
-	};
+	}, [ pageWidth, numPages ] );
 
-	const getOffset = ( index ) => {
-		const offset = pageWidth * index;
-		return isRtl ? offset : -offset;
-	};
+	const getOffset = useCallback(
+		( index ) => {
+			const offset = pageWidth * index;
+			return isRtl ? offset : -offset;
+		},
+		[ isRtl, pageWidth ]
+	);
 
 	const updateEnabled = hasDynamicHeight && numPages > 1;
 
@@ -104,99 +125,112 @@ export const Swipeable = ( {
 		}
 	}, [ numPages, currentPage, onPageSelect ] );
 
-	const getDragPositionAndTime = ( event ) => {
-		const { timeStamp } = event;
-		if ( event.hasOwnProperty( 'clientX' ) ) {
-			return { x: event.clientX, y: event.clientY, timeStamp };
-		}
+	const handleDragStart = useCallback(
+		( event ) => {
+			const position = getDragPositionAndTime( event );
+			setDragStartData( position );
+			setPagesStyle( { ...pagesStyle, transitionDuration: `0ms` } ); // Set transition Duration to 0 for smooth dragging.
+		},
+		[ pagesStyle ]
+	);
 
-		if ( event.targetTouches[ 0 ] ) {
-			return {
-				x: event.targetTouches[ 0 ].clientX,
-				y: event.targetTouches[ 0 ].clientY,
-				timeStamp,
-			};
-		}
+	const hasSwipedToNextPage = useCallback( ( delta ) => ( isRtl ? delta > 0 : delta < 0 ), [
+		isRtl,
+	] );
+	const hasSwipedToPreviousPage = useCallback( ( delta ) => ( isRtl ? delta < 0 : delta > 0 ), [
+		isRtl,
+	] );
 
-		const touch = event.changedTouches[ 0 ];
-		return { x: touch.clientX, y: touch.clientY, timeStamp };
-	};
+	const handleDragEnd = useCallback(
+		( event ) => {
+			if ( ! dragStartData ) {
+				return; // End early if we are not dragging any more.
+			}
 
-	const handleDragStart = ( event ) => {
-		const position = getDragPositionAndTime( event );
-		setDragStartData( position );
-		setPagesStyle( { ...pagesStyle, transitionDuration: `0ms` } ); // Set transition Duration to 0 for smooth dragging.
-	};
+			const dragPosition = getDragPositionAndTime( event );
+			const delta = dragPosition.x - dragStartData.x;
+			const absoluteDelta = Math.abs( delta );
+			const velocity = absoluteDelta / ( dragPosition.timeStamp - dragStartData.timeStamp );
 
-	const hasSwipedToNextPage = ( delta ) => ( isRtl ? delta > 0 : delta < 0 );
-	const hasSwipedToPreviousPage = ( delta ) => ( isRtl ? delta < 0 : delta > 0 );
+			const hasMetThreshold = absoluteDelta > OFFSET_THRESHOLD || velocity > VELOCITY_THRESHOLD;
 
-	const handleDragEnd = ( event ) => {
-		if ( ! dragStartData ) {
-			return; // End early if we are not dragging any more.
-		}
+			let newIndex = currentPage;
+			if ( hasSwipedToNextPage( delta ) && hasMetThreshold && numPages !== currentPage + 1 ) {
+				newIndex = currentPage + 1;
+			}
 
-		const dragPosition = getDragPositionAndTime( event );
-		const delta = dragPosition.x - dragStartData.x;
-		const absoluteDelta = Math.abs( delta );
-		const velocity = absoluteDelta / ( dragPosition.timeStamp - dragStartData.timeStamp );
-
-		const hasMetThreshold = absoluteDelta > OFFSET_THRESHOLD || velocity > VELOCITY_THRESHOLD;
-
-		let newIndex = currentPage;
-		if ( hasSwipedToNextPage( delta ) && hasMetThreshold && numPages !== currentPage + 1 ) {
-			newIndex = currentPage + 1;
-		}
-
-		if ( hasSwipedToPreviousPage( delta ) && hasMetThreshold && currentPage !== 0 ) {
-			newIndex = currentPage - 1;
-		}
-		const offset = getOffset( newIndex );
-		setPagesStyle( {
-			transform: `translate3d(${ offset }px, 0px, 0px)`,
-			transitionDuration: `300ms`,
-		} );
-		onPageSelect( newIndex );
-		setDragStartData( null );
-	};
-
-	const handleDrag = ( event ) => {
-		if ( ! dragStartData ) {
-			return;
-		}
-		const dragPosition = getDragPositionAndTime( event );
-		const delta = dragPosition.x - dragStartData.x;
-
-		const offset = getOffset( currentPage ) + delta;
-
-		// Allow for swipe left or right
-		if (
-			( numPages !== currentPage + 1 && hasSwipedToNextPage( delta ) ) ||
-			( currentPage !== 0 && hasSwipedToPreviousPage( delta ) )
-		) {
+			if ( hasSwipedToPreviousPage( delta ) && hasMetThreshold && currentPage !== 0 ) {
+				newIndex = currentPage - 1;
+			}
+			const offset = getOffset( newIndex );
 			setPagesStyle( {
-				...pagesStyle,
 				transform: `translate3d(${ offset }px, 0px, 0px)`,
-				transitionDuration: `0ms`,
+				transitionDuration: `300ms`,
 			} );
-		}
+			onPageSelect( newIndex );
+			setDragStartData( null );
+		},
+		[
+			currentPage,
+			dragStartData,
+			getOffset,
+			hasSwipedToNextPage,
+			hasSwipedToPreviousPage,
+			numPages,
+			onPageSelect,
+		]
+	);
 
-		if ( ! swipeableArea ) {
-			return;
-		}
+	const handleDrag = useCallback(
+		( event ) => {
+			if ( ! dragStartData ) {
+				return;
+			}
+			const dragPosition = getDragPositionAndTime( event );
+			const delta = dragPosition.x - dragStartData.x;
 
-		// Did the user swipe out of the swipeable area?
-		if (
-			dragPosition.x < swipeableArea.left ||
-			dragPosition.x > swipeableArea.right ||
-			dragPosition.y > swipeableArea.bottom ||
-			dragPosition.y < swipeableArea.top
-		) {
-			handleDragEnd( event );
-		}
-	};
+			const offset = getOffset( currentPage ) + delta;
 
-	const getTouchEvents = () => {
+			// Allow for swipe left or right
+			if (
+				( numPages !== currentPage + 1 && hasSwipedToNextPage( delta ) ) ||
+				( currentPage !== 0 && hasSwipedToPreviousPage( delta ) )
+			) {
+				setPagesStyle( {
+					...pagesStyle,
+					transform: `translate3d(${ offset }px, 0px, 0px)`,
+					transitionDuration: `0ms`,
+				} );
+			}
+
+			if ( ! swipeableArea ) {
+				return;
+			}
+
+			// Did the user swipe out of the swipeable area?
+			if (
+				dragPosition.x < swipeableArea.left ||
+				dragPosition.x > swipeableArea.right ||
+				dragPosition.y > swipeableArea.bottom ||
+				dragPosition.y < swipeableArea.top
+			) {
+				handleDragEnd( event );
+			}
+		},
+		[
+			dragStartData,
+			getOffset,
+			currentPage,
+			numPages,
+			hasSwipedToNextPage,
+			hasSwipedToPreviousPage,
+			swipeableArea,
+			pagesStyle,
+			handleDragEnd,
+		]
+	);
+
+	const getTouchEvents = useCallback( () => {
 		if ( 'onpointerup' in document ) {
 			return {
 				onPointerDown: handleDragStart,
@@ -225,7 +259,7 @@ export const Swipeable = ( {
 		}
 
 		return null;
-	};
+	}, [ handleDragStart, handleDrag, handleDragEnd ] );
 
 	return (
 		<>
