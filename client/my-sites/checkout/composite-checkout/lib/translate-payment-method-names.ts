@@ -54,9 +54,11 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 ): WPCOMPaymentMethod | null {
 	// existing cards have unique paymentMethodIds
 	if ( paymentMethod.startsWith( 'existingCard' ) ) {
-		paymentMethod = 'card';
+		paymentMethod = 'existingCard';
 	}
 	switch ( paymentMethod ) {
+		case 'existingCard':
+			return 'WPCOM_Billing_MoneyPress_Stored';
 		case 'ebanx':
 			return 'WPCOM_Billing_Ebanx';
 		case 'brazil-tef':
@@ -123,7 +125,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 }
 
 export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMethodSlug | null {
-	if ( slug.startsWith( 'existingCard-' ) ) {
+	if ( slug.startsWith( 'existingCard' ) ) {
 		slug = 'card';
 	}
 	switch ( slug ) {
