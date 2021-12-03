@@ -93,7 +93,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
-				{ headerBar }
+				{ course && cloneElement( headerBar, { course: course } ) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
 						<h2>{ translate( 'Watch five videos.' ) }</h2>
