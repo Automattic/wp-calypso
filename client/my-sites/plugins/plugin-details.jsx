@@ -201,7 +201,7 @@ function PluginDetails( props ) {
 					</Notice>
 				) }
 
-				<SitesList
+				<SitesListArea
 					fullPlugin={ fullPlugin }
 					isPluginInstalledOnsite={ isPluginInstalledOnsite }
 					{ ...props }
@@ -248,7 +248,7 @@ function PluginDetails( props ) {
 	);
 }
 
-function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) {
+function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) {
 	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
