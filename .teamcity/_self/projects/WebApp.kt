@@ -549,7 +549,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export TARGET_DEVICE=$targetDevice
 					export LOCALE=en
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-					export DEBUG=pw:api
+					export DEBUG=*
 
 					yarn jest --reporters=jest-teamcity --reporters=default --group=calypso-pr --runInBand
 				""".trimIndent()
