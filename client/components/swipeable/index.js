@@ -11,6 +11,7 @@ export const Swipeable = ( {
 	onPageSelect,
 	pageClassName,
 	containerClassName,
+	...otherProps
 } ) => {
 	const [ pageWidth, setPageWidth ] = useState( null );
 	const [ swipeableArea, setSwipeableArea ] = useState();
@@ -227,7 +228,12 @@ export const Swipeable = ( {
 
 	return (
 		<>
-			<div { ...getTouchEvents() } className="swipeable__container" ref={ pagesRef }>
+			<div
+				{ ...getTouchEvents() }
+				className="swipeable__container"
+				ref={ pagesRef }
+				{ ...otherProps }
+			>
 				<div
 					className={ classnames( 'swipeable__pages', containerClassName ) }
 					style={ { ...pagesStyle, width: getPagesWidth() } }
