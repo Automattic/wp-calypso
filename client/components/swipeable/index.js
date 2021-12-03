@@ -4,6 +4,9 @@ import { Children, useState, useEffect, useRef } from 'react';
 
 import './style.scss';
 
+const OFFSET_THRESHOLD = 100; // Number of pixels to travel before we trigger the slider to move to the desired slide.
+const VELOCITY_THRESHOLD = 0.5; // Speed of drag above, before we trigger the slider to move to the desired slide.
+
 export const Swipeable = ( {
 	hasDynamicHeight = false,
 	children,
@@ -133,8 +136,6 @@ export const Swipeable = ( {
 			return; // End early if we are not dragging any more.
 		}
 
-		const OFFSET_THRESHOLD = 100; // Number of pixels to travel before we trigger the slider to move to the desired slide.
-		const VELOCITY_THRESHOLD = 0.5;
 		const dragPosition = getDragPositionAndTime( event );
 		const delta = dragPosition.x - dragStartData.x;
 		const absoluteDelta = Math.abs( delta );
