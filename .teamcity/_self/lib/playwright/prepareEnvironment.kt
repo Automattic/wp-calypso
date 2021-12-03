@@ -33,10 +33,7 @@ fun BuildSteps.prepareEnvironment(): ScriptBuildStep {
 			export PLAYWRIGHT_BROWSERS_PATH=0
 
 			# Install deps
-			yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
-
-			# Build packages
-			yarn workspace @automattic/calypso-e2e build
+			yarn workspaces focus wp-e2e-tests
 		""".trimIndent()
 		dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		dockerPull = true
