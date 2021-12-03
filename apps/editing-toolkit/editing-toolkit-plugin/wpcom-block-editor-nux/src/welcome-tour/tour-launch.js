@@ -9,13 +9,12 @@ import { useEffect, useMemo } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import PrefetchImage from './prefetch-image';
 import { WelcomeTourContextProvider, useWelcomeTourContext } from './tour-context';
 import WelcomeTourMinimized from './tour-minimized-renderer';
 import WelcomeTourStep from './tour-step-renderer';
 import getTourSteps from './tour-steps';
-
 import './style-tour.scss';
+import { usePrefetchTourAssets } from './utils';
 
 function LaunchWpcomWelcomeTour() {
 	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
@@ -26,6 +25,10 @@ function LaunchWpcomWelcomeTour() {
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
 	} ) );
+
+	const localeSlug = useLocale();
+	// Preload first card image (others preloaded after open state confirmed)
+	new window.Image().src = getTourSteps( localeSlug )[ 0 ].meta.imgSrc;
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
@@ -61,7 +64,7 @@ function WelcomeTour() {
 	const { setJustMaximized } = useWelcomeTourContext();
 
 	// Preload card images
-	tourSteps.forEach( ( step ) => <PrefetchImage asset={ step.meta.imgSrc } /> );
+	usePrefetchTourAssets();
 
 	const tourConfig = {
 		steps: tourSteps,
