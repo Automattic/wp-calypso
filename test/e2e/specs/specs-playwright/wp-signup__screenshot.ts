@@ -209,7 +209,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Enter billing and payment details', async function () {
 			const paymentDetails = DataHelper.getTestPaymentDetails();
 			await cartCheckoutPage.enterBillingDetails( paymentDetails );
-			await cartCheckoutPage.enterCardholderName( paymentDetails );
+			await cartCheckoutPage.enterPaymentDetails( paymentDetails );
 		} );
 
 		it( 'Screenshot checkout page in desktop, en locale', async function () {
@@ -244,7 +244,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 				await cartCheckoutPage.visit( blogName );
 				const paymentDetails = DataHelper.getTestPaymentDetails();
 				await cartCheckoutPage.enterBillingDetails( paymentDetails );
-				await cartCheckoutPage.enterCardholderName( paymentDetails );
+				await cartCheckoutPage.enterPaymentDetails( paymentDetails );
 				await page.screenshot( {
 					path: `tos_checkout_desktop_${ locale }.png`,
 					fullPage: true,

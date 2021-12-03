@@ -256,15 +256,6 @@ export class CartCheckoutPage {
 	}
 
 	/**
-	 * Enter cardholder's name in the payment details form.
-	 *
-	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
-	 */
-	async enterCardholderName( paymentDetails: PaymentDetails ): Promise< void > {
-		await this.page.fill( selectors.cardholderName, paymentDetails.cardHolder );
-	}
-
-	/**
 	 * Complete the purchase by clicking on the 'Pay' button.
 	 */
 	async purchase( { timeout }: { timeout?: number } = {} ): Promise< void > {
