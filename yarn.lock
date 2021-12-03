@@ -20581,16 +20581,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"imports-loader@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "imports-loader@npm:0.8.0"
-  dependencies:
-    loader-utils: ^1.0.2
-    source-map: ^0.6.1
-  checksum: 83dab0559c64caefa8c7ee4995b16d48251cbc90daac4d3936bf0295c29be5c4072ddcfc92f5dc304c359c79eaa1eb64a4f5313b5a950cd56cc1e717f98f3d6e
-  languageName: node
-  linkType: hard
-
 "imurmurhash@npm:^0.1.4":
   version: 0.1.4
   resolution: "imurmurhash@npm:0.1.4"
@@ -24076,7 +24066,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^1.0.2, loader-utils@npm:^1.1.0, loader-utils@npm:^1.2.3, loader-utils@npm:^1.4.0":
+"loader-utils@npm:^1.1.0, loader-utils@npm:^1.2.3, loader-utils@npm:^1.4.0":
   version: 1.4.0
   resolution: "loader-utils@npm:1.4.0"
   dependencies:
@@ -38366,7 +38356,6 @@ testarmada-magellan@11.0.10:
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"
     ignore-loader: ^0.1.2
-    imports-loader: ^0.8.0
     jest: ^27.3.1
     jest-environment-jsdom: ^27.3.1
     jest-enzyme: ^7.1.2
