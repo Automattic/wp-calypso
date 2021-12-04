@@ -43,10 +43,11 @@ describe( 'ShoppingCartManager', () => {
 	} );
 
 	it( 'addProductsToCart rejects its promise if there are error messages in the response', async () => {
+		const errorCode = 'test-error';
 		const errorMessage = 'test error message';
 		const mockSetCart = jest.fn().mockResolvedValue( {
 			...getEmptyResponseCart(),
-			messages: { errors: [ { code: 'test-error', message: errorMessage } ] },
+			messages: { errors: [ { code: errorCode, message: errorMessage } ] },
 		} );
 		const cartManagerClient = createShoppingCartManagerClient( {
 			getCart,
@@ -54,11 +55,15 @@ describe( 'ShoppingCartManager', () => {
 		} );
 		const manager = cartManagerClient.forCartKey( mainCartKey );
 		await manager.fetchInitialCart();
-		const p1 = manager.actions.addProductsToCart( [ planOne ] );
-		return expect( p1 ).rejects.toEqual( errorMessage );
+		expect.assertions( 2 );
+		return manager.actions.addProductsToCart( [ planOne ] ).catch( ( error ) => {
+			expect( error.message ).toEqual( errorMessage );
+			expect( error.code ).toEqual( errorCode );
+		} );
 	} );
 
 	it( 'addProductsToCart rejects its promise if there is a connection error', async () => {
+		const errorCode = 'SET_SERVER_CART_ERROR';
 		const errorMessage = 'test error message';
 		const mockSetCart = jest.fn().mockRejectedValue( { message: errorMessage } );
 		const cartManagerClient = createShoppingCartManagerClient( {
@@ -67,8 +72,11 @@ describe( 'ShoppingCartManager', () => {
 		} );
 		const manager = cartManagerClient.forCartKey( mainCartKey );
 		await manager.fetchInitialCart();
-		const p1 = manager.actions.addProductsToCart( [ planOne ] );
-		return expect( p1 ).rejects.toEqual( errorMessage );
+		expect.assertions( 2 );
+		return manager.actions.addProductsToCart( [ planOne ] ).catch( ( error ) => {
+			expect( error.message ).toEqual( errorMessage );
+			expect( error.code ).toEqual( errorCode );
+		} );
 	} );
 
 	it( 'addProductsToCart adds the products to the cart if queued', async () => {
