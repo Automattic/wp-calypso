@@ -37,7 +37,7 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 	};
 
 	return (
-		<>
+		<div className="domain-management-header__container">
 			{ renderBreadcrumbs() }
 			<FormattedHeader
 				brandFont
@@ -46,7 +46,7 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 				align="left"
 				hasScreenOptions={ false }
 			/>
-		</>
+		</div>
 	);
 };
 

@@ -3,3 +3,18 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+.domain-management-header__container {
+	.domain-management-header__title {
+		padding-top: 10px;
+
+		&::first-letter {
+			text-transform: uppercase;
+		}
+
+		.formatted-header__title {
+			font-weight: 400;
+			font-size: $font-title-large;
+		}
+	}
+}
