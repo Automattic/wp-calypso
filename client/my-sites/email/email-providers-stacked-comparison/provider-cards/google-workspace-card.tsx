@@ -7,19 +7,12 @@ import { translate } from 'i18n-calypso';
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
 import { canCurrentUserAddEmail, getSelectedDomain } from 'calypso/lib/domains';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
-import {
-	areAllUsersValid,
-	getItemsForCart,
-	GSuiteNewUser,
-	newUsers,
-} from 'calypso/lib/gsuite/new-users';
+import { getItemsForCart } from 'calypso/lib/gsuite/new-users';
 import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
@@ -32,6 +25,11 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	EmailProviderGenericForm,
+	newUser,
+	GenericNewUser,
+} from '../email-provider-stacked-card/email-provider-generic-form';
 import {
 	AddToCartAndCheckout,
 	PriceBadge,
@@ -142,10 +140,11 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		/>
 	);
 
-	const [ googleUsers, setGoogleUsers ] = useState( newUsers( selectedDomainName ) );
+	const [ genericUsers, setGenericUsers ] = useState( [ newUser( selectedDomainName ) ] );
 	const [ addingToCart, setAddingToCart ] = useState( false );
+	const [ validForm, setValidForm ] = useState( false );
 
-	const onGoogleConfirmNewMailboxes = () => {
+	const onConfirmNewMailboxes = () => {
 		const {
 			comparisonContext,
 			domain,
@@ -158,21 +157,9 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			source,
 		} = props;
 
-		const gSuiteProduct =
-			termLength === TermLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
-
-		const usersAreValid = areAllUsersValid( googleUsers );
+		const product = termLength === TermLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
+		const usersAreValid = validForm;
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
-
-		recordTracksEventAddToCartClick(
-			comparisonContext,
-			googleUsers?.map( ( user: GSuiteNewUser ) => user.uuid ),
-			usersAreValid,
-			GOOGLE_PROVIDER_NAME,
-			source,
-			userCanAddEmail,
-			null
-		);
 
 		if ( ! usersAreValid || ! userCanAddEmail ) {
 			return;
@@ -180,8 +167,18 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 
 		const domains: { name: string }[] = domain ? [ domain ] : [];
 
+		recordTracksEventAddToCartClick(
+			comparisonContext,
+			genericUsers?.map( ( user: GenericNewUser ) => user.uuid ),
+			usersAreValid,
+			GOOGLE_PROVIDER_NAME,
+			source,
+			userCanAddEmail,
+			null
+		);
+
 		setAddingToCart( true );
-		const cartItems: any = getItemsForCart( domains, gSuiteProduct.product_slug, googleUsers );
+		const cartItems: any = getItemsForCart( domains, product.product_slug, genericUsers );
 
 		AddToCartAndCheckout(
 			shoppingCartManager,
@@ -197,27 +194,28 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	const domainList = domain ? [ domain ] : [];
 
 	googleWorkspace.onExpandedChange = onExpandedChange;
+
 	googleWorkspace.formFields = (
-		<FormFieldset className="google-workspace-card__form-fieldset">
-			<GSuiteNewUserList
-				extraValidation={ identityMap }
-				domains={ domainList }
-				onUsersChange={ setGoogleUsers }
-				selectedDomainName={ selectedDomainName }
-				users={ googleUsers }
-				onReturnKeyPress={ onGoogleFormReturnKeyPress }
-				showAddAnotherMailboxButton={ false }
+		<EmailProviderGenericForm
+			extraValidation={ identityMap }
+			domains={ domainList }
+			onUsersChange={ setGenericUsers }
+			selectedDomainName={ selectedDomainName }
+			users={ genericUsers }
+			onReturnKeyPress={ onGoogleFormReturnKeyPress }
+			showAddAnotherMailboxButton={ false }
+			setValidForm={ setValidForm }
+			optionalFields={ [ 'email', 'fullName', 'isAdmin' ] }
+		>
+			<FullWidthButton
+				className="google-workspace-card__continue"
+				primary
+				busy={ addingToCart }
+				onClick={ onConfirmNewMailboxes }
 			>
-				<FullWidthButton
-					className="google-workspace-card__continue"
-					primary
-					busy={ addingToCart }
-					onClick={ onGoogleConfirmNewMailboxes }
-				>
-					{ translate( 'Create your mailbox' ) }
-				</FullWidthButton>
-			</GSuiteNewUserList>
-		</FormFieldset>
+				{ translate( 'Create your mailbox' ) }
+			</FullWidthButton>
+		</EmailProviderGenericForm>
 	);
 
 	return <EmailProvidersStackedCard { ...googleWorkspace } />;
