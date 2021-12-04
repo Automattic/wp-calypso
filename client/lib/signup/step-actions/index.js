@@ -464,15 +464,6 @@ function processItemCart(
 				.actions.addProductsToCart( newCartItemsToAdd )
 				.then( ( updatedCart ) => {
 					debug( 'product add request complete', updatedCart );
-					// Even if the cart request succeeds, there may be errors
-					if ( updatedCart.messages?.errors && updatedCart.messages.errors.length > 0 ) {
-						throw new Error( updatedCart.messages.errors[ 0 ].message );
-					}
-					const error = cartManagerClient.forCartKey( siteSlug ).getState().loadingError;
-					if ( error ) {
-						throw new Error( error );
-					}
-					debug( 'product add request successful' );
 					callback( undefined, providedDependencies );
 				} )
 				.catch( ( error ) => {
