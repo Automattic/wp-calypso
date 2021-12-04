@@ -1,4 +1,5 @@
 import debugFactory from 'debug';
+import { ActionPromiseError } from './action-promise-error';
 import {
 	getShoppingCartManagerState,
 	createSubscriptionManager,
@@ -41,13 +42,14 @@ function createDispatchAndWaitForValid(
 	};
 }
 
-function getErrorFromState( state: ShoppingCartState ): string | undefined {
+function getErrorFromState( state: ShoppingCartState ): undefined | ActionPromiseError {
 	if ( state.loadingError ) {
-		return state.loadingError;
+		return new ActionPromiseError( state.loadingError, state.loadingErrorType ?? 'Unknown type' );
 	}
 	const errorMessages = state.responseCart.messages?.errors ?? [];
 	if ( errorMessages.length > 0 ) {
-		return errorMessages[ 0 ].message;
+		const firstMessage = errorMessages[ 0 ];
+		return new ActionPromiseError( firstMessage.message, firstMessage.code );
 	}
 	return undefined;
 }
@@ -72,7 +74,12 @@ function createShoppingCartManager(
 		state = newState;
 
 		if ( state.cacheStatus === 'error' ) {
-			actionPromises.reject( state.loadingError ?? 'Unknown error while fetching shopping-cart' );
+			actionPromises.reject(
+				new ActionPromiseError(
+					state.loadingError ?? 'Unknown error',
+					state.loadingErrorType ?? 'Unknown type'
+				)
+			);
 		}
 
 		if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {

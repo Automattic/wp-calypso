@@ -1,3 +1,4 @@
+import type { ActionPromiseError } from './action-promise-error';
 import type { Dispatch } from 'react';
 
 export type ShoppingCartReducerDispatch = ( action: ShoppingCartAction ) => void;
@@ -155,12 +156,12 @@ export type DispatchAndWaitForValid = ( action: ShoppingCartAction ) => Promise<
 
 export type SavedActionPromise = {
 	resolve: ( responseCart: ResponseCart ) => void;
-	reject: ( error: string ) => void;
+	reject: ( error: ActionPromiseError ) => void;
 };
 
 export interface ActionPromises {
 	resolve: ( tempResponseCart: TempResponseCart ) => void;
-	reject: ( error: string ) => void;
+	reject: ( error: ActionPromiseError ) => void;
 	add: ( actionPromise: SavedActionPromise ) => void;
 }
 
