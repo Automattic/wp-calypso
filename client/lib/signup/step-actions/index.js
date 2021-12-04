@@ -70,7 +70,11 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			.forCartKey( cartKey )
 			.actions.replaceProductsInCart( domainChoiceCart )
 			.then( () => callback( undefined, providedDependencies ) )
-			.catch( ( error ) => callback( error, providedDependencies ) );
+			.catch( ( error ) => {
+				debug( 'product replace request had an error', error );
+				reduxStore.dispatch( errorNotice( error.message ) );
+				callback( error, providedDependencies );
+			} );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
@@ -84,7 +88,11 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			.forCartKey( siteId )
 			.actions.replaceProductsInCart( products )
 			.then( () => callback( undefined, providedDependencies ) )
-			.catch( ( error ) => callback( error, providedDependencies ) );
+			.catch( ( error ) => {
+				debug( 'product replace request had an error', error );
+				reduxStore.dispatch( errorNotice( error.message ) );
+				callback( error, providedDependencies );
+			} );
 	} else {
 		const newSiteData = {
 			cartItem,
