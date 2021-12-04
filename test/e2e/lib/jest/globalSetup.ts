@@ -43,13 +43,23 @@ export default async (): Promise< void > => {
 		// instead of checking that cookies are older than 3 days, this checks whether the cookies
 		// are newer than 3 days. If so, presumably the cookies are still good to use and the iteration
 		// is short-circuited.
+		let cookieFileExists = false;
 		try {
 			await access( cookiePath );
+			cookieFileExists = true;
+		} catch {
+			// noop
+			// Do not re-throw the error here, as doing so would halt Jest entirely.
+			// A previous cookie file not having been found is perfectly accpetable
+			// eg. running tests for the first time.
+		}
+
+		if ( cookieFileExists ) {
 			const stats = await stat( cookiePath );
 			const createdTime = Math.trunc( stats.birthtimeMs );
 			const currentTime = new Date();
 
-			if ( createdTime > currentTime.setDate( currentTime.getDate() - 3 ) ) {
+			if ( createdTime > currentTime.setDate( currentTime.getDate() - 1 ) ) {
 				console.log( `\nCookie file on disk for ${ user } is recent, skipping.` );
 				continue;
 			} else {
@@ -57,11 +67,6 @@ export default async (): Promise< void > => {
 				// overwrite files.
 				await unlink( cookiePath );
 			}
-		} catch {
-			// noop
-			// Do not re-throw the error here, as doing so would halt Jest entirely.
-			// A previous cookie file not having been found is perfectly accpetable
-			// eg. running tests for the first time.
 		}
 
 		const [ username, password ] = config.get( 'testAccounts' )[ user ];
