@@ -44,9 +44,10 @@ describe( 'ShoppingCartManager', () => {
 
 	it( 'addProductsToCart rejects its promise if there are error messages in the response', async () => {
 		const errorMessage = 'test error message';
-		const mockSetCart = jest
-			.fn()
-			.mockResolvedValue( { ...getEmptyResponseCart(), messages: { errors: [ errorMessage ] } } );
+		const mockSetCart = jest.fn().mockResolvedValue( {
+			...getEmptyResponseCart(),
+			messages: { errors: [ { code: 'test-error', message: errorMessage } ] },
+		} );
 		const cartManagerClient = createShoppingCartManagerClient( {
 			getCart,
 			setCart: mockSetCart,
@@ -59,7 +60,7 @@ describe( 'ShoppingCartManager', () => {
 
 	it( 'addProductsToCart rejects its promise if there is a connection error', async () => {
 		const errorMessage = 'test error message';
-		const mockSetCart = jest.fn().mockRejectedValue( errorMessage );
+		const mockSetCart = jest.fn().mockRejectedValue( { message: errorMessage } );
 		const cartManagerClient = createShoppingCartManagerClient( {
 			getCart,
 			setCart: mockSetCart,
