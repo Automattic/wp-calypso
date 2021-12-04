@@ -42,6 +42,34 @@ describe( 'ShoppingCartManager', () => {
 		expect( responseCart.products[ 0 ].product_slug ).toBe( planOne.product_slug );
 	} );
 
+	it( 'addProductsToCart rejects its promise if there are error messages in the response', async () => {
+		const errorMessage = 'test error message';
+		const mockSetCart = jest
+			.fn()
+			.mockResolvedValue( { ...getEmptyResponseCart(), messages: { errors: [ errorMessage ] } } );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart: mockSetCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
+		const p1 = manager.actions.addProductsToCart( [ planOne ] );
+		return expect( p1 ).rejects.toEqual( errorMessage );
+	} );
+
+	it( 'addProductsToCart rejects its promise if there is a connection error', async () => {
+		const errorMessage = 'test error message';
+		const mockSetCart = jest.fn().mockRejectedValue( errorMessage );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart: mockSetCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
+		const p1 = manager.actions.addProductsToCart( [ planOne ] );
+		return expect( p1 ).rejects.toEqual( errorMessage );
+	} );
+
 	it( 'addProductsToCart adds the products to the cart if queued', async () => {
 		const cartManagerClient = createShoppingCartManagerClient( {
 			getCart,
