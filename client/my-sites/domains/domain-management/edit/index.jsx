@@ -47,7 +47,7 @@ class Edit extends Component {
 						} ) }
 					</Header>
 				) : (
-					<DomainManagementHeader { ...this.props }></DomainManagementHeader>
+					<DomainManagementHeader domain={ domain } { ...this.props }></DomainManagementHeader>
 				) }
 				{ this.renderDetails( domain, Details ) }
 			</Main>
