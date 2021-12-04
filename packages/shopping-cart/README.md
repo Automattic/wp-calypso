@@ -32,9 +32,9 @@ The `UseShoppingCart` object contains the following properties. Note that the ac
 - `loadingErrorType: ShoppingCartError | undefined`. If fetching or updating the cart causes an error, this will contain a string that explains what type of error.
 - `couponStatus: 'fresh' | 'pending' | 'applied' | 'rejected'. A string that can be used to determine if a coupon is applied.
 
-The following actions are also properties. Each one returns a Promise that resolves when the cart is next valid (this may be after several queued actions are complete).
+The following actions are also properties. Each one returns a Promise that resolves when the cart is next valid (this may be after several queued actions are complete). If there are errors returned by the cart endpoint (the `responseCart.messages.errors`), or if there is an error during the request (`loadingError`), the Promise will be rejected.
 
-**Note that the Promise returned by cart actions will never be rejected.** If there are errors returned by the shopping-cart response, they will be in the `messages.errors` property of the returned `ResponseCart`. If the cart request itself fails, the `loadingError` property will be set on the cart manager.
+Regardless, it's a good idea to always check `responseCart.messages.errors` and the `loadingError` property on the cart manager on any state change!
 
 - `addProductsToCart: ( products: RequestCartProduct[] ) => Promise<ResponseCart>`. A function that requests adding new products to the cart. May cause the cart to be replaced instead, depending on the RequestCartProducts (mostly renewals and non-renewals cannot co-exist in the cart at the same time).
 - `removeProductFromCart: ( uuidToRemove: string ) => Promise<ResponseCart>`. A function that requests removing a product from the cart.
