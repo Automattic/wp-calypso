@@ -45,6 +45,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'netbanking';
 		case 'WPCOM_Billing_Web_Payment':
 			return 'web-pay';
+		case 'WPCOM_Billing_MoneyPress_Stored':
+			return 'existingCard';
 	}
 	throw new Error( `Unknown payment method '${ paymentMethod }'` );
 }
@@ -124,9 +126,12 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 	return null;
 }
 
+/**
+ * Return the passed CheckoutPaymentMethodSlug if valid
+ */
 export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMethodSlug | null {
 	if ( slug.startsWith( 'existingCard' ) ) {
-		slug = 'card';
+		slug = 'existingCard';
 	}
 	switch ( slug ) {
 		case 'ebanx':
@@ -135,6 +140,7 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'paypal-direct':
 		case 'paypal':
 		case 'card':
+		case 'existingCard':
 		case 'alipay':
 		case 'bancontact':
 		case 'eps':
