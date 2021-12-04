@@ -153,9 +153,15 @@ export type CartValidCallback = ( cart: ResponseCart ) => void;
 
 export type DispatchAndWaitForValid = ( action: ShoppingCartAction ) => Promise< ResponseCart >;
 
+export type SavedActionPromise = {
+	resolve: ( responseCart: ResponseCart ) => void;
+	reject: ( error: string ) => void;
+};
+
 export interface ActionPromises {
 	resolve: ( tempResponseCart: TempResponseCart ) => void;
-	add: ( resolve: ( value: ResponseCart ) => void ) => void;
+	reject: ( error: string ) => void;
+	add: ( actionPromise: SavedActionPromise ) => void;
 }
 
 export interface CartSyncManager {

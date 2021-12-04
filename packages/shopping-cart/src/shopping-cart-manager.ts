@@ -34,11 +34,22 @@ function createDispatchAndWaitForValid(
 	actionPromises: ActionPromises
 ): DispatchAndWaitForValid {
 	return ( action ) => {
-		return new Promise< ResponseCart >( ( resolve ) => {
-			actionPromises.add( resolve );
+		return new Promise< ResponseCart >( ( resolve, reject ) => {
+			actionPromises.add( { resolve, reject } );
 			dispatch( action );
 		} );
 	};
+}
+
+function getErrorFromState( state: ShoppingCartState ): string | undefined {
+	if ( state.loadingError ) {
+		return state.loadingError;
+	}
+	const errorMessages = state.responseCart.messages?.errors ?? [];
+	if ( errorMessages.length > 0 ) {
+		return errorMessages[ 0 ].message;
+	}
+	return undefined;
 }
 
 function createShoppingCartManager(
@@ -60,10 +71,19 @@ function createShoppingCartManager(
 		const isStateChanged = newState !== state;
 		state = newState;
 
+		if ( state.cacheStatus === 'error' ) {
+			actionPromises.reject( state.loadingError ?? 'Unknown error while fetching shopping-cart' );
+		}
+
 		if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
 			// action promises are resolved even if state hasn't changed so that
 			// noop actions resolve immediately.
-			actionPromises.resolve( state.responseCart );
+			const error = getErrorFromState( state );
+			if ( error ) {
+				actionPromises.reject( error );
+			} else {
+				actionPromises.resolve( state.responseCart );
+			}
 		}
 
 		if ( isStateChanged ) {
@@ -93,12 +113,16 @@ function createShoppingCartManager(
 	let didInitialFetch = false;
 	const initialFetch = () => {
 		if ( didInitialFetch ) {
+			const error = getErrorFromState( state );
+			if ( error ) {
+				return Promise.reject( error );
+			}
 			return Promise.resolve( state.lastValidResponseCart );
 		}
 		didInitialFetch = true;
 		takeActionsBasedOnState( state, dispatch );
-		return new Promise< ResponseCart >( ( resolve ) => {
-			actionPromises.add( resolve );
+		return new Promise< ResponseCart >( ( resolve, reject ) => {
+			actionPromises.add( { resolve, reject } );
 		} );
 	};
 
