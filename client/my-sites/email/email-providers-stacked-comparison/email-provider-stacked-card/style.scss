@@ -369,3 +369,20 @@ h2.action-panel__title {
 	margin-bottom: 15px;
 }
 
+.email-provider-generic-form__add-another-user-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var( --color-accent );
+}
+
+.email-provider-generic-form__add-another-user-button {
+	cursor: pointer;
+	display: flex;
+	background-color: transparent;
+	color: var( --color-accent );
+	margin-bottom: 8px;
+	> svg {
+		margin-right: 8px;
+	}
+}
