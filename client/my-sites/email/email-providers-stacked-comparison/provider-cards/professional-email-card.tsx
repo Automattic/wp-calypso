@@ -21,10 +21,6 @@ import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import PriceBadge from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-with-interval';
-import {
-	TITAN_PASSWORD_RESET_FIELD,
-	TITAN_FULL_NAME_FIELD,
-} from 'calypso/my-sites/email/titan-new-mailbox';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
