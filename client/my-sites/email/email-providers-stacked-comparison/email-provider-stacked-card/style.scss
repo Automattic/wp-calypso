@@ -219,16 +219,37 @@ h2.action-panel__title {
 .email-providers-stacked-comparison__provider-card {
 	.email-provider-stacked-card__header {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		flex-wrap: wrap;
 
-		.email-provider-stacked-card__title-price-badge {
-			width: $width-right-panel-card;
+		.email-provider-stacked-card__provider-card-main-details {
+			margin-top: 12px;
+			width: calc( 100% - 10px );
 			margin-left: 10px;
+			@include break-large {
+				margin-top: 0px;
+				margin-left: 10px;
+				width: 100px;
+			}
+
+			.email-provider-stacked-card__provider-expand-cta {
+				width: 100%;
+			}
+		}
+
+		@include break-large {
+			flex-direction: row;
+		}
+
+		.email-provider-stacked-card__title-price-badge {
+			width: 100%;
+			margin-left: 10px;
+			flex-basis: content;
 		}
 	}
 	&.is-expanded {
 		.email-provider-stacked-card__header {
+			flex-direction: row;
 			.email-provider-stacked-card__title-price-badge {
 				width: initial;
 				margin-left: 10px;
@@ -239,7 +260,6 @@ h2.action-panel__title {
 
 .email-provider-stacked-card__provider-card-main-details {
 	width: 120px;
-	text-align: right;
 }
 
 .email-provider-stacked-card__title-container {
