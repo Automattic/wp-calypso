@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, MouseEventHandler } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
