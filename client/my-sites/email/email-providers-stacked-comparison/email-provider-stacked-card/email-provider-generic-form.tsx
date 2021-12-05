@@ -707,7 +707,7 @@ interface EmailProviderGenericFormProps {
 	showAddAnotherMailboxButton: boolean;
 	onUsersChange: ( users: GenericNewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
-	optionalFields: string[];
+	hiddenFields: string[];
 	users: GenericNewUser[];
 }
 
@@ -718,7 +718,7 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 	extraValidation,
 	onUsersChange,
 	onReturnKeyPress,
-	optionalFields = [],
+  	hiddenFields = [],
 	selectedDomainName,
 	setValidForm,
 	showAddAnotherMailboxButton = true,
@@ -745,8 +745,8 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 			return changedUser;
 		} );
 
-		onUsersChange( validateUsers( changedUsers, extraValidation, optionalFields ) );
-		setValidForm( areAllUsersValid( users, optionalFields ) );
+		onUsersChange( validateUsers( changedUsers, extraValidation, hiddenFields ) );
+		setValidForm( areAllUsersValid( users, hiddenFields ) );
 	};
 
 	const onUserAdd = () => {
@@ -768,7 +768,7 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 						domains={
 							domains ? domains.map( ( domain: any ) => domain.name ) : [ selectedDomainName ]
 						}
-						hiddenFields={ optionalFields }
+						hiddenFields={ hiddenFields }
 						user={ user }
 						onUserValueChange={ onUserValueChange( user.uuid ) }
 						onUserRemove={ onUserRemove( user.uuid ) }
