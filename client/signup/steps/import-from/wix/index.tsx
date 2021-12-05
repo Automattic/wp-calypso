@@ -17,6 +17,7 @@ import './style.scss';
 
 interface Props {
 	job?: ImportJob;
+	run: boolean;
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
@@ -27,7 +28,7 @@ interface Props {
 export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wix';
 	const { __ } = useI18n();
-	const { job, siteId, siteSlug, fromSite, importSite, startImport, resetImport } = props;
+	const { job, run, siteId, siteSlug, fromSite, importSite, startImport, resetImport } = props;
 
 	/**
 	 ↓ Effects
@@ -38,6 +39,8 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Methods
 	 */
 	function runImport() {
+		if ( ! run ) return;
+
 		// If there is no existing import job, start a new
 		if ( job === undefined ) {
 			startImport( siteId, getImporterTypeForEngine( importer ) );

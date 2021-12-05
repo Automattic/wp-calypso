@@ -59,7 +59,7 @@ export function getWpComOnboardingUrl(
 	platform: string,
 	fromSite?: string
 ): string {
-	return '/start/from/importing/{importer}?from={fromSite}&to={siteSlug}'
+	return '/start/from/importing/{importer}?from={fromSite}&to={siteSlug}&run=true'
 		.replace( '{siteSlug}', siteSlug )
 		.replace( '{importer}', getPlatformImporterName( platform ) )
 		.replace( '{fromSite}', fromSite || '' );

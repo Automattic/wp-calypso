@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Title } from '@automattic/onboarding';
-import React, { useEffect } from 'react';
+import page from 'page';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
@@ -22,6 +23,7 @@ import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
+	path: string;
 	stepName: string;
 	stepSectionName: string;
 	queryObject: QueryObject;
@@ -43,19 +45,21 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		isImporterStatusHydrated,
 		fromSite,
 	} = props;
-	const engine: Importer = stepSectionName.toLowerCase() as Importer;
 
 	/**
 	 ↓ Fields
 	 */
-	function getImportJob( engine: Importer ): ImportJob | undefined {
+	const engine: Importer = stepSectionName.toLowerCase() as Importer;
+	const [ runImportInitially, setRunImportInitially ] = useState( false );
+	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
-	}
+	};
 
 	/**
 	 ↓ Effects
 	 */
 	useEffect( fetchImporters, [ siteId ] );
+	useEffect( checkInitialRunState, [ siteId ] );
 
 	/**
 	 ↓ Methods
@@ -70,6 +74,18 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 
 	function hasPermission(): boolean {
 		return canImport;
+	}
+
+	function checkInitialRunState() {
+		const searchParams = new URLSearchParams( window.location.search );
+
+		// run query param indicates that the import process can be run immediately,
+		// but before proceeding, remove it from the URL path
+		// because of the browser's back edge case
+		if ( searchParams.get( 'run' ) === 'true' ) {
+			setRunImportInitially( true );
+			page.replace( props.path.replace( '&run=true', '' ).replace( 'run=true', '' ) );
+		}
 	}
 
 	return (
@@ -103,6 +119,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									return (
 										<WixImporter
 											job={ getImportJob( engine ) }
+											run={ runImportInitially }
 											siteId={ siteId }
 											siteSlug={ siteSlug }
 											fromSite={ fromSite }
