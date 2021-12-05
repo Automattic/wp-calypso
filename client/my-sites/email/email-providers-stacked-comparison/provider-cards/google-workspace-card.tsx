@@ -9,17 +9,17 @@ import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
-import { canCurrentUserAddEmail, getSelectedDomain } from 'calypso/lib/domains';
+import {
+	canCurrentUserAddEmail,
+	getSelectedDomain,
+	getCurrentUserCannotAddEmailReason,
+} from 'calypso/lib/domains';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getItemsForCart } from 'calypso/lib/gsuite/new-users';
 import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import {
-	EmailProvidersStackedCardProps,
-	ProviderCard,
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
@@ -27,8 +27,11 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	EmailProviderGenericForm,
+	GENERIC_EMAIL_FORM_ALTERNATIVE_EMAIL_FIELD,
+	GENERIC_EMAIL_FORM_EMAIL_FIELD,
+	GENERIC_EMAIL_FORM_FULL_NAME_FIELD,
+	GENERIC_EMAIL_FORM_IS_ADMIN_FIELD,
 	newUser,
-	GenericNewUser,
 } from '../email-provider-stacked-card/email-provider-generic-form';
 import {
 	AddToCartAndCheckout,
@@ -37,6 +40,11 @@ import {
 	recordTracksEventAddToCartClick,
 	TermLength,
 } from './utils';
+import type { GenericNewUser } from '../email-provider-stacked-card/email-provider-generic-form';
+import type {
+	EmailProvidersStackedCardProps,
+	ProviderCard,
+} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 
 import './google-workspace-card.scss';
 
@@ -98,7 +106,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	const standardPriceForTermLength = formatPrice( gSuiteProduct?.cost, currencyCode ?? '' );
 	const salePriceForTermLength = formatPrice( gSuiteProduct?.sale_cost, currencyCode ?? '' );
 
-	const discount = productIsDiscounted ? (
+	const additionalPriceInformation = productIsDiscounted ? (
 		<div className="google-workspace-card__discount-with-renewal">
 			{ translate(
 				'%(discount)d% off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
@@ -134,7 +142,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 
 	googleWorkspace.priceBadge = (
 		<PriceBadge
-			additionalPriceInformationComponent={ discount }
+			additionalPriceInformationComponent={ additionalPriceInformation }
 			priceComponent={ priceWithTerm }
 			className={ 'google-workspace-card' }
 		/>
@@ -158,10 +166,13 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		} = props;
 
 		const product = termLength === TermLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
-		const usersAreValid = validForm;
-		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
-		if ( ! usersAreValid || ! userCanAddEmail ) {
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+		const userCannotAddEmailReason = userCanAddEmail
+			? null
+			: getCurrentUserCannotAddEmailReason( domain );
+
+		if ( ! validForm || ! userCanAddEmail ) {
 			return;
 		}
 
@@ -170,11 +181,11 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		recordTracksEventAddToCartClick(
 			comparisonContext,
 			genericUsers?.map( ( user: GenericNewUser ) => user.uuid ),
-			usersAreValid,
+			validForm,
 			GOOGLE_PROVIDER_NAME,
 			source,
 			userCanAddEmail,
-			null
+			userCannotAddEmailReason
 		);
 
 		setAddingToCart( true );
@@ -205,7 +216,12 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			onReturnKeyPress={ onGoogleFormReturnKeyPress }
 			showAddAnotherMailboxButton={ false }
 			setValidForm={ setValidForm }
-			optionalFields={ [ 'email', 'fullName', 'isAdmin' ] }
+			optionalFields={ [
+				GENERIC_EMAIL_FORM_EMAIL_FIELD,
+				GENERIC_EMAIL_FORM_FULL_NAME_FIELD,
+				GENERIC_EMAIL_FORM_IS_ADMIN_FIELD,
+				GENERIC_EMAIL_FORM_ALTERNATIVE_EMAIL_FIELD,
+			] }
 		>
 			<FullWidthButton
 				className="google-workspace-card__continue"

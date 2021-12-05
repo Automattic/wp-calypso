@@ -13,24 +13,29 @@ import {
 } from 'calypso/lib/domains';
 import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
-import {
-	areAllMailboxesValid,
-	buildNewTitanMailbox,
-	transformMailboxForCart,
-	validateMailboxes as validateTitanMailboxes,
-} from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
 	TITAN_PASSWORD_RESET_FIELD,
 	TITAN_FULL_NAME_FIELD,
 } from 'calypso/my-sites/email/titan-new-mailbox';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	EmailProviderGenericForm,
+	GENERIC_EMAIL_FORM_ALTERNATIVE_EMAIL_FIELD,
+	GENERIC_EMAIL_FORM_EMAIL_FIELD,
+	GENERIC_EMAIL_FORM_FIRST_NAME_FIELD,
+	GENERIC_EMAIL_FORM_FULL_NAME_FIELD,
+	GENERIC_EMAIL_FORM_IS_ADMIN_FIELD,
+	GENERIC_EMAIL_FORM_LAST_NAME_FIELD,
+	GenericNewUser,
+	newUser,
+	transformGenericUserFromTitanMailboxForCart,
+} from '../email-provider-stacked-card/email-provider-generic-form';
 import {
 	AddToCartAndCheckout,
 	PriceBadge,
@@ -53,6 +58,8 @@ const getTitanFeatures = () => {
 		translate( '24/7 support via email' ),
 	];
 };
+
+const identityMap = ( item: any ) => item;
 
 const professionalEmailCardInformation: ProviderCard = {
 	detailsExpanded: true,
@@ -87,14 +94,12 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	const titanMailProduct =
 		termLength === TermLength.MONTHLY ? titanMailMonthlyProduct : titanMailAnnuallyProduct;
 
-	const [ titanMailbox, setTitanMailbox ] = useState( [
-		buildNewTitanMailbox( selectedDomainName, false ),
-	] );
+	const [ genericUsers, setGenericUsers ] = useState( [ newUser( selectedDomainName ) ] );
 	const [ addingToCart, setAddingToCart ] = useState( false );
-	const [ validatedTitanMailboxUuids, setValidatedTitanMailboxUuids ] = useState( [ '' ] );
 	const optionalFields = [ TITAN_PASSWORD_RESET_FIELD, TITAN_FULL_NAME_FIELD ];
+	const [ validForm, setValidForm ] = useState( false );
 
-	const onTitanConfirmNewMailboxes = () => {
+	const onConfirmNewMailboxes = () => {
 		const {
 			comparisonContext,
 			domain,
@@ -106,48 +111,37 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			source,
 		} = props;
 
-		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
-
-		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes, optionalFields );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 		const userCannotAddEmailReason = userCanAddEmail
 			? null
 			: getCurrentUserCannotAddEmailReason( domain );
 
-		const validatedMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
 		recordTracksEventAddToCartClick(
 			comparisonContext,
-			validatedMailboxUuids,
-			mailboxesAreValid,
+			genericUsers?.map( ( user: GenericNewUser ) => user.uuid ),
+			validForm,
 			TITAN_PROVIDER_NAME,
 			source,
 			userCanAddEmail,
 			userCannotAddEmailReason
 		);
 
-		setTitanMailbox( titanMailbox );
-		setValidatedTitanMailboxUuids( validatedMailboxUuids );
-
-		if ( ! mailboxesAreValid || ! userCanAddEmail ) {
-			return;
-		}
-
 		const cartItem =
 			termLength === TermLength.MONTHLY
 				? titanMailMonthly( {
 						domain: selectedDomainName,
-						quantity: validatedTitanMailboxes.length,
+						quantity: genericUsers.length,
 						extra: {
-							email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
-							new_quantity: validatedTitanMailboxes.length,
+							email_users: genericUsers.map( transformGenericUserFromTitanMailboxForCart ),
+							new_quantity: genericUsers.length,
 						},
 				  } )
 				: titanMailAnnually( {
 						domain: selectedDomainName,
-						quantity: validatedTitanMailboxes.length,
+						quantity: genericUsers.length,
 						extra: {
-							email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
-							new_quantity: validatedTitanMailboxes.length,
+							email_users: genericUsers.map( transformGenericUserFromTitanMailboxForCart ),
+							new_quantity: genericUsers.length,
 						},
 				  } );
 
@@ -184,26 +178,36 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		</>
 	);
 
+	const domainList = domain ? [ domain ] : [];
+
 	professionalEmail.formFields = (
-		<TitanNewMailboxList
-			onMailboxesChange={ setTitanMailbox }
-			mailboxes={ titanMailbox }
+		<EmailProviderGenericForm
+			extraValidation={ identityMap }
+			domains={ domainList }
+			onUsersChange={ setGenericUsers }
 			selectedDomainName={ selectedDomainName }
+			users={ genericUsers }
 			onReturnKeyPress={ onTitanFormReturnKeyPress }
-			showLabels={ true }
-			validatedMailboxUuids={ validatedTitanMailboxUuids }
 			showAddAnotherMailboxButton={ false }
-			hiddenFieldNames={ [ TITAN_FULL_NAME_FIELD, TITAN_PASSWORD_RESET_FIELD ] }
+			setValidForm={ setValidForm }
+			optionalFields={ [
+				GENERIC_EMAIL_FORM_EMAIL_FIELD,
+				GENERIC_EMAIL_FORM_FULL_NAME_FIELD,
+				GENERIC_EMAIL_FORM_FIRST_NAME_FIELD,
+				GENERIC_EMAIL_FORM_LAST_NAME_FIELD,
+				GENERIC_EMAIL_FORM_IS_ADMIN_FIELD,
+				GENERIC_EMAIL_FORM_ALTERNATIVE_EMAIL_FIELD,
+			] }
 		>
 			<FullWidthButton
 				className="professional-email-card__continue"
 				primary
 				busy={ addingToCart }
-				onClick={ onTitanConfirmNewMailboxes }
+				onClick={ onConfirmNewMailboxes }
 			>
 				{ translate( 'Create your mailbox' ) }
 			</FullWidthButton>
-		</TitanNewMailboxList>
+		</EmailProviderGenericForm>
 	);
 
 	return <EmailProvidersStackedCard { ...professionalEmail } />;

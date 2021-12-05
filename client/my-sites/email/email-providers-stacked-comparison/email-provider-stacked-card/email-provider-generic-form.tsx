@@ -1,8 +1,9 @@
 import { Button, Gridicon } from '@automattic/components';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import { translate, TranslateResult, useRtl, useTranslate } from 'i18n-calypso';
-import { countBy, includes, mapValues } from 'lodash';
+import { countBy, find, groupBy, includes, map, mapValues } from 'lodash';
 import React, { ChangeEvent, Fragment, FunctionComponent, ReactNode, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -12,12 +13,42 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
+import {
+	getGSuiteMailboxCount,
+	hasGSuiteWithUs,
+	isGoogleWorkspaceProductSlug,
+	isGSuiteProductSlug,
+} from 'calypso/lib/gsuite';
+import { GSuiteNewUser, GSuiteProductUser } from 'calypso/lib/gsuite/new-users';
 
 import './style.scss';
+
+export const GENERIC_EMAIL_FORM_EMAIL_FIELD = 'email';
+export const GENERIC_EMAIL_FORM_FULL_NAME_FIELD = 'fullName';
+export const GENERIC_EMAIL_FORM_FIRST_NAME_FIELD = 'firstName';
+export const GENERIC_EMAIL_FORM_LAST_NAME_FIELD = 'lastName';
+export const GENERIC_EMAIL_FORM_IS_ADMIN_FIELD = 'isAdmin';
+export const GENERIC_EMAIL_FORM_ALTERNATIVE_EMAIL_FIELD = 'alternativeEmail';
+
 const requiredField = ( { value, error }: GenericNewUserField ): GenericNewUserField => ( {
 	value,
 	error:
 		! error && ( ! value || '' === value.trim() ) ? translate( 'This field is required.' ) : error,
+} );
+
+/*
+ * Adds a new error if the mailbox has no errors and the email address is invalid.
+ */
+const validateEmail = ( {
+	value: alternativeEmail,
+	error: alternativeEmailError,
+}: GenericNewUserField ): GenericNewUserField => ( {
+	value: alternativeEmail,
+	error:
+		! alternativeEmailError && ! emailValidator.validate( alternativeEmail )
+			? translate( 'Please provide a valid email address.' )
+			: alternativeEmailError,
 } );
 
 /*
@@ -106,8 +137,20 @@ const validateNewUsersAreUnique = ( users: GenericNewUser[] ): GenericNewUser[] 
 	);
 
 	return users.map(
-		( { uuid, fullName, email, domain, isAdmin, mailBox, firstName, lastName, password } ) => ( {
+		( {
 			uuid,
+			alternativeEmail,
+			fullName,
+			email,
+			domain,
+			isAdmin,
+			mailBox,
+			firstName,
+			lastName,
+			password,
+		} ) => ( {
+			uuid,
+			alternativeEmail,
 			email,
 			firstName,
 			fullName,
@@ -182,6 +225,7 @@ export const validatePasswordField = (
  */
 const validateUser = ( user: GenericNewUser, optoinalFields: string[] ): GenericNewUser => {
 	const {
+		alternativeEmail,
 		domain,
 		email,
 		fullName,
@@ -196,6 +240,7 @@ const validateUser = ( user: GenericNewUser, optoinalFields: string[] ): Generic
 
 	return {
 		uuid: user.uuid,
+		alternativeEmail: validateEmail( alternativeEmail ),
 		domain,
 		isAdmin,
 		fullName,
@@ -260,7 +305,10 @@ const validateOverallEmailAgainstExistingEmails = (
 	value: mailBox,
 	error:
 		! mailBoxError &&
-		includes( mapValues( existingGenericUsers, 'email' ), `${ mailBox }@${ domain }` )
+		includes(
+			mapValues( existingGenericUsers, GENERIC_EMAIL_FORM_EMAIL_FIELD ),
+			`${ mailBox }@${ domain }`
+		)
 			? translate( 'You already have this email address.' )
 			: mailBoxError,
 } );
@@ -268,6 +316,7 @@ const validateOverallEmailAgainstExistingEmails = (
 export const validateAgainstExistingUsers = (
 	{
 		uuid,
+		alternativeEmail,
 		domain,
 		email,
 		isAdmin,
@@ -280,6 +329,7 @@ export const validateAgainstExistingUsers = (
 	existingGSuiteUsers: [  ]
 ): GenericNewUser => ( {
 	uuid,
+	alternativeEmail,
 	firstName,
 	fullName,
 	lastName,
@@ -319,7 +369,7 @@ const doesUserHaveError = ( user: GenericNewUser ): boolean => {
  * @param user user to check
  * @returns boolean if the user is valid or not
  */
-const isUserValid = ( user: GenericNewUser, optionalFields: string[] ): boolean =>
+export const isUserValid = ( user: GenericNewUser, optionalFields: string[] ): boolean =>
 	isUserComplete( user, optionalFields ) && ! doesUserHaveError( user );
 
 export const areAllUsersValid = (
@@ -330,6 +380,7 @@ export const areAllUsersValid = (
 export const newUser = ( domain = '' ): GenericNewUser => {
 	return {
 		uuid: uuidv4(),
+		alternativeEmail: newField(),
 		firstName: newField(),
 		fullName: newField(),
 		isAdmin: newField(),
@@ -348,7 +399,7 @@ export interface GenericNewUserField {
 
 export interface GenericNewUser {
 	uuid: string;
-
+	alternativeEmail: GenericNewUserField;
 	domain: GenericNewUserField;
 	email: GenericNewUserField;
 	mailBox: GenericNewUserField;
@@ -416,6 +467,7 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 	onUserValueChange,
 	onReturnKeyPress,
 	user: {
+		alternativeEmail: { value: alternativeEmail, error: alternativeEmailError },
 		firstName: { value: firstName, error: firstNameError },
 		fullName: { value: fullName, error: fullNameError },
 		lastName: { value: lastName, error: lastNameError },
@@ -437,12 +489,14 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 			( value ) => null !== value
 		);
 
+	const [ alternativeEmailFieldTouched, setAlternativeEmailFieldTouched ] = useState( false );
 	const [ firstNameFieldTouched, setFirstNameFieldTouched ] = useState( false );
 	const [ fullNameFieldTouched, setFullNameFieldTouched ] = useState( false );
 	const [ lastNameFieldTouched, setLastNameFieldTouched ] = useState( false );
 	const [ mailBoxFieldTouched, setMailBoxFieldTouched ] = useState( false );
 	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
 
+	const hasAlternativeEmailError = alternativeEmailFieldTouched && null !== alternativeEmailError;
 	const hasMailBoxError = mailBoxFieldTouched && null !== mailBoxError;
 	const hasFirstNameError = firstNameFieldTouched && null !== firstNameError;
 	const hasFullNameError = fullNameFieldTouched && null !== fullNameError;
@@ -502,7 +556,7 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 	return (
 		<div className={ classNames( 'email-provider-generic-form__new-user' ) }>
 			<FormFieldset className="email-provider-generic-form__form-fieldset">
-				{ ! hiddenFields.some( ( field ) => field === 'fullName' ) && (
+				{ ! hiddenFields.some( ( field ) => field === GENERIC_EMAIL_FORM_FULL_NAME_FIELD ) && (
 					<div className="email-provider-generic-form__new-user-name-container">
 						<LabelWrapper label={ translate( 'Full name' ) }>
 							<FormTextInput
@@ -511,7 +565,7 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 								maxLength={ 60 }
 								isError={ hasFullNameError }
 								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onUserValueChange( 'fullName', event.target.value );
+									onUserValueChange( GENERIC_EMAIL_FORM_FULL_NAME_FIELD, event.target.value );
 								} }
 								onBlur={ () => {
 									setFullNameFieldTouched( wasValidated );
@@ -524,7 +578,7 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 					</div>
 				) }
 
-				{ ! hiddenFields.some( ( field ) => field === 'firstName' ) && (
+				{ ! hiddenFields.some( ( field ) => field === GENERIC_EMAIL_FORM_FIRST_NAME_FIELD ) && (
 					<div className="email-provider-generic-form__new-user-name-container">
 						<LabelWrapper label={ translate( 'First name' ) }>
 							<FormTextInput
@@ -533,7 +587,7 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 								maxLength={ 60 }
 								isError={ hasFirstNameError }
 								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onUserValueChange( 'firstName', event.target.value );
+									onUserValueChange( GENERIC_EMAIL_FORM_FIRST_NAME_FIELD, event.target.value );
 								} }
 								onBlur={ () => {
 									setFirstNameFieldTouched( wasValidated );
@@ -547,14 +601,14 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 				) }
 
 				<div className="email-provider-generic-form__new-user-name-container">
-					{ ! hiddenFields.some( ( field ) => field === 'lastName' ) && (
+					{ ! hiddenFields.some( ( field ) => field === GENERIC_EMAIL_FORM_LAST_NAME_FIELD ) && (
 						<LabelWrapper label={ translate( 'Last name' ) }>
 							<FormTextInput
 								value={ lastName }
 								maxLength={ 60 }
 								isError={ hasLastNameError }
 								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onUserValueChange( 'lastName', event.target.value );
+									onUserValueChange( GENERIC_EMAIL_FORM_LAST_NAME_FIELD, event.target.value );
 								} }
 								onBlur={ () => {
 									setLastNameFieldTouched( wasValidated );
@@ -567,6 +621,38 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 					{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 				</div>
 			</FormFieldset>
+
+			{ ! hiddenFields.some(
+				( field ) => field === GENERIC_EMAIL_FORM_ALTERNATIVE_EMAIL_FIELD
+			) && (
+				<FormFieldset className="email-provider-generic-form__form-fieldset">
+					<div className="email-provider-generic-form__new-user-name-container">
+						<LabelWrapper
+							label={ translate( 'Password reset email address', {
+								comment: 'This is the email address we will send password reset emails to',
+							} ) }
+						>
+							<FormTextInput
+								value={ alternativeEmail }
+								isError={ hasAlternativeEmailError }
+								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+									onUserValueChange(
+										GENERIC_EMAIL_FORM_ALTERNATIVE_EMAIL_FIELD,
+										event.target.value
+									);
+								} }
+								onBlur={ () => {
+									setAlternativeEmailFieldTouched( wasValidated );
+								} }
+								onKeyUp={ onReturnKeyPress }
+							/>
+						</LabelWrapper>
+						{ hasAlternativeEmailError && (
+							<FormInputValidation text={ alternativeEmailError } isError />
+						) }
+					</div>
+				</FormFieldset>
+			) }
 
 			<FormFieldset className="email-provider-generic-form__form-fieldset">
 				<div className="email-provider-generic-form__new-user-email-container">
@@ -597,7 +683,6 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 
 					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
 				</div>
-
 				{ showTrashButton && (
 					<Button
 						className="email-provider-generic-form__new-user-remove-user-button"
@@ -653,7 +738,7 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 
 			const changedUser = { ...user, [ fieldName ]: { value: fieldValue, error: null } };
 
-			if ( 'firstName' === fieldName && ! mailBoxFieldTouched ) {
+			if ( GENERIC_EMAIL_FORM_FIRST_NAME_FIELD === fieldName && ! mailBoxFieldTouched ) {
 				return { ...changedUser, mailBox: { value: sanitizeEmail( fieldValue ), error: null } };
 			}
 
@@ -683,6 +768,7 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 						domains={
 							domains ? domains.map( ( domain: any ) => domain.name ) : [ selectedDomainName ]
 						}
+						hiddenFields={ optionalFields }
 						user={ user }
 						onUserValueChange={ onUserValueChange( user.uuid ) }
 						onUserRemove={ onUserRemove( user.uuid ) }
@@ -709,5 +795,68 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 				{ children }
 			</div>
 		</div>
+	);
+};
+
+export const transformGenericUserFromTitanMailboxForCart = ( genericNewUser: GenericNewUser ) => ( {
+	alternative_email: genericNewUser.alternativeEmail?.value,
+	email: `${ genericNewUser.mailBox?.value }@${ genericNewUser.domain?.value }`,
+	is_admin: genericNewUser.isAdmin?.value,
+	name: genericNewUser.fullName?.value ?? genericNewUser.firstName?.value,
+	password: genericNewUser.password?.value,
+} );
+
+const transformGenericUserFromGoogleWorkspaceMailboxForCart = ( {
+	firstName: { value: firstname },
+	lastName: { value: lastname },
+	domain: { value: domain },
+	mailBox: { value: mailBox },
+	password: { value: password },
+}: GSuiteNewUser ): GSuiteProductUser => ( {
+	email: `${ mailBox }@${ domain }`.toLowerCase(),
+	firstname,
+	lastname,
+	password,
+} );
+
+const mapGoogleCartItem = (
+	groupedUsers: GSuiteProductUser[],
+	domainName: string,
+	productSlug: string,
+	domains: { name: string }[]
+) => {
+	const properties = { domain: domainName, users: groupedUsers };
+
+	const domain = find( domains, [ 'name', domainName ] );
+
+	const isExtraLicense = domain && hasGSuiteWithUs( domain );
+
+	if ( isGSuiteProductSlug( productSlug ) && isExtraLicense ) {
+		return googleAppsExtraLicenses( properties );
+	}
+
+	if ( isGoogleWorkspaceProductSlug( productSlug ) && isExtraLicense ) {
+		properties[ 'new_quantity' ] = groupedUsers.length;
+		properties[ 'quantity' ] = getGSuiteMailboxCount( domain ) + groupedUsers.length;
+	}
+
+	if ( isGoogleWorkspaceProductSlug( productSlug ) && ! isExtraLicense ) {
+		properties[ 'quantity' ] = groupedUsers.length;
+	}
+	return googleApps( { ...properties, product_slug: productSlug } );
+};
+
+export const getItemsFromGoogleWorkspaceForCart = (
+	domains: { name: string }[],
+	productSlug: string,
+	users: GSuiteNewUser[]
+): MinimalRequestCartProduct => {
+	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
+		groupBy( users, 'domain.value' ),
+		( groupedUsers ) => groupedUsers.map( transformGenericUserFromGoogleWorkspaceMailboxForCart )
+	);
+
+	return map( usersGroupedByDomain, ( groupedUsers, domainName ) =>
+		mapGoogleCartItem( groupedUsers, domainName, productSlug, domains )
 	);
 };
