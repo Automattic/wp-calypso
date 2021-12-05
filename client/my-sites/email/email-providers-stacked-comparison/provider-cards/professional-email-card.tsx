@@ -15,10 +15,6 @@ import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import {
-	TITAN_PASSWORD_RESET_FIELD,
-	TITAN_FULL_NAME_FIELD,
-} from 'calypso/my-sites/email/titan-new-mailbox';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
@@ -96,7 +92,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 
 	const [ genericUsers, setGenericUsers ] = useState( [ newUser( selectedDomainName ) ] );
 	const [ addingToCart, setAddingToCart ] = useState( false );
-	const optionalFields = [ TITAN_PASSWORD_RESET_FIELD, TITAN_FULL_NAME_FIELD ];
 	const [ validForm, setValidForm ] = useState( false );
 
 	const onConfirmNewMailboxes = () => {
