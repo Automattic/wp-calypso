@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Title } from '@automattic/onboarding';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
@@ -51,6 +51,11 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	function getImportJob( engine: Importer ): ImportJob | undefined {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
 	}
+
+	/**
+	 ↓ Effects
+	 */
+	useEffect( fetchImporters, [ siteId ] );
 
 	/**
 	 ↓ Methods
@@ -114,10 +119,11 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 };
 
 export default connect(
-	( state, props: Props ) => {
-		const { queryObject } = props;
-		const siteSlug = decodeURIComponentIfValid( queryObject.to );
-		const fromSite = decodeURIComponentIfValid( queryObject.from );
+	( state ) => {
+		const searchParams = new URLSearchParams( window.location.search );
+
+		const siteSlug = decodeURIComponentIfValid( searchParams.get( 'to' ) );
+		const fromSite = decodeURIComponentIfValid( searchParams.get( 'from' ) );
 		const siteId = getSiteId( state, siteSlug ) as number;
 
 		return {
