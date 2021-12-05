@@ -783,7 +783,7 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 
 			{ showAddAnotherMailboxButton && (
 				<div className="email-provider-generic-form__add-another-user-container">
-					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/interactive-supports-focus */}
+					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/interactive-supports-focus */ }
 					<span
 						role="button"
 						className="email-provider-generic-form__add-another-user-button"
