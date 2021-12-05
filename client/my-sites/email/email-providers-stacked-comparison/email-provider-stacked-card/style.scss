@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/mixins';
 
 $width-right-panel-card: calc( 45% - 130px );
-$width-left-panel-card: calc( 55% );
+$width-left-panel-card: 55%;
 
 .email-provider-stacked-features__whats-included {
 	color: var( --studio-gray-20 );
@@ -101,11 +101,12 @@ h2.action-panel__title {
 	}
 }
 
-.email-provider-stacked-card__provider__provider-price-and-button {
+.email-provider-stacked-card__provider-price-and-button {
 	align-items: center;
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 1em;
+	order: 3;
 }
 
 .email-provider-stacked-card__provider__provider-expand-cta {
@@ -131,10 +132,6 @@ h2.action-panel__title {
 	}
 }
 
-.email-provider-stacked-card__title-price-badge {
-	width: $width-right-panel-card;
-}
-
 .email-provider-stacked-card__provider-additional-price-information {
 	color: var( --studio-gray-60 );
 	margin-left: 4px;
@@ -144,6 +141,17 @@ h2.action-panel__title {
 	display: none;
 }
 
+.email-providers-stacked-comparison__main.main .card.action-panel.promo-card.email-providers-stacked-comparison__provider-card .action-panel__figure {
+	margin-right: unset;
+	@include break-mobile {
+		margin-right: 24px;
+	}
+}
+
+.email-provider-stacked-card__provider-expand-cta {
+	width: 110px;
+}
+
 .is-expanded {
 	.email-provider-stacked-card__provider-expand-cta {
 		display: none;
@@ -151,13 +159,17 @@ h2.action-panel__title {
 
 	.email-provider-stacked-card__provider-form-and-right-panel {
 		display: flex;
-		flex-direction: column-reverse;
+		flex-direction: column;
 		justify-content: start;
 		margin-top: 1em;
 		line-height: 1.5;
 		padding-right: 20px;
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include break-small {
+			flex-direction: column-reverse;
+		}
+
+		@include break-xlarge {
 			flex-direction: row;
 		}
 	}
@@ -165,7 +177,11 @@ h2.action-panel__title {
 	.email-provider-stacked-card__provider-form {
 		margin-bottom: 20px;
 		margin-right: 20px;
-		width: $width-left-panel-card;
+		width: 100%;
+
+		@include break-xlarge {
+			width: $width-left-panel-card;
+		}
 
 		@include breakpoint-deprecated( '>1040px' ) {
 			margin-top: 0;
@@ -181,21 +197,9 @@ h2.action-panel__title {
 			}
 		}
 	}
-
-	.email-provider-features {
-		margin-bottom: 2.5em;
-
-		@include breakpoint-deprecated( '>1040px' ) {
-			margin-bottom: 14px;
-			margin-left: 64px;
-			margin-top: 0;
-		}
-	}
 }
 
 .email-provider-stacked-card__provider-right-panel {
-	width: $width-right-panel-card;
-
 	img {
 		margin-top: 40px;
 	}
@@ -212,21 +216,41 @@ h2.action-panel__title {
 	color: var( --color-neutral-70 );
 }
 
-.email-provider-stacked-card__header {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: space-between;
+.email-providers-stacked-comparison__provider-card {
+	.email-provider-stacked-card__header {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+
+		.email-provider-stacked-card__title-price-badge {
+			width: $width-right-panel-card;
+			margin-left: 10px;
+		}
+	}
+	&.is-expanded {
+		.email-provider-stacked-card__header {
+			.email-provider-stacked-card__title-price-badge {
+				width: initial;
+				margin-left: 10px;
+			}
+		}
+	}
 }
 
 .email-provider-stacked-card__provider-card-main-details {
 	width: 120px;
+	text-align: right;
 }
 
 .email-provider-stacked-card__title-container {
-	width: $width-left-panel-card;
+	width: 100%;
 	display:flex;
 	flex-direction: column;
+
+	@include break-small {
+		min-width: $width-left-panel-card;
+		flex-basis: content;
+	}
 }
 
 
@@ -340,7 +364,15 @@ h2.action-panel__title {
 
 .email-provider-generic-form__new-user-email {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+
+	.form-label {
+		width: 100%;
+	}
+
+	@include break-large {
+		flex-direction: column;
+	}
 
 	select.form-select {
 		width: 100%;
@@ -386,3 +418,16 @@ h2.action-panel__title {
 		margin-right: 8px;
 	}
 }
+
+.email-provider-stacked-features__toggle-button {
+	overflow: visible;
+	white-space: nowrap;
+	cursor: pointer;
+	display: flex;
+	justify-content: space-between;
+	width: calc( 100% - 26px );
+	.gridicon {
+		margin-left: 5px;
+	}
+}
+

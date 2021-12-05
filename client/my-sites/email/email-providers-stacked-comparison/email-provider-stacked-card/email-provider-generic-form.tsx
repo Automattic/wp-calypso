@@ -626,7 +626,7 @@ const GenericNewUser: FunctionComponent< GenericNewUserProps > = ( {
 				( field ) => field === GENERIC_EMAIL_FORM_ALTERNATIVE_EMAIL_FIELD
 			) && (
 				<FormFieldset className="email-provider-generic-form__form-fieldset">
-					<div className="email-provider-generic-form__new-user-name-container">
+					<div className="email-provider-generic-form__new-user-alternative-email-container">
 						<LabelWrapper
 							label={ translate( 'Password reset email address', {
 								comment: 'This is the email address we will send password reset emails to',

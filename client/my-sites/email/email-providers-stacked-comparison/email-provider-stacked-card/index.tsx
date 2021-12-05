@@ -3,8 +3,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { FunctionComponent, useState } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
-import EmailProviderFeaturesToggleButton from 'calypso/my-sites/email/email-provider-features/toggle-button';
-import EmailProviderStackedFeatures from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
+import { EmailProviderStackedFeatures, EmailProviderStackedFeaturesToggleButton } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
 import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 
 import './style.scss';
@@ -31,9 +30,9 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
-	const isViewportSizeLowerThan1040px = useBreakpoint( '<1040px' );
+	const isViewportSizeLowerThan660px = useBreakpoint( '<660px' );
 
-	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan1040px;
+	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan660px;
 
 	const toggleVisibility = ( event: React.MouseEvent ): void => {
 		event.preventDefault();
@@ -48,8 +47,8 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 				<p>{ description }</p>
 			</div>
 			<div className="email-provider-stacked-card__title-price-badge">{ priceBadge }</div>
-			<div className="email-provider-stacked-card__provider-card-main-details">
-				{ showExpandButton && (
+			{ showExpandButton && ! detailsExpanded && (
+				<div className="email-provider-stacked-card__provider-card-main-details">
 					<Button
 						primary={ false }
 						onClick={ toggleVisibility }
@@ -57,8 +56,8 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 					>
 						{ expandButtonLabel }
 					</Button>
-				) }
-			</div>
+				</div>
+			) }
 		</div>
 	);
 
@@ -73,7 +72,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		>
 			<div className="email-provider-stacked-card__provider-price-and-button">
 				{ showFeaturesToggleButton && (
-					<EmailProviderFeaturesToggleButton
+					<EmailProviderStackedFeaturesToggleButton
 						handleClick={ () => setFeaturesExpanded( ! areFeaturesExpanded ) }
 						isRelatedContentExpanded={ areFeaturesExpanded }
 					/>

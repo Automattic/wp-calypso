@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .email-providers-stacked-comparison__header {
 	font-size: 2rem;
 	text-align: center;
@@ -12,6 +15,30 @@
 
 		img {
 			max-width: 36px;
+		}
+	}
+}
+
+.email-providers-stacked-comparison__main.main {
+	margin: 12px auto;
+	@include break-mobile {
+		flex-direction: row;
+	}
+
+	.card.action-panel.promo-card.email-providers-stacked-comparison__provider-card {
+		display: flex;
+		flex-direction: row;
+		.action-panel__figure {
+			margin-top: 3px;
+
+			@include breakpoint-deprecated('>480px') {
+				max-width: 24px;
+				order: 1;
+
+				&.align-left {
+					order: -1;
+				}
+			}
 		}
 	}
 }
