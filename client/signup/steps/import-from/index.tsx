@@ -14,6 +14,7 @@ import {
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { Importer, QueryObject, ImportJob } from './types';
+import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
 
 import './style.scss';
@@ -25,6 +26,8 @@ interface Props {
 	stepSectionName: string;
 	queryObject: QueryObject;
 	siteId: number;
+	siteSlug: string;
+	fromSite: string;
 	canImport: boolean;
 	isImporterStatusHydrated: boolean;
 	siteImports: ImportJob[];
@@ -33,23 +36,24 @@ interface Props {
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const {
 		stepSectionName,
-		queryObject,
 		siteId,
 		canImport,
+		siteSlug,
 		siteImports,
 		isImporterStatusHydrated,
+		fromSite,
 	} = props;
-	const importerName: Importer = stepSectionName.toLowerCase() as Importer;
+	const engine: Importer = stepSectionName.toLowerCase() as Importer;
 
 	/**
-	 * Fields
+	 ↓ Fields
 	 */
-	const importJob = siteImports.find(
-		( x: { type: string } ) => x.type === `importer-type-${ importerName }`
-	);
+	function getImportJob( engine: Importer ): ImportJob | undefined {
+		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
+	}
 
 	/**
-	 * Methods
+	 ↓ Methods
 	 */
 	function fetchImporters() {
 		siteId && props.fetchImporterState( siteId );
@@ -87,14 +91,18 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									 * Permission screen
 									 */
 									return <Title>You are not authorized to view this page</Title>;
-								} else if (
+								} else if ( engine === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
 									/**
 									 * Wix importer
 									 */
-									importerName === 'wix' &&
-									isEnabled( 'gutenboarding/import-from-wix' )
-								) {
-									return <WixImporter queryObject={ queryObject } job={ importJob } />;
+									return (
+										<WixImporter
+											job={ getImportJob( engine ) }
+											siteId={ siteId }
+											siteSlug={ siteSlug }
+											fromSite={ fromSite }
+										/>
+									);
 								}
 							} )() }
 						</div>
@@ -109,10 +117,13 @@ export default connect(
 	( state, props: Props ) => {
 		const { queryObject } = props;
 		const siteSlug = decodeURIComponentIfValid( queryObject.to );
+		const fromSite = decodeURIComponentIfValid( queryObject.from );
 		const siteId = getSiteId( state, siteSlug ) as number;
 
 		return {
 			siteId,
+			siteSlug,
+			fromSite,
 			siteImports: getImporterStatusForSiteId( state, siteId ),
 			isImporterStatusHydrated: isImporterStatusHydrated( state ),
 			canImport: canCurrentUser( state, siteId, 'manage_options' ),

@@ -1,28 +1,72 @@
 import { ProgressBar } from '@automattic/components';
-import { Progress, Title, SubTitle, Hooray, NextButton } from '@automattic/onboarding';
+import { Progress, Title, SubTitle, Hooray } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
+import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
-import { Importer, QueryObject, ImportJob } from '../types';
+import { importSite } from 'calypso/state/imports/site-importer/actions';
+import { Importer, ImportJob } from '../types';
+import { getImporterTypeForEngine } from '../util';
+import DoneButton from './done-button';
 
 import './style.scss';
 
 interface Props {
-	queryObject: QueryObject;
-	siteId?: number | null;
-	fetchImporterState?: ( siteId: number ) => void;
 	job?: ImportJob;
+	siteId: number;
+	siteSlug: string;
+	fromSite: string;
+	importSite: ( params: { [ key: string ]: any } ) => void;
+	startImport: ( siteId: number, type: string ) => void;
+	resetImport: ( siteId: number, importerId: string ) => void;
 }
-const WixImporter: React.FunctionComponent< Props > = ( props ) => {
+export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wix';
 	const { __ } = useI18n();
-	const { job } = props;
+	const { job, siteId, siteSlug, fromSite, importSite, startImport, resetImport } = props;
 
 	/**
-	 * Methods
+	 ↓ Effects
 	 */
+	useEffect( runImport, [ job ] );
+
+	/**
+	 ↓ Methods
+	 */
+	function runImport() {
+		// If there is no existing import job, start a new
+		if ( job === undefined ) {
+			startImport( siteId, getImporterTypeForEngine( importer ) );
+		} else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
+			importSite( prepareImportParams() );
+		}
+	}
+
+	function prepareImportParams() {
+		const targetSiteUrl = fromSite.startsWith( 'http' ) ? fromSite : 'https://' + fromSite;
+
+		return {
+			engine: importer,
+			importerStatus: job,
+			params: { engine: importer },
+			site: { ID: siteId },
+			targetSiteUrl,
+			supportedContent: [],
+			unsupportedContent: [],
+		};
+	}
+
+	function checkLoading() {
+		return (
+			job?.importerState === appStates.READY_FOR_UPLOAD ||
+			job?.importerState === appStates.UPLOAD_SUCCESS
+		);
+	}
+
 	function checkProgress() {
 		return job && job.importerState === appStates.IMPORTING;
 	}
@@ -33,19 +77,24 @@ const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<>
-			<div className={ classnames( `importer-${ importer }` ) }>
+			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
 				{ ( () => {
-					/**
-					 * Progress screen
-					 */
-					if ( checkProgress() ) {
+					if ( checkLoading() ) {
+						/**
+						 * Loading screen
+						 */
+						return <LoadingEllipsis />;
+					} else if ( checkProgress() ) {
+						/**
+						 * Progress screen
+						 */
 						return (
 							<Progress>
 								<Title>{ __( 'Importing' ) }...</Title>
 								<ProgressBar
 									color={ 'black' }
 									compact={ true }
-									value={ calculateProgress( job && job.progress ) }
+									value={ calculateProgress( job?.progress ) }
 								/>
 								<SubTitle>
 									{ __( "This may take a few minutes. We'll notify you by email when it's done." ) }
@@ -62,7 +111,12 @@ const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 								<SubTitle>
 									{ __( 'Congratulations. Your content was successfully imported.' ) }
 								</SubTitle>
-								<NextButton>{ __( 'View site' ) }</NextButton>
+								<DoneButton
+									siteId={ siteId }
+									siteSlug={ siteSlug }
+									job={ job as ImportJob }
+									resetImport={ resetImport }
+								/>
 							</Hooray>
 						);
 					}
@@ -72,4 +126,8 @@ const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default WixImporter;
+export default connect( null, {
+	importSite,
+	startImport,
+	resetImport,
+} )( WixImporter );
