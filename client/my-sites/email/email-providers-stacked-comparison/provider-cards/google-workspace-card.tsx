@@ -216,7 +216,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			onReturnKeyPress={ onGoogleFormReturnKeyPress }
 			showAddAnotherMailboxButton={ false }
 			setValidForm={ setValidForm }
-			optionalFields={ [
+			hiddenFields={ [
 				GENERIC_EMAIL_FORM_EMAIL_FIELD,
 				GENERIC_EMAIL_FORM_FULL_NAME_FIELD,
 				GENERIC_EMAIL_FORM_IS_ADMIN_FIELD,

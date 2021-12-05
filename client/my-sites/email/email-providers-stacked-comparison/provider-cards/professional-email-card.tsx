@@ -185,7 +185,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			onReturnKeyPress={ onTitanFormReturnKeyPress }
 			showAddAnotherMailboxButton={ false }
 			setValidForm={ setValidForm }
-			optionalFields={ [
+			hiddenFields={ [
 				GENERIC_EMAIL_FORM_EMAIL_FIELD,
 				GENERIC_EMAIL_FORM_FULL_NAME_FIELD,
 				GENERIC_EMAIL_FORM_FIRST_NAME_FIELD,
