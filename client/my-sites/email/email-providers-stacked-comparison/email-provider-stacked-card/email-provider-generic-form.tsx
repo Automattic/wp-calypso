@@ -718,7 +718,7 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 	extraValidation,
 	onUsersChange,
 	onReturnKeyPress,
-  	hiddenFields = [],
+	hiddenFields = [],
 	selectedDomainName,
 	setValidForm,
 	showAddAnotherMailboxButton = true,
@@ -781,19 +781,22 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 				</Fragment>
 			) ) }
 
-			<div className="email-provider-generic-form__actions">
-				{ showAddAnotherMailboxButton && (
-					<Button
+			{ showAddAnotherMailboxButton && (
+				<div className="email-provider-generic-form__add-another-user-container">
+					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/interactive-supports-focus */}
+					<span
+						role="button"
 						className="email-provider-generic-form__add-another-user-button"
 						onClick={ onUserAdd }
 					>
 						<Gridicon icon="plus" />
-						<span>{ translate( 'Add another mailbox' ) }</span>
-					</Button>
-				) }
+						{ translate( 'Add an extra mailbox' ) }
+					</span>
+					<hr className="email-provider-generic-form__user-divider" />
+				</div>
+			) }
 
-				{ children }
-			</div>
+			<div className="email-provider-generic-form__actions">{ children }</div>
 		</div>
 	);
 };

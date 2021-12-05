@@ -220,7 +220,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			selectedDomainName={ selectedDomainName }
 			users={ genericUsers }
 			onReturnKeyPress={ onGoogleFormReturnKeyPress }
-			showAddAnotherMailboxButton={ false }
+			showAddAnotherMailboxButton={ true }
 			setValidForm={ setValidForm }
 			hiddenFields={ [
 				GENERIC_EMAIL_FORM_EMAIL_FIELD,
