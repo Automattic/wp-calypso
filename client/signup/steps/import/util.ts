@@ -54,6 +54,17 @@ export function getWpComMigrateUrl( siteSlug: string, fromSite?: string ): strin
 		.replace( '{fromSite}', fromSite || '' );
 }
 
+export function getWpComOnboardingUrl(
+	siteSlug: string,
+	platform: string,
+	fromSite?: string
+): string {
+	return '/start/from/importing/{importer}?from={fromSite}&to={siteSlug}'
+		.replace( '{siteSlug}', siteSlug )
+		.replace( '{importer}', getPlatformImporterName( platform ) )
+		.replace( '{fromSite}', fromSite || '' );
+}
+
 export function getWpComImporterUrl(
 	siteSlug: string,
 	platform: string,
