@@ -81,9 +81,8 @@ export function requestSites() {
 		} );
 		const siteFilter = config( 'site_filter' );
 
-		return wpcom
-			.me()
-			.sites( {
+		return wpcom.req
+			.get( '/me/sites', {
 				apiVersion: '1.2',
 				site_visibility: 'all',
 				include_domain_only: true,
@@ -126,7 +125,7 @@ export function requestSite( siteFragment ) {
 			query.filters = siteFilter.join( ',' );
 		}
 
-		return wpcom.site( siteFragment ).get( query );
+		return wpcom.req.get( `/sites/${ siteFragment }`, query );
 	}
 
 	return ( dispatch ) => {
