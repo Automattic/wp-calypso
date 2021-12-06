@@ -25,6 +25,7 @@ const PluginsBrowserListElement = ( props ) => {
 		plugin = {},
 		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
+		currentSites,
 	} = props;
 
 	const translate = useTranslate();
@@ -39,7 +40,8 @@ const PluginsBrowserListElement = ( props ) => {
 	);
 
 	const dateFromNow = useMemo(
-		() => moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow(),
+		() =>
+			plugin.last_updated ? moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow() : null,
 		[ plugin.last_updated ]
 	);
 
@@ -96,10 +98,12 @@ const PluginsBrowserListElement = ( props ) => {
 								{ translate( 'by ' ) }
 								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
 							</div>
-							<div className="plugins-browser-item__last-updated">
-								{ translate( 'Last updated ' ) }
-								<span className="plugins-browser-item__last-updated-value">{ dateFromNow }</span>
-							</div>
+							{ dateFromNow && (
+								<div className="plugins-browser-item__last-updated">
+									{ translate( 'Last updated ' ) }
+									<span className="plugins-browser-item__last-updated-value">{ dateFromNow }</span>
+								</div>
+							) }
 						</>
 					) }
 					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
@@ -139,7 +143,7 @@ const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled } ) => {
 			/* eslint-disable wpcalypso/jsx-gridicon-size */
 			<div className="plugins-browser-item__installed">
 				<Gridicon icon="checkmark" size={ 14 } />
-				{ props.translate( 'Installed' ) }
+				{ translate( 'Installed' ) }
 			</div>
 			/* eslint-enable wpcalypso/jsx-gridicon-size */
 		);
@@ -149,14 +153,16 @@ const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled } ) => {
 };
 
 const UpgradeButton = ( { plugin } ) => {
+	const translate = useTranslate();
 	const { isPreinstalled, upgradeLink } = plugin;
+
 	if ( isPreinstalled || ! upgradeLink ) {
 		return null;
 	}
 
 	return (
 		<Button className="plugins-browser-item__upgrade-button" compact primary href={ upgradeLink }>
-			{ props.translate( 'Upgrade' ) }
+			{ translate( 'Upgrade' ) }
 		</Button>
 	);
 };
