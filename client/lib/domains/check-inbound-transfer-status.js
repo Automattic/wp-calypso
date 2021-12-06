@@ -7,9 +7,7 @@ export function checkInboundTransferStatus( domainName, onComplete ) {
 	}
 
 	wpcom.req
-		.get( {
-			path: `/domains/${ encodeURIComponent( domainName ) }/inbound-transfer-status`,
-		} )
+		.get( `/domains/${ encodeURIComponent( domainName ) }/inbound-transfer-status` )
 		.then( ( data ) => {
 			onComplete( null, data );
 		} )
