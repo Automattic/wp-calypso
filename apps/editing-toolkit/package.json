@@ -33,7 +33,7 @@
 		"build:wpcom-block-editor-nav-sidebar": "calypso-build --env source='wpcom-block-editor-nav-sidebar'",
 		"build:wpcom-block-editor-nux": "calypso-build --env source='wpcom-block-editor-nux'",
 		"build:wpcom-site-editor-nux": "calypso-build --env source='wpcom-site-editor'",
-		"clean": "rm -rf dist editing-toolkit-plugin/*/dist",
+		"clean": "rm -rf dist editing-toolkit-plugin/*/dist || true",
 		"dev": "yarn run calypso-apps-builder --localPath editing-toolkit-plugin --remotePath /home/wpcom/public_html/wp-content/plugins/editing-toolkit-plugin/dev",
 		"lint:php": "../../vendor/bin/phpcs --standard=../phpcs.xml ./ ",
 		"lint:php:fix": "../../vendor/bin/phpcbf --standard=../phpcs.xml ./ ",
