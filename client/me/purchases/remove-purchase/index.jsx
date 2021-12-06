@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -185,19 +184,13 @@ class RemovePurchase extends Component {
 	}
 
 	renderDomainDialog() {
-		let chatButton = null;
-
-		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
-			chatButton = this.getChatButton();
-		}
-
 		return (
 			<RemoveDomainDialog
 				isRemoving={ this.state.isRemoving }
 				isDialogVisible={ this.state.isDialogVisible }
 				removePurchase={ this.removePurchase }
 				closeDialog={ this.closeDialog }
-				chatButton={ chatButton }
+				chatButton={ this.getChatButton() }
 				purchase={ this.props.purchase }
 			/>
 		);
