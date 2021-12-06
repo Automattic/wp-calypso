@@ -44,7 +44,7 @@ function createDispatchAndWaitForValid(
 
 function getErrorFromState( state: ShoppingCartState ): undefined | ActionPromiseError {
 	if ( state.loadingError ) {
-		return new ActionPromiseError( state.loadingError, state.loadingErrorType ?? 'Unknown type' );
+		return new ActionPromiseError( state.loadingError, state.loadingErrorType );
 	}
 	const errorMessages = state.responseCart.messages?.errors ?? [];
 	if ( errorMessages.length > 0 ) {
@@ -74,12 +74,7 @@ function createShoppingCartManager(
 		state = newState;
 
 		if ( state.cacheStatus === 'error' ) {
-			actionPromises.reject(
-				new ActionPromiseError(
-					state.loadingError ?? 'Unknown error',
-					state.loadingErrorType ?? 'Unknown type'
-				)
-			);
+			actionPromises.reject( new ActionPromiseError( state.loadingError, state.loadingErrorType ) );
 		}
 
 		if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
