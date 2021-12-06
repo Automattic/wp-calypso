@@ -105,15 +105,24 @@
 	color: $studio-blue-40;
 }
 
-.plugins-browser-item__last-updated {
+.plugins-browser-item__last-updated,
+.plugins-browser-item__rating-value,
+.plugins-browser-item__active-installs {
 	color: var( --studio-gray-60 );
 	font-size: $font-body-extra-small;
+}
+
+.plugins-browser-item__last-updated {
 	margin-top: 2px;
+}
+
+.plugins-browser-item__active-installs {
+	margin-top: 5px;
+	text-align: right;
 }
 
 .plugins-browser-item__pricing,
 .plugins-browser-item__installed {
-	margin-top: auto;
 	font-size: $font-body;
 	color: $studio-black;
 }
@@ -123,6 +132,7 @@
 	align-items: center;
 	color: var( --studio-green-30 );
 	animation: appear 0.15s ease-in;
+	margin-top: -10px;
 
 	.gridicon {
 		margin-right: 6px;
@@ -135,11 +145,6 @@
 	margin-top: auto;
 	display: flex;
 	justify-content: space-between;
-}
-
-.plugins-browser-item__rating-value {
-	color: var( --studio-gray-60 );
-	font-size: $font-body-extra-small;
 }
 
 .button.plugins-browser-item__upgrade-button {

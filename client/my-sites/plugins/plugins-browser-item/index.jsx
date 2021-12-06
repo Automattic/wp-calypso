@@ -6,6 +6,7 @@ import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -116,17 +117,27 @@ const PluginsBrowserListElement = ( props ) => {
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
-						<div className="plugins-browser-item__ratings">
-							<PluginRatings
-								rating={ plugin.rating }
-								inlineNumRatings={
-									plugin.rating && Number.isInteger( plugin.num_ratings )
-										? plugin.num_ratings.toLocaleString( getLocaleSlug() )
-										: null
-								}
-								hideRatingValue
-							/>
-						</div>
+						{ !! plugin.rating && (
+							<div className="plugins-browser-item__ratings">
+								<PluginRatings
+									rating={ plugin.rating }
+									inlineNumRatings={
+										plugin.rating && Number.isInteger( plugin.num_ratings )
+											? plugin.num_ratings.toLocaleString( getLocaleSlug() )
+											: null
+									}
+									hideRatingValue
+								/>
+							</div>
+						) }
+						{ !! plugin.active_installs && (
+							<div className="plugins-browser-item__active-installs">
+								<span className="plugins-browser-item__active-installs-value">{ `${ formatNumberMetric(
+									plugin.active_installs
+								) }${ plugin.active_installs > 1000 && '+' }` }</span>
+								{ translate( ' Active Installs' ) }
+							</div>
+						) }
 					</div>
 				</div>
 			</a>
