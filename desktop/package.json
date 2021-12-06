@@ -43,7 +43,7 @@
 		"enzyme": "^3.11.0",
 		"jest": "^27.3.1",
 		"lodash": "^4.17.21",
-		"playwright": "1.14.0",
+		"playwright": "^1.17",
 		"postcss": "^8.3.11",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
