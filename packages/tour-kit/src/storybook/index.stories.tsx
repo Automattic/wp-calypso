@@ -79,7 +79,9 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 							<button onClick={ onDismiss( 'main-btn' ) }>Close</button>
 							<button onClick={ onMinimize }>Minimize</button>
 						</div>
-						<p>{ steps[ currentStepIndex ].meta.description as string }</p>
+						<p>{ `${
+							steps[ currentStepIndex ].meta.description as string
+						} (${ currentStepIndex })` }</p>
 						<div className="storybook__tourkit-step-controls">
 							<button onClick={ onNext } ref={ setInitialFocusedElement }>
 								Next
