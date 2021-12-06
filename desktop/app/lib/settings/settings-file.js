@@ -1,4 +1,4 @@
-const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
+const fs = require( 'fs' );
 const path = require( 'path' );
 const { app } = require( 'electron' );
 const log = require( '../../lib/logger' )( 'desktop:settings' );

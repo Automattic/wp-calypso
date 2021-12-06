@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -25,16 +26,18 @@ import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -47,7 +50,6 @@ import {
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
 	getCanonicalTheme,
-	getPremiumThemePrice,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
@@ -70,7 +72,6 @@ class ThemeSheet extends Component {
 		author: PropTypes.string,
 		screenshot: PropTypes.string,
 		screenshots: PropTypes.array,
-		price: PropTypes.string,
 		description: PropTypes.string,
 		descriptionLong: PropTypes.oneOfType( [
 			PropTypes.string,
@@ -100,6 +101,9 @@ class ThemeSheet extends Component {
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
 		} ),
+		blockEditorSettings: PropTypes.shape( {
+			is_fse_eligible: PropTypes.bool,
+		} ),
 	};
 
 	static defaultProps = {
@@ -114,6 +118,7 @@ class ThemeSheet extends Component {
 		this.scrollToTop();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( nextProps.id !== this.props.id ) {
 			this.scrollToTop();
@@ -176,15 +181,24 @@ class ThemeSheet extends Component {
 	};
 
 	renderBar = () => {
+		const { author, blockEditorSettings, name, taxonomies, translate } = this.props;
+
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
-		const title = this.props.name || placeholder;
-		const tag = this.props.author
-			? this.props.translate( 'by %(author)s', { args: { author: this.props.author } } )
-			: placeholder;
+		const title = name || placeholder;
+		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
+		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+		const showBetaBadge = isFullSiteEditingTheme( { taxonomies } ) && isFSEEligible;
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">{ title }</span>
+				<span className="theme__sheet-bar-title">
+					{ title }
+					{ showBetaBadge && (
+						<Badge type="warning-clear" className="theme__sheet-badge-beta">
+							{ translate( 'Beta' ) }
+						</Badge>
+					) }
+				</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -501,13 +515,7 @@ class ThemeSheet extends Component {
 								{
 									components: {
 										InlineSupportLink: (
-											<InlineSupportLink
-												showIcon={ false }
-												supportPostId={ 174865 }
-												supportLink={ localizeUrl(
-													'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/'
-												) }
-											/>
+											<InlineSupportLink supportContext="themes-unsupported" showIcon={ false } />
 										),
 									},
 								}
@@ -587,21 +595,6 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderPrice = () => {
-		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive ) {
-			price = '';
-		} else if ( ! this.props.isPremium ) {
-			price = this.props.translate( 'Free' );
-		}
-
-		const className = classNames( 'theme__sheet-action-bar-cost', {
-			'theme__sheet-action-bar-cost-upgrade': ! /\d/g.test( this.props.price ),
-		} );
-
-		return price ? <span className={ className }>{ price }</span> : '';
-	};
-
 	renderButton = () => {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
@@ -613,11 +606,10 @@ class ThemeSheet extends Component {
 				className="theme__sheet-primary-button"
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
-				primary={ isActive }
+				primary
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
-				{ this.props.isWpcomTheme && this.renderPrice() }
 			</Button>
 		);
 	};
@@ -656,7 +648,7 @@ class ThemeSheet extends Component {
 
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
-		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
+		const { canonicalUrl, description, name: themeName } = this.props;
 		const title =
 			themeName &&
 			translate( '%(themeName)s Theme', {
@@ -743,7 +735,7 @@ class ThemeSheet extends Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
-				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				<QueryUserPurchases />
 				{
 					siteId && (
 						<QuerySitePurchases siteId={ siteId } />
@@ -786,6 +778,7 @@ class ThemeSheet extends Component {
 }
 
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
+const ThemeSheetWithEditorSettings = withBlockEditorSettings( ConnectedThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
 	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack, demoUrl } = props;
@@ -812,7 +805,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	}
 
 	return (
-		<ConnectedThemeSheet
+		<ThemeSheetWithEditorSettings
 			{ ...props }
 			demo_uri={ demoUrl }
 			siteId={ siteId }
@@ -829,8 +822,7 @@ export default connect(
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, id );
 		const backPath = getBackPath( state );
-		const currentUserId = getCurrentUserId( state );
-		const isCurrentUserPaid = isUserPaid( state, currentUserId );
+		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, id );
 		const siteIdOrWpcom = siteId || 'wpcom';
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
@@ -839,15 +831,13 @@ export default connect(
 		return {
 			...theme,
 			id,
-			price: getPremiumThemePrice( state, id, siteId ),
 			error,
 			siteId,
 			siteSlug,
 			backPath,
-			currentUserId,
 			isCurrentUserPaid,
 			isWpcomTheme,
-			isLoggedIn: !! currentUserId,
+			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, id, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isVip: isVipSite( state, siteId ),

@@ -47,54 +47,6 @@ export const requesting = ( state = {}, action ) => {
 	return state;
 };
 
-/**
- * Returns the updated site-rename state after an action has been dispatched.
- * Saving state tracks whether the settings for a site are currently being saved.
- *
- * @param  {object} state 	Current rename requesting state
- * @param  {object} action 	Action object
- * @returns {object} 		Updated rename request state
- */
-export const status = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case SITE_ADDRESS_CHANGE_REQUEST: {
-			const { siteId } = action;
-
-			return {
-				...state,
-				[ siteId ]: {
-					status: 'pending',
-					error: false,
-				},
-			};
-		}
-		case SITE_ADDRESS_CHANGE_REQUEST_SUCCESS: {
-			const { siteId } = action;
-
-			return {
-				...state,
-				[ siteId ]: {
-					status: 'success',
-					error: false,
-				},
-			};
-		}
-		case SITE_ADDRESS_CHANGE_REQUEST_FAILURE: {
-			const { siteId, error } = action;
-
-			return {
-				...state,
-				[ siteId ]: {
-					status: 'error',
-					error,
-				},
-			};
-		}
-	}
-
-	return state;
-};
-
 export const validation = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_ADDRESS_AVAILABILITY_REQUEST: {
@@ -124,7 +76,7 @@ export const validation = ( state = {}, action ) => {
 			};
 		}
 		case SITE_ADDRESS_AVAILABILITY_ERROR: {
-			const { siteId, errorType, message } = action;
+			const { siteId, errorType, message, errorStatus } = action;
 
 			return {
 				...state,
@@ -135,6 +87,7 @@ export const validation = ( state = {}, action ) => {
 					error: {
 						errorType,
 						message,
+						errorStatus,
 					},
 				},
 			};
@@ -158,7 +111,6 @@ export const validation = ( state = {}, action ) => {
 
 const combinedReducer = combineReducers( {
 	validation,
-	status,
 	requesting,
 } );
 

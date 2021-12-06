@@ -20,7 +20,7 @@ import {
 	getTitanProductName,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	areAllMailboxesAvailable,
@@ -49,6 +49,8 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
+import './style.scss';
+
 class TitanAddMailboxes extends Component {
 	state = {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
@@ -68,10 +70,12 @@ class TitanAddMailboxes extends Component {
 	}
 
 	recordClickEvent = ( eventName, eventProps ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		recordTracksEvent( eventName, {
 			...eventProps,
 			domain_name: selectedDomainName,
+			provider: TITAN_PROVIDER_NAME,
+			source,
 		} );
 	};
 
@@ -81,13 +85,15 @@ class TitanAddMailboxes extends Component {
 			isSelectedDomainNameValid,
 			selectedDomainName,
 			selectedSite,
+			source,
 		} = this.props;
 
 		page(
 			emailManagement(
 				selectedSite.slug,
 				isSelectedDomainNameValid ? selectedDomainName : null,
-				currentRoute
+				currentRoute,
+				{ source }
 			)
 		);
 	};
@@ -164,6 +170,7 @@ class TitanAddMailboxes extends Component {
 						// Stay on the page to show the relevant error
 						return;
 					}
+
 					return this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}
@@ -205,22 +212,22 @@ class TitanAddMailboxes extends Component {
 
 				<Card>
 					<TitanNewMailboxList
-						domain={ selectedDomainName }
+						selectedDomainName={ selectedDomainName }
 						mailboxes={ this.state.mailboxes }
 						onMailboxesChange={ this.onMailboxesChange }
 						validatedMailboxUuids={ this.state.validatedMailboxUuids }
 					>
-						<Button className="titan-add-mailboxes__action-cancel" onClick={ this.handleCancel }>
-							{ translate( 'Cancel' ) }
-						</Button>
-						<Button
-							className="titan-add-mailboxes__action-continue"
-							primary
-							busy={ this.state.isAddingToCart || this.state.isCheckingAvailability }
-							onClick={ this.handleContinue }
-						>
-							{ translate( 'Continue' ) }
-						</Button>
+						<div className="titan-add-mailboxes__buttons">
+							<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
+
+							<Button
+								primary
+								busy={ this.state.isAddingToCart || this.state.isCheckingAvailability }
+								onClick={ this.handleContinue }
+							>
+								{ translate( 'Continue' ) }
+							</Button>
+						</div>
 					</TitanNewMailboxList>
 				</Card>
 			</>
@@ -310,4 +317,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( withCartKey( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) ) );
+)( withCartKey( withShoppingCart( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) ) );

@@ -68,7 +68,10 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 			// Cursory check to ensure the newly registered account does not have a site.
 			// Waiting for `networkidle` is required so Calypso loading won't swallow up
 			// the click on navbar in the Close Account steps.
-			await page.goto( DataHelper.getCalypsoURL(), { waitUntil: 'networkidle' } );
+			await Promise.all( [
+				page.waitForNavigation( { url: '**/read', waitUntil: 'load' } ),
+				page.goto( DataHelper.getCalypsoURL() ),
+			] );
 		} );
 	} );
 
@@ -87,8 +90,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 		} );
 
 		it( 'Ensure user is unable to log in', async function () {
-			await loginPage.login( { username: email, password: signupPassword } );
-			await page.waitForSelector( ':text("This account has been closed")' );
+			expect( loginPage.login( { username: email, password: signupPassword } ) ).rejects.toThrow();
 		} );
 	} );
 } );

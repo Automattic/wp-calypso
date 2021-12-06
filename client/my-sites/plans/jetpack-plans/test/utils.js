@@ -110,28 +110,24 @@ describe( 'getHighestAnnualDiscount', () => {
 } );
 
 describe( 'getMonthlySlugFromYearly', () => {
-	const yearlySlugs = [
-		'jetpack_personal',
-		'jetpack_premium',
-		'jetpack_business',
-		'jetpack_anti_spam',
-		'jetpack_backup_daily',
-		'jetpack_backup_realtime',
-		'jetpack_scan',
-		'jetpack_search',
-		'jetpack_security_daily',
-		'jetpack_security_realtime',
-		'jetpack_complete',
-	];
-
-	yearlySlugs.forEach( ( slug ) => {
-		test( `returns ${ slug } monthly version`, () => {
-			expect( getMonthlySlugFromYearly( slug ) ).toBe( `${ slug }_monthly` );
-		} );
+	test.each( [
+		[ 'jetpack_personal', 'jetpack_personal_monthly' ],
+		[ 'jetpack_premium', 'jetpack_premium_monthly' ],
+		[ 'jetpack_business', 'jetpack_business_monthly' ],
+		[ 'jetpack_anti_spam', 'jetpack_anti_spam_monthly' ],
+		[ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
+		[ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
+		[ 'jetpack_scan', 'jetpack_scan_monthly' ],
+		[ 'jetpack_search', 'jetpack_search_monthly' ],
+		[ 'jetpack_security_daily', 'jetpack_security_daily_monthly' ],
+		[ 'jetpack_security_realtime', 'jetpack_security_realtime_monthly' ],
+		[ 'jetpack_complete', 'jetpack_complete_monthly' ],
+	] )( 'returns monthly version of a yearly product/plan slug', ( yearlySlug ) => {
+		expect( getMonthlySlugFromYearly( yearlySlug ) ).toBe( `${ yearlySlug }_monthly` );
 	} );
 
-	test( 'returns null when the slug is already the yearly version slug', () => {
-		expect( getMonthlySlugFromYearly( 'jetpack_scan_monthly' ) ).toBeNull();
+	test( 'returns the original slug when the slug is already the yearly version slug', () => {
+		expect( getMonthlySlugFromYearly( 'jetpack_scan_monthly' ) ).toBe( 'jetpack_scan_monthly' );
 	} );
 
 	test( 'returns null when slug does not correspond to a Jetpack product', () => {
@@ -140,32 +136,28 @@ describe( 'getMonthlySlugFromYearly', () => {
 } );
 
 describe( 'getYearlySlugFromMonthly', () => {
-	const monthlySlugs = [
-		'jetpack_personal_monthly',
-		'jetpack_premium_monthly',
-		'jetpack_business_monthly',
-		'jetpack_anti_spam_monthly',
-		'jetpack_backup_daily_monthly',
-		'jetpack_backup_realtime_monthly',
-		'jetpack_scan_monthly',
-		'jetpack_search_monthly',
-		'jetpack_security_daily_monthly',
-		'jetpack_security_realtime_monthly',
-		'jetpack_complete_monthly',
-	];
-
-	monthlySlugs.forEach( ( slug ) => {
-		test( `returns ${ slug } yearly version`, () => {
-			// jetpack_scan_monthly => ['jetpack', 'scan', 'monthly']
-			const slugParts = slug.split( '_' );
-			// ['jetpack', 'scan', 'monthly'] => ['jetpack', 'scan'] => 'jetpack_scan'
-			const slugWithoutTerm = slugParts.slice( 0, slugParts.length - 1 ).join( '_' );
-			expect( getYearlySlugFromMonthly( slug ) ).toBe( slugWithoutTerm );
-		} );
+	test.each( [
+		[ 'jetpack_personal_monthly', 'jetpack_personal' ],
+		[ 'jetpack_premium_monthly', 'jetpack_premium' ],
+		[ 'jetpack_business_monthly', 'jetpack_business' ],
+		[ 'jetpack_anti_spam_monthly', 'jetpack_anti_spam' ],
+		[ 'jetpack_backup_daily_monthly', 'jetpack_backup_daily' ],
+		[ 'jetpack_backup_realtime_monthly', 'jetpack_backup_realtime' ],
+		[ 'jetpack_scan_monthly', 'jetpack_scan' ],
+		[ 'jetpack_search_monthly', 'jetpack_search' ],
+		[ 'jetpack_security_daily_monthly', 'jetpack_security_daily' ],
+		[ 'jetpack_security_realtime_monthly', 'jetpack_security_realtime' ],
+		[ 'jetpack_complete_monthly', 'jetpack_complete' ],
+	] )( 'returns yearly version of a monthly product/plan slug', ( monthlySlug ) => {
+		// jetpack_scan_monthly => ['jetpack', 'scan', 'monthly']
+		const slugParts = monthlySlug.split( '_' );
+		// ['jetpack', 'scan', 'monthly'] => ['jetpack', 'scan'] => 'jetpack_scan'
+		const slugWithoutTerm = slugParts.slice( 0, slugParts.length - 1 ).join( '_' );
+		expect( getYearlySlugFromMonthly( monthlySlug ) ).toBe( slugWithoutTerm );
 	} );
 
-	test( 'returns null when the slug is already the yearly version slug', () => {
-		expect( getYearlySlugFromMonthly( 'jetpack_scan' ) ).toBeNull();
+	test( 'returns the original slug when the slug is already the yearly version slug', () => {
+		expect( getYearlySlugFromMonthly( 'jetpack_scan' ) ).toBe( 'jetpack_scan' );
 	} );
 
 	test( 'returns null when slug does not correspond to a Jetpack product', () => {

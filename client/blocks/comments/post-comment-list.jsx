@@ -87,8 +87,6 @@ class PostCommentList extends Component {
 
 	state = {
 		amountOfCommentsToTake: this.props.initialSize,
-		commentsFilter: 'all',
-		activeEditCommentId: null,
 	};
 
 	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
@@ -161,6 +159,7 @@ class PostCommentList extends Component {
 		}
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.initialFetches();
 		this.scrollWhenDOMReady();
@@ -170,6 +169,7 @@ class PostCommentList extends Component {
 		this.resetActiveReplyComment();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.initialFetches( nextProps );
 		if (
@@ -198,20 +198,13 @@ class PostCommentList extends Component {
 			return null;
 		}
 
-		// TODO Should not need to bind here
-		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
-
 		return (
 			<PostComment
 				post={ this.props.post }
 				commentsTree={ this.props.commentsTree }
 				commentId={ commentId }
 				key={ commentId }
-				showModerationTools={ this.props.showModerationTools }
-				activeEditCommentId={ this.state.activeEditCommentId }
 				activeReplyCommentId={ this.props.activeReplyCommentId }
-				onEditCommentClick={ onEditCommentClick }
-				onEditCommentCancel={ this.onEditCommentCancel }
 				onReplyClick={ this.onReplyClick }
 				onReplyCancel={ this.onReplyCancel }
 				commentText={ this.commentText }
@@ -244,12 +237,6 @@ class PostCommentList extends Component {
 		);
 	};
 
-	onEditCommentClick = ( commentId ) => {
-		this.setState( { activeEditCommentId: commentId } );
-	};
-
-	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
-
 	onReplyClick = ( commentId ) => {
 		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
@@ -266,7 +253,7 @@ class PostCommentList extends Component {
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
-			comment_id: this.state.activeReplyCommentId,
+			comment_id: this.props.activeReplyCommentId,
 		} );
 		this.resetActiveReplyComment();
 	};

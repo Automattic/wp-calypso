@@ -24,7 +24,6 @@ import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -48,7 +47,6 @@ class CancelPurchase extends Component {
 		purchaseId: PropTypes.number.isRequired,
 		site: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
-		userId: PropTypes.number,
 	};
 
 	state = {
@@ -61,6 +59,7 @@ class CancelPurchase extends Component {
 		purchaseListUrl: purchasesRoot,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
 			this.redirect( this.props );
@@ -68,6 +67,7 @@ class CancelPurchase extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			this.redirect( nextProps );
@@ -82,10 +82,14 @@ class CancelPurchase extends Component {
 
 		const { purchase } = props;
 
+		if ( ! purchase ) {
+			return false;
+		}
+
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
 
-		return purchase && isCancelable( purchase ) && isDomainTransferCancelable;
+		return isCancelable( purchase ) && isDomainTransferCancelable;
 	};
 
 	redirect = ( props ) => {
@@ -147,7 +151,7 @@ class CancelPurchase extends Component {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<div>
-					<QueryUserPurchases userId={ this.props.userId } />
+					<QueryUserPurchases />
 					<CancelPurchaseLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
 						siteSlug={ this.props.siteSlug }
@@ -236,6 +240,5 @@ export default connect( ( state, props ) => {
 		purchase,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		site: getSite( state, purchase ? purchase.siteId : null ),
-		userId: getCurrentUserId( state ),
 	};
 } )( localize( withLocalizedMoment( CancelPurchase ) ) );

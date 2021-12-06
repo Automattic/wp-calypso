@@ -18,15 +18,15 @@
 		box-shadow: none;
 
 		.form-text-input {
-			color: var(--color-sidebar-text);
-			box-shadow: 0 0 1px var(--color-neutral-10);
+			color: var( --color-sidebar-text );
+			box-shadow: 0 0 1px var( --color-neutral-10 );
 			background-color: transparent;
 			padding: 0 8px;
 			margin: 4px 4px 4px 0;
-			font-size: 0.8125rem;
+			font-size: $font-body-small;
 
 			&:focus {
-				box-shadow: 0 0 0 2px var(--color-primary-10);
+				box-shadow: 0 0 0 2px var( --color-primary-10 );
 			}
 
 			&::placeholder {
@@ -98,5 +98,19 @@
 		white-space: nowrap;
 		overflow: hidden;
 		margin-right: 4px;
+	}
+
+	.sidebar-streams__following-load-more {
+		color: var( --color-sidebar-text-alternative );
+		cursor: pointer;
+		font-size: $font-body-extra-small;
+		text-align: center;
+		margin-top: 15px;
+		padding: 10px 12px;
+		width: 100%;
+
+		&:hover {
+			color: var( --color-sidebar-menu-hover-text );
+		}
 	}
 }

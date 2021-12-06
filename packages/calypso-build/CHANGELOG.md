@@ -2,14 +2,22 @@
 
 ## trunk
 
+- Dropped Babel presets. They have been moved to `@automattic/calypso-babel-config`. The new packge should be a drop in replacement, you anywhere you were using `@automattic/calypso-build/babel/dependencies` you can use `@automattic/calypso-babel-config/presets/dependencies` (same for the other presets)
+
+## 10.0.0
+
 - Dropped `cache-loader`, as it is not compatible with Webpack 5.
 - Dropped `cacheDirectory` option in Sass loader
 - Updated dependencies:
   - sass to ^1.37.5
   - sass-loader to ^12.1.0
+  - postcss-loader to ^6.2.0
+  - postcss peer requirement to ^8.3.11
+  - @automattic/webpack-rtl-plugin to ^5.1.0
 - Set `quietDeps: true` in dart sass options. This avoids printing deprecation
   warnings for stylesheets imported from node_modules.
 - Stopped defaulting `publicPath` option to `/` in `webpack/file-loader`, using the global default that treats paths as relative to the importing script URL.
+- Fixed an issue where the default calypso-build PostCSS config was not being resolved. PostCSS will now process CSS files using a default config file if you do not specify your own config file. This was previously broken. ([More info here](https://github.com/Automattic/wp-calypso/pull/56600).)
 
 ## 9.0.0
 

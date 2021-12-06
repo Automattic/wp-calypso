@@ -34,6 +34,7 @@ export class Instagram extends SharingService {
 		<SocialLogo icon="instagram" size={ 48 } className="sharing-service__logo" />
 	);
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {

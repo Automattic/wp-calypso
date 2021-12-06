@@ -1,7 +1,6 @@
 /**
  * WARNING: No ES6 modules here. Not transpiled! *
  */
-/* eslint-disable import/no-nodejs-modules */
 
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
@@ -97,7 +96,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				},
 			} ),
 		],
-		watch: isDevelopment,
 		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
 		stats: 'minimal',
 	};

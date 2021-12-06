@@ -13,14 +13,19 @@ export type Features =
 	| 'Priority support';
 
 const selectors = {
+	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
+	buttonSkip: '.action-buttons__skip',
+	buttonNext: '.action-buttons__next',
+	wpLogo: 'div.gutenboarding__header-wp-logo',
 
 	// Start your website
 	siteTitle: '.acquire-intent-text-input__input',
 	siteTitleLabel: 'label.site-title__input-label',
+	siteIsCalled: 'label[data-e2e-string="My site is called"]',
 
 	// Domain
-	domainSearch: 'input[placeholder="Search for a domain"]',
+	domainSearch: '.domain-picker__search input[name="search"]',
 	domainSuggestionSpan: ( target: string ) =>
 		`.domain-picker__suggestion-item-name span:has-text("${ target }")`,
 
@@ -37,6 +42,7 @@ const selectors = {
 	// Plans
 	planItem: '.plans-accordion-item',
 	planName: '.plans-accordion-item__name',
+	showAllPlans: '.plans-accordion__toggle-all-button',
 	selectPlanButton: ( name: string ) =>
 		`.plans-accordion-item:has(.plans-accordion-item__name:has-text("${ name }")) ${ selectors.button(
 			'Select'
@@ -73,10 +79,30 @@ export class GutenboardingFlow {
 	 * Given a text, clicks on the first instance of the button with the text.
 	 *
 	 * @param {string} text User-visible text on the button.
-	 * @returns {Promise<void>} No return value.
 	 */
-	async clickButton( text: string ) {
+	async clickButton( text: string ): Promise< void > {
 		await this.page.click( selectors.button( text ) );
+	}
+
+	/**
+	 * Clicks the first skip button button.
+	 */
+	async clickSkipButton(): Promise< void > {
+		await this.page.click( selectors.buttonSkip );
+	}
+
+	/**
+	 * Clicks the first next button button.
+	 */
+	async clickNextButton(): Promise< void > {
+		await this.page.click( selectors.buttonNext );
+	}
+
+	/**
+	 * Clicks on the WP Logo on top left.
+	 */
+	async clickWpLogo(): Promise< void > {
+		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.wpLogo ) ] );
 	}
 
 	/* Initial (landing) screen */
@@ -97,7 +123,6 @@ export class GutenboardingFlow {
 	 */
 	async getSiteTitleLabel(): Promise< string > {
 		const elementHandle = await this.page.waitForSelector( selectors.siteTitleLabel );
-		await elementHandle.waitForElementState( 'stable' );
 		return await elementHandle.innerText();
 	}
 
@@ -198,13 +223,20 @@ export class GutenboardingFlow {
 	/* Plan selection screen */
 
 	/**
+	 * Expand all plans.
+	 */
+	async expandAllPlans(): Promise< void > {
+		await this.page.click( selectors.showAllPlans );
+	}
+
+	/**
 	 * Given a name, select a plan matching the name.
 	 *
 	 * @param {string} name Name of the plan.
 	 */
 	async selectPlan( name: Plans ): Promise< void > {
 		// First, expand the accordion.
-		await this.page.click( ':text-is("Show all plans")' );
+		await this.expandAllPlans();
 		await this.page.click( selectors.selectPlanButton( name ) );
 	}
 
@@ -259,10 +291,14 @@ export class GutenboardingFlow {
 	 */
 	async switchLanguage( target: string ): Promise< void > {
 		await this.clickLanguagePicker();
-		// Clicking on a language button triggers a navigation to a URL containing
-		// the ISO 639-1 code eg. /new/ja.
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			// Wait for the request response to complete.
+			// This request runs last when selecting a new language and is responsible for obtaining
+			// the translated strings.
+			this.page.waitForResponse(
+				( response ) =>
+					response.status() === 200 && response.url().includes( `details?locale=${ target }` )
+			),
 			this.page.click( selectors.languageButton( target ) ),
 		] );
 	}

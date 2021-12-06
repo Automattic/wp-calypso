@@ -23,9 +23,8 @@ export class RegionAddressFieldsets extends Component {
 		shouldAutoFocusAddressField: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 		contactDetailsErrors: PropTypes.shape(
-			Object.assign(
-				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
+			Object.fromEntries(
+				CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, PropTypes.node ] )
 			)
 		),
 	};

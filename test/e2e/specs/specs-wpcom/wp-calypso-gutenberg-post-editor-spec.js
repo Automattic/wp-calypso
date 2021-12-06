@@ -3,7 +3,6 @@ import config from 'config';
 import { By } from 'selenium-webdriver';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NoticesComponent from '../../lib/components/notices-component.js';
-import PostPreviewComponent from '../../lib/components/post-preview-component';
 import RevisionsModalComponent from '../../lib/components/revisions-modal-component';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import * as dataHelper from '../../lib/data-helper';
@@ -95,64 +94,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			await gEditorSidebarComponent.collapseCategories();
 			await gEditorSidebarComponent.collapseTags();
 			await gEditorComponent.closeSidebar();
-		} );
-
-		it( 'Can launch post preview', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.ensureSaved();
-			await gEditorComponent.launchPreview();
-		} );
-
-		it( 'Can see correct post title in preview', async function () {
-			this.postPreviewComponent = await PostPreviewComponent.Expect( this.driver );
-
-			const postTitle = await this.postPreviewComponent.postTitle();
-			assert.strictEqual(
-				postTitle.toLowerCase(),
-				blogPostTitle.toLowerCase(),
-				'The blog post preview title is not correct'
-			);
-		} );
-
-		it( 'Can see correct post content in preview', async function () {
-			const content = await this.postPreviewComponent.postContent();
-			assert.strictEqual(
-				content.indexOf( blogPostQuote ) > -1,
-				true,
-				'The post preview content (' +
-					content +
-					') does not include the expected content (' +
-					blogPostQuote +
-					')'
-			);
-		} );
-
-		it( 'Can see the post category in preview', async function () {
-			const categoryDisplayed = await this.postPreviewComponent.categoryDisplayed();
-			assert.strictEqual(
-				categoryDisplayed.toUpperCase(),
-				newCategoryName.toUpperCase(),
-				'The tag: ' + newCategoryName + ' is not being displayed on the post'
-			);
-		} );
-
-		// Disable this step until https://github.com/Automattic/wp-calypso/issues/28974 is solved
-		// it( 'Can see the post tag in preview', async function() {
-		// 	let tagDisplayed = await this.postPreviewComponent.tagDisplayed();
-		// 	assert.strictEqual(
-		// 		tagDisplayed.toUpperCase(),
-		// 		newTagName.toUpperCase(),
-		// 		'The tag: ' + newTagName + ' is not being displayed on the post'
-		// 	);
-		// } );
-
-		it( 'Can see the image in preview', async function () {
-			const imageDisplayed = await this.postPreviewComponent.imageDisplayed( fileDetails );
-			assert.strictEqual( imageDisplayed, true, 'Could not see the image in the web preview' );
-		} );
-
-		it( 'Can close post preview', async function () {
-			await this.postPreviewComponent.close();
 		} );
 
 		it( 'Can publish and view content', async function () {
@@ -789,7 +730,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					);
 				} );
 
-				it( 'Can see the Line Height setting for the paragraph', async function () {
+				it( 'Can add and see the Line Height setting for the paragraph in the `Typography` panel', async function () {
 					const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( this.driver );
 
 					if ( driverManager.currentScreenSize() === 'mobile' )
@@ -803,6 +744,28 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 					await gSidebarComponent.displayComponentIfNecessary();
 					await gSidebarComponent.chooseBlockSettings();
+
+					/**
+					 * Before GB 11.9, `line-height` was always shown, but 11.9 introduces changes to the panel that
+					 * requires the user to add some settings manually. Discussion about the rationale can be found
+					 * in this Slack thread:
+					 * - p1636568230296600/1636417237.235700-slack-C7YPUHBB2
+					 *
+					 * This setting is still present for all themes in WPCOM regardless of theme support, so the code
+					 * here still relevant:
+					 *- https://github.com/Automattic/wp-calypso/blob/trunk/apps/editing-toolkit/editing-toolkit-plugin/common/index.php#L179-L182
+					 *
+					 * @todo provided we have more cases like this, abstract this in a `ToolsPanel` general component
+					 * that can handle any `ToolsPanel`-like section that need to have settings added like this.
+					 */
+					await driverHelper.clickWhenClickable(
+						this.driver,
+						By.css( 'button[aria-label="View and add options"]' )
+					);
+					await driverHelper.clickWhenClickable(
+						this.driver,
+						By.css( 'button[aria-label="Show Line height"]' )
+					);
 
 					const lineHeighSettingPresent = await driverHelper.isElementLocated(
 						this.driver,

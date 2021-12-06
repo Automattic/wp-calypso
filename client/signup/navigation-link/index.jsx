@@ -31,6 +31,7 @@ export class NavigationLink extends Component {
 		primary: PropTypes.bool,
 		backIcon: PropTypes.string,
 		forwardIcon: PropTypes.string,
+		queryParams: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -81,7 +82,7 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const { flowName, signupProgress, stepName, userLoggedIn } = this.props;
+		const { flowName, signupProgress, stepName, userLoggedIn, queryParams } = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(
@@ -96,7 +97,8 @@ export class NavigationLink extends Component {
 			previousStep.lastKnownFlow || this.props.flowName,
 			previousStep.stepName,
 			stepSectionName,
-			locale
+			locale,
+			queryParams
 		);
 	}
 
@@ -110,7 +112,9 @@ export class NavigationLink extends Component {
 			this.props.goToNextStep();
 		}
 
-		this.recordClick();
+		if ( ! this.props.disabledTracks ) {
+			this.recordClick();
+		}
 	};
 
 	recordClick() {
@@ -164,12 +168,16 @@ export class NavigationLink extends Component {
 			this.props.cssClass
 		);
 
+		const hrefUrl =
+			this.props.direction === 'forward' && this.props.forwardUrl
+				? this.props.forwardUrl
+				: this.getBackUrl();
 		return (
 			<Button
 				primary={ primary }
 				borderless={ borderless }
 				className={ buttonClasses }
-				href={ this.getBackUrl() }
+				href={ hrefUrl }
 				onClick={ this.handleClick }
 				rel={ this.props.rel }
 			>

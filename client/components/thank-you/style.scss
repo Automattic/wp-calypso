@@ -13,6 +13,25 @@
 	flex-direction: column;
 	text-align: center;
 	align-items: center;
+	width: auto;
+	padding-top: calc( -33px + var( --masterbar-height ) );
+	padding-right: 20px;
+	padding-left: 20px;
+	padding-bottom: 35px;
+	box-sizing: border-box;
+	height: auto;
+
+	img {
+		max-width: 260px;
+	}
+}
+
+.thank-you__notice {
+	@include breakpoint-deprecated( '<480px' ) {
+		padding: 14px 24px;
+		align-items: flex-start;
+		height: auto;
+	}
 }
 
 .thank-you__step-cta {
@@ -51,11 +70,15 @@
 		padding-top: 3px;
 		margin-left: 4px;
 	}
-	+.thank-you__help-link {
+	+ .thank-you__help-link {
 		margin-top: 0.25em;
 	}
 }
 
 .thank-you__help-text {
 	margin-bottom: 0.5em;
+}
+
+.gridicon.gridicons-external {
+	margin-left: 4px;
 }

@@ -1,21 +1,16 @@
-/**
- * @file Helps manage browser instance.
- * @author Edwin Takahashi
- */
-
+import { readFile, access, stat } from 'fs/promises';
+import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
-import {
-	getDefaultLoggerConfiguration,
-	getHeadless,
-	getLaunchConfiguration,
-} from './browser-helper';
+import { getHeadless, getLaunchConfiguration } from './browser-helper';
+import { COOKIES_PATH } from './environment';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
 
 export interface LaunchOptions {
-	logger: Logger;
+	logger?: Logger;
+	locale?: string;
 }
 
 /**
@@ -43,6 +38,10 @@ export async function newBrowserContext(
 		config.logger = launchOptions.logger;
 	}
 
+	if ( launchOptions?.locale ) {
+		config.locale = launchOptions.locale;
+	}
+
 	// Launch a new BrowserContext with launch configuration.
 	return await browser.newContext( config );
 }
@@ -52,27 +51,16 @@ export async function newBrowserContext(
  *
  * If the optional parameter `context` is provivided, this method will return a
  * new instance of a Page belonging to the supplied BrowserContext.
- * Alternatively, if optional parameter
  * Otherwise, a new instance of a Page is returned from the most recent BrowserContext.
  *
  * @param param0 Keyed object parameter.
  * @param {BrowserContext} [param0.context] BrowserContext on which the new Page should be created.
- * @param {boolean} [param0.newContext] If a new BrowserContext is desired.
  * @returns {Promise<Page>} Instance of a new Page object.
  */
-export async function newPage( {
-	context,
-	newContext = false,
-}: { context?: BrowserContext; newContext?: boolean } = {} ): Promise< Page > {
+export async function newPage( { context }: { context?: BrowserContext } = {} ): Promise< Page > {
 	// If caller supplies the target BrowserContext.
 	if ( context ) {
 		return await context.newPage();
-	}
-
-	// If caller wants the Page object in a new BrowserContext.
-	if ( newContext ) {
-		const newContext = await newBrowserContext( await getDefaultLoggerConfiguration() );
-		return await newContext.newPage();
 	}
 
 	// Default case - launch a new Page object in the most recent BrowserContext.
@@ -196,4 +184,36 @@ export async function setStoreCookie(
 			},
 		] );
 	}
+}
+
+/**
+ *
+ * @param page
+ * @param accountType
+ */
+export async function setLoginCookie( page: Page, accountType: string ): Promise< void > {
+	const browserContext = page.context();
+	const cookiePath = path.join( COOKIES_PATH, `${ accountType }.json` );
+	try {
+		await access( cookiePath );
+	} catch {
+		throw new Error( `Cookie file ${ cookiePath } not found on disk.` );
+	}
+
+	// Check the creation time of the cookie.
+	// WordPress.com cookies are valid for a limited time, typically less than 3 days.
+	// So if a cookie file is found, but the creation time is older than 3 days, pretend that
+	// a cookie file did not exist.
+	// This is only an issue when running the tests locally.
+	const stats = await stat( cookiePath );
+	const createdTime = Math.trunc( stats.birthtimeMs );
+	const currentTime = new Date();
+
+	if ( createdTime < currentTime.setDate( currentTime.getDate() - 3 ) ) {
+		throw new Error( `Cookie file is stale: created time is ${ stats.birthtime }` );
+	}
+
+	const cookie = JSON.parse( await readFile( cookiePath, 'utf8' ) );
+
+	await browserContext.addCookies( cookie.cookies );
 }

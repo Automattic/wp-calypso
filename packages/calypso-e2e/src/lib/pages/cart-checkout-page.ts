@@ -69,7 +69,7 @@ export class CartCheckoutPage {
 	/**
 	 * Constructs an instance of the Cart Checkout POM.
 	 *
-	 * @param {Page} page Instance of the Playwright page
+	 * @param {Page} page Instance of the Playwright page.
 	 */
 	constructor( page: Page ) {
 		this.page = page;
@@ -236,9 +236,9 @@ export class CartCheckoutPage {
 	/**
 	 * Complete the purchase by clicking on the 'Pay' button.
 	 */
-	async purchase(): Promise< void > {
+	async purchase( { timeout }: { timeout?: number } = {} ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForNavigation( { timeout: timeout } ),
 			this.page.click( selectors.purchaseButton ),
 		] );
 	}

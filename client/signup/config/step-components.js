@@ -43,10 +43,12 @@ const stepNameToModuleName = {
 	'site-style': 'site-style',
 	'site-title': 'site-title',
 	'site-title-without-domains': 'site-title',
+	'site-options': 'site-options',
 	'site-topic': 'site-topic',
 	'site-topic-with-theme': 'site-topic',
 	'site-type': 'site-type',
 	'site-type-with-theme': 'site-type',
+	'starting-point': 'starting-point',
 	survey: 'survey',
 	'survey-user': 'survey-user',
 	test: 'test-step',
@@ -67,14 +69,23 @@ const stepNameToModuleName = {
 	passwordless: 'passwordless',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
+	'p2-get-started': 'p2-get-started',
 	'plans-business-monthly': 'plans',
 	'plans-ecommerce-monthly': 'plans',
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
-	design: 'design-picker',
 	'design-setup-site': 'design-picker',
+	'difm-design-setup-site': 'design-picker',
+	'difm-design': 'difm-design-picker',
 	'site-info-collection': 'site-info-collection',
 	intent: 'intent',
+	list: 'import',
+	capture: 'import',
+	ready: 'import',
+	importing: 'import-from',
+	'select-site': 'woocommerce-install/select-site',
+	confirm: 'woocommerce-install/confirm',
+	transfer: 'woocommerce-install/transfer',
 };
 
 export function getStepModuleName( stepName ) {
@@ -84,7 +95,10 @@ export function getStepModuleName( stepName ) {
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(
-		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[0-9a-z-]+\/index.[j|t]sx$/ */ `calypso/signup/steps/${ moduleName }`
+		/* webpackChunkName: "async-load-signup-steps-[request]" */
+		/* webpackInclude: /signup\/steps\/[0-9a-z/-]+\/index\.[j|t]sx$/ */
+		/* webpackExclude: /signup\/steps\/[0-9a-z/-]+\/test\/index\.[j|t]sx$/ */
+		`calypso/signup/steps/${ moduleName }`
 	);
 	return module.default;
 }

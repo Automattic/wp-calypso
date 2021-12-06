@@ -1,10 +1,13 @@
 import {
-	getTermDuration,
-	getPlan,
-	getBillingMonthsForTerm,
 	findPlansKeys,
-	GROUP_WPCOM,
+	findProductKeys,
+	getBillingMonthsForTerm,
+	getPlan,
+	getProductFromSlug,
+	getTermDuration,
 	GROUP_JETPACK,
+	GROUP_WPCOM,
+	objectIsProduct,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
@@ -20,19 +23,20 @@ import { requestProductsList } from 'calypso/state/products-list/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
-import type { Plan } from '@automattic/calypso-products';
+import type { Plan, Product } from '@automattic/calypso-products';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
 export interface AvailableProductVariant {
 	planSlug: string;
-	plan: Plan;
+	plan: Plan | Product;
 	product: {
 		product_id: number;
 		currency_code: string;
 	};
 	priceFull: number;
 	priceFinal: number;
+	isIntroductoryOfferApplied: boolean;
 }
 
 export interface AvailableProductVariantAndCompared extends AvailableProductVariant {
@@ -56,6 +60,12 @@ const Discount = styled.span`
 	.rtl & {
 		margin-right: 0;
 		margin-left: 8px;
+	}
+	order: unset;
+
+	@media ( max-width: 660px ) {
+		order: 1;
+		width: 100%;
 	}
 `;
 
@@ -213,34 +223,53 @@ function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAn
 	const discountPercentage = Math.round(
 		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
 	);
-	return (
-		<Discount>
-			{ translate( 'Save %(percent)s%%', {
+	let message = '';
+	if ( variant.isIntroductoryOfferApplied ) {
+		message = String(
+			translate( 'Eligible orders save %(percent)s%%', {
 				args: {
 					percent: discountPercentage,
 				},
-			} ) }
-		</Discount>
-	);
+			} )
+		);
+	} else {
+		message = String(
+			translate( 'Save %(percent)s%%', {
+				args: {
+					percent: discountPercentage,
+				},
+			} )
+		);
+	}
+	return <Discount>{ message }</Discount>;
 }
 
 function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const chosenPlan = getPlan( productSlug );
+	const chosenPlan = getPlan( productSlug )
+		? getPlan( productSlug )
+		: getProductFromSlug( productSlug );
 
 	if ( ! chosenPlan ) {
 		return [];
 	}
 
 	// Only construct variants for WP.com and Jetpack plans
-	if ( chosenPlan.group !== GROUP_WPCOM && chosenPlan.group !== GROUP_JETPACK ) {
+	if (
+		! objectIsProduct( chosenPlan ) &&
+		chosenPlan.group !== GROUP_WPCOM &&
+		chosenPlan.group !== GROUP_JETPACK
+	) {
 		return [];
 	}
 
-	// : WPCOMProductSlug[]
-	return findPlansKeys( {
-		group: chosenPlan.group,
-		type: chosenPlan.type,
-	} );
+	return objectIsProduct( chosenPlan )
+		? findProductKeys( {
+				type: chosenPlan.type,
+		  } )
+		: findPlansKeys( {
+				group: chosenPlan.group,
+				type: chosenPlan.type,
+		  } );
 }
 
 function isVariantOfActivePlan(

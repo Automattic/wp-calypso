@@ -11,6 +11,7 @@ import {
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import classnames from 'classnames';
+import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -24,6 +25,8 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 
 import './style.scss';
 
+const debug = debugFactory( 'calypso:upsell-nudge' );
+
 export const UpsellNudge = ( {
 	callToAction,
 	canManageSite,
@@ -34,6 +37,7 @@ export const UpsellNudge = ( {
 	description,
 	disableHref,
 	dismissPreferenceName,
+	dismissTemporary,
 	event,
 	feature,
 	forceDisplay,
@@ -104,6 +108,12 @@ export const UpsellNudge = ( {
 		{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) }
 	);
 
+	if ( dismissPreferenceName && forceHref && href ) {
+		debug(
+			"It's not possible to force the whole banner to be a link when it needs to link and be dismissable"
+		);
+	}
+
 	return (
 		<Banner
 			callToAction={ callToAction }
@@ -112,6 +122,7 @@ export const UpsellNudge = ( {
 			description={ description }
 			disableHref={ disableHref }
 			dismissPreferenceName={ dismissPreferenceName }
+			dismissTemporary={ dismissTemporary }
 			event={ event }
 			feature={ feature }
 			forceHref={ forceHref }
@@ -122,7 +133,7 @@ export const UpsellNudge = ( {
 			isAtomic={ isAtomic }
 			list={ list }
 			onClick={ onClick }
-			onDismissClick={ onDismissClick }
+			onDismiss={ onDismissClick }
 			plan={ plan }
 			price={ price }
 			primaryButton={ primaryButton }

@@ -1,4 +1,7 @@
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import {
+	tryToGuessPostalCodeFormat,
+	getCountryPostalCodeSupport,
+} from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
@@ -28,7 +31,6 @@ import {
 } from './custom-form-fieldsets/constants';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { getCountryPostalCodeSupport } from './helper';
 
 import './style.scss';
 
@@ -126,6 +128,7 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			debounceWait: 500,

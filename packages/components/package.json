@@ -29,10 +29,10 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
+		"@wordpress/base-styles": "^4.0.4",
 		"classnames": "^2.3.1",
 		"gridicons": "^3.4.0",
-		"i18n-calypso": "^5.0.0",
+		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
 		"prop-types": "^15.7.2",
 		"react-modal": "^3.14.3",
@@ -43,17 +43,19 @@
 		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
-		"@storybook/addon-actions": "^6.3.8",
+		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/addon-actions": "^6.3.12",
 		"@storybook/preset-scss": "^1.0.3",
-		"css-loader": "^3.4.2",
+		"css-loader": "^3.6.0",
 		"enzyme": "^3.11.0",
 		"sass-loader": "^10.1.1",
 		"style-loader": "^1.2.1",
-		"typescript": "^4.4.3",
-		"webpack": "^5.54.0"
+		"typescript": "^4.4.4",
+		"webpack": "^5.64.4"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build"
 	}

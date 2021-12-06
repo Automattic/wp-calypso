@@ -33,6 +33,7 @@ export function getEmptyResponseCart(): ResponseCart {
 		tax: { location: {}, display_taxes: false },
 		is_signup: false,
 		next_domain_is_free: false,
+		next_domain_condition: '',
 	};
 }
 
@@ -50,6 +51,8 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		current_quantity: null,
 		item_original_cost_integer: 0,
 		item_original_cost_display: '$0',
+		item_original_cost_for_quantity_one_integer: 0,
+		item_original_cost_for_quantity_one_display: '$0',
 		item_subtotal_integer: 0,
 		item_subtotal_display: '$0',
 		product_cost_integer: 0,
@@ -61,6 +64,7 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		is_domain_registration: false,
 		is_bundled: false,
 		is_sale_coupon_applied: false,
+		bill_period: '365',
 		months_per_bill_period: null,
 		uuid: 'product001',
 		cost: 0,

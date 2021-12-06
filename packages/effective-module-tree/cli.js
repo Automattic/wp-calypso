@@ -29,5 +29,4 @@ if ( args.output === 'tree' ) {
 } else {
 	tree = getEffectiveTreeAsList( args.root );
 }
-// eslint-disable-next-line no-console
 console.log( tree );

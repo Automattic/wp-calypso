@@ -1,3 +1,5 @@
+import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
+import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -14,6 +16,7 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 } from 'calypso/state/action-types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/domains/init';
 
@@ -43,20 +46,22 @@ export function requestContactDetailsCache() {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
 
-		wpcom.undocumented().getDomainContactInformation( ( error, data ) => {
-			if ( error ) {
+		wpcom.req
+			.get( '/me/domain-contact-information' )
+			.then( ( data ) => {
+				dispatch(
+					receiveContactDetailsCache( mapRecordKeysRecursively( data, snakeToCamelCase ) )
+				);
+				dispatch( {
+					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
+				} );
+			} )
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
 					error,
 				} );
-				return;
-			}
-
-			dispatch( receiveContactDetailsCache( data ) );
-			dispatch( {
-				type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
 			} );
-		} );
 	};
 }
 
@@ -96,9 +101,8 @@ export function requestWhois( domain ) {
 			domain,
 		} );
 
-		return wpcom
-			.undocumented()
-			.fetchWhois( domain )
+		return wpcom.req
+			.get( `/domains/${ domain }/whois` )
 			.then( ( whoisData ) => {
 				dispatch( receiveWhois( domain, whoisData ) );
 				dispatch( {
@@ -132,9 +136,11 @@ export function saveWhois( domain, whoisData, transferLock ) {
 			domain,
 		} );
 
-		return wpcom
-			.undocumented()
-			.updateWhois( domain, whoisData, transferLock )
+		return wpcom.req
+			.post( `/domains/${ domain }/whois`, {
+				whois: whoisData,
+				transfer_lock: transferLock,
+			} )
 			.then( ( data ) => {
 				dispatch( updateWhois( domain, whoisData ) );
 				dispatch( {
@@ -160,3 +166,29 @@ export function updateWhois( domain, whoisData ) {
 		whoisData,
 	};
 }
+
+export const showUpdatePrimaryDomainSuccessNotice = ( domainName ) => {
+	return ( dispatch ) => {
+		dispatch(
+			successNotice(
+				translate(
+					'Primary domain changed: all domains will redirect to {{em}}%(domainName)s{{/em}}.',
+					{ args: { domainName }, components: { em: <em /> } }
+				),
+				{ duration: 10000, isPersistent: true }
+			)
+		);
+	};
+};
+
+export const showUpdatePrimaryDomainErrorNotice = ( errorMessage ) => {
+	return ( dispatch ) => {
+		dispatch(
+			errorNotice(
+				errorMessage ||
+					translate( "Something went wrong and we couldn't change your primary domain." ),
+				{ duration: 10000, isPersistent: true }
+			)
+		);
+	};
+};

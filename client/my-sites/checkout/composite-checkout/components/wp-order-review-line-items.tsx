@@ -1,14 +1,20 @@
-import { useShoppingCart } from '@automattic/shopping-cart';
-import { getCouponLineItemFromCart, getCreditsLineItemFromCart } from '@automattic/wpcom-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import {
+	getCouponLineItemFromCart,
+	getCreditsLineItemFromCart,
+	isWpComProductRenewal,
+	joinClasses,
+	NonProductLineItem,
+	LineItem,
+} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import joinClasses from './join-classes';
-import { NonProductLineItem, LineItem } from './wp-line-item';
+import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
+	ResponseCart,
 	RemoveProductFromCart,
 	ResponseCartProduct,
 	RemoveCouponFromCart,
@@ -46,6 +52,11 @@ export function WPOrderReviewLineItems( {
 	removeCoupon,
 	onChangePlanLength,
 	createUserAndSiteBeforeTransaction,
+	responseCart,
+	isPwpoUser,
+	onRemoveProduct,
+	onRemoveProductClick,
+	onRemoveProductCancel,
 }: {
 	className?: string;
 	siteId?: number | undefined;
@@ -54,27 +65,46 @@ export function WPOrderReviewLineItems( {
 	removeCoupon: RemoveCouponFromCart;
 	onChangePlanLength?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
+	responseCart: ResponseCart;
+	isPwpoUser: boolean;
+	onRemoveProduct?: ( label: string ) => void;
+	onRemoveProductClick?: ( label: string ) => void;
+	onRemoveProductCancel?: ( label: string ) => void;
 } ): JSX.Element {
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => {
+				const isRenewal = isWpComProductRenewal( product );
+				const shouldShowVariantSelector = onChangePlanLength && ! isRenewal;
 				return (
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
-							allowVariants
-							siteId={ siteId }
 							hasDeleteButton={ canItemBeDeleted( product ) }
 							removeProductFromCart={ removeProductFromCart }
-							onChangePlanLength={ onChangePlanLength }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						/>
+							responseCart={ responseCart }
+							isPwpoUser={ isPwpoUser }
+							onRemoveProduct={ onRemoveProduct }
+							onRemoveProductClick={ onRemoveProductClick }
+							onRemoveProductCancel={ onRemoveProductCancel }
+						>
+							{ shouldShowVariantSelector && (
+								<ItemVariationPicker
+									selectedItem={ product }
+									onChangeItemVariant={ onChangePlanLength }
+									isDisabled={ isDisabled }
+									siteId={ siteId }
+									productSlug={ product.product_slug }
+								/>
+							) }
+						</LineItem>
 					</WPOrderReviewListItem>
 				);
 			} ) }
@@ -86,11 +116,17 @@ export function WPOrderReviewLineItems( {
 						hasDeleteButton={ ! isSummary }
 						removeProductFromCart={ removeCoupon }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						isPwpoUser={ isPwpoUser }
 					/>
 				</WPOrderReviewListItem>
 			) }
 			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-				<NonProductLineItem subtotal lineItem={ creditsLineItem } isSummary={ isSummary } />
+				<NonProductLineItem
+					subtotal
+					lineItem={ creditsLineItem }
+					isSummary={ isSummary }
+					isPwpoUser={ isPwpoUser }
+				/>
 			) }
 		</WPOrderReviewList>
 	);

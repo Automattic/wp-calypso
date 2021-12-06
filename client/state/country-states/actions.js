@@ -27,9 +27,8 @@ export function requestCountryStates( countryCode ) {
 			countryCode,
 		} );
 
-		return wpcom
-			.undocumented()
-			.getDomainRegistrationSupportedStates( countryCode )
+		return wpcom.req
+			.get( `/domains/supported-states/${ countryCode }` )
 			.then( ( countryStates ) => {
 				dispatch( receiveCountryStates( countryStates, countryCode ) );
 				dispatch( {

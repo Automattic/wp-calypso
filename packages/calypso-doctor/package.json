@@ -18,5 +18,9 @@
 	"dependencies": {
 		"chalk": "^4.1.0",
 		"yargs": "^17.0.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

@@ -11,6 +11,7 @@ export const mainCartKey = '1';
 const emptyResponseCart = getEmptyResponseCart();
 
 export const planOne: ResponseCartProduct = {
+	bill_period: '365',
 	time_added_to_cart: Date.now(),
 	current_quantity: 1,
 	product_name: 'WordPress.com Personal',
@@ -25,6 +26,8 @@ export const planOne: ResponseCartProduct = {
 	quantity: null,
 	item_original_cost_integer: 14400,
 	item_original_cost_display: 'R$144',
+	item_original_cost_for_quantity_one_integer: 14400,
+	item_original_cost_for_quantity_one_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
 	product_cost_integer: 14400,
@@ -45,6 +48,7 @@ export const planOne: ResponseCartProduct = {
 };
 
 export const planTwo: ResponseCartProduct = {
+	bill_period: '365',
 	time_added_to_cart: Date.now(),
 	current_quantity: 1,
 	product_name: 'WordPress.com Business',
@@ -59,6 +63,8 @@ export const planTwo: ResponseCartProduct = {
 	quantity: null,
 	item_original_cost_integer: 14400,
 	item_original_cost_display: 'R$144',
+	item_original_cost_for_quantity_one_integer: 14400,
+	item_original_cost_for_quantity_one_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
 	product_cost_integer: 14400,

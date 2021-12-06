@@ -8,7 +8,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import { canCurrentUserCreateSiteFromDomainOnly } from 'calypso/lib/domains';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -30,9 +30,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 	const hasEmailWithUs = hasGSuiteWithUs( primaryDomain ) || hasTitanMailWithUs( primaryDomain );
 	const domainName = primaryDomain.name;
 	const canCreateSite = canCurrentUserCreateSiteFromDomainOnly( primaryDomain );
-	const createSiteUrl = `/start/site-selected/?siteSlug=${ encodeURIComponent(
-		slug
-	) }&siteId=${ encodeURIComponent( siteId ) }`;
+	const createSiteUrl = createSiteFromDomainOnly( slug, siteId );
 
 	const recordEmailClick = () => {
 		const tracksName = hasEmailWithUs

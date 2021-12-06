@@ -1,4 +1,13 @@
-import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
+import {
+	isPlan,
+	isMonthly,
+	isMonthlyProduct,
+	getYearlyPlanByMonthly,
+	getPlan,
+	isDomainProduct,
+	isDomainTransfer,
+	isDIFMProduct,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
 	CheckoutCheckIcon,
@@ -14,7 +23,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -22,6 +31,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getPlanFeatures from '../lib/get-plan-features';
+import getRefundText from '../lib/get-refund-text';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
@@ -139,12 +149,13 @@ function CheckoutSummaryFeaturesList( props: {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const hasDomainsInCart = responseCart.products.some(
-		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
 	const domains = responseCart.products.filter(
-		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
 	const hasPlanInCart = responseCart.products.some( ( product ) => isPlan( product ) );
+	const hasDIFMLiteInCart = responseCart.products.some( ( product ) => isDIFMProduct( product ) );
 	const translate = useTranslate();
 	const siteId = props.siteId;
 	const isJetpackNotAtomic = useSelector( ( state ) =>
@@ -153,25 +164,29 @@ function CheckoutSummaryFeaturesList( props: {
 	const { hasMonthlyPlan = false } = props;
 
 	const showRefundText = responseCart.total_cost > 0;
-	let refundText = translate( 'Money back guarantee' );
 
-	let refundDays = 0;
-	if ( hasDomainsInCart && ! hasPlanInCart ) {
-		refundDays = 4;
-	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
-		refundDays = hasMonthlyPlan ? 7 : 14;
-	}
+	const refundTexts = new Set< TranslateResult >();
 
-	if ( refundDays !== 0 ) {
-		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
-		refundText = translate(
-			'%(days)d-day money back guarantee',
-			'%(days)d-day money back guarantee',
-			{
-				count: refundDays,
-				args: { days: refundDays },
+	if ( hasDIFMLiteInCart ) {
+		responseCart.products.forEach( ( product ) => {
+			let refundDays = 0;
+			if ( isDomainProduct( product ) || isDomainTransfer( product ) ) {
+				refundDays = 4;
+			} else if ( isPlan( product ) ) {
+				refundDays = isMonthlyProduct( product ) ? 7 : 14;
+			} else if ( isDIFMProduct( product ) ) {
+				refundDays = 2;
 			}
-		);
+			refundTexts.add( getRefundText( refundDays, product.product_name, translate ) );
+		} );
+	} else {
+		let refundDays = 0;
+		if ( hasDomainsInCart && ! hasPlanInCart ) {
+			refundDays = 4;
+		} else if ( hasPlanInCart && ! hasDomainsInCart ) {
+			refundDays = hasMonthlyPlan ? 7 : 14;
+		}
+		refundTexts.add( getRefundText( refundDays, null, translate ) );
 	}
 
 	return (
@@ -195,12 +210,13 @@ function CheckoutSummaryFeaturesList( props: {
 					{ ...props }
 				/>
 			</CheckoutSummaryFeaturesListItem>
-			{ showRefundText && (
-				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-refund-text" />
-					{ refundText }
-				</CheckoutSummaryFeaturesListItem>
-			) }
+			{ showRefundText &&
+				Array.from( refundTexts.values() ).map( ( refundText, index ) => (
+					<CheckoutSummaryFeaturesListItem key={ index }>
+						<WPCheckoutCheckIcon id="features-list-refund-text" />
+						{ refundText }
+					</CheckoutSummaryFeaturesListItem>
+				) ) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }

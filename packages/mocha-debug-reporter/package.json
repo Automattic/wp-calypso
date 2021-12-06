@@ -16,16 +16,17 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
-		"@types/mocha": "^8.2.3"
+		"@types/mocha": "^9.0.0"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.3"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.4.4"
 	},
 	"peerDependencies": {
 		"mocha": ">=8.0.0"
 	},
 	"scripts": {
-		"clean": "yarn build --clean && npx rimraf dist",
+		"clean": "yarn build --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json"
 	}
 }

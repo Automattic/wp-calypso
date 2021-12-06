@@ -1,12 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { shuffle } from '@automattic/js-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { availableDesignsConfig } from './available-designs-config';
-import { shuffleArray } from './shuffle';
 import type { MShotsOptions } from '../components/mshots-image';
-import type { Design } from '../types';
+import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
 
-export const getDesignUrl = ( design: Design, locale: string ): string => {
+export const getDesignUrl = (
+	design: Design,
+	locale: string,
+	options: DesignUrlOptions = {}
+): string => {
 	const theme = encodeURIComponent( design.theme );
 	const template = encodeURIComponent( design.template );
 
@@ -20,6 +24,7 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 			viewport_height: 700,
 			language: locale,
 			use_screenshot_overrides: true,
+			...options,
 		}
 	);
 };
@@ -30,7 +35,8 @@ export const mShotOptions = ( { preview }: Design, highRes: boolean ): MShotsOpt
 	return {
 		vpw: 1600,
 		vph: preview === 'static' ? 1040 : 1600,
-		w: highRes ? 1200 : 600,
+		// When `w` was 1200 it created a visual glitch on one thumbnail. #57261
+		w: highRes ? 1199 : 600,
 		screen_height: 3600,
 	};
 };
@@ -40,9 +46,15 @@ interface AvailableDesignsOptions {
 	useFseDesigns?: boolean;
 	randomize?: boolean;
 }
+
+/**
+ * To prevent the accumulation of tech debt, make duplicate entries for all Universal
+ * themes, one with `is_fse: true`, the other not. This tech debt can be eliminated
+ * by using the REST API for themes rather than a hardcoded list.
+ */
 export function getAvailableDesigns( {
 	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
-	useFseDesigns = isEnabled( 'gutenboarding/site-editor' ),
+	useFseDesigns = false,
 	randomize = false,
 }: AvailableDesignsOptions = {} ): AvailableDesigns {
 	let designs = { ...availableDesignsConfig };
@@ -57,8 +69,7 @@ export function getAvailableDesigns( {
 		};
 	}
 
-	// If we are in the FSE flow, only show FSE designs. In normal flows, remove
-	// the FSE designs.
+	// If we are opting into FSE, show only FSE designs.
 	designs = {
 		...designs,
 		featured: designs.featured.filter( ( design ) =>
@@ -67,12 +78,13 @@ export function getAvailableDesigns( {
 	};
 
 	if ( randomize ) {
-		designs.featured = shuffleArray( designs.featured );
+		designs.featured = shuffle( designs.featured );
 	}
 
-	// Force blank canvas design to always be first in the list
+	// Force designs using a "featured" term in the theme_picks taxonomy to always be first in the list.
+	// For example: Blank Canvas.
 	designs.featured = designs.featured.sort(
-		( a, b ) => Number( isBlankCanvasDesign( b ) ) - Number( isBlankCanvasDesign( a ) )
+		( a, b ) => Number( !! b.is_featured_picks ) - Number( !! a.is_featured_picks )
 	);
 
 	return designs;

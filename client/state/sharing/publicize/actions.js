@@ -42,21 +42,29 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 			message,
 		} );
 
-		return new Promise( ( resolve ) => {
-			wpcom
-				.undocumented()
-				.publicizePost( siteId, postId, message, skippedConnections, ( error, data ) => {
-					// Note: successes are recorded in data.results, errors are recorded in data.errors. There could be
-					// several errors and several successes.
-					if ( error || ! data.results ) {
-						dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error } );
-					} else {
-						dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
-					}
+		const body = {
+			skipped_connections: skippedConnections ?? [],
+			message,
+		};
 
-					resolve();
-				} );
-		} );
+		wpcom.req
+			.post( {
+				path: `/sites/${ siteId }/posts/${ postId }/publicize`,
+				body,
+				apiNamespace: 'wpcom/v2',
+			} )
+			// Note: successes are recorded in data.results, errors are recorded in data.errors. There could be
+			// several errors and several successes.
+			.then( ( data ) => {
+				if ( ! data.results.length ) {
+					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId } );
+				} else {
+					dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
+				}
+			} )
+			.catch( () => {
+				dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId } );
+			} );
 	};
 }
 
@@ -74,9 +82,8 @@ export function fetchConnections( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.siteConnections( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/publicize-connections` )
 			.then( ( connections ) => {
 				dispatch( receiveConnections( siteId, connections ) );
 				dispatch( {
@@ -145,10 +152,18 @@ export function fetchConnection( siteId, connectionId ) {
  * @returns {Function}                  Action thunk
  */
 export function createSiteConnection( siteId, keyringConnectionId, externalUserId ) {
-	return ( dispatch ) =>
-		wpcom
-			.undocumented()
-			.createConnection( keyringConnectionId, siteId, externalUserId, { shared: false } )
+	return ( dispatch ) => {
+		const body = {
+			keyring_connection_ID: keyringConnectionId,
+			shared: false,
+		};
+
+		if ( externalUserId ) {
+			body.external_user_ID = externalUserId;
+		}
+
+		return wpcom.req
+			.post( `/sites/${ siteId }/publicize-connections/new`, body )
 			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_CREATE,
@@ -176,6 +191,7 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
 					)
 				);
 			} );
+	};
 }
 
 /**
@@ -190,9 +206,8 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
  */
 export function updateSiteConnection( connection, attributes ) {
 	return ( dispatch ) =>
-		wpcom
-			.undocumented()
-			.updateConnection( connection.site_ID, connection.ID, attributes )
+		wpcom.req
+			.post( `/sites/${ connection.site_ID }/publicize-connections/${ connection.ID }`, attributes )
 			.then( ( response ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_UPDATE,
@@ -238,9 +253,8 @@ export function updateSiteConnection( connection, attributes ) {
  */
 export function deleteSiteConnection( connection ) {
 	return ( dispatch ) =>
-		wpcom
-			.undocumented()
-			.deleteSiteConnection( connection.site_ID, connection.ID )
+		wpcom.req
+			.post( `/sites/${ connection.site_ID }/publicize-connections/${ connection.ID }/delete` )
 			.then( () => {
 				dispatch( deleteConnection( connection ) );
 				dispatch( deleteConnectionSuccess( connection ) );

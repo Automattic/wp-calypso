@@ -1,6 +1,7 @@
 ## 5.1.0 (next)
 
-- Add `i18n.getLocaleVariant()` method to get a nonstandard locale variant slug
+- Add `i18n.getLocaleVariant()` method to get a nonstandard locale variant slug.
+- Bump `interpolate-components` (renamed to `@automattic/interpolate-components`) to 1.1.2 (for React 17 compat).
 
 ## 5.0.0
 

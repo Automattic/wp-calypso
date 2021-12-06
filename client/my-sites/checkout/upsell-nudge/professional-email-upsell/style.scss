@@ -1,0 +1,154 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.is-section-professional-email-upsell {
+	background-color: var( --studio-white );
+}
+
+.main.professional-email-upsell {
+	max-width: 1040px;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		padding: 1em;
+	}
+}
+
+.professional-email-upsell__header {
+	text-align: center;
+}
+
+.professional-email-upsell__small-title {
+	font-size: $font-body-small;
+}
+
+.professional-email-upsell__title {
+	font-size: $font-title-large;
+	margin-top: 1rem;
+	line-height: 38px;
+}
+
+.professional-email-upsell__pricing {
+	display: flex;
+	flex-direction: column;
+	margin-top: 10px;
+
+	@include break-mobile {
+		flex-direction: row;
+		justify-content: center;
+
+		span + span {
+			margin-left: 8px;
+		}
+	}
+}
+
+.professional-email-upsell__content {
+	display: flex;
+	flex-direction: column;
+	margin-top: 2.5em;
+
+	@include break-medium {
+		flex-direction: row;
+		margin-top: 3em;
+
+		> div {
+			padding: 1em;
+
+			&:first-of-type {
+				flex: 1;
+				max-width: 550px;
+				padding-right: 3em;
+			}
+
+			&:last-of-type {
+				padding-left: 3em;
+			}
+		}
+	}
+}
+
+.professional-email-upsell__form {
+	.form-fieldset {
+		margin-bottom: 24px;
+
+		&:last-of-type {
+			margin-bottom: 32px;
+		}
+	}
+
+	.form-label {
+		margin-bottom: 0;
+
+		.form-text-input-with-affixes__suffix {
+			font-weight: normal;
+		}
+	}
+
+	.form-password-input,
+	.form-text-input-with-affixes {
+		margin-top: 5px;
+	}
+}
+
+.professional-email-upsell__form-buttons {
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: space-between;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+
+	.button:not( :first-of-type ) {
+		/* Note that we use margin-bottom because we're using column-reverse */
+		margin-bottom: 1em;
+
+		@include break-mobile {
+			margin-bottom: 0;
+			margin-left: 0.5em;
+		}
+	}
+}
+
+.professional-email-upsell__features {
+	display: flex;
+	flex-direction: column;
+	margin-top: 2.5em;
+
+	@include break-medium {
+		margin-top: 0;
+	}
+
+	h2 {
+		font-size: $font-body-small;
+		font-weight: 600;
+		margin-bottom: 5px;
+	}
+}
+
+.professional-email-upsell__feature-list {
+	font-size: $font-body-small;
+	list-style: none;
+	margin: 0;
+
+	li {
+		padding-bottom: 0.25em;
+
+		.gridicon {
+			fill: var( --color-neutral-40 );
+			margin-left: 1px;
+			margin-right: 6px;
+			vertical-align: text-bottom;
+		}
+	}
+}
+
+.professional-email-upsell__titan-logo {
+	margin-top: 2em;
+	margin-bottom: 3em;
+	max-width: 160px;
+
+	@include break-mobile {
+		margin-bottom: 0;
+	}
+}

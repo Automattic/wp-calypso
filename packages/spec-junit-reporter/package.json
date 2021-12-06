@@ -18,5 +18,8 @@
 	"peerDependencies": {
 		"mocha": "^8.1.3",
 		"mocha-junit-reporter": "^2.0.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

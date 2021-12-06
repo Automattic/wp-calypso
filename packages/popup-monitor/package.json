@@ -29,7 +29,7 @@
 		"src"
 	],
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},
@@ -37,6 +37,7 @@
 		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"chai": "^4.3.4"
 	}
 }

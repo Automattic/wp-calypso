@@ -39,6 +39,7 @@
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.3"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.4.4"
 	}
 }

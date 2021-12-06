@@ -1,7 +1,6 @@
 import { Button, Popover, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { has } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -64,10 +63,9 @@ export class DateRange extends Component {
 
 		// Define the date range that is selectable (ie: not disabled)
 		const firstSelectableDate =
-			has( this.props, 'firstSelectableDate' ) &&
-			this.props.moment( this.props.firstSelectableDate );
+			this.props.firstSelectableDate && this.props.moment( this.props.firstSelectableDate );
 		const lastSelectableDate =
-			has( this.props, 'lastSelectableDate' ) && this.props.moment( this.props.lastSelectableDate );
+			this.props.lastSelectableDate && this.props.moment( this.props.lastSelectableDate );
 
 		// Clamp start/end dates to ranges (if specified)
 		let startDate =
@@ -579,7 +577,7 @@ export class DateRange extends Component {
 	/**
 	 * Renders the Popover component
 	 *
-	 * @returns {React.Element} the Popover component
+	 * @returns {import('react').Element} the Popover component
 	 */
 	renderPopover() {
 		const headerProps = {
@@ -618,7 +616,7 @@ export class DateRange extends Component {
 	/**
 	 * Renders the DatePicker component
 	 *
-	 * @returns {React.Element} the DatePicker component
+	 * @returns {import('react').Element} the DatePicker component
 	 */
 	renderDatePicker() {
 		const fromDate = this.momentDateToJsDate( this.state.startDate );
@@ -670,7 +668,7 @@ export class DateRange extends Component {
 	/**
 	 * Renders the component
 	 *
-	 * @returns {React.Element} the DateRange component
+	 * @returns {import('react').Element} the DateRange component
 	 */
 	render() {
 		const rootClassNames = classNames( {

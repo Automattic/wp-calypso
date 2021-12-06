@@ -1,9 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { Step, StepType, useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
+import useFseBetaOptInStep from './use-fse-beta-opt-in-step';
 import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
@@ -14,7 +14,7 @@ export default function useSteps(): Array< StepType > {
 			return {
 				hasSiteTitle: onboardSelect.hasSiteTitle(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
-				isEnrollingInFse: onboardSelect.shouldEnrollInFseBeta(),
+				isEnrollingInFse: onboardSelect.isEnrollingInFseBeta(),
 			};
 		},
 		[ ONBOARD_STORE ]
@@ -31,7 +31,6 @@ export default function useSteps(): Array< StepType > {
 		steps = [
 			Step.IntentGathering,
 			Step.Domains,
-			Step.FseBetaOptIn,
 			Step.DesignSelection,
 			Step.Style,
 			Step.Features,
@@ -40,7 +39,6 @@ export default function useSteps(): Array< StepType > {
 	} else {
 		steps = [
 			Step.IntentGathering,
-			Step.FseBetaOptIn,
 			Step.DesignSelection,
 			Step.Style,
 			Step.Domains,
@@ -53,17 +51,13 @@ export default function useSteps(): Array< StepType > {
 	// - Site Editor flow (feature flag)
 	// - the user has selected a design without fonts
 	// - the user is enrolled in Beta FSE
-	if (
-		isEnabled( 'gutenboarding/site-editor' ) ||
-		hasSelectedDesignWithoutFonts ||
-		isEnrollingInFse
-	) {
+	if ( hasSelectedDesignWithoutFonts || isEnrollingInFse ) {
 		steps = steps.filter( ( step ) => step !== Step.Style );
 	}
 
-	// Remove the FSE Beta Opt In if not in a configured environment
-	if ( ! isEnabled( 'full-site-editing/beta-opt-in' ) ) {
-		steps = steps.filter( ( step ) => step !== Step.FseBetaOptIn );
+	// Add the FSE Beta Opt In step if the user is eligible
+	if ( useFseBetaOptInStep() ) {
+		steps = [ Step.FseBetaOptIn, Step.FseBetaIntentGathering, ...steps.slice( 1 ) ];
 	}
 
 	// Logic necessary to skip Domains or Plans steps

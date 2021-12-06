@@ -6,7 +6,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SortedGrid from 'calypso/components/sorted-grid';
-import { getMimePrefix } from 'calypso/lib/media/utils';
 import { selectMediaItems } from 'calypso/state/media/actions';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
@@ -36,6 +35,8 @@ export class MediaLibraryList extends Component {
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
+		source: PropTypes.string,
+		onSourceChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -157,12 +158,6 @@ export class MediaLibraryList extends Component {
 		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
 		const ref = this.getItemRef( item );
 
-		const showGalleryHelp =
-			! this.props.single &&
-			selectedIndex !== -1 &&
-			selectedItems.length === 1 &&
-			'image' === getMimePrefix( item );
-
 		return (
 			<ListItem
 				ref={ ref }
@@ -171,7 +166,6 @@ export class MediaLibraryList extends Component {
 				media={ item }
 				scale={ this.props.mediaScale }
 				thumbnailType={ this.props.thumbnailType }
-				showGalleryHelp={ showGalleryHelp }
 				selectedIndex={ selectedIndex }
 				onToggle={ this.toggleItem }
 			/>
@@ -214,6 +208,7 @@ export class MediaLibraryList extends Component {
 				filter: this.props.filter,
 				search: this.props.search,
 				source: this.props.source,
+				onSourceChange: this.props.onSourceChange,
 			} );
 		}
 

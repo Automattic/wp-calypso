@@ -60,6 +60,7 @@ export const createSiteDomainObject = ( domain ) => {
 		currentUserCannotAddEmailReason: assembleCurrentUserCannotAddEmailReason(
 			domain.current_user_cannot_add_email_reason
 		),
+		currentUserIsOwner: Boolean( domain.current_user_is_owner ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
 		domainRegistrationAgreementUrl: getDomainRegistrationAgreementUrl( domain ),
@@ -78,7 +79,12 @@ export const createSiteDomainObject = ( domain ) => {
 		isRedeemable: Boolean( domain.is_redeemable ),
 		isEligibleForInboundTransfer: Boolean( domain.is_eligible_for_inbound_transfer ),
 		isAutoRenewing: Boolean( domain.auto_renewing ),
+		isIcannVerificationSuspended:
+			typeof domain.is_icann_verification_suspended === 'boolean'
+				? Boolean( domain.is_icann_verification_suspended )
+				: null,
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
+		isPendingRenewal: Boolean( domain.pending_renewal ),
 		isPremium: Boolean( domain.is_premium ),
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),

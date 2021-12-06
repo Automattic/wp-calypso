@@ -1,10 +1,10 @@
 import { createSelector } from '@automattic/state-utils';
 import debugFactory from 'debug';
-import { difference, find, findLast, flatMap, get, includes, map, startsWith, pick } from 'lodash';
-import GuidedToursConfig from 'calypso/layout/guided-tours/config';
+import guidedToursConfig from 'calypso/layout/guided-tours/config';
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'calypso/state/action-types';
 import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRouteTimestamp from 'calypso/state/selectors/get-current-route-timestamp';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getActionLog } from 'calypso/state/ui/action-log/selectors';
 import { getSectionName, getSectionGroup } from 'calypso/state/ui/selectors';
@@ -21,15 +21,17 @@ const SECTIONS_WITHOUT_TOURS = [
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const mappable = ( x ) => ( ! Array.isArray( x ) ? [ x ] : x );
+function tourMatchesPath( tour, path ) {
+	if ( ! tour.path ) {
+		return false;
+	}
 
-const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
-	mappable( tourMeta.path ).map( ( path ) => ( {
-		tour: key,
-		when: tourMeta.when,
-		path,
-	} ) )
-);
+	if ( Array.isArray( tour.path ) ) {
+		return tour.path.some( ( p ) => path.startsWith( p ) );
+	}
+
+	return path.startsWith( tour.path );
+}
 
 /*
  * Returns a collection of tour names. These tours are selected if the user has
@@ -37,19 +39,18 @@ const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
  * tour.
  */
 const getToursFromFeaturesReached = createSelector(
-	( state ) => [
-		...new Set(
-			getActionLog( state )
-				.filter( ( { type } ) => type === ROUTE_SET )
-				.reduceRight( ( allTours, { path: triggerPath } ) => {
-					const newTours = relevantFeatures
-						.filter( ( { path: featurePath } ) => startsWith( triggerPath, featurePath ) )
-						.map( ( feature ) => feature.tour );
-
-					return newTours ? [ ...allTours, ...newTours ] : allTours;
-				}, [] )
-		),
-	],
+	( state ) => {
+		// list of recent navigations in reverse order
+		const navigationActions = getActionLog( state )
+			.filter( ( { type } ) => type === ROUTE_SET )
+			.reverse();
+		// find tours that match by route path
+		const matchingTours = navigationActions.flatMap( ( action ) =>
+			guidedToursConfig.filter( ( tour ) => tourMatchesPath( tour, action.path ) )
+		);
+		// return array of tour names
+		return matchingTours.map( ( tour ) => tour.name );
+	},
 	[ getActionLog ]
 );
 
@@ -58,7 +59,7 @@ const getToursFromFeaturesReached = createSelector(
  * recently and in the past.
  */
 const getToursSeen = createSelector(
-	( state ) => [ ...new Set( map( getToursHistory( state ), 'tourName' ) ) ],
+	( state ) => [ ...new Set( getToursHistory( state ).map( ( tour ) => tour.tourName ) ) ],
 	[ getToursHistory ]
 );
 
@@ -70,12 +71,11 @@ const getTourFromQuery = createSelector(
 	( state ) => {
 		const initial = getInitialQueryArguments( state );
 		const current = getCurrentQueryArguments( state );
-		const tourProps = [ 'tour', '_timestamp' ];
-		const { tour, _timestamp } =
-			current && current.tour ? pick( current, tourProps ) : pick( initial, tourProps );
+		const timestamp = getCurrentRouteTimestamp( state );
+		const tour = current.tour ?? initial.tour;
 
-		if ( tour && find( relevantFeatures, { tour } ) ) {
-			return { tour, _timestamp };
+		if ( tour && guidedToursConfig.some( ( { name } ) => name === tour ) ) {
+			return { tour, timestamp };
 		}
 	},
 	[ getInitialQueryArguments, getCurrentQueryArguments ]
@@ -85,9 +85,9 @@ const getTourFromQuery = createSelector(
  * Returns true if `tour` has been seen in the current Calypso session, false
  * otherwise.
  */
-const hasJustSeenTour = ( state, { tour, _timestamp } ) =>
+const hasJustSeenTour = ( state, { tour, timestamp } ) =>
 	getToursHistory( state ).some(
-		( entry ) => entry.tourName === tour && entry.timestamp > _timestamp
+		( entry ) => entry.tourName === tour && timestamp != null && entry.timestamp > timestamp
 	);
 
 /*
@@ -112,39 +112,23 @@ const findTriggeredTour = ( state ) => {
 		return;
 	}
 
-	const toursFromTriggers = [
-		...new Set( [
-			...getToursFromFeaturesReached( state ),
-			// Right now, only one source from which to derive tours, but we may
-			// have more later. Examples:
-			// ...getToursFromPurchases( state ),
-			// ...getToursFromFirstActions( state ),
-		] ),
-	];
-
-	const toursToDismiss = [
-		...new Set( [
-			// Same idea here.
-			...getToursSeen( state ),
-		] ),
-	];
-
-	const newTours = difference( toursFromTriggers, toursToDismiss );
-	return find( newTours, ( tour ) => {
-		const { when = () => true } = find( relevantFeatures, { tour } );
+	const toursFromTriggers = getToursFromFeaturesReached( state );
+	const toursToDismiss = getToursSeen( state );
+	const newTours = toursFromTriggers.filter( ( tour ) => ! toursToDismiss.includes( tour ) );
+	return newTours.find( ( tour ) => {
+		const { when = () => true } = guidedToursConfig.find( ( { name } ) => name === tour );
 		return when( state );
 	} );
 };
 
 const doesSectionAllowTours = ( state ) =>
-	! includes( SECTIONS_WITHOUT_TOURS, getSectionName( state ) );
+	! SECTIONS_WITHOUT_TOURS.includes( getSectionName( state ) );
 
 export const hasTourJustBeenVisible = createSelector(
 	( state, now = Date.now() ) => {
-		const last = findLast( getActionLog( state ), {
-			type: GUIDED_TOUR_UPDATE,
-			shouldShow: false,
-		} );
+		const last = getActionLog( state )
+			.reverse()
+			.find( ( action ) => action.type === GUIDED_TOUR_UPDATE && action.shouldShow === false );
 		// threshold is one minute
 		return last && now - last.timestamp < 60000;
 	},
@@ -183,7 +167,7 @@ export const findEligibleTour = createSelector(
  * @param  {object}  state Global state tree
  * @returns {object}        Current Guided Tours state
  */
-const getRawGuidedTourState = ( state ) => get( state, 'guidedTours', false );
+const getRawGuidedTourState = ( state ) => state.guidedTours;
 
 export const getGuidedTourState = createSelector(
 	( state ) => {

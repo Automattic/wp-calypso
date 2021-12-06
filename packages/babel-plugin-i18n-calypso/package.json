@@ -7,8 +7,11 @@
 		"gettext-parser": "^4.0.3",
 		"lodash": "^4.17.21"
 	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^"
+	},
 	"peerDependencies": {
-		"@babel/core": "^7.15.0"
+		"@babel/core": "^7.16.0"
 	},
 	"publishConfig": {
 		"access": "public"

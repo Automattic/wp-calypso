@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { includes, some } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
@@ -8,6 +9,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
+import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
@@ -28,15 +30,17 @@ function renderSinglePlugin( context, siteUrl ) {
 	} else if ( context.prevPath ) {
 		prevPath = sectionify( context.prevPath );
 	}
-
 	// Render single plugin component
-	context.primary = createElement( PluginComponent, {
-		path: context.path,
-		prevQuerystring: lastPluginsQuerystring,
-		prevPath,
-		pluginSlug,
-		siteUrl,
-	} );
+	context.primary = createElement(
+		config.isEnabled( 'marketplace-v0.5' ) ? PluginDetails : PluginComponent,
+		{
+			path: context.path,
+			prevQuerystring: lastPluginsQuerystring,
+			prevPath,
+			pluginSlug,
+			siteUrl,
+		}
+	);
 }
 
 function getPathWithoutSiteSlug( context, site ) {

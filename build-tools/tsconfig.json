@@ -1,5 +1,5 @@
 {
-	"extends": "@automattic/calypso-build/typescript/js-package.json",
+	"extends": "@automattic/calypso-typescript-config/js-package.json",
 	"compilerOptions": {
 		"noEmit": false,
 		"emitDeclarationOnly": true,
@@ -7,9 +7,5 @@
 		"declarationDir": "dist/types",
 		"types": [ "node" ]
 	},
-	"include": [
-		"babel/**/*",
-		"lib/**/*",
-		"webpack/**/*",
-	]
+	"include": [ "babel/**/*", "lib/**/*", "webpack/**/*" ]
 }

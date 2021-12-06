@@ -1,13 +1,11 @@
-import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { receiveHelpCourses } from 'calypso/state/help/courses/actions';
 import { getHelpCourses } from 'calypso/state/help/courses/selectors';
 import {
@@ -21,6 +19,7 @@ import CourseList, { CourseListPlaceholder } from './course-list';
 import './style.scss';
 
 class Courses extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.fetchCoursesIfNeeded();
 	}
@@ -38,7 +37,7 @@ class Courses extends Component {
 	}
 
 	render() {
-		const { courses, isBusinessPlanUser, isLoading, translate, userId } = this.props;
+		const { courses, isEligible, isLoading, translate } = this.props;
 
 		return (
 			<Main className="help-courses">
@@ -49,31 +48,28 @@ class Courses extends Component {
 				{ isLoading ? (
 					<CourseListPlaceholder />
 				) : (
-					<CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } />
+					<CourseList courses={ courses } isBusinessPlanUser={ isEligible } />
 				) }
 
-				<QueryUserPurchases userId={ userId } />
+				<QueryUserPurchases />
 			</Main>
 		);
 	}
 }
 
 export function mapStateToProps( state ) {
-	const userId = getCurrentUserId( state );
-	const purchases = getUserPurchases( state, userId );
-	const isBusinessPlanUser =
-		purchases &&
-		!! find( purchases, ( { productSlug } ) =>
-			planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING )
-		);
+	const purchases = getUserPurchases( state );
+	const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
+	const isEligible =
+		purchaseSlugs &&
+		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) );
 	const courses = getHelpCourses( state );
 	const isLoading =
 		isFetchingUserPurchases( state ) || ! courses || ! hasLoadedUserPurchasesFromServer( state );
 
 	return {
 		isLoading,
-		isBusinessPlanUser,
-		userId,
+		isEligible,
 		courses,
 	};
 }

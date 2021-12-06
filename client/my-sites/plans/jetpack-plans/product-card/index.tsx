@@ -11,6 +11,7 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
@@ -33,6 +34,7 @@ import type {
 	SelectorProduct,
 	SiteProduct,
 } from '../types';
+import type { JetpackPurchasableItemSlug } from 'calypso/../packages/calypso-products';
 
 interface ProductCardProps {
 	item: SelectorProduct;
@@ -91,13 +93,28 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		item?.monthlyProductSlug || ''
 	);
 
-	// If item is a plan feature, use the plan purchase object.
 	const isItemPlanFeature = !! (
 		sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug )
 	);
-	const purchase = isItemPlanFeature
-		? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
-		: getPurchaseByProductSlug( purchases, item.productSlug );
+	const isDeprecated = Boolean( item.legacy );
+	const isIncludedInPlan = ! isOwned && isItemPlanFeature;
+	const isSuperseded = !! (
+		! isDeprecated &&
+		! isOwned &&
+		! isIncludedInPlan &&
+		sitePlan &&
+		item &&
+		isSupersedingJetpackItem(
+			sitePlan.product_slug as JetpackPurchasableItemSlug,
+			item.productSlug as JetpackPurchasableItemSlug
+		)
+	);
+
+	// If item is a plan feature, use the plan purchase object.
+	const purchase =
+		isItemPlanFeature || isSuperseded
+			? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
+			: getPurchaseByProductSlug( purchases, item.productSlug );
 
 	// Handles expiry.
 	const isExpiring = purchase && isCloseToExpiration( purchase );
@@ -118,10 +135,11 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				planHasFeature( item.productSlug, productSlug )
 			).length;
 		}
-		return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].includes( item.productSlug );
+		return ! ( [
+			...JETPACK_BACKUP_PRODUCTS,
+			...JETPACK_SCAN_PRODUCTS,
+		] as ReadonlyArray< string > ).includes( item.productSlug );
 	}, [ item.productSlug ] );
-
-	const isDeprecated = Boolean( item.legacy );
 
 	// Disable the product card if it's an incompatible multisite product or CRM monthly product
 	// (CRM is not offered with "Monthly" billing. Only Yearly.)
@@ -138,23 +156,20 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 
 	return (
 		<JetpackProductCard
-			productSlug={ item.productSlug }
-			productName={ item.displayName }
-			subheader={ item.subheader }
-			headingLevel={ 3 }
+			item={ item }
+			headerLevel={ 3 }
 			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
-			currencyCode={ item.displayCurrency }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
-			billingTerm={ item.displayTerm || item.term }
 			buttonLabel={ productButtonLabel( {
 				product: item,
 				isOwned,
 				isUpgradeableToYearly,
 				isDeprecated,
+				isSuperseded,
 				currentPlan: sitePlan,
 			} ) }
-			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
+			buttonPrimary={ ! ( isOwned || isItemPlanFeature || isSuperseded ) }
 			onButtonClick={ () => {
 				onClick( item, isUpgradeableToYearly, purchase );
 			} }
@@ -164,13 +179,10 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
 			isOwned={ isOwned }
-			isIncludedInPlan={ ! isOwned && isItemPlanFeature }
-			isFree={ item.isFree }
+			isIncludedInPlan={ isIncludedInPlan || isSuperseded }
 			isDeprecated={ isDeprecated }
 			isAligned={ isAligned }
-			features={ item.features }
 			displayFrom={ ! siteId && priceTierList.length > 0 }
-			belowPriceText={ item.belowPriceText }
 			tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }

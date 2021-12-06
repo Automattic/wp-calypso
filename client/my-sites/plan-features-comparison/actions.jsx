@@ -20,6 +20,7 @@ const PlanFeaturesActionsButton = ( {
 	className,
 	current = false,
 	freePlan = false,
+	isDisabled = false,
 	isPlaceholder = false,
 	isPopular,
 	isInSignup,
@@ -54,7 +55,11 @@ const PlanFeaturesActionsButton = ( {
 
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
 		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+			<Button
+				className={ classes }
+				onClick={ handleUpgradeButtonClick }
+				disabled={ isPlaceholder || isDisabled }
+			>
 				{ translate( 'Select', {
 					args: {
 						plan: planName,
@@ -98,6 +103,7 @@ PlanFeaturesComparisonActions.propTypes = {
 	className: PropTypes.string,
 	current: PropTypes.bool,
 	freePlan: PropTypes.bool,
+	isDisabled: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isLaunchPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,

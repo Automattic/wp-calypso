@@ -4,44 +4,65 @@ import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { transferStatus } from 'calypso/lib/domains/constants';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
-import { domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
+import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	getByPurchaseId,
-	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import DomainStatus from '../card/domain-status';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
 class TransferInDomainType extends Component {
 	startTransfer = () => {
-		const { domain, selectedSite } = this.props;
-		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );
+		this.setState( { isTransferring: true }, this.goToInboundTransferPage );
 	};
+
+	goToInboundTransferPage() {
+		const { domain, selectedSite } = this.props;
+		page(
+			domainUseMyDomain( selectedSite.slug, domain.name, useMyDomainInputMode.transferDomain )
+		);
+	}
 
 	renderPendingStart() {
 		const { domain, translate } = this.props;
+		const { currentUserIsOwner } = domain;
 
 		return (
 			<>
 				<p>
-					{ translate(
-						'We need you to complete a couple of steps before we can transfer %(domain)s from your ' +
-							'current domain provider to WordPress.com. Your domain will stay at your current provider ' +
-							'until the transfer is completed.',
-						{
-							args: {
-								domain: domain.name,
-							},
-						}
-					) }
+					{ currentUserIsOwner
+						? translate(
+								'We need you to complete a couple of steps before we can transfer %(domain)s from your ' +
+									'current domain provider to WordPress.com. Your domain will stay at your current provider ' +
+									'until the transfer is completed.',
+								{
+									args: {
+										domain: domain.name,
+									},
+								}
+						  )
+						: translate(
+								'This domain transfer is waiting to be initiated. Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, to start it.',
+								{
+									args: {
+										owner: domain.owner,
+									},
+									components: {
+										strong: <strong />,
+									},
+								}
+						  ) }
 				</p>
 
-				<Button primary onClick={ this.startTransfer }>
+				<Button disabled={ ! currentUserIsOwner } primary onClick={ this.startTransfer }>
 					{ translate( 'Start transfer' ) }
 				</Button>
 			</>
@@ -64,33 +85,48 @@ class TransferInDomainType extends Component {
 
 	renderTransferFailed() {
 		const { domain, translate } = this.props;
+		const { currentUserIsOwner } = domain;
 
 		return (
 			<>
 				<p>
-					{ translate(
-						'We were unable to complete the transfer of {{strong}}%(domain)s{{/strong}}. ' +
-							'You can remove the transfer from your account or try to start the transfer again. ' +
-							'{{a}}Learn more{{/a}}',
-						{
-							args: {
-								domain: domain.name,
-							},
-							components: {
-								strong: <strong />,
-								a: (
-									<a
-										href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
+					{ currentUserIsOwner
+						? translate(
+								'We were unable to complete the transfer of {{strong}}%(domain)s{{/strong}}. ' +
+									'You can remove the transfer from your account or try to start the transfer again. ' +
+									'{{a}}Learn more{{/a}}',
+								{
+									args: {
+										domain: domain.name,
+									},
+									components: {
+										strong: <strong />,
+										a: (
+											<a
+												href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+						  )
+						: translate(
+								'The domain transfer failed to complete. Please contact the domain owner, {{strong}}%(owner)s{{/strong}}, to restart it.',
+								{
+									args: {
+										owner: domain.owner,
+									},
+									components: {
+										strong: <strong />,
+									},
+								}
+						  ) }
 				</p>
 
-				<Button onClick={ this.startTransfer }>{ translate( 'Start transfer again' ) }</Button>
+				<Button disabled={ ! currentUserIsOwner } onClick={ this.startTransfer }>
+					{ translate( 'Start transfer again' ) }
+				</Button>
 			</>
 		);
 	}
@@ -133,11 +169,16 @@ class TransferInDomainType extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const { subscriptionId } = ownProps.domain;
-	return {
-		purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
-		isLoadingPurchase:
-			isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
-	};
-} )( withLocalizedMoment( localize( TransferInDomainType ) ) );
+export default connect(
+	( state, ownProps ) => {
+		const { subscriptionId } = ownProps.domain;
+		return {
+			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
+			isLoadingPurchase:
+				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+		};
+	},
+	{
+		errorNotice,
+	}
+)( withLocalizedMoment( localize( TransferInDomainType ) ) );

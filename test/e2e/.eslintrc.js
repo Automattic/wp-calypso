@@ -1,12 +1,20 @@
+const nodeConfig = require( '@automattic/calypso-eslint-overrides/node' );
+
 module.exports = {
+	...nodeConfig,
 	env: {
-		node: true,
+		...nodeConfig.env,
 		mocha: false,
 	},
 	overrides: [
 		{
 			plugins: [ 'mocha' ],
-			files: [ 'specs/specs-jetpack/*', 'specs/specs-calypso/*', 'specs/specs-wpcom/*' ],
+			files: [
+				'specs/specs-jetpack/*',
+				'specs/specs-calypso/*',
+				'specs/specs-wpcom/*',
+				'lib/mocha-hooks.js',
+			],
 			rules: {
 				'mocha/no-exclusive-tests': 'error',
 				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
@@ -35,7 +43,7 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'specs/specs-playwright/shared-specs/**/*' ],
+			files: [ 'specs/specs-playwright/shared-specs/**/*', 'lib/shared-steps/**/*' ],
 			rules: {
 				// This directory is used to create shared specs that can be re-used in multiple places.
 				'jest/no-export': 'off',
@@ -43,8 +51,7 @@ module.exports = {
 		},
 	],
 	rules: {
-		'import/no-nodejs-modules': 'off',
-		'no-console': 'off',
+		...nodeConfig.rules,
 
 		// We have many tests that don't make an explicit `expect`, but instead puts the browser
 		// in certain state that will be used by the next test, or asserted by WebDriver

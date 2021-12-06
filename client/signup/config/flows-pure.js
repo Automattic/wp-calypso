@@ -12,6 +12,7 @@ export function generateFlows( {
 	getChecklistThemeDestination = noop,
 	getImportDestination = noop,
 	getDestinationFromIntent = noop,
+	getDIFMSignupDestination = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -268,9 +269,17 @@ export function generateFlows( {
 		{
 			name: 'p2',
 			steps: [ 'p2-site', 'p2-details', 'user' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }?p2-site`,
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'P2 signup flow',
 			lastModified: '2020-09-01',
+			showRecaptcha: true,
+		},
+		{
+			name: 'p2-new',
+			steps: [ 'p2-get-started', 'user', 'p2-site' ],
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+			description: 'New P2 signup flow',
+			lastModified: '2021-11-15',
 			showRecaptcha: true,
 		},
 		{
@@ -343,6 +352,27 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'importer',
+			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
+			destination: '/',
+			pageTitle: translate( 'Import your site content' ),
+			description: 'A new import flow that can be used from the onboarding flow',
+			lastModified: '2021-10-18',
+			disallowResume: true,
+			hideFlowProgress: true,
+			providesDependenciesInQuery: [ 'siteSlug' ],
+		},
+		{
+			name: 'from',
+			steps: [ 'importing' ],
+			destination: '/',
+			pageTitle: translate( 'Import your site content' ),
+			description: 'Onboarding - start from importer',
+			lastModified: '2021-11-15',
+			hideFlowProgress: true,
+			enableBranchSteps: true,
+		},
+		{
 			name: 'reader',
 			steps: [ 'reader-landing', 'user' ],
 			destination: '/',
@@ -406,34 +436,32 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'with-design-picker',
-			steps: [ 'user', 'domains', 'plans', 'design' ],
-			destination: getSignupDestination,
-			description: 'Default onboarding experience with design picker as the last step',
-			lastModified: '2021-03-29',
-			showRecaptcha: true,
-		},
-		{
 			name: 'setup-site',
-			steps: isEnabled( 'signup/hero-flow' )
-				? [ 'intent', 'design-setup-site' ]
-				: [ 'design-setup-site' ],
-			destination: isEnabled( 'signup/hero-flow' )
-				? getDestinationFromIntent
-				: getChecklistThemeDestination,
+			steps: [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ],
+			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
-			lastModified: '2021-09-02',
+			lastModified: '2021-10-14',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
 			pageTitle: translate( 'Setup your site' ),
+			enableBranchSteps: true,
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [ 'user', 'site-info-collection', 'domains' ],
-			destination: getSignupDestination,
-			description: 'The current best performing flow in AB tests',
-			lastModified: '2019-06-20',
+			steps: [ 'user', 'difm-design-setup-site', 'site-info-collection', 'domains' ],
+			destination: getDIFMSignupDestination,
+			description: 'A flow for DIFM Lite leads',
+			lastModified: '2021-09-30',
+		},
+		{
+			name: 'woocommerce-install',
+			pageTitle: translate( 'Add WooCommerce to your site' ),
+			steps: [ 'confirm', 'transfer' ],
+			destination: '/',
+			description: 'Onboarding and installation flow for woocommerce on all plans.',
+			providesDependenciesInQuery: [ 'site' ],
+			lastModified: '2021-11-11',
 		},
 	];
 

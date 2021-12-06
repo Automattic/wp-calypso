@@ -1,0 +1,27 @@
+{
+	"name": "@automattic/calypso-eslint-overrides",
+	"version": "1.0.0",
+	"description": "Shared Calypso eslint config",
+	"keywords": [
+		"calypso",
+		"eslint"
+	],
+	"main": "index.js",
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-eslint-overrides"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^"
+	}
+}

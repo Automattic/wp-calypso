@@ -5,6 +5,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
+
 import './style.scss';
 
 const Header: React.FC< Props > = () => {

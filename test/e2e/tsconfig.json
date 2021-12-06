@@ -1,9 +1,14 @@
 {
-	"extends": "@automattic/calypso-build/typescript/ts-package.json",
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
 	"compilerOptions": {
 		"allowJs": true,
 		"noEmit": true, // just type checking, no output. The output is handled by babel.
 		"types": [ "jest", "node" ] // no mocha - we are only using TypeScript for the new Playwright scripts
 	},
-	"include": [ "specs/specs-playwright", "specs/constants.js", "lib/gutenberg/tracking" ]
+	"include": [
+		"specs/specs-playwright",
+		"specs/specs-p2",
+		"specs/constants.js",
+		"lib/gutenberg/tracking"
+	]
 }

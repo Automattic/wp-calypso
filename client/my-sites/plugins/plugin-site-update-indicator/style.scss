@@ -1,4 +1,4 @@
-.plugin-site-update-indicator {
+.plugin-site-update-indicator__icon {
 	line-height: 32px;
 	vertical-align: bottom;
 
@@ -7,6 +7,19 @@
 	}
 }
 
-.plugin-site-update-indicator__button {
-	margin-top: 8px;
+.plugin-site-update-indicator__link-container {
+	margin-top: 1px;
+	text-align: center;
+}
+
+.plugin-site-update-indicator__link {
+	cursor: pointer;
+	color: var( --studio-gray-80 );
+	text-decoration: underline;
+	line-height: 18px;
+
+	&:hover, &:focus {
+		color: var( --studio-gray-100 );
+		font-weight: bold;
+	}
 }

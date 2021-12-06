@@ -3,17 +3,18 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryRewindPolicies } from 'calypso/components/data/query-rewind-policies';
 import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import {
 	getRewindBytesAvailable,
 	getRewindBytesUsed,
 	isRequestingRewindPolicies,
 	isRequestingRewindSize,
 } from 'calypso/state/rewind/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { BackupStorageSpaceUpsell } from './backup-storage-space-upsell';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { getUsageLevel, StorageUsageLevels } from './storage-usage-levels';
 import UsageDisplay from './usage-display';
+import UsageWarning from './usage-warning';
 
 import './style.scss';
 
@@ -21,20 +22,21 @@ const BackupStorageSpace: React.FC = () => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	useQueryRewindSize( siteId );
 	useQueryRewindPolicies( siteId );
+	useQuerySitePurchases( siteId );
 
 	const bytesUsed = useSelector( ( state ) => getRewindBytesUsed( state, siteId ) );
 	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) );
 	const usageLevel = getUsageLevel( bytesUsed, bytesAvailable ) ?? StorageUsageLevels.Normal;
 
-	const showUpsell = usageLevel > StorageUsageLevels.Normal;
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const showWarning = usageLevel > StorageUsageLevels.Normal;
 
+	const requestingPurchases = useSelector( isFetchingSitePurchases );
 	const requestingPolicies = useSelector( ( state ) =>
 		isRequestingRewindPolicies( state, siteId )
 	);
 	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
 
-	if ( requestingPolicies ) {
+	if ( requestingPolicies || requestingPurchases ) {
 		return <Card className="backup-storage-space__loading" />;
 	}
 
@@ -47,13 +49,13 @@ const BackupStorageSpace: React.FC = () => {
 	return (
 		<Card className="backup-storage-space">
 			<UsageDisplay loading={ requestingSize } usageLevel={ usageLevel } />
-			{ showUpsell && (
+			{ showWarning && (
 				<>
 					<div className="backup-storage-space__divider"></div>
-					<BackupStorageSpaceUpsell
+					<UsageWarning
+						siteId={ siteId }
 						usageLevel={ usageLevel }
 						bytesUsed={ bytesUsed as number }
-						href={ isJetpackCloud() ? `/pricing/backup/${ siteSlug }` : `/plans/${ siteSlug }` }
 					/>
 				</>
 			) }

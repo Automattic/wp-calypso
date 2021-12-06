@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { debounce, get, noop } from 'lodash';
+import { debounce, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -17,6 +17,8 @@ import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
 import { updateMedia } from 'calypso/state/media/thunks';
 import EditorMediaModalFieldset from '../fieldset';
+
+const noop = () => {};
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
@@ -36,6 +38,7 @@ class EditorMediaModalDetailFields extends Component {
 		this.delayedSaveChange = debounce( this.saveChange, 1000 );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
 			this.updateChange( true );
@@ -185,14 +188,15 @@ class EditorMediaModalDetailFields extends Component {
 				label: 'R',
 				value: 'R-17',
 			},
-			{
-				label: 'X',
-				value: 'X-18',
-			},
 		];
-		const rating = this.getItemValue( 'rating' );
+		let rating = this.getItemValue( 'rating' );
 		if ( ! rating ) {
 			return;
+		}
+
+		// X-18 was previously supported but is now removed to better comply with our TOS.
+		if ( 'X-18' === rating ) {
+			rating = 'R-17';
 		}
 
 		return (
@@ -229,7 +233,7 @@ class EditorMediaModalDetailFields extends Component {
 					/>
 					<span>
 						{ this.props.translate(
-							'Display share menu and allow viewers to embed or download this video'
+							'Display share menu and allow viewers to copy a link or embed this video'
 						) }
 					</span>
 				</FormLabel>

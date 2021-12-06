@@ -106,6 +106,16 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
+		paths.domainManagementDnsAddRecord,
+		domainManagementController.domainManagementDnsAddRecord
+	);
+
+	registerStandardDomainManagementPages(
+		paths.domainManagementDnsEditRecord,
+		domainManagementController.domainManagementDnsEditRecord
+	);
+
+	registerStandardDomainManagementPages(
 		paths.domainManagementNameServers,
 		domainManagementController.domainManagementNameServers
 	);

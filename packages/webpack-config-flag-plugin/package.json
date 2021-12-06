@@ -4,7 +4,7 @@
 	"description": "A webpack plugin to replace `config.isEnabled` flag checks with literals",
 	"main": "index.js",
 	"peerDependencies": {
-		"webpack": "^5.54.0"
+		"webpack": "^5.64.4"
 	},
 	"author": "Automattic Inc.",
 	"private": true,
@@ -19,6 +19,7 @@
 		"access": "public"
 	},
 	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"rimraf": "^3.0.0"
 	}
 }

@@ -1,12 +1,12 @@
 import { createStripeSetupIntent } from '@automattic/calypso-stripe';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { saveCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/stored-payment-method-api';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 interface Props {
 	useAsPrimaryPaymentMethod?: boolean;
@@ -14,14 +14,14 @@ interface Props {
 	stripe: Stripe | null;
 	stripeConfiguration: StripeConfiguration | null;
 	element: StripeCardNumberElement | undefined;
-	dispatch: ReturnType< typeof useDispatch >;
+	dispatch: CalypsoDispatch;
 }
 
 export async function assignNewCardProcessor(
 	{ useAsPrimaryPaymentMethod, translate, stripe, stripeConfiguration, dispatch, element }: Props,
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
-	recordFormSubmitEvent( { dispatch } );
+	dispatch( recordFormSubmitEvent() );
 
 	try {
 		if ( ! isNewCardDataValid( submitData ) ) {
@@ -88,6 +88,6 @@ interface NewCardSubmitData {
 	name: string;
 }
 
-function recordFormSubmitEvent( { dispatch }: { dispatch: ReturnType< typeof useDispatch > } ) {
-	dispatch( recordTracksEvent( 'calypso_partner_portal_add_credit_card_form_submit' ) );
+function recordFormSubmitEvent() {
+	return recordTracksEvent( 'calypso_partner_portal_add_credit_card_form_submit' );
 }

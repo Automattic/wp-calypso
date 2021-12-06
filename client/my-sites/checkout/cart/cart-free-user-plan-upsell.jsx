@@ -32,7 +32,7 @@ import { getAllCartItems } from '../../../lib/cart-values/cart-items';
 class CartFreeUserPlanUpsell extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
-		isCartPendingUpdate: PropTypes.bool.isRequired,
+		isCartPendingUpdate: PropTypes.bool,
 		addItemToCart: PropTypes.func.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		hasPaidPlan: PropTypes.bool,
@@ -125,7 +125,7 @@ class CartFreeUserPlanUpsell extends Component {
 	}
 
 	addPlanToCart = () => {
-		const planCartItem = planItem( PLAN_PERSONAL, {} );
+		const planCartItem = planItem( PLAN_PERSONAL );
 		if ( planCartItem ) {
 			this.props.addItemToCart( planCartItem );
 			this.props.clickUpsellAddToCart();

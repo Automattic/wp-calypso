@@ -23,6 +23,10 @@
 	}
 }
 
+.themes__content {
+	min-height: 100vh;
+}
+
 .is-section-themes.has-no-sidebar .themes__content {
 	padding: 0 0 32px;
 
@@ -85,8 +89,4 @@
 .section-nav__mobile-header-text .theme-showcase__badge-beta,
 .section-nav-tab__text .theme-showcase__badge-beta {
 	margin-left: 6px;
-	line-height: 12px;
-	height: 13px;
-	padding-left: 8px;
-	padding-right: 8px;
 }

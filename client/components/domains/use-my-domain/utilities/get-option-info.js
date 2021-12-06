@@ -13,7 +13,17 @@ import {
 	optionInfo,
 } from './index';
 
-const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
+export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
+	if ( ! domainInboundTransferStatusInfo ) {
+		return {
+			transferrable: false,
+			domainTransferContent: {
+				...optionInfo.transferNotSupported,
+				topText: optionInfo.transferNotSupported.topText,
+			},
+		};
+	}
+
 	const { inRedemption, transferEligibleDate } = domainInboundTransferStatusInfo;
 
 	const result = {
@@ -46,11 +56,13 @@ export function getOptionInfo( {
 	selectedSite,
 	siteIsOnPaidPlan,
 } ) {
+	availability = availability ?? {};
 	const mappingFreeText = getMappingFreeText( {
 		cart,
 		domain,
 		primaryWithPlansOnly,
 		selectedSite,
+		isSignupStep,
 	} );
 
 	const mappingPriceText = getMappingPriceText( {

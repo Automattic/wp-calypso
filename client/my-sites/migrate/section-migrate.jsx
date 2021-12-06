@@ -55,6 +55,10 @@ class SectionMigrate extends Component {
 			return page( `/import/${ this.props.targetSiteSlug }` );
 		}
 
+		if ( this.props.url ) {
+			this.setMigrationState( { url: this.props.url } );
+		}
+
 		if ( true === this.props.startMigration ) {
 			this._startedMigrationFromCart = true;
 			this._timeStartedMigrationFromCart = new Date().getTime();
@@ -95,16 +99,16 @@ class SectionMigrate extends Component {
 			}
 		} );
 
-		wpcom.undocumented().themes( this.props.sourceSite.ID, { apiVersion: '1' }, ( err, data ) => {
-			if ( data.themes ) {
+		wpcom.req
+			.get( `/sites/${ this.props.sourceSite.ID }/themes`, { apiVersion: '1' } )
+			.then( ( data ) => {
 				const sourceSiteThemes = [
 					// Put active theme first
 					...data.themes.filter( ( theme ) => theme.active ),
 					...data.themes.filter( ( theme ) => ! theme.active ),
 				];
 				this.setState( { sourceSiteThemes } );
-			}
-		} );
+			} );
 	};
 
 	handleJetpackSelect = () => {

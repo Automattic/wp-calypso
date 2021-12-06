@@ -39,7 +39,12 @@ class InviteAcceptLoggedOut extends Component {
 	};
 
 	clickSignInLink = () => {
-		const signInLink = login( { redirectTo: window.location.href } );
+		const linkParams = { redirectTo: window.location.href };
+		if ( get( this.props.invite, 'site.is_wpforteams_site', false ) ) {
+			linkParams.from = 'p2';
+		}
+
+		const signInLink = login( linkParams );
 		recordTracksEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
 		window.location = signInLink;
 	};
@@ -153,7 +158,7 @@ class InviteAcceptLoggedOut extends Component {
 			return this.renderSignInLinkOnly();
 		}
 
-		if ( this.props.invite?.site?.is_wpforteams_site ) {
+		if ( get( this.props.invite, 'site.is_wpforteams_site', false ) ) {
 			return P2InviteAcceptLoggedOut( {
 				...this.props,
 				onClickSignInLink: this.clickSignInLink,

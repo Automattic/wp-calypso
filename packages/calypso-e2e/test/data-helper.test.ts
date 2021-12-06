@@ -102,8 +102,8 @@ describe( 'DataHelper Tests', function () {
 	describe( `Test: createSuiteTitle`, function () {
 		test.each`
 			suite                       | viewport       | expected
-			${ 'Feature (Click: Tap)' } | ${ 'desktop' } | ${ '[WPCOM] Feature (Click: Tap): (desktop) @parallel' }
-			${ 'Manage' }               | ${ 'mobile' }  | ${ '[WPCOM] Manage: (mobile) @parallel' }
+			${ 'Feature (Click: Tap)' } | ${ 'desktop' } | ${ 'Feature (Click: Tap)' }
+			${ 'Manage' }               | ${ 'mobile' }  | ${ 'Manage' }
 		`(
 			'Returns $expected if toTitleCase is called with $words',
 			function ( { suite, viewport, expected } ) {

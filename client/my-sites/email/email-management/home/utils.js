@@ -1,4 +1,5 @@
 import { translate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	hasGoogleAccountTOSWarning,
@@ -9,7 +10,6 @@ import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
 	hasGSuiteWithUs,
-	hasPendingGSuiteUsers,
 	isPendingGSuiteTOSAcceptance,
 } from 'calypso/lib/gsuite';
 import {
@@ -123,10 +123,6 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			return errorStatus;
 		}
 
-		if ( hasPendingGSuiteUsers( domain ) ) {
-			return errorStatus;
-		}
-
 		return activeStatus;
 	}
 
@@ -166,4 +162,36 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 	}
 
 	return activeStatus;
+}
+
+/**
+ * Tracks an event for the key 'calypso_email_app_launch'.
+ *
+ * @param {app, context, provider} - app/context/provider should be string and must be provided.
+ */
+export function recordEmailAppLaunchEvent( { app, context, provider } ) {
+	recordTracksEvent( 'calypso_email_app_launch', {
+		app,
+		context,
+		provider,
+	} );
+}
+
+/**
+ * Tracks an event for the key 'calypso_inbox_new_mailbox_upsell_click'.
+ *
+ */
+export function recordInboxNewMailboxUpsellClickEvent() {
+	recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {} );
+}
+
+/**
+ * Tracks an event for the key 'calypso_inbox_upsell'.
+ *
+ * @param context context, where this event was logged.
+ */
+export function recordInboxUpsellTracksEvent( context = null ) {
+	recordTracksEvent( 'calypso_inbox_upsell', {
+		context,
+	} );
 }

@@ -37,6 +37,12 @@
 	.p2-step-wrapper__header-text {
 		margin-bottom: 0.5em;
 	}
+
+	.p2-step-wrapper__header-logo {
+		svg path {
+			fill: inherit;
+		}
+	}
 }
 
 .p2-step-wrapper__header {
@@ -52,24 +58,25 @@
 }
 
 .p2-step-wrapper__footer {
-	text-align: center;
 	margin-top: auto;
 	padding-top: 24px;
 	padding-bottom: 24px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	line-height: 1.5;
 }
 
 .p2-step-wrapper__w-logo {
 	width: 20px;
 	height: 20px;
-	display: inline-block;
-	margin-bottom: 3px;
+	display: block;
 	margin-right: 8px;
 	vertical-align: middle;
 }
 
 .p2-step-wrapper__footer-text {
 	font-size: var( --p2-font-size-form-xxs );
-	line-height: 17px;
 }
 
 .p2-step-wrapper button {

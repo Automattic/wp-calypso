@@ -3,9 +3,10 @@ import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/caly
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import languages from '@automattic/languages';
 import classNames from 'classnames';
-import { flowRight, get, has } from 'lodash';
+import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
@@ -16,7 +17,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import LanguagePicker from 'calypso/components/language-picker';
+import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
@@ -91,40 +92,69 @@ export class SiteSettingsFormGeneral extends Component {
 		} = this.props;
 
 		return (
-			<div className="site-settings__site-options">
-				<div className="site-settings__site-title-tagline">
-					<FormFieldset>
-						<FormLabel htmlFor="blogname">{ translate( 'Site title' ) }</FormLabel>
-						<FormInput
-							name="blogname"
-							id="blogname"
-							data-tip-target="site-title-input"
-							value={ fields.blogname || '' }
-							onChange={ onChangeField( 'blogname' ) }
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Title Field' ) }
-							onKeyPress={ uniqueEventTracker( 'Typed in Site Title Field' ) }
-						/>
-					</FormFieldset>
-					<FormFieldset>
-						<FormLabel htmlFor="blogdescription">{ translate( 'Site tagline' ) }</FormLabel>
-						<FormInput
-							name="blogdescription"
-							id="blogdescription"
-							data-tip-target="site-tagline-input"
-							value={ fields.blogdescription || '' }
-							onChange={ onChangeField( 'blogdescription' ) }
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Tagline Field' ) }
-							onKeyPress={ uniqueEventTracker( 'Typed in Site Tagline Field' ) }
-						/>
-						<FormSettingExplanation>
-							{ translate( 'In a few words, explain what this site is about.' ) }
-						</FormSettingExplanation>
-					</FormFieldset>
+			<>
+				<div className="site-settings__site-options">
+					<div className="site-settings__site-title-tagline">
+						<FormFieldset>
+							<FormLabel htmlFor="blogname">{ translate( 'Site title' ) }</FormLabel>
+							<FormInput
+								name="blogname"
+								id="blogname"
+								data-tip-target="site-title-input"
+								value={ fields.blogname || '' }
+								onChange={ onChangeField( 'blogname' ) }
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Title Field' ) }
+								onKeyPress={ uniqueEventTracker( 'Typed in Site Title Field' ) }
+							/>
+						</FormFieldset>
+						<FormFieldset>
+							<FormLabel htmlFor="blogdescription">{ translate( 'Site tagline' ) }</FormLabel>
+							<FormInput
+								name="blogdescription"
+								id="blogdescription"
+								data-tip-target="site-tagline-input"
+								value={ fields.blogdescription || '' }
+								onChange={ onChangeField( 'blogdescription' ) }
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Tagline Field' ) }
+								onKeyPress={ uniqueEventTracker( 'Typed in Site Tagline Field' ) }
+							/>
+							<FormSettingExplanation>
+								{ translate( 'In a few words, explain what this site is about.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+					</div>
+					<SiteIconSetting />
 				</div>
-				<SiteIconSetting />
-			</div>
+				<div className="site-settings__fiverr-logo-maker-cta">
+					<div className="site-settings__fiverr-logo-icon">
+						<img
+							className="site-settings__fiverr-logo-cta"
+							src={ fiverrLogo }
+							alt="fiverr small logo"
+						/>
+					</div>
+					<div className="site-settings__fiverr-logo-maker-cta-text">
+						<div className="site-settings__fiverr-logo-maker-cta-text-title">
+							{ translate( 'Make an incredible logo in minutes' ) }
+						</div>
+						<div className="site-settings__fiverr-logo-maker-cta-text-subhead">
+							{ translate( 'Pre-designed by top talent. Just add your touch.' ) }
+						</div>
+					</div>
+					<div className="site-settings__fiver-cta-button">
+						<Button
+							target="_blank"
+							href={ 'https://wp.me/logo-maker/?utm_campaign=general_settings' }
+							onClick={ this.trackFiverrLogoMakerClick }
+						>
+							<Gridicon icon="external" />
+							{ translate( 'Try Fiverr Logo Maker' ) }
+						</Button>
+					</div>
+				</div>
+			</>
 		);
 	}
 
@@ -217,6 +247,12 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 	};
 
+	trackFiverrLogoMakerClick = () => {
+		this.props.recordTracksEvent( 'calypso_site_icon_fiverr_logo_maker_cta_click', {
+			cta_name: 'site_icon_fiverr_logo_maker',
+		} );
+	};
+
 	renderLanguagePickerNotice = () => {
 		const { fields, translate } = this.props;
 		const langId = get( fields, 'lang_id', '' );
@@ -237,21 +273,20 @@ export class SiteSettingsFormGeneral extends Component {
 			},
 		};
 		const noticeContent = errors[ langId ];
+		if ( ! noticeContent ) {
+			return null;
+		}
 
 		return (
-			has( noticeContent, 'text' ) && (
-				<Notice
-					text={ noticeContent.text }
-					className="site-settings__language-picker-notice"
-					isCompact
-				>
-					{ has( noticeContent, 'link' ) && (
-						<NoticeAction href={ noticeContent.link } external>
-							{ noticeContent.linkText }
-						</NoticeAction>
-					) }
-				</Notice>
-			)
+			<Notice
+				text={ noticeContent.text }
+				className="site-settings__language-picker-notice"
+				isCompact
+			>
+				<NoticeAction href={ noticeContent.link } external>
+					{ noticeContent.linkText }
+				</NoticeAction>
+			</Notice>
 		);
 	};
 
@@ -270,7 +305,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<FormFieldset className={ siteIsJetpack && 'site-settings__has-divider is-top-only' }>
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
 				{ errorNotice }
-				<LanguagePicker
+				<SiteLanguagePicker
 					languages={ languages }
 					valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
 					value={ errorNotice ? 'en_US' : fields.lang_id }

@@ -8,6 +8,7 @@ import {
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
 	renderPluginsSetupStatusPage,
+	renderPluginsInstallPage,
 	redirectToHome,
 } from './controller';
 
@@ -23,7 +24,7 @@ export default function () {
 		);
 	}
 
-	if ( config.isEnabled( 'marketplace-yoast' ) ) {
+	if ( config.isEnabled( 'marketplace' ) ) {
 		page( '/marketplace/domain/:site?', renderDomainsPage, makeLayout, clientRender );
 		page(
 			'/marketplace/product/setup/:site?',
@@ -48,8 +49,18 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+	}
+
+	if ( config.isEnabled( 'marketplace-v0.5' ) ) {
 		page(
-			'/marketplace/thank-you/:site?',
+			'/marketplace/:productSlug?/install/:site?',
+			siteSelection,
+			renderPluginsInstallPage,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/marketplace/thank-you/:productSlug/:site?',
 			siteSelection,
 			renderMarketplaceThankYou,
 			makeLayout,

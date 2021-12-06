@@ -4,7 +4,7 @@ type SupportResultType = 'article' | 'where';
 
 const selectors = {
 	// Components
-	supportPopoverButton: '.inline-help__button',
+	supportPopoverButton: `button[title="Help"]`,
 	supportPopover: '.inline-help__popover',
 	searchInput: '[aria-label="Search"]',
 	clearSearch: '[aria-label="Close Search"]',
@@ -23,6 +23,7 @@ const selectors = {
 
 	// Article
 	readMoreButton: 'text=Read more',
+	supportArticlePlaceholder: 'p.support-article-dialog__placeholder-text',
 	visitArticleButton: 'text="Visit article"',
 	closeButton: 'button:text("Close")',
 };
@@ -58,8 +59,29 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openPopover(): Promise< void > {
-		await this.page.click( selectors.supportPopoverButton );
-		await this.page.waitForSelector( selectors.supportPopover, { state: 'visible' } );
+		if ( await this.page.isVisible( selectors.supportPopover ) ) {
+			return;
+		}
+
+		// This Promise.all wrapper contains many calls due to a certain level of uncertainty
+		// when the support popover is launched.
+		await Promise.all( [
+			// Waits for all placeholder CSS elements to be removed from the DOM.
+			this.waitForQueryComplete(),
+			// Waits for one of the network request (triggered by the opening of the popover) to complete.
+			this.page.waitForResponse(
+				( response ) => response.status() === 200 && response.url().includes( 'kayako/mine?' )
+			),
+			this.page.click( selectors.supportPopoverButton ),
+		] );
+
+		// Obtain the element handle for the Support popover, then wait until the `is-active` attribute
+		// is added.
+		const elementHandle = await this.page.waitForSelector( selectors.supportPopoverButton );
+		await this.page.waitForFunction(
+			( element: HTMLElement | SVGElement ) => element.classList.contains( 'is-active' ),
+			elementHandle
+		);
 	}
 
 	/**
@@ -68,6 +90,9 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async closePopover(): Promise< void > {
+		if ( await this.page.isHidden( selectors.supportPopover ) ) {
+			return;
+		}
 		await this.page.click( selectors.supportPopoverButton );
 		await this.page.waitForSelector( selectors.supportPopover, { state: 'hidden' } );
 	}
@@ -129,6 +154,7 @@ export class SupportComponent {
 	 */
 	async clickResult( category: SupportResultType, target: number ): Promise< void > {
 		let selector: string;
+
 		if ( category === 'article' ) {
 			selector = selectors.results( selectors.supportCategory );
 		} else {
@@ -136,7 +162,18 @@ export class SupportComponent {
 		}
 
 		await this.page.click( `:nth-match(${ selector }, ${ target })` );
-		await this.page.click( selectors.readMoreButton );
+	}
+
+	/**
+	 * Click on the `Read More` button shown on the support popover.
+	 *
+	 * The target button is shown only for Article type results.
+	 */
+	async clickReadMore(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } ),
+			this.page.click( selectors.readMoreButton ),
+		] );
 	}
 
 	/**
@@ -145,12 +182,18 @@ export class SupportComponent {
 	 * @returns {Promise<Page>} Reference to support page.
 	 */
 	async visitArticle(): Promise< Page > {
+		await this.page.waitForLoadState( 'networkidle' );
+		const visitArticleLocator = this.page.locator( selectors.visitArticleButton );
+
 		const browserContext = this.page.context();
+		// `Visit article` launches a new page.
 		const [ newPage ] = await Promise.all( [
 			browserContext.waitForEvent( 'page' ),
-			this.page.click( selectors.visitArticleButton ),
+			visitArticleLocator.click( { force: true } ),
 		] );
 		await newPage.waitForLoadState( 'domcontentloaded' );
+
+		// Return handler to the new tab.
 		return newPage;
 	}
 

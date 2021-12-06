@@ -8,13 +8,14 @@ const noop = () => {};
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { store, section, pathname, query, primary, secondary } = context;
+		const { store, queryClient, section, pathname, query, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! ( context.isServerSide && isUserLoggedIn( context.store.getState() ) ) ) {
 			context.layout = (
 				<LayoutComponent
 					store={ store }
+					queryClient={ queryClient }
 					currentSection={ section }
 					currentRoute={ pathname }
 					currentQuery={ query }

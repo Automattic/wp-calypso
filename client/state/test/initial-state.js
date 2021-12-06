@@ -14,10 +14,10 @@ import {
 	getInitialState,
 	getStateFromCache,
 	persistOnChange,
-	loadAllState,
 	MAX_AGE,
 	SERIALIZE_THROTTLE,
 } from 'calypso/state/initial-state';
+import { loadPersistedState } from 'calypso/state/persisted-state';
 import postTypes from 'calypso/state/post-types/reducer';
 import reader from 'calypso/state/reader/reducer';
 import signupReducer from 'calypso/state/signup/reducer';
@@ -64,7 +64,7 @@ describe( 'initial-state', () => {
 						getStoredItemSpy = jest
 							.spyOn( browserStorage, 'getAllStoredItems' )
 							.mockResolvedValue( savedState );
-						await loadAllState();
+						await loadPersistedState();
 						state = getInitialState( initialReducer, 123456789 );
 					} );
 
@@ -129,7 +129,7 @@ describe( 'initial-state', () => {
 					getStoredItemSpy = jest
 						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
-					await loadAllState();
+					await loadPersistedState();
 					state = getInitialState( initialReducer, 123456789 );
 				} );
 
@@ -192,7 +192,7 @@ describe( 'initial-state', () => {
 					getStoredItemSpy = jest
 						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
-					await loadAllState();
+					await loadPersistedState();
 					state = getInitialState( initialReducer, 123456789 );
 				} );
 
@@ -247,7 +247,7 @@ describe( 'initial-state', () => {
 					getStoredItemSpy = jest
 						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
-					await loadAllState();
+					await loadPersistedState();
 					state = getInitialState( initialReducer, 123456789 );
 				} );
 
@@ -305,7 +305,7 @@ describe( 'initial-state', () => {
 					getStoredItemSpy = jest
 						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
-					await loadAllState();
+					await loadPersistedState();
 					state = getInitialState( initialReducer, 123456789 );
 				} );
 
@@ -351,7 +351,7 @@ describe( 'initial-state', () => {
 				getStoredItemSpy = jest
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( savedState );
-				await loadAllState();
+				await loadPersistedState();
 				state = getStateFromCache( reader, 'reader', 123456789 );
 			} );
 
@@ -393,7 +393,7 @@ describe( 'initial-state', () => {
 				getStoredItemSpy = jest
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( savedState );
-				await loadAllState();
+				await loadPersistedState();
 				state = getStateFromCache( reader, 'reader' );
 			} );
 
@@ -443,7 +443,7 @@ describe( 'initial-state', () => {
 				getStoredItemSpy = jest
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( savedState );
-				await loadAllState();
+				await loadPersistedState();
 				state = getStateFromCache( reader, 'reader', 123456789 );
 			} );
 
@@ -493,7 +493,7 @@ describe( 'initial-state', () => {
 				getStoredItemSpy = jest
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( savedState );
-				await loadAllState();
+				await loadPersistedState();
 				state = getStateFromCache( reader, 'reader', 123456789 );
 			} );
 
@@ -546,7 +546,7 @@ describe( 'initial-state', () => {
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( storedState );
 
-				await loadAllState();
+				await loadPersistedState();
 				state = getStateFromCache( signupReducer, 'signup' );
 			} );
 
@@ -615,7 +615,7 @@ describe( 'initial-state', () => {
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( storedState );
 
-				await loadAllState();
+				await loadPersistedState();
 				state = getStateFromCache( signupReducer, 'signup', 123456789 );
 			} );
 
@@ -858,7 +858,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		await loadAllState();
+		await loadPersistedState();
 		const state = getInitialState( reducer, 123456789 );
 		const store = createReduxStore( state, reducer );
 
@@ -885,7 +885,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		await loadAllState();
+		await loadPersistedState();
 		const userId = 123456789;
 		const state = getInitialState( reducer, userId );
 		const store = createReduxStore( state, reducer );
@@ -920,7 +920,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		await loadAllState();
+		await loadPersistedState();
 		const userId = 123456789;
 		const state = getInitialState( reducer, userId );
 		const store = createReduxStore( state, reducer );
@@ -957,7 +957,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		await loadAllState();
+		await loadPersistedState();
 		const userId = 123456789;
 		const state = getInitialState( reducer, userId );
 		const store = createReduxStore( state, reducer );
@@ -993,7 +993,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 		} );
 
 		// load initial state and create Redux store with it
-		await loadAllState();
+		await loadPersistedState();
 		const userId = 123456789;
 		const state = getInitialState( reducer, userId );
 		const store = createReduxStore( state, reducer );

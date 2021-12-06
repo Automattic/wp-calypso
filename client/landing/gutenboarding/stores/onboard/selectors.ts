@@ -39,4 +39,4 @@ export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 	hasSelectedDesign( state ) && ! state.selectedFonts;
 
-export const shouldEnrollInFseBeta = ( state: State ): boolean => state.shouldEnrollInFseBeta;
+export const isEnrollingInFseBeta = ( state: State ): boolean => state.isEnrollingInFseBeta;

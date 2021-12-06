@@ -19,5 +19,9 @@
 		"debug": "^4.1.1",
 		"object-treeify": "^1.1.23",
 		"yargs": "^17.0.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

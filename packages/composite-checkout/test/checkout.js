@@ -15,10 +15,6 @@ import {
 	CheckoutStepArea,
 	CheckoutStepBody,
 	CheckoutSteps,
-	useSelect,
-	useDispatch,
-	createRegistry,
-	useRegisterStore,
 	useIsStepComplete,
 	useTransactionStatus,
 	usePaymentProcessor,
@@ -29,7 +25,7 @@ const usePaymentData = () => useContext( myContext );
 
 describe( 'Checkout', () => {
 	describe( 'using the default steps', function () {
-		describe( 'using the default registry', function () {
+		describe( 'using other defaults', function () {
 			let MyCheckout;
 			const mockMethod = createMockMethod();
 			const { items, total } = createMockItems();
@@ -41,69 +37,6 @@ describe( 'Checkout', () => {
 						total={ total }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
-						initiallySelectedPaymentMethodId={ mockMethod.id }
-					>
-						<Checkout />
-					</CheckoutProvider>
-				);
-			} );
-
-			it( 'renders the line items and the total', () => {
-				const { container } = render( <MyCheckout /> );
-
-				// Product line items show the correct price
-				getAllByLabelTextInNode( container, items[ 0 ].label ).map( ( element ) =>
-					expect( element ).toHaveTextContent( items[ 0 ].amount.displayValue )
-				);
-				getAllByLabelTextInNode( container, items[ 1 ].label ).map( ( element ) =>
-					expect( element ).toHaveTextContent( items[ 1 ].amount.displayValue )
-				);
-
-				// All elements labeled 'Total' show the expected price
-				getAllByLabelTextInNode( container, total.label ).map( ( element ) =>
-					expect( element ).toHaveTextContent( total.amount.displayValue )
-				);
-			} );
-
-			it( 'renders the payment method label', () => {
-				const { getAllByText } = render( <MyCheckout /> );
-				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
-			} );
-
-			it( 'renders the payment method activeContent', () => {
-				const { getByTestId } = render( <MyCheckout /> );
-				const activeComponent = getByTestId( 'mock-payment-form' );
-				expect( activeComponent ).toHaveTextContent( 'Cardholder Name' );
-			} );
-
-			it( 'renders the review step', () => {
-				const { getAllByText } = render( <MyCheckout /> );
-				expect( getAllByText( items[ 0 ].label ) ).toHaveLength( 2 );
-				expect( getAllByText( items[ 0 ].amount.displayValue ) ).toHaveLength( 1 );
-				expect( getAllByText( items[ 1 ].label ) ).toHaveLength( 2 );
-				expect( getAllByText( items[ 1 ].amount.displayValue ) ).toHaveLength( 1 );
-			} );
-
-			it( 'renders the payment method submitButton', () => {
-				const { getByText } = render( <MyCheckout /> );
-				expect( getByText( 'Pay Please' ) ).toBeTruthy();
-			} );
-		} );
-
-		describe( 'using a custom registry', function () {
-			let MyCheckout;
-			const mockMethod = createMockMethod();
-			const { items, total } = createMockItems();
-
-			beforeEach( () => {
-				const registry = createRegistry();
-				MyCheckout = () => (
-					<CheckoutProvider
-						items={ items }
-						total={ total }
-						paymentMethods={ [ mockMethod ] }
-						paymentProcessors={ getMockPaymentProcessors() }
-						registry={ registry }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<Checkout />
@@ -569,27 +502,7 @@ function MockSubmitButton( { disabled } ) {
 }
 
 function MockPaymentForm( { summary } ) {
-	useRegisterStore( 'mock', {
-		reducer( state = {}, action ) {
-			switch ( action.type ) {
-				case 'CARDHOLDER_NAME_SET':
-					return { ...state, cardholderName: action.payload };
-			}
-			return state;
-		},
-		actions: {
-			changeCardholderName( payload ) {
-				return { type: 'CARDHOLDER_NAME_SET', payload };
-			},
-		},
-		selectors: {
-			getCardholderName( state ) {
-				return state.cardholderName || '';
-			},
-		},
-	} );
-	const cardholderName = useSelect( ( select ) => select( 'mock' ).getCardholderName() );
-	const { changeCardholderName } = useDispatch( 'mock' );
+	const [ cardholderName, changeCardholderName ] = useState( '' );
 	return (
 		<div data-testid="mock-payment-form">
 			<label>

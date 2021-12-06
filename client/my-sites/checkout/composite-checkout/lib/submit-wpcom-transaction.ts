@@ -1,4 +1,6 @@
+import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import wp from 'calypso/lib/wp';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { createAccount } from '../payment-method-helpers';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -16,15 +18,28 @@ export default async function submitWpcomTransaction(
 	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
 		const isJetpackUserLessCheckout = payload.cart.is_jetpack_checkout;
 
-		const createAccountOptions = isJetpackUserLessCheckout
-			? { signupFlowName: 'jetpack-userless-checkout' }
-			: { signupFlowName: 'onboarding-registrationless' };
-
-		return createAccount( createAccountOptions ).then( ( response ) => {
+		return createAccount( {
+			signupFlowName: isJetpackUserLessCheckout
+				? 'jetpack-userless-checkout'
+				: 'onboarding-registrationless',
+			email: transactionOptions.contactDetails?.email?.value,
+			siteId: transactionOptions.siteId,
+			recaptchaClientId: transactionOptions.recaptchaClientId,
+		} ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
-			// If the account is already created(as happens when we are reprocessing after a transaction error), then
-			// the create account response will not have a site ID, so we fetch from state.
+			// We need to store the created site ID so that if the transaction fails,
+			// we can retry safely. createUserAndSiteBeforeTransaction will still be
+			// set and createAccount is idempotent for site site creation so long as
+			// siteId is set (although it will update the email address if that
+			// changes).
+			if ( siteIdFromResponse ) {
+				transactionOptions.reduxDispatch( setSelectedSiteId( Number( siteIdFromResponse ) ) );
+			}
+
+			// If the account is already created (as happens when we are reprocessing
+			// after a transaction error), then the create account response will not
+			// have a site ID, so we fetch from state.
 			const siteId = siteIdFromResponse || transactionOptions.siteId;
 			const newPayload = {
 				...payload,
@@ -32,11 +47,15 @@ export default async function submitWpcomTransaction(
 					...payload.cart,
 					blog_id: siteId || '0',
 					cart_key: siteId || 'no-site',
+					create_new_blog: siteId ? false : true,
 				},
 			};
-			return wp.undocumented().transactions( newPayload );
+			return wp.req.post(
+				'/me/transactions',
+				mapRecordKeysRecursively( newPayload, camelToSnakeCase )
+			);
 		} );
 	}
 
-	return wp.undocumented().transactions( payload );
+	return wp.req.post( '/me/transactions', mapRecordKeysRecursively( payload, camelToSnakeCase ) );
 }

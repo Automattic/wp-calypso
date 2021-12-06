@@ -192,13 +192,8 @@ class ActivityLogItem extends Component {
 
 	renderItemAction() {
 		const {
-			enableClone,
-			activity: { activityIsRewindable, activityName, activityMeta },
+			activity: { activityName, activityMeta },
 		} = this.props;
-
-		if ( enableClone ) {
-			return activityIsRewindable ? this.renderCloneAction() : null;
-		}
 
 		switch ( activityName ) {
 			case 'rewind__scan_result_found':
@@ -214,16 +209,14 @@ class ActivityLogItem extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="activity-log-item__action">
-				<Button
-					className="activity-log-item__clone-action"
-					primary
-					compact
-					onClick={ this.performCloneAction }
-				>
-					{ translate( 'Clone from here' ) }
-				</Button>
-			</div>
+			<Button
+				className="activity-log-item__clone-action"
+				primary
+				compact
+				onClick={ this.performCloneAction }
+			>
+				{ translate( 'Clone from here' ) }
+			</Button>
 		);
 	};
 
@@ -239,6 +232,7 @@ class ActivityLogItem extends Component {
 			createRewind,
 			disableBackup,
 			disableRestore,
+			enableClone,
 			siteId,
 			siteSlug,
 			trackAddCreds,
@@ -254,7 +248,7 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				{ ! showCredentialsButton && (
+				{ ! showCredentialsButton && ! enableClone && (
 					<Button compact={ isCompact } disabled={ disableRestore } onClick={ createRewind }>
 						<Gridicon icon="history" size={ 18 } /> { translate( 'Restore' ) }
 					</Button>
@@ -275,9 +269,13 @@ class ActivityLogItem extends Component {
 					</Button>
 				) }
 
-				<Button compact={ isCompact } disabled={ disableBackup } onClick={ createBackup }>
-					<Gridicon icon="cloud-download" size={ 18 } /> { translate( 'Download' ) }
-				</Button>
+				{ ! enableClone && (
+					<Button compact={ isCompact } disabled={ disableBackup } onClick={ createBackup }>
+						<Gridicon icon="cloud-download" size={ 18 } /> { translate( 'Download' ) }
+					</Button>
+				) }
+
+				{ enableClone && this.renderCloneAction() }
 			</div>
 		);
 	};

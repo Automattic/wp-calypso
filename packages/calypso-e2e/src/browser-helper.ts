@@ -1,9 +1,9 @@
-import { appendFile, mkdir, mkdtemp } from 'fs/promises';
+import { appendFile } from 'fs/promises';
+import os from 'os';
 import path from 'path';
 import config from 'config';
-import { getState } from 'expect';
 import { devices } from 'playwright';
-import { getVideoDir } from './media-helper';
+import { getTimestamp } from './data-helper';
 import type { LaunchOptions } from './browser-manager';
 import type { TargetDevice } from './types';
 import type { BrowserContextOptions, ViewportSize } from 'playwright';
@@ -74,7 +74,6 @@ export function getHeadless(): boolean {
  * @returns {BrowserContextOptions} Customized launch configuration for the target.
  */
 export function getLaunchConfiguration( chromeVersion: string ): BrowserContextOptions {
-	const videoDir = getVideoDir();
 	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
 
 	// Obtain the target device. Currently supported are devices are listed in types.
@@ -85,7 +84,8 @@ export function getLaunchConfiguration( chromeVersion: string ): BrowserContextO
 	// Overwrite predefined user agent string with our custom one.
 	config.userAgent = userAgent;
 	// Explicitly resize captured video resolution to the viewport size.
-	config.recordVideo = { dir: videoDir, size: config.viewport as ViewportSize };
+	config.recordVideo = { dir: os.tmpdir(), size: config.viewport as ViewportSize };
+
 	return config;
 }
 
@@ -99,6 +99,15 @@ export function targetGutenbergEdge(): boolean {
 }
 
 /**
+ * Returns boolean indicating whether this test run should target a CoBlocks Edge user and site.
+ *
+ * @returns {boolean} True if should target Coblocks edge. False otherwise.
+ */
+export function targetCoBlocksEdge(): boolean {
+	return !! process.env.COBLOCKS_EDGE;
+}
+
+/**
  * Returns the default Logger configuration.
  *
  * The default Logger configuration has the following:
@@ -108,12 +117,17 @@ export function targetGutenbergEdge(): boolean {
  *
  * @returns {LaunchOptions} Logger configuration.
  */
-export async function getDefaultLoggerConfiguration(): Promise< LaunchOptions > {
+export async function getDefaultLoggerConfiguration(
+	artifactPath: string
+): Promise< LaunchOptions > {
+	// Unless filename is defined here, every line of logs will trigger creation of a new file.
+	// The timestamp is to prevent multiple contexts or pages from overwriting each other.
+	const filename = `playwright-${ getTimestamp() }.log`;
 	return {
 		logger: {
 			log: async ( name: string, severity: string, message: string ) => {
 				await appendFile(
-					path.join( await getArtifactDir(), 'playwright.log' ),
+					path.join( artifactPath, filename ),
 					`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
 				);
 			},
@@ -121,17 +135,4 @@ export async function getDefaultLoggerConfiguration(): Promise< LaunchOptions > 
 			isEnabled: ( name: string ) => name === 'api',
 		},
 	};
-}
-
-/**
- * Returns the artifact directory where logs, screenshots and video recordings are stored.
- *
- * @returns {Promise<string>} Path to the artifdact directory.
- */
-export async function getArtifactDir(): Promise< string > {
-	const { testPath } = getState() as { testPath: string };
-	const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
-	const resultsPath = path.join( process.cwd(), 'results' );
-	await mkdir( resultsPath, { recursive: true } );
-	return await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
 }

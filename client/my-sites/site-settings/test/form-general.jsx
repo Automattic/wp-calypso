@@ -36,6 +36,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { shallow } from 'enzyme';
 import '@testing-library/jest-dom/extend-expect';
 import moment from 'moment';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
@@ -63,17 +64,23 @@ const initialReduxState = {
 };
 
 function renderWithRedux( ui ) {
+	const queryClient = new QueryClient();
 	const store = createStore(
 		( state ) => state,
 		initialReduxState,
 		applyMiddleware( thunkMiddleware )
 	);
-	return render( <Provider store={ store }>{ ui }</Provider> );
+
+	return render(
+		<QueryClientProvider client={ queryClient }>
+			<Provider store={ store }>{ ui }</Provider>
+		</QueryClientProvider>
+	);
 }
 
 const props = {
 	site: {
-		plan: PLAN_FREE,
+		plan: { product_slug: PLAN_FREE },
 	},
 	selectedSite: {},
 	translate: ( x ) => x,
@@ -96,7 +103,11 @@ describe( 'SiteSettingsFormGeneral', () => {
 		[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( plan ) => {
 			test( `Business 1 year for (${ plan })`, () => {
 				const comp = shallow(
-					<SiteSettingsFormGeneral { ...props } siteIsJetpack={ false } site={ { plan } } />
+					<SiteSettingsFormGeneral
+						{ ...props }
+						siteIsJetpack={ false }
+						site={ { plan: { product_slug: plan } } }
+					/>
 				);
 				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
 				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
@@ -106,7 +117,11 @@ describe( 'SiteSettingsFormGeneral', () => {
 		[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( ( plan ) => {
 			test( `Business 2 year for (${ plan })`, () => {
 				const comp = shallow(
-					<SiteSettingsFormGeneral { ...props } siteIsJetpack={ false } site={ { plan } } />
+					<SiteSettingsFormGeneral
+						{ ...props }
+						siteIsJetpack={ false }
+						site={ { plan: { product_slug: plan } } }
+					/>
 				);
 				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
 				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
@@ -126,7 +141,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			testProps = {
 				...props,
 				siteIsJetpack: false,
-				site: { plan: PLAN_PERSONAL },
+				site: { plan: { product_slug: PLAN_PERSONAL } },
 				fields: {
 					blog_public: 1,
 					wpcom_coming_soon: 0,

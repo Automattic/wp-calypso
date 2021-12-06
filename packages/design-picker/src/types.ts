@@ -8,10 +8,15 @@ export interface FontPair {
 	base: Font;
 }
 
+export interface Category {
+	slug: string;
+	name: string;
+}
+
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 export interface Design {
-	categories: Array< string >;
+	categories: Array< Category >;
 	fonts?: FontPair;
 	is_alpha?: boolean;
 	is_fse?: boolean;
@@ -23,10 +28,20 @@ export interface Design {
 	title: string;
 	features: Array< DesignFeatures >;
 
+	// This design will appear at the top, regardless of category
+	showFirst?: boolean;
+
 	/**
 	 * Quickly hide a design from the picker without having to remove
 	 * it from the list of available design configs (stored in the
 	 * `@automattic/design-picker` package)
 	 */
 	hide?: boolean;
+
+	// designs with a "featured" term in the theme_picks taxonomy
+	is_featured_picks?: boolean;
+}
+
+export interface DesignUrlOptions {
+	iframe?: boolean;
 }

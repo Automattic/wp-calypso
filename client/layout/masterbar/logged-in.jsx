@@ -13,7 +13,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { requestHttpData } from 'calypso/state/data-layer/http-data';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { hasUnseen } from 'calypso/state/reader-ui/seen-posts/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -30,7 +29,6 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import PopUpSearch from '../popup-search';
 import Item from './item';
 import Masterbar from './masterbar';
 import Notifications from './notifications';
@@ -49,7 +47,6 @@ class MasterbarLoggedIn extends Component {
 		siteSlug: PropTypes.string,
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
-		hasUnseen: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -236,7 +233,11 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<>
 				{ isWordPressActionSearchFeatureEnabled && isActionSearchVisible ? (
-					<PopUpSearch onClose={ this.onSearchActionsClose } />
+					<AsyncLoad
+						require="calypso/layout/popup-search"
+						placeholder={ null }
+						onClose={ this.onSearchActionsClose }
+					/>
 				) : null }
 				<Masterbar>
 					{ this.renderMySites() }
@@ -249,7 +250,6 @@ class MasterbarLoggedIn extends Component {
 						isActive={ this.isActive( 'reader' ) }
 						tooltip={ translate( 'Read the blogs and topics you follow' ) }
 						preloadSection={ this.preloadReader }
-						hasUnseen={ this.props.hasUnseen }
 					>
 						{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 					</Item>
@@ -326,7 +326,6 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		return {
-			hasUnseen: hasUnseen( state ),
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			siteSlug: getSiteSlug( state, siteId ),

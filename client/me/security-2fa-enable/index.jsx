@@ -21,11 +21,11 @@ class Security2faEnable extends Component {
 	static displayName = 'Security2faEnable';
 
 	static defaultProps = {
-		doSMSFlow: false,
+		isSmsFlow: false,
 	};
 
 	static propTypes = {
-		doSMSFlow: PropTypes.bool,
+		isSmsFlow: PropTypes.bool,
 		onCancel: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 	};
@@ -33,7 +33,7 @@ class Security2faEnable extends Component {
 	state = {
 		lastError: false,
 		lastErrorType: false,
-		method: this.props.doSMSFlow ? 'sms' : 'scan',
+		method: this.props.isSmsFlow ? 'sms' : 'scan',
 		otpAuthUri: false,
 		smsRequestsAllowed: true,
 		smsRequestPerformed: false,
@@ -47,7 +47,7 @@ class Security2faEnable extends Component {
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
 		twoStepAuthorization.getAppAuthCodes( this.onAppAuthCodesRequestResponse );
-		if ( this.props.doSMSFlow ) {
+		if ( this.props.isSmsFlow ) {
 			this.requestSMS();
 		}
 	}
@@ -189,7 +189,7 @@ class Security2faEnable extends Component {
 			<div className="security-2fa-enable__qr-code-block">
 				<p className="security-2fa-enable__qr-instruction">
 					{ this.props.translate(
-						"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
+						"Scan this QR code with the authenticator app on your mobile. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
 						{
 							components: {
 								toggleMethodLink: this.getToggleLink(),
@@ -363,7 +363,7 @@ class Security2faEnable extends Component {
 						  } ) }
 				</FormButton>
 
-				{ 'sms' === this.state.method ? (
+				{ 'sms' === this.state.method && (
 					<FormButton
 						disabled={ ! this.state.smsRequestsAllowed }
 						isPrimary={ false }
@@ -374,18 +374,6 @@ class Security2faEnable extends Component {
 					>
 						{ this.props.translate( 'Resend Code', {
 							context: 'A button label to let a user get the SMS code sent again.',
-						} ) }
-					</FormButton>
-				) : (
-					<FormButton
-						isPrimary={ false }
-						onClick={ ( event ) => {
-							gaRecordEvent( 'Me', 'Clicked On Enable SMS Use SMS Button' );
-							this.onVerifyBySMS( event );
-						} }
-					>
-						{ this.props.translate( 'Use SMS', {
-							context: 'A button label to let a user switch to enabling Two-Step by SMS.',
 						} ) }
 					</FormButton>
 				) }
@@ -412,7 +400,7 @@ class Security2faEnable extends Component {
 	render() {
 		return (
 			<div>
-				<Security2faProgress step={ 2 } />
+				<Security2faProgress step={ 2 } isSmsFlow={ this.props.isSmsFlow } />
 				<form className="security-2fa-enable" onSubmit={ this.onCodeSubmit }>
 					<div className="security-2fa-enable__inner">
 						{ this.renderCodeBlock() }

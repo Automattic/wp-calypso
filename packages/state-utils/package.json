@@ -26,20 +26,21 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@wordpress/is-shallow-equal": "^4.2.0",
-		"@wordpress/warning": "^2.2.1",
+		"@wordpress/is-shallow-equal": "^4.2.1",
+		"@wordpress/warning": "^2.2.2",
 		"lodash": "^4.17.21",
-		"redux": "^4.1.1",
+		"redux": "^4.1.2",
 		"redux-thunk": "^2.3.0",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.3"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.4.4"
 	}
 }

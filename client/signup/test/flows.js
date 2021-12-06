@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
+import assert from 'assert';
 import sinon from 'sinon';
 import flows from 'calypso/signup/config/flows';
 import mockedFlows from './fixtures/flows';

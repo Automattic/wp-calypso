@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
@@ -12,10 +13,16 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
-import { domainManagementEdit, domainManagementDns } from 'calypso/my-sites/domains/paths';
+import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainManagementDns,
+} from 'calypso/my-sites/domains/paths';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -48,6 +55,7 @@ class NameServers extends Component {
 		nameservers: this.props.nameservers ?? null,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( props ) {
 		this.setStateWhenLoadedFromServer( props );
 	}
@@ -155,9 +163,13 @@ class NameServers extends Component {
 				</VerticalNav>
 
 				<VerticalNav>
-					{ this.hasWpcomNameservers() && ! this.isPendingTransfer() && (
-						<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
-					) }
+					{ this.hasWpcomNameservers() &&
+						! this.isPendingTransfer() &&
+						( config.isEnabled( 'domains/dns-records-redesign' ) ? (
+							<EmailSetup selectedDomainName={ this.props.selectedDomainName } />
+						) : (
+							<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
+						) ) }
 				</VerticalNav>
 			</Fragment>
 		);
@@ -169,8 +181,10 @@ class NameServers extends Component {
 		} );
 
 		return (
-			<Main className={ classes }>
-				{ this.header() }
+			<Main wideLayout className={ classes }>
+				{ config.isEnabled( 'domains/dns-records-redesign' )
+					? this.renderBreadcrumbs()
+					: this.header() }
 				{ this.getContent() }
 			</Main>
 		);
@@ -207,6 +221,35 @@ class NameServers extends Component {
 			} );
 		}
 	};
+
+	renderBreadcrumbs() {
+		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+		const previousPath = domainManagementEdit(
+			selectedSite.slug,
+			selectedDomainName,
+			currentRoute
+		);
+
+		const items = [
+			{
+				label: translate( 'Domains' ),
+				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+			},
+			{
+				label: selectedDomainName,
+				href: previousPath,
+			},
+			{ label: translate( 'DNS records' ) },
+		];
+
+		const mobileItem = {
+			label: translate( 'Back' ),
+			href: previousPath,
+			showBackArrow: true,
+		};
+
+		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+	}
 
 	saveNameservers = () => {
 		const { nameservers } = this.state;

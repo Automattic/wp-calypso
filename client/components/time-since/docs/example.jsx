@@ -5,7 +5,13 @@ const TimeSinceExample = () => {
 	return (
 		<div>
 			<div>
+				<TimeSince date={ moment().subtract( 30, 'seconds' ).toDate() } />
+			</div>
+			<div>
 				<TimeSince date={ moment().subtract( 5, 'minutes' ).toDate() } />
+			</div>
+			<div>
+				<TimeSince date={ moment().subtract( 3, 'days' ).toDate() } />
 			</div>
 			<div>
 				<TimeSince date={ moment().subtract( 5, 'months' ).toDate() } />

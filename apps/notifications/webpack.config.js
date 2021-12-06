@@ -1,7 +1,6 @@
 /**
  *WARNING: No ES6 modules here. Not transpiled! ****
  */
-/* eslint-disable import/no-nodejs-modules */
 
 const spawnSync = require( 'child_process' ).spawnSync;
 const path = require( 'path' );
@@ -48,6 +47,17 @@ function getWebpackConfig(
 
 	return {
 		...webpackConfig,
+		devServer: {
+			host: 'calypso.localhost',
+			port: 3000,
+			static: {
+				directory: path.join( __dirname, 'dist' ),
+			},
+			client: {
+				progress: true,
+			},
+			watchFiles: [ 'dist/**/*' ],
+		},
 		plugins: [
 			...webpackConfig.plugins,
 			new HtmlWebpackPlugin( {

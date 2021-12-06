@@ -3,17 +3,19 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T2_YEARLY,
+	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState, useEffect } from 'react';
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { FootnotesList } from '../footnotes-list';
 import { getForCurrentCROIteration, Iterations } from '../iterations';
 import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import JetpackFreeCard from '../jetpack-free-card';
@@ -138,10 +140,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ] );
 
 	const showFreeCard = useSelector( getShowFreeCard );
-	const showCrmFreeCard =
-		getForCurrentCROIteration( {
-			[ Iterations.ONLY_REALTIME_PRODUCTS ]: true,
-		} ) ?? false;
 
 	const bundleComparisonRef = useRef< null | HTMLElement >( null );
 	const scrollToComparison = () => {
@@ -169,8 +167,24 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		[ Iterations.ONLY_REALTIME_PRODUCTS ]: [
 			PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_MONTHLY,
+			PLAN_JETPACK_SECURITY_T2_YEARLY,
+			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 		],
 	} ) ?? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
+
+	const getOtherItemsProductCard = ( product: SelectorProduct ) => (
+		<li key={ product.iconSlug }>
+			<ProductCard
+				item={ product }
+				onClick={ onSelectProduct }
+				siteId={ siteId }
+				currencyCode={ currencyCode }
+				selectedTerm={ duration }
+				scrollCardIntoView={ scrollCardIntoView }
+				createButtonURL={ createButtonURL }
+			/>
+		</li>
+	);
 
 	return (
 		<>
@@ -182,7 +196,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					onSelectProduct={ onSelectProduct }
 				/>
 			) }
-			<ProductGridSection title={ translate( 'Most Popular' ) }>
+			<ProductGridSection>
 				{ ! planRecommendation && filterBar }
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
@@ -219,47 +233,54 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				</div>
 			</ProductGridSection>
 			<ProductGridSection title={ translate( 'More Products' ) }>
-				<ul className="product-grid__product-grid">
-					{ otherItems.map( ( product ) => (
-						<li key={ product.iconSlug }>
-							<ProductCard
-								item={ product }
-								onClick={ onSelectProduct }
+				{ getForCurrentCROIteration( {
+					[ Iterations.ONLY_REALTIME_PRODUCTS ]: (
+						<ul className="product-grid__product-grid">
+							{ otherItems.map( getOtherItemsProductCard ) }
+
+							<li>
+								<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+							</li>
+
+							{ showFreeCard && (
+								<li>
+									<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+								</li>
+							) }
+						</ul>
+					),
+				} ) ?? (
+					<>
+						<ul className="product-grid__product-grid">
+							{ otherItems.map( ( product ) => (
+								<li key={ product.iconSlug }>
+									<ProductCard
+										item={ product }
+										onClick={ onSelectProduct }
+										siteId={ siteId }
+										currencyCode={ currencyCode }
+										selectedTerm={ duration }
+										scrollCardIntoView={ scrollCardIntoView }
+										createButtonURL={ createButtonURL }
+									/>
+								</li>
+							) ) }
+						</ul>
+						<div className="product-grid__free add-top-margin">
+							{ showFreeCard && (
+								<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+							) }
+							<JetpackCrmFreeCard
+								fullWidth={ ! showFreeCard }
 								siteId={ siteId }
-								currencyCode={ currencyCode }
-								selectedTerm={ duration }
-								scrollCardIntoView={ scrollCardIntoView }
-								createButtonURL={ createButtonURL }
+								duration={ duration }
 							/>
-						</li>
-					) ) }
-				</ul>
-				<div className="product-grid__free">
-					{ showCrmFreeCard && (
-						<JetpackCrmFreeCard
-							fullWidth={ ! showFreeCard }
-							siteId={ siteId }
-							duration={ duration }
-						/>
-					) }
-					{ showFreeCard && (
-						<JetpackFreeCard
-							fullWidth={ ! showCrmFreeCard }
-							siteId={ siteId }
-							urlQueryArgs={ urlQueryArgs }
-						/>
-					) }
-				</div>
+						</div>
+					</>
+				) }
 			</ProductGridSection>
 			<StoreFooter />
-			<ul className="product-grid__asterisk-list">
-				<li className="product-grid__asterisk-item">
-					{ translate( '* Monthly plans are 7-day money back guarantee.' ) }
-				</li>
-				<li className="product-grid__asterisk-item">
-					{ translate( '✢ Discount is for first term only, all renewals are at full price.' ) }
-				</li>
-			</ul>
+			<FootnotesList />
 		</>
 	);
 };

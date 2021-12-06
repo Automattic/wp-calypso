@@ -1,155 +1,211 @@
 import { ThemeProvider } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import yoastInstalledImage from 'calypso/assets/images/marketplace/yoast-installed.svg';
+import { useSelector, useDispatch } from 'react-redux';
+import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import theme from 'calypso/my-sites/marketplace/theme';
-import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
-import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
-import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import {
-	isFetchingAutomatedTransferStatus,
-	getAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
-import { getIsPluginInstalledDuringPurchase } from 'calypso/state/marketplace/purchase-flow/selectors';
+import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
+import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
+import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-import './style.scss';
+const ThankYouContainer = styled.div`
+	.marketplace-thank-you {
+		margin-top: 72px;
+		img {
+			height: 74px;
+		}
+	}
 
-const MarketplaceThankYou = () => {
-	const [ pollCount, setPollCount ] = useState( 0 );
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	.thank-you__header-title {
+		font-size: 44px;
+	}
+
+	.thank-you__header-subtitle {
+		font-size: 16px;
+		color: var( --studio-gray-60 );
+	}
+`;
+
+const MasterbarStyled = styled( Masterbar )`
+	--color-masterbar-background: var( --studio-white );
+	--color-masterbar-text: var( --studio-gray-60 );
+	--masterbar-height: 72px;
+	border-bottom: 0;
+`;
+
+const WordPressLogoStyled = styled( WordPressLogo )`
+	max-height: calc( 100% - 47px );
+	align-self: center;
+	fill: rgb( 54, 54, 54 );
+`;
+
+const ItemStyled = styled( Item )`
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	padding: 0;
+
+	&:hover {
+		background: var( --studio-white );
+		text-decoration: underline;
+	}
+
+	.gridicon {
+		height: 17px;
+		fill: var( --studio-black );
+
+		@media ( max-width: 480px ) {
+			margin: 0;
+		}
+	}
+
+	@media ( max-width: 480px ) {
+		.masterbar__item-content {
+			display: block;
+		}
+	}
+`;
+
+interface IProps {
+	productSlug: string;
+}
+
+const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const dispatch = useDispatch();
-
-	const isFetchingTransferStatus = useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, selectedSiteId ?? 0 )
-	);
-
-	const isPluginInstalledDuringPurchase = useSelector( getIsPluginInstalledDuringPurchase );
-	const transferStatus = useSelector( ( state ) =>
-		getAutomatedTransferStatus( state, selectedSiteId ?? 0 )
-	);
-	const menuItems = useSiteMenuItems();
-	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
-	const { url: postsPageUrl } =
-		menuItems.find( ( { slug }: { slug: string } ) => slug === 'edit-php' ) ?? {};
-
-	const { url: yoastSeoPageUrl } =
-		menuItems.find( ( { slug }: { slug: string } ) => slug === 'wpseo_dashboard' ) ?? {};
-
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
+	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, siteId, productSlug ) );
+	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
+	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const [ pluginIcon, setPluginIcon ] = useState( null );
+
+	const [ retries, setRetries ] = useState( 0 );
+
+	// retrieve wporg plugin data if not available
+	useEffect( () => {
+		dispatch(
+			pluginInstallationStateChange(
+				MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED,
+				'deauthorize plugin installation URL'
+			)
+		);
+	}, [] );
 
 	useEffect( () => {
-		if ( ! postsPageUrl || ! yoastSeoPageUrl ) {
-			selectedSiteId && dispatch( requestAdminMenu( selectedSiteId ) );
+		if ( ! isWporgPluginFetched ) {
+			dispatch( wporgFetchPluginData( productSlug ) );
 		}
-	}, [ dispatch, postsPageUrl, selectedSiteId, yoastSeoPageUrl ] );
+		if ( isWporgPluginFetched ) {
+			// wporgPlugin exists in the wporg directory.
+			setPluginIcon( wporgPlugin?.icon || successImage );
+		}
+	}, [ isWporgPluginFetched, productSlug, setPluginIcon, dispatch ] );
 
 	useEffect( () => {
-		if (
-			isPluginInstalledDuringPurchase &&
-			transferStatus !== 'complete' &&
-			! isFetchingTransferStatus
-		) {
-			setTimeout( () => {
-				selectedSiteId && dispatch( fetchAutomatedTransferStatus( selectedSiteId ) );
-				setPollCount( ( c ) => c + 1 );
-			}, 1500 );
+		if ( wporgPlugin?.wporg === false ) {
+			// wporgPlugin exists and plugin doesn't exist in wporg directory.
+			setPluginIcon( successImage );
 		}
-	}, [
-		isFetchingTransferStatus,
-		isPluginInstalledDuringPurchase,
-		pollCount,
-		setPollCount,
-		dispatch,
-		transferStatus,
-		selectedSiteId,
-	] );
+	}, [ wporgPlugin ] );
 
-	/* TODO: Make all these items product-dependent */
+	useEffect( () => {
+		if ( ! isRequestingPlugins && ! pluginOnSite && retries < 10 ) {
+			setRetries( retries + 1 );
+			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
+		}
+		// Do not add retries in dependencies to avoid infinite loop.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId ] );
+
 	const thankYouImage = {
-		alt: 'yoast logo',
-		src: yoastInstalledImage,
+		alt: '',
+		src: pluginIcon,
 	};
 
-	const yoastSetupSection = {
-		sectionKey: 'yoast_whats_next',
+	const setupURL = pluginOnSite?.action_links?.Settings || `${ siteAdminUrl }plugins.php`;
+
+	const setupSection = {
+		sectionKey: 'setup_whats_next',
 		sectionTitle: translate( 'What’s next?' ),
 		nextSteps: [
 			{
-				stepKey: 'yoast_whats_next_plugin_setup',
+				stepKey: 'whats_next_plugin_setup',
 				stepTitle: translate( 'Plugin setup' ),
 				stepDescription: translate(
-					'Get to know Yoast SEO and customize it, so you can hit the ground running.'
+					'Get to know your plugin and customize it, so you can hit the ground running.'
 				),
 				stepCta: (
-					<FullWidthButton
-						href={ yoastSeoPageUrl }
-						primary
-						busy={ isRequestingMenu }
-						// TODO: Menu links are not properly loading on initial request, post transfer so yoastSeoPageUrl will remain empty post transfer
-						// This should be fixed with perhaps a work around to periodically poll for the menu with various domains until it loads
-						// or maybe blocking the user from entering this flow until a domain acquires SSL
-						disabled={ ! yoastSeoPageUrl }
-					>
-						{ translate( 'Get started' ) }
+					<FullWidthButton href={ setupURL } primary busy={ ! pluginOnSite && retries < 10 }>
+						{ translate( 'Manage plugin' ) }
 					</FullWidthButton>
 				),
 			},
 			{
-				stepKey: 'yoast_whats_next_view_posts',
-				stepTitle: translate( 'Start putting SEO to work' ),
+				stepKey: 'whats_next_grow',
+				stepTitle: translate( 'Keep growing' ),
 				stepDescription: translate(
-					"Improve your site's performance and rank higher with a few tips."
+					'Take your site to the next level. We have all the solutions to help you grow and thrive.'
 				),
 				stepCta: (
 					<FullWidthButton
-						href={ postsPageUrl }
-						busy={ isRequestingMenu }
-						disabled={ ! yoastSeoPageUrl }
+						onClick={ () =>
+							// Force reload the page.
+							( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
+						}
 					>
-						{ translate( 'View posts' ) }
+						{ translate( 'Explore plugins' ) }
 					</FullWidthButton>
 				),
 			},
 		],
 	};
 
+	const thankYouSubtitle = translate( '%(pluginName)s has been installed.', {
+		args: { pluginName: pluginOnSite?.name },
+	} );
+
 	return (
-		<>
-			<Masterbar>
-				<Item
-					icon="cross"
+		<ThemeProvider theme={ theme }>
+			<MasterbarStyled>
+				<WordPressLogoStyled />
+				<ItemStyled
+					icon="chevron-left"
 					onClick={ () =>
-						page( `/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }` )
-					}
-					tooltip={ translate( 'Go to plugin' ) }
-					tipTarget="close"
+						( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
+					} // Force reload the page.
+				>
+					{ translate( 'Back to plugins' ) }
+				</ItemStyled>
+			</MasterbarStyled>
+			<ThankYouContainer>
+				<ThankYou
+					containerClassName="marketplace-thank-you"
+					sections={ [ setupSection ] }
+					showSupportSection={ true }
+					thankYouImage={ thankYouImage }
+					thankYouTitle={ translate( 'All ready to go!' ) }
+					thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
+					headerBackgroundColor="#fff"
+					headerTextColor="#000"
 				/>
-			</Masterbar>
-			<ThankYou
-				containerClassName="marketplace-thank-you"
-				sections={ [ yoastSetupSection ] }
-				showSupportSection={ true }
-				thankYouImage={ thankYouImage }
-				/* TODO: Change thank you message to be dynamic according to product */
-				thankYouTitle={ translate( 'Yoast SEO Premium is installed' ) }
-			/>
-		</>
+			</ThankYouContainer>
+		</ThemeProvider>
 	);
 };
 
-export default function MarketplaceWrapper(): JSX.Element {
-	return (
-		<ThemeProvider theme={ theme }>
-			<MarketplaceThankYou />
-		</ThemeProvider>
-	);
-}
+export default MarketplaceThankYou;

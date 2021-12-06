@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
-import { getSelectedDomain, requestGdprConsentManagementLink } from 'calypso/lib/domains';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import wpcom from 'calypso/lib/wp';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
@@ -95,13 +96,14 @@ class ManageConsent extends Component {
 
 	requestConsentManagementLink = () => {
 		this.setState( { submitting: true } );
-		requestGdprConsentManagementLink( this.props.selectedDomainName, ( error ) => {
-			if ( error ) {
-				this.setState( { error: error.message, success: false, submitting: false } );
-			} else {
+		wpcom.req
+			.get( `/domains/${ this.props.selectedDomainName }/request-gdpr-consent-management-link` )
+			.then( () => {
 				this.setState( { error: null, success: true, submitting: false } );
-			}
-		} );
+			} )
+			.catch( ( error ) => {
+				this.setState( { error: error.message, success: false, submitting: false } );
+			} );
 	};
 
 	goToContactsPrivacy = () => {

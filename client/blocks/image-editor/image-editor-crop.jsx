@@ -86,10 +86,12 @@ class ImageEditorCrop extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.updateCrop( this.getDefaultState( this.props ), this.props, this.applyComputedCrop );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { bounds, aspectRatio, crop } = this.props;
 
@@ -151,7 +153,7 @@ class ImageEditorCrop extends Component {
 		let finalHeight = newHeight;
 
 		switch ( aspectRatio ) {
-			case AspectRatios.ORIGINAL:
+			case AspectRatios.ORIGINAL: {
 				//image not loaded yet
 				if ( ! this.props.originalAspectRatio ) {
 					this.setState( newValues, callback );
@@ -163,6 +165,7 @@ class ImageEditorCrop extends Component {
 				imageHeight = rotated ? width : height;
 
 				break;
+			}
 
 			case AspectRatios.ASPECT_1X1:
 				imageWidth = 1;
@@ -395,7 +398,6 @@ class ImageEditorCrop extends Component {
 					} }
 				/>
 				<Draggable
-					ref="border"
 					onDrag={ this.onBorderDrag }
 					onStop={ this.applyCrop }
 					x={ left }
@@ -422,7 +424,6 @@ class ImageEditorCrop extends Component {
 						top: topBound,
 						left: leftBound,
 					} }
-					ref="topLeft"
 					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
 				/>
 				<Draggable
@@ -437,7 +438,6 @@ class ImageEditorCrop extends Component {
 						top: topBound,
 						right: rightBound,
 					} }
-					ref="topRight"
 					className={ classNames( handleClassName, handleClassName + '-nesw' ) }
 				/>
 				<Draggable
@@ -452,7 +452,6 @@ class ImageEditorCrop extends Component {
 						bottom: bottomBound,
 						right: rightBound,
 					} }
-					ref="bottomRight"
 					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
 				/>
 				<Draggable
@@ -467,7 +466,6 @@ class ImageEditorCrop extends Component {
 						bottom: bottomBound,
 						left: leftBound,
 					} }
-					ref="bottomLeft"
 					className={ classNames( handleClassName, handleClassName + '-nesw' ) }
 				/>
 			</div>

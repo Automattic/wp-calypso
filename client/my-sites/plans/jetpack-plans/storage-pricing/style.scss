@@ -6,4 +6,18 @@
 			padding: 16px 0;
 		}
 	}
+
+	// StoragePricing has a max-width of 1040px,
+	// but we want the upgrade cards to stay narrow
+	// like on the "regular" pricing page
+	.storage-tier-upgrade {
+		max-width: 720px;
+		margin-left: 20px;
+		margin-right: 20px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
 }

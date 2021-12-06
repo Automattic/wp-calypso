@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	TERM_BIENNIALLY,
@@ -10,14 +11,19 @@ import {
 	isJetpackProduct,
 	getProductFromSlug,
 } from '@automattic/calypso-products';
+import { Card } from '@automattic/components';
 import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import UserItem from 'calypso/components/user';
+import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	getName,
@@ -26,7 +32,6 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-	cardProcessorSupportsUpdates,
 	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
@@ -37,7 +42,7 @@ import {
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getByPurchaseId, isPurchaseManagementLocked } from 'calypso/state/purchases/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
@@ -62,9 +67,12 @@ export default function PurchaseMeta( {
 
 	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
 
-	if ( isDataLoading || ! purchaseId ) {
+	if ( isDataLoading || ! purchaseId || ! purchase ) {
 		return <PurchaseMetaPlaceholder />;
 	}
+
+	const isJetpackProductOrPlan = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
+	const showJetpackUserLicense = isEnabled( 'jetpack/user-licensing' ) && isJetpackProductOrPlan;
 
 	return (
 		<>
@@ -91,6 +99,7 @@ export default function PurchaseMeta( {
 					site={ site }
 				/>
 			</ul>
+			{ showJetpackUserLicense && <PurchaseJetpackUserLicense purchaseId={ purchaseId } /> }
 			<RenewErrorMessage purchase={ purchase } translate={ translate } site={ site } />
 		</>
 	);
@@ -267,13 +276,42 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
 		translate,
 		purchase.introductoryOffer.intervalUnit,
 		purchase.introductoryOffer.intervalCount,
-		isIntroductoryOfferFreeTrial( purchase )
+		isIntroductoryOfferFreeTrial( purchase ),
+		'manage-purchases',
+		purchase.introductoryOffer.remainingRenewalsUsingOffer
 	);
+
+	let regularPriceText = null;
+	if ( purchase.introductoryOffer.isNextRenewalUsingOffer ) {
+		regularPriceText = translate(
+			'After the offer ends, the subscription price will be %(regularPrice)s',
+			{
+				args: {
+					regularPrice: purchase.regularPriceText,
+				},
+			}
+		);
+	} else if ( purchase.introductoryOffer.isNextRenewalProrated ) {
+		regularPriceText = translate(
+			'After the first renewal, the subscription price will be %(regularPrice)s',
+			{
+				args: {
+					regularPrice: purchase.regularPriceText,
+				},
+			}
+		);
+	}
 
 	return (
 		<>
 			<br />
 			<small> { text } </small>
+			{ regularPriceText && (
+				<>
+					{ ' ' }
+					<br /> <small> { regularPriceText } </small>{ ' ' }
+				</>
+			) }
 		</>
 	);
 }
@@ -289,12 +327,7 @@ function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, s
 
 	const paymentDetails = <PaymentInfoBlock purchase={ purchase } />;
 
-	if (
-		! canEditPaymentDetails( purchase ) ||
-		! isPaidWithCreditCard( purchase ) ||
-		! cardProcessorSupportsUpdates( purchase ) ||
-		! site
-	) {
+	if ( ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) || ! site ) {
 		return <li>{ paymentDetails }</li>;
 	}
 
@@ -381,11 +414,8 @@ function PurchaseMetaExpiration( {
 	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
-	const canManagePurchase = useSelector(
-		( state ) => ! isPurchaseManagementLocked( state, purchase?.id )
-	);
 
-	if ( isDomainTransfer( purchase ) ) {
+	if ( ! purchase || isDomainTransfer( purchase ) ) {
 		return null;
 	}
 
@@ -423,7 +453,7 @@ function PurchaseMetaExpiration( {
 				>
 					{ subsBillingText }
 				</span>
-				{ site && ! hideAutoRenew && isProductOwner && canManagePurchase && (
+				{ site && ! hideAutoRenew && isProductOwner && (
 					<span className="manage-purchase__detail">
 						<AutoRenewToggle
 							planName={ site.plan.product_name_short }
@@ -454,5 +484,48 @@ function PurchaseMetaExpiration( {
 				} ) }
 			</span>
 		</li>
+	);
+}
+
+function PurchaseJetpackUserLicense( { purchaseId } ) {
+	const translate = useTranslate();
+	const { data, isError, isLoading } = useUserLicenseBySubscriptionQuery( purchaseId );
+
+	const [ isCopied, setCopied ] = useState( false );
+
+	useEffect( () => {
+		if ( isCopied ) {
+			const confirmationTimeout = setTimeout( () => setCopied( false ), 4000 );
+			return () => clearTimeout( confirmationTimeout );
+		}
+	}, [ isCopied ] );
+
+	const showConfirmation = () => {
+		setCopied( true );
+	};
+
+	if ( isError || isLoading ) {
+		return null;
+	}
+
+	const { licenseKey } = data;
+	// Make sure the size of the input element can hold the entire key
+	const licenseKeyInputSize = licenseKey.length + 5;
+
+	return (
+		<Card className="manage-purchase__jetpack-user-license">
+			<strong>{ translate( 'License key' ) }</strong>
+			<div className="manage-purchase__jetpack-user-license-clipboard">
+				<FormTextInput
+					className="manage-purchase__jetpack-user-license-input"
+					value={ licenseKey }
+					size={ licenseKeyInputSize }
+					readOnly
+				/>
+				<ClipboardButton text={ licenseKey } onCopy={ showConfirmation } compact>
+					{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
+				</ClipboardButton>
+			</div>
+		</Card>
 	);
 }

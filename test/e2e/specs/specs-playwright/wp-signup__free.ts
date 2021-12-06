@@ -7,21 +7,27 @@ import {
 	DomainSearchComponent,
 	GutenbergEditorPage,
 	LoginPage,
-	NewPostFlow,
 	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
-	BrowserManager,
-	EmailClient,
-	BrowserHelper,
 	CloseAccountFlow,
-	LoginFlow,
-	GutenboardingFlow,
+	StartSiteFlow,
+	SidebarComponent,
+	GeneralSettingsPage,
+	BrowserManager,
+	ComingSoonPage,
+	MyHomePage,
+	skipDescribeIf,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe(
-	DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish/Magic Link' ),
+const isStagingOrProd = DataHelper.getCalypsoURL()
+	.toLowerCase()
+	.includes( 'https://wordpress.com' );
+
+// Skipping while new onboarding flows are in transition and we map the new tests
+skipDescribeIf( isStagingOrProd )(
+	DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ),
 	function () {
 		const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 		const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
@@ -31,20 +37,22 @@ describe(
 		} );
 		const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
 		const blogName = DataHelper.getBlogName();
+		const tagline = `${ blogName } tagline`;
 
 		let page: Page;
 		let domainSearchComponent: DomainSearchComponent;
-		let selectedDomain: string;
 		let gutenbergEditorPage: GutenbergEditorPage;
+		let startSiteFlow: StartSiteFlow;
+		let generalSettingsPage: GeneralSettingsPage;
 
 		setupHooks( ( args ) => {
 			page = args.page;
 		} );
 
-		describe( 'Signup', function () {
+		describe( 'Signup and select plan', function () {
 			it( 'Navigate to Signup page', async function () {
 				const loginPage = new LoginPage( page );
-				await loginPage.clickSignup();
+				await loginPage.signup();
 			} );
 
 			it( 'Sign up as new user', async function () {
@@ -55,96 +63,119 @@ describe(
 			it( 'Select a free .wordpress.com domain', async function () {
 				domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.search( blogName );
-				selectedDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
+				await domainSearchComponent.selectDomain( '.wordpress.com' );
 			} );
 
 			it( 'Select WordPress.com Free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
 				await signupPickPlanPage.selectPlan( 'Free' );
 			} );
+		} );
 
-			it( 'Skip the design selection prompt', async function () {
-				const gutenboardingFlow = new GutenboardingFlow( page );
-				await gutenboardingFlow.skipDesign();
+		describe( 'Onboarding flow', function () {
+			it( 'Select "write" path', async function () {
+				startSiteFlow = new StartSiteFlow( page );
+				await startSiteFlow.clickButton( 'Start writing' );
+			} );
+
+			it( 'Enter blog name', async function () {
+				await startSiteFlow.enterBlogName( blogName );
+			} );
+
+			it( 'Enter tagline', async function () {
+				await startSiteFlow.enterTagline( tagline );
+			} );
+
+			it( 'Click continue', async function () {
+				await startSiteFlow.clickButton( 'Continue' );
+			} );
+
+			it( 'Select "Choose a design" path', async function () {
+				await startSiteFlow.clickButton( 'View designs' );
+			} );
+
+			it( 'See design picker screen', async function () {
+				await startSiteFlow.validateOnDesignPickerScreen();
+			} );
+
+			it( 'Navigate back', async function () {
+				await startSiteFlow.goBackOneScreen();
+			} );
+
+			it( 'Select "Draft your first post" path and land in editor', async function () {
+				const navigationTimeout = 2 * 60 * 1000;
+				// Let's add some resilience based on potential A/B test landing places for posts
+				const navigationPromise = Promise.race( [
+					page.waitForNavigation( { url: '**/post/**', timeout: navigationTimeout } ),
+					page.waitForNavigation( {
+						url: '**/wp-admin/post-new.php**',
+						timeout: navigationTimeout,
+					} ),
+				] );
+
+				await Promise.all( [ navigationPromise, startSiteFlow.clickButton( 'Start writing' ) ] );
 			} );
 		} );
 
-		describe( 'Interact with editor', function () {
-			it( 'Start a new post', async function () {
-				const newPostFlow = new NewPostFlow( page );
-				await newPostFlow.newPostFromNavbar();
+		describe( 'Validate site metadata', function () {
+			it( 'Return to Calypso dashboard', async function () {
+				gutenbergEditorPage = new GutenbergEditorPage( page );
+				await gutenbergEditorPage.returnToCalypsoDashboard();
 			} );
 
-			it( 'Return to Home dashboard', async function () {
-				// Temporary workaround due to https://github.com/Automattic/wp-calypso/issues/51162.
-				// Conditional can be removed once fixed.
-				if ( BrowserHelper.getTargetDeviceName() === 'mobile' ) {
-					await page.goBack();
-				} else {
-					gutenbergEditorPage = new GutenbergEditorPage( page );
-					await gutenbergEditorPage.openNavSidebar();
-					await gutenbergEditorPage.returnToDashboard();
-				}
+			it( 'Navigate to settings', async function () {
+				const sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.navigate( 'Settings', 'General' );
+			} );
+
+			it( 'Validate blog name and tagline', async function () {
+				generalSettingsPage = new GeneralSettingsPage( page );
+
+				await generalSettingsPage.validateSiteTitle( blogName );
+				await generalSettingsPage.validateSiteTagline( tagline );
 			} );
 		} );
 
-		describe( 'Magic link', function () {
-			let magicLink: string;
-
-			it( 'Clear authenticated state', async function () {
-				await BrowserManager.clearAuthenticationState( page );
+		describe( 'Launch site', function () {
+			it( 'Verify site is not yet launched', async function () {
+				// Obtain a new Page in a separate BrowserContext.
+				const testContext = await BrowserManager.newBrowserContext();
+				const testPage = await BrowserManager.newPage( { context: testContext } );
+				// TODO: make a utility to obtain the blog URL.
+				await testPage.goto( `https://${ blogName }.wordpress.com` );
+				// View site without logging in.
+				const comingSoonPage = new ComingSoonPage( testPage );
+				await comingSoonPage.validateComingSoonState();
+				// Dispose the test page and context.
+				await BrowserManager.closePage( testPage, { closeContext: true } );
 			} );
 
-			it( 'Request magic link', async function () {
-				const loginPage = new LoginPage( page );
-				await loginPage.visit();
-				await loginPage.requestMagicLink( email );
+			it( 'Start site launch', async function () {
+				const sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.navigate( 'Settings', 'General' );
+				const generalSettingsPage = new GeneralSettingsPage( page );
+				await generalSettingsPage.launchSite();
 			} );
 
-			it( 'Magic link is received', async function () {
-				const emailClient = new EmailClient();
-				const message = await emailClient.getLastEmail( {
-					inboxId: inboxId,
-					emailAddress: email,
-					subject: 'Log in to WordPress.com',
-				} );
-				const links = await emailClient.getLinksFromMessage( message );
-				magicLink = links.find( ( link: string ) =>
-					link.includes( 'wpcom_email_click' )
-				) as string;
-				expect( magicLink ).toBeDefined();
+			it( 'Skip domain purchasse', async function () {
+				const domainSearchComponent = new DomainSearchComponent( page );
+				await domainSearchComponent.clickButton( 'Skip Purchase' );
 			} );
 
-			it( 'Log in using magic link', async function () {
-				const loginPage = new LoginPage( page );
-				await loginPage.followMagicLink( magicLink );
+			it( 'Keep free plan', async function () {
+				const signupPickPlanPage = new SignupPickPlanPage( page );
+				await signupPickPlanPage.selectPlan( 'Free' );
+			} );
+
+			it( 'Confirm site is launched', async function () {
+				const myHomePage = new MyHomePage( page );
+				await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
 			} );
 		} );
 
 		describe( 'Delete user account', function () {
-			let newPage: Page;
-
-			it( 'Launch new context to ensure correct host', async function () {
-				newPage = await BrowserManager.newPage( { newContext: true } );
-			} );
-
-			it( 'Login', async function () {
-				// Logging in and immediately using navbar often leads to race conditions when the redirect
-				// from <rooturl> to <rooturl>/home/<site> redirect takes you out of the navigation you just did.
-				// We need to wait for that to happen before proceeding.
-				const expectedLandngUrl = DataHelper.getCalypsoURL( `home/${ selectedDomain }` );
-				const loginFlow = new LoginFlow( newPage, {
-					username: username,
-					password: signupPassword,
-				} );
-				await Promise.all( [
-					newPage.waitForNavigation( { url: expectedLandngUrl } ),
-					loginFlow.logIn(),
-				] );
-			} );
-
 			it( 'Close account', async function () {
-				const closeAccountFlow = new CloseAccountFlow( newPage );
+				const closeAccountFlow = new CloseAccountFlow( page );
 				await closeAccountFlow.closeAccount();
 			} );
 		} );

@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { has, mapValues, pickBy, flowRight as compose } from 'lodash';
+import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -30,7 +31,9 @@ import {
 
 const identity = ( theme ) => theme;
 
-function getAllThemeOptions( { translate } ) {
+function getAllThemeOptions( { translate, blockEditorSettings } ) {
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
+
 	const purchase = config.isEnabled( 'upgrades/checkout' )
 		? {
 				label: translate( 'Purchase', {
@@ -99,17 +102,26 @@ function getAllThemeOptions( { translate } ) {
 	};
 
 	const customize = {
-		label: translate( 'Customize' ),
-		extendedLabel: translate( 'Customize this design' ),
-		header: translate( 'Customize on:', {
-			comment: 'label in the dialog for selecting a site for which to customize a theme',
-		} ),
 		icon: 'customize',
-		getUrl: getCustomizeUrl,
+		getUrl: ( state, themeId, siteId ) => getCustomizeUrl( state, themeId, siteId, isFSEActive ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 			! isThemeActive( state, themeId, siteId ),
 	};
+
+	if ( isFSEActive ) {
+		customize.label = translate( 'Edit', { comment: "label for button to edit a theme's design" } );
+		customize.extendedLabel = translate( 'Edit this design' );
+		customize.header = translate( 'Edit design on:', {
+			comment: "label in the dialog for selecting a site for which to edit a theme's design",
+		} );
+	} else {
+		customize.label = translate( 'Customize' );
+		customize.extendedLabel = translate( 'Customize this design' );
+		customize.header = translate( 'Customize on:', {
+			comment: 'label in the dialog for selecting a site for which to customize a theme',
+		} );
+	}
 
 	const tryandcustomize = {
 		label: translate( 'Try & Customize' ),
@@ -236,7 +248,7 @@ const connectOptionsHoc = connect(
 	( options, actions, ownProps ) => {
 		const { defaultOption, secondaryOption, getScreenshotOption } = ownProps;
 		options = mapValues( options, ( option, name ) => {
-			if ( has( option, 'action' ) ) {
+			if ( option.hasOwnProperty( 'action' ) ) {
 				return { ...option, action: actions[ name ] };
 			}
 			return option;
@@ -252,4 +264,4 @@ const connectOptionsHoc = connect(
 	}
 );
 
-export const connectOptions = compose( localize, connectOptionsHoc );
+export const connectOptions = compose( localize, withBlockEditorSettings, connectOptionsHoc );

@@ -188,7 +188,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					createButtonURL={ createProductURL }
 				/>
 
-				{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
+				<QueryProductsList type="jetpack" />
+				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				{ siteId && <QuerySites siteId={ siteId } /> }
 

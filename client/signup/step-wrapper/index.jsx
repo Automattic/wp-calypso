@@ -29,6 +29,7 @@ class StepWrapper extends Component {
 		isExternalBackUrl: PropTypes.bool,
 		headerButton: PropTypes.node,
 		isHorizontalLayout: PropTypes.bool,
+		queryParams: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -53,6 +54,7 @@ class StepWrapper extends Component {
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
 				backIcon={ isReskinnedFlow( this.props.flowName ) ? 'chevron-left' : undefined }
+				queryParams={ this.props.queryParams }
 			/>
 		);
 	}
@@ -111,6 +113,7 @@ class StepWrapper extends Component {
 			<NavigationLink
 				direction="forward"
 				goToNextStep={ goToNextStep }
+				forwardUrl={ this.props.forwardUrl }
 				defaultDependencies={ defaultDependencies }
 				flowName={ flowName }
 				stepName={ stepName }
@@ -119,6 +122,7 @@ class StepWrapper extends Component {
 				borderless={ false }
 				primary
 				forwardIcon={ null }
+				disabledTracks
 			/>
 		);
 	}
@@ -168,7 +172,13 @@ class StepWrapper extends Component {
 			isHorizontalLayout,
 		} = this.props;
 
-		const hasNavigation = ! hideBack || ( ! hideSkip && skipButtonAlign === 'top' ) || ! hideNext;
+		const backButton = ! hideBack && this.renderBack();
+		const skipButton =
+			! hideSkip &&
+			skipButtonAlign === 'top' &&
+			this.renderSkip( { borderless: true, forwardIcon: null } );
+		const nextButton = ! hideNext && this.renderNext();
+		const hasNavigation = backButton || skipButton || nextButton;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
@@ -179,19 +189,14 @@ class StepWrapper extends Component {
 		return (
 			<>
 				<div className={ classes }>
-					{ hasNavigation && (
-						<ActionButtons
-							className="step-wrapper__navigation"
-							sticky={ isReskinnedFlow( flowName ) ? null : false }
-						>
-							{ ! hideBack && this.renderBack() }
-							{ ! hideSkip &&
-								skipButtonAlign === 'top' &&
-								this.renderSkip( { borderless: true, forwardIcon: null } ) }
-							{ ! hideNext && this.renderNext() }
-						</ActionButtons>
-					) }
-
+					<ActionButtons
+						className="step-wrapper__navigation"
+						sticky={ isReskinnedFlow( flowName ) ? null : false }
+					>
+						{ backButton }
+						{ skipButton }
+						{ nextButton }
+					</ActionButtons>
 					{ ! hideFormattedHeader && (
 						<div className="step-wrapper__header">
 							<FormattedHeader

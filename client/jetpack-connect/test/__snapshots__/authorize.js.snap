@@ -26,6 +26,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         siteId={98765}
         siteIsOnSitesList={false}
       />
+      <QueryJetpackUserLicenses />
       <Connect(Localized(AuthFormHeader))
         authQuery={
           Object {
@@ -113,11 +114,11 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         >
           Create a new account
         </LoggedOutFormLinkItem>
-        <Connect(Localized(JetpackConnectHappychatButton))
+        <JetpackConnectHappychatButton
           eventName="calypso_jpc_authorize_chat_initiated"
         >
           <JetpackConnectHelpButton />
-        </Connect(Localized(JetpackConnectHappychatButton))>
+        </JetpackConnectHappychatButton>
       </LoggedOutFormLinks>
     </div>
   </div>

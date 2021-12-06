@@ -1,5 +1,5 @@
 {
-	"extends": "@automattic/calypso-build/typescript/ts-package.json",
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
 	"compilerOptions": {
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
@@ -8,5 +8,9 @@
 	},
 	"include": [ "src", "src/*.json" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
-	"references": [ { "path": "../calypso-config" }, { "path": "../onboarding" } ]
+	"references": [
+		{ "path": "../calypso-config" },
+		{ "path": "../js-utils" },
+		{ "path": "../onboarding" }
+	]
 }

@@ -19,6 +19,7 @@ import performanceIcon from './assets/icons/performance.svg';
 import scanIcon from './assets/icons/scan.svg';
 import searchIcon from './assets/icons/search.svg';
 import securityIcon from './assets/icons/security.svg';
+import videoIcon from './assets/icons/video.svg';
 
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 const BP = 960; // Breakpoint defined in stylesheet
@@ -77,6 +78,12 @@ const JetpackComMasterbar: React.FC = () => {
 								description: translate( 'Instant speed and SEO' ),
 								href: '/boost/',
 								icon: boostIcon,
+							},
+							{
+								label: translate( 'VideoPress' ),
+								description: translate( 'High-quality, ad-free video' ),
+								href: '/videopress/',
+								icon: videoIcon,
 							},
 						],
 					},

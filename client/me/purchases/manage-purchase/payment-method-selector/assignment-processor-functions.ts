@@ -6,7 +6,6 @@ import {
 } from '@automattic/composite-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
@@ -14,6 +13,7 @@ import type { StripeConfiguration, StripeSetupIntent } from '@automattic/calypso
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 const wpcomAssignPaymentMethod = (
 	subscriptionId: string,
@@ -38,28 +38,26 @@ const wpcomCreatePayPalAgreement = (
 export async function assignNewCardProcessor(
 	{
 		purchase,
-		useForAllSubscriptions,
 		translate,
 		stripe,
 		stripeConfiguration,
 		cardNumberElement,
 		reduxDispatch,
+		eventSource,
 	}: {
 		purchase: Purchase | undefined;
-		useForAllSubscriptions?: boolean;
 		translate: ReturnType< typeof useTranslate >;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
 		cardNumberElement: StripeCardNumberElement | undefined;
-		reduxDispatch: ReturnType< typeof useDispatch >;
+		reduxDispatch: CalypsoDispatch;
+		eventSource?: string;
 	},
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
-	recordFormSubmitEvent( { reduxDispatch, purchase } );
-
 	try {
 		if ( ! isNewCardDataValid( submitData ) ) {
-			throw new Error( 'Credit Card data is missing name, country, or postal code' );
+			throw new Error( 'Credit Card data is missing country' );
 		}
 		if ( ! stripe || ! stripeConfiguration ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
@@ -68,12 +66,14 @@ export async function assignNewCardProcessor(
 			throw new Error( 'Cannot assign payment method if there is no card number' );
 		}
 
-		const { name, countryCode, postalCode } = submitData;
+		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
+
+		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
 
 		const formFieldValues = {
 			country: countryCode,
-			postal_code: postalCode,
-			name,
+			postal_code: postalCode ?? '',
+			name: name ?? '',
 		};
 		const tokenResponse = await createStripeSetupIntentAsync(
 			formFieldValues,
@@ -91,6 +91,8 @@ export async function assignNewCardProcessor(
 				purchase,
 				token,
 				stripeConfiguration,
+				useForAllSubscriptions: Boolean( useForAllSubscriptions ),
+				eventSource,
 			} );
 
 			return makeSuccessResponse( result );
@@ -100,6 +102,7 @@ export async function assignNewCardProcessor(
 			token,
 			stripeConfiguration,
 			useForAllSubscriptions: Boolean( useForAllSubscriptions ),
+			eventSource,
 		} );
 
 		return makeSuccessResponse( result );
@@ -139,21 +142,22 @@ async function createStripeSetupIntentAsync(
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
 	const newCardData = data as NewCardSubmitData;
-	return !! ( newCardData.name && newCardData.countryCode && newCardData.postalCode );
+	return !! newCardData.countryCode;
 }
 
 interface NewCardSubmitData {
-	name: string;
+	name?: string;
 	countryCode: string;
-	postalCode: string;
+	postalCode?: string;
+	useForAllSubscriptions: boolean;
 }
 
 export async function assignExistingCardProcessor(
 	purchase: Purchase | undefined,
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
-	recordFormSubmitEvent( { reduxDispatch, purchase } );
+	reduxDispatch( recordFormSubmitEvent( { purchase } ) );
 	try {
 		if ( ! isValidExistingCardData( submitData ) ) {
 			throw new Error( 'Credit card data is missing stored details id' );
@@ -181,12 +185,12 @@ interface ExistingCardSubmitData {
 
 export async function assignPayPalProcessor(
 	purchase: Purchase | undefined,
-	reduxDispatch: ReturnType< typeof useDispatch >
+	reduxDispatch: CalypsoDispatch
 ): Promise< PaymentProcessorResponse > {
 	if ( ! purchase ) {
 		throw new Error( 'Cannot assign PayPal payment method without a purchase' );
 	}
-	recordFormSubmitEvent( { reduxDispatch, purchase } );
+	reduxDispatch( recordFormSubmitEvent( { purchase } ) );
 	return wpcomCreatePayPalAgreement(
 		String( purchase.id ),
 		addQueryArgs( window.location.href, { success: 'true' } ),
@@ -199,17 +203,18 @@ export async function assignPayPalProcessor(
 }
 
 function recordFormSubmitEvent( {
-	reduxDispatch,
 	purchase,
+	useForAllSubscriptions,
 }: {
-	reduxDispatch: ReturnType< typeof useDispatch >;
-	purchase?: Purchase | undefined;
+	purchase?: Purchase;
+	useForAllSubscriptions?: boolean;
 } ) {
-	reduxDispatch(
-		purchase?.productSlug
-			? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
-					product_slug: purchase.productSlug,
-			  } )
-			: recordTracksEvent( 'calypso_add_credit_card_form_submit' )
-	);
+	return purchase?.productSlug
+		? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
+				product_slug: purchase.productSlug,
+				use_for_all_subs: String( useForAllSubscriptions ),
+		  } )
+		: recordTracksEvent( 'calypso_add_credit_card_form_submit', {
+				use_for_all_subs: String( useForAllSubscriptions ),
+		  } );
 }

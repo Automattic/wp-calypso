@@ -1,10 +1,11 @@
 {
-	"extends": "@automattic/calypso-build/typescript/ts-package.json",
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
 	"compilerOptions": {
 		"allowJs": true,
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
 		"rootDir": "src"
 	},
-	"include": [ "src" ]
+	"include": [ "src" ],
+	"references": [ { "path": "../calypso-config" } ]
 }

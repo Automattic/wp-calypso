@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -26,10 +26,9 @@ import { render, hydrate } from './web-util.js';
 export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 export { render, hydrate } from './web-util.js';
 
-const queryClient = new QueryClient();
-
 export const ProviderWrappedLayout = ( {
 	store,
+	queryClient,
 	currentSection,
 	currentRoute,
 	currentQuery,

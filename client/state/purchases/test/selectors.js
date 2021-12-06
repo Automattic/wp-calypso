@@ -70,6 +70,7 @@ describe( 'selectors', () => {
 				active: false,
 				amount: NaN,
 				attachedToPurchaseId: NaN,
+				blogCreatedDate: undefined,
 				canExplicitRenew: false,
 				canDisableAutoRenew: false,
 				costToUnbundle: NaN,
@@ -93,6 +94,9 @@ describe( 'selectors', () => {
 				isRenewal: false,
 				meta: undefined,
 				mostRecentRenewDate: undefined,
+				partnerKeyId: undefined,
+				partnerName: undefined,
+				partnerSlug: undefined,
 				payment: {
 					countryCode: undefined,
 					countryName: undefined,
@@ -108,8 +112,10 @@ describe( 'selectors', () => {
 				totalRefundAmount: NaN,
 				totalRefundText: undefined,
 				refundAmount: NaN,
+				refundOptions: undefined,
 				refundText: undefined,
 				renewDate: undefined,
+				saleAmount: undefined,
 				siteName: undefined,
 				subscribedDate: undefined,
 				subscriptionStatus: undefined,
@@ -317,6 +323,9 @@ describe( 'selectors', () => {
 
 		test( 'should return false because there is no purchases', () => {
 			const state = {
+				currentUser: {
+					id: targetUserId,
+				},
 				purchases: {
 					data: [],
 					error: null,
@@ -327,11 +336,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).toBe( false );
+			expect( isUserPaid( state ) ).toBe( false );
 		} );
 
 		test( 'should return true because there are purchases from the target user', () => {
 			const state = {
+				currentUser: {
+					id: targetUserId,
+				},
 				purchases: {
 					data: examplePurchases,
 					error: null,
@@ -342,11 +354,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).toBe( true );
+			expect( isUserPaid( state ) ).toBe( true );
 		} );
 
 		test( 'should return false because there are no purchases from this user', () => {
 			const state = {
+				currentUser: {
+					id: 65535,
+				},
 				purchases: {
 					data: examplePurchases,
 					error: null,
@@ -357,11 +372,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, 65535 ) ).toBe( false );
+			expect( isUserPaid( state ) ).toBe( false );
 		} );
 
-		test( 'should return false because the data is not ready.', () => {
+		test( 'should return null because the data is not ready.', () => {
 			const state = {
+				currentUser: {
+					id: targetUserId,
+				},
 				purchases: {
 					data: examplePurchases,
 					error: null,
@@ -372,7 +390,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).toBe( false );
+			expect( isUserPaid( state ) ).toBeNull();
 		} );
 	} );
 } );

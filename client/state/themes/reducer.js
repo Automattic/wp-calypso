@@ -483,11 +483,17 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
 export function recommendedThemes( state = {}, action ) {
 	switch ( action.type ) {
 		case RECOMMENDED_THEMES_FETCH:
-			return { ...state, [ action.filter ]: { isLoading: true, themes: [] } };
+			return {
+				...state,
+				[ action.filter ]: { isLoading: true, themes: state[ action.filter ]?.themes ?? [] },
+			};
 		case RECOMMENDED_THEMES_SUCCESS:
 			return { ...state, [ action.filter ]: { isLoading: false, themes: action.payload.themes } };
 		case RECOMMENDED_THEMES_FAIL:
-			return { ...state, [ action.filter ]: { isLoading: false, themes: [] } };
+			return {
+				...state,
+				[ action.filter ]: { isLoading: false, themes: state[ action.filter ]?.themes ?? [] },
+			};
 	}
 
 	return state;

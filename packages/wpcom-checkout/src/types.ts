@@ -79,6 +79,8 @@ export interface TransactionRequest {
 	pan?: string | undefined;
 	gstin?: string | undefined;
 	nik?: string | undefined;
+	useForAllSubscriptions?: boolean;
+	eventSource?: string;
 }
 
 export type WPCOMTransactionEndpoint = (
@@ -118,6 +120,7 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	pan?: string;
 	gstin?: string;
 	nik?: string;
+	useForAllSubscriptions?: boolean;
 };
 
 // The data model used in ContactDetailsFormFields and related components.
@@ -303,12 +306,6 @@ export type ManagedContactDetailsErrors = ManagedContactDetailsShape<
 export type ManagedContactDetailsUpdate = ManagedContactDetailsShape< string >;
 
 /*
- * Different subsets of the details are mandatory depending on what is
- * in the cart. This type lets us define these subsets declaratively.
- */
-export type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< boolean >;
-
-/*
  * All child components in composite checkout are controlled -- they accept
  * data from their parents and evaluate callbacks when edited, rather than
  * managing their own state. Hooks providing this data in turn need some extra
@@ -319,12 +316,9 @@ export interface ManagedValue {
 	value: string;
 	isTouched: boolean; // Has value been edited by the user?
 	errors: string[] | TranslateResult[]; // Has value passed validation?
-	isRequired: boolean; // Is this field required?
 }
 
 export type WpcomStoreState = {
-	siteId: string;
-	siteSlug: string;
 	recaptchaClientId: number;
 	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	contactDetails: ManagedContactDetails;
@@ -352,10 +346,6 @@ export type ManagedContactDetailsUpdaters = {
 	updateDomainContactFields: (
 		arg0: ManagedContactDetails,
 		arg1: DomainContactDetails
-	) => ManagedContactDetails;
-	updateRequiredDomainFields: (
-		arg0: ManagedContactDetails,
-		arg1: ManagedContactDetailsRequiredMask
 	) => ManagedContactDetails;
 	touchContactFields: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
 	updateVatId: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
@@ -496,3 +486,9 @@ export type RawDomainContactValidationResponse = {
 	success: boolean;
 	messages?: RawContactValidationResponseMessages;
 };
+
+export interface CountryListItem {
+	code: string;
+	name: string;
+	has_postal_codes: boolean;
+}

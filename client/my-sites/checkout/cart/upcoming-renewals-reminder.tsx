@@ -18,7 +18,6 @@ import {
 	getRenewableSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { ReduxDispatch } from 'calypso/state/redux-store';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { RequestCartProduct } from '@automattic/shopping-cart';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -53,7 +52,7 @@ interface Props {
 }
 
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
-	const reduxDispatch = useDispatch< ReduxDispatch >();
+	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
@@ -144,7 +143,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	return (
 		<>
-			<QueryUserPurchases userId={ userId } />
+			<QueryUserPurchases />
 			{ shouldRender && (
 				<div className="cart__upsell-wrapper">
 					<UpcomingRenewalsDialog

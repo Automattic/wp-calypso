@@ -36,6 +36,7 @@ export class FormPhoneInput extends Component {
 		phoneNumber: this.props.initialPhoneNumber || '',
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.maybeSetCountryStateFromList();
 	}
@@ -58,7 +59,6 @@ export class FormPhoneInput extends Component {
 						countriesList={ this.props.countriesList }
 						disabled={ this.props.isDisabled }
 						name="country_code"
-						ref="countryCode"
 						value={ this.state.countryCode }
 						onChange={ this.handleCountryChange }
 					/>

@@ -72,6 +72,7 @@ export function getAllowedPluginData( plugin ) {
 		'banners',
 		'compatibility',
 		'description',
+		'active_installs',
 		'short_description',
 		'detailsFetched',
 		'downloaded',
@@ -88,6 +89,8 @@ export function getAllowedPluginData( plugin ) {
 		'sections',
 		'slug',
 		'support_URL',
+		'tags',
+		'tested',
 		'update',
 		'updating',
 		'version',
@@ -174,7 +177,8 @@ export function normalizePluginData( plugin, pluginData ) {
 				const cleanItem = {};
 				for ( const sectionKey of Object.keys( item ) ) {
 					if ( ! item[ sectionKey ] ) {
-						throw new Error( `Section expected for key ${ sectionKey }` );
+						// The current section hasn't value or is empty.
+						continue;
 					}
 					cleanItem[ sectionKey ] = sanitizeSectionContent( item[ sectionKey ] );
 				}
@@ -227,7 +231,6 @@ export function normalizePluginsList( pluginsList ) {
  * @param  {Array} logs      List of all notices
  * @param  {number} siteId   Site Object
  * @param  {string} pluginId Plugin ID
- *
  * @returns {Array} Array of filtered logs that match the criteria
  */
 export function filterNotices( logs, siteId, pluginId ) {

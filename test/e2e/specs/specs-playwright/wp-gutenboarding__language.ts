@@ -1,14 +1,9 @@
 /**
  * @group calypso-pr
+ * @group gutenberg
  */
 
-import {
-	setupHooks,
-	DataHelper,
-	LoginFlow,
-	SidebarComponent,
-	GutenboardingFlow,
-} from '@automattic/calypso-e2e';
+import { setupHooks, DataHelper, GutenboardingFlow } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Gutenboarding: Language' ), function () {
@@ -19,16 +14,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Language' ), function () 
 		page = args.page;
 	} );
 
-	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'defaultUser' );
-		await loginFlow.logIn();
-	} );
-
-	it( 'Click on Add Site on Sidebar', async function () {
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.switchSite();
-		await sidebarComponent.addSite();
-
+	it( 'Navigate to /new', async function () {
+		await page.goto( DataHelper.getCalypsoURL( 'new' ) );
 		gutenboardingFlow = new GutenboardingFlow( page );
 	} );
 

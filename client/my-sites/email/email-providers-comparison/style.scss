@@ -172,19 +172,37 @@
 			.price__discounted {
 				text-decoration: line-through;
 			}
+
+			&.price__discounted span {
+				color: var( --color-text-subtle );
+
+				&.email-providers-comparison__discounted-price {
+					color: var( --studio-green-50 );
+					text-decoration: none;
+				}
+
+				&.email-providers-comparison__keep-main-price {
+					text-decoration: none;
+				}
+			}
 		}
 
 		.price__discount {
 			display: block;
+			font-weight: 600;
 			margin-left: 0;
-		}
-	}
+			margin-top: 0.25em;
 
-	.email-providers-comparison__provider-additional-price-information {
-		color: var( --color-text-subtle );
-		font-size: $font-body-extra-small;
-		font-style: normal;
-		margin-top: 3px;
+			.email-providers-comparison__discount-with-renewal span {
+				color: var( --color-text-subtle );
+				font-weight: 400;
+			}
+
+			.email-providers-comparison__discount-with-renewal .info-popover {
+				margin-left: 2px;
+				vertical-align: text-top;
+			}
+		}
 	}
 
 	.email-providers-comparison__provider-form-and-features {
@@ -211,6 +229,16 @@
 		.email-providers-comparison__provider-form {
 			flex-grow: 1;
 			margin-bottom: 20px;
+
+			form.email-forwarding__add-new {
+				.email-forwarding__form-content {
+					border-top-width: 0;
+					padding-top: 0;
+				}
+			}
+			.email-forwarding__add-new-separator {
+				margin-top: 3em;
+			}
 
 			@include breakpoint-deprecated( '>1040px' ) {
 				margin-top: 0;

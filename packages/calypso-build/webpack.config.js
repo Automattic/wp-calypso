@@ -21,6 +21,7 @@ const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/u
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const cachePath = path.resolve( '.cache' );
+const shouldCheckForDuplicatePackages = ! process.env.DISABLE_DUPLICATE_PACKAGE_CHECK;
 
 /**
  * Return a webpack config object
@@ -59,17 +60,19 @@ function getWebpackConfig(
 	let babelConfig = path.join( process.cwd(), 'babel.config.js' );
 	let presets = [];
 	if ( ! fs.existsSync( babelConfig ) ) {
-		// Default to this package's Babel presets
 		presets = [
-			path.join( __dirname, 'babel', 'default' ),
-			env.WP && path.join( __dirname, 'babel', 'wordpress-element' ),
+			require.resolve( '@automattic/calypso-babel-config/presets/default' ),
+			env.WP && require.resolve( '@automattic/calypso-babel-config/presets/wordpress-element' ),
 		].filter( Boolean );
 		babelConfig = undefined;
 	}
 
 	// Use this package's PostCSS config. If it doesn't exist postcss will look
 	// for the config file starting in the current directory (https://github.com/webpack-contrib/postcss-loader#config-cascade)
-	const postCssConfigPath = path.join( process.cwd(), 'postcss.config.js' );
+	const consumerPostCssConfig = path.join( process.cwd(), 'postcss.config.js' );
+	const postCssConfigPath = fs.existsSync( consumerPostCssConfig )
+		? consumerPostCssConfig
+		: path.join( __dirname, 'postcss.config.js' );
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
@@ -108,12 +111,12 @@ function getWebpackConfig(
 				TranspileConfig.loader( {
 					cacheDirectory: path.resolve( cachePath, 'babel' ),
 					include: shouldTranspileDependency,
-					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
+					presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
 					workerCount,
 				} ),
 				SassConfig.loader( {
 					postCssOptions: {
-						...( fs.existsSync( postCssConfigPath ) ? { config: postCssConfigPath } : {} ),
+						config: postCssConfigPath,
 					},
 				} ),
 				FileConfig.loader(),
@@ -140,7 +143,7 @@ function getWebpackConfig(
 				filename: cssFilename,
 				minify: ! isDevelopment,
 			} ),
-			new DuplicatePackageCheckerPlugin(),
+			...( shouldCheckForDuplicatePackages ? [ new DuplicatePackageCheckerPlugin() ] : [] ),
 			...( env.WP ? [ new DependencyExtractionWebpackPlugin( { injectPolyfill: true } ) ] : [] ),
 		],
 	};

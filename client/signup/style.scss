@@ -11,6 +11,7 @@ body.is-section-signup {
 
 		.layout:not( .dops ) .wpcom-site__logo {
 			fill: var( --color-neutral-10 );
+			color: var( --color-neutral-10 );
 			opacity: 1;
 
 			path {
@@ -23,6 +24,7 @@ body.is-section-signup {
 	&.is-p2-signup {
 		background: var( --p2-color-white );
 		color: var( --p2-color-text );
+		letter-spacing: -0.01em;
 
 		&.has-loading-screen-signup {
 			background: var( --p2-color-text );
@@ -105,6 +107,7 @@ body.is-section-signup .layout.gravatar {
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
 		fill: var( --color-primary-dark );
+		color: var( --color-primary-dark );
 		opacity: 0.3;
 	}
 
@@ -375,6 +378,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 		@include break-small {
 			left: 72px;
+			right: 24px;
 		}
 	}
 
@@ -448,18 +452,17 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.signup__step.is-user {
 		.formatted-header {
 			.formatted-header__title {
-				text-align: left;
+				text-align: center;
 
 				@include break-small {
 					max-width: inherit;
-					text-align: center;
 					font-size: 3.25rem; /* stylelint-disable-line */
 					line-height: 3.5rem;
 				}
 			}
 
 			.formatted-header__subtitle {
-				text-align: left;
+				text-align: center;
 				color: #646970;
 
 				a {
@@ -470,7 +473,6 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 				@include break-small {
 					max-width: inherit;
-					text-align: center;
 					font-size: 1.125rem; /* stylelint-disable-line */
 					line-height: 1.625rem;
 					letter-spacing: 0.24px;
@@ -508,6 +510,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			padding-bottom: 0;
 			border: 0;
 			box-shadow: none;
+			background-color: transparent;
 
 			@include break-small {
 				text-align: center;
@@ -684,7 +687,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			}
 
 			.signup-form__separator-text {
-				background: var( --studio-white );
+				background-color: #fdfdfd;
 				text-transform: uppercase;
 				text-align: center;
 				padding: 24px 0;
@@ -767,17 +770,28 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.signup__step.is-design,
-	.signup__step.is-design-setup-site {
+	.signup__step.is-design-setup-site, .signup__step.is-difm-design-setup-site {
 		.step-wrapper__header {
 			@include breakpoint-deprecated( '<660px' ) {
 				margin-left: 0;
 				margin-right: 0;
 			}
 		}
+
+		.design-picker__preview .step-wrapper__header {
+			margin-top: 40px;
+
+			.formatted-header__title {
+				font-size: 2rem; /* stylelint-disable-line */
+			}
+
+			@include break-mobile {
+				margin-top: 12px;
+			}
+		}
 	}
 
-	button.is-primary {
+	button.is-borderless {
 		box-shadow: none;
 		border: 0;
 	}
@@ -785,6 +799,19 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.inline-help {
 		@include breakpoint-deprecated( '<660px' ) {
 			bottom: 74px;
+		}
+	}
+}
+/**
+ * Removed the navigation back button step from mobile viewports.
+ * This is done because the there is usally already a back button displayed to the user (Browser back button)
+ * and the current back button is redundent.
+*/
+body.is-section-signup.is-white-signup {
+	.signup__step.is-plans .step-wrapper__navigation,
+	.signup__step.is-domains .step-wrapper__navigation {
+		@include breakpoint-deprecated( '<660px' ) {
+			display: none;
 		}
 	}
 }

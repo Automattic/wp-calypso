@@ -2,12 +2,10 @@ import classNames from 'classnames';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import DatePicker from 'calypso/components/date-picker';
 import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
 import InputChrono from 'calypso/components/input-chrono';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import Clock from './clock';
 import Header from './header';
 import { convertDateToUserLocation, convertDateToGivenOffset } from './utils';
@@ -16,7 +14,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class PostSchedule extends Component {
+export default class PostSchedule extends Component {
 	static propTypes = {
 		events: PropTypes.array,
 		posts: PropTypes.array,
@@ -28,7 +26,6 @@ class PostSchedule extends Component {
 		onMonthChange: PropTypes.func,
 		onDayMouseEnter: PropTypes.func,
 		onDayMouseLeave: PropTypes.func,
-		userLocale: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -47,6 +44,7 @@ class PostSchedule extends Component {
 		showTooltip: false,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( ! this.props.selectedDay ) {
 			return this.setState( {
@@ -62,6 +60,7 @@ class PostSchedule extends Component {
 		} );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedDay === nextProps.selectedDay ) {
 			return;
@@ -186,7 +185,6 @@ class PostSchedule extends Component {
 				<InputChrono
 					value={ chronoText }
 					placeholder={ date.calendar() }
-					lang={ this.props.userLocale }
 					onSet={ this.updateDate }
 				/>
 
@@ -263,7 +261,3 @@ class PostSchedule extends Component {
 		);
 	}
 }
-
-export default connect( ( state ) => ( {
-	userLocale: getCurrentUserLocale( state ),
-} ) )( PostSchedule );

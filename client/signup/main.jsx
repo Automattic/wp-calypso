@@ -31,6 +31,7 @@ import {
 	recordSignupComplete,
 	recordSignupStep,
 	recordSignupInvalidStep,
+	recordSignupProcessingScreen,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -61,6 +62,7 @@ import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/act
 import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
@@ -83,6 +85,7 @@ import {
 	getFirstInvalidStep,
 	getStepUrl,
 	isReskinnedFlow,
+	isP2Flow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -112,12 +115,8 @@ function removeLoadingScreenClassNamesFromBody() {
 	document.body.classList.remove( 'has-loading-screen-signup' );
 }
 
-function isWPForTeamsFlow( flowName ) {
-	return flowName === 'p2';
-}
-
 function showProgressIndicator( flowName ) {
-	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site' ];
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site', 'importer' ];
 
 	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
 }
@@ -150,9 +149,10 @@ class Signup extends Component {
 		previousFlowName: null,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
+		const queryObject = this.props.initialContext?.query ?? {};
 
 		let providedDependencies;
 
@@ -204,6 +204,7 @@ class Signup extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { stepName, flowName, progress } = nextProps;
 
@@ -239,18 +240,21 @@ class Signup extends Component {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.startTrackingForBusinessSite();
-		recordSignupStart( this.props.flowName, this.props.refParameter );
-		recordSignupStep( this.props.flowName, this.props.stepName );
+		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
+		if ( ! this.state.shouldShowLoadingScreen ) {
+			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+		}
 		this.preloadNextStep();
 		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
 		if (
-			this.props.flowName !== prevProps.flowName ||
-			this.props.stepName !== prevProps.stepName
+			( this.props.flowName !== prevProps.flowName ||
+				this.props.stepName !== prevProps.stepName ) &&
+			! this.state.shouldShowLoadingScreen
 		) {
-			recordSignupStep( this.props.flowName, this.props.stepName );
+			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
 		}
 
 		if (
@@ -266,6 +270,16 @@ class Signup extends Component {
 			// `scrollToTop` here handles cases where the viewport may fall slightly below the top of the page when the next step is rendered
 			this.scrollToTop();
 		}
+	}
+
+	getRecordProps() {
+		const { signupDependencies } = this.props;
+
+		return {
+			theme: get( signupDependencies, 'selectedDesign.theme' ),
+			intent: get( signupDependencies, 'intent' ),
+			starting_point: get( signupDependencies, 'startingPoint' ),
+		};
 	}
 
 	scrollToTop() {
@@ -355,6 +369,12 @@ class Signup extends Component {
 		}
 
 		if ( startLoadingScreen ) {
+			recordSignupProcessingScreen(
+				this.props.flowName,
+				this.props.stepName,
+				this.getRecordProps()
+			);
+
 			this.setState( { shouldShowLoadingScreen: true } );
 			/* Temporary change to add a 10 second delay to the processing screen.
 			 * This is done to allow the user 10 seconds to answer the bizx survey
@@ -363,7 +383,7 @@ class Signup extends Component {
 				this.bizxSurveyTimerComplete = new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
 			}
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isP2Flow( this.props.flowName ) ) {
 				addLoadingScreenClassNamesToBody();
 
 				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
@@ -374,7 +394,7 @@ class Signup extends Component {
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isP2Flow( this.props.flowName ) ) {
 				removeLoadingScreenClassNamesFromBody();
 			}
 		}
@@ -417,6 +437,9 @@ class Signup extends Component {
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
+		const selectedDesign = get( dependencies, 'selectedDesign' );
+		const intent = get( dependencies, 'intent' );
+		const startingPoint = get( dependencies, 'startingPoint' );
 
 		const debugProps = {
 			isNewishUser,
@@ -426,6 +449,9 @@ class Signup extends Component {
 			isNew7DUserSite,
 			flow: this.props.flowName,
 			siteId,
+			theme: selectedDesign?.theme,
+			intent,
+			startingPoint,
 		};
 		debug( 'Tracking signup completion.', debugProps );
 
@@ -435,6 +461,10 @@ class Signup extends Component {
 			isNewUser,
 			hasCartItems,
 			isNew7DUserSite,
+			// Record the following values so that we can know the user completed which branch under the hero flow
+			theme: selectedDesign?.theme,
+			intent,
+			startingPoint,
 		} );
 
 		this.handleLogin( dependencies, destination );
@@ -506,9 +536,13 @@ class Signup extends Component {
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
-		if ( ! this.isEveryStepSubmitted() ) {
+		// The `stepName` might be undefined after the user finish the last step but the value of
+		// `isEveryStepSubmitted` is still false. Thus, check the `stepName` here to avoid going
+		// to invalid step.
+		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
+			const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
+			page( getStepUrl( flowName, stepName, stepSectionName, locale, { siteId, siteSlug } ) );
 		} else if ( this.isEveryStepSubmitted() ) {
 			this.goToFirstInvalidStep();
 		}
@@ -536,6 +570,7 @@ class Signup extends Component {
 			progress,
 			this.props.isLoggedIn
 		);
+		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
 
 		if ( firstInvalidStep ) {
 			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
@@ -548,7 +583,12 @@ class Signup extends Component {
 
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
-			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale ) );
+			page(
+				getStepUrl( this.props.flowName, firstInvalidStep.stepName, '', locale, {
+					siteId,
+					siteSlug,
+				} )
+			);
 		}
 	};
 
@@ -557,6 +597,7 @@ class Signup extends Component {
 		const completedSteps = getCompletedSteps(
 			this.props.flowName,
 			progress,
+			{},
 			this.props.isLoggedIn
 		);
 		return flowSteps.length === completedSteps.length;
@@ -574,12 +615,12 @@ class Signup extends Component {
 	}
 
 	renderProcessingScreen( isReskinned ) {
-		if ( isWPForTeamsFlow( this.props.flowName ) ) {
+		if ( isP2Flow( this.props.flowName ) ) {
 			return <P2SignupProcessingScreen />;
 		}
 
 		if ( isReskinned ) {
-			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
+			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
 			const destination = this.signupFlowController.getDestination();
 
@@ -587,9 +628,7 @@ class Signup extends Component {
 				<ReskinnedProcessingScreen
 					flowName={ this.props.flowName }
 					hasPaidDomain={ hasPaidDomain }
-					// If destination is not setup-site flow, we'll apply default design now
-					// because the user cannot choose design in current flow
-					hasAppliedDesign={ ! destination.startsWith( '/start/setup-site' ) }
+					isDestinationSetupSiteFlow={ destination.startsWith( '/start/setup-site' ) }
 				/>
 			);
 		}
@@ -618,6 +657,8 @@ class Signup extends Component {
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
+
+		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
 
 		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
@@ -659,6 +700,7 @@ class Signup extends Component {
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
+							queryParams={ { siteId, siteSlug } }
 							{ ...propsForCurrentStep }
 						/>
 					) }
@@ -708,7 +750,7 @@ class Signup extends Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ this.props.pageTitle } />
-				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+				{ ! isP2Flow( this.props.flowName ) && (
 					<SignupHeader
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }
@@ -742,7 +784,13 @@ class Signup extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
-		const siteId = getSiteId( state, signupDependencies.siteSlug );
+
+		// Use selectedSiteId which was set by setSelectedSiteForSignup of controller
+		// If we don't have selectedSiteId, then fallback to use getSiteId by siteSlug
+		// Note that siteSlug might not be updated as the value was updated when the Signup component will mount
+		// and we initialized SignupFlowController
+		// See: https://github.com/Automattic/wp-calypso/pull/57386
+		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const shouldStepShowSitePreview = get(
 			steps[ ownProps.stepName ],

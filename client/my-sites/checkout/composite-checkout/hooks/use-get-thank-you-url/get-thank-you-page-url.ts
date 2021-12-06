@@ -1,5 +1,5 @@
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -15,6 +15,7 @@ import debugFactory from 'debug';
 import {
 	hasRenewalItem,
 	getAllCartItems,
+	getDomainRegistrations,
 	getRenewalItems,
 	hasConciergeSession,
 	hasJetpackPlan,
@@ -23,16 +24,20 @@ import {
 	hasPremiumPlan,
 	hasBusinessPlan,
 	hasEcommercePlan,
+	hasGoogleApps,
+	hasTitanMail,
 	hasTrafficGuide,
 	hasDIFMProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { badNaiveClientSideRollout } from 'calypso/lib/naive-client-side-rollout';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
+import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
+import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -58,6 +63,7 @@ export default function getThankYouPageUrl( {
 	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
 	adminPageRedirect,
+	domains,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -77,6 +83,7 @@ export default function getThankYouPageUrl( {
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
+	domains: SiteDomain[] | undefined;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -143,17 +150,18 @@ export default function getThankYouPageUrl( {
 		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug;
 
-		const thankYouUrlSiteLess = `/checkout/jetpack/thank-you/no-site/${
-			productSlug ?? 'no_product'
-		}`;
+		const thankYouUrl = isEnabled( 'jetpack/user-licensing' )
+			? `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug ?? 'no_product' }`
+			: `/checkout/jetpack/thank-you/no-site/${ productSlug ?? 'no_product' }`;
 
-		const isValidReceiptId = ! isNaN( parseInt( pendingOrReceiptId ) );
+		const isValidReceiptId =
+			! isNaN( parseInt( pendingOrReceiptId ) ) || pendingOrReceiptId === ':receiptId';
 		return addQueryArgs(
 			{
 				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
-			thankYouUrlSiteLess
+			thankYouUrl
 		);
 	}
 
@@ -207,22 +215,29 @@ export default function getThankYouPageUrl( {
 
 	// Domain only flow
 	if ( cart?.create_new_blog ) {
-		const newBlogUrl = urlFromCookie || fallbackUrl;
-		const newBlogReceiptUrl = `${ newBlogUrl }/${ pendingOrReceiptId }`;
+		const newBlogReceiptUrl = urlFromCookie
+			? `${ urlFromCookie }/${ pendingOrReceiptId }`
+			: fallbackUrl;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
 		return newBlogReceiptUrl;
 	}
 
-	const redirectPathForConciergeUpsell = getRedirectUrlForConciergeNudge( {
+	const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
 		pendingOrReceiptId,
 		orderId,
 		cart,
 		siteSlug,
-		hideNudge: Boolean( hideNudge ),
+		hideUpsell: Boolean( hideNudge ),
+		domains,
 	} );
-	if ( redirectPathForConciergeUpsell ) {
-		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
-		return redirectPathForConciergeUpsell;
+
+	if ( redirectUrlForPostCheckoutUpsell ) {
+		debug(
+			'redirect for post-checkout upsell exists, so returning',
+			redirectUrlForPostCheckoutUpsell
+		);
+
+		return redirectUrlForPostCheckoutUpsell;
 	}
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
@@ -304,7 +319,7 @@ function getFallbackDestination( {
 		// Check the cart (since our Thank You modal doesn't support multiple products, we only take the first
 		// one found).
 		const productFromCart = cart?.products?.find( ( { product_slug } ) =>
-			productsWithCustomThankYou.includes( product_slug )
+			( productsWithCustomThankYou as ReadonlyArray< string > ).includes( product_slug )
 		)?.product_slug;
 
 		const purchasedProduct =
@@ -375,15 +390,14 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	const currentPlan = getPlan( currentPlanSlug );
 
 	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
-		return getPlan(
-			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan.term } )
-		)?.getPathSlug();
+		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan.term } );
+		return planKey ? getPlan( planKey )?.getPathSlug() : undefined;
 	}
 
 	return;
 }
 
-function maybeShowPlanBumpOffer( {
+function getPlanUpgradeUpsellUrl( {
 	pendingOrReceiptId,
 	cart,
 	siteSlug,
@@ -397,8 +411,10 @@ function maybeShowPlanBumpOffer( {
 	if ( orderId ) {
 		return;
 	}
+
 	if ( cart && hasPremiumPlan( cart ) ) {
 		const upgradeItem = getNextHigherPlanSlug( cart );
+
 		if ( upgradeItem ) {
 			return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
 		}
@@ -407,29 +423,39 @@ function maybeShowPlanBumpOffer( {
 	return;
 }
 
-function getRedirectUrlForConciergeNudge( {
+function getRedirectUrlForPostCheckoutUpsell( {
 	pendingOrReceiptId,
 	orderId,
 	cart,
 	siteSlug,
-	hideNudge,
+	hideUpsell,
+	domains,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	hideNudge: boolean;
+	hideUpsell: boolean;
+	domains: SiteDomain[] | undefined;
 } ): string | undefined {
-	if ( hideNudge ) {
+	if ( hideUpsell ) {
 		return;
 	}
 
-	// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
-	// then skip this section so that we do not show further upsells.
+	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {
+		pendingOrReceiptId,
+		cart,
+		orderId,
+		siteSlug,
+		domains,
+	} );
+
+	if ( professionalEmailUpsellUrl ) {
+		return professionalEmailUpsellUrl;
+	}
+
 	if (
-		config.isEnabled( 'upsell/concierge-session' ) &&
 		cart &&
-		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
 		! hasDIFMProduct( cart ) &&
 		( hasBloggerPlan( cart ) ||
@@ -438,43 +464,76 @@ function getRedirectUrlForConciergeNudge( {
 			hasBusinessPlan( cart ) )
 	) {
 		// A user just purchased one of the qualifying plans
-		// Show them the concierge session upsell page
 
-		const upgradePath = maybeShowPlanBumpOffer( {
+		const planUpgradeUpsellUrl = getPlanUpgradeUpsellUrl( {
 			pendingOrReceiptId,
 			cart,
 			orderId,
 			siteSlug,
 		} );
-		if ( upgradePath ) {
-			return upgradePath;
-		}
 
-		// This is used when we need to quickly dial back the volume of concierge sessions
-		// being offered and sold, to be inline with HE availability.
-		// Change this percentage to change the amount of offers given out:
-		const percentConciergeOffers = 75;
-		if ( badNaiveClientSideRollout( 'conciergeUpsellDial', percentConciergeOffers ) ) {
-			return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
+		if ( planUpgradeUpsellUrl ) {
+			return planUpgradeUpsellUrl;
 		}
 	}
 
 	return;
 }
 
-function getQuickstartUrl( {
+function getProfessionalEmailUpsellUrl( {
 	pendingOrReceiptId,
+	cart,
 	siteSlug,
 	orderId,
+	domains,
 }: {
 	pendingOrReceiptId: string;
+	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
+	domains: SiteDomain[] | undefined;
 } ): string | undefined {
-	if ( orderId ) {
+	if ( orderId || ! cart ) {
 		return;
 	}
-	return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
+
+	if ( hasGoogleApps( cart ) || hasTitanMail( cart ) ) {
+		return;
+	}
+
+	if ( hasPremiumPlan( cart ) ) {
+		return;
+	}
+
+	if (
+		! hasBloggerPlan( cart ) &&
+		! hasPersonalPlan( cart ) &&
+		! hasBusinessPlan( cart ) &&
+		! hasEcommercePlan( cart )
+	) {
+		return;
+	}
+
+	const domainRegistrations = getDomainRegistrations( cart );
+
+	let domainName = null;
+
+	// Uses either a domain being purchased, or the first domain eligible found in site domains
+	if ( domainRegistrations.length > 0 ) {
+		domainName = domainRegistrations[ 0 ].meta;
+	} else if ( siteSlug && domains ) {
+		const domain = getEligibleTitanDomain( siteSlug, domains, true );
+
+		if ( domain ) {
+			domainName = domain.name;
+		}
+	}
+
+	if ( ! domainName ) {
+		return;
+	}
+
+	return `/checkout/offer/${ PROFESSIONAL_EMAIL_OFFER }/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
 }
 
 function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {

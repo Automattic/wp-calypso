@@ -9,15 +9,16 @@ export function checkDomainAvailability( params, onComplete ) {
 		onComplete( null, { status: domainAvailability.EMPTY_QUERY } );
 		return;
 	}
-
-	wpcom
-		.undocumented()
-		.isDomainAvailable( domainName, blogId, isCartPreCheck, function ( serverError, result ) {
-			if ( serverError ) {
-				onComplete( serverError.error );
-				return;
-			}
-
-			onComplete( null, result );
+	wpcom.req
+		.get( `/domains/${ encodeURIComponent( domainName ) }/is-available`, {
+			blog_id: blogId,
+			apiVersion: '1.3',
+			is_cart_pre_check: isCartPreCheck,
+		} )
+		.then( ( data ) => {
+			onComplete( null, data );
+		} )
+		.catch( ( error ) => {
+			onComplete( error.error );
 		} );
 }

@@ -1,56 +1,59 @@
+@import '@automattic/color-studio/dist/color-variables';
+
 .plugins-browser-item {
-	border-left: 1px solid var( --color-neutral-0 );
 	box-sizing: border-box;
 	cursor: pointer;
 	display: block;
 	float: left;
-	margin: 0;
+	margin: 10px 0;
 	position: relative;
 	overflow: hidden;
 
-	&.is-placeholder,
-	&.is-empty {
+	&.is-placeholder {
 		cursor: default;
 	}
 
-	.plugins-browser-item__link {
-		padding: 16px 16px 48px;
-		display: block;
-	}
-
-	@include breakpoint-deprecated( '>960px' ) {
-		width: 33.33%;
-
-		&:nth-child( 3n + 1 ) {
-			border-left: 0;
-		}
-
-		&:nth-child( n + 4 ) {
-			border-top: 1px solid var( --color-neutral-0 );
-		}
-	}
-
-	@include breakpoint-deprecated( '<960px' ) {
-		width: 100%;
-
-		&:nth-child( n + 2 ) {
-			border-top: 1px solid var( --color-neutral-0 );
-		}
-
-		&.is-empty {
-			display: none;
-		}
-	}
-}
-
-.plugins-browser-item {
 	.plugin-icon {
 		width: 48px;
 		height: 48px;
+		margin-right: 0;
 
 		&.is-placeholder {
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
+	}
+
+	.plugin-icon {
+		width: 60px;
+		height: 60px;
+	}
+
+	.plugins-browser-item__title,
+	.plugins-browser-item__author {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		margin-left: calc( 60px + 16px ); // icon width + margin
+	}
+
+	.plugins-browser-item__description {
+		margin: 32px 0 20px;
+		font-size: $font-body-small;
+		font-weight: 400;
+		color: $studio-gray-60;
+	}
+
+	&.compact {
+		.plugins-browser-item__description {
+			margin: 5px 0 0 calc( 60px + 16px ); // icon width + margin
+		}
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		width: calc( 50% - 10px ); // 2 column grid with 20px gutter
+	}
+
+	@include breakpoint-deprecated( '<960px' ) {
+		width: 100%;
 	}
 }
 
@@ -58,12 +61,24 @@
 	overflow: hidden; // lazy clearfix
 }
 
+.plugins-browser-item__link {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 30px;
+	box-sizing: border-box;
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: 5px; /* stylelint-disable-line scales/radii */
+
+	&:focus, &:hover {
+		border-color: var( --studio-gray-30 );
+	}
+}
+
 .plugins-browser-item__title,
-.plugins-browser-item__author {
-	text-overflow: ellipsis;
-	white-space: nowrap;
+.plugins-browser-item__author,
+.plugins-browser-item__description {
 	overflow: hidden;
-	margin-left: 60px;
 
 	.is-placeholder & {
 		color: transparent;
@@ -84,28 +99,27 @@
 	font-size: $font-body-small;
 }
 
-.plugins-browser-item .plugin-icon {
-	margin-right: 0;
+.plugins-browser-item__author-name {
+	color: $studio-blue-40;
 }
 
-.plugins-browser-item .rating {
-	margin-top: 12px;
-	position: absolute;
+.plugins-browser-item__pricing,
+.plugins-browser-item__installed {
+	margin-top: auto;
+	font-size: $font-body;
+	color: $studio-black;
 }
 
 .plugins-browser-item__installed {
 	display: flex;
 	align-items: center;
-	position: absolute;
-	bottom: 16px;
-	right: 16px;
-	color: var( --color-success );
-	font-size: $font-body-extra-small;
-	font-weight: 600;
+	color: var( --studio-green-30 );
 	animation: appear 0.15s ease-in;
 
 	.gridicon {
-		margin-right: 3px;
+		margin-right: 6px;
+		border: 2px solid var( --studio-green-30 );
+		border-radius: 50%; /* stylelint-disable-line */
 	}
 }
 

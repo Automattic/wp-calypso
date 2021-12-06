@@ -9,7 +9,7 @@ export default function QueryJetpackPartnerPortalPartner() {
 
 	useEffect( () => {
 		if ( ! hasFetched ) {
-			dispatch( fetchPartner );
+			dispatch( fetchPartner() );
 		}
 	}, [ hasFetched, dispatch ] );
 

@@ -41,12 +41,12 @@
 
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
-	gap: 24px 16px;
+	gap: 16px;
 }
 
 .product-grid__plan-grid:not( .is-wrapping ) {
 	margin-top: 72px;
-	gap: 24px 0;
+	gap: 16px 0;
 
 	// Considering there are 3 plans
 	> li {
@@ -66,6 +66,10 @@
 	> li {
 		height: 100%;
 	}
+
+	&.second-grid {
+		margin: 16px 0;
+	}
 }
 
 .product-grid__filter-bar {
@@ -78,58 +82,102 @@
 }
 
 .product-grid__free {
-	margin-block-start: 32px;
-}
+	height: 100%;
+	display: flex;
+	gap: 16px;
+	flex-wrap: wrap;
 
-.product-grid__asterisk-items {
-	margin-top: initial;
-	margin-bottom: initial;
-}
+	.product-without-price {
+		flex: 1 1 0;
+		min-width: 300px;
+	}
 
-.product-grid__asterisk-list {
-	margin: 76px;
-	padding: 0;
-
-	list-style-type: none;
-}
-
-.product-grid__asterisk-item {
-	color: var( --color-neutral-light );
-
-	font-size: $font-body;
-	line-height: 2;
-	text-align: center;
+	&.add-top-margin {
+		margin-block-start: 16px;
+	}
 }
 
 .product-grid__more.is-detached {
 	margin-top: 48px;
 }
 
-/*
- * From this point, rules only apply:
- * - when the 'jetpack/only-realtime-products' feature flag is enabled
- * - and the current active iteration is Iterations.ONLY_REALTIME_PRODUCTS
- */
+// Show both CRM and Free as full-width on narrow or mid-width screens
 .jetpack-plans__iteration--only-realtime-products {
-	.product-grid__plan-grid,
-	.product-grid__product-grid {
-		gap: 16px;
-	}
-
-	.product-grid__plan-grid:not( .is-wrapping ) {
-		gap: 16px 0;
-	}
-
 	.product-grid__free {
-		display: flex;
-		gap: 16px;
-		flex-wrap: wrap;
+		margin-top: 16px;
+		flex-direction: column;
 
-		margin-block-start: 16px;
+		@include breakpoint-deprecated( '>660px' ) {
+			flex-direction: initial;
+		}
+	}
 
-		.product-without-price {
-			flex: 1 1 0;
-			min-width: 300px;
+	.jetpack-product-card.jetpack-free-card {
+		margin: initial;
+	}
+
+	.product-grid__free .jetpack-crm-free-card .jetpack-product-card__body {
+		.display-price {
+			min-height: 133px;
+		}
+
+		@include breakpoint-deprecated( '>660px' ) {
+			display: grid;
+			grid-column-gap: 32px;
+			grid-template-columns: 1fr 1fr;
+
+			padding-block-end: 32px;
+
+			.jetpack-product-card__product-name {
+				grid-column: 1 / span 2;
+				grid-row: 1;
+			}
+
+			.display-price {
+				grid-column: 1;
+				grid-row: 2;
+
+				min-height: initial;
+			}
+
+			.display-price__above-price-text {
+				margin-block-start: initial;
+			}
+
+			.jetpack-product-card__button {
+				grid-column: 1;
+				grid-row: 3;
+				align-self: flex-end;
+				margin-block-end: initial;
+			}
+
+			.jetpack-product-card__description {
+				grid-column: 2;
+				grid-row: 2;
+				min-height: initial;
+			}
+
+			.jetpack-product-card__features {
+				margin-block-end: initial;
+			}
+
+			.jetpack-product-card__features-list {
+				grid-column: 2;
+				grid-row: 3;
+
+				margin-block-end: initial;
+				margin-inline-end: initial;
+			}
+
+			.jetpack-product-card__features-item {
+				&:first-child {
+					margin-block-start: initial;
+				}
+
+				&:last-child {
+					margin-block-end: initial;
+				}
+			}
 		}
 	}
 }

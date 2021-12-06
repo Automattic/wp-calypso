@@ -6,6 +6,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { FootnotesList } from '../footnotes-list';
 import PlansFilterBar from '../plans-filter-bar';
 import { StorageTierUpgrade } from '../storage-tier-upgrade';
 import { QueryArgs, Duration } from '../types';
@@ -33,18 +34,26 @@ export const StoragePricing: React.FC< Props > = ( {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
 	return (
-		<Main className="storage-pricing__main">
-			{ nav }
-			{ header }
-			<PlansFilterBar showDiscountMessage duration={ duration } onDurationChange={ setDuration } />
-			<StorageTierUpgrade
-				duration={ duration }
-				urlQueryArgs={ urlQueryArgs }
-				siteSlug={ siteSlug }
-			/>
-			{ footer }
+		<>
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-		</Main>
+
+			{ nav }
+			<Main className="storage-pricing__main" wideLayout>
+				{ header }
+				<PlansFilterBar
+					showDiscountMessage
+					duration={ duration }
+					onDurationChange={ setDuration }
+				/>
+				<StorageTierUpgrade
+					duration={ duration }
+					urlQueryArgs={ urlQueryArgs }
+					siteSlug={ siteSlug }
+				/>
+				<FootnotesList />
+				{ footer }
+			</Main>
+		</>
 	);
 };

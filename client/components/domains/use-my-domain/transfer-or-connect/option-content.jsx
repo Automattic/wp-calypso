@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -12,25 +13,41 @@ export default function OptionContent( {
 	illustration,
 	learnMoreLink,
 	onSelect,
+	isPlaceholder,
 	pricing,
 	primary,
 	recommended,
 	titleText,
 	topText,
 } ) {
+	const localizeUrl = useLocalizeUrl();
 	const pricingTextClasses = classNames( 'option-content__pricing-text', {
 		[ 'is-free' ]: pricing?.isFree,
 	} );
 	const pricingCostClasses = classNames( 'option-content__pricing-cost', {
 		[ 'has-sale-price' ]: pricing?.sale,
 	} );
+	const optionContentClasses = classNames( 'option-content__main', {
+		'is-placeholder': isPlaceholder,
+	} );
 
-	return (
+	return isPlaceholder ? (
+		<div className="option-content is-placeholder">
+			<div className="option-content__illustration" height={ 100 } width={ 150 }></div>
+			<div className="option-content__main">
+				<div className="option-content__header">
+					<h2> </h2>
+				</div>
+				<div className="option-content__top-text"></div>
+				<div className="option-content__learn-more"></div>
+			</div>
+		</div>
+	) : (
 		<div className="option-content">
 			<div className="option-content__illustration">
 				{ illustration && <img src={ illustration } alt="" width={ 150 } /> }
 			</div>
-			<div className="option-content__main">
+			<div className={ optionContentClasses }>
 				<div className="option-content__header">
 					<h2>{ titleText }</h2>
 					{ recommended && <Badge type="info-green">{ __( 'Recommended' ) }</Badge> }
@@ -39,7 +56,7 @@ export default function OptionContent( {
 				<a
 					className="option-content__learn-more"
 					target="_blank"
-					href={ learnMoreLink }
+					href={ localizeUrl( learnMoreLink ) }
 					rel="noopener noreferrer"
 				>
 					{ __( 'Learn more' ) }
