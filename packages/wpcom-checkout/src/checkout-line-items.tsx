@@ -11,14 +11,9 @@ import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
+	isJetpackProductSlug,
 } from '@automattic/calypso-products';
-import {
-	CheckoutModal,
-	FormStatus,
-	useFormStatus,
-	useEvents,
-	Button,
-} from '@automattic/composite-checkout';
+import { CheckoutModal, FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -78,30 +73,32 @@ export const LineItem = styled( WPLineItem )< {
 
 const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	display: flex;
 	font-size: 14px;
-	justify-content: space-between;
 	width: 100%;
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.success };
-	text-align: right;
+	display: block;
+	margin: 2px 0;
+`;
 
-	.rtl & {
-		text-align: left;
-	}
+const NotApplicableCallout = styled.div< { theme?: Theme } >`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	display: block;
+	margin: 2px 0;
+	font-size: 12px;
 `;
 
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
-	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+	font-size: 16px;
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+	font-size: 16px;
 
 	.rtl & {
 		margin-right: 12px;
@@ -500,7 +497,7 @@ function LineItemSublabelAndPrice( {
 	// This is the price for one item for products with a quantity (eg. seats in a license).
 	const itemPrice = product.item_original_cost_for_quantity_one_display;
 
-	if ( isPlan( product ) ) {
+	if ( isPlan( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
 			const members = product?.current_quantity || 1;
 			const p2Options = {
@@ -578,7 +575,16 @@ function FirstTermDiscountCallout( {
 	const cost = product.product_cost_integer;
 	const isRenewal = product.is_renewal;
 
-	if ( ! isWpComPlan( planSlug ) || origCost <= cost || isRenewal || isCouponApplied( product ) ) {
+	if ( product.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+
+	if (
+		( ! isWpComPlan( planSlug ) && ! isJetpackProductSlug( planSlug ) ) ||
+		origCost <= cost ||
+		isRenewal ||
+		isCouponApplied( product )
+	) {
 		return null;
 	}
 
@@ -603,6 +609,13 @@ function IntroductoryOfferCallout( {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
+	if ( product.introductory_offer_terms?.reason ) {
+		return (
+			<NotApplicableCallout>
+				{ translate( 'Order not eligible for introductory discount' ) }
+			</NotApplicableCallout>
+		);
+	}
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
@@ -611,7 +624,9 @@ function IntroductoryOfferCallout( {
 		translate,
 		product.introductory_offer_terms.interval_unit,
 		product.introductory_offer_terms.interval_count,
-		isFreeTrial
+		isFreeTrial,
+		'checkout',
+		product.introductory_offer_terms.transition_after_renewal_count
 	);
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
@@ -680,6 +695,9 @@ function WPLineItem( {
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	isPwpoUser,
+	onRemoveProduct,
+	onRemoveProductClick,
+	onRemoveProductCancel,
 }: {
 	children?: React.ReactNode;
 	product: ResponseCartProduct;
@@ -690,6 +708,9 @@ function WPLineItem( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser?: boolean;
+	onRemoveProduct?: ( label: string ) => void;
+	onRemoveProductClick?: ( label: string ) => void;
+	onRemoveProductCancel?: ( label: string ) => void;
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -706,7 +727,6 @@ function WPLineItem( {
 		createUserAndSiteBeforeTransaction || false,
 		isPwpoUser || false
 	);
-	const onEvent = useEvents();
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	const isRenewal = isWpComProductRenewal( product );
@@ -761,12 +781,7 @@ function WPLineItem( {
 							disabled={ isDisabled }
 							onClick={ () => {
 								setIsModalVisible( true );
-								onEvent( {
-									type: 'a8c_checkout_delete_product_press',
-									payload: {
-										product_name: label,
-									},
-								} );
+								onRemoveProductClick?.( label );
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
@@ -780,17 +795,10 @@ function WPLineItem( {
 						} }
 						primaryAction={ () => {
 							removeProductFromCart( product.uuid );
-							onEvent( {
-								type: 'a8c_checkout_delete_product',
-								payload: {
-									product_name: label,
-								},
-							} );
+							onRemoveProduct?.( label );
 						} }
 						cancelAction={ () => {
-							onEvent( {
-								type: 'a8c_checkout_cancel_delete_product',
-							} );
+							onRemoveProductCancel?.( label );
 						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }

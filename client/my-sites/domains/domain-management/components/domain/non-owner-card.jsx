@@ -1,8 +1,9 @@
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { getSelectedDomain } from 'calypso/lib/domains';
 
-const NonOwnerCard = ( { domains, selectedDomainName, translate } ) => {
+const NonOwnerCard = ( { domains, selectedDomainName } ) => {
+	const translate = useTranslate();
 	const domain = getSelectedDomain( { domains, selectedDomainName } );
 
 	return (
@@ -24,4 +25,4 @@ const NonOwnerCard = ( { domains, selectedDomainName, translate } ) => {
 	);
 };
 
-export default localize( NonOwnerCard );
+export default NonOwnerCard;

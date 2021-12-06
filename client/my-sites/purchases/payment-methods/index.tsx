@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -14,6 +15,7 @@ import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
@@ -22,32 +24,26 @@ import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-meth
 import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
 
 function useLogPaymentMethodsError( message: string ) {
-	const reduxDispatch = useDispatch();
-
 	return useCallback(
 		( error ) => {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message,
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						env: config( 'env_id' ),
-						type: 'site_level_payment_methods',
-						message: String( error ),
-					},
-				} )
-			);
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'site_level_payment_methods',
+					message: String( error ),
+				},
+			} );
 		},
-		[ reduxDispatch, message ]
+		[ message ]
 	);
 }
 
@@ -81,12 +77,12 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 			/>
 			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPaymentMethodsError }
 			>
 				<PaymentMethodList addPaymentMethodUrl={ getAddNewPaymentMethodUrlFor( siteSlug ) } />
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -106,7 +102,9 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		activePayButtonText: translate( 'Save card' ),
+		activePayButtonText: String( translate( 'Save card' ) ),
+		allowUseForAllSubscriptions: true,
+		initialUseForAllSubscriptions: true,
 	} );
 	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [
 		stripeMethod,
@@ -134,7 +132,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPaymentMethodsError }
 			>
@@ -144,13 +142,14 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 						<PaymentMethodSelector
 							paymentMethods={ paymentMethodList }
 							successCallback={ goToBillingHistory }
+							eventContext={ '/purchases/add-payment-method' }
 						/>
 					</Column>
 					<Column type="sidebar">
 						<PaymentMethodSidebar />
 					</Column>
 				</Layout>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }

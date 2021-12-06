@@ -6,6 +6,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getThankYouPageUrl from './get-thank-you-page-url';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
@@ -23,6 +24,7 @@ export default function useGetThankYouUrl( {
 	hideNudge,
 	isInEditor,
 	isJetpackCheckout = false,
+	domains,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -49,10 +51,13 @@ export default function useGetThankYouUrl( {
 			hideNudge,
 			isInEditor,
 			isJetpackCheckout,
+			domains,
 		};
+
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 		debug( 'getThankYouUrl returned', url );
+
 		return url;
 	}, [
 		isInEditor,
@@ -68,6 +73,7 @@ export default function useGetThankYouUrl( {
 		cart,
 		hideNudge,
 		isJetpackCheckout,
+		domains,
 	] );
 	return getThankYouUrl;
 }
@@ -84,4 +90,5 @@ export interface GetThankYouUrlProps {
 	hideNudge?: boolean;
 	isInEditor?: boolean;
 	isJetpackCheckout?: boolean;
+	domains: SiteDomain[] | undefined;
 }

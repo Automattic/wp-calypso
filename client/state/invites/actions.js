@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { get, truncate } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import {
@@ -167,10 +169,13 @@ function inviteAccepted( invite ) {
 
 export function createAccount( userData, invite ) {
 	return ( dispatch ) => {
-		const result = wpcom.undocumented().usersNew( {
+		const result = wpcom.req.post( '/users/new', {
 			...userData,
 			validate: false,
 			send_verification_email: userData.email !== invite.sentTo,
+			locale: getLocaleSlug(),
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
 		} );
 
 		result

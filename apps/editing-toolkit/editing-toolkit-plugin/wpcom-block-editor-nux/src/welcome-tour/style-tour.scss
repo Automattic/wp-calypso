@@ -1,21 +1,10 @@
+@use 'sass:math';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/z-index';
 
 $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
-
-.wpcom-editor-welcome-tour-frame {
-	background-color: $white;
-	border-radius: 2px;
-	bottom: 44px;
-	display: inline;
-	left: 16px;
-	position: fixed;
-	z-index: 9999;
-	// Avoid the text cursor when the text is not selectable
-	cursor: default;
-}
 
 .welcome-tour-card__heading {
 	font-size: 1.125rem; /* stylelint-disable-line */
@@ -35,15 +24,30 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
-.wpcom-editor-welcome-tour__resume-btn {
+.wpcom-editor-welcome-tour__minimized {
 	border-radius: 2px;
 	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
 		0 1px 1px rgba( 0, 0, 0, 0.08 );
 	background-color: $white;
 	color: $black;
 
-	&.components-button {
+	.components-button {
 		height: 44px;
+
+		.wpcom-editor-welcome-tour__minimized-tour-index {
+			color: $gray-600;
+		}
+
+		svg {
+			color: #50575e;
+		}
+
+		&:hover {
+			.wpcom-editor-welcome-tour__minimized-tour-index,
+			svg {
+				color: inherit;
+			}
+		}
 	}
 }
 
@@ -62,17 +66,23 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
+.wpcom-editor-welcome-tour > .tour-kit-frame__container {
+	box-shadow: none;
+}
+
 .welcome-tour-card {
 	width: 400px;
 	max-width: 92vw;
 
 	&.welcome-tour-card.is-elevated {
+		box-shadow: none;
 		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
 	}
 
 	&.components-card {
 		border: none;
 		border-radius: 4px; /* stylelint-disable-line */
+		box-shadow: none;
 	}
 
 	.components-card__body {
@@ -114,7 +124,17 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 
 	.components-card__media {
-		min-height: 260px;
+		height: 0;
+		padding-top: math.percentage( math.div( math.ceil( math.div( 1, 1.53 ) * 100 ), 100 ) ); // img width:height ratio (1:1.53)
+		position: relative;
+		width: 100%;
+
+		img {
+			left: 0;
+			position: absolute;
+			top: 0;
+			width: 100%;
+		}
 	}
 
 	.components-guide__page-control {
@@ -143,6 +163,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	padding: $grid-unit-15;
 	position: absolute;
 	right: 0;
+	z-index: 1; // z-index is needed because overlay controls are written before components-card__media, and so ends up under the image
 
 	.components-button {
 		width: 32px;
@@ -163,8 +184,8 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 			opacity: 0;
 		}
 
-		.wpcom-editor-welcome-tour-frame:hover &,
-		.wpcom-editor-welcome-tour-frame:focus-within & {
+		.tour-kit-frame__container:hover &,
+		.tour-kit-frame__container:focus-within & {
 			.components-button {
 				opacity: 0.7;
 

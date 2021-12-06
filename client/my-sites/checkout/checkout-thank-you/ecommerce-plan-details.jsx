@@ -3,16 +3,10 @@ import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
-import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import updatesImage from 'calypso/assets/images/illustrations/updates.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-
-function trackOnboardingButtonClick() {
-	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
-}
 
 const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
 	const plan = find( sitePlans.data, isEcommerce );
@@ -25,18 +19,6 @@ const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purch
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
-			/>
-
-			<PurchaseDetail
-				icon={ <img alt="" src={ conciergeImage } /> }
-				title={ i18n.translate( 'Get personalized help' ) }
-				description={ i18n.translate(
-					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
-						'your site and learn more about WordPress.com.'
-				) }
-				buttonText={ i18n.translate( 'Schedule a session' ) }
-				href={ `/me/quickstart/${ selectedSite.slug }/book` }
-				onClick={ trackOnboardingButtonClick }
 			/>
 
 			{ ! selectedFeature && (

@@ -16,6 +16,7 @@ import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import Sidebar from 'calypso/layout/sidebar';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -47,6 +48,7 @@ import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getScanState from 'calypso/state/selectors/get-site-scan-state';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForDotcomChecklist from 'calypso/state/selectors/is-eligible-for-dotcom-checklist';
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
@@ -55,8 +57,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import {
@@ -70,6 +71,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
@@ -92,6 +94,7 @@ export class MySitesSidebar extends Component {
 		setLayoutFocus: PropTypes.func.isRequired,
 		path: PropTypes.string,
 		currentUser: PropTypes.object,
+		isDIFMLiteInProgress: PropTypes.bool,
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
@@ -984,7 +987,10 @@ export class MySitesSidebar extends Component {
 	};
 
 	renderSidebarMenus() {
-		if ( this.props.isDomainOnly ) {
+		if (
+			! this.props.isSupportSession &&
+			( this.props.isDomainOnly || this.props.isDIFMLiteInProgress )
+		) {
 			return (
 				<SidebarMenu>
 					<SidebarItem
@@ -1096,7 +1102,10 @@ export class MySitesSidebar extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
+function mapStateToProps( state, props ) {
+	const { blockEditorSettings } = props;
+
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 	const currentUser = getCurrentUser( state );
 	const currentRoute = getCurrentRoute( state );
 
@@ -1137,6 +1146,8 @@ function mapStateToProps( state ) {
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		forceAllSitesView: isAllDomainsView,
 		hasJetpackSites: hasJetpackSites( state ),
+		isDIFMLiteInProgress: isDIFMLiteInProgress( state, selectedSiteId ),
+		isSupportSession: isSupportSession( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		shouldRenderJetpackSection: isJetpackSectionEnabledForSite( state, selectedSiteId ),
@@ -1149,12 +1160,8 @@ function mapStateToProps( state ) {
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
-		showCustomizerLink:
-			! (
-				isSiteUsingFullSiteEditing( state, selectedSiteId ) ||
-				isSiteUsingCoreSiteEditor( state, selectedSiteId )
-			) && siteId,
-		showSiteEditor: isSiteUsingCoreSiteEditor( state, selectedSiteId ),
+		showCustomizerLink: ! isSiteUsingLegacyFSE( state, selectedSiteId ) && siteId,
+		showSiteEditor: isFSEActive,
 		siteEditorUrl: getSiteEditorUrl( state, selectedSiteId ),
 		siteId,
 		site,
@@ -1179,7 +1186,7 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, {
+const ConnectedMySitesSidebar = connect( mapStateToProps, {
 	recordGoogleEvent,
 	recordTracksEvent,
 	setLayoutFocus,
@@ -1188,3 +1195,5 @@ export default connect( mapStateToProps, {
 	expandSection,
 	toggleSection,
 } )( localize( MySitesSidebar ) );
+
+export default withBlockEditorSettings( ConnectedMySitesSidebar );

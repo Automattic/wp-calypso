@@ -1,4 +1,4 @@
-import { map, zipObject, size, filter, get, compact, partition } from 'lodash';
+import { map, size, filter, get, partition } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -64,11 +64,9 @@ export class ConversationCommentList extends Component {
 	};
 
 	state = {
-		activeEditCommentId: null,
+		commentText: null,
 	};
 
-	onEditCommentClick = ( commentId ) => this.setState( { activeEditCommentId: commentId } );
-	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 	onUpdateCommentText = ( commentText ) => this.setState( { commentText: commentText } );
 
 	onReplyClick = ( commentId ) => {
@@ -112,6 +110,7 @@ export class ConversationCommentList extends Component {
 		this.reqMoreComments();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { hiddenComments, commentsTree, siteId, commentErrors } = nextProps;
 
@@ -164,22 +163,18 @@ export class ConversationCommentList extends Component {
 
 		const minId = Math.min( ...commentIds );
 		const startingCommentIds = ( sortedComments || [] )
-			.filter( ( comment ) => {
-				return comment.ID >= minId || comment.isPlaceholder;
-			} )
+			.filter( ( comment ) => comment.ID >= minId || comment.isPlaceholder )
 			.map( ( comment ) => comment.ID );
 
-		const parentIds = compact(
-			map( startingCommentIds, ( id ) => this.getParentId( commentsTree, id ) )
-		);
-		const commentExpansions = Array( startingCommentIds.length ).fill(
-			POST_COMMENT_DISPLAY_TYPES.excerpt
-		);
-		const parentExpansions = Array( parentIds.length ).fill( POST_COMMENT_DISPLAY_TYPES.excerpt );
+		const parentIds = startingCommentIds
+			.map( ( id ) => this.getParentId( commentsTree, id ) )
+			.filter( Boolean );
 
-		const startingExpanded = zipObject(
-			startingCommentIds.concat( parentIds ),
-			commentExpansions.concat( parentExpansions )
+		const startingExpanded = Object.fromEntries(
+			[ startingCommentIds, ...parentIds ].map( ( id ) => [
+				id,
+				POST_COMMENT_DISPLAY_TYPES.excerpt,
+			] )
 		);
 
 		return { ...startingExpanded, ...expansions };
@@ -250,9 +245,6 @@ export class ConversationCommentList extends Component {
 								onReplyClick={ this.onReplyClick }
 								onReplyCancel={ this.onReplyCancel }
 								activeReplyCommentId={ this.props.activeReplyCommentId }
-								onEditCommentClick={ this.onEditCommentClick }
-								onEditCommentCancel={ this.onEditCommentCancel }
-								activeEditCommentId={ this.state.activeEditCommentId }
 								onUpdateCommentText={ this.onUpdateCommentText }
 								onCommentSubmit={ this.resetActiveReplyComment }
 								commentText={ this.state.commentText }

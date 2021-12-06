@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
+import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -42,18 +43,12 @@ import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors'
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
 
-function goBack() {
-	window.history.back();
-}
-
 class SinglePlugin extends Component {
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.isFetched() ) {
 			this.props.wporgFetchPluginData( this.props.pluginSlug );
 		}
-	}
 
-	componentDidMount() {
 		this.hasAlreadyShownTheTour = false;
 	}
 
@@ -90,12 +85,13 @@ class SinglePlugin extends Component {
 		);
 	}
 
-	backHref = ( shouldUseHistoryBack ) => {
-		const { prevPath, siteUrl } = this.props;
+	goBack = () => {
+		const { prevPath, siteUrl, navigated } = this.props;
+		const shouldUseHistoryBack = window.history.length > 1 && navigated;
 		if ( prevPath ) {
-			return this.getPreviousListUrl();
+			return page( this.getPreviousListUrl() );
 		}
-		return ! shouldUseHistoryBack ? '/plugins/manage/' + ( siteUrl || '' ) : null;
+		return ! shouldUseHistoryBack ? page( `/plugins/${ siteUrl || '' }` ) : window.history.back();
 	};
 
 	displayHeader() {
@@ -104,15 +100,9 @@ class SinglePlugin extends Component {
 		}
 
 		const recordEvent = this.recordEvent.bind( this, 'Clicked Header Plugin Back Arrow' );
-		const { navigated } = this.props;
-		const shouldUseHistoryBack = window.history.length > 1 && navigated;
+
 		return (
-			<HeaderCake
-				isCompact={ true }
-				backHref={ this.backHref( shouldUseHistoryBack ) }
-				onBackArrowClick={ recordEvent }
-				onClick={ shouldUseHistoryBack ? goBack : undefined }
-			/>
+			<HeaderCake isCompact={ true } onBackArrowClick={ recordEvent } onClick={ this.goBack } />
 		);
 	}
 

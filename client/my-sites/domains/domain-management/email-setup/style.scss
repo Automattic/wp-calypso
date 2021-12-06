@@ -1,0 +1,66 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.email-setup {
+	.section-nav {
+		box-shadow: none;
+		border-bottom: 1px solid var( --studio-gray-5 );
+	}
+
+	.form-label {
+		font-weight: 400;
+	}
+
+	.dns__form {
+		padding-top: 4px;
+		border: none;
+	}
+}
+
+.email-setup.foldable-card {
+	.foldable-card__header {
+		padding: 16px;
+
+		.foldable-card__main {
+			justify-content: space-between;
+			max-width: 100%;
+			margin-right: 0;
+		}
+
+		.email-setup__subtitle {
+			font-size: $font-body-small;
+			color: var( --color-neutral-50 );
+		}
+
+		.foldable-card__action {
+			position: relative;
+
+			svg {
+				fill: var( --color-neutral-90 );
+			}
+		}
+
+		.foldable-card__secondary {
+			display: none;
+		}
+
+		@include break-mobile {
+			padding: 24px;
+		}
+	}
+
+	.foldable-card__content {
+		padding: 0 16px 16px;
+		border-top: none;
+
+		@include break-mobile {
+			padding: 0 24px 24px;
+		}
+	}
+}
+
+.dns-records.main {
+	* + .email-setup {
+		margin-top: 32px;
+	}
+}

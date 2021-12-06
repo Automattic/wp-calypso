@@ -1,5 +1,5 @@
 const path = require( 'path' );
-const nodeConfig = require( '@automattic/calypso-build/eslint/node' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 
 module.exports = {
 	// Allow fetch api function usage (and similar)

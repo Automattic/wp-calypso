@@ -1,22 +1,23 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { debounce, get, noop } from 'lodash';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import TrackInputChanges from 'calypso/components/track-input-changes';
+import { withUpdateMedia } from 'calypso/data/media/with-update-media';
 import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
-import { updateMedia } from 'calypso/state/media/thunks';
 import EditorMediaModalFieldset from '../fieldset';
+
+const noop = () => {};
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
@@ -29,13 +30,17 @@ class EditorMediaModalDetailFields extends Component {
 		onUpdate: noop,
 	};
 
-	constructor() {
-		super( ...arguments );
+	constructor( props ) {
+		super( props );
 
 		// Save changes to server after 1 second delay
 		this.delayedSaveChange = debounce( this.saveChange, 1000 );
+		this.state = {
+			modifiedChanges: null,
+		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
 			this.updateChange( true );
@@ -74,7 +79,7 @@ class EditorMediaModalDetailFields extends Component {
 	updateChange( saveImmediately = false ) {
 		const siteId = this.props.site?.ID;
 		const itemId = this.props.item?.ID;
-		const modifiedChanges = this.state?.modifiedChanges;
+		const modifiedChanges = this.state.modifiedChanges;
 		const hasChanges = siteId && itemId && modifiedChanges;
 
 		if ( ! hasChanges ) {
@@ -86,24 +91,23 @@ class EditorMediaModalDetailFields extends Component {
 
 		// Save changes immediately or after a delay
 		if ( saveImmediately ) {
-			this.saveChange( siteId, modifiedChanges );
+			this.saveChange( siteId, itemId, modifiedChanges );
 		} else {
-			this.delayedSaveChange( siteId, modifiedChanges );
+			this.delayedSaveChange( siteId, itemId, modifiedChanges );
 		}
 	}
 
-	saveChange( siteId, modifiedChanges ) {
-		this.props.updateMedia( siteId, modifiedChanges );
+	saveChange( siteId, mediaId, modifiedChanges ) {
+		this.props.updateMedia( siteId, mediaId, modifiedChanges );
 	}
 
 	setFieldByName = ( name, value ) => {
-		const modifiedChanges = Object.assign(
-			{ ID: this.props.item.ID },
-			get( this.state, 'modifiedChanges', {} ),
-			{ [ name ]: value }
+		this.setState(
+			( state ) => ( {
+				modifiedChanges: { ...state.modifiedChanges, [ name ]: value },
+			} ),
+			this.updateChange
 		);
-
-		this.setState( { modifiedChanges }, this.updateChange );
 	};
 
 	setFieldValue = ( { target } ) => {
@@ -121,14 +125,7 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	getItemValue( attribute ) {
-		const modifiedValue = get( this.state, [ 'modifiedChanges', attribute ], null );
-		if ( modifiedValue !== null ) {
-			return modifiedValue;
-		}
-
-		if ( this.props.item ) {
-			return this.props.item[ attribute ];
-		}
+		return this.state.modifiedChanges?.[ attribute ] ?? this.props.item?.[ attribute ];
 	}
 
 	scrollToShowVisibleDropdown = ( event ) => {
@@ -185,14 +182,15 @@ class EditorMediaModalDetailFields extends Component {
 				label: 'R',
 				value: 'R-17',
 			},
-			{
-				label: 'X',
-				value: 'X-18',
-			},
 		];
-		const rating = this.getItemValue( 'rating' );
+		let rating = this.getItemValue( 'rating' );
 		if ( ! rating ) {
 			return;
+		}
+
+		// X-18 was previously supported but is now removed to better comply with our TOS.
+		if ( 'X-18' === rating ) {
+			rating = 'R-17';
 		}
 
 		return (
@@ -229,7 +227,7 @@ class EditorMediaModalDetailFields extends Component {
 					/>
 					<span>
 						{ this.props.translate(
-							'Display share menu and allow viewers to embed or download this video'
+							'Display share menu and allow viewers to copy a link or embed this video'
 						) }
 					</span>
 				</FormLabel>
@@ -285,4 +283,4 @@ class EditorMediaModalDetailFields extends Component {
 	}
 }
 
-export default localize( connect( null, { updateMedia } )( EditorMediaModalDetailFields ) );
+export default localize( withUpdateMedia( EditorMediaModalDetailFields ) );

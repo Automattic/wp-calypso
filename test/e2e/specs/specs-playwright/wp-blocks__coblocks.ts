@@ -1,12 +1,13 @@
 /**
  * @group gutenberg
+ * @group coblocks
  */
 
 import {
 	setupHooks,
 	DataHelper,
 	MediaHelper,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	GutenbergEditorPage,
 	PricingTableBlock,
@@ -15,6 +16,7 @@ import {
 	ClicktoTweetBlock,
 	LogosBlock,
 	TestFile,
+	BrowserHelper,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
@@ -24,6 +26,15 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	let pricingTableBlock: PricingTableBlock;
 	let page: Page;
 	let logoImage: TestFile;
+
+	let user: string;
+	if ( BrowserHelper.targetCoBlocksEdge() ) {
+		user = 'coBlocksSimpleSiteEdgeUser';
+	} else if ( BrowserHelper.targetGutenbergEdge() ) {
+		user = 'gutenbergSimpleSiteEdgeUser';
+	} else {
+		user = 'gutenbergSimpleSiteUser';
+	}
 
 	// Test data
 	const pricingTableBlockPrice = 888;
@@ -40,8 +51,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: user } );
 	} );
 
 	it( 'Start new post', async function () {
@@ -98,10 +109,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	} );
 
 	it( 'Publish and visit post', async function () {
-		// Must save as draft first to bypass issue with post-publish panel being auto-dismissed when
-		// ClickToTweet and Logos blocks are present.
-		// See https://github.com/Automattic/wp-calypso/issues/54421.
-		await gutenbergEditorPage.publish( { visit: true, saveDraft: true } );
+		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 
 	// Pass in a 1D array of values or text strings to validate each block.

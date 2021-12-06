@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
@@ -28,11 +27,16 @@ class InlineHelpPopover extends Component {
 	};
 
 	state = {
+		searchQuery: '',
 		activeSecondaryView: null,
 		selectedResult: null,
 	};
 
 	secondaryViewRef = createRef();
+
+	setSearchQuery = ( searchQuery ) => {
+		this.setState( { searchQuery } );
+	};
 
 	openResultView = ( event, result ) => {
 		event.preventDefault();
@@ -121,13 +125,14 @@ class InlineHelpPopover extends Component {
 				<QuerySupportTypes />
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
-						query={ this.props.searchQuery }
+						searchQuery={ this.state.searchQuery }
+						onSearch={ this.setSearchQuery }
 						isVisible={ ! this.state.activeSecondaryView }
 					/>
 					<InlineHelpSearchResults
 						onSelect={ this.openResultView }
 						onAdminSectionSelect={ this.setAdminSection }
-						searchQuery={ this.props.searchQuery }
+						searchQuery={ this.state.searchQuery }
 					/>
 				</div>
 				{ this.renderSecondaryView() }
@@ -137,7 +142,7 @@ class InlineHelpPopover extends Component {
 
 	renderSecondaryView = () => {
 		const { onClose, setDialogState } = this.props;
-		const { selectedResult } = this.state;
+		const { searchQuery, selectedResult } = this.state;
 		const classes = classNames(
 			'inline-help__secondary-view',
 			`inline-help__${ this.state.activeSecondaryView }`
@@ -160,6 +165,7 @@ class InlineHelpPopover extends Component {
 								setDialogState={ setDialogState }
 								closePopover={ onClose }
 								result={ selectedResult }
+								searchQuery={ searchQuery }
 							/>
 						),
 					}[ this.state.activeSecondaryView ]
@@ -188,16 +194,6 @@ class InlineHelpPopover extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
-	return {
-		searchQuery: getSearchQuery( state ),
-	};
-}
-
-const mapDispatchToProps = {
-	recordTracksEvent,
-};
-
 export default withMobileBreakpoint(
-	connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpPopover ) )
+	connect( null, { recordTracksEvent } )( localize( InlineHelpPopover ) )
 );

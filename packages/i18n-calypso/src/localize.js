@@ -15,8 +15,8 @@ export default function ( i18n ) {
 	/**
 	 * Localize a React component
 	 *
-	 * @param  {React.Component} ComposedComponent React component to localize
-	 * @returns {React.Component}                   The localized component
+	 * @param  {Component} ComposedComponent React component to localize
+	 * @returns {Component}                   The localized component
 	 */
 	return function ( ComposedComponent ) {
 		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';

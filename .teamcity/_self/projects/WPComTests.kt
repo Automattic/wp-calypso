@@ -36,10 +36,13 @@ object WPComTests : Project({
 	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
 	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c"));
 	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada"));
+	buildType(coblocksPlaywrightBuildType("desktop", "08f88b93-993e-4de8-8d80-4a94981d9af4"));
+	buildType(coblocksPlaywrightBuildType("mobile", "cbcd44d5-4d31-4adc-b1b5-97f1225c6a7c"));
 	buildType(jetpackBuildType("desktop"));
 	buildType(jetpackBuildType("mobile"));
 	buildType(VisualRegressionTests);
 	buildType(I18NTests);
+	buildType(P2E2ETests)
 })
 
 fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
@@ -360,6 +363,141 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 	}
 }
 
+fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
+    return BuildType {
+		id("WPComTests_coblocks_Playwright_$targetDevice")
+		uuid=buildUuid
+		name = "Playwright CoBlocks E2E Tests ($targetDevice)"
+		description = "Runs CoBlocks E2E tests as $targetDevice using Playwright"
+
+
+		artifactRules = """
+			reports => reports
+			logs.tgz => logs.tgz
+			screenshots => screenshots
+		""".trimIndent()
+
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
+		params {
+			text(
+				name = "URL",
+				value = "https://wordpress.com",
+				label = "Test URL",
+				description = "URL to test against",
+				allowEmpty = false
+			)
+			checkbox(
+				name = "COBLOCKS_EDGE",
+				value = "false",
+				label = "Use coblocks-edge",
+				description = "Use a blog with coblocks-edge sticker",
+				checked = "true",
+				unchecked = "false"
+			)
+		}
+
+		steps {
+			prepareEnvironment()
+			bashNodeScript {
+				name = "Run e2e tests ($targetDevice)"
+				scriptContent = """
+					shopt -s globstar
+					set -x
+
+					cd test/e2e
+					mkdir temp
+
+					export NODE_CONFIG_ENV=test
+					export PLAYWRIGHT_BROWSERS_PATH=0
+					export TEAMCITY_VERSION=2021
+					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
+					export URL=%URL%
+					export TARGET_DEVICE=$targetDevice
+					export LOCALE=en
+					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+					export DEBUG=pw:api
+					export HEADLESS=true
+
+					# Decrypt config
+					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+					# Run the test
+					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=coblocks
+				""".trimIndent()
+			}
+			bashNodeScript {
+				name = "Collect results"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					set -x
+
+					mkdir -p screenshots
+					find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+					mkdir -p logs
+					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+					mkdir -p trace
+					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+				""".trimIndent()
+			}
+		}
+
+		features {
+			perfmon {
+			}
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#gutenberg-e2e"
+					messageFormat = verboseMessageFormat {
+						addBranch = true
+						addStatusText = true
+						maximumNumberOfChanges = 10
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailed = true
+				buildFinishedSuccessfully = true
+			}
+			commitStatusPublisher {
+				vcsRootExtId = "${Settings.WpCalypso.id}"
+				publisher = github {
+					githubUrl = "https://api.github.com"
+					authType = personalToken {
+						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+					}
+				}
+			}
+		}
+
+		failureConditions {
+			executionTimeoutMin = 20
+			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
+			// been muted previously.
+			nonZeroExitCode = false
+
+			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
+			// crashes and no tests are run.
+			failOnMetricChange {
+				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+				threshold = 50
+				units = BuildFailureOnMetric.MetricUnit.PERCENTS
+				comparison = BuildFailureOnMetric.MetricComparison.LESS
+				compareTo = build {
+					buildRule = lastSuccessful()
+				}
+			}
+		}
+
+		triggers {}
+	}
+}
+
 
 fun jetpackBuildType(screenSize: String): BuildType {
 	return BuildType {
@@ -565,9 +703,9 @@ private object I18NTests : BuildType({
 	description = "Runs tests related to i18n"
 
 	artifactRules = """
-		reports => reports
 		logs.tgz => logs.tgz
 		screenshots => screenshots
+		trace => trace
 	""".trimIndent()
 
 	vcs {
@@ -593,59 +731,48 @@ private object I18NTests : BuildType({
 	}
 
 	steps {
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-					export NODE_ENV="test"
-
-					# Install modules
-					${_self.yarn_install_cmd}
-				"""
-		}
+		prepareEnvironment()
 		bashNodeScript {
 			name = "Run i18n tests"
 			scriptContent = """
-					shopt -s globstar
-					set -x
+				shopt -s globstar
+				set -x
 
-					cd test/e2e
-					mkdir temp
+				cd test/e2e
+				mkdir temp
 
-					export URL=%URL%
-					export LIVEBRANCHES=false
-					export NODE_CONFIG_ENV=test
-					export TEST_VIDEO=true
-					export HIGHLIGHT_ELEMENT=true
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL}\"}"
-					export TARGET=I18N
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+				export TEAMCITY_VERSION=2021
+				export URL=%URL%
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+				export HEADLESS=true
+				export TARGET_DEVICE=desktop
+				export LOCALES=%LOCALES%
 
-					# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
-					# mocha-teamcity-reporter to work.
-					export MAGELLANDEBUG=true
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-					# Run the test
-					IFS="," read -r -a LOCALE <<< "%LOCALES%"
-					for locale in ${'$'}{LOCALE[@]}; do
-						BROWSERLOCALE="${'$'}{locale}" yarn magellan --config=magellan-i18n.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json" || true
-					done
-				""".trimIndent()
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+				# Run the test
+				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=i18n
+			""".trimIndent()
 		}
 		bashNodeScript {
 			name = "Collect results"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-					set -x
+				set -x
 
-					mkdir -p screenshots
-					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+				mkdir -p screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
-					mkdir -p logs
-					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-				""".trimIndent()
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+			""".trimIndent()
 		}
 	}
 
@@ -699,3 +826,145 @@ private object I18NTests : BuildType({
 	}
 })
 
+object P2E2ETests : BuildType({
+	name = "P2 E2E Tests"
+	description = "Runs end-to-end tests against P2."
+
+	artifactRules = """
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+		trace => trace
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	params {
+		checkbox(
+			name = "env.SAVE_AUTH_COOKIES",
+			value = "false",
+			label = "Save authentication cookies",
+			description = "Login once and reuse auth cookies for all specs",
+			checked = "true",
+			unchecked = "false"
+		)
+	}
+
+	steps {
+		prepareEnvironment()
+
+		bashNodeScript {
+			name = "Execute tests"
+			scriptContent = """
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export URL="https://wpcalypso.wordpress.com"
+
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+				export TEAMCITY_VERSION=2021
+				export LOCALE=en
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+				export HEADLESS=true
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				# Run the test
+				export TARGET_DEVICE=desktop
+				export LOCALE=en
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+
+				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=p2
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-p2"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = "trunk"
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			buildFailedToStart = true
+			buildProbablyHanging = true
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#happytools-alerts"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = "trunk"
+			buildFailed = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = cron {
+				hours = "*/3"
+				dayOfWeek = "*"
+			}
+			branchFilter = "+:trunk"
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 10
+		// Do not fail on non-zero exit code to permit passing builds with muted tests.
+		nonZeroExitCode = false
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
+	}
+})

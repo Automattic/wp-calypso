@@ -13,19 +13,19 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
-export function recordSignupStart( flow, ref ) {
+export function recordSignupStart( flow, ref, optionalProps ) {
 	// Tracks
-	recordTracksEvent( 'calypso_signup_start', { flow, ref } );
+	recordTracksEvent( 'calypso_signup_start', { flow, ref, ...optionalProps } );
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_signup_start' );
 	// Marketing
 	adTrackSignupStart( flow );
 	// FullStory
-	recordFullStoryEvent( 'calypso_signup_start', { flow, ref } );
+	recordFullStoryEvent( 'calypso_signup_start', { flow, ref, ...optionalProps } );
 }
 
 export function recordSignupComplete(
-	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
+	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, theme, intent, startingPoint },
 	now
 ) {
 	const isNewSite = !! siteId;
@@ -35,7 +35,7 @@ export function recordSignupComplete(
 		return addToQueue(
 			'signup',
 			'recordSignupComplete',
-			{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
+			{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, theme, intent, startingPoint },
 			true
 		);
 	}
@@ -50,6 +50,9 @@ export function recordSignupComplete(
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
 		has_cart_items: hasCartItems,
+		theme,
+		intent,
+		starting_point: startingPoint,
 	} );
 
 	// Google Analytics
@@ -84,18 +87,27 @@ export function recordSignupComplete(
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
 		has_cart_items: hasCartItems,
+		theme,
+		intent,
+		starting_point: startingPoint,
 	} );
 }
 
-export function recordSignupStep( flow, step ) {
+export function recordSignupStep( flow, step, optionalProps ) {
 	const device = resolveDeviceTypeByViewPort();
+	const props = {
+		flow,
+		step,
+		device,
+		...optionalProps,
+	};
 
-	signupDebug( 'recordSignupStep:', { flow, step, device } );
+	signupDebug( 'recordSignupStep:', props );
 
 	// Tracks
-	recordTracksEvent( 'calypso_signup_step_start', { flow, step, device } );
+	recordTracksEvent( 'calypso_signup_step_start', props );
 	// FullStory
-	recordFullStoryEvent( 'calypso_signup_step_start', { flow, step, device } );
+	recordFullStoryEvent( 'calypso_signup_step_start', props );
 }
 
 export function recordSignupInvalidStep( flow, step ) {
@@ -125,4 +137,21 @@ export function recordRegistration( { userData, flow, type } ) {
 	adTrackRegistration();
 	// FullStory
 	recordFullStoryEvent( 'calypso_user_registration_complete', { flow, type, device } );
+}
+
+/**
+ * Records loading of the processing screen
+ *
+ * @param {string} flow Signup flow name
+ * @param {string} previousStep The step before the processing screen
+ * @param {string} optionalProps Extra properties to record
+ */
+export function recordSignupProcessingScreen( flow, previousStep, optionalProps ) {
+	const device = resolveDeviceTypeByViewPort();
+	recordTracksEvent( 'calypso_signup_processing_screen_show', {
+		flow,
+		previous_step: previousStep,
+		device,
+		...optionalProps,
+	} );
 }

@@ -1,3 +1,4 @@
+import { createSelector } from '@automattic/state-utils';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -53,11 +54,17 @@ const StatsSparklineChart = ( { className, hourlyViews, height = DEFAULT_HEIGHT 
 		</div>
 	);
 };
-const StatsSparkline = ( { className, siteId } ) => {
-	const hourlyViews = useSelector( ( state ) => {
+
+const getStatsInsightsHourlyViews = createSelector(
+	( state, siteId ) => {
 		const statsInsights = getSiteStatsNormalizedData( state, siteId, 'statsInsights' );
 		return statsInsights.hourlyViews ? Object.values( statsInsights.hourlyViews ) : null;
-	} );
+	},
+	( state, siteId ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights' )
+);
+
+const StatsSparkline = ( { className, siteId } ) => {
+	const hourlyViews = useSelector( ( state ) => getStatsInsightsHourlyViews( state, siteId ) );
 
 	return (
 		<>

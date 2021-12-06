@@ -2,7 +2,7 @@
  * @group calypso-pr
  */
 
-import { DataHelper, LoginFlow, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
@@ -14,13 +14,13 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 
 	describe.each( [
 		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'wooCommerceUser' },
+		{ siteType: 'Atomic', user: 'eCommerceUser' },
 	] )( 'Search from Support Card ($siteType)', function ( { user } ) {
 		let supportComponent: SupportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Displays default entries', async function () {

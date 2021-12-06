@@ -67,6 +67,7 @@ export class MediaLibraryContent extends Component {
 		filterRequiresUpgrade: PropTypes.bool,
 		search: PropTypes.string,
 		source: PropTypes.string,
+		onSourceChange: PropTypes.func,
 		containerWidth: PropTypes.number,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
@@ -423,6 +424,7 @@ export class MediaLibraryContent extends Component {
 					thumbnailType={ this.getThumbnailType() }
 					single={ this.props.single }
 					scrollable={ this.props.scrollable }
+					onSourceChange={ this.props.onSourceChange }
 					mediaScale={ this.props.mediaScale }
 				/>
 			</MediaListData>

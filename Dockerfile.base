@@ -2,7 +2,7 @@
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
 #### Note that yarn v3 cache lives in `/calypso/.yarn`
-FROM node:16.7.0-buster as cache
+FROM node:16.11.1-buster as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -37,7 +37,7 @@ ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to uni test and build calypso.
-FROM node:16.7.0-buster as base
+FROM node:16.11.1-buster as base
 
 ARG node_memory=8192
 ARG user=calypso
@@ -73,17 +73,14 @@ COPY --from=cache --chown=$UID /calypso/.yarn /calypso/.yarn
 
 ENTRYPOINT [ "/bin/bash" ]
 
-#### ci-desktop image
-#### This image is used to run desktop tests.
-FROM base as ci-desktop
+#### ci-e2e image
+#### This image is used to run E2E tests.
+FROM base as ci-e2e
 
-ENV ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
-ENV USE_HARD_LINKS=false
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=false
 ENV PUPPETEER_SKIP_DOWNLOAD=false
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
-# This chrome image is the latest version supported by wp-desktop's chromedriver, declared in desktop/package.json.
-ENV CHROME_VERSION="80.0.3987.163-1"
+ENV DETECT_CHROMEDRIVER_VERSION=true
 ENV DISPLAY=:99
 
 RUN apt update \
@@ -113,25 +110,11 @@ RUN apt update \
 		xfonts-scalable \
 		xvfb
 
-RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-	&& rm ./google-chrome-stable_${CHROME_VERSION}_amd64.deb
-
-ENTRYPOINT [ "/bin/bash" ]
-
-#### ci-e2e image
-#### This image is used to run e2e tests. The only difference with ci-desktop is the Chrome version.
-FROM ci-desktop as ci-e2e
-
-# test/e2e/test/mocha.env.js will install a compatible chromedriver.
-ENV DETECT_CHROMEDRIVER_VERSION=true
-
 RUN wget --no-verbose https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
 	&& apt-get install -y ./google-chrome-stable_current_amd64.deb \
 	&& rm ./google-chrome-stable_current_amd64.deb
 
 ENTRYPOINT [ "/bin/bash" ]
-
 
 #### ci-wpcom image
 #### This image is used to test and build WPCOM plugins in Calypso repo.
@@ -145,6 +128,7 @@ RUN apt update &&\
 	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg &&\
 	echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php-sury.list &&\
 	apt update &&\
+ 	apt-get upgrade -y &&\
 	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose &&\
 	composer install
 

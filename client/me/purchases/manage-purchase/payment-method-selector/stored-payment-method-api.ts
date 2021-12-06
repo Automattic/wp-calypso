@@ -9,15 +9,18 @@ export async function saveCreditCard( {
 	token,
 	stripeConfiguration,
 	useForAllSubscriptions,
+	eventSource,
 }: {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 	useForAllSubscriptions: boolean;
+	eventSource?: string;
 } ): Promise< StoredCardEndpointResponse > {
 	const additionalData = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
 		useForAllSubscriptions,
+		eventSource,
 	} );
 	const response = await wp.req.post(
 		{
@@ -41,19 +44,33 @@ export async function updateCreditCard( {
 	purchase,
 	token,
 	stripeConfiguration,
+	useForAllSubscriptions,
+	eventSource,
 }: {
 	purchase: Purchase;
 	token: string;
 	stripeConfiguration: StripeConfiguration;
+	useForAllSubscriptions: boolean;
+	eventSource?: string;
 } ): Promise< StoredCardEndpointResponse > {
-	const { purchaseId, payment_partner, paygate_token } = getParamsForApi( {
+	const {
+		purchaseId,
+		payment_partner,
+		paygate_token,
+		use_for_existing,
+		event_source,
+	} = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
 		purchase,
+		useForAllSubscriptions,
+		eventSource,
 	} );
 	const response = await wp.req.post( '/upgrades/' + purchaseId + '/update-credit-card', {
-		payment_partner: payment_partner,
-		paygate_token: paygate_token,
+		payment_partner,
+		paygate_token,
+		use_for_existing,
+		event_source,
 	} );
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_purchases_save_new_payment_method_error' );
@@ -68,11 +85,13 @@ function getParamsForApi( {
 	stripeConfiguration,
 	purchase,
 	useForAllSubscriptions,
+	eventSource,
 }: {
 	cardToken: string;
 	stripeConfiguration: StripeConfiguration;
 	purchase?: Purchase | undefined;
 	useForAllSubscriptions?: boolean;
+	eventSource?: string;
 } ) {
 	return {
 		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
@@ -80,5 +99,6 @@ function getParamsForApi( {
 		...( useForAllSubscriptions === true ? { use_for_existing: true } : {} ),
 		...( useForAllSubscriptions === false ? { use_for_existing: false } : {} ), // if undefined, we do not add this property
 		...( purchase ? { purchaseId: purchase.id } : {} ),
+		...( eventSource ? { event_source: eventSource } : {} ),
 	};
 }

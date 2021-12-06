@@ -1,11 +1,9 @@
 import { getHandlers, registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import httpHandlers from 'calypso/state/http';
 import httpData from './http-data';
 import { bypassDataLayer } from './utils';
 import wpcomHttpHandlers from './wpcom-http';
 
 registerHandlers( 'declarative resource loader', httpData );
-registerHandlers( 'raw HTTP request loader', httpHandlers );
 registerHandlers( 'WordPress API request loader', wpcomHttpHandlers );
 
 const shouldNext = ( action ) => {

@@ -230,7 +230,11 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
 	next_domain_is_free: boolean;
+	next_domain_condition: '' | 'blog';
+	bundled_domain?: string;
+	has_bundle_credit?: boolean;
 	terms_of_service?: TermsOfServiceRecord[];
+	has_pending_payment?: boolean;
 }
 
 export interface ResponseCartTaxData {
@@ -292,6 +296,7 @@ export interface ResponseCartProduct {
 	is_sale_coupon_applied: boolean;
 	meta: string;
 	time_added_to_cart: number;
+	bill_period: string;
 	months_per_bill_period: number | null;
 	volume: number;
 	quantity: number | null;
@@ -320,6 +325,8 @@ export interface IntroductoryOfferTerms {
 	interval_unit: string;
 	interval_count: number;
 	reason?: string;
+	transition_after_renewal_count: number;
+	should_prorate_when_offer_ends: boolean;
 }
 
 export interface CartLocation {

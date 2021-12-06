@@ -4,10 +4,10 @@ import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import {
 	activatePlugin,
 	installPlugin as installAndActivatePlugin,
@@ -22,6 +22,7 @@ import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 import { getSelectedSiteWithFallback, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { recordTrack } from '../lib/analytics';
+import WoopLandingPage from '../woop/landing-page';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 
@@ -75,6 +76,7 @@ class RequiredPluginsInstallView extends Component {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		skipSlug: PropTypes.string,
 		skipConfirmation: PropTypes.bool,
 	};
 
@@ -113,6 +115,7 @@ class RequiredPluginsInstallView extends Component {
 		this.destroyTimeoutTimer();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { automatedTransferStatus: currentATStatus, siteId, hasPendingAT } = this.props;
 		const { automatedTransferStatus: nextATStatus } = nextProps;
@@ -167,7 +170,7 @@ class RequiredPluginsInstallView extends Component {
 			  } ) )
 			: sitePlugins;
 
-		this.props.logToLogstash( {
+		logToLogstash( {
 			feature: 'calypso_client',
 			message: 'woocommerce setup timeout',
 			extra: {
@@ -477,29 +480,6 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	renderConfirmScreen = () => {
-		const { translate } = this.props;
-		return (
-			<div className="dashboard__setup-wrapper setup__wrapper">
-				<SetupNotices />
-				<div className="card dashboard__setup-confirm">
-					<SetupHeader
-						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
-						imageWidth={ 160 }
-						title={ translate( 'Have something to sell?' ) }
-						subtitle={ translate(
-							'You can sell your products right on your site and ship them to customers in a snap!'
-						) }
-					>
-						<Button onClick={ this.startSetup } primary>
-							{ translate( 'Set up my store!' ) }
-						</Button>
-					</SetupHeader>
-				</div>
-			</div>
-		);
-	};
-
 	getTotalSeconds = () => {
 		const { hasPendingAT } = this.props;
 
@@ -593,11 +573,16 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	render() {
-		const { hasPendingAT, fixMode, translate } = this.props;
+		const { hasPendingAT, fixMode, translate, siteId } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
-			return this.renderConfirmScreen();
+			return (
+				<>
+					<SetupNotices />
+					<WoopLandingPage siteId={ siteId } startSetup={ this.startSetup } />
+				</>
+			);
 		}
 
 		if ( 'DONEFAILURE' === engineState ) {
@@ -652,5 +637,4 @@ export default connect( mapStateToProps, {
 	fetchPluginData,
 	installAndActivatePlugin,
 	fetchPlugins,
-	logToLogstash,
 } )( localize( RequiredPluginsInstallView ) );

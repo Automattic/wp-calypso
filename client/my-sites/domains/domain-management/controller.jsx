@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from 'page';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
@@ -5,6 +6,8 @@ import {
 	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
+	domainManagementDnsAddRecord,
+	domainManagementDnsEditRecord,
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
@@ -28,11 +31,15 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
+		let listComponent = DomainManagement.List;
+		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
+			listComponent = DomainManagement.SiteDomains;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementList( ':site' ) }
 				analyticsTitle="Domain Management"
-				component={ DomainManagement.List }
+				component={ listComponent }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -44,11 +51,15 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
+		let listAllComponent = DomainManagement.ListAll;
+		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
+			listAllComponent = DomainManagement.AllDomains;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementRoot() }
 				analyticsTitle="Domain Management > All Domains"
-				component={ DomainManagement.ListAll }
+				component={ listAllComponent }
 				context={ pageContext }
 			/>
 		);
@@ -70,6 +81,9 @@ export default {
 	},
 
 	domainManagementEdit( pageContext, next ) {
+		if ( config.isEnabled( 'domains/settings-page-redesign' ) ) {
+			// TODO: set different component for the new domain settings page
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
@@ -152,11 +166,15 @@ export default {
 	},
 
 	domainManagementEditContactInfo( pageContext, next ) {
+		let component = DomainManagement.EditContactInfo;
+		if ( config.isEnabled( 'domains/contact-info-redesign' ) ) {
+			component = DomainManagement.EditContactInfoPage;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEditContactInfo( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Contacts and Privacy > Edit Contact Info"
-				component={ DomainManagement.EditContactInfo }
+				component={ component }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
@@ -176,11 +194,43 @@ export default {
 	},
 
 	domainManagementDns( pageContext, next ) {
+		let component = DomainManagement.Dns;
+
+		if ( config.isEnabled( 'domains/dns-records-redesign' ) ) {
+			component = DomainManagement.DnsRecords;
+		}
+
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementDns( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
-				component={ DomainManagement.Dns }
+				component={ component }
+				context={ pageContext }
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementDnsAddRecord( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementDnsAddRecord( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records > Add a record"
+				component={ DomainManagement.AddDnsRecord }
+				context={ pageContext }
+				selectedDomainName={ pageContext.params.domain }
+			/>
+		);
+		next();
+	},
+
+	domainManagementDnsEditRecord( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementDnsEditRecord( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records > Edit record"
+				component={ DomainManagement.AddDnsRecord }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
 			/>
@@ -251,11 +301,15 @@ export default {
 	},
 
 	domainManagementTransfer( pageContext, next ) {
+		let component = DomainManagement.Transfer;
+		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
+			component = DomainManagement.TransferPage;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransfer( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer"
-				component={ DomainManagement.Transfer }
+				component={ component }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
@@ -265,6 +319,9 @@ export default {
 	},
 
 	domainManagementTransferToOtherSite( pageContext, next ) {
+		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
+			// TODO: set different component for the new transfer page
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToOtherSite( ':site', ':domain' ) }
@@ -279,11 +336,15 @@ export default {
 	},
 
 	domainManagementTransferToOtherUser( pageContext, next ) {
+		let transferComponent = DomainManagement.TransferToOtherUser;
+		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
+			transferComponent = DomainManagement.TransferDomainToOtherUser;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other User"
-				component={ DomainManagement.TransferToOtherUser }
+				component={ transferComponent }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }

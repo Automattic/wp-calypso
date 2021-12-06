@@ -279,9 +279,9 @@ const validateMailboxName = ( { value, error }, { value: domainName, error: doma
 	return { value, error };
 };
 
-const validateName = ( name ) => {
+const validateName = ( { value, error } ) => {
 	// TODO: validate the user's name
-	return name;
+	return { value, error };
 };
 
 /**
@@ -420,7 +420,12 @@ const transformMailboxForCart = ( {
 
 const checkMailboxAvailability = async ( domain, mailbox ) => {
 	try {
-		const response = await wp.undocumented().getTitanMailboxAvailability( domain, mailbox );
+		const encDomain = encodeURIComponent( domain );
+		const encMailbox = encodeURIComponent( mailbox );
+		const response = await wp.req.get( {
+			path: `/emails/titan/${ encDomain }/check-mailbox-availability/${ encMailbox }`,
+			apiNamespace: 'wpcom/v2',
+		} );
 		return { message: response.message, status: 200 };
 	} catch ( e ) {
 		return { message: e.message, status: e.statusCode };

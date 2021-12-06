@@ -1,3 +1,4 @@
+import debugModule from 'debug';
 import {
 	defer,
 	difference,
@@ -20,6 +21,7 @@ import flows from 'calypso/signup/config/flows';
 import untypedSteps from 'calypso/signup/config/steps';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import {
 	resetSignup,
 	updateDependencies,
@@ -35,17 +37,9 @@ import {
 import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import type { Flow, Dependencies } from '../../signup/types';
 
-interface Dependencies {
-	[ other: string ]: string[];
-}
-
-interface Flow {
-	destination: string | ( ( dependencies: Dependencies ) => string );
-	providesDependenciesInQuery?: string[];
-	optionalDependenciesInQuery?: string[];
-	steps: string[];
-}
+const debug = debugModule( 'calypso:signup' );
 
 interface Step {
 	apiRequestFunction?: (
@@ -62,6 +56,7 @@ interface Step {
 	providesToken?: boolean;
 	stepName: string;
 	allowUnauthenticated?: boolean;
+	isPasswordlessSignupForm?: boolean;
 }
 
 const steps: Record< string, Step > = untypedSteps;
@@ -109,6 +104,7 @@ export default class SignupFlowController {
 		try {
 			this._assertFlowHasValidDependencies();
 		} catch ( ex ) {
+			debug( 'Invalid dependencies in flow : ' + ex.message );
 			if ( this._flowName !== flows.defaultFlowName ) {
 				// redirect to the default signup flow, hopefully it will be valid
 				page( getStepUrl() );
@@ -222,7 +218,7 @@ export default class SignupFlowController {
 	}
 
 	_assertFlowHasValidDependencies() {
-		forEach( pick( steps, this._flow.steps ), ( step ) => {
+		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
 			if ( ! step.dependencies ) {
 				return;
 			}
@@ -254,7 +250,7 @@ export default class SignupFlowController {
 	_assertFlowProvidedRequiredDependencies() {
 		const storedDependencies = keys( getSignupDependencyStore( this._reduxStore.getState() ) );
 
-		forEach( pick( steps, this._flow.steps ), ( step ) => {
+		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
 			if ( ! step.providesDependencies ) {
 				return;
 			}
@@ -286,19 +282,38 @@ export default class SignupFlowController {
 	}
 
 	/**
+	 * Returns a list of non-excluded steps in the flow which enable the branch steps. Otherwise, return a list
+	 * of all steps
+	 *
+	 * @returns {Array} a list of dependency names
+	 */
+	_getFlowSteps() {
+		// As signup framework is shared across multiple products, we keep using this value with excluded steps
+		// to ensure that this change does not any existed behavior. Thus, the excluded steps will be processed
+		// for those flows.
+		if ( ! this._flow.enableBranchSteps ) {
+			return this._flow.steps;
+		}
+
+		const userLoggedIn = isUserLoggedIn( this._reduxStore.getState() );
+		const flow = flows.getFlow( this._flowName, userLoggedIn );
+		return flow.steps;
+	}
+
+	/**
 	 * Returns a list of the dependencies provided in the flow configuration.
 	 *
 	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies() {
 		return flatMap(
-			this._flow.steps,
+			this._getFlowSteps(),
 			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		).concat( this._flow.providesDependenciesInQuery || [] );
 	}
 
 	_process() {
-		const currentSteps = this._flow.steps;
+		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
 			includes( currentSteps, step.stepName )
 		);
@@ -326,7 +341,7 @@ export default class SignupFlowController {
 		const { dependencies = [], providesToken } = steps[ step.stepName ];
 		const dependenciesFound = this._findDependencies( step.stepName, 'dependencies' );
 		const dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length;
-		const currentSteps = this._flow.steps;
+		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter(
 			getSignupProgress( this._reduxStore.getState() ),
 			( { stepName } ) => includes( currentSteps, stepName )
@@ -356,6 +371,21 @@ export default class SignupFlowController {
 			'optionalDependencies'
 		);
 
+		/*
+			AB Test: passwordlessSignup
+			`isPasswordlessSignupForm` is set by the PasswordlessSignupForm.
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow.
+			For passwordless signups, the API call has already occurred in the PasswordlessSignupForm, so here it is skipped.
+		*/
+		if ( step?.isPasswordlessSignupForm ) {
+			this._processingSteps.delete( step.stepName );
+			recordTracksEvent( 'calypso_signup_actions_complete_step', {
+				step: step.stepName,
+			} );
+			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
+			return;
+		}
+
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {
 			this._reduxStore.dispatch( processStep( step ) );
@@ -373,9 +403,12 @@ export default class SignupFlowController {
 				if ( errors ) {
 					this._reduxStore.dispatch( invalidateStep( step, errors ) );
 				} else {
+					const { intent } = getSignupDependencyStore( this._reduxStore.getState() );
+
 					recordTracksEvent( 'calypso_signup_actions_complete_step', {
 						step: step.stepName,
 						flow: this._flowName,
+						intent,
 					} );
 					this._reduxStore.dispatch( completeSignupStep( step, providedDependencies ) );
 				}
@@ -398,7 +431,8 @@ export default class SignupFlowController {
 
 	_destination( dependencies: Dependencies ): string {
 		if ( typeof this._flow.destination === 'function' ) {
-			return this._flow.destination( dependencies );
+			const localeSlug = getCurrentLocaleSlug( this._reduxStore.getState() );
+			return this._flow.destination( dependencies, localeSlug );
 		}
 
 		return this._flow.destination;
@@ -406,7 +440,7 @@ export default class SignupFlowController {
 
 	_getStoredDependencies() {
 		const requiredDependencies = flatMap(
-			this._flow.steps,
+			this._getFlowSteps(),
 			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		);
 

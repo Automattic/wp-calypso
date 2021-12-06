@@ -128,7 +128,7 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 				<ul className="billing-history__receipt-details group">
 					<li>
 						<strong>{ translate( 'Receipt ID' ) }</strong>
-						<span>{ transaction.id }</span>
+						<span className="receipt__monospace">{ transaction.id }</span>
 					</li>
 					<ReceiptTransactionId transaction={ transaction } />
 					<ReceiptPaymentMethod transaction={ transaction } />
@@ -160,7 +160,7 @@ function ReceiptTransactionId( { transaction } ) {
 	return (
 		<li>
 			<strong>{ translate( 'Transaction ID' ) }</strong>
-			<span>{ transaction.pay_ref }</span>
+			<span className="receipt__monospace">{ transaction.pay_ref }</span>
 		</li>
 	);
 }

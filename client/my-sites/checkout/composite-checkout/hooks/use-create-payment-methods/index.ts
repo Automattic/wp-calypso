@@ -59,6 +59,8 @@ export function useCreateCreditCard( {
 	shouldUseEbanx,
 	shouldShowTaxFields = false,
 	activePayButtonText = undefined,
+	initialUseForAllSubscriptions,
+	allowUseForAllSubscriptions,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -67,9 +69,18 @@ export function useCreateCreditCard( {
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
 	activePayButtonText?: string | undefined;
+	initialUseForAllSubscriptions?: boolean;
+	allowUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
-	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );
+	const stripePaymentMethodStore = useMemo(
+		() =>
+			createCreditCardPaymentMethodStore( {
+				initialUseForAllSubscriptions,
+				allowUseForAllSubscriptions,
+			} ),
+		[ initialUseForAllSubscriptions, allowUseForAllSubscriptions ]
+	);
 	const stripeMethod = useMemo(
 		() =>
 			shouldLoadStripeMethod
@@ -80,6 +91,7 @@ export function useCreateCreditCard( {
 						shouldUseEbanx,
 						shouldShowTaxFields,
 						activePayButtonText,
+						allowUseForAllSubscriptions,
 				  } )
 				: null,
 		[
@@ -90,6 +102,7 @@ export function useCreateCreditCard( {
 			shouldUseEbanx,
 			shouldShowTaxFields,
 			activePayButtonText,
+			allowUseForAllSubscriptions,
 		]
 	);
 	return stripeMethod;
@@ -426,17 +439,17 @@ export default function useCreatePaymentMethods( {
 		siteSlug,
 	} );
 
-	const shouldUseEbanx = Boolean(
-		responseCart?.allowed_payment_methods?.includes(
-			translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
-		)
+	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
+		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
+	const allowUseForAllSubscriptions = true;
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
 		shouldUseEbanx,
+		allowUseForAllSubscriptions,
 	} );
 
 	const fullCreditsPaymentMethod = useCreateFullCredits();

@@ -1,47 +1,55 @@
-import { Modal, Button } from '@wordpress/components';
-import { doAction } from '@wordpress/hooks';
-import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
+import { doAction, hasAction } from '@wordpress/hooks';
+import { __ } from '@wordpress/i18n';
+import NuxModal from '../nux-modal';
 import draftPostImage from './images/draft-post.svg';
 import './style.scss';
 
-const DraftPostModal = () => {
-	const { __ } = useI18n();
-	const [ isOpen, setIsOpen ] = React.useState( true );
-	const closeModal = () => setIsOpen( false );
-	const closeEditor = () => doAction( 'a8c.wpcom-block-editor.closeEditor' );
+const CLOSE_EDITOR_ACTION = 'a8c.wpcom-block-editor.closeEditor';
 
-	if ( ! isOpen ) {
-		return null;
-	}
+const DraftPostModal = () => {
+	const siteId = window._currentSiteId;
+	const primaryDomain = useSelect( ( select ) =>
+		select( 'automattic/site' ).getPrimarySiteDomain( siteId )
+	);
+
+	const homeUrl = `/home/${ primaryDomain?.domain || window.location.hostname }`;
+	const [ isOpen, setIsOpen ] = useState( true );
+	const closeModal = () => setIsOpen( false );
+	const closeEditor = () => {
+		if ( hasAction( CLOSE_EDITOR_ACTION ) ) {
+			doAction( CLOSE_EDITOR_ACTION, homeUrl );
+		} else {
+			window.location.href = `https://wordpress.com${ homeUrl }`;
+		}
+	};
 
 	return (
-		<Modal
-			open={ isOpen }
+		<NuxModal
+			isOpen={ isOpen }
 			className="wpcom-block-editor-draft-post-modal"
+			title={ __( 'Write your first post', 'full-site-editing' ) }
+			description={ __(
+				'It’s time to flex those writing muscles and start drafting your first post!',
+				'full-site-editing'
+			) }
+			imageSrc={ draftPostImage }
+			actionButtons={
+				<>
+					<Button isPrimary onClick={ closeModal }>
+						{ __( 'Start writing', 'full-site-editing' ) }
+					</Button>
+					<Button isSecondary onClick={ closeEditor }>
+						{ __( "I'm not ready", 'full-site-editing' ) }
+					</Button>
+				</>
+			}
 			onRequestClose={ closeModal }
-		>
-			<div className="wpcom-block-editor-draft-post-modal__image-container">
-				<img src={ draftPostImage } alt={ __( 'Write post', 'full-site-editing' ) } />
-			</div>
-			<h1 className="wpcom-block-editor-draft-post-modal__title">
-				{ __( 'Write your first post', 'full-site-editing' ) }
-			</h1>
-			<p className="wpcom-block-editor-draft-post-modal__description">
-				{ __(
-					'It’s time to flex those writing muscles and start drafting your first post!',
-					'full-site-editing'
-				) }
-			</p>
-			<div className="wpcom-block-editor-draft-post-modal__buttons" justify="center">
-				<Button variant="primary" onClick={ closeModal }>
-					{ __( 'Start writing', 'full-site-editing' ) }
-				</Button>
-				<Button variant="secondary" onClick={ closeEditor }>
-					{ __( "I'm not ready", 'full-site-editing' ) }
-				</Button>
-			</div>
-		</Modal>
+			onOpen={ () => recordTracksEvent( 'calypso_editor_wpcom_draft_post_modal_show' ) }
+		/>
 	);
 };
 

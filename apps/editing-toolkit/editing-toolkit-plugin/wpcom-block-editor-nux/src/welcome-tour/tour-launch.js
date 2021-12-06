@@ -3,23 +3,20 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
-import { Button, Flex } from '@wordpress/components';
+import TourKit from '@automattic/tour-kit';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/icons';
+import { useEffect, useMemo } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import maximize from './icons/maximize';
-import KeyboardNavigation from './keyboard-navigation';
-import WelcomeTourCard from './tour-card';
-import getTourContent from './tour-content';
+import { WelcomeTourContextProvider, useWelcomeTourContext } from './tour-context';
+import WelcomeTourMinimized from './tour-minimized-renderer';
+import WelcomeTourStep from './tour-step-renderer';
+import getTourSteps from './tour-steps';
 
 import './style-tour.scss';
 
 function LaunchWpcomWelcomeTour() {
-	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
 		show: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown(),
 		// Handle the case where the new page pattern modal is initialized and open
@@ -30,133 +27,105 @@ function LaunchWpcomWelcomeTour() {
 	} ) );
 
 	const localeSlug = useLocale();
-
 	// Preload first card image (others preloaded after open state confirmed)
-	new window.Image().src = getTourContent( localeSlug )[ 0 ].imgSrc;
+	new window.Image().src = getTourSteps( localeSlug )[ 0 ].meta.imgSrc;
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
 			return;
 		}
 
-		portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
-		document.body.appendChild( portalParent );
-
 		// Track opening of the Welcome Guide
 		recordTracksEvent( 'calypso_editor_wpcom_tour_open', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			is_manually_opened: isManuallyOpened,
 		} );
-
-		return () => {
-			document.body.removeChild( portalParent );
-		};
-	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show, portalParent ] );
+	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show ] );
 
 	if ( ! show || isNewPageLayoutModalOpen ) {
 		return null;
 	}
 
-	return <div>{ createPortal( <WelcomeTourFrame />, portalParent ) }</div>;
+	return (
+		<WelcomeTourContextProvider>
+			<WelcomeTour />
+		</WelcomeTourContextProvider>
+	);
 }
 
-function WelcomeTourFrame() {
-	const tourContainerRef = useRef( null );
-	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
-	const [ isMinimized, setIsMinimized ] = useState( false );
-	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
-	const [ justMaximized, setJustMaximized ] = useState( false );
+function WelcomeTour() {
 	const localeSlug = useLocale();
-	const cardContent = getTourContent( localeSlug );
-	const lastCardIndex = cardContent.length - 1;
+	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
+	const isWelcomeTourNext = () => {
+		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
+	};
+	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() );
+	const { setJustMaximized } = useWelcomeTourContext();
 
-	const handleDismiss = ( source ) => {
-		return () => {
+	// Preload card images
+	tourSteps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
+
+	const tourConfig = {
+		steps: tourSteps,
+		renderers: {
+			tourStep: WelcomeTourStep,
+			tourMinimized: WelcomeTourMinimized,
+		},
+		closeHandler: ( steps, currentStepIndex, source ) => {
 			recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 				is_gutenboarding: isGutenboarding,
-				slide_number: currentCardIndex + 1,
+				slide_number: currentStepIndex + 1,
 				action: source,
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
-		};
+		},
+		options: {
+			callbacks: {
+				onMinimize: ( currentStepIndex ) => {
+					recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
+						is_gutenboarding: isGutenboarding,
+						slide_number: currentStepIndex + 1,
+					} );
+				},
+				onMaximize: ( currentStepIndex ) => {
+					setJustMaximized( true );
+					recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
+						is_gutenboarding: isGutenboarding,
+						slide_number: currentStepIndex + 1,
+					} );
+				},
+			},
+			effects: {
+				__experimental__spotlight: isWelcomeTourNext(),
+				arrowIndicator: false,
+			},
+			popperModifiers: [
+				useMemo(
+					() => ( {
+						name: 'offset',
+						options: {
+							offset: ( { placement, reference } ) => {
+								if ( placement === 'bottom' ) {
+									const boundary = document.querySelector( '.edit-post-header' );
+									const boundaryRect = boundary.getBoundingClientRect();
+									const boundaryBottomY = boundaryRect.height + boundaryRect.y;
+									const referenceBottomY = reference.height + reference.y;
+
+									return [ 0, boundaryBottomY - referenceBottomY + 16 ];
+								}
+								return [ 0, 0 ];
+							},
+						},
+					} ),
+					[]
+				),
+			],
+			className: 'wpcom-editor-welcome-tour',
+		},
 	};
 
-	const handleNextCardProgression = () => {
-		if ( lastCardIndex > currentCardIndex ) {
-			setCurrentCardIndex( currentCardIndex + 1 );
-		}
-	};
-
-	const handlePreviousCardProgression = () => {
-		currentCardIndex && setCurrentCardIndex( currentCardIndex - 1 );
-	};
-
-	const handleMinimize = () => {
-		setIsMinimized( true );
-		recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
-			is_gutenboarding: isGutenboarding,
-			slide_number: currentCardIndex + 1,
-		} );
-	};
-
-	const handleMaximize = () => {
-		setIsMinimized( false );
-		setJustMaximized( true );
-		recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
-			is_gutenboarding: isGutenboarding,
-			slide_number: currentCardIndex + 1,
-		} );
-	};
-
-	// Preload card images
-	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
-
-	return (
-		<>
-			<KeyboardNavigation
-				onMinimize={ handleMinimize }
-				onDismiss={ handleDismiss }
-				onNextCardProgression={ handleNextCardProgression }
-				onPreviousCardProgression={ handlePreviousCardProgression }
-				tourContainerRef={ tourContainerRef }
-				isMinimized={ isMinimized }
-			/>
-			<div className="wpcom-editor-welcome-tour-frame" ref={ tourContainerRef }>
-				{ ! isMinimized ? (
-					<>
-						<WelcomeTourCard
-							cardContent={ cardContent[ currentCardIndex ] }
-							currentCardIndex={ currentCardIndex }
-							justMaximized={ justMaximized }
-							key={ currentCardIndex }
-							lastCardIndex={ lastCardIndex }
-							onDismiss={ handleDismiss }
-							onMinimize={ handleMinimize }
-							setJustMaximized={ setJustMaximized }
-							setCurrentCardIndex={ setCurrentCardIndex }
-							onNextCardProgression={ handleNextCardProgression }
-							onPreviousCardProgression={ handlePreviousCardProgression }
-							isGutenboarding={ isGutenboarding }
-						/>
-					</>
-				) : (
-					<WelcomeTourMinimized onMaximize={ handleMaximize } />
-				) }
-			</div>
-		</>
-	);
-}
-
-function WelcomeTourMinimized( { onMaximize } ) {
-	return (
-		<Button onClick={ onMaximize } className="wpcom-editor-welcome-tour__resume-btn">
-			<Flex gap={ 13 }>
-				<p>{ __( 'Click to resume tutorial', 'full-site-editing' ) }</p>
-				<Icon icon={ maximize } size={ 24 } />
-			</Flex>
-		</Button>
-	);
+	return <TourKit config={ tourConfig } />;
 }
 
 export default LaunchWpcomWelcomeTour;

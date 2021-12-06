@@ -1,12 +1,9 @@
-/**
- * /*eslint-disable
- *
- */
+/* eslint-disable */
 
 /**
  * Modified from phpjs original to convert to a module
  * https://github.com/kvz/phpjs/tree/af99785b02
- **/
+ */
 function version_compare( v1, v2, operator ) {
 	//       discuss at: http://phpjs.org/functions/version_compare/
 	//      original by: Philippe Jausions (http://pear.php.net/user/jausions)
@@ -73,7 +70,6 @@ function version_compare( v1, v2, operator ) {
 	x = Math.max( v1.length, v2.length );
 	for ( i = 0; i < x; i++ ) {
 		if ( v1[ i ] == v2[ i ] ) {
-			// eslint-disable-line
 			continue;
 		}
 		v1[ i ] = numVersion( v1[ i ] );

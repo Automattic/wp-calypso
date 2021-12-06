@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useStripe } from '@automattic/calypso-stripe';
 import { Card, Gridicon } from '@automattic/components';
 import {
@@ -7,13 +8,12 @@ import {
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getStoredPaymentAgreements } from 'calypso/state/stored-cards/selectors';
@@ -28,20 +28,41 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
-import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { CheckoutPageErrorCallback, PaymentMethod } from '@automattic/composite-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
+function useLogError( message: string ): CheckoutPageErrorCallback {
+	return useCallback(
+		( errorType, errorMessage ) => {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'payment_method_selector',
+					message: String( errorMessage ),
+					errorType,
+				},
+			} );
+		},
+		[ message ]
+	);
+}
+
 export default function PaymentMethodSelector( {
 	purchase,
 	paymentMethods,
 	successCallback,
+	eventContext,
 }: {
 	purchase?: Purchase;
 	paymentMethods: PaymentMethod[];
 	successCallback: () => void;
+	eventContext?: string;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
@@ -71,6 +92,8 @@ export default function PaymentMethodSelector( {
 		[ reduxDispatch ]
 	);
 
+	const logError = useLogError( 'payment method selector page load error' );
+
 	const currentPaymentMethodNotAvailable = ! paymentMethods.some(
 		( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
 	);
@@ -85,14 +108,9 @@ export default function PaymentMethodSelector( {
 		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
 	} );
 
-	const [ useForAllSubscriptions, setUseForAllSubscriptions ] = useState< boolean >( ! purchase );
-	const assignAllSubscriptionsText = String(
-		translate( 'Assign this payment method to all of my subscriptions' )
-	);
-
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			reduxDispatch( errorNotice( stripeLoadingError ) );
+			reduxDispatch( errorNotice( stripeLoadingError.message ) );
 		}
 	}, [ stripeLoadingError, reduxDispatch ] );
 
@@ -105,20 +123,22 @@ export default function PaymentMethodSelector( {
 			}
 			onPaymentRedirect={ showRedirectMessage }
 			onPaymentError={ showErrorMessage }
+			onPageLoadError={ logError }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
 				paypal: () => assignPayPalProcessor( purchase, reduxDispatch ),
-				'existing-card': ( data ) => assignExistingCardProcessor( purchase, reduxDispatch, data ),
-				card: ( data ) =>
+				'existing-card': ( data: unknown ) =>
+					assignExistingCardProcessor( purchase, reduxDispatch, data ),
+				card: ( data: unknown ) =>
 					assignNewCardProcessor(
 						{
 							purchase,
-							useForAllSubscriptions,
 							translate,
 							stripe,
 							stripeConfiguration,
 							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 							reduxDispatch,
+							eventSource: eventContext,
 						},
 						data
 					),
@@ -142,45 +162,9 @@ export default function PaymentMethodSelector( {
 					</p>
 				</div>
 
-				{ ! purchase && (
-					<FormLabel className="payment-method-selector__all-subscriptions-checkbox-label">
-						<FormInputCheckbox
-							className="payment-method-selector__all-subscriptions-checkbox"
-							checked={ useForAllSubscriptions }
-							onChange={ () => setUseForAllSubscriptions( ( checked ) => ! checked ) }
-							aria-label={ assignAllSubscriptionsText }
-						/>
-						{ assignAllSubscriptionsText }
-						<AllSubscriptionsEffectWarning useForAllSubscriptions={ useForAllSubscriptions } />
-					</FormLabel>
-				) }
-
 				<CheckoutSubmitButton />
 			</Card>
 		</CheckoutProvider>
-	);
-}
-
-function AllSubscriptionsEffectWarning( {
-	useForAllSubscriptions,
-}: {
-	useForAllSubscriptions: boolean;
-} ) {
-	const translate = useTranslate();
-
-	if ( useForAllSubscriptions ) {
-		return (
-			<span className="payment-method-selector__all-subscriptions-effect-warning">
-				{ translate( 'This card will be used for future renewals of existing purchases.' ) }
-			</span>
-		);
-	}
-	return (
-		<span className="payment-method-selector__all-subscriptions-effect-warning">
-			{ translate(
-				'This card will not be assigned to any subscriptions. You can assign it to a subscription from the subscription page.'
-			) }
-		</span>
 	);
 }
 

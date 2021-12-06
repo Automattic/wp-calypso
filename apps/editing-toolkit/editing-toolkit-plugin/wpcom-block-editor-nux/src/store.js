@@ -61,11 +61,23 @@ const welcomeGuideVariantReducer = ( state = DEFAULT_VARIANT, action ) => {
 	}
 };
 
+const shouldShowFirstPostPublishedModalReducer = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL':
+			return action.value;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return false;
+		default:
+			return state;
+	}
+};
+
 const reducer = combineReducers( {
 	welcomeGuideManuallyOpened: welcomeGuideManuallyOpenedReducer,
 	showWelcomeGuide: showWelcomeGuideReducer,
 	tourRating: tourRatingReducer,
 	welcomeGuideVariant: welcomeGuideVariantReducer,
+	shouldShowFirstPostPublishedModal: shouldShowFirstPostPublishedModalReducer,
 } );
 
 const actions = {
@@ -75,6 +87,16 @@ const actions = {
 		return {
 			type: 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS',
 			response,
+		};
+	},
+	*fetchShouldShowFirstPostPublishedModal() {
+		const response = yield apiFetchControls( {
+			path: '/wpcom/v2/block-editor/should-show-first-post-published-modal',
+		} );
+
+		return {
+			type: 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL',
+			value: response.should_show_first_post_published_modal,
 		};
 	},
 	setShowWelcomeGuide: ( show, { openedManually } = {} ) => {
@@ -96,6 +118,9 @@ const actions = {
 	setUsedPageOrPatternsModal: () => {
 		return { type: 'WPCOM_HAS_USED_PATTERNS_MODAL' };
 	},
+	setShouldShowFirstPostPublishedModal: ( value ) => {
+		return { type: 'WPCOM_SET_SHOULD_SHOW_FIRST_POST_PUBLISHED_MODAL', value };
+	},
 	// The `resetStore` action is only used for testing to reset the
 	// store inbetween tests.
 	resetStore: () => ( {
@@ -111,6 +136,7 @@ const selectors = {
 	// the 'modal' variant previously used for mobile has been removed but its slug may still be persisted in local storage
 	getWelcomeGuideVariant: ( state ) =>
 		state.welcomeGuideVariant === 'modal' ? DEFAULT_VARIANT : state.welcomeGuideVariant,
+	getShouldShowFirstPostPublishedModal: ( state ) => state.shouldShowFirstPostPublishedModal,
 };
 
 export function register() {

@@ -22,8 +22,10 @@
 	}
 
 	.button.domain-suggestion__action {
-		min-width: 120px;
 		padding: 0;
+		@include break-mobile {
+			min-width: 120px;
+		}
 	}
 
 	.card {

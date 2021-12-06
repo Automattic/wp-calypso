@@ -6,7 +6,7 @@ import assert from 'assert';
 import {
 	DataHelper,
 	BrowserManager,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	GutenbergEditorPage,
 	PublishedPostPage,
@@ -21,8 +21,8 @@ const quote =
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let page;
-	const mainUser = 'gutenbergSimpleSiteUser';
-	const anotherUser = 'defaultUser';
+	const postingUser = 'simpleSitePersonalPlanUser';
+	const likeUser = 'defaultUser';
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -34,8 +34,8 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		let publishedURL;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, mainUser );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: postingUser } );
 		} );
 
 		it( 'Start new post', async function () {
@@ -71,15 +71,21 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 			await BrowserManager.clearAuthenticationState( page );
 		} );
 
-		it( `Like post as ${ anotherUser }`, async function () {
+		it( `Like post as ${ likeUser }`, async function () {
 			publishedPostPage = new PublishedPostPage( page );
 
-			const loginFlow = new LoginFlow( page, anotherUser );
-
 			// Clicking the Like button will bring up a new popup.
-			// `loginFromPopup` will observe for a popup event, grab the new popup and
-			// execute the login process on that page.
-			await Promise.all( [ loginFlow.logInFromPopup(), publishedPostPage.likePost() ] );
+			// Observe for the new popup in the Promise. Once the Page object
+			// is obtained, execute login steps there and wait for the
+			// popup to close.
+			await Promise.all( [
+				page.on( 'popup', async ( popup ) => {
+					const loginPage = new LoginPage( popup );
+					await loginPage.loginFromPopup( { account: likeUser } );
+					await popup.waitForEvent( 'close' );
+				} ),
+				publishedPostPage.likePost(),
+			] );
 		} );
 	} );
 } );

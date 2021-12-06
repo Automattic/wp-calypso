@@ -1,0 +1,248 @@
+@import '@automattic/onboarding/styles/base-styles.scss';
+@import '@automattic/onboarding/styles/mixins.scss';
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+@import './mixins.scss';
+
+.import__onboarding-page {
+	@include onboarding-block-margin;
+
+	.components-button.action-buttons__next.is-primary {
+		padding: 9px 40px;
+		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		line-height: 20px;
+
+		// override unnecessary super specificity added by another class
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+
+		&:disabled {
+			color: #fff;
+			background-color: #dcdcde;
+		}
+	}
+
+	.import__header {
+		@include onboarding-heading-padding;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.import__heading {
+		flex-grow: 1;
+
+		@include break-medium {
+			h1 {
+				width: 492px;
+				margin: auto;
+			}
+
+			h2 {
+				width: 560px;
+				margin: auto;
+			}
+		}
+
+		&.center {
+			text-align: center;
+		}
+
+		strong {
+			font-weight: 500; /* stylelint-disable-line */
+			color: var( --studio-gray-100 );
+		}
+
+		.onboarding-title {
+			@include onboarding-import-heading-text;
+			margin-bottom: 20px;
+		}
+
+		.onboarding-subtitle {
+			font-size: 1.125rem; /* stylelint-disable-line */
+			line-height: 1.4444em;
+
+			@include break-small {
+				width: 600px;
+			}
+		}
+
+		.import__buttons-group {
+			margin: 28px 0;
+		}
+
+		.action-buttons__next {
+			margin-bottom: 20px;
+		}
+
+		.components-button.action-buttons__back {
+			color: var( --studio-gray-100 );
+			font-weight: 500; /* stylelint-disable-line */
+
+			&:hover {
+				color: var( --color-neutral-70 );
+			}
+		}
+	}
+
+	.import__heading-center {
+		text-align: center;
+	}
+
+	// Layout
+	.import-layout {
+		@include onboarding-block-margin;
+		@include onboarding-heading-padding;
+		display: flex;
+		flex-direction: column;
+
+		@include break-small {
+			flex-direction: row;
+		}
+	}
+
+	.import-layout__column {
+		display: flex;
+		flex-direction: column;
+		flex-basis: 100%;
+	}
+
+	.import-layout__center {
+		background-color: var( --contrastColor );
+		tab-size: 4;
+		min-height: calc( 100vh - 2 * #{$onboarding-header-height} );
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+}
+
+// Navigation
+.signup.is-importer {
+	.step-wrapper {
+		max-width: initial;
+	}
+
+	.step-wrapper__navigation {
+		.step-wrapper__navigation-link.forward {
+			border: none;
+			background: none;
+			text-decoration: underline;
+			color: var( --studio-gray-100 );
+			box-shadow: none;
+		}
+	}
+}
+
+/**
+ * New components style
+ 	- it's mostly style overrides
+ */
+
+// ActionCard component
+.card.action-card {
+	box-shadow: 0 1px 0 var( --studio-gray-5 );
+
+	&.is-compact {
+		display: flex;
+		padding: 12px 0;
+	}
+
+	&:last-child {
+		box-shadow: none;
+	}
+
+	.action-card__heading {
+		margin: 0 0 2px;
+		line-height: 1.2em;
+		color: 0 1px 0 var( --studio-gray-100 );
+	}
+
+	.action-card__main p {
+		color: var( --studio-gray-40 );
+		font-size: 0.875em; /* stylelint-disable-line */
+		margin-bottom: 0;
+	}
+
+	.action-card__button-container {
+		text-align: right;
+		margin-bottom: 0;
+	}
+
+	.action-card__button-container a,
+	.action-card__button-container button {
+		text-align: right;
+		padding-right: 0;
+		border: none;
+	}
+
+	.action-card__button-container a svg,
+	.action-card__button-container button svg {
+		fill: var( --studio-gray-30 );
+	}
+}
+
+// Modal component
+.components-modal__frame.components-modal-new__frame {
+	border-radius: 4px; /* stylelint-disable-line */
+
+	p {
+		font-size: 1rem; /* stylelint-disable-line */
+		color: var( --studio-gray-70 );
+		margin-bottom: 1em;
+
+		@include break-small {
+			font-size: 1.125rem; /* stylelint-disable-line */
+			line-height: 1.4444em;
+		}
+	}
+
+	strong {
+		font-weight: 500; /* stylelint-disable-line */
+	}
+
+	.components-modal__content {
+		display: block;
+		margin-top: 0;
+		padding: 40px;
+		overflow: auto;
+
+		&::before {
+			margin: 0;
+		}
+	}
+
+	.components-modal__header {
+		position: static;
+		display: block;
+		height: auto;
+		border: none;
+		margin-top: 0;
+		padding: 0;
+
+		button {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			left: auto;
+			padding: 0;
+
+			svg {
+				width: 34px;
+				height: 34px;
+			}
+		}
+
+		.components-modal__header-heading-container {
+			display: block;
+		}
+
+		.components-modal__header-heading {
+			font-size: 2rem;
+			font-weight: normal;
+			line-height: 1.25em;
+			margin-bottom: 0.75em;
+		}
+	}
+}

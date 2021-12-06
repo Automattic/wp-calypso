@@ -1,30 +1,48 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
-// Total time to perform "loading"
+// Default estimated time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-const useSteps = ( { flowName, hasPaidDomain, hasAppliedDesign } ) => {
+const flowsWithDesignPicker = [ 'setup-site', 'do-it-for-me' ];
+
+const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => {
 	const { __ } = useI18n();
 	let steps = [];
 
 	switch ( flowName ) {
 		case 'launch-site':
-			steps = [ __( 'Your site will be live shortly.' ) ]; // copy from 'packages/launch/src/focused-launch/success'
-			break;
-		case 'setup-site':
-			steps = [ __( 'Applying design' ) ];
+			steps = [ { title: __( 'Your site will be live shortly.' ) } ]; // copy from 'packages/launch/src/focused-launch/success'
 			break;
 		default:
 			steps = [
-				__( 'Building your site' ),
-				hasPaidDomain && __( 'Getting your domain' ),
-				hasAppliedDesign && __( 'Applying design' ),
+				! isDestinationSetupSiteFlow && { title: __( 'Building your site' ) },
+				hasPaidDomain && { title: __( 'Getting your domain' ) },
+				! isDestinationSetupSiteFlow && { title: __( 'Applying design' ) },
 			];
+	}
+
+	if ( flowsWithDesignPicker.includes( flowName ) ) {
+		// Custom durations give a more believable loading effect while setting up
+		// the site with headstart. Which can take quite a long time.
+		steps = [
+			{ title: __( 'Laying the foundations' ), duration: 7000 },
+			{ title: __( 'Turning on the lights' ), duration: 3000 },
+			{ title: __( 'Making it beautiful' ), duration: 4000 },
+			{ title: __( 'Personalizing your site' ), duration: 7000 },
+			{ title: __( 'Sprinkling some magic' ), duration: 4000 },
+			{ title: __( 'Securing your data' ), duration: 9000 },
+			{ title: __( 'Enabling encryption' ), duration: 3000 },
+			{ title: __( 'Optimizing your content' ), duration: 6000 },
+			{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
+			{ title: __( 'Closing the loop' ) },
+		];
 	}
 
 	return useRef( steps.filter( Boolean ) );
@@ -36,9 +54,15 @@ export default function ReskinnedProcessingScreen( props ) {
 	const { __ } = useI18n();
 
 	const steps = useSteps( props );
+	const { isDestinationSetupSiteFlow, flowName } = props;
 	const totalSteps = steps.current.length;
+	const shouldShowNewSpinner =
+		isDestinationSetupSiteFlow || flowsWithDesignPicker.includes( flowName );
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
+
+	const defaultDuration = DURATION_IN_MS / totalSteps;
+	const duration = steps.current[ currentStep ]?.duration || defaultDuration;
 
 	/**
 	 * Completion progress: 0 <= progress <= 1
@@ -48,8 +72,8 @@ export default function ReskinnedProcessingScreen( props ) {
 
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),
-		// Enable the interval when progress is incomplete
-		isComplete ? null : DURATION_IN_MS / totalSteps
+		// Enable the interval when progress is incomplete.
+		isComplete ? null : duration
 	);
 
 	// Force animated progress bar to start at 0
@@ -60,25 +84,36 @@ export default function ReskinnedProcessingScreen( props ) {
 	}, [] );
 
 	return (
-		<div className="reskinned-processing-screen">
+		<div
+			className={ classnames( 'reskinned-processing-screen', {
+				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
+			} ) }
+		>
 			<h1 className="reskinned-processing-screen__progress-step">
-				{ steps.current[ currentStep ] }
+				{ steps.current[ currentStep ]?.title }
 			</h1>
-			<div
-				className="reskinned-processing-screen__progress-bar"
-				style={ {
-					'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-				} }
-			/>
-			<p className="reskinned-processing-screen__progress-numbered-steps">
-				{
-					// translators: these are progress steps. Eg: step 1 of 4.
-					sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-						currentStep: currentStep + 1,
-						totalSteps,
-					} )
-				}
-			</p>
+			{ shouldShowNewSpinner && <LoadingEllipsis /> }
+			{ ! shouldShowNewSpinner && (
+				<>
+					<div
+						className="reskinned-processing-screen__progress-bar"
+						style={ {
+							'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
+						} }
+					/>
+					{ totalSteps > 1 && (
+						<p className="reskinned-processing-screen__progress-numbered-steps">
+							{
+								// translators: these are progress steps. Eg: step 1 of 4.
+								sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+									currentStep: currentStep + 1,
+									totalSteps,
+								} )
+							}
+						</p>
+					) }
+				</>
+			) }
 		</div>
 	);
 }
@@ -86,5 +121,5 @@ export default function ReskinnedProcessingScreen( props ) {
 ReskinnedProcessingScreen.propTypes = {
 	flowName: PropTypes.string,
 	hasPaidDomain: PropTypes.bool,
-	hasAppliedDesign: PropTypes.bool,
+	isDestinationSetupSiteFlow: PropTypes.bool,
 };

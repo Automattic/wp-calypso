@@ -1,9 +1,9 @@
-import isSiteUsingFullSiteEditing from '../is-site-using-full-site-editing';
+import isSiteUsingLegacyFSE from '../is-site-using-legacy-fse';
 
-describe( 'isSiteUsingFullSiteEditing', () => {
+describe( 'isSiteUsingLegacyFSE', () => {
 	test( 'returns false if site does not exist', () => {
 		const state = { sites: { items: {} } };
-		const isFSE = isSiteUsingFullSiteEditing( state, 1 );
+		const isFSE = isSiteUsingLegacyFSE( state, 1 );
 		expect( isFSE ).toBe( false );
 	} );
 
@@ -21,7 +21,7 @@ describe( 'isSiteUsingFullSiteEditing', () => {
 				},
 			},
 		};
-		const isFSE = isSiteUsingFullSiteEditing( state, 123 );
+		const isFSE = isSiteUsingLegacyFSE( state, 123 );
 		expect( isFSE ).toBe( true );
 	} );
 
@@ -39,7 +39,7 @@ describe( 'isSiteUsingFullSiteEditing', () => {
 				},
 			},
 		};
-		const isFSE = isSiteUsingFullSiteEditing( state, 123 );
+		const isFSE = isSiteUsingLegacyFSE( state, 123 );
 		expect( isFSE ).toBe( false );
 	} );
 
@@ -56,7 +56,7 @@ describe( 'isSiteUsingFullSiteEditing', () => {
 				},
 			},
 		};
-		const isFSE = isSiteUsingFullSiteEditing( state, 123 );
+		const isFSE = isSiteUsingLegacyFSE( state, 123 );
 		expect( isFSE ).toBe( false );
 	} );
 } );

@@ -18,6 +18,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object WebApp : Project({
 	id("WebApp")
@@ -26,11 +27,10 @@ object WebApp : Project({
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(seleniumBuildType("desktop", "52f38738-92b2-43cb-b7fb-19fce03cb67c"))
-	buildType(seleniumBuildType("mobile", "04de2dd8-9896-4917-b31d-c04eb1c8ecdb"))
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
+	buildType(QuarantinedE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -87,6 +87,7 @@ object BuildDockerImage : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
 				commandArgs = """
 					--pull
@@ -107,6 +108,7 @@ object BuildDockerImage : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
 			}
 		}
@@ -156,6 +158,7 @@ object RunAllUnitTests : BuildType({
 	artifactRules = """
 		test_results => test_results
 		artifacts => artifacts
+		checkstyle_results => checkstyle_results
 	""".trimIndent()
 
 	vcs {
@@ -171,6 +174,38 @@ object RunAllUnitTests : BuildType({
 
 				# Install modules
 				${_self.yarn_install_cmd}
+
+				# The "name" property refers to the code of the message (like YN0002).
+
+				# Generate a JSON array of the errors we care about:
+				# 1. Select warning YN0002 (Unmet peer dependencies.)
+				# 2. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
+				# 3. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
+				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 68 or (.type == "error" and .name != 0)) ]')
+
+				num_errors=${'$'}(jq length <<< "${'$'}yarn_errors")
+				if [ "${'$'}num_errors" -gt 0 ] ; then
+					# Construct warning strings from the JSON array of yarn problems.
+					err_string=${'$'}(jq '.[] | "Yarn error \(.displayName): \(.data)"' <<< "${'$'}yarn_errors")
+
+					# Remove quotes which had to be added in the jq expression:
+					err_string=${'$'}(sed 's/^"//g;s/"${'$'}//g' <<< "${'$'}err_string")
+
+					# Escape values as needed for TeamCity: https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+values
+					# Specifically, add | before every [, ], |, and '.
+					err_string=${'$'}(sed "s/\([][|']\)/|\1/g" <<< "${'$'}err_string")
+
+					# Output each yarn problem as a TeamCity service message for easier debugging.
+					while read -r err ; do
+						echo "##teamcity[message text='${'$'}err' status='ERROR']"
+					done <<< "${'$'}err_string"
+
+					# Quick plural handling because why not.
+					if [ "${'$'}num_errors" -gt 1 ]; then s='s'; else s=''; fi
+
+					echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
+					exit 1
+				fi
 			"""
 		}
 		bashNodeScript {
@@ -216,10 +251,19 @@ object RunAllUnitTests : BuildType({
 			scriptContent = """
 				export NODE_ENV="test"
 
-				# Run type checks
+				# These are not expected to fail
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
-				yarn tsc --project client/landing/gutenboarding
+
+				# These have known errors, so we report them as checkstyle
+				(
+					# Enable pipe errors in this subshell. After all, we know these will fail.
+					set +e
+					yarn tsc --build client 2>&1 | tee tsc_out
+					mkdir -p checkstyle_results
+					yarn run typescript-checkstyle < tsc_out > ./checkstyle_results/tsc.xml
+					cat ./checkstyle_results/tsc.xml
+				)
 			"""
 		}
 		bashNodeScript {
@@ -231,7 +275,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Run client tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
@@ -243,7 +287,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Run server tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
@@ -255,7 +299,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Run packages tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
@@ -267,7 +311,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Run build-tools tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
@@ -298,8 +342,9 @@ object RunAllUnitTests : BuildType({
 	features {
 		feature {
 			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "test_results/**/*.xml")
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/*.xml")
+			param("xmlReportParsing.verboseOutput", "true")
 		}
 		perfmon {
 		}
@@ -345,6 +390,17 @@ object CheckCodeStyleBranch : BuildType({
 	name = "Code style"
 	description = "Check code style"
 
+	params {
+		checkbox(
+			name = "run_full_eslint",
+			value = "false",
+			label = "Run full eslint",
+			description = "Run ESLint for all files in the repo, not only for changed files",
+			checked = "true",
+			unchecked = "false"
+		)
+	}
+
 	artifactRules = """
 		checkstyle_results => checkstyle_results
 	""".trimIndent()
@@ -370,7 +426,7 @@ object CheckCodeStyleBranch : BuildType({
 				export NODE_ENV="test"
 
 				# Find files to lint
-				if [ "%calypso.run_full_eslint%" = "true" ]; then
+				if [ "%run_full_eslint%" = "true" ]; then
 					FILES_TO_LINT="."
 				else
 					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
@@ -431,171 +487,33 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
-	return BuildType {
-		id("Calypso_E2E_Selenium_$viewportName")
-		uuid = buildUuid
-		name = "Selenium E2E Tests ($viewportName)"
-		description = "Runs Calypso e2e tests in $viewportName size using Selenium"
-		artifactRules = """
-			reports => reports
-			logs.tgz => logs.tgz
-			screenshots => screenshots
-		""".trimIndent()
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		steps {
-			bashNodeScript {
-				name = "Prepare environment"
-				scriptContent = """
-					export NODE_ENV="test"
-
-					# Install modules
-					${_self.yarn_install_cmd}
-
-					# Build package
-					yarn workspace @automattic/mocha-debug-reporter build
-				"""
-				dockerImage = "%docker_image_e2e%"
-			}
-			bashNodeScript {
-				name = "Run e2e tests ($viewportName)"
-				scriptContent = """
-					shopt -s globstar
-					set -x
-
-					chmod +x ./bin/get-calypso-live-url.sh
-					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-					if [[ ${'$'}? -ne 0 ]]; then
-						// Command failed. URL contains stderr
-						echo ${'$'}URL
-						exit 1
-					fi
-
-					cd test/e2e
-					mkdir temp
-
-					export LIVEBRANCHES=true
-					export NODE_CONFIG_ENV=test
-					export TEST_VIDEO=true
-					export HIGHLIGHT_ELEMENT=true
-
-					# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
-					# mocha-teamcity-reporter to work.
-					export MAGELLANDEBUG=true
-
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-					# Run the test
-					export BROWSERSIZE="$viewportName"
-					export BROWSERLOCALE="en"
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-
-					yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-				dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
-			}
-			bashNodeScript {
-				name = "Collect results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					mkdir -p screenshots
-					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-					mkdir -p logs
-					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-			}
-		}
-
-		features {
-			perfmon {
-			}
-			pullRequests {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				provider = github {
-					authType = token {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-				}
-			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
-			}
-		}
-
-		triggers {
-			vcs {
-				branchFilter = """
-					+:*
-					-:pull*
-				""".trimIndent()
-			}
-		}
-
-		failureConditions {
-			executionTimeoutMin = 20
-			// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
-			// display a difference between real errors and retries, making it hard to understand what is actually failing.
-			supportTestRetry = true
-
-			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
-			// been muted previously.
-			nonZeroExitCode = false
-
-			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-			// crashes and no tests are run.
-			failOnMetricChange {
-				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-				threshold = 50
-				units = BuildFailureOnMetric.MetricUnit.PERCENTS
-				comparison = BuildFailureOnMetric.MetricComparison.LESS
-				compareTo = build {
-					buildRule = lastSuccessful()
-				}
-			}
-		}
-
-		dependencies {
-			snapshot(BuildDockerImage) {
-				onDependencyFailure = FailureAction.FAIL_TO_START
-			}
-		}
-	}
-}
-
 fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	return BuildType {
 		id("Calypso_E2E_Playwright_$targetDevice")
 		uuid = buildUuid
-		name = "Playwright E2E Tests ($targetDevice)"
-		description = "Runs Calypso e2e tests as $targetDevice using Playwright"
+		name = "E2E Tests ($targetDevice)"
+		description = "Runs Calypso e2e tests on $targetDevice size"
 
 		artifactRules = """
-			reports => reports
 			logs.tgz => logs.tgz
 			screenshots => screenshots
+			trace => trace
 		""".trimIndent()
 
 		vcs {
 			root(Settings.WpCalypso)
 			cleanCheckout = true
+		}
+
+		params {
+			checkbox(
+				name = "env.SAVE_AUTH_COOKIES",
+				value = "true",
+				label = "Save authentication cookies",
+				description = "Login once and reuse auth cookies for all specs",
+				checked = "true",
+				unchecked = "false"
+			)
 		}
 
 		steps {
@@ -648,6 +566,9 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 
 					mkdir -p logs
 					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+					mkdir -p trace
+					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -681,12 +602,32 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 				branchFilter = """
 					+:*
 					-:pull*
+					-:trunk
 				""".trimIndent()
+			}
+			schedule {
+				schedulingPolicy = cron {
+					minutes = "0/30"
+				}
+				branchFilter = "+:trunk"
+				triggerBuild = always()
+				withPendingChangesOnly = false
 			}
 		}
 
 		failureConditions {
 			executionTimeoutMin = 20
+			// Do not fail on non-zero exit code to permit passing builds with muted tests.
+			nonZeroExitCode = false
+			failOnMetricChange {
+				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+				threshold = 50
+				units = BuildFailureOnMetric.MetricUnit.PERCENTS
+				comparison = BuildFailureOnMetric.MetricComparison.LESS
+				compareTo = build {
+					buildRule = lastSuccessful()
+				}
+			}
 		}
 
 		dependencies {
@@ -705,9 +646,9 @@ object PreReleaseE2ETests : BuildType({
 	maxRunningBuilds = 1
 
 	artifactRules = """
-		reports => reports
 		logs.tgz => logs.tgz
 		screenshots => screenshots
+		trace => trace
 	""".trimIndent()
 
 	vcs {
@@ -755,6 +696,9 @@ object PreReleaseE2ETests : BuildType({
 
 				mkdir -p logs
 				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -781,5 +725,116 @@ object PreReleaseE2ETests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		nonZeroExitCode = false
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
+	}
+})
+
+object QuarantinedE2ETests: BuildType( {
+	id("Quarantined_E2E_Tests")
+	uuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c"
+	name = "Quarantined E2E Tests"
+	description = "E2E tests quarantined due to intermittent failures."
+	maxRunningBuilds = 1
+
+	artifactRules = """
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+		trace => trace
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		prepareEnvironment()
+		bashNodeScript {
+			name = "Run e2e tests"
+			scriptContent = """
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export URL="https://wpcalypso.wordpress.com"
+
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+				export TEAMCITY_VERSION=2021
+				export TARGET_DEVICE=desktop
+				export LOCALE=en
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+				export HEADLESS=true
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = simpleMessageFormat()
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = cron {
+				hours = "*/3"
+				dayOfWeek = "2-6"
+			}
+			branchFilter = "+:trunk"
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
+		nonZeroExitCode = false
 	}
 })

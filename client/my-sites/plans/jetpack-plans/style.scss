@@ -18,6 +18,7 @@
 
 .jetpack-plans__pricing-header {
 	margin-top: 3rem;
+	margin-bottom: 3rem;
 	padding: 0 1rem;
 	max-width: none;
 
@@ -27,5 +28,6 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: $font-headline-small;
+		margin-bottom: 0;
 	}
 }

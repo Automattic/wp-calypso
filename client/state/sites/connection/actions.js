@@ -19,9 +19,8 @@ export const requestConnectionStatus = ( siteId ) => {
 			siteId,
 		} );
 
-		return wp
-			.undocumented()
-			.testConnectionJetpack( siteId )
+		return wp.req
+			.get( `/jetpack-blogs/${ siteId }/test-connection` )
 			.then( ( response ) => {
 				dispatch( {
 					type: SITE_CONNECTION_STATUS_RECEIVE,

@@ -4,14 +4,10 @@ exports[`iOS deep link fragments returns a fragment for each section 1`] = `"%2F
 
 exports[`iOS deep link fragments returns a fragment for each section 2`] = `"%2Ftest"`;
 
-exports[`iOS deep link fragments returns a fragment for each section 3`] = `"%2Fpost"`;
-
-exports[`iOS deep link fragments returns a fragment for each section 4`] = `"%2Fnotifications"`;
+exports[`iOS deep link fragments returns a fragment for each section 3`] = `"%2Fnotifications"`;
 
 exports[`iOS deep links returns URIs for each path 1`] = `"https://apps.wordpress.com/get?campaign=calypso-open-in-app#%2Ftest"`;
 
 exports[`iOS deep links returns URIs for each path 2`] = `"https://apps.wordpress.com/get?campaign=calypso-open-in-app#%2Ftest"`;
 
-exports[`iOS deep links returns URIs for each path 3`] = `"https://apps.wordpress.com/get?campaign=calypso-open-in-app#%2Fpost"`;
-
-exports[`iOS deep links returns URIs for each path 4`] = `"https://apps.wordpress.com/get?campaign=calypso-open-in-app#%2Fnotifications"`;
+exports[`iOS deep links returns URIs for each path 3`] = `"https://apps.wordpress.com/get?campaign=calypso-open-in-app#%2Fnotifications"`;

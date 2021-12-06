@@ -17,20 +17,22 @@ interface Props {
 	domains?: string[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
+	showAddAnotherMailboxButton: boolean;
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
 }
 
 const GSuiteNewUserList: FunctionComponent< Props > = ( {
+	autoFocus = false,
 	children,
 	domains,
 	extraValidation,
-	selectedDomainName,
 	onUsersChange,
-	users,
 	onReturnKeyPress,
-	autoFocus = false,
+	selectedDomainName,
+	showAddAnotherMailboxButton = true,
+	users,
 } ) => {
 	const translate = useTranslate();
 
@@ -77,6 +79,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 						onUserValueChange={ onUserValueChange( user.uuid ) }
 						onUserRemove={ onUserRemove( user.uuid ) }
 						onReturnKeyPress={ onReturnKeyPress }
+						selectedDomainName={ selectedDomainName }
 						showTrashButton={ index > 0 }
 					/>
 
@@ -85,10 +88,12 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 			) ) }
 
 			<div className="gsuite-new-user-list__actions">
-				<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
-					<Gridicon icon="plus" />
-					<span>{ translate( 'Add another mailbox' ) }</span>
-				</Button>
+				{ showAddAnotherMailboxButton && (
+					<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
+						<Gridicon icon="plus" />
+						<span>{ translate( 'Add another mailbox' ) }</span>
+					</Button>
+				) }
 
 				{ children }
 			</div>

@@ -5,7 +5,7 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	SidebarComponent,
 	PreviewComponent,
 	ThemesPage,
@@ -29,9 +29,9 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 		page = args.page;
 	} );
 
-	it( 'Log In', async function () {
-		const loginFlow = new LoginFlow( page, user );
-		await loginFlow.logIn();
+	it( 'Log in', async function () {
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: user } );
 	} );
 
 	it( 'Navigate to Appearance > Themes', async function () {
@@ -49,6 +49,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = new ThemesPage( page );
+		// 2021-11-29: Turn this on when premium themes are activated for everyone. -mreishus
+		// await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 

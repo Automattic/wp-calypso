@@ -5,7 +5,7 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isMonthlyProduct,
 	isPlan,
@@ -394,21 +394,6 @@ function isCloseToExpiration( purchase ) {
 }
 
 /**
- * Checks if a purchase credit card number can be updated
- * Payments done via CC & Paygate can have their CC updated, but this
- * is not currently true for other providers such as EBANX.
- *
- * @param {object} purchase - the purchase with which we are concerned
- * @returns {boolean} if the purchase card can be updated
- */
-function cardProcessorSupportsUpdates( purchase ) {
-	return (
-		isPaidWithCreditCard( purchase ) &&
-		purchase.payment.creditCard.processor !== 'WPCOM_Billing_Ebanx'
-	);
-}
-
-/**
  * Checks if a purchase might be in the refund period, whether refundable or not.
  *
  * If you need to determine whether a purchase can be programmatically refunded
@@ -425,7 +410,6 @@ function cardProcessorSupportsUpdates( purchase ) {
  * who are likely to be eligible for one.
  *
  * @param {object} purchase - the purchase with which we are concerned
- *
  * @returns {boolean} Whether in refund period.
  */
 function maybeWithinRefundPeriod( purchase ) {
@@ -687,8 +671,8 @@ function purchaseType( purchase ) {
 		return purchase.productName;
 	}
 
-	if ( isGoogleWorkspace( purchase ) ) {
-		return i18n.translate( 'Productivity and Collaboration Tools at %(domain)s', {
+	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
+		return i18n.translate( 'Productivity Tools and Mailboxes at %(domain)s', {
 			args: {
 				domain: purchase.meta,
 			},
@@ -804,12 +788,9 @@ export {
 	needsToRenewSoon,
 	paymentLogoType,
 	purchaseType,
-	cardProcessorSupportsUpdates,
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	shouldRenderExpiringCreditCard,
 	shouldRenderMonthlyRenewalOption,
 };
-
-export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';

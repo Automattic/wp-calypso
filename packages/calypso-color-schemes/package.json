@@ -24,12 +24,14 @@
 		"access": "public"
 	},
 	"scripts": {
-		"clean": "npx rimraf js css src/__color-studio",
+		"clean": "rm -rf js css src/__color-studio",
 		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"postcss": "^8.2.15",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/color-studio": "2.5.0",
+		"postcss": "^8.3.11",
 		"postcss-custom-properties": "^11.0.0",
 		"sass": "^1.37.5"
 	}

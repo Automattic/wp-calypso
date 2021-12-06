@@ -36,7 +36,7 @@ const ThankYouBody = styled.div`
 	margin-top: 50px;
 	> div {
 		width: 600px;
-		padding: 0 35px;
+		padding: 0 20px;
 	}
 	div {
 		min-width: 144px;
@@ -148,9 +148,9 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	const {
-		headerBackgroundColor = '#0675C4',
+		headerBackgroundColor = 'var( --studio-blue-50 )',
 		headerClassName,
-		headerTextColor = 'white',
+		headerTextColor = 'var( --studio-white )',
 		containerClassName,
 		sections,
 		showSupportSection = true,

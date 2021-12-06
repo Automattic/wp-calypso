@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /* eslint-disable no-restricted-imports */
-import url from 'url';
 import config from '@automattic/calypso-config';
 import { getQueryArg } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -11,7 +10,6 @@ import { Component, Fragment } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { navigate } from 'calypso/lib/navigate';
 import {
@@ -83,16 +81,13 @@ interface CheckoutModalOptions extends RequestCart {
 interface State {
 	allowedTypes?: any;
 	classicBlockEditorId?: any;
-	editedPost?: any;
 	gallery?: any;
 	isIframeLoaded: boolean;
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isCheckoutModalVisible: boolean;
-	isPreviewVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
-	previewUrl: T.URL;
 	checkoutModalOptions?: CheckoutModalOptions;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -110,7 +105,6 @@ enum EditorActions {
 	GetCheckoutModalStatus = 'getCheckoutModalStatus',
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
-	PreviewPost = 'previewPost',
 	ViewPost = 'viewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
@@ -137,8 +131,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		isMediaModalVisible: false,
 		isCheckoutModalVisible: false,
 		isIframeLoaded: false,
-		isPreviewVisible: false,
-		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
 		checkoutModalOptions: undefined,
 	};
@@ -377,9 +369,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
-			const { unsavedChanges = false } = payload;
+			const { unsavedChanges = false, destinationUrl = this.props.closeUrl } = payload;
 			this.props.setEditorIframeLoaded( false );
-			this.navigate( this.props.closeUrl, unsavedChanges );
+			this.navigate( destinationUrl, unsavedChanges );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -391,11 +383,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			}
 
 			this.props.openPostRevisionsDialog();
-		}
-
-		if ( EditorActions.PreviewPost === action ) {
-			const { postUrl } = payload;
-			this.openPreviewModal( postUrl, ports[ 0 ] );
 		}
 
 		if ( EditorActions.ViewPost === action ) {
@@ -610,42 +597,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		} );
 	};
 
-	openPreviewModal = ( postUrl: string, previewPort: MessagePort ) => {
-		this.setState( {
-			isPreviewVisible: true,
-			previewUrl: 'about:blank',
-			postUrl,
-		} );
-
-		previewPort.onmessage = ( message: MessageEvent ) => {
-			previewPort.close();
-
-			const { frameNonce, unmappedSiteUrl } = this.props;
-			const { previewUrl, editedPost } = message.data;
-			const parsedPreviewUrl = url.parse( previewUrl, true );
-
-			if ( frameNonce ) {
-				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
-			}
-
-			parsedPreviewUrl.query.iframe = 'true';
-			delete parsedPreviewUrl.search;
-
-			const { host: unmappedSiteUrlHost } = url.parse( unmappedSiteUrl );
-			if ( unmappedSiteUrlHost ) {
-				parsedPreviewUrl.host = unmappedSiteUrlHost;
-				parsedPreviewUrl.hostname = unmappedSiteUrlHost;
-			}
-
-			this.setState( {
-				previewUrl: url.format( parsedPreviewUrl ),
-				editedPost,
-			} );
-		};
-	};
-
-	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
-
 	/* eslint-disable @typescript-eslint/ban-types */
 	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
 		let { customizerUrl } = this.props;
@@ -734,10 +685,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			allowedTypes,
 			multiple,
 			isIframeLoaded,
-			isPreviewVisible,
-			previewUrl,
-			postUrl,
-			editedPost,
 			currentIFrameUrl,
 			checkoutModalOptions,
 		} = this.state;
@@ -808,14 +755,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					require="calypso/post-editor/editor-revisions/dialog"
 					placeholder={ null }
 					loadRevision={ this.loadRevision }
-				/>
-				<WebPreview
-					externalUrl={ postUrl }
-					onClose={ this.closePreviewModal }
-					overridePost={ editedPost }
-					previewUrl={ previewUrl }
-					showEditHeaderLink={ true }
-					showPreview={ isPreviewVisible }
 				/>
 			</Fragment>
 		);

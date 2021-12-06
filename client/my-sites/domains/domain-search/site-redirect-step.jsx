@@ -197,4 +197,4 @@ export default connect( null, {
 	recordInputFocus,
 	recordGoButtonClick,
 	recordFormSubmit,
-} )( withShoppingCart( withCartKey( localize( SiteRedirectStep ) ) ) );
+} )( withCartKey( withShoppingCart( localize( SiteRedirectStep ) ) ) );

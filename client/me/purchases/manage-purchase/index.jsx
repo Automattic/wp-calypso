@@ -18,9 +18,11 @@ import {
 	isTitanMail,
 	applyTestFiltersToPlansList,
 	isWpComMonthlyPlan,
+	JETPACK_BACKUP_T1_PRODUCTS,
 	JETPACK_PLANS,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_PRODUCTS_LIST,
+	JETPACK_SECURITY_T1_PLANS,
 	isP2Plus,
 	getMonthlyPlanByYearly,
 } from '@automattic/calypso-products';
@@ -37,6 +39,7 @@ import Badge from 'calypso/components/badge';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
@@ -44,7 +47,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
 	getDisplayName,
 	getPartnerName,
@@ -57,10 +59,8 @@ import {
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
-	isPaidWithCreditCard,
 	isPartnerPurchase,
 	isRenewable,
-	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
 	purchaseType,
@@ -69,7 +69,6 @@ import {
 } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
@@ -86,9 +85,7 @@ import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
-	isPurchaseManagementLocked,
 	getRenewableSitePurchases,
-	shouldRevertAtomicSiteBeforeDeactivation,
 } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -133,7 +130,6 @@ class ManagePurchase extends Component {
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
-		userId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -150,6 +146,7 @@ class ManagePurchase extends Component {
 		cancelLink: null,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
 			page.redirect( this.props.purchaseListUrl );
@@ -157,6 +154,7 @@ class ManagePurchase extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			page.redirect( this.props.purchaseListUrl );
@@ -230,11 +228,39 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	renderUpgradeButton() {
+		const { purchase, translate } = this.props;
+
+		const isUpgradeablePlan =
+			isPlan( purchase ) &&
+			! isEcommerce( purchase ) &&
+			! isComplete( purchase ) &&
+			! isP2Plus( purchase );
+		const isUpgradeableProduct =
+			! isPlan( purchase ) && JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+
+		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
+			return null;
+		}
+
+		if ( isExpired( purchase ) ) {
+			return null;
+		}
+
+		const upgradeUrl = this.getUpgradeUrl();
+
+		return (
+			<Button primary compact href={ upgradeUrl }>
+				{ translate( 'Upgrade' ) }
+			</Button>
+		);
+	}
+
 	renderSelectNewButton() {
 		const { translate, siteId } = this.props;
 
 		return (
-			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }/` } compact>
+			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }` } compact>
 				{ translate( 'Select a new plan' ) }
 			</Button>
 		);
@@ -302,26 +328,52 @@ class ManagePurchase extends Component {
 		} );
 	};
 
-	renderUpgradeNavItem() {
-		const { purchase, translate, siteId } = this.props;
-		const buttonText = isExpired( purchase )
-			? translate( 'Pick Another Plan' )
-			: translate( 'Upgrade Plan' );
+	getUpgradeUrl() {
+		const { purchase, siteId } = this.props;
 
-		if (
-			! isPlan( purchase ) ||
-			isEcommerce( purchase ) ||
-			isComplete( purchase ) ||
-			isP2Plus( purchase )
-		) {
+		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
+
+		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
+			return `/plans/storage/${ siteId }`;
+		}
+
+		return `/plans/${ siteId }`;
+	}
+
+	renderUpgradeNavItem() {
+		const { purchase, translate } = this.props;
+
+		const isUpgradeablePlan =
+			purchase &&
+			isPlan( purchase ) &&
+			! isEcommerce( purchase ) &&
+			! isComplete( purchase ) &&
+			! isP2Plus( purchase );
+
+		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+		const isUpgradeableProduct = isUpgradeableBackupProduct;
+
+		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
 		}
+
+		let buttonText;
+		if ( isExpired( purchase ) ) {
+			buttonText = isUpgradeablePlan
+				? translate( 'Pick Another Plan' )
+				: translate( 'Pick Another Product' );
+		} else {
+			buttonText = translate( 'Upgrade' );
+		}
+
+		const upgradeUrl = this.getUpgradeUrl();
 
 		return (
 			<CompactCard
 				tagName="button"
 				displayAsLink
-				href={ `/plans/${ siteId }/` }
+				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
 				{ buttonText }
@@ -333,7 +385,7 @@ class ManagePurchase extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }/` }>
+			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }` }>
 				{ translate( 'Select a new plan' ) }
 			</CompactCard>
 		);
@@ -352,15 +404,6 @@ class ManagePurchase extends Component {
 
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
-			const renewing = isRenewing( purchase );
-
-			if (
-				renewing &&
-				isPaidWithCreditCard( purchase ) &&
-				! cardProcessorSupportsUpdates( purchase )
-			) {
-				return null;
-			}
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
@@ -433,7 +476,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, shouldRevertAtomicSiteBeforeCancel, translate } = this.props;
+		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
 		if ( ! isCancelable( purchase ) ) {
@@ -441,12 +484,9 @@ class ManagePurchase extends Component {
 		}
 
 		let text;
-		let link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
+		const link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
 
-		if ( shouldRevertAtomicSiteBeforeCancel && ! config.isEnabled( 'atomic/automated-revert' ) ) {
-			text = translate( 'Contact Support to Cancel your Subscription' );
-			link = CALYPSO_CONTACT;
-		} else if ( hasAmountAvailableToRefund( purchase ) ) {
+		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				text = translate( 'Cancel Domain and Refund' );
 			}
@@ -538,19 +578,23 @@ class ManagePurchase extends Component {
 		return null;
 	}
 
-	renderPurchaseDescription() {
-		const { plan, purchase, site, theme, translate } = this.props;
-
-		let description = purchaseType( purchase );
+	getPurchaseDescription() {
+		const { plan, purchase, theme, translate } = this.props;
 
 		if ( isPlan( purchase ) ) {
-			description = plan.getDescription();
-		} else if ( isTheme( purchase ) && theme ) {
-			description = theme.description;
-		} else if ( isConciergeSession( purchase ) ) {
-			description = purchase.description;
-		} else if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
-			description = translate(
+			return plan.getDescription();
+		}
+
+		if ( isTheme( purchase ) && theme ) {
+			return theme.description;
+		}
+
+		if ( isConciergeSession( purchase ) ) {
+			return purchase.description;
+		}
+
+		if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
+			return translate(
 				"Replaces your site's free address, %(domain)s, with the domain, " +
 					'making it easier to remember and easier to share.',
 				{
@@ -559,41 +603,26 @@ class ManagePurchase extends Component {
 					},
 				}
 			);
-		} else if ( isDomainTransfer( purchase ) ) {
-			description = translate(
+		}
+
+		if ( isDomainTransfer( purchase ) ) {
+			return translate(
 				'Transfers an existing domain from another provider to WordPress.com, ' +
 					'helping you manage your site and domain in one place.'
 			);
-		} else if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
-			description = translate(
-				'Professional email integrated with Google Meet and other collaboration tools from Google.'
-			);
+		}
+
+		if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
+			const description = isTitanMail( purchase )
+				? translate(
+						'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
+				  )
+				: translate(
+						'Professional email integrated with Google Meet and other productivity tools from Google.'
+				  );
 
 			if ( purchase.purchaseRenewalQuantity ) {
-				description = (
-					<>
-						{ description }{ ' ' }
-						{ translate(
-							'This purchase is for %(numberOfUsers)d user for the domain %(domain)s.',
-							'This purchase is for %(numberOfUsers)d users for the domain %(domain)s.',
-							{
-								count: purchase.purchaseRenewalQuantity,
-								args: {
-									numberOfUsers: purchase.purchaseRenewalQuantity,
-									domain: purchase.meta,
-								},
-							}
-						) }
-					</>
-				);
-			}
-		} else if ( isTitanMail( purchase ) ) {
-			description = translate(
-				'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
-			);
-
-			if ( purchase.purchaseRenewalQuantity ) {
-				description = (
+				return (
 					<>
 						{ description }{ ' ' }
 						{ translate(
@@ -610,17 +639,27 @@ class ManagePurchase extends Component {
 					</>
 				);
 			}
+
+			return description;
 		}
+
+		return purchaseType( purchase );
+	}
+
+	renderPurchaseDescription() {
+		const { purchase, site, translate } = this.props;
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
 		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
 
 		return (
 			<div className="manage-purchase__content">
-				<span className="manage-purchase__description">{ description }</span>
+				<span className="manage-purchase__description">{ this.getPurchaseDescription() }</span>
+
 				<span className="manage-purchase__settings-link">
 					{ site && <ProductLink purchase={ purchase } selectedSite={ site } /> }
 				</span>
+
 				{ registrationAgreementUrl && (
 					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
 						{ domainRegistrationAgreementLinkText }
@@ -705,15 +744,14 @@ class ManagePurchase extends Component {
 			siteSlug,
 			getChangePaymentMethodUrlFor,
 			hasLoadedPurchasesFromServer,
-			canManagePurchase,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
-			'is-personal': isPersonal( purchase ),
-			'is-premium': isPremium( purchase ),
-			'is-business': isBusiness( purchase ),
-			'is-jetpack-product': isJetpackProduct( purchase ),
+			'is-personal': purchase && isPersonal( purchase ),
+			'is-premium': purchase && isPremium( purchase ),
+			'is-business': purchase && isBusiness( purchase ),
+			'is-jetpack-product': purchase && isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;
@@ -760,11 +798,12 @@ class ManagePurchase extends Component {
 							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
-					{ isProductOwner && canManagePurchase && (
-						<>
+					{ isProductOwner && (
+						<div className="manage-purchase__renew-upgrade-buttons">
 							{ preventRenewal && this.renderSelectNewButton() }
+							{ this.renderUpgradeButton() }
 							{ ! preventRenewal && this.renderRenewButton() }
-						</>
+						</div>
 					) }
 				</Card>
 				<PurchasePlanDetails
@@ -772,13 +811,13 @@ class ManagePurchase extends Component {
 					isProductOwner={ isProductOwner }
 				/>
 
-				{ isProductOwner && canManagePurchase && (
+				{ isProductOwner && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ ! preventRenewal && ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
@@ -822,6 +861,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<Fragment>
+				<QueryStoredCards />
 				<TrackPurchasePageView
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -829,7 +869,7 @@ class ManagePurchase extends Component {
 				{ this.props.siteId ? (
 					<QuerySitePurchases siteId={ this.props.siteId } />
 				) : (
-					<QueryUserPurchases userId={ this.props.userId } />
+					<QueryUserPurchases />
 				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
@@ -922,14 +962,8 @@ export default connect( ( state, props ) => {
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
 		isAtomicSite: isSiteAtomic( state, siteId ),
-		userId,
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
 		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
-		shouldRevertAtomicSiteBeforeCancel: shouldRevertAtomicSiteBeforeDeactivation(
-			state,
-			purchase?.id
-		),
-		canManagePurchase: ! isPurchaseManagementLocked( state, purchase?.id ),
 	};
 } )( localize( ManagePurchase ) );

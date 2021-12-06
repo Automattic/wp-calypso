@@ -16,7 +16,13 @@
 		},
 		{
 			"extends": "monorepo:react",
-			"prPriority": 1
+			"prPriority": 1,
+			"ignorePaths": [ "packages/interpolate-components" ]
+		},
+		{
+			"extends": [ "monorepo:react", ":disablePeerDependencies" ],
+			"prPriority": 1,
+			"includePaths": [ "packages/interpolate-components" ]
 		},
 		{
 			"packagePatterns": [ "^redux$", "^react-redux$" ],
@@ -69,5 +75,5 @@
 	"semanticCommitType": "chore",
 	"masterIssue": true,
 	"masterIssueTitle": "Renovate Dependency Updates",
-	"reviewers": [ "team:@Automattic/team-calypso-platform" ]
+	"reviewers": [ "team:team-calypso-platform" ]
 }

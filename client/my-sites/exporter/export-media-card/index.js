@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import QueryMediaExport from 'calypso/components/data/query-media-export';
 import QueryMediaStorage from 'calypso/components/data/query-media-storage';
 import FoldableCard from 'calypso/components/foldable-card';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getMediaExportUrl from 'calypso/state/selectors/get-media-export-url';
 import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
@@ -54,6 +55,21 @@ class ExportMediaCard extends Component {
 									<h2 className="export-media-card__subtitle">
 										{ translate(
 											'Download all the media library files (images, videos, audio and documents) from your site.'
+										) }
+									</h2>
+									<h2 className="export-media-card__warning">
+										{ translate(
+											'Depending on your media library size and/or connection speed, you might need to use a download manager. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+											{
+												components: {
+													learnMoreLink: (
+														<InlineSupportLink
+															supportContext="export-media-library"
+															showIcon={ false }
+														/>
+													),
+												},
+											}
 										) }
 									</h2>
 								</div>

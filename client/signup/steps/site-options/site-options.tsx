@@ -6,7 +6,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
-import { tip } from './icons';
+import { tip } from '../../icons';
 import type { SiteOptionsFormValues } from './types';
 import './site-options.scss';
 
@@ -59,7 +59,7 @@ const SiteOptions: React.FC< Props > = ( {
 				</FormLabel>
 				<FormInput name="tagline" id="tagline" value={ formValues.tagline } onChange={ onChange } />
 				<FormSettingExplanation>
-					<Icon icon={ tip } size={ 20 } />
+					<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
 					{ translate( 'In a few words, explain what your blog is about.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>

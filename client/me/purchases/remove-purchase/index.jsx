@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -9,14 +8,13 @@ import {
 	isPlan,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import { Dialog, Button, CompactCard, Gridicon } from '@automattic/components';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
@@ -116,7 +114,7 @@ class RemovePurchase extends Component {
 
 		const { isDomainOnlySite, purchase, translate } = this.props;
 
-		const response = await this.props.removePurchase( purchase.id, this.props.userId );
+		await this.props.removePurchase( purchase.id, this.props.userId );
 
 		const productName = getName( purchase );
 		const { purchasesError, purchaseListUrl } = this.props;
@@ -129,46 +127,20 @@ class RemovePurchase extends Component {
 			return;
 		}
 
-		if ( response.status === 'completed' ) {
-			if ( isDomainRegistration( purchase ) ) {
-				if ( isDomainOnlySite ) {
-					this.props.receiveDeletedSite( purchase.siteId );
-					this.props.setAllSitesSelected();
-				}
+		if ( isDomainRegistration( purchase ) ) {
+			if ( isDomainOnlySite ) {
+				this.props.receiveDeletedSite( purchase.siteId );
+				this.props.setAllSitesSelected();
+			}
 
-				successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
-					components: { domain: <em>{ productName }</em> },
-				} );
-			} else {
-				successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
-					args: { productName },
-					components: { siteName: <em>{ purchase.domain }</em> },
-				} );
-			}
-		} else if ( response.status === 'queued' ) {
-			if ( isDomainRegistration( purchase ) ) {
-				successMessage = translate(
-					'We are removing the domain {{domain/}} from your account.{{br/}}' +
-						'Please give it some time for changes to take effect. ' +
-						'An email will be sent once the process is complete.',
-					{ components: { br: <br />, domain: <em>{ productName }</em> } }
-				);
-			} else {
-				successMessage = translate(
-					'We are removing %(productName)s from {{siteName/}}.{{br/}}' +
-						'Please give it some time for changes to take effect. ' +
-						'An email will be sent once the process is complete.',
-					{
-						args: { productName },
-						components: { br: <br />, siteName: <em>{ purchase.domain }</em> },
-					}
-				);
-			}
+			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
+				components: { domain: <em>{ productName }</em> },
+			} );
 		} else {
-			this.setState( { isRemoving: false } );
-			this.closeDialog();
-			this.props.errorNotice( translate( 'There was an error removing the purchase.' ) );
-			return;
+			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
+				args: { productName },
+				components: { siteName: <em>{ purchase.domain }</em> },
+			} );
 		}
 
 		this.props.successNotice( successMessage, { isPersistent: true } );
@@ -212,19 +184,13 @@ class RemovePurchase extends Component {
 	}
 
 	renderDomainDialog() {
-		let chatButton = null;
-
-		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
-			chatButton = this.getChatButton();
-		}
-
 		return (
 			<RemoveDomainDialog
 				isRemoving={ this.state.isRemoving }
 				isDialogVisible={ this.state.isDialogVisible }
 				removePurchase={ this.removePurchase }
 				closeDialog={ this.closeDialog }
-				chatButton={ chatButton }
+				chatButton={ this.getChatButton() }
 				purchase={ this.props.purchase }
 			/>
 		);
@@ -331,44 +297,6 @@ class RemovePurchase extends Component {
 		);
 	}
 
-	renderAtomicDialog( purchase ) {
-		const { translate } = this.props;
-		const supportButton = this.props.isChatAvailable
-			? this.getChatButton()
-			: this.getContactUsButton();
-
-		const buttons = [
-			supportButton,
-			{
-				action: 'cancel',
-				disabled: this.state.isRemoving,
-				isPrimary: true,
-				label: translate( "I'll Keep It" ),
-			},
-		];
-		const productName = getName( purchase );
-
-		return (
-			<Dialog
-				buttons={ buttons }
-				className="remove-purchase__dialog"
-				isVisible={ this.state.isDialogVisible }
-				onClose={ this.closeDialog }
-			>
-				<FormSectionHeading />
-				<p>
-					{ translate(
-						'To cancel your %(productName)s plan, please contact our support team' +
-							' — a Happiness Engineer will take care of it.',
-						{
-							args: { productName },
-						}
-					) }
-				</p>
-			</Dialog>
-		);
-	}
-
 	renderJetpackDialog() {
 		const { purchase } = this.props;
 
@@ -408,10 +336,6 @@ class RemovePurchase extends Component {
 					site={ this.props.site }
 				/>
 			);
-		}
-
-		if ( this.props.shouldRevertAtomicSite && ! config.isEnabled( 'atomic/automated-revert' ) ) {
-			return this.renderAtomicDialog( purchase );
 		}
 
 		// Jetpack Plan or Product Cancellation

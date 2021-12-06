@@ -1,4 +1,4 @@
-import { has, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 import moment from 'moment-timezone';
 
 /**
@@ -10,7 +10,6 @@ import moment from 'moment-timezone';
  *
  * @see http://momentjs.com/docs/#/manipulating/utc-offset/
  * @see http://momentjs.com/timezone/docs/#/using-timezones/parsing-in-zone/
- *
  * @param {string} timezoneString A timezone string.
  * @returns {object} The timezone-adjusted Moment.js object of the current date and time.
  */
@@ -29,7 +28,6 @@ export function getLocalizedDate( timezoneString ) {
  *
  * @see http://php.net/manual/en/function.date.php#refsect1-function.date-parameters
  * @see http://momentjs.com/docs/#/displaying/format/
- *
  * @type {object}
  */
 const phpToMomentMapping = {
@@ -121,11 +119,12 @@ export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 				case 'L':
 					// 1 or 0
 					return `[${ momentDate.isLeapYear() | 0 }]`;
-				case 'B':
+				case 'B': {
 					const utcDate = momentDate.clone().utc();
 					const swatchTime =
 						( ( utcDate.hours() + 1 ) % 24 ) + utcDate.minutes() / 60 + utcDate.seconds() / 3600;
 					return Math.floor( ( swatchTime * 1000 ) / 24 );
+				}
 				case 'I':
 					// 1 or 0
 					return `[${ momentDate.isDST() | 0 }]`;
@@ -136,7 +135,7 @@ export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 			}
 
 			// Check if character is a recognized mapping token
-			if ( has( phpToMomentMapping, c ) ) {
+			if ( phpToMomentMapping.hasOwnProperty( c ) ) {
 				return phpToMomentMapping[ c ];
 			}
 

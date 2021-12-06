@@ -1,5 +1,5 @@
 const path = require( 'path' );
-const nodeConfig = require( '@automattic/calypso-build/eslint/node' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
 
@@ -205,6 +205,8 @@ module.exports = {
 	rules: {
 		// REST API objects include underscores
 		camelcase: 'off',
+
+		'no-constant-condition': [ 'error', { checkLoops: false } ],
 
 		'no-path-concat': 'error',
 

@@ -1,0 +1,666 @@
+import {
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+	TYPE_FREE,
+	TYPE_BLOGGER,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+	TYPE_SECURITY_DAILY,
+	TYPE_SECURITY_REALTIME,
+	TYPE_ALL,
+	GROUP_WPCOM,
+	GROUP_JETPACK,
+	JETPACK_RESET_PLANS,
+	FEATURE_JETPACK_SEARCH,
+	FEATURE_JETPACK_SEARCH_MONTHLY,
+	TYPE_P2_PLUS,
+} from './constants';
+import { PLANS_LIST } from './plans-list';
+import {
+	isJetpackBusiness,
+	isBusiness,
+	isEnterprise,
+	isEcommerce,
+	isVipPlan,
+	isMarketplaceProduct,
+	getProductFromSlug,
+} from '.';
+import type {
+	Product,
+	Plan,
+	JetpackPlan,
+	WPComPlan,
+	PlanMatchesQuery,
+	PlanSlug,
+	WithCamelCaseSlug,
+	WithSnakeCaseSlug,
+} from './types';
+import type { TranslateResult } from 'i18n-calypso';
+
+export function getPlans(): Record< string, Plan > {
+	return PLANS_LIST;
+}
+
+export function getPlansSlugs(): string[] {
+	return Object.keys( getPlans() );
+}
+
+export function getPlan( planKey: string | Plan ): Plan | JetpackPlan | WPComPlan | undefined {
+	if ( typeof planKey !== 'string' ) {
+		if ( Object.values( PLANS_LIST ).includes( planKey ) ) {
+			return planKey;
+		}
+		return undefined;
+	}
+	return PLANS_LIST[ planKey ];
+}
+
+export function getPlanByPathSlug( pathSlug: string, group?: string ): Plan | undefined {
+	let plans: Plan[] = Object.values( PLANS_LIST );
+	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
+	return plans.find( ( p ) => typeof p.getPathSlug === 'function' && p.getPathSlug() === pathSlug );
+}
+
+export function getPlanPath( plan: string ): string | undefined {
+	const retrievedPlan = getPlan( plan );
+	const slug = retrievedPlan?.getPathSlug || ( () => undefined );
+	return slug();
+}
+
+export function getPlanClass( planKey: string ): string {
+	if ( isFreePlan( planKey ) ) {
+		return 'is-free-plan';
+	}
+
+	if ( isBloggerPlan( planKey ) ) {
+		return 'is-blogger-plan';
+	}
+
+	if ( isPersonalPlan( planKey ) ) {
+		return 'is-personal-plan';
+	}
+
+	if ( isPremiumPlan( planKey ) ) {
+		return 'is-premium-plan';
+	}
+
+	if ( isBusinessPlan( planKey ) ) {
+		return 'is-business-plan';
+	}
+
+	if ( isEcommercePlan( planKey ) ) {
+		return 'is-ecommerce-plan';
+	}
+
+	if ( isSecurityDailyPlan( planKey ) ) {
+		return 'is-daily-security-plan';
+	}
+
+	if ( isSecurityRealTimePlan( planKey ) ) {
+		return 'is-realtime-security-plan';
+	}
+
+	if ( isCompletePlan( planKey ) ) {
+		return 'is-complete-plan';
+	}
+
+	return '';
+}
+
+/**
+ * Determines if a plan has a specific feature.
+ *
+ * Collects features for a plan by calling all possible feature methods for the plan.
+ */
+export function planHasFeature( plan: string | Plan, feature: string ): boolean {
+	const allFeatures = getAllFeaturesForPlan( plan );
+	return allFeatures.includes( feature );
+}
+
+/**
+ * Determine if a plan has at least one of several features.
+ */
+export function planHasAtLeastOneFeature( plan: string | Plan, features: string[] ): boolean {
+	const allFeatures = getAllFeaturesForPlan( plan );
+	return features.some( ( feature ) => allFeatures.includes( feature ) );
+}
+
+/**
+ * Get all features for a plan
+ *
+ * Collects features for a plan by calling all possible feature methods for the plan.
+ *
+ * Returns an array of all the plan features (may have duplicates)
+ */
+export function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] {
+	const planObj = getPlan( plan );
+	if ( ! planObj ) {
+		return [];
+	}
+	return [
+		...( 'getPlanCompareFeatures' in planObj && planObj.getPlanCompareFeatures
+			? planObj.getPlanCompareFeatures()
+			: [] ),
+		...( 'getPromotedFeatures' in planObj && planObj.getPromotedFeatures
+			? planObj.getPromotedFeatures()
+			: [] ),
+		...( 'getSignupFeatures' in planObj && planObj.getSignupFeatures
+			? planObj.getSignupFeatures()
+			: [] ),
+		...( 'getSignupCompareAvailableFeatures' in planObj && planObj.getSignupCompareAvailableFeatures
+			? planObj.getSignupCompareAvailableFeatures()
+			: [] ),
+		...( 'getBlogSignupFeatures' in planObj && planObj.getBlogSignupFeatures
+			? planObj.getBlogSignupFeatures()
+			: [] ),
+		...( 'getPortfolioSignupFeatures' in planObj && planObj.getPortfolioSignupFeatures
+			? planObj.getPortfolioSignupFeatures()
+			: [] ),
+		...( 'getIncludedFeatures' in planObj && planObj.getIncludedFeatures
+			? planObj.getIncludedFeatures()
+			: [] ),
+	];
+}
+
+/**
+ * Determines if a plan has a superior version of a specific feature.
+ */
+export function planHasSuperiorFeature( plan: string | Plan, feature: string ): boolean {
+	const planConstantObj = getPlan( plan );
+	const features = planConstantObj?.getInferiorFeatures?.() ?? [];
+	return ( features as ReadonlyArray< string > ).includes( feature );
+}
+
+export function shouldFetchSitePlans( sitePlans: {
+	hasLoadedFromServer: boolean;
+	isRequesting: boolean;
+} ): boolean {
+	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting;
+}
+
+/**
+ * Returns the monthly slug which corresponds to the provided yearly slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ */
+export function getMonthlyPlanByYearly( planSlug: string ): string {
+	const plan = getPlan( planSlug );
+	if ( plan && 'getMonthlySlug' in plan && plan.getMonthlySlug ) {
+		return plan.getMonthlySlug();
+	}
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
+}
+
+/**
+ * Returns the yearly slug which corresponds to the provided monthly slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ */
+export function getYearlyPlanByMonthly( planSlug: string ): string {
+	const plan = getPlan( planSlug );
+	if ( plan && 'getAnnualSlug' in plan && plan.getAnnualSlug ) {
+		return plan.getAnnualSlug();
+	}
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
+}
+
+/**
+ * Returns the biennial slug which corresponds to the provided slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ */
+export function getBiennialPlan( planSlug: string ): string {
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_BIENNIALLY } ) || '';
+}
+
+/**
+ * Returns true if plan "types" match regardless of their interval.
+ *
+ * For example (fake plans):
+ *     planLevelsMatch( PRO_YEARLY, PRO_YEARLY ) => true
+ *     planLevelsMatch( PRO_YEARLY, PRO_MONTHLY ) => true
+ *     planLevelsMatch( PRO_YEARLY, PERSONAL_YEARLY ) => false
+ */
+export function planLevelsMatch( planSlugA: string, planSlugB: string ): boolean {
+	const planA = getPlan( planSlugA );
+	const planB = getPlan( planSlugB );
+	return Boolean( planA && planB && planA.type === planB.type && planA.group === planB.group );
+}
+
+export function isEcommercePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_ECOMMERCE } );
+}
+
+export function isBusinessPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_BUSINESS } );
+}
+
+export function isPremiumPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_PREMIUM } );
+}
+
+export function isPersonalPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_PERSONAL } );
+}
+
+export function isBloggerPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_BLOGGER } );
+}
+
+export function isFreePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+export function isSecurityDailyPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_SECURITY_DAILY } );
+}
+
+export function isSecurityRealTimePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_SECURITY_REALTIME } );
+}
+
+export function isCompletePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_ALL } );
+}
+
+export function isWpComPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { group: GROUP_WPCOM } );
+}
+
+export function isWpComBusinessPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
+}
+
+export function isWpComEcommercePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_ECOMMERCE, group: GROUP_WPCOM } );
+}
+
+export function isWpComPremiumPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
+}
+
+export function isWpComPersonalPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_WPCOM } );
+}
+
+export function isWpComBloggerPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_BLOGGER, group: GROUP_WPCOM } );
+}
+
+export function isWpComFreePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_WPCOM } );
+}
+
+export function isWpComMonthlyPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { term: TERM_MONTHLY, group: GROUP_WPCOM } );
+}
+
+export function isJetpackBusinessPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
+}
+
+export function isJetpackPremiumPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_JETPACK } );
+}
+
+export function isJetpackPersonalPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_JETPACK } );
+}
+
+export function isJetpackFreePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
+}
+
+export function isJetpackOfferResetPlan( planSlug: string ): boolean {
+	return ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( planSlug );
+}
+
+export function isP2PlusPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_P2_PLUS } );
+}
+
+export function findFirstSimilarPlanKey(
+	planKey: string | Plan,
+	diff: PlanMatchesQuery
+): string | undefined {
+	return findSimilarPlansKeys( planKey, diff )[ 0 ];
+}
+
+/**
+ * A similar plan is one that has the same `type`, `group`, and `term` as first
+ * argument, except for differences specified in the second argument.
+ *
+ * For example:
+ *
+ * > findSimilarPlansKeys( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * [PLAN_BUSINESS_2_YEARS]
+ * > findSimilarPlansKeys( TYPE_JETPACK_BUSINESS_MONTHLY, { type: TYPE_ANNUALLY } );
+ * [TYPE_JETPACK_BUSINESS]
+ */
+export function findSimilarPlansKeys(
+	planKey: string | Plan,
+	diff: PlanMatchesQuery = {}
+): string[] {
+	const plan = getPlan( planKey );
+	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
+	if ( ! plan ) {
+		return [];
+	}
+	return findPlansKeys( {
+		type: plan.type,
+		group: plan.group,
+		term: plan.term,
+		...diff,
+	} );
+}
+
+/**
+ * Finds all keys of plans matching a query
+ *
+ * For example:
+ *
+ * > findPlansKeys( { term: TERM_BIENNIALLY } );
+ * [PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS]
+ */
+export function findPlansKeys( query: PlanMatchesQuery = {} ): string[] {
+	const plans = getPlans();
+	return Object.keys( plans ).filter( ( k ) => planMatches( plans[ k ], query ) );
+}
+
+/**
+ * Matches plan specified by `planKey` against `query`.
+ * Only compares `type`, `group`, and `term` properties.
+ *
+ * For example:
+ *
+ * > planMatches( TYPE_BUSINESS, { term: TERM_ANNUALLY, group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+ * true
+ *
+ * > planMatches( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * false
+ */
+export function planMatches( planKey: string | Plan, query: PlanMatchesQuery = {} ): boolean {
+	const acceptedKeys = [ 'type', 'group', 'term' ];
+	const unknownKeys = Object.keys( query ).filter( ( key ) => ! acceptedKeys.includes( key ) );
+	if ( unknownKeys.length ) {
+		throw new Error(
+			`planMatches can only match against ${ acceptedKeys.join( ',' ) }, ` +
+				`but unknown keys ${ unknownKeys.join( ',' ) } were passed.`
+		);
+	}
+
+	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
+	const plan = getPlan( planKey );
+	if ( ! plan ) {
+		return false;
+	}
+	if (
+		( ! ( 'type' in query ) || plan.type === query.type ) &&
+		( ! ( 'group' in query ) || plan.group === query.group ) &&
+		( ! ( 'term' in query ) || plan.term === query.term )
+	) {
+		return true;
+	}
+	return false;
+}
+
+export function calculateMonthlyPriceForPlan( planSlug: string, termPrice: number ): number {
+	const plan = getPlan( planSlug );
+	if ( ! plan ) {
+		throw new Error( `Unknown plan: ${ planSlug }` );
+	}
+	return calculateMonthlyPrice( plan.term, termPrice );
+}
+
+export function calculateMonthlyPrice( term: string, termPrice: number ): number {
+	const divisor = getBillingMonthsForTerm( term );
+	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
+}
+
+export function getBillingMonthsForPlan( planSlug: string ): number {
+	const plan = getPlan( planSlug );
+	if ( ! plan ) {
+		throw new Error( `Unknown plan: ${ planSlug }` );
+	}
+	return getBillingMonthsForTerm( plan.term );
+}
+
+export function getBillingMonthsForTerm( term: string ): number {
+	if ( term === TERM_MONTHLY ) {
+		return 1;
+	} else if ( term === TERM_ANNUALLY ) {
+		return 12;
+	} else if ( term === TERM_BIENNIALLY ) {
+		return 24;
+	}
+	throw new Error( `Unknown term: ${ term }` );
+}
+
+export function plansLink(
+	urlString: string,
+	siteSlug: string,
+	intervalType: string,
+	forceIntervalType = false
+): string {
+	const url = new URL( urlString, window.location.origin );
+
+	if ( 'monthly' === intervalType || forceIntervalType ) {
+		url.pathname += '/' + intervalType;
+	}
+
+	if ( siteSlug ) {
+		url.pathname += '/' + siteSlug;
+	}
+
+	if ( urlString.startsWith( '/' ) ) {
+		return url.pathname + url.search;
+	}
+	return url.toString();
+}
+
+export function applyTestFiltersToPlansList(
+	planName: string,
+	abtest: string | undefined,
+	extraArgs: Record< string, string | boolean[] > = {}
+): Plan & Pick< WPComPlan, 'getPlanCompareFeatures' > {
+	const plan = getPlan( planName );
+	if ( ! plan ) {
+		throw new Error( `Unknown plan: ${ planName }` );
+	}
+	const filteredPlanConstantObj = { ...plan };
+	const filteredPlanFeaturesConstantList =
+		'getPlanCompareFeatures' in plan && plan.getPlanCompareFeatures
+			? plan.getPlanCompareFeatures( abtest, extraArgs )
+			: [];
+
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// these becomes no-ops when we removed some of the abtest overrides, but
+	// we're leaving the code in place for future tests
+	const removeDisabledFeatures = () => {};
+
+	const updatePlanDescriptions = () => {};
+
+	const updatePlanFeatures = () => {};
+
+	/* eslint-enable */
+
+	removeDisabledFeatures();
+	updatePlanDescriptions();
+	updatePlanFeatures();
+
+	return {
+		...filteredPlanConstantObj,
+		getPlanCompareFeatures: () => filteredPlanFeaturesConstantList,
+	};
+}
+
+export function applyTestFiltersToProductsList(
+	productName: string
+): Product & Pick< WPComPlan, 'getPlanCompareFeatures' > {
+	const product = getProductFromSlug( productName );
+	if ( typeof product === 'string' ) {
+		throw new Error( `Unknown product ${ productName } ` );
+	}
+	const filteredProductConstantObj = { ...product };
+
+	/* eslint-disable @typescript-eslint/no-empty-function */
+
+	// these becomes no-ops when we removed some of the abtest overrides, but
+	// we're leaving the code in place for future tests
+	const removeDisabledFeatures = () => {};
+
+	const updatePlanDescriptions = () => {};
+
+	const updatePlanFeatures = () => {};
+
+	/* eslint-enable */
+
+	removeDisabledFeatures();
+	updatePlanDescriptions();
+	updatePlanFeatures();
+
+	return {
+		...filteredProductConstantObj,
+		getPlanCompareFeatures: () => [],
+	};
+}
+
+export function getPlanTermLabel(
+	planName: string,
+	translate: ( text: string ) => string
+): string | undefined {
+	const plan = getPlan( planName );
+	if ( ! plan || ! plan.term ) {
+		return;
+	}
+
+	switch ( plan.term ) {
+		case TERM_MONTHLY:
+			return translate( 'Monthly subscription' );
+		case TERM_ANNUALLY:
+			return translate( 'Annual subscription' );
+		case TERM_BIENNIALLY:
+			return translate( 'Two year subscription' );
+	}
+}
+
+export const getPopularPlanSpec = ( {
+	customerType,
+	isJetpack,
+	availablePlans,
+}: {
+	customerType: string;
+	isJetpack: boolean;
+	availablePlans: string[];
+} ): false | { type: string; group: string } => {
+	// Jetpack doesn't currently highlight "Popular" plans
+	if ( isJetpack ) {
+		return false;
+	}
+
+	if ( availablePlans.length === 0 ) {
+		return false;
+	}
+
+	const defaultPlan = getPlan( availablePlans[ 0 ] );
+
+	if ( ! defaultPlan ) {
+		return false;
+	}
+
+	const group = GROUP_WPCOM;
+
+	if ( customerType === 'personal' ) {
+		if ( availablePlans.findIndex( isPremiumPlan ) !== -1 ) {
+			return {
+				type: TYPE_PREMIUM,
+				group,
+			};
+		}
+		// when customerType is not personal, default to business
+	} else if ( availablePlans.findIndex( isBusinessPlan ) !== -1 ) {
+		return {
+			type: TYPE_BUSINESS,
+			group,
+		};
+	}
+
+	// finally, just return the default one.
+	return {
+		type: defaultPlan.type,
+		group,
+	};
+};
+
+function isValueTruthy< T >( value: T ): value is Exclude< T, null | undefined | false | 0 | '' > {
+	return !! value;
+}
+
+export const chooseDefaultCustomerType = ( {
+	currentCustomerType,
+	selectedPlan,
+	currentPlan,
+}: {
+	currentCustomerType: string;
+	selectedPlan: string;
+	currentPlan: { product_slug: string };
+} ): string => {
+	if ( currentCustomerType ) {
+		return currentCustomerType;
+	}
+
+	const group = GROUP_WPCOM;
+	const businessPlanSlugs = [
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+	]
+		.map( ( planKey ) => getPlan( planKey ) )
+		.filter( isValueTruthy )
+		.map( ( plan ) => plan.getStoreSlug() );
+
+	if ( selectedPlan ) {
+		return businessPlanSlugs.includes( selectedPlan as PlanSlug ) ? 'business' : 'personal';
+	} else if ( currentPlan ) {
+		const isPlanInBusinessGroup =
+			businessPlanSlugs.indexOf( currentPlan.product_slug as PlanSlug ) !== -1;
+		return isPlanInBusinessGroup ? 'business' : 'personal';
+	}
+
+	return 'personal';
+};
+
+/**
+ * Determines if a plan includes Jetpack Search by looking at the plan's features.
+ */
+export const planHasJetpackSearch = ( planSlug: string ): boolean =>
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH ) ||
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH_MONTHLY );
+
+/**
+ * Determines if a plan includes Jetpack Search Classic by checking available plans.
+ */
+export function planHasJetpackClassicSearch(
+	plan: WithCamelCaseSlug | WithSnakeCaseSlug
+): boolean {
+	return (
+		plan &&
+		( isJetpackBusiness( plan ) ||
+			isBusiness( plan ) ||
+			isEnterprise( plan ) ||
+			isEcommerce( plan ) ||
+			isVipPlan( plan ) )
+	);
+}
+
+/**
+ * Determines if a product is supported by the Atomic sites infrastructure.
+ */
+export const isAtomicSupportedProduct = ( productSlug: string ): boolean =>
+	isWpComBusinessPlan( productSlug ) ||
+	isWpComEcommercePlan( productSlug ) ||
+	isMarketplaceProduct( { productSlug } );

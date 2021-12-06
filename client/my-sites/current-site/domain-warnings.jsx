@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
+import isSiteEligibleForLegacyFSE from 'calypso/state/selectors/is-site-eligible-for-legacy-fse';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -68,6 +68,6 @@ export default connect( ( state ) => {
 		isAtomic: isSiteAutomatedTransfer( state, selectedSiteId ),
 		selectedSite: getSelectedSite( state ),
 		siteIsUnlaunched: isUnlaunchedSite( state, selectedSiteId ),
-		isSiteEligibleForFSE: isSiteEligibleForFullSiteEditing( state, selectedSiteId ),
+		isSiteEligibleForFSE: isSiteEligibleForLegacyFSE( state, selectedSiteId ),
 	};
 } )( CurrentSiteDomainWarnings );

@@ -1,6 +1,8 @@
 import { GROUP_WPCOM } from '@automattic/calypso-products';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { isIntroductoryOfferAppliedToPlanPrice } from 'calypso/state/sites/plans/selectors';
 import { getPlanPrice } from './get-plan-price';
+import { getProductCost } from './get-product-cost';
 
 /**
  * Computes a full and monthly price for a given plan, based on it's slug/constant
@@ -25,12 +27,20 @@ export const computeFullAndMonthlyPricesForPlan = (
 		return computePricesForWpComPlan( state, planObject );
 	}
 
+	const planOrProductPrice = ! getPlanPrice( state, siteId, planObject, false )
+		? getProductCost( state, planObject.getStoreSlug() )
+		: getPlanPrice( state, siteId, planObject, false );
+
+	const isIntroductoryOfferApplied = isIntroductoryOfferAppliedToPlanPrice(
+		state,
+		siteId,
+		planObject.getStoreSlug()
+	);
+
 	return {
-		priceFull: getPlanPrice( state, siteId, planObject, false ),
-		priceFinal: Math.max(
-			getPlanPrice( state, siteId, planObject, false ) - credits - couponDiscount,
-			0
-		),
+		priceFull: planOrProductPrice,
+		priceFinal: Math.max( planOrProductPrice - credits - couponDiscount, 0 ),
+		isIntroductoryOfferApplied,
 	};
 };
 

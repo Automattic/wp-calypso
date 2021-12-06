@@ -5,7 +5,7 @@
 			"/^font-size$|^font$/": ["rem"],
 			"/radius$/": ["px"]
 		},
-		"scales/font-weights": [400, 600, 700],
+		"scales/font-weights": [400, 500, 600, 700],
 		"scales/font-sizes": [
 			{
 				"scale": [0.75, 0.875, 1, 1.25, 1.5, 2, 2.25, 3, 3.375],
@@ -14,7 +14,7 @@
 		],
 		"scales/radii": [
 			{
-				"scale": [2],
+				"scale": [2, 4],
 				"units": ["px"]
 			}
 		],

@@ -1,21 +1,22 @@
 /**
- * @group calypso-release
+ * @group quarantined
  */
 
 import {
 	DataHelper,
 	BrowserManager,
-	LoginFlow,
+	LoginPage,
 	DomainsPage,
 	SidebarComponent,
 	DomainSearchComponent,
 	setupHooks,
 	CartCheckoutPage,
 	IndividualPurchasePage,
+	NavbarComponent,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
 	let page: Page;
 
 	setupHooks( ( args ) => {
@@ -31,68 +32,82 @@ describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), functio
 	let domainsPage: DomainsPage;
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'calypsoPreReleaseUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'calypsoPreReleaseUser' } );
 	} );
 
 	it( 'Set store cookie', async function () {
 		await BrowserManager.setStoreCookie( page );
 	} );
 
-	it( 'Navigate to Upgrades > Domains', async function () {
-		sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Upgrades', 'Domains' );
+	describe( 'Purchase domain', function () {
+		it( 'Navigate to Upgrades > Domains', async function () {
+			sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Upgrades', 'Domains' );
+		} );
+
+		it( 'If required, clear the cart', async function () {
+			domainsPage = new DomainsPage( page );
+			const cartOpened = await domainsPage.openCart();
+			// The cart popover existing implies there are some items that need to be removed.
+			if ( cartOpened ) {
+				await domainsPage.emptyCart();
+			}
+		} );
+
+		it( 'Add domain to site', async function () {
+			await domainsPage.addDomain();
+		} );
+
+		it( 'Search for a domain name', async function () {
+			domainSearchComponent = new DomainSearchComponent( page );
+			await domainSearchComponent.search( blogName + '.live' );
+		} );
+
+		it( 'Choose the .live TLD', async function () {
+			selectedDomain = await domainSearchComponent.selectDomain( '.live' );
+		} );
+
+		it( 'Decline Titan Email upsell', async function () {
+			await domainSearchComponent.clickButton( 'Skip' );
+		} );
+
+		it( 'See secure payment', async function () {
+			cartCheckoutPage = new CartCheckoutPage( page );
+			await cartCheckoutPage.validateCartItem( selectedDomain );
+		} );
+
+		it( 'Make purchase', async function () {
+			await Promise.all( [
+				page.waitForNavigation( {
+					url: '**/checkout/thank-you/**',
+					// Sometimes the testing domain third party system is really slow. It's better to wait a while than to throw a false positive.
+					timeout: 90 * 1000,
+				} ),
+				cartCheckoutPage.purchase( { timeout: 120 * 1000 } ),
+			] );
+		} );
 	} );
 
-	it( 'If required, clear the cart', async function () {
-		domainsPage = new DomainsPage( page );
-		const cartOpened = await domainsPage.openCart();
-		// The cart popover existing implies there are some items that need to be removed.
-		if ( cartOpened ) {
-			await domainsPage.emptyCart();
-		}
-	} );
+	describe( 'Cancel domain', function () {
+		it( 'Return to Home dashboard', async function () {
+			const navbarComponent = new NavbarComponent( page );
+			await navbarComponent.clickMySites();
+		} );
 
-	it( 'Add domain to site', async function () {
-		await domainsPage.addDomain();
-	} );
+		it( 'Navigate to Upgrades > Domains', async function () {
+			sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Upgrades', 'Domains' );
+		} );
 
-	it( 'Search for a domain name', async function () {
-		domainSearchComponent = new DomainSearchComponent( page );
-		await domainSearchComponent.search( blogName + '.live' );
-	} );
+		it( 'Click on purchased domain', async function () {
+			const domainsPage = new DomainsPage( page );
+			await domainsPage.click( selectedDomain );
+		} );
 
-	it( 'Choose the .live TLD', async function () {
-		selectedDomain = await domainSearchComponent.selectDomain( '.live' );
-	} );
-
-	it( 'Decline Titan Email upsell', async function () {
-		await domainSearchComponent.clickButton( 'Skip' );
-	} );
-
-	it( 'See secure payment', async function () {
-		cartCheckoutPage = new CartCheckoutPage( page );
-		await cartCheckoutPage.validateCartItem( selectedDomain );
-	} );
-
-	it( 'Make purchase', async function () {
-		await Promise.all( [
-			page.waitForNavigation( {
-				url: '**/checkout/thank-you/**',
-				waitUntil: 'networkidle',
-				// Sometimes the testing domain third party system is really slow. It's better to wait a while than to throw a false positive.
-				timeout: 90 * 1000,
-			} ),
-			cartCheckoutPage.purchase(),
-		] );
-	} );
-
-	it( 'Manage domain', async function () {
-		await page.click( 'button:text("Manage domain")' );
-	} );
-
-	it( 'Cancel domain', async function () {
-		const individualPurchasePage = new IndividualPurchasePage( page );
-		await individualPurchasePage.deleteDomain();
+		it( 'Cancel domain', async function () {
+			const individualPurchasePage = new IndividualPurchasePage( page );
+			await individualPurchasePage.deleteDomain();
+		} );
 	} );
 } );

@@ -1,10 +1,9 @@
-import { get, includes, map, without, has } from 'lodash';
+import { get, includes, map, without } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_QUERY_UPDATE,
-	COMMENTS_TREE_SITE_REQUEST,
 } from 'calypso/state/action-types';
 import { getFiltersKey } from 'calypso/state/comments/ui/utils';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -99,13 +98,12 @@ export const pendingActions = function ( state = [], action ) {
 		case COMMENTS_CHANGE_STATUS:
 		case COMMENTS_DELETE: {
 			const key = getRequestKey( action );
-			if ( has( action, 'meta.dataLayer.trackRequest' ) && state.indexOf( key ) === -1 ) {
+			if ( action.meta?.dataLayer?.trackRequest && ! state.includes( key ) ) {
 				return [ ...state, key ];
 			}
 			return state;
 		}
 		case COMMENTS_LIST_REQUEST:
-		case COMMENTS_TREE_SITE_REQUEST:
 			//ignore pending requests if we're looking at a fresh view
 			return [];
 		default:

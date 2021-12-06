@@ -27,10 +27,10 @@ class MxRecord extends Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Name (optional)', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={ translate( 'Enter subdomain (optional)', {
+						placeholder={ translate( 'Enter subdomain', {
 							context:
 								'Placeholder shown when entering the optional subdomain part of a new DNS record',
 						} ) }
@@ -80,7 +80,6 @@ class MxRecord extends Component {
 						isError={ ! isAuxValid }
 						onChange={ onChange }
 						value={ fieldValues.aux }
-						defaultValue="10"
 					/>
 					{ ! isAuxValid && (
 						<FormInputValidation text={ translate( 'Invalid Priority' ) } isError />

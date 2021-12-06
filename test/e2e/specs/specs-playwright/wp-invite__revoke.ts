@@ -5,7 +5,7 @@
 import {
 	DataHelper,
 	EmailClient,
-	LoginFlow,
+	LoginPage,
 	SidebarComponent,
 	InvitePeoplePage,
 	PeoplePage,
@@ -33,8 +33,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'defaultUser' } );
 	} );
 
 	it( 'Navigate to Users > All Users', async function () {
@@ -78,7 +78,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	} );
 
 	it( `Ensure invite link is no longer valid`, async function () {
-		const testPage = await BrowserManager.newPage( { newContext: true } );
+		const testContext = await BrowserManager.newBrowserContext();
+		const testPage = await BrowserManager.newPage( { context: testContext } );
 		await testPage.goto( adjustedInviteLink );
 
 		await testPage.waitForSelector( `:text("Oops, that invite is not valid")` );

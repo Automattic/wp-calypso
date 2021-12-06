@@ -19,7 +19,7 @@ function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 		<div className={ classes }>
 			{ thumbnail && (
 				<a href={ postLink } className="post-type-list__post-thumbnail-link">
-					<img //eslint-disable-line
+					<img // eslint-disable-line
 						src={ resizeImageUrl( safeImageUrl( thumbnail ), { h: 80 } ) }
 						className="post-type-list__post-thumbnail"
 						onClick={ onClick }

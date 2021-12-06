@@ -547,3 +547,28 @@ $image-height: 47px;
 		margin-top: 24px;
 	}
 }
+
+.wp-login__p2-logo {
+	position: absolute;
+	top: 24px;
+	left: 24px;
+}
+
+.wp-login__p2-powered-by {
+	margin: 24px 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.wp-login__p2-powered-by-logo {
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin-right: 8px;
+}
+
+.wp-login__p2-powered-by-text {
+	font-size: var( --p2-font-size-form-xxs );
+}

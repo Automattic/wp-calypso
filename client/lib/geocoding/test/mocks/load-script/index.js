@@ -1,8 +1,7 @@
 import { defer } from 'lodash';
 
 function fakeLoader( url, callback ) {
-	// eslint-disable-next-line no-undef
-	google = {
+	globalThis.google = {
 		maps: {
 			Geocoder: function () {
 				return {

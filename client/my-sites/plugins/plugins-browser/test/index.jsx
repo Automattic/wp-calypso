@@ -23,6 +23,7 @@ import { shallow } from 'enzyme';
 import { PluginsBrowser } from '../';
 
 const props = {
+	isRequestingRecommendedPlugins: false,
 	pluginsByCategory: [],
 	pluginsByCategoryNew: [],
 	pluginsByCategoryPopular: [],
@@ -146,4 +147,26 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 			} );
 		}
 	);
+} );
+
+describe( 'Search view', () => {
+	const myProps = {
+		...props,
+		search: 'test searchterm',
+	};
+
+	test( 'should show NoResults when there are no results', () => {
+		const comp = shallow( <PluginsBrowser { ...myProps } /> );
+		expect( comp.find( 'NoResults' ).length ).toBe( 1 );
+	} );
+
+	test( 'should show plugin list when there are results', () => {
+		const myProps2 = {
+			...myProps,
+			pluginsBySearchTerm: [ { name: 'plugin1', slug: 'test-plugin' } ],
+		};
+
+		const comp = shallow( <PluginsBrowser { ...myProps2 } /> );
+		expect( comp.find( 'Localized(PluginsBrowserList)' ).length ).toBe( 1 );
+	} );
 } );

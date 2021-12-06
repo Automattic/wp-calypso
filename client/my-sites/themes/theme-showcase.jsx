@@ -14,12 +14,12 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getActiveTheme,
@@ -116,7 +116,9 @@ class ThemeShowcase extends Component {
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
-		isSiteEditorActive: PropTypes.bool,
+		blockEditorSettings: PropTypes.shape( {
+			is_fse_eligible: PropTypes.bool,
+		} ),
 	};
 
 	static defaultProps = {
@@ -157,7 +159,22 @@ class ThemeShowcase extends Component {
 
 	scrollToSearchInput = () => {
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
-			this.scrollRef.current.scrollIntoView();
+			// If you are a larger screen where the theme info is displayed horizontally.
+			if ( window.innerWidth > 600 ) {
+				return;
+			}
+			const headerHeight = document
+				.getElementsByClassName( 'masterbar' )[ 0 ]
+				?.getBoundingClientRect().height;
+			const screenOptionTab = document
+				.getElementsByClassName( 'screen-options-tab__button' )[ 0 ]
+				?.getBoundingClientRect().height;
+
+			const yOffset = -( headerHeight + screenOptionTab ); // Total height of admin bar and screen options on mobile.
+			const elementBoundary = this.scrollRef.current.getBoundingClientRect();
+
+			const y = elementBoundary.top + window.pageYOffset + yOffset;
+			window.scrollTo( { top: y } );
 		}
 	};
 
@@ -269,7 +286,7 @@ class ThemeShowcase extends Component {
 				return this.props.isJetpackSite;
 			case this.tabFilters.FSE.key:
 				// Display FSE tab if the Site Editor is active for the site.
-				return this.props.isSiteEditorActive;
+				return this.props.blockEditorSettings?.is_fse_eligible;
 		}
 	};
 
@@ -285,6 +302,7 @@ class ThemeShowcase extends Component {
 			pathName,
 			title,
 			filterString,
+			isMultisite,
 			locale,
 		} = this.props;
 		const tier = '';
@@ -374,12 +392,13 @@ class ThemeShowcase extends Component {
 						uri={ this.constructUrl() }
 					/>
 				) }
-				<div className="themes__content">
+				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
 						tier={ tier }
+						showTierThemesControl={ ! isMultisite }
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (
@@ -434,8 +453,10 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
-		isSiteEditorActive: isSiteUsingCoreSiteEditor( state, siteId ),
 	};
 };
 
-export default connect( mapStateToProps, null )( localize( ThemeShowcase ) );
+export default connect(
+	mapStateToProps,
+	null
+)( localize( withBlockEditorSettings( ThemeShowcase ) ) );

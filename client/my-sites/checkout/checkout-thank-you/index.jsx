@@ -8,6 +8,7 @@ import {
 	isDomainTransfer,
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
 	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
@@ -144,7 +145,7 @@ export class CheckoutThankYou extends Component {
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite.ID );
-		} else if ( shouldFetchSitePlans( sitePlans, selectedSite ) ) {
+		} else if ( selectedSite && shouldFetchSitePlans( sitePlans ) ) {
 			this.props.fetchSitePlans( selectedSite.ID );
 		}
 
@@ -166,6 +167,7 @@ export class CheckoutThankYou extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
 		this.redirectIfDomainOnly( nextProps );
@@ -390,21 +392,27 @@ export class CheckoutThankYou extends Component {
 		let wasMarketplaceProduct = false;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
-		let wasDomainMappingOrTransferProduct = false;
+		let wasDomainProduct = false;
+		let wasGSuiteOrGoogleWorkspace = false;
 		let wasTitanEmailOnlyProduct = false;
+		let wasTitanEmailProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
+
+			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
+			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
-			wasDomainMappingOrTransferProduct =
-				purchases.length === 1 &&
-				purchases.some(
-					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
-				);
+			wasDomainProduct = purchases.some(
+				( purchase ) =>
+					isDomainMapping( purchase ) ||
+					isDomainTransfer( purchase ) ||
+					isDomainRegistration( purchase )
+			);
 			wasDIFMProduct = purchases.some( isDIFMProduct );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
 		}
@@ -486,17 +494,25 @@ export class CheckoutThankYou extends Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainMappingOrTransferProduct ) {
-			const [ purchaseType, predicate ] = purchases.some( isDomainMapping )
-				? [ 'MAPPING', isDomainMapping ]
-				: [ 'TRANSFER', isDomainTransfer ];
+		} else if ( wasDomainProduct ) {
+			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
 			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
+
+			const professionalEmailPurchase = this.getProfessionalEmailPurchaseFromPurchases(
+				predicate,
+				purchases
+			);
+
 			return (
 				<DomainThankYou
-					email={ this.props.user?.email }
-					type={ purchaseType }
 					domain={ domainName }
+					email={
+						professionalEmailPurchase ? professionalEmailPurchase.meta : this.props.user?.email
+					}
+					hasProfessionalEmail={ wasTitanEmailProduct }
+					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
+					type={ purchaseType }
 				/>
 			);
 		} else if ( wasTitanEmailOnlyProduct ) {
@@ -530,6 +546,28 @@ export class CheckoutThankYou extends Component {
 				) }
 			</Main>
 		);
+	}
+
+	getProfessionalEmailPurchaseFromPurchases( purchaseTypePredicate, purchases ) {
+		const titanMailPurchases = purchases.filter(
+			( product ) => isTitanMail( product ) && purchaseTypePredicate( product )
+		);
+		if ( titanMailPurchases.length > 0 ) {
+			return titanMailPurchases[ 0 ];
+		}
+
+		return null;
+	}
+
+	getDomainPurchaseType( purchases ) {
+		const hasDomainMapping = purchases.some( isDomainMapping );
+
+		if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
+			return [ 'REGISTRATION', isDomainRegistration ];
+		} else if ( hasDomainMapping ) {
+			return [ 'MAPPING', isDomainMapping ];
+		}
+		return [ 'TRANSFER', isDomainTransfer ];
 	}
 
 	startTransfer = ( event ) => {
@@ -719,11 +757,11 @@ export default connect(
 		};
 	},
 	{
-		themeActivated,
+		fetchAtomicTransfer,
 		fetchReceipt,
 		fetchSitePlans,
 		refreshSitePlans,
 		recordStartTransferClickInThankYou,
-		fetchAtomicTransfer,
+		themeActivated,
 	}
 )( localize( CheckoutThankYou ) );

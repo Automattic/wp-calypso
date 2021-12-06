@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	setupHooks,
 	SidebarComponent,
 	PlansPage,
@@ -12,8 +12,6 @@ import {
 	CartCheckoutPage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
-
-const userOnPremiumPlan = 'defaultUser';
 
 describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	let page: Page;
@@ -26,9 +24,9 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	} );
 
 	describe( 'Initial navigation', function () {
-		it( 'Log In', async function () {
-			const loginFlow = new LoginFlow( page, userOnPremiumPlan );
-			await loginFlow.logIn();
+		it( 'Log in', async function () {
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: 'defaultUser' } );
 		} );
 
 		it( 'Navigate to Upgrades > Plans', async function () {

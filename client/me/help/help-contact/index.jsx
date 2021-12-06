@@ -58,7 +58,6 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_UPWORK_TICKET,
 } from 'calypso/state/selectors/get-inline-help-support-variation';
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
-import getSupportLevel from 'calypso/state/selectors/get-support-level';
 import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
 import isDirectlyFailed from 'calypso/state/selectors/is-directly-failed';
 import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
@@ -359,16 +358,6 @@ class HelpContact extends Component {
 			} );
 
 		this.clearSavedContactForm();
-	};
-
-	shouldUseHappychat = () => {
-		// if happychat is disabled in the config, do not use it
-		if ( ! config.isEnabled( 'happychat' ) ) {
-			return false;
-		}
-
-		// if the happychat connection is able to accept chats, use it
-		return this.props.isHappychatAvailable && this.props.isHappychatUserEligible;
 	};
 
 	recordCompactSubmit = ( variation ) => {
@@ -732,7 +721,7 @@ class HelpContact extends Component {
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				{ ! this.props.compact && <QuerySupportHistory email={ this.props.currentUser.email } /> }
 				<QueryTicketSupportConfiguration />
-				<QueryUserPurchases userId={ this.props.currentUser.ID } />
+				<QueryUserPurchases />
 				<QueryLanguageNames />
 			</Fragment>
 		);
@@ -766,7 +755,6 @@ export default connect(
 			isRequestingSites: isRequestingSites( state ),
 			supportVariation: getInlineHelpSupportVariation( state ),
 			activeSupportTickets: getActiveSupportTickets( state ),
-			supportLevel: getSupportLevel( state ),
 		};
 	},
 	{

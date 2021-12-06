@@ -19,14 +19,14 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"scripts": {},
 	"peerDependencies": {
-		"webpack": "^5.54.0"
+		"webpack": "^5.64.4"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"rimraf": "^3.0.0",
-		"webpack": "^5.54.0"
+		"webpack": "^5.64.4"
 	},
 	"files": [
 		"index.js"

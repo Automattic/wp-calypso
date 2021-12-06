@@ -1,4 +1,5 @@
-import { registerStore, useSelect, PaymentLogo } from '@automattic/composite-checkout';
+import { PaymentLogo } from '@automattic/composite-checkout';
+import { useSelect, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { Fragment } from 'react';
@@ -18,7 +19,10 @@ import CreditCardPayButton from './credit-card-pay-button';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
-export function createCreditCardPaymentMethodStore() {
+export function createCreditCardPaymentMethodStore( {
+	initialUseForAllSubscriptions,
+	allowUseForAllSubscriptions,
+} ) {
 	debug( 'creating a new credit card payment method store' );
 	const actions = {
 		changeBrand( payload ) {
@@ -35,6 +39,9 @@ export function createCreditCardPaymentMethodStore() {
 		},
 		setFieldError( key, message ) {
 			return { type: 'FIELD_ERROR_SET', payload: { key, message } };
+		},
+		setUseForAllSubscriptions( payload ) {
+			return { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET', payload };
 		},
 		touchAllFields() {
 			return { type: 'TOUCH_ALL_FIELDS' };
@@ -58,6 +65,9 @@ export function createCreditCardPaymentMethodStore() {
 		},
 		getPaymentPartner( state ) {
 			return state.paymentPartner;
+		},
+		useForAllSubscriptions( state ) {
+			return state.useForAllSubscriptions;
 		},
 	};
 
@@ -133,6 +143,25 @@ export function createCreditCardPaymentMethodStore() {
 		}
 	}
 
+	function allSubscriptionsReducer( state, action ) {
+		switch ( action?.type ) {
+			case 'USE_FOR_ALL_SUBSCRIPTIONS_SET':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
+	function getInitialUseForAllSubscriptionsValue() {
+		if ( ! allowUseForAllSubscriptions ) {
+			return false;
+		}
+		if ( initialUseForAllSubscriptions !== undefined ) {
+			return initialUseForAllSubscriptions;
+		}
+		return false;
+	}
+
 	const store = registerStore( 'credit-card', {
 		reducer(
 			state = {
@@ -140,6 +169,7 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataErrors: cardDataErrorsReducer(),
 				cardDataComplete: cardDataCompleteReducer(),
 				brand: brandReducer(),
+				useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
 			},
 			action
 		) {
@@ -148,6 +178,9 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 				brand: brandReducer( state.brand, action ),
+				useForAllSubscriptions: allowUseForAllSubscriptions
+					? allSubscriptionsReducer( state.useForAllSubscriptions, action )
+					: false,
 			};
 		},
 		actions,
@@ -162,8 +195,9 @@ export function createCreditCardMethod( {
 	stripe,
 	stripeConfiguration,
 	shouldUseEbanx,
-	shouldShowTaxFields = false,
-	activePayButtonText = undefined,
+	shouldShowTaxFields,
+	activePayButtonText,
+	allowUseForAllSubscriptions,
 } ) {
 	return {
 		id: 'card',
@@ -174,6 +208,7 @@ export function createCreditCardMethod( {
 				stripeConfiguration={ stripeConfiguration }
 				shouldUseEbanx={ shouldUseEbanx }
 				shouldShowTaxFields={ shouldShowTaxFields }
+				allowUseForAllSubscriptions={ allowUseForAllSubscriptions }
 			/>
 		),
 		submitButton: (

@@ -70,7 +70,6 @@ structure. Pretty cool 😎
 
 ```js
 import { shallow } from 'enzyme';
-import React from 'react';
 import LocaleSuggestions from '../locale-suggestions';
 import MyComponent from '../my-component';
 

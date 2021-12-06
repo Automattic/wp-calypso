@@ -1,18 +1,15 @@
-import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
-import { Button, CompactCard, Card, Gridicon } from '@automattic/components';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
-import helpSupportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 import helpDomains from 'calypso/assets/images/illustrations/help-domains.svg';
 import helpGetStarted from 'calypso/assets/images/illustrations/help-getstarted.svg';
 import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
 import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
 import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
-import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -20,11 +17,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
-import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
-import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
 import HelpUnverifiedWarning from './help-unverified-warning';
@@ -202,10 +196,6 @@ class Help extends PureComponent {
 	);
 
 	getCoursesTeaser = () => {
-		if ( ! this.props.showCoursesTeaser ) {
-			return null;
-		}
-
 		return (
 			<CompactCard
 				className="help__support-link"
@@ -224,58 +214,10 @@ class Help extends PureComponent {
 		);
 	};
 
-	supportSessionCard = () => {
-		const { translate, hasAppointment, scheduleId, isUserBlocked } = this.props;
-
-		//If we already have an appointment or the scheduleId has not been loaded, bail
-		if ( hasAppointment || null === scheduleId || isUserBlocked ) {
-			return;
-		}
-
-		return (
-			<Card className="help__support-session-card">
-				<div className="help__support-session-text">
-					<h2 className="help__support-session-title">
-						{ translate( 'Schedule a support session' ) }
-					</h2>
-					<p className="help__support-session-description">
-						{ translate(
-							'Quick Start Support Sessions give you a way to talk to one of our Happiness Engineers via a screen share with audio.'
-						) }
-					</p>
-					<div className="help__support-session-actions">
-						<Button
-							className="help__support-session-action"
-							primary
-							href={ localizeUrl( 'https://wordpress.com/checkout/offer-quickstart-session/' ) }
-							onClick={ this.trackSupportSessionButtonClick }
-						>
-							{ translate( 'Schedule a session' ) }
-						</Button>
-						<Button
-							className="help__support-session-action is-link"
-							borderless
-							href={ localizeUrl( 'https://wordpress.com/support/quickstart-support/' ) }
-						>
-							{ translate( 'Learn more' ) }
-						</Button>
-					</div>
-				</div>
-				<div className="help__support-session-illustration">
-					<img src={ helpSupportSession } alt="" />
-				</div>
-			</Card>
-		);
-	};
-
-	trackSupportSessionButtonClick = () => {
-		recordTracksEvent( 'calypso_help_support_session_card_click' );
-	};
-
 	trackCoursesButtonClick = () => {
-		const { isBusinessPlanUser } = this.props;
+		const { isBusinessOrEcomPlanUser } = this.props;
 		recordTracksEvent( 'calypso_help_courses_click', {
-			is_business_plan_user: isBusinessPlanUser,
+			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 		} );
 	};
 
@@ -300,7 +242,7 @@ class Help extends PureComponent {
 	};
 
 	render() {
-		const { isEmailVerified, userId, isLoading, translate } = this.props;
+		const { isEmailVerified, isLoading, translate } = this.props;
 
 		if ( isLoading ) {
 			return this.getPlaceholders();
@@ -328,43 +270,33 @@ class Help extends PureComponent {
 				{ ! this.state.isSearching && (
 					<div className="help__inner-wrapper">
 						{ ! isEmailVerified && <HelpUnverifiedWarning /> }
-						{ this.supportSessionCard() }
 						{ this.getHelpfulArticles() }
 						{ this.getSupportLinks() }
 					</div>
 				) }
 				{ this.getContactUs() }
-				<QueryConciergeInitial />
-				<QueryUserPurchases userId={ userId } />
+				<QueryUserPurchases />
 			</Main>
 		);
 	}
 }
 
-function planHasOnboarding( { productSlug } ) {
-	return planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING );
-}
+const getProductSlugs = ( purchases ) => purchases.map( ( purchase ) => purchase.productSlug );
 
 export const mapStateToProps = ( state ) => {
 	const isEmailVerified = isCurrentUserEmailVerified( state );
-	const userId = getCurrentUserId( state );
-	const purchases = getUserPurchases( state, userId );
+	const purchases = getUserPurchases( state );
+	const purchaseSlugs = purchases && getProductSlugs( purchases );
 	const isLoading = isFetchingUserPurchases( state );
-	const isBusinessPlanUser = some( purchases, planHasOnboarding );
-	const hasAppointment = getConciergeNextAppointment( state );
-	const scheduleId = getConciergeScheduleId( state );
-	const isUserBlocked = getConciergeUserBlocked( state );
-	const showCoursesTeaser = isBusinessPlanUser;
+	const isBusinessOrEcomPlanUser = !! (
+		purchaseSlugs &&
+		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
+	);
 
 	return {
-		userId,
-		isBusinessPlanUser,
-		showCoursesTeaser,
+		isBusinessOrEcomPlanUser,
 		isLoading,
 		isEmailVerified,
-		hasAppointment,
-		scheduleId,
-		isUserBlocked,
 	};
 };
 

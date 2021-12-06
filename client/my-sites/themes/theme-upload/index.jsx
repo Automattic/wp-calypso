@@ -102,6 +102,7 @@ class Upload extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
@@ -332,11 +333,7 @@ class Upload extends Component {
 						{
 							components: {
 								learnMoreLink: (
-									<InlineSupportLink
-										supportLink="https://wordpress.com/support/themes/uploading-setting-up-custom-themes/"
-										supportPostId={ 134784 }
-										showIcon={ false }
-									/>
+									<InlineSupportLink supportContext="themes-upload" showIcon={ false } />
 								),
 							},
 						}

@@ -13,7 +13,12 @@ function getRedirectToAfterLoginUrl( { flowName } ) {
 }
 
 function getLoginLink( { flowName, locale } ) {
-	return login( { redirectTo: getRedirectToAfterLoginUrl( { flowName } ), locale } );
+	return login( {
+		redirectTo: getRedirectToAfterLoginUrl( { flowName } ),
+		locale,
+		signupUrl: '/start/p2/user',
+		from: 'p2',
+	} );
 }
 
 function P2Details( {

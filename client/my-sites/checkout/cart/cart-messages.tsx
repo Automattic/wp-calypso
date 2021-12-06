@@ -8,6 +8,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { ResponseCartMessage } from '@automattic/shopping-cart';
+import type { CalypsoDispatch } from 'calypso/state/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Element {
@@ -154,7 +155,7 @@ function getNoticeIdForMessage( message: ResponseCartMessage ): string {
 
 function showMessages(
 	messages: ResponseCartMessage[],
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	messageType: 'error' | 'success'
 ): void {
 	const messageActionCreator = messageType === 'error' ? errorNotice : successNotice;

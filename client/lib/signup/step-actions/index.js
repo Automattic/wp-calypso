@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
@@ -11,6 +12,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
+import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
@@ -24,6 +26,7 @@ import {
 	getSelectedImportEngine,
 	getNuxUrlInputValue,
 } from 'calypso/state/importer-nux/temp-selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -280,32 +283,44 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		return;
 	}
 
-	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
+	const locale = getLocaleSlug();
+
+	wpcom.req.post(
+		'/sites/new',
+		{
+			...newSiteParams,
+			locale,
+			lang_id: getLanguage( locale ).value,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		},
+		function ( error, response ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
+
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
+
+			const siteSlug = parsedBlogURL.hostname;
+			const siteId = response.blog_details.blogid;
+			const providedDependencies = {
+				siteId,
+				siteSlug,
+				domainItem,
+				themeItem,
+			};
+			processItemCart(
+				providedDependencies,
+				newCartItems,
+				callback,
+				reduxStore,
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo
+			);
 		}
-
-		const parsedBlogURL = getUrlParts( response.blog_details.url );
-
-		const siteSlug = parsedBlogURL.hostname;
-		const siteId = response.blog_details.blogid;
-		const providedDependencies = {
-			siteId,
-			siteSlug,
-			domainItem,
-			themeItem,
-		};
-		processItemCart(
-			providedDependencies,
-			newCartItems,
-			callback,
-			reduxStore,
-			siteSlug,
-			isFreeThemePreselected,
-			themeSlugWithRepo
-		);
-	} );
+	);
 }
 
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
@@ -337,6 +352,7 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 			wpcom.req.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
 			} )
 		)
 		.then( () => {
@@ -362,6 +378,24 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	wpcom.undocumented().settings( siteSlug, 'post', settings, function ( errors ) {
 		callback( isEmpty( errors ) ? undefined : [ errors ] );
 	} );
+}
+
+export function setIntentOnSite( callback, { siteSlug, intent } ) {
+	if ( ! intent ) {
+		defer( callback );
+		return;
+	}
+
+	wpcom.req
+		.post( {
+			path: `/sites/${ siteSlug }/site-intent`,
+			apiNamespace: 'wpcom/v2',
+			body: { site_intent: intent },
+		} )
+		.then( () => callback() )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
+		} );
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
@@ -409,19 +443,37 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
-		debug( 'adding cart items', newCartItems );
+		debug( 'preparing to add cart items (if any) from', newCartItems );
 		const reduxState = reduxStore.getState();
 		const newCartItemsToAdd = newCartItems
 			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
 			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
 
 		if ( newCartItemsToAdd.length ) {
+			debug( 'adding products to cart', newCartItemsToAdd );
 			cartManagerClient
 				.forCartKey( siteSlug )
 				.actions.addProductsToCart( newCartItemsToAdd )
-				.then( () => callback( undefined, providedDependencies ) )
-				.catch( ( error ) => callback( error, providedDependencies ) );
+				.then( ( updatedCart ) => {
+					debug( 'product add request complete', updatedCart );
+					// Even if the cart request succeeds, there may be errors
+					if ( updatedCart.messages?.errors && updatedCart.messages.errors.length > 0 ) {
+						throw new Error( updatedCart.messages.errors[ 0 ].message );
+					}
+					const error = cartManagerClient.forCartKey( siteSlug ).getState().loadingError;
+					if ( error ) {
+						throw new Error( error );
+					}
+					debug( 'product add request successful' );
+					callback( undefined, providedDependencies );
+				} )
+				.catch( ( error ) => {
+					debug( 'product add request had an error', error );
+					reduxStore.dispatch( errorNotice( error.message ) );
+					callback( error, providedDependencies );
+				} );
 		} else {
+			debug( 'no cart items to add' );
 			callback( undefined, providedDependencies );
 		}
 	};
@@ -541,13 +593,20 @@ export function createAccount(
 			return;
 		}
 
+		// Handling special case where users log in via social using signup form.
+		let newAccountCreated = true;
+
+		if ( signupType === SIGNUP_TYPE_SOCIAL && response && ! response.created_account ) {
+			newAccountCreated = false;
+		}
+
 		// we should either have an error with an error property, or we should have a response with a bearer_token
 		const bearerToken = {};
 		if ( response && response.bearer_token ) {
 			bearerToken.bearer_token = response.bearer_token;
 		} else {
 			// something odd happened...
-			//eslint-disable-next-line no-console
+			// eslint-disable-next-line no-console
 			console.error( 'Expected either an error or a bearer token. got %o, %o.', error, response );
 		}
 
@@ -574,12 +633,14 @@ export function createAccount(
 
 		const plans_reorder_abtest_variation = response?.plans_reorder_abtest_variation ?? '';
 
-		// Fire after a new user registers.
-		recordRegistration( {
-			userData: registrationUserData,
-			flow: flowName,
-			type: signupType,
-		} );
+		// Fire tracking events, but only after a _new_ user registers.
+		if ( newAccountCreated ) {
+			recordRegistration( {
+				userData: registrationUserData,
+				flow: flowName,
+				type: signupType,
+			} );
+		}
 
 		const providedDependencies = {
 			username,
@@ -600,18 +661,23 @@ export function createAccount(
 
 	if ( service ) {
 		// We're creating a new social account
-		wpcom.undocumented().usersSocialNew(
+		wpcom.req.post(
+			'/users/social/new',
 			{
 				service,
 				access_token,
 				id_token,
 				signup_flow_name: flowName,
+				locale: getLocaleSlug(),
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
 				...userData,
 			},
 			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);
 	} else {
-		wpcom.undocumented().usersNew(
+		wpcom.req.post(
+			'/users/new',
 			Object.assign(
 				{},
 				userData,
@@ -623,6 +689,9 @@ export function createAccount(
 					nux_q_question_experience: userExperience || undefined,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
+					locale: getLocaleSlug(),
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
 				},
 				oauth2Signup
 					? {
@@ -644,6 +713,7 @@ export function createAccount(
 export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { themeSlugWithRepo } = dependencies;
 	const { site } = stepData;
+	const locale = getLocaleSlug();
 
 	const data = {
 		blog_name: site,
@@ -655,9 +725,13 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 			wpcom_public_coming_soon: 1,
 		},
 		validate: false,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
 	};
 
-	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
+	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
 		let providedDependencies;
 		let siteSlug;
 
@@ -683,6 +757,8 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	// More info: https://wp.me/p9lV3a-1dM-p2
 	const themeSlugWithRepo = 'pub/p2020';
 
+	const locale = getLocaleSlug();
+
 	const data = {
 		blog_name: site,
 		blog_title: siteTitle,
@@ -694,9 +770,13 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 			p2_initialize_as_hub: true,
 		},
 		validate: false,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
 	};
 
-	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
+	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
 		let providedDependencies;
 		let siteSlug;
 

@@ -11,21 +11,18 @@ See p1HpG7-7ET-p2 for more details.
 
 ```jsx
 import { Button } from '@automattic/components';
-import React from 'react';
 import MyPlanCard from 'calypso/components/my-plan-card';
 
-export default class extends React.Component {
-	render() {
-		return (
-			<MyPlanCard
-				action={ <Button compact>Manage Payment</Button> }
-				details="Expires on October 27, 2020"
-				product="jetpack_personal"
-				tagline="Your data is being securely backed up and you have access to priority support."
-				title="Jetpack Personal"
-			/>
-		);
-	}
+export default function MyComponent() {
+	return (
+		<MyPlanCard
+			action={ <Button compact>Manage Payment</Button> }
+			details="Expires on October 27, 2020"
+			product="jetpack_personal"
+			tagline="Your data is being securely backed up and you have access to priority support."
+			title="Jetpack Personal"
+		/>
+	);
 }
 ```
 

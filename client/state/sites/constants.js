@@ -18,6 +18,7 @@ export const SITE_REQUEST_FIELDS = [
 	'lang',
 	'launch_status',
 	'site_migration',
+	'site_owner',
 	'is_fse_active',
 	'is_fse_eligible',
 	'is_core_site_editor_enabled',
@@ -68,4 +69,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'woocommerce_is_active',
 	'wordads',
 	'site_creation_flow',
+	'is_difm_lite_in_progress',
 ].join();

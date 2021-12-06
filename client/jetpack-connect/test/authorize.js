@@ -5,6 +5,8 @@
 import deepFreeze from 'deep-freeze';
 import { shallow } from 'enzyme';
 import { JetpackAuthorize } from '../authorize';
+import { JPC_PATH_PLANS } from '../constants';
+import { OFFER_RESET_FLOW_TYPES } from '../flow-types';
 
 const noop = () => {};
 const CLIENT_ID = 98765;
@@ -54,7 +56,11 @@ const DEFAULT_PROPS = deepFreeze( {
 	user: {
 		display_name: "A User's Name",
 	},
+	partnerSlug: null,
+	selectedPlanSlug: null,
+	siteHasJetpackPaidProduct: false,
 	userAlreadyConnected: false,
+	userHasUnattachedLicenses: false,
 } );
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -294,6 +300,67 @@ describe( 'JetpackAuthorize', () => {
 			};
 
 			expect( isFromJetpackBoost( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'getRedirectionTarget', () => {
+		test( 'should redirect to pressable if partnerSlug is "pressable"', () => {
+			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
+			const component = shallow( renderableComponent );
+			component.setProps( {
+				partnerSlug: 'pressable',
+			} );
+			const target = component.instance().getRedirectionTarget();
+
+			expect( target ).toBe( `/start/pressable-nux?blogid=${ DEFAULT_PROPS.authQuery.clientId }` );
+		} );
+
+		test( 'should redirect to /checkout if the selected plan/product is Jetpack plan/product', () => {
+			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
+			const component = shallow( renderableComponent );
+			component.setProps( {
+				selectedPlanSlug: OFFER_RESET_FLOW_TYPES[ 0 ],
+			} );
+			const target = component.instance().getRedirectionTarget();
+
+			expect( target ).toBe( `/checkout/${ SITE_SLUG }/${ OFFER_RESET_FLOW_TYPES[ 0 ] }` );
+		} );
+
+		test( 'should redirect to wp-admin when site has a purchased plan/product', () => {
+			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
+			const component = shallow( renderableComponent );
+			component.setProps( {
+				siteHasJetpackPaidProduct: true,
+			} );
+			const target = component.instance().getRedirectionTarget();
+
+			expect( target ).toBe( DEFAULT_PROPS.authQuery.redirectAfterAuth );
+		} );
+
+		test( 'should redirect to wp-admin when site has an unattached "user"(not partner) product license key', () => {
+			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
+			const component = shallow( renderableComponent );
+			component.setProps( {
+				userHasUnattachedLicenses: true,
+			} );
+			const target = component.instance().getRedirectionTarget();
+
+			expect( target ).toBe( DEFAULT_PROPS.authQuery.redirectAfterAuth );
+		} );
+
+		test( 'should redirect to redirect to the /jetpack/connect/plans page by default', () => {
+			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
+			const component = shallow( renderableComponent );
+			// component.setProps( {
+			// 	siteHasJetpackPaidProduct: true,
+			// } );
+			const target = component.instance().getRedirectionTarget();
+
+			expect( target ).toBe(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+					DEFAULT_PROPS.authQuery.redirectAfterAuth
+				) }`
+			);
 		} );
 	} );
 } );

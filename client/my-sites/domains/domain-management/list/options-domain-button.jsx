@@ -1,5 +1,10 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
+import { Icon, moreVertical, plus, search } from '@wordpress/icons';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -20,10 +25,14 @@ class AddDomainButton extends Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,
 		specificSiteActions: PropTypes.bool,
+		ellipsisButton: PropTypes.bool,
+		borderless: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		specificSiteActions: false,
+		ellipsisButton: false,
+		borderless: false,
 	};
 
 	state = {
@@ -62,9 +71,10 @@ class AddDomainButton extends Component {
 			return (
 				<Fragment>
 					<PopoverMenuItem onClick={ this.clickAddDomain }>
+						<Icon icon={ search } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 						{ translate( 'Search for a domain' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
+					<PopoverMenuItem icon="domains" href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
 						{ translate( 'Use a domain I own' ) }
 					</PopoverMenuItem>
 				</Fragment>
@@ -73,40 +83,68 @@ class AddDomainButton extends Component {
 
 		return (
 			<Fragment>
-				<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
-					{ translate( 'Manage all domains' ) }
-				</PopoverMenuItem>
-				<PopoverMenuItem href="/new" onClick={ this.trackMenuClick }>
+				{ ! config.isEnabled( 'domains/management-list-redesign' ) && (
+					<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
+						{ translate( 'Manage all domains' ) }
+					</PopoverMenuItem>
+				) }
+				<PopoverMenuItem icon="plus" href="/new" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain to a new site' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem href="/domains/add" onClick={ this.trackMenuClick }>
+				<PopoverMenuItem icon="create" href="/domains/add" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain to a different site' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem href="/start/domain" onClick={ this.trackMenuClick }>
+				<PopoverMenuItem icon="domains" href="/start/domain" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain without a site' ) }
 				</PopoverMenuItem>
 			</Fragment>
 		);
 	};
 
-	render() {
-		const { translate } = this.props;
+	renderLabel() {
+		const { ellipsisButton, specificSiteActions, translate } = this.props;
+		const isRedesign = config.isEnabled( 'domains/management-list-redesign' );
 
-		const label = this.props.specificSiteActions
-			? translate( 'Add a domain to this site' )
-			: translate( 'Other domain options' );
+		if ( ellipsisButton ) {
+			return <Icon icon={ moreVertical } className="options-domain-button__ellipsis gridicon" />;
+		}
+
+		let label = translate( 'Other domain options' );
+		if ( specificSiteActions ) {
+			label = isRedesign ? translate( 'Add a domain' ) : translate( 'Add a domain to this site' );
+		}
+
+		if ( isRedesign ) {
+			return (
+				<>
+					<Icon icon={ plus } className="options-domain-button__add gridicon" viewBox="2 2 20 20" />
+					<span className="options-domain-button__desktop">{ label }</span>
+				</>
+			);
+		}
+
+		return (
+			<>
+				{ label }
+				{ <Gridicon icon="chevron-down" /> }
+			</>
+		);
+	}
+
+	render() {
+		const { specificSiteActions, ellipsisButton, borderless } = this.props;
+		const classes = classNames( 'options-domain-button', ellipsisButton && 'ellipsis' );
 
 		return (
 			<Fragment>
 				<Button
-					primary={ this.props.specificSiteActions }
-					compact
-					className="options-domain-button"
+					primary={ specificSiteActions }
+					className={ classes }
 					onClick={ this.toggleAddMenu }
 					ref={ this.addDomainButtonRef }
+					borderless={ borderless }
 				>
-					{ label }
-					<Gridicon icon="chevron-down" />
+					{ this.renderLabel() }
 				</Button>
 				<PopoverMenu
 					className="options-domain-button__popover"

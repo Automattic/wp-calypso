@@ -8,10 +8,10 @@
 		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"peerDependencies": {
-		"@babel/core": "^7.15.0"
+		"@babel/core": "^7.16.0"
 	},
 	"publishConfig": {
 		"access": "public"

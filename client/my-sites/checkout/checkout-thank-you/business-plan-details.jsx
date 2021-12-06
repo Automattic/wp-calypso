@@ -6,12 +6,11 @@ import { connect, useSelector } from 'react-redux';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
 import jetpackBackupImage from 'calypso/assets/images/illustrations/jetpack-backup.svg';
-import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import updatesImage from 'calypso/assets/images/illustrations/updates.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getProductsList, getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
@@ -26,7 +25,6 @@ const BusinessPlanDetails = ( {
 	selectedFeature,
 	purchases,
 	hasProductsList,
-	conciergeSessionDisplayCost,
 } ) => {
 	const shouldPromoteJetpack = useSelector( ( state ) =>
 		isJetpackSectionEnabledForSite( state, selectedSite?.ID )
@@ -34,32 +32,6 @@ const BusinessPlanDetails = ( {
 
 	const plan = find( sitePlans.data, isBusiness );
 	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
-
-	const locale = i18n.getLocaleSlug();
-	const isEnglish = -1 !== [ 'en', 'en-gb' ].indexOf( locale );
-
-	const detailDescriptionWithPrice = i18n.translate(
-		'Schedule a %(price)s Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.',
-		{
-			args: {
-				price: conciergeSessionDisplayCost,
-			},
-		}
-	);
-
-	//TODO: remove this once price translations are finished and just use detailDescriptionWithPrice.
-	let detailDescription = i18n.translate(
-		'Schedule a Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
-	);
-
-	if (
-		isEnglish ||
-		i18n.hasTranslation(
-			'Schedule a %(price)s Quick Start session with a Happiness Engineer to set up your site and learn more about WordPress.com.'
-		)
-	) {
-		detailDescription = detailDescriptionWithPrice;
-	}
 
 	return (
 		<div>
@@ -70,17 +42,6 @@ const BusinessPlanDetails = ( {
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
 			/>
-
-			{ ( isEnglish || i18n.hasTranslation( 'Purchase a session' ) ) && (
-				<PurchaseDetail
-					icon={ <img alt="" src={ conciergeImage } /> }
-					title={ i18n.translate( 'Get personalized help' ) }
-					description={ detailDescription }
-					buttonText={ i18n.translate( 'Purchase a session' ) }
-					href={ `/checkout/offer-quickstart-session` }
-					onClick={ trackOnboardingButtonClick }
-				/>
-			) }
 
 			<PurchaseDetail
 				icon={ <img alt={ i18n.translate( 'Earn Illustration' ) } src={ earnImage } /> }
@@ -141,6 +102,5 @@ export default connect( ( state ) => {
 	const productsList = getProductsList( state );
 	return {
 		hasProductsList: Object.keys( productsList ).length > 0,
-		conciergeSessionDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
 	};
 } )( BusinessPlanDetails );

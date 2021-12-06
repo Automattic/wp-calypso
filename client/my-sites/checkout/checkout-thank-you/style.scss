@@ -2,6 +2,9 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
+.layout__content {
+	overflow: visible;
+}
 .checkout-thank-you {
 	box-sizing: border-box;
 	position: static;
@@ -703,6 +706,8 @@
 	}
 	.jetpack-checkout-siteless-thank-you-completed__card {
 		padding: 0;
+		border-radius: 4px; /* stylelint-disable-line */
+		overflow: hidden;
 		box-shadow: 0 0 40px 0 #00000014;
 
 		width: 100%;
@@ -725,10 +730,15 @@
 				font-size: $font-headline-medium;
 			}
 		}
+
 		p {
 			@include break-mobile {
 				font-size: 18px; /* stylelint-disable-line */
 				line-height: 1.75rem;
+			}
+
+			&:last-of-type {
+				margin-bottom: 0;
 			}
 		}
 		.jetpack-checkout-siteless-thank-you-completed__button,
@@ -749,7 +759,7 @@
 		.jetpack-checkout-siteless-thank-you-completed__main-message {
 			font-size: 2.25rem;
 			font-weight: 700;
-			margin-bottom: 56px;
+			margin-bottom: 32px;
 			line-height: 1;
 			@include break-mobile {
 				font-size: 3rem;
@@ -772,17 +782,10 @@
 		flex-direction: column;
 		padding: 0;
 		border-radius: 4px; /* stylelint-disable-line */
-		overflow: hidden;
 		box-shadow: 0 0 40px 0 #00000014;
 
 		width: 100%;
 		max-width: none;
-
-		@include break-medium {
-			flex-direction: row;
-			width: auto;
-			max-width: 1200px;
-		}
 
 		.jetpack-logo {
 			margin-bottom: 25px;
@@ -827,7 +830,7 @@
 		.jetpack-checkout-siteless-thank-you__card-main {
 			max-width: 744px;
 		}
-
+		
 		.jetpack-checkout-siteless-thank-you__step {
 			display: flex;
 			align-items: flex-start;
@@ -933,6 +936,112 @@
 	}
 }
 
+.jetpack-checkout-siteless-thank-you {
+	.jetpack-checkout-siteless-thank-you__card {
+		@include break-medium {
+			flex-direction: row;
+			width: auto;
+			max-width: 1200px;
+		}
+	}
+}
+
+.licensing-thank-you-auto-activation__product-info-loading {
+	@include placeholder( --color-neutral-20 );
+}
+
+.licensing-thank-you-auto-activation__select {
+	.select-dropdown__header {
+		.select-dropdown__header-text {
+			padding-right: 10px;
+		}
+	}
+	.licensing-thank-you-auto-activation__dropdown-item-flex-container {
+		display: flex;
+		justify-content: space-between;
+		&.has-seperator {
+			border-top: 1px solid var( --color-neutral-10 );
+		}
+		> span {
+			display: block;
+		}
+	}
+	.select-dropdown__options {
+		max-height: 220px;
+		overflow-y: scroll;
+	}
+	a.select-dropdown__item {
+		padding: 0 16px;
+		text-decoration: none;
+		&:hover {
+			color: var( --studio-jetpack-green );
+		}
+		.select-dropdown__item-text {
+			display: block;
+			position: static;
+			.licensing-thank-you-auto-activation__dropdown-item-text {
+				padding-right: 10px;
+			}
+		}
+		&::before {
+			display: none;
+		}
+		&.is-selected {
+			background-color: var( --color-neutral-10 );
+		}
+	}
+}
+
+.licensing-thank-you-manual-activation-instructions__step-number {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+
+	margin-right: 12px;
+
+	font-weight: bold;
+	text-align: center;
+	color: white;
+
+	background-color: var( --studio-jetpack-green-40 );
+
+	border-radius: 24px; /* stylelint-disable-line */
+
+	width: 28px;
+	height: 28px;
+}
+
+.licensing-activation .licensing-thank-you-manual-activation-instructions__button.button {
+	margin-top: 0;
+}
+
+.licensing-thank-you-manual-activation-license-key__key {
+	margin-top: 40px;
+}
+
+.licensing-thank-you-manual-activation-license-key__clipboard {
+	display: flex;
+
+	margin-top: 8px;
+
+	.licensing-thank-you-manual-activation-license-key__input.form-text-input {
+		margin-right: 8px;
+
+		background-color: var( --studio-gray-0 );
+
+		border: none;
+	}
+
+	.licensing-thank-you-manual-activation-license-key__input.form-text-input.is-loading {
+		@include placeholder( --color-neutral-20 );
+	}
+}
+
+.licensing-activation .licensing-thank-you-manual-activation-license-key__button.button {
+	margin-top: 0;
+	min-width: 100px;
+}
+
 .jetpack-checkout-thank-you {
 	.jetpack-checkout-thank-you__card,
 	.jetpack-checkout-thank-you__card-loading {
@@ -981,19 +1090,5 @@
 	.jetpack-checkout-thank-you__sub-message-loading,
 	.jetpack-checkout-thank-you__email-message-loading {
 		@include placeholder( --color-neutral-20 );
-	}
-}
-
-.checkout-thank-you__domains .thank-you__body {
-	& > div {
-		width: 690px;
-	}
-
-	div {
-		justify-content: space-between;
-	}
-
-	.domain-mapping-thank-you__button {
-		width: 100%;
 	}
 }

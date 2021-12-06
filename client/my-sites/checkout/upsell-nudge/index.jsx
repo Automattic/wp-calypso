@@ -140,17 +140,15 @@ export class UpsellNudge extends Component {
 					value: postalCode,
 					isTouched: true,
 					errors: [],
-					isRequired: false,
 				},
 				countryCode: {
 					value: countryCode,
 					isTouched: true,
 					errors: [],
-					isRequired: false,
 				},
 			};
 			const validationResult = await getTaxValidationResult( contactInfo );
-			return isContactValidationResponseValid( validationResult, contactInfo );
+			return isContactValidationResponseValid( validationResult );
 		};
 
 		validateContactDetails().then( ( isValid ) => {
@@ -197,7 +195,7 @@ export class UpsellNudge extends Component {
 		);
 	}
 
-	renderPlaceholders() {
+	renderGenericPlaceholder() {
 		const { receiptId } = this.props;
 		return (
 			<>
@@ -243,6 +241,50 @@ export class UpsellNudge extends Component {
 		);
 	}
 
+	renderProfessionalEmailUpsellPlaceholder() {
+		return (
+			<>
+				<div className="upsell-nudge__placeholders">
+					<div>
+						<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__hold-tight-placeholder" />
+						<div className="upsell-nudge__placeholder-row is-placeholder" />
+						<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__price-placeholder" />
+					</div>
+				</div>
+				<div className="upsell-nudge__placeholders upsell-nudge__form-container-placeholder">
+					<div className="upsell-nudge__placeholders upsell-nudge__form-placeholder">
+						<div>
+							<div className="upsell-nudge__placeholder-row is-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder" />
+							<div className="upsell-nudge__placeholder-button-container">
+								<div className="upsell-nudge__placeholder-button is-placeholder" />
+								<div className="upsell-nudge__placeholder-button is-placeholder" />
+							</div>
+						</div>
+					</div>
+					<div className="upsell-nudge__placeholders upsell-nudge__benefits-placeholder">
+						<div>
+							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
+							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
+						</div>
+					</div>
+				</div>
+			</>
+		);
+	}
+
+	renderPlaceholders() {
+		const { upsellType } = this.props;
+
+		if ( upsellType === 'professional-email-upsell' ) {
+			return this.renderProfessionalEmailUpsellPlaceholder();
+		}
+		return this.renderGenericPlaceholder();
+	}
+
 	renderContent() {
 		const {
 			receiptId,
@@ -253,6 +295,7 @@ export class UpsellNudge extends Component {
 			planDiscountedRawPrice,
 			isLoggedIn,
 			upsellType,
+			upgradeItem,
 			translate,
 			siteSlug,
 			hasSevenDayRefundPeriod,
@@ -307,6 +350,7 @@ export class UpsellNudge extends Component {
 				return (
 					<ProfessionalEmailUpsell
 						currencyCode={ currencyCode }
+						domainName={ upgradeItem }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						productCost={ productCost }
@@ -332,6 +376,7 @@ export class UpsellNudge extends Component {
 			hideNudge: shouldHideUpsellNudges,
 			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
+
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
@@ -538,4 +583,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( withShoppingCart( withCartKey( localize( UpsellNudge ) ) ) );
+)( withCartKey( withShoppingCart( localize( UpsellNudge ) ) ) );

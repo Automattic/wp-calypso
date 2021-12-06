@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest an idea for this project!
+description: Suggest an idea for Calypso!
 title: "Feature Request:"
 labels: ["[Type] Feature Request"]
 body:
@@ -7,7 +7,8 @@ body:
     attributes:
       value: |
         Please, be as descriptive as possible. Issues lacking detail, or for any other reason than to request a feature, may be closed without action.
-  - type: input
+
+  - type: textarea
     id: what
     attributes:
       label: What
@@ -30,4 +31,4 @@ body:
     id: how
     attributes:
       label: How
-      description: If applicable, add screenshots, mockup, aminations and/or videos to help illustrate how the feature could be done.
+      description: If applicable, add screenshots, mockup, animations and/or videos to help illustrate how the feature could be done.

@@ -48,10 +48,9 @@ describe( 'isRequestingJetpackSettings()', () => {
 		expect( output ).toBe( false );
 	} );
 
-	test( 'should return true if settings are currently being requested for a matching site ID and query', () => {
+	test( 'should return true if settings are currently being requested for a matching site ID', () => {
 		const siteId = 87654321;
-		const query = { foo: 'bar' };
-		const action = requestJetpackSettings( siteId, query );
+		const action = requestJetpackSettings( siteId );
 		const state = {
 			dataRequests: {
 				[ getRequestKey( action ) ]: {
@@ -60,23 +59,7 @@ describe( 'isRequestingJetpackSettings()', () => {
 			},
 		};
 
-		const output = isRequestingJetpackSettings( state, siteId, query );
+		const output = isRequestingJetpackSettings( state, siteId );
 		expect( output ).toBe( true );
-	} );
-
-	test( 'should return false if settings are currently being requested for matching site ID and non-matching query', () => {
-		const siteId = 87654321;
-		const query = { foo: 'bar' };
-		const action = requestJetpackSettings( siteId, { foo: 'baz' } );
-		const state = {
-			dataRequests: {
-				[ getRequestKey( action ) ]: {
-					status: 'pending',
-				},
-			},
-		};
-
-		const output = isRequestingJetpackSettings( state, siteId, query );
-		expect( output ).toBe( false );
 	} );
 } );

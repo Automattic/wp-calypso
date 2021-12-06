@@ -50,8 +50,6 @@ const useSiteMenuItems = () => {
 
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
 
-	const shouldShowBetaTesting = ! isJetpack && ! isP2;
-
 	const shouldShowInbox = ! isP2;
 
 	/**
@@ -77,7 +75,6 @@ const useSiteMenuItems = () => {
 		siteDomain,
 		shouldShowWooCommerce,
 		shouldShowThemes,
-		shouldShowBetaTesting,
 		shouldShowInbox,
 	};
 

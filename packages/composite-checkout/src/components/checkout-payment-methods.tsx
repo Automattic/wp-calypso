@@ -3,8 +3,8 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-import { useCallback } from 'react';
-import * as React from 'react';
+import { useCallback, useContext } from 'react';
+import CheckoutContext from '../lib/checkout-context';
 import joinClasses from '../lib/join-classes';
 import {
 	useAllPaymentMethods,
@@ -12,12 +12,12 @@ import {
 	usePaymentMethodId,
 	useIsStepActive,
 	useIsStepComplete,
-	useEvents,
 	useFormStatus,
 } from '../public-api';
 import { FormStatus } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import RadioButton from './radio-button';
+import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
@@ -35,17 +35,16 @@ export default function CheckoutPaymentMethods( {
 	className?: string;
 } ): JSX.Element | null {
 	const { __ } = useI18n();
-	const onEvent = useEvents();
-	const onError = useCallback(
-		( error ) => onEvent( { type: 'PAYMENT_METHOD_LOAD_ERROR', payload: error } ),
-		[ onEvent ]
-	);
+	const { onPageLoadError, onPaymentMethodChanged } = useContext( CheckoutContext );
+	const onError = useCallback( ( error ) => onPageLoadError?.( 'payment_method_load', error ), [
+		onPageLoadError,
+	] );
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
 	const onClickPaymentMethod = ( newMethod: string ) => {
 		debug( 'setting payment method to', newMethod );
-		onEvent( { type: 'PAYMENT_METHOD_SELECT', payload: newMethod } );
+		onPaymentMethodChanged?.( newMethod );
 		setPaymentMethod( newMethod );
 	};
 	const paymentMethods = useAllPaymentMethods();
@@ -176,8 +175,8 @@ interface PaymentMethodProps {
 	onClick?: ( id: string ) => void;
 	checked: boolean;
 	ariaLabel: string;
-	activeContent?: React.ReactNode;
-	label?: React.ReactNode;
-	inactiveContent?: React.ReactNode;
+	activeContent?: ReactNode;
+	label?: ReactNode;
+	inactiveContent?: ReactNode;
 	summary?: boolean;
 }

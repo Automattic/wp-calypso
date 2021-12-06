@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card, ProgressBar } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
@@ -18,6 +19,10 @@ import {
 	isEligibleForAutomatedTransfer,
 	getAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
+import {
+	pluginInstallationStateChange,
+	productToBeInstalled,
+} from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
@@ -42,6 +47,7 @@ class PluginUpload extends Component {
 		! inProgress && this.props.clearPluginUpload( siteId );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
@@ -54,6 +60,12 @@ class PluginUpload extends Component {
 
 		if ( nextProps.complete ) {
 			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+		}
+
+		if ( config.isEnabled( 'marketplace-v0.5' ) && nextProps.inProgress ) {
+			this.props.productToBeInstalled( null, nextProps.pluginId, nextProps.siteSlug );
+
+			page( `/marketplace/install/${ nextProps.siteSlug }` );
 		}
 
 		const { COMPLETE } = transferStates;
@@ -89,7 +101,7 @@ class PluginUpload extends Component {
 		return (
 			<Card>
 				{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }
-				{ inProgress && this.renderProgressBar() }
+				{ inProgress && ! config.isEnabled( 'marketplace-v0.5' ) && this.renderProgressBar() }
 			</Card>
 		);
 	}
@@ -187,6 +199,8 @@ const flowRightArgs = [
 		clearPluginUpload,
 		initiateAutomatedTransferWithPluginZip,
 		successNotice,
+		productToBeInstalled,
+		pluginInstallationStateChange,
 	} ),
 	localize,
 ];

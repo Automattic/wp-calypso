@@ -126,6 +126,18 @@ export function domainManagementDns( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'dns', relativeTo );
 }
 
+export function domainManagementDnsAddRecord( siteName, domainName, relativeTo = null ) {
+	return domainManagementEditBase( siteName, domainName, 'add-dns-record', relativeTo );
+}
+
+export function domainManagementDnsEditRecord( siteName, domainName, recordId, relativeTo = null ) {
+	let path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
+	if ( recordId ) {
+		path += '?recordId=' + encodeURI( recordId );
+	}
+	return path;
+}
+
 export function domainManagementRedirectSettings( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'redirect-settings', relativeTo );
 }
@@ -237,13 +249,18 @@ export function domainUseYourDomain( siteName, domain ) {
 	return path;
 }
 
-export function domainUseMyDomain( siteName, domain ) {
-	let path = `/domains/add/use-my-domain/${ siteName }`;
+export function domainUseMyDomain( siteName, domain, initialMode ) {
+	const path = `/domains/add/use-my-domain/${ siteName }`;
+	const queryArgs = [];
 	if ( domain ) {
-		path += `?initialQuery=${ domain }`;
+		queryArgs.push( `initialQuery=${ domain }` );
+
+		if ( initialMode ) {
+			queryArgs.push( `initialMode=${ initialMode }` );
+		}
 	}
 
-	return path;
+	return path + ( queryArgs.length ? `?${ queryArgs.join( '&' ) }` : '' );
 }
 
 export function getSectionName( pathname ) {
@@ -255,4 +272,10 @@ export function getSectionName( pathname ) {
 
 export function domainManagementDomainConnectMapping( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'domain-connect-mapping', relativeTo );
+}
+
+export function createSiteFromDomainOnly( siteSlug, siteId ) {
+	return `/start/site-selected/?siteSlug=${ encodeURIComponent(
+		siteSlug
+	) }&siteId=${ encodeURIComponent( siteId ) }`;
 }

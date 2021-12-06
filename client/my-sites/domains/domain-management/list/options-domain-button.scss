@@ -1,9 +1,45 @@
-.options-domain-button {
-	& > .gridicon {
-		margin-left: 5px;
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+button {
+	&.options-domain-button {
+		padding: 8px;
+
+		&__popover {
+			margin-top: 5px;
+		}
+
+		@include break-mobile {
+			padding: 7px 15px;
+			font-size: $font-body-small;
+			line-height: 1;
+
+			.gridicon {
+				top: 5px;
+				margin-top: -8px;
+			}
+
+			& > .gridicon {
+				margin-left: 5px;
+			}
+		}
 	}
 
-	&__popover {
-		margin-top: 5px;
+	.options-domain-button__desktop {
+		display: none;
+
+		@include break-mobile {
+			display: initial;
+		}
+	}
+
+	.options-domain-button.ellipsis {
+		border: none;
+
+		@include break-mobile {
+			&:hover {
+				color: var( --color-neutral-70 );
+			}
+		}
 	}
 }

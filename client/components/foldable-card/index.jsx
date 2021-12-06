@@ -41,6 +41,7 @@ class FoldableCard extends Component {
 		expanded: this.props.expanded,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.expanded !== this.props.expanded ) {
 			this.setState( { expanded: nextProps.expanded } );
@@ -121,11 +122,13 @@ class FoldableCard extends Component {
 		} );
 		return (
 			<div className={ headerClasses } role="presentation" onClick={ headerClickAction }>
-				<span className="foldable-card__main">{ this.props.header } </span>
+				<span className="foldable-card__main">
+					{ this.props.header }
+					{ this.renderActionButton() }
+				</span>
 				<span className="foldable-card__secondary">
 					{ summary }
 					{ expandedSummary }
-					{ this.renderActionButton() }
 				</span>
 			</div>
 		);

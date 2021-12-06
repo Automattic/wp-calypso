@@ -1,7 +1,8 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.signup__step.is-design-setup-site {
+.signup__step.is-design-setup-site,
+.signup__step.is-difm-design-setup-site {
 	.step-wrapper {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -16,11 +17,6 @@
 			padding-left: 48px;
 			padding-right: 48px;
 		}
-
-		@include break-medium {
-			padding-left: 96px;
-			padding-right: 96px;
-		}
 	}
 
 	.step-wrapper__content {
@@ -32,6 +28,14 @@
 
 		@include break-medium {
 			margin-top: 48px;
+		}
+	}
+
+	.step-wrapper.design-picker__has-categories {
+		.step-wrapper__content {
+			@include break-medium {
+				margin-top: 64px;
+			}
 		}
 	}
 
@@ -55,9 +59,69 @@
 		}
 	}
 
+	.design-picker__has-categories {
+		.design-picker__grid {
+			@include break-medium {
+				grid-template-columns: 1fr;
+				column-gap: 24px;
+				row-gap: 36px;
+			}
+
+			@include break-large {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		.formatted-header__subtitle {
+			// Overrides some very specific selectors in /client/signup/style.scss
+			margin: 12px 0 48px !important;
+		}
+	}
+
 	.action-buttons {
 		@include break-small {
 			background-color: transparent;
 		}
+	}
+}
+
+.design-picker__preview {
+	padding-bottom: 30px;
+
+	.step-wrapper__content {
+		height: calc( 100vh - 245px );
+
+		@include break-mobile {
+			height: calc( 100vh - 225px );
+		}
+
+		@include break-small {
+			height: calc( 100vh - 128px );
+		}
+	}
+
+	@include break-small {
+		.step-wrapper__header,
+		.step-wrapper__content {
+			transform: translateY( -48px );
+		}
+
+		.step-wrapper__content {
+			max-height: 1080px;
+		}
+	}
+}
+
+.design-picker__web-preview {
+	.web-preview__frame-wrapper.is-resizable {
+		background-color: transparent;
+	}
+
+	.web-preview__frame {
+		border: 1px solid rgba( 0, 0, 0, 0.12 );
+		border-top-width: 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 0 0 6px 6px;
+		box-sizing: border-box;
 	}
 }

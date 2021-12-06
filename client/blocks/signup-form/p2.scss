@@ -34,18 +34,7 @@
 	}
 
 	.form-input-validation {
-		font-size: var( --p2-font-size-form-xxs );
-		line-height: 1.5;
-		padding: 8px 0 0 2px;
-		margin-bottom: 1rem;
-
-		svg {
-			display: none;
-		}
-
-		&.is-error {
-			color: var( --p2-color-error );
-		}
+		@extend %p2-form-input-validation;
 	}
 
 	.form-password-input {

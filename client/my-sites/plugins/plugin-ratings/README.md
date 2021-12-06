@@ -1,6 +1,7 @@
 # Plugin Ratings
 
-This component is used to display the detail of how the ratings of a plugin are divided.
+This component is used to display the detail of how the ratings of a plugin are divided
+or just rating stars.
 
 ## How to use
 
@@ -8,11 +9,14 @@ This component is used to display the detail of how the ratings of a plugin are 
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings';
 
 function render() {
-	return <PluginRatings plugin={ this.props.plugin } barWidth={ 100 } />;
+	return <PluginRatings plugin={ 90 } />;
 }
 ```
 
 ## Props
 
-- `plugin`: A plugin object
-- `barWidth`: Width in pixels for the percentage bars of the component
+- `rating`: The plugin rating (0-100)
+- `ratings`: An object or array with the Plugin ratings
+- `downloaded`: The plugin current downloads number
+- `slug`: The Plugin slug
+- `numRatings`: The total ratings this plugin has received

@@ -2,6 +2,7 @@ import { RichText } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { InnerBlocks } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
+import { transforms } from './transform';
 
 const blockAttributes = {
 	summary: {
@@ -86,10 +87,11 @@ registerBlockType( 'a8c/spoiler', {
 	icon: 'warning',
 	category: 'a8c',
 	description: __( 'Hide content until the reader wants to see it.' ),
-	keywords: [ __( 'spoiler' ) ],
+	keywords: [ __( 'spoiler' ), __( 'accordion' ), __( 'Dropdown' ) ],
 	attributes: blockAttributes,
 	edit,
 	save,
+	transforms,
 	deprecated: [
 		{
 			attributes: blockAttributes_v1,

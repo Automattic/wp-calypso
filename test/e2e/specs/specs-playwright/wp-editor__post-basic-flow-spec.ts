@@ -9,13 +9,14 @@ import {
 	DataHelper,
 	GutenbergEditorPage,
 	EditorSettingsSidebarComponent,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	setupHooks,
-	PreviewComponent,
 	PublishedPostPage,
+	ImageBlock,
+	skipItIf,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, ElementHandle } from 'playwright';
 
 const quote =
 	'The problem with quotes on the Internet is that it is hard to verify their authenticity. \n— Abraham Lincoln';
@@ -27,20 +28,21 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
-	let previewComponent: PreviewComponent;
 	let publishedPostPage: PublishedPostPage;
 	const user = BrowserHelper.targetGutenbergEdge()
 		? 'gutenbergSimpleSiteEdgeUser'
-		: 'gutenbergSimpleSiteUser';
+		: 'simpleSitePersonalPlanUser';
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
-	describe( 'Starting and populating post data', function () {
+	describe( 'Block editor', function () {
+		let blockHandle: ElementHandle;
+
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Start new post', async function () {
@@ -55,6 +57,17 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		it( 'Enter post text', async function () {
 			await gutenbergEditorPage.enterText( quote );
+		} );
+
+		it( 'Add image block', async function () {
+			blockHandle = await gutenbergEditorPage.addBlock(
+				ImageBlock.blockName,
+				ImageBlock.blockEditorSelector
+			);
+		} );
+
+		it( 'Remove image block', async function () {
+			await gutenbergEditorPage.removeBlock( blockHandle );
 		} );
 
 		it( 'Open editor settings sidebar for post', async function () {
@@ -76,40 +89,50 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Preview post', function () {
-		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional
+		const targetDevice = BrowserHelper.getTargetDeviceName();
+		let previewPage: Page;
+
+		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 		it( 'Close settings sidebar', async function () {
 			await editorSettingsSidebarComponent.closeSidebar();
 		} );
 
+		// The following two steps have conditiionals inside them, as how the
+		// Editor Preview behaves depends on the device type.
+		// On desktop and tablet, preview applies CSS attributes to modify the preview in-editor.
+		// On mobile web, preview button opens a new tab.
 		it( 'Launch preview', async function () {
-			await gutenbergEditorPage.preview();
-			previewComponent = new PreviewComponent( page );
-			await previewComponent.previewReady();
+			if ( BrowserHelper.getTargetDeviceName() === 'mobile' ) {
+				previewPage = await gutenbergEditorPage.openPreviewAsMobile();
+			} else {
+				await gutenbergEditorPage.openPreviewAsDesktop( 'Mobile' );
+			}
 		} );
-
-		it( 'Post content is found in preview', async function () {
-			await previewComponent.validateTextInPreviewContent( title );
-			await previewComponent.validateTextInPreviewContent( quote );
-		} );
-
-		// We won't preview the metadata in the preview because of a race condition with tags.
-		// If you are really fast, like Playwright is, you can add a tag and launch a preview before
-		// the tag has been saved to the database, meaning it is not in the preview!
-		// It's sufficient to verify content in preview, and metadata in published post.
 
 		it( 'Close preview', async function () {
-			await previewComponent.closePreview();
+			// Mobile path.
+			if ( previewPage ) {
+				await previewPage.close();
+				// Desktop path.
+			} else {
+				await gutenbergEditorPage.closePreview();
+			}
+		} );
+
+		// Step skipped for mobile, since previewing naturally saves the post, rendering this step unnecessary.
+		skipItIf( targetDevice === 'mobile' )( 'Save draft', async function () {
+			await gutenbergEditorPage.saveDraft();
 		} );
 	} );
 
 	describe( 'Publish post', function () {
 		it( 'Publish and visit post', async function () {
 			const publishedURL = await gutenbergEditorPage.publish( { visit: true } );
-			expect( publishedURL ).toBe( await page.url() );
-			publishedPostPage = new PublishedPostPage( page );
+			expect( publishedURL ).toBe( page.url() );
 		} );
 
 		it( 'Post content is found in published post', async function () {
+			publishedPostPage = new PublishedPostPage( page );
 			await publishedPostPage.validateTextInPost( title );
 			await publishedPostPage.validateTextInPost( quote );
 		} );

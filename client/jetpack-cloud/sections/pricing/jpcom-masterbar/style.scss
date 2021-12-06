@@ -62,6 +62,7 @@
 }
 
 .jpcom-masterbar__logo {
+	margin-right: 1rem;
 	padding-top: 0.25em;
 
 	svg {
@@ -94,7 +95,7 @@
 	@include break-large {
 		display: flex;
 		flex-direction: row;
-		justify-content: flex-end;
+		justify-content: flex-start;
 
 		padding: 0;
 		margin: 0.5em 0;
@@ -121,7 +122,7 @@
 		border-radius: 0;
 		color: var( --studio-gray-60 );
 
-		font-size: 1.1rem;
+		font-size: 1.1rem; /* stylelint-disable scales/font-sizes */
 
 		transition: all 0.2s ease-in-out;
 
@@ -203,7 +204,7 @@
 		height: 3px;
 		background-color: black;
 
-		border-radius: 4px;
+		border-radius: 4px; /* stylelint-disable scales/radii */
 		position: absolute;
 		transition-property: transform;
 		transition-duration: 0.15s;
@@ -309,8 +310,8 @@
 				content: '';
 
 				position: absolute;
-				right: 22rem;
-				top: calc( 100% + 22px ); // nav bottom padding
+				left: 3rem;
+				top: calc( 100% + 12px ); // nav bottom padding
 
 				display: block;
 
@@ -351,8 +352,8 @@
 
 	@include break-large {
 		position: absolute;
-		top: calc( 100% - 2px );
-		right: 0;
+		top: calc( 100% - 12px );
+		left: 8px;
 
 		padding-top: 1.5rem;
 	}

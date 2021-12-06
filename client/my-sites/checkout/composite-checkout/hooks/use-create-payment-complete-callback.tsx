@@ -16,6 +16,7 @@ import {
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
+import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	retrieveSignupDestination,
@@ -45,6 +46,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
@@ -96,6 +98,8 @@ export default function useCreatePaymentCompleteCallback( {
 		getJetpackCheckoutRedirectUrl( state, siteId )
 	);
 
+	const domains = useSiteDomains( siteId ?? undefined );
+
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
@@ -126,7 +130,9 @@ export default function useCreatePaymentCompleteCallback( {
 				isJetpackCheckout,
 				jetpackTemporarySiteId,
 				adminPageRedirect,
+				domains,
 			};
+
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 			debug( 'getThankYouUrl returned', url );
@@ -143,11 +149,12 @@ export default function useCreatePaymentCompleteCallback( {
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
 				console.error( err );
-				recordCompositeCheckoutErrorDuringAnalytics( {
-					reduxDispatch,
-					errorObject: err,
-					failureDescription: 'useCreatePaymentCompleteCallback',
-				} );
+				reduxDispatch(
+					recordCompositeCheckoutErrorDuringAnalytics( {
+						errorObject: err,
+						failureDescription: 'useCreatePaymentCompleteCallback',
+					} )
+				);
 			}
 
 			const receiptId = transactionResult?.receipt_id;
@@ -257,6 +264,7 @@ export default function useCreatePaymentCompleteCallback( {
 			isJetpackCheckout,
 			checkoutFlow,
 			adminPageRedirect,
+			domains,
 		]
 	);
 }
@@ -275,7 +283,7 @@ function displayRenewalSuccessNotice(
 	purchases: Record< number, Purchase[] >,
 	translate: ReturnType< typeof useTranslate >,
 	moment: ReturnType< typeof useLocalizedMoment >,
-	reduxDispatch: ReturnType< typeof useDispatch >
+	reduxDispatch: CalypsoDispatch
 ): void {
 	const renewalItem = getRenewalItems( responseCart )[ 0 ];
 	// group all purchases into an array
@@ -348,7 +356,7 @@ function recordPaymentCompleteAnalytics( {
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	checkoutFlow?: string;
-	reduxDispatch: ReturnType< typeof useDispatch >;
+	reduxDispatch: CalypsoDispatch;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )

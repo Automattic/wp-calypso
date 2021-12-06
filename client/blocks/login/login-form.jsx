@@ -17,7 +17,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -122,6 +121,7 @@ export class LoginForm extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { disableAutoFocus } = this.props;
 
@@ -440,6 +440,27 @@ export class LoginForm extends Component {
 		);
 	}
 
+	renderChangeUsername() {
+		return (
+			<button type="button" className="login__form-change-username" onClick={ this.resetView }>
+				<Gridicon icon="arrow-left" size={ 18 } />
+				{ includes( this.state.usernameOrEmail, '@' )
+					? this.props.translate( 'Change Email Address' )
+					: this.props.translate( 'Change Username' ) }
+			</button>
+		);
+	}
+
+	renderUsernameorEmailLabel() {
+		if ( this.props.isP2Login ) {
+			return this.props.translate( 'Your email address or username' );
+		}
+
+		return this.isPasswordView()
+			? this.renderChangeUsername()
+			: this.props.translate( 'Email Address or Username' );
+	}
+
 	render() {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
@@ -450,6 +471,7 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
 			isGutenboarding,
+			isP2Login,
 			isJetpackWooDnaFlow,
 			wccomFrom,
 			currentRoute,
@@ -503,22 +525,7 @@ export class LoginForm extends Component {
 								) }
 							</p>
 						) }
-						<FormLabel htmlFor="usernameOrEmail">
-							{ this.isPasswordView() ? (
-								<button
-									type="button"
-									className="login__form-change-username"
-									onClick={ this.resetView }
-								>
-									<Gridicon icon="arrow-left" size={ 18 } />
-									{ includes( this.state.usernameOrEmail, '@' )
-										? this.props.translate( 'Change Email Address' )
-										: this.props.translate( 'Change Username' ) }
-								</button>
-							) : (
-								this.props.translate( 'Email Address or Username' )
-							) }
-						</FormLabel>
+						<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
 						<FormTextInput
 							autoCapitalize="off"
@@ -559,6 +566,8 @@ export class LoginForm extends Component {
 							</FormInputValidation>
 						) }
 
+						{ isP2Login && this.isPasswordView() && this.renderChangeUsername() }
+
 						<div
 							className={ classNames( 'login__form-password', {
 								'is-hidden': isPasswordHidden,
@@ -588,23 +597,20 @@ export class LoginForm extends Component {
 					</div>
 
 					<p className="login__form-terms">
-						{ preventWidows(
-							this.props.translate(
-								// To make any changes to this copy please speak to the legal team
-								'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-								{
-									components: {
-										tosLink: (
-											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							),
-							5
+						{ this.props.translate(
+							// To make any changes to this copy please speak to the legal team
+							'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+							{
+								components: {
+									tosLink: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
 						) }
 					</p>
 

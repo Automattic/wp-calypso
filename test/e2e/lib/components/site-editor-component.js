@@ -171,7 +171,7 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		}
 
 		const pressedGlobalStylesButtonLocator = By.css(
-			'button[aria-label="Global Styles"][aria-expanded="true"]'
+			'button[aria-label="Styles"][aria-expanded="true"]'
 		);
 		return !! ( await driverHelper.clickIfPresent(
 			this.driver,
@@ -194,17 +194,11 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 
 				await driverHelper.clickWhenClickable(
 					this.driver,
-					driverHelper.createTextLocator(
-						By.css( 'button[role="menuitemcheckbox"]' ),
-						'Global Styles'
-					)
+					driverHelper.createTextLocator( By.css( 'button[role="menuitemcheckbox"]' ), 'Styles' )
 				);
 			}
 		} else {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( 'button[aria-label="Global Styles"]' )
-			);
+			await driverHelper.clickWhenClickable( this.driver, By.css( 'button[aria-label="Styles"]' ) );
 		}
 	}
 
@@ -226,6 +220,129 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 			this.driver,
 			By.css( '.edit-site-navigation-toggle__button' )
 		);
+	}
+
+	async clickGlobalStylesResetButton() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-site-global-styles-sidebar button[aria-label="More Global Styles Actions"' )
+		);
+		const resetButtonLocator = driverHelper.createTextLocator(
+			By.css( '.popover-slot button.components-dropdown-menu__menu-item' ),
+			'Reset to defaults'
+		);
+		return await driverHelper.clickWhenClickable( this.driver, resetButtonLocator );
+	}
+
+	async changeGlobalStylesFontSize( value, blocksLevel ) {
+		if ( ! blocksLevel ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.edit-site-global-styles-sidebar button[aria-label="Set custom size"]' )
+			);
+		}
+		return await driverHelper.setWhenSettable(
+			this.driver,
+			By.css( '.edit-site-global-styles-sidebar .components-font-size-picker input' ),
+			value
+		);
+	}
+
+	async changeGlobalStylesColor( colorType, { valueIndex = 1 } ) {
+		await this.clickGlobalStylesMenuItem( colorType );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css(
+				`.edit-site-global-styles-sidebar .components-circular-option-picker .components-circular-option-picker__option-wrapper:nth-of-type(${ valueIndex }) button`
+			)
+		);
+	}
+
+	async maybeSaveGlobalStyles( { pauseAfter = false } = {} ) {
+		// Bail early if saving is not enabled.
+		const isNothingToSave = await driverHelper.isElementLocated(
+			this.driver,
+			By.css( '.edit-site-save-button__button[aria-disabled="true"]' )
+		);
+		if ( isNothingToSave ) {
+			return isNothingToSave;
+		}
+
+		// Open the save panel and verify whether or not there are Global Styles to save.
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-site-save-button__button' )
+		);
+		const globalStylesSaveItemLocator = driverHelper.createTextLocator(
+			By.css( '.entities-saved-states__panel .components-checkbox-control__label' ),
+			'Custom Styles'
+		);
+		const isGlobalStylesDirty = await driverHelper.isElementLocated(
+			this.driver,
+			globalStylesSaveItemLocator
+		);
+
+		if ( isGlobalStylesDirty ) {
+			const allCheckboxes = await this.driver.findElements(
+				By.css( '.entities-saved-states__panel .components-checkbox-control__input' )
+			);
+			for ( const checkbox of allCheckboxes ) {
+				await driverHelper.setCheckbox( this.driver, () => checkbox, false );
+			}
+			await driverHelper.clickWhenClickable( this.driver, globalStylesSaveItemLocator );
+			const saveClicked = await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.editor-entities-saved-states__save-button' )
+			);
+			if ( pauseAfter ) {
+				// The pause ensures there is enough time for the debounced tracking function to run,
+				// and get/compare entities to create the tracks event.
+				return await this.driver.sleep( 500 );
+			}
+			return saveClicked;
+		}
+
+		// If there were no Global Styles to save, close the panel.
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.entities-saved-states__panel button[aria-label="Close panel"]' )
+		);
+	}
+
+	async changeGlobalStylesFirstColorPaletteItem( value, { pickerOpened = false } = {} ) {
+		if ( ! pickerOpened ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css(
+					'.edit-site-global-styles-sidebar .components-base-control:last-of-type .components-color-edit__color-option button'
+				)
+			);
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.components-color-picker button[aria-label="Show detailed inputs"]' )
+			);
+		}
+
+		return await driverHelper.setWhenSettable(
+			this.driver,
+			By.css( '.components-color-picker input' ),
+			value
+		);
+	}
+
+	async clickGlobalStylesMenuItem( menuTitle ) {
+		const locator = driverHelper.createTextLocator(
+			By.css( '.edit-site-global-styles-sidebar button' ),
+			menuTitle
+		);
+		return await driverHelper.clickWhenClickable( this.driver, locator );
+	}
+
+	async clickGlobalStylesBackButton() {
+		const backButtonLocator = By.css(
+			'.edit-site-global-styles-sidebar button[aria-label="Navigate to the previous view"]'
+		);
+		return await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
 	}
 
 	/**

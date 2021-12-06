@@ -2,9 +2,9 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getMailboxesCacheKey, useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
@@ -20,7 +20,13 @@ import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import {
+	recordEmailAppLaunchEvent,
+	recordInboxNewMailboxUpsellClickEvent,
+} from 'calypso/my-sites/email/email-management/home/utils';
+import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
+import { emailManagement, emailManagementInbox } from 'calypso/my-sites/email/paths';
+import { recordPageView } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
 
@@ -121,7 +127,8 @@ const NewMailboxUpsell = () => {
 	const selectedSiteSlug = selectedSite?.slug;
 
 	const handleCreateNewMailboxClick = useCallback( () => {
-		page( `/email/${ selectedSiteSlug }` );
+		recordInboxNewMailboxUpsellClickEvent();
+		page( emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } ) );
 	}, [ selectedSiteSlug ] );
 
 	return (
@@ -221,13 +228,18 @@ MailboxLoaderError.propType = {
 };
 
 const MailboxSelectionList = () => {
-	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID ?? null;
+	const translate = useTranslate();
 
 	const { data, isError, isLoading, refetch } = useGetMailboxes( selectedSiteId, {
 		retry: 2,
 	} );
+
+	useEffect( () => {
+		dispatch( recordPageView( emailManagementInbox( ':site' ), 'Inbox' ) );
+	}, [ dispatch ] );
 
 	if ( isLoading || selectedSiteId === null ) {
 		return <ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />;

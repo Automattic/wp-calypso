@@ -1,4 +1,7 @@
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import {
+	tryToGuessPostalCodeFormat,
+	getCountryPostalCodeSupport,
+} from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { camelCase, deburr } from 'lodash';
@@ -20,7 +23,6 @@ import {
 } from './custom-form-fieldsets/constants';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { getCountryPostalCodeSupport } from './helper';
 
 import './style.scss';
 
@@ -32,15 +34,13 @@ export class ManagedContactDetailsFormFields extends Component {
 	static propTypes = {
 		eventFormName: PropTypes.string,
 		contactDetails: PropTypes.shape(
-			Object.assign(
-				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
+			Object.fromEntries(
+				CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, PropTypes.string ] )
 			)
 		).isRequired,
 		contactDetailsErrors: PropTypes.shape(
-			Object.assign(
-				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
+			Object.fromEntries(
+				CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, PropTypes.node ] )
 			)
 		),
 		countriesList: PropTypes.array.isRequired,
@@ -56,9 +56,8 @@ export class ManagedContactDetailsFormFields extends Component {
 
 	static defaultProps = {
 		eventFormName: 'Domain contact details form',
-		contactDetails: Object.assign(
-			{},
-			...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: '' } ) )
+		contactDetails: Object.fromEntries(
+			CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => [ field, '' ] )
 		),
 		getIsFieldDisabled: () => {},
 		onContactDetailsChange: () => {},

@@ -4,9 +4,9 @@ import {
 	useLineItems,
 	useEvents,
 	useFormStatus,
-	useSelect,
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
+import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -26,6 +26,9 @@ export default function CreditCardPayButton( {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const useForAllSubscriptions = useSelect( ( select ) =>
+		select( 'credit-card' ).useForAllSubscriptions()
+	);
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
@@ -40,7 +43,7 @@ export default function CreditCardPayButton( {
 				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
-						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
+						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN', payload: { useForAllSubscriptions } } );
 						onClick( 'card', {
 							stripe,
 							name: cardholderName?.value,
@@ -51,6 +54,8 @@ export default function CreditCardPayButton( {
 							paymentPartner,
 							countryCode: fields?.countryCode?.value,
 							postalCode: fields?.postalCode?.value,
+							useForAllSubscriptions,
+							eventSource: 'checkout',
 						} );
 						return;
 					}

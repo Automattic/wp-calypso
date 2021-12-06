@@ -20,7 +20,6 @@ module.exports = {
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/*.skip.[jt]s?(x)', '!**/.eslintrc.*' ],
 	testPathIgnorePatterns: [ '<rootDir>/server/' ],
 	testURL: 'https://example.com',
-	setupFiles: [ 'regenerator-runtime/runtime' ], // some NPM-published packages depend on the global
 	setupFilesAfterEnv: [ '<rootDir>/../test/client/setup-test-framework.js' ],
 	verbose: false,
 	globals: {

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, { getAvailableDesigns } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
@@ -27,12 +26,12 @@ const Designs: React.FunctionComponent = () => {
 		getSelectedDesign,
 		hasPaidDesign,
 		getRandomizedDesigns,
-		shouldEnrollInFseBeta,
+		isEnrollingInFseBeta,
 	} = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	const selectedDesign = getSelectedDesign();
-	const isEnrollingInFseBeta = shouldEnrollInFseBeta();
+	const isFse = isEnrollingInFseBeta();
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: selectedDesign?.slug,
@@ -55,11 +54,11 @@ const Designs: React.FunctionComponent = () => {
 		// Make sure we're using the right designs since we can't rely on config variables
 		// any more and `getRandomizedDesigns` is auto-populated in a state-agnostic way.
 		const availableDesigns = getAvailableDesigns( {
-			useFseDesigns: isEnrollingInFseBeta,
+			useFseDesigns: isFse,
 			randomize: true,
 		} );
 		setRandomizedDesigns( availableDesigns );
-	}, [ isEnrollingInFseBeta, setRandomizedDesigns ] );
+	}, [ isFse, setRandomizedDesigns ] );
 
 	return (
 		<div className="gutenboarding-page designs">
@@ -105,7 +104,6 @@ const Designs: React.FunctionComponent = () => {
 						<span className="designs__premium-badge-text">{ __( 'Premium' ) }</span>
 					</Badge>
 				}
-				showCategoryFilter={ isEnabled( 'signup/design-picker-categories' ) }
 			/>
 		</div>
 	);

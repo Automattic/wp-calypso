@@ -85,6 +85,7 @@ export function getLaunchConfiguration( chromeVersion: string ): BrowserContextO
 	config.userAgent = userAgent;
 	// Explicitly resize captured video resolution to the viewport size.
 	config.recordVideo = { dir: os.tmpdir(), size: config.viewport as ViewportSize };
+
 	return config;
 }
 
@@ -95,6 +96,15 @@ export function getLaunchConfiguration( chromeVersion: string ): BrowserContextO
  */
 export function targetGutenbergEdge(): boolean {
 	return !! process.env.GUTENBERG_EDGE;
+}
+
+/**
+ * Returns boolean indicating whether this test run should target a CoBlocks Edge user and site.
+ *
+ * @returns {boolean} True if should target Coblocks edge. False otherwise.
+ */
+export function targetCoBlocksEdge(): boolean {
+	return !! process.env.COBLOCKS_EDGE;
 }
 
 /**

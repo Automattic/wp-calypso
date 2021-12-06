@@ -10,7 +10,6 @@ import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
 	hasGSuiteWithUs,
-	hasPendingGSuiteUsers,
 	isPendingGSuiteTOSAcceptance,
 } from 'calypso/lib/gsuite';
 import {
@@ -124,10 +123,6 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			return errorStatus;
 		}
 
-		if ( hasPendingGSuiteUsers( domain ) ) {
-			return errorStatus;
-		}
-
 		return activeStatus;
 	}
 
@@ -179,5 +174,24 @@ export function recordEmailAppLaunchEvent( { app, context, provider } ) {
 		app,
 		context,
 		provider,
+	} );
+}
+
+/**
+ * Tracks an event for the key 'calypso_inbox_new_mailbox_upsell_click'.
+ *
+ */
+export function recordInboxNewMailboxUpsellClickEvent() {
+	recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {} );
+}
+
+/**
+ * Tracks an event for the key 'calypso_inbox_upsell'.
+ *
+ * @param context context, where this event was logged.
+ */
+export function recordInboxUpsellTracksEvent( context = null ) {
+	recordTracksEvent( 'calypso_inbox_upsell', {
+		context,
 	} );
 }

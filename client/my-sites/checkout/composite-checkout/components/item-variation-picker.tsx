@@ -48,7 +48,7 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 		<TermOptions className="item-variation-picker">
 			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
 				<ProductVariant
-					key={ productVariant.variantLabel }
+					key={ productVariant.productSlug + productVariant.variantLabel }
 					selectedItem={ selectedItem }
 					onChangeItemVariant={ onChangeItemVariant }
 					isDisabled={ isDisabled }
@@ -78,8 +78,8 @@ function ProductVariant( {
 	return (
 		<TermOptionsItem>
 			<RadioButton
-				name={ variantLabel }
-				id={ variantLabel }
+				name={ productSlug + variantLabel }
+				id={ productSlug + variantLabel }
 				value={ productSlug }
 				checked={ isChecked }
 				disabled={ isDisabled }
@@ -117,4 +117,5 @@ const TermOptionsItem = styled.li`
 
 const VariantLabel = styled.span`
 	flex: 1;
+	display: flex;
 `;

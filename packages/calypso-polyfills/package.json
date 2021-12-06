@@ -25,10 +25,9 @@
 	},
 	"dependencies": {
 		"core-js": "^3.6.3",
-		"isomorphic-fetch": "^2.2.1",
-		"regenerator-runtime": "^0.13.9"
+		"isomorphic-fetch": "^2.2.1"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

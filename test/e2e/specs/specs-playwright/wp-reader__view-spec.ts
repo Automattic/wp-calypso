@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	setupHooks,
 	ReaderPage,
 	NotificationsComponent,
@@ -16,15 +16,15 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	let page: Page;
 	let readerPage: ReaderPage;
 	let notificationsComponent: NotificationsComponent;
-	const comment = DataHelper.getRandomPhrase();
+	const comment = DataHelper.getRandomPhrase() + ' wp-reader__view-spec';
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
-	it( 'Log In', async function () {
-		const loginFlow = new LoginFlow( page, 'commentingUser' );
-		await loginFlow.logIn();
+	it( 'Log in', async function () {
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'commentingUser' }, { landingUrl: '**/read' } );
 	} );
 
 	it( 'View the Reader stream', async function () {
@@ -43,8 +43,8 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	} );
 
 	it( 'Log in as test site owner', async function () {
-		const loginFlow = new LoginFlow( page, 'notificationsUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'notificationsUser' } );
 	} );
 
 	it( 'Open Notifications panel', async function () {

@@ -17,37 +17,40 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"build": "yarn clean && BROWSERSLIST_ENV=wpcom calypso-build"
+		"clean": "rm -rf dist",
+		"build:o2-blocks": "calypso-build",
+		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/a8c-blocks",
+		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
-		"@automattic/calypso-build": "^9.0.0",
-		"@wordpress/api-fetch": "^5.2.2",
-		"@wordpress/base-styles": "^4.0.0",
-		"@wordpress/block-editor": "^7.0.2",
-		"@wordpress/blocks": "^11.1.0",
-		"@wordpress/components": "^17.0.0",
-		"@wordpress/data": "^6.1.0",
-		"@wordpress/editor": "^11.0.2",
-		"@wordpress/element": "^4.0.1",
-		"@wordpress/hooks": "^3.2.0",
-		"@wordpress/i18n": "^4.2.2",
-		"@wordpress/is-shallow-equal": "^4.2.0",
-		"@wordpress/primitives": "^3.0.1",
+		"@automattic/calypso-build": "workspace:^",
+		"@wordpress/api-fetch": "^5.2.6",
+		"@wordpress/base-styles": "^4.0.4",
+		"@wordpress/block-editor": "^8.0.7",
+		"@wordpress/blocks": "^11.1.4",
+		"@wordpress/components": "^19.1.1",
+		"@wordpress/data": "^6.1.4",
+		"@wordpress/editor": "^12.0.10",
+		"@wordpress/element": "^4.0.4",
+		"@wordpress/hooks": "^3.2.2",
+		"@wordpress/i18n": "^4.2.4",
+		"@wordpress/is-shallow-equal": "^4.2.1",
+		"@wordpress/primitives": "^3.0.4",
 		"classnames": "^2.3.1",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
 		"new-github-issue-url": "^0.2.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"react-native": "^0.65.0",
 		"reakit-utils": "^0.15.1",
-		"redux": "^4.0.5"
+		"redux": "^4.1.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"enzyme": "^3.11.0",
-		"jest": "^27.0.6",
-		"postcss": "^8.2.6",
-		"webpack": "^5.54.0"
+		"jest": "^27.3.1",
+		"postcss": "^8.3.11",
+		"webpack": "^5.64.4"
 	}
 }

@@ -35,13 +35,16 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackAuthorize from './authorize';
 import {
 	ALLOWED_MOBILE_APP_REDIRECT_URL_LIST,
 	CALYPSO_PLANS_PAGE,
 	CALYPSO_REDIRECTION_PAGE,
 	JETPACK_ADMIN_PATH,
+	JETPACK_COUPON_PARTNERS,
+	JETPACK_COUPON_PRESET_MAPPING,
+	JPC_PATH_CHECKOUT,
 } from './constants';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import InstallInstructions from './install-instructions';
@@ -77,6 +80,63 @@ const analyticsPageTitleByType = {
 	scan: 'Jetpack Scan Daily',
 	antispam: 'Jetpack Anti-spam',
 };
+
+/**
+ * Allow special behavior for Jetpack partner coupons
+ *
+ * Jetpack Avalon (Infinity) has introduced a Jetpack Partner Coupon API
+ * which requires special behavior.
+ * This behavior could be a (not yet developed) upsell plans screen where
+ * we take the partner coupon discount into account. E.g. a 100% discount
+ * for Jetpack Backup, but we want to upsell Security T1 instead, so we
+ * show a price for Security where we take the 100% discounted Backup
+ * product into account (this makes sense because partners pay us for
+ * these coupons).
+ * For now we just redirect directly to checkout since we do not have any
+ * upsell logic ready and want to avoid confusion by show full price products
+ * on the plan page.
+ *
+ * @todo Should we dynamically fetch partners and presets?
+ * @todo Should we make a coupon validation request? If the coupon is invalid, we leave the user on the plans page.
+ * @todo Accept partner coupon as a query parameter during the initial auth request (client/jetpack-connect/schema.js).
+ *       This should allow us to have more flexible return URLs as well.
+ * @todo Fetch the partner coupon with a selector instead (e.g. like: getPartnerIdFromQuery()).
+ */
+export function partnerCouponRedirects( context, next ) {
+	const queryArgs = new URLSearchParams( context?.query?.redirect );
+	const partnerCoupon = queryArgs.get( 'partnerCoupon' );
+
+	if ( ! partnerCoupon || ! partnerCoupon.includes( '_' ) ) {
+		next();
+		return;
+	}
+
+	// All partner coupons assumes a logic like {PARTNER}_{PRESET}_abc123.
+	// A coupon preset in this context should just be seen as a product but does
+	// technically include other options like purchase type, single use etc.
+	const splitCoupon = partnerCoupon.split( '_' );
+
+	// Simple coupon verification by:
+	//   * Check for 2 underscores in the coupon for partner, preset and unique code.
+	//   * Check for allowed coupon partners.
+	//   * Check for known coupon presets.
+	if (
+		splitCoupon.length !== 3 ||
+		! JETPACK_COUPON_PARTNERS.includes( splitCoupon[ 0 ] ) ||
+		! JETPACK_COUPON_PRESET_MAPPING.hasOwnProperty( splitCoupon[ 1 ] )
+	) {
+		next();
+		return;
+	}
+
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
+	const productOrPlan = JETPACK_COUPON_PRESET_MAPPING[ splitCoupon[ 1 ] ];
+
+	return navigate(
+		`${ JPC_PATH_CHECKOUT }/${ siteSlug }/${ productOrPlan }?coupon=${ partnerCoupon }`
+	);
+}
 
 export function offerResetRedirects( context, next ) {
 	debug( 'controller: offerResetRedirects', context.params );

@@ -66,7 +66,6 @@ import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/s
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
-import StickyPanel from 'calypso/components/sticky-panel';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
@@ -270,6 +269,7 @@ class RegisterDomainStep extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if (
@@ -309,7 +309,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	checkForBloggerPlan() {
-		const plan = get( this.props, 'selectedSite.plan', false );
+		const plan = get( this.props, 'selectedSite.plan', {} );
 		const products = get( this.props, 'cart.products', [] );
 		const isBloggerPlan = isBlogger( plan ) || products.some( isBlogger );
 
@@ -445,11 +445,11 @@ class RegisterDomainStep extends Component {
 		return (
 			<>
 				<div className={ containerDivClassName }>
-					<StickyPanel className={ searchBoxClassName }>
+					<div className={ searchBoxClassName }>
 						<CompactCard className="register-domain-step__search-card">
 							{ this.renderSearchBar() }
 						</CompactCard>
-					</StickyPanel>
+					</div>
 					{ ! isSignupStep && isQueryInvalid && (
 						<Notice
 							className="register-domain-step__notice"
@@ -1633,4 +1633,4 @@ export default connect(
 		hideSitePreview,
 		showSitePreview,
 	}
-)( withShoppingCart( withCartKey( localize( RegisterDomainStep ) ) ) );
+)( withCartKey( withShoppingCart( localize( RegisterDomainStep ) ) ) );

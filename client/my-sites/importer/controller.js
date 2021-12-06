@@ -6,7 +6,14 @@ export function importSite( context, next ) {
 	const engine = context.query?.engine;
 	const fromSite = decodeURIComponentIfValid( context.query?.[ 'from-site' ] );
 
-	const afterStartImport = () => page.replace( context.pathname );
+	const afterStartImport = () => {
+		let path = context.pathname;
+
+		if ( fromSite ) {
+			path += '?from-site=' + fromSite;
+		}
+		page.replace( path );
+	};
 
 	context.primary = (
 		<SectionImport engine={ engine } fromSite={ fromSite } afterStartImport={ afterStartImport } />
