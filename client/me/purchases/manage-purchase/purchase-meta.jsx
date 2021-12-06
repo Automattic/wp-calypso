@@ -442,10 +442,31 @@ function PurchaseMetaExpiration( {
 							dateSpan,
 						},
 				  } );
+
+		const shouldRenderToggle = site && isProductOwner;
+
 		return (
-			<li>
+			<li className="manage-purchase__meta-expiration">
 				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-				{ ! hideAutoRenew && <span className="manage-purchase__detail">{ subsRenewText }</span> }
+				{ ! hideAutoRenew && (
+					<div className="manage-purchase__auto-renew">
+						{ shouldRenderToggle && (
+							<span className="manage-purchase__detail manage-purchase__auto-renew-toggle">
+								<AutoRenewToggle
+									planName={ site.plan.product_name_short }
+									siteDomain={ site.domain }
+									siteSlug={ site.slug }
+									purchase={ purchase }
+									toggleSource="manage-purchase"
+									getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
+								/>
+							</span>
+						) }
+						<span className="manage-purchase__detail manage-purchase__auto-renew-text">
+							{ subsRenewText }
+						</span>
+					</div>
+				) }
 				<span
 					className={ classNames( 'manage-purchase__detail', {
 						'is-expiring': isCloseToExpiration( purchase ),
@@ -453,18 +474,6 @@ function PurchaseMetaExpiration( {
 				>
 					{ subsBillingText }
 				</span>
-				{ site && ! hideAutoRenew && isProductOwner && (
-					<span className="manage-purchase__detail">
-						<AutoRenewToggle
-							planName={ site.plan.product_name_short }
-							siteDomain={ site.domain }
-							siteSlug={ site.slug }
-							purchase={ purchase }
-							toggleSource="manage-purchase"
-							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
-						/>
-					</span>
-				) }
 			</li>
 		);
 	}

@@ -18,9 +18,11 @@ import {
 	isTitanMail,
 	applyTestFiltersToPlansList,
 	isWpComMonthlyPlan,
+	JETPACK_BACKUP_T1_PRODUCTS,
 	JETPACK_PLANS,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_PRODUCTS_LIST,
+	JETPACK_SECURITY_T1_PLANS,
 	isP2Plus,
 	getMonthlyPlanByYearly,
 } from '@automattic/calypso-products';
@@ -225,11 +227,39 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	renderUpgradeButton() {
+		const { purchase, translate } = this.props;
+
+		const isUpgradeablePlan =
+			isPlan( purchase ) &&
+			! isEcommerce( purchase ) &&
+			! isComplete( purchase ) &&
+			! isP2Plus( purchase );
+		const isUpgradeableProduct =
+			! isPlan( purchase ) && JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+
+		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
+			return null;
+		}
+
+		if ( isExpired( purchase ) ) {
+			return null;
+		}
+
+		const upgradeUrl = this.getUpgradeUrl();
+
+		return (
+			<Button primary compact href={ upgradeUrl }>
+				{ translate( 'Upgrade' ) }
+			</Button>
+		);
+	}
+
 	renderSelectNewButton() {
 		const { translate, siteId } = this.props;
 
 		return (
-			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }/` } compact>
+			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }` } compact>
 				{ translate( 'Select a new plan' ) }
 			</Button>
 		);
@@ -297,27 +327,52 @@ class ManagePurchase extends Component {
 		} );
 	};
 
-	renderUpgradeNavItem() {
-		const { purchase, translate, siteId } = this.props;
-		const buttonText = isExpired( purchase )
-			? translate( 'Pick Another Plan' )
-			: translate( 'Upgrade Plan' );
+	getUpgradeUrl() {
+		const { purchase, siteId } = this.props;
 
-		if (
-			! purchase ||
-			! isPlan( purchase ) ||
-			isEcommerce( purchase ) ||
-			isComplete( purchase ) ||
-			isP2Plus( purchase )
-		) {
+		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
+
+		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
+			return `/plans/storage/${ siteId }`;
+		}
+
+		return `/plans/${ siteId }`;
+	}
+
+	renderUpgradeNavItem() {
+		const { purchase, translate } = this.props;
+
+		const isUpgradeablePlan =
+			purchase &&
+			isPlan( purchase ) &&
+			! isEcommerce( purchase ) &&
+			! isComplete( purchase ) &&
+			! isP2Plus( purchase );
+
+		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+		const isUpgradeableProduct = isUpgradeableBackupProduct;
+
+		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
 		}
+
+		let buttonText;
+		if ( isExpired( purchase ) ) {
+			buttonText = isUpgradeablePlan
+				? translate( 'Pick Another Plan' )
+				: translate( 'Pick Another Product' );
+		} else {
+			buttonText = translate( 'Upgrade' );
+		}
+
+		const upgradeUrl = this.getUpgradeUrl();
 
 		return (
 			<CompactCard
 				tagName="button"
 				displayAsLink
-				href={ `/plans/${ siteId }/` }
+				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
 				{ buttonText }
@@ -329,7 +384,7 @@ class ManagePurchase extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }/` }>
+			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }` }>
 				{ translate( 'Select a new plan' ) }
 			</CompactCard>
 		);
@@ -743,10 +798,11 @@ class ManagePurchase extends Component {
 						/>
 					) }
 					{ isProductOwner && (
-						<>
+						<div className="manage-purchase__renew-upgrade-buttons">
 							{ preventRenewal && this.renderSelectNewButton() }
+							{ this.renderUpgradeButton() }
 							{ ! preventRenewal && this.renderRenewButton() }
-						</>
+						</div>
 					) }
 				</Card>
 				<PurchasePlanDetails
@@ -760,7 +816,7 @@ class ManagePurchase extends Component {
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ ! preventRenewal && ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
