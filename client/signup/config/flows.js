@@ -4,7 +4,6 @@ import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import stepConfig from './steps';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName ) {
@@ -140,14 +139,14 @@ function removeUserStepFromFlow( flow ) {
 	};
 }
 
-function removeP2StepFromFlow( flow, stepName ) {
+function removeP2DetailsStepFromFlow( flow ) {
 	if ( ! flow ) {
 		return;
 	}
 
 	return {
 		...flow,
-		steps: reject( flow.steps, ( s ) => s === stepName ),
+		steps: reject( flow.steps, ( stepName ) => stepName === 'p2-details' ),
 	};
 }
 
@@ -197,14 +196,8 @@ const Flows = {
 			}
 		}
 
-		if ( flowName === 'p2' || flowName === 'p2-new' ) {
-			if ( isUserLoggedIn ) {
-				flow = removeP2StepFromFlow( flow, 'p2-details' );
-			}
-
-			if ( isUserLoggedIn && isCurrentUserEmailVerified ) {
-				flow = removeP2StepFromFlow( flow, 'p2-confirm-email' );
-			}
+		if ( flowName === 'p2' && isUserLoggedIn ) {
+			flow = removeP2DetailsStepFromFlow( flow );
 		}
 
 		return Flows.filterExcludedSteps( flow );
