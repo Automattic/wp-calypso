@@ -1,3 +1,7 @@
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	TITAN_MAIL_MONTHLY_SLUG,
+} from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
@@ -8,9 +12,9 @@ import Main from 'calypso/components/main';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { Site } from 'calypso/reader/list-manage/types';
+import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
+import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -19,7 +23,7 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ProfessionalEmailCard from './provider-cards/professional-email-card';
+import type { Site } from 'calypso/reader/list-manage/types';
 
 import './style.scss';
 
@@ -40,7 +44,7 @@ type EmailProvidersStackedComparisonProps = {
 	selectedSite?: Site | null;
 	selectedDomainName: string;
 	source: string;
-	titanMailProduct?: any;
+	gSuiteAnnualProduct?: any;
 };
 
 const recordTracksEventAddToCartClick = (
@@ -67,10 +71,9 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 	props
 ) => {
 	const translate = useTranslate();
-	const { comparisonContext, selectedDomainName, selectedSite, source } = props;
-
+	const { comparisonContext, isGSuiteSupported, selectedDomainName, selectedSite, source } = props;
 	return (
-		<Main className={ 'email-providers-stacked-comparison__main' } wideLayout>
+		<Main wideLayout>
 			<QueryProductsList />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
@@ -86,7 +89,13 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				source={ source }
 			/>
 
-			<> Google Workspace Component Placeholder </>
+			{ isGSuiteSupported && (
+				<GoogleWorkspaceCard
+					comparisonContext={ comparisonContext }
+					selectedDomainName={ selectedDomainName }
+					source={ source }
+				/>
+			) }
 		</Main>
 	);
 };
@@ -112,6 +121,7 @@ export default connect(
 			comparisonContext: ownProps.comparisonContext,
 			domain,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
+			gSuiteAnnualProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasCartDomain,
 			isGSuiteSupported,
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
