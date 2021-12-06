@@ -1,7 +1,6 @@
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -16,39 +15,31 @@ import CourseList, { CourseListPlaceholder } from './course-list';
 
 import './style.scss';
 
-class Courses extends Component {
-	render() {
-		const { isEligible, isLoading, translate } = this.props;
-
-		return (
-			<Main className="help-courses">
-				<PageViewTracker path="/help/courses" title="Help > Courses" />
-				<QueryUserPurchases />
-				<HeaderCake backHref="/help" isCompact={ false } className="help-courses__header-cake">
-					{ translate( 'Courses' ) }
-				</HeaderCake>
-				{ isLoading ? (
-					<CourseListPlaceholder />
-				) : (
-					<CourseList courses={ helpCourses } isBusinessPlanUser={ isEligible } />
-				) }
-			</Main>
-		);
-	}
-}
-
-export function mapStateToProps( state ) {
-	const purchases = getUserPurchases( state );
+function Courses() {
+	const translate = useTranslate();
+	const purchases = useSelector( getUserPurchases );
 	const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
 	const isEligible =
 		purchaseSlugs &&
 		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) );
-	const isLoading = isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state );
+	const fetchingUserPurchases = useSelector( isFetchingUserPurchases );
+	const loadedUserPurchases = useSelector( hasLoadedUserPurchasesFromServer );
+	const isLoading = fetchingUserPurchases || ! loadedUserPurchases;
 
-	return {
-		isLoading,
-		isEligible,
-	};
+	return (
+		<Main className="help-courses">
+			<PageViewTracker path="/help/courses" title="Help > Courses" />
+			<QueryUserPurchases />
+			<HeaderCake backHref="/help" isCompact={ false } className="help-courses__header-cake">
+				{ translate( 'Courses' ) }
+			</HeaderCake>
+			{ isLoading ? (
+				<CourseListPlaceholder />
+			) : (
+				<CourseList courses={ helpCourses } isBusinessPlanUser={ isEligible } />
+			) }
+		</Main>
+	);
 }
 
-export default connect( mapStateToProps )( localize( Courses ) );
+export default Courses;
