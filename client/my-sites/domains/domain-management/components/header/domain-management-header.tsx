@@ -1,12 +1,17 @@
-import { Icon, home } from '@wordpress/icons';
+import { SVG, Circle } from '@wordpress/components';
+import { Icon, home, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { isMappedDomain } from 'calypso/lib/domains';
+import { type as DomainType, transferStatus } from 'calypso/lib/domains/constants';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import { domainManagementList, isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-by-site-id';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 import type { DomainManagementHeaderPassedProps, DomainManagementHeaderProps } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -18,6 +23,12 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 	if ( ! selectedDomainName ) {
 		formattedHeaderText = isManagingAllDomains ? __( 'All Domains' ) : __( 'Site Domains' );
 	}
+
+	const renderCircle = () => (
+		<SVG viewBox="0 0 24 24">
+			<Circle cx="12" cy="12" r="12" />
+		</SVG>
+	);
 
 	const renderBreadcrumbs = () => {
 		const items = [
@@ -40,43 +51,77 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
 	};
 
-	const renderMainBadge = () => null;
+	const renderSuccessBadge = ( description: TranslateResult, icon?: JSX.Element ) => (
+		<Badge className="domain-management-header__badge domain-management-header__badge--success">
+			{ icon ? (
+				<Icon icon={ icon } size={ 14 } />
+			) : (
+				<div className="domain-management-header__badge-indicator">{ renderCircle() }</div>
+			) }
+			{ description }
+		</Badge>
+	);
 
-	const renderPrimaryBadge = () => (
-		<Badge
-			className="domain-management-header__badge domain-management-header__badge--primary"
-			type="info-green"
-		>
-			<Icon icon={ home } size={ 14 } />
-			{ __( 'Primary site address' ) }
+	const renderWarningBadge = ( description: TranslateResult ) => (
+		<Badge className="domain-management-header__badge domain-management-header__badge--success">
+			<div className="domain-management-header__badge-indicator">{ renderCircle() }</div>
+			{ description }
 		</Badge>
 	);
 
 	const renderPremiumBadge = () => (
 		<Badge className="domain-management-header__badge domain-management-header__badge--premium">
 			{ __( 'Premium domain' ) }
-			<Icon icon={ home } size={ 14 } />
+			<Icon icon={ info } size={ 14 } />
 		</Badge>
 	);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const renderNeutralBadge = ( description: TranslateResult ) => (
 		<Badge className="domain-management-header__badge domain-management-header__badge--neutral">
 			{ description }
 		</Badge>
 	);
 
-	const renderBadges = ( domain: typeof props[ 'domain' ] ) => {
-		const badges = [];
-
-		const mainBadge = renderMainBadge();
-
-		if ( mainBadge ) {
-			badges.push( mainBadge );
+	const renderTransferOrMappingBadge = ( type: string ) => {
+		if ( type === DomainType.MAPPED ) {
+			return renderNeutralBadge( __( 'Registered with an external provider' ) );
 		}
 
+		return renderNeutralBadge( __( 'Domain transfer' ) );
+	};
+
+	const renderStatusBadge = () => {
+		if ( domain.expired ) {
+			return renderWarningBadge( __( 'Expired' ) );
+		}
+
+		if ( domain.isPendingIcannVerification ) {
+			return renderWarningBadge( __( 'Verify email' ) );
+		}
+
+		if ( isRecentlyRegistered( domain.registrationDate ) ) {
+			return renderSuccessBadge( __( 'Activating' ) );
+		}
+
+		if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
+			return renderSuccessBadge( __( 'In progress' ) );
+		}
+
+		return renderSuccessBadge( __( 'Active' ) );
+	};
+
+	const renderBadges = () => {
+		const { domain } = props;
+		const badges = [];
+
+		if ( [ DomainType.MAPPED, DomainType.TRANSFER ].includes( domain.type ) ) {
+			badges.push( renderTransferOrMappingBadge( domain.type ) );
+		}
+
+		badges.push( renderStatusBadge() );
+
 		if ( domain.isPrimary ) {
-			badges.push( renderPrimaryBadge() );
+			badges.push( renderSuccessBadge( __( 'Primary site address' ), home ) );
 		}
 
 		if ( domain.isPremium ) {
@@ -96,18 +141,20 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 				align="left"
 				hasScreenOptions={ false }
 			/>
-			{ renderBadges( domain ) }
+			{ renderBadges() }
 		</div>
 	);
 };
 
 const connectComponent = connect( ( state, ownProps: DomainManagementHeaderPassedProps ) => {
 	const path = getCurrentRoute( state );
+	const siteId = getSelectedSiteId( state );
 	const { domain } = ownProps;
 
 	return {
 		isManagingAllDomains: isUnderDomainManagementAll( path ),
 		isMapping: domain && isMappedDomain( domain ),
+		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, domain.name ),
 	};
 } )( DomainManagementHeader );
 
