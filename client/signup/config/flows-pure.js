@@ -340,17 +340,6 @@ export function generateFlows( {
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
 		},
-		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
-		// when switching from the onboarding flow.
-		{
-			name: 'import-onboarding',
-			steps: [ 'user', 'site-type', 'domains', 'plans-import' ],
-			destination: getImportDestination,
-			description: 'Import flow that can be used from the onboarding flow',
-			disallowResume: true,
-			lastModified: '2021-12-02',
-			showRecaptcha: true,
-		},
 		{
 			name: 'importer',
 			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
