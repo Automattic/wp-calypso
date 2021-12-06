@@ -223,6 +223,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	categoriesFooter,
 	categorization,
 } ) => {
+	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
 			? filterDesignsByCategory( designs, categorization.selection )
@@ -233,8 +234,12 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	}, [ designs, categorization?.selection ] );
 
 	return (
-		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
-			{ !! categorization?.categories.length && (
+		<div
+			className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className, {
+				'design-picker--has-categories': hasCategories,
+			} ) }
+		>
+			{ categorization && hasCategories && (
 				<DesignPickerCategoryFilter
 					categories={ categorization.categories }
 					selectedCategory={ categorization.selection }
