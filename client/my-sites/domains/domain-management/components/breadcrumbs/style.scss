@@ -83,6 +83,7 @@
 			&.is-only-item {
 				.breadcrumbs__item-label {
 					font-weight: 600;
+					font-size: $font-body;
 					color: var( --color-neutral-80 );
 				}
 			}
@@ -107,6 +108,7 @@
 		/* This rule applies when there's no back arrow present */
 		span:first-child {
 			font-weight: 600;
+			font-size: $font-body;
 		}
 	}
 
