@@ -206,6 +206,9 @@ export interface WPCOMCart {
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 }
 
+// Payment method slugs which all map to a WPCOMPaymentMethod using
+// translateCheckoutPaymentMethodToWpcomPaymentMethod and
+// translateWpcomPaymentMethodToCheckoutPaymentMethod.
 export type CheckoutPaymentMethodSlug =
 	| 'alipay'
 	| 'web-pay'
@@ -224,7 +227,10 @@ export type CheckoutPaymentMethodSlug =
 	| 'free-purchase'
 	| 'full-credits'
 	| 'stripe-three-d-secure'
-	| 'wechat';
+	| 'wechat'
+	| `existingCard-${ string }` // a synonym for 'card'
+	| 'apple-pay' // a synonym for 'web-pay'
+	| 'google-pay'; // a synonym for 'web-pay'
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
