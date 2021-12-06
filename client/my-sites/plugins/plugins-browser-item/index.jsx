@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { includes } from 'lodash';
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -26,6 +27,7 @@ const PluginsBrowserListElement = ( props ) => {
 	} = props;
 
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
@@ -33,6 +35,11 @@ const PluginsBrowserListElement = ( props ) => {
 		isJetpack && currentSites
 			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
 			: []
+	);
+
+	const dateFromNow = useMemo(
+		() => moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow(),
+		[ plugin.last_updated ]
 	);
 
 	const pluginLink = useMemo( () => {
@@ -45,7 +52,7 @@ const PluginsBrowserListElement = ( props ) => {
 			url += '/' + site;
 		}
 		return url;
-	}, [ plugin] );
+	}, [ plugin ] );
 
 	const trackPluginLinkClick = useCallback( () => {
 		recordTracksEvent( 'calypso_plugin_browser_item_click', {
@@ -83,10 +90,16 @@ const PluginsBrowserListElement = ( props ) => {
 					<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
 					<div className="plugins-browser-item__title">{ plugin.name }</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
-						<div className="plugins-browser-item__author">
-							{ translate( 'by ' ) }
-							<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
-						</div>
+						<>
+							<div className="plugins-browser-item__author">
+								{ translate( 'by ' ) }
+								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
+							</div>
+							<div className="plugins-browser-item__last-updated">
+								{ translate( 'Last updated ' ) }
+								<span className="plugins-browser-item__last-updated-value">{ dateFromNow }</span>
+							</div>
+						</>
 					) }
 					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 				</div>
