@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
@@ -10,6 +11,8 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -26,6 +29,7 @@ import {
 	getNextStepName,
 	getPreviousStepName,
 	getStepUrl,
+	isP2Flow,
 } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -58,10 +62,11 @@ function getRedirectToAfterLoginUrl( {
 	const stepAfterRedirect =
 		getNextStepName( flowName, stepName, userLoggedIn ) ||
 		getPreviousStepName( flowName, stepName, userLoggedIn );
-	const queryArgs = new URLSearchParams( initialContext?.query );
-	const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
 
-	return window.location.origin + getStepUrl( flowName, stepAfterRedirect ) + queryArgsString;
+	return (
+		window.location.origin +
+		getStepUrl( flowName, stepAfterRedirect, '', '', initialContext?.query )
+	);
 }
 
 function isOauth2RedirectValid( oauth2Redirect ) {
@@ -95,8 +100,11 @@ export class UserStep extends Component {
 	state = {
 		subHeaderText: '',
 		recaptchaClientId: null,
+		experiment: null,
+		isDesktop: isDesktop(),
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			this.props.flowName !== nextProps.flowName ||
@@ -107,14 +115,38 @@ export class UserStep extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		const { oauth2Signup, initialContext } = this.props;
+		const { oauth2Signup, initialContext, flowName } = this.props;
+
 		const clientId = get( initialContext, 'query.oauth2_client_id', null );
 
 		this.setSubHeaderText( this.props );
 
 		if ( oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
+		}
+		if ( flowName === 'onboarding' ) {
+			const experimentCheck = this.state.isDesktop
+				? 'registration_email_only_desktop_relaunch'
+				: 'registration_email_only_mobile_relaunch';
+
+			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
+				this.setState( { experiment: experimentName } );
+			} );
+		}
+	}
+
+	componentDidUpdate() {
+		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
+			// It looks like the user just completed the User Registartion Step
+			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
+			const url = new URL( window.location );
+			const searchParams = url.searchParams;
+			searchParams.set( 'user_completed', true );
+			url.search = searchParams.toString();
+			// Redirect to itself and append ?user_completed
+			window.location.replace( url.toString() );
 		}
 	}
 
@@ -224,6 +256,10 @@ export class UserStep extends Component {
 						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 					}
 				);
+			}
+
+			if ( this.props.userLoggedIn ) {
+				subHeaderText = '';
 			}
 		}
 
@@ -350,6 +386,10 @@ export class UserStep extends Component {
 		return this.props.step && 'completed' === this.props.step.status;
 	}
 
+	userCreationCompletedAndHasHistory( props ) {
+		return 'completed' === props.step?.status && detectHistoryNavigation.loadedViaHistory();
+	}
+
 	userCreationPending() {
 		return this.props.step && 'pending' === this.props.step.status;
 	}
@@ -413,7 +453,7 @@ export class UserStep extends Component {
 	submitButtonText() {
 		const { translate, flowName } = this.props;
 
-		if ( flowName === 'p2' ) {
+		if ( isP2Flow( flowName ) ) {
 			return translate( 'Continue' );
 		}
 
@@ -426,6 +466,10 @@ export class UserStep extends Component {
 		}
 
 		return translate( 'Create your account' );
+	}
+
+	isPasswordlessExperiment() {
+		return this.state.experiment?.variationName === 'treatment';
 	}
 
 	renderSignupForm() {
@@ -459,13 +503,12 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
+					isPasswordlessExperiment={ this.isPasswordlessExperiment() }
+					experimentName={ this.state.experiment }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					showRecaptchaToS={
-						flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha
-					}
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
 				/>
@@ -494,8 +537,12 @@ export class UserStep extends Component {
 	}
 
 	render() {
-		if ( this.props.flowName === 'p2' ) {
+		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
+		}
+
+		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
+			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
 		return (

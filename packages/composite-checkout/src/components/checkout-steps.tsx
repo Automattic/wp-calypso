@@ -26,7 +26,6 @@ import {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
-	useEvents,
 	usePaymentMethod,
 } from '../public-api';
 import { FormStatus, CheckoutStepProps } from '../types';
@@ -288,23 +287,19 @@ export const CheckoutStep = ( {
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
-	const { onPageLoadError } = useContext( CheckoutContext );
+	const { onPageLoadError, onStepChanged } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
-	const onEvent = useEvents();
 	const activePaymentMethod = usePaymentMethod();
 	const finishIsCompleteCallback = ( completeResult: boolean ) => {
 		setThisStepCompleteStatus( !! completeResult );
 		if ( completeResult ) {
-			onEvent( {
-				type: 'STEP_NUMBER_CHANGED',
-				payload: {
-					stepNumber: nextStepNumber,
-					previousStepNumber: stepNumber,
-					paymentMethodId: activePaymentMethod?.id ?? '',
-				},
+			onStepChanged?.( {
+				stepNumber: nextStepNumber,
+				previousStepNumber: stepNumber,
+				paymentMethodId: activePaymentMethod?.id ?? '',
 			} );
 			if ( nextStepNumber ) {
 				saveStepNumberToUrl( nextStepNumber );

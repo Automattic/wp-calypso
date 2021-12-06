@@ -227,6 +227,25 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	return domainManagementPaths.indexOf( path ) > -1;
 }
 
+/**
+ * The paths allowed for domain-only sites and DIFM in-progress sites are the same
+ * with one exception - /domains/add should be allowed for DIFM in-progress sites.
+ *
+ * @param {string} path The path to be checked
+ * @param {string} slug The site slug
+ * @param {object} primaryDomain The primary domain if it exists
+ * @param {object} contextParams Context parameters
+ * @returns {boolean} true if the path is allowed, false otherwise
+ */
+function isPathAllowedForDIFMInProgressSite( path, slug, primaryDomain, contextParams ) {
+	const domainAdditionPath = '/domains/add';
+
+	return (
+		isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) ||
+		path.startsWith( domainAdditionPath )
+	);
+}
+
 function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
@@ -254,18 +273,19 @@ function onSelectedSiteAvailable( context ) {
 	}
 
 	/**
-	 * The paths allowed for domain-only sites and DIFM in-progress sites are the same.
+	 * For DIFM in-progress sites, render the in-progress screen for all
+	 * paths except those in the allow-list defined in `isPathAllowedForDIFMInProgressSite`.
 	 * Ignore this check if we are inside a support session.
 	 */
 	if (
 		isDIFMLiteInProgress( state, selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite(
+		! isSupportSession( state ) &&
+		! isPathAllowedForDIFMInProgressSite(
 			context.pathname,
 			selectedSite.slug,
 			primaryDomain,
 			context.params
-		) &&
-		! isSupportSession( state )
+		)
 	) {
 		renderSelectedSiteIsDIFMLiteInProgress( context, selectedSite );
 		return false;
@@ -373,7 +393,6 @@ export function siteSelection( context, next ) {
 
 	const { getState, dispatch } = getStore( context );
 	const siteFragment = context.params.site || getSiteFragment( context.path );
-	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 
@@ -436,7 +455,7 @@ export function siteSelection( context, next ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context, basePath ) ) {
+		if ( onSelectedSiteAvailable( context ) ) {
 			next();
 		}
 	} else {
@@ -458,7 +477,7 @@ export function siteSelection( context, next ) {
 					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
-					if ( onSelectedSiteAvailable( context, basePath ) ) {
+					if ( onSelectedSiteAvailable( context ) ) {
 						next();
 					}
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {

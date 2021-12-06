@@ -28,13 +28,14 @@ import type { Site } from 'calypso/reader/list-manage/types';
 import './style.scss';
 
 type EmailProvidersStackedComparisonProps = {
-	cartDomainName?: string;
 	comparisonContext: string;
+	cartDomainName?: string;
 	currencyCode?: string;
 	currentRoute?: string;
 	domain?: any;
 	domainName?: string;
 	domainsWithForwards?: any[];
+	gSuiteProduct?: string;
 	hasCartDomain?: boolean;
 	isGSuiteSupported?: boolean;
 	productsList?: string[];
@@ -43,7 +44,6 @@ type EmailProvidersStackedComparisonProps = {
 	selectedSite?: Site | null;
 	selectedDomainName: string;
 	source: string;
-	titanMailMonthlyProduct?: any;
 	gSuiteAnnualProduct?: any;
 };
 
@@ -127,6 +127,7 @@ export default connect(
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedDomainName: domainName,
 			selectedSite,
+			source: ownProps.source,
 			titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},

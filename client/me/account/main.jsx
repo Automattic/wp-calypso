@@ -4,7 +4,7 @@ import languages from '@automattic/languages';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { debounce, flowRight as compose, get, has, map, size } from 'lodash';
+import { debounce, flowRight as compose, get, map, size } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
@@ -142,7 +142,7 @@ class Account extends Component {
 	}
 
 	hasUnsavedUserSetting( settingName ) {
-		return has( this.props.unsavedUserSettings, settingName );
+		return this.props.unsavedUserSettings.hasOwnProperty( settingName );
 	}
 
 	hasUnsavedUserSettings( settingNames ) {

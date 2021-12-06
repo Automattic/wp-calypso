@@ -292,7 +292,8 @@ export default {
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
-			! providesDependenciesInQuery?.includes( 'siteSlug' )
+			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
+			! providesDependenciesInQuery?.includes( 'site' )
 		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
@@ -318,6 +319,8 @@ export default {
 		const signupDependencies = getSignupDependencyStore( getState() );
 
 		const siteIdOrSlug =
+			query?.site ||
+			signupDependencies?.site ||
 			signupDependencies?.siteSlug ||
 			query?.siteSlug ||
 			signupDependencies?.siteId ||

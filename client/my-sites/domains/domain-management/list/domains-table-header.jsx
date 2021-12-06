@@ -131,7 +131,11 @@ class DomainsTableHeader extends PureComponent {
 							} ) }
 							data-column={ column.name }
 						>
-							{ column.label } { this.renderSortIcon( column, activeSortKey, activeSortOrder ) }
+							{ column.label }{ ' ' }
+							{ column.bubble > 0 && (
+								<span className={ `list__${ column.name }-cell__bubble` }>{ column.bubble }</span>
+							) }
+							{ this.renderSortIcon( column, activeSortKey, activeSortOrder ) }
 						</Button>
 					) ) }
 				</div>

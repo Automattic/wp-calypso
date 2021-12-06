@@ -1,8 +1,10 @@
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import EmailProviderFeaturesToggleButton from 'calypso/my-sites/email/email-provider-features/toggle-button';
 import EmailProviderStackedFeatures from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
 import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
@@ -14,13 +16,16 @@ const noop = () => {};
 
 const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) => {
 	const {
+		additionalPriceInformation,
 		buttonLabel,
 		children,
 		description,
+		discount,
 		detailsExpanded,
 		expandButtonLabel,
 		features,
 		footerBadge,
+		formattedPrice,
 		formFields,
 		logo,
 		onButtonClick = noop,
@@ -45,13 +50,30 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 
 	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;
 
+	const price = (
+		<div className="email-provider-stacked-card__title-price-badge">
+			<div className="email-provider-stacked-card__discount badge badge--info-green">
+				{ translate( '3 months free' ) }
+			</div>
+			<PromoCardPrice
+				formattedPrice={ formattedPrice }
+				discount={ discount }
+				additionalPriceInformation={
+					<span className="email-provider-stacked-card__provider-additional-price-information">
+						{ additionalPriceInformation }
+					</span>
+				}
+			/>
+		</div>
+	);
+
 	const header = (
 		<div className="email-provider-stacked-card__header">
 			<div className="email-provider-stacked-card__title-container">
 				<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
 				<p>{ description }</p>
 			</div>
-			<div className="email-provider-stacked-card__title-price-badge">{ priceBadge }</div>
+			{ price }
 		</div>
 	);
 

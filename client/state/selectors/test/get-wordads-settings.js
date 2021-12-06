@@ -3,7 +3,6 @@ import getWordadsSettings from 'calypso/state/selectors/get-wordads-settings';
 describe( 'getWordadsSettings()', () => {
 	const settings = {
 		paypal: 'support@wordpress.com',
-		addr1: '123 streetname street',
 	};
 	const siteId = 12345678;
 	const sitesState = {
@@ -63,42 +62,6 @@ describe( 'getWordadsSettings()', () => {
 		};
 		const output = getWordadsSettings( state, siteId );
 		expect( output ).toMatchObject( settings );
-	} );
-
-	test( 'should return a truthy normalized us_checked field when us_resident is "yes"', () => {
-		const state = {
-			wordads: {
-				settings: {
-					items: {
-						[ siteId ]: {
-							us_resident: 'yes',
-						},
-					},
-				},
-			},
-			...sitesState,
-			...jetpackSettingsState,
-		};
-		const output = getWordadsSettings( state, siteId );
-		expect( output ).toHaveProperty( 'us_checked', true );
-	} );
-
-	test( 'should return a falsy normalized us_checked field when us_resident is "no"', () => {
-		const state = {
-			wordads: {
-				settings: {
-					items: {
-						[ siteId ]: {
-							us_resident: 'no',
-						},
-					},
-				},
-			},
-			...sitesState,
-			...jetpackSettingsState,
-		};
-		const output = getWordadsSettings( state, siteId );
-		expect( output ).toHaveProperty( 'us_checked', false );
 	} );
 
 	test( 'should get settings from Jetpack settings state for a Jetpack site', () => {

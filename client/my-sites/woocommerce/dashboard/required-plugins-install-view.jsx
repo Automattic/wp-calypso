@@ -78,8 +78,6 @@ class RequiredPluginsInstallView extends Component {
 		} ),
 		skipSlug: PropTypes.string,
 		skipConfirmation: PropTypes.bool,
-		isFeatureActive: PropTypes.bool,
-		upgradingPlan: PropTypes.object,
 	};
 
 	constructor( props ) {
@@ -117,6 +115,7 @@ class RequiredPluginsInstallView extends Component {
 		this.destroyTimeoutTimer();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { automatedTransferStatus: currentATStatus, siteId, hasPendingAT } = this.props;
 		const { automatedTransferStatus: nextATStatus } = nextProps;
@@ -574,26 +573,14 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	render() {
-		const {
-			hasPendingAT,
-			fixMode,
-			translate,
-			isFeatureActive,
-			upgradingPlan,
-			siteSlug,
-		} = this.props;
+		const { hasPendingAT, fixMode, translate, siteId } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
 			return (
 				<>
 					<SetupNotices />
-					<WoopLandingPage
-						startSetup={ this.startSetup }
-						isFeatureActive={ isFeatureActive }
-						upgradingPlan={ upgradingPlan }
-						siteSlug={ siteSlug }
-					/>
+					<WoopLandingPage siteId={ siteId } startSetup={ this.startSetup } />
 				</>
 			);
 		}

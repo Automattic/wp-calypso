@@ -18,7 +18,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport#readme",
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},
@@ -26,7 +26,6 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "workspace:^",
-		"regenerator-runtime": "^0.13.9"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

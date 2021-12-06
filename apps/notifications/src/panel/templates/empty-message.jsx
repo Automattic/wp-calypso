@@ -5,6 +5,7 @@ import { bumpStat } from '../rest-client/bump-stat';
 const TITLE_OFFSET = 38;
 
 export class EmptyMessage extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( this.props.showing ) {
 			bumpStat( 'notes-empty-message', this.props.name + '_shown' );

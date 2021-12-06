@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { has, mapValues, pickBy, flowRight as compose } from 'lodash';
+import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
@@ -248,7 +248,7 @@ const connectOptionsHoc = connect(
 	( options, actions, ownProps ) => {
 		const { defaultOption, secondaryOption, getScreenshotOption } = ownProps;
 		options = mapValues( options, ( option, name ) => {
-			if ( has( option, 'action' ) ) {
+			if ( option.hasOwnProperty( 'action' ) ) {
 				return { ...option, action: actions[ name ] };
 			}
 			return option;

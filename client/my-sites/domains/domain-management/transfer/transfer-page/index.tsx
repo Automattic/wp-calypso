@@ -1,11 +1,16 @@
 import { Card } from '@automattic/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import {
 	domainManagementEdit,
@@ -26,7 +31,15 @@ import './style.scss';
 
 const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const { __ } = useI18n();
-	const { selectedSite, currentRoute, selectedDomainName } = props;
+	const {
+		currentRoute,
+		isAtomic,
+		isDomainOnly,
+		isMapping,
+		isPrimaryDomain,
+		selectedDomainName,
+		selectedSite,
+	} = props;
 
 	const renderBreadcrumbs = () => {
 		const items = [
@@ -58,12 +71,17 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
 	};
 
-	return (
-		<Main className="transfer-page" wideLayout>
-			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
-			<Card>
+	const renderTransferOptions = () => {
+		const options = [];
+
+		if ( ! isDomainOnly ) {
+			const mainText = isMapping
+				? __( 'Transfer this domain connection to any administrator on this site' )
+				: __( 'Transfer this domain to any administrator on this site' );
+
+			options.push(
 				<ActionCard
+					key="transfer-to-another-user"
 					buttonHref={ domainManagementTransferToAnotherUser(
 						selectedSite.slug,
 						selectedDomainName,
@@ -73,10 +91,22 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					buttonText={ __( 'Continue' ) }
 					// translators: Transfer a domain to another user
 					headerText={ __( 'To another user' ) }
-					mainText={ __( 'Transfer this domain to any administrator on this site' ) }
+					mainText={ mainText }
 				/>
-				<div className="transfer-page__item-separator"></div>
+			);
+		}
+
+		if ( ! ( isPrimaryDomain && isAtomic ) ) {
+			if ( options.length > 0 ) {
+				options.push( <div key="separator" className="transfer-page__item-separator"></div> );
+			}
+			const mainText = isMapping
+				? __( 'Transfer this domain connection to any site you are an administrator on' )
+				: __( 'Transfer this domain to any site you are an administrator on' );
+
+			options.push(
 				<ActionCard
+					key="transfer-to-another-site"
 					buttonHref={ domainManagementTransferToOtherSite(
 						selectedSite.slug,
 						selectedDomainName,
@@ -86,9 +116,39 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					buttonText={ __( 'Continue' ) }
 					// translators: Transfer a domain to another WordPress.com site
 					headerText={ __( 'To another WordPress.com site' ) }
-					mainText={ __( 'Transfer this domain to any site you are an administrator on' ) }
+					mainText={ mainText }
 				/>
-			</Card>
+			);
+		}
+
+		return options.length > 0 ? <Card>{ options }</Card> : null;
+	};
+
+	return (
+		<Main className="transfer-page" wideLayout>
+			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+			{ renderBreadcrumbs() }
+			<FormattedHeader brandFont headerText={ __( 'Transfer' ) } align="left" />
+			<Layout>
+				<Column type="main">{ renderTransferOptions() }</Column>
+				<Column type="sidebar">
+					<Card className="transfer-page__help-section-card">
+						<p className="transfer-page__help-section-title">{ __( 'How do transfers work?' ) }</p>
+						<span className="transfer-page__help-section-text">
+							{ __( 'Transferring a domain within WordPress.com is immediate.' ) }
+							<br />
+							{ createInterpolateElement(
+								__(
+									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <a>this important information</a> before starting a transfer.'
+								),
+								{
+									a: createElement( 'a', { href: TRANSFER_DOMAIN_REGISTRATION } ),
+								}
+							) }
+						</span>
+					</Card>
+				</Column>
+			</Layout>
 		</Main>
 	);
 };

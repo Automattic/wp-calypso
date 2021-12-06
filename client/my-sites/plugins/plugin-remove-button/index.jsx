@@ -2,11 +2,13 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import { Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { Icon, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import accept from 'calypso/lib/accept';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -165,26 +167,36 @@ class PluginRemoveButton extends Component {
 			  } );
 		if ( this.props.inProgress ) {
 			return (
-				<span className="plugin-action plugin-remove-button__remove">
-					{ this.props.translate( 'Removing…' ) }
-				</span>
+				<div className="plugin-action">
+					<span className="plugin-remove-button__remove">
+						{ this.props.translate( 'Removing…' ) }
+					</span>
+				</div>
 			);
 		}
 
 		const handleClick = disabled ? null : this.removeAction;
 
+		if ( this.props.menuItem ) {
+			return (
+				<PopoverMenuItem onClick={ handleClick } className="plugin-remove-button__remove-button">
+					{ label }
+				</PopoverMenuItem>
+			);
+		}
+
 		return (
 			<PluginAction
-				label={ label }
 				htmlFor={ 'remove-plugin-' + this.props.site.ID }
 				action={ this.removeAction }
 				disabled={ disabled }
 				disabledInfo={ disabledInfo }
 				className="plugin-remove-button__remove-link"
 			>
-				<a onClick={ handleClick } className="plugin-remove-button__remove-icon">
-					<Gridicon icon="trash" size={ 18 } />
-				</a>
+				<Button onClick={ handleClick } className="plugin-remove-button__remove-button">
+					<Icon icon={ trash } className="plugin-remove-button__remove-icon" />
+					{ label }
+				</Button>
 			</PluginAction>
 		);
 	};

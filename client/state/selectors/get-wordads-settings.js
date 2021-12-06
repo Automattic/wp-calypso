@@ -19,10 +19,6 @@ export const getWordadsSettings = createSelector(
 			return null;
 		}
 
-		const normalizedSettings = {
-			us_checked: 'yes' === settings.us_resident,
-		};
-
 		const isJetpack = isJetpackSite( state, siteId );
 
 		// WordAds settings on Jetpack sites are not available on the WordAds state, so we get
@@ -52,7 +48,6 @@ export const getWordadsSettings = createSelector(
 
 		return {
 			...settings,
-			...normalizedSettings,
 			...jetpackSettings,
 		};
 	},
