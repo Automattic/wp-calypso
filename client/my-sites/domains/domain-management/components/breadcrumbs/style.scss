@@ -57,26 +57,29 @@
 		display: flex;
 		align-items: center;
 		font-size: 13px; /* stylelint-disable-line */
-		font-weight: 500; /* stylelint-disable-line */
-		color: var( --color-neutral-80 );
+		font-weight: 400;
 
 		& .breadcrumbs__item {
-			color: var( --color-neutral-80 );
+			.breadcrumbs__item-label {
+				color: var( --color-neutral-50 );
 
-			& .breadcrumbs__item-label {
-				color: var( --color-neutral-80 );
-			}
-
-			&:first-child {
-				.breadcrumbs__item-label {
-					font-size: $font-body;
-					font-weight: 600;
+				&:hover {
+					color: var( --color-neutral-80 );
 				}
 			}
 
-			&:last-child {
+			&.is-last-item {
 				.breadcrumbs__item-label {
-					color: var( --color-neutral-50 );
+					font-weight: 500; /* stylelint-disable-line */
+					color: var( --color-neutral-80 );
+				}
+			}
+
+			&.is-only-item {
+				.breadcrumbs__item-label {
+					font-weight: 600;
+					font-size: $font-body;
+					color: var( --color-neutral-80 );
 				}
 			}
 		}
@@ -86,30 +89,22 @@
 .breadcrumbs__items-mobile {
 	display: flex;
 	align-items: center;
+	font-size: 13px; /* stylelint-disable-line */
+	font-weight: 400;
 
 	& .breadcrumbs__item {
 		display: flex;
 		align-items: center;
-	}
 
-	& .breadcrumbs__item-label {
-		color: var( --color-neutral-80 );
-		font-size: 13px; /* stylelint-disable-line */
-	}
+		.breadcrumbs__item-label {
+			color: var( --color-neutral-80 );
+		}
 
-	& .breadcrumbs__item:first-child {
-		font-size: $font-body;
-		font-weight: 600;
-		color: var( --color-neutral-50 );
-
-		& .breadcrumbs__item-label {
+		/* This rule applies when there's no back arrow present */
+		span:first-child {
+			font-weight: 600;
 			font-size: $font-body;
 		}
-	}
-	& span:first-child {
-		font-size: $font-body;
-		font-weight: 600;
-		color: var( --color-neutral-80 );
 	}
 
 	@include break-mobile {
@@ -132,7 +127,7 @@
 
 .breadcrumbs__separator {
 	margin: 0 12px;
-	color: var( --color-neutral-20 );
+	color: var( --color-neutral-10 );
 }
 
 .breadcrumbs__buttons,
