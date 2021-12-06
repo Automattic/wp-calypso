@@ -679,6 +679,10 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
+		'p2-get-started': {
+			stepName: 'p2-get-started',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
@@ -788,21 +792,16 @@ export function generateSteps( {
 		confirm: {
 			stepName: 'confirm',
 			props: {
-				headerTitle: i18n.translate( 'Your new store' ),
-				headerDescription: (
-					<>
-						{ i18n.translate( 'This will be your new store domain.' ) }
-						<br />
-						{ i18n.translate( 'You can change it later and get a custom one.' ) }
-					</>
+				headerTitle: i18n.translate( 'One final step' ),
+				headerDescription: i18n.translate(
+					'We’ve highlighted a few important details you should review before we create your store. '
 				),
 			},
+			dependencies: [ 'site' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-		},
-		install: {
-			stepName: 'install',
+			dependencies: [ 'site' ],
 		},
 	};
 }

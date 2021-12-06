@@ -16,7 +16,7 @@
 		"directory": "packages/explat-client-react-helpers"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"prepack": "yarn run clean && yarn run build",

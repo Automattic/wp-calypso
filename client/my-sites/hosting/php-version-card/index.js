@@ -59,6 +59,12 @@ const PhpVersionCard = ( {
 				} ),
 				value: '8.0',
 			},
+			{
+				label: translate( '8.1', {
+					comment: 'PHP Version for a version switcher',
+				} ),
+				value: '8.1',
+			},
 		];
 	};
 

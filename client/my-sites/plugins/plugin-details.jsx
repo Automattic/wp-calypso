@@ -194,15 +194,7 @@ function PluginDetails( props ) {
 					<div
 						className={ classNames(
 							'plugin-details__layout-col',
-							'plugin-details__layout-col-left',
-							{
-								'no-cta ': ! shouldDisplayCTA(
-									selectedSite,
-									props.pluginSlug,
-									isPluginInstalledOnsite,
-									isJetpackSelfHosted
-								),
-							}
+							'plugin-details__layout-col-left'
 						) }
 					>
 						<div className="plugin-details__tags">{ tags }</div>
@@ -239,51 +231,51 @@ function PluginDetails( props ) {
 							</div>
 						</div>
 					</div>
-					<div
-						className={ classNames(
-							'plugin-details__layout-col',
-							'plugin-details__layout-col-right',
-							{
-								'no-cta': ! shouldDisplayCTA(
-									selectedSite,
-									props.pluginSlug,
-									isPluginInstalledOnsite,
-									isJetpackSelfHosted
-								),
-							}
-						) }
-					>
-						<div className="plugin-details__header">
-							<div className="plugin-details__price">{ translate( 'Free' ) }</div>
-							<div className="plugin-details__install">
-								<CTA
-									slug={ props.pluginSlug }
-									isPluginInstalledOnsite={ isPluginInstalledOnsite }
-									isJetpackSelfHosted={ isJetpackSelfHosted }
-									selectedSite={ selectedSite }
-									isJetpack={ isJetpack }
-									isVip={ isVip }
-									hasEligibilityMessages={ hasEligibilityMessages }
-								/>
-							</div>
-							<div className="plugin-details__t-and-c">
-								{ translate(
-									'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the Third-Party plugin Terms.',
-									{
-										components: {
-											a: (
-												<a
-													target="_blank"
-													rel="noopener noreferrer"
-													href="https://wordpress.com/tos/"
-												/>
-											),
-										},
-									}
-								) }
+					{ shouldDisplayCTA(
+						selectedSite,
+						props.pluginSlug,
+						isPluginInstalledOnsite,
+						isJetpackSelfHosted,
+						requestingPluginsForSites
+					) && (
+						<div
+							className={ classNames(
+								'plugin-details__layout-col',
+								'plugin-details__layout-col-right'
+							) }
+						>
+							<div className="plugin-details__header">
+								<div className="plugin-details__price">{ translate( 'Free' ) }</div>
+								<div className="plugin-details__install">
+									<CTA
+										slug={ props.pluginSlug }
+										isPluginInstalledOnsite={ isPluginInstalledOnsite }
+										isJetpackSelfHosted={ isJetpackSelfHosted }
+										selectedSite={ selectedSite }
+										isJetpack={ isJetpack }
+										isVip={ isVip }
+										hasEligibilityMessages={ hasEligibilityMessages }
+									/>
+								</div>
+								<div className="plugin-details__t-and-c">
+									{ translate(
+										'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the Third-Party plugin Terms.',
+										{
+											components: {
+												a: (
+													<a
+														target="_blank"
+														rel="noopener noreferrer"
+														href="https://wordpress.com/tos/"
+													/>
+												),
+											},
+										}
+									) }
+								</div>
 							</div>
 						</div>
-					</div>
+					) }
 				</div>
 
 				{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
@@ -347,7 +339,17 @@ function PluginDetails( props ) {
 	);
 }
 
-function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpackSelfHosted ) {
+function shouldDisplayCTA(
+	selectedSite,
+	slug,
+	isPluginInstalledOnsite,
+	isJetpackSelfHosted,
+	requestingPluginsForSites
+) {
+	if ( requestingPluginsForSites ) {
+		// Display nothing if we are still requesting the plugin status.
+		return false;
+	}
 	if ( ! isJetpackSelfHosted && ! isCompatiblePlugin( slug ) ) {
 		// Check for WordPress.com compatibility.
 		return false;
@@ -361,22 +363,10 @@ function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpac
 	return ! isPluginInstalledOnsite;
 }
 
-function CTA( {
-	slug,
-	isPluginInstalledOnsite,
-	isJetpackSelfHosted,
-	selectedSite,
-	isJetpack,
-	isVip,
-	hasEligibilityMessages,
-} ) {
+function CTA( { slug, selectedSite, isJetpack, isVip, hasEligibilityMessages } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
-
-	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite, isJetpackSelfHosted ) ) {
-		return null;
-	}
 
 	const shouldUpgrade = ! (
 		isBusiness( selectedSite.plan ) ||
@@ -447,6 +437,8 @@ function onClickInstallPlugin( { dispatch, selectedSite, slug, upgradeAndInstall
 function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) {
 	const translate = useTranslate();
 
+	const selectedSite = useSelector( getSelectedSite );
+
 	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 
@@ -467,27 +459,63 @@ function SitesList( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) 
 	);
 
 	return (
-		<div className="plugin-details__sites-list">
-			<PluginSiteList
-				className="plugin-details__installed-on"
-				title={ translate( 'Installed on', {
-					comment: 'header for list of sites a plugin is installed on',
-				} ) }
-				sites={ sitesWithPlugin }
-				plugin={ plugin }
-			/>
-			{ plugin.wporg && (
+		<div className="plugin-details__sites-list-background">
+			<div className="plugin-details__sites-list">
 				<PluginSiteList
-					className="plugin-details__not-installed-on"
-					title={ translate( 'Available sites', {
-						comment: 'header for list of sites a plugin can be installed on',
+					className="plugin-details__installed-on"
+					title={ getInstalledOnTitle( {
+						translate,
+						selectedSite,
+						count: sitesWithPlugin.length,
 					} ) }
-					sites={ notInstalledSites }
+					sites={ sitesWithPlugin }
 					plugin={ plugin }
+					titlePrimary
+					showAdditionalHeaders
 				/>
-			) }
+				{ plugin.wporg && (
+					<PluginSiteList
+						className="plugin-details__not-installed-on"
+						title={ getAvailabeOnTitle( {
+							translate,
+							selectedSite,
+							count: notInstalledSites.length,
+						} ) }
+						sites={ notInstalledSites }
+						plugin={ plugin }
+					/>
+				) }
+			</div>
 		</div>
 	);
+}
+
+function getInstalledOnTitle( { translate, selectedSite, count } ) {
+	const installedOnSingleSiteTitle = translate( 'Installed on', {
+		comment: 'header for list of sites a plugin is installed on',
+	} );
+
+	const installedOnMultiSiteTitle = translate( 'Installed on %d site', 'Installed on %d sites', {
+		comment: 'header for list of sites a plugin is installed on',
+		args: [ count ],
+		count,
+	} );
+
+	return selectedSite ? installedOnSingleSiteTitle : installedOnMultiSiteTitle;
+}
+
+function getAvailabeOnTitle( { translate, selectedSite, count } ) {
+	const availableOnSingleSiteTitle = translate( 'Available sites', {
+		comment: 'header for list of sites a plugin can be installed on',
+	} );
+
+	const availabeOnMultiSiteTitle = translate( 'Available on %d site', 'Available on %d sites', {
+		comment: 'header for list of sites a plugin can be installed on',
+		args: [ count ],
+		count,
+	} );
+
+	return selectedSite ? availableOnSingleSiteTitle : availabeOnMultiSiteTitle;
 }
 
 function PluginDoesNotExistView() {

@@ -18,10 +18,8 @@ export const requestBillingTransaction = ( transactionId ) => ( dispatch ) => {
 		transactionId,
 	} );
 
-	return wp
-		.undocumented()
-		.me()
-		.getReceipt( transactionId, { format: 'display' } )
+	return wp.req
+		.get( `/me/billing-history/receipt/${ transactionId }`, { format: 'display' } )
 		.then( ( receipt ) => {
 			dispatch( {
 				type: BILLING_TRANSACTION_REQUEST_SUCCESS,

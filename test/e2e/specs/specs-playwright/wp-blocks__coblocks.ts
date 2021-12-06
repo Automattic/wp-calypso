@@ -109,10 +109,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	} );
 
 	it( 'Publish and visit post', async function () {
-		// Must save as draft first to bypass issue with post-publish panel being auto-dismissed when
-		// ClickToTweet and Logos blocks are present.
-		// See https://github.com/Automattic/wp-calypso/issues/54421.
-		await gutenbergEditorPage.publish( { visit: true, saveDraft: true } );
+		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 
 	// Pass in a 1D array of values or text strings to validate each block.

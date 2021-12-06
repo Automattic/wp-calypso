@@ -27,9 +27,8 @@ export function installTheme( themeId, siteId ) {
 			themeId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.installThemeOnJetpack( siteId, themeId )
+		return wpcom.req
+			.post( `/sites/${ siteId }/themes/${ themeId }/install` )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {

@@ -1,147 +1,182 @@
-import { BackButton, NextButton } from '@automattic/onboarding';
+import { NextButton } from '@automattic/onboarding';
+import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
 import { ReactElement, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import yourNewStoreImage from 'calypso/assets/images/woocommerce-install/your-new-store.png';
-import { default as HoldList } from 'calypso/blocks/eligibility-warnings/hold-list';
-import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
+import { useSelector } from 'react-redux';
+import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
+import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
+import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import {
-	fetchAutomatedTransferStatusOnce,
-	requestEligibility,
-} from 'calypso/state/automated-transfer/actions';
-import {
-	isFetchingAutomatedTransferStatus,
-	getEligibility,
-	EligibilityData,
-} from 'calypso/state/automated-transfer/selectors';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 
 import './style.scss';
 
-export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned, stepSectionName, headerTitle, headerDescription } = props;
-	const { __ } = useI18n();
-	const siteId = useSelector( getSelectedSiteId ) as number;
-	const dispatch = useDispatch();
+const SupportLinkStyle = styled.a`
+	/* Gray / Gray 100 - have to find the var value for this color */
+	color: #101517 !important;
+	text-decoration: underline;
+	font-weight: bold;
+`;
 
-	// Request eligibility data.
+const ActionSection = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	flex-wrap: wrap;
+
+	@media ( max-width: 320px ) {
+		align-items: center;
+	}
+`;
+
+const Divider = styled.hr`
+	border-top: 1px solid #eee;
+	background: none;
+	margin-bottom: 40px;
+`;
+
+const WarningsOrHoldsSection = styled.div`
+	margin-bottom: 40px;
+`;
+
+const SupportLinkContainer = styled.p`
+	@media ( max-width: 320px ) {
+		margin-top: 0px;
+		width: 100%;
+	}
+`;
+
+const StyledNextButton = styled( NextButton )`
+	@media ( max-width: 320px ) {
+		width: 100%;
+		margin-bottom: 20px;
+	}
+`;
+
+function SupportLink() {
+	return (
+		<SupportLinkContainer>
+			{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
+				a: <SupportLinkStyle href="#support-link" />,
+			} ) }
+		</SupportLinkContainer>
+	);
+}
+
+export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
+	const { goToStep, isReskinned, headerTitle, headerDescription } = props;
+	const { __ } = useI18n();
+
+	// selectedSiteId is set by the controller whenever site is provided as a query param.
+	const siteId = useSelector( getSelectedSiteId ) as number;
+
+	const {
+		wpcomDomain,
+		stagingDomain,
+		wpcomSubdomainWarning,
+		siteUpgrading,
+		hasBlockers,
+		isDataReady,
+		warnings,
+		isAtomicSite,
+		isReadyForTransfer,
+	} = useWooCommerceOnPlansEligibility( siteId );
+
 	useEffect( () => {
-		if ( ! siteId ) {
+		if ( ! isAtomicSite ) {
+			// Automatically start the transfer process when it's ready.
+			if ( isReadyForTransfer ) {
+				return goToStep( 'transfer' );
+			}
+
 			return;
 		}
-		dispatch( fetchAutomatedTransferStatusOnce( siteId ) );
-		dispatch( requestEligibility( siteId ) );
-	}, [ siteId, dispatch, goToStep ] );
 
-	// Check whether it's requesting eligibility data.
-	const isFetchingTransferStatus = !! useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
-	);
-
-	// Get eligibility data.
-	const {
-		eligibilityHolds,
-		eligibilityWarnings: allEligibilityWarnings,
-	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
-
-	// Check whether the wpcom.com subdomain warning is present.
-	const wordPressSubdomainWarning = allEligibilityWarnings?.find(
-		( { id } ) => id === 'wordpress_subdomain'
-	);
-
-	const eligibilityWarnings = allEligibilityWarnings?.filter(
-		( { id } ) => id !== 'wordpress_subdomain'
-	);
-
-	// Pick the wpcom subdomain.
-	const wpcomDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-
-	const isProcessing = ! siteId || isFetchingTransferStatus || ! wordPressSubdomainWarning;
+		page.redirect( `/woocommerce-installation/${ wpcomDomain }` );
+	}, [ goToStep, isAtomicSite, isReadyForTransfer, wpcomDomain ] );
 
 	function getWPComSubdomainWarningContent() {
-		// Get staging sudomain based on the wpcom subdomain.
-		const stagingDomain = wpcomDomain?.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+		if ( ! wpcomSubdomainWarning ) {
+			return null;
+		}
+
+		return <DomainEligibilityWarning wpcomDomain={ wpcomDomain } stagingDomain={ stagingDomain } />;
+	}
+
+	function getCheckoutContent() {
+		if ( ! siteUpgrading.required ) {
+			return null;
+		}
 
 		return (
-			<>
-				<div className="confirm__image-container">
-					{ isProcessing && <LoadingEllipsis /> }
-					<img src={ yourNewStoreImage } alt="" />
-				</div>
-				<div className="confirm__instructions-container">
-					<div className="confirm__instructions-title confirm__instructions-wpcom-domain">
-						{ wpcomDomain }
-					</div>
+			<PlanWarning title={ __( 'Upgrade your plan' ) }>{ siteUpgrading.description }</PlanWarning>
+		);
+	}
 
-					<div className="confirm__instructions-title">{ stagingDomain }</div>
-
-					<p>
-						{ __(
-							'By installing this product your subdomain will change. You can change it later to a custom domain and we will pick up the tab for a year.'
+	function getWarningsOrHoldsSection() {
+		if ( hasBlockers ) {
+			return (
+				<WarningsOrHoldsSection>
+					<WarningCard
+						message={ __(
+							'There is an error that is stopping us from being able to install this product, please contact support.'
 						) }
-					</p>
+					/>
+				</WarningsOrHoldsSection>
+			);
+		}
 
-					<p>
-						{ createInterpolateElement( __( '<a>Contact support</a> for help and questions.' ), {
-							a: <a href="#support-link" />,
-						} ) }
-					</p>
+		if ( warnings.length || isAtomicSite ) {
+			return (
+				<WarningsOrHoldsSection>
+					<Divider />
+					<EligibilityWarningsList warnings={ warnings } />
+				</WarningsOrHoldsSection>
+			);
+		}
 
-					<NextButton
-						disabled={ isProcessing }
-						onClick={ () => {
-							if ( eligibilityHolds?.length || eligibilityWarnings?.length ) {
-								return goToStep( 'confirm', 'eligibility_substep' );
-							}
+		return null;
+	}
 
-							return goToStep( 'transfer' );
-						} }
-					>
-						{ __( 'Sounds good' ) }
-					</NextButton>
+	function getContent() {
+		return (
+			<>
+				<div className="confirm__info-section" />
+				<div className="confirm__instructions-container">
+					{ getWPComSubdomainWarningContent() }
+					{ getCheckoutContent() }
+					{ getWarningsOrHoldsSection() }
+					<ActionSection>
+						<SupportLink />
+						<StyledNextButton
+							disabled={ hasBlockers || ! isDataReady || isAtomicSite }
+							onClick={ () => {
+								if ( siteUpgrading.required ) {
+									return ( window.location.href = siteUpgrading.checkoutUrl );
+								}
+								goToStep( 'transfer' );
+							} }
+						>
+							{ __( 'Sounds good' ) }
+						</StyledNextButton>
+					</ActionSection>
 				</div>
 			</>
 		);
 	}
 
-	function getContent() {
-		// wpcom subdomain warning.
-		if (
-			wordPressSubdomainWarning &&
-			( stepSectionName === 'wpcom_subdomain_substep' || typeof stepSectionName === 'undefined' )
-		) {
-			return getWPComSubdomainWarningContent();
-		}
-
+	if ( ! siteId || ! isDataReady || isAtomicSite ) {
 		return (
-			<>
-				<div className="confirm__image-container">
-					{ isProcessing && <LoadingEllipsis /> }
-					<img src={ yourNewStoreImage } alt="" />
-					<div>
-						<BackButton onClick={ () => goToStep( 'confirm', 'wpcom_subdomain_substep' ) } />
-					</div>
-				</div>
-				<div className="confirm__instructions-container">
-					{ !! eligibilityHolds?.length && (
-						<p>
-							<HoldList holds={ eligibilityHolds } context={ 'plugins' } isPlaceholder={ false } />
-						</p>
-					) }
-					{ !! eligibilityWarnings?.length && (
-						<p>
-							<WarningList warnings={ eligibilityWarnings } context={ 'plugins' } />
-						</p>
-					) }
-
-					<NextButton onClick={ () => goToStep( 'transfer' ) }>{ __( 'Confirm' ) }</NextButton>
-				</div>
-			</>
+			<div className="confirm__info-section">
+				<LoadingEllipsis />
+			</div>
 		);
 	}
 
@@ -151,7 +186,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
-			backUrl="/woocommerce-installation"
+			backUrl={ `/woocommerce-installation/${ wpcomDomain }` }
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }

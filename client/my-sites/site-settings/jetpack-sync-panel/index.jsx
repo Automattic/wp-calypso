@@ -22,8 +22,14 @@ const debug = debugModule( 'calypso:site-settings:jetpack-sync-panel' );
 const SYNC_STATUS_ERROR_NOTICE_THRESHOLD = 3; // Only show sync status error notice if >= this number
 
 class JetpackSyncPanel extends Component {
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.fetchSyncStatus();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteId !== this.props.siteId ) {
+			this.fetchSyncStatus();
+		}
 	}
 
 	fetchSyncStatus = () => {

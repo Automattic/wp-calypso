@@ -1,6 +1,7 @@
 import type { GoToStep } from '../../types';
 
 export interface WooCommerceInstallProps {
+	siteId: number;
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;
@@ -8,6 +9,9 @@ export interface WooCommerceInstallProps {
 	headerTitle: string;
 	headerDescription: string;
 	queryObject: {
+		siteSlug: string;
+	};
+	signupDependencies: {
 		siteSlug: string;
 	};
 }

@@ -51,3 +51,10 @@ export const getSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder 
 
 export const getReverseSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder ) =>
 	getSimpleSortFunctionBy( column )( first, second, sortOrder ) * -1;
+
+export const countDomainsInOrangeStatus = ( domainStatutes ) =>
+	domainStatutes.filter( ( domainStatus ) =>
+		[ 'status-neutral-dot', 'status-alert', 'status-warning', 'status-error' ].includes(
+			domainStatus.statusClass
+		)
+	).length;

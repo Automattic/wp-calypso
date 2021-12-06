@@ -1,87 +1,86 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { cloneElement, useEffect, useState } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
+import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
-import VideoFooterBar from './video-footer-bar';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
+const VideosUi = ( { headerBar, footerBar } ) => {
 	const translate = useTranslate();
 
 	const courseSlug = 'blogging-quick-start';
 	const { data: course } = useCourseQuery( courseSlug, { retry: false } );
+	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
 
-	const userCourseProgression = useSelector( ( state ) => {
+	const initialUserCourseProgression = useSelector( ( state ) => {
 		const courses = getOriginalUserSetting( state, 'courses' );
 		return courses !== null && courseSlug in courses ? courses[ courseSlug ] : [];
-	} );
+	}, shallowEqual );
+	const [ userCourseProgression, setUserCourseProgression ] = useState( [] );
+	useEffect( () => {
+		setUserCourseProgression( initialUserCourseProgression );
+	}, [ initialUserCourseProgression ] );
 
-	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
+	const completedVideoCount = Object.keys( userCourseProgression ).length;
+	const courseChapterCount = course ? Object.keys( course.videos ).length : 0;
+	const isCourseComplete = completedVideoCount > 0 && courseChapterCount === completedVideoCount;
+
+	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
-	const [ currentVideo, setCurrentVideo ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
+	const currentVideo = currentVideoKey ? course?.videos[ currentVideoKey ] : course?.videos[ 0 ];
 
-	const videoRef = useRef( null );
-
-	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
+	const onVideoPlayClick = ( videoSlug ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
 			video: videoSlug,
 		} );
 
-		setCurrentVideo( videoInfo );
+		setCurrentVideoKey( videoSlug );
 		setIsPlaying( true );
 	};
 
 	useEffect( () => {
-		if ( videoRef.current ) {
-			videoRef.current.onplay = () => {
-				setIsPlaying( true );
-			};
-
-			videoRef.current.onpause = () => {
-				setIsPlaying( false );
-			};
+		if ( ! course || ! initialUserCourseProgression ) {
+			return;
 		}
-	} );
-
-	useEffect( () => {
-		if ( ! currentVideoKey && course ) {
-			// @TODO add logic to pick the first unseen video
-			const initialVideoId = 'find-theme';
-			setCurrentVideoKey( initialVideoId );
-			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( initialVideoId ) );
+		const videoSlugs = Object.keys( course?.videos ?? [] );
+		const viewedSlugs = Object.keys( initialUserCourseProgression );
+		if ( viewedSlugs.length > 0 ) {
+			const nextSlug = videoSlugs.find( ( slug ) => ! viewedSlugs.includes( slug ) );
+			if ( nextSlug ) {
+				setCurrentVideoKey( nextSlug );
+				setSelectedChapterIndex( videoSlugs.indexOf( nextSlug ) );
+				return;
+			}
 		}
-	}, [ currentVideoKey, course ] );
+		const initialVideoId = 'find-theme';
+		setCurrentVideoKey( initialVideoId );
+		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoId ) );
+	}, [ course, initialUserCourseProgression ] );
 
-	useEffect( () => {
-		if ( currentVideoKey && course ) {
-			setCurrentVideo( course.videos[ currentVideoKey ] );
-			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( currentVideoKey ) );
-		}
-	}, [ currentVideoKey, course ] );
-
-	const isVideoSelected = ( idx ) => {
-		return selectedVideoIndex === idx;
+	const isChapterSelected = ( idx ) => {
+		return selectedChapterIndex === idx;
 	};
 
-	const onVideoSelected = ( idx ) => {
-		if ( isVideoSelected( idx ) ) {
-			setSelectedVideoIndex( null );
-		} else {
-			setSelectedVideoIndex( idx );
+	const onChapterSelected = ( idx ) => {
+		if ( isChapterSelected( idx ) ) {
+			return;
 		}
+		setSelectedChapterIndex( idx );
 	};
 
-	const skipClickHandler = () =>
-		recordTracksEvent( 'calypso_courses_skip_to_draft', {
-			course: course.slug,
-		} );
+	const markVideoCompleted = ( videoData ) => {
+		const updatedUserCourseProgression = { ...userCourseProgression };
+		updatedUserCourseProgression[ videoData.slug ] = true;
+		setUserCourseProgression( updatedUserCourseProgression );
+		updateUserCourseProgression( courseSlug, videoData.slug );
+	};
 
 	useEffect( () => {
 		if ( course ) {
@@ -94,7 +93,7 @@ const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
-				{ headerBar }
+				{ course && cloneElement( headerBar, { course: course } ) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
 						<h2>{ translate( 'Watch five videos.' ) }</h2>
@@ -128,15 +127,16 @@ const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
 				<div className="videos-ui__video-content">
 					{ currentVideo && (
 						<VideoPlayer
-							videoRef={ videoRef }
-							videoUrl={ currentVideo.url }
+							videoData={ { ...currentVideo, ...{ slug: currentVideoKey } } }
+							onVideoPlayStatusChanged={ ( isVideoPlaying ) => setIsPlaying( isVideoPlaying ) }
 							isPlaying={ isPlaying }
-							poster={ currentVideo.poster ? currentVideo.poster : false }
+							course={ course }
+							onVideoCompleted={ markVideoCompleted }
 						/>
 					) }
 					<div className="videos-ui__chapters">
 						{ course &&
-							Object.entries( course.videos ).map( ( data, i ) => {
+							Object.entries( course?.videos ).map( ( data, i ) => {
 								const isVideoCompleted =
 									data[ 0 ] in userCourseProgression && userCourseProgression[ data[ 0 ] ];
 								const videoInfo = data[ 1 ];
@@ -144,12 +144,12 @@ const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
 								return (
 									<div
 										key={ i }
-										className={ `${ isVideoSelected( i ) ? 'selected ' : '' }videos-ui__chapter` }
+										className={ `${ isChapterSelected( i ) ? 'selected ' : '' }videos-ui__chapter` }
 									>
 										<button
 											type="button"
 											className="videos-ui__chapter-accordion-toggle"
-											onClick={ () => onVideoSelected( i ) }
+											onClick={ () => onChapterSelected( i ) }
 										>
 											<span className="videos-ui__video-title">
 												{ i + 1 }. { videoInfo.title }{ ' ' }
@@ -160,12 +160,12 @@ const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
 													<Gridicon icon="checkmark" size={ 12 } />
 												</span>
 											) }
-											{ isVideoSelected( i ) && ! isVideoCompleted && (
+											{ isChapterSelected( i ) && ! isVideoCompleted && (
 												<span className="videos-ui__status-icon">
 													<Gridicon icon="chevron-up" size={ 18 } />
 												</span>
 											) }
-											{ ! isVideoSelected( i ) && ! isVideoCompleted && (
+											{ ! isChapterSelected( i ) && ! isVideoCompleted && (
 												<span className="videos-ui__status-icon">
 													<Gridicon icon="chevron-down" size={ 18 } />
 												</span>
@@ -191,9 +191,9 @@ const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
 															d="M1.9165 1.75L10.0832 7L1.9165 12.25V1.75Z"
 															fill="#101517"
 															stroke="#101517"
-															stroke-width="2"
-															stroke-linecap="round"
-															stroke-linejoin="round"
+															strokeWidth="2"
+															strokeLinecap="round"
+															strokeLinejoin="round"
 														/>
 													</svg>
 													<span>{ translate( 'Play video' ) }</span>
@@ -206,19 +206,8 @@ const VideosUi = ( { headerBar, onBackClick = () => {} } ) => {
 					</div>
 				</div>
 			</div>
-			{ course && (
-				<VideoFooterBar
-					displayBackButton={ true }
-					displaySkipLink={ true }
-					displayCTA={ false }
-					descriptionCTA={ course.cta.description }
-					buttonTextCTA={ course.cta.action }
-					hrefCTA={ course.cta.url }
-					courseSlug={ course.slug }
-					onBackClick={ onBackClick }
-					skipClickHandler={ skipClickHandler }
-				/>
-			) }
+			{ course &&
+				cloneElement( footerBar, { course: course, isCourseComplete: isCourseComplete } ) }
 		</div>
 	);
 };

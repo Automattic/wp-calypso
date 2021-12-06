@@ -5,7 +5,6 @@ import {
 	isDomainMapping,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from '@automattic/calypso-products';
-import { useEvents } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
@@ -21,8 +20,6 @@ import {
 	getSignupValidationErrorResponse,
 } from '../types/wpcom-store-state';
 import getContactDetailsType from './get-contact-details-type';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './translate-payment-method-names';
-import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type {
 	ManagedContactDetails,
@@ -118,9 +115,7 @@ async function runLoggedOutEmailValidationCheck(
 export async function validateContactDetails(
 	contactInfo: ManagedContactDetails,
 	isLoggedOutCart: boolean,
-	activePaymentMethod: PaymentMethod | null,
 	responseCart: ResponseCart,
-	onEvent: ReturnType< typeof useEvents >,
 	showErrorMessageBriefly: ( message: string ) => void,
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void,
 	clearDomainContactErrorMessages: () => void,
@@ -135,9 +130,7 @@ export async function validateContactDetails(
 		if ( shouldDisplayErrors ) {
 			handleContactValidationResult( {
 				translate,
-				recordEvent: onEvent,
 				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
 				clearDomainContactErrorMessages,
@@ -155,9 +148,7 @@ export async function validateContactDetails(
 		if ( shouldDisplayErrors ) {
 			handleContactValidationResult( {
 				translate,
-				recordEvent: onEvent,
 				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult: loggedOutValidationResult,
 				applyDomainContactValidationResults,
 				clearDomainContactErrorMessages,
@@ -361,17 +352,13 @@ async function getGSuiteValidationResult(
 
 function handleContactValidationResult( {
 	translate,
-	recordEvent,
 	showErrorMessage,
-	paymentMethodId,
 	validationResult,
 	applyDomainContactValidationResults,
 	clearDomainContactErrorMessages,
 }: {
 	translate: ReturnType< typeof useTranslate >;
-	recordEvent: ReturnType< typeof useEvents >;
 	showErrorMessage: ( message: string ) => void;
-	paymentMethodId: string;
 	validationResult: unknown;
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void;
 	clearDomainContactErrorMessages: () => void;
@@ -379,14 +366,6 @@ function handleContactValidationResult( {
 	if ( ! isContactValidationResponse( validationResult ) ) {
 		return;
 	}
-
-	recordEvent( {
-		type: 'VALIDATE_DOMAIN_CONTACT_INFO',
-		payload: {
-			credits: null,
-			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
-		},
-	} );
 
 	if ( ! validationResult ) {
 		showErrorMessage(

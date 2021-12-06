@@ -1,6 +1,26 @@
 {
 	"featured": [
 		{
+			"title": "Arbutus",
+			"slug": "arbutus",
+			"template": "arbutus",
+			"theme": "arbutus",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Arbutus",
+			"slug": "arbutus",
+			"template": "arbutus",
+			"theme": "arbutus",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": false,
+			"features": []
+		},
+		{
 			"title": "Quadrat",
 			"slug": "quadrat",
 			"template": "quadrat",
@@ -510,6 +530,7 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": false,
+			"is_featured_picks": true,
 			"features": []
 		}
 	]

@@ -41,13 +41,13 @@
 		"electron-notarize": "^0.1.1",
 		"electron-rebuild": "^2.3.5",
 		"enzyme": "^3.11.0",
-		"jest": "^27.2.4",
+		"jest": "^27.3.1",
 		"lodash": "^4.17.21",
 		"playwright": "1.14.0",
 		"postcss": "^8.3.11",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"webpack": "^5.64.1",
+		"webpack": "^5.64.4",
 		"webpack-cli": "^4.9.1"
 	},
 	"dependencies": {

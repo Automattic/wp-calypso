@@ -87,6 +87,7 @@ class InlineConnectButton extends Component {
 		this.props.recordGoogleEvent( 'Sharing', eventName, id );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.isFetching === true ) {
 			this.setState( { isConnecting: false, isRefreshing: false } );
