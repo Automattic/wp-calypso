@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
@@ -99,23 +98,19 @@ class CancelPurchaseForm extends Component {
 		isVisible: false,
 	};
 
-	shouldShowChatButton = () => {
-		if ( ! config.isEnabled( 'upgrades/precancellation-chat' ) ) {
-			return false;
-		}
-
+	shouldShowChatButton() {
 		// Jetpack doesn't do Happychat support
 		// NOTE: The HappychatButton component may still decide not to render,
 		// based on agent availability and connection status.
 		return ! this.props.isJetpack;
-	};
+	}
 
-	shouldUseBlankCanvasLayout = () => {
+	shouldUseBlankCanvasLayout() {
 		const { isJetpack, purchase } = this.props;
 		return isPlan( purchase ) && ! isJetpack;
-	};
+	}
 
-	getAllSurveySteps = () => {
+	getAllSurveySteps() {
 		const { purchase, shouldRevertAtomicSite } = this.props;
 
 		if ( isPlan( purchase ) ) {
@@ -131,7 +126,7 @@ class CancelPurchaseForm extends Component {
 		}
 
 		return [ FINAL_STEP ];
-	};
+	}
 
 	initSurveyState() {
 		const [ firstStep ] = this.getAllSurveySteps();

@@ -84,48 +84,6 @@ body:
         ---
 
         <br>
-
-        ### Additional context
-
-        Please provide whatever additional information you have available to you. If not, please scroll to the bottom and submit the issue.
-
-        <br>
-
-        ---
-
-        <br>
-  - type: dropdown
-    id: os
-    attributes:
-      label: Operating System
-      description: (You may select more than one)
-      options:
-        - Windows
-        - macOS
-        - Linux
-        - Android
-        - iOS
-      multiple: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
-  - type: dropdown
-    id: browser
-    attributes:
-      label: Browser
-      description: (You may select more than one)
-      options:
-        - Google Chrome/Chromium
-        - Mozilla Firefox
-        - Microsoft Edge
-        - Microsoft Edge (legacy)
-        - Apple Safari
-      multiple: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
   - type: dropdown
     id: site-type
     attributes:
@@ -144,7 +102,7 @@ body:
     attributes:
       label: Theme-specific issue?
       placeholder: |
-        If yes, what is the theme name?
+        If so, add the affected theme name(s) here.
   - type: markdown
     attributes:
       value: |
@@ -152,9 +110,9 @@ body:
   - type: textarea
     id: other_notes
     attributes:
-      label: Other notes
+      label: Browser, operating system and other notes
       placeholder: |
-        e.g. Logs, CLI or console errors, notes, observations, etc.
+        Note the affected browser(s), operating system(s), console errors, notes, observations, Logs, CLI, etc, here.
   - type: markdown
     attributes:
       value: |

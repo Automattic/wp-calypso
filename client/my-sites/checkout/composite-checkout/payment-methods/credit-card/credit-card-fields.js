@@ -1,14 +1,16 @@
-import { FormStatus, useEvents, useFormStatus } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment, useState, useEffect } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import {
 	LeftColumn,
 	RightColumn,
 } from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
 import Spinner from 'calypso/my-sites/checkout/composite-checkout/components/spinner';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AssignToAllPaymentMethods from './assign-to-all-payment-methods';
 import ContactFields from './contact-fields';
 import CreditCardCvvField from './credit-card-cvv-field';
@@ -24,7 +26,6 @@ export default function CreditCardFields( {
 } ) {
 	const { __ } = useI18n();
 	const theme = useTheme();
-	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const useForAllSubscriptions = useSelect( ( select ) =>
@@ -43,6 +44,7 @@ export default function CreditCardFields( {
 		setCardDataComplete,
 		setUseForAllSubscriptions,
 	} = useDispatch( 'credit-card' );
+	const reduxDispatch = useReduxDispatch();
 
 	// We need the countryCode for the country specific payment fields which have
 	// no country selector but require country data during validation and submit
@@ -67,14 +69,13 @@ export default function CreditCardFields( {
 		}
 
 		if ( input.error && input.error.message ) {
-			onEvent( {
-				type: 'a8c_checkout_stripe_field_invalid_error',
-				payload: {
-					type: 'Stripe field error',
-					field: input.elementType,
-					message: input.error.message,
-				},
-			} );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_stripe_field_invalid_error', {
+					error_type: 'Stripe field error',
+					error_field: input.elementType,
+					error_message: input.error.message,
+				} )
+			);
 			setCardDataError( input.elementType, input.error.message );
 			return;
 		}

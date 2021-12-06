@@ -28,6 +28,7 @@ export class LocaleSuggestions extends Component {
 		dismissed: false,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		let { locale } = this.props;
 
@@ -44,6 +45,7 @@ export class LocaleSuggestions extends Component {
 		this.props.setLocale( locale );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.locale !== nextProps.locale ) {
 			this.props.setLocale( nextProps.locale );

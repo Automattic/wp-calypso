@@ -336,14 +336,15 @@ export default {
 	},
 
 	domainManagementTransferToOtherUser( pageContext, next ) {
+		let transferComponent = DomainManagement.TransferToOtherUser;
 		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
-			// TODO: set different component for the new transfer page
+			transferComponent = DomainManagement.TransferDomainToOtherUser;
 		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other User"
-				component={ DomainManagement.TransferToOtherUser }
+				component={ transferComponent }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }

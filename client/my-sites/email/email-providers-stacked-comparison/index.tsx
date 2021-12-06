@@ -25,7 +25,7 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
 
@@ -37,6 +37,7 @@ type EmailProvidersStackedComparisonProps = {
 	domain?: any;
 	domainName?: string;
 	domainsWithForwards?: any[];
+	gSuiteProduct?: string;
 	hasCartDomain?: boolean;
 	isGSuiteSupported?: boolean;
 	productsList?: string[];
@@ -138,6 +139,7 @@ export default connect(
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedDomainName: domainName,
 			selectedSite,
+			source: ownProps.source,
 			titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},

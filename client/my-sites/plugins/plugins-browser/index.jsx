@@ -98,6 +98,7 @@ export class PluginsBrowser extends Component {
 		this.WrappedSearch = ( props ) => <Search { ...props } />;
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.reinitializeSearch();
 
@@ -236,7 +237,7 @@ export class PluginsBrowser extends Component {
 				<>
 					<PluginsBrowserList
 						plugins={ pluginsBySearchTerm }
-						listName={ 'search-' + searchTerm }
+						listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 						title={ searchTitle }
 						subtitle={ subtitle }
 						site={ this.props.siteSlug }

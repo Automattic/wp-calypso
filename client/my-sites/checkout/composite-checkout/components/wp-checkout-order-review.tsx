@@ -8,10 +8,11 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
@@ -88,6 +89,31 @@ export default function WPCheckoutOrderReview( {
 	const cartKey = useCartKey();
 	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
+	const reduxDispatch = useDispatch();
+
+	const onRemoveProductCancel = useCallback( () => {
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
+	}, [ reduxDispatch ] );
+	const onRemoveProduct = useCallback(
+		( label: string ) => {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_delete_product', {
+					product_name: label,
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
+	const onRemoveProductClick = useCallback(
+		( label: string ) => {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_delete_product_press', {
+					product_name: label,
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
 
 	const selectedSiteData = useSelector( getSelectedSite );
 
@@ -140,6 +166,9 @@ export default function WPCheckoutOrderReview( {
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					responseCart={ responseCart }
 					isPwpoUser={ isPwpoUser ?? false }
+					onRemoveProduct={ onRemoveProduct }
+					onRemoveProductClick={ onRemoveProductClick }
+					onRemoveProductCancel={ onRemoveProductCancel }
 				/>
 			</WPOrderReviewSection>
 

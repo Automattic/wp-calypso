@@ -13,6 +13,7 @@ class PostTypeListMaxPagesNotice extends Component {
 		totalPosts: PropTypes.number,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_post_type_list_max_pages_view' );
 	}

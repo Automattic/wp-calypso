@@ -54,6 +54,7 @@ export default function FreeDomainItem( {
 					toggleTitle={ __( 'Free WordPress address options' ) }
 					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 					popoverClassName="free-domain-item__popover"
+					position="bottom"
 				>
 					{ canMakePrimary && (
 						<PopoverMenuItem onClick={ handleMakePrimary }>

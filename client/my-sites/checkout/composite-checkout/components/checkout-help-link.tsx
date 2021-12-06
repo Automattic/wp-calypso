@@ -6,14 +6,13 @@ import {
 	isPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { useEvents } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import { HappychatButton as HappychatButtonUnstyled } from 'calypso/components/happychat/button';
+import HappychatButtonUnstyled from 'calypso/components/happychat/button';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
@@ -140,9 +139,8 @@ export default function CheckoutHelpLink(): JSX.Element {
 	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
 	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
 
-	const onEvent = useEvents();
 	const handleHelpButtonClicked = () => {
-		onEvent( { type: 'calypso_checkout_composite_summary_help_click', payload: {} } );
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_summary_help_click' ) );
 		reduxDispatch( showInlineHelpPopover() );
 	};
 

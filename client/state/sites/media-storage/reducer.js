@@ -1,12 +1,4 @@
-/* eslint-disable no-case-declarations */
-
-import { pick } from 'lodash';
-import {
-	SITE_MEDIA_STORAGE_RECEIVE,
-	SITE_MEDIA_STORAGE_REQUEST,
-	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
+import { SITE_MEDIA_STORAGE_RECEIVE } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
@@ -19,38 +11,12 @@ import { itemsSchema } from './schema';
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
-		case SITE_MEDIA_STORAGE_RECEIVE:
-			const mediaStorage = pick( action.mediaStorage, [
-				'max_storage_bytes',
-				'storage_used_bytes',
-			] );
-			return Object.assign( {}, state, {
-				[ action.siteId ]: mediaStorage,
-			} );
+		case SITE_MEDIA_STORAGE_RECEIVE: {
+			const { max_storage_bytes, storage_used_bytes } = action.mediaStorage;
+			return { ...state, [ action.siteId ]: { max_storage_bytes, storage_used_bytes } };
+		}
 	}
 	return state;
 } );
 
-/**
- * Tracks media-storage fetching state, indexed by site ID.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- */
-export function fetchingItems( state = {}, action ) {
-	switch ( action.type ) {
-		case SITE_MEDIA_STORAGE_REQUEST:
-		case SITE_MEDIA_STORAGE_REQUEST_SUCCESS:
-		case SITE_MEDIA_STORAGE_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.type === SITE_MEDIA_STORAGE_REQUEST,
-			} );
-	}
-	return state;
-}
-
-export default combineReducers( {
-	items,
-	fetchingItems,
-} );
+export default combineReducers( { items } );
