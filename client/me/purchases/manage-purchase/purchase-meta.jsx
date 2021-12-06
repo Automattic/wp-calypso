@@ -44,6 +44,7 @@ import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { managePurchase } from '../paths';
 import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
 import AutoRenewToggle from './auto-renew-toggle';
@@ -317,6 +318,7 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
 }
 
 function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, siteSlug, site } ) {
+	const cards = useSelector( getAllStoredCards );
 	const handleEditPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
@@ -325,7 +327,7 @@ function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, s
 		return null;
 	}
 
-	const paymentDetails = <PaymentInfoBlock purchase={ purchase } />;
+	const paymentDetails = <PaymentInfoBlock purchase={ purchase } cards={ cards } />;
 
 	if ( ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) || ! site ) {
 		return <li>{ paymentDetails }</li>;

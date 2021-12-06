@@ -29,8 +29,8 @@ describe( 'PendingPayments', () => {
 	describe( 'Loading Placeholder', () => {
 		const wrapper = shallow( <PendingPayments { ...defaultProps } /> );
 
-		test( 'Connect(PurchasesSite)[isPlaceholder=true]', () => {
-			expect( wrapper.find( 'Connect(PurchasesSite)[isPlaceholder=true]' ) ).toHaveLength( 1 );
+		test( 'PurchasesSite[isPlaceholder=true]', () => {
+			expect( wrapper.find( 'PurchasesSite[isPlaceholder=true]' ) ).toHaveLength( 1 );
 		} );
 	} );
 
