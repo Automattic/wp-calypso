@@ -2,33 +2,38 @@
 @import '@wordpress/base-styles/mixins';
 
 .breadcrumbs {
-	position: relative;
-	margin: 0;
-	z-index: 10;
+	> div:first-child {
+		position: fixed;
+		margin: 0;
+		z-index: 10;
+		background-color: white;
+		top: var( --masterbar-height );
+		padding: 0 16px;
+		left: 0;
+		right: 0px;
+		border-bottom: 1px solid var( --studio-gray-5 );
 
-	@include break-mobile {
-		position: sticky;
-		top: 0;
-		margin-top: 0;
+		@include breakpoint-deprecated( '>660px' ) {
+			padding: 0 24px;
+		}
+
+		@media screen and ( min-width: #{ ($break-medium + 1) } ) {
+			left: var( --sidebar-width-min );
+		}
+
+		@media screen and ( min-width: #{ ($break-large + 1) } ) {
+			padding: 0 32px;
+		}
+
+		@include break-large {
+			left: var( --sidebar-width-max );
+		}
 	}
 
-	@include breakpoint-deprecated( '480px-660px' ) {
-		position: sticky;
-		top: 0;
-		margin-top: -22px;
-	}
-
-	@include breakpoint-deprecated( '>660px' ) {
-		position: sticky;
-		/* hack to make the breadcrumbs closer to the top of the content area */
-		top: -22px;
-		margin-top: -22px;
-	}
-
-	@include break-medium {
-		position: sticky;
-		top: -44px;
-		margin-top: -44px;
+	.select-dropdown__separator {
+		border-top: 1px solid var( --color-neutral-10 );
+		display: block;
+		margin: 8px 0 0;
 	}
 }
 
@@ -36,25 +41,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 16px;
-	min-height: 40px;
+	height: 60px;
+	max-width: 1040px;
+	margin: 0 auto;
 
 	@include break-mobile {
-		padding: 16px 0;
-	}
-
-	@include breakpoint-deprecated( '480px-660px' ) {
-		padding: 16px;
-	}
-}
-
-.breadcrumbs__bottom-border {
-	height: 0;
-	/* hack to make the border line cover the entire width of the content area */
-	margin: 0 -1000px 16px;
-	border-bottom: 1px solid #dcdcde;
-	@include break-mobile {
-		margin-bottom: 32px;
+		height: 70px;
 	}
 }
 
@@ -132,7 +124,10 @@
 
 .breadcrumbs__help-bubble {
 	margin-left: 7px;
-	color: var( --color-neutral-40 );
+
+	&.info-popover .gridicon {
+		color: var( --studio-gray-30 );
+	}
 }
 
 .breadcrumbs__separator {
@@ -191,5 +186,17 @@
 
 	@include break-mobile {
 		display: flex;
+	}
+}
+
+.breadcrumbs__spacer {
+	height: 58px;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		height: 66px;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		height: 76px;
 	}
 }
