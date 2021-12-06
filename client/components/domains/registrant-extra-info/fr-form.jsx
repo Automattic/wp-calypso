@@ -72,6 +72,7 @@ class RegistrantExtraInfoFrForm extends PureComponent {
 		registrantVatId: sanitizeVat,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		// We're pushing props out into the global state here because:
 		// 1) We want to use these values if the user navigates unexpectedly then returns

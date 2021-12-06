@@ -8,6 +8,7 @@ export const siteHasPaidPlan = ( selectedSite ) =>
 	selectedSite && selectedSite.plan && ! isFreePlan( selectedSite.plan.product_slug );
 
 export class SitePickerSubmit extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { stepSectionName, stepName, goToStep, selectedSite } = this.props;
 		const hasPaidPlan = siteHasPaidPlan( selectedSite );

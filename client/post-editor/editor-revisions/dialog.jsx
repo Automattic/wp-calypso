@@ -36,11 +36,13 @@ class PostRevisionsDialog extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.toggleBodyClass( { isVisible: this.props.isVisible } );
 		this.props.selectPostRevision( null );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( { isVisible } ) {
 		this.toggleBodyClass( { isVisible } );
 	}

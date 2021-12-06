@@ -1,7 +1,6 @@
 import debugFactory from 'debug';
 import { omit } from 'lodash';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import Me from './me';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -18,32 +17,6 @@ function Undocumented( wpcom ) {
 	}
 	this.wpcom = wpcom;
 }
-
-Undocumented.prototype.me = function () {
-	return new Me( this.wpcom );
-};
-
-Undocumented.prototype.jetpackLogin = function ( siteId, _wp_nonce, redirect_uri, scope, state ) {
-	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/jetpack-login';
-	const params = { _wp_nonce, redirect_uri, scope, state };
-	return this.wpcom.req.get( { path: endpointUrl }, params );
-};
-
-Undocumented.prototype.jetpackAuthorize = function (
-	siteId,
-	code,
-	state,
-	redirect_uri,
-	secret,
-	jp_version,
-	from
-) {
-	debug( '/jetpack-blogs/:site_id:/authorize query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/authorize';
-	const params = { code, state, redirect_uri, secret, jp_version, from };
-	return this.wpcom.req.post( { path: endpointUrl }, params );
-};
 
 Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
 	debug( '/sites/:site_id:/jetpack-connect/is-user-connected query' );
@@ -77,27 +50,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
 	}
 
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
-};
-
-/**
- * Determine whether a domain name is available for registration
- *
- * @param {string} domain - The domain name to check.
- * @param {number} blogId - Optional blogId to determine if domain is used on another site.
- * @param {boolean} isCartPreCheck - specifies whether this availability check is for a domain about to be added to the cart.
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.isDomainAvailable = function ( domain, blogId, isCartPreCheck, fn ) {
-	return this.wpcom.req.get(
-		`/domains/${ encodeURIComponent( domain ) }/is-available`,
-		{
-			blog_id: blogId,
-			apiVersion: '1.3',
-			is_cart_pre_check: isCartPreCheck,
-		},
-		fn
-	);
 };
 
 /**
@@ -155,16 +107,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
 };
 
 /**
- * Fetches a list of available top-level domain names ordered by popularity.
- *
- * @param {object} query Optional query parameters
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getAvailableTlds = function ( query = {} ) {
-	return this.wpcom.req.get( '/domains/suggestions/tlds', query );
-};
-
-/**
  *
  * @param domain {string}
  * @param fn {function}
@@ -210,18 +152,6 @@ Undocumented.prototype.readSitePost = function ( query, fn ) {
 	debug( '/read/sites/:site/post/:post' );
 	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
-};
-
-Undocumented.prototype.readSitePostRelated = function ( query, fn ) {
-	debug( '/read/site/:site/post/:post/related' );
-	const params = omit( query, [ 'site_id', 'post_id' ] );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-	return this.wpcom.req.get(
-		'/read/site/' + query.site_id + '/post/' + query.post_id + '/related',
-		params,
-		fn
-	);
 };
 
 /**
@@ -344,49 +274,6 @@ Undocumented.prototype.isSiteImportable = function ( site_url ) {
 		{ path: '/imports/is-site-importable', apiNamespace: 'wpcom/v2' },
 		{ site_url }
 	);
-};
-
-Undocumented.prototype.fetchImporterState = function ( siteId ) {
-	debug( `/sites/${ siteId }/importer/` );
-
-	return this.wpcom.req.get( { path: `/sites/${ siteId }/imports/` } );
-};
-
-Undocumented.prototype.updateImporter = function ( siteId, importerStatus ) {
-	debug( `/sites/${ siteId }/imports/${ importerStatus.importId }` );
-
-	return this.wpcom.req.post( {
-		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
-		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
-	} );
-};
-
-Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
-	return new Promise( ( resolve, rejectPromise ) => {
-		const resolver = ( error, data ) => {
-			error ? rejectPromise( error ) : resolve( data );
-		};
-
-		const formData = [
-			[ 'importStatus', JSON.stringify( params.importStatus ) ],
-			[ 'import', params.file ],
-		];
-
-		if ( params.url ) {
-			formData.push( [ 'url', params.url ] );
-		}
-
-		const req = this.wpcom.req.post(
-			{
-				path: `/sites/${ siteId }/imports/new`,
-				formData,
-			},
-			resolver
-		);
-
-		req.upload.onprogress = params.onprogress;
-		req.onabort = params.onabort;
-	} );
 };
 
 /**

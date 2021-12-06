@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-import 'regenerator-runtime';
-
 let viewport;
 
 const matchesMock = jest.fn( () => 'foo' );

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import i18n from 'i18n-calypso';
 import {
 	getLanguageSlugs,
 	isDefaultLocale,
@@ -6,7 +7,8 @@ import {
 } from 'calypso/lib/i18n-utils';
 import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
 import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-locale';
-import { setLocale, setLocaleRawData } from 'calypso/state/ui/language/actions';
+import { LOCALE_SET } from 'calypso/state/action-types';
+import { setLocale } from 'calypso/state/ui/language/actions';
 
 function getLocaleFromPathname() {
 	const pathname = window.location.pathname.replace( /\/$/, '' );
@@ -36,15 +38,15 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 
 	if ( window.i18nLocaleStrings ) {
 		// Use the locale translation data that were boostrapped by the server
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
+		const localeData = JSON.parse( window.i18nLocaleStrings );
 
-		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
+		i18n.setLocale( localeData );
+		const localeSlug = i18n.getLocaleSlug();
+		const localeVariant = i18n.getLocaleVariant();
+		reduxStore.dispatch( { type: LOCALE_SET, localeSlug, localeVariant } );
 
-		// The empty string key [ '' ] where metadata about the translation file
-		// (e.g., the locale name, plurals definitions, etc.) are stored.
-		const languageSlug = i18nLocaleStringsObject?.[ '' ]?.localeSlug;
-		if ( languageSlug ) {
-			loadUserUndeployedTranslations( languageSlug );
+		if ( localeSlug ) {
+			loadUserUndeployedTranslations( localeSlug );
 		}
 	} else if ( currentUser && currentUser.localeSlug ) {
 		if ( shouldUseFallbackLocale ) {

@@ -1,0 +1,20 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.titan-add-mailboxes__buttons {
+	display: flex;
+	flex-direction: column;
+
+	button {
+		margin-top: 10px;
+	}
+
+	@include break-mobile {
+		flex-direction: row;
+
+		button {
+			margin-left: 10px;
+			margin-top: 0;
+		}
+	}
+}

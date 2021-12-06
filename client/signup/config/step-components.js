@@ -69,6 +69,7 @@ const stepNameToModuleName = {
 	passwordless: 'passwordless',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
+	'p2-get-started': 'p2-get-started',
 	'plans-business-monthly': 'plans',
 	'plans-ecommerce-monthly': 'plans',
 	'plans-personal-monthly': 'plans',
