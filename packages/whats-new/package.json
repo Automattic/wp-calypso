@@ -31,7 +31,7 @@
 		"src"
 	],
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile && copy-assets",
 		"prepack": "yarn run clean && yarn run build"
 	},
