@@ -173,18 +173,8 @@ h2.action-panel__title {
 	}
 }
 
-div.email-provider-stacked-card__price-badge {
+.email-provider-stacked-card__title-price-badge {
 	width: $width-right-panel-card;
-	.promo-card__price {
-		margin-top: 12px;
-		span.price__cost {
-			font-size: $font-title-medium;
-		}
-		span.price__discount {
-			text-decoration: line-through;
-			color: var( --studio-gray-60 );
-		}
-	}
 }
 
 .email-provider-stacked-card__provider-additional-price-information {
@@ -223,12 +213,6 @@ div.email-provider-stacked-card__price-badge {
 
 		> .form-fieldset {
 			margin-bottom: 0;
-		}
-
-		.email-providers-stacked-comparison__titan-mailbox-action-continue {
-			@include break-mobile {
-				margin-left: auto;
-			}
 		}
 
 		.email-providers-stacked-comparison__titan-mailbox-action-skip {

@@ -1,13 +1,13 @@
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import EmailProviderFeaturesToggleButton from 'calypso/my-sites/email/email-provider-features/toggle-button';
 import EmailProviderStackedFeatures from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
-import { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/index';
+import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 
 import './style.scss';
 
@@ -20,8 +20,8 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		buttonLabel,
 		children,
 		description,
-		detailsExpanded,
 		discount,
+		detailsExpanded,
 		expandButtonLabel,
 		features,
 		footerBadge,
@@ -34,8 +34,6 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		providerKey,
 		showExpandButton = true,
 	} = props;
-
-	const translate = useTranslate();
 
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
@@ -52,7 +50,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;
 
 	const price = (
-		<div className="email-provider-stacked-card__price-badge">
+		<div className="email-provider-stacked-card__title-price-badge">
 			<div className="email-provider-stacked-card__discount badge badge--info-green">
 				{ translate( '3 months free' ) }
 			</div>
