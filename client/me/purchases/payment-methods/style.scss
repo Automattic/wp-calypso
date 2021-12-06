@@ -89,11 +89,12 @@
 }
 
 .payment-method-backup-toggle {
-	margin: 4px 32px 4px 16px;
+	margin: 6px 16px 4px 76px;
 	order: 4;
 	width: 100%;
 
 	@include breakpoint-deprecated( '>660px' ) {
+		margin: 4px 32px 4px 16px;
 		order: unset;
 		width: auto;
 	}
