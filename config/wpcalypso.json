@@ -110,6 +110,7 @@
 		"signup/social": true,
 		"signup/design-picker-categories": true,
 		"signup/design-picker-use-featured-picks-buttons": true,
+		"signup/hero-flow-non-en": true,
 		"site-indicator": true,
 		"support-user": true,
 		"themes/premium": false,
