@@ -27,7 +27,7 @@ export class ImageBlock {
 	}
 
 	/**
-	 * @returns The image element
+	 * @returns {Promise< ElementHandle >} The image element
 	 */
 	async getImage(): Promise< ElementHandle > {
 		return await this.block.waitForSelector( 'img' );

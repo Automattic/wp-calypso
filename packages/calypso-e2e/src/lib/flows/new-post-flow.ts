@@ -25,7 +25,7 @@ export class NewPostFlow {
 	 * account. Logs in if necessary.
 	 *
 	 * @param user The username of the account to start the post with
-	 * @returns An instance of the GutenbergEditorPage class
+	 * @returns {Promise< GutenbergEditorPage >} An instance of the GutenbergEditorPage class
 	 */
 	async startImmediately( user: string ): Promise< GutenbergEditorPage > {
 		const siteHost = DataHelper.getAccountSiteURL( user, { protocol: false } );
