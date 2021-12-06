@@ -41,7 +41,7 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		const loggingConfiguration = await getDefaultLoggerConfiguration( artifactPath );
 
 		// Start the browser
-		await startBrowser( chromium, { channel: 'chrome' } );
+		await startBrowser( chromium );
 
 		// Launch context with logging.
 		context = await newBrowserContext( loggingConfiguration );
