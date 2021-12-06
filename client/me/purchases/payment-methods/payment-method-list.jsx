@@ -8,6 +8,7 @@ import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
+import PaymentMethodBackupToggle from 'calypso/me/purchases/payment-methods/payment-method-backup-toggle';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import {
 	getAllStoredCards,
@@ -15,6 +16,7 @@ import {
 	hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards,
 } from 'calypso/state/stored-cards/selectors';
+import PaymentMethodDetails from './payment-method-details';
 
 import 'calypso/me/purchases/payment-methods/style.scss';
 
@@ -38,6 +40,16 @@ class PaymentMethodList extends Component {
 		return cards.map( ( card ) => {
 			return (
 				<PaymentMethod key={ card.stored_details_id }>
+					<PaymentMethodDetails
+						lastDigits={ card.card }
+						email={ card.email }
+						cardType={ card.card_type || '' }
+						paymentPartner={ card.payment_partner }
+						name={ card.name }
+						expiry={ card.expiry }
+						isExpired={ card.is_expired }
+					/>
+					<PaymentMethodBackupToggle card={ card } />
 					<PaymentMethodDelete card={ card } />
 				</PaymentMethod>
 			);
