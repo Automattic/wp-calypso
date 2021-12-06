@@ -98,7 +98,6 @@ const debug = debugFactory( 'calypso:domains:register-domain-step' );
 const isPaginationEnabled = config.isEnabled( 'domains/kracken-ui/pagination' );
 
 const noop = () => {};
-const domains = wpcom.domains();
 
 // max amount of domain suggestions we should fetch/display
 const INITIAL_SUGGESTION_QUANTITY = 2;
@@ -1002,8 +1001,8 @@ class RegisterDomainStep extends Component {
 
 		debug( 'Fetching domains suggestions with the following query', query );
 
-		return domains
-			.suggestions( query )
+		return wpcom.req
+			.get( '/domains/suggestions', query )
 			.then( ( domainSuggestions ) => {
 				this.props.onDomainsAvailabilityChange( true );
 				const timeDiff = Date.now() - timestamp;
@@ -1117,8 +1116,8 @@ class RegisterDomainStep extends Component {
 			...this.getActiveFiltersForAPI(),
 		};
 
-		domains
-			.suggestions( subdomainQuery )
+		wpcom.req
+			.get( '/domains/suggestions', subdomainQuery )
 			.then( this.handleSubdomainSuggestions( domain, subdomainQuery.vendor, timestamp ) )
 			.catch( this.handleSubdomainSuggestionsFailure( domain, timestamp ) );
 	};

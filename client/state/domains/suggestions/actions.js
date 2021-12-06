@@ -40,9 +40,8 @@ export function requestDomainsSuggestions( queryObject ) {
 			type: DOMAINS_SUGGESTIONS_REQUEST,
 			queryObject,
 		} );
-		return wpcom
-			.domains()
-			.suggestions( queryObject )
+		return wpcom.req
+			.get( '/domains/suggestions', queryObject )
 			.then( ( suggestions ) => {
 				dispatch( receiveDomainsSuggestions( suggestions, queryObject ) );
 				dispatch( {
