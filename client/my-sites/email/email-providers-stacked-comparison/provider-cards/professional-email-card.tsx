@@ -127,7 +127,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		const {
 			comparisonContext,
 			domain,
-			selectedDomainName,
 			hasCartDomain,
 			recordTracksEventAddToCartClick = noop,
 			source,
