@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { ActionPromiseError } from './action-promise-error';
+import { CartActionError } from './errors';
 import {
 	getShoppingCartManagerState,
 	createSubscriptionManager,
@@ -42,14 +42,14 @@ function createDispatchAndWaitForValid(
 	};
 }
 
-function getErrorFromState( state: ShoppingCartState ): undefined | ActionPromiseError {
+function getErrorFromState( state: ShoppingCartState ): undefined | CartActionError {
 	if ( state.loadingError ) {
-		return new ActionPromiseError( state.loadingError, state.loadingErrorType );
+		return new CartActionError( state.loadingError, state.loadingErrorType );
 	}
 	const errorMessages = state.responseCart.messages?.errors ?? [];
 	if ( errorMessages.length > 0 ) {
 		const firstMessage = errorMessages[ 0 ];
-		return new ActionPromiseError( firstMessage.message, firstMessage.code );
+		return new CartActionError( firstMessage.message, firstMessage.code );
 	}
 	return undefined;
 }
@@ -74,7 +74,7 @@ function createShoppingCartManager(
 		state = newState;
 
 		if ( state.cacheStatus === 'error' ) {
-			actionPromises.reject( new ActionPromiseError( state.loadingError, state.loadingErrorType ) );
+			actionPromises.reject( new CartActionError( state.loadingError, state.loadingErrorType ) );
 		}
 
 		if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
