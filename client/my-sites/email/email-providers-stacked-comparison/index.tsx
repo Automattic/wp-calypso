@@ -25,7 +25,7 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
 
