@@ -35,6 +35,7 @@ type EmailProvidersStackedComparisonProps = {
 	domain?: any;
 	domainName?: string;
 	domainsWithForwards?: any[];
+	gSuiteProduct?: string;
 	hasCartDomain?: boolean;
 	isGSuiteSupported?: boolean;
 	productsList?: string[];
@@ -128,6 +129,7 @@ export default connect(
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedDomainName: domainName,
 			selectedSite,
+			source: ownProps.source,
 			titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},

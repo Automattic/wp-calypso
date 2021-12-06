@@ -5,6 +5,7 @@ import {
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -35,10 +36,10 @@ export default async function existingCardProcessor(
 	}
 	const {
 		stripe,
-		recordEvent,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		contactDetails,
+		reduxDispatch,
 	} = dataForProcessor;
 	if ( ! stripe ) {
 		throw new Error( 'Stripe is required to submit an existing card payment' );
@@ -71,7 +72,7 @@ export default async function existingCardProcessor(
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				debug( 'transaction requires authentication' );
 				// 3DS authentication required
-				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
 				return confirmStripePaymentIntent(
 					stripe,
 					stripeResponse?.message?.payment_intent_client_secret

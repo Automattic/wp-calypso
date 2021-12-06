@@ -31,7 +31,6 @@ import {
 	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_BUSINESS_ONBOARDING,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
@@ -104,6 +103,7 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
+	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -397,7 +397,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REPUBLICIZE,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
 			FEATURE_UPLOAD_PLUGINS,
 			FEATURE_UPLOAD_THEMES,
@@ -413,7 +412,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
 		FEATURE_ADVANCED_DESIGN,
-		FEATURE_BUSINESS_ONBOARDING,
 	],
 	getSignupFeatures: () => [
 		FEATURE_ACCEPT_PAYMENTS,
@@ -430,23 +428,25 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHIPPING_CARRIERS,
 		FEATURE_ALL_BUSINESS_FEATURES,
 	],
-	getSignupCompareAvailableFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_HOSTING,
-		FEATURE_NO_ADS,
-		FEATURE_COLLECT_PAYMENTS_V2,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
-		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		FEATURE_EARN_AD,
-		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_INSTALL_PLUGINS,
-		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		FEATURE_SITE_BACKUPS_AND_RESTORE,
-		FEATURE_SFTP_DATABASE,
-		FEATURE_ACCEPT_PAYMENTS,
-		FEATURE_SHIPPING_CARRIERS,
-		PREMIUM_DESIGN_FOR_STORES,
-	],
+	getSignupCompareAvailableFeatures: () =>
+		[
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_HOSTING,
+			FEATURE_NO_ADS,
+			FEATURE_COLLECT_PAYMENTS_V2,
+			FEATURE_EMAIL_SUPPORT_SIGNUP,
+			FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			FEATURE_EARN_AD,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_INSTALL_PLUGINS,
+			FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+			FEATURE_SITE_BACKUPS_AND_RESTORE,
+			FEATURE_SFTP_DATABASE,
+			FEATURE_ACCEPT_PAYMENTS,
+			FEATURE_SHIPPING_CARRIERS,
+			PREMIUM_DESIGN_FOR_STORES,
+		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -512,21 +512,30 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ADVANCED_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
-	getBlogSignupFeatures: () => [ FEATURE_MONETISE, FEATURE_ALL_PERSONAL_FEATURES ],
-	getPortfolioSignupFeatures: () => [
-		FEATURE_ADVANCED_CUSTOMIZATION,
-		FEATURE_ALL_PERSONAL_FEATURES,
-	],
-	getSignupCompareAvailableFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_HOSTING,
-		FEATURE_NO_ADS,
-		FEATURE_COLLECT_PAYMENTS_V2,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
-		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		FEATURE_EARN_AD,
-		FEATURE_GOOGLE_ANALYTICS,
-	],
+	getBlogSignupFeatures: () =>
+		[
+			FEATURE_MONETISE,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_ALL_PERSONAL_FEATURES,
+		].filter( isValueTruthy ),
+	getPortfolioSignupFeatures: () =>
+		[
+			FEATURE_ADVANCED_CUSTOMIZATION,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_ALL_PERSONAL_FEATURES,
+		].filter( isValueTruthy ),
+	getSignupCompareAvailableFeatures: () =>
+		[
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_HOSTING,
+			FEATURE_NO_ADS,
+			FEATURE_COLLECT_PAYMENTS_V2,
+			FEATURE_EMAIL_SUPPORT_SIGNUP,
+			FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			FEATURE_EARN_AD,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_GOOGLE_ANALYTICS,
+		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_CLOUDFLARE_ANALYTICS ],
 	getInferiorFeatures: () => [],
@@ -576,7 +585,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REPUBLICIZE,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
 			FEATURE_UPLOAD_PLUGINS,
 			FEATURE_UPLOAD_THEMES,
@@ -588,7 +596,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_NO_ADS,
 		FEATURE_ADVANCED_DESIGN,
 		FEATURE_VIDEO_UPLOADS,
-		FEATURE_BUSINESS_ONBOARDING,
 	],
 	getSignupFeatures: () => [
 		FEATURE_UPLOAD_THEMES_PLUGINS,
@@ -605,20 +612,22 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_200GB_STORAGE,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
-	getSignupCompareAvailableFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_HOSTING,
-		FEATURE_NO_ADS,
-		FEATURE_COLLECT_PAYMENTS_V2,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
-		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		FEATURE_EARN_AD,
-		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_INSTALL_PLUGINS,
-		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		FEATURE_SITE_BACKUPS_AND_RESTORE,
-		FEATURE_SFTP_DATABASE,
-	],
+	getSignupCompareAvailableFeatures: () =>
+		[
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_HOSTING,
+			FEATURE_NO_ADS,
+			FEATURE_COLLECT_PAYMENTS_V2,
+			FEATURE_EMAIL_SUPPORT_SIGNUP,
+			FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			FEATURE_EARN_AD,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_INSTALL_PLUGINS,
+			FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+			FEATURE_SITE_BACKUPS_AND_RESTORE,
+			FEATURE_SFTP_DATABASE,
+		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -734,10 +743,16 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 		].includes( plan ),
 	getDescription: () =>
-		i18n.translate(
-			'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites.',
-			plansDescriptionHeadingComponent
-		),
+		isEnabled( 'themes/premium' )
+			? i18n.translate(
+					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites.',
+					plansDescriptionHeadingComponent
+			  )
+			: i18n.translate(
+					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
+						'and premium themes.',
+					plansDescriptionHeadingComponent
+			  ),
 	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),
 	getPlanCardFeatures: () => [
 		FEATURE_BACKUP_REALTIME_V2,

@@ -43,8 +43,14 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 				message: transferDomainError.AUTH_CODE,
 			} );
 
-		const checkAvailabilityResult = await wpcomDomain.isDomainAvailable( selectedSite.ID, false );
-
+		const checkAvailabilityResult = await wpcom.req.get(
+			`/domains/${ encodeURIComponent( domain ) }/is-available`,
+			{
+				blog_id: selectedSite.ID,
+				apiVersion: '1.3',
+				is_cart_pre_check: false,
+			}
+		);
 		const addTransferToCartAndCheckout = async () => {
 			let supportsPrivacy = false;
 

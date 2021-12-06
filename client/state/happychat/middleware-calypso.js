@@ -1,4 +1,3 @@
-import { has } from 'lodash';
 import {
 	ANALYTICS_EVENT_RECORD,
 	HELP_CONTACT_FORM_SITE_SELECT,
@@ -128,7 +127,7 @@ export const sendActionLogsAndEvents = ( { getState, dispatch }, action ) => {
 	}
 
 	// If there's analytics metadata attached to this action, send analytics events
-	if ( has( action, 'meta.analytics' ) ) {
+	if ( action.meta?.analytics ) {
 		sendAnalyticsLogEvent( dispatch, action );
 	}
 

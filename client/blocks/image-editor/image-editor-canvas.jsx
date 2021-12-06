@@ -79,6 +79,7 @@ export class ImageEditorCanvas extends Component {
 		this.isMounted = true;
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( this.props.src !== newProps.src ) {
 			this.getImage( newProps.src );

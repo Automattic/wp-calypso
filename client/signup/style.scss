@@ -452,18 +452,17 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.signup__step.is-user {
 		.formatted-header {
 			.formatted-header__title {
-				text-align: left;
+				text-align: center;
 
 				@include break-small {
 					max-width: inherit;
-					text-align: center;
 					font-size: 3.25rem; /* stylelint-disable-line */
 					line-height: 3.5rem;
 				}
 			}
 
 			.formatted-header__subtitle {
-				text-align: left;
+				text-align: center;
 				color: #646970;
 
 				a {
@@ -474,7 +473,6 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 				@include break-small {
 					max-width: inherit;
-					text-align: center;
 					font-size: 1.125rem; /* stylelint-disable-line */
 					line-height: 1.625rem;
 					letter-spacing: 0.24px;

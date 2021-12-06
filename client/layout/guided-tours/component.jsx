@@ -21,6 +21,7 @@ class GuidedToursComponent extends Component {
 		return this.props.tourState !== nextProps.tourState;
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.requestedTour === 'reset' && this.props.requestedTour !== 'reset' ) {
 			this.props.dispatch( resetGuidedToursHistory() );

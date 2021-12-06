@@ -40,10 +40,12 @@ class Referrers extends Component {
 		selectedReferrer: {},
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setData( nextProps, this.state.filter );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.setData( this.props, this.state.filter );
 	}
@@ -57,8 +59,10 @@ class Referrers extends Component {
 				queryParams: { referrer, ...queryParams },
 			} = this.props;
 			const widgetPath = getWidgetPath( unit, slug, queryParams );
-			this.state.filter = '';
-			this.state.selectedReferrer = {};
+			this.setState( {
+				filter: '',
+				selectedReferrer: {},
+			} );
 			page( `${ basePath }${ widgetPath }` );
 		}
 		this.setData( this.props, trimmedStr );

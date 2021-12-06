@@ -32,7 +32,7 @@
 		"@automattic/design-picker": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/blocks": "^11.1.4",
-		"@wordpress/components": "^19.0.5",
+		"@wordpress/components": "^19.1.1",
 		"@wordpress/compose": "^5.0.6",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/i18n": "^4.2.4",
@@ -43,7 +43,7 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/react": "^12.1.2",
-		"jest": "^27.2.4",
+		"jest": "^27.3.1",
 		"jest-canvas-mock": "^2.3.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
@@ -56,7 +56,7 @@
 		"redux": "^4.1.2"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build"
 	}

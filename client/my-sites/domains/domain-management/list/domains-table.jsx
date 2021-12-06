@@ -20,6 +20,7 @@ class DomainsTable extends PureComponent {
 		hasLoadedPurchases: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
+		isSavingContactInfo: PropTypes.bool,
 		primaryDomainIndex: PropTypes.number,
 		purchases: PropTypes.array,
 		settingPrimaryDomain: PropTypes.bool,
@@ -100,6 +101,9 @@ class DomainsTable extends PureComponent {
 			shouldUpgradeToMakeDomainPrimary,
 			requestingSiteDomains,
 			sites,
+			isContactEmailEditContext,
+			isSavingContactInfo,
+			handleDomainItemToggle,
 			translate,
 		} = this.props;
 
@@ -149,16 +153,20 @@ class DomainsTable extends PureComponent {
 					<DomainRow
 						key={ `${ domain.name }-${ index }` }
 						currentRoute={ currentRoute }
+						showCheckbox={ isContactEmailEditContext }
+						isSavingContactInfo={ isSavingContactInfo }
 						domain={ domain }
 						site={ selectedSite }
 						isManagingAllSites={ isManagingAllSites }
 						isLoadingDomainDetails={ isLoadingDomainDetails }
+						handleDomainItemToggle={ handleDomainItemToggle }
 						onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
 						isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
 						busyMessage={ translate( 'Setting primary site address…', {
 							context: 'Shows up when the primary domain is changing and the user is waiting',
 						} ) }
-						disabled={ settingPrimaryDomain }
+						disabled={ settingPrimaryDomain || isContactEmailEditContext }
+						showDomainDetails={ ! isContactEmailEditContext }
 						selectionIndex={ index }
 						onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
 						shouldUpgradeToMakePrimary={

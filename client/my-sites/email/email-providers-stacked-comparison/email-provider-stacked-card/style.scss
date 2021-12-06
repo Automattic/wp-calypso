@@ -49,6 +49,48 @@ $width-left-panel-card: calc( 60% - 48px );
 	flex-direction: row;
 }
 
+.email-provider-stacked-card__provider__providers {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	.promo-card {
+		width: calc( 33% - 0.5em );
+		margin: 8px 0;
+
+		&.no-gsuite {
+			width: calc( 50% - 0.5em );
+		}
+
+		&.no-titan {
+			width: calc( 50% - 0.5em );
+		}
+
+		&.gsuite .action-panel__figure img {
+			max-width: 24px;
+		}
+
+		&.titan {
+			.promo-card__title-badge {
+				background: none;
+				padding: 0;
+
+				img {
+					max-height: 14px;
+				}
+			}
+		}
+
+		@include breakpoint-deprecated( '<1040px' ) {
+			&,
+			&.no-gsuite {
+				width: 100%;
+			}
+		}
+	}
+}
+
 .action-panel__figure {
 	float: right;
 	max-width: 208px;

@@ -928,7 +928,6 @@ object P2E2ETests : BuildType({
 			buildFailed = true
 			buildFinishedSuccessfully = true
 			buildFailedToStart = true
-			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
 		}
 		notifications {

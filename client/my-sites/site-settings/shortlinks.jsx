@@ -45,7 +45,7 @@ class Shortlinks extends Component {
 							text={ translate(
 								'Generates shorter links so you can have more space to write on social media sites.'
 							) }
-							link="https://jetpack.com/support/shortlinks/"
+							link="https://jetpack.com/support/wp-me-shortlinks/"
 						/>
 
 						<JetpackModuleToggle

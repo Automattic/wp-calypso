@@ -291,7 +291,11 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								) }
 							>
 								<span className="licensing-thank-you-auto-activation__dropdown-item-text">
-									{ option.label }
+									{ option.value === 'activate-license-manually' ? (
+										<strong>{ option.label }</strong>
+									) : (
+										option.label
+									) }
 								</span>
 								{ option.value !== 'activate-license-manually' && (
 									<span>
