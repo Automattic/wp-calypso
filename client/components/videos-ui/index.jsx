@@ -155,7 +155,9 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 											<span className="videos-ui__video-title">
 												{ i + 1 }. { videoInfo.title }{ ' ' }
 											</span>
-											<span className="videos-ui__duration"> { moment.unix( videoInfo.duration_seconds ).format('m:ss') } </span>{ ' ' }
+											<span className="videos-ui__duration"> 
+												{ moment.unix( videoInfo.duration_seconds ).format('m:ss') } 
+											</span>
 											{ isVideoCompleted && (
 												<span className="videos-ui__completed-checkmark">
 													<Gridicon icon="checkmark" size={ 12 } />
