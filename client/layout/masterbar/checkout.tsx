@@ -2,11 +2,11 @@ import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import { navigate } from 'calypso/lib/navigate';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -40,11 +40,11 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 		dispatch( recordTracksEvent( 'calypso_masterbar_close_clicked' ) );
 
 		if ( checkoutBackUrl ) {
-			window.location.href = checkoutBackUrl;
-			return;
+			closeUrl = checkoutBackUrl;
 		}
 
 		if (
+			! checkoutBackUrl &&
 			previousPath &&
 			'' !== previousPath &&
 			previousPath !== window.location.href &&
@@ -64,12 +64,11 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			// user there after checkout by putting the previous page's path in the
 			// `redirect_to` query param. When leaving checkout via the close button,
 			// we probably want to return to that location also.
-			if ( searchParams.has( 'redirect_to' ) ) {
+			if ( ! checkoutBackUrl && searchParams.has( 'redirect_to' ) ) {
 				const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
 				// Only allow redirecting to relative paths.
 				if ( redirectPath.startsWith( '/' ) ) {
-					page( redirectPath );
-					return;
+					closeUrl = redirectPath;
 				}
 			}
 		} catch ( error ) {
@@ -78,11 +77,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			console.error( 'Error getting query string in close button' );
 		}
 
-		if ( closeUrl.startsWith( '/' ) ) {
-			page( closeUrl );
-			return;
-		}
-		window.location.href = closeUrl;
+		navigate( closeUrl );
 	}, [ siteSlug, checkoutBackUrl, previousPath, dispatch ] );
 
 	const cartKey = useCartKey();
