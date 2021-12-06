@@ -6,3 +6,7 @@ export class CartActionError extends Error {
 		this.code = code;
 	}
 }
+
+export class CartActionConnectionError extends CartActionError {}
+
+export class CartActionResponseError extends CartActionError {}

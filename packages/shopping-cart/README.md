@@ -34,7 +34,7 @@ The `UseShoppingCart` object contains the following properties. Note that the ac
 
 The following actions are also properties. Each one returns a Promise that resolves when the cart is next valid (this may be after several queued actions are complete).
 
-If there are errors returned by the cart endpoint (the `responseCart.messages.errors`), or if there is an error during the request (`loadingError`), the Promise will be rejected. The argument passed to the rejection will an instance of `CartActionError` with a `code` and a `message` property.
+If there are errors returned by the cart endpoint (the `responseCart.messages.errors`), or if there is an error during the request (`loadingError`), the Promise will be rejected. The argument passed to the rejection will an instance of `CartActionConnectionError` or `CartActionResponseError` (both subclasses of `CartActionError`) with a `code` and a `message` property.
 
 Regardless, it's a good idea to always check `responseCart.messages.errors` and the `loadingError` property on the cart manager after any state change!
 
