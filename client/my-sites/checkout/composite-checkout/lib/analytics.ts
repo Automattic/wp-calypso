@@ -78,7 +78,9 @@ export const recordTransactionBeginAnalytics = ( {
 				payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
 			} )
 		);
-		const paymentMethodIdForTracks = paymentMethodId.replace( /-/, '_' ).toLowerCase();
+		const paymentMethodIdForTracks = paymentMethodId.startsWith( 'existingCard' )
+			? 'existing_card'
+			: paymentMethodId.replace( /-/, '_' ).toLowerCase();
 		dispatch(
 			recordTracksEvent(
 				`calypso_checkout_composite_${ paymentMethodIdForTracks }_submit_clicked`,
