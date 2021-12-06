@@ -23,6 +23,7 @@ class Courses extends Component {
 		return (
 			<Main className="help-courses">
 				<PageViewTracker path="/help/courses" title="Help > Courses" />
+				<QueryUserPurchases />
 				<HeaderCake backHref="/help" isCompact={ false } className="help-courses__header-cake">
 					{ translate( 'Courses' ) }
 				</HeaderCake>
@@ -31,8 +32,6 @@ class Courses extends Component {
 				) : (
 					<CourseList courses={ helpCourses } isBusinessPlanUser={ isEligible } />
 				) }
-
-				<QueryUserPurchases />
 			</Main>
 		);
 	}
