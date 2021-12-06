@@ -7,6 +7,7 @@ import {
 	BrowserHelper,
 	DataHelper,
 	MediaHelper,
+	ElementHelper,
 	GutenbergEditorPage,
 	TestFile,
 	ImageBlock,
@@ -73,26 +74,13 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	} );
 
 	it( 'Verify the new image was published', async () => {
-		// Image is not always immediately available on a published site, so
-		// we need to refresh and check again until timeout or condition met.
-		const timeout = 10000;
-		const startTime = Date.now();
-
-		async function verify(): Promise< void > {
+		// Image is not always immediately available on a published site, so we need
+		// to refresh and check again.
+		await ElementHelper.reloadAndRetry( page, async function () {
 			const publishedImage = await page.waitForSelector( '.wp-block-image img' );
 			const publishedImageURL = ( await publishedImage.getAttribute( 'src' ) ) as string;
 
-			try {
-				expect( publishedImageURL.split( '?' )[ 0 ] ).toEqual( newImageURL );
-			} catch ( error ) {
-				if ( Date.now() - timeout >= startTime ) {
-					throw error;
-				}
-				await page.reload();
-				return await verify();
-			}
-		}
-
-		await verify();
+			expect( publishedImageURL.split( '?' )[ 0 ] ).toEqual( newImageURL );
+		} );
 	} );
 } );
