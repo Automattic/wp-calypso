@@ -1,7 +1,7 @@
 import debug from 'debug';
 import { translate } from 'i18n-calypso';
 import { isEqual, omit } from 'lodash';
-import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST, MEDIA_ITEM_EDIT } from 'calypso/state/action-types';
+import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -14,7 +14,7 @@ import {
 	successMediaRequest,
 } from 'calypso/state/media/actions';
 import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 
 /**
@@ -33,24 +33,6 @@ export const updateMediaError = ( { siteId, originalMediaItem } ) => [
 		id: `update-media-notice-${ originalMediaItem.ID }`,
 	} ),
 ];
-
-export const editMedia = ( action ) => {
-	const { siteId, data } = action;
-	const { ID: mediaId, ...rest } = data;
-
-	return [
-		removeNotice( `update-media-notice-${ mediaId }` ),
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ siteId }/media/${ mediaId }/edit`,
-				apiVersion: '1.1',
-				formData: Object.entries( rest ),
-			},
-			action
-		),
-	];
-};
 
 export function requestMedia( action ) {
 	log( 'Request media for site %d using query %o', action.siteId, action.query );
@@ -131,14 +113,6 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 			fetch: requestMediaItem,
 			onSuccess: receiveMediaItem,
 			onError: receiveMediaItemError,
-		} ),
-	],
-
-	[ MEDIA_ITEM_EDIT ]: [
-		dispatchRequest( {
-			fetch: editMedia,
-			onSuccess: updateMediaSuccess,
-			onError: updateMediaError,
 		} ),
 	],
 } );
