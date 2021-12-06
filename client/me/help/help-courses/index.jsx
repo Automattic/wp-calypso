@@ -1,4 +1,4 @@
-import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -37,7 +37,7 @@ class Courses extends Component {
 	}
 
 	render() {
-		const { courses, isBusinessPlanUser, isLoading, translate } = this.props;
+		const { courses, isEligible, isLoading, translate } = this.props;
 
 		return (
 			<Main className="help-courses">
@@ -48,7 +48,7 @@ class Courses extends Component {
 				{ isLoading ? (
 					<CourseListPlaceholder />
 				) : (
-					<CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } />
+					<CourseList courses={ courses } isBusinessPlanUser={ isEligible } />
 				) }
 
 				<QueryUserPurchases />
@@ -59,18 +59,17 @@ class Courses extends Component {
 
 export function mapStateToProps( state ) {
 	const purchases = getUserPurchases( state );
-	const isBusinessPlanUser =
-		purchases &&
-		purchases.some( ( { productSlug } ) =>
-			planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING )
-		);
+	const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
+	const isEligible =
+		purchaseSlugs &&
+		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) );
 	const courses = getHelpCourses( state );
 	const isLoading =
 		isFetchingUserPurchases( state ) || ! courses || ! hasLoadedUserPurchasesFromServer( state );
 
 	return {
 		isLoading,
-		isBusinessPlanUser,
+		isEligible,
 		courses,
 	};
 }

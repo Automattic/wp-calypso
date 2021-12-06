@@ -54,7 +54,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	numberFormat: ( x ) => x,
 } ) );
 
-describe( 'mapStateToProps should return correct value for isBusinessPlanUser', () => {
+describe( 'mapStateToProps should return correct value for isBusinessOrEcomPlanUser', () => {
 	[
 		PLAN_FREE,
 		PLAN_BLOGGER,
@@ -73,7 +73,7 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 	].forEach( ( productSlug ) => {
 		test( `False for plan ${ productSlug }`, () => {
 			getUserPurchases.mockImplementation( () => [ { productSlug } ] );
-			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( false );
+			expect( mapStateToProps( {}, {} ).isEligible ).toBe( false );
 		} );
 	} );
 
@@ -86,7 +86,7 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 	].forEach( ( productSlug ) => {
 		test( `True for plan ${ productSlug }`, () => {
 			getUserPurchases.mockImplementation( () => [ { productSlug } ] );
-			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
+			expect( mapStateToProps( {}, {} ).isEligible ).toBe( true );
 		} );
 	} );
 } );
