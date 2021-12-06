@@ -258,7 +258,7 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
-		currentSection: getCurrentSection( sectionName, isNotesOpen, currentRoute ),
+		currentSection: getCurrentSection( sectionName, isNotesOpen ),
 		currentRoute,
 		fetchingPreferences: isFetchingPreferences( state ),
 		isTosBannerVisible: shouldDisplayTosUpdateBanner( state ),

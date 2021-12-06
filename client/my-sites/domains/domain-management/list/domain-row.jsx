@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, home, moreVertical } from '@wordpress/icons';
+import { Icon, home, moreVertical, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -9,6 +9,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
@@ -22,7 +23,11 @@ import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/ema
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
-import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementList,
+	createSiteFromDomainOnly,
+	domainTransferIn,
+} from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -38,6 +43,7 @@ class DomainRow extends PureComponent {
 		isBusy: PropTypes.bool,
 		isLoadingDomainDetails: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
+		isSavingContactInfo: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
 		onMakePrimaryClick: PropTypes.func,
 		purchase: PropTypes.object,
@@ -50,6 +56,7 @@ class DomainRow extends PureComponent {
 	static defaultProps = {
 		disabled: false,
 		isManagingAllSites: false,
+		isSavingContactInfo: false,
 		isLoadingDomainDetails: false,
 		isBusy: false,
 		showDomainDetails: true,
@@ -166,7 +173,7 @@ class DomainRow extends PureComponent {
 	}
 
 	renderAutoRenew() {
-		const { site, hasLoadedPurchases, purchase } = this.props;
+		const { site, hasLoadedPurchases, purchase, isManagingAllSites, showCheckbox } = this.props;
 
 		if ( ! this.shouldShowAutoRenewStatus() || ( hasLoadedPurchases && ! purchase ) ) {
 			return <span className="domain-row__auto-renew-cell">-</span>;
@@ -187,6 +194,7 @@ class DomainRow extends PureComponent {
 					planName={ site.plan.product_name_short }
 					siteDomain={ site.domain }
 					purchase={ purchase }
+					shouldDisable={ isManagingAllSites && showCheckbox }
 					withTextStatus={ false }
 					toggleSource="registered-domain-status"
 				/>
@@ -303,6 +311,7 @@ class DomainRow extends PureComponent {
 	renderEllipsisMenu() {
 		const {
 			isLoadingDomainDetails,
+			site,
 			domain,
 			showDomainDetails,
 			disabled,
@@ -314,7 +323,7 @@ class DomainRow extends PureComponent {
 			return <div className="domain-row__action-cell"></div>;
 		}
 
-		if ( isLoadingDomainDetails || ! domain ) {
+		if ( isLoadingDomainDetails || ! domain || ! site ) {
 			return (
 				<div className="domain-row__action-cell">
 					<p className="domain-row__placeholder" />
@@ -322,31 +331,44 @@ class DomainRow extends PureComponent {
 			);
 		}
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="domain-row__action-cell">
+				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<EllipsisMenu
 					disabled={ disabled || isBusy }
 					onClick={ this.stopPropagation }
 					toggleTitle={ translate( 'Options' ) }
 					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 					popoverClassName="domain-row__popover"
+					position="bottom"
 				>
 					<PopoverMenuItem icon="domains" onClick={ this.handleClick }>
-						{ translate( 'View settings' ) }
+						{ domain.type === domainTypes.TRANSFER
+							? translate( 'View transfer' )
+							: translate( 'View settings' ) }
 					</PopoverMenuItem>
 					{ this.canSetAsPrimary() && (
 						<PopoverMenuItem onClick={ this.makePrimary }>
-							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 							<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-							{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 							{ translate( 'Make primary site address' ) }
 						</PopoverMenuItem>
 					) }
+					{ domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer && (
+						<PopoverMenuItem href={ domainTransferIn( site.slug, domain.name, true ) }>
+							<Icon icon={ redo } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+							{ translate( 'Transfer to WordPress.com' ) }
+						</PopoverMenuItem>
+					) }
+					{ site.options?.is_domain_only && (
+						<PopoverMenuItem href={ createSiteFromDomainOnly( site.slug, site.siteId ) }>
+							<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+							{ translate( 'Create site' ) }
+						</PopoverMenuItem>
+					) }
 				</EllipsisMenu>
+				{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 			</div>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	canSetAsPrimary() {
@@ -380,6 +402,25 @@ class DomainRow extends PureComponent {
 		);
 	}
 
+	handleDomainSelection = ( event ) => {
+		const { domain } = this.props;
+		return this.props.handleDomainItemToggle( domain.name, event.target.checked );
+	};
+
+	renderDomainCheckbox() {
+		const { domain, isSavingContactInfo } = this.props;
+		return (
+			<div className="domain-row__checkbox-cell">
+				<FormCheckbox
+					className="domain-row__checkbox"
+					onChange={ this.handleDomainSelection }
+					checked={ domain.selected }
+					disabled={ isSavingContactInfo }
+				/>
+			</div>
+		);
+	}
+
 	busyMessage() {
 		if ( this.props.isBusy && this.props.busyMessage ) {
 			return <div className="domain-row__busy-message">{ this.props.busyMessage }</div>;
@@ -387,13 +428,14 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, isManagingAllSites, translate } = this.props;
+		const { domain, isManagingAllSites, showCheckbox, translate } = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
 
 		return (
 			<div className="domain-row">
 				<div className="domain-row__mobile-container">
+					{ isManagingAllSites && showCheckbox && this.renderDomainCheckbox() }
 					{ this.renderDomainName( domainTypeText ) }
 					{ isManagingAllSites && this.renderSite() }
 					{ this.renderDomainStatus() }

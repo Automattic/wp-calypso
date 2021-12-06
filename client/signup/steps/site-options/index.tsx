@@ -14,6 +14,7 @@ interface Props {
 	isReskinned: boolean;
 	signupDependencies: any;
 	stepName: string;
+	initialContext: any;
 }
 
 export default function SiteOptionsStep( props: Props ): React.ReactNode {
@@ -22,6 +23,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	const headerText = translate( "First, let's give your blog a name" );
 	const { stepName, signupDependencies, goToNextStep } = props;
 	const { siteTitle, tagline } = signupDependencies;
+
 	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
 			has_site_title: !! siteTitle,

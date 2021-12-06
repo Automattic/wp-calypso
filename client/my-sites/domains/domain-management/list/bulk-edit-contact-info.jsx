@@ -115,7 +115,7 @@ class BulkEditContactInfo extends Component {
 	};
 
 	onTransferLockOptOutChange = ( event ) => {
-		this.props.onTransferLockOptOutChange( event.target.checked );
+		this.props.onTransferLockOptOutChange( ! event.target.checked );
 	};
 
 	validateContactDetails = ( contactDetails ) => {

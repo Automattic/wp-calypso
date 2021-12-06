@@ -1,7 +1,7 @@
 import url from 'url'; // eslint-disable-line no-restricted-imports
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { isEmpty, flowRight, has, trim, sortBy } from 'lodash';
+import { isEmpty, flowRight, trim, sortBy } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -137,7 +137,7 @@ class SiteImporterInputPane extends Component {
 		if ( this.state.selectedEndpoint ) {
 			params.force_endpoint = this.state.selectedEndpoint;
 		}
-		if ( has( this.props, 'importerData.engine' ) ) {
+		if ( this.props.importerData.hasOwnProperty( 'engine' ) ) {
 			params.engine = this.props.importerData.engine;
 		}
 		return params;

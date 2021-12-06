@@ -1,8 +1,7 @@
-import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
@@ -197,10 +196,6 @@ class Help extends PureComponent {
 	);
 
 	getCoursesTeaser = () => {
-		if ( ! this.props.showCoursesTeaser ) {
-			return null;
-		}
-
 		return (
 			<CompactCard
 				className="help__support-link"
@@ -220,9 +215,9 @@ class Help extends PureComponent {
 	};
 
 	trackCoursesButtonClick = () => {
-		const { isBusinessPlanUser } = this.props;
+		const { isBusinessOrEcomPlanUser } = this.props;
 		recordTracksEvent( 'calypso_help_courses_click', {
-			is_business_plan_user: isBusinessPlanUser,
+			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 		} );
 	};
 
@@ -286,20 +281,20 @@ class Help extends PureComponent {
 	}
 }
 
-function planHasOnboarding( { productSlug } ) {
-	return planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING );
-}
+const getProductSlugs = ( purchases ) => purchases.map( ( purchase ) => purchase.productSlug );
 
 export const mapStateToProps = ( state ) => {
 	const isEmailVerified = isCurrentUserEmailVerified( state );
 	const purchases = getUserPurchases( state );
+	const purchaseSlugs = purchases && getProductSlugs( purchases );
 	const isLoading = isFetchingUserPurchases( state );
-	const isBusinessPlanUser = some( purchases, planHasOnboarding );
-	const showCoursesTeaser = isBusinessPlanUser;
+	const isBusinessOrEcomPlanUser = !! (
+		purchaseSlugs &&
+		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
+	);
 
 	return {
-		isBusinessPlanUser,
-		showCoursesTeaser,
+		isBusinessOrEcomPlanUser,
 		isLoading,
 		isEmailVerified,
 	};

@@ -54,6 +54,9 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	isPwpoUser,
+	onRemoveProduct,
+	onRemoveProductClick,
+	onRemoveProductCancel,
 }: {
 	className?: string;
 	siteId?: number | undefined;
@@ -64,6 +67,9 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser: boolean;
+	onRemoveProduct?: ( label: string ) => void;
+	onRemoveProductClick?: ( label: string ) => void;
+	onRemoveProductCancel?: ( label: string ) => void;
 } ): JSX.Element {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -85,6 +91,9 @@ export function WPOrderReviewLineItems( {
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							responseCart={ responseCart }
 							isPwpoUser={ isPwpoUser }
+							onRemoveProduct={ onRemoveProduct }
+							onRemoveProductClick={ onRemoveProductClick }
+							onRemoveProductCancel={ onRemoveProductCancel }
 						>
 							{ shouldShowVariantSelector && (
 								<ItemVariationPicker

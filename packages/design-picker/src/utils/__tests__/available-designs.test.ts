@@ -93,6 +93,7 @@ jest.mock( '../available-designs-config', () => {
 		theme: 'mock-blank-canvas-design-theme',
 		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
+		is_featured_picks: true,
 		features: [],
 	};
 
