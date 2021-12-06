@@ -20,6 +20,7 @@ import {
 	getItemsForCart,
 	GSuiteNewUser,
 	newUsers,
+} from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
