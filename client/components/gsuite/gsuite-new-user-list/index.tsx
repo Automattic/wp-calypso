@@ -17,6 +17,7 @@ interface Props {
 	domains?: string[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
+	showAddAnotherMailboxButton: boolean;
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
@@ -30,6 +31,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	onUsersChange,
 	onReturnKeyPress,
 	selectedDomainName,
+	showAddAnotherMailboxButton = true,
 	users,
 } ) => {
 	const translate = useTranslate();
@@ -86,10 +88,12 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 			) ) }
 
 			<div className="gsuite-new-user-list__actions">
-				<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
-					<Gridicon icon="plus" />
-					<span>{ translate( 'Add another mailbox' ) }</span>
-				</Button>
+				{ showAddAnotherMailboxButton && (
+					<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
+						<Gridicon icon="plus" />
+						<span>{ translate( 'Add another mailbox' ) }</span>
+					</Button>
+				) }
 
 				{ children }
 			</div>
