@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { USER_STORE } from '../stores/user';
 
-const FSE_BETA_ROLLOUT_PERCENTAGE = 10;
+const FSE_BETA_ROLLOUT_PERCENTAGE = 20;
 
 export default function useFseBetaEligibility(): boolean {
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
