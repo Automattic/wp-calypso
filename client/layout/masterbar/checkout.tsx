@@ -91,14 +91,10 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 		leaveCheckout();
 	};
 
-	const modalTitleText = String(
-		translate( 'You are about to leave checkout with items in your cart' )
-	);
-	const modalBodyText = String(
-		translate( 'You can leave the items in the cart or clear your cart.' )
-	);
-	const modalPrimaryText = String( translate( 'Continue' ) );
-	const modalSecondaryText = String( translate( 'Clear cart' ) );
+	const modalTitleText = translate( 'You are about to leave checkout with items in your cart' );
+	const modalBodyText = translate( 'You can leave the items in the cart or clear your cart.' );
+	const modalPrimaryText = translate( 'Continue' );
+	const modalSecondaryText = translate( 'Clear cart' );
 	const clearCartAndLeave = () => {
 		replaceProductsInCart( [] );
 		leaveCheckout();
