@@ -4,7 +4,6 @@ import { isEqual, omit } from 'lodash';
 import {
 	MEDIA_REQUEST,
 	MEDIA_ITEM_REQUEST,
-	MEDIA_ITEM_UPDATE,
 	MEDIA_ITEM_EDIT,
 	MEDIA_ITEM_DELETE,
 } from 'calypso/state/action-types';
@@ -29,23 +28,6 @@ import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
  * Module variables
  */
 const log = debug( 'calypso:middleware-media' );
-
-export function updateMedia( action ) {
-	const { siteId, item } = action;
-
-	return [
-		removeNotice( `update-media-notice-${ item.ID }` ),
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ siteId }/media/${ item.ID }`,
-				apiVersion: '1.1',
-				body: item,
-			},
-			action
-		),
-	];
-}
 
 export const updateMediaSuccess = ( { siteId }, mediaItem ) => [
 	receiveMedia( siteId, mediaItem ),
@@ -184,14 +166,6 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 			fetch: requestMediaItem,
 			onSuccess: receiveMediaItem,
 			onError: receiveMediaItemError,
-		} ),
-	],
-
-	[ MEDIA_ITEM_UPDATE ]: [
-		dispatchRequest( {
-			fetch: updateMedia,
-			onSuccess: updateMediaSuccess,
-			onError: updateMediaError,
 		} ),
 	],
 
