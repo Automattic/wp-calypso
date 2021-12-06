@@ -6,7 +6,7 @@ import type { ReactElement } from 'react';
 export interface Props {
 	/** Should be of the format: <span>$price</span> /interval, e.g. <span>$1</span> /year */
 	formattedPrice?: string | TranslateResult;
-	discount?: string | TranslateResult;
+	discount?: string | TranslateResult | null;
 	additionalPriceInformation?: string | TranslateResult | ReactElement;
 }
 

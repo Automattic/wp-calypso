@@ -1,7 +1,3 @@
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	TITAN_MAIL_MONTHLY_SLUG,
-} from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
@@ -9,66 +5,69 @@ import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { Site } from 'calypso/reader/list-manage/types';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
-import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import EmailProvidersStackedCard from './email-provider-stacked-card';
-import { professionalEmailCard } from './provider-cards/professional-email-card';
-import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement } from 'react';
+import ProfessionalEmailCard from './provider-cards/professional-email-card';
 
 import './style.scss';
 
 type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
+	cartDomainName?: string;
+	currencyCode?: string;
+	currentRoute?: string;
+	domain?: any;
+	domainName?: string;
+	domainsWithForwards?: any[];
+	gSuiteProduct?: string;
+	hasCartDomain?: boolean;
+	isGSuiteSupported?: boolean;
+	productsList?: string[];
+	requestingSiteDomains?: boolean;
+	shoppingCartManager?: any;
+	selectedSite?: Site | null;
 	selectedDomainName: string;
 	source: string;
-	cartDomainName?: string;
-	selectedSite?: Site;
-	titanMailMonthlyProduct?: any;
-	gSuiteAnnualProduct?: any;
+	titanMailProduct?: any;
 };
 
-export interface ProviderCard {
-	additionalPriceInformation?: TranslateResult;
-	badge?: ReactElement;
-	buttonLabel?: TranslateResult;
-	children?: ReactElement;
-	description: TranslateResult;
-	detailsExpanded: boolean;
-	discount?: string;
-	expandButtonLabel: TranslateResult;
-	features: TranslateResult[];
-	footerBadge?: ReactElement;
-	formattedPrice: string;
-	formFields: ReactElement;
-	logo: ReactElement;
-	onExpandedChange: ( providerKey: string, expanded: boolean ) => void;
-	onButtonClick?: ( event: React.MouseEvent ) => void;
-	productName: TranslateResult;
-	providerKey: string;
-	showExpandButton: boolean;
-}
+const recordTracksEventAddToCartClick = (
+	comparisonContext: string,
+	validatedMailboxUuids: string[],
+	mailboxesAreValid: boolean,
+	provider: string,
+	source: string,
+	userCanAddEmail: boolean,
+	userCannotAddEmailReason: any
+) => {
+	recordTracksEvent( 'calypso_email_providers_add_click', {
+		context: comparisonContext,
+		mailbox_count: validatedMailboxUuids.length,
+		mailboxes_valid: mailboxesAreValid ? 1 : 0,
+		provider: provider,
+		source,
+		user_can_add_email: userCanAddEmail,
+		user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
+	} );
+};
 
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
 	props
 ) => {
 	const translate = useTranslate();
-	const professionalEmailCardProps: ProviderCard = professionalEmailCard;
-	const { selectedSite } = props;
-
-	professionalEmailCardProps.formFields = <p>Placeholder</p>;
+	const { comparisonContext, selectedDomainName, selectedSite, source } = props;
 
 	return (
 		<Main className={ 'email-providers-stacked-comparison__main' } wideLayout>
@@ -80,12 +79,14 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				{ translate( 'Pick an email solution' ) }
 			</h1>
 
-			<EmailProvidersStackedCard
-				discount={ '$42' }
-				additionalPriceInformation={ 'per mailbox' }
-				footerBadge={ professionalEmailCardProps.badge }
-				{ ...professionalEmailCardProps }
+			<ProfessionalEmailCard
+				comparisonContext={ comparisonContext }
+				recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
 			/>
+
+			<> Google Workspace Component Placeholder </>
 		</Main>
 	);
 };
@@ -108,17 +109,15 @@ export default connect(
 			( hasCartDomain || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) );
 
 		return {
-			currencyCode: getCurrentUserCurrencyCode( state ),
-			currentRoute: getCurrentRoute( state ),
+			comparisonContext: ownProps.comparisonContext,
 			domain,
-			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
-			gSuiteAnnualProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasCartDomain,
 			isGSuiteSupported,
-			productsList: getProductsList( state ),
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
+			selectedDomainName: domainName,
 			selectedSite,
+			source: ownProps.source,
 			titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},
