@@ -1,12 +1,13 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { includes } from 'lodash';
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -103,12 +104,27 @@ const PluginsBrowserListElement = ( props ) => {
 					) }
 					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 				</div>
-				{ variant === PluginsBrowserElementVariant.Extended && (
-					<InstalledInOrPricing
-						sitesWithPlugin={ sitesWithPlugin }
-						isWpcomPreinstalled={ isWpcomPreinstalled }
-					/>
-				) }
+				<div className="plugins-browser-item__footer">
+					{ variant === PluginsBrowserElementVariant.Extended && (
+						<InstalledInOrPricing
+							sitesWithPlugin={ sitesWithPlugin }
+							isWpcomPreinstalled={ isWpcomPreinstalled }
+						/>
+					) }
+					<div className="plugins-browser-item__additional-info">
+						<div className="plugins-browser-item__ratings">
+							<PluginRatings
+								rating={ plugin.rating }
+								inlineNumRatings={
+									plugin.rating && Number.isInteger( plugin.num_ratings )
+										? plugin.num_ratings.toLocaleString( getLocaleSlug() )
+										: null
+								}
+								hideRatingValue
+							/>
+						</div>
+					</div>
+				</div>
 			</a>
 			<UpgradeButton plugin={ plugin } />
 		</li>

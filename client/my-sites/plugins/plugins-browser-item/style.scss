@@ -131,6 +131,17 @@
 	}
 }
 
+.plugins-browser-item__footer {
+	margin-top: auto;
+	display: flex;
+	justify-content: space-between;
+}
+
+.plugins-browser-item__rating-value {
+	color: var( --studio-gray-60 );
+	font-size: $font-body-extra-small;
+}
+
 .button.plugins-browser-item__upgrade-button {
 	position: absolute;
 	bottom: 16px;

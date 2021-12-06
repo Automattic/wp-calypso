@@ -64,7 +64,7 @@ export function fetchPluginsList( options ) {
 		'request[page]': page,
 		'request[per_page]': pageSize,
 		'request[fields]':
-			'icons,last_updated,-active_installs,-downloaded,-ratings,-rating,-requires,-requires_php,-tags,-tested,-contributors,-added,-donate_link,-homepage',
+			'icons,last_updated,rating,-active_installs,-downloaded,-ratings,-requires,-requires_php,-tags,-tested,-contributors,-added,-donate_link,-homepage',
 		'request[locale]': getWporgLocaleCode( options.locale ),
 	};
 

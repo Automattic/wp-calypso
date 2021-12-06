@@ -90,7 +90,15 @@ class PluginRatings extends Component {
 	}
 
 	render() {
-		const { placeholder, ratings, rating, numRatings, downloaded } = this.props;
+		const {
+			placeholder,
+			ratings,
+			rating,
+			numRatings,
+			inlineNumRatings,
+			downloaded,
+			hideRatingValue,
+		} = this.props;
 
 		if ( placeholder ) {
 			return this.renderPlaceholder();
@@ -105,7 +113,10 @@ class PluginRatings extends Component {
 			<div className="plugin-ratings">
 				<div className="plugin-ratings__rating-stars">
 					<Rating rating={ rating } />
-					<span className="plugin-ratings__number">{ rating / 20 }</span>
+					{ inlineNumRatings && (
+						<span className="plugin-ratings__num-ratings">({ inlineNumRatings })</span>
+					) }
+					{ ! hideRatingValue && <span className="plugin-ratings__number">{ rating / 20 }</span> }
 				</div>
 				{ numRatings && (
 					<div className="plugin-ratings__rating-text">
