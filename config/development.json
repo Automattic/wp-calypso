@@ -157,7 +157,7 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"upsell/concierge-session": true,
+		"upsell/concierge-session": false,
 		"woocommerce/extension-referrers": true,
 		"woop": true,
 		"wordpress-action-search": false,
