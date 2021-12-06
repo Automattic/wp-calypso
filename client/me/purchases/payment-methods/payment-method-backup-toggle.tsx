@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import wpcom from 'calypso/lib/wp';
 import { updateStoredCardIsBackupComplete } from 'calypso/state/stored-cards/actions';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
@@ -75,12 +75,13 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 			<CheckboxControl
 				checked={ isBackup }
 				onChange={ toggleIsBackup }
-				label={ translate( 'Use as backup. {{link}}Learn more{{/link}}', {
+				label={ translate( 'Use as backup.{{supportLink /}}', {
 					components: {
-						link: (
-							<ExternalLink
-								icon
-								href="https://wordpress.com/support/payment/#manage-payment-methods"
+						supportLink: (
+							<InlineSupportLink
+								showText={ false }
+								supportContext="payment_methods_manage"
+								iconSize={ 16 }
 							/>
 						),
 					},
