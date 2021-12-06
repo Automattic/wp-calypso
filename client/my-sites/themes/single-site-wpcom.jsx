@@ -1,8 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	PLAN_BUSINESS,
-	FEATURE_UPLOAD_THEMES,
 	FEATURE_PREMIUM_THEMES,
+	FEATURE_UPLOAD_THEMES,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -29,7 +30,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 				className="themes__showcase-banner"
 				event="calypso_themes_list_premium_themes"
 				feature={ FEATURE_PREMIUM_THEMES }
-				plan={ PLAN_BUSINESS }
+				plan={ PLAN_PREMIUM }
 				title={ translate(
 					'Unlock all premium themes with our Premium, Business and eCommerce plans!'
 				) }
