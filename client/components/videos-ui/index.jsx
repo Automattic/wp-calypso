@@ -1,9 +1,10 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { cloneElement, useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { cloneElement, useEffect, useState } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
+import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
 import VideoPlayer from './video-player';
@@ -14,80 +15,71 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 
 	const courseSlug = 'blogging-quick-start';
 	const { data: course } = useCourseQuery( courseSlug, { retry: false } );
+	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
 
-	const userCourseProgression = useSelector( ( state ) => {
+	const initialUserCourseProgression = useSelector( ( state ) => {
 		const courses = getOriginalUserSetting( state, 'courses' );
 		return courses !== null && courseSlug in courses ? courses[ courseSlug ] : [];
-	} );
+	}, shallowEqual );
+	const [ userCourseProgression, setUserCourseProgression ] = useState( [] );
+	useEffect( () => {
+		setUserCourseProgression( initialUserCourseProgression );
+	}, [ initialUserCourseProgression ] );
 
-	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
+	const completedVideoCount = Object.keys( userCourseProgression ).length;
+	const courseChapterCount = course ? Object.keys( course.videos ).length : 0;
+	const isCourseComplete = completedVideoCount > 0 && courseChapterCount === completedVideoCount;
+
+	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
-	const [ currentVideo, setCurrentVideo ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
+	const currentVideo = currentVideoKey ? course?.videos[ currentVideoKey ] : course?.videos[ 0 ];
 
-	const videoRef = useRef( null );
-
-	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
+	const onVideoPlayClick = ( videoSlug ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
 			video: videoSlug,
 		} );
 
-		setCurrentVideo( videoInfo );
+		setCurrentVideoKey( videoSlug );
 		setIsPlaying( true );
 	};
 
 	useEffect( () => {
-		if ( videoRef.current ) {
-			videoRef.current.onplay = () => {
-				setIsPlaying( true );
-			};
-
-			videoRef.current.onpause = () => {
-				setIsPlaying( false );
-			};
-		}
-	} );
-
-	useEffect( () => {
-		if ( ! course ) {
+		if ( ! course || ! initialUserCourseProgression ) {
 			return;
 		}
-
-		const videoSlugs = Object.keys( course.videos );
-		if ( ! currentVideoKey ) {
-			const initialVideoId = 'find-theme';
-			setCurrentVideoKey( initialVideoId );
-			setSelectedVideoIndex( videoSlugs.indexOf( initialVideoId ) );
-		}
-
-		const viewedSlugs = Object.keys( userCourseProgression );
+		const videoSlugs = Object.keys( course?.videos ?? [] );
+		const viewedSlugs = Object.keys( initialUserCourseProgression );
 		if ( viewedSlugs.length > 0 ) {
 			const nextSlug = videoSlugs.find( ( slug ) => ! viewedSlugs.includes( slug ) );
 			if ( nextSlug ) {
 				setCurrentVideoKey( nextSlug );
-				setSelectedVideoIndex( videoSlugs.indexOf( nextSlug ) );
+				setSelectedChapterIndex( videoSlugs.indexOf( nextSlug ) );
+				return;
 			}
 		}
-	}, [ currentVideoKey, course, userCourseProgression ] );
+		const initialVideoId = 'find-theme';
+		setCurrentVideoKey( initialVideoId );
+		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoId ) );
+	}, [ course, initialUserCourseProgression ] );
 
-	useEffect( () => {
-		if ( currentVideoKey && course ) {
-			setCurrentVideo( course.videos[ currentVideoKey ] );
-			setSelectedVideoIndex( Object.keys( course.videos ).indexOf( currentVideoKey ) );
-		}
-	}, [ currentVideoKey, course ] );
-
-	const isVideoSelected = ( idx ) => {
-		return selectedVideoIndex === idx;
+	const isChapterSelected = ( idx ) => {
+		return selectedChapterIndex === idx;
 	};
 
-	const onVideoSelected = ( idx ) => {
-		if ( isVideoSelected( idx ) ) {
-			setSelectedVideoIndex( null );
-		} else {
-			setSelectedVideoIndex( idx );
+	const onChapterSelected = ( idx ) => {
+		if ( isChapterSelected( idx ) ) {
+			return;
 		}
+		setSelectedChapterIndex( idx );
+	};
+
+	const markVideoCompleted = ( videoData ) => {
+		const updatedUserCourseProgression = { ...userCourseProgression };
+		updatedUserCourseProgression[ videoData.slug ] = true;
+		setUserCourseProgression( updatedUserCourseProgression );
+		updateUserCourseProgression( courseSlug, videoData.slug );
 	};
 
 	useEffect( () => {
@@ -101,7 +93,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
-				{ headerBar }
+				{ course && cloneElement( headerBar, { course: course } ) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
 						<h2>{ translate( 'Watch five videos.' ) }</h2>
@@ -135,16 +127,16 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 				<div className="videos-ui__video-content">
 					{ currentVideo && (
 						<VideoPlayer
-							completedSeconds={ currentVideo.completed_seconds }
-							videoRef={ videoRef }
-							videoUrl={ currentVideo.url }
+							videoData={ { ...currentVideo, ...{ slug: currentVideoKey } } }
+							onVideoPlayStatusChanged={ ( isVideoPlaying ) => setIsPlaying( isVideoPlaying ) }
 							isPlaying={ isPlaying }
-							poster={ currentVideo.poster ? currentVideo.poster : undefined }
+							course={ course }
+							onVideoCompleted={ markVideoCompleted }
 						/>
 					) }
 					<div className="videos-ui__chapters">
 						{ course &&
-							Object.entries( course.videos ).map( ( data, i ) => {
+							Object.entries( course?.videos ).map( ( data, i ) => {
 								const isVideoCompleted =
 									data[ 0 ] in userCourseProgression && userCourseProgression[ data[ 0 ] ];
 								const videoInfo = data[ 1 ];
@@ -152,12 +144,12 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 								return (
 									<div
 										key={ i }
-										className={ `${ isVideoSelected( i ) ? 'selected ' : '' }videos-ui__chapter` }
+										className={ `${ isChapterSelected( i ) ? 'selected ' : '' }videos-ui__chapter` }
 									>
 										<button
 											type="button"
 											className="videos-ui__chapter-accordion-toggle"
-											onClick={ () => onVideoSelected( i ) }
+											onClick={ () => onChapterSelected( i ) }
 										>
 											<span className="videos-ui__video-title">
 												{ i + 1 }. { videoInfo.title }{ ' ' }
@@ -168,12 +160,12 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 													<Gridicon icon="checkmark" size={ 12 } />
 												</span>
 											) }
-											{ isVideoSelected( i ) && ! isVideoCompleted && (
+											{ isChapterSelected( i ) && ! isVideoCompleted && (
 												<span className="videos-ui__status-icon">
 													<Gridicon icon="chevron-up" size={ 18 } />
 												</span>
 											) }
-											{ ! isVideoSelected( i ) && ! isVideoCompleted && (
+											{ ! isChapterSelected( i ) && ! isVideoCompleted && (
 												<span className="videos-ui__status-icon">
 													<Gridicon icon="chevron-down" size={ 18 } />
 												</span>
@@ -214,7 +206,8 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 					</div>
 				</div>
 			</div>
-			{ course && cloneElement( footerBar, { course: course } ) }
+			{ course &&
+				cloneElement( footerBar, { course: course, isCourseComplete: isCourseComplete } ) }
 		</div>
 	);
 };

@@ -437,12 +437,8 @@ export function generateFlows( {
 		},
 		{
 			name: 'setup-site',
-			steps: isEnabled( 'signup/hero-flow' )
-				? [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ]
-				: [ 'design-setup-site' ],
-			destination: isEnabled( 'signup/hero-flow' )
-				? getDestinationFromIntent
-				: getChecklistThemeDestination,
+			steps: [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ],
+			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
 			lastModified: '2021-10-14',
@@ -461,12 +457,10 @@ export function generateFlows( {
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: [ 'select-site', 'confirm', 'transfer' ],
+			steps: [ 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
-			providesDependenciesInQuery: [ 'siteSlug' ],
-			optionalDependenciesInQuery: [ 'siteSlug' ],
-			disallowResume: true,
+			providesDependenciesInQuery: [ 'site' ],
 			lastModified: '2021-11-11',
 		},
 	];

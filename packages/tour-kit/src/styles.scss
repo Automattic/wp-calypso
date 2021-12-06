@@ -1,4 +1,4 @@
-.tour-kit__frame {
+.tour-kit-frame__container {
 	border-radius: 2px;
 	bottom: 44px;
 	display: inline;
@@ -7,11 +7,11 @@
 	z-index: 9999;
 	// Avoid the text cursor when the text is not selectable
 	cursor: default;
-    box-shadow: 0px 0px 3px 0px rgba( 0, 0, 0, 0.25 );
+    box-shadow: 0 0 3px 0 rgba( 0, 0, 0, 0.25 );
 	background: white;
 }
 
-.tour-kit__overlay {
+.tour-kit-overlay {
 	position: fixed;
 	width: 100vw;
 	height: 100vh;
@@ -25,7 +25,7 @@
 	}
 }
 
-.tour-kit__spotlight {
+.tour-kit-spotlight {
 	&.--visible {
 		position: fixed;
 		width: 50px;
@@ -38,12 +38,12 @@
 	}
 }
 
-.tour-kit__arrow {
+.tour-kit-frame__arrow {
     visibility: hidden;
 }
 
-.tour-kit__arrow,
-.tour-kit__arrow::before {
+.tour-kit-frame__arrow,
+.tour-kit-frame__arrow::before {
     position: absolute;
     width: 12px;
     height: 12px;
@@ -51,34 +51,34 @@
     z-index: -1;
 }
 
-.tour-kit__arrow::before {
+.tour-kit-frame__arrow::before {
     visibility: visible;
     content: '';
-    transform: rotate(45deg);
+    transform: rotate( 45deg );
 }
 
-.tour-kit__frame[data-popper-placement^='top'] > .tour-kit__arrow {
+.tour-kit-frame__container[data-popper-placement^='top'] > .tour-kit-frame__arrow {
     bottom: -6px;
     &::before {
         box-shadow: 1px 1px 2px -1px rgb( 0 0 0 / 25% );
     }
 }
 
-.tour-kit__frame[data-popper-placement^='bottom'] > .tour-kit__arrow {
+.tour-kit-frame__container[data-popper-placement^='bottom'] > .tour-kit-frame__arrow {
     top: -6px;
     &::before {
         box-shadow: -1px -1px 2px -1px rgb( 0 0 0 / 25% );
     }
 }
 
-.tour-kit__frame[data-popper-placement^='left'] > .tour-kit__arrow {
+.tour-kit-frame__container[data-popper-placement^='left'] > .tour-kit-frame__arrow {
     right: -6px;
     &::before {
         box-shadow: -1px 1px 2px -1px rgb( 0 0 0 / 25% );
     }
 }
 
-.tour-kit__frame[data-popper-placement^='right'] > .tour-kit__arrow {
+.tour-kit-frame__container[data-popper-placement^='right'] > .tour-kit-frame__arrow {
     left: -6px;
     &::before {
         box-shadow: 1px -1px 2px -1px rgb( 0 0 0 / 25% );

@@ -152,14 +152,6 @@ $plugin-details-header-padding: 100px;
 }
 
 .plugin-details__top-section {
-	.plugin-details__layout-col-right.no-cta {
-		visibility: hidden;
-
-		@media screen and ( max-width: 1040px ) {
-			display: none;
-		}
-	}
-
 	&.is-placeholder {
 		.plugin-details__name,
 		.plugin-details__price,
@@ -217,10 +209,11 @@ $plugin-details-header-padding: 100px;
 
 	.plugin-details__additional-info {
 		display: flex;
-		justify-content: space-between;
 		flex-wrap: wrap;
 
 		.plugin-details__info {
+			width: 25%;
+
 			@media screen and ( max-width: 1040px ) {
 				width: 50%;
 				padding-bottom: 12px;
@@ -245,8 +238,13 @@ $plugin-details-header-padding: 100px;
 		.plugin-details__install-button {
 			width: 100%;
 			padding: 12px 16px;
-			background-color: var( --studio-pink-50 );
+			background-color: var( --color-accent-50 );
 			color: var( --studio-white );
+
+			&:focus,
+			&:hover {
+				background-color: var( --color-accent-60 );
+			}
 		}
 	}
 

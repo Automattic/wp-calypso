@@ -11,7 +11,7 @@ export default function () {
 		if ( isLoggedIn ) {
 			handleLoggedIn( context );
 		} else {
-			handleLoggedOut( context );
+			handleLoggedOut();
 		}
 	} );
 }

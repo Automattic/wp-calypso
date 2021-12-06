@@ -1004,61 +1004,6 @@ describe( 'main app', () => {
 		} );
 	} );
 
-	describe( 'Middleware localSubdomains', () => {
-		describe( 'sets locale info in the request context', () => {
-			it( 'rtl language', async () => {
-				const { request } = await app.run( {
-					request: {
-						hostname: 'ar.valid.hostname',
-					},
-				} );
-
-				expect( request.context.lang ).toBe( 'ar' );
-			} );
-
-			it( 'ltr language', async () => {
-				const { request } = await app.run( {
-					request: {
-						hostname: 'es.valid.hostname',
-					},
-				} );
-
-				expect( request.context.lang ).toBe( 'es' );
-			} );
-		} );
-
-		describe( 'strips language from the hostname for logged in users', () => {
-			it( 'redirects to http', async () => {
-				const { response } = await app.run( {
-					request: {
-						url: '/my-path',
-						hostname: 'es.valid.hostname',
-						cookies: {
-							wordpress_logged_in: true,
-						},
-					},
-				} );
-
-				expect( response.redirect ).toHaveBeenCalledWith( 'http://valid.hostname:3000/my-path' );
-			} );
-
-			it( 'redirects to https', async () => {
-				const { response } = await app.run( {
-					request: {
-						url: '/my-path',
-						hostname: 'es.valid.hostname',
-						get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'https' : undefined ) ),
-						cookies: {
-							wordpress_logged_in: true,
-						},
-					},
-				} );
-
-				expect( response.redirect ).toHaveBeenCalledWith( 'https://valid.hostname:3000/my-path' );
-			} );
-		} );
-	} );
-
 	describe( 'Route /sites/:site/:section', () => {
 		[
 			{ section: 'posts', url: '/posts/my-site' },

@@ -8,7 +8,7 @@
 	"author": "Automattic, Inc.",
 	"private": true,
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "run-s build:modules build:bundle",
 		"prepack": "yarn run clean && yarn run build",
 		"build:modules": "transpile",

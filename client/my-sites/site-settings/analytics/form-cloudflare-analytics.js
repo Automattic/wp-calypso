@@ -213,7 +213,7 @@ export function CloudflareAnalyticsSettings( {
 							<ToggleControl
 								checked={ isCloudflareEnabled }
 								disabled={ isRequestingSettings || isSavingSettings || ! enableForm }
-								onChange={ () => handleFormToggle( ! isCloudflareEnabled ) }
+								onChange={ handleFormToggle }
 								label={ translate( 'Add Cloudflare' ) }
 							/>
 						</div>

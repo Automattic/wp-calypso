@@ -1,4 +1,4 @@
-import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
+import { Card, Ribbon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, some } from 'lodash';
@@ -7,10 +7,8 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
-import InfoPopover from 'calypso/components/info-popover';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -38,8 +36,6 @@ export class Theme extends Component {
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
-		// Theme price (pre-formatted string) -- empty string indicates free theme
-		price: PropTypes.string,
 		// If true, the theme is being installed
 		installing: PropTypes.bool,
 		// If true, render a placeholder
@@ -88,7 +84,6 @@ export class Theme extends Component {
 		return (
 			nextProps.theme.id !== this.props.theme.id ||
 			nextProps.active !== this.props.active ||
-			nextProps.price !== this.props.price ||
 			nextProps.installing !== this.props.installing ||
 			! isEqual(
 				Object.keys( nextProps.buttonContents ),
@@ -133,33 +128,18 @@ export class Theme extends Component {
 		}
 	}
 
-	onUpsellClick = () => {
-		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
-			cta_name: 'theme-upsell-popup',
-			theme: this.props.theme.id,
-		} );
-	};
-
 	setBookmark = () => {
 		this.props.setThemesBookmark( this.props.theme.id );
 	};
 
 	render() {
-		const { active, blockEditorSettings, price, theme, translate, upsellUrl } = this.props;
+		const { active, blockEditorSettings, theme, translate } = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': isActionable,
 		} );
-
-		const hasPrice = /\d/g.test( price );
-		const showUpsell = hasPrice && upsellUrl;
-		const priceClass = classNames( 'theme__badge-price', {
-			'theme__badge-price-upgrade': ! hasPrice,
-			'theme__badge-price-test': showUpsell,
-		} );
-
 		const themeDescription = decodeEntities( description );
 
 		// for performance testing
@@ -168,37 +148,6 @@ export class Theme extends Component {
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
-
-		const impressionEventName = 'calypso_upgrade_nudge_impression';
-		const upsellEventProperties = { cta_name: 'theme-upsell', theme: theme.id };
-		const upsellPopupEventProperties = { cta_name: 'theme-upsell-popup', theme: theme.id };
-		const upsell = showUpsell && (
-			<span className="theme__upsell">
-				<TrackComponentView
-					eventName={ impressionEventName }
-					eventProperties={ upsellEventProperties }
-				/>
-				<InfoPopover icon="star" className="theme__upsell-icon" position="top left">
-					<TrackComponentView
-						eventName={ impressionEventName }
-						eventProperties={ upsellPopupEventProperties }
-					/>
-					<div className="theme__upsell-popover">
-						<h2 className="theme__upsell-heading">
-							{ translate( 'Use this theme at no extra cost on our Premium or Business Plan' ) }
-						</h2>
-						<Button
-							onClick={ this.onUpsellClick }
-							className="theme__upsell-cta"
-							primary
-							href={ upsellUrl }
-						>
-							{ translate( 'Upgrade Now' ) }
-						</Button>
-					</div>
-				</InfoPopover>
-			</span>
-		);
 
 		const fit = '479,360';
 		const themeImgSrc = photon( screenshot, { fit } );
@@ -259,8 +208,6 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
-						<span className={ priceClass }>{ price }</span>
-						{ upsell }
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }

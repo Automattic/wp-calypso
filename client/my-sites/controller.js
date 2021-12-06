@@ -393,7 +393,6 @@ export function siteSelection( context, next ) {
 
 	const { getState, dispatch } = getStore( context );
 	const siteFragment = context.params.site || getSiteFragment( context.path );
-	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 
@@ -456,7 +455,7 @@ export function siteSelection( context, next ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context, basePath ) ) {
+		if ( onSelectedSiteAvailable( context ) ) {
 			next();
 		}
 	} else {
@@ -478,7 +477,7 @@ export function siteSelection( context, next ) {
 					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
-					if ( onSelectedSiteAvailable( context, basePath ) ) {
+					if ( onSelectedSiteAvailable( context ) ) {
 						next();
 					}
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {

@@ -1,6 +1,6 @@
 # tour-kit
 
-A React tour library for generating configurable guided tours. Carries a minimalist setup for basic usage, but  extensible/configurable enough to accomodate more complex use cases.
+A React tour library for generating configurable guided tours. Carries a minimalist setup for basic usage, but extensible/configurable enough to accomodate more complex use cases.
 
 We've kept the initial setup minimal with little in the way of styling (not much outside of a box-shadow for the steps and arrow indicator). Contains some optional effects (like spotlight and overlay) that can be enabled/disabled depending on desired use.
 
@@ -8,7 +8,7 @@ Uses [Popper.js](https://popper.js.org/) underneath (also customizable via tour 
 
 ## Usage
 
-### A tour is made up of the following components:
+A tour is made up of the following components:
 
 - A number of `steps`, made up of:
   - some arbitrary metadata
@@ -21,7 +21,7 @@ Uses [Popper.js](https://popper.js.org/) underneath (also customizable via tour 
 
 See [types.ts](./src/types.ts) for the full definition of the various entities.
 
-### A typical expected workflow builds around:
+A typical expected workflow builds around:
 
 1. Define the criteria for showing a tour.
 2. Define a configuration for the tour, passing along a handler for closing.
@@ -60,16 +60,18 @@ function FooBar() {
 				return (
 					<>
 						<button onClick={ onPrevious }>Previous</button>
-						<button onClick={ onNext } ref={ setInitialFocusedElement }>Next</button>
+						<button onClick={ onNext } ref={ setInitialFocusedElement }>
+							Next
+						</button>
 						<button onClick={ onDismiss( 'close-btn' ) }>Close</button>
 						<p>{ steps[ currentStepIndex ].meta.description }</p>
 					</>
 				);
 			},
-			tourMinimized: ...,
+			tourMinimized: <div />,
 		},
 		closeHandler: () => setShowTour( false ),
-		options: ...
+		options: {},
 	};
 
 	// 3. Render it (or not):
@@ -80,7 +82,6 @@ function FooBar() {
 
 	return <Tour config={ config } />;
 }
-
 ```
 
 ### Examples Using [Storybook](https://storybook.js.org/)
@@ -101,7 +102,7 @@ When a tour is rendered and focused, the following functionality exists:
 
 ## Configuration
 
-The main API for configuring a tour is the config object. See example usage and  [types.ts](./src/types.ts) for the full definition.
+The main API for configuring a tour is the config object. See example usage and [types.ts](./src/types.ts) for the full definition.
 
 `config.steps`: An array of objects that define the content we wish to render on the page. Each step defined by:
 
@@ -113,6 +114,7 @@ The main API for configuring a tour is the config object. See example usage and 
 `config.renderers`:
 
 - `tourStep`: A React component that will be called to render each step. Receives the following properties:
+
   - `steps`: The steps defined for the tour.
   - `currentStepIndex`
   - `onDismiss`: Handler that dismissed/closes the tour.
@@ -121,7 +123,6 @@ The main API for configuring a tour is the config object. See example usage and 
   - `onMinimize`: Handler that minimizes the tour (passes rendering to `tourMinimized`).
   - `setInitialFocusedElement`: A dispatcher that assigns an element to be initially focused when a step renders (see examples).
   - `onGoToStep`: Handler that progresses the tour to a given step index.
-
 
 - `tourMinimized`: A React component that will be called to render a minimized view for the tour. Receives the following properties:
   - `steps`: The steps defined for the tour.

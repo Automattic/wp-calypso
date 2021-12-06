@@ -259,12 +259,11 @@ export default function CompositeCheckout( {
 
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
-		recordEvent( {
-			type: 'THANK_YOU_URL_GENERATED',
-			payload: { url },
+		logStashEvent( 'thank you url generated', {
+			url,
 		} );
 		return url;
-	}, [ getThankYouUrlBase, recordEvent ] );
+	}, [ getThankYouUrlBase ] );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
@@ -331,9 +330,13 @@ export default function CompositeCheckout( {
 	);
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
-		messages.forEach( ( message ) =>
-			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
-		);
+		messages.forEach( ( message ) => {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {
+					error_message: String( message ),
+				} )
+			);
+		} );
 	} );
 
 	const {
@@ -404,16 +407,17 @@ export default function CompositeCheckout( {
 
 	const changePlanLength = useCallback(
 		( uuidToReplace, newProductSlug, newProductId ) => {
-			recordEvent( {
-				type: 'CART_CHANGE_PLAN_LENGTH',
-				payload: { newProductSlug },
-			} );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
+					new_product_slug: newProductSlug,
+				} )
+			);
 			replaceProductInCart( uuidToReplace, {
 				product_slug: newProductSlug,
 				product_id: newProductId,
 			} );
 		},
-		[ replaceProductInCart, recordEvent ]
+		[ replaceProductInCart, reduxDispatch ]
 	);
 
 	// Often products are added using just the product_slug but missing the

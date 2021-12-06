@@ -63,12 +63,12 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 			} ) => {
 				return (
 					<div className="storybook-tour__step">
-						<div className='storybook-tour__step-controls'>
+						<div className="storybook-tour__step-controls">
 							<button onClick={ onDismiss( 'main-btn' ) }>Close</button>
 							<button onClick={ onMinimize }>Minimize</button>
 						</div>
 						<p>{ steps[ currentStepIndex ].meta.description as string }</p>
-						<div className='storybook-tour__step-controls'>
+						<div className="storybook-tour__step-controls">
 							<button onClick={ onNext } ref={ setInitialFocusedElement }>
 								Next
 							</button>
@@ -80,7 +80,7 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 			tourMinimized: ( { onMaximize, onDismiss } ) => {
 				return (
 					<div className="storybook-tour__step">
-						<div className='storybook-tour__step-controls'>
+						<div className="storybook-tour__step-controls">
 							<button onClick={ onDismiss( 'main-btn' ) }>Close</button>
 							<button onClick={ onMaximize }>Miximize</button>
 						</div>
@@ -109,8 +109,8 @@ const StoryTour = ( { options = {} }: { options?: Config[ 'options' ] } ) => {
 	);
 };
 
-export const Default = () => <StoryTour />;
-export const Overlay = () => <StoryTour options={ { effects: { overlay: true } } } />;
-export const Spotlight__Experimental = () => (
+export const Default = (): JSX.Element => <StoryTour />;
+export const Overlay = (): JSX.Element => <StoryTour options={ { effects: { overlay: true } } } />;
+export const Spotlight__Experimental = (): JSX.Element => (
 	<StoryTour options={ { effects: { __experimental__spotlight: true } } } />
 );

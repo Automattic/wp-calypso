@@ -20,9 +20,13 @@
 	padding: 16px;
 }
 
-.plugin-remove-button__remove-icon {
+.plugin-remove-button__remove-button {
 	color: var( --studio-gray-80 );
 	font-size: $font-body-small;
+}
+
+.plugin-remove-button__remove-icon {
+	margin-right: 3px;
 }
 
 .plugin-remove-button__remove-link.is-disabled .plugin-remove-button__remove-icon .gridicons-trash {
