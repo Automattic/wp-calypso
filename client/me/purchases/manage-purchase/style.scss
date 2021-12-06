@@ -1,3 +1,22 @@
+.purchases.manage-purchase > button.card,
+.purchases.manage-purchase > a.card {
+	padding-inline-start: 16px;
+	padding-inline-end: 16px;
+
+	.card__link-indicator {
+		right: 16px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			right: 24px;
+		}
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-inline-start: 24px;
+		padding-inline-end: 24px;
+	}
+}
+
 .manage-purchase__info {
 	font-size: $font-body-small;
 	padding: 0;
@@ -215,8 +234,8 @@
 			box-sizing: border-box;
 			flex: 1 1 auto;
 			font-size: $font-body-small;
-			text-align: center;
-			padding: 15px 8px 12px;
+			padding: 15px 16px 12px;
+			min-height: 130px;
 
 			&:first-child {
 				padding-left: 0;
@@ -272,6 +291,10 @@
 
 	.components-toggle-control {
 		display: inline-block;
+
+		.components-form-toggle {
+			margin-right: initial;
+		}
 	}
 
 	.payment-logo {
@@ -292,6 +315,28 @@
 	margin-right: 0;
 }
 
+@include breakpoint-deprecated( '>660px' ) {
+	.manage-purchase__auto-renew {
+		display: flex;
+		flex-wrap: wrap-reverse;
+		justify-content: space-between;
+		gap: 8px;
+
+		.manage-purchase__auto-renew-text {
+			white-space: nowrap;
+			line-height: 1.5rem;
+		}
+
+		.manage-purchase__auto-renew-toggle {
+			order: 2;
+
+			.components-base-control__field {
+				margin: initial;
+			}
+		}
+	}
+}
+
 .manage-purchase__expiring-credit-card-notice.notice,
 .manage-purchase__purchase-expiring-notice.notice {
 	margin-bottom: 10px;
@@ -301,16 +346,23 @@
 	}
 }
 
-.manage-purchase__renew-button {
-	@include breakpoint-deprecated( '<660px' ) {
-		margin-top: 16px;
-		width: 100%;
-	}
+.manage-purchase__renew-upgrade-buttons {
+	display: none;
 
 	@include breakpoint-deprecated( '>660px' ) {
+		display: initial;
 		position: absolute;
 		right: 24px;
 		top: 16px;
+
+		> a,
+		> button {
+			margin-inline-end: 8px;
+
+			&:last-child {
+				margin-inline-end: initial;
+			}
+		}
 	}
 }
 
@@ -383,4 +435,3 @@
 		margin-top: 0;
 	}
 }
-
