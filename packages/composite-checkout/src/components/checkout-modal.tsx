@@ -1,7 +1,6 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import joinClasses from '../lib/join-classes';
 import Button from './button';
@@ -29,7 +28,9 @@ export default function CheckoutModal( {
 		return null;
 	}
 
-	const titleId = `${ title.toLowerCase().replace( /[^a-z0-9_-]/g, '-' ) }-modal-title`;
+	const titleId = `${ String( title )
+		.toLowerCase()
+		.replace( /[^a-z0-9_-]/g, '-' ) }-modal-title`;
 
 	return (
 		<CheckoutModalWrapper
@@ -71,32 +72,20 @@ export default function CheckoutModal( {
 	);
 }
 
-CheckoutModal.propTypes = {
-	closeModal: PropTypes.func.isRequired,
-	title: PropTypes.string.isRequired,
-	copy: PropTypes.string.isRequired,
-	primaryAction: PropTypes.func.isRequired,
-	cancelAction: PropTypes.func,
-	isVisible: PropTypes.bool.isRequired,
-	className: PropTypes.string,
-	buttonCTA: PropTypes.string,
-	cancelButtonCTA: PropTypes.string,
-};
-
 type Callback = () => void;
 
 interface CheckoutModalProps {
 	closeModal: Callback;
-	title: string;
-	copy: string;
+	title: React.ReactNode;
+	copy: React.ReactNode;
 	primaryAction: Callback;
 	secondaryAction?: Callback;
 	cancelAction?: Callback;
 	isVisible: boolean;
 	className?: string;
-	buttonCTA?: string;
-	cancelButtonCTA?: string;
-	secondaryButtonCTA?: string;
+	buttonCTA?: React.ReactNode;
+	cancelButtonCTA?: React.ReactNode;
+	secondaryButtonCTA?: React.ReactNode;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
