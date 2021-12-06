@@ -156,7 +156,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 												{ i + 1 }. { videoInfo.title }{ ' ' }
 											</span>
 											<span className="videos-ui__duration"> 
-												{ moment.unix( videoInfo.duration_seconds ).format('m:ss') } 
+												{ moment.unix( videoInfo.duration_seconds ).format( 'm:ss' ) }
 											</span>
 											{ isVideoCompleted && (
 												<span className="videos-ui__completed-checkmark">
