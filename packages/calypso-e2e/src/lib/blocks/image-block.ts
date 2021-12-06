@@ -30,7 +30,7 @@ export class ImageBlock {
 	 * @returns The image element
 	 */
 	async getImage(): Promise< ElementHandle > {
-		return this.block.waitForSelector( 'img' );
+		return await this.block.waitForSelector( 'img' );
 	}
 
 	/**
