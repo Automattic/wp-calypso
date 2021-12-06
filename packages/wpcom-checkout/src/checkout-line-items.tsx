@@ -1,5 +1,4 @@
 import {
-	TITAN_MAIL_MONTHLY_SLUG,
 	isDomainRegistration,
 	isPlan,
 	isMonthlyProduct,
@@ -227,54 +226,66 @@ function WPNonProductLineItem( {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-function GSuiteUsersList( { product }: { product: ResponseCartProduct } ) {
-	const users = product.extra?.google_apps_users ?? [];
+function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRenewal: boolean } ) {
+	const translate = useTranslate();
+
+	if ( isRenewal ) {
+		let numberOfMailboxes = null;
+
+		if ( isGSuiteOrExtraLicenseProductSlug( product.product_slug ) ) {
+			numberOfMailboxes = product.volume ?? null;
+		}
+
+		if ( isGoogleWorkspaceProductSlug( product.product_slug ) || isTitanMail( product ) ) {
+			numberOfMailboxes = product.current_quantity ?? null;
+		}
+
+		if ( numberOfMailboxes === null ) {
+			return;
+		}
+
+		return (
+			<LineItemMeta>
+				{ translate(
+					'%(numberOfMailboxes)d mailbox for %(domainName)s',
+					'%(numberOfMailboxes)d mailboxes for %(domainName)s',
+					{
+						args: {
+							numberOfMailboxes,
+							domainName: product.meta,
+						},
+						count: numberOfMailboxes,
+					}
+				) }
+			</LineItemMeta>
+		);
+	}
+
+	let mailboxes = [];
+
+	if (
+		isGSuiteOrExtraLicenseProductSlug( product.product_slug ) ||
+		isGoogleWorkspaceProductSlug( product.product_slug )
+	) {
+		mailboxes = product.extra?.google_apps_users ?? [];
+	}
+
+	if ( isTitanMail( product ) ) {
+		mailboxes = product.extra?.email_users ?? [];
+	}
 
 	return (
 		<>
-			{ users.map( ( user, index ) => {
+			{ mailboxes.map( ( mailbox, index ) => {
 				return (
-					<LineItemMeta key={ user.email }>
-						<div key={ user.email }>{ user.email }</div>
+					<LineItemMeta key={ mailbox.email }>
+						<div key={ mailbox.email }>{ mailbox.email }</div>
+
 						{ index === 0 && <GSuiteDiscountCallout product={ product } /> }
 					</LineItemMeta>
 				);
 			} ) }
 		</>
-	);
-}
-
-function TitanMailMeta( {
-	product,
-	isRenewal,
-}: {
-	product: ResponseCartProduct;
-	isRenewal: boolean;
-} ) {
-	const translate = useTranslate();
-	const quantity = product.extra?.new_quantity ?? 1;
-	const domainName = product.meta;
-	const translateArgs = {
-		args: {
-			numberOfMailboxes: quantity,
-			domainName,
-		},
-		count: quantity,
-	};
-	return (
-		<LineItemMeta>
-			{ isRenewal
-				? translate(
-						'%(numberOfMailboxes)d mailbox for %(domainName)s',
-						'%(numberOfMailboxes)d mailboxes for %(domainName)s',
-						translateArgs
-				  )
-				: translate(
-						'%(numberOfMailboxes)d new mailbox for %(domainName)s',
-						'%(numberOfMailboxes)d new mailboxes for %(domainName)s',
-						translateArgs
-				  ) }
-		</LineItemMeta>
 	);
 }
 
@@ -762,11 +773,6 @@ function WPLineItem( {
 
 	const productSlug = product?.product_slug;
 
-	const isGSuite =
-		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
-
-	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
-
 	const sublabel = getSublabel( product );
 	const label = getLabel( product );
 
@@ -777,6 +783,11 @@ function WPLineItem( {
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
+
+	const isEmail =
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
+		isGoogleWorkspaceProductSlug( productSlug ) ||
+		isTitanMail( product );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -844,9 +855,11 @@ function WPLineItem( {
 					<IntroductoryOfferCallout product={ product } />
 				</LineItemMeta>
 			) }
+
 			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
-			{ isGSuite && <GSuiteUsersList product={ product } /> }
-			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
+
+			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+
 			{ children }
 		</div>
 	);
