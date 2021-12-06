@@ -306,6 +306,10 @@
 		cursor: pointer;
 	}
 
+	.manage-purchase__backup-payment-method-notice a {
+		display: inline;
+	}
+
 	&.is-expiring .manage-purchase__detail-date-span {
 		color: var( --studio-pink-50 );
 	}
