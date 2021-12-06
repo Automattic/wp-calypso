@@ -39,7 +39,7 @@ const Header: React.FunctionComponent = () => {
 	const locale = useLocale();
 	const isAnchorFmSignup = useIsAnchorFm();
 	const isDesignPickerCategoriesEnabled =
-		isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
+		! isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
 
 	const { goBack } = useStepNavigation();
 	const title = isDesignPickerCategoriesEnabled ? __( 'Themes' ) : __( 'Choose a design' );
@@ -91,7 +91,7 @@ const Designs: React.FunctionComponent = () => {
 
 	// As the amount of the anchorfm related designs is little, we don't need to enable categories filter
 	const isDesignPickerCategoriesEnabled =
-		isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
+		! isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
 
 	const useFeaturedPicksButtons =
 		isDesignPickerCategoriesEnabled &&
