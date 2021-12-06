@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { cloneElement, useEffect, useState } from 'react';
+import moment from 'moment';
 import { useSelector, shallowEqual } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
@@ -154,7 +155,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 											<span className="videos-ui__video-title">
 												{ i + 1 }. { videoInfo.title }{ ' ' }
 											</span>
-											<span className="videos-ui__duration"> { videoInfo.duration } </span>{ ' ' }
+											<span className="videos-ui__duration"> { moment.unix( videoInfo.duration_seconds ).format('m:ss') } </span>{ ' ' }
 											{ isVideoCompleted && (
 												<span className="videos-ui__completed-checkmark">
 													<Gridicon icon="checkmark" size={ 12 } />
