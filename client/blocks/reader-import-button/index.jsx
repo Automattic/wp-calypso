@@ -44,6 +44,8 @@ class ReaderImportButton extends Component {
 				path: '/read/following/mine/import',
 				formData: [ [ 'import', file ] ],
 			},
+			// XXX: kind strange, wpcom.js, that `apiVersion` must be in `query`
+			// *and* pass a `body` of null for this to work properly…
 			{
 				apiVersion: '1.2',
 			},
