@@ -135,15 +135,25 @@ export interface ShoppingCartManagerActions {
 
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
 
-export type ShoppingCartState = {
-	responseCart: TempResponseCart;
-	lastValidResponseCart: ResponseCart;
-	couponStatus: CouponStatus;
-	cacheStatus: CacheStatus;
-	loadingError?: string;
-	loadingErrorType?: ShoppingCartError;
-	queuedActions: ShoppingCartAction[];
-};
+export type ShoppingCartState =
+	| {
+			responseCart: TempResponseCart;
+			lastValidResponseCart: ResponseCart;
+			couponStatus: CouponStatus;
+			cacheStatus: Exclude< CacheStatus, 'error' >;
+			loadingError?: undefined;
+			loadingErrorType?: undefined;
+			queuedActions: ShoppingCartAction[];
+	  }
+	| {
+			responseCart: TempResponseCart;
+			lastValidResponseCart: ResponseCart;
+			couponStatus: CouponStatus;
+			cacheStatus: Extract< CacheStatus, 'error' >;
+			loadingError: string;
+			loadingErrorType: ShoppingCartError;
+			queuedActions: ShoppingCartAction[];
+	  };
 
 export interface WithShoppingCartProps {
 	shoppingCartManager: UseShoppingCart;
