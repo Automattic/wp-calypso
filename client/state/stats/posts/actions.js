@@ -44,9 +44,8 @@ export function requestPostStats( siteId, postId, fields = [] ) {
 			fields,
 		} );
 
-		return wpcom
-			.site( siteId )
-			.statsPostViews( postId, { fields: fields.join() } )
+		return wpcom.req
+			.get( `/sites/${ siteId }/stats/post/${ postId }`, { fields: fields.join() } )
 			.then( ( stats ) => {
 				dispatch( receivePostStats( siteId, postId, stats ) );
 				dispatch( {
