@@ -50,7 +50,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;
 
 	const price = (
-		<div className="email-provider-stacked-card__price-badge">
+		<div className="email-provider-stacked-card__title-price-badge">
 			<div className="email-provider-stacked-card__discount badge badge--info-green">
 				{ translate( '3 months free' ) }
 			</div>
