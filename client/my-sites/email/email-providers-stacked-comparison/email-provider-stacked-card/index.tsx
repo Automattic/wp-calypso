@@ -30,7 +30,6 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		logo,
 		onButtonClick = noop,
 		onExpandedChange = noop,
-		priceBadge = null,
 		productName,
 		providerKey,
 		showExpandButton = true,
