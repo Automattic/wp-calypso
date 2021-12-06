@@ -2,11 +2,9 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { cloneElement, useEffect, useState } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
 import VideoPlayer from './video-player';
 import './style.scss';
 
@@ -17,10 +15,8 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	const { data: course } = useCourseQuery( courseSlug, { retry: false } );
 	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
 
-	const initialUserCourseProgression = useSelector( ( state ) => {
-		const courses = getOriginalUserSetting( state, 'courses' );
-		return courses !== null && courseSlug in courses ? courses[ courseSlug ] : [];
-	}, shallowEqual );
+	const initialUserCourseProgression = course?.completions ?? [];
+
 	const [ userCourseProgression, setUserCourseProgression ] = useState( [] );
 	useEffect( () => {
 		setUserCourseProgression( initialUserCourseProgression );
