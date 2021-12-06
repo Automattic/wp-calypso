@@ -37,7 +37,7 @@
 		"typescript": "^4.4.4"
 	},
 	"scripts": {
-		"clean": "yarn build --clean && npx rimraf dist",
+		"clean": "yarn build --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json",
 		"test": "yarn jest"
 	}
