@@ -1,4 +1,3 @@
-import path from 'path';
 import { Page } from 'playwright';
 import { DataHelper } from '../..';
 import { NavbarComponent, SidebarComponent } from '../components';
@@ -29,10 +28,9 @@ export class NewPostFlow {
 	 * @returns An instance of the GutenbergEditorPage class
 	 */
 	async startImmediately( user: string ): Promise< GutenbergEditorPage > {
-		const calypsoURL = DataHelper.getCalypsoURL();
 		const siteHost = DataHelper.getAccountSiteURL( user, { protocol: false } );
 
-		await this.page.goto( path.join( calypsoURL, 'post', siteHost ) );
+		await this.page.goto( DataHelper.getCalypsoURL( `post/${ siteHost }` ) );
 
 		if ( ! this.isLoggedIn ) {
 			await new LoginPage( this.page ).fillAndSubmit( { account: user } );
