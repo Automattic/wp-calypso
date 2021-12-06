@@ -78,16 +78,12 @@ export async function newPage( { context }: { context?: BrowserContext } = {} ):
  * @param {BrowserType} browserType Type of browser to use.
  * @returns {Promise<Browser>} New Browser instance.
  */
-export async function startBrowser(
-	browserType: BrowserType,
-	options?: { channel?: string }
-): Promise< Browser > {
+export async function startBrowser( browserType: BrowserType ): Promise< Browser > {
 	if ( browser ) {
 		return browser;
 	}
 
 	browser = await browserType.launch( {
-		...options,
 		headless: getHeadless(),
 		args: [ '--window-position=0,0' ],
 	} );
