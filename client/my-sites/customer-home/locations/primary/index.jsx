@@ -14,11 +14,9 @@ import {
 	TASK_FIND_DOMAIN,
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
-	TASK_GROWTH_SUMMIT,
 	TASK_PODCASTING,
 	TASK_RENEW_EXPIRED_PLAN,
 	TASK_RENEW_EXPIRING_PLAN,
-	TASK_SITE_SETUP_CHECKLIST_ECOMMERCE,
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_UPSELL_TITAN,
 	TASK_VERIFY_EMAIL,
@@ -36,10 +34,8 @@ import DIFMLiteInProgress from 'calypso/my-sites/customer-home/cards/tasks/difm-
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
-import GrowthSummit from 'calypso/my-sites/customer-home/cards/tasks/growth-summit';
 import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
-import SiteSetupListEcommerce from 'calypso/my-sites/customer-home/cards/tasks/site-setup-checklist-ecommerce';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
 import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
@@ -59,13 +55,11 @@ const cardComponents = {
 	[ TASK_FIND_DOMAIN ]: FindDomain,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
-	[ TASK_GROWTH_SUMMIT ]: GrowthSummit,
 	[ TASK_PODCASTING ]: Podcasting,
 	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
 	[ TASK_RENEW_EXPIRING_PLAN ]: Renew,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
 	[ TASK_UPSELL_TITAN ]: TitanBanner,
-	[ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE ]: SiteSetupListEcommerce,
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
