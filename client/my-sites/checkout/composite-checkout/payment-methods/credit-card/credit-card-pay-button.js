@@ -1,10 +1,4 @@
-import {
-	Button,
-	FormStatus,
-	useLineItems,
-	useEvents,
-	useFormStatus,
-} from '@automattic/composite-checkout';
+import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
@@ -31,7 +25,6 @@ export default function CreditCardPayButton( {
 	);
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const paymentPartner = shouldUseEbanx ? 'ebanx' : 'stripe';
 	const elements = useElements();
 	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
@@ -43,7 +36,6 @@ export default function CreditCardPayButton( {
 				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
-						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN', payload: { useForAllSubscriptions } } );
 						onClick( 'card', {
 							stripe,
 							name: cardholderName?.value,
@@ -61,7 +53,6 @@ export default function CreditCardPayButton( {
 					}
 					if ( paymentPartner === 'ebanx' ) {
 						debug( 'submitting ebanx payment' );
-						onEvent( { type: 'EBANX_TRANSACTION_BEGIN' } );
 						onClick( 'card', {
 							name: cardholderName?.value || '',
 							countryCode: fields?.countryCode?.value || '',
