@@ -1,4 +1,5 @@
 import { createRef, useEffect, useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const VideoPlayer = ( {
 	videoData,
@@ -41,6 +42,13 @@ const VideoPlayer = ( {
 		setShouldCheckForVideoComplete( true );
 	}, [ course?.slug, videoData?.slug ] );
 
+	const trackPlayClick = () => {
+		recordTracksEvent( 'calypso_courses_video_player_play_click', {
+			course: course.slug,
+			video: videoData.slug,
+		} );
+	};
+
 	return (
 		<div key={ videoData.url } className="videos-ui__video">
 			<video
@@ -48,6 +56,7 @@ const VideoPlayer = ( {
 				ref={ videoRef }
 				poster={ videoData.poster }
 				autoPlay={ isPlaying }
+				onPlay={ trackPlayClick }
 				onTimeUpdate={ shouldCheckForVideoComplete ? markVideoAsComplete : undefined }
 			>
 				<source src={ videoData.url } />{ ' ' }
