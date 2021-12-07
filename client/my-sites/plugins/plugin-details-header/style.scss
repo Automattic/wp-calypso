@@ -1,6 +1,10 @@
-@use '../placeholder';
+@use '../variables';
 
 $plugin-details-header-padding: 100px;
+
+.plugin-details-header__container {
+    @extend %plugin-header;
+}
 
 .plugin-details-header__name {
 	font-family: $brand-serif;

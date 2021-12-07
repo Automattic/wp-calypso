@@ -72,7 +72,7 @@ const PluginDetailsCTA = ( {
 	}
 
 	return (
-		<div className="plugin-details-CTA__container plugin-details__header">
+		<div className="plugin-details-CTA__container">
 			<div className="plugin-details-CTA__price">{ translate( 'Free' ) }</div>
 			<div className="plugin-details-CTA__install">
 				<CTAButton
@@ -101,7 +101,7 @@ const PluginDetailsCTA = ( {
 
 const PluginDetailsCTAPlaceholder = () => {
 	return (
-		<div className="plugin-details-CTA__container plugin-details__header is-placeholder">
+		<div className="plugin-details-CTA__container is-placeholder">
 			<div className="plugin-details-CTA__price">...</div>
 			<div className="plugin-details-CTA__install">...</div>
 			<div className="plugin-details-CTA__t-and-c">...</div>

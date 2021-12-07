@@ -18,7 +18,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 	return (
 		<>
 			<div className="plugin-details-header__tags">{ tags }</div>
-			<div className="plugin-details-header__container plugin-details__header">
+			<div className="plugin-details-header__container">
 				<div className="plugin-details-header__name">{ plugin.name }</div>
 				<div className="plugin-details-header__description">
 					{ plugin.short_description || plugin.description }
@@ -56,9 +56,9 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 
 const PluginDetailsHeaderPlaceholder = () => {
 	return (
-		<div className="is-placeholder">
+		<div className="plugin-details-header-wrapper is-placeholder">
 			<div className="plugin-details-header__tags">...</div>
-			<div className="plugin-details-header__container plugin-details__header">
+			<div className="plugin-details-header__container">
 				<div className="plugin-details-header__name">...</div>
 				<div className="plugin-details-header__description">...</div>
 				<div className="plugin-details-header__additional-info">...</div>

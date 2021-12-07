@@ -118,8 +118,6 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
-$plugin-details-header-padding: 100px;
-
 .plugin-details__layout {
 	@include grid-row( 4, 1 );
 	@include breakpoint-deprecated( '>1040px' ) {
@@ -146,17 +144,6 @@ $plugin-details-header-padding: 100px;
 .plugin-details__page {
 	@media screen and ( max-width: 1040px ) {
 		padding: 16px;
-	}
-}
-
-.plugin-details__header {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	padding: $plugin-details-header-padding 0;
-
-	@media screen and ( max-width: 1040px ) {
-		padding: 0;
 	}
 }
 

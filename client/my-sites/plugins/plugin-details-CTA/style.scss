@@ -1,4 +1,8 @@
-@use '../placeholder';
+@use '../variables';
+
+.plugin-details-CTA__container {
+	@extend %plugin-header;
+}
 
 .plugin-details-CTA__price {
 	font-family: $brand-serif;
