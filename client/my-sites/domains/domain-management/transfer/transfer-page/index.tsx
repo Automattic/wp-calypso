@@ -4,6 +4,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import moment from 'moment';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
@@ -214,16 +215,40 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		);
 
 		const domain = getSelectedDomain( props );
+		const disabled =
+			! domain.domainLockingAvailable ||
+			domain.transferAwayEligibleAt ||
+			isLockingOrUnlockingDomain;
 
 		return (
 			<ToggleControl
 				className="transfer-page__transfer-lock"
 				checked={ isDomainLocked }
-				disabled={ ! domain.domainLockingAvailable || isLockingOrUnlockingDomain }
+				disabled={ disabled }
 				onChange={ toggleDomainLock }
 				label={ label }
 			/>
 		);
+	};
+
+	const renderTransferMessage = () => {
+		const domain = getSelectedDomain( props );
+
+		if ( domain.transferAwayEligibleAt ) {
+			// translators: %s is a date string, e.g. April 1, 2020
+			return sprintf(
+				__( 'You can unlock this domain after %s' ),
+				moment( domain.transferAwayEligibleAt ).format( 'LL' )
+			);
+		}
+
+		if ( isDomainInfoLoading || domain.domainLockingAvailable ) {
+			return __(
+				'We recommend leaving the transfer lock on, unless you want to transfer your domain to another provider.'
+			);
+		}
+
+		return __( 'This domain cannot be locked.' );
 	};
 
 	const renderAdvancedTransferOptions = () => {
@@ -231,19 +256,11 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			return null;
 		}
 
-		const domain = getSelectedDomain( props );
-		const description =
-			isDomainInfoLoading || domain.domainLockingAvailable
-				? __(
-						'We recommend leaving the transfer lock on, unless you want to transfer your domain to another provider.'
-				  )
-				: __( 'This domain cannot be transfer locked.' );
-
 		return (
 			<Card className="transfer-page__advanced-transfer-options">
 				<CardHeading size={ 16 }>Advanced Options</CardHeading>
 				{ renderTransferLock() }
-				<p>{ description }</p>
+				<p>{ renderTransferMessage() }</p>
 				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
 					{ __( 'Get authorization code' ) }
 				</Button>
