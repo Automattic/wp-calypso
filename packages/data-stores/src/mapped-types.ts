@@ -14,6 +14,10 @@ import type { FunctionKeys } from 'utility-types';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// See
+type Cast< T, U > = T extends U ? T : T & U;
+type CastToFunction< T > = Cast< T, ( ...args: any[] ) => any >;
+
 /**
  * Maps a "raw" selector object to the selectors available when registered on the @wordpress/data store.
  *
@@ -22,8 +26,8 @@ import type { FunctionKeys } from 'utility-types';
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SelectFromMap< S extends object > = {
 	[ selector in FunctionKeys< S > ]: (
-		...args: TailParameters< S[ selector ] >
-	) => ReturnType< S[ selector ] >;
+		...args: TailParameters< CastToFunction< S[ selector ] > >
+	) => ReturnType< CastToFunction< S[ selector ] > >;
 };
 
 /**
