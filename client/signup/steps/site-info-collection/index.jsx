@@ -53,7 +53,6 @@ function SiteInformationCollection( {
 
 	return (
 		<Container>
-			<button onClick={()=>onTypeformSubmission("XXXYYY")}>NEXT</button>
 			<Widget
 				hidden={ {
 					username: signupUsername || loggedInUsername,
