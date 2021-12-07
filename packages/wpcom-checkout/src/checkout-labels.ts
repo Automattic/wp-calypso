@@ -39,7 +39,7 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 			: String( translate( 'Plan Subscription' ) );
 	}
 
-	if ( isGSuiteOrExtraLicenseProductSlug || isGoogleWorkspace( serverCartItem ) ) {
+	if ( isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspace( serverCartItem ) ) {
 		if ( isRenewalItem ) {
 			return String( translate( 'Productivity Tools and Mailboxes Renewal' ) );
 		}

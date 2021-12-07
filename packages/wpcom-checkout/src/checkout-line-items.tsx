@@ -500,16 +500,13 @@ function LineItemSublabelAndPrice( {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
-	const isDomainRegistration = product.is_domain_registration;
-	const isDomainMap = product.product_slug === 'domain_map';
 	const productSlug = product.product_slug;
 	const sublabel = getSublabel( product );
 
-	// This is the price for one item for products with a quantity (eg. seats in a license).
-	const itemPrice = product.item_original_cost_for_quantity_one_display;
-
 	if ( isPlan( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
+			// This is the price for one item for products with a quantity (eg. seats in a license).
+			const itemPrice = product.item_original_cost_for_quantity_one_display;
 			const members = product?.current_quantity || 1;
 			const p2Options = {
 				args: {
@@ -518,6 +515,7 @@ function LineItemSublabelAndPrice( {
 				},
 				count: members,
 			};
+
 			return (
 				<>
 					{ translate(
@@ -582,8 +580,12 @@ function LineItemSublabelAndPrice( {
 		);
 	}
 
+	const isDomainRegistration = product.is_domain_registration;
+	const isDomainMap = productSlug === 'domain_map';
+
 	if ( ( isDomainRegistration || isDomainMap ) && product.months_per_bill_period === 12 ) {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
+
 		return (
 			<>
 				{ translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
