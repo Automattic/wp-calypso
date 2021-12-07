@@ -60,6 +60,7 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
+				set -x
 				# Merge the trunk branch first. This way, our builds and tests
 				# include the latest merged version of the plugin being built.
 				# Otherwise, we can get into a situation where the current plugin
@@ -81,7 +82,13 @@ open class PluginBaseBuild : Template({
 				# Update composer
 				composer install
 
-				$yarn_install_cmd
+				cd $workingDir
+
+				# Focus on the app workspace. This will also install all dependant workspaces
+				yarn workspaces focus
+
+				# Run the script 'prepare' in all dependant workspaces
+				yarn workspaces foreach --recursive --verbose --parallel run prepare
 			"""
 		}
 		bashNodeScript {
@@ -119,6 +126,7 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Process Artifact"
 			scriptContent = """
+				set -x
 				# Prepare pr commenter script.
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
