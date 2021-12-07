@@ -19,8 +19,8 @@ export const BillingIntervalToggle: FunctionComponent< BillingIntervalToggleProp
 	};
 
 	return (
-		<>
-			<SegmentedControl className="billing-interval-toggle__wrapper" compact primary>
+		<div className="billing-interval-toggle__wrapper">
+			<SegmentedControl compact primary>
 				<SegmentedControl.Item
 					selected={ intervalLength === IntervalLength.MONTHLY }
 					onClick={ onIntervalClick( IntervalLength.MONTHLY ) }
@@ -35,6 +35,6 @@ export const BillingIntervalToggle: FunctionComponent< BillingIntervalToggleProp
 					<span>{ translate( 'Pay annually' ) }</span>
 				</SegmentedControl.Item>
 			</SegmentedControl>
-		</>
+		</div>
 	);
 };
