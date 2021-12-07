@@ -2,7 +2,7 @@ import { NextButton } from '@automattic/onboarding';
 import { Icon, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
@@ -13,6 +13,12 @@ import './style.scss';
 import type { ChangeEvent, FormEvent } from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+const trackEventName = 'calypso_signup_step_start';
+const trackEventParams = {
+	flow: 'importer',
+	step: 'capture',
+};
 
 const validateUrl = ( url: string ): boolean => {
 	const urlRgx = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
@@ -37,9 +43,9 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	/**
 	 ↓ Fields
 	 */
-	const [ urlValue, setUrlValue ] = React.useState( '' );
-	const [ isValid, setIsValid ] = React.useState( true );
-	const [ showError, setShowError ] = React.useState( false );
+	const [ urlValue, setUrlValue ] = useState( '' );
+	const [ isValid, setIsValid ] = useState( true );
+	const [ showError, setShowError ] = useState( false );
 	const showSubmitButton = isValid && urlValue && ! analyzerError;
 
 	/**
@@ -60,9 +66,8 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	const recordScanningEvent = () => {
 		if ( ! isAnalyzing ) return;
 
-		recordTracksEvent( 'calypso_signup_step_start', {
-			flow: 'importer',
-			step: 'capture',
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
 			action: 'scanning',
 		} );
 	};
@@ -70,9 +75,8 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	const recordScanningErrorEvent = () => {
 		if ( ! analyzerError ) return;
 
-		recordTracksEvent( 'calypso_signup_step_start', {
-			flow: 'importer',
-			step: 'capture',
+		recordTracksEvent( trackEventParams, {
+			...trackEventParams,
 			action: 'scanning-error',
 			error: JSON.stringify( analyzerError ),
 		} );
