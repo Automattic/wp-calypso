@@ -1411,7 +1411,7 @@ __metadata:
     moment: ^2.26.0
     npm-run-all: ^4.1.5
     postcss: ^8.3.11
-    puppeteer: ^3.0.4
+    puppeteer: ^12.0.1
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
@@ -14716,6 +14716,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"debug@npm:4.3.2":
+  version: 4.3.2
+  resolution: "debug@npm:4.3.2"
+  dependencies:
+    ms: 2.1.2
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 3cc408070bcee066ee9b2a4f3a9c40f53728919ec7c7ff568f7c3a75b0723cb5a8407191a63495be4e10669e99b0ff7f26ec70e10b025da1898cdce4876d96ca
+  languageName: node
+  linkType: hard
+
 "debug@npm:^3.0.0, debug@npm:^3.1.0, debug@npm:^3.1.1, debug@npm:^3.2.6, debug@npm:^3.2.7":
   version: 3.2.7
   resolution: "debug@npm:3.2.7"
@@ -15137,6 +15149,13 @@ __metadata:
   version: 0.0.901419
   resolution: "devtools-protocol@npm:0.0.901419"
   checksum: e579806f1f17e7a59383043d7301efd9c3d5b894e89ec24f31b80aa47b7960324481adc761e3cf3aedbbb596084cffbb7d85c82006a0d64f8c69bc052b92b2c7
+  languageName: node
+  linkType: hard
+
+"devtools-protocol@npm:0.0.937139":
+  version: 0.0.937139
+  resolution: "devtools-protocol@npm:0.0.937139"
+  checksum: 45653bdec130ec8b7320d4ec19a4d4743c4561bdb532fe640e7952ffc8c24c7ccd6e5ddad2c0943829eb1a69573246189250cf57b7a052b6282a4cb5be17f2aa
   languageName: node
   linkType: hard
 
@@ -26449,6 +26468,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"node-fetch@npm:2.6.5":
+  version: 2.6.5
+  resolution: "node-fetch@npm:2.6.5"
+  dependencies:
+    whatwg-url: ^5.0.0
+  checksum: 5ef1783bb1d0f3df82b8fbf09635d408e951a79f4424bb7eb39594fa327cd9d85bbf713f474c4e832116b48e0874cb0ac2b4497599c66d0c1ab6dc5ad284b7ba
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:^1.0.1, node-fetch@npm:^1.7.2":
   version: 1.7.3
   resolution: "node-fetch@npm:1.7.3"
@@ -29586,7 +29614,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"progress@npm:^2.0.0, progress@npm:^2.0.1, progress@npm:^2.0.3":
+"progress@npm:2.0.3, progress@npm:^2.0.0, progress@npm:^2.0.1, progress@npm:^2.0.3":
   version: 2.0.3
   resolution: "progress@npm:2.0.3"
   checksum: 1697e07cb1068055dbe9fe858d242368ff5d2073639e652b75a7eb1f2a1a8d4afd404d719de23c7b48481a6aa0040686310e2dac2f53d776daa2176d3f96369c
@@ -29889,6 +29917,26 @@ fsevents@~2.1.2:
     unbzip2-stream: 1.3.3
     ws: 7.4.6
   checksum: 91c746cd587601f487638cb916dba362d13fc053e68373d65e0a6ff85eb32be9b5cd39d4182438789197fd73e98ae40cd603fc2269f350404bd3c107285c0146
+  languageName: node
+  linkType: hard
+
+"puppeteer@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "puppeteer@npm:12.0.1"
+  dependencies:
+    debug: 4.3.2
+    devtools-protocol: 0.0.937139
+    extract-zip: 2.0.1
+    https-proxy-agent: 5.0.0
+    node-fetch: 2.6.5
+    pkg-dir: 4.2.0
+    progress: 2.0.3
+    proxy-from-env: 1.1.0
+    rimraf: 3.0.2
+    tar-fs: 2.1.1
+    unbzip2-stream: 1.4.3
+    ws: 8.2.3
+  checksum: f61187b8546bb7ffb8aa32ff323a3445dbb55890a9c63671c3e5e1ff3d0d93af907a1e3188c1c4987b0d74e89e03be694fb364fbe16f7416d0e0d9235268e33d
   languageName: node
   linkType: hard
 
@@ -35255,7 +35303,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"tar-fs@npm:^2.0.0, tar-fs@npm:^2.1.1":
+"tar-fs@npm:2.1.1, tar-fs@npm:^2.0.0, tar-fs@npm:^2.1.1":
   version: 2.1.1
   resolution: "tar-fs@npm:2.1.1"
   dependencies:
@@ -36499,13 +36547,13 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"unbzip2-stream@npm:^1.3.3":
-  version: 1.4.2
-  resolution: "unbzip2-stream@npm:1.4.2"
+"unbzip2-stream@npm:1.4.3, unbzip2-stream@npm:^1.3.3":
+  version: 1.4.3
+  resolution: "unbzip2-stream@npm:1.4.3"
   dependencies:
     buffer: ^5.2.1
     through: ^2.3.8
-  checksum: afa14e8c23a18ade3e743f12e26c1e1784facee7379eb9df1c3f82514416e5a70b5ee25f787313ee660fa788c3ad820f649c57e190220b932d78c4700f163d92
+  checksum: 2ea2048f3c9db3499316ccc1d95ff757017ccb6f46c812d7c42466247e3b863fb178864267482f7f178254214247779daf68e85f50bd7736c3c97ba2d58b910a
   languageName: node
   linkType: hard
 
@@ -38511,6 +38559,21 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
+"ws@npm:8.2.3, ws@npm:^8.1.0":
+  version: 8.2.3
+  resolution: "ws@npm:8.2.3"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ^5.0.2
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 5ef0f81cc5b8776fb5dd5504c83b4f49be5aa610f9319ff774158bba7db495127e69763d73085288223061e7a5d104d022e2e264346b36b046322f50057e7945
+  languageName: node
+  linkType: hard
+
 "ws@npm:^1.1.0, ws@npm:^1.1.5":
   version: 1.1.5
   resolution: "ws@npm:1.1.5"
@@ -38562,21 +38625,6 @@ testarmada-magellan@11.0.10:
     utf-8-validate:
       optional: true
   checksum: ca1674eb90923c1b67a7df99709119c38b39b20db7595255dc146fae6f0cdf513311714a314a30819cf6bbe06bb31378bb4722d0a3025c161ef556281077e5ec
-  languageName: node
-  linkType: hard
-
-"ws@npm:^8.1.0":
-  version: 8.2.3
-  resolution: "ws@npm:8.2.3"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 5ef0f81cc5b8776fb5dd5504c83b4f49be5aa610f9319ff774158bba7db495127e69763d73085288223061e7a5d104d022e2e264346b36b046322f50057e7945
   languageName: node
   linkType: hard
 
