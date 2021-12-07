@@ -66,18 +66,22 @@
 			}
 		}
 
-		.site-setup-list__email {
-			display: none;
-			@include break-mobile {
-				color: var( --studio-gray-20 );
-				display: block;
-			}
+		.site-setup-list__nav-item-email {
+			color: var( --studio-gray-50 );
+			display: block;
 		}
 
-		.site-setup-list__emailbold {
-			font-weight: bolder;
+		.site-setup-list__task-description-email {
+			font-weight: 600;
 			display: block;
 			padding-top: 30px;
+		}
+	}
+
+	.site-setup-list__list .nav-item.is-current .site-setup-list__nav-item-email {
+		display: none;
+		@include break-mobile {
+			display: block;
 		}
 	}
 

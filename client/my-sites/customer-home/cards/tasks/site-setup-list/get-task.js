@@ -80,21 +80,22 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			taskData = {
 				timing: 1,
-				title: translate( 'Confirm your email address {{emailAddress /}}', {
-					components: {
-						emailAddress: <span className="site-setup-list__email">{ userEmail }</span>,
-					},
-				} ),
+				title: (
+					<>
+						{ translate( 'Confirm your email address' ) }
+						<span className="site-setup-list__nav-item-email">{ userEmail }</span>
+					</>
+				),
 				description: translate(
-					'We have sent an email to this address to verify your account. Not in inbox or spam folder? Tap the Resend button!' +
-						'{{emailWrapperBold}} %(email)s {{/emailWrapperBold}} {{changeButton}} Change {{/changeButton}}',
+					'We have sent an email to this address to verify your account. Not in inbox or spam folder? Tap the Resend email button! ' +
+						'{{emailWrapper}}%(email)s{{/emailWrapper}} {{changeButton}}Change{{/changeButton}}',
 					{
 						args: {
 							email: userEmail,
 						},
 						components: {
 							changeButton: <a href="/me/account" />,
-							emailWrapperBold: <span className="site-setup-list__emailbold" />,
+							emailWrapper: <span className="site-setup-list__task-description-email" />,
 						},
 					}
 				),
