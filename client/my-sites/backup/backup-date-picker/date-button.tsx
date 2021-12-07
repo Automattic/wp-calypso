@@ -33,10 +33,12 @@ const DateButton: React.FC< Props > = ( {
 
 	// Map date strings that should be disabled to Date objects that can be used by the calendar
 	const disabledDatesObjects = useMemo( () => {
-		return disabledDates.map( ( date ) => {
-			const momentDate = moment( date );
-			return new Date( momentDate.year(), momentDate.month(), momentDate.date() );
-		} );
+		return disabledDates
+			? disabledDates.map( ( date ) => {
+					const momentDate = moment( date );
+					return new Date( momentDate.year(), momentDate.month(), momentDate.date() );
+			  } )
+			: [];
 	}, [ disabledDates ] );
 
 	const renderPicker = () => {

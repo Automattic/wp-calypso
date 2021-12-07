@@ -66,20 +66,28 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 
 		const dateOutputs = [
 			{
+				label: 'previous',
 				date: previousDate,
 				string: previousDate.format( dateFormat ),
 			},
 			{
+				label: 'next',
 				date: nextDate,
 				string: nextDate.format( dateFormat ),
 			},
 			{
+				label: 'current',
 				date: selectedDate,
 				string: selectedDate.format( dateFormat ),
 			},
 		];
 
 		dateOutputs.forEach( ( formatObject ) => {
+			// Don't modify the "next: date control
+			if ( 'next' === formatObject.label ) {
+				return;
+			}
+			// For current and previous dates, set to say "Today" or "Yesterday" when appropriate
 			if ( formatObject.date.isSame( today, 'day' ) ) {
 				formatObject.string = translate( 'Today' ).toString();
 			} else if ( formatObject.date.isSame( yesterday, 'day' ) ) {
