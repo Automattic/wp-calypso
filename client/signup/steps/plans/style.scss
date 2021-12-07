@@ -39,12 +39,17 @@
 	margin-top: 25px;
 }
 
-.signup__step.is-plans .formatted-header__subtitle .button.is-borderless,
-.signup__step.is-plans-launch .formatted-header__subtitle .button.is-borderless {
-	padding: 0;
-	color: inherit;
-	font-size: inherit;
-	font-weight: inherit;
-	line-height: inherit;
-	text-decoration: underline;
+.signup__step {
+	&.is-plans,
+	&.is-plans-launch,
+	&.is-plans-import, {
+		.formatted-header__subtitle .button.is.borderless {
+			padding: 0;
+			color: inherit;
+			font-size: inherit;
+			font-weight: inherit;
+			line-height: inherit;
+			text-decoration: underline;
+		}
+	}
 }
