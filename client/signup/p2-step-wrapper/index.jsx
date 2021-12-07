@@ -40,7 +40,11 @@ function P2StepWrapper( {
 						/>
 					</SVG>
 				</div>
-				{ headerIcon && <Icon icon={ headerIcon } /> }
+				{ headerIcon && (
+					<div className="p2-step-wrapper__header-icon">
+						<Icon icon={ headerIcon } />
+					</div>
+				) }
 				{ headerText && <h1 className="p2-step-wrapper__header-text">{ headerText }</h1> }
 				{ subHeaderText && <p className="p2-step-wrapper__subheader-text">{ subHeaderText }</p> }
 			</div>
