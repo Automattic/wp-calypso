@@ -3,11 +3,11 @@
  */
 import { Button } from '@wordpress/components';
 import { Icon, chevronRight } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { login } from 'calypso/lib/paths';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
