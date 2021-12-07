@@ -9,10 +9,9 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { login } from 'calypso/lib/paths';
-import flows from 'calypso/signup/config/flows';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
-import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 function getLoginLink( { flowName, locale } ) {
@@ -36,25 +35,8 @@ function P2GetStarted( {
 } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-
-	const maybeExcludeEmailConfirmationStep = () => {
-		if ( ! isUserLoggedIn ) {
-			return;
-		}
-
-		if ( ! isEmailVerified ) {
-			return;
-		}
-
-		const emailConfirmationStepName = 'p2-confirm-email';
-		submitSignupStep( { stepName: emailConfirmationStepName, wasSkipped: true } );
-		flows.excludeStep( emailConfirmationStepName );
-	};
 
 	const handleNextStepClick = ( option ) => {
-		maybeExcludeEmailConfirmationStep();
-
 		submitSignupStep( {
 			stepName,
 			option,
