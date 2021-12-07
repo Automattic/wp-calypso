@@ -34,11 +34,11 @@ import {
 	newUser,
 } from '../email-provider-stacked-card/email-provider-generic-form';
 import {
-	AddToCartAndCheckout,
+	addToCartAndCheckout,
 	PriceBadge,
-	PriceWithTerm,
+	PriceWithInterval,
 	recordTracksEventAddToCartClick,
-	TermLength,
+	IntervalLength,
 } from './utils';
 import type { GenericNewUser } from '../email-provider-stacked-card/email-provider-generic-form';
 import type {
@@ -68,7 +68,9 @@ const googleWorkspaceCardInformation: ProviderCard = {
 	onExpandedChange: noop,
 	providerKey: 'google',
 	showExpandButton: true,
-	description: translate( 'Productivity tools and mailbox from Google.' ),
+	description: translate(
+		'Professional email integrated with Google Meet and other productivity tools from Google.'
+	),
 	logo: { path: googleWorkspaceIcon, className: 'google-workspace-icon' },
 	productName: getGoogleMailServiceFamily(),
 	features: getGoogleFeatures(),
@@ -83,28 +85,28 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		gSuiteProductYearly,
 		onExpandedChange,
 		selectedDomainName,
-		termLength,
+		intervalLength,
 	} = props;
-	const googleWorkspace: ProviderCard = googleWorkspaceCardInformation;
+	const googleWorkspace: ProviderCard = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = detailsExpanded;
 
 	const gSuiteProduct =
-		termLength === TermLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
+		intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
 	const productIsDiscounted = hasDiscount( gSuiteProduct );
 
-	const priceWithTerm = (
-		<PriceWithTerm
+	const priceWithInterval = (
+		<PriceWithInterval
 			className={ 'google-workspace-card' }
-			termLength={ termLength }
+			intervalLength={ intervalLength }
 			cost={ gSuiteProduct?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
 			hasDiscount={ productIsDiscounted }
 		/>
 	);
 
-	const standardPriceForTermLength = formatPrice( gSuiteProduct?.cost, currencyCode ?? '' );
-	const salePriceForTermLength = formatPrice( gSuiteProduct?.sale_cost, currencyCode ?? '' );
+	const standardPriceForIntervalLength = formatPrice( gSuiteProduct?.cost, currencyCode ?? '' );
+	const salePriceForIntervalLength = formatPrice( gSuiteProduct?.sale_cost, currencyCode ?? '' );
 
 	const additionalPriceInformation = productIsDiscounted ? (
 		<div className="google-workspace-card__discount-with-renewal">
@@ -113,8 +115,8 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 				{
 					args: {
 						discount: gSuiteProduct.sale_coupon.discount,
-						discountedPrice: salePriceForTermLength,
-						standardPrice: standardPriceForTermLength,
+						discountedPrice: salePriceForIntervalLength,
+						standardPrice: standardPriceForIntervalLength,
 					},
 					comment:
 						'%(discount)d is a numeric discount percentage, e.g. 40; ' +
@@ -143,7 +145,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	googleWorkspace.priceBadge = (
 		<PriceBadge
 			additionalPriceInformationComponent={ additionalPriceInformation }
-			priceComponent={ priceWithTerm }
+			priceComponent={ priceWithInterval }
 			className={ 'google-workspace-card' }
 		/>
 	);
@@ -165,7 +167,8 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			source,
 		} = props;
 
-		const product = termLength === TermLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
+		const product =
+			intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 		const userCannotAddEmailReason = userCanAddEmail
@@ -191,7 +194,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		setAddingToCart( true );
 		const cartItems: any = getItemsForCart( domains, product.product_slug, genericUsers );
 
-		AddToCartAndCheckout(
+		addToCartAndCheckout(
 			shoppingCartManager,
 			cartItems[ 0 ],
 			productsList,

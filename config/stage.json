@@ -16,7 +16,6 @@
 	"difm_typeform_id": "YMiXMYId",
 	"difm_signup_typeform_id": "m3s2pdgI",
 	"features": {
-		"activity-log/display-rules": true,
 		"ad-tracking": false,
 		"async-payments": false,
 		"calypsoify/plugins": true,
@@ -52,7 +51,6 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/magic-link-signup": true,
-		"jetpack/only-realtime-products": true,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,

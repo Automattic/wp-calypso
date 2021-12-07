@@ -2,12 +2,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import i18nCalypso, { localize } from 'i18n-calypso';
+import i18nCalypso, { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
+import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
@@ -388,7 +389,7 @@ class PurchaseItem extends Component {
 	};
 
 	renderPurhaseItemContent = () => {
-		const { purchase, showSite } = this.props;
+		const { purchase, showSite, isBackupMethodAvailable } = this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
@@ -405,6 +406,7 @@ class PurchaseItem extends Component {
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
 					{ this.getPaymentMethod() }
+					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
 		);
@@ -462,6 +464,23 @@ class PurchaseItem extends Component {
 	}
 }
 
+function BackupPaymentMethodNotice() {
+	const translate = useTranslate();
+	const noticeText = translate(
+		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
+		{
+			components: {
+				link: <a href="/me/purchases/payment-methods" />,
+			},
+		}
+	);
+	return (
+		<span className="purchase-item__backup-payment-method-notice">
+			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
+		</span>
+	);
+}
+
 PurchaseItem.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func,
 	isDisconnectedSite: PropTypes.bool,
@@ -471,6 +490,7 @@ PurchaseItem.propTypes = {
 	purchase: PropTypes.object,
 	showSite: PropTypes.bool,
 	slug: PropTypes.string,
+	isBackupMethodAvailable: PropTypes.bool,
 };
 
 export default localize( withLocalizedMoment( PurchaseItem ) );

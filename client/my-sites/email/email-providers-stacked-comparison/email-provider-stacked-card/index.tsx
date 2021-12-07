@@ -33,14 +33,14 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
-	const isViewportSizeLowerThan660px = useBreakpoint( '<660px' );
+	const isViewportSizeLowerThan960px = useBreakpoint( '<960px' );
 
-	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan660px;
+	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan960px;
 
 	const toggleVisibility = ( event: React.MouseEvent ): void => {
 		event.preventDefault();
 
-		onExpandedChange( providerKey, ! detailsExpanded );
+		onExpandedChange( providerKey ?? '', ! detailsExpanded );
 	};
 
 	const header = (

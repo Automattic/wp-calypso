@@ -81,13 +81,6 @@ $width-left-panel-card: 55%;
 				}
 			}
 		}
-
-		@include breakpoint-deprecated( '<1040px' ) {
-			&,
-			&.no-gsuite {
-				width: 100%;
-			}
-		}
 	}
 }
 
@@ -174,9 +167,8 @@ h2.action-panel__title {
 	}
 }
 
-.email-provider-stacked-card__provider-additional-price-information {
-	color: var( --studio-gray-60 );
-	margin-left: 4px;
+.email-provider-stacked-card__title-price-badge {
+	width: $width-right-panel-card;
 }
 
 .email-provider-stacked-card__provider-form-and-right-panel {
@@ -206,10 +198,6 @@ h2.action-panel__title {
 		margin-top: 1em;
 		line-height: 1.5;
 		padding-right: 20px;
-
-		@include break-small {
-			flex-direction: column-reverse;
-		}
 
 		@include break-xlarge {
 			flex-direction: row;

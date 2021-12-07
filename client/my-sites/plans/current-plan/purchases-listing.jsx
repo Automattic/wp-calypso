@@ -33,10 +33,6 @@ import {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
@@ -308,11 +304,7 @@ class PurchasesListing extends Component {
 			return null;
 		}
 
-		return (
-			getForCurrentCROIteration( {
-				[ Iterations.ONLY_REALTIME_PRODUCTS ]: <BackupStorageSpace />,
-			} ) ?? null
-		);
+		return <BackupStorageSpace />;
 	}
 
 	renderPlan() {

@@ -13,10 +13,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { BillingSelector } from 'calypso/my-sites/email/email-providers-stacked-comparison/billing-selector/billing-selector';
+import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-stacked-comparison/billing-selector/billing-interval-toggle';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
-import { TermLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -54,7 +54,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 	props
 ) => {
 	const translate = useTranslate();
-	const [ billingPeriod, setBillingPeriod ] = useState( TermLength.MONTHLY );
+	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
 	const { comparisonContext, isGSuiteSupported, selectedDomainName, selectedSite, source } = props;
 	const [ expanded, setExpanded ] = useState( {
 		titan: true,
@@ -88,13 +88,16 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			<h1 className="email-providers-stacked-comparison__header wp-brand-font">
 				{ translate( 'Pick an email solution' ) }
 			</h1>
-			<BillingSelector onTermTypeChange={ setBillingPeriod } termLength={ billingPeriod } />
+			<BillingIntervalToggle
+				onIntervalChange={ setBillingPeriod }
+				intervalLength={ billingPeriod }
+			/>
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ expanded.titan }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
-				termLength={ billingPeriod }
+				intervalLength={ billingPeriod }
 				onExpandedChange={ onExpandedStateChange }
 			/>
 
@@ -104,7 +107,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 					detailsExpanded={ expanded.google }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
-					termLength={ billingPeriod }
+					intervalLength={ billingPeriod }
 					onExpandedChange={ onExpandedStateChange }
 				/>
 			) }

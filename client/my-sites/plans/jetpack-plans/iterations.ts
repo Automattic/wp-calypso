@@ -1,13 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Iterations
  */
 
-export enum Iterations {
-	ONLY_REALTIME_PRODUCTS = 'only-realtime-products',
-}
+// No iterations, currently
+export enum Iterations {}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -18,7 +16,7 @@ const iterationNames: string[] = Object.values( Iterations );
 /**
  * Gets the name of the current CRO iteration.
  *
- * **NOTE:** Avoid using this externally; instead, opt for either
+ * NOTE:** Avoid using this externally; instead, opt for either
  * `getForCurrentCROIteration` or `doForCurrentCROIteration`.
  *
  * @see Iterations
@@ -43,7 +41,7 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		}
 	}
 
-	return isEnabled( 'jetpack/only-realtime-products' ) ? Iterations.ONLY_REALTIME_PRODUCTS : null;
+	return null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;
@@ -55,7 +53,6 @@ type IterationValueMap< T > = Partial< { [ key in Iterations ]: T } >;
  *
  * @param valueGetter {IterationValueMap|IterationValueFunction} Either a map
  * from Iterations to return values, or a function that accepts the current Iteration as an argument.
- *
  * @see getCurrentCROIterationName
  */
 export const getForCurrentCROIteration = < T >(

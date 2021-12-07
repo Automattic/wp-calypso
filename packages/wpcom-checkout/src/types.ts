@@ -228,7 +228,7 @@ export type CheckoutPaymentMethodSlug =
 	| 'full-credits'
 	| 'stripe-three-d-secure'
 	| 'wechat'
-	| `existingCard-${ string }` // a synonym for 'card'
+	| `existingCard${ string }`
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay'; // a synonym for 'web-pay'
 
@@ -239,6 +239,7 @@ export type CheckoutPaymentMethodSlug =
  */
 export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_WPCOM'
+	| 'WPCOM_Billing_MoneyPress_Stored'
 	| 'WPCOM_Billing_Ebanx'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef'
 	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'

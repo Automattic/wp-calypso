@@ -34,7 +34,7 @@
 		"@wordpress/i18n": "^4.2.4",
 		"asana-phrase": "^0.0.8",
 		"node-fetch": "^2.6.1",
-		"typescript": "^4.4.4"
+		"typescript": "^4.5.2"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",

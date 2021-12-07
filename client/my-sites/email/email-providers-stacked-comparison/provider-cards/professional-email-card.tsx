@@ -1,6 +1,6 @@
 import { TITAN_MAIL_ANNUALLY_SLUG, TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { RequestCartProductExtra, withShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
@@ -33,11 +33,11 @@ import {
 	transformGenericUserFromTitanMailboxForCart,
 } from '../email-provider-stacked-card/email-provider-generic-form';
 import {
-	AddToCartAndCheckout,
+	addToCartAndCheckout,
 	PriceBadge,
-	PriceWithTerm,
+	PriceWithInterval,
 	recordTracksEventAddToCartClick,
-	TermLength,
+	IntervalLength,
 } from './utils';
 import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
 
@@ -78,17 +78,17 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		domain,
 		onExpandedChange,
 		selectedDomainName,
-		termLength,
+		intervalLength,
 		titanMailMonthlyProduct,
 		titanMailAnnuallyProduct,
 	} = props;
-	const professionalEmail: ProviderCard = professionalEmailCardInformation;
+	const professionalEmail: ProviderCard = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
 
 	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 
 	const titanMailProduct =
-		termLength === TermLength.MONTHLY ? titanMailMonthlyProduct : titanMailAnnuallyProduct;
+		intervalLength === IntervalLength.MONTHLY ? titanMailMonthlyProduct : titanMailAnnuallyProduct;
 
 	const [ genericUsers, setGenericUsers ] = useState( [ newUser( selectedDomainName ) ] );
 	const [ addingToCart, setAddingToCart ] = useState( false );
@@ -121,26 +121,27 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			userCannotAddEmailReason
 		);
 
-		const cartItem =
-			termLength === TermLength.MONTHLY
-				? titanMailMonthly( {
-						domain: selectedDomainName,
-						quantity: genericUsers.length,
-						extra: {
-							email_users: genericUsers.map( transformGenericUserFromTitanMailboxForCart ),
-							new_quantity: genericUsers.length,
-						},
-				  } )
-				: titanMailAnnually( {
-						domain: selectedDomainName,
-						quantity: genericUsers.length,
-						extra: {
-							email_users: genericUsers.map( transformGenericUserFromTitanMailboxForCart ),
-							new_quantity: genericUsers.length,
-						},
-				  } );
+		const cartProps: {
+			meta?: string;
+			domain?: string;
+			source?: string;
+			quantity?: number | null;
+			extra?: RequestCartProductExtra & { email_users: any };
+		} = {
+			domain: selectedDomainName,
+			quantity: genericUsers.length,
+			extra: {
+				email_users: genericUsers.map( transformGenericUserFromTitanMailboxForCart ),
+				new_quantity: genericUsers.length,
+			},
+		};
 
-		AddToCartAndCheckout(
+		const cartItem =
+			intervalLength === IntervalLength.MONTHLY
+				? titanMailMonthly( cartProps )
+				: titanMailAnnually( cartProps );
+
+		addToCartAndCheckout(
 			shoppingCartManager,
 			cartItem,
 			productsList,
@@ -151,16 +152,17 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 
 	const onTitanFormReturnKeyPress = noop;
 
-	const priceWithTerm = (
-		<PriceWithTerm
+	const priceWithInterval = (
+		<PriceWithInterval
 			className={ 'professional-email-card' }
-			termLength={ termLength }
+			intervalLength={ intervalLength }
 			cost={ titanMailProduct?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
 			hasDiscount={ isEligibleForFreeTrial }
 		/>
 	);
 
+	professionalEmail.footerBadge = badge;
 	professionalEmail.onExpandedChange = onExpandedChange;
 	professionalEmail.priceBadge = (
 		<>
@@ -169,7 +171,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 					{ translate( '3 months free' ) }
 				</div>
 			) }
-			<PriceBadge priceComponent={ priceWithTerm } className={ 'professional-email-card' } />
+			<PriceBadge priceComponent={ priceWithInterval } className={ 'professional-email-card' } />
 		</>
 	);
 

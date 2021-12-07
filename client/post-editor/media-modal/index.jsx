@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
 import CloseOnEscape from 'calypso/components/close-on-escape';
+import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
 import * as MediaUtils from 'calypso/lib/media/utils';
@@ -14,7 +15,7 @@ import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analyt
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { changeMediaSource, selectMediaItems, setQuery } from 'calypso/state/media/actions';
-import { editMedia, deleteMedia, addExternalMedia } from 'calypso/state/media/thunks';
+import { editMedia, addExternalMedia } from 'calypso/state/media/thunks';
 import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -213,13 +214,10 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		let toDelete = selectedItems;
-		if ( ModalViews.DETAIL === this.props.view ) {
-			toDelete = toDelete[ this.getDetailSelectedIndex() ];
-			this.setNextAvailableDetailView();
-		}
-
-		this.props.deleteMedia( site.ID, toDelete );
+		this.props.deleteMedia(
+			site.ID,
+			selectedItems.map( ( { ID } ) => ID )
+		);
 		mcBumpStat( 'editor_media_actions', 'delete_media' );
 	};
 
@@ -587,7 +585,6 @@ export default connect(
 	{
 		setView: setEditorMediaModalView,
 		resetView: resetMediaModalView,
-		deleteMedia,
 		onViewDetails: flow(
 			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
 			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
@@ -601,4 +598,4 @@ export default connect(
 		addExternalMedia,
 		changeMediaSource,
 	}
-)( localize( EditorMediaModal ) );
+)( localize( withDeleteMedia( EditorMediaModal ) ) );

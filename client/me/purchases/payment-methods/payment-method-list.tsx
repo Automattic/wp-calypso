@@ -1,13 +1,14 @@
 import { Button, CompactCard } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import page from 'page';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isCreditCard } from 'calypso/lib/checkout/payment-methods';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
+import PaymentMethodBackupToggle from 'calypso/me/purchases/payment-methods/payment-method-backup-toggle';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import {
 	getAllStoredCards,
@@ -15,11 +16,23 @@ import {
 	hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards,
 } from 'calypso/state/stored-cards/selectors';
+import PaymentMethodDetails from './payment-method-details';
+import type { PaymentMethod as PaymentMethodType } from 'calypso/lib/checkout/payment-methods';
+import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 import 'calypso/me/purchases/payment-methods/style.scss';
 
-class PaymentMethodList extends Component {
-	renderPaymentMethods( cards ) {
+interface PaymentMethodListProps {
+	addPaymentMethodUrl: string;
+	cards: StoredCard[];
+	paymentAgreements: PaymentMethodType[];
+	hasLoadedFromServer?: boolean;
+	isFetching?: boolean;
+	translate: typeof translate;
+}
+
+class PaymentMethodList extends Component< PaymentMethodListProps > {
+	renderPaymentMethods( paymentMethods: PaymentMethodType[] ) {
 		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
 			return (
 				<CompactCard className="payment-method-list__loader">
@@ -29,16 +42,26 @@ class PaymentMethodList extends Component {
 			);
 		}
 
-		if ( ! cards.length ) {
+		if ( ! paymentMethods.length ) {
 			return (
 				<CompactCard>{ this.props.translate( 'You have no saved payment methods.' ) }</CompactCard>
 			);
 		}
 
-		return cards.map( ( card ) => {
+		return paymentMethods.map( ( paymentMethod ) => {
 			return (
-				<PaymentMethod key={ card.stored_details_id }>
-					<PaymentMethodDelete card={ card } />
+				<PaymentMethod key={ paymentMethod.stored_details_id }>
+					<PaymentMethodDetails
+						lastDigits={ paymentMethod.card }
+						email={ paymentMethod.email }
+						cardType={ paymentMethod.card_type || '' }
+						paymentPartner={ paymentMethod.payment_partner }
+						name={ paymentMethod.name }
+						expiry={ paymentMethod.expiry }
+						isExpired={ paymentMethod.is_expired }
+					/>
+					{ isCreditCard( paymentMethod ) && <PaymentMethodBackupToggle card={ paymentMethod } /> }
+					<PaymentMethodDelete card={ paymentMethod } />
 				</PaymentMethod>
 			);
 		} );
@@ -75,15 +98,6 @@ class PaymentMethodList extends Component {
 		);
 	}
 }
-
-PaymentMethodList.propTypes = {
-	addPaymentMethodUrl: PropTypes.string.isRequired,
-	// From connect:
-	cards: PropTypes.array.isRequired,
-	paymentAgreements: PropTypes.array.isRequired,
-	hasLoadedFromServer: PropTypes.bool,
-	isFetching: PropTypes.bool,
-};
 
 export default connect( ( state ) => ( {
 	cards: getAllStoredCards( state ),
