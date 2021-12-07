@@ -143,32 +143,6 @@ $plugin-details-header-padding: 100px;
 	}
 }
 
-%placeholder {
-	cursor: default;
-	color: transparent;
-	user-select: none;
-	background-color: var( --color-neutral-0 );
-	animation: loading-fade 1.6s ease-in-out infinite;
-}
-
-.plugin-details__top-section {
-	&.is-placeholder {
-		.plugin-details__name,
-		.plugin-details__price,
-		.plugin-details__description,
-		.plugin-details__additional-info,
-		.plugin-details__install,
-		.plugin-details__t-and-c {
-			@extend %placeholder;
-		}
-
-		.plugin-details-header__tags {
-			@extend %placeholder;
-			width: 50%;
-		}
-	}
-}
-
 .plugin-details__page {
 	@media screen and ( max-width: 1040px ) {
 		padding: 16px;

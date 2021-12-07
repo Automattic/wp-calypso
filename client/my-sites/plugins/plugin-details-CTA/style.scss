@@ -1,3 +1,5 @@
+@use '../placeholder';
+
 .plugin-details-CTA__price {
 	font-family: $brand-serif;
 	font-size: $font-title-large;
@@ -28,4 +30,13 @@
     @media screen and ( max-width: 1040px ) {
         padding-bottom: 40px;
     }
+}
+
+.is-placeholder {
+	.plugin-details-CTA__price,
+	.plugin-details-CTA__install,
+	.plugin-details-CTA__t-and-c {
+		@extend %placeholder;
+	}
+
 }

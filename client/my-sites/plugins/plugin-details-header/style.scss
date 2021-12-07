@@ -1,43 +1,45 @@
+@use '../placeholder';
+
 $plugin-details-header-padding: 100px;
 
 .plugin-details-header__name {
-    font-family: $brand-serif;
-    font-size: $font-title-large;
-    color: var( --studio-gray-100 );
-    margin: 16px 0;
+	font-family: $brand-serif;
+	font-size: $font-title-large;
+	color: var( --studio-gray-100 );
+	margin: 16px 0;
 }
 
 .plugin-details-header__description {
-    font-size: $font-title-small;
-    color: var( --studio-gray-70 );
-    margin-bottom: 30px;
+	font-size: $font-title-small;
+	color: var( --studio-gray-70 );
+	margin-bottom: 30px;
 }
 
 .plugin-details-header__additional-info {
-    display: flex;
-    flex-wrap: wrap;
+	display: flex;
+	flex-wrap: wrap;
 
-    .plugin-details-header__info {
-        width: 25%;
-        box-sizing: border-box;
-        padding: 0 5px;
+	.plugin-details-header__info {
+		width: 25%;
+		box-sizing: border-box;
+		padding: 0 5px;
 
-        @media screen and ( max-width: 1040px ) {
-            width: 50%;
-            padding-bottom: 12px;
-        }
-    }
+		@media screen and ( max-width: 1040px ) {
+			width: 50%;
+			padding-bottom: 12px;
+		}
+	}
 
-    .plugin-details-header__info-title {
-        font-size: $font-body-extra-small;
-        font-weight: 400;
-        color: var( --studio-gray-60 );
-    }
+	.plugin-details-header__info-title {
+		font-size: $font-body-extra-small;
+		font-weight: 400;
+		color: var( --studio-gray-60 );
+	}
 
-    .plugin-details-header__info-value {
-        font-size: $font-body;
-        color: var( --studio-gray-90 );
-    }
+	.plugin-details-header__info-value {
+		font-size: $font-body;
+		color: var( --studio-gray-90 );
+	}
 }
 
 .plugin-details-header__tags {
@@ -49,5 +51,18 @@ $plugin-details-header-padding: 100px;
 
 	@media screen and ( max-width: 1040px ) {
 		top: -5px;
+	}
+}
+
+.is-placeholder {
+	.plugin-details-header__name,
+	.plugin-details-header__description,
+	.plugin-details-header__additional-info {
+		@extend %placeholder;
+	}
+
+	.plugin-details-header__tags {
+		@extend %placeholder;
+		width: 50%;
 	}
 }

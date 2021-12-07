@@ -141,13 +141,11 @@ function PluginDetails( props ) {
 		return <NoPermissionsError title={ getPageTitle() } />;
 	}
 
-	if ( existingPlugin === 'unknown' ) {
-		return <PluginPlaceholder />;
-	}
-
 	if ( existingPlugin === false ) {
 		return <PluginDoesNotExistView />;
 	}
+
+	const showPlaceholder = existingPlugin === 'unknown';
 
 	return (
 		<MainComponent wideLayout>
@@ -166,7 +164,7 @@ function PluginDetails( props ) {
 			<div className="plugin-details__page">
 				<div className="plugin-details__layout plugin-details__top-section">
 					<div className="plugin-details__layout-col-left">
-						<PluginDetailsHeader plugin={ fullPlugin } />
+						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 					</div>
 
 					<div className="plugin-details__layout-col-right">
@@ -175,48 +173,53 @@ function PluginDetails( props ) {
 							siteIds={ siteIds }
 							selectedSite={ selectedSite }
 							isPluginInstalledOnsite={ isPluginInstalledOnsite }
+							isPlaceholder={ showPlaceholder }
 						/>
 					</div>
 				</div>
 
-				{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
-					<Notice
-						text={ translate(
-							'Incompatible plugin: This plugin is not supported on WordPress.com.'
+				{ ! showPlaceholder && (
+					<>
+						{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
+							<Notice
+								text={ translate(
+									'Incompatible plugin: This plugin is not supported on WordPress.com.'
+								) }
+								status="is-warning"
+								showDismiss={ false }
+							>
+								<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+									{ translate( 'More info' ) }
+								</NoticeAction>
+							</Notice>
 						) }
-						status="is-warning"
-						showDismiss={ false }
-					>
-						<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
-							{ translate( 'More info' ) }
-						</NoticeAction>
-					</Notice>
+
+						<SitesListArea
+							fullPlugin={ fullPlugin }
+							isPluginInstalledOnsite={ isPluginInstalledOnsite }
+							{ ...props }
+						/>
+
+						<div className="plugin-details__layout plugin-details__body">
+							<div className="plugin-details__layout-col-left">
+								{ fullPlugin.wporg ? (
+									<PluginSections
+										className="plugin-details__plugins-sections"
+										plugin={ fullPlugin }
+										isWpcom={ isWpcom }
+										addBanner
+										removeReadMore
+									/>
+								) : (
+									<PluginSectionsCustom plugin={ fullPlugin } />
+								) }
+							</div>
+							<div className="plugin-details__layout-col-right">
+								<PluginDetailsSidebar plugin={ fullPlugin } />
+							</div>
+						</div>
+					</>
 				) }
-
-				<SitesListArea
-					fullPlugin={ fullPlugin }
-					isPluginInstalledOnsite={ isPluginInstalledOnsite }
-					{ ...props }
-				/>
-
-				<div className="plugin-details__layout plugin-details__body">
-					<div className="plugin-details__layout-col-left">
-						{ fullPlugin.wporg ? (
-							<PluginSections
-								className="plugin-details__plugins-sections"
-								plugin={ fullPlugin }
-								isWpcom={ isWpcom }
-								addBanner
-								removeReadMore
-							/>
-						) : (
-							<PluginSectionsCustom plugin={ fullPlugin } />
-						) }
-					</div>
-					<div className="plugin-details__layout-col-right">
-						<PluginDetailsSidebar plugin={ fullPlugin } />
-					</div>
-				</div>
 			</div>
 		</MainComponent>
 	);
@@ -321,32 +324,6 @@ function PluginDoesNotExistView() {
 				action={ action }
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
-		</MainComponent>
-	);
-}
-
-function PluginPlaceholder() {
-	return (
-		<MainComponent wideLayout>
-			<div className="plugin-details__page">
-				<div className="plugin-details__layout plugin-details__top-section is-placeholder">
-					<div className="plugin-details__layout-col-left">
-						<div className="plugin-details__tags">...</div>
-						<div className="plugin-details__header">
-							<div className="plugin-details__name">...</div>
-							<div className="plugin-details__description">...</div>
-							<div className="plugin-details__additional-info">...</div>
-						</div>
-					</div>
-					<div className="plugin-details__layout-col-right">
-						<div className="plugin-details__header">
-							<div className="plugin-details__price">...</div>
-							<div className="plugin-details__install">...</div>
-							<div className="plugin-details__t-and-c">...</div>
-						</div>
-					</div>
-				</div>
-			</div>
 		</MainComponent>
 	);
 }

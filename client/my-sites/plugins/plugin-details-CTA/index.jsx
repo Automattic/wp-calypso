@@ -19,9 +19,14 @@ import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import './style.scss';
 
-const PluginDetailsCTA = ( props ) => {
+const PluginDetailsCTA = ( {
+	pluginSlug,
+	selectedSite,
+	isPluginInstalledOnsite,
+	siteIds,
+	isPlaceholder,
+} ) => {
 	const translate = useTranslate();
-	const { pluginSlug, selectedSite, isPluginInstalledOnsite, siteIds } = props;
 
 	const requestingPluginsForSites = useSelector( ( state ) =>
 		isRequestingForSites( state, siteIds )
@@ -42,6 +47,10 @@ const PluginDetailsCTA = ( props ) => {
 	);
 	const hasEligibilityMessages =
 		! isJetpack && ( eligibilityHolds || eligibilityWarnings || isEligible );
+
+	if ( isPlaceholder ) {
+		return <PluginDetailsCTAPlaceholder />;
+	}
 
 	if ( requestingPluginsForSites ) {
 		// Display nothing if we are still requesting the plugin status.
@@ -86,6 +95,16 @@ const PluginDetailsCTA = ( props ) => {
 					}
 				) }
 			</div>
+		</div>
+	);
+};
+
+const PluginDetailsCTAPlaceholder = () => {
+	return (
+		<div className="plugin-details-CTA__container plugin-details__header is-placeholder">
+			<div className="plugin-details-CTA__price">...</div>
+			<div className="plugin-details-CTA__install">...</div>
+			<div className="plugin-details-CTA__t-and-c">...</div>
 		</div>
 	);
 };
