@@ -1,10 +1,18 @@
 .is-p-2-confirm-email {
+	.p2-step-wrapper__header {
+		margin-bottom: 0;
+	}
+
 	.p2-step-wrapper__header-icon svg {
 		stroke: var( --p2-color-link );
-		width: 48px;
-		height: 48px;
+		width: 36px;
+		height: 36px;
 		border: 1px solid var( --p2-color-link );
 		border-radius: 50%; /* stylelint-disable-line */
 		padding: 8px;
 	}
+}
+
+.p2-confirm-email__message {
+	text-align: center;
 }

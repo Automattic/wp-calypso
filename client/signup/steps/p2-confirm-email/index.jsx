@@ -34,7 +34,7 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 			headerText={ translate( 'Check your email' ) }
 		>
 			<div className="p2-confirm-email">
-				<div>
+				<div className="p2-confirm-email__message">
 					{ translate(
 						"We've sent an email with a verification link to {{strong}}%(email)s{{/strong}}. Please follow that link to confirm your email address and continue.",
 						{
