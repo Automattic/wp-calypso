@@ -6,6 +6,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import starIcon from './assets/star.svg';
 import DisplayPrice from './display-price';
 import JetpackProductCardFeatures from './features';
+import useCouponDiscount from './use-coupon-discount';
 import type {
 	ScrollCardIntoViewCallback,
 	SelectorProduct,
@@ -82,16 +83,30 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
 } ) => {
-	const translate = useTranslate();
+	const billingTerm = item.displayTerm || item.term;
 
+	const translate = useTranslate();
 	const anchorRef = useRef< HTMLDivElement >( null );
+	const { discount } = useCouponDiscount( billingTerm, originalPrice, discountedPrice );
+
+	const discountElt =
+		discount &&
+		translate( '%(percent)d%% off {{sup}}✢{{/sup}}', {
+			args: {
+				percent: discount,
+			},
+			comment: '✢ clause describing the displayed price adjustment',
+			components: {
+				sup: <sup />,
+			},
+		} );
 
 	useEffect( () => {
 		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
 		if ( anchorRef && anchorRef.current && originalPrice ) {
 			scrollCardIntoView && scrollCardIntoView( anchorRef.current, item.productSlug );
 		}
-	}, [ originalPrice ] );
+	}, [ originalPrice, item.productSlug, scrollCardIntoView ] );
 
 	return (
 		<div
@@ -112,9 +127,14 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				</div>
 			) }
 			<div className="jetpack-product-card__body">
-				<Header level={ headerLevel } className="jetpack-product-card__product-name">
-					{ item.displayName }
-				</Header>
+				<header className="jetpack-product-card__heading">
+					<Header level={ headerLevel } className="jetpack-product-card__product-name">
+						{ item.displayName }
+					</Header>
+					{ ! hideSavingLabel && (
+						<span className="jetpack-product-card__discount-label">{ discountElt }</span>
+					) }
+				</header>
 				{ item.subheader && (
 					<Header
 						level={ ( headerLevel + 1 ) as HeaderLevel }
