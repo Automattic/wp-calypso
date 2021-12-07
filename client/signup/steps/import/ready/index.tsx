@@ -120,6 +120,18 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 		} );
 	};
 
+	const recordBackToStart = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'back-to-start',
+		} );
+	};
+
+	const onBackBtnClick = () => {
+		recordBackToStart();
+		goToStep( 'capture' );
+	};
+
 	useEffect( recordReadyScreenEvent, [] );
 
 	return (
@@ -138,9 +150,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 							{ __( 'Start building' ) }
 						</NextButton>
 						<div>
-							<BackButton onClick={ () => goToStep( 'capture' ) }>
-								{ __( 'Back to start' ) }
-							</BackButton>
+							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
 					</div>
 				</div>
@@ -232,6 +242,18 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 		} );
 	};
 
+	const recordBackToStart = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'back-to-start',
+		} );
+	};
+
+	const onBackBtnClick = () => {
+		recordBackToStart();
+		goToStep( 'capture' );
+	};
+
 	useEffect( recordReadyScreenEvent, [] );
 
 	return (
@@ -259,9 +281,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 							{ __( 'Start building' ) }
 						</NextButton>
 						<div>
-							<BackButton onClick={ () => goToStep( 'capture' ) }>
-								{ __( 'Back to start' ) }
-							</BackButton>
+							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
 					</div>
 				</div>
