@@ -1,5 +1,5 @@
 import formatCurrency from '@automattic/format-currency';
-import { RequestCartProduct, ShoppingCartManagerActions } from '@automattic/shopping-cart';
+import { RequestCartProduct, ResponseCart, ShoppingCartManagerActions } from "@automattic/shopping-cart";
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import React, { FunctionComponent, ReactElement } from 'react';
@@ -46,15 +46,18 @@ export const addToCartAndCheckout = (
 
 	shoppingCartManager
 		.addProductsToCart( [ fillInSingleCartItemAttributes( cartItem, productList ) ] )
-		.then( ( response: any ) => {
+		.then( ( response: ResponseCart ) => {
 			setAddingToCart( false );
-			const { errors } = response?.messages;
+			const errors = response?.messages?.errors;
 			if ( errors && errors.length ) {
 				// Stay on the page to show the relevant error(s)
 				return;
 			}
 
 			page( `/checkout/${ selectedSite }` );
+		} )
+		.then( () => {
+			setAddingToCart( false );
 		} );
 };
 
