@@ -16,7 +16,7 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 				/>
 			}
 			popoverClassName="dns-records-list-item__action-menu-popover"
-			position="top left"
+			position="bottom left"
 			disabled={ actions.length === 0 }
 		>
 			{ actions.map( ( action ) => {
