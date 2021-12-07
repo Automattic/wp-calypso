@@ -10,8 +10,9 @@
 	}
 
 	.gridicons-trash {
-		margin-top: -2px;
-		margin-right: 4px;
+		margin-block-start: -2px;
+		margin-inline-start: -4px;
+		margin-inline-end: 4px;
 		vertical-align: middle;
 	}
 }

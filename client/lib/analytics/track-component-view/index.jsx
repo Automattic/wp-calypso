@@ -22,9 +22,8 @@ class TrackComponentView extends Component {
 		bumpStat: () => {},
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		debug( 'Component will mount.' );
+	componentDidMount() {
+		debug( 'Component did mount.' );
 		const { eventName, eventProperties } = this.props;
 		if ( eventName ) {
 			debug( `Recording Tracks event "${ eventName }".` );

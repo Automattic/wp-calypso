@@ -27,7 +27,6 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import { EmailProvidersStackedCardProps } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import {
 	TITAN_PASSWORD_RESET_FIELD,
 	TITAN_FULL_NAME_FIELD,
@@ -38,7 +37,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type ProviderCard from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
 
 import './professional-email-card.scss';
 
@@ -128,7 +127,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		const {
 			comparisonContext,
 			domain,
-			selectedDomainName,
 			hasCartDomain,
 			recordTracksEventAddToCartClick = noop,
 			source,
@@ -160,7 +158,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			return;
 		}
 
-		const { productsList, selectedSite, shoppingCartManager } = props;
+		const { productsList, selectedDomainName, selectedSite, shoppingCartManager } = props;
 
 		const cartItem = titanMailMonthly( {
 			domain: selectedDomainName,
@@ -243,9 +241,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			productName={ professionalEmail.productName }
 			description={ professionalEmail.description }
 			detailsExpanded={ professionalEmail.detailsExpanded }
-			additionalPriceInformation={ professionalEmail.additionalPriceInformation }
 			onExpandedChange={ professionalEmail.onExpandedChange }
-			formattedPrice={ formattedPrice }
 			formFields={ formFields }
 			isDomainEligibleForTitanFreeTrial={ isDomainEligibleForTitanFreeTrial( domain ) }
 			showExpandButton={ professionalEmail.showExpandButton }
@@ -270,7 +266,7 @@ export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		domain,
-		domainName: resolvedDomainName,
+		selectedDomainName: resolvedDomainName,
 		hasCartDomain,
 		productsList: getProductsList( state ),
 		selectedSite,

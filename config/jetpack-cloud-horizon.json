@@ -24,7 +24,6 @@
 		}
 	],
 	"features": {
-		"activity-log/display-rules": true,
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
 		"current-site/domain-warning": false,

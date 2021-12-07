@@ -7,6 +7,7 @@ import {
 import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -72,6 +73,12 @@ async function stripeCardProcessor(
 		contactDetails,
 		reduxDispatch,
 	} = transactionOptions;
+	reduxDispatch(
+		recordTransactionBeginAnalytics( {
+			paymentMethodId: 'stripe',
+			useForAllSubscriptions: submitData.useForAllSubscriptions,
+		} )
+	);
 
 	let paymentMethodToken;
 	try {
@@ -148,7 +155,9 @@ async function ebanxCardProcessor(
 		responseCart,
 		siteId,
 		contactDetails,
+		reduxDispatch,
 	} = transactionOptions;
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'ebanx' } ) );
 
 	let paymentMethodToken;
 	try {

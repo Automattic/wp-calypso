@@ -27,7 +27,6 @@
 	],
 	"oauth_client_id": 68663,
 	"features": {
-		"activity-log/display-rules": true,
 		"activity-log/v2": true,
 		"always_use_logout_url": true,
 		"current-site/domain-warning": false,

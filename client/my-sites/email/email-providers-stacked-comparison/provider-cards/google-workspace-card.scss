@@ -1,0 +1,28 @@
+.google-workspace-card__logo {
+	color: var( --color-wordpress-com );
+	height: 48px;
+	width: 48px;
+}
+
+
+.google-workspace-card__keep-main-price {
+	color: var( --studio-green-50 );
+	text-decoration: none;
+}
+
+div.google-workspace-card__price-badge {
+	.promo-card__price {
+		margin-top: 12px;
+		span.price__discount {
+			text-decoration: line-through;
+			color: var( --studio-gray-60 );
+		}
+	}
+}
+
+
+.google-workspace-icon {
+	max-width: 36px;
+}
+
+
