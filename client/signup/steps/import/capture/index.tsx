@@ -2,8 +2,9 @@ import { NextButton } from '@automattic/onboarding';
 import { Icon, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
@@ -29,13 +30,21 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	resetError,
 	isAnalyzing,
 	analyzerError,
+	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
 
+	/**
+	 ↓ Fields
+	 */
 	const [ urlValue, setUrlValue ] = React.useState( '' );
 	const [ isValid, setIsValid ] = React.useState( true );
 	const [ showError, setShowError ] = React.useState( false );
+	const showSubmitButton = isValid && urlValue && ! analyzerError;
 
+	/**
+	 ↓ Methods
+	 */
 	const runProcess = (): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
 		analyzeUrl( urlValue ).then( ( response: UrlData ) => {
@@ -45,6 +54,16 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 				stepSectionName = 'wpcom';
 			}
 			goToStep( 'ready', stepSectionName );
+		} );
+	};
+
+	const recordScanningEvent = () => {
+		if ( ! isAnalyzing ) return;
+
+		recordTracksEvent( 'calypso_signup_step_start', {
+			flow: 'importer',
+			step: 'capture',
+			action: 'scanning',
 		} );
 	};
 
@@ -61,7 +80,10 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 		isValid && urlValue && runProcess();
 	};
 
-	const showSubmitButton = isValid && urlValue && ! analyzerError;
+	/**
+	 ↓ Effects
+	 */
+	useEffect( recordScanningEvent, [ isAnalyzing ] );
 
 	return (
 		<>
@@ -114,6 +136,7 @@ const connector = connect(
 	{
 		analyzeUrl,
 		resetError,
+		recordTracksEvent,
 	}
 );
 
