@@ -332,15 +332,6 @@ export function generateFlows( {
 			pageTitle: translate( 'Launch your site' ),
 		},
 		{
-			name: 'import',
-			steps: [ 'user', 'from-url', 'domains', 'plans-import' ],
-			destination: getImportDestination,
-			description: 'A flow to kick off an import during signup',
-			disallowResume: true,
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		},
-		{
 			name: 'importer',
 			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
 			destination: '/',
