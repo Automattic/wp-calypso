@@ -78,6 +78,11 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		intervalLength,
 		titanMailMonthlyProduct,
 		titanMailAnnuallyProduct,
+		comparisonContext,
+		productsList,
+		shoppingCartManager,
+		selectedSite,
+		source,
 	} = props;
 	const professionalEmail: ProviderCard = professionalEmailCardInformation;
 	professionalEmail.detailsExpanded = detailsExpanded;
@@ -95,17 +100,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	const optionalFields = [ TITAN_PASSWORD_RESET_FIELD, TITAN_FULL_NAME_FIELD ];
 
 	const onTitanConfirmNewMailboxes = () => {
-		const {
-			comparisonContext,
-			domain,
-			hasCartDomain,
-			productsList,
-			shoppingCartManager,
-			selectedDomainName,
-			selectedSite,
-			source,
-		} = props;
-
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
 
 		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes, optionalFields );
