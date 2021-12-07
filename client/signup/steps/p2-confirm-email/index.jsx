@@ -19,9 +19,9 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 			<path
 				d="M30.0003 11.25H10.0003C8.84973 11.25 7.91699 12.1827 7.91699 13.3333V26.6667C7.91699 27.8173 8.84973 28.75 10.0003 28.75H30.0003C31.1509 28.75 32.0837 27.8173 32.0837 26.6667V13.3333C32.0837 12.1827 31.1509 11.25 30.0003 11.25Z"
 				stroke=""
-				stroke-width="1.5"
+				strokeWidth="1.5"
 			/>
-			<path d="M8.33301 11.666L19.9997 21.666L31.6663 11.666" stroke="" stroke-width="1.5" />
+			<path d="M8.33301 11.666L19.9997 21.666L31.6663 11.666" stroke="" strokeWidth="1.5" />
 		</svg>
 	);
 
@@ -43,10 +43,19 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 						}
 					) }
 				</div>
-				<div>
-					<Button className="p2-confirm-email__change-email" onClick={ () => {} }>
-						{ translate( 'Use a different email address' ) }
-					</Button>
+				<div className="p2-confirm-email__actions">
+					<div className="p2-confirm-email__actions-text">
+						{ translate( 'Are you having issues receiving it?' ) }
+					</div>
+					<div className="p2-confirm-email__buttons">
+						<Button className="p2-confirm-email__resend-email" onClick={ () => {} }>
+							{ translate( 'Resend the verification email' ) }
+						</Button>
+						<div className="p2-confirm-email__buttons-separator">or</div>
+						<Button className="p2-confirm-email__change-email" onClick={ () => {} }>
+							{ translate( 'Use a different email address' ) }
+						</Button>
+					</div>
 				</div>
 			</div>
 		</P2StepWrapper>

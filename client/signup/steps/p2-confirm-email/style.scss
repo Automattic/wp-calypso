@@ -1,4 +1,16 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .is-p-2-confirm-email {
+	.p2-step-wrapper {
+
+		@include break-small {
+			padding-left: 20px;
+			padding-right: 20px;
+			max-width: 500px;
+		}
+	}
+
 	.p2-step-wrapper__header {
 		margin-bottom: 0;
 	}
@@ -11,8 +23,44 @@
 		border-radius: 50%; /* stylelint-disable-line */
 		padding: 8px;
 	}
+
+	button.p2-confirm-email__resend-email ,
+	button.p2-confirm-email__change-email {
+		background: none;
+		color: var(--p2-color-link);
+		text-decoration: underline;
+		width: fit-content;
+		padding: 0;
+		margin: 0;
+		font-size: var( --p2-font-size-form-xxs );
+
+		&:hover {
+			background: none;
+		}
+	}
 }
 
 .p2-confirm-email__message {
 	text-align: center;
+}
+
+.p2-confirm-email__actions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 3em;
+	font-size: var( --p2-font-size-form-xxs );
+}
+
+.p2-confirm-email__actions-text {
+	color: var( --p2-color-text-light );
+}
+
+.p2-confirm-email__buttons {
+	display: flex;
+	align-items: center;
+}
+
+.p2-confirm-email__buttons-separator {
+	padding: 0 1em;
 }
