@@ -1,6 +1,3 @@
-import { store as blockEditorStore } from '@wordpress/block-editor';
-import { compose } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
 import { addFilter } from '@wordpress/hooks';
 
 addFilter(
@@ -13,19 +10,13 @@ addFilter(
 
 		return {
 			...settings,
-			edit: compose(
-				withSelect( ( select, { attributes } ) => {
-					const { getSettings } = select( blockEditorStore );
-					const { bodyPlaceholder } = getSettings();
-
-					return {
-						attributes: {
-							...attributes,
-							placeholder: attributes.placeholder || bodyPlaceholder,
-						},
-					};
-				} )
-			)( settings.edit ),
+			attributes: {
+				...settings.attributes,
+				placeholder: {
+					...settings.attributes.placeholder,
+					default: window.wpcomSiteEditorParagraphPlaceholder,
+				},
+			},
 		};
 	}
 );
