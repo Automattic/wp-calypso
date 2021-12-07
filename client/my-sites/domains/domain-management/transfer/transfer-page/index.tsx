@@ -295,7 +295,6 @@ const transferPageComponent = connect(
 			isDomainInfoLoading: ! domainInfo.hasLoadedFromServer,
 			isDomainLocked: domainInfo.data?.locked,
 			isDomainOnly: isDomainOnlySite( state, siteId ),
-			isDomainPendingTransfer: !! domainInfo.data?.pendingTransfer,
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
 		};
