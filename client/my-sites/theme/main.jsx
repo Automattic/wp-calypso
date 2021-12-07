@@ -154,7 +154,11 @@ class ThemeSheet extends Component {
 	getValidSections = () => {
 		const validSections = [];
 		validSections.push( '' ); // Default section
-		this.props.supportDocumentation && validSections.push( 'setup' );
+
+		if ( ! this.props.isPremium && this.props.supportDocumentation ) {
+			validSections.push( 'setup' );
+		}
+
 		validSections.push( 'support' );
 		return validSections;
 	};
