@@ -2,7 +2,6 @@ import debugFactory from 'debug';
 import { omit } from 'lodash';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
-const { Blob } = globalThis; // The linter complains if I don't do this...?
 
 /**
  * Create an `Undocumented` instance
@@ -316,66 +315,6 @@ Undocumented.prototype.startMigration = function ( sourceSiteId, targetSiteId ) 
 		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
 		apiNamespace: 'wpcom/v2',
 	} );
-};
-
-Undocumented.prototype.getAtomicSiteMediaViaProxy = function (
-	siteIdOrSlug,
-	mediaPath,
-	{ query = '', maxSize }
-) {
-	const safeQuery = query.replace( /^\?/, '' );
-	const params = {
-		path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file?path=${ mediaPath }&${ safeQuery }`,
-		apiNamespace: 'wpcom/v2',
-	};
-
-	return new Promise( ( resolve, _reject ) => {
-		const fetchMedia = () =>
-			this.wpcom.req.get( { ...params, responseType: 'blob' }, ( error, data ) => {
-				if ( error || ! ( data instanceof Blob ) ) {
-					_reject( error );
-				} else {
-					resolve( data );
-				}
-			} );
-
-		if ( ! maxSize ) {
-			return fetchMedia();
-		}
-
-		return this.wpcom.req.get( { ...params, method: 'HEAD' }, ( err, data, headers ) => {
-			if ( headers[ 'Content-Length' ] > maxSize ) {
-				_reject( { message: 'exceeded_max_size' } );
-				return;
-			}
-
-			fetchMedia();
-		} );
-	} );
-};
-
-Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
-	siteIdOrSlug,
-	mediaPath,
-	options
-) {
-	let retries = 0;
-	const request = () =>
-		this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options ).catch( ( error ) => {
-			// Retry three times with exponential backoff times
-			if ( retries < 3 ) {
-				return new Promise( ( resolve ) => {
-					++retries;
-					setTimeout( () => {
-						resolve( request() );
-					}, ( retries * retries * 1000 ) / 2 );
-				} );
-			}
-
-			return Promise.reject( error );
-		} );
-
-	return request();
 };
 
 /**
