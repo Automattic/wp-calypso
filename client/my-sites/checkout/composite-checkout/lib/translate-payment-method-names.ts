@@ -71,6 +71,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_PayPal_Direct';
 		case 'paypal':
 			return 'WPCOM_Billing_PayPal_Express';
+		case 'stripe':
 		case 'card':
 			return 'WPCOM_Billing_Stripe_Payment_Method';
 		case 'alipay':
@@ -140,6 +141,7 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'paypal-direct':
 		case 'paypal':
 		case 'card':
+		case 'stripe':
 		case 'existingCard':
 		case 'alipay':
 		case 'bancontact':

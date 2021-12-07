@@ -16,42 +16,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
-				case 'STRIPE_TRANSACTION_BEGIN': {
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_form_submit', {
-							credits: null,
-							payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-							use_for_all_subs: action.payload?.useForAllSubscriptions,
-						} )
-					);
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_form_submit', {
-							credits: null,
-							payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-							use_for_all_subs: action.payload?.useForAllSubscriptions,
-						} )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
-					);
-				}
-				case 'EBANX_TRANSACTION_BEGIN': {
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_form_submit', {
-							credits: null,
-							payment_method: 'WPCOM_Billing_Ebanx',
-						} )
-					);
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_form_submit', {
-							credits: null,
-							payment_method: 'WPCOM_Billing_Ebanx',
-						} )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
-					);
-				}
 				default:
 					debug( 'unknown checkout event', action );
 					return reduxDispatch(
