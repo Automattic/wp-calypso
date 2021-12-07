@@ -3,8 +3,8 @@ import {
 	isDomainTransfer,
 	isDomainProduct,
 	isDotComPlan,
-	isGSuiteOrExtraLicenseProductSlug,
 	isGoogleWorkspace,
+	isGSuiteOrExtraLicenseProductSlug,
 	isTitanMail,
 	isP2Plus,
 	isJetpackSearch,
@@ -39,7 +39,7 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 			: String( translate( 'Plan Subscription' ) );
 	}
 
-	if ( isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspace( serverCartItem ) ) {
+	if ( isGoogleWorkspace( serverCartItem ) || isGSuiteOrExtraLicenseProductSlug( productSlug ) ) {
 		if ( isRenewalItem ) {
 			return String( translate( 'Productivity Tools and Mailboxes Renewal' ) );
 		}

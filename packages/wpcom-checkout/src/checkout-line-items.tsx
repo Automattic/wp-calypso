@@ -264,8 +264,8 @@ function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRe
 	let mailboxes = [];
 
 	if (
-		isGSuiteOrExtraLicenseProductSlug( product.product_slug ) ||
-		isGoogleWorkspaceProductSlug( product.product_slug )
+		isGoogleWorkspaceProductSlug( product.product_slug ) ||
+		isGSuiteOrExtraLicenseProductSlug( product.product_slug )
 	) {
 		mailboxes = product.extra?.google_apps_users ?? [];
 	}
@@ -548,8 +548,8 @@ function LineItemSublabelAndPrice( {
 	}
 
 	if (
-		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isGoogleWorkspaceProductSlug( productSlug ) ||
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product )
 	) {
 		let interval = null;
@@ -581,9 +581,9 @@ function LineItemSublabelAndPrice( {
 	}
 
 	const isDomainRegistration = product.is_domain_registration;
-	const isDomainMap = productSlug === 'domain_map';
+	const isDomainMapping = productSlug === 'domain_map';
 
-	if ( ( isDomainRegistration || isDomainMap ) && product.months_per_bill_period === 12 ) {
+	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
 
 		return (
@@ -787,8 +787,8 @@ function WPLineItem( {
 	);
 
 	const isEmail =
-		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isGoogleWorkspaceProductSlug( productSlug ) ||
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
