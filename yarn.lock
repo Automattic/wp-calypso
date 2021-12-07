@@ -12433,17 +12433,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar-cli@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "chokidar-cli@npm:2.1.0"
+"chokidar-cli@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "chokidar-cli@npm:3.0.0"
   dependencies:
-    chokidar: ^3.2.3
+    chokidar: ^3.5.2
     lodash.debounce: ^4.0.8
     lodash.throttle: ^4.1.1
     yargs: ^13.3.0
   bin:
-    chokidar: ./index.js
-  checksum: 9b722096752305b6b7ae38c35b468d988c42478ef751a29e5a4201c18b9aa04394679d9ce392832cd347fe8d15952d23f52f472cb8763fd78f8897617be88ccc
+    chokidar: index.js
+  checksum: e464f3d2cae535bf95e852e9ba02be1a0f9470d9a061279e02531907689cac021e86bd53ee7264f59aa23d06251f66df9d83bab13c965595f57e309f833ad786
   languageName: node
   linkType: hard
 
@@ -12466,7 +12466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.2.3, chokidar@npm:^3.3.0, chokidar@npm:^3.3.1, chokidar@npm:^3.4.0, chokidar@npm:^3.4.1, chokidar@npm:^3.4.2, chokidar@npm:^3.5.2":
+"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.3.1, chokidar@npm:^3.4.0, chokidar@npm:^3.4.1, chokidar@npm:^3.4.2, chokidar@npm:^3.5.2":
   version: 3.5.2
   resolution: "chokidar@npm:3.5.2"
   dependencies:
@@ -38175,7 +38175,7 @@ testarmada-magellan@11.0.10:
     chalk: ^4.0.0
     check-node-version: ^4.0.2
     cheerio: ^1.0.0-rc.3
-    chokidar-cli: ^2.1.0
+    chokidar-cli: ^3.0.0
     chroma-js: ^2.1.0
     concurrently: ^5.1.0
     config: ^3.3.6

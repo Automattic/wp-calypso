@@ -202,7 +202,7 @@
 		"chalk": "^4.0.0",
 		"check-node-version": "^4.0.2",
 		"cheerio": "^1.0.0-rc.3",
-		"chokidar-cli": "^2.1.0",
+		"chokidar-cli": "^3.0.0",
 		"chroma-js": "^2.1.0",
 		"concurrently": "^5.1.0",
 		"config": "^3.3.6",
