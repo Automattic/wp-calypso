@@ -67,9 +67,6 @@ private object EditingToolkit : WPComPluginBuild(
 		bashNodeScript {
 			name = "Run JS tests"
 			scriptContent = """
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit
-
 				cd apps/editing-toolkit
 				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
 			"""
