@@ -25,7 +25,7 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 		},
 		{
 			key: 'courses',
-			title: translate( 'Take the Masterclass' ),
+			title: translate( 'Watch Blogging videos' ),
 			description: translate( ' Learn the blogging basics in minutes ' ),
 			icon: play,
 			value: 'courses',
