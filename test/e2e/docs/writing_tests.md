@@ -1,30 +1,76 @@
 # Writing Tests
 
-This document will outline tips to write successful tests for both Selenium and Playwright suites.
-
-Refer to the [Playwright style guide](docs/style-guide-playwright.md) for more information.
-
-## Table of contents
-
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-  - [Table of contents](#table-of-contents)
-  - [Get Started](#get-started)
-  - [Top-level block](#top-level-block)
-  - [Child-level block](#child-level-block)
-  - [Setup](#setup)
+  - [Example](#example)
+  - [Quick start](#quick-start)
+  - [Top-level describe block](#top-level-describe-block)
+  - [Child-level describe blocks](#child-level-describe-blocks)
   - [Test step](#test-step)
   - [Hooks](#hooks)
   - [Block Smoke Testing](#block-smoke-testing)
+    - [Overview](#overview)
+    - [How To](#how-to)
+    - [Examples](#examples)
 
 <!-- /TOC -->
 
-## Get Started
+## Example
 
-Tests can be written in both TypeScript and JavaScript.
+```typescript
+/**
+ * @group calypso-pr
+ * @group gutenberg
+ */
 
-### 1. Create a spec file with the following structure
+import { setupHooks, DataHelper, LoginPage } from '@automattic/calypso-e2e';
+
+const xyz = 'someconst';
+
+describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
+	let page: Page;
+
+	setupHooks( ( args ) => {
+		page = args.page;
+	} );
+
+	describe( 'Input valid search query', function () {
+		let someComponent: SomeComponent;
+		const searchQuery = 'valid search string';
+
+		it( 'Check title', async function () {
+			someComponent = await SomeComponent.Expect( page );
+			await someComponent.clickMyPages();
+			const resultValue = await someComponent.getTitle();
+			assert.strictEqual( resultValue, expectedValue );
+		} );
+
+		it( 'Enter search string', async function () {
+			await someComponent.search( searchQuery );
+			await someComponent.clickResult( 1 );
+		} );
+	} );
+
+	describe( 'Change preview value', function () {
+		let anotherComponent: AnotherComponent;
+
+		it.each`
+			value         | expected
+			${ 'small' }  | ${ 's' }
+			${ 'medium' } | ${ 'm' }
+		`( 'Click on $value on AnotherComponent', function ( { value, expected } ) {
+			anotherComponent = await AnotherComponent.Expect( page );
+			const resultValue = await anotherComponent.click( value );
+			assert.strictEqual( resultValue, expected );
+		} );
+	} );
+} );
+```
+
+## Quick start
+
+1. Create a TypeScript file with the following naming structure.
 
 ```
 test/e2e/specs/specs-playwright/wp-<major feature>__<subfeature>.ts
@@ -32,13 +78,19 @@ test/e2e/specs/specs-playwright/wp-<major feature>__<subfeature>.ts
 
 This is for multiple reasons:
 
-- grouping of test specs by feature.
-- separation of subfeatures into separate files to take advantage of parallelization.
+- visual grouping of test specs by feature.
+- separation of tests into separate files to take advantage of parallelization.
 
-### 2. Assign the spec file to the appropriate suites
+2. Import the basics
+
+```typescript
+import { setupHooks, DataHelper, LoginPage } from '@automattic/calypso-e2e';
+```
+
+3. Assign a test group.
 
 Specs are grouped into suites using [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups). **Specs must be explicitly added to suites to be run as part of CI pipelines.**  
-To add your spec file to suites, add a jsdoc block at the top of the file, and use the `@group` tag for each suite.
+To add your spec file to suites, add a JSDoc block at the top of the file, and use the `@group` tag. Multiple suites are supported.
 
 ```typescript
 /**
@@ -50,57 +102,75 @@ To add your spec file to suites, add a jsdoc block at the top of the file, and u
 The current suites used are...
 
 - `calypso-pr` - tests run pre-merge on every Calypso PR.
-- `gutenberg` - WPCOM focused tests run as part of Gutenberg upgrades.
 - `calypso-release` - tests run post-merge and pre-release in the Calypso deployment process.
+- `gutenberg` - WPCOM focused tests run as part of Gutenberg upgrades.
+- `coblocks` - tests for CoBlocks features.
+- `i18n` - internationalization tests.
+- `p2` - P2 tests.
+- `quarantined` - flakey tests that need to prove their stability.
 
-### 3. Import the basics
+4. Populate test steps.
 
-```typescript
-import { setupHooks, DataHelper, LoginFlow } from '@automattic/calypso-e2e';
-```
+This is the longest and most arduous portion of the process.
 
-## Top-level block
+In some cases, this will be straightforward - all required methods would have been implemented in page objects already. In other cases, it may be required to implement new page objects from scratch.
+
+For guide on how writing page objects, components and flows please refer to the [Library Objects](library_objects.md) page.
+
+## Top-level `describe` block
 
 As referenced in the [Style Guide](style-guide-playwright.md#Tests), there should only be one top-level `describe` block in a spec file.
 
 Using the `DataHelper.createSuiteTitle` function, define a short, descriptive name for the overall suite:
 
 ```typescript
-describe( DataHelper.createSuiteTitle( 'Feature' ), function () {} );
+describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
+	...
+} );
 ```
 
-## Child-level block
+## Child-level describe blocks
+
+Do not use `DataHelper.createSuiteTitle` for child-level blocks:
 
 Unlike top-level blocks, there are no restrictions on the number of child-level `describe` blocks.
 
 > :warning: while there are no limits to the number of child blocks, exercise restraint - child blocks run sequentially, so if a file takes 8 minutes to complete the CI task will inevitably take that long!
 
-Using child-level `describe` blocks, group distinct test cases for the feature. Do not use `DataHelper.createSuiteTitle` for child-level blocks:
+Using child-level `describe` blocks, group test cases for a feature:
 
 ```typescript
 describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
-	describe( 'Use Feature with valid string', function() {});
+	describe( 'Use Feature with valid string', function() {
+		// Valid string test
+	});
 
-	describe( 'Use Feature with invalid string', function() {});
+	describe( 'Use Feature with invalid string', function() {
+		// Invalid string test
+	});
 
-	describe( 'Deactivate Feature', funtion() {});
+	describe( 'Use Feature with a number', funtion() {
+		// Number instead of string test
+	});
 })
 ```
 
-## Setup
-
-With Playwright, the `page` instance lives until it is closed or crashes. As such, the same `page` instance can be used throughout the test.
-
-Invoke the `setupHooks` call to obtain an instance of a `Page` object:
+Another way to use child-level `describe` blocks is to group distinct steps:
 
 ```typescript
-describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
-	let page: Page;
+describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
+	describe( 'Set up feature', function() {
+		// Steps to set up the feature under test
+	});
 
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
-} );
+	describe( 'Test feature', function() {
+		// Interact and test the feature
+	});
+
+	describe( 'Turn off feature', funtion() {
+		// Test deactivating the feature
+	});
+})
 ```
 
 ## Test step
@@ -199,6 +269,7 @@ export class ExampleBlockFlow implements BlockFlow {
 	}
 }
 ```
+
 </details d>
 
 <details>
@@ -215,17 +286,16 @@ import { createBlockTests } from './shared-specs/block-testing';
 
 const blockFlows: BlockFlow[] = [
 	new ExampleABlockFlow( {
-		neededString: 'a test data string needed by block Example A'
+		neededString: 'a test data string needed by block Example A',
 	} ),
 	new ExampleBBlockFlow( {
-		neededObj: { 
+		neededObj: {
 			// an object of test data needed by block Example B
-		}
+		},
 	} ),
 ];
 
 createBlockTests( 'Example Blocks', blockFlows );
-
 ```
 
 </details>
