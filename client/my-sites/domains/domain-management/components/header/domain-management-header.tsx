@@ -71,7 +71,7 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 	const renderPremiumBadge = () => (
 		<Badge className="domain-management-header__badge domain-management-header__badge--premium">
 			{ __( 'Premium domain' ) }
-			<Icon icon={ info } size={ 14 } />
+			<Icon icon={ info } size={ 17 } />
 		</Badge>
 	);
 
