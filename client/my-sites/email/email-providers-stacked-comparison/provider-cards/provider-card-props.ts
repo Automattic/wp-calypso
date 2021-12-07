@@ -16,7 +16,13 @@ export interface ProviderCard {
 	formattedPrice?: TranslateResult;
 	formFields?: ReactElement;
 	isDomainEligibleForTitanFreeTrial?: boolean;
+	logo?: ReactElement | { path: string; className?: string };
+	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
 	onButtonClick?: ( event: React.MouseEvent ) => void;
+	priceBadge?: ReactElement | TranslateResult;
+	productName?: TranslateResult;
+	providerKey?: string;
+	showExpandButton?: boolean;
 }
 
 export type EmailProvidersStackedCardProps = {

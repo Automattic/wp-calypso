@@ -28,8 +28,8 @@ import type { Site } from 'calypso/reader/list-manage/types';
 import './style.scss';
 
 type EmailProvidersStackedComparisonProps = {
-	comparisonContext: string;
 	cartDomainName?: string;
+	comparisonContext: string;
 	currencyCode?: string;
 	currentRoute?: string;
 	domain?: any;
@@ -44,6 +44,7 @@ type EmailProvidersStackedComparisonProps = {
 	selectedSite?: Site | null;
 	selectedDomainName: string;
 	source: string;
+	titanMailMonthlyProduct?: any;
 	gSuiteAnnualProduct?: any;
 };
 
@@ -92,6 +93,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			{ isGSuiteSupported && (
 				<GoogleWorkspaceCard
 					comparisonContext={ comparisonContext }
+					recordTracksEventAddToCartClick={ recordTracksEventAddToCartClick }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
 				/>
