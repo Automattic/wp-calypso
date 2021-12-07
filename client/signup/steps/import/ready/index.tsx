@@ -11,6 +11,12 @@ import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+const trackEventName = 'calypso_signup_step_start';
+const trackEventParams = {
+	flow: 'importer',
+	step: 'ready',
+};
+
 interface ReadyPreviewProps {
 	urlData: UrlData;
 	siteSlug: string;
@@ -26,17 +32,25 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
+	const recordReadyScreenEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'preview',
+			platform: urlData.platform,
+		} );
+	};
+
 	const recordImportGuideEvent = () => {
 		if ( ! isModalDetailsOpen ) return;
 
-		recordTracksEvent( 'calypso_signup_step_start', {
-			flow: 'importer',
-			step: 'ready',
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
 			action: 'guide-modal',
 			platform: urlData.platform,
 		} );
 	};
 
+	useEffect( recordReadyScreenEvent, [] );
 	useEffect( recordImportGuideEvent, [ isModalDetailsOpen ] );
 
 	return (
