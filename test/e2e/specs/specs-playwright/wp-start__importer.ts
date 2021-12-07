@@ -60,7 +60,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 			await startImportFlow.validateScanningPage();
 			await startImportFlow.validateBuildingPage( reason );
 			await startImportFlow.startBuilding();
-			await startImportFlow.validateDesignPage();
+			await startImportFlow.validateSetupPage();
 		} );
 	} );
 
@@ -122,20 +122,6 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 			await startImportFlow.enterURL( 'example.com' );
 			await startImportFlow.clickButton( 'Back to start' );
 			await startImportFlow.validateURLCapturePage();
-		} );
-	} );
-
-	// Go back from a importer error page
-	describe( 'Go back from building page', () => {
-		navigateToSetup();
-
-		// Back to setup page from the design page
-		it( 'Back to URL capture page from error page', async () => {
-			await startImportFlow.enterURL( 'example.com' );
-			await startImportFlow.startBuilding();
-			await startImportFlow.validateDesignPage();
-			await startImportFlow.goBackOneScreen();
-			await startImportFlow.validateSetupPage();
 		} );
 	} );
 } );
