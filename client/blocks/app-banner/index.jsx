@@ -70,12 +70,14 @@ export class AppBanner extends Component {
 		if ( ! appBanner && this.appBannerNode ) {
 			this.appBannerNode.removeEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.removeEventListener( 'touchstart', this.stopBubblingEvents, false );
+			document.body.classList.remove( 'app-banner-is-visible' );
 			return;
 		}
 		if ( appBanner ) {
 			this.appBannerNode = ReactDom.findDOMNode( appBanner );
 			this.appBannerNode.addEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.addEventListener( 'touchstart', this.stopBubblingEvents, false );
+			document.body.classList.add( 'app-banner-is-visible' );
 		}
 	};
 
