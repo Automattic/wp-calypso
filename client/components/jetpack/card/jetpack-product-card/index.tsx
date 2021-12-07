@@ -95,7 +95,8 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 			args: {
 				percent: discount,
 			},
-			comment: '✢ clause describing the displayed price adjustment',
+			comment:
+				'Should be as concise as possible. ✢ refers to a clause describing the displayed price adjustment. The {{sup}} tag displays it as superscript.',
 			components: {
 				sup: <sup />,
 			},
