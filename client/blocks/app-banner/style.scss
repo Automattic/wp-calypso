@@ -12,6 +12,9 @@
 
 /* Prevent the body from scrolling when the app banner is visible */
 body.app-banner-is-visible {
+	position: fixed;
+	height: 100%;
+	width: 100%;
 	overflow: hidden;
 }
 
