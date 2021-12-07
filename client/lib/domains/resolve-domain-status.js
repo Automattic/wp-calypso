@@ -205,7 +205,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
-					status: translate( 'Action required' ),
+					status: translate( 'Verify email' ),
 					icon: 'info',
 					listStatusWeight: 600,
 				};

@@ -90,10 +90,6 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 	};
 
 	const renderStatusBadge = ( domain: typeof props[ 'domain' ] ) => {
-		if ( domain.isPendingIcannVerification ) {
-			return renderWarningBadge( __( 'Verify email' ) );
-		}
-
 		const { status, statusClass } = resolveDomainStatus( domain );
 
 		if ( status ) {
