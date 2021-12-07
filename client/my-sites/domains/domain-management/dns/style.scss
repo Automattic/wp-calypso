@@ -79,7 +79,7 @@ body.dns__body-white {
 			}
 
 			@include break-mobile {
-				padding: 10px 0;
+				padding: 16px 0;
 				border-top: none;
 				border-bottom: 1px solid $gray-5;
 			}
@@ -163,11 +163,12 @@ body.dns__body-white {
 
 					&.dns-records-list-item__menu {
 						position: absolute;
-						top: 0;
+						top: -4px;
 						right: 0;
 
 						.ellipsis-menu__toggle {
 							position: relative;
+							padding: 0;
 							right: 8px;
 						}
 
