@@ -1103,7 +1103,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    cli-color: ^2.0.1
+    chalk: ^4.1.0
     coffee-script: ^1.12.7
     lodash: ^4.17.21
     mocha: ^8.1.3
@@ -12704,19 +12704,6 @@ __metadata:
     memoizee: ^0.4.14
     timers-ext: ^0.1.5
   checksum: 71ff09e8c9ca4e728ef67f272126e0967a28868ac56fd14c124a3bc8e8c3aeb14c58b0e073b9605b5425016f9bbcf148eba04c92a279997443304c83f7195458
-  languageName: node
-  linkType: hard
-
-"cli-color@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "cli-color@npm:2.0.1"
-  dependencies:
-    d: ^1.0.1
-    es5-ext: ^0.10.53
-    es6-iterator: ^2.0.3
-    memoizee: ^0.4.15
-    timers-ext: ^0.1.7
-  checksum: 12115743be154afbe908d88915785540eb8e084ee8284f7683b43036ba233d8b1ba45bdccde78c5fc9816ada0ddb25ac2ef1481873612a64b222ec031645d6e9
   languageName: node
   linkType: hard
 
@@ -25030,7 +25017,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"memoizee@npm:^0.4.14, memoizee@npm:^0.4.15":
+"memoizee@npm:^0.4.14":
   version: 0.4.15
   resolution: "memoizee@npm:0.4.15"
   dependencies:
