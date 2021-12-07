@@ -253,17 +253,6 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 };
 
 /**
- * Requests streamlined approval to WordAds program
- *
- * @param {number}       siteId            The site ID
- * @returns {Promise} A promise representing the request
- */
-Undocumented.prototype.wordAdsApprove = function ( siteId ) {
-	debug( '/sites/:site:/wordads/approve' );
-	return this.wpcom.req.post( '/sites/' + siteId + '/wordads/approve' );
-};
-
-/**
  * Fetch the status of an Automated Transfer.
  *
  * @param {number} siteId -- the ID of the site being transferred
@@ -275,21 +264,6 @@ Undocumented.prototype.transferStatus = function ( siteId, transferId ) {
 	return this.wpcom.req.get( {
 		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`,
 	} );
-};
-
-/**
- * Get OAuth2 Client data for a given client ID
- *
- * @param {string}     clientId       The client ID
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.oauth2ClientId = function ( clientId, fn ) {
-	return this.wpcom.req.get(
-		`/oauth2/client-data/${ clientId }`,
-		{ apiNamespace: 'wpcom/v2' },
-		fn
-	);
 };
 
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (

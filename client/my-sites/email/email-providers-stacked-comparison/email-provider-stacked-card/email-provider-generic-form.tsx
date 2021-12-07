@@ -359,8 +359,8 @@ const isUserComplete = ( user: GenericNewUser, optionalFields: string[] ): boole
 	return getFields( user, optionalFields ).every( ( { value } ) => '' !== value );
 };
 
-const doesUserHaveError = ( user: GenericNewUser ): boolean => {
-	return getFields( user ).some( ( { error } ) => null !== error );
+const doesUserHaveError = ( user: GenericNewUser, optionalFields: string[] ): boolean => {
+	return getFields( user, optionalFields ).some( ( { error } ) => null !== error );
 };
 
 /**
@@ -370,7 +370,7 @@ const doesUserHaveError = ( user: GenericNewUser ): boolean => {
  * @returns boolean if the user is valid or not
  */
 export const isUserValid = ( user: GenericNewUser, optionalFields: string[] ): boolean =>
-	isUserComplete( user, optionalFields ) && ! doesUserHaveError( user );
+	isUserComplete( user, optionalFields ) && ! doesUserHaveError( user, optionalFields );
 
 export const areAllUsersValid = (
 	users: GenericNewUser[],

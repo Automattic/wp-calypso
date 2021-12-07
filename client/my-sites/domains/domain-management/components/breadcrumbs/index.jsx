@@ -34,10 +34,7 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 	const renderItemLabel = ( item ) => {
 		if ( item.href ) {
 			return (
-				<a
-					className="breadcrumbs__item-label breadcrumbs__item-label--clickable"
-					href={ item.href }
-				>
+				<a className="breadcrumbs__item-label" href={ item.href }>
 					{ item.label }
 				</a>
 			);
@@ -70,13 +67,19 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	};
 
-	const renderItem = ( item, index ) => (
-		<React.Fragment key={ `breadcrumb${ index }` }>
-			<span className="breadcrumbs__item">{ renderItemLabel( item ) }</span>
-			{ renderHelpBubble( item ) }
-			{ renderSeparator( index ) }
-		</React.Fragment>
-	);
+	const renderItem = ( item, index ) => {
+		const classes = classNames( 'breadcrumbs__item', {
+			'is-last-item': index === items.length - 1,
+			'is-only-item': items.length === 1,
+		} );
+		return (
+			<React.Fragment key={ `breadcrumb${ index }` }>
+				<span className={ classes }>{ renderItemLabel( item ) }</span>
+				{ renderHelpBubble( item ) }
+				{ renderSeparator( index ) }
+			</React.Fragment>
+		);
+	};
 
 	const renderBackArrow = () => {
 		if ( mobileItem.showBackArrow && mobileItem.href ) {

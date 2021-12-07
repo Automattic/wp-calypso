@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { TermLength } from './utils';
+import { IntervalLength } from './utils';
 import type { Site } from 'calypso/my-sites/scan/types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -42,7 +42,7 @@ export type EmailProvidersStackedCardProps = {
 	selectedDomainName: string;
 	shoppingCartManager?: any;
 	source: string;
-	termLength: TermLength;
+	intervalLength: IntervalLength;
 	titanMailMonthlyProduct?: any;
 	titanMailAnnuallyProduct?: any;
 	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;

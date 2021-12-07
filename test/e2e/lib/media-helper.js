@@ -33,7 +33,7 @@ export function createFile( notRandom, uploadDirectoryName = 'image-uploads' ) {
 }
 
 export function getMP3FileWithFilename( filename ) {
-	const originalFileName = 'bees.mp3';
+	const originalFileName = 'test-audio-01.mp3';
 	const originalFile = path.resolve( __dirname, `../image-uploads/${ originalFileName }` );
 	const newFile = path.resolve( __dirname, '../image-uploads/' + filename );
 	fs.copySync( originalFile, newFile );
@@ -50,7 +50,7 @@ export function createFileWithFilename( filename, skipNameCheck ) {
 		throw new Error( `Invalid filename given ${ filename }` );
 	}
 
-	const originalFileName = 'image0.jpg';
+	const originalFileName = 'test-image-01.png';
 	const originalFile = path.resolve( __dirname, `../image-uploads/${ originalFileName }` );
 	const newFile = path.resolve( __dirname, '../image-uploads/' + filename );
 	fs.copySync( originalFile, newFile );
