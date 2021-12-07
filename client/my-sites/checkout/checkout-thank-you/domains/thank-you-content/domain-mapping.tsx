@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
+import domainConnectedSuccess from 'calypso/assets/images/domains/connect.svg';
 import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';

@@ -4,7 +4,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import domainConnectedIllustration from 'calypso/assets/images/illustrations/domain-connected.svg';
+import domainConnectedIllustration from 'calypso/assets/images/domains/connect.svg';
 import CardHeading from 'calypso/components/card-heading';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
