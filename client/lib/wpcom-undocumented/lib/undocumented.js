@@ -266,21 +266,6 @@ Undocumented.prototype.transferStatus = function ( siteId, transferId ) {
 	} );
 };
 
-/**
- * Get OAuth2 Client data for a given client ID
- *
- * @param {string}     clientId       The client ID
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.oauth2ClientId = function ( clientId, fn ) {
-	return this.wpcom.req.get(
-		`/oauth2/client-data/${ clientId }`,
-		{ apiNamespace: 'wpcom/v2' },
-		fn
-	);
-};
-
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 	domain,
 	providerId,
