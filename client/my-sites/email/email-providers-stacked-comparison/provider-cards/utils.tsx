@@ -1,5 +1,9 @@
 import formatCurrency from '@automattic/format-currency';
-import { RequestCartProduct, ResponseCart, ShoppingCartManagerActions } from "@automattic/shopping-cart";
+import {
+	RequestCartProduct,
+	ResponseCart,
+	ShoppingCartManagerActions,
+} from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import React, { FunctionComponent, ReactElement } from 'react';
