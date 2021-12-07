@@ -34,6 +34,8 @@ import {
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 	isDIFMProduct,
+	TITAN_MAIL_ANNUALLY_SLUG,
+	TITAN_MAIL_MONTHLY_SLUG,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
@@ -42,7 +44,6 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from 'calypso/lib/gsuite/constants';
-import { TITAN_MAIL_ANNUALLY_SLUG, TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type {
 	ResponseCart,
@@ -399,6 +400,30 @@ export function googleAppsExtraLicenses( properties: {
 }
 
 /**
+ * Creates a new shopping cart item for Titan Mail.
+ */
+function titanMailProduct(
+	properties: {
+		meta?: string;
+		domain?: string;
+		source?: string;
+		quantity?: number | null;
+		extra?: RequestCartProductExtra;
+	},
+	productSlug: string
+) {
+	const domainName = properties.meta ?? properties.domain;
+	if ( ! domainName ) {
+		throw new Error( 'Titan mail requires a domain' );
+	}
+	return {
+		...domainItem( productSlug, domainName, properties.source ),
+		quantity: properties.quantity,
+		extra: properties.extra,
+	};
+}
+
+/**
  * Creates a new shopping cart item for Titan Mail Annually.
  */
 export function titanMailAnnually( properties: {
@@ -408,15 +433,7 @@ export function titanMailAnnually( properties: {
 	quantity?: number | null;
 	extra?: RequestCartProductExtra;
 } ) {
-	const domainName = properties.meta ?? properties.domain;
-	if ( ! domainName ) {
-		throw new Error( 'Titan mail requires a domain' );
-	}
-	return {
-		...domainItem( TITAN_MAIL_ANNUALLY_SLUG, domainName, properties.source ),
-		quantity: properties.quantity,
-		extra: properties.extra,
-	};
+	return titanMailProduct( properties, TITAN_MAIL_ANNUALLY_SLUG );
 }
 
 /**
@@ -429,15 +446,7 @@ export function titanMailMonthly( properties: {
 	quantity?: number | null;
 	extra?: RequestCartProductExtra;
 } ): IncompleteRequestCartProduct {
-	const domainName = properties.meta ?? properties.domain;
-	if ( ! domainName ) {
-		throw new Error( 'Titan mail requires a domain' );
-	}
-	return {
-		...domainItem( TITAN_MAIL_MONTHLY_SLUG, domainName, properties.source ),
-		quantity: properties.quantity,
-		extra: properties.extra,
-	};
+	return titanMailProduct( properties, TITAN_MAIL_MONTHLY_SLUG );
 }
 
 export function hasGoogleApps( cart: ResponseCart ): boolean {

@@ -11,6 +11,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
+import { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
 import { canCurrentUserAddEmail, getSelectedDomain } from 'calypso/lib/domains';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
@@ -33,11 +34,11 @@ import { getProductBySlug, getProductsList } from 'calypso/state/products-list/s
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
-	AddToCartAndCheckout,
+	addToCartAndCheckout,
 	PriceBadge,
-	PriceWithTerm,
+	PriceWithInterval,
 	recordTracksEventAddToCartClick,
-	TermLength,
+	IntervalLength,
 } from './utils';
 
 import './google-workspace-card.scss';
@@ -79,28 +80,28 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		gSuiteProductYearly,
 		onExpandedChange,
 		selectedDomainName,
-		termLength,
+		intervalLength,
 	} = props;
-	const googleWorkspace: ProviderCard = googleWorkspaceCardInformation;
+	const googleWorkspace: ProviderCard = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = detailsExpanded;
 
 	const gSuiteProduct =
-		termLength === TermLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
+		intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
 	const productIsDiscounted = hasDiscount( gSuiteProduct );
 
-	const priceWithTerm = (
-		<PriceWithTerm
+	const priceWithInterval = (
+		<PriceWithInterval
 			className={ 'google-workspace-card' }
-			termLength={ termLength }
+			intervalLength={ intervalLength }
 			cost={ gSuiteProduct?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
 			hasDiscount={ productIsDiscounted }
 		/>
 	);
 
-	const standardPriceForTermLength = formatPrice( gSuiteProduct?.cost, currencyCode ?? '' );
-	const salePriceForTermLength = formatPrice( gSuiteProduct?.sale_cost, currencyCode ?? '' );
+	const standardPriceForIntervalLength = formatPrice( gSuiteProduct?.cost, currencyCode ?? '' );
+	const salePriceForIntervalLength = formatPrice( gSuiteProduct?.sale_cost, currencyCode ?? '' );
 
 	const discount = productIsDiscounted ? (
 		<div className="google-workspace-card__discount-with-renewal">
@@ -109,8 +110,8 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 				{
 					args: {
 						discount: gSuiteProduct.sale_coupon.discount,
-						discountedPrice: salePriceForTermLength,
-						standardPrice: standardPriceForTermLength,
+						discountedPrice: salePriceForIntervalLength,
+						standardPrice: standardPriceForIntervalLength,
 					},
 					comment:
 						'%(discount)d is a numeric discount percentage, e.g. 40; ' +
@@ -139,7 +140,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	googleWorkspace.priceBadge = (
 		<PriceBadge
 			additionalPriceInformationComponent={ discount }
-			priceComponent={ priceWithTerm }
+			priceComponent={ priceWithInterval }
 			className={ 'google-workspace-card' }
 		/>
 	);
@@ -161,7 +162,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		} = props;
 
 		const gSuiteProduct =
-			termLength === TermLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
+			intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
@@ -183,9 +184,13 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		const domains: { name: string }[] = domain ? [ domain ] : [];
 
 		setAddingToCart( true );
-		const cartItems: any = getItemsForCart( domains, gSuiteProduct.product_slug, googleUsers );
+		const cartItems: IncompleteRequestCartProduct[] = getItemsForCart(
+			domains,
+			gSuiteProduct.product_slug,
+			googleUsers
+		);
 
-		AddToCartAndCheckout(
+		addToCartAndCheckout(
 			shoppingCartManager,
 			cartItems[ 0 ],
 			productsList,

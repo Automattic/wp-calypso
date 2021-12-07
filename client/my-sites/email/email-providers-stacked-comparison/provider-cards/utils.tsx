@@ -1,43 +1,44 @@
 import formatCurrency from '@automattic/format-currency';
-import { RequestCartProduct } from '@automattic/shopping-cart';
+import { RequestCartProduct, ShoppingCartManagerActions } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import React, { FunctionComponent, ReactElement } from 'react';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
 
-export enum TermLength {
+export enum IntervalLength {
 	ANNUALLY = 'annually',
 	MONTHLY = 'monthly',
 }
 
-export const formattedPriceWithTerm = (
+export const formattedPriceWithInterval = (
 	formattedPriceClassName: string,
-	termLengthClassName: string,
+	intervalLengthClassName: string,
 	cost: number,
 	currencyCode: string,
-	termLength?: TermLength
+	intervalLength?: IntervalLength
 ) => {
-	return translate( '{{price/}} /mailbox {{termLength/}}', {
+	return translate( '{{price/}} /mailbox {{intervalLength/}}', {
 		components: {
 			price: (
 				<span className={ formattedPriceClassName }>
 					{ formatCurrency( cost ?? 0, currencyCode ) }
 				</span>
 			),
-			termLength: <span className={ termLengthClassName }>/{ termLength }</span>,
+			intervalLength: <span className={ intervalLengthClassName }>/{ intervalLength }</span>,
 		},
 		comment:
 			'{{price/}} is the formatted price, e.g. $20' +
-			'{{termLength/}} is already translated and it is either annually or monthly',
+			'{{intervalLength/}} is already translated and it is either annually or monthly',
 	} );
 };
 
-export const AddToCartAndCheckout = (
-	shoppingCartManager: any,
-	cartItem: RequestCartProduct,
-	productList: any,
+export const addToCartAndCheckout = (
+	shoppingCartManager: ShoppingCartManagerActions,
+	cartItem: RequestCartProduct | IncompleteRequestCartProduct,
+	productList: Record< string, { product_id: number } >,
 	setAddingToCart: ( addingToCart: boolean ) => void,
 	selectedSite: string
 ): void => {
@@ -77,20 +78,20 @@ export const recordTracksEventAddToCartClick = (
 	} );
 };
 
-type PriceWithTermProps = {
+type PriceWithIntervalProps = {
 	className: string;
 	cost: number;
 	currencyCode: string;
 	hasDiscount: boolean;
 	sale?: number | null;
-	termLength: TermLength;
+	intervalLength: IntervalLength;
 };
 
-export const PriceWithTerm: FunctionComponent< PriceWithTermProps > = ( props ) => {
-	const { className, cost, currencyCode, hasDiscount, sale, termLength } = props;
+export const PriceWithInterval: FunctionComponent< PriceWithIntervalProps > = ( props ) => {
+	const { className, cost, currencyCode, hasDiscount, sale, intervalLength } = props;
 
 	const costClassName = `${ className }__${ hasDiscount ? 'discounted-price' : 'keep-main-price' }`;
-	const termLengthClassName = `${ className }__term`;
+	const intervalLengthClassName = `${ className }__interval`;
 	const mailboxClassName = `${ className }__mailbox`;
 	const saleClassName = `${ className }__sale`;
 
@@ -108,18 +109,18 @@ export const PriceWithTerm: FunctionComponent< PriceWithTermProps > = ( props ) 
 	const saleSpan = (
 		<span className={ saleClassName }>{ formatCurrency( sale ?? 0, currencyCode ) }</span>
 	);
-	const termLengthSpan =
-		termLength === 'annually' ? (
-			<span className={ termLengthClassName }>/{ translate( 'annually' ) }</span>
+	const intervalLengthSpan =
+		intervalLength === 'annually' ? (
+			<span className={ intervalLengthClassName }>/{ translate( 'annually' ) }</span>
 		) : (
-			<span className={ termLengthClassName }>/{ translate( 'monthly' ) }</span>
+			<span className={ intervalLengthClassName }>/{ translate( 'monthly' ) }</span>
 		);
 
 	const mailboxSpan = <span className={ mailboxClassName }> /{ translate( 'mailbox' ) } </span>;
 
 	return (
 		<>
-			{ priceSpan } { showSale && saleSpan } { mailboxSpan } { termLengthSpan }
+			{ priceSpan } { showSale && saleSpan } { mailboxSpan } { intervalLengthSpan }
 		</>
 	);
 };
