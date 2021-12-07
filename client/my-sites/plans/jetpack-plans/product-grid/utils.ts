@@ -8,7 +8,6 @@ import {
 	getYearlyPlanByMonthly,
 } from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
-import { doForCurrentCROIteration, Iterations } from '../iterations';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import type { Duration, SelectorProduct } from '../types';
 
@@ -27,23 +26,19 @@ export const getPlansToDisplay = ( {
 	let planSlugsToDisplay = SELECTOR_PLANS;
 
 	// When users own a tier 2 security plan, display that instead of the tier 1 plans.
-	doForCurrentCROIteration( ( key ) => {
-		if ( Iterations.ONLY_REALTIME_PRODUCTS === key ) {
-			if (
-				currentPlanSlug &&
-				[ PLAN_JETPACK_SECURITY_T2_YEARLY, PLAN_JETPACK_SECURITY_T2_MONTHLY ].includes(
-					currentPlanSlug
-				)
-			) {
-				const slugReplacements: { [ x: string ]: string } = {
-					[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: PLAN_JETPACK_SECURITY_T2_YEARLY,
-					[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: PLAN_JETPACK_SECURITY_T2_MONTHLY,
-				};
+	if (
+		currentPlanSlug &&
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY, PLAN_JETPACK_SECURITY_T2_MONTHLY ].includes(
+			currentPlanSlug
+		)
+	) {
+		const slugReplacements: { [ x: string ]: string } = {
+			[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: PLAN_JETPACK_SECURITY_T2_YEARLY,
+			[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: PLAN_JETPACK_SECURITY_T2_MONTHLY,
+		};
 
-				planSlugsToDisplay = planSlugsToDisplay.map( ( slug ) => slugReplacements[ slug ] ?? slug );
-			}
-		}
-	} );
+		planSlugsToDisplay = planSlugsToDisplay.map( ( slug ) => slugReplacements[ slug ] ?? slug );
+	}
 
 	const plansToDisplay = planSlugsToDisplay
 		.map( slugToSelectorProduct )
