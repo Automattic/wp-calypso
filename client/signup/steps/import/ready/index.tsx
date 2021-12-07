@@ -2,8 +2,8 @@ import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding'
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import * as React from 'react';
-import { UrlData, GoToStep } from '../types';
+import React, { useEffect } from 'react';
+import { UrlData, GoToStep, RecordTracksEvent } from '../types';
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
@@ -15,14 +15,29 @@ interface ReadyPreviewProps {
 	urlData: UrlData;
 	siteSlug: string;
 	goToImporterPage: ( platform: string ) => void;
+	recordTracksEvent: RecordTracksEvent;
 }
 
 const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 	urlData,
 	goToImporterPage,
+	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
+
+	const recordImportGuideEvent = () => {
+		if ( ! isModalDetailsOpen ) return;
+
+		recordTracksEvent( 'calypso_signup_step_start', {
+			flow: 'importer',
+			step: 'ready',
+			action: 'guide-modal',
+			platform: urlData.platform,
+		} );
+	};
+
+	useEffect( recordImportGuideEvent, [ isModalDetailsOpen ] );
 
 	return (
 		<>

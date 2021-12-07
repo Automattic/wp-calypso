@@ -4,11 +4,12 @@ import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAnalyzing, getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep } from './ready';
-import { GoToStep, GoToNextStep, UrlData } from './types';
+import { GoToStep, GoToNextStep, UrlData, RecordTracksEvent } from './types';
 import { getImporterUrl } from './util';
 import './style.scss';
 
@@ -21,6 +22,7 @@ type Props = ConnectedProps< typeof connector > & {
 		siteSlug: string;
 	};
 	urlData: UrlData;
+	recordTracksEvent: RecordTracksEvent;
 };
 
 const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
@@ -32,6 +34,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 		isAnalyzing,
 		signupDependencies,
 		urlData,
+		recordTracksEvent,
 	} = props;
 
 	const shouldHideBackBtn = ( stepName: string ): boolean => {
@@ -113,6 +116,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 							urlData={ urlData }
 							goToImporterPage={ goToImporterPage }
 							siteSlug={ signupDependencies.siteSlug }
+							recordTracksEvent={ recordTracksEvent }
 						/>
 					) }
 					{ stepName === 'ready' && stepSectionName === 'wpcom' && (
@@ -129,7 +133,9 @@ const connector = connect(
 		urlData: getUrlData( state ),
 		isAnalyzing: isAnalyzing( state ),
 	} ),
-	{}
+	{
+		recordTracksEvent,
+	}
 );
 
 export default connector( ImportOnboarding );
