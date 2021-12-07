@@ -5,7 +5,7 @@ module.exports = {
 	modulePaths: [ '<rootDir>/client/extensions' ],
 	rootDir: '../..',
 	testEnvironment: 'node',
-	resolver: '<rootDir>/test/module-resolver.js',
+	resolver: require.resolve( '@automattic/calypso-jest/src/module-resolver.js' ),
 	testMatch: [
 		'<rootDir>/bin/**/integration/*.[jt]s',
 		'<rootDir>/client/**/integration/*.[jt]s',
