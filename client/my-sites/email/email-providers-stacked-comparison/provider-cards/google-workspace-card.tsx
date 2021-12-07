@@ -66,7 +66,7 @@ const googleWorkspaceCardInformation: ProviderCard = {
 
 const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
 	const { currencyCode = '', domain, gSuiteProduct, selectedDomainName } = props;
-	const googleWorkspace: ProviderCard = googleWorkspaceCardInformation;
+	const googleWorkspace: ProviderCard = { ...googleWorkspaceCardInformation };
 
 	const isUpgrading = () => {
 		const { domain, hasCartDomain } = props;
@@ -255,7 +255,6 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			description={ googleWorkspace.description }
 			detailsExpanded={ googleWorkspace.detailsExpanded }
 			discount={ discount }
-			additionalPriceInformation={ googleWorkspace.additionalPriceInformation }
 			onExpandedChange={ googleWorkspace.onExpandedChange }
 			priceBadge={ priceBadge }
 			formFields={ formFields }

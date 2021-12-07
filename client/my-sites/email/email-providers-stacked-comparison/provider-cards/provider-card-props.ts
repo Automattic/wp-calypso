@@ -21,7 +21,7 @@ export interface ProviderCard {
 	onButtonClick?: ( event: React.MouseEvent ) => void;
 	priceBadge?: ReactElement | TranslateResult;
 	productName?: TranslateResult;
-	providerKey?: string;
+	providerKey: string;
 	showExpandButton?: boolean;
 }
 
