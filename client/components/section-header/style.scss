@@ -19,7 +19,9 @@
 .section-header__label {
 	display: flex;
 	align-items: center;
+	flex-basis: 0;
 	flex-grow: 1;
+	flex-shrink: 1;
 	position: relative;
 	overflow: hidden;
 
@@ -40,7 +42,9 @@
 }
 
 .section-header__actions {
+	align-self: center;
 	flex-grow: 0;
+	margin-left: 8px;
 	position: relative;
 
 	@include clear-fix;

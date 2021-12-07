@@ -437,7 +437,7 @@ class MembershipsSection extends Component {
 				<PopoverMenuItem
 					target="_blank"
 					rel="noopener norefferer"
-					href={ `https://dashboard.stripe.com/test/search?query=metadata%3A${ subscriber.user.ID }` }
+					href={ `https://dashboard.stripe.com/search?query=metadata%3A${ subscriber.user.ID }` }
 				>
 					<Gridicon size={ 18 } icon={ 'external' } />
 					{ this.props.translate( 'See transactions in Stripe Dashboard' ) }

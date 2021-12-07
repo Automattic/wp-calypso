@@ -8,6 +8,7 @@ import {
 	STORED_CARDS_FETCH,
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
+	STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/stored-cards/init';
@@ -77,4 +78,12 @@ export const deleteStoredCard = ( card ) => ( dispatch ) => {
 				error: error.message || i18n.translate( 'There was a problem deleting the stored card.' ),
 			} );
 		} );
+};
+
+export const updateStoredCardIsBackupComplete = ( stored_details_id, is_backup ) => {
+	return {
+		type: STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED,
+		stored_details_id,
+		is_backup,
+	};
 };
