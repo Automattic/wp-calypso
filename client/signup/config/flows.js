@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
@@ -73,7 +74,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 	}
 
 	// Initially ship to English users only, then ship to all users when translations complete
-	if ( englishLocales.includes( localeSlug ) ) {
+	if ( englishLocales.includes( localeSlug ) || isEnabled( 'signup/hero-flow-non-en' ) ) {
 		return addQueryArgs( queryParam, '/start/setup-site' );
 	}
 
