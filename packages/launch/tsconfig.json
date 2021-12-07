@@ -18,7 +18,6 @@
 	"references": [
 		{ "path": "../shopping-cart" },
 		{ "path": "../data-stores" },
-		{ "path": "../components" },
 		{ "path": "../onboarding" },
 		{ "path": "../domain-picker" },
 		{ "path": "../plans-grid" },

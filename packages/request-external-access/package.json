@@ -38,6 +38,7 @@
 		"@automattic/popup-monitor": "workspace:^"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

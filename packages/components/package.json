@@ -29,6 +29,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
+		"@types/react-modal": "^3.13.1",
 		"@wordpress/base-styles": "^4.0.4",
 		"classnames": "^2.3.1",
 		"gridicons": "^3.4.0",
@@ -43,6 +44,7 @@
 		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",

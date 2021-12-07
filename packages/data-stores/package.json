@@ -34,6 +34,9 @@
 	},
 	"dependencies": {
 		"@automattic/format-currency": "workspace:^",
+		"@types/qs": "^6.9.7",
+		"@types/wordpress__data": "^4.6.10",
+		"@types/wordpress__data-controls": "^2.2.0",
 		"@wordpress/api-fetch": "^5.2.6",
 		"@wordpress/data-controls": "^2.2.7",
 		"@wordpress/deprecated": "^3.2.3",
@@ -51,6 +54,7 @@
 		"react": "^17.0.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/validator": "^13.7.0",
 		"jest-fetch-mock": "^3.0.3",

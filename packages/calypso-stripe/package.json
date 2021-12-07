@@ -39,9 +39,12 @@
 	"dependencies": {
 		"@stripe/react-stripe-js": "^1.4.1",
 		"@stripe/stripe-js": "^1.17.1",
+		"@types/debug": "^4.1.7",
+		"@types/react": "^17.0.36",
 		"debug": "^4.1.1",
 		"react": "^17.0.2",
-		"react-dom": "^17.0.2"
+		"react-dom": "^17.0.2",
+		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

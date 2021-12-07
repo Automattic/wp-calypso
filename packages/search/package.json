@@ -31,6 +31,7 @@
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
 		"@babel/runtime": "^7.16.5",
+		"@types/wordpress__components": "^14.0.4",
 		"@wordpress/base-styles": "^4.0.4",
 		"@wordpress/components": "^19.1.5",
 		"@wordpress/compose": "^5.0.6",
@@ -46,6 +47,7 @@
 		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",

@@ -4,9 +4,6 @@
 	"description": "jscodeshift transforms used to upgrade calypso code",
 	"main": "./api.js",
 	"bin": "./index.js",
-	"scripts": {
-		"test": "jest"
-	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",

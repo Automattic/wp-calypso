@@ -32,6 +32,7 @@
 		"use-subscription": "^1.5.1"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",

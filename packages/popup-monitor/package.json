@@ -37,6 +37,7 @@
 		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"chai": "^4.3.4"
 	}

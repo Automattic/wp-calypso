@@ -35,6 +35,9 @@
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
+		"@types/debug": "^4.1.7",
+		"@types/react-router-dom": "^5.3.2",
+		"@types/wordpress__components": "^14.0.4",
 		"@wordpress/components": "^19.1.5",
 		"@wordpress/react-i18n": "^3.0.4",
 		"@wordpress/url": "^3.3.1",
@@ -57,6 +60,7 @@
 		"webpack": "^5.65.0"
 	},
 	"peerDependencies": {
+		"@types/debug": "^4.1.7",
 		"@wordpress/data": "^6.1.4",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/i18n": "^4.2.4",

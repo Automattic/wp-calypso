@@ -32,6 +32,8 @@
 	},
 	"dependencies": {
 		"@automattic/data-stores": "workspace:^",
+		"@types/react-router-dom": "^5.3.2",
+		"@types/wordpress__components": "^14.0.4",
 		"@wordpress/components": "^19.1.5",
 		"@wordpress/data": "^6.1.4",
 		"@wordpress/icons": "^6.1.1",
@@ -41,6 +43,7 @@
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@testing-library/react": "^12.1.2",

@@ -36,6 +36,7 @@
 		"react": "^17.0.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"types": "types"

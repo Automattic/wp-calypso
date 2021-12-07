@@ -43,6 +43,7 @@
 		"seed-random": "^2.2.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^4.5.4"
 	},

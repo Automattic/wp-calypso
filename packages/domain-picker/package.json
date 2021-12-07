@@ -37,6 +37,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
+		"@types/wordpress__components": "^14.0.4",
 		"@wordpress/base-styles": "^4.0.4",
 		"@wordpress/components": "^19.1.5",
 		"@wordpress/compose": "^5.0.6",
@@ -49,6 +50,7 @@
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^5.16.1",
 		"@testing-library/react": "^12.1.2",

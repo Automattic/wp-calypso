@@ -19,8 +19,7 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"prepare": "yarn run build",
-		"download": "node bin/download.js",
-		"test": "yarn jest"
+		"download": "node bin/download.js"
 	},
 	"dependencies": {
 		"tslib": "^2.3.0"

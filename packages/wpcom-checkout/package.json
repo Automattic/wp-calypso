@@ -43,6 +43,7 @@
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.3.0",
 		"@stripe/stripe-js": "^1.17.1",
+		"@types/wordpress__data": "^4.6.10",
 		"@wordpress/data": "^6.1.4",
 		"@wordpress/i18n": "^4.2.4",
 		"@wordpress/react-i18n": "^3.0.4",
@@ -51,6 +52,7 @@
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^5.16.1",
 		"@testing-library/react": "^12.1.2",

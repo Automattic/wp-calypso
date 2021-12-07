@@ -34,6 +34,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
+		"@types/debug": "^4.1.7",
 		"@wordpress/components": "^19.1.5",
 		"@wordpress/compose": "^5.0.6",
 		"@wordpress/icons": "^6.1.1",
@@ -46,6 +47,7 @@
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/base-styles": "^4.0.4",
