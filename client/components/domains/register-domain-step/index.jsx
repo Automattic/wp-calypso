@@ -844,22 +844,22 @@ class RegisterDomainStep extends Component {
 
 	fetchDomainPricePromise = ( domain ) => {
 		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getDomainPrice( domain, ( serverError, result ) => {
-				if ( serverError ) {
+			wpcom.req
+				.get( `/domains/${ encodeURIComponent( domain ) }/price` )
+				.then( ( data ) => {
+					resolve( {
+						pending: false,
+						is_premium: data.is_premium,
+						cost: data.cost,
+						is_price_limit_exceeded: data?.is_price_limit_exceeded,
+					} );
+				} )
+				.catch( ( error ) => {
 					resolve( {
 						pending: true,
-						error: serverError,
+						error,
 					} );
-					return;
-				}
-
-				resolve( {
-					pending: false,
-					is_premium: result.is_premium,
-					cost: result.cost,
-					is_price_limit_exceeded: result?.is_price_limit_exceeded,
 				} );
-			} );
 		} );
 	};
 
