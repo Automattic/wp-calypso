@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import { getAtomicSiteMediaViaProxyRetry } from 'calypso/lib/get-atomic-site-media';
 import { mediaURLToProxyConfig, canvasToBlob } from 'calypso/lib/media/utils';
-import wpcom from 'calypso/lib/wp';
 import {
 	setImageEditorCropBounds,
 	setImageEditorImageHasLoaded,
@@ -92,7 +92,7 @@ export class ImageEditorCanvas extends Component {
 		const useProxy = isPrivateAtomic && filePath && isRelativeToSiteRoot;
 
 		if ( useProxy ) {
-			return wpcom.undocumented().getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, { query } );
+			return getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, { query } );
 		}
 
 		if ( ! src.startsWith( 'blob' ) ) {
