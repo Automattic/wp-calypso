@@ -3,6 +3,39 @@
 		opacity: 0.4;
 	}
 
+	&.is-free {
+		min-height: 130px;
+		margin-block-start: -4px;
+		padding-block-start: 24px;
+
+		// Adjust leading margin so that different UI fonts
+		// still align to the price the same way
+		&.is-jetpack-cloud {
+			.display-price__above-price-text {
+				margin-inline-start: 0;
+			}
+
+			.display-price__price-free {
+				margin-inline-start: -4px;
+			}
+		}
+
+		.display-price__above-price-text {
+			display: block;
+			margin-block-start: -24px;
+			margin-inline-start: 2px;
+
+			font-size: 1rem;
+			font-weight: 700;
+		}
+
+		.display-price__price-free {
+			display: block;
+			line-height: $font-headline-medium;
+			letter-spacing: -2px;
+		}
+	}
+
 	.plan-price {
 		display: inline-flex;
 		color: var( --studio-gray-100 );
