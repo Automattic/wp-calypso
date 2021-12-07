@@ -19,13 +19,6 @@ const VideoPlayer = ( {
 		setShouldCheckForVideoComplete( false );
 	};
 
-	const trackPlayClick = () => {
-		recordTracksEvent( 'calypso_courses_video_player_play_click', {
-			course: course.slug,
-			video: videoData.slug,
-		} );
-	};
-
 	useEffect( () => {
 		if ( videoRef.current ) {
 			videoRef.current.onplay = () => {
@@ -55,7 +48,6 @@ const VideoPlayer = ( {
 				ref={ videoRef }
 				poster={ videoData.poster }
 				autoPlay={ isPlaying }
-				onPlay={ trackPlayClick }
 				onTimeUpdate={ shouldCheckForVideoComplete ? markVideoAsComplete : undefined }
 			>
 				<source src={ videoData.url } />{ ' ' }
