@@ -45,7 +45,7 @@
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^6.3.12",
+		"@storybook/addon-actions": "^6.4.8",
 		"@storybook/preset-scss": "^1.0.3",
 		"css-loader": "^3.6.0",
 		"enzyme": "^3.11.0",

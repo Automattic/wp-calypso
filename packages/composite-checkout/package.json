@@ -47,7 +47,7 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^6.3.12",
+		"@storybook/addon-actions": "^6.4.8",
 		"@storybook/preset-scss": "^1.0.3",
 		"@testing-library/jest-dom": "^5.16.1",
 		"@testing-library/react": "^12.1.2",
