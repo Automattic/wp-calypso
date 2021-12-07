@@ -241,9 +241,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			productName={ professionalEmail.productName }
 			description={ professionalEmail.description }
 			detailsExpanded={ professionalEmail.detailsExpanded }
-			additionalPriceInformation={ professionalEmail.additionalPriceInformation }
 			onExpandedChange={ professionalEmail.onExpandedChange }
-			formattedPrice={ formattedPrice }
 			formFields={ formFields }
 			isDomainEligibleForTitanFreeTrial={ isDomainEligibleForTitanFreeTrial( domain ) }
 			showExpandButton={ professionalEmail.showExpandButton }
