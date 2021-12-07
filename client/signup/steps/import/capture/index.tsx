@@ -67,6 +67,17 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 		} );
 	};
 
+	const recordScanningErrorEvent = () => {
+		if ( ! analyzerError ) return;
+
+		recordTracksEvent( 'calypso_signup_step_start', {
+			flow: 'importer',
+			step: 'capture',
+			action: 'scanning-error',
+			error: analyzerError,
+		} );
+	};
+
 	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {
 		resetError();
 		setUrlValue( e.target.value );
@@ -84,6 +95,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	 ↓ Effects
 	 */
 	useEffect( recordScanningEvent, [ isAnalyzing ] );
+	useEffect( recordScanningErrorEvent, [ analyzerError ] );
 
 	return (
 		<>
