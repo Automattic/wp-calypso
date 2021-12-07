@@ -16,7 +16,6 @@ open class PluginBaseBuild : Template({
 	val workingDir = "apps/$pluginSlug"
 	val archiveDir = "%archive_dir%"
 	val releaseTag = "%release_tag%"
-	val packageName = "%package_name%"
 
 	artifactRules = "$pluginSlug.zip"
 	buildNumberPattern = "%build.prefix%.%build.counter%"
@@ -83,11 +82,13 @@ open class PluginBaseBuild : Template({
 				# Update composer
 				composer install
 
+				cd $workingDir
+
 				# Focus on the app workspace. This will also install all dependant workspaces
-				yarn workspaces focus $packageName
+				yarn workspaces focus
 
 				# Run the script 'prepare' in all dependant workspaces
-				yarn workspaces foreach --recursive --verbose --from="$packageName" --parallel run prepare
+				yarn workspaces foreach --recursive --verbose --parallel run prepare
 			"""
 		}
 		bashNodeScript {
