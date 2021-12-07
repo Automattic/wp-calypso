@@ -9,12 +9,12 @@ import { useEffect, useMemo } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
+import { usePrefetchTourAssets } from './hooks';
 import { WelcomeTourContextProvider, useWelcomeTourContext } from './tour-context';
 import WelcomeTourMinimized from './tour-minimized-renderer';
 import WelcomeTourStep from './tour-step-renderer';
 import getTourSteps from './tour-steps';
 import './style-tour.scss';
-import { usePrefetchTourAssets } from './utils';
 
 function LaunchWpcomWelcomeTour() {
 	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
