@@ -219,11 +219,10 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 		name = "Playwright E2E Tests ($targetDevice)"
 		description = "Runs Gutenberg E2E tests as $targetDevice using Playwright"
 
-
 		artifactRules = """
-			reports => reports
 			logs.tgz => logs.tgz
 			screenshots => screenshots
+			trace => trace
 		""".trimIndent()
 
 		vcs {
@@ -271,19 +270,21 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 					export NODE_CONFIG_ENV=test
 					export PLAYWRIGHT_BROWSERS_PATH=0
 					export TEAMCITY_VERSION=2021
+					export HEADLESS=true
+
 					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
 					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
 					export URL=%URL%
+
 					export TARGET_DEVICE=$targetDevice
 					export LOCALE=en
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-					export DEBUG=pw:api
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 					# Run the test
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=gutenberg
+					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=gutenberg
 				""".trimIndent()
 			}
 			bashNodeScript {
