@@ -253,17 +253,6 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 };
 
 /**
- * Requests streamlined approval to WordAds program
- *
- * @param {number}       siteId            The site ID
- * @returns {Promise} A promise representing the request
- */
-Undocumented.prototype.wordAdsApprove = function ( siteId ) {
-	debug( '/sites/:site:/wordads/approve' );
-	return this.wpcom.req.post( '/sites/' + siteId + '/wordads/approve' );
-};
-
-/**
  * Fetch the status of an Automated Transfer.
  *
  * @param {number} siteId -- the ID of the site being transferred

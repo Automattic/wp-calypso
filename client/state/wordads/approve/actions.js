@@ -15,9 +15,8 @@ export const requestWordAdsApproval = ( siteId ) => ( dispatch ) => {
 		siteId,
 	} );
 
-	return wpcom
-		.undocumented()
-		.wordAdsApprove( siteId )
+	return wpcom.req
+		.post( `/sites/${ siteId }/wordads/approve` )
 		.then( ( result ) => {
 			dispatch( {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
