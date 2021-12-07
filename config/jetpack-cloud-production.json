@@ -34,7 +34,6 @@
 		"checkout/google-pay": false,
 		"i18n/community-translator": false,
 		"jetpack-cloud": true,
-		"jetpack/only-realtime-products": true,
 		"jetpack/pricing-page": true,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/server-credentials-advanced-flow": true,

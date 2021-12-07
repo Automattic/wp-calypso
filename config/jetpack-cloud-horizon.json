@@ -31,7 +31,6 @@
 		"current-site/stale-cart-notice": false,
 		"checkout/google-pay": true,
 		"jetpack-cloud": true,
-		"jetpack/only-realtime-products": true,
 		"jetpack/search-product": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,

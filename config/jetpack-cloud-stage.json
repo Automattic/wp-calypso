@@ -34,7 +34,6 @@
 		"checkout/google-pay": false,
 		"jetpack-cloud": true,
 		"jetpack/activity-log-sharing": true,
-		"jetpack/only-realtime-products": true,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/pricing-page": true,
 		"jetpack/redirect-legacy-plans": true,
