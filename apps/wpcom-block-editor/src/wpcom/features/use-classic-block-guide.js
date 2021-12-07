@@ -1,13 +1,12 @@
-import url from 'url'; // eslint-disable-line no-restricted-imports
 import { Guide } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement, useState } from '@wordpress/element';
 // Disabling lint rule while trying to make an urgent fix -- feel free to update to lib/url later!
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
+import { hasQueryArg } from '@wordpress/url';
 import { ClassicBlockImage, InserterImage, InserterIconImage } from './images';
 
-const parsedEditorUrl = url.parse( globalThis.location.href, true );
 const storageKey = `classic_block_guide_${ globalThis._currentSiteId }_is_dismissed`;
 
 const ClassicGuide = () => {
@@ -91,7 +90,7 @@ const ClassicGuide = () => {
 
 const guideDismissed = globalThis.localStorage.getItem( storageKey );
 
-if ( parsedEditorUrl.query[ 'in-editor-deprecation-group' ] && ! guideDismissed ) {
+if ( hasQueryArg( globalThis.location.href, 'in-editor-deprecation-group' ) && ! guideDismissed ) {
 	registerPlugin( 'wpcom-classic-block-editor-nux', {
 		render: () => <ClassicGuide />,
 	} );
