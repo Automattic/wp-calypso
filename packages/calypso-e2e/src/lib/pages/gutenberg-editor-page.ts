@@ -95,9 +95,15 @@ export class GutenbergEditorPage {
 				return;
 			}
 
-			const body: { [ index: string ]: never } = await response.json();
-			if ( body[ 'body' ][ 'show_welcome_guide' ] === true ) {
-				await this.dismissWelcomeTourIfPresent();
+			interface NuxPayload {
+				body: {
+					show_welcome_guide: boolean;
+				};
+			}
+
+			const body = ( await response.json() ) as NuxPayload;
+			if ( body?.body?.show_welcome_guide === true ) {
+				await this.dismissWelcomeTour();
 			}
 		} );
 
@@ -112,7 +118,7 @@ export class GutenbergEditorPage {
 	/**
 	 * Dismisses the Welcome Tour (card) if it is present.
 	 */
-	async dismissWelcomeTourIfPresent(): Promise< void > {
+	async dismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
 		const locator = frame.locator( selectors.welcomeTourCloseButton );
 
