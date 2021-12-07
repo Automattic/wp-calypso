@@ -235,8 +235,8 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		const domain = getSelectedDomain( props );
 
 		if ( domain.transferAwayEligibleAt ) {
-			// translators: %s is a date string, e.g. April 1, 2020
 			return sprintf(
+				// translators: %s is a date string, e.g. April 1, 2020
 				__( 'You can unlock this domain after %s' ),
 				moment( domain.transferAwayEligibleAt ).format( 'LL' )
 			);
