@@ -97,6 +97,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/payment/',
 		post_id: 76237,
 	},
+	payment_methods_manage: {
+		link: 'https://wordpress.com/support/payment/#manage-payment-methods',
+		post_id: 76237,
+	},
 	payment_method_all_subscriptions: {
 		link: 'https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions',
 		post_id: 76237,

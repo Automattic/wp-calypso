@@ -1,17 +1,11 @@
 import debug from 'debug';
 import { translate } from 'i18n-calypso';
 import { isEqual, omit } from 'lodash';
-import {
-	MEDIA_REQUEST,
-	MEDIA_ITEM_REQUEST,
-	MEDIA_ITEM_EDIT,
-	MEDIA_ITEM_DELETE,
-} from 'calypso/state/action-types';
+import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST, MEDIA_ITEM_EDIT } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
-	deleteMedia,
 	failMediaItemRequest,
 	failMediaRequest,
 	receiveMedia,
@@ -22,7 +16,6 @@ import {
 import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
-import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 
 /**
  * Module variables
@@ -124,34 +117,6 @@ export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
 export const receiveMediaItemError = ( { mediaId, siteId } ) =>
 	failMediaItemRequest( siteId, mediaId );
 
-export const requestDeleteMedia = ( action ) => {
-	const { siteId, mediaId } = action;
-
-	return [
-		removeNotice( `delete-media-notice-${ mediaId }` ),
-		http(
-			{
-				apiVersion: '1.1',
-				method: 'POST',
-				path: `/sites/${ siteId }/media/${ mediaId }/delete`,
-			},
-			action
-		),
-	];
-};
-
-export const deleteMediaSuccess = ( { siteId }, mediaItem ) => [
-	deleteMedia( siteId, mediaItem.ID ),
-	requestMediaStorage( siteId ),
-	gutenframeUpdateImageBlocks( mediaItem, 'deleted' ),
-];
-
-export const deleteMediaError = ( { mediaId } ) => [
-	errorNotice( translate( 'We were unable to delete this media item.' ), {
-		id: `delete-media-notice-${ mediaId }`,
-	} ),
-];
-
 registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 	[ MEDIA_REQUEST ]: [
 		dispatchRequest( {
@@ -174,14 +139,6 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 			fetch: editMedia,
 			onSuccess: updateMediaSuccess,
 			onError: updateMediaError,
-		} ),
-	],
-
-	[ MEDIA_ITEM_DELETE ]: [
-		dispatchRequest( {
-			fetch: requestDeleteMedia,
-			onSuccess: deleteMediaSuccess,
-			onError: deleteMediaError,
 		} ),
 	],
 } );

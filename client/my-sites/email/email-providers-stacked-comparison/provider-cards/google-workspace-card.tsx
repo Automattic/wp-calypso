@@ -62,7 +62,9 @@ const googleWorkspaceCardInformation: ProviderCard = {
 	onExpandedChange: noop,
 	providerKey: 'google',
 	showExpandButton: true,
-	description: translate( 'Productivity tools and mailbox from Google.' ),
+	description: translate(
+		'Professional email integrated with Google Meet and other productivity tools from Google.'
+	),
 	logo: { path: googleWorkspaceIcon, className: 'google-workspace-icon' },
 	productName: getGoogleMailServiceFamily(),
 	features: getGoogleFeatures(),

@@ -23,7 +23,6 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 		{ siteType: 'Atomic', user: 'eCommerceUser' },
 	] )( 'Search and view a support article ($siteType)', function ( { user } ) {
 		let supportComponent: SupportComponent;
-		let supportArticlePage: Page;
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
@@ -54,16 +53,13 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 			expect( results.length ).toBeGreaterThan( 0 );
 		} );
 
-		it( 'Click and visit first support article', async function () {
+		it( 'Click on first search result', async function () {
 			await supportComponent.clickResult( 'article', 1 );
 			await supportComponent.clickReadMore();
-			// Obtain handle to the popup page.
-			supportArticlePage = await supportComponent.visitArticle();
 		} );
 
-		it( 'Close article page and preview', async function () {
-			await supportArticlePage.close();
-			await supportComponent.closeArticle();
+		it( 'Close popover', async function () {
+			await supportComponent.closePopover;
 		} );
 	} );
 } );
