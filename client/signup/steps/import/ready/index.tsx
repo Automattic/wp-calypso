@@ -164,6 +164,7 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,
 			action: 'regular',
+			platform,
 		} );
 	};
 
