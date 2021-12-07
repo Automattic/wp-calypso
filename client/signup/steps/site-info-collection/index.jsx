@@ -9,8 +9,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
-import { submitDIFMLiteForm } from 'calypso/state/signup/steps/difm-lite/actions';
-import { getSelectedCategory } from 'calypso/state/signup/steps/difm-lite/selectors';
 
 import './style.scss';
 
@@ -32,8 +30,7 @@ function SiteInformationCollection( {
 	submitSignupStep,
 	goToNextStep,
 } ) {
-	const { username: signupUsername } = useSelector( getSignupDependencyStore );
-	const selectedVertical = useSelector( getSelectedCategory );
+	const { username: signupUsername, selectedSiteCategory } = useSelector( getSignupDependencyStore );
 	const dispatch = useDispatch();
 	const loggedInUsername = useSelector( getCurrentUserName );
 	useEffect( () => {
@@ -41,7 +38,6 @@ function SiteInformationCollection( {
 	}, [ dispatch, stepName ] );
 
 	const onTypeformSubmission = async ( typeformSubmissionId ) => {
-		dispatch( submitDIFMLiteForm( typeformSubmissionId ) );
 		const cartItem = { product_slug: WPCOM_DIFM_LITE };
 		const step = {
 			stepName,
@@ -50,16 +46,18 @@ function SiteInformationCollection( {
 		};
 		submitSignupStep( step, {
 			cartItem,
-		} );
+			typeformResponseId: typeformSubmissionId,
+		});
 		goToNextStep();
 	};
 
 	return (
 		<Container>
+			<button onClick={()=>onTypeformSubmission("XXXYYY")}>NEXT</button>
 			<Widget
 				hidden={ {
 					username: signupUsername || loggedInUsername,
-					vertical: selectedVertical,
+					vertical: selectedSiteCategory,
 				} }
 				id={ getTypeformId() }
 				style={ {

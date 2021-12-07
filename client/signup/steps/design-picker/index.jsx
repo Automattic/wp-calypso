@@ -21,7 +21,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { selectDesignCategory } from 'calypso/state/signup/steps/difm-lite/actions';
 import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
 import { getRecommendedThemes } from 'calypso/state/themes/selectors';
 import DIFMThemes from '../difm-design-picker/themes';
@@ -126,11 +125,6 @@ export default function DesignPickerStep( props ) {
 		sort: sortBlogToTop,
 	} );
 
-	useEffect( () => {
-		// Sets the category selection which is important for the difm flow
-		dispatch( selectDesignCategory( categorization.selection ) );
-	}, [ categorization.selection, dispatch ] );
-
 	function pickDesign( _selectedDesign ) {
 		// Design picker preview will submit the defaultDependencies via next button,
 		// So only do this when the user picks the design directly
@@ -141,6 +135,7 @@ export default function DesignPickerStep( props ) {
 				},
 				{
 					selectedDesign: _selectedDesign,
+					selectedSiteCategory: categorization.selection,
 				}
 			)
 		);
