@@ -1,4 +1,4 @@
-# Style Guide
+# Library Objects
 
 The `@automattic/calypso-e2e` package offers a robust set of library objects patterned after the Page Object Model. When developing a new test spec, try to leverage these objects as much as possible for a seamless experience.
 
@@ -6,7 +6,7 @@ For a brief introduction to Page Object Models, please refer to [this page](http
 
 <!-- TOC -->
 
-- [Style Guide](#style-guide)
+- [Library Objects](#library-objects)
   - [Distinction](#distinction)
   - [Components](#components)
   - [Page](#page)

@@ -35,7 +35,7 @@ yarn workspace @automattic/calypso-e2e build --watch
 Specify the file(s) directly:
 
 ```
-yarn jest specs/specs-playwright/wp-support__popover.ts specs/specs-playwright/wp-support__home.ts
+yarn jest specs/specs-playwright/wp-support__popover.ts specs/specs-playwright/wp-seo__preview-spec.js
 ```
 
 ### Group
@@ -108,7 +108,7 @@ The local environment is now ready for testing. When a test is run, it will hit 
 
 Refer to the [Debugging](debugging.md) page for techniques on running a test in debug mode.
 
-#0## Notes on TypeScript
+#### Notes on TypeScript
 
 Because Jest, the test runner, is already to configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs/specs-playwright` directory, and it will automatically take care of running both `.js` and `.ts` files.
 
