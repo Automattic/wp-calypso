@@ -11,6 +11,7 @@ import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useDatesWithNoSuccessfulBackups } from '../status/hooks';
 import DateButton from './date-button';
 import { useCanGoToDate, useFirstKnownBackupAttempt } from './hooks';
 
@@ -44,6 +45,7 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 		{ shouldExecute: !! firstKnownBackupAttempt.backupAttempt }
 	);
 	// Get the oldest visible backup date.
+	// This is added into the state via QueryRewindPolicies
 	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
 	// If the number of visible days is falsy, then use the oldest date as the first visible backup date.
 	const firstVisibleBackupDate = visibleDays
@@ -51,6 +53,11 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 		: oldestDateAvailable;
 
 	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable );
+	const datesWithNoBackups = useDatesWithNoSuccessfulBackups(
+		siteId,
+		firstVisibleBackupDate,
+		today
+	);
 
 	const { previousDisplayDate, nextDisplayDate, selectedDisplayDate } = useMemo( () => {
 		const yesterday = moment( today ).subtract( 1, 'day' );
@@ -186,6 +193,7 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 				onDateSelected={ goToCalendarDate }
 				selectedDate={ selectedDate }
 				firstBackupDate={ firstVisibleBackupDate }
+				disabledDates={ datesWithNoBackups.dates }
 			/>
 		</div>
 	);

@@ -66,6 +66,18 @@ const getDailyAttemptFilter = ( { before, after, successOnly, sortOrder } = {} )
 	};
 };
 
+// Get all successful backups in a range
+const getSuccessfulBackupsFilter = ( { before, after, sortOrder } = {} ) => {
+	return {
+		name: SUCCESSFUL_BACKUP_ACTIVITIES,
+		before: before ? before.toISOString() : undefined,
+		after: after ? after.toISOString() : undefined,
+		aggregate: false,
+		number: 500,
+		sortOrder,
+	};
+};
+
 // For more context, see the note on real-time backups in
 // `useFirstMatchingBackupAttempt`
 const getRealtimeAttemptFilter = ( { before, after, sortOrder } = {} ) => {
@@ -75,6 +87,39 @@ const getRealtimeAttemptFilter = ( { before, after, sortOrder } = {} ) => {
 		aggregate: false,
 		number: 100,
 		sortOrder,
+	};
+};
+
+// Find all the backup attempts in a given date range
+export const useMatchingBackupAttemptsInRange = (
+	siteId,
+	{ before, after, sortOrder } = {},
+	shouldExecute = true
+) => {
+	const filter = getSuccessfulBackupsFilter( { before, after, sortOrder } );
+	const { activityLogs, isLoadingActivityLogs } = useActivityLogs(
+		siteId,
+		filter,
+		!! shouldExecute
+	);
+
+	if ( ! shouldExecute ) {
+		return {
+			isLoading: false,
+			backups: undefined,
+		};
+	}
+
+	if ( isLoadingActivityLogs ) {
+		return {
+			isLoading: true,
+			backups: undefined,
+		};
+	}
+
+	return {
+		isLoading: false,
+		backups: activityLogs,
 	};
 };
 

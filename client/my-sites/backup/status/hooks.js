@@ -7,7 +7,11 @@ import {
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
-import { useActivityLogs, useFirstMatchingBackupAttempt } from '../hooks';
+import {
+	useActivityLogs,
+	useFirstMatchingBackupAttempt,
+	useMatchingBackupAttemptsInRange,
+} from '../hooks';
 
 const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } = {} ) => {
 	return useFirstMatchingBackupAttempt( siteId, {
@@ -63,6 +67,45 @@ const useRawBackupDeltas = (
 	return {
 		isLoadingDeltas: !! ( shouldExecute && isLoadingActivityLogs ),
 		deltas: getDeltaActivities( activityLogs ),
+	};
+};
+
+// Get the dates where there are no successful backups in a range
+export const useDatesWithNoSuccessfulBackups = ( siteId, startDate, endDate ) => {
+	const moment = useLocalizedMoment();
+
+	// Get the activity log for the range, filtering for only days with successful backups.
+	const startMoment = moment( startDate ).startOf( 'day' );
+	const endMoment = moment( endDate ).endOf( 'day' );
+	const movingDate = moment( startDate ).startOf( 'day' );
+	const datesWithoutBackups = [];
+
+	// Collect an array of all the dates in the range
+	while ( movingDate < endMoment ) {
+		datesWithoutBackups.push( movingDate.format( 'MM-DD-YYYY' ) );
+		movingDate.add( 1, 'day' );
+	}
+
+	// This will get a set of activity logs
+	const { isLoading, backups } = useMatchingBackupAttemptsInRange( siteId, {
+		after: startMoment,
+		before: endMoment,
+	} );
+
+	if ( ! isLoading && backups ) {
+		backups.forEach( ( item ) => {
+			// Remove dates from the datesWithoutBackups array that have backups
+			// This should leave only dates that have no backups in the array
+			const backupDate = moment( item.activityDate ).format( 'MM-DD-YYYY' );
+			if ( datesWithoutBackups.indexOf( backupDate ) > -1 ) {
+				datesWithoutBackups.splice( datesWithoutBackups.indexOf( backupDate ), 1 );
+			}
+		} );
+	}
+
+	return {
+		isLoading: isLoading,
+		dates: isLoading ? [] : datesWithoutBackups,
 	};
 };
 

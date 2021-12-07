@@ -7,6 +7,7 @@ import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
+import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import FormattedHeader from 'calypso/components/formatted-header';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
@@ -115,6 +116,9 @@ const AdminContent = ( { selectedDate } ) => {
 	return (
 		<>
 			<QueryRewindCapabilities siteId={ siteId } />
+			<QueryRewindPolicies
+				siteId={ siteId } /* The policies inform the max visible limit for backups */
+			/>
 			<QueryRewindState siteId={ siteId } />
 
 			{ isFiltering && <SearchResults /> }

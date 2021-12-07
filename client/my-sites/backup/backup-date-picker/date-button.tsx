@@ -1,7 +1,7 @@
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import DatePicker from 'calypso/components/date-picker';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -9,7 +9,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 const DATE_PICKER_OPEN = recordTracksEvent( 'calypso_jetpack_backup_date_picker_open' );
 
-const DateButton: React.FC< Props > = ( { selectedDate, onDateSelected, firstBackupDate } ) => {
+const DateButton: React.FC< Props > = ( {
+	selectedDate,
+	onDateSelected,
+	firstBackupDate,
+	disabledDates,
+} ) => {
 	const dispatch = useDispatch();
 
 	const [ pickerVisible, setPickerVisible ] = useState( false );
@@ -25,6 +30,14 @@ const DateButton: React.FC< Props > = ( { selectedDate, onDateSelected, firstBac
 		onDateSelected( date );
 		setPickerVisible( false );
 	};
+
+	// Map date strings that should be disabled to Date objects that can be used by the calendar
+	const disabledDatesObjects = useMemo( () => {
+		return disabledDates.map( ( date ) => {
+			const momentDate = moment( date );
+			return new Date( momentDate.year(), momentDate.month(), momentDate.date() );
+		} );
+	}, [ disabledDates ] );
 
 	const renderPicker = () => {
 		if ( pickerVisible ) {
@@ -49,6 +62,8 @@ const DateButton: React.FC< Props > = ( { selectedDate, onDateSelected, firstBac
 									: null, // The first known backup date - should be nothing before this.
 								after: moment().toDate(), // There are no backups of the future.
 							},
+							// Dates that do not have a backup
+							...disabledDatesObjects,
 						] }
 					/>
 				</div>
@@ -83,6 +98,7 @@ type Props = {
 	selectedDate: Moment;
 	firstBackupDate: Moment | undefined;
 	onDateSelected: ( m: Moment ) => void;
+	disabledDates: Array< string >;
 };
 
 export default DateButton;
