@@ -36,9 +36,9 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
-import isAppBannerVisible from 'calypso/state/selectors/is-app-banner-visible';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
 	getCustomizerUrl,
@@ -49,6 +49,7 @@ import {
 	getSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isAppBannerDismissed from 'calypso/state/ui/selectors/app-banner-is-dismissed';
 import * as T from 'calypso/types';
 import { sendSiteEditorBetaFeedback } from '../../lib/fse-beta/send-site-editor-beta-feedback';
 import Iframe from './iframe';
@@ -503,7 +504,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.GetIsAppBannerVisible === action ) {
-			const isAppBannerVisible = this.props.isAppBannerVisible;
+			const isAppBannerVisible = this.props.shouldDisplayAppBanner;
 			ports[ 0 ].postMessage( {
 				isAppBannerVisible,
 			} );
@@ -887,8 +888,8 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ?? 0 ),
 		parentPostId,
-		isAppBannerVisible: isAppBannerVisible( state ),
-		appBannerDismissed: state.ui.appBannerDismissed,
+		shouldDisplayAppBanner: shouldDisplayAppBanner( state ),
+		appBannerDismissed: isAppBannerDismissed( state ),
 	};
 };
 

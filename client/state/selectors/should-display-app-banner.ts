@@ -15,12 +15,12 @@ import { getSectionName, appBannerIsEnabled } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 
 /**
- * Returns true if the App Banner is visible
+ * Returns true if the App Banner should be displayed
  *
  * @param {object} state Global state tree
  * @returns {boolean} True if App Banner is visible
  */
-export const isAppBannerVisible = ( state: AppState ): boolean | null => {
+export const shouldDisplayAppBanner = ( state: AppState ): boolean | null => {
 	// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
 	// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
 	// be displayed.
@@ -51,7 +51,7 @@ export const isAppBannerVisible = ( state: AppState ): boolean | null => {
 	return isMobile() && ! isWpMobileApp() && ! dismissed;
 };
 
-export default createSelector( isAppBannerVisible, [
+export default createSelector( shouldDisplayAppBanner, [
 	shouldDisplayTosUpdateBanner,
 	appBannerIsEnabled,
 	isFetchingPreferences,

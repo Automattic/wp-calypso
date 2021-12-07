@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { isAppBannerVisible } from 'calypso/state/selectors/is-app-banner-visible';
+import { shouldDisplayAppBanner } from 'calypso/state/selectors/should-display-app-banner';
 
-describe( 'isAppBannerVisible()', () => {
+describe( 'shouldDisplayAppBanner()', () => {
 	test( 'should return false if Terms or Service update banner is displayed', () => {
 		const state = {
 			legal: {
@@ -10,7 +10,7 @@ describe( 'isAppBannerVisible()', () => {
 				},
 			},
 		};
-		const output = isAppBannerVisible( state );
+		const output = shouldDisplayAppBanner( state );
 		expect( output ).to.be.false;
 	} );
 
@@ -23,7 +23,7 @@ describe( 'isAppBannerVisible()', () => {
 				},
 			},
 		};
-		const output = isAppBannerVisible( state );
+		const output = shouldDisplayAppBanner( state );
 		expect( output ).to.be.false;
 	} );
 
@@ -36,7 +36,7 @@ describe( 'isAppBannerVisible()', () => {
 				},
 			},
 		};
-		const output = isAppBannerVisible( state );
+		const output = shouldDisplayAppBanner( state );
 		expect( output ).to.be.false;
 	} );
 
@@ -52,7 +52,7 @@ describe( 'isAppBannerVisible()', () => {
 				fetching: true,
 			},
 		};
-		const output = isAppBannerVisible( state );
+		const output = shouldDisplayAppBanner( state );
 		expect( output ).to.be.false;
 	} );
 
@@ -71,7 +71,7 @@ describe( 'isAppBannerVisible()', () => {
 				fetching: false,
 			},
 		};
-		const output = isAppBannerVisible( state );
+		const output = shouldDisplayAppBanner( state );
 		expect( output ).to.be.false;
 	} );
 } );
