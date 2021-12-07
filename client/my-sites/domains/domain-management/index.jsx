@@ -17,6 +17,7 @@ import ListAll from './list/list-all';
 import ManageConsent from './manage-consent';
 import NameServers from './name-servers';
 import Security from './security';
+import Settings from './settings';
 import SiteRedirectSettings from './site-redirect';
 import Transfer from './transfer';
 import TransferOut from './transfer/transfer-out';
@@ -43,6 +44,7 @@ export default {
 	SiteDomains,
 	NameServers,
 	Security,
+	Settings,
 	SiteRedirect,
 	SiteRedirectSettings,
 	TransferIn,
