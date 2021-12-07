@@ -190,13 +190,25 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 interface ReadyWpComProps {
 	urlData: UrlData;
 	goToStep: GoToStep;
+	recordTracksEvent: RecordTracksEvent;
 }
 
 const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 	urlData,
 	goToStep,
+	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
+
+	const recordReadyScreenEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'already-wpcom',
+			platform: urlData.platform,
+		} );
+	};
+
+	useEffect( recordReadyScreenEvent, [] );
 
 	return (
 		<div className="import-layout__center">

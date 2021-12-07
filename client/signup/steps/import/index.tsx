@@ -120,7 +120,11 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 						/>
 					) }
 					{ stepName === 'ready' && stepSectionName === 'wpcom' && (
-						<ReadyAlreadyOnWPCOMStep urlData={ urlData } goToStep={ goToStepWithDependencies } />
+						<ReadyAlreadyOnWPCOMStep
+							urlData={ urlData }
+							goToStep={ goToStepWithDependencies }
+							recordTracksEvent={ recordTracksEvent }
+						/>
 					) }
 				</div>
 			}
