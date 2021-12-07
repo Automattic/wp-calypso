@@ -120,7 +120,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 		} );
 	};
 
-	const recordBackToStart = () => {
+	const recordBackToStartEvent = () => {
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,
 			action: 'back-to-start',
@@ -128,7 +128,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 	};
 
 	const onBackBtnClick = () => {
-		recordBackToStart();
+		recordBackToStartEvent();
 		goToStep( 'capture' );
 	};
 
@@ -242,7 +242,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 		} );
 	};
 
-	const recordBackToStart = () => {
+	const recordBackToStartEvent = () => {
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,
 			action: 'back-to-start',
@@ -250,7 +250,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 	};
 
 	const onBackBtnClick = () => {
-		recordBackToStart();
+		recordBackToStartEvent();
 		goToStep( 'capture' );
 	};
 
