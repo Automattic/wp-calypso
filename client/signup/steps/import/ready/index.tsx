@@ -104,10 +104,23 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 
 interface ReadyNotProps {
 	goToStep: GoToStep;
+	recordTracksEvent: RecordTracksEvent;
 }
 
-const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) => {
+const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
+	goToStep,
+	recordTracksEvent,
+} ) => {
 	const { __ } = useI18n();
+
+	const recordReadyScreenEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'not',
+		} );
+	};
+
+	useEffect( recordReadyScreenEvent, [] );
 
 	return (
 		<div className="import-layout__center">
@@ -139,12 +152,22 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) 
 interface ReadyProps {
 	platform: string;
 	goToImporterPage: ( platform: string ) => void;
+	recordTracksEvent: RecordTracksEvent;
 }
 
 const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
-	const { platform, goToImporterPage } = props;
+	const { platform, goToImporterPage, recordTracksEvent } = props;
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
+
+	const recordReadyScreenEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'regular',
+		} );
+	};
+
+	useEffect( recordReadyScreenEvent, [] );
 
 	return (
 		<div className="import-layout__center">

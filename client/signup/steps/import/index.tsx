@@ -106,10 +106,17 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 					{ stepName === 'list' && <ListStep goToStep={ goToStepWithDependencies } /> }
 
 					{ stepName === 'ready' && ! stepSectionName && (
-						<ReadyStep goToImporterPage={ goToImporterPage } platform={ urlData.platform } />
+						<ReadyStep
+							platform={ urlData.platform }
+							goToImporterPage={ goToImporterPage }
+							recordTracksEvent={ recordTracksEvent }
+						/>
 					) }
 					{ stepName === 'ready' && stepSectionName === 'not' && (
-						<ReadyNotStep goToStep={ goToStepWithDependencies } />
+						<ReadyNotStep
+							goToStep={ goToStepWithDependencies }
+							recordTracksEvent={ recordTracksEvent }
+						/>
 					) }
 					{ stepName === 'ready' && stepSectionName === 'preview' && (
 						<ReadyPreviewStep
