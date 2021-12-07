@@ -14,7 +14,7 @@ import type { FunctionKeys } from 'utility-types';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// See
+// See https://github.com/microsoft/TypeScript/issues/46855#issuecomment-974484444
 type Cast< T, U > = T extends U ? T : T & U;
 type CastToFunction< T > = Cast< T, ( ...args: any[] ) => any >;
 
