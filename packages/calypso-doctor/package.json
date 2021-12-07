@@ -16,7 +16,7 @@
 	"license": "GPL-2.0-or-later",
 	"bin": "./cli.js",
 	"dependencies": {
-		"chalk": "^4.1.0",
+		"chalk": "^5.0.0",
 		"yargs": "^17.0.1"
 	},
 	"devDependencies": {
