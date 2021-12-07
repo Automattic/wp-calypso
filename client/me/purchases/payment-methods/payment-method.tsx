@@ -1,11 +1,12 @@
 import { CompactCard } from '@automattic/components';
-import { FunctionComponent, ComponentProps } from 'react';
+import { FunctionComponent } from 'react';
 import PaymentMethodDetails from './payment-method-details';
+import type { PaymentMethod as PaymentMethodType } from 'calypso/lib/checkout/payment-methods';
 
 import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
-	card: ComponentProps< typeof PaymentMethodDetails >;
+	card?: PaymentMethodType;
 }
 
 const PaymentMethod: FunctionComponent< Props > = ( { card, children } ) => {
