@@ -3603,7 +3603,7 @@ describe( 'selectors', () => {
 	describe( 'canCurrentUserUseCustomerHome()', () => {
 		const createState = ( {
 			created_at,
-			manage_options = true,
+			edit_posts = true,
 			jetpack = false,
 			vip = false,
 			atomic = false,
@@ -3614,7 +3614,7 @@ describe( 'selectors', () => {
 			currentUser: {
 				capabilities: {
 					1: {
-						manage_options,
+						edit_posts,
 					},
 				},
 			},
@@ -3629,10 +3629,10 @@ describe( 'selectors', () => {
 			},
 		} );
 
-		test( "should return false if user can't manage site options", () => {
+		test( "should return false if user can't edit posts", () => {
 			expect(
 				canCurrentUserUseCustomerHome(
-					createState( { created_at: '2020-01-01', manage_options: false } )
+					createState( { created_at: '2020-01-01', edit_posts: false } )
 				)
 			).toBe( false );
 		} );
