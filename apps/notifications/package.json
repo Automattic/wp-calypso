@@ -17,7 +17,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"analyze-bundles": "EMIT_STATS=true yarn run build && webpack-bundle-analyzer stats.json dist -h 127.0.0.1 -p 9898 -s gzip",
+		"analyze-bundles": "EMIT_STATS=true yarn run build && webpack-bundle-analyzer stats.json dist -h 127.0.0.1 -s gzip",
 		"clean": "rm -rf dist stats.json",
 		"build:notifications": "calypso-build",
 		"dev-server": "NODE_ENV=development webpack serve",
