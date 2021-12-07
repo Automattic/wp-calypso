@@ -23,7 +23,7 @@ class TrackComponentView extends Component {
 	};
 
 	componentDidMount() {
-		debug( 'Component will mount.' );
+		debug( 'Component did mount.' );
 		const { eventName, eventProperties } = this.props;
 		if ( eventName ) {
 			debug( `Recording Tracks event "${ eventName }".` );
