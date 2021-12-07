@@ -1105,7 +1105,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    cli-color: ^1.2.0
+    chalk: ^4.1.0
     coffee-script: ^1.12.7
     lodash: ^4.17.21
     mocha: ^8.1.3
@@ -12695,7 +12695,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-color@npm:^1.1.0, cli-color@npm:^1.2.0":
+"cli-color@npm:^1.1.0":
   version: 1.4.0
   resolution: "cli-color@npm:1.4.0"
   dependencies:
@@ -16313,7 +16313,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es5-ext@npm:^0.10.35, es5-ext@npm:^0.10.45, es5-ext@npm:^0.10.46, es5-ext@npm:^0.10.50, es5-ext@npm:~0.10.14, es5-ext@npm:~0.10.2, es5-ext@npm:~0.10.46":
+"es5-ext@npm:^0.10.35, es5-ext@npm:^0.10.46, es5-ext@npm:^0.10.50, es5-ext@npm:^0.10.53, es5-ext@npm:~0.10.14, es5-ext@npm:~0.10.2, es5-ext@npm:~0.10.46":
   version: 0.10.53
   resolution: "es5-ext@npm:0.10.53"
   dependencies:
@@ -16399,7 +16399,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es6-weak-map@npm:^2.0.2":
+"es6-weak-map@npm:^2.0.3":
   version: 2.0.3
   resolution: "es6-weak-map@npm:2.0.3"
   dependencies:
@@ -21332,7 +21332,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"is-promise@npm:^2.1":
+"is-promise@npm:^2.2.2":
   version: 2.2.2
   resolution: "is-promise@npm:2.2.2"
   checksum: 2dba959812380e45b3df0fb12e7cb4d4528c989c7abb03ececb1d1fd6ab1cbfee956ca9daa587b9db1d8ac3c1e5738cf217bdb3dfd99df8c691be4c00ae09069
@@ -24474,7 +24474,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"lru-queue@npm:0.1":
+"lru-queue@npm:^0.1.0":
   version: 0.1.0
   resolution: "lru-queue@npm:0.1.0"
   dependencies:
@@ -25020,18 +25020,18 @@ fsevents@~2.1.2:
   linkType: hard
 
 "memoizee@npm:^0.4.14":
-  version: 0.4.14
-  resolution: "memoizee@npm:0.4.14"
+  version: 0.4.15
+  resolution: "memoizee@npm:0.4.15"
   dependencies:
-    d: 1
-    es5-ext: ^0.10.45
-    es6-weak-map: ^2.0.2
+    d: ^1.0.1
+    es5-ext: ^0.10.53
+    es6-weak-map: ^2.0.3
     event-emitter: ^0.3.5
-    is-promise: ^2.1
-    lru-queue: 0.1
-    next-tick: 1
-    timers-ext: ^0.1.5
-  checksum: ad29604ca114d697d8bb8033fa36100463249dc6f012fb79e7a3c6a69ee300ef99184f5ea20ea1253d101748b3d4dc2316f90a9458abef5582951f33ade5123a
+    is-promise: ^2.2.2
+    lru-queue: ^0.1.0
+    next-tick: ^1.1.0
+    timers-ext: ^0.1.7
+  checksum: 297e65cd8256bdf24c48f5e158da80d4c9688db0d6e65c5dcc13fa768e782ddeb71aec36925359931b5efef0efc6666b5bb2af6deb3de63d4258a3821ed16fce
   languageName: node
   linkType: hard
 
@@ -26330,7 +26330,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"next-tick@npm:1":
+"next-tick@npm:1, next-tick@npm:^1.1.0":
   version: 1.1.0
   resolution: "next-tick@npm:1.1.0"
   checksum: 3ba80dd805fcb336b4f52e010992f3e6175869c8d88bf4ff0a81d5d66e6049f89993463b28211613e58a6b7fe93ff5ccbba0da18d4fa574b96289e8f0b577f28
@@ -35716,7 +35716,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"timers-ext@npm:^0.1.5":
+"timers-ext@npm:^0.1.5, timers-ext@npm:^0.1.7":
   version: 0.1.7
   resolution: "timers-ext@npm:0.1.7"
   dependencies:
