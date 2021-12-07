@@ -1,5 +1,6 @@
 /**
  * @group gutenberg
+ * @group calypso-pr
  */
 
 import assert from 'assert';
@@ -11,12 +12,13 @@ import {
 	NewPostFlow,
 	setupHooks,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
 
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
 describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
-	let page;
+	let page: Page;
 	let publishedURL;
 
 	setupHooks( ( args ) => {
@@ -24,8 +26,8 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	} );
 
 	describe( 'Comment and like on a new post', function () {
-		let commentsComponent;
-		let gutenbergEditorPage;
+		let commentsComponent: CommentsComponent;
+		let gutenbergEditorPage: GutenbergEditorPage;
 		const comment = DataHelper.getRandomPhrase();
 
 		it( 'Log in', async function () {
