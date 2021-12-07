@@ -1,6 +1,24 @@
+.app-banner-overlay {
+	position: fixed;
+	height: 100vh;
+	width: 100%;
+	top: 0;
+	left: 0;
+	background: rgba( var( --studio-black-rgb ), 0.6 );
+
+	/* Needed for banner to appear in front of notifications panel. */
+	z-index: z-index( 'root', '.app-banner' );
+}
+
+/* Prevent the body from scrolling when the app banner is visible */
+body.app-banner-is-visible {
+	overflow: hidden;
+}
+
 .card.app-banner {
 	position: fixed;
 	bottom: 0;
+	left: 0;
 	width: 100%;
 	background-color: var( --color-surface );
 	color: var( --color-primary-80 );
@@ -8,8 +26,6 @@
 	margin-bottom: 0;
 	box-shadow: 3px -2px 24px 4px rgba( 0, 0, 0, 0.29 );
 	overflow: hidden;
-	/* Needed for banner to appear in front of notifications panel. */
-	z-index: z-index( 'root', '.app-banner' );
 }
 
 .app-banner__circle {
