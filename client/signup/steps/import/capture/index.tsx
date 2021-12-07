@@ -74,7 +74,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 			flow: 'importer',
 			step: 'capture',
 			action: 'scanning-error',
-			error: analyzerError,
+			error: JSON.stringify( analyzerError ),
 		} );
 	};
 
