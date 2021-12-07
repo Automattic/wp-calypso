@@ -58,34 +58,34 @@ private object EditingToolkit : WPComPluginBuild(
 		bashNodeScript {
 			name = "Update version"
 			scriptContent = """
-					cd apps/editing-toolkit
-					# Update plugin version in the plugin file and readme.txt.
-					sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
-					sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
-				"""
+				cd apps/editing-toolkit
+				# Update plugin version in the plugin file and readme.txt.
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
+				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
+			"""
 		}
 		bashNodeScript {
 			name = "Run JS tests"
 			scriptContent = """
-					export JEST_JUNIT_OUTPUT_NAME="results.xml"
-					export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit
 
-					cd apps/editing-toolkit
-					yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
-				"""
+				cd apps/editing-toolkit
+				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
+			"""
 		}
 		// Note: We run the PHP lint after the build to verify that the newspack-blocks
 		// code is also formatted correctly.
 		bashNodeScript {
 			name = "Run PHP Lint"
 			scriptContent = """
-					cd apps/editing-toolkit
-					if [ ! -d "./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks" ] ; then
-						echo "Newspack blocks were not built correctly."
-						exit 1
-					fi
-					yarn lint:php
-				"""
+				cd apps/editing-toolkit
+				if [ ! -d "./editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks" ] ; then
+					echo "Newspack blocks were not built correctly."
+					exit 1
+				fi
+				yarn lint:php
+			"""
 		}
 	},
 	buildParams = {
