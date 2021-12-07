@@ -1,47 +1,20 @@
-import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import SettingsHeader from './settings-header';
 import { SettingsPageProps } from './types';
 
 const Settings = ( props: SettingsPageProps ): JSX.Element => {
-	const translate = useTranslate();
-
-	const renderBreadcrumbs = () => {
-		const { selectedSite, currentRoute, selectedDomainName } = props;
-
-		const previousPath = domainManagementEdit(
-			selectedSite?.slug,
-			selectedDomainName,
-			currentRoute
-		);
-
-		const items = [
-			{
-				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite?.slug, selectedDomainName ),
-			},
-			{ label: selectedDomainName },
-		];
-
-		const mobileItem = {
-			label: translate( 'Back' ),
-			href: previousPath,
-			showBackArrow: true,
-		};
-
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
-	};
+	const domain = props.domains && getSelectedDomain( props );
 
 	return (
 		<Main wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderBreadcrumbs() }
+			<SettingsHeader domain={ domain } />
 			Page goes here.
 			{ /* Placeholder to test accordion */ }
 			<div style={ { marginTop: '30px' } }>

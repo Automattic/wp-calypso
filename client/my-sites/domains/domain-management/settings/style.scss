@@ -1,0 +1,110 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.settings-header__children {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.settings-header {
+	&__container {
+
+		&-title {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			margin: 0 0 16px;
+
+			// Higher specificity needed to override .formatted-header.is-left-align media-query styles
+			header.settings-header__title {
+				margin: 8px 0;
+	
+				&::first-letter {
+					text-transform: uppercase;
+				}
+	
+				.formatted-header__title {
+					font-weight: 400;
+					font-size: $font-title-large;
+					margin: 0;
+					line-height: 100%;
+				}
+			}
+		}
+
+		&-badges {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			margin-left: 16px;
+			gap: 8px;
+
+			// Higher specificity needed to override .badge styles
+			div.settings-header__badge {
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+				font-size: $font-body-extra-small;
+				border-radius: 4px; /* stylelint-disable-line */
+				font-weight: 500; /* stylelint-disable-line */
+
+				.settings-header__badge-indicator {
+					display: flex;
+					height: 8px;
+				}
+
+				svg {
+					margin-right: 8px;
+				}
+
+				&--success {
+					background: rgba( 184, 230, 191, 0.6 );
+					color: var( --studio-green-80 );
+					
+					svg {
+						fill: var( --studio-green-80 );
+					}
+					
+					.settings-header__badge-indicator {
+						color: var( --studio-green-50 );
+					}
+				}
+
+				&--warning {
+					background: var( --studio-orange-0 );
+					color: var( --studio-yellow-80 );
+					
+					svg {
+						fill: var( --studio-orange-40 );
+					}
+					
+					.settings-header__badge-indicator {
+						color: var( --studio-orange-40 );
+					}
+				}
+
+				&--premium {
+					background: var( --studio-yellow-10 );
+					color: var( --studio-yellow-80 );
+					
+					svg {
+						fill: var( --studio-yellow-80 );
+						margin-right: 0;
+						margin-left: 6px;
+					}
+				}
+
+				&--neutral {
+					background: rgba( 220, 220, 222, 0.6 );
+					color: var( --studio-gray-80 );
+					
+					svg {
+						fill: var( --studio-gray-80 );
+					}
+				}
+			}
+		}
+	}
+}
