@@ -430,7 +430,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@testing-library/jest-dom": ^5.15.1
     "@testing-library/react": ^12.1.2
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/react-i18n": ^3.0.4
     "@wordpress/url": ^3.3.1
     classnames: ^2.3.1
@@ -472,7 +472,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.15.1
     "@testing-library/react": ^12.1.2
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/icons": ^6.1.1
     "@wordpress/react-i18n": ^3.0.4
@@ -668,7 +668,7 @@ __metadata:
     "@automattic/search": "workspace:^"
     "@babel/runtime": ^7.16.3
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/i18n": ^4.2.4
     "@wordpress/react-i18n": ^3.0.4
     typescript: ^4.4.4
@@ -725,7 +725,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.2
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/icons": ^6.1.1
     "@wordpress/react-i18n": ^3.0.4
     "@wordpress/url": ^3.3.1
@@ -854,11 +854,11 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@wordpress/api-fetch": ^5.2.6
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/block-editor": ^8.0.7
+    "@wordpress/block-editor": ^8.0.9
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/data": ^6.1.4
-    "@wordpress/editor": ^12.0.10
+    "@wordpress/editor": ^12.0.12
     "@wordpress/element": ^4.0.4
     "@wordpress/hooks": ^3.2.2
     "@wordpress/i18n": ^4.2.4
@@ -888,7 +888,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.2
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/data": ^6.1.4
     "@wordpress/icons": ^6.1.1
     "@wordpress/react-i18n": ^3.0.4
@@ -917,7 +917,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.2
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/element": ^4.0.4
     "@wordpress/i18n": ^4.2.4
@@ -947,7 +947,7 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/icons": ^6.1.1
     "@wordpress/primitives": ^3.0.4
@@ -1019,7 +1019,7 @@ __metadata:
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/data": ^6.1.4
     "@wordpress/icons": ^6.1.1
@@ -1063,7 +1063,7 @@ __metadata:
   resolution: "@automattic/social-previews@workspace:packages/social-previews"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/i18n": ^4.2.4
     classnames: ^2.3.1
     enzyme: ^3.11.0
@@ -1231,7 +1231,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/react-i18n": ^3.0.4
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -1280,16 +1280,16 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@babel/runtime": ^7.16.3
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/block-editor": ^8.0.7
+    "@wordpress/block-editor": ^8.0.9
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/data": ^6.1.4
     "@wordpress/dependency-extraction-webpack-plugin": ^3.2.1
     "@wordpress/dom-ready": ^3.2.3
-    "@wordpress/edit-post": ^5.0.13
-    "@wordpress/edit-site": ^3.0.13
-    "@wordpress/editor": ^12.0.10
+    "@wordpress/edit-post": ^5.0.15
+    "@wordpress/edit-site": ^3.0.15
+    "@wordpress/editor": ^12.0.12
     "@wordpress/element": ^4.0.4
     "@wordpress/hooks": ^3.2.2
     "@wordpress/i18n": ^4.2.4
@@ -1372,17 +1372,17 @@ __metadata:
     "@wordpress/a11y": ^3.2.4
     "@wordpress/api-fetch": ^5.2.6
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/block-editor": ^8.0.7
+    "@wordpress/block-editor": ^8.0.9
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/data": ^6.1.4
     "@wordpress/data-controls": ^2.2.7
     "@wordpress/date": ^4.2.3
     "@wordpress/dependency-extraction-webpack-plugin": ^3.2.1
     "@wordpress/dom-ready": ^3.2.3
-    "@wordpress/edit-post": ^5.0.13
-    "@wordpress/editor": ^12.0.10
+    "@wordpress/edit-post": ^5.0.15
+    "@wordpress/editor": ^12.0.12
     "@wordpress/element": ^4.0.4
     "@wordpress/env": ^4.1.3
     "@wordpress/escape-html": ^2.2.3
@@ -1393,13 +1393,13 @@ __metadata:
     "@wordpress/icons": ^6.1.1
     "@wordpress/is-shallow-equal": ^4.2.1
     "@wordpress/keycodes": ^3.2.4
-    "@wordpress/nux": ^5.0.11
+    "@wordpress/nux": ^5.0.13
     "@wordpress/plugins": ^4.0.6
     "@wordpress/primitives": ^3.0.4
     "@wordpress/react-i18n": ^3.0.4
     "@wordpress/rich-text": ^5.0.6
     "@wordpress/scripts": ^19.2.2
-    "@wordpress/server-side-render": ^3.0.11
+    "@wordpress/server-side-render": ^3.0.13
     "@wordpress/url": 3.3.1
     babel-jest: ^26.6.3
     classnames: ^2.3.1
@@ -7791,9 +7791,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/block-editor@npm:^8.0.7":
-  version: 8.0.7
-  resolution: "@wordpress/block-editor@npm:8.0.7"
+"@wordpress/block-editor@npm:^8.0.7, @wordpress/block-editor@npm:^8.0.9":
+  version: 8.0.9
+  resolution: "@wordpress/block-editor@npm:8.0.9"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@react-spring/web": ^9.2.4
@@ -7802,7 +7802,7 @@ __metadata:
     "@wordpress/blob": ^3.2.2
     "@wordpress/block-serialization-default-parser": ^4.2.3
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/data": ^6.1.4
     "@wordpress/deprecated": ^3.2.3
@@ -7835,22 +7835,22 @@ __metadata:
     redux-multi: ^0.1.12
     rememo: ^3.0.0
     traverse: ^0.6.6
-  checksum: ef922ae5cfdbaa4e4fe0bb67616e0fd8cbe78bd06c2392d9d90c5efa0ed01a7b356871a6a07929a300ee82bd81cbe48eb6bc933f78f237d677dc20557d420cac
+  checksum: 1a0eb0fe8909df8d298d9689d3c945fffffead31b48135713cc91803e57242eca8f1fbba16893d632478554575046a7a2992c8523bb6171754028634a05efa57
   languageName: node
   linkType: hard
 
-"@wordpress/block-library@npm:^6.0.11":
-  version: 6.0.11
-  resolution: "@wordpress/block-library@npm:6.0.11"
+"@wordpress/block-library@npm:^6.0.11, @wordpress/block-library@npm:^6.0.13":
+  version: 6.0.13
+  resolution: "@wordpress/block-library@npm:6.0.13"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@wordpress/a11y": ^3.2.4
     "@wordpress/api-fetch": ^5.2.6
     "@wordpress/autop": ^3.2.3
     "@wordpress/blob": ^3.2.2
-    "@wordpress/block-editor": ^8.0.7
+    "@wordpress/block-editor": ^8.0.9
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/core-data": ^4.0.8
     "@wordpress/data": ^6.1.4
@@ -7863,14 +7863,14 @@ __metadata:
     "@wordpress/html-entities": ^3.2.3
     "@wordpress/i18n": ^4.2.4
     "@wordpress/icons": ^6.1.1
-    "@wordpress/interface": ^4.1.9
+    "@wordpress/interface": ^4.1.11
     "@wordpress/is-shallow-equal": ^4.2.1
     "@wordpress/keycodes": ^3.2.4
     "@wordpress/notices": ^3.2.7
     "@wordpress/primitives": ^3.0.4
-    "@wordpress/reusable-blocks": ^3.0.13
+    "@wordpress/reusable-blocks": ^3.0.15
     "@wordpress/rich-text": ^5.0.6
-    "@wordpress/server-side-render": ^3.0.11
+    "@wordpress/server-side-render": ^3.0.13
     "@wordpress/url": ^3.3.1
     "@wordpress/viewport": ^4.0.6
     classnames: ^2.3.1
@@ -7878,9 +7878,9 @@ __metadata:
     fast-average-color: 4.3.0
     lodash: ^4.17.21
     memize: ^1.1.0
-    micromodal: ^0.4.6
+    micromodal: ^0.4.9
     moment: ^2.22.1
-  checksum: 37cb4ba1297c088de38c3040d5d00e44290823686366f613a731d5d8c4d393694f8ad86cc043100c4a235ee4591ce0a451ebe24f4ad4ccffc23be4b8bf106db3
+  checksum: 1bf56c3667ce87a0ae973b7f13e38b576cf2e688a3ed57530c31edb5b8247d2b8d28457c3fd76a11bc6f3bd23893ba6553e34490b68187ee10c47d55ba9b4a97
   languageName: node
   linkType: hard
 
@@ -8250,27 +8250,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/edit-post@npm:^5.0.1, @wordpress/edit-post@npm:^5.0.13":
-  version: 5.0.13
-  resolution: "@wordpress/edit-post@npm:5.0.13"
+"@wordpress/edit-post@npm:^5.0.1, @wordpress/edit-post@npm:^5.0.13, @wordpress/edit-post@npm:^5.0.15":
+  version: 5.0.15
+  resolution: "@wordpress/edit-post@npm:5.0.15"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@wordpress/a11y": ^3.2.4
     "@wordpress/api-fetch": ^5.2.6
-    "@wordpress/block-editor": ^8.0.7
-    "@wordpress/block-library": ^6.0.11
+    "@wordpress/block-editor": ^8.0.9
+    "@wordpress/block-library": ^6.0.13
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/core-data": ^4.0.8
     "@wordpress/data": ^6.1.4
     "@wordpress/data-controls": ^2.2.7
-    "@wordpress/editor": ^12.0.10
+    "@wordpress/editor": ^12.0.12
     "@wordpress/element": ^4.0.4
     "@wordpress/hooks": ^3.2.2
     "@wordpress/i18n": ^4.2.4
     "@wordpress/icons": ^6.1.1
-    "@wordpress/interface": ^4.1.9
+    "@wordpress/interface": ^4.1.11
     "@wordpress/keyboard-shortcuts": ^3.0.6
     "@wordpress/keycodes": ^3.2.4
     "@wordpress/media-utils": ^3.0.5
@@ -8285,39 +8285,39 @@ __metadata:
     memize: ^1.1.0
     rememo: ^3.0.0
     uuid: 8.3.0
-  checksum: 67d81c934dfcff116c5f99ee804e384dafd1014063d97fde24d3bdc41dd1f689bfebbdd9bc6679e5fe6fc557d2d1283d4e755c0e592966ef28f151a21cb881c5
+  checksum: b39977d340ac69b33b8372c2034860756d6ab1b18ef2bca576acf1cf3e22d7b7e29082e19d5d689424ea9978b6b8b28b8ff578d04f2010ff697703aa3677506e
   languageName: node
   linkType: hard
 
-"@wordpress/edit-site@npm:^3.0.13":
-  version: 3.0.13
-  resolution: "@wordpress/edit-site@npm:3.0.13"
+"@wordpress/edit-site@npm:^3.0.15":
+  version: 3.0.15
+  resolution: "@wordpress/edit-site@npm:3.0.15"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@wordpress/a11y": ^3.2.4
     "@wordpress/api-fetch": ^5.2.6
-    "@wordpress/block-editor": ^8.0.7
-    "@wordpress/block-library": ^6.0.11
+    "@wordpress/block-editor": ^8.0.9
+    "@wordpress/block-library": ^6.0.13
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/core-data": ^4.0.8
     "@wordpress/data": ^6.1.4
     "@wordpress/data-controls": ^2.2.7
-    "@wordpress/editor": ^12.0.10
+    "@wordpress/editor": ^12.0.12
     "@wordpress/element": ^4.0.4
     "@wordpress/hooks": ^3.2.2
     "@wordpress/html-entities": ^3.2.3
     "@wordpress/i18n": ^4.2.4
     "@wordpress/icons": ^6.1.1
-    "@wordpress/interface": ^4.1.9
+    "@wordpress/interface": ^4.1.11
     "@wordpress/keyboard-shortcuts": ^3.0.6
     "@wordpress/keycodes": ^3.2.4
     "@wordpress/media-utils": ^3.0.5
     "@wordpress/notices": ^3.2.7
     "@wordpress/plugins": ^4.0.6
     "@wordpress/primitives": ^3.0.4
-    "@wordpress/reusable-blocks": ^3.0.13
+    "@wordpress/reusable-blocks": ^3.0.15
     "@wordpress/url": ^3.3.1
     "@wordpress/viewport": ^4.0.6
     classnames: ^2.3.1
@@ -8326,22 +8326,22 @@ __metadata:
     jszip: ^3.2.2
     lodash: ^4.17.21
     rememo: ^3.0.0
-  checksum: a5da66add28f73fc8585b1a0dd0f8cd732dc45f44f25186842f92402b4a58c78da5a64a7f87bf4495d167f5ff9e74a5494e613ec35c482290e963c56b27abe6a
+  checksum: e0e95c4966eeca4b6e01373cca83bdf07406f5837cfc3d6abde44b501df93ed647448ccf620fdccbc0534d4f3813147d568718d13bfbd297b81576bb6b833c95
   languageName: node
   linkType: hard
 
-"@wordpress/editor@npm:^12.0.10":
-  version: 12.0.10
-  resolution: "@wordpress/editor@npm:12.0.10"
+"@wordpress/editor@npm:^12.0.10, @wordpress/editor@npm:^12.0.12":
+  version: 12.0.12
+  resolution: "@wordpress/editor@npm:12.0.12"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@wordpress/a11y": ^3.2.4
     "@wordpress/api-fetch": ^5.2.6
     "@wordpress/autop": ^3.2.3
     "@wordpress/blob": ^3.2.2
-    "@wordpress/block-editor": ^8.0.7
+    "@wordpress/block-editor": ^8.0.9
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/core-data": ^4.0.8
     "@wordpress/data": ^6.1.4
@@ -8358,9 +8358,9 @@ __metadata:
     "@wordpress/keycodes": ^3.2.4
     "@wordpress/media-utils": ^3.0.5
     "@wordpress/notices": ^3.2.7
-    "@wordpress/reusable-blocks": ^3.0.13
+    "@wordpress/reusable-blocks": ^3.0.15
     "@wordpress/rich-text": ^5.0.6
-    "@wordpress/server-side-render": ^3.0.11
+    "@wordpress/server-side-render": ^3.0.13
     "@wordpress/url": ^3.3.1
     "@wordpress/wordcount": ^3.2.3
     classnames: ^2.3.1
@@ -8368,7 +8368,7 @@ __metadata:
     memize: ^1.1.0
     react-autosize-textarea: ^7.1.0
     rememo: ^3.0.0
-  checksum: 18c3734b5c1c243a2639be375af1c0ed259be2a59c04a91d93d085bf8724b4093099285f3f8553ef41bce406791e7c1d2e6ac41aac46b19dd35323791cf7faac
+  checksum: cf511d9cab71983a0488789e8009f52f112b4265d1eb8f83c283b4372bf87ef2e4e1ecf8eafae428317d4ea9090e5ee0f6d97eaf5f15ba111106d28a088184ff
   languageName: node
   linkType: hard
 
@@ -8487,14 +8487,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/format-library@npm:^3.0.13":
-  version: 3.0.13
-  resolution: "@wordpress/format-library@npm:3.0.13"
+"@wordpress/format-library@npm:^3.0.13, @wordpress/format-library@npm:^3.0.15":
+  version: 3.0.15
+  resolution: "@wordpress/format-library@npm:3.0.15"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@wordpress/a11y": ^3.2.4
-    "@wordpress/block-editor": ^8.0.7
-    "@wordpress/components": ^19.1.1
+    "@wordpress/block-editor": ^8.0.9
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/data": ^6.1.4
     "@wordpress/dom": ^3.2.7
@@ -8506,7 +8506,7 @@ __metadata:
     "@wordpress/rich-text": ^5.0.6
     "@wordpress/url": ^3.3.1
     lodash: ^4.17.21
-  checksum: 858940fcb7036ed1be9cf0ead28e4dfe8a1f17412d3d78fe6ba6efabbd39b11f9656a007c03c4fcf7994d4aaa69a92ca9d60d111152a8f8ef7693c63846006fd
+  checksum: f0d92240dc2b0c3425ce1cc52022c83f2f1667ead54e91cdf13797ba356db914f556040d38fecb771a5eff0f886fc37ef673575afacc83e965a6b65b47a1428c
   languageName: node
   linkType: hard
 
@@ -8615,13 +8615,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/interface@npm:^4.1.9":
-  version: 4.1.9
-  resolution: "@wordpress/interface@npm:4.1.9"
+"@wordpress/interface@npm:^4.1.11, @wordpress/interface@npm:^4.1.9":
+  version: 4.1.11
+  resolution: "@wordpress/interface@npm:4.1.11"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@wordpress/a11y": ^3.2.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/data": ^6.1.4
     "@wordpress/deprecated": ^3.2.3
@@ -8632,7 +8632,7 @@ __metadata:
     "@wordpress/viewport": ^4.0.6
     classnames: ^2.3.1
     lodash: ^4.17.21
-  checksum: 592e1cb65f8e6c19495b30f48170528bef5dc8e61795361fdbfb9ade6e1d29272c0a4bee3c7c06013df6ff961838120080d4cbee467b36b5ee908505fcdd7a9b
+  checksum: 430c0c31865ce10c182054f2ccc8d2172dc465cebb0275bd5aff6bd20be90d1991dcb898c961e36a157f1171d4e1d039ed207a2d0b2e4a52df57267fa7ac7e42
   languageName: node
   linkType: hard
 
@@ -8769,12 +8769,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/nux@npm:^5.0.11":
-  version: 5.0.11
-  resolution: "@wordpress/nux@npm:5.0.11"
+"@wordpress/nux@npm:^5.0.13":
+  version: 5.0.13
+  resolution: "@wordpress/nux@npm:5.0.13"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/data": ^6.1.4
     "@wordpress/deprecated": ^3.2.3
@@ -8783,7 +8783,7 @@ __metadata:
     "@wordpress/icons": ^6.1.1
     lodash: ^4.17.21
     rememo: ^3.0.0
-  checksum: 6c17888802135970e144123dca8aeed56816bd593769ab0b54ee430c29565453f1ee56c66ecf78aada10f5262696afd07fa682a3e07e999bb47da16b305d9863
+  checksum: 0d8a37c543b7d04325247cb684344645908ef07799dd095911994bba6f463ef0c4827823b9c1559bf7bcb3650dff210d3e364244b80833c3f6a4cb4937965c96
   languageName: node
   linkType: hard
 
@@ -8907,13 +8907,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/reusable-blocks@npm:^3.0.13":
-  version: 3.0.13
-  resolution: "@wordpress/reusable-blocks@npm:3.0.13"
+"@wordpress/reusable-blocks@npm:^3.0.13, @wordpress/reusable-blocks@npm:^3.0.15":
+  version: 3.0.15
+  resolution: "@wordpress/reusable-blocks@npm:3.0.15"
   dependencies:
-    "@wordpress/block-editor": ^8.0.7
+    "@wordpress/block-editor": ^8.0.9
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/core-data": ^4.0.8
     "@wordpress/data": ^6.1.4
@@ -8923,7 +8923,7 @@ __metadata:
     "@wordpress/notices": ^3.2.7
     "@wordpress/url": ^3.3.1
     lodash: ^4.17.21
-  checksum: 5e992b0dfab21c9e31d511ba0335dc961d3534c6824c7463a2fe923374b866438e4bbeed8ee0198027198294685e9357d48594df28430fa1d43cbf3abfc9f03b
+  checksum: ca37864137fdcfe2ad6461d0f0b2704dc8cf87f469283161c6be3febc34a0304f9e08c67a739a7fd034dc227c84650093e4987971454888d0e32ffd1b1a14671
   languageName: node
   linkType: hard
 
@@ -9030,14 +9030,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/server-side-render@npm:^3.0.11":
-  version: 3.0.11
-  resolution: "@wordpress/server-side-render@npm:3.0.11"
+"@wordpress/server-side-render@npm:^3.0.11, @wordpress/server-side-render@npm:^3.0.13":
+  version: 3.0.13
+  resolution: "@wordpress/server-side-render@npm:3.0.13"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@wordpress/api-fetch": ^5.2.6
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/data": ^6.1.4
     "@wordpress/deprecated": ^3.2.3
@@ -9045,7 +9045,7 @@ __metadata:
     "@wordpress/i18n": ^4.2.4
     "@wordpress/url": ^3.3.1
     lodash: ^4.17.21
-  checksum: ef77840d89887042afa4420d7e54ccc8bb7eac191b8fb585dcd3d6153ad6cc3456dafd15d691de3fab2728cc912604d22033abaa41f5ad4634044c7e4b0304a2
+  checksum: 9266bc4f150f3225c9a69aa8cb1d740b447066c3b60ff75da98d1c872f834eb6734afe3ecd74d9a98bceb409fa44216613314227466d31ebf1e34680cf41b232
   languageName: node
   linkType: hard
 
@@ -11939,15 +11939,15 @@ __metadata:
     "@wordpress/a11y": ^3.2.4
     "@wordpress/api-fetch": ^5.2.6
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/block-editor": ^8.0.7
+    "@wordpress/block-editor": ^8.0.9
     "@wordpress/blocks": ^11.1.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/compose": ^5.0.6
     "@wordpress/data": ^6.1.4
     "@wordpress/data-controls": ^2.2.7
-    "@wordpress/edit-post": ^5.0.13
+    "@wordpress/edit-post": ^5.0.15
     "@wordpress/element": ^4.0.4
-    "@wordpress/format-library": ^3.0.13
+    "@wordpress/format-library": ^3.0.15
     "@wordpress/hooks": ^3.2.2
     "@wordpress/i18n": ^4.2.4
     "@wordpress/icons": ^6.1.1
@@ -25530,10 +25530,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"micromodal@npm:^0.4.6":
-  version: 0.4.6
-  resolution: "micromodal@npm:0.4.6"
-  checksum: 4f18e491278fad36d8efa224bedcbddd75345640265c4688537bb87921b0164ac21c2290c5ef40585f5432488dc496d35f31cfbd3a362105291cd8e20836a7ae
+"micromodal@npm:^0.4.9":
+  version: 0.4.10
+  resolution: "micromodal@npm:0.4.10"
+  checksum: 31df78f27ab82ab195c7e629411bc30c5032afe06a5d2926902c2bfd45babf71521d4e4bbe7d82c4243467c320ec212d75b2f49057b180a926ab095cbec907af
   languageName: node
   linkType: hard
 
@@ -38147,7 +38147,7 @@ testarmada-magellan@11.0.10:
     "@typescript-eslint/parser": ^4.33.0
     "@wojtekmaj/enzyme-adapter-react-17": ^0.6.3
     "@wordpress/base-styles": ^4.0.4
-    "@wordpress/components": ^19.1.1
+    "@wordpress/components": ^19.1.3
     "@wordpress/data": ^6.1.4
     "@wordpress/element": ^4.0.4
     "@wordpress/eslint-plugin": ^9.3.0
