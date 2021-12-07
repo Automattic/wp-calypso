@@ -27,7 +27,6 @@
 	],
 	"oauth_client_id": 68663,
 	"features": {
-		"activity-log/display-rules": true,
 		"activity-log/v2": true,
 		"always_use_logout_url": true,
 		"current-site/domain-warning": false,
@@ -39,7 +38,6 @@
 		"jetpack-cloud": true,
 		"jetpack/activity-log-sharing": true,
 		"jetpack/backups-date-picker": true,
-		"jetpack/only-realtime-products": true,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/pricing-page": true,
 		"jetpack/redirect-legacy-plans": true,
