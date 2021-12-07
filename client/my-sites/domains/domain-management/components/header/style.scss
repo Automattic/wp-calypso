@@ -10,70 +10,97 @@
 
 .domain-management-header {
 	&__container {
-		.domain-management-header__title {
-			padding-top: 10px;
 
-			&::first-letter {
-				text-transform: uppercase;
-			}
+		&-title {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			margin: 16px 0;
 
-			.formatted-header__title {
-				font-weight: 400;
-				font-size: $font-title-large;
+			.domain-management-header__title {
+				margin: 8px 0 8px 16px;
+	
+				&::first-letter {
+					text-transform: uppercase;
+				}
+	
+				.formatted-header__title {
+					font-weight: 400;
+					font-size: $font-title-large;
+					margin: 0;
+					line-height: 100%;
+				}
 			}
 		}
 
-		div.domain-management-header__badge {
-			font-size: $font-body-extra-small;
-			border-radius: 4px; /* stylelint-disable-line */
-			font-weight: 500; /* stylelint-disable-line */
-			margin: 4px 0;
-
-			display: inline-flex;
-			justify-content: center;
+		&-badges {
+			display: flex;
+			flex-wrap: wrap;
 			align-items: center;
+			margin-left: 16px;
+			gap: 8px;
 
-			@include break-mobile {
-				margin-top: 8px;
-			}
+			// Higher specificity needed to override .badge styles
+			div.domain-management-header__badge {
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+				font-size: $font-body-extra-small;
+				border-radius: 4px; /* stylelint-disable-line */
+				font-weight: 500; /* stylelint-disable-line */
 
-			.domain-management-header__badge-indicator {
-				display: flex;
-				height: 8px;
-			}
-
-			&--success {
-				background: rgba( 184, 230, 191, 0.6 );
-				color: var( --studio-green-80 );
-				svg {
-					fill: var( --studio-green-80 );
-					margin-right: 8px;
-				}
-				
 				.domain-management-header__badge-indicator {
-					color: var( --studio-green-50 );
+					display: flex;
+					height: 8px;
 				}
-			}
 
-			&--warning {
-				background: var( --studio-orange-0 );
-				color: var( --studio-yellow-80 );
 				svg {
-					fill: var( --studio-orange-40 );
 					margin-right: 8px;
 				}
-				
-				.domain-management-header__badge-indicator {
-					color: var( --studio-orange-40 );
-				}
-			}
 
-			&--premium {
-				background: var( --studio-yellow-10 );
-				color: var( --studio-yellow-80 );
-				svg {
-					fill: var( --studio-yellow-80 );
-					margin-right: 8px;
+				&--success {
+					background: rgba( 184, 230, 191, 0.6 );
+					color: var( --studio-green-80 );
+					
+					svg {
+						fill: var( --studio-green-80 );
+					}
+					
+					.domain-management-header__badge-indicator {
+						color: var( --studio-green-50 );
+					}
+				}
+
+				&--warning {
+					background: var( --studio-orange-0 );
+					color: var( --studio-yellow-80 );
+					
+					svg {
+						fill: var( --studio-orange-40 );
+						margin-right: 8px;
+					}
+					
+					.domain-management-header__badge-indicator {
+						color: var( --studio-orange-40 );
+					}
+				}
+
+				&--premium {
+					background: var( --studio-yellow-10 );
+					color: var( --studio-yellow-80 );
+					
+					svg {
+						fill: var( --studio-yellow-80 );
+					}
+				}
+
+				&--neutral {
+					background: rgba( 220, 220, 222, 0.6 );
+					color: var( --studio-gray-80 );
+					
+					svg {
+						fill: var( --studio-gray-80 );
+					}
 				}
 			}
 		}
