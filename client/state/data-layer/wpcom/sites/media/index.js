@@ -1,11 +1,7 @@
 import debug from 'debug';
 import { translate } from 'i18n-calypso';
 import { isEqual, omit } from 'lodash';
-import {
-	MEDIA_REQUEST,
-	MEDIA_ITEM_REQUEST,
-	MEDIA_ITEM_EDIT,
-} from 'calypso/state/action-types';
+import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST, MEDIA_ITEM_EDIT } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
