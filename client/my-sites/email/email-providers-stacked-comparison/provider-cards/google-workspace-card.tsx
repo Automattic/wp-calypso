@@ -1,7 +1,8 @@
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import page from 'page';
+import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -9,10 +10,17 @@ import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
-import { getSelectedDomain } from 'calypso/lib/domains';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getAnnualPrice, getGoogleMailServiceFamily, getMonthlyPrice } from 'calypso/lib/gsuite';
-import { newUsers } from 'calypso/lib/gsuite/new-users';
+import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
+import {
+	areAllUsersValid,
+	getItemsForCart,
+	GSuiteNewUser,
+	newUsers,
+} from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
@@ -72,7 +80,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		components: {
 			price: (
 				<span className={ 'google-workspace-card__keep-main-price' }>
-					{ getMonthlyPrice( gSuiteProduct?.cost ?? 0, currencyCode ) }
+					{ getMonthlyPrice( gSuiteProduct?.cost ?? 0, currencyCode ?? '' ) }
 				</span>
 			),
 		},
@@ -83,7 +91,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		components: {
 			price: (
 				<span className={ 'google-workspace-card__keep-main-price' }>
-					{ getAnnualPrice( gSuiteProduct?.cost ?? 0, currencyCode ) }
+					{ getAnnualPrice( gSuiteProduct?.cost ?? 0, currencyCode ?? '' ) }
 				</span>
 			),
 		},
@@ -158,8 +166,60 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		</div>
 	);
 
-	const onGoogleConfirmNewMailboxes = noop;
-	const onGoogleUsersChange = noop;
+	const [ googleUsers, setGoolgeUsers ] = useState( newUsers( selectedDomainName ) );
+	const [ addingToCart, setAddingToCart ] = useState( false );
+
+	const onGoogleConfirmNewMailboxes = () => {
+		const {
+			comparisonContext,
+			domain,
+			gSuiteProduct,
+			hasCartDomain,
+			productsList,
+			recordTracksEventAddToCartClick = noop,
+			selectedSite,
+			shoppingCartManager,
+			source,
+		} = props;
+
+		const usersAreValid = areAllUsersValid( googleUsers );
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+
+		recordTracksEventAddToCartClick(
+			comparisonContext,
+			googleUsers?.map( ( user: GSuiteNewUser ) => user.uuid ),
+			usersAreValid,
+			GOOGLE_PROVIDER_NAME,
+			source,
+			userCanAddEmail,
+			null
+		);
+
+		if ( ! usersAreValid || ! userCanAddEmail ) {
+			return;
+		}
+
+		const domains: { name: string }[] = domain ? [ domain ] : [];
+
+		setAddingToCart( true );
+		const itemsForCart: any = getItemsForCart( domains, gSuiteProduct.product_slug, googleUsers );
+
+		shoppingCartManager
+			.addProductsToCart(
+				itemsForCart.map( ( item: any ) => fillInSingleCartItemAttributes( item, productsList ) )
+			)
+			.then( () => {
+				setAddingToCart( false );
+				const { errors } = props.cart?.messages;
+				if ( errors && errors.length ) {
+					// Stay on the page to show the relevant error(s)
+					return;
+				}
+
+				page( '/checkout/' + selectedSite?.slug );
+			} );
+	};
+
 	const onGoogleFormReturnKeyPress = noop;
 
 	const domainList = domain ? [ domain ] : [];
@@ -169,16 +229,16 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			<GSuiteNewUserList
 				extraValidation={ identityMap }
 				domains={ domainList }
-				onUsersChange={ onGoogleUsersChange }
+				onUsersChange={ setGoolgeUsers }
 				selectedDomainName={ selectedDomainName }
-				users={ newUsers( selectedDomainName ) }
+				users={ googleUsers }
 				onReturnKeyPress={ onGoogleFormReturnKeyPress }
 				showAddAnotherMailboxButton={ false }
 			>
 				<FullWidthButton
 					className="google-workspace-card__continue"
 					primary
-					busy={ false }
+					busy={ addingToCart }
 					onClick={ onGoogleConfirmNewMailboxes }
 				>
 					{ translate( 'Create your mailbox' ) }
