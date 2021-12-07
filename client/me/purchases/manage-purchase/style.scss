@@ -283,17 +283,28 @@
 }
 
 .manage-purchase__detail {
-	@include breakpoint-deprecated( '<660px' ) {
-		text-align: right;
-	}
-
 	display: block;
+	text-align: right;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: left;
+	}
 
 	.components-toggle-control {
 		display: inline-block;
 
 		.components-form-toggle {
 			margin-right: initial;
+		}
+	}
+
+	.manage-purchase__payment-method {
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 6px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			justify-content: flex-start;
 		}
 	}
 
@@ -304,10 +315,6 @@
 	a {
 		display: block;
 		cursor: pointer;
-	}
-
-	.manage-purchase__backup-payment-method-notice {
-		margin-top: 6px;
 	}
 
 	.manage-purchase__backup-payment-method-notice a {
