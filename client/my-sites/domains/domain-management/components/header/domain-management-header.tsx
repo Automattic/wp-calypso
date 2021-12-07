@@ -1,23 +1,22 @@
-import { SVG, Circle } from '@wordpress/components';
-import { Icon, home, info } from '@wordpress/icons';
+import { Circle, SVG } from '@wordpress/components';
+import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { isMappedDomain } from 'calypso/lib/domains';
-import { type as DomainType, transferStatus } from 'calypso/lib/domains/constants';
-import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
+import { isMappedDomain, resolveDomainStatus } from 'calypso/lib/domains';
+import { type as DomainType } from 'calypso/lib/domains/constants';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import { domainManagementList, isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-by-site-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import './style.scss';
 import type { DomainManagementHeaderPassedProps, DomainManagementHeaderProps } from './types';
 import type { TranslateResult } from 'i18n-calypso';
+import './style.scss';
 
 const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
-	const { selectedDomainName, isManagingAllDomains, selectedSite, domain } = props;
+	const { selectedDomainName, isManagingAllDomains, selectedSite } = props;
 	const { __ } = useI18n();
 	let formattedHeaderText = selectedDomainName;
 	if ( ! selectedDomainName ) {
@@ -90,24 +89,18 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 		return renderNeutralBadge( __( 'Domain transfer' ) );
 	};
 
-	const renderStatusBadge = () => {
-		if ( domain.expired ) {
-			return renderWarningBadge( __( 'Expired' ) );
-		}
-
+	const renderStatusBadge = ( domain: typeof props[ 'domain' ] ) => {
 		if ( domain.isPendingIcannVerification ) {
 			return renderWarningBadge( __( 'Verify email' ) );
 		}
 
-		if ( isRecentlyRegistered( domain.registrationDate ) ) {
-			return renderSuccessBadge( __( 'Activating' ) );
-		}
+		const { status, statusClass } = resolveDomainStatus( domain );
 
-		if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
-			return renderSuccessBadge( __( 'In progress' ) );
+		if ( status ) {
+			return statusClass === 'status-success'
+				? renderSuccessBadge( status )
+				: renderWarningBadge( status );
 		}
-
-		return renderSuccessBadge( __( 'Active' ) );
 	};
 
 	const renderBadges = () => {
@@ -118,7 +111,10 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 			badges.push( renderTransferOrMappingBadge( domain.type ) );
 		}
 
-		badges.push( renderStatusBadge() );
+		const statusBadge = renderStatusBadge( domain );
+		if ( statusBadge ) {
+			badges.push( statusBadge );
+		}
 
 		if ( domain.isPrimary ) {
 			badges.push( renderSuccessBadge( __( 'Primary site address' ), home ) );
@@ -128,20 +124,22 @@ const DomainManagementHeader = ( props: DomainManagementHeaderProps ) => {
 			badges.push( renderPremiumBadge() );
 		}
 
-		return <div className="domain-management-header__badges-container">{ badges }</div>;
+		return <div className="domain-management-header__container-badges">{ badges }</div>;
 	};
 
 	return (
 		<div className="domain-management-header__container">
 			{ renderBreadcrumbs() }
-			<FormattedHeader
-				brandFont
-				className="domain-management-header__title"
-				headerText={ formattedHeaderText }
-				align="left"
-				hasScreenOptions={ false }
-			/>
-			{ renderBadges() }
+			<div className="domain-management-header__container-title">
+				<FormattedHeader
+					brandFont
+					className="domain-management-header__title"
+					headerText={ formattedHeaderText }
+					align="left"
+					hasScreenOptions={ false }
+				/>
+				{ renderBadges() }
+			</div>
 		</div>
 	);
 };
