@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { shouldDisplayAppBanner } from 'calypso/state/selectors/should-display-app-banner';
 
 describe( 'shouldDisplayAppBanner()', () => {
-	test( 'should return false if Terms or Service update banner is displayed', () => {
+	test( 'should return false if ToS update banner is displayed', () => {
 		const state = {
 			legal: {
 				tos: {
@@ -40,7 +40,7 @@ describe( 'shouldDisplayAppBanner()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	test( 'should return false is fetching preferences', () => {
+	test( 'should return false if fetching preferences', () => {
 		const state = {
 			ui: {
 				appBannerVisibility: true,
