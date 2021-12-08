@@ -4,7 +4,7 @@ import displayTypes from 'calypso/state/reader/posts/display-types';
 const { X_POST } = displayTypes;
 
 export function isXPost( post ) {
-	return post && ( post.display_type & X_POST || post.tags.hasOwnProperty( 'p2-xpost' ) );
+	return post && ( post.display_type & X_POST || post.tags?.hasOwnProperty( 'p2-xpost' ) );
 }
 
 const exported = {
