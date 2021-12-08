@@ -1,6 +1,19 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/colors';
 
 .transfer-to-other-site {
+	background: var( --studio-white );
+
+	.formatted-header__title {
+		font-size: $font-title-medium;
+
+		@include break-medium {
+			font-size: $font-title-large;
+		}
+
+	}
+
 	&__card {
 		padding: 0;
 		box-shadow: none;

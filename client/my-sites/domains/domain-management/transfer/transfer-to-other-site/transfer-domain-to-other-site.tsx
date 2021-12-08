@@ -182,7 +182,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	};
 
 	renderSection(): JSX.Element {
-		const { currentUserCanManage, selectedDomainName } = this.props;
+		const { translate, currentUserCanManage, selectedDomainName } = this.props;
 		const { children, ...propsWithoutChildren } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...propsWithoutChildren } />;
@@ -197,6 +197,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 						filter={ this.isSiteEligible }
 						sites={ this.props.sites }
 						onSiteSelect={ this.handleSiteSelect }
+						searchPlaceholder={ translate( 'Search' ) }
 					/>
 				</Card>
 				{ this.state.targetSiteId && (
