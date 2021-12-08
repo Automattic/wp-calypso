@@ -7,17 +7,19 @@ export default { title: 'tour-kit' };
 const References = () => {
 	return (
 		<div className={ 'storybook__tourkit-references' }>
-			<div className={ 'storybook__tourkit-references-a' }>
-				<p>Reference A</p>
-			</div>
-			<div className={ 'storybook__tourkit-references-b' }>
-				<p>Reference B</p>
-			</div>
-			<div className={ 'storybook__tourkit-references-c' }>
-				<p>Reference C</p>
-			</div>
-			<div className={ 'storybook__tourkit-references-d' }>
-				<p>Reference D</p>
+			<div className={ 'storybook__tourkit-references-container' }>
+				<div className={ 'storybook__tourkit-references-a' }>
+					<p>Reference A</p>
+				</div>
+				<div className={ 'storybook__tourkit-references-b' }>
+					<p>Reference B</p>
+				</div>
+				<div className={ 'storybook__tourkit-references-c' }>
+					<p>Reference C</p>
+				</div>
+				<div className={ 'storybook__tourkit-references-d' }>
+					<p>Reference D</p>
+				</div>
 			</div>
 		</div>
 	);
