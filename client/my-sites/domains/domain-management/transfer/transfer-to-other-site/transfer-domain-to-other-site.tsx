@@ -122,7 +122,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	render(): JSX.Element {
 		const { selectedSite, selectedDomainName, currentRoute, translate } = this.props;
 		const { slug } = selectedSite;
-		const componentClassName = 'transfer-to-other-site';
+		const componentClassName = 'transfer-domain-to-other-site';
 		if ( ! this.isDataReady() ) {
 			return (
 				<DomainMainPlaceholder
@@ -182,7 +182,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	};
 
 	renderSection(): JSX.Element {
-		const { translate, currentUserCanManage, selectedDomainName } = this.props;
+		const { currentUserCanManage, selectedDomainName } = this.props;
 		const { children, ...propsWithoutChildren } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...propsWithoutChildren } />;
@@ -190,14 +190,13 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 		return (
 			<div>
-				<Card className="transfer-to-other-site__card">
+				<Card className="transfer-domain-to-other-site__card">
 					<p>{ this.getMessage() }</p>
 					<SiteSelector
-						className={ 'transfer-to-other-site__site-selector' }
+						className={ 'transfer-domain-to-other-site__site-selector' }
 						filter={ this.isSiteEligible }
 						sites={ this.props.sites }
 						onSiteSelect={ this.handleSiteSelect }
-						searchPlaceholder={ translate( 'Search' ) }
 					/>
 				</Card>
 				{ this.state.targetSiteId && (
