@@ -842,7 +842,6 @@ __metadata:
     html-webpack-plugin: ^5.0.0-beta.4
     i18n-calypso: "workspace:^"
     jest: ^27.3.1
-    moment: ^2.26.0
     page: ^1.11.5
     postcss: ^8.3.11
     postcss-custom-properties: ^11.0.0
