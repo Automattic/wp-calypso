@@ -40,8 +40,8 @@ ul.plans-feature-list__item-group {
 
 	// If the 'INCLUDED WITH ANNUAL PLANS` text is rendered
 	// the item needs more margin top
-	& + &--requires-annual-enabled,
-	& + &--requires-annual-disabled {
+	&--requires-annual-enabled,
+	&--requires-annual-disabled {
 		margin-top: 8px;
 	}
 
@@ -60,8 +60,7 @@ ul.plans-feature-list__item-group {
 // Content wrapper. Can be a <button> in case of the domain feature item
 .plans-feature-list__item-content-wrapper,
 .plans-feature-list__item-content-wrapper.components-button.is-link {
-	display: flex;
-	align-items: flex-end;
+	display: block;
 	padding: 0;
 	text-decoration: none;
 
@@ -75,6 +74,7 @@ ul.plans-feature-list__item-group {
 	flex-grow: 0;
 	flex-shrink: 0;
 	margin-right: 6px;
+	margin-top: 1px;
 
 	color: var( --studio-gray-100 );
 
@@ -97,23 +97,20 @@ ul.plans-feature-list__item-group {
 
 // Wrapper for the feature item's text content
 .plans-feature-list__item-text {
-	// Item tends to occupy all available space, but without exceeding parent's width
-	flex: 1;
-	max-width: 100%;
-
-	// Makes the tick/cross icon align better with the text
-	margin-bottom: 1px;
+	display: flex;
+	align-items: flex-start;
 }
 
 // Optional text informing the user that a specific feature is only available with the annual version of a plan
 .plans-feature-list__item-annual-nudge {
 	display: block;
 	text-transform: uppercase;
-	font-size: 10px; /* stylelint-disable-line scales/font-size */
+	font-size: 10px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	font-weight: 700;
 	letter-spacing: 0.02em;
 	line-height: 1;
 	margin-bottom: 6px;
+	padding-left: 24px;
 
 	.plans-feature-list__item--requires-annual-enabled & {
 		color: var( --studio-green-60 );
@@ -126,8 +123,13 @@ ul.plans-feature-list__item-group {
 
 // The text describing the feature
 .plans-feature-list__item-description {
+	// Item tends to occupy all available space, but without exceeding parent's width
+	flex: 1;
+	max-width: 100%;
+
+	padding-top: 1px;
 	font-size: $font-body-small;
-	line-height: 1.2;
+	line-height: 1.35;
 	letter-spacing: 0.2px;
 	font-weight: 400;
 	color: var( --studio-gray-70 );
