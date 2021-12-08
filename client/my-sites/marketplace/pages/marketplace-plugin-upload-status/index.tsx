@@ -276,10 +276,10 @@ const MarketplacePluginInstall = ( {
 					line={ translate(
 						'This plugin already exists in your site. If you want to upgrade/ downgrade it please continue by uploading again from WP Admin.'
 					) }
-					action={ translate( 'Back' ) }
-					actionURL={ `/plugins/upload/${ selectedSiteSlug }` }
-					secondaryAction={ translate( 'Continue' ) }
-					secondaryActionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php` }
+					secondaryAction={ translate( 'Back' ) }
+					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
+					action={ translate( 'Continue' ) }
+					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php` }
 				/>
 			);
 		}
