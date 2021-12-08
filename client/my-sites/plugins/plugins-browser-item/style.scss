@@ -37,7 +37,7 @@
 	}
 
 	.plugins-browser-item__description {
-		margin: 32px 0 20px;
+		margin: 16px 0;
 		font-size: $font-body-small;
 		font-weight: 400;
 		color: $studio-gray-60;
@@ -110,6 +110,18 @@
 .plugins-browser-item__active-installs {
 	color: var( --studio-gray-60 );
 	font-size: $font-body-extra-small;
+}
+
+.plugins-browser-item__untested-notice {
+	display: flex;
+	color: var( --studio-gray-60 );
+	fill: var( --studio-gray-60 );
+	font-size: $font-body-small;
+	margin-bottom: 16px;
+
+	.plugins-browser-item__untested-text {
+		margin-left: 6px;
+	}
 }
 
 .plugins-browser-item__last-updated {

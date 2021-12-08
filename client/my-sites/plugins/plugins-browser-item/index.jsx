@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -7,12 +8,13 @@ import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
+import version_compare from 'calypso/lib/version-compare';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
@@ -32,8 +34,8 @@ const PluginsBrowserListElement = ( props ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
+	const selectedSite = useSelector( getSelectedSite );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.id ) );
 	const sitesWithPlugin = useSelector( ( state ) =>
 		isJetpack && currentSites
 			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
@@ -78,6 +80,17 @@ const PluginsBrowserListElement = ( props ) => {
 		return ! isJetpack && includes( PREINSTALLED_PLUGINS, plugin.name );
 	}, [ isJetpack, site, plugin ] );
 
+	const isUntestedVersion = useMemo( () => {
+		const wpVersion = selectedSite?.options?.software_version;
+		const pluginTestedVersion = plugin?.tested;
+
+		if ( ! wpVersion || ! pluginTestedVersion ) {
+			return false;
+		}
+
+		return version_compare( wpVersion, pluginTestedVersion, '>' );
+	} );
+
 	if ( isPlaceholder ) {
 		return <Placeholder iconSize={ iconSize } />;
 	}
@@ -109,6 +122,14 @@ const PluginsBrowserListElement = ( props ) => {
 					) }
 					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 				</div>
+				{ isUntestedVersion && (
+					<div className="plugins-browser-item__untested-notice">
+						<Icon size={ 20 } icon={ info } />
+						<span className="plugins-browser-item__untested-text">
+							{ translate( 'Untested with your version of WordPress' ) }
+						</span>
+					</div>
+				) }
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<InstalledInOrPricing
@@ -134,7 +155,7 @@ const PluginsBrowserListElement = ( props ) => {
 							<div className="plugins-browser-item__active-installs">
 								<span className="plugins-browser-item__active-installs-value">{ `${ formatNumberMetric(
 									plugin.active_installs
-								) }${ plugin.active_installs > 1000 && '+' }` }</span>
+								) }${ plugin.active_installs > 1000 ? '+' : '' }` }</span>
 								{ translate( ' Active Installs' ) }
 							</div>
 						) }
