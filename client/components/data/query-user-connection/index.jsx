@@ -1,50 +1,34 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { isUserConnected } from 'calypso/state/jetpack-connect/actions';
 import { isRequestingSite } from 'calypso/state/sites/selectors';
 
-class QueryUserConnection extends Component {
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( siteId, siteIsOnSitesList ) => ( dispatch, getState ) => {
+	if ( ! isRequestingSite( getState(), siteId ) ) {
+		dispatch( isUserConnected( siteId, siteIsOnSitesList ) );
 	}
+};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId ) {
-			this.request( nextProps );
-		}
-	}
+function QueryUserConnection( { siteId, siteIsOnSitesList = false } ) {
+	// save the `siteIsOnSitesList` flag to a ref so that it can be used by the request effect,
+	// but doesn't trigger a new request when it changes.
+	const savedSiteIsOnSitesList = useRef();
+	useEffect( () => {
+		savedSiteIsOnSitesList.current = siteIsOnSitesList;
+	}, [ siteIsOnSitesList ] );
 
-	request( props ) {
-		if ( props.siteId && ! props.requestingSite ) {
-			props.isUserConnected( props.siteId, props.siteIsOnSitesList );
-		}
-	}
+	const dispatch = useDispatch();
+	useEffect( () => {
+		dispatch( request( siteId, savedSiteIsOnSitesList.current ) );
+	}, [ dispatch, siteId ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryUserConnection.propTypes = {
 	siteId: PropTypes.number,
 	siteIsOnSitesList: PropTypes.bool,
-	requestingSite: PropTypes.bool,
-	isUserConnected: PropTypes.func,
 };
 
-QueryUserConnection.defaultProps = {
-	isUserConnected: () => {},
-	siteIsOnSitesList: false,
-};
-
-export default connect(
-	( state, { siteId } ) => {
-		return {
-			requestingSite: isRequestingSite( state, siteId ),
-		};
-	},
-	{ isUserConnected }
-)( QueryUserConnection );
+export default QueryUserConnection;
