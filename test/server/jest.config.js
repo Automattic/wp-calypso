@@ -1,24 +1,14 @@
+const path = require( 'path' );
+const base = require( '@automattic/calypso-jest' );
+
 module.exports = {
-	cacheDirectory: '<rootDir>/../.cache/jest',
-	modulePaths: [ '<rootDir>/extensions' ],
-	rootDir: '../../client',
-	roots: [ '<rootDir>/server' ],
-	testEnvironment: 'node',
-	resolver: require.resolve( '@automattic/calypso-jest/src/module-resolver.js' ),
-	transform: {
-		'\\.[jt]sx?$': 'babel-jest',
-		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve(
-			'@automattic/calypso-jest/src/transform/asset.js'
-		),
-	},
-	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!draft-js|calypso)(?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css))',
-	],
+	...base,
+	cacheDirectory: path.join( __dirname, '../../.cache/jest' ),
+	rootDir: '../../client/server',
+	transformIgnorePatterns: [ 'node_modules/(?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)' ],
 	moduleNameMapper: {
 		'^@automattic/calypso-config$': 'calypso/server/config',
 		'^@automattic/calypso-config/(.*)$': 'calypso/server/config/$1',
 	},
-	testMatch: [ '<rootDir>/server/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
-	setupFilesAfterEnv: [ '<rootDir>/../test/server/setup-test-framework.js' ],
-	verbose: false,
+	setupFilesAfterEnv: [ require.resolve( './setup-test-framework.js' ) ],
 };

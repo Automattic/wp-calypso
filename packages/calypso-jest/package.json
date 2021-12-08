@@ -22,7 +22,6 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"dependencies": {
-		"@automattic/calypso-babel-config": "workspace:^",
 		"@babel/core": "^7.16.0",
 		"@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
 		"babel-jest": "^27.3.1",
