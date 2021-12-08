@@ -51,7 +51,10 @@ export const getPlansToDisplay = ( {
 				! currentPlanTerms.includes( product.productSlug )
 		);
 
-	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
+	if (
+		currentPlanSlug &&
+		( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( currentPlanSlug )
+	) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
 			return [ currentPlanSelectorProduct, ...plansToDisplay ];

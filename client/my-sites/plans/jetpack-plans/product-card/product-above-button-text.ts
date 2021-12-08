@@ -12,7 +12,7 @@ export default function productAboveButtonText(
 		! isOwned &&
 		! isIncludedInPlan &&
 		siteProduct &&
-		JETPACK_SEARCH_PRODUCTS.includes( product.productSlug )
+		( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( product.productSlug )
 	) {
 		return translate( '*estimated price based off of %(records)s records', {
 			args: {
