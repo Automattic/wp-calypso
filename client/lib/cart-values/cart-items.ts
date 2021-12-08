@@ -399,12 +399,12 @@ export function googleAppsExtraLicenses( properties: {
 	};
 }
 
-interface TitanProductProps {
+export interface TitanProductProps {
 	domain?: string;
 	meta?: string;
 	source?: string;
 	quantity?: number | null;
-	extra?: RequestCartProductExtra;
+	extra?: RequestCartProductExtra & { email_users: any };
 }
 
 /**

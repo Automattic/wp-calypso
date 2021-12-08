@@ -1,11 +1,15 @@
 import { TITAN_MAIL_ANNUALLY_SLUG, TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { RequestCartProductExtra, withShoppingCart } from '@automattic/shopping-cart';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
-import { titanMailAnnually, titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
+import {
+	titanMailAnnually,
+	titanMailMonthly,
+	TitanProductProps,
+} from 'calypso/lib/cart-values/cart-items';
 import {
 	getSelectedDomain,
 	canCurrentUserAddEmail,
@@ -129,13 +133,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			return;
 		}
 
-		const props: {
-			meta?: string;
-			domain?: string;
-			source?: string;
-			quantity?: number | null;
-			extra?: RequestCartProductExtra & { email_users: any };
-		} = {
+		const props: TitanProductProps = {
 			domain: selectedDomainName,
 			quantity: validatedTitanMailboxes.length,
 			extra: {
