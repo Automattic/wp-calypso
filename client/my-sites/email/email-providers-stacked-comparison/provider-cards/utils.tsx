@@ -6,8 +6,7 @@ import {
 } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React, { FunctionComponent, ReactElement } from 'react';
-import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
+import React, { FunctionComponent } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
@@ -112,29 +111,5 @@ export const PriceWithInterval: FunctionComponent< PriceWithIntervalProps > = ( 
 		<>
 			{ priceSpan } { saleSpan } { mailboxSpan } { intervalLengthSpan }
 		</>
-	);
-};
-
-type PriceBadgeProps = {
-	additionalPriceInformationComponent?: ReactElement | null;
-	className: string;
-	priceComponent: ReactElement;
-};
-
-export const PriceBadge: FunctionComponent< PriceBadgeProps > = ( props ) => {
-	const { additionalPriceInformationComponent, className, priceComponent } = props;
-	const priceBadgeClass = `${ className }__price-badge`;
-	const additionalPriceInformationClass = `${ className }__provider-additional-price-information`;
-	return (
-		<div className={ priceBadgeClass }>
-			<PromoCardPrice
-				formattedPrice={ priceComponent }
-				additionalPriceInformation={
-					<span className={ additionalPriceInformationClass }>
-						{ additionalPriceInformationComponent }
-					</span>
-				}
-			/>
-		</div>
 	);
 };
