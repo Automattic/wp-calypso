@@ -28,9 +28,16 @@
 	
 				.formatted-header__title {
 					font-weight: 400;
-					font-size: $font-title-large;
 					margin: 0;
 					line-height: 100%;
+
+					@include break-zoomed-in {
+						font-size: $font-title-medium;
+					}
+
+					@include break-small {
+						font-size: $font-title-large;
+					}
 				}
 			}
 
