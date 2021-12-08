@@ -53,9 +53,12 @@ type EmailProvidersStackedComparisonProps = {
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
 	props
 ) => {
-	const translate = useTranslate();
-	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
 	const { comparisonContext, isGSuiteSupported, selectedDomainName, selectedSite, source } = props;
+
+	const translate = useTranslate();
+
+	const [ intervalLength, setIntervalLength ] = useState( IntervalLength.MONTHLY );
+
 	const [ expanded, setExpanded ] = useState( {
 		titan: true,
 		google: false,
@@ -88,16 +91,18 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			<h1 className="email-providers-stacked-comparison__header wp-brand-font">
 				{ translate( 'Pick an email solution' ) }
 			</h1>
+
 			<BillingIntervalToggle
-				onIntervalChange={ setBillingPeriod }
-				intervalLength={ billingPeriod }
+				onIntervalChange={ setIntervalLength }
+				intervalLength={ intervalLength }
 			/>
+
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ expanded.titan }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
-				intervalLength={ billingPeriod }
+				intervalLength={ intervalLength }
 				onExpandedChange={ onExpandedStateChange }
 			/>
 
@@ -107,7 +112,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 					detailsExpanded={ expanded.google }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
-					intervalLength={ billingPeriod }
+					intervalLength={ intervalLength }
 					onExpandedChange={ onExpandedStateChange }
 				/>
 			) }
