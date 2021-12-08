@@ -31,28 +31,6 @@ Undocumented.prototype.checkAuthCode = function ( domain, authCode, fn ) {
 	);
 };
 
-/**
- * Starts an inbound domain transfer that is in the pending_start state.
- *
- * @param {number|string} siteId The site ID
- * @param {string} domain The domain name
- * @param {string} authCode The auth code for the transfer
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCode, fn ) {
-	let query = {};
-	if ( authCode && authCode !== '' ) {
-		query = { auth_code: authCode };
-	}
-
-	return this.wpcom.req.get(
-		`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
-		query,
-		fn
-	);
-};
-
 Undocumented.prototype.fetchDns = function ( domainName, fn ) {
 	return this.wpcom.req.get( '/domains/' + domainName + '/dns', fn );
 };

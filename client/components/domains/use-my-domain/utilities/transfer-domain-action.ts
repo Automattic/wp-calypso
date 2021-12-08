@@ -78,9 +78,10 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 
 		const startInboundTransferAndReload = async () => {
 			try {
-				const result = await wpcom
-					.undocumented()
-					.startInboundTransfer( selectedSite.ID, domain, authCode );
+				const result = await wpcom.req.get(
+					`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ selectedSite.ID }`,
+					authCode ? { auth_code: authCode } : {}
+				);
 				if ( result.success ) {
 					page( domainManagementTransferIn( selectedSite.slug, domain ) );
 				} else {
