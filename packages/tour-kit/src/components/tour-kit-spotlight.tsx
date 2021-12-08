@@ -17,6 +17,12 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement,
 			name: 'flip',
 			enabled: false,
 		},
+		{
+			name: 'preventOverflow',
+			options: {
+				mainAxis: false, // true by default
+			},
+		},
 		useMemo(
 			() => ( {
 				name: 'offset',
