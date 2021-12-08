@@ -256,7 +256,7 @@ export class SiteDomains extends Component {
 			{
 				label: 'All my domains',
 				value: 'all-my-domains',
-				path: domainManagementRoot(),
+				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: null,
 			},
 		];
