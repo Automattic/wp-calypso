@@ -674,17 +674,15 @@ class RegisterDomainStep extends Component {
 		this.save();
 
 		Object.keys( this.state.premiumDomains ).map( ( premiumDomain ) => {
-			this.fetchDomainPrice( premiumDomain )
-				.catch( () => [] )
-				.then( ( domainPrice ) => {
-					this.setState( ( state ) => {
-						const newPremiumDomains = { ...state.premiumDomains };
-						newPremiumDomains[ premiumDomain ] = domainPrice;
-						return {
-							premiumDomains: newPremiumDomains,
-						};
-					} );
+			this.fetchDomainPrice( premiumDomain ).then( ( domainPrice ) => {
+				this.setState( ( state ) => {
+					const newPremiumDomains = { ...state.premiumDomains };
+					newPremiumDomains[ premiumDomain ] = domainPrice;
+					return {
+						premiumDomains: newPremiumDomains,
+					};
 				} );
+			} );
 		} );
 	};
 
