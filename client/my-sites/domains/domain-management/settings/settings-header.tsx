@@ -74,7 +74,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 	);
 
 	const renderWarningBadge = ( description: TranslateResult ) => (
-		<Badge className="settings-header__badge settings-header__badge--success">
+		<Badge className="settings-header__badge settings-header__badge--warning">
 			<div className="settings-header__badge-indicator">{ renderCircle() }</div>
 			{ description }
 		</Badge>
