@@ -621,6 +621,12 @@ export default function CompositeCheckout( {
 		( args ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+					step: 2,
+					step_name: "payment-method-step",
+				} )
+			);
 		},
 		[ onPaymentComplete, onAfterPaymentComplete ]
 	);

@@ -48,6 +48,7 @@ import type { OnChangeItemVariant } from '../components/item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -302,7 +303,15 @@ export default function WPCheckout( {
 					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
 					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
-					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					goToNextStep={ () => {
+						setIsOrderReviewActive( ! isOrderReviewActive )
+						reduxDispatch(
+							recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+								step: 0,
+								step_name: "review-order-step",
+							} )
+						);
+					}}
 					activeStepContent={
 						<WPCheckoutOrderReview
 							removeProductFromCart={ removeProductFromCart }
@@ -349,7 +358,18 @@ export default function WPCheckout( {
 									reduxDispatch,
 									translate,
 									true
-								);
+								).then((response) => {
+									if (response) {
+										reduxDispatch(
+											recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+												step: 1,
+												step_name: "contact-form",
+											} )
+										);
+									}
+									return response;
+									
+								});;
 							} }
 							activeStepContent={
 								<WPContactForm
