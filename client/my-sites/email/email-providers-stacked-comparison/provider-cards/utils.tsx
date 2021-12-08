@@ -95,7 +95,7 @@ export const PriceWithInterval: FunctionComponent< PriceWithIntervalProps > = ( 
 		<span className={ saleClassName }>{ formatCurrency( sale ?? 0, currencyCode ) }</span>
 	);
 	const intervalLengthSpan =
-		intervalLength === 'annually' ? (
+		intervalLength === IntervalLength.ANNUALLY ? (
 			<span className={ intervalLengthClassName }>/{ translate( 'annually' ) }</span>
 		) : (
 			<span className={ intervalLengthClassName }>/{ translate( 'monthly' ) }</span>
