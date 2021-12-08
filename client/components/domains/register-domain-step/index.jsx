@@ -674,7 +674,7 @@ class RegisterDomainStep extends Component {
 		this.save();
 
 		Object.keys( this.state.premiumDomains ).map( ( premiumDomain ) => {
-			this.fetchDomainPricePromise( premiumDomain )
+			this.fetchDomainPrice( premiumDomain )
 				.catch( () => [] )
 				.then( ( domainPrice ) => {
 					this.setState( ( state ) => {
@@ -842,25 +842,19 @@ class RegisterDomainStep extends Component {
 			.catch( noop );
 	};
 
-	fetchDomainPricePromise = ( domain ) => {
-		return new Promise( ( resolve ) => {
-			wpcom.req
-				.get( `/domains/${ encodeURIComponent( domain ) }/price` )
-				.then( ( data ) => {
-					resolve( {
-						pending: false,
-						is_premium: data.is_premium,
-						cost: data.cost,
-						is_price_limit_exceeded: data?.is_price_limit_exceeded,
-					} );
-				} )
-				.catch( ( error ) => {
-					resolve( {
-						pending: true,
-						error,
-					} );
-				} );
-		} );
+	fetchDomainPrice = ( domain ) => {
+		return wpcom.req
+			.get( `/domains/${ encodeURIComponent( domain ) }/price` )
+			.then( ( data ) => ( {
+				pending: false,
+				is_premium: data.is_premium,
+				cost: data.cost,
+				is_price_limit_exceeded: data?.is_price_limit_exceeded,
+			} ) )
+			.catch( ( error ) => ( {
+				pending: true,
+				error,
+			} ) );
 	};
 
 	preCheckDomainAvailability = ( domain ) => {
