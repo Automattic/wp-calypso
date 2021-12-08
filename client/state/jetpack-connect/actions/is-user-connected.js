@@ -30,7 +30,9 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 			.then( ( site ) => {
 				accessibleSite = site;
 				debug( 'site is accessible! checking that user is connected', siteId );
-				return wpcom.undocumented().jetpackIsUserConnected( siteId );
+				return wpcom.req.get( `/sites/${ siteId }/jetpack-connect/is-user-connected`, {
+					apiNamespace: 'wpcom/v2',
+				} );
 			} )
 			.then( () => {
 				debug( 'user is connected to site.', accessibleSite );
