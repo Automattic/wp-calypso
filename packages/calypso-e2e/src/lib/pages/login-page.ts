@@ -1,18 +1,49 @@
 /* eslint-disable require-jsdoc */
 import { Locator, Page, Response } from 'playwright';
+import { getAccountCredentials, getCalypsoURL } from '../../data-helper';
+
+interface UsernameAuthPayload {
+	code: number;
+}
 
 export class LoginPage {
 	private page: Page;
+	readonly pageUrl: string;
 
 	constructor( page: Page ) {
 		this.page = page;
+		this.pageUrl = getCalypsoURL( 'log-in' );
 	}
 
-	async clickSignUp(): Promise< Locator > {
-		const locator = await this.page.locator( ':text-is("Sign Up")' );
-		await locator.click();
+	async visit(): Promise< Response | null > {
+		return await this.page.goto( this.pageUrl );
+	}
 
-		return locator;
+	async logInWithUsername( accountType: string ): Promise< void > {
+		const { username, password } = getAccountCredentials( accountType );
+
+		await this.fillUsername( username );
+
+		const [ usernameAuthResponse ] = await Promise.all( [
+			this.waitForUsernameAuthResponse( username ),
+			this.clickSubmit(),
+		] );
+
+		const usernameAuthPayload = ( await usernameAuthResponse.json() ) as UsernameAuthPayload;
+		if ( usernameAuthPayload.code === 404 ) {
+			throw new Error( 'Invalid username' );
+		}
+
+		await this.fillPassword( password );
+
+		const [ loginAuthResponse ] = await Promise.all( [
+			this.waitForLoginAuthResponse(),
+			this.clickSubmit(),
+		] );
+
+		if ( loginAuthResponse.status() === 400 ) {
+			throw new Error( `Login error:\n${ await this.getInputValidationErrorText() }` );
+		}
 	}
 
 	async fillUsername( value: string ): Promise< Locator > {
@@ -36,56 +67,80 @@ export class LoginPage {
 		return locator;
 	}
 
-	async clickContinue(): Promise< Locator > {
-		const locator = await this.page.locator( ':text-is("Continue")' );
+	async clickSubmit(): Promise< Locator > {
+		const locator = await this.page.locator( 'button[type="submit"]' );
 		await locator.click();
 
 		return locator;
 	}
 
-	async clickContinueWithGoogle(): Promise< Locator > {
+	async clickLoginWithGoogle(): Promise< Locator > {
 		const locator = await this.page.locator( ':text-is("Continue with Google")' );
 		await locator.click();
 
 		return locator;
 	}
 
-	async clickContinueWithApple(): Promise< Locator > {
+	async clickLoginWithApple(): Promise< Locator > {
 		const locator = await this.page.locator( ':text-is("Continue with Google")' );
 		await locator.click();
 
 		return locator;
 	}
 
-	async clickCreateANewAccount(): Promise< Locator > {
+	async clickCreateNewAccount(): Promise< Locator > {
 		const locator = await this.page.locator( ':text-is("Create a new account")' );
 		await locator.click();
 
 		return locator;
 	}
 
-	async clickEmailMeALoginLink(): Promise< Locator > {
+	async clickSendMagicLink(): Promise< Locator > {
 		const locator = await this.page.locator( ':text-is("Email me a login link")' );
 		await locator.click();
 
 		return locator;
 	}
 
-	async clickLostYourPassword(): Promise< Locator > {
+	async clickRetrievePassword(): Promise< Locator > {
 		const locator = await this.page.locator( ':text-is("Lost your password?")' );
 		await locator.click();
 
 		return locator;
 	}
 
-	async clickLogInAsAnotherUser(): Promise< Locator > {
+	async clickChangeAccount(): Promise< Locator > {
 		const locator = await this.page.locator( '#loginAsAnotherUser' );
 		await locator.click();
 
 		return locator;
 	}
 
-	async waitForLoginResponse(): Promise< Response > {
+	async clickSignUp(): Promise< Locator > {
+		const locator = await this.page.locator( ':text-is("Sign Up")' );
+		await locator.click();
+
+		return locator;
+	}
+
+	async waitForUsernameAuthResponse( username: string ): Promise< Response > {
+		return await this.page.waitForResponse( `**/${ username }/auth-options` );
+	}
+
+	async waitForLoginAuthResponse(): Promise< Response > {
 		return await this.page.waitForResponse( '**/wp-login.php?action=login-endpoint' );
+	}
+
+	async waitForVerificationCodeResponse(): Promise< Response > {
+		return await this.page.waitForResponse(
+			'**/wp-login.php?action=two-step-authentication-endpoint'
+		);
+	}
+
+	async getInputValidationErrorText(): Promise< string > {
+		const locator = await this.page.locator( '.form-input-validation.is-error' );
+		const innerTexts = await locator.allInnerTexts();
+
+		return innerTexts.join( '/' );
 	}
 }
