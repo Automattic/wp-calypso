@@ -493,7 +493,7 @@ export function getRenewalItemFromProduct(
 	product: ( WithCamelCaseSlug | WithSnakeCaseSlug ) & {
 		is_domain_registration?: boolean;
 		isDomainRegistration?: boolean;
-		id: string;
+		id: string | number;
 	} & Partial< RequestCartProduct > & {
 			domain?: string;
 			users?: GSuiteProductUser[];
@@ -563,7 +563,7 @@ export function getRenewalItemFromProduct(
  */
 export function getRenewalItemFromCartItem< T extends Partial< RequestCartProduct > >(
 	cartItem: T,
-	properties: { id: string }
+	properties: { id: string | number }
 ): T {
 	return {
 		...cartItem,
