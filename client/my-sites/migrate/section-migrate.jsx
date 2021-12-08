@@ -115,6 +115,13 @@ class SectionMigrate extends Component {
 		this.props.navigateToSelectedSourceSite( this.state.selectedSiteSlug );
 	};
 
+	requestMigrationReset = ( targetSiteId ) => {
+		return wpcom.req.post( {
+			path: `/sites/${ targetSiteId }/reset-migration`,
+			apiNamespace: 'wpcom/v2',
+		} );
+	};
+
 	finishMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
@@ -124,34 +131,28 @@ class SectionMigrate extends Component {
 		 */
 		this.props.requestSite( targetSiteId );
 
-		wpcom
-			.undocumented()
-			.resetMigration( targetSiteId )
-			.finally( () => {
-				page( `/home/${ targetSiteSlug }` );
-			} );
+		this.requestMigrationReset( targetSiteId ).finally( () => {
+			page( `/home/${ targetSiteSlug }` );
+		} );
 	};
 
 	resetMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
-		wpcom
-			.undocumented()
-			.resetMigration( targetSiteId )
-			.finally( () => {
-				page( `/migrate/${ targetSiteSlug }` );
-				/**
-				 * Note this migrationStatus is local, thus the setState vs setMigrationState.
-				 * Call to updateFromAPI will update both local and non-local state.
-				 */
-				this.setState(
-					{
-						migrationStatus: 'inactive',
-						errorMessage: '',
-					},
-					this.updateFromAPI
-				);
-			} );
+		this.requestMigrationReset( targetSiteId ).finally( () => {
+			page( `/migrate/${ targetSiteSlug }` );
+			/**
+			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
+			 * Call to updateFromAPI will update both local and non-local state.
+			 */
+			this.setState(
+				{
+					migrationStatus: 'inactive',
+					errorMessage: '',
+				},
+				this.updateFromAPI
+			);
+		} );
 	};
 
 	setMigrationState = ( state ) => {
@@ -241,9 +242,11 @@ class SectionMigrate extends Component {
 
 		this.props.recordTracksEvent( 'calypso_site_migration_start_migration' );
 
-		wpcom
-			.undocumented()
-			.startMigration( sourceSiteId, targetSiteId )
+		wpcom.req
+			.post( {
+				path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
+				apiNamespace: 'wpcom/v2',
+			} )
 			.then( () => this.updateFromAPI() )
 			.catch( ( error ) => {
 				const { code = '', message = '' } = error;
@@ -271,9 +274,11 @@ class SectionMigrate extends Component {
 
 	updateFromAPI = () => {
 		const { targetSiteId, targetSite } = this.props;
-		wpcom
-			.undocumented()
-			.getMigrationStatus( targetSiteId )
+		wpcom.req
+			.get( {
+				path: `/sites/${ targetSiteId }/migration-status`,
+				apiNamespace: 'wpcom/v2',
+			} )
 			.then( ( response ) => {
 				const {
 					status: migrationStatus,

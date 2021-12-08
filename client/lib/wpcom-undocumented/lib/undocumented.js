@@ -238,27 +238,6 @@ Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function (
 	} );
 };
 
-Undocumented.prototype.getMigrationStatus = function ( targetSiteId ) {
-	return this.wpcom.req.get( {
-		path: `/sites/${ targetSiteId }/migration-status`,
-		apiNamespace: 'wpcom/v2',
-	} );
-};
-
-Undocumented.prototype.resetMigration = function ( targetSiteId ) {
-	return this.wpcom.req.post( {
-		path: `/sites/${ targetSiteId }/reset-migration`,
-		apiNamespace: 'wpcom/v2',
-	} );
-};
-
-Undocumented.prototype.startMigration = function ( sourceSiteId, targetSiteId ) {
-	return this.wpcom.req.post( {
-		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
-		apiNamespace: 'wpcom/v2',
-	} );
-};
-
 /**
  * Look for a site belonging to the currently logged in user that matches the
  * anchor parameters specified.
