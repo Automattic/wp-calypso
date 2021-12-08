@@ -828,6 +828,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/notifications@workspace:apps/notifications"
   dependencies:
+    "@automattic/babel-plugin-preserve-i18n": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
@@ -835,6 +836,11 @@ __metadata:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@babel/helpers": ^7.16.3
+    "@babel/plugin-proposal-class-properties": ^7.16.0
+    "@babel/plugin-transform-runtime": ^7.16.4
+    "@babel/preset-env": ^7.16.4
+    "@babel/preset-react": ^7.16.0
+    "@babel/preset-typescript": ^7.16.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
     classnames: ^2.3.1
