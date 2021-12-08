@@ -172,6 +172,11 @@ class TitanAddMailboxes extends Component {
 					}
 
 					return this.isMounted && page( '/checkout/' + selectedSite.slug );
+				} )
+				.catch( () => {
+					if ( this.isMounted ) {
+						this.setState( { isAddingToCart: false } );
+					}
 				} );
 		}
 	};
