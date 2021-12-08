@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { omit } from 'lodash';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 
@@ -20,34 +19,6 @@ Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
 	debug( '/sites/:site_id:/jetpack-connect/is-user-connected query' );
 	const endpointUrl = '/sites/' + siteId + '/jetpack-connect/is-user-connected';
 	return this.wpcom.req.get( { path: endpointUrl, apiNamespace: 'wpcom/v2' } );
-};
-
-/**
- * GET/POST site settings
- *
- * @param {number|string} [siteId] The site ID
- * @param {string} [method] The request method
- * @param {object} [data] The POST data
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, fn ) {
-	debug( '/sites/:site_id:/settings query' );
-	if ( 'function' === typeof method ) {
-		fn = method;
-		method = 'get';
-		data = {};
-	}
-
-	// If no apiVersion was specified, use the settings api version with the widest support (1.1)
-	const apiVersion = data.apiVersion || '1.1';
-	const body = omit( data, [ 'apiVersion' ] );
-	const path = '/sites/' + siteId + '/settings';
-
-	if ( 'get' === method ) {
-		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
-
-	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
 };
 
 /**
