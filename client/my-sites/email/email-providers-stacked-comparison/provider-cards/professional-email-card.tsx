@@ -44,6 +44,7 @@ import './professional-email-card.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
+
 const logo = <Gridicon className="professional-email-card__logo" icon="my-sites" />;
 const badge = (
 	<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan', { textOnly: true } ) } />

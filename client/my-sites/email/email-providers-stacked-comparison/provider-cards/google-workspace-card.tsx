@@ -45,6 +45,7 @@ import './google-workspace-card.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
+
 const identityMap = ( item: any ) => item;
 
 const getGoogleFeatures = () => {

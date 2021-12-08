@@ -5,6 +5,9 @@ import { IntervalLength } from '../provider-cards/utils';
 
 import './style.scss';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
 interface BillingIntervalToggleProps {
 	intervalLength: IntervalLength;
 	onIntervalChange: ( term: IntervalLength ) => void;
@@ -12,7 +15,7 @@ interface BillingIntervalToggleProps {
 
 export const BillingIntervalToggle: FunctionComponent< BillingIntervalToggleProps > = ( props ) => {
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	const { onIntervalChange = () => {}, intervalLength } = props;
+	const { onIntervalChange = noop, intervalLength } = props;
 	const translate = useTranslate();
 	const onIntervalClick = ( intervalLength: IntervalLength ) => {
 		return () => onIntervalChange( intervalLength );
