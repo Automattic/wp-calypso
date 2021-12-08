@@ -113,7 +113,7 @@
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@testing-library/jest-dom": "^5.15.1",
+		"@testing-library/jest-dom": "^5.16.1",
 		"@testing-library/react": "^12.1.2",
 		"@types/node": "^15.0.2",
 		"@types/wordpress__plugins": "^3.0.0",
