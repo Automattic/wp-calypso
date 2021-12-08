@@ -17,28 +17,6 @@ export enum IntervalLength {
 	MONTHLY = 'monthly',
 }
 
-export const formattedPriceWithInterval = (
-	formattedPriceClassName: string,
-	intervalLengthClassName: string,
-	cost: number,
-	currencyCode: string,
-	intervalLength?: IntervalLength
-) => {
-	return translate( '{{price/}} /mailbox {{intervalLength/}}', {
-		components: {
-			price: (
-				<span className={ formattedPriceClassName }>
-					{ formatCurrency( cost ?? 0, currencyCode ) }
-				</span>
-			),
-			intervalLength: <span className={ intervalLengthClassName }>/{ intervalLength }</span>,
-		},
-		comment:
-			'{{price/}} is the formatted price, e.g. $20' +
-			'{{intervalLength/}} is already translated and it is either annually or monthly',
-	} );
-};
-
 export const addToCartAndCheckout = (
 	shoppingCartManager: ShoppingCartManagerActions,
 	cartItem: RequestCartProduct | IncompleteRequestCartProduct,
