@@ -320,14 +320,15 @@ export default {
 	},
 
 	domainManagementTransferToOtherSite( pageContext, next ) {
+		let transferComponent = DomainManagement.TransferToOtherSite;
 		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
-			// TODO: set different component for the new transfer page
+			transferComponent = DomainManagement.TransferDomainToOtherSite;
 		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToOtherSite( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other Site"
-				component={ DomainManagement.TransferToOtherSite }
+				component={ transferComponent }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
