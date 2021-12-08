@@ -76,21 +76,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
 };
 
 /**
- *
- * @param domain {string}
- * @param fn {function}
- */
-Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		`/domains/${ encodeURIComponent( domain ) }/price`,
-		{
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Launches a private site
  *
  * @param {string} siteIdOrSlug - ID or slug of the site to be launched
