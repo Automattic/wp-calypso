@@ -58,13 +58,13 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( '/rest/v1.1/sites/2916284/settings' )
+				.get( '/rest/v1.4/sites/2916284/settings' )
 				.reply( 200, {
 					name: 'blog name',
 					description: 'blog description',
 					settings: { settingKey: 'cat' },
 				} )
-				.get( '/rest/v1.1/sites/2916285/settings' )
+				.get( '/rest/v1.4/sites/2916285/settings' )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.',
@@ -120,11 +120,11 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2916284/settings' )
+				.post( '/rest/v1.4/sites/2916284/settings' )
 				.reply( 200, {
 					updated: { real_update: 'ribs' },
 				} )
-				.post( '/rest/v1.1/sites/2916285/settings' )
+				.post( '/rest/v1.4/sites/2916285/settings' )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.',
