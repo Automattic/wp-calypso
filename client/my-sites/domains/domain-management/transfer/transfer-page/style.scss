@@ -96,11 +96,7 @@
 	}
 	
 	.transfer-page__transfer-lock {
-		margin-top: 8px;
-
-		@include break-mobile {
-			margin-top: 16px;
-		}
+		margin: 8px 0 16px;
 	}
 
 	.transfer-page__transfer-lock-label {

@@ -16,7 +16,7 @@ import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import {
@@ -216,8 +216,8 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 
 		const domain = getSelectedDomain( props );
 		const disabled =
-			! domain.domainLockingAvailable ||
-			domain.transferAwayEligibleAt ||
+			! domain?.domainLockingAvailable ||
+			domain?.transferAwayEligibleAt ||
 			isLockingOrUnlockingDomain;
 
 		return (
@@ -234,15 +234,25 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const renderTransferMessage = () => {
 		const domain = getSelectedDomain( props );
 
-		if ( domain.transferAwayEligibleAt ) {
-			return sprintf(
-				// translators: %s is a date string, e.g. April 1, 2020
-				__( 'You can unlock this domain after %s' ),
-				moment( domain.transferAwayEligibleAt ).format( 'LL' )
+		const registrationDatePlus60Days = moment.utc( domain?.registrationDate ).add( 60, 'days' );
+		const supportLink = moment.utc().isAfter( registrationDatePlus60Days )
+			? DESIGNATED_AGENT
+			: TRANSFER_DOMAIN_REGISTRATION;
+
+		if ( domain?.transferAwayEligibleAt ) {
+			return createInterpolateElement(
+				sprintf(
+					// translators: %s is a date string, e.g. April 1, 2020
+					__( 'You can unlock this domain after %s. <a>Why is my domain locked?</a>' ),
+					moment( domain.transferAwayEligibleAt ).format( 'LL' )
+				),
+				{
+					a: createElement( 'a', { href: supportLink } ),
+				}
 			);
 		}
 
-		if ( isDomainInfoLoading || domain.domainLockingAvailable ) {
+		if ( isDomainInfoLoading || domain?.domainLockingAvailable ) {
 			return __(
 				'We recommend leaving the transfer lock on, unless you want to transfer your domain to another provider.'
 			);
@@ -259,8 +269,8 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return (
 			<Card className="transfer-page__advanced-transfer-options">
 				<CardHeading size={ 16 }>Advanced Options</CardHeading>
-				{ renderTransferLock() }
 				<p>{ renderTransferMessage() }</p>
+				{ renderTransferLock() }
 				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
 					{ __( 'Get authorization code' ) }
 				</Button>
