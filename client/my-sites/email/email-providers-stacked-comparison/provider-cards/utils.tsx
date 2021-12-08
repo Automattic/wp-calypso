@@ -51,7 +51,7 @@ export const recordTracksEventAddToCartClick = (
 	source: string,
 	userCanAddEmail: boolean,
 	userCannotAddEmailReason: any
-) => {
+): void => {
 	recordTracksEvent( 'calypso_email_providers_add_click', {
 		context: comparisonContext,
 		mailbox_count: validatedMailboxUuids.length,
