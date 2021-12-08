@@ -22,7 +22,7 @@ export const getDomainsBySiteId = ( state, siteId ) => {
  *
  * @param {object} state - global state tree
  * @param {number | undefined} siteId - identifier of the site
- * @returns {?object} the wpcom domain
+ * @returns {null|import('./types').SiteDomain} the wpcom domain
  */
 export const getWpComDomainBySiteId = ( state, siteId ) => {
 	const domains = getDomainsBySiteId( state, siteId );

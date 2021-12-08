@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -23,6 +24,7 @@ import {
 } from 'calypso/my-sites/marketplace/constants';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { setPrimaryDomainCandidate } from 'calypso/state/marketplace/purchase-flow/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -74,10 +76,11 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	const { addProductsToCart, removeProductFromCart } = useShoppingCart( cartKey );
 	const previousPath = useSelector( getPreviousPath );
 	const selectedSite = useSelector( getSelectedSite );
+	const products = useSelector( getProductsList );
 	const domainObject = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSite?.ID )
 	);
-	const domain = domainObject?.domain;
+	const domain = domainObject?.domain ?? '';
 	const siteName = getSiteNameFromURL( domain );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -95,6 +98,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 
 	const onDomainSelect = async ( suggestion: DomainSuggestions.DomainSuggestion ) => {
 		const { product_slug, domain_name } = suggestion;
+		if ( ! product_slug ) {
+			throw new Error( 'Cannot select domain without product slug' );
+		}
 		const domainProduct = {
 			...domainRegistration( {
 				productSlug: product_slug,
@@ -112,7 +118,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		}
 
 		//Then add the new domain
-		const responseCart = await addProductsToCart( [ domainProduct ] );
+		const responseCart = await addProductsToCart( [
+			fillInSingleCartItemAttributes( domainProduct, products ),
+		] );
 		const productAdded = responseCart.products.find(
 			( { product_slug: added_product_slug } ) => added_product_slug === product_slug
 		);
@@ -121,7 +129,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	};
 
 	const freeWpcomStagingDomain: DomainSuggestions.DomainSuggestion = {
-		domain_name: `${ getSiteNameFromURL( selectedSite?.slug ) }.wpcomstaging.com`,
+		domain_name: `${ getSiteNameFromURL( selectedSite?.slug ?? '' ) }.wpcomstaging.com`,
 		cost: 'Free',
 		match_reasons: [ 'Domain name after transfer' ],
 		unavailable: false,
