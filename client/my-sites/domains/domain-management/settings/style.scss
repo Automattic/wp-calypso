@@ -64,6 +64,10 @@
 				.settings-header__badge-indicator {
 					display: flex;
 					height: 8px;
+
+					svg {
+						margin-right: 8px;
+					}
 				}
 
 				svg {
@@ -78,8 +82,8 @@
 						fill: var( --studio-green-80 );
 					}
 					
-					.settings-header__badge-indicator {
-						color: var( --studio-green-50 );
+					.settings-header__badge-indicator svg {
+						fill: var( --studio-green-50 );
 					}
 				}
 
@@ -89,10 +93,6 @@
 					
 					svg {
 						fill: var( --studio-orange-40 );
-					}
-					
-					.settings-header__badge-indicator {
-						color: var( --studio-orange-40 );
 					}
 				}
 
