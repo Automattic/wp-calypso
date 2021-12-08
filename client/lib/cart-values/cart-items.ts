@@ -415,9 +415,11 @@ function titanMailProduct(
 	productSlug: string
 ): IncompleteRequestCartProduct {
 	const domainName = properties.meta ?? properties.domain;
+
 	if ( ! domainName ) {
 		throw new Error( 'Titan mail requires a domain' );
 	}
+
 	return {
 		...domainItem( productSlug, domainName, properties.source ),
 		quantity: properties.quantity,

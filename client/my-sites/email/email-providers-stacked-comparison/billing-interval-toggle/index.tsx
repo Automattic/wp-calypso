@@ -10,7 +10,7 @@ const noop = () => {};
 
 interface BillingIntervalToggleProps {
 	intervalLength: IntervalLength;
-	onIntervalChange: ( term: IntervalLength ) => void;
+	onIntervalChange: ( intervalLength: IntervalLength ) => void;
 }
 
 export const BillingIntervalToggle: FunctionComponent< BillingIntervalToggleProps > = ( props ) => {
