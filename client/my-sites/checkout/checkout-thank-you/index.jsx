@@ -22,7 +22,6 @@ import {
 	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
 	shouldFetchSitePlans,
-	isMarketplaceProduct,
 	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
@@ -60,7 +59,10 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
-import { isProductsListFetching } from 'calypso/state/products-list/selectors';
+import {
+	isMarketplaceProduct,
+	isProductsListFetching,
+} from 'calypso/state/products-list/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
@@ -406,7 +408,9 @@ export class CheckoutThankYou extends Component {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
-			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
+			wasMarketplaceProduct = purchases.some( ( product ) =>
+				this.props.marketplaceProduct( product.productSlug )
+			);
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
 					isDomainMapping( purchase ) ||
@@ -754,6 +758,8 @@ export default connect(
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
 			site: getSite( state, siteId ),
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			marketplaceProduct: ( slug ) => isMarketplaceProduct( state, slug ),
 		};
 	},
 	{

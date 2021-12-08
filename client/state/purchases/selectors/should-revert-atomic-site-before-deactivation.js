@@ -1,9 +1,13 @@
 import { isAtomicSupportedProduct } from '@automattic/calypso-products';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getByPurchaseId } from './get-by-purchase-id';
 import { getSitePurchases } from './get-site-purchases';
 
 import 'calypso/state/purchases/init';
+
+const isAtomicSupported = ( productSlug ) =>
+	isAtomicSupportedProduct( productSlug ) || isMarketplaceProduct( productSlug );
 
 /**
  * Whether a purchase needs to trigger an Atomic revert prior its cancellation/removal.
@@ -22,7 +26,7 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 	if (
 		! purchase ||
 		! isSiteAutomatedTransfer( state, purchase.siteId ) ||
-		! isAtomicSupportedProduct( purchase.productSlug )
+		! isAtomicSupported( purchase.productSlug )
 	) {
 		return false;
 	}
@@ -32,6 +36,6 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 	// the site needs to be kept in the Atomic infra.
 	return ! getSitePurchases( state, purchase.siteId ).some(
 		( sitePurchase ) =>
-			sitePurchase.id !== purchaseId && isAtomicSupportedProduct( sitePurchase.productSlug )
+			sitePurchase.id !== purchaseId && isAtomicSupported( sitePurchase.productSlug )
 	);
 };
