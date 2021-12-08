@@ -37,6 +37,7 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
+	isNewOrExistingSiteFulfilled = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -740,6 +741,21 @@ export function generateSteps( {
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
 			},
 		},
+
+		'new-or-existing-site': {
+			stepName: 'new-or-existing-site',
+			fulfilledStepCallback: isNewOrExistingSiteFulfilled,
+		},
+
+		'difm-site-picker': {
+			stepName: 'difm-site-picker',
+			props: {
+				headerText: i18n.translate( 'Choose your site?' ),
+			},
+			providesDependencies: [ 'siteId', 'siteSlug' ],
+			optionalDependencies: [ 'siteId', 'siteSlug' ],
+		},
+
 		'difm-design-setup-site': {
 			stepName: 'difm-design-setup-site',
 			apiRequestFunction: setDesignOnSite,

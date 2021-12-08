@@ -267,6 +267,20 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		return;
 	}
 
+	if ( 'do-it-for-me' === flowToCheck ) {
+		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
+		const siteId = getSiteId( state, siteSlug );
+		if ( siteId && siteSlug ) {
+			defer( () =>
+				callback( undefined, {
+					siteId,
+					siteSlug,
+				} )
+			);
+			return;
+		}
+	}
+
 	const newSiteParams = getNewSiteParams( {
 		dependencies,
 		flowToCheck,
@@ -991,6 +1005,13 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { existingSiteCount } = nextProps;
+	if ( ! existingSiteCount || 0 === existingSiteCount ) {
 		flows.excludeStep( stepName );
 	}
 }

@@ -50,7 +50,9 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		httpDataEnhancer,
 		applyMiddleware( ...middlewares ),
 		isBrowser && window.app && window.app.isDebug && actionLogger,
-		isBrowser && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+		isBrowser &&
+			window.__REDUX_DEVTOOLS_EXTENSION__ &&
+			window.__REDUX_DEVTOOLS_EXTENSION__( { trace: true } ),
 	].filter( Boolean );
 
 	return createStore( reducer, initialState, compose( ...enhancers ) );
