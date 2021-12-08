@@ -741,8 +741,8 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign','selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign' ,'selectedSiteCategory'],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
@@ -753,7 +753,7 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign','selectedSiteCategory' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
 				hideSkip: true,
@@ -771,7 +771,7 @@ export function generateSteps( {
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'siteSlug', 'selectedDesign' ],
-			providesDependencies: [ 'cartItem','typeformResponseId' ],
+			providesDependencies: [ 'cartItem', 'typeformResponseId' ],
 			apiRequestFunction: addPlanToCart,
 		},
 

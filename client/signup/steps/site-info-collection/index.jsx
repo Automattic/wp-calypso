@@ -30,14 +30,16 @@ function SiteInformationCollection( {
 	submitSignupStep,
 	goToNextStep,
 } ) {
-	const { username: signupUsername, selectedSiteCategory } = useSelector( getSignupDependencyStore );
+	const { username: signupUsername, selectedSiteCategory } = useSelector(
+		getSignupDependencyStore
+	);
 	const dispatch = useDispatch();
 	const loggedInUsername = useSelector( getCurrentUserName );
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [ dispatch, stepName ] );
 
-	const onTypeformSubmission = async ( typeformSubmissionId ) => {
+	const onTypeformSubmission = ( typeformSubmissionId ) => {
 		const cartItem = { product_slug: WPCOM_DIFM_LITE };
 		const step = {
 			stepName,
@@ -47,7 +49,7 @@ function SiteInformationCollection( {
 		submitSignupStep( step, {
 			cartItem,
 			typeformResponseId: typeformSubmissionId,
-		});
+		} );
 		goToNextStep();
 	};
 
