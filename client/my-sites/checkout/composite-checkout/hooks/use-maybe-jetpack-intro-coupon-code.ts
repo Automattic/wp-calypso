@@ -21,7 +21,7 @@ const useMaybeJetpackIntroCouponCode = (
 			return undefined;
 		}
 
-		const isEligibleForFirstYear50 = products.filter(
+		const isEligibleForFirstYear50 = products.some(
 			( product ) => isNewPurchase( product ) && isYearly( product ) && isJetpackSearch( product )
 		);
 
