@@ -14,15 +14,16 @@ interface BillingIntervalToggleProps {
 }
 
 export const BillingIntervalToggle: FunctionComponent< BillingIntervalToggleProps > = ( props ) => {
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	const { onIntervalChange = noop, intervalLength } = props;
+
 	const translate = useTranslate();
+
 	const onIntervalClick = ( intervalLength: IntervalLength ) => {
 		return () => onIntervalChange( intervalLength );
 	};
 
 	return (
-		<div className="billing-interval-toggle__wrapper">
+		<div className="billing-interval-toggle">
 			<SegmentedControl compact primary>
 				<SegmentedControl.Item
 					selected={ intervalLength === IntervalLength.MONTHLY }
