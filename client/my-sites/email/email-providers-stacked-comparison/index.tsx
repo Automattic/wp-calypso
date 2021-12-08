@@ -59,27 +59,29 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 
 	const [ intervalLength, setIntervalLength ] = useState( IntervalLength.MONTHLY );
 
-	const [ expanded, setExpanded ] = useState( {
+	const [ detailsExpanded, setDetailsExpanded ] = useState( {
 		titan: true,
 		google: false,
 	} );
 
-	const onExpandedStateChange = ( providerKey: string, isExpanded: boolean ) => {
-		const expandedEntries = Object.entries( expanded ).map( ( entry ) => {
-			const [ key, currentExpanded ] = entry;
-			if ( isExpanded ) {
+	const onExpandedChange = ( providerKey: string, expand: boolean ) => {
+		const detailsExpandedAsArray = Object.entries( detailsExpanded ).map( ( details ) => {
+			const [ key, isExpanded ] = details;
+
+			if ( expand ) {
 				return [ key, key === providerKey ];
 			}
-			return [ key, key === providerKey ? isExpanded : currentExpanded ];
+
+			return [ key, key === providerKey ? expand : isExpanded ];
 		} );
 
-		if ( isExpanded ) {
+		if ( expand ) {
 			recordTracksEvent( 'calypso_email_providers_expand_section_click', {
 				provider: providerKey,
 			} );
 		}
 
-		setExpanded( Object.fromEntries( expandedEntries ) );
+		setDetailsExpanded( Object.fromEntries( detailsExpandedAsArray ) );
 	};
 
 	return (
@@ -99,21 +101,21 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
-				detailsExpanded={ expanded.titan }
+				detailsExpanded={ detailsExpanded.titan }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
 				intervalLength={ intervalLength }
-				onExpandedChange={ onExpandedStateChange }
+				onExpandedChange={ onExpandedChange }
 			/>
 
 			{ isGSuiteSupported && (
 				<GoogleWorkspaceCard
 					comparisonContext={ comparisonContext }
-					detailsExpanded={ expanded.google }
+					detailsExpanded={ detailsExpanded.google }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
 					intervalLength={ intervalLength }
-					onExpandedChange={ onExpandedStateChange }
+					onExpandedChange={ onExpandedChange }
 				/>
 			) }
 		</Main>
