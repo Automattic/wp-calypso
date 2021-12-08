@@ -185,9 +185,10 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		const domains: { name: string }[] = domain ? [ domain ] : [];
 
 		setAddingToCart( true );
+
 		const cartItems: IncompleteRequestCartProduct[] = getItemsForCart(
 			domains,
-			gSuiteProduct.product_slug,
+			gSuiteProduct.productSlug,
 			googleUsers
 		);
 
