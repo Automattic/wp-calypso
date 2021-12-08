@@ -57,6 +57,6 @@
 		"postcss": "^8.3.11",
 		"postcss-custom-properties": "^11.0.0",
 		"webpack": "^5.65.0",
-		"webpack-dev-server": "^4.5.0"
+		"webpack-dev-server": "^4.6.0"
 	}
 }
