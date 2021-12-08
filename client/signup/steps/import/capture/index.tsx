@@ -75,7 +75,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	const recordScanningErrorEvent = () => {
 		if ( ! analyzerError ) return;
 
-		recordTracksEvent( trackEventParams, {
+		recordTracksEvent( trackEventName, {
 			...trackEventParams,
 			action: 'scanning-error',
 			error: JSON.stringify( analyzerError ),
