@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import domainTransferredSuccess from 'calypso/assets/images/illustrations/domain-transferred-success.svg';
+import domainTransferredSuccess from 'calypso/assets/images/domains/transfer.svg';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
