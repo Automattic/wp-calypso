@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
-import { IntervalLength } from '../provider-cards/utils';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 
 import './style.scss';
 
