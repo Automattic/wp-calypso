@@ -30,7 +30,9 @@ export const addToCartAndCheckout = (
 		.addProductsToCart( [ fillInSingleCartItemAttributes( cartItem, productList ) ] )
 		.then( ( response: ResponseCart ) => {
 			setAddingToCart( false );
+
 			const errors = response?.messages?.errors;
+
 			if ( errors && errors.length ) {
 				// Stay on the page to show the relevant error(s)
 				return;
@@ -38,7 +40,7 @@ export const addToCartAndCheckout = (
 
 			page( `/checkout/${ selectedSite }` );
 		} )
-		.then( () => {
+		.catch( () => {
 			setAddingToCart( false );
 		} );
 };
