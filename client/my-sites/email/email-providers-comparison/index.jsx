@@ -238,14 +238,8 @@ class EmailProvidersComparison extends Component {
 			.then( () => {
 				if ( this.isMounted ) {
 					this.setState( { addingToCart: false } );
+					page( '/checkout/' + selectedSite.slug );
 				}
-				const { errors } = this.props?.cart?.messages;
-				if ( errors && errors.length ) {
-					// Stay on the page to show the relevant error(s)
-					return;
-				}
-
-				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
 
@@ -304,16 +298,8 @@ class EmailProvidersComparison extends Component {
 			.then( () => {
 				if ( this.isMounted ) {
 					this.setState( { addingToCart: false } );
+					page( '/checkout/' + selectedSite.slug );
 				}
-
-				const { errors } = this.props?.cart?.messages;
-
-				if ( errors && errors.length ) {
-					// Stay on the page to show the relevant error(s)
-					return;
-				}
-
-				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
 
