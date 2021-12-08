@@ -70,14 +70,16 @@ type PriceWithIntervalProps = {
 	cost: number;
 	currencyCode: string;
 	hasDiscount: boolean;
-	sale?: number | null;
 	intervalLength: IntervalLength;
+	sale?: number | null;
 };
 
 export const PriceWithInterval: FunctionComponent< PriceWithIntervalProps > = ( props ) => {
 	const { className, cost, currencyCode, hasDiscount, sale, intervalLength } = props;
 
-	const costClassName = `${ className }__${ hasDiscount ? 'discounted-price' : 'keep-main-price' }`;
+	const priceClassName = `${ className }__${
+		hasDiscount ? 'discounted-price' : 'keep-main-price'
+	}`;
 	const intervalLengthClassName = `${ className }__interval`;
 	const mailboxClassName = `${ className }__mailbox`;
 	const saleClassName = `${ className }__sale`;
@@ -89,25 +91,26 @@ export const PriceWithInterval: FunctionComponent< PriceWithIntervalProps > = ( 
 	};
 
 	const priceSpan = (
-		<span style={ lineThrough } className={ costClassName }>
+		<span style={ lineThrough } className={ priceClassName }>
 			{ formatCurrency( cost ?? 0, currencyCode ) }
 		</span>
 	);
-	const saleSpan = (
+
+	const saleSpan = showSale && (
 		<span className={ saleClassName }>{ formatCurrency( sale ?? 0, currencyCode ) }</span>
 	);
-	const intervalLengthSpan =
-		intervalLength === IntervalLength.ANNUALLY ? (
-			<span className={ intervalLengthClassName }>/{ translate( 'annually' ) }</span>
-		) : (
-			<span className={ intervalLengthClassName }>/{ translate( 'monthly' ) }</span>
-		);
 
-	const mailboxSpan = <span className={ mailboxClassName }> /{ translate( 'mailbox' ) } </span>;
+	const intervalLengthSpan = (
+		<span className={ intervalLengthClassName }>
+			{ intervalLength === IntervalLength.ANNUALLY ? translate( '/year' ) : translate( '/month' ) }
+		</span>
+	);
+
+	const mailboxSpan = <span className={ mailboxClassName }>{ translate( '/mailbox' ) } </span>;
 
 	return (
 		<>
-			{ priceSpan } { showSale && saleSpan } { mailboxSpan } { intervalLengthSpan }
+			{ priceSpan } { saleSpan } { mailboxSpan } { intervalLengthSpan }
 		</>
 	);
 };
