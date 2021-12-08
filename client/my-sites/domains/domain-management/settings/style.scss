@@ -16,6 +16,7 @@
 			flex-wrap: wrap;
 			align-items: center;
 			margin: 0 0 16px;
+			column-gap: 16px;
 
 			// Higher specificity needed to override .formatted-header.is-left-align media-query styles
 			header.settings-header__title {
@@ -32,13 +33,16 @@
 					line-height: 100%;
 				}
 			}
+
+			@include breakpoint-deprecated( '<660px' ) {
+				margin-left: 16px;
+			}
 		}
 
 		&-badges {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-			margin-left: 16px;
 			gap: 8px;
 
 			// Higher specificity needed to override .badge styles
