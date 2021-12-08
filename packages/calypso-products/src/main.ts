@@ -657,7 +657,7 @@ export function planHasJetpackClassicSearch(
 }
 
 /**
- * Determines if a plan is supported by the Atomic sites infrastructure.
+ * Determines if a product is supported by the Atomic sites infrastructure.
  */
 export const isAtomicSupportedProduct = ( productSlug: string ): boolean =>
 	isWpComBusinessPlan( productSlug ) || isWpComEcommercePlan( productSlug );
