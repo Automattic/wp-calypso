@@ -399,19 +399,21 @@ export function googleAppsExtraLicenses( properties: {
 	};
 }
 
+interface TitanProductProps {
+	domain?: string;
+	meta?: string;
+	source?: string;
+	quantity?: number | null;
+	extra?: RequestCartProductExtra;
+}
+
 /**
  * Creates a new shopping cart item for Titan Mail.
  */
 function titanMailProduct(
-	properties: {
-		meta?: string;
-		domain?: string;
-		source?: string;
-		quantity?: number | null;
-		extra?: RequestCartProductExtra;
-	},
+	properties: TitanProductProps,
 	productSlug: string
-) {
+): IncompleteRequestCartProduct {
 	const domainName = properties.meta ?? properties.domain;
 	if ( ! domainName ) {
 		throw new Error( 'Titan mail requires a domain' );
@@ -426,26 +428,14 @@ function titanMailProduct(
 /**
  * Creates a new shopping cart item for Titan Mail Annually.
  */
-export function titanMailAnnually( properties: {
-	meta?: string;
-	domain?: string;
-	source?: string;
-	quantity?: number | null;
-	extra?: RequestCartProductExtra;
-} ) {
+export function titanMailAnnually( properties: TitanProductProps ): IncompleteRequestCartProduct {
 	return titanMailProduct( properties, TITAN_MAIL_ANNUALLY_SLUG );
 }
 
 /**
  * Creates a new shopping cart item for Titan Mail Monthly.
  */
-export function titanMailMonthly( properties: {
-	meta?: string;
-	domain?: string;
-	source?: string;
-	quantity?: number | null;
-	extra?: RequestCartProductExtra;
-} ): IncompleteRequestCartProduct {
+export function titanMailMonthly( properties: TitanProductProps ): IncompleteRequestCartProduct {
 	return titanMailProduct( properties, TITAN_MAIL_MONTHLY_SLUG );
 }
 
