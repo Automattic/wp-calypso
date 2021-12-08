@@ -25,6 +25,7 @@ import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import PriceBadge from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-badge';
+import PriceWithInterval from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-with-interval';
 import {
 	EmailProvidersStackedCardProps,
 	ProviderCard,
@@ -34,12 +35,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import {
-	addToCartAndCheckout,
-	PriceWithInterval,
-	recordTracksEventAddToCartClick,
-	IntervalLength,
-} from './utils';
+import { addToCartAndCheckout, recordTracksEventAddToCartClick, IntervalLength } from './utils';
 
 import './google-workspace-card.scss';
 
