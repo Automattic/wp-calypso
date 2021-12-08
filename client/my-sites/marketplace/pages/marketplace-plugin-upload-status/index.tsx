@@ -233,6 +233,7 @@ const MarketplacePluginInstall = ( {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
+					title={ null }
 					line={ translate(
 						"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
 					) }
@@ -245,6 +246,7 @@ const MarketplacePluginInstall = ( {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
+					title={ null }
 					line={ translate(
 						'This URL should not be accessed directly. Please try to upload the plugin again.'
 					) }
@@ -257,6 +259,7 @@ const MarketplacePluginInstall = ( {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
+					title={ null }
 					line={ translate(
 						'This URL should not be accessed directly. Please click the Install button on the plugin page.'
 					) }
@@ -269,6 +272,7 @@ const MarketplacePluginInstall = ( {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
+					title={ null }
 					line={ translate(
 						'This plugin already exists in your site. If you want to upgrade/ downgrade it please continue by uploading again from WP Admin.'
 					) }
@@ -288,6 +292,7 @@ const MarketplacePluginInstall = ( {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
+					title={ null }
 					line={ translate( 'An error occurred while installing the plugin.' ) }
 					action={ translate( 'Back' ) }
 					actionURL={
