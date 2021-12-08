@@ -13,7 +13,7 @@ const BloggingQuickStart = () => {
 		<EducationalContent
 			title={ translate( 'Blog like an expert from day one' ) }
 			description={ translate(
-				"Learn the fundamentals from our bite-sized video course &mdash; you'll be up and running in just nine minutes."
+				"Learn the fundamentals from our bite-sized video course — you'll be up and running in just nine minutes."
 			) }
 			modalLinks={ [
 				{
