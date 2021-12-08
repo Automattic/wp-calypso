@@ -1,4 +1,4 @@
-import 'calypso/state/help/init';
+import 'calypso/state/happychat/init';
 
 /**
  * Returns the current user's support level, representing their highest paid plan.
@@ -7,5 +7,5 @@ import 'calypso/state/help/init';
  * @returns {?string} Level of support
  */
 export default function getSupportLevel( state ) {
-	return state.help.supportLevel;
+	return state.happychat.user.supportLevel;
 }
