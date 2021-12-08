@@ -834,6 +834,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@babel/helpers": ^7.16.3
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
     classnames: ^2.3.1
@@ -845,6 +846,8 @@ __metadata:
     page: ^1.11.5
     postcss: ^8.3.11
     postcss-custom-properties: ^11.0.0
+    preact: ^10.6.2
+    preact-render-to-string: ^5.1.19
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -28898,6 +28901,24 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"preact-render-to-string@npm:^5.1.19":
+  version: 5.1.19
+  resolution: "preact-render-to-string@npm:5.1.19"
+  dependencies:
+    pretty-format: ^3.8.0
+  peerDependencies:
+    preact: ">=10"
+  checksum: 560670ad725fc22ef80c37f38b2b2959313f53b9b52e988260365d7be158fbaebb24ddee391f41e4c353365b2c59a36e27e3e5c84cb692016c5adbb4c9a7a055
+  languageName: node
+  linkType: hard
+
+"preact@npm:^10.6.2":
+  version: 10.6.2
+  resolution: "preact@npm:10.6.2"
+  checksum: 00b57e486c89e491c1ab6f7255be8f0dc0f36fa8b7208027eda4c801f74de12362a47b19361a9fcd066adc6ce6da33eaa957fb652a0505a2dfd9d574ca58162c
+  languageName: node
+  linkType: hard
+
 "prebuild-install@npm:^6.0.0, prebuild-install@npm:^6.1.2":
   version: 6.1.3
   resolution: "prebuild-install@npm:6.1.3"
@@ -29010,6 +29031,13 @@ fsevents@~2.1.2:
     ansi-styles: ^5.0.0
     react-is: ^17.0.1
   checksum: b255146debac1212b26ef718f26b6433e22b2e3fe5f141bd038fbf73a94494c1fd8141359a98cd2d94ad7256a7440a340ac1ac2b3f81aadfeccc6fcbfbd883d4
+  languageName: node
+  linkType: hard
+
+"pretty-format@npm:^3.8.0":
+  version: 3.8.0
+  resolution: "pretty-format@npm:3.8.0"
+  checksum: 69f12937bfb7b2a537a7463b9f875a16322401f1e44d7702d643faa0d21991126c24c093217ef6da403b54c15942a834174fa1c016b72e2cb9edaae6bb3729b6
   languageName: node
   linkType: hard
 
