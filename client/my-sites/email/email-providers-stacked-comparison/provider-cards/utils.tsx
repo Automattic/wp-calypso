@@ -50,7 +50,7 @@ export const recordTracksEventAddToCartClick = (
 	provider: string,
 	source: string,
 	userCanAddEmail: boolean,
-	userCannotAddEmailReason: any
+	userCannotAddEmailReason?: { code: string } | null
 ): void => {
 	recordTracksEvent( 'calypso_email_providers_add_click', {
 		context: comparisonContext,
