@@ -56,7 +56,7 @@ const PluginsBrowserListElement = ( props ) => {
 			url += '/' + site;
 		}
 		return url;
-	}, [ plugin ] );
+	}, [ plugin, site ] );
 
 	const trackPluginLinkClick = useCallback( () => {
 		recordTracksEvent( 'calypso_plugin_browser_item_click', {
@@ -179,7 +179,6 @@ const UpgradeButton = ( { plugin } ) => {
 };
 
 const Placeholder = ( { iconSize } ) => {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<li className="plugins-browser-item is-placeholder">
 			<span className="plugins-browser-item__link">
@@ -192,7 +191,6 @@ const Placeholder = ( { iconSize } ) => {
 			</span>
 		</li>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default PluginsBrowserListElement;
