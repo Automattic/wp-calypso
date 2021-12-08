@@ -70,4 +70,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'wordads',
 	'site_creation_flow',
 	'is_difm_lite_in_progress',
+	'difm_lite_site_options',
 ].join();
