@@ -53,7 +53,7 @@ const MarketplacePluginInstall = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const pluginUploadProgress = useSelector( ( state ) => getPluginUploadProgress( state, siteId ) );
 	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
-	const pluginExists = pluginUploadError?.error === 'folder_exists' || false;
+	const pluginExists = pluginUploadError?.error === 'folder_exists';
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const uploadedPluginSlug = useSelector( ( state ) =>
