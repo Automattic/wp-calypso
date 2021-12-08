@@ -98,7 +98,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 			return renderNeutralBadge( __( 'Registered with an external provider' ) );
 		}
 
-		return renderNeutralBadge( __( 'Domain transfer' ) );
+		return renderNeutralBadge( __( 'Domain Transfer' ) );
 	};
 
 	const renderStatusBadge = ( domain: typeof props[ 'domain' ] ) => {
