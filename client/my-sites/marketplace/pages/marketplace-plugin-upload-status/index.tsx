@@ -53,6 +53,7 @@ const MarketplacePluginInstall = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const pluginUploadProgress = useSelector( ( state ) => getPluginUploadProgress( state, siteId ) );
 	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
+	const pluginExists = pluginUploadError?.error === 'folder_exists' || false;
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const uploadedPluginSlug = useSelector( ( state ) =>
@@ -232,7 +233,7 @@ const MarketplacePluginInstall = ( {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate(
+					line={ translate(
 						"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
 					) }
 					action={ translate( 'Upgrade to Business Plan' ) }
@@ -244,7 +245,7 @@ const MarketplacePluginInstall = ( {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate(
+					line={ translate(
 						'This URL should not be accessed directly. Please try to upload the plugin again.'
 					) }
 					action={ translate( 'Go to the upload page' ) }
@@ -256,7 +257,7 @@ const MarketplacePluginInstall = ( {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate(
+					line={ translate(
 						'This URL should not be accessed directly. Please click the Install button on the plugin page.'
 					) }
 					action={ translate( 'Go to the plugin page' ) }
@@ -264,6 +265,21 @@ const MarketplacePluginInstall = ( {
 				/>
 			);
 		}
+		if ( pluginExists ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					line={ translate(
+						'This plugin already exists in your site. If you want to upgrade/ downgrade it please continue by uploading again from WP Admin.'
+					) }
+					action={ translate( 'Back' ) }
+					actionURL={ `/plugins/upload/${ selectedSiteSlug }` }
+					secondaryAction={ translate( 'Continue' ) }
+					secondaryActionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php` }
+				/>
+			);
+		}
+		// Catch the rest of the error cases.
 		if (
 			pluginUploadError ||
 			pluginInstallStatus.error ||
@@ -272,7 +288,7 @@ const MarketplacePluginInstall = ( {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate( 'An error occurred while installing the plugin.' ) }
+					line={ translate( 'An error occurred while installing the plugin.' ) }
 					action={ translate( 'Back' ) }
 					actionURL={
 						isUploadFlow
