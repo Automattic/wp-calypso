@@ -91,13 +91,14 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 						/**
 						 * Progress screen
 						 */
+						const progress = calculateProgress( job?.progress );
 						return (
 							<Progress>
 								<Title>{ __( 'Importing' ) }...</Title>
 								<ProgressBar
 									color={ 'black' }
 									compact={ true }
-									value={ calculateProgress( job?.progress ) }
+									value={ Number.isNaN( progress ) ? 0 : progress }
 								/>
 								<SubTitle>
 									{ __( "This may take a few minutes. We'll notify you by email when it's done." ) }
