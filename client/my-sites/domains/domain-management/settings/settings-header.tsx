@@ -1,60 +1,17 @@
 import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { isMappedDomain, resolveDomainStatus } from 'calypso/lib/domains';
+import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import {
-	domainManagementEdit,
-	domainManagementList,
-	isUnderDomainManagementAll,
-} from 'calypso/my-sites/domains/paths';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type {
-	SettingsHeaderProps,
-	SettingsHeaderConnectedProps,
-	SettingsHeaderPassedProps,
-} from './types';
+import type { SettingsHeaderProps } from './types';
 import type { TranslateResult } from 'i18n-calypso';
+
 import './style.scss';
 
-const SettingsHeader = ( props: SettingsHeaderProps ) => {
-	const { selectedDomainName, isManagingAllDomains } = props;
+const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	const { __ } = useI18n();
-	let formattedHeaderText = selectedDomainName;
-	if ( ! selectedDomainName ) {
-		formattedHeaderText = isManagingAllDomains ? __( 'All Domains' ) : __( 'Site Domains' );
-	}
-
-	const renderBreadcrumbs = () => {
-		const { selectedSite, currentRoute, selectedDomainName } = props;
-
-		const previousPath = domainManagementEdit(
-			selectedSite.slug,
-			selectedDomainName,
-			currentRoute
-		);
-
-		const items = [
-			{
-				label: __( 'Domains' ),
-				href: domainManagementList( selectedSite?.slug, selectedDomainName ),
-			},
-			{ label: selectedDomainName },
-		];
-
-		const mobileItem = {
-			label: __( 'Back' ),
-			href: previousPath,
-			showBackArrow: true,
-		};
-
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
-	};
 
 	const renderCircle = () => (
 		<SVG viewBox="0 0 24 24">
@@ -137,12 +94,11 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 
 	return (
 		<div className="settings-header__container">
-			{ renderBreadcrumbs() }
 			<div className="settings-header__container-title">
 				<FormattedHeader
 					brandFont
 					className="settings-header__title"
-					headerText={ formattedHeaderText }
+					headerText={ props.domain.name }
 					align="left"
 					hasScreenOptions={ false }
 				/>
@@ -152,17 +108,4 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 	);
 };
 
-export default connect< SettingsHeaderConnectedProps, never, SettingsHeaderPassedProps >(
-	( state, ownProps: SettingsHeaderPassedProps ): SettingsHeaderConnectedProps => {
-		const path = getCurrentRoute( state );
-		const { domain } = ownProps;
-
-		return {
-			selectedSite: getSelectedSite( state )!,
-			selectedDomainName: domain.name,
-			currentRoute: getCurrentRoute( state ),
-			isManagingAllDomains: Boolean( isUnderDomainManagementAll( path ) ),
-			isMapping: domain && isMappedDomain( domain ),
-		};
-	}
-)( SettingsHeader );
+export default SettingsHeader;

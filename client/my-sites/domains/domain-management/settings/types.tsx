@@ -10,16 +10,6 @@ export type SettingsPageProps = {
 	hasDomainOnlySite: boolean;
 };
 
-export type SettingsHeaderPassedProps = {
+export type SettingsHeaderProps = {
 	domain: ResponseDomain;
 };
-
-export type SettingsHeaderConnectedProps = {
-	currentRoute: string;
-	selectedDomainName: string;
-	isManagingAllDomains: boolean;
-	selectedSite: SiteData;
-	isMapping: boolean;
-};
-
-export type SettingsHeaderProps = SettingsHeaderPassedProps & SettingsHeaderConnectedProps;
