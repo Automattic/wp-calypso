@@ -404,7 +404,7 @@ export interface TitanProductProps {
 	meta?: string;
 	source?: string;
 	quantity?: number | null;
-	extra?: RequestCartProductExtra & { email_users: any };
+	extra?: RequestCartProductExtra;
 }
 
 /**

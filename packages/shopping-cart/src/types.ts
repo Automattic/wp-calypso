@@ -341,6 +341,7 @@ export interface ResponseCartProductExtra {
 	premium?: boolean;
 	new_quantity?: number;
 	domain_to_bundle?: string;
+	email_users?: TitanProductUser[];
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	purchaseType?: string;
@@ -360,6 +361,13 @@ export interface GSuiteProductUser {
 	firstname: string;
 	lastname: string;
 	email: string;
+	password: string;
+}
+
+export interface TitanProductUser {
+	alternative_email: string;
+	email: string;
+	name: string;
 	password: string;
 }
 
