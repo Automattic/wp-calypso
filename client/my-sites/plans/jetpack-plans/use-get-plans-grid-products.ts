@@ -25,20 +25,24 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 	const includedInPlanProducts: string[] =
-		( currentPlan && getPlan( currentPlan )?.getIncludedFeatures() ) || [];
+		( currentPlan && getPlan( currentPlan )?.getIncludedFeatures?.() ) || [];
 
 	// Owned products from direct purchases
 	const purchasedProducts =
 		useSelector( ( state ) => getSiteProducts( state, siteId ) )
 			?.map( ( { productSlug } ) => productSlug )
-			.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) ) ?? [];
+			.filter( ( productSlug ) =>
+				( JETPACK_PRODUCTS_LIST as ReadonlyArray< string > ).includes( productSlug )
+			) ?? [];
 
 	// Directly and indirectly owned products
 	const ownedProducts = [ ...purchasedProducts, ...includedInPlanProducts ];
 
 	// If Jetpack Search is directly or indirectly owned, continue, otherwise make it available.
 	if (
-		! ownedProducts.some( ( ownedProduct ) => JETPACK_SEARCH_PRODUCTS.includes( ownedProduct ) )
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_SEARCH_PRODUCTS ];
 	}
@@ -68,7 +72,9 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 
 	// If Jetpack Scan is directly or indirectly owned, continue, otherwise make it available.
 	if (
-		! ownedProducts.some( ( ownedProduct ) => JETPACK_SCAN_PRODUCTS.includes( ownedProduct ) )
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_SCAN_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
 	) {
 		availableProducts = [
 			...availableProducts,
@@ -78,14 +84,18 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 
 	// If Jetpack Anti-spam is directly or indirectly owned, continue, otherwise make it available.
 	if (
-		! ownedProducts.some( ( ownedProduct ) => JETPACK_ANTI_SPAM_PRODUCTS.includes( ownedProduct ) )
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_ANTI_SPAM_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_ANTI_SPAM_PRODUCTS ];
 	}
 
 	// If Jetpack VideoPress is directly or indirectly owned, continue, otherwise make it available.
 	if (
-		! ownedProducts.some( ( ownedProduct ) => JETPACK_VIDEOPRESS_PRODUCTS.includes( ownedProduct ) )
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_VIDEOPRESS_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_VIDEOPRESS_PRODUCTS ];
 	}
