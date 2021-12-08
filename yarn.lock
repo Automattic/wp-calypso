@@ -9808,7 +9808,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-regex@npm:^4.0.0, ansi-regex@npm:^4.1.0":
+"ansi-regex@npm:^4.1.0":
   version: 4.1.0
   resolution: "ansi-regex@npm:4.1.0"
   checksum: a10376bc12035b0b40f036d3e544d92f9e6a525bc7cd65f71e108c0965d74f777e0eef47a6d0bfbdec1d835df1edf0410516a39525d2d89ce9547eb47644d681
@@ -22172,13 +22172,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jest-get-type@npm:^24.9.0":
-  version: 24.9.0
-  resolution: "jest-get-type@npm:24.9.0"
-  checksum: af1da287a14e5de5888b0114e92cd4042050852d32982d412e1465a8d69cb0a22702c7c491c56eb664e05a1391c1d6eeeb840e249a76d4f6159c402a4dfde56d
-  languageName: node
-  linkType: hard
-
 "jest-get-type@npm:^26.3.0":
   version: 26.3.0
   resolution: "jest-get-type@npm:26.3.0"
@@ -22314,19 +22307,6 @@ fsevents@~2.1.2:
     pretty-format: ^27.3.1
     throat: ^6.0.1
   checksum: e147c97d7a733854b61b5788d117dcc21ca7c9a08ca0bf8c61b2ac178c515437bf629742e85252d32774a7bcc485335b8b7301b57f7a806de3abe207167d9f70
-  languageName: node
-  linkType: hard
-
-"jest-junit@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "jest-junit@npm:9.0.0"
-  dependencies:
-    jest-validate: ^24.9.0
-    mkdirp: ^0.5.1
-    strip-ansi: ^5.2.0
-    uuid: ^3.3.3
-    xml: ^1.0.1
-  checksum: dc6a1570433da95e5ea2f10f823d23158db21c01c5ee70317a3695d4149e5996c8b51918322d7bad2d56a2b1d23edadf5e35eed441f6778d28e11d216cc48414
   languageName: node
   linkType: hard
 
@@ -22825,20 +22805,6 @@ fsevents@~2.1.2:
     graceful-fs: ^4.2.4
     picomatch: ^2.2.3
   checksum: 28570a064c5fd7369f870dec1d6b5bb38691028151535ae24a1ab3dc077db368a33566aad3080dd183c81ef6423d7077b3e9641d0c93c8082bc9c8f1c9a6cf78
-  languageName: node
-  linkType: hard
-
-"jest-validate@npm:^24.9.0":
-  version: 24.9.0
-  resolution: "jest-validate@npm:24.9.0"
-  dependencies:
-    "@jest/types": ^24.9.0
-    camelcase: ^5.3.1
-    chalk: ^2.0.1
-    jest-get-type: ^24.9.0
-    leven: ^3.1.0
-    pretty-format: ^24.9.0
-  checksum: ed34bb40c758bd0287e1f8563b9589dd056ceb22cbb3e93fcfe0421100aaca7c14db511d6555fae5fdacf9948b10fc69620e5b0d3a3dfbdb62acbb27f9e7ee86
   languageName: node
   linkType: hard
 
@@ -29467,18 +29433,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^24.9.0":
-  version: 24.9.0
-  resolution: "pretty-format@npm:24.9.0"
-  dependencies:
-    "@jest/types": ^24.9.0
-    ansi-regex: ^4.0.0
-    ansi-styles: ^3.2.0
-    react-is: ^16.8.4
-  checksum: 1e75c0ae55dab8953a5fe8025aab0a6d6090773561b672a7a00108f6cfb7dace198b27143392382dff913cb71f6fbc10ed23beaddf2117c380588a3b575825f0
-  languageName: node
-  linkType: hard
-
 "pretty-format@npm:^26.5.2, pretty-format@npm:^26.6.2":
   version: 26.6.2
   resolution: "pretty-format@npm:26.6.2"
@@ -30460,7 +30414,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.12.0, react-is@npm:^16.13.1, react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1, react-is@npm:^16.8.4":
+"react-is@npm:^16.12.0, react-is@npm:^16.13.1, react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: 33977da7a5f1a287936a0c85639fec6ca74f4f15ef1e59a6bc20338fc73dc69555381e211f7a3529b8150a1f71e4225525b41b60b52965bda53ce7d47377ada1
@@ -37167,7 +37121,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"uuid@npm:^3.1.0, uuid@npm:^3.3.2, uuid@npm:^3.3.3, uuid@npm:^3.4.0":
+"uuid@npm:^3.1.0, uuid@npm:^3.3.2, uuid@npm:^3.4.0":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
   bin:
@@ -38202,7 +38156,6 @@ testarmada-magellan@11.0.10:
     jest: ^27.3.1
     jest-environment-jsdom: ^27.3.1
     jest-enzyme: ^7.1.2
-    jest-junit: ^9.0.0
     jest-teamcity: ^1.9.0
     loader-utils: ^1.2.3
     lodash: ^4.17.21
@@ -38650,7 +38603,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"xml@npm:^1.0.0, xml@npm:^1.0.1":
+"xml@npm:^1.0.0":
   version: 1.0.1
   resolution: "xml@npm:1.0.1"
   checksum: 04bcc9b8b5e7b49392072fbd9c6b0f0958bd8e8f8606fee460318e43991349a68cbc5384038d179ff15aef7d222285f69ca0f067f53d071084eb14c7fdb30411
