@@ -26,8 +26,16 @@ function is_core_fse_active() {
 		return false;
 	}
 
-	// Now we just check for our own option.
-	return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
+	// For universal themes, we check for our own option.
+	if ( 'pub/blockase' === get_option( 'template' ) ) {
+		return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
+	}
+
+	// Universal themes can use the customizer to customize the site, regardless of whether or
+	// not the full site editor is activated. Block themes, however, don't have access to the
+	// customizer. If the site editor is disabled for them, it will severely limit site
+	// customizability. Because of this we always activate FSE for block themes.
+	return true;
 }
 
 /**
