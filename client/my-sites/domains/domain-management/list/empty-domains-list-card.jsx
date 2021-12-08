@@ -69,7 +69,11 @@ function EmptyDomainsListCard( {
 	);
 
 	return (
-		<Card className="empty-domains-list-card">
+		<Card
+			className={ classNames( 'empty-domains-list-card', {
+				'has-non-wpcom-domains': hasNonWpcomDomains,
+			} ) }
+		>
 			<div
 				className={ classNames( 'empty-domains-list-card__wrapper', {
 					'is-compact': isCompact,

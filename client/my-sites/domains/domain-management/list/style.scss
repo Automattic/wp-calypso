@@ -299,6 +299,15 @@
 }
 
 .domain-management-list__items + .empty-domains-list-card {
+	margin-top: 16px;
+	margin-bottom: 32px;
+
+	@include break-small {
+		margin-top: 0;
+	}
+}
+
+.domain-management-list__items + .empty-domains-list-card.has-non-wpcom-domains {
 	margin-top: 32px;
 	margin-bottom: 32px;
 }
