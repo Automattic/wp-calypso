@@ -144,20 +144,20 @@ export type PossiblyCompleteDomainContactDetails = {
 };
 
 export type DomainContactDetailsErrors = {
-	firstName?: string | TranslateResult;
-	lastName?: string | TranslateResult;
-	organization?: string | TranslateResult;
-	email?: string | TranslateResult;
-	alternateEmail?: string | TranslateResult;
-	phone?: string | TranslateResult;
-	address1?: string | TranslateResult;
-	address2?: string | TranslateResult;
-	city?: string | TranslateResult;
-	state?: string | TranslateResult;
-	postalCode?: string | TranslateResult;
-	countryCode?: string | TranslateResult;
-	fax?: string | TranslateResult;
-	vatId?: string | TranslateResult;
+	firstName?: TranslateResult;
+	lastName?: TranslateResult;
+	organization?: TranslateResult;
+	email?: TranslateResult;
+	alternateEmail?: TranslateResult;
+	phone?: TranslateResult;
+	address1?: TranslateResult;
+	address2?: TranslateResult;
+	city?: TranslateResult;
+	state?: TranslateResult;
+	postalCode?: TranslateResult;
+	countryCode?: TranslateResult;
+	fax?: TranslateResult;
+	vatId?: TranslateResult;
 	extra?: DomainContactDetailsErrorsExtra;
 };
 
@@ -168,22 +168,22 @@ type DomainContactDetailsErrorsExtra = {
 };
 
 export type CaDomainContactExtraDetailsErrors = {
-	lang?: string | TranslateResult;
-	legalType?: string | TranslateResult;
-	ciraAgreementAccepted?: string | TranslateResult;
+	lang?: TranslateResult;
+	legalType?: TranslateResult;
+	ciraAgreementAccepted?: TranslateResult;
 };
 
 export type UkDomainContactExtraDetailsErrors = {
-	registrantType?: { errorCode: string; errorMessage: string | TranslateResult }[];
-	registrationNumber?: { errorCode: string; errorMessage: string | TranslateResult }[];
-	tradingName?: { errorCode: string; errorMessage: string | TranslateResult }[];
+	registrantType?: { errorCode: string; errorMessage: TranslateResult }[];
+	registrationNumber?: { errorCode: string; errorMessage: TranslateResult }[];
+	tradingName?: { errorCode: string; errorMessage: TranslateResult }[];
 };
 
 export type FrDomainContactExtraDetailsErrors = {
-	registrantType?: string[] | TranslateResult[];
-	registrantVatId?: string[] | TranslateResult[];
-	trademarkNumber?: string[] | TranslateResult[];
-	sirenSiret?: string[] | TranslateResult[];
+	registrantType?: TranslateResult[];
+	registrantVatId?: TranslateResult[];
+	trademarkNumber?: TranslateResult[];
+	sirenSiret?: TranslateResult[];
 };
 
 export type PayPalExpressEndpoint = (
@@ -306,7 +306,7 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
 
 export type ManagedContactDetailsErrors = ManagedContactDetailsShape<
-	undefined | string[] | TranslateResult[]
+	undefined | TranslateResult[]
 >;
 
 /*
@@ -324,7 +324,7 @@ export type ManagedContactDetailsUpdate = ManagedContactDetailsShape< string >;
 export interface ManagedValue {
 	value: string;
 	isTouched: boolean; // Has value been edited by the user?
-	errors: string[] | TranslateResult[]; // Has value passed validation?
+	errors: TranslateResult[]; // Has value passed validation?
 }
 
 export type WpcomStoreState = {

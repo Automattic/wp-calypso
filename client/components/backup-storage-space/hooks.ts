@@ -19,7 +19,7 @@ const bytesToUnit = ( bytes: number, unit: StorageUnits ) => bytes / unit;
 export const useStorageUsageText = (
 	bytesUsed: number | undefined,
 	bytesAvailable: number | undefined
-): TranslateResult | null => {
+): TranslateResult => {
 	const translate = useTranslate();
 
 	return useMemo( () => {

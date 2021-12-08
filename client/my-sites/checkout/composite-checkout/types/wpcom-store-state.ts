@@ -242,7 +242,7 @@ export function isValid( arg: ManagedValue ): boolean {
 function getInitialManagedValue( initialProperties?: {
 	value?: string;
 	isTouched?: boolean;
-	errors?: Array< string | TranslateResult >;
+	errors?: Array< TranslateResult >;
 } ): ManagedValue {
 	return {
 		value: '',
@@ -283,10 +283,7 @@ function setValueUnlessTouched(
 	return oldData.isTouched ? oldData : { ...oldData, value: newValue, errors: [] };
 }
 
-function setErrors(
-	errors: string[] | TranslateResult[] | undefined,
-	oldData: ManagedValue
-): ManagedValue {
+function setErrors( errors: TranslateResult[] | undefined, oldData: ManagedValue ): ManagedValue {
 	return undefined === errors ? { ...oldData, errors: [] } : { ...oldData, errors };
 }
 
@@ -459,7 +456,7 @@ function prepareUkDomainContactExtraDetailsErrors(
 ): UkDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.uk ) {
 		// Needed for compatibility with existing component props
-		const toErrorPayload = ( errorMessage: string | TranslateResult, index: number ) => {
+		const toErrorPayload = ( errorMessage: TranslateResult, index: number ) => {
 			return { errorCode: index.toString(), errorMessage };
 		};
 

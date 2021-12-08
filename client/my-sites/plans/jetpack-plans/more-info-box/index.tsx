@@ -3,13 +3,12 @@ import * as React from 'react';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { PLAN_COMPARISON_PAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactNode } from 'react';
 
 import './style.scss';
 
 type MoreInfoProps = {
 	headline: TranslateResult;
-	buttonLabel: TranslateResult | ReactNode;
+	buttonLabel: TranslateResult;
 	onButtonClick?: () => void;
 };
 

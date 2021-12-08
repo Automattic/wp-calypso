@@ -39,10 +39,10 @@ export type ThankYouProps = {
 	showSupportSection?: boolean;
 	customSupportSection?: ThankYouSupportSectionProps;
 	thankYouImage: {
-		alt: string | TranslateResult;
+		alt: string;
 		src: string;
 	};
-	thankYouTitle?: string | TranslateResult;
-	thankYouSubtitle?: string | TranslateResult;
+	thankYouTitle?: TranslateResult;
+	thankYouSubtitle?: TranslateResult;
 	thankYouNotice?: ThankYouNoticeProps;
 };

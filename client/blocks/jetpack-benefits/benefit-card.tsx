@@ -3,7 +3,7 @@ import { TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 
 interface Props {
-	stat?: TranslateResult | string | number | null;
+	stat?: TranslateResult;
 	headline: TranslateResult;
 	description: TranslateResult;
 	placeholder?: boolean | null;

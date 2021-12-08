@@ -6,8 +6,8 @@ import JetpackUpsell from 'calypso/components/jetpack/upsell';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 interface Props {
-	bodyText: TranslateResult | ReactNode;
-	buttonLink?: TranslateResult;
+	bodyText: TranslateResult;
+	buttonLink?: string;
 	buttonText?: TranslateResult;
 	headerText: TranslateResult;
 	iconComponent?: ReactNode;

@@ -192,7 +192,7 @@ function onPaymentSelectComplete( {
 }: {
 	successCallback: () => void;
 	translate: ReturnType< typeof useTranslate >;
-	showSuccessMessage: ( message: string | TranslateResult ) => void;
+	showSuccessMessage: ( message: TranslateResult ) => void;
 	purchase?: Purchase | undefined;
 } ) {
 	if ( purchase ) {
@@ -211,9 +211,7 @@ function CurrentPaymentMethodNotAvailableNotice( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const storedPaymentAgreements = useSelector( getStoredPaymentAgreements );
-	const noticeProps: Record< string, boolean | string | number | TranslateResult > = {
-		showDismiss: false,
-	};
+	const noticeProps: Record< string, TranslateResult > = { showDismiss: false };
 
 	if ( purchase.payment.creditCard && creditCardHasAlreadyExpired( purchase ) ) {
 		noticeProps.text = translate(

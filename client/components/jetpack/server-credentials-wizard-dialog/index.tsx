@@ -18,7 +18,7 @@ interface Props {
 	children: React.ReactNode;
 	buttons?: React.ReactNode;
 	baseDialogClassName?: string;
-	title: i18nCalypso.TranslateResult;
+	title: React.ReactNode;
 	titleClassName?: string;
 }
 

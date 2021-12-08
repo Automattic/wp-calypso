@@ -14,7 +14,7 @@ interface Choice {
 
 interface JetpackCancellationSurveyProps {
 	selectedAnswerId: string | null;
-	onAnswerChange: ( answerId: string | null, answerText: TranslateResult | string ) => void;
+	onAnswerChange: ( answerId: string | null, answerText: TranslateResult ) => void;
 }
 
 export default function JetpackCancellationSurvey( {

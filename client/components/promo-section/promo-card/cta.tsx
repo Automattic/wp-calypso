@@ -17,7 +17,7 @@ interface CtaAction {
 }
 
 export interface CtaButton {
-	text: string | TranslateResult;
+	text: TranslateResult;
 	action: URL | ClickCallback | CtaAction;
 	component?: JSX.Element;
 }

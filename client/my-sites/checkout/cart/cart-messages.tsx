@@ -123,7 +123,7 @@ function getMessagePrettifier(
 	translate: ReturnType< typeof useTranslate >,
 	selectedSiteSlug: string | null | undefined
 ) {
-	return function getPrettyMessage( message: ResponseCartMessage ): TranslateResult | string {
+	return function getPrettyMessage( message: ResponseCartMessage ): TranslateResult {
 		switch ( message.code ) {
 			case 'chargeback':
 				return getChargebackErrorMessage( { translate, selectedSiteSlug } );

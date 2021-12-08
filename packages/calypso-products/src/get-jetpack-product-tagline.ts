@@ -7,7 +7,7 @@ import type { TranslateResult } from 'i18n-calypso';
 export function getJetpackProductTagline(
 	product: { product_slug: string },
 	isOwned = false
-): TranslateResult | undefined {
+): TranslateResult {
 	const jetpackProductsTaglines = getJetpackProductsTaglines();
 	const productTagline = jetpackProductsTaglines[ product.product_slug ];
 	return isOwned ? productTagline?.owned || productTagline?.default : productTagline?.default;

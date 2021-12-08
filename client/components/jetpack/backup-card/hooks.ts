@@ -8,7 +8,7 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-type GetDisplayDateHook = () => ( date: Moment ) => TranslateResult | undefined;
+type GetDisplayDateHook = () => ( date: Moment ) => TranslateResult;
 
 // We format a bit differently here than in
 // calypso/components/jetpack/daily-backup-status

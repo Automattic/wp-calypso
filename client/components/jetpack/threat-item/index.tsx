@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
@@ -70,7 +70,7 @@ const ThreatItem: React.FC< Props > = ( {
 		[ isFixing, onFixThreat, threat ]
 	);
 
-	const getFix = React.useCallback( (): i18nCalypso.TranslateResult | undefined => {
+	const getFix = React.useCallback( (): TranslateResult => {
 		if ( threat.status === 'fixed' ) {
 			return;
 		}

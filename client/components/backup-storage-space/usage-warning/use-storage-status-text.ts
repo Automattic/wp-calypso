@@ -2,7 +2,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { StorageUsageLevels } from '../storage-usage-levels';
 
-const useStorageStatusText = ( usageLevel: StorageUsageLevels ): TranslateResult | null => {
+const useStorageStatusText = ( usageLevel: StorageUsageLevels ): TranslateResult => {
 	const translate = useTranslate();
 
 	// TODO: For StorageUsageLevels.Warning, estimate how many days until

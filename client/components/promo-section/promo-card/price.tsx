@@ -1,13 +1,12 @@
 import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
-import type { ReactElement } from 'react';
+import type { FunctionComponent } from 'react';
 
 export interface Props {
 	/** Should be of the format: <span>$price</span> /interval, e.g. <span>$1</span> /year */
-	formattedPrice?: string | TranslateResult;
-	discount?: string | TranslateResult | null;
-	additionalPriceInformation?: string | TranslateResult | ReactElement;
+	formattedPrice?: TranslateResult;
+	discount?: TranslateResult;
+	additionalPriceInformation?: TranslateResult;
 }
 
 const PromoCardPrice: FunctionComponent< Props > = ( {
