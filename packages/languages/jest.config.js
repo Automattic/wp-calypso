@@ -1,3 +1,3 @@
 module.exports = {
-	preset: '@automattic/calypso-build',
+	preset: '../../test/packages/jest-preset.js',
 };

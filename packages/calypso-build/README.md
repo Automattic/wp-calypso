@@ -120,13 +120,3 @@ module.exports = () => ( {
 	},
 } );
 ```
-
-## Jest
-
-Use the provided Jest configuration via a preset. In your `jest.config.js` set the following:
-
-```js
-module.exports = {
-	preset: '@automattic/calypso-build',
-};
-```
