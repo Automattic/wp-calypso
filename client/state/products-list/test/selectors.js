@@ -12,6 +12,7 @@ import {
 	planSlugToPlanProduct,
 	computeFullAndMonthlyPricesForPlan,
 	computeProductsWithPrices,
+	isMarketplaceProduct,
 } from '../selectors';
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
@@ -363,6 +364,28 @@ describe( 'selectors', () => {
 		test( 'should return true when productsList.isFetching is true', () => {
 			const state = { productsList: { isFetching: true } };
 			expect( isProductsListFetching( state ) ).toBe( true );
+		} );
+	} );
+
+	describe( '#isMarketplaceProduct()', () => {
+		const state = {
+			productsList: {
+				items: {
+					product1: { product_type: 'jetpack' },
+					product2: { product_type: 'marketplace_plugin' },
+				},
+			},
+		};
+		test( "should return false when the product isn't in the products list", () => {
+			expect( isMarketplaceProduct( state, 'product0' ) ).toBe( false );
+		} );
+
+		test( "should return false when the product isn't a marketplace product", () => {
+			expect( isMarketplaceProduct( state, 'product1' ) ).toBe( false );
+		} );
+
+		test( 'should return true when the product is a marketplace product', () => {
+			expect( isMarketplaceProduct( state, 'product2' ) ).toBe( true );
 		} );
 	} );
 } );
