@@ -484,11 +484,11 @@
 		display: flex;
 		width: 20px;
 		background: #d67709;
-		border-radius: 16px;
+		border-radius: 16px; /* stylelint-disable-line */
 		justify-content: center;
 		align-items: center;
 		color: #ffffff;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		height: 18px;
 		margin: 0 4px;
 		line-height: 20px;
