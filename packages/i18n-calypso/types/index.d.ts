@@ -51,17 +51,28 @@ declare namespace i18nCalypso {
 		original: string | { single: string; plural: string; count: number };
 	}
 
-	// Translate hooks force us to open up this type.
-	export type TranslateResult = string | React.ReactFragment;
+	export type TranslateOptionsText = TranslateOptions & { textOnly: true };
+	export type TranslateOptionsPlural = TranslateOptions & { count: number };
+	export type TranslateOptionsPluralText = TranslateOptionsPlural & { textOnly: true };
 
-	export function translate( options: DeprecatedTranslateOptions ): TranslateResult;
-	export function translate( original: string ): TranslateResult;
-	export function translate( original: string, options: TranslateOptions ): TranslateResult;
+	// Translate hooks, like component interpolation or highlighting untranslated strings,
+	// force us to declare the return type as a generic React node, not as just string.
+	export type TranslateResult = React.ReactNode;
+
+	export function translate( options: DeprecatedTranslateOptions ): React.ReactNode;
+	export function translate( original: string ): React.ReactNode;
+	export function translate( original: string, options: TranslateOptions ): React.ReactNode;
+	export function translate( original: string, options: TranslateOptionsText ): string;
 	export function translate(
 		original: string,
 		plural: string,
-		options: TranslateOptions & { count: number }
-	): TranslateResult;
+		options: TranslateOptionsPlural
+	): React.ReactNode;
+	export function translate(
+		original: string,
+		plural: string,
+		options: TranslateOptionsPluralText
+	): string;
 
 	export function setLocale( localeData: LocaleData ): void;
 	export function addTranslations( localeData: LocaleData ): void;
@@ -103,9 +114,9 @@ declare namespace i18nCalypso {
 	export function reRenderTranslations(): void;
 
 	export type TranslateHook = (
-		translation: TranslateResult,
+		translation: React.ReactNode,
 		options: NormalizedTranslateArgs
-	) => TranslateResult;
+	) => React.ReactNode;
 	export function registerTranslateHook( hook: TranslateHook ): void;
 
 	export type ComponentUpdateHook = ( ...args: any ) => any;
