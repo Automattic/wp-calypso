@@ -1,8 +1,7 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { useTranslate, getLocaleSlug } from 'i18n-calypso';
-import { includes } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -35,7 +34,7 @@ const PluginsBrowserListElement = ( props ) => {
 	const moment = useLocalizedMoment();
 
 	const selectedSite = useSelector( getSelectedSite );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.id ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const sitesWithPlugin = useSelector( ( state ) =>
 		isJetpack && currentSites
 			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
@@ -77,7 +76,7 @@ const PluginsBrowserListElement = ( props ) => {
 			return false;
 		}
 
-		return ! isJetpack && includes( PREINSTALLED_PLUGINS, plugin.name );
+		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.name );
 	}, [ isJetpack, site, plugin ] );
 
 	const isUntestedVersion = useMemo( () => {
@@ -142,12 +141,9 @@ const PluginsBrowserListElement = ( props ) => {
 							<div className="plugins-browser-item__ratings">
 								<PluginRatings
 									rating={ plugin.rating }
-									inlineNumRatings={
-										plugin.rating && Number.isInteger( plugin.num_ratings )
-											? plugin.num_ratings.toLocaleString( getLocaleSlug() )
-											: null
-									}
-									hideRatingValue
+									numRatings={ plugin.num_ratings }
+									inlineNumRatings
+									hideRatingNumber
 								/>
 							</div>
 						) }
@@ -162,7 +158,6 @@ const PluginsBrowserListElement = ( props ) => {
 					</div>
 				</div>
 			</a>
-			<UpgradeButton plugin={ plugin } />
 		</li>
 	);
 };
@@ -182,21 +177,6 @@ const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled } ) => {
 	}
 
 	return <div className="plugins-browser-item__pricing">{ translate( 'Free' ) }</div>;
-};
-
-const UpgradeButton = ( { plugin } ) => {
-	const translate = useTranslate();
-	const { isPreinstalled, upgradeLink } = plugin;
-
-	if ( isPreinstalled || ! upgradeLink ) {
-		return null;
-	}
-
-	return (
-		<Button className="plugins-browser-item__upgrade-button" compact primary href={ upgradeLink }>
-			{ translate( 'Upgrade' ) }
-		</Button>
-	);
 };
 
 const Placeholder = ( { iconSize } ) => {

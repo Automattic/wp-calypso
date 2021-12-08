@@ -141,12 +141,11 @@
 
 .plugins-browser-item__installed {
 	display: flex;
-	align-items: center;
 	color: var( --studio-green-30 );
 	animation: appear 0.15s ease-in;
-	margin-top: -10px;
 
 	.gridicon {
+		margin-top: 3px;
 		margin-right: 6px;
 		border: 2px solid var( --studio-green-30 );
 		border-radius: 50%; /* stylelint-disable-line */
@@ -159,8 +158,3 @@
 	justify-content: space-between;
 }
 
-.button.plugins-browser-item__upgrade-button {
-	position: absolute;
-	bottom: 16px;
-	right: 16px;
-}
