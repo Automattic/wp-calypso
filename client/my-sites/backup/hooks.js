@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -155,10 +154,6 @@ export const useIsDateVisible = ( siteId ) => {
 
 	return useCallback(
 		( date ) => {
-			if ( ! isEnabled( 'activity-log/display-rules' ) ) {
-				return true;
-			}
-
 			if ( visibleDays === undefined ) {
 				return true;
 			}

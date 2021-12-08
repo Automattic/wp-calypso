@@ -8,7 +8,7 @@
 	"calypso:src": "src/index.ts",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
@@ -43,7 +43,7 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"chai": "^4.3.4",
-		"typescript": "^4.4.4"
+		"typescript": "^4.5.2"
 	},
 	"peerDependencies": {
 		"react": "^17.0.2"

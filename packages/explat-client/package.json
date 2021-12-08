@@ -16,7 +16,7 @@
 		"directory": "packages/explat-client"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"prepack": "yarn run clean && yarn run build",
@@ -28,6 +28,6 @@
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.4.4"
+		"typescript": "^4.5.2"
 	}
 }

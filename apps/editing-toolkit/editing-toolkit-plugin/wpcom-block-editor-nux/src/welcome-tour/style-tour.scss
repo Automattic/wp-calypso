@@ -66,7 +66,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
-.wpcom-editor-welcome-tour > .tour-kit__frame {
+.wpcom-editor-welcome-tour > .tour-kit-frame__container {
 	box-shadow: none;
 }
 
@@ -184,8 +184,8 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 			opacity: 0;
 		}
 
-		.tour-kit__frame:hover &,
-		.tour-kit__frame:focus-within & {
+		.tour-kit-frame__container:hover &,
+		.tour-kit-frame__container:focus-within & {
 			.components-button {
 				opacity: 0.7;
 
@@ -202,4 +202,12 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	margin-left: $grid-unit-15;
 	justify-content: center;
 	min-width: 85px;
+}
+
+// TODO: Remove once @wordpress/components/src/card/styles/card-styles.js is updated
+.welcome-tour-card__media img {
+	display: block;
+	height: auto;
+	max-width: 100%;
+	width: 100%;
 }

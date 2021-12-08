@@ -11,6 +11,8 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
+import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
@@ -95,6 +97,15 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const [ retries, setRetries ] = useState( 0 );
 
 	// retrieve wporg plugin data if not available
+	useEffect( () => {
+		dispatch(
+			pluginInstallationStateChange(
+				MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED,
+				'deauthorize plugin installation URL'
+			)
+		);
+	}, [] );
+
 	useEffect( () => {
 		if ( ! isWporgPluginFetched ) {
 			dispatch( wporgFetchPluginData( productSlug ) );

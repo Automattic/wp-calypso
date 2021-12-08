@@ -369,15 +369,17 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 		return;
 	}
 
-	const settings = {
-		apiVersion: '1.4',
-		blogname: siteTitle,
-		blogdescription: tagline,
-	};
-
-	wpcom.undocumented().settings( siteSlug, 'post', settings, function ( errors ) {
-		callback( isEmpty( errors ) ? undefined : [ errors ] );
-	} );
+	wpcom.req.post(
+		`/sites/${ siteSlug }/settings`,
+		{ apiVersion: '1.4' },
+		{
+			blogname: siteTitle,
+			blogdescription: tagline,
+		},
+		function ( errors ) {
+			callback( isEmpty( errors ) ? undefined : [ errors ] );
+		}
+	);
 }
 
 export function setIntentOnSite( callback, { siteSlug, intent } ) {

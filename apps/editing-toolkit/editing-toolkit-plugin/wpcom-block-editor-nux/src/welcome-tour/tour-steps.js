@@ -3,14 +3,33 @@ import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
-const addBlock = 'https://s0.wp.com/i/editor-welcome-tour/slide-add-block.gif';
-const allBlocks = 'https://s0.wp.com/i/editor-welcome-tour/slide-all-blocks.gif';
-const finish = 'https://s0.wp.com/i/editor-welcome-tour/slide-finish.png';
-const makeBold = 'https://s0.wp.com/i/editor-welcome-tour/slide-make-bold.gif';
-const moreOptions = 'https://s0.wp.com/i/editor-welcome-tour/slide-more-options.gif';
-const moveBlock = 'https://s0.wp.com/i/editor-welcome-tour/slide-move-block.gif';
-const undo = 'https://s0.wp.com/i/editor-welcome-tour/slide-undo.gif';
-const welcome = 'https://s0.wp.com/i/editor-welcome-tour/slide-welcome.png';
+function getTourAssets( key ) {
+	const CDN_PREFIX = 'https://s0.wp.com/i/editor-welcome-tour';
+	const tourAssets = {
+		addBlock: {
+			desktop: { src: `${ CDN_PREFIX }/slide-add-block.gif`, type: 'image/gif' },
+			mobile: { src: `${ CDN_PREFIX }/slide-add-block_mobile.gif`, type: 'image/gif' },
+		},
+		allBlocks: { desktop: { src: `${ CDN_PREFIX }/slide-all-blocks.gif`, type: 'image/gif' } },
+		finish: { desktop: { src: `${ CDN_PREFIX }/slide-finish.png`, type: 'image/gif' } },
+		makeBold: { desktop: { src: `${ CDN_PREFIX }/slide-make-bold.gif`, type: 'image/gif' } },
+		moreOptions: {
+			desktop: { src: `${ CDN_PREFIX }/slide-more-options.gif`, type: 'image/gif' },
+			mobile: { src: `${ CDN_PREFIX }/slide-more-options_mobile.gif`, type: 'image/gif' },
+		},
+		moveBlock: {
+			desktop: { src: `${ CDN_PREFIX }/slide-move-block.gif`, type: 'image/gif' },
+			mobile: { src: `${ CDN_PREFIX }/slide-move-block_mobile.gif`, type: 'image/gif' },
+		},
+		undo: { desktop: { src: `${ CDN_PREFIX }/slide-undo.gif`, type: 'image/gif' } },
+		welcome: {
+			desktop: { src: `${ CDN_PREFIX }/slide-welcome.png`, type: 'image/png' },
+			mobile: { src: `${ CDN_PREFIX }/slide-welcome_mobile.jpg`, type: 'image/jpeg' },
+		},
+	};
+
+	return tourAssets[ key ];
+}
 
 const referenceElements = [
 	{
@@ -61,7 +80,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
 					'full-site-editing'
 				),
-				imgSrc: welcome,
+				imgSrc: getTourAssets( 'welcome' ),
 				animation: null,
 			},
 		},
@@ -73,7 +92,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					'In the WordPress Editor, paragraphs, images, and videos are all blocks.',
 					'full-site-editing'
 				),
-				imgSrc: allBlocks,
+				imgSrc: getTourAssets( 'allBlocks' ),
 				animation: null,
 			},
 		},
@@ -85,7 +104,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					'Click + to open the inserter. Then click the block you want to add.',
 					'full-site-editing'
 				),
-				imgSrc: addBlock,
+				imgSrc: getTourAssets( 'addBlock' ),
 				animation: 'block-inserter',
 			},
 		},
@@ -97,7 +116,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					'Use the toolbar to change the appearance of a selected block. Try making it bold.',
 					'full-site-editing'
 				),
-				imgSrc: makeBold,
+				imgSrc: getTourAssets( 'makeBold' ),
 				animation: null,
 			},
 		},
@@ -106,7 +125,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			meta: {
 				heading: __( 'More Options', 'full-site-editing' ),
 				description: __( 'Click the settings icon to see even more options.', 'full-site-editing' ),
-				imgSrc: moreOptions,
+				imgSrc: getTourAssets( 'moreOptions' ),
 				animation: null,
 			},
 		},
@@ -115,7 +134,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			meta: {
 				heading: __( 'Undo any mistake', 'full-site-editing' ),
 				description: __( "Click the Undo button if you've made a mistake.", 'full-site-editing' ),
-				imgSrc: undo,
+				imgSrc: getTourAssets( 'undo' ),
 				animation: 'undo-button',
 			},
 		},
@@ -124,7 +143,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			meta: {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
 				description: __( 'To move blocks around, click and drag the handle.', 'full-site-editing' ),
-				imgSrc: moveBlock,
+				imgSrc: getTourAssets( 'moveBlock' ),
 				animation: 'undo-button',
 			},
 		},
@@ -156,7 +175,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 						),
 					}
 				),
-				imgSrc: finish,
+				imgSrc: getTourAssets( 'finish' ),
 				animation: 'block-inserter',
 			},
 		},

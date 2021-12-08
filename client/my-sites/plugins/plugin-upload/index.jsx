@@ -19,6 +19,10 @@ import {
 	isEligibleForAutomatedTransfer,
 	getAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
+import {
+	pluginInstallationStateChange,
+	productToBeInstalled,
+} from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
@@ -59,6 +63,8 @@ class PluginUpload extends Component {
 		}
 
 		if ( config.isEnabled( 'marketplace-v0.5' ) && nextProps.inProgress ) {
+			this.props.productToBeInstalled( null, nextProps.pluginId, nextProps.siteSlug );
+
 			page( `/marketplace/install/${ nextProps.siteSlug }` );
 		}
 
@@ -193,6 +199,8 @@ const flowRightArgs = [
 		clearPluginUpload,
 		initiateAutomatedTransferWithPluginZip,
 		successNotice,
+		productToBeInstalled,
+		pluginInstallationStateChange,
 	} ),
 	localize,
 ];

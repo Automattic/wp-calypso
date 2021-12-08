@@ -118,8 +118,6 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
-$plugin-details-header-padding: 100px;
-
 .plugin-details__layout {
 	@include grid-row( 4, 1 );
 	@include breakpoint-deprecated( '>1040px' ) {
@@ -143,134 +141,14 @@ $plugin-details-header-padding: 100px;
 	}
 }
 
-%placeholder {
-	cursor: default;
-	color: transparent;
-	user-select: none;
-	background-color: var( --color-neutral-0 );
-	animation: loading-fade 1.6s ease-in-out infinite;
-}
-
-.plugin-details__top-section {
-	&.is-placeholder {
-		.plugin-details__name,
-		.plugin-details__price,
-		.plugin-details__description,
-		.plugin-details__additional-info,
-		.plugin-details__install,
-		.plugin-details__t-and-c {
-			@extend %placeholder;
-		}
-
-		.plugin-details__tags {
-			@extend %placeholder;
-			width: 50%;
-		}
-	}
-}
-
 .plugin-details__page {
 	@media screen and ( max-width: 1040px ) {
 		padding: 16px;
 	}
 }
 
-.plugin-details__tags {
-	position: absolute;
-	font-size: $font-body-extra-small;
-	color: var( --studio-gray-60 );
-	top: calc( $plugin-details-header-padding - 15px );
-	left: 0;
-
-	@media screen and ( max-width: 1040px ) {
-		top: -5px;
-	}
-}
-
-.plugin-details__header {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	padding: $plugin-details-header-padding 0;
-
-	.plugin-details__name,
-	.plugin-details__price {
-		font-family: $brand-serif;
-		font-size: $font-title-large;
-		color: var( --studio-gray-100 );
-		margin: 16px 0;
-	}
-
-	.plugin-details__description {
-		font-size: $font-title-small;
-		color: var( --studio-gray-70 );
-		margin-bottom: 30px;
-	}
-
-	.plugin-details__additional-info {
-		display: flex;
-		flex-wrap: wrap;
-
-		.plugin-details__info {
-			width: 25%;
-
-			@media screen and ( max-width: 1040px ) {
-				width: 50%;
-				padding-bottom: 12px;
-			}
-		}
-
-		.plugin-details__info-title {
-			font-size: $font-body-extra-small;
-			font-weight: 400;
-			color: var( --studio-gray-60 );
-		}
-
-		.plugin-details__info-value {
-			font-size: $font-body;
-			color: var( --studio-gray-90 );
-		}
-	}
-
-	.plugin-details__install {
-		margin-bottom: 20px;
-
-		.plugin-details__install-button {
-			width: 100%;
-			padding: 12px 16px;
-			background-color: var( --color-accent-50 );
-			color: var( --studio-white );
-
-			&:focus,
-			&:hover {
-				background-color: var( --color-accent-60 );
-			}
-		}
-	}
-
-	.plugin-details__t-and-c {
-		font-size: $font-body-extra-small;
-		color: var( --studio-gray-50 );
-
-		@media screen and ( max-width: 1040px ) {
-			padding-bottom: 40px;
-		}
-	}
-
-	@media screen and ( max-width: 1040px ) {
-		padding: 0;
-	}
-}
-
 .plugin-details__body {
 	border-top: 1px solid var( --studio-gray-5 );
-
-	.plugin-details__plugin-details-title {
-		padding: 15px 0;
-		display: none;
-		color: var( --studio-gray-100 );
-		font-size: $font-body-small;
-	}
 
 	.plugin-sections {
 		margin-top: 20px;
@@ -328,15 +206,6 @@ $plugin-details-header-padding: 100px;
 	@media screen and ( max-width: 1040px ) {
 		display: flex;
 		flex-direction: column;
-
-		.plugin-details__plugin-details-content {
-			display: flex;
-			justify-content: space-between;
-		}
-
-		.plugin-details__plugin-details-title {
-			display: block;
-		}
 
 		.plugin-details__layout-col-left {
 			order: 2;

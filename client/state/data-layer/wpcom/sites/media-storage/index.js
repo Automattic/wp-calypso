@@ -1,8 +1,4 @@
-import {
-	SITE_MEDIA_STORAGE_REQUEST,
-	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
+import { SITE_MEDIA_STORAGE_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -21,14 +17,10 @@ export function requestMediaStorage( action ) {
 	];
 }
 
-export const requestMediaStorageSuccess = ( { siteId }, mediaStorage ) => [
-	receiveMediaStorage( mediaStorage, siteId ),
-	{ type: SITE_MEDIA_STORAGE_REQUEST_SUCCESS, siteId },
-];
+const requestMediaStorageSuccess = ( { siteId }, mediaStorage ) =>
+	receiveMediaStorage( mediaStorage, siteId );
 
-export const requestMediaStorageError = ( { siteId }, error ) => [
-	{ type: SITE_MEDIA_STORAGE_REQUEST_FAILURE, siteId, error },
-];
+const requestMediaStorageError = () => {};
 
 registerHandlers( 'state/data-layer/wpcom/sites/media-storage/index.js', {
 	[ SITE_MEDIA_STORAGE_REQUEST ]: [

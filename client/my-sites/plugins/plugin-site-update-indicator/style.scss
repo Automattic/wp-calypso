@@ -7,7 +7,19 @@
 	}
 }
 
-.plugin-site-update-indicator__button-container {
-	margin-top: 8px;
-	flex: 40%;
+.plugin-site-update-indicator__link-container {
+	margin-top: 1px;
+	text-align: center;
+}
+
+.plugin-site-update-indicator__link {
+	cursor: pointer;
+	color: var( --studio-gray-80 );
+	text-decoration: underline;
+	line-height: 18px;
+
+	&:hover, &:focus {
+		color: var( --studio-gray-100 );
+		font-weight: bold;
+	}
 }

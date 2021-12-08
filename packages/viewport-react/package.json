@@ -5,6 +5,7 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
+	"types": "./types.d.ts",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -29,7 +30,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},

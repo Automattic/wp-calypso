@@ -1,9 +1,6 @@
 import debugFactory from 'debug';
-import { omit } from 'lodash';
-import readerContentWidth from 'calypso/reader/lib/content-width';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
-const { Blob } = globalThis; // The linter complains if I don't do this...?
 
 /**
  * Create an `Undocumented` instance
@@ -22,34 +19,6 @@ Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
 	debug( '/sites/:site_id:/jetpack-connect/is-user-connected query' );
 	const endpointUrl = '/sites/' + siteId + '/jetpack-connect/is-user-connected';
 	return this.wpcom.req.get( { path: endpointUrl, apiNamespace: 'wpcom/v2' } );
-};
-
-/**
- * GET/POST site settings
- *
- * @param {number|string} [siteId] The site ID
- * @param {string} [method] The request method
- * @param {object} [data] The POST data
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, fn ) {
-	debug( '/sites/:site_id:/settings query' );
-	if ( 'function' === typeof method ) {
-		fn = method;
-		method = 'get';
-		data = {};
-	}
-
-	// If no apiVersion was specified, use the settings api version with the widest support (1.1)
-	const apiVersion = data.apiVersion || '1.1';
-	const body = omit( data, [ 'apiVersion' ] );
-	const path = '/sites/' + siteId + '/settings';
-
-	if ( 'get' === method ) {
-		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
-
-	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
 };
 
 /**
@@ -104,54 +73,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
 		query,
 		fn
 	);
-};
-
-/**
- *
- * @param domain {string}
- * @param fn {function}
- */
-Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		`/domains/${ encodeURIComponent( domain ) }/price`,
-		{
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-function addReaderContentWidth( params ) {
-	if ( params.content_width ) {
-		return;
-	}
-	const contentWidth = readerContentWidth();
-	if ( contentWidth ) {
-		params.content_width = contentWidth;
-	}
-}
-
-Undocumented.prototype.readFeedPost = function ( query, fn ) {
-	const params = omit( query, [ 'feedId', 'postId' ] );
-	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-
-	return this.wpcom.req.get(
-		'/read/feed/' +
-			encodeURIComponent( query.feedId ) +
-			'/posts/' +
-			encodeURIComponent( query.postId ),
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.readSitePost = function ( query, fn ) {
-	const params = omit( query, [ 'site', 'postId' ] );
-	debug( '/read/sites/:site/post/:post' );
-	addReaderContentWidth( params );
-	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
 };
 
 /**
@@ -286,69 +207,6 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 	return this.wpcom.req.get( '/connect/site-info', { url: inputUrl } );
 };
 
-/**
- * Imports given XML file into the user's Reader feed.
- * XML file is expected to be in OPML format.
- *
- * @param {globalThis.File}     file         The File object to upload
- * @param {Function} fn           The callback function
- * @returns {globalThis.XMLHttpRequest} The XHR instance, to attach `progress`
- *   listeners to, etc.
- */
-Undocumented.prototype.importReaderFeed = function ( file, fn ) {
-	debug( '/read/following/mine/import' );
-	const params = {
-		path: '/read/following/mine/import',
-		formData: [ [ 'import', file ] ],
-	};
-	// XXX: kind strange, wpcom.js, that `apiVersion` must be in `query`
-	// *and* pass a `body` of null for this to work properly…
-	const query = {
-		apiVersion: '1.2',
-	};
-	return this.wpcom.req.post( params, query, null, fn );
-};
-
-/**
- * Requests streamlined approval to WordAds program
- *
- * @param {number}       siteId            The site ID
- * @returns {Promise} A promise representing the request
- */
-Undocumented.prototype.wordAdsApprove = function ( siteId ) {
-	debug( '/sites/:site:/wordads/approve' );
-	return this.wpcom.req.post( '/sites/' + siteId + '/wordads/approve' );
-};
-
-/**
- * Fetch the status of an Automated Transfer.
- *
- * @param {number} siteId -- the ID of the site being transferred
- * @param {number} transferId -- ID of the specific transfer
- * @returns {Promise} promise for handling result
- */
-Undocumented.prototype.transferStatus = function ( siteId, transferId ) {
-	debug( '/sites/:site_id/automated-transfers/status/:transfer_id' );
-	return this.wpcom.req.get( {
-		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`,
-	} );
-};
-
-/**
- * Get OAuth2 Client data for a given client ID
- *
- * @param {string}     clientId       The client ID
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.oauth2ClientId = function ( clientId, fn ) {
-	return this.wpcom.req.get(
-		`/oauth2/client-data/${ clientId }`,
-		{ apiNamespace: 'wpcom/v2' },
-		fn
-	);
-};
-
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 	domain,
 	providerId,
@@ -399,66 +257,6 @@ Undocumented.prototype.startMigration = function ( sourceSiteId, targetSiteId ) 
 		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
 		apiNamespace: 'wpcom/v2',
 	} );
-};
-
-Undocumented.prototype.getAtomicSiteMediaViaProxy = function (
-	siteIdOrSlug,
-	mediaPath,
-	{ query = '', maxSize }
-) {
-	const safeQuery = query.replace( /^\?/, '' );
-	const params = {
-		path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file?path=${ mediaPath }&${ safeQuery }`,
-		apiNamespace: 'wpcom/v2',
-	};
-
-	return new Promise( ( resolve, _reject ) => {
-		const fetchMedia = () =>
-			this.wpcom.req.get( { ...params, responseType: 'blob' }, ( error, data ) => {
-				if ( error || ! ( data instanceof Blob ) ) {
-					_reject( error );
-				} else {
-					resolve( data );
-				}
-			} );
-
-		if ( ! maxSize ) {
-			return fetchMedia();
-		}
-
-		return this.wpcom.req.get( { ...params, method: 'HEAD' }, ( err, data, headers ) => {
-			if ( headers[ 'Content-Length' ] > maxSize ) {
-				_reject( { message: 'exceeded_max_size' } );
-				return;
-			}
-
-			fetchMedia();
-		} );
-	} );
-};
-
-Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
-	siteIdOrSlug,
-	mediaPath,
-	options
-) {
-	let retries = 0;
-	const request = () =>
-		this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options ).catch( ( error ) => {
-			// Retry three times with exponential backoff times
-			if ( retries < 3 ) {
-				return new Promise( ( resolve ) => {
-					++retries;
-					setTimeout( () => {
-						resolve( request() );
-					}, ( retries * retries * 1000 ) / 2 );
-				} );
-			}
-
-			return Promise.reject( error );
-		} );
-
-	return request();
 };
 
 /**

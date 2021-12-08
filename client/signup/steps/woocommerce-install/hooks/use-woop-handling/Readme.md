@@ -39,7 +39,8 @@ The hook returns an object with the following properties:
 
 ### hasBlockers
 
-### isReadyForTransfer
-
 ### siteUpgrading
 
+### isReadyForTransfer
+
+### isDataReady

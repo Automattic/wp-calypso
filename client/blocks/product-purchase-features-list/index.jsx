@@ -34,6 +34,7 @@ import BusinessOnboarding from './business-onboarding';
 import CustomCSS from './custom-css';
 import CustomDomain from './custom-domain';
 import CustomizeTheme from './customize-theme';
+import FindNewTheme from './find-new-theme';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import GoogleMyBusiness from './google-my-business';
 import HappinessSupportCard from './happiness-support-card';
@@ -85,6 +86,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -149,6 +151,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -181,6 +184,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<SellOnlinePaypal isJetpack={ false } />

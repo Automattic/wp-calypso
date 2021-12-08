@@ -3,11 +3,13 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
 import { ReactElement, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
 import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -27,6 +29,11 @@ const ActionSection = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
+	flex-wrap: wrap;
+
+	@media ( max-width: 320px ) {
+		align-items: center;
+	}
 `;
 
 const Divider = styled.hr`
@@ -39,13 +46,27 @@ const WarningsOrHoldsSection = styled.div`
 	margin-bottom: 40px;
 `;
 
+const SupportLinkContainer = styled.p`
+	@media ( max-width: 320px ) {
+		margin-top: 0px;
+		width: 100%;
+	}
+`;
+
+const StyledNextButton = styled( NextButton )`
+	@media ( max-width: 320px ) {
+		width: 100%;
+		margin-bottom: 20px;
+	}
+`;
+
 function SupportLink() {
 	return (
-		<p>
+		<SupportLinkContainer>
 			{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
 				a: <SupportLinkStyle href="#support-link" />,
 			} ) }
-		</p>
+		</SupportLinkContainer>
 	);
 }
 
@@ -62,17 +83,24 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		wpcomSubdomainWarning,
 		siteUpgrading,
 		hasBlockers,
-
+		isDataReady,
 		warnings,
+		isAtomicSite,
 		isReadyForTransfer,
 	} = useWooCommerceOnPlansEligibility( siteId );
 
-	// Skip to transfer step if the site is ready for transfer.
 	useEffect( () => {
-		if ( isReadyForTransfer ) {
-			goToStep( 'transfer' );
+		if ( ! isAtomicSite ) {
+			// Automatically start the transfer process when it's ready.
+			if ( isReadyForTransfer ) {
+				return goToStep( 'transfer' );
+			}
+
+			return;
 		}
-	}, [ goToStep, isReadyForTransfer ] );
+
+		page.redirect( `/woocommerce-installation/${ wpcomDomain }` );
+	}, [ goToStep, isAtomicSite, isReadyForTransfer, wpcomDomain ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
@@ -105,7 +133,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			);
 		}
 
-		if ( warnings.length ) {
+		if ( warnings.length || isAtomicSite ) {
 			return (
 				<WarningsOrHoldsSection>
 					<Divider />
@@ -118,10 +146,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	}
 
 	function getContent() {
-		if ( ! siteId ) {
-			return null;
-		}
-
 		return (
 			<>
 				<div className="confirm__info-section" />
@@ -131,8 +155,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					{ getWarningsOrHoldsSection() }
 					<ActionSection>
 						<SupportLink />
-						<NextButton
-							disabled={ hasBlockers }
+						<StyledNextButton
+							disabled={ hasBlockers || ! isDataReady || isAtomicSite }
 							onClick={ () => {
 								if ( siteUpgrading.required ) {
 									return ( window.location.href = siteUpgrading.checkoutUrl );
@@ -141,10 +165,18 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 							} }
 						>
 							{ __( 'Sounds good' ) }
-						</NextButton>
+						</StyledNextButton>
 					</ActionSection>
 				</div>
 			</>
+		);
+	}
+
+	if ( ! siteId || ! isDataReady || isAtomicSite ) {
+		return (
+			<div className="confirm__info-section">
+				<LoadingEllipsis />
+			</div>
 		);
 	}
 

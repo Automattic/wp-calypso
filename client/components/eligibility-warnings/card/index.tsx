@@ -21,7 +21,6 @@ const CardTitle = styled.span`
 
 const CardBody = styled.div`
 	padding: 0 0 0 48px;
-	min-width: 300px;
 
 	p {
 		color: var( --studio-gray-60 );
@@ -30,7 +29,17 @@ const CardBody = styled.div`
 		line-height: 1.25rem;
 		margin-top: 30px;
 	}
-}`;
+
+	@media ( max-width: 660px ) {
+		padding: 0;
+	}
+`;
+
+const Icon = styled( Gridicon )`
+	@media ( max-width: 660px ) {
+		display: none;
+	}
+`;
 
 interface Card {
 	title: string;
@@ -42,7 +51,7 @@ export default function Card( { title, icon = 'domains', children }: Card ): Rea
 	return (
 		<>
 			<CardTitle>
-				<Gridicon icon={ icon } size={ 24 } />
+				<Icon icon={ icon } size={ 24 } />
 				<h2>{ title }</h2>
 			</CardTitle>
 			<CardBody>{ children }</CardBody>

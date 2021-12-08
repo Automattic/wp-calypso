@@ -2,7 +2,6 @@ import {
 	HELP_CONTACT_FORM_SITE_SELECT,
 	SUPPORT_HISTORY_REQUEST,
 	SUPPORT_HISTORY_SET,
-	SUPPORT_LEVEL_SET,
 } from 'calypso/state/action-types';
 
 // Support History data needs to be disabled temporarily to avoid rate-limiting with our Zendesk API.
@@ -23,9 +22,4 @@ export const requestSupportHistory = ( email ) => ( {
 export const setSupportHistory = ( items ) => ( {
 	type: SUPPORT_HISTORY_SET,
 	items,
-} );
-
-export const setSupportLevel = ( level ) => ( {
-	type: SUPPORT_LEVEL_SET,
-	level,
 } );
