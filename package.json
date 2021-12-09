@@ -292,7 +292,7 @@
 		"@bartekbp/typescript-checkstyle": "^5.0.0",
 		"bunyan": "^1.8.15",
 		"eslint-nibble": "^7.0.0",
-		"husky": "^7.0.0"
+		"husky": "^7.0.4"
 	},
 	"resolutions": {
 		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
