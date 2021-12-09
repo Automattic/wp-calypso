@@ -289,15 +289,6 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
-		if (
-			! providesDependenciesInQuery?.includes( 'siteId' ) &&
-			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
-			! providesDependenciesInQuery?.includes( 'site' )
-		) {
-			context.store.dispatch( setSelectedSiteId( null ) );
-		}
-
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
@@ -311,6 +302,17 @@ export default {
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
 		} );
+
+		const signupDependencies = getSignupDependencyStore( context.store.getState() );
+		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
+		if (
+			! providesDependenciesInQuery?.includes( 'siteId' ) &&
+			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
+			! providesDependenciesInQuery?.includes( 'site' ) &&
+			! signupDependencies.isManageSiteFlow
+		) {
+			context.store.dispatch( setSelectedSiteId( null ) );
+		}
 
 		next();
 	},
