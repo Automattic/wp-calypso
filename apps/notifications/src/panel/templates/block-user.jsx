@@ -76,7 +76,7 @@ function getShortDateString( timestamp, locale = 'en' ) {
 		} );
 		return formatter.format( new Date( timestamp ) );
 	} catch ( error ) {
-		return getISODateString( timestamp, locale );
+		return getISODateString( timestamp );
 	}
 }
 
@@ -97,7 +97,7 @@ function getNumericDateString( timestamp, locale = 'en' ) {
 		} );
 		return formatter.format( new Date( timestamp ) );
 	} catch ( error ) {
-		return getISODateString( timestamp, locale );
+		return getISODateString( timestamp );
 	}
 }
 
