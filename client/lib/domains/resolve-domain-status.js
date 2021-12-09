@@ -137,7 +137,7 @@ export function resolveDomainStatus(
 					icon: 'verifying',
 					listStatusText: status,
 					listStatusClass: 'verifying',
-					listStatusWeight: 200,
+					listStatusWeight: 600,
 				};
 			}
 
@@ -168,7 +168,7 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: pendingRenewalMessage,
 					listStatusClass: 'warning',
-					listStatusWeight: 800,
+					listStatusWeight: 400,
 				};
 			}
 
