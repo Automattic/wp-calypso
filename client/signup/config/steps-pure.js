@@ -541,24 +541,6 @@ export function generateSteps( {
 			],
 		},
 
-		/* Import onboarding */
-		'import-url': {
-			stepName: 'import-url',
-			providesDependencies: [
-				'importSiteEngine',
-				'importSiteFavicon',
-				'importSiteUrl',
-				'siteTitle',
-				'suggestedDomain',
-				'themeSlugWithRepo',
-			],
-		},
-
-		'import-preview': {
-			stepName: 'import-preview',
-			dependencies: [ 'importSiteEngine', 'importSiteFavicon', 'importSiteUrl', 'siteTitle' ],
-		},
-
 		'reader-landing': {
 			stepName: 'reader-landing',
 			providesDependencies: [],

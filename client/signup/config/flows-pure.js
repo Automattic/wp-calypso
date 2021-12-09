@@ -10,7 +10,6 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
-	getImportDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 } = {} ) {
@@ -330,26 +329,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2019-11-22',
 			pageTitle: translate( 'Launch your site' ),
-		},
-		{
-			name: 'import',
-			steps: [ 'user', 'from-url', 'domains', 'plans-import' ],
-			destination: getImportDestination,
-			description: 'A flow to kick off an import during signup',
-			disallowResume: true,
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		},
-		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
-		// when switching from the onboarding flow.
-		{
-			name: 'import-onboarding',
-			steps: [ 'user', 'site-type', 'import-url', 'import-preview', 'domains', 'plans-import' ],
-			destination: getImportDestination,
-			description: 'Import flow that can be used from the onboarding flow',
-			disallowResume: true,
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
 		},
 		{
 			name: 'importer',
