@@ -104,7 +104,6 @@
 		"themes/premium": false,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
-		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
