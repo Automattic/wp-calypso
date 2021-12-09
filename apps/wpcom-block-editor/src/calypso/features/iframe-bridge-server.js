@@ -1094,7 +1094,7 @@ function handleInlineHelpButton( calypsoPort ) {
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function getIsAppBannerVisible( calypsoPort ) {
+function handleAppBannerShowing( calypsoPort ) {
 	const isWelcomeGuideShown = select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown();
 	if ( ! isWelcomeGuideShown ) {
 		return;
@@ -1111,9 +1111,11 @@ function getIsAppBannerVisible( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		const { isAppBannerVisible, hasAppBannerBeenDismissed } = data;
 		if ( hasAppBannerBeenDismissed ) {
-			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true );
+			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, { onlyLocal: true } );
 		} else if ( isAppBannerVisible ) {
-			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( false );
+			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( false, {
+				onlyLocal: true,
+			} );
 		}
 	};
 }
@@ -1223,7 +1225,7 @@ function initPort( message ) {
 
 		handleSiteEditorFeedbackPlugin( calypsoPort );
 
-		getIsAppBannerVisible( calypsoPort );
+		handleAppBannerShowing( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

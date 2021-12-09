@@ -18,16 +18,14 @@ import getTourSteps from './tour-steps';
 import './style-tour.scss';
 
 function LaunchWpcomWelcomeTour() {
-	const { show, isNewPageLayoutModalOpen, isManuallyOpened, isWelcomeGuideEnabled } = useSelect(
-		( select ) => ( {
-			show: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown(),
-			// Handle the case where the new page pattern modal is initialized and open
-			isNewPageLayoutModalOpen:
-				select( 'automattic/starter-page-layouts' ) &&
-				select( 'automattic/starter-page-layouts' ).isOpen(),
-			isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
-		} )
-	);
+	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
+		show: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown(),
+		// Handle the case where the new page pattern modal is initialized and open
+		isNewPageLayoutModalOpen:
+			select( 'automattic/starter-page-layouts' ) &&
+			select( 'automattic/starter-page-layouts' ).isOpen(),
+		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
+	} ) );
 	const localeSlug = useLocale();
 
 	// Preload first card image (others preloaded after open state confirmed)
@@ -43,9 +41,9 @@ function LaunchWpcomWelcomeTour() {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			is_manually_opened: isManuallyOpened,
 		} );
-	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show, isWelcomeGuideEnabled ] );
+	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show ] );
 
-	if ( ! show && ! isNewPageLayoutModalOpen ) {
+	if ( ! show || isNewPageLayoutModalOpen ) {
 		return null;
 	}
 
