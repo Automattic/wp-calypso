@@ -33,9 +33,16 @@
 		padding: 0;
 		margin: 0;
 		font-size: var( --p2-font-size-form-xxs );
+		border-radius: 0;
 
 		&:hover {
+			outline: none;
 			background: none;
+		}
+
+		&:focus {
+			outline: thin dotted;
+			box-shadow: none;
 		}
 	}
 }

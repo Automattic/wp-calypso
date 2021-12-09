@@ -2,18 +2,26 @@
  * External dependencies
  */
 import { Button } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import wpcom from 'calypso/lib/wp';
 /**
  * Internal dependencies
  */
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
 function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const userEmail = useSelector( getCurrentUserEmail );
+
+	const [ emailResendCount, setEmailResendCount ] = useState( 0 );
+	const EMAIL_RESEND_MAX = 3;
+
 	const mail = (
 		<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path
@@ -24,6 +32,24 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 			<path d="M8.33301 11.666L19.9997 21.666L31.6663 11.666" stroke="" strokeWidth="1.5" />
 		</svg>
 	);
+
+	const handleResendEmailClick = () => {
+		if ( emailResendCount >= EMAIL_RESEND_MAX ) {
+			return;
+		}
+
+		wpcom.req
+			.post( '/me/send-verification-email' )
+			.then( () => {
+				setEmailResendCount( emailResendCount + 1 );
+				dispatch(
+					successNotice( translate( 'Verification mail resent. Please check your inbox.' ) )
+				);
+			} )
+			.catch( () => {
+				dispatch( errorNotice( translate( 'Unable to resend mail. Please try again later.' ) ) );
+			} );
+	};
 
 	return (
 		<P2StepWrapper
@@ -43,20 +69,18 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 						}
 					) }
 				</div>
-				<div className="p2-confirm-email__actions">
-					<div className="p2-confirm-email__actions-text">
-						{ translate( 'Are you having issues receiving it?' ) }
+				{ emailResendCount < EMAIL_RESEND_MAX && (
+					<div className="p2-confirm-email__actions">
+						<div className="p2-confirm-email__actions-text">
+							{ translate( 'Are you having issues receiving it?' ) }
+						</div>
+						<div className="p2-confirm-email__buttons">
+							<Button className="p2-confirm-email__resend-email" onClick={ handleResendEmailClick }>
+								{ translate( 'Resend the verification email' ) }
+							</Button>
+						</div>
 					</div>
-					<div className="p2-confirm-email__buttons">
-						<Button className="p2-confirm-email__resend-email" onClick={ () => {} }>
-							{ translate( 'Resend the verification email' ) }
-						</Button>
-						<div className="p2-confirm-email__buttons-separator">or</div>
-						<Button className="p2-confirm-email__change-email" onClick={ () => {} }>
-							{ translate( 'Use a different email address' ) }
-						</Button>
-					</div>
-				</div>
+				) }
 			</div>
 		</P2StepWrapper>
 	);
