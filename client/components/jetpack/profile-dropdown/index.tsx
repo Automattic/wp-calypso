@@ -55,7 +55,7 @@ const ProfileDropdown: React.FC = () => {
 				<Gravatar
 					className="profile-dropdown__button-gravatar"
 					user={ user }
-					alt={ translate( 'My Profile' ) }
+					alt={ translate( 'My Profile', { textOnly: true } ) }
 					size={ 24 }
 				/>
 			</button>

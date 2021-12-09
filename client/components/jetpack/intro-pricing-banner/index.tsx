@@ -29,7 +29,10 @@ const Banner: React.FC = () => {
 
 			<img
 				className="intro-pricing-banner__badge"
-				alt={ translate( 'Money Back %(days)d-Day Guarantee', { args: { days: 14 } } ) }
+				alt={ translate( 'Money Back %(days)d-Day Guarantee', {
+					args: { days: 14 },
+					textOnly: true,
+				} ) }
 				src={ badgeIcon }
 			/>
 		</div>
