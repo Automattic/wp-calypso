@@ -21,6 +21,7 @@ import {
 	isGSuiteProductSlug,
 } from 'calypso/lib/gsuite';
 import { GSuiteNewUser, GSuiteProductUser } from 'calypso/lib/gsuite/new-users';
+import type { TitanProductUser } from '@automattic/shopping-cart';
 
 import './style.scss';
 
@@ -801,7 +802,9 @@ export const EmailProviderGenericForm: FunctionComponent< EmailProviderGenericFo
 	);
 };
 
-export const transformGenericUserFromTitanMailboxForCart = ( genericNewUser: GenericNewUser ) => ( {
+export const transformGenericUserFromTitanMailboxForCart = (
+	genericNewUser: GenericNewUser
+): TitanProductUser => ( {
 	alternative_email: genericNewUser.alternativeEmail?.value,
 	email: `${ genericNewUser.mailBox?.value }@${ genericNewUser.domain?.value }`,
 	is_admin: Boolean( genericNewUser.isAdmin?.value ),

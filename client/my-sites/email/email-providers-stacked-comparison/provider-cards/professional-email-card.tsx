@@ -26,7 +26,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { addToCartAndCheckout, IntervalLength, recordTracksEventAddToCartClick } from './utils';
 import {
 	EmailProviderGenericForm,
 	GENERIC_EMAIL_FORM_ALTERNATIVE_EMAIL_FIELD,
@@ -39,6 +38,7 @@ import {
 	newUser,
 	transformGenericUserFromTitanMailboxForCart,
 } from '../email-provider-stacked-card/email-provider-generic-form';
+import { addToCartAndCheckout, IntervalLength, recordTracksEventAddToCartClick } from './utils';
 import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
 
 import './professional-email-card.scss';
@@ -117,7 +117,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			userCanAddEmail,
 			userCannotAddEmailReason
 		);
-
 
 		if ( ! validForm || ! userCanAddEmail ) {
 			return;
