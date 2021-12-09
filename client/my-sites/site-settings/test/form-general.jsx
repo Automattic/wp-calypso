@@ -2,11 +2,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'store', () => ( {
-	get: () => {},
-	User: () => {},
-} ) );
-
 jest.mock(
 	'calypso/blocks/upsell-nudge',
 	() =>
