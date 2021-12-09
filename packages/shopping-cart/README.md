@@ -34,9 +34,7 @@ The `UseShoppingCart` object contains the following properties. Note that the ac
 
 The following actions are also properties. Each one returns a Promise that resolves when the cart is next valid (this may be after several queued actions are complete).
 
-If there are errors returned by the cart endpoint (the `responseCart.messages.errors`), or if there is an error during the request (`loadingError`), the Promise will be rejected. The argument passed to the rejection will an instance of `CartActionConnectionError` or `CartActionResponseError` (both subclasses of `CartActionError`) with a `code` and a `message` property.
-
-Regardless, it's a good idea to always check `responseCart.messages.errors` and the `loadingError` property on the cart manager after any state change!
+**Note that the Promise returned by cart actions will never be rejected.** If there are errors returned by the shopping-cart response, they will be in the `messages.errors` property of the returned `ResponseCart`. If the cart request itself fails, the `loadingError` property will be set on the cart manager.
 
 - `addProductsToCart: ( products: RequestCartProduct[] ) => Promise<ResponseCart>`. A function that requests adding new products to the cart. May cause the cart to be replaced instead, depending on the RequestCartProducts (mostly renewals and non-renewals cannot co-exist in the cart at the same time).
 - `removeProductFromCart: ( uuidToRemove: string ) => Promise<ResponseCart>`. A function that requests removing a product from the cart.

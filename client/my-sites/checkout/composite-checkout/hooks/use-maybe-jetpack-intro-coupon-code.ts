@@ -2,14 +2,14 @@ import { isJetpackProductSlug, isJetpackPlanSlug } from '@automattic/calypso-pro
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 const JETPACK_INTRO_COUPON_CODE = 'FRESHPACK';
 
 // **NOTE**: This hook can be safely deleted when we no longer need to
 // rely on auto-applied coupons for introductory new purchase pricing.
 const useMaybeJetpackIntroCouponCode = (
-	products: MinimalRequestCartProduct[],
+	products: RequestCartProduct[],
 	isCouponApplied: boolean
 ): string | undefined => {
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
@@ -29,7 +29,7 @@ const useMaybeJetpackIntroCouponCode = (
 		}
 
 		// Only apply FRESHPACK for new purchases, not renewals.
-		if ( jetpackProducts.some( ( product ) => product.extra?.purchaseType === 'renewal' ) ) {
+		if ( jetpackProducts.some( ( product ) => product.extra.purchaseType === 'renewal' ) ) {
 			return undefined;
 		}
 

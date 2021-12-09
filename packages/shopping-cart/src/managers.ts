@@ -4,7 +4,7 @@ import { getEmptyResponseCart } from './empty-carts';
 import type {
 	ShoppingCartManager,
 	ShoppingCartState,
-	SavedActionPromise,
+	ResponseCart,
 	ShoppingCartManagerState,
 	ShoppingCartManagerGetState,
 	SubscribeCallback,
@@ -78,28 +78,20 @@ export function createSubscriptionManager( cartKey: string | undefined ): Subscr
 }
 
 export function createActionPromisesManager(): ActionPromises {
-	let actionPromises: SavedActionPromise[] = [];
+	let actionPromises: ( ( cart: ResponseCart ) => void )[] = [];
 
 	return {
 		resolve( tempResponseCart ) {
 			if ( actionPromises.length > 0 ) {
 				debug( `resolving ${ actionPromises.length } action promises` );
 				const responseCart = convertTempResponseCartToResponseCart( tempResponseCart );
-				actionPromises.forEach( ( actionPromise ) => actionPromise.resolve( responseCart ) );
+				actionPromises.forEach( ( callback ) => callback( responseCart ) );
 				actionPromises = [];
 			}
 		},
 
-		reject( error ) {
-			if ( actionPromises.length > 0 ) {
-				debug( `rejecting ${ actionPromises.length } action promises` );
-				actionPromises.forEach( ( actionPromise ) => actionPromise.reject( error ) );
-				actionPromises = [];
-			}
-		},
-
-		add( actionPromise: SavedActionPromise ) {
-			actionPromises.push( actionPromise );
+		add( resolve ) {
+			actionPromises.push( resolve );
 		},
 	};
 }
