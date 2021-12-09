@@ -4,7 +4,7 @@ addFilter(
 	'blocks.registerBlockType',
 	'full-site-editing/wpcom-site-editor/paragraph-block-placeholder',
 	( settings, name ) => {
-		if ( name !== 'core/paragraph' ) {
+		if ( name !== 'core/paragraph' || ! window.wpcomSiteEditorParagraphPlaceholder ) {
 			return settings;
 		}
 
