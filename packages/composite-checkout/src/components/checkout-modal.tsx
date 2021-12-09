@@ -18,9 +18,7 @@ export default function CheckoutModal( {
 	closeModal,
 	isVisible,
 	buttonCTA,
-	cancelButtonCTA,
 	secondaryButtonCTA,
-	hideCancelButton,
 }: CheckoutModalProps ): JSX.Element | null {
 	const { __ } = useI18n();
 	useModalScreen( isVisible, closeModal );
@@ -47,11 +45,6 @@ export default function CheckoutModal( {
 				<CheckoutModalCopy className="checkout-modal__copy">{ copy }</CheckoutModalCopy>
 
 				<CheckoutModalActions>
-					{ hideCancelButton ? undefined : (
-						<Button onClick={ () => handleActionAndClose( cancelAction, closeModal ) }>
-							{ cancelButtonCTA || __( 'Cancel' ) }
-						</Button>
-					) }
 					{ secondaryAction && secondaryButtonCTA && (
 						<Button
 							onClick={ () => {
@@ -87,9 +80,7 @@ interface CheckoutModalProps {
 	isVisible: boolean;
 	className?: string;
 	buttonCTA?: React.ReactNode;
-	cancelButtonCTA?: React.ReactNode;
 	secondaryButtonCTA?: React.ReactNode;
-	hideCancelButton?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
