@@ -34,7 +34,7 @@ export default function useDetectMatchingAnchorSite(): boolean {
 
 		setIsLoading( true );
 
-		// construct query object from entries that are not null
+		// construct query object from entries that are not null or undefined
 		const query = Object.fromEntries(
 			[
 				[ 'podcast', anchorFmPodcastId ],
