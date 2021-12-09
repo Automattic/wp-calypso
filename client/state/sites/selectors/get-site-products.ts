@@ -23,8 +23,8 @@ interface SiteWithProducts {
 	products: RawSiteProduct[];
 }
 
-function isSiteWithProducts( site: null | Record< string, unknown > ): site is SiteWithProducts {
-	return ( site as SiteWithProducts ).products !== undefined;
+function isSiteWithProducts( site: unknown ): site is SiteWithProducts {
+	return ( site as SiteWithProducts )?.products !== undefined;
 }
 
 /**

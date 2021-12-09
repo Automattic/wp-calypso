@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import React from 'react';
@@ -9,7 +10,7 @@ import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep } from './ready';
 import { GoToStep, GoToNextStep, UrlData } from './types';
-import { getImporterUrl } from './util';
+import { getImporterUrl, getWpComOnboardingUrl } from './util';
 import './style.scss';
 
 type Props = ConnectedProps< typeof connector > & {
@@ -64,7 +65,12 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	};
 
 	const goToImporterPage = ( platform: string ): void => {
-		const importerUrl = getImporterUrl( signupDependencies.siteSlug, platform, urlData.url );
+		let importerUrl;
+		if ( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
+			importerUrl = getWpComOnboardingUrl( signupDependencies.siteSlug, platform, urlData.url );
+		} else {
+			importerUrl = getImporterUrl( signupDependencies.siteSlug, platform, urlData.url );
+		}
 
 		importerUrl.includes( 'wp-admin' )
 			? ( window.location.href = importerUrl )

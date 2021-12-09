@@ -59,8 +59,10 @@ export const recordCompositeCheckoutErrorDuringAnalytics = ( {
 
 export const recordTransactionBeginAnalytics = ( {
 	paymentMethodId,
+	useForAllSubscriptions,
 }: {
 	paymentMethodId: CheckoutPaymentMethodSlug;
+	useForAllSubscriptions?: boolean;
 } ) => ( dispatch: CalypsoDispatch ): void => {
 	try {
 		if ( isRedirectPaymentMethod( paymentMethodId ) ) {
@@ -70,12 +72,14 @@ export const recordTransactionBeginAnalytics = ( {
 			recordTracksEvent( 'calypso_checkout_form_submit', {
 				credits: null,
 				payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+				...( useForAllSubscriptions ? { use_for_all_subs: useForAllSubscriptions } : undefined ),
 			} )
 		);
 		dispatch(
 			recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 				credits: null,
 				payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+				...( useForAllSubscriptions ? { use_for_all_subs: useForAllSubscriptions } : undefined ),
 			} )
 		);
 		const paymentMethodIdForTracks = paymentMethodId.startsWith( 'existingCard' )

@@ -515,7 +515,7 @@ export function getRenewalItemFromProduct(
 	product: ( WithCamelCaseSlug | WithSnakeCaseSlug ) & {
 		is_domain_registration?: boolean;
 		isDomainRegistration?: boolean;
-		id: string;
+		id: string | number;
 	} & Partial< RequestCartProduct > & {
 			domain?: string;
 			users?: GSuiteProductUser[];
@@ -585,7 +585,7 @@ export function getRenewalItemFromProduct(
  */
 export function getRenewalItemFromCartItem< T extends Partial< RequestCartProduct > >(
 	cartItem: T,
-	properties: { id: string }
+	properties: { id: string | number }
 ): T {
 	return {
 		...cartItem,
@@ -606,10 +606,10 @@ export function hasDomainInCart( cart: ResponseCart, domain: string ): boolean {
 /**
  * Changes presence of a privacy protection for the given domain cart item.
  */
-export function updatePrivacyForDomain(
-	item: ResponseCartProduct,
+export function updatePrivacyForDomain< T extends IncompleteRequestCartProduct >(
+	item: T,
 	value: boolean
-): ResponseCartProduct {
+): T {
 	return {
 		...item,
 		extra: {

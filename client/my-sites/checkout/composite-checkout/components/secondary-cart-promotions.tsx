@@ -10,7 +10,7 @@ import type { ResponseCart, RequestCartProduct } from '@automattic/shopping-cart
 export type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
 	responseCart: PartialCart;
-	addItemToCart: ( item: RequestCartProduct ) => void;
+	addItemToCart: ( item: Partial< RequestCartProduct > ) => void;
 	isCartPendingUpdate: boolean;
 }
 

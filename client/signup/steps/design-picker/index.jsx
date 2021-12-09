@@ -135,6 +135,7 @@ export default function DesignPickerStep( props ) {
 				},
 				{
 					selectedDesign: _selectedDesign,
+					selectedSiteCategory: categorization.selection,
 				}
 			)
 		);

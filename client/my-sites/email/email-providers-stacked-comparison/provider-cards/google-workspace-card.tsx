@@ -153,18 +153,6 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	const [ validForm, setValidForm ] = useState( false );
 
 	const onConfirmNewMailboxes = () => {
-		const {
-			comparisonContext,
-			domain,
-			gSuiteProductMonthly,
-			gSuiteProductYearly,
-			hasCartDomain,
-			productsList,
-			selectedSite,
-			shoppingCartManager,
-			source,
-		} = props;
-
 		const gSuiteProduct =
 			intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
@@ -211,7 +199,6 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	const domainList = domain ? [ domain ] : [];
 
 	googleWorkspace.onExpandedChange = onExpandedChange;
-
 	googleWorkspace.formFields = (
 		<EmailProviderGenericForm
 			extraValidation={ identityMap }

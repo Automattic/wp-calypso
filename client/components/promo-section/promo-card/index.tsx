@@ -15,7 +15,7 @@ import './style.scss';
 export interface Image {
 	path: string;
 	className?: string;
-	alt?: string | TranslateResult;
+	alt?: string;
 	align?: 'left' | 'right';
 }
 

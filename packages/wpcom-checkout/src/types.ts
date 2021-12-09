@@ -121,6 +121,7 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	gstin?: string;
 	nik?: string;
 	useForAllSubscriptions?: boolean;
+	eventSource?: string;
 };
 
 // The data model used in ContactDetailsFormFields and related components.
@@ -229,6 +230,7 @@ export type CheckoutPaymentMethodSlug =
 	| 'stripe-three-d-secure'
 	| 'wechat'
 	| `existingCard${ string }`
+	| 'stripe' // a synonym for 'card'
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay'; // a synonym for 'web-pay'
 

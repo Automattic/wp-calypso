@@ -36,11 +36,17 @@ export function getSiteSettingsSaveRequestStatus( state, siteId ) {
 }
 
 /**
+ * @typedef {{
+ blog_public?: number;
+ }} SiteSettingsItem
+ */
+
+/**
  * Returns the settings for the specified site ID
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @returns {object}        Site settings
+ * @returns {SiteSettingsItem}        Site settings
  */
 export function getSiteSettings( state, siteId ) {
 	return get( state.siteSettings.items, [ siteId ], null );

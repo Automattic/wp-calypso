@@ -70,7 +70,9 @@ const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) =
 	const purchasedProducts =
 		useSelector( ( state ) => getSiteProducts( state, siteId ) )
 			?.map( ( { productSlug } ) => productSlug )
-			.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) ) ?? [];
+			.filter( ( productSlug ) =>
+				( JETPACK_PRODUCTS_LIST as ReadonlyArray< string > ).includes( productSlug )
+			) ?? [];
 
 	// When coming from in-connect flow, the url contains 'source=jetpack-connect-plans' query param.
 	const isInConnectFlow = context.query?.source === 'jetpack-connect-plans';

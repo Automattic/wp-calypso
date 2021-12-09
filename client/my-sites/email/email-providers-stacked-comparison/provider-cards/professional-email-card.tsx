@@ -118,6 +118,11 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			userCannotAddEmailReason
 		);
 
+
+		if ( ! validForm || ! userCanAddEmail ) {
+			return;
+		}
+
 		const props: TitanProductProps = {
 			domain: selectedDomainName,
 			quantity: genericUsers.length,
