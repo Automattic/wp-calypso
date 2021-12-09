@@ -12,15 +12,20 @@ const Banner: React.FC = () => {
 		<div className="intro-pricing-banner">
 			<div className="intro-pricing-banner__copy">
 				<p className="intro-pricing-banner__header">
-					{ preventWidows( translate( 'Check out our new introductory pricing' ) ) }
+					{ preventWidows(
+						translate( 'Get %(percent)d%% off your first year*', {
+							args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+							comment: '* clause describing the price adjustment',
+						} )
+					) }
 				</p>
 				<p className="intro-pricing-banner__call-to-action">
 					{ preventWidows(
 						translate(
-							'Get the perfect Jetpack for your site with %(percent)d%% off the first term. Try it risk free with our %(days)d-day money-back guarantee.*',
+							'Get the perfect Jetpack for your site with %(percent)d%% off the first year. Try it risk free with our %(days)d-day money-back guarantee.**',
 							{
 								args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE, days: 14 },
-								comment: '* clause describing the money back guarantee',
+								comment: '** clause describing the money back guarantee',
 							}
 						)
 					) }
