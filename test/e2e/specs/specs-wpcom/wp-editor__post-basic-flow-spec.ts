@@ -83,12 +83,12 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 
 		it( 'Add post category', async function () {
-			await editorSettingsSidebarComponent.expandSectionIfCollapsed( 'Categories' );
+			await editorSettingsSidebarComponent.expandSection( 'Categories' );
 			await editorSettingsSidebarComponent.clickCategory( category );
 		} );
 
 		it( 'Add post tag', async function () {
-			await editorSettingsSidebarComponent.expandSectionIfCollapsed( 'Tags' );
+			await editorSettingsSidebarComponent.expandSection( 'Tags' );
 			await editorSettingsSidebarComponent.enterTag( tag );
 		} );
 	} );

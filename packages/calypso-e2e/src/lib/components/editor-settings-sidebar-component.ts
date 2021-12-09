@@ -1,23 +1,36 @@
 import { Frame, Page } from 'playwright';
 
 export type EditorSidebarTab = 'Post' | 'Block';
-export type EditorSidebarSection = 'Categories' | 'Tags';
+export type EditorSidebarSection = 'Categories' | 'Tags' | 'Status & Visibility';
+export type PostVisibilityOptions = 'Public' | 'Private' | 'Password';
 
 const sidebarParentSelector = '[aria-label="Editor settings"]';
 
 const selectors = {
+	// Tab
 	tabButton: ( tabName: EditorSidebarTab ) =>
 		`${ sidebarParentSelector } button:has-text("${ tabName }")`,
 	activeTabButton: ( tabName: EditorSidebarTab ) =>
 		`${ sidebarParentSelector } button.is-active:has-text("${ tabName }")`,
+
+	// Sections
 	sectionToggle: ( sectionName: EditorSidebarSection ) =>
 		`${ sidebarParentSelector } .components-panel__body-toggle:has-text("${ sectionName }")`,
 	expandedSection: ( sectionName: EditorSidebarSection ) =>
 		`${ sidebarParentSelector } .is-opened .components-panel__body-toggle:has-text("${ sectionName }")`,
 	lastSection: `${ sidebarParentSelector } .components-panel__body >> nth=-1`,
+
+	// Status & Visibility
+	visibilityToggle: '.edit-post-post-visibility__toggle',
+	visibilityOption: ( option: PostVisibilityOptions ) => `input[value="${ option.toLowerCase() }"]`,
+	postPasswordInput: '.editor-post-visibility__dialog-password-input',
+
+	// Category
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ sidebarParentSelector } [aria-label=Categories] :text("${ categoryName }")`,
 	tagInput: `${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") input`,
+
+	// Tag
 	addedTag: ( tagName: string ) =>
 		`${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") .components-form-token-field__token:has-text("${ tagName }")`,
 	closeSidebarButton: `${ sidebarParentSelector } [aria-label="Close settings"]:visible`, // there's a hidden copy in there
@@ -58,12 +71,41 @@ export class EditorSettingsSidebarComponent {
 	 * @param {EditorSidebarSection} sectionName Name of section.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async expandSectionIfCollapsed( sectionName: EditorSidebarSection ): Promise< void > {
+	async expandSection( sectionName: EditorSidebarSection ): Promise< void > {
 		// Avoid the wpcalypso/staging banner
 		await this.scrollToBottomOfSidebar();
 		if ( ! ( await this.frame.isVisible( selectors.expandedSection( sectionName ) ) ) ) {
 			await this.frame.click( selectors.sectionToggle( sectionName ) );
 		}
+	}
+
+	/* Status & Visibility */
+
+	/**
+	 * Sets the post visibility to the provided visibility setting.
+	 *
+	 * @param {PostVisibilityOptions} visibility Desired post visibility setting.
+	 */
+	async setVisibility( visibility: PostVisibilityOptions ): Promise< void > {
+		await this.expandSection( 'Status & Visibility' );
+		await this.frame.click( selectors.visibilityToggle );
+
+		// Visibility of 'Private' requires the post to be published at the time
+		// by accepting the dialog box.
+		if ( visibility === 'Private' ) {
+			// Set up a handler to accept the dialog instead of dismissing it.
+			this.page.on( 'dialog', ( dialog ) => dialog.accept() );
+		}
+
+		await this.frame.click( selectors.visibilityOption( visibility ) );
+	}
+
+	/**
+	 *
+	 * @param password
+	 */
+	async setPostPassword( password: string ): Promise< void > {
+		await this.frame.fill( selectors.postPasswordInput, password );
 	}
 
 	/**
