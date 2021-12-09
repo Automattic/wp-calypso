@@ -14,7 +14,7 @@ import type { PriceTierEntry } from '@automattic/calypso-products';
 export default function productTooltip(
 	product: SelectorProduct,
 	tiers: PriceTierEntry[]
-): null | TranslateResult {
+): TranslateResult {
 	if ( ! ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( product.productSlug ) ) {
 		return null;
 	}

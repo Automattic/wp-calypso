@@ -5,14 +5,14 @@ import { FunctionComponent, ReactNode } from 'react';
 import './style.scss';
 
 interface Props {
-	bodyText: TranslateResult | ReactNode;
-	buttonLink?: TranslateResult;
+	bodyText: TranslateResult;
+	buttonLink?: string;
 	buttonText?: TranslateResult;
 	headerText: TranslateResult;
 	iconComponent?: ReactNode;
 	onClick?: () => void;
 	openButtonLinkOnNewTab?: boolean;
-	secondaryButtonLink?: TranslateResult;
+	secondaryButtonLink?: string;
 	secondaryButtonText?: TranslateResult;
 	secondaryOnClick?: () => void;
 }

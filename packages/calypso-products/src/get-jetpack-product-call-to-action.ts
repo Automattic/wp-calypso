@@ -8,10 +8,7 @@ import type { TranslateResult } from 'i18n-calypso';
  * @param {Product} product Product purchase object
  * @returns {TranslateResult} Product display name
  */
-export function getJetpackProductCallToAction( product: Product ): TranslateResult | undefined {
-	const jetpackProductsCallToActions = getJetpackProductsCallToAction() as Record<
-		string,
-		TranslateResult
-	>;
+export function getJetpackProductCallToAction( product: Product ): TranslateResult {
+	const jetpackProductsCallToActions = getJetpackProductsCallToAction();
 	return jetpackProductsCallToActions[ product.product_slug ];
 }

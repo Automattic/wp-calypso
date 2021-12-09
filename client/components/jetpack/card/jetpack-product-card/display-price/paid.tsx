@@ -8,7 +8,6 @@ import { getJetpackSaleCouponDiscountRatio } from 'calypso/state/marketing/selec
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { Moment } from 'moment';
-import type { ReactNode } from 'react';
 
 type OwnProps = {
 	discountedPrice?: number;
@@ -16,7 +15,7 @@ type OwnProps = {
 	billingTerm: Duration;
 	currencyCode?: string | null;
 	displayFrom?: boolean;
-	tooltipText?: TranslateResult | ReactNode;
+	tooltipText?: TranslateResult;
 	expiryDate?: Moment;
 	hideSavingLabel?: boolean;
 };

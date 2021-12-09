@@ -8,12 +8,12 @@ import './style.scss';
 export interface Props {
 	children?: ReactNode;
 	className?: string;
-	header: string | i18nCalypso.TranslateResult;
-	subheader?: string | ReactNode;
+	header: ReactNode;
+	subheader?: ReactNode;
 	highlight?: 'info' | 'success' | 'warning' | 'error';
 	tag?: string;
-	summary?: string | ReactNode;
-	expandedSummary?: string | ReactNode;
+	summary?: ReactNode;
+	expandedSummary?: ReactNode;
 	clickableHeader?: boolean;
 	onClick?: () => void;
 }

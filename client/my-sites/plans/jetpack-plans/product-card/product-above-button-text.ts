@@ -7,7 +7,7 @@ export default function productAboveButtonText(
 	siteProduct?: SiteProduct,
 	isOwned?: boolean,
 	isIncludedInPlan?: boolean
-): TranslateResult | null {
+): TranslateResult {
 	if (
 		! isOwned &&
 		! isIncludedInPlan &&

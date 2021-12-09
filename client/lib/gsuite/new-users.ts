@@ -14,7 +14,7 @@ import type { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
 	value: string;
-	error: TranslateResult | null;
+	error: TranslateResult;
 }
 
 export interface GSuiteNewUser {

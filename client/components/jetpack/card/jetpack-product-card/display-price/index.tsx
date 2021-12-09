@@ -8,7 +8,6 @@ import Paid from './paid';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { TranslateResult } from 'i18n-calypso';
 import type { Moment } from 'moment';
-import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -27,7 +26,7 @@ type OwnProps = {
 	showAbovePriceText?: boolean;
 	originalPrice: number;
 	productName: TranslateResult;
-	tooltipText?: TranslateResult | ReactNode;
+	tooltipText?: TranslateResult;
 };
 
 const DisplayPrice: React.FC< OwnProps > = ( {

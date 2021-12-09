@@ -33,10 +33,10 @@ type OwnProps = {
 	isDeprecated?: boolean;
 	isAligned?: boolean;
 	isDisabled?: boolean;
-	disabledMessage?: TranslateResult | null;
+	disabledMessage?: TranslateResult;
 	displayFrom?: boolean;
-	tooltipText?: TranslateResult | ReactNode;
-	aboveButtonText?: TranslateResult | ReactNode;
+	tooltipText?: TranslateResult;
+	aboveButtonText?: TranslateResult;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
 	showAbovePriceText?: boolean;

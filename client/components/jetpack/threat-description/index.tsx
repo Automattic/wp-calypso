@@ -1,4 +1,4 @@
-import { translate, TranslateResult } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { PureComponent, ReactNode } from 'react';
 import DiffViewer from 'calypso/components/diff-viewer';
 import { ThreatStatus } from 'calypso/components/jetpack/threat-item/types';
@@ -20,7 +20,7 @@ export interface Props {
 }
 
 class ThreatDescription extends PureComponent< Props > {
-	renderTextOrNode( content: string | TranslateResult | ReactNode ) {
+	renderTextOrNode( content: ReactNode ) {
 		return <>{ content }</>;
 	}
 
@@ -30,7 +30,6 @@ class ThreatDescription extends PureComponent< Props > {
 		switch ( status ) {
 			case 'fixed':
 				return translate( 'How did Jetpack fix it?' );
-				break;
 
 			case 'current':
 				if ( isFixable ) {
@@ -38,11 +37,8 @@ class ThreatDescription extends PureComponent< Props > {
 				}
 				return translate( 'Resolving the threat' );
 
-				break;
-
 			default:
 				return translate( 'How we will fix it?' );
-				break;
 		}
 	}
 

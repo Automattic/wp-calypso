@@ -19,7 +19,7 @@ export interface ProviderCard {
 	logo?: ReactElement | { path: string; className?: string };
 	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
 	onButtonClick?: ( event: React.MouseEvent ) => void;
-	priceBadge?: ReactElement | TranslateResult;
+	priceBadge?: TranslateResult;
 	productName?: TranslateResult;
 	providerKey: string;
 	showExpandButton?: boolean;

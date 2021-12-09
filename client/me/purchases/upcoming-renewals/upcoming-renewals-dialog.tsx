@@ -29,7 +29,7 @@ interface Props {
 	isVisible: boolean;
 	onClose: () => void;
 	onConfirm: ( purchases: Purchase[] ) => void;
-	submitButtonText?: string | TranslateResult;
+	submitButtonText?: TranslateResult;
 	showManagePurchaseLinks?: boolean;
 	getManagePurchaseUrlFor?: ( siteSlug: string, purchaseId: number ) => string;
 }

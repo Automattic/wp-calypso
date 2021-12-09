@@ -8,7 +8,7 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { createElement, ReactNode } from 'react';
+import { createElement } from 'react';
 import { useSelector } from 'react-redux';
 import successImageAntiSpam from 'calypso/assets/images/jetpack/licensing-activation-success-Anti-Spam.png';
 import successImageComplete from 'calypso/assets/images/jetpack/licensing-activation-success-Complete.png';
@@ -19,7 +19,7 @@ import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 
 type ActivationConfirmationInfo = {
 	image: string;
-	text: TranslateResult | ReactNode;
+	text: TranslateResult;
 	buttonUrl: string;
 };
 

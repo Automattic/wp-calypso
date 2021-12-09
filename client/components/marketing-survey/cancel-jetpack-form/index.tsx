@@ -37,7 +37,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 	const dispatch = useDispatch();
 	const [ cancellationStep, setCancellationStep ] = useState( steps.FEATURES_LOST_STEP ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
-	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
+	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult >( '' );
 
 	const isAtomicSite = useSelector( ( state ) =>
 		isSiteAutomatedTransfer( state, purchase.siteId )
@@ -145,10 +145,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 		recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
-	const onSurveyAnswerChange = (
-		answerId: string | null,
-		answerText: TranslateResult | string
-	) => {
+	const onSurveyAnswerChange = ( answerId: string | null, answerText: TranslateResult ) => {
 		if ( answerId !== surveyAnswerId ) {
 			recordTracksEvent( 'calypso_purchases_cancel_jetpack_survey_answer_change', {
 				answer_id: answerId,

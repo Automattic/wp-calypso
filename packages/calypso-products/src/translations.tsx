@@ -324,7 +324,7 @@ export const useJetpack1TbStorageAmountText = (): TranslateResult => {
 
 export const useJetpackStorageAmountTextByProductSlug = (
 	productSlug: string
-): TranslateResult | undefined => {
+): TranslateResult => {
 	const TEN_GIGABYTES = useJetpack10GbStorageAmountText();
 	const ONE_TERABYTE = useJetpack1TbStorageAmountText();
 
