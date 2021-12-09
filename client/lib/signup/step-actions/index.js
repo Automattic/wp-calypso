@@ -337,9 +337,10 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 
 	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
 
-	wpcom.undocumented().changeTheme( siteSlug, { theme }, function ( errors ) {
-		callback( isEmpty( errors ) ? undefined : [ errors ] );
-	} );
+	wpcom.req
+		.post( `/sites/${ siteSlug }/themes/mine`, { theme } )
+		.then( () => callback() )
+		.catch( ( error ) => callback( [ error ] ) );
 }
 
 export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
@@ -350,10 +351,8 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 
 	const { theme } = selectedDesign;
 
-	Promise.resolve()
-		.then( () =>
-			wpcom.undocumented().changeTheme( siteSlug, { theme, dont_change_homepage: true } )
-		)
+	wpcom.req
+		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
 		.then( () =>
 			wpcom.req.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
