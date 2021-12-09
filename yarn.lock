@@ -199,7 +199,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
-    "@types/node": ^16.11.10
+    "@types/node": ^16.11.12
     cookie: ^0.4.0
     tslib: ^2.3.0
     typescript: ^4.5.2
@@ -229,9 +229,9 @@ __metadata:
     "@jest/globals": ^27.3.1
     "@types/config": ^0.0.40
     "@types/jest": ^27.0.3
-    "@types/node": ^16.11.10
+    "@types/node": ^16.11.12
     "@types/node-fetch": ^2.5.12
-    "@types/totp-generator": ^0.0.2
+    "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.2.4
     asana-phrase: ^0.0.8
     config: ^3.3.6
@@ -567,7 +567,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": 7.0.2
-    "@types/react": ^17.0.36
+    "@types/react": ^17.0.37
     "@wordpress/compose": ^5.0.6
     "@wordpress/i18n": ^4.2.4
     react: ^17.0.2
@@ -585,7 +585,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     react-dom: ^17.0.2
   peerDependencies:
-    "@types/react": ">=16.1.0"
+    "@types/react": ">=16.14.21"
     react: ">=16.2.0"
   peerDependenciesMeta:
     "@types/react":
@@ -6505,10 +6505,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.14.177":
-  version: 4.14.177
-  resolution: "@types/lodash@npm:4.14.177"
-  checksum: b411e2fcf3cf6a97a96bd1f06b2d059c413530bfec6f3cc4ff14e627ab8dafe8fb22c192bcfd2f1334eed6efe09b9903696da1aff35fa6f9f66b21fb54feb4fa
+"@types/lodash@npm:*, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.14.178":
+  version: 4.14.178
+  resolution: "@types/lodash@npm:4.14.178"
+  checksum: 820e33578a084aba2ca66fc83728c14d82813b91f3f14f281621b36904533c3d1681992b5e2719579b8beb52e1a77cfa914283a145f66dfa71b5e02a7cec5a37
   languageName: node
   linkType: hard
 
@@ -6591,10 +6591,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.10":
-  version: 16.11.10
-  resolution: "@types/node@npm:16.11.10"
-  checksum: 01c20c34ee96682306245b0144662f9364902d9dac25bd92d559b12b00e2b0a630c6003cb9ec1e4b02cede6e42b5309b258fa0d3eef622583ead9826b4377519
+"@types/node@npm:*, @types/node@npm:^16.11.12":
+  version: 16.11.12
+  resolution: "@types/node@npm:16.11.12"
+  checksum: 941afac5fc5816106521f9846be969ce7460b2ad8e72eb1d675666d6418eb3cc0254085b4d0a5e85b64a155eac8b83bba8689416a1faf94a9b40bbc219d3eb8c
   languageName: node
   linkType: hard
 
@@ -6809,14 +6809,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^17.0.36":
-  version: 17.0.36
-  resolution: "@types/react@npm:17.0.36"
+"@types/react@npm:^17.0.37":
+  version: 17.0.37
+  resolution: "@types/react@npm:17.0.37"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 6a23efc1554aaef4a4e827f7ef8afca94fa5f1e8662a62afd080483e9c27ff45ae1f960c6e0250ebe9820e5bed9ea4bf9f4fbadf95dbceb52ee1242b0015646e
+  checksum: af440f6281bd700a3b65146ff955f230243c8137a3c902e111d1e4ab5bf77724bf0e979cee286e51c7db76e6cdd505cd213c557f04831ca03a1767f7a7fcadba
   languageName: node
   linkType: hard
 
@@ -6910,10 +6910,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/totp-generator@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@types/totp-generator@npm:0.0.2"
-  checksum: 4009f1d3eb40ed27037302c874d014bc87dad317475b525f0407f41764c5793688d77d69a5cd6905475ac8c363fd9ce35df2f6c2f79ce64b7fcb270c5dab670b
+"@types/totp-generator@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@types/totp-generator@npm:0.0.3"
+  checksum: e53ff5d86b9d45dd0f607fb84d51dbbafa1a87a148daef612743ff8637eab65605b5a31fe67496e9a44deba095af585325dae8da94d4ced32bc7fbaece99f4de
   languageName: node
   linkType: hard
 
@@ -7050,14 +7050,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__compose@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@types/wordpress__compose@npm:4.0.0"
+"@types/wordpress__compose@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@types/wordpress__compose@npm:4.0.1"
   dependencies:
     "@types/lodash": "*"
     "@types/react": "*"
     "@wordpress/element": ^3.0.0
-  checksum: 835b5e24f83a6c1db20a290107d272f2321fe24341effbbe3b35dd8aef63d5eeb320c71cf0ac08a34258322e74c486dcdb3348e576b2ec395a5ad00cab0a409d
+  checksum: 0d4e4328f145e556e13fe1cb85e2bc7712489572a6784a9052a80e792076b61d0b2660b84fa26461ced448a7e1e767347a059445127f4db0773c3dab2d711a1d
   languageName: node
   linkType: hard
 
@@ -37550,11 +37550,11 @@ testarmada-magellan@11.0.10:
     "@types/debug": ^4.1.7
     "@types/enzyme": ^3.10.10
     "@types/fast-json-stable-stringify": ^2.0.0
-    "@types/lodash": ^4.14.177
-    "@types/node": ^16.11.10
+    "@types/lodash": ^4.14.178
+    "@types/node": ^16.11.12
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
-    "@types/react": ^17.0.36
+    "@types/react": ^17.0.37
     "@types/react-modal": ^3.13.1
     "@types/react-redux": ^7.1.20
     "@types/react-router-dom": ^5.3.2
@@ -37567,7 +37567,7 @@ testarmada-magellan@11.0.10:
     "@types/wordpress__block-editor": ^6.0.4
     "@types/wordpress__block-library": ^2.6.1
     "@types/wordpress__components": ^14.0.4
-    "@types/wordpress__compose": ^4.0.0
+    "@types/wordpress__compose": ^4.0.1
     "@types/wordpress__data": ^4.6.10
     "@types/wordpress__data-controls": ^2.2.0
     "@types/wordpress__editor": ^10.0.1
