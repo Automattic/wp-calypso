@@ -9,8 +9,6 @@ import DomainsLandingContentCard from '../content-card';
 import DomainsLandingHeader from '../header';
 import { getMaintenanceMessageFromError } from '../utils';
 
-const wpcom = wp.undocumented();
-
 class RegistrantVerificationPage extends Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
@@ -23,14 +21,14 @@ class RegistrantVerificationPage extends Component {
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { domain, email, token } = this.props;
-		wpcom.domainsVerifyRegistrantEmail( domain, email, token ).then(
-			( response ) => {
+		wp.req
+			.get( `/domains/${ domain }/verify-email`, { email, token } )
+			.then( ( response ) => {
 				this.setState( this.getVerificationSuccessState( get( response, 'domains', [ domain ] ) ) );
-			},
-			( error ) => {
+			} )
+			.catch( ( error ) => {
 				this.setErrorState( error );
-			}
-		);
+			} );
 	}
 
 	getLoadingState() {
@@ -232,10 +230,9 @@ class RegistrantVerificationPage extends Component {
 
 		this.setState( this.getLoadingState() );
 
-		wpcom.resendIcannVerification( domain, ( error ) => {
-			if ( error ) {
-				this.setErrorState( { error: 'resend_email_failed' } );
-			} else {
+		wp.req
+			.post( `/domains/${ domain }/resend-icann/` )
+			.then( () => {
 				this.setState( {
 					title: translate( 'Email sent!' ),
 					message: translate( 'Check your email.' ),
@@ -244,8 +241,10 @@ class RegistrantVerificationPage extends Component {
 					footer: translate( "That's all for now. We'll see you again soon." ),
 					isLoading: false,
 				} );
-			}
-		} );
+			} )
+			.catch( () => {
+				this.setErrorState( { error: 'resend_email_failed' } );
+			} );
 	};
 
 	render() {
