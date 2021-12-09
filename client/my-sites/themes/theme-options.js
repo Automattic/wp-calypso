@@ -22,7 +22,6 @@ import {
 	getThemeHelpUrl,
 	getThemePurchaseUrl,
 	getThemeSignupUrl,
-	getThemeSupportUrl,
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isThemeGutenbergFirst,
@@ -172,13 +171,6 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 		getUrl: getThemeDetailsUrl,
 	};
 
-	const support = {
-		label: translate( 'Setup' ),
-		icon: 'help',
-		getUrl: getThemeSupportUrl,
-		hideForTheme: ( state, themeId ) => ! isThemePremium( state, themeId ),
-	};
-
 	const help = {
 		label: translate( 'Support' ),
 		getUrl: getThemeHelpUrl,
@@ -195,7 +187,6 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 		signup,
 		separator,
 		info,
-		support,
 		help,
 	};
 }
