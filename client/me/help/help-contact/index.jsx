@@ -42,13 +42,13 @@ import {
 	askQuestion as askDirectlyQuestion,
 	initialize as initializeDirectly,
 } from 'calypso/state/help/directly/actions';
+import { getActiveSupportTicketCount } from 'calypso/state/help/history/selectors';
 import { getHelpSelectedSite } from 'calypso/state/help/selectors';
 import {
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'calypso/state/help/ticket/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import getActiveSupportTickets from 'calypso/state/selectors/get-active-support-tickets';
 import getInlineHelpSupportVariation, {
 	SUPPORT_CHAT_OVERFLOW,
 	SUPPORT_DIRECTLY,
@@ -122,12 +122,7 @@ class HelpContact extends Component {
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
 
-		if ( this.props.activeSupportTickets.length > 0 ) {
-			recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
-				support_type: 'chat',
-				active_ticket_count: this.props.activeSupportTickets.length,
-			} );
-		}
+		this.recordSubmitWithActiveTickets( 'chat' );
 
 		this.setState( {
 			isSubmitting: false,
@@ -154,6 +149,8 @@ class HelpContact extends Component {
 
 	submitDirectlyQuestion = ( contactForm ) => {
 		this.recordCompactSubmit( 'directly' );
+		this.recordSubmitWithActiveTickets( 'directly' );
+
 		const { display_name, email } = this.props.currentUser;
 
 		this.props.askDirectlyQuestion( contactForm.message, display_name, email );
@@ -162,13 +159,6 @@ class HelpContact extends Component {
 
 		if ( ! this.props.compact ) {
 			page( '/help' );
-		}
-
-		if ( this.props.activeSupportTickets.length > 0 ) {
-			recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
-				support_type: 'directly',
-				active_ticket_count: this.props.activeSupportTickets.length,
-			} );
 		}
 	};
 
@@ -221,12 +211,7 @@ class HelpContact extends Component {
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
 				} );
 
-				if ( this.props.activeSupportTickets.length > 0 ) {
-					recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
-						support_type: 'email',
-						active_ticket_count: this.props.activeSupportTickets.length,
-					} );
-				}
+				this.recordSubmitWithActiveTickets( 'email' );
 			} )
 			.catch( ( error ) => {
 				// TODO: bump a stat here
@@ -342,13 +327,7 @@ class HelpContact extends Component {
 				} );
 
 				recordTracksEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
-
-				if ( this.props.activeSupportTickets.length > 0 ) {
-					recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
-						support_type: 'forum',
-						active_ticket_count: this.props.activeSupportTickets.length,
-					} );
-				}
+				this.recordSubmitWithActiveTickets( 'forum' );
 			} )
 			.catch( ( error ) => {
 				// TODO: bump a stat here
@@ -360,13 +339,22 @@ class HelpContact extends Component {
 		this.clearSavedContactForm();
 	};
 
-	recordCompactSubmit = ( variation ) => {
+	recordCompactSubmit( variation ) {
 		if ( this.props.compact ) {
 			this.props.recordTracksEventAction( 'calypso_inlinehelp_contact_submit', {
 				support_variation: variation,
 			} );
 		}
-	};
+	}
+
+	recordSubmitWithActiveTickets( type ) {
+		if ( this.props.activeSupportTicketCount > 0 ) {
+			this.props.recordTracksEventAction( 'calypso_help_contact_submit_with_active_tickets', {
+				support_type: type,
+				active_ticket_count: this.props.activeSupportTicketCount,
+			} );
+		}
+	}
 
 	getContactFormPropsVariation = ( variationSlug ) => {
 		const { isSubmitting } = this.state;
@@ -598,7 +586,7 @@ class HelpContact extends Component {
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
-		const { activeSupportTickets, compact, supportVariation, translate } = this.props;
+		const { activeSupportTicketCount, compact, supportVariation, translate } = this.props;
 
 		debug( { supportVariation } );
 
@@ -652,12 +640,10 @@ class HelpContact extends Component {
 		const isUserAffectedByLiveChatClosure =
 			[ SUPPORT_DIRECTLY, SUPPORT_FORUM, SUPPORT_UPWORK_TICKET ].indexOf( supportVariation ) === -1;
 
-		const activeTicketCount = activeSupportTickets.length;
-
 		return (
 			<div>
-				{ activeTicketCount > 0 && (
-					<ActiveTicketsNotice count={ activeTicketCount } compact={ compact } />
+				{ activeSupportTicketCount > 0 && (
+					<ActiveTicketsNotice count={ activeSupportTicketCount } compact={ compact } />
 				) }
 
 				{ isUserAffectedByLiveChatClosure && (
@@ -719,7 +705,7 @@ class HelpContact extends Component {
 				{ ! this.props.compact && ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className="help-contact__form">{ this.getView() }</Card>
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
-				{ ! this.props.compact && <QuerySupportHistory email={ this.props.currentUser.email } /> }
+				<QuerySupportHistory email={ this.props.currentUser.email } />
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases />
 				<QueryLanguageNames />
@@ -754,7 +740,7 @@ export default connect(
 			shouldStartHappychatConnection: ! isRequestingSites( state ) && selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			supportVariation: getInlineHelpSupportVariation( state ),
-			activeSupportTickets: getActiveSupportTickets( state ),
+			activeSupportTicketCount: getActiveSupportTicketCount( state ),
 		};
 	},
 	{
