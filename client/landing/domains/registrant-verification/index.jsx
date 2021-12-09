@@ -18,8 +18,7 @@ class RegistrantVerificationPage extends Component {
 
 	state = this.getLoadingState();
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		const { domain, email, token } = this.props;
 		wp.req
 			.get( `/domains/${ domain }/verify-email`, { email, token } )
