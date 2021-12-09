@@ -35,7 +35,7 @@ const Page = ( { headline, heading, content, image, cta, handleDismiss } ) => {
 	);
 };
 
-const Modal = ( { announcementId, pages, finishButtonText } ) => {
+const Modal = ( { className, announcementId, pages, finishButtonText } ) => {
 	const dispatch = useDispatch();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
@@ -55,10 +55,13 @@ const Modal = ( { announcementId, pages, finishButtonText } ) => {
 			} )
 		);
 	};
+	const modalClassName = className
+		? [ 'announcement-modal', className ].join( ' ' )
+		: 'announcement-modal';
 
 	return (
 		<Guide
-			className="announcement-modal"
+			className={ modalClassName }
 			onFinish={ handleDismiss }
 			finishButtonText={ finishButtonText }
 			pages={ pages.map( ( page ) => ( {

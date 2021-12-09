@@ -1,3 +1,5 @@
+@import '@automattic/onboarding/styles/mixins';
+
 .plugins-browser__searchbox {
 	width: 250px;
 	display: flex;
@@ -52,6 +54,24 @@
 		&:not( :last-child ) {
 			@include breakpoint-deprecated( '>480px' ) {
 				margin-right: 10px;
+			}
+		}
+	}
+}
+
+.plugins-browser__announcement {
+	$modal-height: 480px;
+
+	&.announcement-modal {
+		@include break-xlarge {
+			@media ( min-height: $modal-height ) {
+				&.components-modal__frame {
+					height: $modal-height;
+				}
+
+				.components-guide__page {
+					height: $modal-height;
+				}
 			}
 		}
 	}
