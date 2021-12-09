@@ -15,13 +15,6 @@ jest.mock(
 		}
 );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mock = jest.fn();
-	mock.isEnabled = jest.fn();
-
-	return mock;
-} );
-
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -81,6 +74,7 @@ function renderWithRedux( ui ) {
 const props = {
 	site: {
 		plan: { product_slug: PLAN_FREE },
+		domain: 'example.wordpress.com',
 	},
 	selectedSite: {},
 	translate: ( x ) => x,
@@ -106,7 +100,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan } } }
+						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
 				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
@@ -120,7 +114,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan } } }
+						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
 				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
@@ -141,7 +135,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			testProps = {
 				...props,
 				siteIsJetpack: false,
-				site: { plan: { product_slug: PLAN_PERSONAL } },
+				site: { plan: { product_slug: PLAN_PERSONAL }, domain: 'example.wordpress.com' },
 				fields: {
 					blog_public: 1,
 					wpcom_coming_soon: 0,
