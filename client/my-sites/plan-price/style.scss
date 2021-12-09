@@ -15,10 +15,6 @@
 		margin-left: 8px;
 		vertical-align: super;
 	}
-
-	@include breakpoint-deprecated( '<960px' ) {
-		font-size: $font-title-medium;
-	}
 }
 
 .plan-price.is-original {
@@ -70,7 +66,6 @@
 .plan-price__integer {
 	margin: 0 1px;
 	font-weight: 400;
-	font-size: $font-title-large;
 }
 
 .plan-price__fraction {
