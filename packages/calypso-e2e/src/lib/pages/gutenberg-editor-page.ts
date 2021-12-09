@@ -38,9 +38,15 @@ const selectors = {
 
 	// Publish panel (including post-publish)
 	publishPanel: '.editor-post-publish-panel',
-	viewButton: 'text=/View (Post|Page)/',
+	// With the selector below, we're targeting both "View Post" buttons: the one
+	// in the post-publish pane, and the one that pops up in the bottom-left
+	// corner. This addresses the bug where the post-publish panel is immediately
+	// closed when publishing with certain blocks on the editor canvas.
+	// See https://github.com/Automattic/wp-calypso/issues/54421.
+	viewButton: 'a.components-button:has-text("View"):visible',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
+	snackbarViewButton: 'a.components-snackbar__action:has-text("View Post"):visible',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
@@ -385,14 +391,25 @@ export class GutenbergEditorPage {
 
 		await frame.click( selectors.publishButton( selectors.postToolbar ) );
 		await frame.click( selectors.publishButton( selectors.publishPanel ) );
-
-		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
-		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
+		const publishedURL = await this.getPublishedURL();
 
 		if ( visit ) {
 			await this.visitPublishedPost( publishedURL );
 		}
 		return publishedURL;
+	}
+
+	/**
+	 *
+	 * @returns
+	 */
+	async getPublishedURL(): Promise< string > {
+		const frame = await this.getEditorFrame();
+
+		const viewPublishedArticleButton = await frame.waitForSelector(
+			`${ selectors.viewButton }, ${ selectors.snackbarViewButton }`
+		);
+		return ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 	}
 
 	/**
