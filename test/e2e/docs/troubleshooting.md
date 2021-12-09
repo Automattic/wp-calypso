@@ -1,4 +1,7 @@
-Return to [Top Page](../README.md).
+<div style="width: 45%; float:left" align="left"><a href="./debugging.md"><-- Debugging</a> </div>
+<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
+
+<br><br>
 
 # Troubleshooting & Debugging
 

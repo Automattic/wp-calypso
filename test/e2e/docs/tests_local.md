@@ -1,4 +1,8 @@
-Return to [Top Page](../README.md).
+<div style="width:454%; float:left" align="left"><a href="./test_environment.md"><-- Test Environment</a> </div>
+<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
+<div style="width: 45%; float:right"align="right"><a href="./tests_ci.md">Running tests on CI --></a> </div>
+
+<br><br>
 
 # Running tests on your machine
 
