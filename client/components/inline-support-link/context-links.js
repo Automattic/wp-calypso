@@ -35,6 +35,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/export/',
 		post_id: 2087,
 	},
+	'export-media-library': {
+		link: 'https://wordpress.com/support/export/#exporting-the-media-library',
+		post_id: 2087,
+	},
 	'getting-started-video': {
 		link:
 			'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com',
@@ -91,6 +95,10 @@ const contextLinks = {
 	},
 	payment_methods: {
 		link: 'https://wordpress.com/support/payment/',
+		post_id: 76237,
+	},
+	payment_methods_manage: {
+		link: 'https://wordpress.com/support/payment/#manage-payment-methods',
 		post_id: 76237,
 	},
 	payment_method_all_subscriptions: {

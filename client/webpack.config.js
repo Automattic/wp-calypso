@@ -196,7 +196,7 @@ const webpackConfig = {
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
-				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
+				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
 				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
 				cacheIdentifier,
 				cacheCompression: false,
@@ -273,7 +273,6 @@ const webpackConfig = {
 		...SassConfig.plugins( {
 			chunkFilename: cssChunkFilename,
 			filename: cssFilename,
-			minify: ! isDevelopment,
 		} ),
 		new AssetsWriter( {
 			filename: `assets.json`,
@@ -380,6 +379,10 @@ const webpackConfig = {
 				},
 		  }
 		: {} ),
+
+	experiments: {
+		backCompat: false,
+	},
 };
 
 module.exports = webpackConfig;

@@ -69,7 +69,7 @@ export class CartCheckoutPage {
 	/**
 	 * Constructs an instance of the Cart Checkout POM.
 	 *
-	 * @param {Page} page Instance of the Playwright page
+	 * @param {Page} page Instance of the Playwright page.
 	 */
 	constructor( page: Page ) {
 		this.page = page;

@@ -1,47 +1,27 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestJetpackConnectionStatus } from 'calypso/state/jetpack/connection/actions';
 import isRequestingJetpackConnectionStatus from 'calypso/state/selectors/is-requesting-jetpack-connection-status';
 
-class QueryJetpackConnection extends Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		requestingJetpackConnectionStatus: PropTypes.bool,
-		requestJetpackConnectionStatus: PropTypes.func,
-	};
-
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( ! isRequestingJetpackConnectionStatus( getState(), siteId ) ) {
+		dispatch( requestJetpackConnectionStatus( siteId ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
-		}
-	}
+function QueryJetpackConnection( { siteId } ) {
+	const dispatch = useDispatch();
 
-	request( props ) {
-		if ( props.requestingJetpackConnectionStatus ) {
-			return;
-		}
+	useEffect( () => {
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
-		props.requestJetpackConnectionStatus( props.siteId );
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingJetpackConnectionStatus: isRequestingJetpackConnectionStatus(
-				state,
-				ownProps.siteId
-			),
-		};
-	},
-	{ requestJetpackConnectionStatus }
-)( QueryJetpackConnection );
+QueryJetpackConnection.propTypes = {
+	siteId: PropTypes.number.isRequired,
+};
+
+export default QueryJetpackConnection;

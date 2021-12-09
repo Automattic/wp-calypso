@@ -36,9 +36,13 @@ import {
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	showUpdatePrimaryDomainSuccessNotice,
+	showUpdatePrimaryDomainErrorNotice,
+} from 'calypso/state/domains/management/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
-import { getPurchases } from 'calypso/state/purchases/selectors';
+import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -50,12 +54,13 @@ import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import DomainOnly from './domain-only';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
+import { filterDomainsByOwner } from './helpers';
 import {
+	countDomainsInOrangeStatus,
 	filterOutWpcomDomains,
 	getDomainManagementPath,
-	showUpdatePrimaryDomainSuccessNotice,
-	showUpdatePrimaryDomainErrorNotice,
 	getSimpleSortFunctionBy,
+	getReverseSimpleSortFunctionBy,
 } from './utils';
 
 import './style.scss';
@@ -86,23 +91,13 @@ export class SiteDomains extends Component {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
 	}
 
-	filterDomains( domains, filter ) {
-		return domains.filter( ( domain ) => {
-			if ( 'owned-by-me' === filter ) {
-				return domain.currentUserCanManage;
-			} else if ( 'owned-by-others' === filter ) {
-				return ! domain.currentUserCanManage;
-			}
-			return true;
-		} );
-	}
-
 	renderNewDesign() {
 		const {
 			currentRoute,
 			domains,
 			hasProductsList,
 			isAtomicSite,
+			isFetchingPurchases,
 			selectedSite,
 			context,
 			translate,
@@ -112,7 +107,10 @@ export class SiteDomains extends Component {
 
 		const selectedFilter = context?.query?.filter;
 
-		const nonWpcomDomains = this.filterDomains( filterOutWpcomDomains( domains ), selectedFilter );
+		const nonWpcomDomains = filterDomainsByOwner(
+			filterOutWpcomDomains( domains ),
+			selectedFilter
+		);
 		const wpcomDomain = domains.find(
 			( domain ) => domain.type === type.WPCOM || domain.isWpcomStagingDomain
 		);
@@ -141,8 +139,15 @@ export class SiteDomains extends Component {
 						} );
 						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
 					},
-					getSimpleSortFunctionBy( 'domain' ),
+					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
+				bubble: countDomainsInOrangeStatus(
+					nonWpcomDomains.map( ( domain ) =>
+						resolveDomainStatus( domain, null, {
+							getMappingErrors: true,
+						} )
+					)
+				),
 			},
 			{
 				name: 'registered-until',
@@ -161,16 +166,6 @@ export class SiteDomains extends Component {
 			<>
 				{ ! hasProductsList && <QueryProductsList /> }
 
-				<div className="domains__header">
-					{ /* TODO: we need to decide where the HeaderCart will appear in the new design */ }
-					<div className="domains__header-buttons">
-						<HeaderCart
-							selectedSite={ this.props.selectedSite }
-							currentRoute={ this.props.currentRoute }
-						/>
-					</div>
-				</div>
-
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
@@ -183,20 +178,21 @@ export class SiteDomains extends Component {
 
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
-						{ this.renderDomainTableFilterButton( false ) }
+						{ this.renderDomainTableFilterButton() }
 					</div>
 					<DomainsTable
-						isLoading={ this.isLoading() }
 						currentRoute={ currentRoute }
 						domains={ nonWpcomDomains }
 						domainsTableColumns={ domainsTableColumns }
-						selectedSite={ selectedSite }
-						primaryDomainIndex={ primaryDomainIndex }
-						settingPrimaryDomain={ settingPrimaryDomain }
-						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
 						goToEditDomainRoot={ this.goToEditDomainRoot }
 						handleUpdatePrimaryDomainOptionClick={ this.handleUpdatePrimaryDomainOptionClick }
+						isLoading={ this.isLoading() }
+						primaryDomainIndex={ primaryDomainIndex }
 						purchases={ this.props.purchases }
+						settingPrimaryDomain={ settingPrimaryDomain }
+						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
+						sites={ { [ selectedSite.ID ]: selectedSite } }
+						hasLoadedPurchases={ ! isFetchingPurchases }
 					/>
 				</div>
 
@@ -227,7 +223,7 @@ export class SiteDomains extends Component {
 		);
 	}
 
-	renderDomainTableFilterButton( compact ) {
+	renderDomainTableFilterButton() {
 		const { selectedSite, domains, context } = this.props;
 
 		const selectedFilter = context?.query?.filter;
@@ -245,7 +241,7 @@ export class SiteDomains extends Component {
 				value: 'owned-by-me',
 				path:
 					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
-				count: this.filterDomains( nonWpcomDomains, 'owned-by-me' )?.length,
+				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
 				label: 'Owned by others',
@@ -254,7 +250,7 @@ export class SiteDomains extends Component {
 					domainManagementList( selectedSite?.slug ) +
 					'?' +
 					stringify( { filter: 'owned-by-others' } ),
-				count: this.filterDomains( nonWpcomDomains, 'owned-by-others' )?.length,
+				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
 			},
 			null,
 			{
@@ -270,7 +266,8 @@ export class SiteDomains extends Component {
 				key="breadcrumb_button_2"
 				selectedFilter={ selectedFilter || '' }
 				filterOptions={ filterOptions }
-				compact={ compact }
+				isLoading={ this.isLoading() }
+				disabled={ this.isLoading() }
 			/>
 		);
 	}
@@ -291,14 +288,24 @@ export class SiteDomains extends Component {
 		};
 
 		const buttons = [
+			this.renderDomainTableFilterButton( false ),
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			this.renderDomainTableFilterButton( true ),
-			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
+			<HeaderCart
+				key="breadcrumb_button_cart"
+				selectedSite={ this.props.selectedSite }
+				currentRoute={ this.props.currentRoute }
+			/>,
+			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
 		const mobileButtons = [
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton />,
+			<HeaderCart
+				key="breadcrumb_button_cart"
+				selectedSite={ this.props.selectedSite }
+				currentRoute={ this.props.currentRoute }
+			/>,
+			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
 		return (
@@ -411,10 +418,10 @@ export class SiteDomains extends Component {
 			.then(
 				() => {
 					this.setState( { primaryDomainIndex: -1 } );
-					showUpdatePrimaryDomainSuccessNotice( domainName );
+					this.props.showUpdatePrimaryDomainSuccessNotice( domainName );
 				},
 				( error ) => {
-					showUpdatePrimaryDomainErrorNotice( error.message );
+					this.props.showUpdatePrimaryDomainErrorNotice( error.message );
 					this.setState( { primaryDomainIndex: currentPrimaryIndex } );
 				}
 			)
@@ -450,14 +457,14 @@ export class SiteDomains extends Component {
 					settingPrimaryDomain: false,
 				} );
 
-				showUpdatePrimaryDomainSuccessNotice( domain.name );
+				this.props.showUpdatePrimaryDomainSuccessNotice( domain.name );
 			},
 			( error ) => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
 				} );
-				showUpdatePrimaryDomainErrorNotice( error.message );
+				this.props.showUpdatePrimaryDomainErrorNotice( error.message );
 			}
 		);
 	};
@@ -528,14 +535,15 @@ export default connect(
 			userCanManageOptions,
 			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
 			purchases,
+			isFetchingPurchases: isFetchingSitePurchases( state ),
 		};
 	},
-	( dispatch ) => {
-		return {
-			setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch ),
-			changePrimary: ( domain, mode ) => dispatch( changePrimary( domain, mode ) ),
-			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
-			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
-		};
+	{
+		changePrimary,
+		errorNotice,
+		setPrimaryDomain,
+		showUpdatePrimaryDomainErrorNotice,
+		showUpdatePrimaryDomainSuccessNotice,
+		successNotice,
 	}
 )( localize( withLocalizedMoment( SiteDomains ) ) );

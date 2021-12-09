@@ -8,6 +8,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
@@ -43,6 +44,7 @@ export default function CheckoutSystemDecider( {
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const prepurchaseNotices = <PrePurchaseNotices />;
 
@@ -79,7 +81,7 @@ export default function CheckoutSystemDecider( {
 					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 						<CompositeCheckout
 							siteSlug={ siteSlug }
-							siteId={ selectedSite?.ID }
+							siteId={ selectedSiteId }
 							productAliasFromUrl={ productAliasFromUrl }
 							purchaseId={ purchaseId }
 							couponCode={ couponCode }

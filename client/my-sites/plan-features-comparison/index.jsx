@@ -131,6 +131,7 @@ export class PlanFeaturesComparison extends Component {
 						title={ planConstantObj.getTitle() }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
+						monthlyDisabled={ this.props.monthlyDisabled }
 					/>
 				</th>
 			);
@@ -176,7 +177,7 @@ export class PlanFeaturesComparison extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
-						isDisabled={ disabledClasses }
+						isDisabled={ Boolean( disabledClasses ) }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }
@@ -294,6 +295,7 @@ export class PlanFeaturesComparison extends Component {
 		} );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -364,17 +366,16 @@ export default connect(
 				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
-				const showMonthly = ! isMonthly( plan );
+				const isMonthlyPlan = isMonthly( plan );
+				const showMonthly = ! isMonthlyPlan;
 				const availableForPurchase = true;
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
 
-				let popular;
-				if ( monthlyDisabled && planObject?.product_name_short === 'Business' ) {
-					popular = true;
-				} else if ( monthlyDisabled ) {
-					popular = false;
+				let popular = false;
+				if ( monthlyDisabled && isMonthlyPlan ) {
+					popular = planObject?.product_name_short === 'Business';
 				} else {
 					popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
 				}
@@ -397,7 +398,6 @@ export default connect(
 				const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
 				let annualPricePerMonth = rawPrice;
-				const isMonthlyPlan = isMonthly( plan );
 				if ( isMonthlyPlan ) {
 					// Get annual price per month for comparison
 					const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
@@ -447,7 +447,7 @@ export default connect(
 					planConstantObj,
 					planName: plan,
 					planObject: planObject,
-					popular: popular,
+					popular,
 					productSlug: get( planObject, 'product_slug' ),
 					hideMonthly: false,
 					primaryUpgrade: popular || plans.length === 1,

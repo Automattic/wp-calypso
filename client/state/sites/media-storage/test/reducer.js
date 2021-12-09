@@ -1,14 +1,8 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import {
-	SITE_MEDIA_STORAGE_RECEIVE,
-	SITE_MEDIA_STORAGE_REQUEST,
-	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
+import { SITE_MEDIA_STORAGE_RECEIVE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
-import reducer, { items, fetchingItems } from '../reducer';
+import reducer, { items } from '../reducer';
 
 describe( 'reducer', () => {
 	let sandbox;
@@ -19,14 +13,14 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'fetchingItems' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [ 'items' ] );
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index media-storage by site ID', () => {
@@ -41,7 +35,7 @@ describe( 'reducer', () => {
 				siteId,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: mediaStorage,
 			} );
 		} );
@@ -62,7 +56,7 @@ describe( 'reducer', () => {
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					max_storage_bytes: -1,
 					storage_used_bytes: -1,
@@ -94,7 +88,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					max_storage_bytes: 3221225472,
 					storage_used_bytes: 56000,
@@ -119,7 +113,7 @@ describe( 'reducer', () => {
 					},
 				} );
 				const state = serialize( items, original );
-				expect( state ).to.eql( original );
+				expect( state ).toEqual( original );
 			} );
 
 			test( 'loads valid persisted state', () => {
@@ -134,7 +128,7 @@ describe( 'reducer', () => {
 					},
 				} );
 				const state = deserialize( items, original );
-				expect( state ).to.eql( original );
+				expect( state ).toEqual( original );
 			} );
 
 			test( 'loads default state when schema does not match', () => {
@@ -149,68 +143,7 @@ describe( 'reducer', () => {
 					},
 				} );
 				const state = deserialize( items, original );
-				expect( state ).to.eql( {} );
-			} );
-		} );
-	} );
-
-	describe( '#fetchingItems()', () => {
-		test( 'should default to an empty object', () => {
-			const state = fetchingItems( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should index fetching state by site ID', () => {
-			const state = fetchingItems( undefined, {
-				type: SITE_MEDIA_STORAGE_REQUEST,
-				siteId: 2916284,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: true,
-			} );
-		} );
-
-		test( 'should update fetching state by site ID on success', () => {
-			const originalState = deepFreeze( {
-				2916284: true,
-			} );
-			const state = fetchingItems( originalState, {
-				type: SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-				siteId: 2916284,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: false,
-			} );
-		} );
-
-		test( 'should update fetching state by site ID on failure', () => {
-			const originalState = deepFreeze( {
-				2916284: true,
-			} );
-			const state = fetchingItems( originalState, {
-				type: SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-				siteId: 2916284,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: false,
-			} );
-		} );
-
-		test( 'should accumulate fetchingItems by site ID', () => {
-			const originalState = deepFreeze( {
-				2916284: false,
-			} );
-			const state = fetchingItems( originalState, {
-				type: SITE_MEDIA_STORAGE_REQUEST,
-				siteId: 77203074,
-			} );
-			expect( state ).to.eql( {
-				2916284: false,
-				77203074: true,
+				expect( state ).toEqual( {} );
 			} );
 		} );
 	} );

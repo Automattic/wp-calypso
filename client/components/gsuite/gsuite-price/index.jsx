@@ -24,8 +24,10 @@ export const hasDiscount = ( product ) => {
 	}
 
 	const currentTime = Date.now();
-	const startDate = new Date( product.sale_coupon.start_date );
-	const endDate = new Date( product.sale_coupon.expires );
+	// Ensure that coupon start and end time are correctly converted to UTC times in the browser.
+	// Use ISO 8601 format to avoid cross-browser issues - convert '2021-12-12 12:34:56' to '2021-12-12T12:34:56Z'
+	const startDate = new Date( product.sale_coupon.start_date.replace( ' ', 'T' ) + 'Z' );
+	const endDate = new Date( product.sale_coupon.expires.replace( ' ', 'T' ) + 'Z' );
 
 	return currentTime >= startDate && currentTime <= endDate;
 };

@@ -68,9 +68,8 @@ export function advancedSettingsFetch( siteId ) {
 
 		const fetchFail = ( error ) => dispatch( advancedSettingsFail( siteId, error ) );
 
-		return wpcom
-			.undocumented()
-			.getExportSettings( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/exports/settings` )
 			.then( updateExportSettings )
 			.catch( fetchFail );
 	};
@@ -116,9 +115,8 @@ export function startExport( siteId, { exportAll = true } = {} ) {
 
 		const failure = ( error ) => dispatch( exportFailed( siteId, error ) );
 
-		return wpcom
-			.undocumented()
-			.startExport( siteId, advancedSettings )
+		return wpcom.req
+			.post( `/sites/${ siteId }/exports/start`, advancedSettings )
 			.then( success )
 			.catch( failure );
 	};
@@ -153,7 +151,7 @@ export function exportStatusFetch( siteId ) {
 			return failure( response );
 		};
 
-		return wpcom.undocumented().getExport( siteId, 0 ).then( success ).catch( failure );
+		return wpcom.req.get( `/sites/${ siteId }/exports/0` ).then( success ).catch( failure );
 	};
 }
 

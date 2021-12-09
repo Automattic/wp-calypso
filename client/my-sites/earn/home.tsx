@@ -14,7 +14,7 @@ import {
 } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { compact, overSome } from 'lodash';
+import { compact } from 'lodash';
 import page from 'page';
 import { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -54,7 +54,7 @@ interface ConnectedProps {
 	trackCtaButton: ( feature: string ) => void;
 }
 
-const wpcom = wp.undocumented();
+const overSome = ( ...checks ) => ( item ) => checks.some( ( check ) => check( item ) );
 
 const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
@@ -77,16 +77,20 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 	useEffect( () => {
 		if ( peerReferralLink ) return;
-		wpcom.me().getPeerReferralLink( ( error: string, data: string ) => {
+		wp.req.get( '/me/peer-referral-link', ( error: string, data: string ) => {
 			setPeerReferralLink( ! error && data ? data : '' );
 		} );
 	}, [ peerReferralLink ] );
 
 	const onPeerReferralCtaClick = () => {
 		if ( peerReferralLink ) return;
-		wpcom.me().setPeerReferralLinkEnable( true, ( error: string, data: string ) => {
-			setPeerReferralLink( ! error && data ? data : '' );
-		} );
+		wp.req.post(
+			'/me/peer-referral-link-enable',
+			{ enable: true },
+			( error: string, data: string ) => {
+				setPeerReferralLink( ! error && data ? data : '' );
+			}
+		);
 	};
 
 	const getAnyPlanNames = () => {

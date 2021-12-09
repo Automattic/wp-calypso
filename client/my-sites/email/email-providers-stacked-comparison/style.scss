@@ -1,0 +1,17 @@
+.email-providers-stacked-comparison__header {
+	font-size: 2rem;
+	text-align: center;
+}
+
+.mail-providers-stacked-comparison__provider-card.promo-card {
+	.action-panel__figure {
+		float: right;
+		max-width: 208px;
+		margin-bottom: 0.5em;
+		margin-top: 0;
+
+		img {
+			max-width: 36px;
+		}
+	}
+}

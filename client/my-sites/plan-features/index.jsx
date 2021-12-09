@@ -9,7 +9,6 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
-	FEATURE_BUSINESS_ONBOARDING,
 	TYPE_P2_PLUS,
 	TYPE_FREE,
 	planMatches,
@@ -18,7 +17,6 @@ import {
 	getPlanPath,
 	isFreePlan,
 	isWpComEcommercePlan,
-	isWpComBusinessPlan,
 	getPlanClass,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
@@ -353,11 +351,7 @@ export class PlanFeatures extends Component {
 			reorderedPlans.push( freePlanProperties );
 		}
 
-		if ( disabledPlanProperties.length > 0 ) {
-			disabledPlanProperties.forEach( ( plan ) => {
-				reorderedPlans.push( plan );
-			} );
-		}
+		reorderedPlans.push( ...disabledPlanProperties );
 
 		let buttonText = null;
 		let forceDisplayButton = false;
@@ -416,6 +410,7 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						isMonthlyPlan={ isMonthlyPlan }
+						monthlyDisabled={ this.props.monthlyDisabled }
 						audience={ planConstantObj.getAudience?.() }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
@@ -552,6 +547,7 @@ export class PlanFeatures extends Component {
 						isLoggedInMonthlyPricing={
 							! isInSignup && ! isJetpack && this.props.kindOfPlanTypeSelector === 'interval'
 						}
+						monthlyDisabled={ this.props.monthlyDisabled }
 					/>
 				</th>
 			);
@@ -830,6 +826,7 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -939,7 +936,8 @@ const ConnectedPlanFeatures = connect(
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
-				const showMonthly = ! isMonthly( plan );
+				const isMonthlyPlan = isMonthly( plan );
+				const showMonthly = ! isMonthlyPlan;
 				const availableForPurchase = isInSignup
 					? true
 					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
@@ -960,23 +958,18 @@ const ConnectedPlanFeatures = connect(
 				}
 
 				// Make Business plan popular for the monthly plans disabled test
-				const popular = monthlyDisabled
-					? planObject?.product_name_short === 'Business'
-					: popularPlanSpec && planMatches( plan, popularPlanSpec );
+				let popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
+				if ( monthlyDisabled ) {
+					popular = planObject?.product_name_short === ( isMonthlyPlan ? 'Business' : 'Premium' );
+				}
 
 				const newPlan = false;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
-				const isMonthlyPlan = isMonthly( plan );
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
-				let features = planConstantObj.getPlanCompareFeatures();
-
-				// TODO: remove this once Quick Start sessions have been removed from Business Plan
-				if ( isWpComBusinessPlan( plan ) ) {
-					features = features.filter( ( feature ) => feature !== FEATURE_BUSINESS_ONBOARDING );
-				}
+				const features = planConstantObj.getPlanCompareFeatures();
 
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
@@ -1053,7 +1046,7 @@ const ConnectedPlanFeatures = connect(
 					planConstantObj,
 					planName: plan,
 					planObject: planObject,
-					popular: popular,
+					popular,
 					productSlug: get( planObject, 'product_slug' ),
 					newPlan: newPlan,
 					bestValue: bestValue,

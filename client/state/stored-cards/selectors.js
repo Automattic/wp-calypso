@@ -7,7 +7,7 @@ import 'calypso/state/stored-cards/init';
  * Return user's stored cards from state object
  *
  * @param {object} state - current state object
- * @returns {Array} Stored Cards
+ * @returns {import('calypso/my-sites/checkout/composite-checkout/types/stored-cards.ts').StoredCard[]} Stored Cards
  */
 export const getStoredCards = ( state ) =>
 	( state.storedCards?.items ?? [] )
@@ -22,7 +22,7 @@ export const getStoredCards = ( state ) =>
  * Return user's stored cards including expired cards
  *
  * @param {object} state - current state object
- * @returns {Array} Stored Cards
+ * @returns {import('calypso/my-sites/checkout/composite-checkout/types/stored-cards.ts').StoredCard[]} Stored Cards
  */
 export const getAllStoredCards = ( state ) =>
 	( state.storedCards?.items ?? [] )
@@ -72,7 +72,7 @@ export const getUniquePaymentAgreements = ( state ) => {
  *
  * @param  {object} state      global state
  * @param  {number} cardId  the card id
- * @returns {object} the matching card if there is one
+ * @returns {undefined|import('calypso/my-sites/checkout/composite-checkout/types/stored-cards.ts').StoredCard} the matching card if there is one
  */
 export const getStoredCardById = ( state, cardId ) =>
 	getStoredCards( state )

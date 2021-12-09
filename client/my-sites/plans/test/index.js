@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'page', () => jest.fn() );
 jest.mock( '../controller', () => ( {
 	features: jest.fn(),

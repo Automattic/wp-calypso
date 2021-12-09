@@ -48,16 +48,23 @@ export function convertToFriendlyWebsiteName( website: string ): string {
 /**
  * Importer URL helpers
  */
-export function getWpComMigrateUrl( siteSlug: string ): string {
-	return '/migrate/{siteSlug}'.replace( '{siteSlug}', siteSlug );
+export function getWpComMigrateUrl( siteSlug: string, fromSite?: string ): string {
+	return '/migrate/{siteSlug}?from-site={fromSite}'
+		.replace( '{siteSlug}', siteSlug )
+		.replace( '{fromSite}', fromSite || '' );
 }
 
-export function getWpComImporterUrl( siteSlug: string, platform: string ): string {
-	const wpComBase = '/import/{siteSlug}?engine={importer}';
+export function getWpComImporterUrl(
+	siteSlug: string,
+	platform: string,
+	fromSite?: string
+): string {
+	const wpComBase = '/import/{siteSlug}?engine={importer}&from-site={fromSite}';
 
 	return wpComBase
 		.replace( '{siteSlug}', siteSlug )
-		.replace( '{importer}', getPlatformImporterName( platform ) );
+		.replace( '{importer}', getPlatformImporterName( platform ) )
+		.replace( '{fromSite}', fromSite || '' );
 }
 
 export function getWpOrgImporterUrl( siteSlug: string, platform: string ): string {
@@ -68,12 +75,12 @@ export function getWpOrgImporterUrl( siteSlug: string, platform: string ): strin
 		.replace( '{importer}', getPlatformImporterName( platform ) );
 }
 
-export function getImporterUrl( siteSlug: string, platform: string ): string {
+export function getImporterUrl( siteSlug: string, platform: string, fromSite?: string ): string {
 	if ( platform === 'wordpress' ) {
-		return getWpComMigrateUrl( siteSlug );
+		return getWpComMigrateUrl( siteSlug, fromSite );
 	} else if ( orgImporters.includes( platform ) ) {
 		return getWpOrgImporterUrl( siteSlug, platform );
 	}
 
-	return getWpComImporterUrl( siteSlug, platform );
+	return getWpComImporterUrl( siteSlug, platform, fromSite );
 }

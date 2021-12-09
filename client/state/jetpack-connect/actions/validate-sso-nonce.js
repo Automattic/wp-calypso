@@ -23,9 +23,8 @@ export function validateSSONonce( siteId, ssoNonce ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.jetpackValidateSSONonce( siteId, ssoNonce )
+		return wpcom.req
+			.post( `/jetpack-blogs/${ siteId }/sso-validate`, { sso_nonce: ssoNonce } )
 			.then( ( data ) => {
 				dispatch( recordTracksEvent( 'calypso_jpc_validate_sso_success' ) );
 				dispatch( {

@@ -51,7 +51,7 @@ const UsageWarningUpsell: React.FC< OwnProps > = ( { siteSlug, bytesUsed, usageL
 			className="usage-warning__upsell"
 			usageLevel={ usageLevel }
 			actionText={ actionText }
-			href={ isJetpackCloud() ? `/pricing/backup/${ siteSlug }` : `/plans/${ siteSlug }` }
+			href={ isJetpackCloud() ? `/pricing/storage/${ siteSlug }` : `/plans/storage/${ siteSlug }` }
 			onClick={ onClick }
 		/>
 	);

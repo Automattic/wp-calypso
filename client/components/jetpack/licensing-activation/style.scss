@@ -26,8 +26,16 @@
 
 .licensing-activation .button.is-primary,
 .licensing-activation .button.is-primary:visited {
+	font-size: $font-body;
+	font-weight: 400;
+
 	border-radius: 2px;
+	margin-top: 58px;
+
+	min-width: 140px;
+
 	@include jetpack-primary-button;
+
 	&.is-busy {
 		background-image: linear-gradient(
 			-45deg,
@@ -65,7 +73,7 @@
 	}
 }
 
-.licensing-activation__card a {
+.licensing-activation__card a:not( .button ) {
 	text-decoration: underline;
 	color: var( --color-studio-black );
 	&:hover {
@@ -140,6 +148,5 @@
 	color: var( --color-neutral-60 );
 	> a {
 		color: var( --color-neutral-60 );
-		text-decoration: underline;
 	}
 }

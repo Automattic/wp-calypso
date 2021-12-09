@@ -3,14 +3,14 @@ import { TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 
 type Props = {
-	title: TranslateResult;
+	title?: TranslateResult;
 	className?: string;
 	children: React.ReactNode;
 };
 
 const ProductGridSection: React.FC< Props > = ( { title, className, children } ) => (
 	<section className={ classNames( 'product-grid__section', className ) }>
-		<h2 className="product-grid__section-title">{ title }</h2>
+		{ title && <h2 className="product-grid__section-title">{ title }</h2> }
 		{ children }
 	</section>
 );

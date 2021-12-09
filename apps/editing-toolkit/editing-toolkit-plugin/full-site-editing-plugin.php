@@ -143,14 +143,6 @@ function load_timeline_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
 
 /**
- * Load Editor Site Launch.
- */
-function load_editor_site_launch() {
-	require_once __DIR__ . '/editor-site-launch/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_site_launch' );
-
-/**
  * Add front-end CoBlocks gallery block scripts.
  *
  * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,

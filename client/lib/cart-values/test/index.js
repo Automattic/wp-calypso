@@ -12,7 +12,7 @@ describe( 'index', () => {
 			productSlug: 'dotcom_domain',
 			domain: 'testdomain.com',
 		} );
-		PREMIUM_PRODUCT = cartItems.planItem( 'value_bundle', { isFreeTrial: false } );
+		PREMIUM_PRODUCT = cartItems.planItem( 'value_bundle' );
 	} );
 
 	describe( 'cartItems.hasProduct( cart, productSlug )', () => {

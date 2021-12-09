@@ -32,10 +32,10 @@ describe( 'selectors', () => {
 						remoteValues: {},
 					},
 				},
-				'mediaModalGalleryInstructionsDismissed'
+				'colorScheme'
 			);
 
-			expect( preference ).to.be.false;
+			expect( preference ).to.equal( 'default' );
 		} );
 
 		test( 'should return the remote value if local does not contain key', () => {

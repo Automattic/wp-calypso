@@ -19,7 +19,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 class PostRevisionsDialog extends PureComponent {
 	static propTypes = {
 		/**
-		 * loadRevision is passed through from `post-editor/post-editor.jsx`
+		 * loadRevision is passed through from `gutenberg/editor/calypsoify-iframe.tsx`
 		 *
 		 * TODO untangle & reduxify
 		 */
@@ -36,11 +36,13 @@ class PostRevisionsDialog extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.toggleBodyClass( { isVisible: this.props.isVisible } );
 		this.props.selectPostRevision( null );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( { isVisible } ) {
 		this.toggleBodyClass( { isVisible } );
 	}

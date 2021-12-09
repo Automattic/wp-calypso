@@ -1,5 +1,10 @@
 import config from '@automattic/calypso-config';
-import { FEATURE_UPLOAD_THEMES, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	FEATURE_PREMIUM_THEMES,
+	FEATURE_UPLOAD_THEMES,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -50,7 +55,6 @@ import {
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
 	getCanonicalTheme,
-	getPremiumThemePrice,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
@@ -73,7 +77,6 @@ class ThemeSheet extends Component {
 		author: PropTypes.string,
 		screenshot: PropTypes.string,
 		screenshots: PropTypes.array,
-		price: PropTypes.string,
 		description: PropTypes.string,
 		descriptionLong: PropTypes.oneOfType( [
 			PropTypes.string,
@@ -120,6 +123,7 @@ class ThemeSheet extends Component {
 		this.scrollToTop();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( nextProps.id !== this.props.id ) {
 			this.scrollToTop();
@@ -596,25 +600,9 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderPrice = () => {
-		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive ) {
-			price = '';
-		} else if ( ! this.props.isPremium ) {
-			price = this.props.translate( 'Free' );
-		}
-
-		const className = classNames( 'theme__sheet-action-bar-cost', {
-			'theme__sheet-action-bar-cost-upgrade': ! /\d/g.test( this.props.price ),
-		} );
-
-		return price ? <span className={ className }>{ price }</span> : '';
-	};
-
 	renderButton = () => {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
-		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const { isActive } = this.props;
 
@@ -627,11 +615,6 @@ class ThemeSheet extends Component {
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
-				{ price && this.props.isWpcomTheme && (
-					<Badge type="info" className="theme__sheet-badge-beta">
-						{ price }
-					</Badge>
-				) }
 			</Button>
 		);
 	};
@@ -652,6 +635,7 @@ class ThemeSheet extends Component {
 			siteId,
 			siteSlug,
 			retired,
+			hasUnlimitedPremiumThemes,
 			isPremium,
 			isJetpack,
 			isWpcomTheme,
@@ -702,7 +686,9 @@ class ThemeSheet extends Component {
 
 		let pageUpsellBanner;
 		let previewUpsellBanner;
-		const hasWpComThemeUpsellBanner = ! isJetpack && isPremium && ! isVip && ! retired;
+
+		const hasWpComThemeUpsellBanner =
+			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
 		const hasWpOrgThemeUpsellBanner =
 			! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
 		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
@@ -853,7 +839,6 @@ export default connect(
 		return {
 			...theme,
 			id,
-			price: getPremiumThemePrice( state, id, siteId ),
 			error,
 			siteId,
 			siteSlug,
@@ -867,6 +852,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
+			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),

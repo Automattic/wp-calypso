@@ -145,7 +145,7 @@ export class CheckoutThankYou extends Component {
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite.ID );
-		} else if ( shouldFetchSitePlans( sitePlans, selectedSite ) ) {
+		} else if ( selectedSite && shouldFetchSitePlans( sitePlans ) ) {
 			this.props.fetchSitePlans( selectedSite.ID );
 		}
 
@@ -167,6 +167,7 @@ export class CheckoutThankYou extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
 		this.redirectIfDomainOnly( nextProps );

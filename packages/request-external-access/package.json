@@ -30,14 +30,14 @@
 		"src"
 	],
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@automattic/popup-monitor": "^1.0.0"
+		"@automattic/popup-monitor": "workspace:^"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

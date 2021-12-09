@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import page from 'page';
+import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList, domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -13,19 +14,20 @@ export const connectDomainAction = (
 	const siteHasPaidPlan = isSiteOnPaidPlan( getState(), selectedSite.ID );
 
 	if ( selectedSite.is_vip ) {
-		wpcom
-			.site( selectedSite.ID )
-			.addVipDomainMapping( domain )
+		wpcom.req
+			.post( `/sites/${ selectedSite.ID }/vip-domain-mapping`, { domain } )
 			.then( () => page( domainManagementList( selectedSite.slug ) ) )
 			.catch( ( error ) => {
 				dispatch( errorNotice( error.message ) );
 				onDone();
 			} );
 	} else if ( siteHasPaidPlan ) {
-		wpcom
-			.site( selectedSite.ID )
-			.addDomainMapping( domain, verificationData )
-			.then( () => {
+		wpcom.req
+			.post( `/sites/${ selectedSite.ID }/add-domain-mapping`, {
+				domain,
+				...verificationData,
+			} )
+			.then( ( result ) => {
 				dispatch(
 					successNotice(
 						__( 'Domain connected! Please make sure to follow the next steps below.' ),
@@ -35,7 +37,8 @@ export const connectDomainAction = (
 						}
 					)
 				);
-				page( domainMappingSetup( selectedSite.slug, domain ) );
+				const step = result.points_to_wpcom ? stepSlug.SUGGESTED_CONNECTED : '';
+				page( domainMappingSetup( selectedSite.slug, domain, step ) );
 			} )
 			.catch( ( error ) => {
 				if ( 'ownership_verification_failed' !== error.error ) {

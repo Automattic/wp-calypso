@@ -47,9 +47,22 @@ export default function useVatDetails(): VatDetailsManager {
 			queryClient.setQueryData( 'vat-details', data );
 		},
 	} );
+	const formatVatDetails = useCallback( ( data: VatDetails ) => {
+		const { country, id } = data;
+
+		if ( !! id && id?.length > 1 ) {
+			const first2UppercasedChars = id.substr( 0, 2 ).toUpperCase();
+
+			if ( isNaN( Number( first2UppercasedChars ) ) && first2UppercasedChars === country ) {
+				return { ...data, id: id.substr( 2 ) };
+			}
+		}
+
+		return data;
+	}, [] );
 	const setDetails = useCallback(
 		( vatDetails: VatDetails ) => {
-			mutation.mutate( vatDetails );
+			mutation.mutate( formatVatDetails( vatDetails ) );
 		},
 		[ mutation ]
 	);

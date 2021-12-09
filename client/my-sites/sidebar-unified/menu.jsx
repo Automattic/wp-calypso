@@ -25,8 +25,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	link,
 	selected,
 	sidebarCollapsed,
-	isHappychatSessionActive,
-	isJetpackNonAtomicSite,
+	shouldOpenExternalLinksInCurrentTab,
 	canNavigate,
 	...props
 } ) => {
@@ -37,15 +36,27 @@ export const MySitesSidebarUnifiedMenu = ( {
 		Array.isArray( children ) &&
 		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
+	const isDesktop = isWithinBreakpoint( '>782px' );
+	const isMobile = ! isDesktop;
 	const showAsExpanded =
-		( ! isWithinBreakpoint( '>782px' ) && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
-		( isWithinBreakpoint( '>782px' ) && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
+		( isMobile && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
+		( isDesktop && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
 
-	// Avoid redirecting to the section if menu is full-width (i.e. mobile viewport) or if user
-	// is forced to keep the current page open (i.e. there is a Happychat session active).
-	const shouldRedirectToSection = isWithinBreakpoint( '>782px' ) && link && canNavigate( link );
+	const onClick = ( event ) => {
+		// Block the navigation on mobile viewports and just toggle the section,
+		// since we don't show the child items on hover and users should have a
+		// chance to see them.
+		if ( isMobile ) {
+			event?.preventDefault();
+			reduxDispatch( toggleSection( sectionId ) );
+			return;
+		}
 
-	const onClick = () => {
+		if ( ! canNavigate( link ) ) {
+			event?.preventDefault();
+			return;
+		}
+
 		window.scrollTo( 0, 0 );
 		reduxDispatch( toggleSection( sectionId ) );
 	};
@@ -61,7 +72,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				count={ count }
 				hideExpandableIcon={ true }
 				inlineText={ props.inlineText }
-				href={ shouldRedirectToSection ? link : undefined }
+				href={ link }
 				{ ...props }
 			>
 				{ children.map( ( item ) => {
@@ -72,8 +83,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 							{ ...item }
 							selected={ isSelected }
 							isSubItem={ true }
-							isHappychatSessionActive={ isHappychatSessionActive }
-							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
+							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
 							canNavigate={ canNavigate }
 						/>
 					);
@@ -92,8 +102,7 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	children: PropTypes.array.isRequired,
 	link: PropTypes.string,
 	sidebarCollapsed: PropTypes.bool,
-	isHappychatSessionActive: PropTypes.bool.isRequired,
-	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
+	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	canNavigate: PropTypes.func.isRequired,
 	/*
 	Example of children shape:

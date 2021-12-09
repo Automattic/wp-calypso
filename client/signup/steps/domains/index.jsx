@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { parse, stringify } from 'qs';
+import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -555,25 +555,25 @@ class DomainsStep extends Component {
 		this.handleAddMapping( 'useYourDomainForm', domain );
 	};
 
-	insertUrlParam( key, value ) {
+	insertUrlParams( params ) {
 		if ( history.pushState ) {
 			const searchParams = new URLSearchParams( window.location.search );
-			searchParams.set( key, value );
-			const newurl =
+
+			Object.entries( params ).forEach( ( [ key, value ] ) => searchParams.set( key, value ) );
+			const newUrl =
 				window.location.protocol +
 				'//' +
 				window.location.host +
 				window.location.pathname +
 				'?' +
-				searchParams.toString();
-			window.history.pushState( { path: newurl }, '', newurl );
+				decodeURIComponent( searchParams.toString() );
+			window.history.pushState( { path: newUrl }, '', newUrl );
 		}
 	}
 
 	setCurrentFlowStep( { mode, domain } ) {
 		this.setState( { currentStep: mode }, () => {
-			this.insertUrlParam( 'step', this.state.currentStep );
-			this.insertUrlParam( 'initialQuery', domain );
+			this.insertUrlParams( { step: this.state.currentStep, initialQuery: domain } );
 		} );
 	}
 
@@ -588,7 +588,7 @@ class DomainsStep extends Component {
 						analyticsSection={ this.getAnalyticsSection() }
 						basePath={ this.props.path }
 						initialQuery={ initialQuery }
-						initialMode={ queryObject.step }
+						initialMode={ queryObject.step ?? inputMode.domainInput }
 						onNextStep={ this.setCurrentFlowStep }
 						isSignupStep
 						showHeader={ false }
@@ -663,12 +663,6 @@ class DomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
-	resetState() {
-		if ( inputMode.domainInput === this.state?.step ) {
-			this.setState( {} );
-		}
-	}
-
 	renderContent() {
 		let content;
 		let sideContent;
@@ -678,7 +672,6 @@ class DomainsStep extends Component {
 		}
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
-			this.resetState();
 			content = this.domainForm();
 		}
 
@@ -710,12 +703,7 @@ class DomainsStep extends Component {
 
 	getPreviousStepUrl() {
 		if ( 'use-your-domain' !== this.props.stepSectionName ) return null;
-		const basePath = getStepUrl(
-			this.props.flowName,
-			this.props.stepName,
-			'use-your-domain',
-			this.getLocale()
-		);
+
 		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
 		const currentStep = step ?? this.state?.currentStep;
 
@@ -734,9 +722,15 @@ class DomainsStep extends Component {
 				mode = inputMode.transferOrConnect;
 				break;
 		}
-		return (
-			`${ basePath }?step=${ mode }` +
-			( Object.keys( queryValues ).length ? `&${ stringify( { ...queryValues } ) }` : '' )
+		return getStepUrl(
+			this.props.flowName,
+			this.props.stepName,
+			'use-your-domain',
+			this.getLocale(),
+			{
+				step: mode,
+				...queryValues,
+			}
 		);
 	}
 

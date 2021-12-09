@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
@@ -10,6 +11,7 @@ import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
+import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -38,6 +40,7 @@ class Site extends Component {
 		submitting: false,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		let initialState;
 
@@ -88,11 +91,17 @@ class Site extends Component {
 	};
 
 	validate = ( fields, onComplete ) => {
-		wpcom.undocumented().sitesNew(
+		const locale = getLocaleSlug();
+		wpcom.req.post(
+			'/sites/new',
 			{
 				blog_name: fields.site,
 				blog_title: fields.site,
 				validate: true,
+				locale,
+				lang_id: getLanguage( locale ).value,
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
 			},
 			function ( error, response ) {
 				let messages = {};

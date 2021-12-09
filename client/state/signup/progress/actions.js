@@ -11,6 +11,7 @@ import {
 	SIGNUP_PROGRESS_ADD_STEP,
 } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 
 import 'calypso/state/signup/init';
@@ -23,7 +24,7 @@ function addProvidedDependencies( step, providedDependencies ) {
 	return { ...step, providedDependencies };
 }
 
-function recordSubmitStep( stepName, providedDependencies ) {
+function recordSubmitStep( stepName, providedDependencies, optionalProps ) {
 	// Transform the keys since tracks events only accept snaked prop names.
 	// And anonymize personally identifiable information.
 	const inputs = reduce(
@@ -70,6 +71,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		device,
 		step: stepName,
+		...optionalProps,
 		...inputs,
 	} );
 }
@@ -91,8 +93,9 @@ export function submitSignupStep( step, providedDependencies ) {
 	return ( dispatch, getState ) => {
 		const lastKnownFlow = getCurrentFlowName( getState() );
 		const lastUpdated = Date.now();
+		const { intent } = getSignupDependencyStore( getState() );
 
-		dispatch( recordSubmitStep( step.stepName, providedDependencies ) );
+		dispatch( recordSubmitStep( step.stepName, providedDependencies, { intent } ) );
 
 		dispatch( {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,

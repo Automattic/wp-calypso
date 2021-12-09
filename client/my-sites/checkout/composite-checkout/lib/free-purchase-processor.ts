@@ -1,5 +1,6 @@
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { recordTransactionBeginAnalytics } from './analytics';
 import getDomainDetails from './get-domain-details';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
@@ -27,7 +28,10 @@ export default async function freePurchaseProcessor(
 		includeDomainDetails,
 		includeGSuiteDetails,
 		contactDetails,
+		reduxDispatch,
 	} = transactionOptions;
+
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'free-purchase' } ) );
 
 	const formattedTransactionData = prepareFreePurchaseTransaction(
 		{

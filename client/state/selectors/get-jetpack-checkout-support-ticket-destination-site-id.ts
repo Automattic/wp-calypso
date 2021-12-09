@@ -14,5 +14,5 @@ export default function getJetpackCheckoutSupportTicketDestinationSiteId(
 	state: AppState,
 	siteId: number
 ): number {
-	return state.jetpackCheckout?.submittedSiteUrl?.[ siteId ]?.transferred_to || 0;
+	return state.jetpackCheckout?.submittedSiteUrl?.[ siteId ]?.transferred_to;
 }

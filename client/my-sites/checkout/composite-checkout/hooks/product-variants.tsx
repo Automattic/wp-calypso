@@ -36,6 +36,7 @@ export interface AvailableProductVariant {
 	};
 	priceFull: number;
 	priceFinal: number;
+	isIntroductoryOfferApplied: boolean;
 }
 
 export interface AvailableProductVariantAndCompared extends AvailableProductVariant {
@@ -59,6 +60,12 @@ const Discount = styled.span`
 	.rtl & {
 		margin-right: 0;
 		margin-left: 8px;
+	}
+	order: unset;
+
+	@media ( max-width: 660px ) {
+		order: 1;
+		width: 100%;
 	}
 `;
 
@@ -157,8 +164,8 @@ function getLowestPriceTimesVariantInterval(
 	}
 
 	allVariants.sort( ( variantA, variantB ) => {
-		const variantAInterval = getTermDuration( variantA.plan.term );
-		const variantBInterval = getTermDuration( variantB.plan.term );
+		const variantAInterval = getTermDuration( variantA.plan.term ) ?? 0;
+		const variantBInterval = getTermDuration( variantB.plan.term ) ?? 0;
 		return variantAInterval - variantBInterval;
 	} );
 	const lowestVariant = allVariants[ 0 ];
@@ -180,7 +187,7 @@ function isVariantAllowed(
 	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 ) {
 		return true;
 	}
-	const variantRenewalInterval = getTermDuration( variant.plan.term );
+	const variantRenewalInterval = getTermDuration( variant.plan.term ) ?? 0;
 	if ( activePlanRenewalInterval <= variantRenewalInterval ) {
 		return true;
 	}
@@ -216,23 +223,33 @@ function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAn
 	const discountPercentage = Math.round(
 		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
 	);
-	return (
-		<Discount>
-			{ translate( 'Save %(percent)s%%', {
+	let message = '';
+	if ( variant.isIntroductoryOfferApplied ) {
+		message = String(
+			translate( 'Eligible orders save %(percent)s%%', {
 				args: {
 					percent: discountPercentage,
 				},
-			} ) }
-		</Discount>
-	);
+			} )
+		);
+	} else {
+		message = String(
+			translate( 'Save %(percent)s%%', {
+				args: {
+					percent: discountPercentage,
+				},
+			} )
+		);
+	}
+	return <Discount>{ message }</Discount>;
 }
 
 function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const chosenPlan = getPlan( productSlug )
-		? getPlan( productSlug )
-		: getProductFromSlug( productSlug );
+	const chosenPlan = getPlan( productSlug ?? '' )
+		? getPlan( productSlug ?? '' )
+		: getProductFromSlug( productSlug ?? '' );
 
-	if ( ! chosenPlan ) {
+	if ( ! chosenPlan || typeof chosenPlan === 'string' ) {
 		return [];
 	}
 

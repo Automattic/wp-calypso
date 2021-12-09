@@ -32,9 +32,9 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 					<SubTitle>
 						{ createInterpolateElement(
 							sprintf(
-								/* translators: the website could be any domain (eg: "yourname.com") that is hosted by a platform (eg: Wix, Squarespace, Blogger, etc.) */
+								/* translators: the website could be any domain (eg: "yourname.com") that is built with a platform (eg: Wix, Squarespace, Blogger, etc.) */
 								__(
-									'It looks like <strong>%(website)s</strong> is hosted by %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
+									'It looks like <strong>%(website)s</strong> is built with %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
 								),
 								{
 									website: convertToFriendlyWebsiteName( urlData.url ),
@@ -92,7 +92,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) 
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ () => goToStep( 'design-setup-site', '', 'setup-site' ) }>
+						<NextButton onClick={ () => goToStep( 'intent', '', 'setup-site' ) }>
 							{ __( 'Start building' ) }
 						</NextButton>
 						<div>
@@ -179,7 +179,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 							sprintf(
 								/* translators: the website could be any domain (eg: "yourname.com") */
 								__(
-									'It looks like <strong>%(website)s</strong> is already on WordPress.com. Try a different address or start buidling a new site instead.'
+									'It looks like <strong>%(website)s</strong> is already on WordPress.com. Try a different address or start building a new site instead.'
 								),
 								{
 									website: convertToFriendlyWebsiteName( urlData.url ),
@@ -190,7 +190,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ () => goToStep( 'design-setup-site', '', 'setup-site' ) }>
+						<NextButton onClick={ () => goToStep( 'intent', '', 'setup-site' ) }>
 							{ __( 'Start building' ) }
 						</NextButton>
 						<div>

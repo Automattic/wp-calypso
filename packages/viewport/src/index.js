@@ -91,7 +91,7 @@ const mediaQueryLists = {
 	'480px-960px': createMediaQueryList( { min: 480, max: 960 } ),
 };
 
-function getMediaQueryList( breakpoint ) {
+export function getMediaQueryList( breakpoint ) {
 	if ( ! mediaQueryLists.hasOwnProperty( breakpoint ) ) {
 		try {
 			// eslint-disable-next-line no-console

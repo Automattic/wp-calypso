@@ -9,6 +9,7 @@ import {
 	isPlan,
 	isSiteRedirect,
 	isTitanMail,
+	isGoogleWorkspaceExtraLicence,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -22,7 +23,6 @@ import {
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
-import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
 import {
 	domainManagementEdit,

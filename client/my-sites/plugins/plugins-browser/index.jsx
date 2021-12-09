@@ -32,6 +32,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
+import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -63,7 +64,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 /**
@@ -98,6 +98,7 @@ export class PluginsBrowser extends Component {
 		this.WrappedSearch = ( props ) => <Search { ...props } />;
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.reinitializeSearch();
 
@@ -224,7 +225,8 @@ export class PluginsBrowser extends Component {
 
 			const subtitle =
 				pluginsPagination &&
-				this.props.translate( '%(total)s plugins', {
+				this.props.translate( '%(total)s plugin', '%(total)s plugins', {
+					count: pluginsPagination.results,
 					textOnly: true,
 					args: {
 						total: pluginsPagination.results,
@@ -235,7 +237,7 @@ export class PluginsBrowser extends Component {
 				<>
 					<PluginsBrowserList
 						plugins={ pluginsBySearchTerm }
-						listName={ searchTerm }
+						listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 						title={ searchTitle }
 						subtitle={ subtitle }
 						site={ this.props.siteSlug }
@@ -513,7 +515,7 @@ export class PluginsBrowser extends Component {
 				{ this.renderPageViewTracker() }
 				<DocumentHead title={ translate( 'Plugins' ) } />
 				<SidebarNavigation />
-				{ isEnabled( 'marketplace' ) && (
+				{ isEnabled( 'marketplace-v0.5' ) && (
 					<AnnouncementModal
 						announcementId="plugins-page-revamp"
 						pages={ this.getAnnoncementPages() }
@@ -543,6 +545,28 @@ export class PluginsBrowser extends Component {
 	}
 }
 
+/**
+ * Filter the popular plugins list.
+ *
+ * Remove the incompatible plugins and the displayed featured
+ * plugins from the popular list to avoid showing them twice.
+ *
+ * @param {Array} popularPlugins
+ * @param {Array} featuredPlugins
+ */
+function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
+	const displayedFeaturedSlugsMap = new Map(
+		featuredPlugins
+			.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins
+			.map( ( plugin ) => [ plugin.slug, plugin.slug ] )
+	);
+
+	return popularPlugins.filter(
+		( plugin ) =>
+			! displayedFeaturedSlugsMap.has( plugin.slug ) && isCompatiblePlugin( plugin.slug )
+	);
+}
+
 export default flow(
 	localize,
 	urlSearch,
@@ -556,6 +580,8 @@ export default flow(
 				( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 			const hasPremiumPlan = sitePlan && ( hasBusinessPlan || isPremium( sitePlan ) );
 			const recommendedPlugins = getRecommendedPlugins( state, selectedSiteId );
+			const featuredPlugins = getPluginsListByCategory( state, 'featured' );
+			const popularPlugins = getPluginsListByCategory( state, 'popular' );
 
 			return {
 				selectedSiteId,
@@ -577,8 +603,8 @@ export default flow(
 				recommendedPlugins: recommendedPlugins || [],
 				pluginsByCategory: getPluginsListByCategory( state, category ),
 				pluginsByCategoryNew: getPluginsListByCategory( state, 'new' ),
-				pluginsByCategoryPopular: getPluginsListByCategory( state, 'popular' ),
-				pluginsByCategoryFeatured: getPluginsListByCategory( state, 'featured' ),
+				pluginsByCategoryPopular: filterPopularPlugins( popularPlugins, featuredPlugins ),
+				pluginsByCategoryFeatured: featuredPlugins,
 				pluginsBySearchTerm: getPluginsListBySearchTerm( state, search ),
 				pluginsPagination: getPluginsListPagination( state, search ),
 				isFetchingPluginsByCategory: isFetchingPluginsList( state, category ),

@@ -1,6 +1,26 @@
 {
 	"featured": [
 		{
+			"title": "Arbutus",
+			"slug": "arbutus",
+			"template": "arbutus",
+			"theme": "arbutus",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Arbutus",
+			"slug": "arbutus",
+			"template": "arbutus",
+			"theme": "arbutus",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": false,
+			"features": []
+		},
+		{
 			"title": "Quadrat",
 			"slug": "quadrat",
 			"template": "quadrat",
@@ -503,13 +523,14 @@
 			"features": [ "anchorfm" ]
 		},
 		{
-			"title": "Start with an empty page",
+			"title": "Blank Canvas",
 			"slug": "blank-canvas",
 			"template": "blank-canvas",
 			"theme": "blank-canvas",
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": false,
+			"is_featured_picks": true,
 			"features": []
 		}
 	]

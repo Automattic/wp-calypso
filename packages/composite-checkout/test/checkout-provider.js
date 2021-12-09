@@ -1,12 +1,10 @@
 import { render, fireEvent } from '@testing-library/react';
+import { useState } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import {
 	CheckoutProvider,
 	FormStatus,
 	TransactionStatus,
-	useSelect,
-	useDispatch,
-	useRegisterStore,
 	useFormStatus,
 	useTransactionStatus,
 } from '../src/public-api';
@@ -308,27 +306,7 @@ function createMockMethod() {
 }
 
 function MockPaymentForm( { summary } ) {
-	useRegisterStore( 'mock', {
-		reducer( state = {}, action ) {
-			switch ( action.type ) {
-				case 'CARDHOLDER_NAME_SET':
-					return { ...state, cardholderName: action.payload };
-			}
-			return state;
-		},
-		actions: {
-			changeCardholderName( payload ) {
-				return { type: 'CARDHOLDER_NAME_SET', payload };
-			},
-		},
-		selectors: {
-			getCardholderName( state ) {
-				return state.cardholderName || '';
-			},
-		},
-	} );
-	const cardholderName = useSelect( ( select ) => select( 'mock' ).getCardholderName() );
-	const { changeCardholderName } = useDispatch( 'mock' );
+	const [ cardholderName, changeCardholderName ] = useState( '' );
 	return (
 		<div data-testid="mock-payment-form">
 			<label>

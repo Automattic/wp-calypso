@@ -325,7 +325,7 @@ export function generateSteps( {
 		},
 		'domain-only': {
 			stepName: 'domain-only',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
@@ -334,7 +334,7 @@ export function generateSteps( {
 
 		'select-domain': {
 			stepName: 'select-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in add-domain flow
 			props: {
 				isAllDomains: true,
 				isDomainOnly: true,
@@ -679,6 +679,10 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
+		'p2-get-started': {
+			stepName: 'p2-get-started',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
@@ -737,10 +741,11 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
+				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
 			},
 		},
 		'difm-design-setup-site': {
@@ -748,23 +753,25 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
+				showDesignPickerCategoriesAllFilter: false,
 			},
 		},
 		'difm-design': {
+			// TODO: Temporary step to be deleted
 			stepName: 'difm-design',
 			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'siteSlug', 'selectedDesign' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'typeformResponseId' ],
 			apiRequestFunction: addPlanToCart,
 		},
 
@@ -778,19 +785,24 @@ export function generateSteps( {
 		ready: {
 			stepName: 'ready',
 		},
+		importing: {
+			stepName: 'importing',
+		},
 
 		// Woocommerce Install steps
 		confirm: {
 			stepName: 'confirm',
+			props: {
+				headerTitle: i18n.translate( 'One final step' ),
+				headerDescription: i18n.translate(
+					'We’ve highlighted a few important details you should review before we create your store. '
+				),
+			},
+			dependencies: [ 'site' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-		},
-		install: {
-			stepName: 'install',
-		},
-		complete: {
-			stepName: 'complete',
+			dependencies: [ 'site' ],
 		},
 	};
 }

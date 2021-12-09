@@ -9,6 +9,7 @@ import InfiniteList from 'calypso/components/infinite-list';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import UserItem from 'calypso/components/user';
 import { hasTouch } from 'calypso/lib/touch-detect';
+import 'calypso/components/popover-menu/style.scss';
 
 /**
  * Module variables

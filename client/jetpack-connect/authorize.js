@@ -119,6 +119,7 @@ export class JetpackAuthorize extends Component {
 		isRedirecting: false,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
@@ -146,12 +147,22 @@ export class JetpackAuthorize extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { retryAuth } = nextProps;
 		const { authorizeError, authorizeSuccess, siteReceived } = nextProps.authorizationData;
 		const { alreadyAuthorized, redirectAfterAuth, site } = nextProps.authQuery;
 
-		if (
+		if ( this.isJetpackPartnerCoupon( nextProps ) && ( siteReceived || authorizeSuccess ) ) {
+			// The current implementation of the partner coupon URL is supposed to
+			// just take over the entire flow and send directly to checkout.
+			// This will happen by the partnerCouponRedirects controller logic if we
+			// just redirect the customer to the plans page.
+			// The reason we have to do this is because e.g. "shouldRedirectJetpackStart" has
+			// logic that will always go straight to the redirect URI after authorization which
+			// means we never hit the "plans" page where our partner coupon logic takes over.
+			return this.redirect();
+		} else if (
 			this.isSso( nextProps ) ||
 			this.isWooRedirect( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
@@ -208,7 +219,13 @@ export class JetpackAuthorize extends Component {
 
 	redirect() {
 		const { isMobileAppFlow, mobileAppRedirect } = this.props;
-		const { from, redirectAfterAuth, scope, closeWindowAfterAuthorize } = this.props.authQuery;
+		const {
+			from,
+			homeUrl,
+			redirectAfterAuth,
+			scope,
+			closeWindowAfterAuthorize,
+		} = this.props.authQuery;
 		const { isRedirecting } = this.state;
 
 		if ( isRedirecting ) {
@@ -229,7 +246,21 @@ export class JetpackAuthorize extends Component {
 			window.close();
 		}
 
-		if (
+		if ( this.isJetpackPartnerCoupon() ) {
+			// The current implementation of the partner coupon URL is supposed to
+			// just take over the entire flow and send directly to checkout.
+			// This will happen by the partnerCouponRedirects controller logic if we
+			// just redirect the customer to the plans page.
+			// The reason we have to do this is because e.g. "shouldRedirectJetpackStart" has
+			// logic that will always go straight to the redirect URI after authorization which
+			// means we never hit the "plans" page where our partner coupon logic takes over.
+			const redirectionTarget = addQueryArgs(
+				{ redirect: redirectAfterAuth },
+				`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+			);
+			debug( `Jetpack Partner Coupon Redirecting to: ${ redirectionTarget }` );
+			navigate( redirectionTarget );
+		} else if (
 			this.isSso() ||
 			this.isWooRedirect() ||
 			this.isFromJpo() ||
@@ -347,6 +378,11 @@ export class JetpackAuthorize extends Component {
 
 	getWooDnaConfig( props = this.props ) {
 		return wooDnaConfig( props.authQuery );
+	}
+
+	isJetpackPartnerCoupon( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-partner-coupon' );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
@@ -702,6 +738,7 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { from } = this.props.authQuery;
+		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
 		if ( this.retryingAuth || isAuthorizing || authorizeSuccess || this.redirecting ) {
 			return null;
@@ -714,19 +751,23 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				{ this.renderBackToWpAdminLink() }
+				{ ! isJetpackMagicLinkSignUpFlow && this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
 					href={ login( { isJetpack: true, redirectTo: window.location.href, from } ) }
 					onClick={ this.handleSignIn }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
-				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
-					{ translate( 'Create a new account' ) }
-				</LoggedOutFormLinkItem>
-				<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
-					<HelpButton />
-				</JetpackConnectHappychatButton>
+				{ ! isJetpackMagicLinkSignUpFlow && (
+					<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
+						{ translate( 'Create a new account' ) }
+					</LoggedOutFormLinkItem>
+				) }
+				{ ! isJetpackMagicLinkSignUpFlow && (
+					<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
+						<HelpButton />
+					</JetpackConnectHappychatButton>
+				) }
 			</LoggedOutFormLinks>
 		);
 	}
@@ -820,9 +861,6 @@ export class JetpackAuthorize extends Component {
 	render() {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
-
-		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
-
 		const authSiteId = this.props.authQuery.clientId;
 
 		return (
@@ -852,7 +890,7 @@ export class JetpackAuthorize extends Component {
 							{ this.renderNotices() }
 							{ this.renderStateAction() }
 						</Card>
-						{ ! isJetpackMagicLinkSignUpFlow && this.renderFooterLinks() }
+						{ this.renderFooterLinks() }
 					</div>
 				</div>
 			</MainWrapper>

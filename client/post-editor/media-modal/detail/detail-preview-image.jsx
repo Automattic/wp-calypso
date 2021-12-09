@@ -20,6 +20,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 
 	state = { loading: true };
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.item.URL !== nextProps.item.URL ) {
 			this.setState( { loading: true } );

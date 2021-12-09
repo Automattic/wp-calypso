@@ -121,7 +121,6 @@
 
 	// The editor has its own sidebar which doesnt
 	// use the secondary element.
-	.is-section-post-editor &,
 	.is-section-gutenberg-editor &,
 	// Some screens (like /theme/) simply dont have
 	// a sidebar.
@@ -227,10 +226,9 @@
 	Content - The content is the furrent focus
 */
 
-// Adjust the content as needed when focused on the site selector
-// or sidebar, but never in the editor.
-.layout.focus-sites:not( .is-section-post-editor ),
-.layout.focus-sidebar:not( .is-section-post-editor ) {
+// Adjust the content as needed when focused on the site selector or sidebar.
+.layout.focus-sites,
+.layout.focus-sidebar {
 	.layout__primary .main {
 		@include breakpoint-deprecated( '<660px' ) {
 			pointer-events: none;

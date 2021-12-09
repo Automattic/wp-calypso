@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -24,8 +25,6 @@ class PluginsBrowserList extends Component {
 	};
 
 	renderPluginsViewList() {
-		let emptyCounter = 0;
-
 		const pluginsViewsList = this.props.plugins.map( ( plugin, n ) => {
 			return (
 				<PluginBrowserItem
@@ -42,15 +41,6 @@ class PluginsBrowserList extends Component {
 				/>
 			);
 		} );
-
-		// We need to complete the list with empty elements to keep the grid drawn.
-		while ( pluginsViewsList.length % 3 !== 0 || pluginsViewsList.length % 2 !== 0 ) {
-			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			pluginsViewsList.push(
-				<div className="plugins-browser-item is-empty" key={ 'empty-item-' + emptyCounter++ } />
-			);
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
-		}
 
 		if ( this.props.size ) {
 			return pluginsViewsList.slice( 0, this.props.size );
@@ -93,7 +83,9 @@ class PluginsBrowserList extends Component {
 		return (
 			<div className="plugins-browser-list">
 				<div className="plugins-browser-list__header">
-					<div className="plugins-browser-list__title">{ this.props.title }</div>
+					<div className={ classnames( 'plugins-browser-list__title', this.props.listName ) }>
+						{ this.props.title }
+					</div>
 					<div className="plugins-browser-list__subtitle">{ this.props.subtitle }</div>
 				</div>
 				<Card className="plugins-browser-list__elements">{ this.renderViews() }</Card>

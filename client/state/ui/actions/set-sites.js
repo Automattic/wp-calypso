@@ -7,7 +7,7 @@ import 'calypso/state/ui/init';
  * as selected.
  *
  * @param {number} siteId Site ID
- * @returns {object} Action object
+ * @returns {{type: string, siteId: number}} Action object
  */
 export function setSelectedSiteId( siteId ) {
 	return {

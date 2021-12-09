@@ -1,5 +1,5 @@
 /**
- * @group calypso-release
+ * @group quarantined
  */
 
 import {
@@ -16,7 +16,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
 	let page: Page;
 
 	setupHooks( ( args ) => {
@@ -81,7 +81,6 @@ describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), functio
 			await Promise.all( [
 				page.waitForNavigation( {
 					url: '**/checkout/thank-you/**',
-					waitUntil: 'networkidle',
 					// Sometimes the testing domain third party system is really slow. It's better to wait a while than to throw a false positive.
 					timeout: 90 * 1000,
 				} ),

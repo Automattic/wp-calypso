@@ -18,7 +18,6 @@ import {
 	PaginatedItems,
 	PartnerPortalThunkAction,
 } from 'calypso/state/partner-portal/types';
-import { ReduxDispatch } from 'calypso/state/redux-store';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
@@ -37,7 +36,7 @@ export function fetchLicenses(
 	sortDirection: LicenseSortDirection,
 	page: number
 ): PartnerPortalThunkAction {
-	return ( dispatch: ReduxDispatch ): void => {
+	return ( dispatch ) => {
 		dispatch(
 			createHttpAction( {
 				type: JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,

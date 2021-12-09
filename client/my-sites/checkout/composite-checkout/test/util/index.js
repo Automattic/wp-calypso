@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getEmptyResponseCart } from '@automattic/shopping-cart';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
@@ -15,7 +16,6 @@ export const processorOptions = {
 	includeGSuiteDetails: false,
 	createUserAndSiteBeforeTransaction: false,
 	stripeConfiguration,
-	recordEvent: () => null,
 	reduxDispatch: () => null,
 	responseCart: getEmptyResponseCart(),
 	getThankYouUrl: () => '',
@@ -253,6 +253,8 @@ export const fetchStripeConfiguration = async () => {
 	return {
 		public_key: 'abc123',
 		js_url: 'https://js.stripe.com/v3/',
+		processor_id: 'test',
+		setup_intent_id: '',
 	};
 };
 
@@ -274,26 +276,37 @@ export async function mockSetCartEndpoint( _, requestCart ) {
 	}, taxInteger );
 
 	return {
-		products,
-		locale: requestLocale,
-		currency: requestCurrency,
-		credits_integer: 0,
-		credits_display: '0',
 		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
+		blog_id: '1234',
+		cart_generated_at_timestamp: 12345,
+		cart_key: '1234',
+		coupon: requestCoupon,
+		coupon_discounts_integer: [],
 		coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
 		coupon_savings_total_integer: requestCoupon ? 1000 : 0,
+		create_new_blog: false,
+		credits_display: '0',
+		credits_integer: 0,
+		currency: requestCurrency,
+		is_coupon_applied: true,
+		is_signup: false,
+		locale: requestLocale,
+		next_domain_is_free: false,
+		products,
 		savings_total_display: requestCoupon ? 'R$10' : 'R$0',
 		savings_total_integer: requestCoupon ? 1000 : 0,
-		total_tax_display: 'R$7',
-		total_tax_integer: taxInteger,
-		total_cost_display: 'R$156',
-		total_cost_integer: totalInteger,
 		sub_total_display: 'R$149',
 		sub_total_integer: totalInteger - taxInteger,
-		coupon: requestCoupon,
-		is_coupon_applied: true,
-		coupon_discounts_integer: [],
+		sub_total_with_taxes_display: 'R$156',
+		sub_total_with_taxes_integer: totalInteger,
 		tax: { location: {}, display_taxes: true },
+		total_cost: 0,
+		total_cost_display: 'R$156',
+		total_cost_integer: totalInteger,
+		total_tax: '',
+		total_tax_breakdown: [],
+		total_tax_display: 'R$7',
+		total_tax_integer: taxInteger,
 	};
 }
 
@@ -716,6 +729,18 @@ export const mockPayPalRedirectResponse = () => [
 	{ redirect_url: 'https://test-redirect-url' },
 ];
 
+export function mockCreateAccountEndpoint( endpointResponse ) {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/users/new', ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( endpointResponse );
+	return endpoint;
+}
+
 export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	const transactionsEndpoint = jest.fn();
 	transactionsEndpoint.mockReturnValue( true );
@@ -729,6 +754,18 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	return transactionsEndpoint;
 }
 
+export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, { success: true } ];
+
+export const mockCreateAccountSiteCreatedResponse = () => [
+	200,
+	{
+		success: true,
+		blog_details: {
+			blogid: 1234567,
+		},
+	},
+];
+
 export const mockTransactionsRedirectResponse = () => [
 	200,
 	{ redirect_url: 'https://test-redirect-url' },
@@ -737,7 +774,7 @@ export const mockTransactionsRedirectResponse = () => [
 export const mockTransactionsSuccessResponse = () => [ 200, { success: 'true' } ];
 
 function getManagedValueFromString( value ) {
-	return { isTouched: true, value, errors: [], isRequired: true };
+	return { isTouched: true, value, errors: [] };
 }
 
 function getStringFromManagedValue( managedValue ) {
@@ -752,6 +789,7 @@ export const state = getManagedValueFromString( 'NY' );
 export const firstName = getManagedValueFromString( 'Human' );
 export const lastName = getManagedValueFromString( 'Person' );
 export const phone = getManagedValueFromString( '+1.5555555555' );
+export const email = getManagedValueFromString( 'test@example.com' );
 
 export const contactDetailsForDomain = {
 	countryCode,
@@ -783,4 +821,19 @@ export const basicExpectedDomainDetails = {
 	phone: getStringFromManagedValue( phone ),
 	postal_code: getStringFromManagedValue( postalCode ),
 	state: getStringFromManagedValue( state ),
+};
+
+export const expectedCreateAccountRequest = {
+	email: getStringFromManagedValue( email ),
+	'g-recaptcha-error': 'recaptcha_didnt_load',
+	'g-recaptcha-response': undefined,
+	is_passwordless: true,
+	extra: {},
+	signup_flow_name: 'onboarding-registrationless',
+	validate: false,
+	new_site_params: {},
+	should_create_site: true,
+	locale: 'en',
+	client_id: config( 'wpcom_signup_id' ),
+	client_secret: config( 'wpcom_signup_key' ),
 };

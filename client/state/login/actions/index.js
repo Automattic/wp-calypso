@@ -11,11 +11,6 @@ export { loginSocialUser } from 'calypso/state/login/actions/login-social-user';
 export { loginUser } from 'calypso/state/login/actions/login-user';
 export { loginUserWithSecurityKey } from 'calypso/state/login/actions/login-user-with-security-key';
 export { loginUserWithTwoFactorVerificationCode } from 'calypso/state/login/actions/login-user-with-two-factor-verification-code';
-export {
-	receivedTwoFactorPushNotificationApproved,
-	startPollAppPushAuth,
-	stopPollAppPushAuth,
-} from 'calypso/state/login/actions/push';
 export { sendSmsCode } from 'calypso/state/login/actions/send-sms-code';
 export { updateNonce } from 'calypso/state/login/actions/update-nonce';
 export { rebootAfterLogin } from 'calypso/state/login/actions/reboot-after-login';

@@ -16,6 +16,10 @@ interface Props {
 	isReskinned: boolean;
 	signupDependencies: any;
 	stepName: string;
+	queryObject: {
+		siteSlug?: string;
+		siteId?: string;
+	};
 }
 
 const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
@@ -30,16 +34,16 @@ const EXTERNAL_FLOW: { [ key: string ]: string } = {
 export default function IntentStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { goToNextStep, stepName } = props;
+	const { goToNextStep, stepName, queryObject } = props;
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
 	const branchSteps = useBranchSteps( stepName );
 
 	const submitIntent = ( intent: IntentFlag ) => {
-		recordTracksEvent( 'calypso_signup_select_intent', { intent } );
+		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
 
 		if ( EXTERNAL_FLOW[ intent ] ) {
-			page( getStepUrl( EXTERNAL_FLOW[ intent ] ) );
+			page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryObject ) );
 		} else {
 			branchSteps( EXCLUDE_STEPS[ intent ] );
 			dispatch( submitSignupStep( { stepName }, { intent } ) );

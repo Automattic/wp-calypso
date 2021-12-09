@@ -3,8 +3,9 @@
 @import '@wordpress/base-styles/mixins';
 
 .breadcrumbs {
-	svg.options-domain-button__add {
-		margin-left: 4px;
+	svg.options-domain-button__add.gridicon {
+		margin-left: 2px;
+		margin-right: 2px;
 
 		@include break-mobile {
 			margin-left: 0;
@@ -13,10 +14,6 @@
 
 	button.options-domain-button.ellipsis {
 		padding: 4px 0;
-
-		@include break-mobile {
-			padding: 7px;
-		}
 	}
 
 	svg.options-domain-button__ellipsis {
@@ -25,8 +22,8 @@
 		margin-left: 0;
 
 		@include break-mobile {
-			width: 18px;
-			height: 18px;
+			width: 24px;
+			height: 24px;
 		}
 	}
 }
@@ -302,10 +299,12 @@
 }
 
 .domain-management-list__items + .empty-domains-list-card {
-	margin-top: 24px;
+	margin-top: 32px;
+	margin-bottom: 32px;
 }
 
-.domain-management-list__filter {
+.domain-management-list__filter,
+.all-domains__filter {
 	padding: 0 16px;
 	> .domains-table-filter-button.is-mobile-version {
 		width: 100%;
@@ -356,6 +355,12 @@
 		& > .button {
 			margin: 16px 8px 0;
 		}
+		@include break-small {
+			justify-content: flex-start;
+			& > .button:first-child {
+				margin-left: 0;
+			}
+		}
 	}
 
 	@include break-small {
@@ -395,10 +400,14 @@
 	display: flex;
 	justify-content: space-between;
 	padding: 8px 0;
-	border-bottom: 1px solid var( --color-neutral-20 );
 	font-size: $font-body-small;
 	font-weight: 600;
 	color: var( --color-neutral-50 );
+
+	border-bottom: 1px solid var( --color-neutral-5 );
+	@include break-mobile {
+		border-bottom: 1px solid var( --color-neutral-20 );
+	}
 
 	.button-plain {
 		text-align: left;
@@ -419,7 +428,7 @@
 			fill: var( --color-neutral-50 );
 		}
 		&:hover > svg {
-			fill: var( --color-neutral-10 );
+			fill: var( --color-neutral-30 );
 		}
 	}
 
@@ -451,11 +460,30 @@
 	}
 }
 
+.list__select-domain-cell {
+	flex: 10 10 0;
+}
 .list__domain-cell {
 	flex: 83 83 0;
 }
+.list__site-cell {
+	flex: 70 70 0;
+}
 .list__status-cell {
 	flex: 40 40 0;
+	&__bubble {
+		display: flex;
+		width: 20px;
+		background: #d67709;
+		border-radius: 16px;
+		justify-content: center;
+		align-items: center;
+		color: #ffffff;
+		font-size: 12px;
+		height: 18px;
+		margin: 0 4px;
+		line-height: 20px;
+	}
 }
 .list__registered-until-cell {
 	flex: 50 50 0;

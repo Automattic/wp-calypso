@@ -8,7 +8,6 @@ and optional actions buttons.
 ```js
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import SectionHeader from 'calypso/components/section-header';
 
 const MyHeader = ( { translate } ) => (

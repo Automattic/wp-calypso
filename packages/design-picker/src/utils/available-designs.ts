@@ -36,7 +36,7 @@ export const mShotOptions = ( { preview }: Design, highRes: boolean ): MShotsOpt
 		vpw: 1600,
 		vph: preview === 'static' ? 1040 : 1600,
 		// When `w` was 1200 it created a visual glitch on one thumbnail. #57261
-		w: highRes ? 1201 : 600,
+		w: highRes ? 1199 : 600,
 		screen_height: 3600,
 	};
 };
@@ -81,9 +81,10 @@ export function getAvailableDesigns( {
 		designs.featured = shuffle( designs.featured );
 	}
 
-	// Force blank canvas design to always be first in the list
+	// Force designs using a "featured" term in the theme_picks taxonomy to always be first in the list.
+	// For example: Blank Canvas.
 	designs.featured = designs.featured.sort(
-		( a, b ) => Number( isBlankCanvasDesign( b ) ) - Number( isBlankCanvasDesign( a ) )
+		( a, b ) => Number( !! b.is_featured_picks ) - Number( !! a.is_featured_picks )
 	);
 
 	return designs;

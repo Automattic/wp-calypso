@@ -1,5 +1,6 @@
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -29,11 +30,9 @@ export default async function webPayProcessor(
 	if ( ! isValidWebPayTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const webPaymentEventType =
-		webPaymentType === 'google-pay'
-			? 'GOOGLE_PAY_TRANSACTION_BEGIN'
-			: 'APPLE_PAY_TRANSACTION_BEGIN';
-	transactionOptions.recordEvent( { type: webPaymentEventType } );
+	transactionOptions.reduxDispatch(
+		recordTransactionBeginAnalytics( { paymentMethodId: webPaymentType } )
+	);
 
 	const {
 		includeDomainDetails,

@@ -39,6 +39,7 @@ export class JetpackConnectMain extends Component {
 				waitingForSites: false,
 		  };
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( this.props.url ) {
 			this.checkUrl( cleanUrl( this.props.url ) );

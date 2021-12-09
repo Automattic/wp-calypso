@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -19,6 +20,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import HeaderCake from 'calypso/components/header-cake';
+import InfoPopover from 'calypso/components/info-popover';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -53,21 +55,26 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
+import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
-import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import {
+	getDomainsWithForwards,
+	isAddingEmailForward,
+} from 'calypso/state/selectors/get-email-forwards';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import EmailProviderCard from './email-provider-card';
 
@@ -98,6 +105,7 @@ class EmailProvidersComparison extends Component {
 		gSuiteProduct: PropTypes.object,
 		hasCartDomain: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
+		isSubmittingEmailForward: PropTypes.bool,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
 		titanMailProduct: PropTypes.object,
@@ -115,12 +123,9 @@ class EmailProvidersComparison extends Component {
 		this.state = {
 			googleUsers: [],
 			titanMailboxes: [ buildNewTitanMailbox( props.selectedDomainName, false ) ],
-			expanded: {
-				forwarding: false,
-				google: false,
-				titan: true,
-			},
+			expanded: this.getDefaultExpandedState( props.source ),
 			addingToCart: false,
+			emailForwardAdded: false,
 			validatedTitanMailboxUuids: [],
 		};
 	}
@@ -131,6 +136,21 @@ class EmailProvidersComparison extends Component {
 
 	componentWillUnmount() {
 		this.isMounted = false;
+	}
+
+	getDefaultExpandedState( source ) {
+		if ( source === 'google-sale' ) {
+			return {
+				forwarding: false,
+				google: true,
+				titan: false,
+			};
+		}
+		return {
+			forwarding: false,
+			google: false,
+			titan: true,
+		};
 	}
 
 	onExpandedStateChange = ( providerKey, isExpanded ) => {
@@ -149,17 +169,6 @@ class EmailProvidersComparison extends Component {
 		}
 
 		this.setState( { expanded: Object.fromEntries( expandedEntries ) } );
-	};
-
-	goToEmailForwarding = () => {
-		const { currentRoute, selectedDomainName, selectedSite, source } = this.props;
-
-		recordTracksEvent( 'calypso_email_providers_add_click', {
-			provider: 'email-forwarding',
-			source,
-		} );
-
-		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
 
 	isUpgrading = () => {
@@ -251,6 +260,16 @@ class EmailProvidersComparison extends Component {
 		}
 	};
 
+	onForwardingConfirmNewMailboxes = () => {
+		const { comparisonContext, source } = this.props;
+
+		recordTracksEvent( 'calypso_email_providers_add_click', {
+			context: comparisonContext,
+			provider: 'email-forwarding',
+			source,
+		} );
+	};
+
 	onGoogleConfirmNewUsers = () => {
 		const { comparisonContext, domain, gSuiteProduct, hasCartDomain, source } = this.props;
 		const { googleUsers } = this.state;
@@ -298,12 +317,29 @@ class EmailProvidersComparison extends Component {
 			} );
 	};
 
+	onAddEmailForwardSuccess = () => {
+		this.setState( { emailForwardAdded: true } );
+		const { domain, getSiteDomains, requestingSiteDomains, selectedSite } = this.props;
+		if ( ! requestingSiteDomains ) {
+			getSiteDomains( selectedSite.ID );
+		}
+		page( emailManagement( selectedSite.slug, domain.name ) );
+	};
+
 	renderEmailForwardingCard() {
-		const { domain, translate } = this.props;
+		const { domain, selectedDomainName, translate } = this.props;
 
 		if ( this.isUpgrading() ) {
 			return null;
 		}
+
+		const formFields = (
+			<EmailForwardingAddNewCompactList
+				selectedDomainName={ selectedDomainName }
+				onConfirmEmailForwarding={ this.onForwardingConfirmNewMailboxes }
+				onAddEmailForwardSuccess={ this.onAddEmailForwardSuccess }
+			/>
+		);
 
 		return (
 			<EmailProviderCard
@@ -314,11 +350,10 @@ class EmailProvidersComparison extends Component {
 					'Use your custom domain in your email address and forward all your mail to another address.'
 				) }
 				detailsExpanded={ this.state.expanded.forwarding }
+				formFields={ formFields }
 				onExpandedChange={ this.onExpandedStateChange }
-				buttonLabel={ translate( 'Add email forwarding' ) }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ translate( 'Add email forwarding' ) }
-				onButtonClick={ this.goToEmailForwarding }
 				features={ getEmailForwardingFeatures() }
 			/>
 		);
@@ -346,7 +381,7 @@ class EmailProvidersComparison extends Component {
 		const productIsDiscounted = hasDiscount( gSuiteProduct );
 		const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
 		const formattedPrice = productIsDiscounted
-			? translate( '{{fullPrice/}} {{discountedPrice/}} /user /month billed annually', {
+			? translate( '{{fullPrice/}} {{discountedPrice/}} /mailbox /month (billed annually)', {
 					components: {
 						fullPrice: <span>{ monthlyPrice }</span>,
 						discountedPrice: (
@@ -358,7 +393,7 @@ class EmailProvidersComparison extends Component {
 					comment:
 						'{{fullPrice/}} is the formatted full price, e.g. $20; {{discountedPrice/}} is the discounted, formatted price, e.g. $10',
 			  } )
-			: translate( '{{price/}} /user /month billed annually', {
+			: translate( '{{price/}} /mailbox /month (billed annually)', {
 					components: {
 						price: <span>{ monthlyPrice }</span>,
 					},
@@ -371,7 +406,7 @@ class EmailProvidersComparison extends Component {
 		const discount = productIsDiscounted ? (
 			<span className="email-providers-comparison__discount-with-renewal">
 				{ translate(
-					'%(discount)d% Off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
+					'%(discount)d% off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
 					{
 						args: {
 							discount: gSuiteProduct.sale_coupon.discount,
@@ -387,17 +422,20 @@ class EmailProvidersComparison extends Component {
 						},
 					}
 				) }
+
+				<InfoPopover position="right" showOnHover>
+					{ translate(
+						'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
+						{
+							args: {
+								googleMailService: getGoogleMailServiceFamily(),
+							},
+							comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+						}
+					) }
+				</InfoPopover>
 			</span>
 		) : null;
-
-		const additionalPriceInformation = productIsDiscounted
-			? null
-			: translate( '%(price)s billed annually', {
-					args: {
-						standardPrice,
-					},
-					comment: "Annual price formatted with the currency (e.g. '$99.99')",
-			  } );
 
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
@@ -459,11 +497,10 @@ class EmailProvidersComparison extends Component {
 				logo={ { path: googleWorkspaceIcon } }
 				title={ getGoogleMailServiceFamily() }
 				description={ translate(
-					'Professional email integrated with Google Meet and other collaboration tools from Google.'
+					'Professional email integrated with Google Meet and other productivity tools from Google.'
 				) }
 				formattedPrice={ formattedPrice }
 				discount={ discount }
-				additionalPriceInformation={ additionalPriceInformation }
 				formFields={ formFields }
 				detailsExpanded={ this.state.expanded.google }
 				onExpandedChange={ this.onExpandedStateChange }
@@ -488,14 +525,23 @@ class EmailProvidersComparison extends Component {
 			translate,
 		} = this.props;
 
-		const formattedPrice = translate( '{{price/}} /user /month billed monthly', {
+		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
+
+		const formattedPriceClassName = classNames( {
+			'email-providers-comparison__keep-main-price': ! isEligibleForFreeTrial,
+		} );
+
+		const formattedPrice = translate( '{{price/}} /mailbox /month (billed monthly)', {
 			components: {
-				price: <span>{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }</span>,
+				price: (
+					<span className={ formattedPriceClassName }>
+						{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }
+					</span>
+				),
 			},
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
 
 		const logo = (
@@ -533,7 +579,6 @@ class EmailProvidersComparison extends Component {
 				mailboxes={ this.state.titanMailboxes }
 				selectedDomainName={ selectedDomainName }
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
-				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
 			>
 				<Button
@@ -719,10 +764,18 @@ class EmailProvidersComparison extends Component {
 			domainsWithForwards,
 			hideEmailForwardingCard,
 			isGSuiteSupported,
+			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
 			source,
 		} = this.props;
+
+		// Ensure we hide the warning when any of the conditions are true:
+		// - We're not showing the email forward card
+		// - We're currently submitting/creating an email forward
+		// - We have added an email forward from this component
+		const shouldShowEmailForwardWarning =
+			! hideEmailForwardingCard && ! isSubmittingEmailForward && ! this.state.emailForwardAdded;
 
 		return (
 			<Main wideLayout>
@@ -736,10 +789,12 @@ class EmailProvidersComparison extends Component {
 
 				{ this.renderDomainEligibilityNotice() }
 
-				<EmailExistingForwardsNotice
-					domainsWithForwards={ domainsWithForwards }
-					selectedDomainName={ selectedDomainName }
-				/>
+				{ shouldShowEmailForwardWarning && (
+					<EmailExistingForwardsNotice
+						domainsWithForwards={ domainsWithForwards }
+						selectedDomainName={ selectedDomainName }
+					/>
+				) }
 
 				{ this.renderTitanCard() }
 
@@ -786,8 +841,10 @@ export default connect(
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasCartDomain,
+			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
+			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
@@ -795,6 +852,7 @@ export default connect(
 	( dispatch ) => {
 		return {
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+			getSiteDomains: ( siteId ) => dispatch( fetchSiteDomains( siteId ) ),
 		};
 	}
 )( withCartKey( withShoppingCart( localize( EmailProvidersComparison ) ) ) );

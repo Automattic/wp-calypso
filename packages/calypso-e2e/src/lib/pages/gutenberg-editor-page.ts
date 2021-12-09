@@ -1,6 +1,7 @@
 import assert from 'assert';
 import { Page, Frame, ElementHandle } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import { reloadAndRetry } from '../../element-helper';
 import { NavbarComponent } from '../components';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
@@ -14,7 +15,7 @@ const selectors = {
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
 	blockInserterPanel: '.block-editor-inserter__content',
-	blockSearch: '[placeholder="Search"]',
+	blockSearch: '.block-editor-inserter__search input[type="search"]',
 	blockInserterResultItem: '.block-editor-block-types-list__list-item',
 
 	// Within the editor body.
@@ -24,7 +25,8 @@ const selectors = {
 
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
-	settingsToggle: '[aria-label="Settings"]',
+	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
+	closeSettingsButton: 'button[aria-label="Close settings"]:visible',
 	saveDraftButton: '.editor-post-save-draft',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
@@ -35,7 +37,12 @@ const selectors = {
 
 	// Publish panel (including post-publish)
 	publishPanel: '.editor-post-publish-panel',
-	viewButton: '.editor-post-publish-panel a:has-text("View")',
+	// With the selector below, we're targeting both "View Post" buttons: the one
+	// in the post-publish pane, and the one that pops up in the bottom-left
+	// corner. This addresses the bug where the post-publish panel is immediately
+	// closed when publishing with certain blocks on the editor canvas.
+	// See https://github.com/Automattic/wp-calypso/issues/54421.
+	viewButton: 'text=/View (Post|Page)/',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
 
@@ -73,27 +80,50 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		await this.page.waitForLoadState( 'load' );
+		// `page.on` construct is used here instead of the more common `page.waitForResponse`.
+		// Using the latter causes this method to hang until the timeout is reached, since
+		// the `waitForResponse` method begins observing the network requests after the
+		// `nux?_envelope=1` request has been completed.
+		// On the other hand, `page.on` is able to monitor every request, including the
+		// one to the `nux` endpoint.
+		this.page.on( 'requestfinished', async ( request ) => {
+			const response = await request.response();
+			if ( ! response ) {
+				return;
+			}
+
+			if ( ! response.url().includes( 'nux?_envelope=1' ) ) {
+				return;
+			}
+
+			interface NuxPayload {
+				body: {
+					show_welcome_guide: boolean;
+				};
+			}
+
+			const body = ( await response.json() ) as NuxPayload;
+			if ( body?.body?.show_welcome_guide === true ) {
+				await this.dismissWelcomeTour();
+			}
+		} );
 
 		const frame = await this.getEditorFrame();
 		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
 		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
 		await frame.waitForSelector( selectors.editorTitle );
 
-		await this.dismissWelcomeTourIfPresent();
 		return frame;
 	}
 
 	/**
 	 * Dismisses the Welcome Tour (card) if it is present.
 	 */
-	async dismissWelcomeTourIfPresent(): Promise< void > {
+	async dismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		try {
-			await frame.click( selectors.welcomeTourCloseButton, { timeout: 5 * 1000 } );
-		} catch ( err ) {
-			// noop - welcome tour was not found, which is great.
-		}
+		const locator = frame.locator( selectors.welcomeTourCloseButton );
+
+		await locator.click( { timeout: 10 * 1000 } );
 	}
 
 	/**
@@ -102,10 +132,16 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		const elementHandle = await this.page.waitForSelector( selectors.editorFrame, {
+		const locator = this.page.locator( selectors.editorFrame );
+
+		const elementHandle = await locator.elementHandle( {
 			timeout: 105 * 1000,
-			state: 'attached',
 		} );
+
+		if ( ! elementHandle ) {
+			throw new Error( 'Could not locate editor iframe.' );
+		}
+
 		return ( await elementHandle.contentFrame() ) as Frame;
 	}
 
@@ -250,6 +286,18 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Remove the block from the editor.
+	 *
+	 * This method requires the handle to the block in question to be passed in as parameter.
+	 *
+	 * @param {ElementHandle} blockHandle ElementHandle of the block to be removed.
+	 */
+	async removeBlock( blockHandle: ElementHandle ): Promise< void > {
+		await blockHandle.click();
+		await this.page.keyboard.press( 'Backspace' );
+	}
+
+	/**
 	 * Open the block inserter panel.
 	 *
 	 * @returns {Promise<void>} No return value.
@@ -262,16 +310,22 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Opens the settings sidebar.
-	 *
-	 * @returns {Promise<void>} No return value.
+	 * @returns Whether the Settings sidebar is open or not.
+	 */
+	async isSettingsSidebarOpen(): Promise< boolean > {
+		const frame = await this.getEditorFrame();
+		return await frame.$eval( selectors.settingsToggle, ( element ) =>
+			element.classList.contains( 'is-pressed' )
+		);
+	}
+
+	/**
+	 * Opens the Settings sidebar.
 	 */
 	async openSettings(): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		const isSidebarOpen = await frame.$eval( selectors.settingsToggle, ( element ) =>
-			element.classList.contains( 'is-pressed' )
-		);
+		const isSidebarOpen = await this.isSettingsSidebarOpen();
 		if ( ! isSidebarOpen ) {
 			await frame.click( selectors.settingsToggle );
 		}
@@ -283,28 +337,33 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Closes the Settings sidebar.
+	 */
+	async closeSettings(): Promise< void > {
+		const isSidebarOpen = await this.isSettingsSidebarOpen();
+		if ( ! isSidebarOpen ) {
+			return;
+		}
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.closeSettingsButton );
+	}
+	/**
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {Promise<void} No return value.
 	 */
-	async publish( {
-		visit = false,
-		saveDraft = false,
-	}: { visit?: boolean; saveDraft?: boolean } = {} ): Promise< string > {
+	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
-
-		if ( saveDraft ) {
-			await this.saveDraft();
-		}
 
 		await frame.click( selectors.publishButton( selectors.postToolbar ) );
 		await frame.click( selectors.publishButton( selectors.publishPanel ) );
+
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
 		if ( visit ) {
-			await this._visitPublishedEntryFromPublishPane();
+			await this.visitPublishedPost( publishedURL );
 		}
 		return publishedURL;
 	}
@@ -348,11 +407,31 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _visitPublishedEntryFromPublishPane(): Promise< void > {
+	private async visitPublishedPost( url: string ): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		await Promise.all( [ this.page.waitForNavigation(), frame.click( selectors.viewButton ) ] );
-		await this.page.waitForLoadState( 'networkidle' );
+		await Promise.all( [
+			this.page.waitForNavigation( { waitUntil: 'networkidle', url: url } ),
+			frame.click( selectors.viewButton ),
+		] );
+
+		await reloadAndRetry( this.page, confirmPostShown );
+
+		/**
+		 * Closure to confirm that post is shown on screen as expected.
+		 *
+		 * In rare cases, visiting the post immediately after it has been published can result
+		 * in the post not being visible to the public yet. In such cases, an error message is
+		 * instead shown to the user.
+		 *
+		 * When used in conjunction with `reloadAndRetry` this method will reload the page
+		 * multiple times to ensure the post content is shown.
+		 *
+		 * @param page
+		 */
+		async function confirmPostShown( page: Page ): Promise< void > {
+			await page.waitForSelector( '.entry-content', { timeout: 5 * 1000 } );
+		}
 	}
 
 	/**
@@ -371,16 +450,17 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Returns to the Posts > All Posts view in Calypso.
+	 * Leave the editor to return to the Calypso dashboard.
 	 *
 	 * On desktop sized viewport, this method clicks on the `< All Posts` link in the block editor sidebar.
 	 * Note, for desktop the editor sidebar must be open. To open the sidebar, call `openNavSidebar` method.
 	 *
 	 * On mobile sized viewport, this method clicks on Navbar > My Sites.
 	 *
-	 * For both cases the esulting page will be the `My Home` page.
+	 * The resulting page can change based on where you come from, and the viewport. Either way, the resulting landing spot
+	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
 	 */
-	async returnToHomeDashboard(): Promise< void > {
+	async returnToCalypsoDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
 		const targetDevice = getTargetDeviceName();
 
@@ -393,9 +473,15 @@ export class GutenbergEditorPage {
 		}
 
 		const navbarComponent = new NavbarComponent( this.page );
-		const actions: Promise< unknown >[] = [
-			this.page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
-		];
+
+		// There are three different places you can return to, depending on how you entered the editor.
+		const navigationPromise = Promise.race( [
+			this.page.waitForNavigation( { url: '**/home/**' } ),
+			this.page.waitForNavigation( { url: '**/posts/**' } ),
+			this.page.waitForNavigation( { url: '**/pages/**' } ),
+		] );
+
+		const actions: Promise< unknown >[] = [ navigationPromise ];
 
 		if ( getTargetDeviceName() !== 'mobile' ) {
 			actions.push( frame.click( selectors.desktopDashboardLink ) );
@@ -437,8 +523,11 @@ export class GutenbergEditorPage {
 	 * Click on the `Preview` button on the editor toolbar, then select requested the preview option.
 	 *
 	 * This method interacts with the non-mobile implementation of the editor preview,
-	 * which applies an attribute to the editor to simulate target device.
+	 * which applies an attribute to the editor to simulate the preview environment.
 	 *
+	 * Additionally, this method only works in the desktop browser environment; in a mobile
+	 * environment, the Preview button will launch a new page. For mobile, use
+	 * `GutenbergEditorPage.openPreviewAsMobile` instead.
 	 *
 	 * @param {PreviewOptions} target Preview option to be selected.
 	 * @throws {Error} If environment is 'mobile'.
@@ -450,7 +539,8 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 		await frame.click( selectors.previewButton );
 		await frame.click( selectors.previewMenuItem( target ) );
-		await frame.waitForSelector( selectors.previewPane( target ) );
+		const handle = await frame.waitForSelector( selectors.previewPane( target ) );
+		await handle.waitForElementState( 'stable' );
 	}
 
 	/**
@@ -458,6 +548,10 @@ export class GutenbergEditorPage {
 	 *
 	 * This method will click on the Preview button if required, then select the `Desktop` entry,
 	 * which is the default view setting when the editor is opened initially.
+	 *
+	 * Additionally, this method only works in the desktop browser environment; in a mobile
+	 * environment, the Preview button would have launched a new page. For mobile, close
+	 * the new page instead.
 	 *
 	 * @throws {Error} If environment is 'mobile'.
 	 */
@@ -467,19 +561,11 @@ export class GutenbergEditorPage {
 		}
 		const frame = await this.getEditorFrame();
 
-		const previewButtonHandle = await frame.waitForSelector( selectors.previewButton );
-		// Check if the Preview button has been clicked and that menu options are showing.
-		// If required, click and show the menu items so that 'Desktop' can be clicked.
-		if ( ( await previewButtonHandle.getAttribute( 'aria-expanded' ) ) === 'false' ) {
-			await frame.click( selectors.previewButton );
-		}
-		// Select 'Desktop'.
-		await frame.click( selectors.previewMenuItem( 'Desktop' ) );
-		// Dismiss the Preview button.
-		await previewButtonHandle.click();
+		// Restore the editor view to Desktop size.
+		await this.openPreviewAsDesktop( 'Desktop' );
 
-		// Ensure the preview menu is closed and that preview settings are back to default.
-		await frame.waitForSelector( 'button[aria-expanded=false]' );
+		// Ensure the preview menu is closed and that preview settings are back to default (Desktop).
+		await frame.waitForSelector( `${ selectors.previewButton }[aria-expanded=false]` );
 		await frame.waitForSelector( selectors.previewPane( 'Desktop' ) );
 	}
 }

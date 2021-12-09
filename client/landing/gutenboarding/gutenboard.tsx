@@ -3,6 +3,7 @@ import { BlockEditorProvider, BlockList } from '@wordpress/block-editor';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { Popover, DropZoneProvider } from '@wordpress/components';
 import '@wordpress/format-library';
+import { ShortcutProvider } from '@wordpress/keyboard-shortcuts';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import Header from './components/header';
@@ -17,10 +18,7 @@ import useSiteTitle from './hooks/use-site-title';
 import useTrackOnboardingStart from './hooks/use-track-onboarding-start';
 import { name, settings } from './onboarding-block';
 import './style.scss';
-
-// TODO: uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
-// See https://github.com/WordPress/gutenberg/pull/19535
-// import '@wordpress/components/build-style/style.css';
+import '@wordpress/components/build-style/style.css';
 
 registerBlockType( name, settings );
 
@@ -81,25 +79,27 @@ const Gutenboard: React.FunctionComponent = () => {
 				<div className="gutenboarding__layout edit-post-layout">
 					<Header />
 					{ showSignupDialog && <SignupForm onRequestClose={ onSignupDialogClose } /> }
-					<BlockEditorProvider
-						useSubRegistry={ false }
-						value={ [ onboardingBlock.current ] }
-						settings={ {
-							templateLock: 'all',
-							alignWide: true,
-						} }
-					>
-						<div className="gutenboarding__content edit-post-layout__content">
-							<div
-								className="gutenboarding__content-editor edit-post-visual-editor editor-styles-wrapper"
-								role="region"
-								aria-label={ __( 'Onboarding screen content' ) }
-								tabIndex={ -1 }
-							>
-								<BlockList />
+					<ShortcutProvider>
+						<BlockEditorProvider
+							useSubRegistry={ false }
+							value={ [ onboardingBlock.current ] }
+							settings={ {
+								templateLock: 'all',
+								alignWide: true,
+							} }
+						>
+							<div className="gutenboarding__content edit-post-layout__content">
+								<div
+									className="gutenboarding__content-editor edit-post-visual-editor editor-styles-wrapper"
+									role="region"
+									aria-label={ __( 'Onboarding screen content' ) }
+									tabIndex={ -1 }
+								>
+									<BlockList />
+								</div>
 							</div>
-						</div>
-					</BlockEditorProvider>
+						</BlockEditorProvider>
+					</ShortcutProvider>
 				</div>
 			</DropZoneProvider>
 			<Popover.Slot />

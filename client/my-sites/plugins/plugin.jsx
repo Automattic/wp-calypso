@@ -44,13 +44,11 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
 
 class SinglePlugin extends Component {
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.isFetched() ) {
 			this.props.wporgFetchPluginData( this.props.pluginSlug );
 		}
-	}
 
-	componentDidMount() {
 		this.hasAlreadyShownTheTour = false;
 	}
 

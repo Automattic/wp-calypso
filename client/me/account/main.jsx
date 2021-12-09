@@ -4,7 +4,7 @@ import languages from '@automattic/languages';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { debounce, flowRight as compose, get, has, map, size } from 'lodash';
+import { debounce, flowRight as compose, get, map, size } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
@@ -31,6 +31,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import SectionHeader from 'calypso/components/section-header';
 import SitesDropdown from 'calypso/components/sites-dropdown';
+import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
@@ -49,7 +50,6 @@ import {
 	getCurrentUserName,
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { requestGeoLocation } from 'calypso/state/data-getters';
 import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
@@ -142,7 +142,7 @@ class Account extends Component {
 	}
 
 	hasUnsavedUserSetting( settingName ) {
-		return has( this.props.unsavedUserSettings, settingName );
+		return this.props.unsavedUserSettings.hasOwnProperty( settingName );
 	}
 
 	hasUnsavedUserSettings( settingNames ) {
@@ -208,7 +208,7 @@ class Account extends Component {
 				previous_language:
 					this.getUserOriginalSetting( 'locale_variant' ) ||
 					this.getUserOriginalSetting( 'language' ),
-				country_code: this.props.countryCode,
+				country_code: this.props.geo?.country_short,
 			} );
 			this.saveInterfaceSettings( event );
 		}
@@ -1080,10 +1080,13 @@ class Account extends Component {
 }
 
 export default compose(
+	localize,
+	withLocalizedMoment,
+	withGeoLocation,
+	protectForm,
 	connect(
 		( state ) => ( {
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
-			countryCode: requestGeoLocation().data,
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
 			currentUserName: getCurrentUserName( state ),
@@ -1112,8 +1115,5 @@ export default compose(
 			saveColorSchemePreference: ( newColorScheme ) =>
 				savePreference( colorSchemeKey, newColorScheme ),
 		}
-	),
-	localize,
-	withLocalizedMoment,
-	protectForm
+	)
 )( Account );

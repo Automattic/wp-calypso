@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Fragment } from 'react';
-import { SiteTitleButton } from 'calypso/layout/guided-tours/button-labels';
+import { SiteTitleButton, SiteTaglineButton } from 'calypso/layout/guided-tours/button-labels';
 import {
 	ButtonRow,
 	Continue,
@@ -17,8 +17,7 @@ export const ChecklistSiteTitleTour = makeTour(
 	<Tour { ...meta }>
 		<Step
 			name="init"
-			target="site-title-input"
-			arrow="top-left"
+			target="site-tagline-input"
 			placement="below"
 			style={ {
 				animationDelay: '0.7s',
@@ -28,10 +27,13 @@ export const ChecklistSiteTitleTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Update the {{siteTitleButton/}} field with a descriptive name ' +
-								'to let your visitors know which site they’re visiting.',
+							'Update the {{siteTitleButton/}} and {{siteTaglineButton/}} fields ' +
+								'to let visitors clearly identify your site.',
 							{
-								components: { siteTitleButton: <SiteTitleButton /> },
+								components: {
+									siteTitleButton: <SiteTitleButton />,
+									siteTaglineButton: <SiteTaglineButton />,
+								},
 							}
 						) }
 					</p>

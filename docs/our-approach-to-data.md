@@ -234,7 +234,6 @@ In the example above we only pass the first argument, `mapStateToProps`. As anot
 
 ```jsx
 import { localize } from 'i18n-calypso';
-import React from 'react';
 
 const PostDeleteButton = ( { deleteHandler, label, translate } ) => (
 	<button onClick={ deleteHandler }>

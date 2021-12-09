@@ -1,4 +1,5 @@
 import { Card, Dialog } from '@automattic/components';
+import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
 import page from 'page';
@@ -26,8 +27,6 @@ import {
 import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import getPreviousPath from '../../../../state/selectors/get-previous-path';
-
-const wpcom = wp.undocumented();
 
 import './style.scss';
 
@@ -107,17 +106,23 @@ class EditContactInfoFormCard extends Component {
 	}
 
 	validate = ( fieldValues, onComplete ) => {
-		wpcom.validateDomainContactInformation(
-			fieldValues,
-			[ this.props.selectedDomain.name ],
-			( error, data ) => {
-				if ( error ) {
-					onComplete( error );
-				} else {
-					onComplete( null, data.messages || {} );
-				}
-			}
-		);
+		wp.req
+			.post(
+				'/me/domain-contact-information/validate',
+				mapRecordKeysRecursively(
+					{
+						contactInformation: fieldValues,
+						domainNames: [ this.props.selectedDomain.name ],
+					},
+					camelToSnakeCase
+				)
+			)
+			.then( ( data ) => {
+				onComplete( null, mapRecordKeysRecursively( data.messages || {}, snakeToCamelCase ) );
+			} )
+			.catch( ( error ) => {
+				onComplete( error );
+			} );
 	};
 
 	requiresConfirmation( newContactDetails ) {
@@ -276,8 +281,7 @@ class EditContactInfoFormCard extends Component {
 
 		const { email } = newContactDetails;
 		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
-			wpcom
-				.me()
+			wp.me()
 				.settings()
 				.update( { user_email: email } )
 				.then( ( data ) => {

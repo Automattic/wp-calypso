@@ -3,8 +3,6 @@ import { Page, ElementHandle } from 'playwright';
 const selectors = {
 	block: '.wp-block-coblocks-logos',
 	fileInput: '.components-form-file-upload input[type="file"]',
-	spinner: '.components-spinner',
-
 	imageTitleData: ( filename: string ) =>
 		`${ selectors.block } img[data-image-title*="${ filename }" i]`,
 };
@@ -29,13 +27,14 @@ export class LogosBlock {
 	/**
 	 * Uplaods the target file at the supplied path to WPCOM.
 	 *
-	 * @param {string} path Path to the file on disk.
+	 * @param {string} filePath Path to the file on disk.
 	 */
-	async upload( path: string ): Promise< void > {
+	async upload( filePath: string ): Promise< void > {
 		const input = await this.block.waitForSelector( selectors.fileInput, { state: 'attached' } );
-		await input.setInputFiles( path );
+		await input.setInputFiles( filePath );
+
 		await Promise.all( [
-			this.block.waitForSelector( selectors.spinner, { state: 'hidden' } ),
+			this.block.waitForSelector( 'img:not([src^="blob:"])' ),
 			this.block.waitForElementState( 'stable' ),
 		] );
 	}

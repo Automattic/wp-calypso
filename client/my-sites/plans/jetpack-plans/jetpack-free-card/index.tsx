@@ -1,38 +1,56 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
-import ProductCardWithoutPrice from 'calypso/components/jetpack/card/product-without-price';
+import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import useJetpackFreeButtonProps from './use-jetpack-free-button-props';
-import type { JetpackFreeProps } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 
-const JetpackFreeCard: FC< JetpackFreeProps > = ( { fullWidth, siteId, urlQueryArgs } ) => {
+type OwnProps = {
+	siteId: number | null;
+	urlQueryArgs: QueryArgs;
+};
+
+const useFreeItem = () => {
 	const translate = useTranslate();
+
+	return useMemo(
+		() => ( {
+			productSlug: 'free',
+			isFree: true,
+			displayName: translate( 'Jetpack Free' ),
+			features: {
+				items: [
+					{ text: translate( 'Brute force attack protection' ) },
+					{ text: translate( 'Site stats' ) },
+					{ text: translate( 'Content Delivery Network' ) },
+				],
+			},
+		} ),
+		[ translate ]
+	);
+};
+
+const JetpackFreeCard: FC< OwnProps > = ( { siteId, urlQueryArgs } ) => {
+	const translate = useTranslate();
+	const freeProduct = useFreeItem();
+
 	const { href: buttonHref, onClick: onButtonClick } = useJetpackFreeButtonProps(
 		siteId,
 		urlQueryArgs
 	);
 
-	const features = useMemo(
-		() => [
-			translate( 'Brute force attack protection' ),
-			translate( 'Site stats' ),
-			translate( 'Content Delivery Network' ),
-		],
-		[ translate ]
-	);
-
 	return (
-		<ProductCardWithoutPrice
-			fullWidth={ fullWidth }
+		<JetpackProductCard
 			className="jetpack-free-card"
-			productSlug="free"
-			displayName={ translate( 'Jetpack Free' ) }
+			hideSavingLabel
+			buttonPrimary
+			item={ freeProduct }
+			headerLevel={ 3 }
 			description={ translate(
 				'Power up your WordPress site with essential security and performance features.'
 			) }
-			productFeatures={ features }
-			buttonHref={ buttonHref }
-			onButtonClick={ onButtonClick }
 			buttonLabel={ translate( 'Start for free' ) }
+			buttonURL={ buttonHref }
+			onButtonClick={ onButtonClick }
 		/>
 	);
 };

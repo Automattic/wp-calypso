@@ -11,15 +11,12 @@ Is a higher-order component (HOC) that provides one prop to the wrapped child:
 ### Usage
 
 ```jsx
-import React from 'react';
 import { withApplySiteOffset } from 'calypso/components/site-offset';
 
-class Label extends React.Component {
-	render() {
-		const { moment, date } = this.props;
-		const displayDate = applySiteOffset( date )?.format( 'LLLL' );
-		return <span>{ displayDate ? displayDate : 'Loading...' }</span>;
-	}
+function Label() {
+	const { moment, date } = this.props;
+	const displayDate = applySiteOffset( date )?.format( 'LLLL' );
+	return <span>{ displayDate ? displayDate : 'Loading...' }</span>;
 }
 
 export default withApplySiteOffset( Label );
@@ -38,7 +35,6 @@ in `withApplySiteOffset`. It's just a different implementation of the same conce
 ### Usage
 
 ```jsx
-import React from 'react';
 import { useApplySiteOffset } from 'calypso/components/site-offset';
 
 export default function Label( { date } ) {
@@ -62,7 +58,6 @@ The `SiteOffsetProvider` component takes one prop: `site`. It is a string that i
 ### Usage
 
 ```jsx
-import React from 'react';
 import ReactDom from 'react-dom';
 import { SiteOffsetProvider } from 'calypso/components/site-offset/context';
 

@@ -20,6 +20,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	flex-wrap: wrap;
 }
 
 .payment-method-details__image {
@@ -84,5 +85,17 @@
 
 	.card-heading {
 		margin-top: 0;
+	}
+}
+
+.payment-method-backup-toggle {
+	margin: 6px 16px 4px 76px;
+	order: 4;
+	width: 100%;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 4px 32px 4px 16px;
+		order: unset;
+		width: auto;
 	}
 }

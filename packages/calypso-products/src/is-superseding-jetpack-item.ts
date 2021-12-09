@@ -1,12 +1,9 @@
+import { JETPACK_PLAN_UPGRADE_MAP, JETPACK_PRODUCT_UPGRADE_MAP } from './constants';
 import { getJetpackItemTermVariants } from './get-jetpack-item-term-variants';
-import {
-	isJetpackPlanSlug,
-	isJetpackProductSlug,
-	JetpackPurchasableItemSlug,
-	JETPACK_PLAN_UPGRADE_MAP,
-	JETPACK_PRODUCT_UPGRADE_MAP,
-	planHasSuperiorFeature,
-} from '.';
+import { isJetpackPlanSlug } from './is-jetpack-plan-slug';
+import { isJetpackProductSlug } from './is-jetpack-product-slug';
+import { planHasSuperiorFeature } from './main';
+import type { JetpackPurchasableItemSlug } from './types';
 
 /**
  * Check if a Jetpack item (product or plan) is superseding another one. Based on yearly variants.

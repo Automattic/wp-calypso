@@ -11,8 +11,7 @@ $placeholder-color: #909398;
 	.capture__input-wrapper {
 		position: relative;
 		margin: auto;
-		max-width: 450px;
-		padding-right: 50px;
+		max-width: 500px;
 
 		.components-button.action-buttons__next.is-primary {
 			position: absolute;
@@ -25,6 +24,11 @@ $placeholder-color: #909398;
 				top: 4px;
 			}
 		}
+	}
+
+	.capture__input-wrapper-padding {
+		max-width: 450px;
+		padding-right: 50px;
 	}
 
 	.capture__input {

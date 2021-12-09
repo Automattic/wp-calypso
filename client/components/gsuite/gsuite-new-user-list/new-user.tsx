@@ -72,14 +72,12 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	const hasLastNameError = lastNameFieldTouched && null !== lastNameError;
 	const hasPasswordError = passwordFieldTouched && null !== passwordError;
 
-	const emailAddressPlaceholder = translate( 'Email' );
 	const emailAddressLabel = translate( 'Email address' );
 
 	const renderSingleDomain = () => {
 		return (
 			<LabelWrapper label={ emailAddressLabel }>
 				<FormTextInputWithAffixes
-					placeholder={ emailAddressPlaceholder }
 					value={ mailBox }
 					isError={ hasMailBoxError }
 					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -100,7 +98,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		return (
 			<LabelWrapper label={ emailAddressLabel }>
 				<FormTextInput
-					placeholder={ emailAddressPlaceholder }
 					value={ mailBox }
 					isError={ hasMailBoxError }
 					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -130,7 +127,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					<LabelWrapper label={ translate( 'First name' ) }>
 						<FormTextInput
 							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-							placeholder={ translate( 'First name' ) }
 							value={ firstName }
 							maxLength={ 60 }
 							isError={ hasFirstNameError }
@@ -150,7 +146,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 				<div className="gsuite-new-user-list__new-user-name-container">
 					<LabelWrapper label={ translate( 'Last name' ) }>
 						<FormTextInput
-							placeholder={ translate( 'Last name' ) }
 							value={ lastName }
 							maxLength={ 60 }
 							isError={ hasLastNameError }
@@ -182,7 +177,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						<FormPasswordInput
 							autoCapitalize="off"
 							autoCorrect="off"
-							placeholder={ translate( 'Password' ) }
 							value={ password }
 							maxLength={ 100 }
 							isError={ hasPasswordError }

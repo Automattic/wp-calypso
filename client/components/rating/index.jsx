@@ -9,7 +9,7 @@ import './style.scss';
 export default class Rating extends PureComponent {
 	static defaultProps = {
 		rating: 0,
-		size: 24,
+		size: 18,
 	};
 
 	static propTypes = {

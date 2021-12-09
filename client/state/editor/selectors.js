@@ -1,7 +1,6 @@
 import { get } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getEditedPost } from 'calypso/state/posts/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
@@ -99,17 +98,6 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 	}
 
 	return path;
-}
-
-/**
- * Returns whether the confirmation sidebar is enabled for the given siteId
- *
- * @param  {object}  state     Global state tree
- * @param  {number}  siteId    Site ID
- * @returns {boolean}           Whether or not the sidebar is enabled
- */
-export function isConfirmationSidebarEnabled( state, siteId ) {
-	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
 }
 
 export function isEditorIframeLoaded( state ) {

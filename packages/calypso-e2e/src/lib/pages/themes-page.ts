@@ -1,6 +1,9 @@
 import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
+	// Curent theme
+	currentTheme: ( name: string ) => `.current-theme:has-text("${ name }")`,
+
 	// Main themes listing
 	items: '.card.theme',
 	excludeActiveTheme: ':not(.is-active)',
@@ -44,6 +47,24 @@ export class ThemesPage {
 			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
 		] );
+	}
+
+	/**
+	 * Filters the themes on page according to the pricing structure.
+	 *
+	 * @param {string} type Pre-defined types of themes.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
+		await this.pageSettled();
+
+		const selector = `a[role="radio"]:has-text("${ type }")`;
+		await this.page.click( selector );
+		const button = await this.page.waitForSelector( selector );
+
+		// Wait for placeholder to disappear (indicating load is completed).
+		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
+		await this.page.waitForFunction( ( element: any ) => element.ariaChecked === 'true', button );
 	}
 
 	/**
@@ -120,5 +141,14 @@ export class ThemesPage {
 		await selectedTheme.waitForElementState( 'stable' );
 		// Clicking on the INFO button will always result in navigation to a new page.
 		await Promise.all( [ this.page.waitForNavigation(), selectedTheme.click() ] );
+	}
+
+	/**
+	 * Validates that the current theme (at top) is the expected theme. Throws if it is not.
+	 *
+	 * @param expectedTheme Expected theme name.
+	 */
+	async validateCurrentTheme( expectedTheme: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.currentTheme( expectedTheme ) );
 	}
 }

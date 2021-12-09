@@ -78,6 +78,10 @@
 	&.banner.card {
 		@include banner-color( var( --color-jetpack ) );
 	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-bottom: 16px;
+	}
 }
 
 /* WordPress.com-only styles */

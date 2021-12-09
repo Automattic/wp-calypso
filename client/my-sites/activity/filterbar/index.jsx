@@ -118,21 +118,27 @@ export class Filterbar extends Component {
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">
 					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
-					<DateRangeSelector
-						isVisible={ this.state.showActivityDates }
-						onButtonClick={ this.toggleDateRangeSelector }
-						onClose={ this.closeDateRangeSelector }
-						filter={ filter }
-						siteId={ siteId }
-					/>
-					<ActionTypeSelector
-						filter={ filter }
-						siteId={ siteId }
-						isVisible={ this.state.showActivityTypes }
-						onButtonClick={ this.toggleActivityTypesSelector }
-						onClose={ this.closeActivityTypes }
-					/>
-					{ this.renderCloseButton() }
+					<ul className="filterbar__control-list">
+						<li>
+							<DateRangeSelector
+								isVisible={ this.state.showActivityDates }
+								onButtonClick={ this.toggleDateRangeSelector }
+								onClose={ this.closeDateRangeSelector }
+								filter={ filter }
+								siteId={ siteId }
+							/>
+						</li>
+						<li>
+							<ActionTypeSelector
+								filter={ filter }
+								siteId={ siteId }
+								isVisible={ this.state.showActivityTypes }
+								onButtonClick={ this.toggleActivityTypesSelector }
+								onClose={ this.closeActivityTypes }
+							/>
+						</li>
+						<li>{ this.renderCloseButton() }</li>
+					</ul>
 				</div>
 				<div className="filterbar__mobile-wrap" />
 			</div>

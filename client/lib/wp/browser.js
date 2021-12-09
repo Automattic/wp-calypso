@@ -38,10 +38,8 @@ if ( config.isEnabled( 'support-user' ) ) {
 if ( 'development' === process.env.NODE_ENV ) {
 	require( './offline-library' ).makeOffline( wpcom );
 
-	// expose wpcom global var only in development
-	const wpcomPKG = require( 'wpcom/package' );
+	// expose wpcom global var in development mode
 	window.wpcom = wpcom;
-	window.wpcom.__version = wpcomPKG.version;
 }
 
 // Inject localization helpers to `wpcom` instance

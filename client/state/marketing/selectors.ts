@@ -6,6 +6,7 @@ export interface JetpackSaleCoupon {
 	discount: number;
 	start_date: string;
 	expiry_date: string;
+	sale_title: string;
 }
 
 export function isTreatmentPlansReorderTest( state: AppState ): boolean {

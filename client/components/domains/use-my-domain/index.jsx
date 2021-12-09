@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
@@ -130,12 +131,9 @@ function UseMyDomain( props ) {
 	const setDomainTransferData = useCallback( async () => {
 		// TODO: remove this try-catch when the next statuses get added on the API
 		setIsFetchingAvailability( true );
-		let inboundTransferStatusResult = {};
-		try {
-			inboundTransferStatusResult = await wpcom
-				.undocumented()
-				.getInboundTransferStatus( domainName );
-		} catch {}
+		const inboundTransferStatusResult = await wpcom.req
+			.get( `/domains/${ encodeURIComponent( domainName ) }/inbound-transfer-status` )
+			.catch( () => ( {} ) );
 
 		const inboundTransferStatusInfo = {
 			creationDate: inboundTransferStatusResult.creation_date,
@@ -310,11 +308,32 @@ function UseMyDomain( props ) {
 			case inputMode.domainInput:
 				return __( 'Use a domain I own' );
 			case inputMode.transferDomain:
-				/* translators: %s - the name of the domain the user will add to their site */
-				return sprintf( __( 'Transfer %s' ), domainName );
+				return createInterpolateElement(
+					sprintf(
+						/* translators: %(domainName)s - the name of the domain the user will add to their site */
+						__( 'Transfer <span>%(domainName)s</span>' ),
+						{
+							domainName,
+						}
+					),
+					{
+						span: <span />,
+					}
+				);
+
 			default:
-				/* translators: %s - the name of the domain the user will add to their site */
-				return sprintf( __( 'Use a domain I own: %s' ), domainName );
+				return createInterpolateElement(
+					sprintf(
+						/* translators: %(domainName)s - the name of the domain the user will add to their site */
+						__( 'Use a domain I own: <span>%(domainName)s</span>' ),
+						{
+							domainName,
+						}
+					),
+					{
+						span: <span />,
+					}
+				);
 		}
 	}, [ domainName, mode, __ ] );
 

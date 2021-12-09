@@ -44,6 +44,7 @@ import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { managePurchase } from '../paths';
 import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
 import AutoRenewToggle from './auto-renew-toggle';
@@ -67,7 +68,7 @@ export default function PurchaseMeta( {
 
 	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
 
-	if ( isDataLoading || ! purchaseId ) {
+	if ( isDataLoading || ! purchaseId || ! purchase ) {
 		return <PurchaseMetaPlaceholder />;
 	}
 
@@ -276,18 +277,48 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
 		translate,
 		purchase.introductoryOffer.intervalUnit,
 		purchase.introductoryOffer.intervalCount,
-		isIntroductoryOfferFreeTrial( purchase )
+		isIntroductoryOfferFreeTrial( purchase ),
+		'manage-purchases',
+		purchase.introductoryOffer.remainingRenewalsUsingOffer
 	);
+
+	let regularPriceText = null;
+	if ( purchase.introductoryOffer.isNextRenewalUsingOffer ) {
+		regularPriceText = translate(
+			'After the offer ends, the subscription price will be %(regularPrice)s',
+			{
+				args: {
+					regularPrice: purchase.regularPriceText,
+				},
+			}
+		);
+	} else if ( purchase.introductoryOffer.isNextRenewalProrated ) {
+		regularPriceText = translate(
+			'After the first renewal, the subscription price will be %(regularPrice)s',
+			{
+				args: {
+					regularPrice: purchase.regularPriceText,
+				},
+			}
+		);
+	}
 
 	return (
 		<>
 			<br />
 			<small> { text } </small>
+			{ regularPriceText && (
+				<>
+					{ ' ' }
+					<br /> <small> { regularPriceText } </small>{ ' ' }
+				</>
+			) }
 		</>
 	);
 }
 
 function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, siteSlug, site } ) {
+	const cards = useSelector( getAllStoredCards );
 	const handleEditPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
@@ -296,7 +327,7 @@ function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, s
 		return null;
 	}
 
-	const paymentDetails = <PaymentInfoBlock purchase={ purchase } />;
+	const paymentDetails = <PaymentInfoBlock purchase={ purchase } cards={ cards } />;
 
 	if ( ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) || ! site ) {
 		return <li>{ paymentDetails }</li>;
@@ -386,7 +417,7 @@ function PurchaseMetaExpiration( {
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
-	if ( isDomainTransfer( purchase ) ) {
+	if ( ! purchase || isDomainTransfer( purchase ) ) {
 		return null;
 	}
 
@@ -413,10 +444,31 @@ function PurchaseMetaExpiration( {
 							dateSpan,
 						},
 				  } );
+
+		const shouldRenderToggle = site && isProductOwner;
+
 		return (
-			<li>
+			<li className="manage-purchase__meta-expiration">
 				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-				{ ! hideAutoRenew && <span className="manage-purchase__detail">{ subsRenewText }</span> }
+				{ ! hideAutoRenew && (
+					<div className="manage-purchase__auto-renew">
+						{ shouldRenderToggle && (
+							<span className="manage-purchase__detail manage-purchase__auto-renew-toggle">
+								<AutoRenewToggle
+									planName={ site.plan.product_name_short }
+									siteDomain={ site.domain }
+									siteSlug={ site.slug }
+									purchase={ purchase }
+									toggleSource="manage-purchase"
+									getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
+								/>
+							</span>
+						) }
+						<span className="manage-purchase__detail manage-purchase__auto-renew-text">
+							{ subsRenewText }
+						</span>
+					</div>
+				) }
 				<span
 					className={ classNames( 'manage-purchase__detail', {
 						'is-expiring': isCloseToExpiration( purchase ),
@@ -424,18 +476,6 @@ function PurchaseMetaExpiration( {
 				>
 					{ subsBillingText }
 				</span>
-				{ site && ! hideAutoRenew && isProductOwner && (
-					<span className="manage-purchase__detail">
-						<AutoRenewToggle
-							planName={ site.plan.product_name_short }
-							siteDomain={ site.domain }
-							siteSlug={ site.slug }
-							purchase={ purchase }
-							toggleSource="manage-purchase"
-							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
-						/>
-					</span>
-				) }
 			</li>
 		);
 	}

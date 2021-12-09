@@ -11,9 +11,12 @@ import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
+import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { YOAST, WOO } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
 import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
+import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
+import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	fetchAutomatedTransferStatus,
@@ -54,6 +57,7 @@ export default function MarketplaceTest(): JSX.Element {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
+	const { data = [], isFetching } = useWPCOMPlugins( 'all' );
 
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
@@ -105,7 +109,7 @@ export default function MarketplaceTest(): JSX.Element {
 	const allBlockingMessages = getBlockingMessages( translate );
 	const holds = eligibilityDetails.eligibilityHolds || [];
 	const raisedBlockingMessages = holds
-		.filter( ( message: any ) => allBlockingMessages[ message ] )
+		.filter( ( message: string ) => allBlockingMessages[ message ] )
 		.map( ( message: string ) => allBlockingMessages[ message ] );
 	const hardBlockSingleMessages = holds.filter(
 		( message: string ) => message !== 'TRANSFER_ALREADY_EXISTS' || ! allBlockingMessages[ message ]
@@ -116,6 +120,18 @@ export default function MarketplaceTest(): JSX.Element {
 		<Container>
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
 			<SidebarNavigation />
+			<Card key="wpcom-plugins">
+				<PluginsBrowserList
+					plugins={ data }
+					listName={ 'paid' }
+					title={ 'Paid Plugins' }
+					site={ selectedSiteSlug }
+					showPlaceholders={ isFetching }
+					currentSites={ null }
+					variant={ PluginsBrowserListVariant.Fixed }
+					extended
+				/>
+			</Card>
 			<Card key="heading">
 				<CardHeading key="title" tagName="h1" size={ 24 }>
 					Marketplace Test Page

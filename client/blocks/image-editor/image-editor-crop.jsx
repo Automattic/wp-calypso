@@ -86,10 +86,12 @@ class ImageEditorCrop extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.updateCrop( this.getDefaultState( this.props ), this.props, this.applyComputedCrop );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { bounds, aspectRatio, crop } = this.props;
 

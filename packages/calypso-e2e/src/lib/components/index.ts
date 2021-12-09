@@ -8,5 +8,6 @@ export * from './site-select-component';
 export * from './cookie-banner-component';
 export * from './editor-settings-sidebar-component';
 export * from './domain-search-component';
+export * from './isolated-block-editor-component';
 
 export * from './me';

@@ -66,7 +66,6 @@ import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/s
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
-import StickyPanel from 'calypso/components/sticky-panel';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
@@ -270,6 +269,7 @@ class RegisterDomainStep extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if (
@@ -309,7 +309,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	checkForBloggerPlan() {
-		const plan = get( this.props, 'selectedSite.plan', false );
+		const plan = get( this.props, 'selectedSite.plan', {} );
 		const products = get( this.props, 'cart.products', [] );
 		const isBloggerPlan = isBlogger( plan ) || products.some( isBlogger );
 
@@ -445,11 +445,11 @@ class RegisterDomainStep extends Component {
 		return (
 			<>
 				<div className={ containerDivClassName }>
-					<StickyPanel className={ searchBoxClassName }>
+					<div className={ searchBoxClassName }>
 						<CompactCard className="register-domain-step__search-card">
 							{ this.renderSearchBar() }
 						</CompactCard>
-					</StickyPanel>
+					</div>
 					{ ! isSignupStep && isQueryInvalid && (
 						<Notice
 							className="register-domain-step__notice"
@@ -674,17 +674,15 @@ class RegisterDomainStep extends Component {
 		this.save();
 
 		Object.keys( this.state.premiumDomains ).map( ( premiumDomain ) => {
-			this.fetchDomainPricePromise( premiumDomain )
-				.catch( () => [] )
-				.then( ( domainPrice ) => {
-					this.setState( ( state ) => {
-						const newPremiumDomains = { ...state.premiumDomains };
-						newPremiumDomains[ premiumDomain ] = domainPrice;
-						return {
-							premiumDomains: newPremiumDomains,
-						};
-					} );
+			this.fetchDomainPrice( premiumDomain ).then( ( domainPrice ) => {
+				this.setState( ( state ) => {
+					const newPremiumDomains = { ...state.premiumDomains };
+					newPremiumDomains[ premiumDomain ] = domainPrice;
+					return {
+						premiumDomains: newPremiumDomains,
+					};
 				} );
+			} );
 		} );
 	};
 
@@ -842,25 +840,19 @@ class RegisterDomainStep extends Component {
 			.catch( noop );
 	};
 
-	fetchDomainPricePromise = ( domain ) => {
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getDomainPrice( domain, ( serverError, result ) => {
-				if ( serverError ) {
-					resolve( {
-						pending: true,
-						error: serverError,
-					} );
-					return;
-				}
-
-				resolve( {
-					pending: false,
-					is_premium: result.is_premium,
-					cost: result.cost,
-					is_price_limit_exceeded: result?.is_price_limit_exceeded,
-				} );
-			} );
-		} );
+	fetchDomainPrice = ( domain ) => {
+		return wpcom.req
+			.get( `/domains/${ encodeURIComponent( domain ) }/price` )
+			.then( ( data ) => ( {
+				pending: false,
+				is_premium: data.is_premium,
+				cost: data.cost,
+				is_price_limit_exceeded: data.is_price_limit_exceeded,
+			} ) )
+			.catch( ( error ) => ( {
+				pending: true,
+				error,
+			} ) );
 	};
 
 	preCheckDomainAvailability = ( domain ) => {

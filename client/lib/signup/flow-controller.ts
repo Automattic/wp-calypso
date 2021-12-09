@@ -56,6 +56,7 @@ interface Step {
 	providesToken?: boolean;
 	stepName: string;
 	allowUnauthenticated?: boolean;
+	isPasswordlessSignupForm?: boolean;
 }
 
 const steps: Record< string, Step > = untypedSteps;
@@ -370,6 +371,21 @@ export default class SignupFlowController {
 			'optionalDependencies'
 		);
 
+		/*
+			AB Test: passwordlessSignup
+			`isPasswordlessSignupForm` is set by the PasswordlessSignupForm.
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow.
+			For passwordless signups, the API call has already occurred in the PasswordlessSignupForm, so here it is skipped.
+		*/
+		if ( step?.isPasswordlessSignupForm ) {
+			this._processingSteps.delete( step.stepName );
+			recordTracksEvent( 'calypso_signup_actions_complete_step', {
+				step: step.stepName,
+			} );
+			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
+			return;
+		}
+
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {
 			this._reduxStore.dispatch( processStep( step ) );
@@ -387,9 +403,12 @@ export default class SignupFlowController {
 				if ( errors ) {
 					this._reduxStore.dispatch( invalidateStep( step, errors ) );
 				} else {
+					const { intent } = getSignupDependencyStore( this._reduxStore.getState() );
+
 					recordTracksEvent( 'calypso_signup_actions_complete_step', {
 						step: step.stepName,
 						flow: this._flowName,
+						intent,
 					} );
 					this._reduxStore.dispatch( completeSignupStep( step, providedDependencies ) );
 				}

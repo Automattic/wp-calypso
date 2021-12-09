@@ -15,3 +15,8 @@ export const REMOTE_PATH_INSTALL =
 	'/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 export const ALLOWED_MOBILE_APP_REDIRECT_URL_LIST = [ /^wordpress:\/\// ];
 export const JPC_PATH_CHECKOUT = '/checkout';
+export const JETPACK_COUPON_PARTNERS = [ 'JPTST', 'IONOS' ];
+export const JETPACK_COUPON_PRESET_MAPPING = {
+	IONA: 'jetpack_backup_daily',
+	JPTA: 'jetpack_backup_daily',
+};

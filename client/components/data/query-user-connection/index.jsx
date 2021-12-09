@@ -5,10 +5,12 @@ import { isUserConnected } from 'calypso/state/jetpack-connect/actions';
 import { isRequestingSite } from 'calypso/state/sites/selectors';
 
 class QueryUserConnection extends Component {
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			this.request( nextProps );

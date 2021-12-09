@@ -1,4 +1,3 @@
-import { useResizeObserver } from '@wordpress/compose';
 import { Icon, arrowRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
@@ -86,18 +85,42 @@ export const DotPager = ( {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ pagesStyle, setPagesStyle ] = useState();
 	const pagesRef = useRef();
-	const [ resizeObserver, sizes ] = useResizeObserver();
 	const numPages = Children.count( children );
 
-	useEffect( () => {
-		if ( ! hasDynamicHeight ) {
-			return;
-		}
+	function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
+		// save callback to a ref so that it doesn't need to be a dependency of other hooks
+		const savedUpdateLayout = useRef();
+		useEffect( () => {
+			savedUpdateLayout.current = updateLayout;
+		}, [ updateLayout ] );
 
-		const targetHeight = pagesRef.current?.children[ currentPage ]?.offsetHeight;
+		// fire when the `currentPageIndex` parameter changes
+		useEffect( () => {
+			if ( ! enabled ) {
+				return;
+			}
 
+			savedUpdateLayout.current();
+		}, [ enabled, currentPageIndex ] );
+
+		// fire when the window resizes
+		useEffect( () => {
+			if ( ! enabled ) {
+				return;
+			}
+
+			const onResize = () => savedUpdateLayout.current();
+			window.addEventListener( 'resize', onResize );
+			return () => window.removeEventListener( 'resize', onResize );
+		}, [ enabled ] );
+	}
+
+	const updateEnabled = hasDynamicHeight && numPages > 1;
+
+	useUpdateLayout( updateEnabled, currentPage, () => {
+		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
 		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
-	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle, children ] );
+	} );
 
 	useEffect( () => {
 		if ( currentPage >= numPages ) {
@@ -107,7 +130,6 @@ export const DotPager = ( {
 
 	return (
 		<div className={ className } { ...props }>
-			{ resizeObserver }
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }

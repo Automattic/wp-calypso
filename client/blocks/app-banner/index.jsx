@@ -24,7 +24,6 @@ import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-dis
 import { getSectionName, appBannerIsEnabled } from 'calypso/state/ui/selectors';
 import {
 	ALLOWED_SECTIONS,
-	EDITOR,
 	GUTENBERG,
 	NOTES,
 	READER,
@@ -71,12 +70,14 @@ export class AppBanner extends Component {
 		if ( ! appBanner && this.appBannerNode ) {
 			this.appBannerNode.removeEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.removeEventListener( 'touchstart', this.stopBubblingEvents, false );
+			document.body.classList.remove( 'app-banner-is-visible' );
 			return;
 		}
 		if ( appBanner ) {
 			this.appBannerNode = ReactDom.findDOMNode( appBanner );
 			this.appBannerNode.addEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.addEventListener( 'touchstart', this.stopBubblingEvents, false );
+			document.body.classList.add( 'app-banner-is-visible' );
 		}
 	};
 
@@ -103,7 +104,7 @@ export class AppBanner extends Component {
 
 		// Inside page/post editor, hide the banner until we know that welcome tour has been dimissed to avoid overlapping.
 		if (
-			[ EDITOR, GUTENBERG ].includes( currentSection ) &&
+			currentSection === GUTENBERG &&
 			( ! blockEditorNuxStatus || blockEditorNuxStatus.show_welcome_guide )
 		) {
 			return false;
@@ -144,7 +145,6 @@ export class AppBanner extends Component {
 		if ( this.isAndroid() ) {
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
-				case EDITOR:
 				case GUTENBERG:
 					return 'intent://post/#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case NOTES:
@@ -181,43 +181,45 @@ export class AppBanner extends Component {
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
 		return (
-			<Card
-				className={ classNames( 'app-banner', 'is-compact', currentSection ) }
-				ref={ this.preventNotificationsClose }
-			>
-				<TrackComponentView
-					eventName="calypso_mobile_app_banner_impression"
-					eventProperties={ {
-						page: currentSection,
-					} }
-					statGroup="calypso_mobile_app_banner"
-					statName="impression"
-				/>
-				<div className="app-banner__circle is-top-left is-yellow" />
-				<div className="app-banner__circle is-top-right is-blue" />
-				<div className="app-banner__circle is-bottom-right is-red" />
-				<div className="app-banner__text-content">
-					<div className="app-banner__title">
-						<span> { title } </span>
+			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
+				<Card
+					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
+					ref={ this.preventNotificationsClose }
+				>
+					<TrackComponentView
+						eventName="calypso_mobile_app_banner_impression"
+						eventProperties={ {
+							page: currentSection,
+						} }
+						statGroup="calypso_mobile_app_banner"
+						statName="impression"
+					/>
+					<div className="app-banner__circle is-top-left is-yellow" />
+					<div className="app-banner__circle is-top-right is-blue" />
+					<div className="app-banner__circle is-bottom-right is-red" />
+					<div className="app-banner__text-content">
+						<div className="app-banner__title">
+							<span> { title } </span>
+						</div>
+						<div className="app-banner__copy">
+							<span> { copy } </span>
+						</div>
 					</div>
-					<div className="app-banner__copy">
-						<span> { copy } </span>
+					<div className="app-banner__buttons">
+						<Button
+							primary
+							className="app-banner__open-button"
+							onClick={ this.openApp }
+							href={ this.getDeepLink() }
+						>
+							{ translate( 'Open in app' ) }
+						</Button>
+						<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
+							{ translate( 'No thanks' ) }
+						</Button>
 					</div>
-				</div>
-				<div className="app-banner__buttons">
-					<Button
-						primary
-						className="app-banner__open-button"
-						onClick={ this.openApp }
-						href={ this.getDeepLink() }
-					>
-						{ translate( 'Open in app' ) }
-					</Button>
-					<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
-						{ translate( 'No thanks' ) }
-					</Button>
-				</div>
-			</Card>
+				</Card>
+			</div>
 		);
 	}
 }
@@ -234,7 +236,6 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 
 	const getFragment = () => {
 		switch ( currentSection ) {
-			case EDITOR:
 			case GUTENBERG:
 				return '/post';
 			case NOTES:
@@ -261,7 +262,7 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
-		currentSection: getCurrentSection( sectionName, isNotesOpen, currentRoute ),
+		currentSection: getCurrentSection( sectionName, isNotesOpen ),
 		currentRoute,
 		fetchingPreferences: isFetchingPreferences( state ),
 		isTosBannerVisible: shouldDisplayTosUpdateBanner( state ),

@@ -48,20 +48,17 @@ export const toggleWPcomEmailSetting = ( setting ) => toggle( 'wpcom', 'email', 
 export const fetchSettings = () => ( dispatch ) => {
 	dispatch( { type: NOTIFICATION_SETTINGS_FETCH } );
 
-	wpcom
-		.undocumented()
-		.me()
-		.getNotificationSettings()
+	wpcom.req
+		.get( '/me/notifications/settings/' )
 		.then( ( data ) =>
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_FETCH_COMPLETE,
 				data,
 			} )
 		)
-		.catch( ( error ) =>
+		.catch( () =>
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_FETCH_FAILED,
-				error,
 			} )
 		);
 };
@@ -97,28 +94,21 @@ export const showSaveErrorNotice = () =>
 export const saveSettings = ( source, settings, applyToAll = false ) => ( dispatch ) => {
 	dispatch( { type: NOTIFICATION_SETTINGS_SAVE } );
 
-	wpcom
-		.undocumented()
-		.me()
-		.updateNotificationSettings(
-			buildSavePayload( source, settings ),
-			applyToAll,
-			( error, data ) => {
-				if ( error ) {
-					dispatch( showSaveErrorNotice() );
-					dispatch( {
-						type: NOTIFICATION_SETTINGS_SAVE_FAILED,
-						error,
-						data,
-					} );
-				} else {
-					dispatch( showSaveSuccessNotice() );
-					dispatch( {
-						type: NOTIFICATION_SETTINGS_SAVE_COMPLETE,
-						error,
-						data,
-					} );
-				}
-			}
-		);
+	const query = applyToAll ? { applyToAll: true } : {};
+
+	wpcom.req
+		.post( '/me/notifications/settings/', query, buildSavePayload( source, settings ) )
+		.then( ( data ) => {
+			dispatch( showSaveSuccessNotice() );
+			dispatch( {
+				type: NOTIFICATION_SETTINGS_SAVE_COMPLETE,
+				data,
+			} );
+		} )
+		.catch( () => {
+			dispatch( showSaveErrorNotice() );
+			dispatch( {
+				type: NOTIFICATION_SETTINGS_SAVE_FAILED,
+			} );
+		} );
 };

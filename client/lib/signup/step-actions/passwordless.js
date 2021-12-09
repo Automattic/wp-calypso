@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 
 /**
@@ -9,11 +11,16 @@ import wpcom from 'calypso/lib/wp';
  * @param {string}   data.email
  */
 export function createPasswordlessUser( callback, { email } ) {
-	wpcom
-		.undocumented()
-		.usersEmailNew( { email }, null )
-		.then( ( response ) => callback( null, response ) )
-		.catch( ( err ) => callback( err ) );
+	wpcom.req.post(
+		'/users/email/new',
+		{
+			email,
+			locale: getLocaleSlug(),
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		},
+		callback
+	);
 }
 
 /**
@@ -25,9 +32,13 @@ export function createPasswordlessUser( callback, { email } ) {
  * @param {string}   data.code
  */
 export function verifyPasswordlessUser( callback, { email, code } ) {
-	wpcom
-		.undocumented()
-		.usersEmailVerification( { email, code }, null )
+	wpcom.req
+		.post( '/users/email/verification', {
+			email,
+			code,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
 		.then( ( response ) =>
 			callback( null, { email, username: email, bearer_token: response.token.access_token } )
 		)

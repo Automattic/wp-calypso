@@ -18,18 +18,20 @@ class GenerateChunksMapPlugin {
 			// Generate chunks map
 			const { chunks } = compilation;
 
-			const chunksMap = chunks.reduce( ( map, chunk ) => {
-				const files = chunk.files;
-				const name = files.find( ( file ) => /\.js$/.test( file ) ) || files[ 0 ];
-				const modules = [ ...chunk.modulesIterable ]
+			const chunksMap = {};
+			for ( const chunk of chunks ) {
+				// This logic assumes there is only one `.js`. If there are more than one `.js` file linked to a chunk,
+				// this will be non deterministic as `chunk.files` iteration order is not guaranteed.
+				const name = Array.from( chunk.files ).find( ( file ) => /\.js$/.test( file ) );
+				if ( ! name ) continue;
+
+				const modules = [ ...compilation.chunkGraph.getChunkModulesIterable( chunk ) ]
 					.reduce( ( acc, item ) => acc.concat( item.modules || item ), [] )
 					.map( ( { userRequest } ) => userRequest && path.relative( '.', userRequest ) )
 					.filter( ( module ) => !! module );
 
-				map[ name ] = modules;
-
-				return map;
-			}, {} );
+				chunksMap[ name ] = modules;
+			}
 
 			// Write chunks map
 			fs.writeFileSync( this.output, JSON.stringify( chunksMap ) );

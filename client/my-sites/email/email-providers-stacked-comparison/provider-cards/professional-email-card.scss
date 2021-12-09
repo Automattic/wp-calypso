@@ -1,0 +1,24 @@
+.professional-email-card__logo {
+	color: var( --color-wordpress-com );
+	height: 48px;
+	width: 48px;
+}
+
+.professional-email-card__keep-main-price {
+	color: var( --studio-green-50 );
+	text-decoration: none;
+}
+
+.professional-email-card__price-badge {
+	.promo-card__price {
+		margin-top: 12px;
+		.price__discount {
+			text-decoration: line-through;
+			color: var( --studio-gray-60 );
+		}
+	}
+}
+
+.professional-email-card__discount {
+	margin-bottom: 12px;
+}

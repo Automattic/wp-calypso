@@ -119,6 +119,7 @@ export class RewindCredentialsForm extends Component {
 	toggleAdvancedSettings = () =>
 		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { credentials, siteSlug } = nextProps;
 

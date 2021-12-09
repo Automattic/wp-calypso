@@ -18,12 +18,12 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import useStripProductsFromUrl from './use-strip-products-from-url';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
+import type { RequestCartProduct, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
 interface PreparedProductsForCart {
-	productsForCart: RequestCartProduct[];
+	productsForCart: MinimalRequestCartProduct[];
 	isLoading: boolean;
 	error: string | null;
 }
@@ -124,8 +124,8 @@ export default function usePrepareProductsForCart( {
 }
 
 type PreparedProductsAction =
-	| { type: 'PRODUCTS_ADD'; products: RequestCartProduct[] }
-	| { type: 'RENEWALS_ADD'; products: RequestCartProduct[] }
+	| { type: 'PRODUCTS_ADD'; products: MinimalRequestCartProduct[] }
+	| { type: 'RENEWALS_ADD'; products: MinimalRequestCartProduct[] }
 	| { type: 'PRODUCTS_ADD_ERROR'; message: string };
 
 function preparedProductsReducer(
@@ -232,8 +232,8 @@ function useAddProductsFromLocalStorage( {
 			return;
 		}
 
-		const productsForCart: RequestCartProduct[] = getCartFromLocalStorage().map( ( product ) =>
-			fillInSingleCartItemAttributes( product, products )
+		const productsForCart: MinimalRequestCartProduct[] = getCartFromLocalStorage().map(
+			( product ) => fillInSingleCartItemAttributes( product, products )
 		);
 
 		if ( productsForCart.length < 1 ) {

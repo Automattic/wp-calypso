@@ -4,7 +4,6 @@ import { isEqual } from 'lodash';
 import * as React from 'react';
 import Spinner from 'calypso/components/spinner';
 import { getMimePrefix } from 'calypso/lib/media/utils';
-import EditorMediaModalGalleryHelp from 'calypso/post-editor/media-modal/gallery-help';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
 import ListItemImage from './list-item-image';
@@ -26,7 +25,6 @@ interface Props {
 	scale: number;
 	maxImageWidth?: number;
 	thumbnailType?: string;
-	showGalleryHelp?: boolean;
 	selectedIndex?: number;
 	onToggle?: ( media: Media | undefined, shiftKey: boolean ) => void;
 	style?: React.CSSProperties;
@@ -91,7 +89,6 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 			scale,
 			maxImageWidth,
 			thumbnailType,
-			showGalleryHelp,
 			selectedIndex,
 			onToggle,
 			style,
@@ -136,7 +133,6 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 							<Spinner />
 						</div>
 					) }
-					{ showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 				</figure>
 			</button>
 		);

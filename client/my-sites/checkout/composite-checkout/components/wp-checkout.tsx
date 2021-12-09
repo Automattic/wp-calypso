@@ -8,21 +8,19 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
-	useDispatch,
-	useEvents,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
 	usePaymentMethod,
-	useSelect,
 	useTotal,
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
+import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -47,6 +45,7 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
+import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -124,6 +123,7 @@ export default function WPCheckout( {
 	isLoggedOutCart,
 	infoMessage,
 	createUserAndSiteBeforeTransaction,
+	onPageLoadError,
 }: {
 	removeProductFromCart: RemoveProductFromCart;
 	changePlanLength: OnChangeItemVariant;
@@ -135,6 +135,7 @@ export default function WPCheckout( {
 	isLoggedOutCart: boolean;
 	infoMessage?: JSX.Element;
 	createUserAndSiteBeforeTransaction: boolean;
+	onPageLoadError: CheckoutPageErrorCallback;
 } ): JSX.Element {
 	const cartKey = useCartKey();
 	const {
@@ -147,7 +148,6 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
-	const onEvent = useEvents();
 	const reduxDispatch = useReduxDispatch();
 
 	const areThereDomainProductsInCart =
@@ -157,14 +157,13 @@ export default function WPCheckout( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
-		sel( 'wpcom' ).getContactInfo()
+		sel( 'wpcom-checkout' ).getContactInfo()
 	);
 	const {
-		setSiteId,
 		touchContactFields,
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
-	} = useDispatch( 'wpcom' );
+	} = useDispatch( 'wpcom-checkout' );
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -198,11 +197,6 @@ export default function WPCheckout( {
 	} );
 
 	const { formStatus } = useFormStatus();
-
-	// Copy siteId to the store so it can be more easily accessed during payment submission
-	useEffect( () => {
-		setSiteId( siteId );
-	}, [ siteId, setSiteId ] );
 
 	const arePostalCodesSupported = getCountryPostalCodeSupport(
 		countriesList,
@@ -245,26 +239,18 @@ export default function WPCheckout( {
 
 	const onReviewError = useCallback(
 		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'review',
-				},
+			onPageLoadError( 'step_load', String( error ), {
+				step_id: 'review',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const onSummaryError = useCallback(
 		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'summary',
-				},
+			onPageLoadError( 'step_load', String( error ), {
+				step_id: 'summary',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const validatingButtonText = isCartPendingUpdate
@@ -356,9 +342,7 @@ export default function WPCheckout( {
 								return validateContactDetails(
 									contactInfo,
 									isLoggedOutCart,
-									activePaymentMethod,
 									responseCart,
-									onEvent,
 									showErrorMessageBriefly,
 									applyDomainContactValidationResults,
 									clearDomainContactErrorMessages,
@@ -377,9 +361,7 @@ export default function WPCheckout( {
 										validateContactDetails(
 											contactInfo,
 											isLoggedOutCart,
-											activePaymentMethod,
 											responseCart,
-											onEvent,
 											showErrorMessageBriefly,
 											applyDomainContactValidationResults,
 											clearDomainContactErrorMessages,

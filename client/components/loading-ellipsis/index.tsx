@@ -1,7 +1,7 @@
 import classnames from 'classnames';
-import type { ReactNode } from 'react';
+import type { ReactElement } from 'react';
 
-export function LoadingEllipsis( { className }: { className?: string } ): ReactNode {
+export function LoadingEllipsis( { className }: { className?: string } ): ReactElement {
 	return (
 		// Styles are defined globally in _loading.scss so that this component
 		// can be rendered on the server and will appear immediately.

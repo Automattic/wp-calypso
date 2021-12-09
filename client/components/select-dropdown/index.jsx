@@ -39,6 +39,7 @@ class SelectDropdown extends Component {
 				icon: PropTypes.element,
 			} )
 		),
+		isLoading: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -184,6 +185,7 @@ class SelectDropdown extends Component {
 			'is-open': this.state.isOpen && ! this.props.disabled,
 			'is-disabled': this.props.disabled,
 			'has-count': 'number' === typeof this.props.selectedCount,
+			'is-loading': this.props?.isLoading,
 		} );
 
 		const selectedText = this.getSelectedText();

@@ -34,6 +34,7 @@ const noop = () => {};
 interface ExternalProps {
 	backUrl: string;
 	onProceed: () => void;
+	standaloneProceed: boolean;
 	className?: string;
 	eligibilityData?: {
 		eligibilityHolds: string[];
@@ -53,6 +54,7 @@ export const EligibilityWarnings = ( {
 	isEligible,
 	isPlaceholder,
 	onProceed,
+	standaloneProceed,
 	recordUpgradeClick,
 	siteId,
 	siteSlug,
@@ -79,6 +81,10 @@ export const EligibilityWarnings = ( {
 	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
 	const logEventAndProceed = () => {
+		if ( standaloneProceed ) {
+			onProceed();
+			return;
+		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
 			page.redirect( `/checkout/${ siteSlug }/business` );

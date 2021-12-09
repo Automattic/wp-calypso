@@ -40,6 +40,14 @@ describe( 'streams.items reducer', () => {
 		expect( nextState ).toEqual( [ time2PostKey, time1PostKey ] );
 	} );
 
+	it( 'should accept new items with duplicates removed', () => {
+		const prevState = deepfreeze( [ time2PostKey ] );
+		const action = receivePage( { streamItems: [ time2PostKey, time1PostKey ] } );
+		const nextState = items( prevState, action );
+
+		expect( nextState ).toEqual( [ time2PostKey, time1PostKey ] );
+	} );
+
 	it( 'should add new posts to existing items', () => {
 		const prevState = deepfreeze( [ time2PostKey ] );
 		const action = receivePage( { streamItems: [ time1PostKey ] } );

@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
@@ -93,15 +92,13 @@ export class NavigationLink extends Component {
 		);
 
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
-		const queryString = queryParams ? '?' + stringify( queryParams ) : '';
 
-		return (
-			getStepUrl(
-				previousStep.lastKnownFlow || this.props.flowName,
-				previousStep.stepName,
-				stepSectionName,
-				locale
-			) + queryString
+		return getStepUrl(
+			previousStep.lastKnownFlow || this.props.flowName,
+			previousStep.stepName,
+			stepSectionName,
+			locale,
+			queryParams
 		);
 	}
 
@@ -171,12 +168,16 @@ export class NavigationLink extends Component {
 			this.props.cssClass
 		);
 
+		const hrefUrl =
+			this.props.direction === 'forward' && this.props.forwardUrl
+				? this.props.forwardUrl
+				: this.getBackUrl();
 		return (
 			<Button
 				primary={ primary }
 				borderless={ borderless }
 				className={ buttonClasses }
-				href={ this.getBackUrl() }
+				href={ hrefUrl }
 				onClick={ this.handleClick }
 				rel={ this.props.rel }
 			>

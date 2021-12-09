@@ -46,6 +46,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
@@ -97,7 +98,7 @@ export default function useCreatePaymentCompleteCallback( {
 		getJetpackCheckoutRedirectUrl( state, siteId )
 	);
 
-	const domains = useSiteDomains( siteId );
+	const domains = useSiteDomains( siteId ?? undefined );
 
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
@@ -282,7 +283,7 @@ function displayRenewalSuccessNotice(
 	purchases: Record< number, Purchase[] >,
 	translate: ReturnType< typeof useTranslate >,
 	moment: ReturnType< typeof useLocalizedMoment >,
-	reduxDispatch: ReturnType< typeof useDispatch >
+	reduxDispatch: CalypsoDispatch
 ): void {
 	const renewalItem = getRenewalItems( responseCart )[ 0 ];
 	// group all purchases into an array
@@ -309,7 +310,7 @@ function displayRenewalSuccessNotice(
 					{
 						args: {
 							productName: renewalItem.product_name,
-							duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+							duration: moment.duration( { days: parseInt( renewalItem.bill_period ) } ).humanize(),
 							email: product.user_email,
 						},
 						components: {
@@ -331,7 +332,7 @@ function displayRenewalSuccessNotice(
 				{
 					args: {
 						productName: renewalItem.product_name,
-						duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+						duration: moment.duration( { days: parseInt( renewalItem.bill_period ) } ).humanize(),
 						date: moment( product.expiry ).format( 'LL' ),
 						email: product.user_email,
 					},
@@ -355,7 +356,7 @@ function recordPaymentCompleteAnalytics( {
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	checkoutFlow?: string;
-	reduxDispatch: ReturnType< typeof useDispatch >;
+	reduxDispatch: CalypsoDispatch;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )

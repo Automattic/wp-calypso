@@ -46,10 +46,12 @@ export class Comment extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.debounceScrollToOffset = debounce( this.scrollToOffset, 100 );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { isBulkMode: wasBulkMode, isPostView: wasPostView } = this.props;
 		const { isBulkMode, isPostView } = nextProps;

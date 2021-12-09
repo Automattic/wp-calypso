@@ -1,5 +1,4 @@
 import '@emotion/react';
-import { DataRegistry } from '@wordpress/data';
 import { ReactElement } from 'react';
 import { Theme as ThemeType } from './lib/theme';
 
@@ -102,7 +101,6 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 
 export interface CheckoutProviderProps {
 	theme?: ThemeType;
-	registry?: DataRegistry;
 	total?: LineItem;
 	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
@@ -110,7 +108,8 @@ export interface CheckoutProviderProps {
 	onPaymentRedirect?: PaymentEventCallback;
 	onPaymentError?: PaymentErrorCallback;
 	onPageLoadError?: CheckoutPageErrorCallback;
-	onEvent?: ( event: ReactStandardAction ) => void;
+	onStepChanged?: StepChangedCallback;
+	onPaymentMethodChanged?: PaymentMethodChangedCallback;
 	isLoading?: boolean;
 	redirectToUrl?: ( url: string ) => void;
 	paymentProcessors: PaymentProcessorProp;
@@ -123,6 +122,8 @@ export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
+export type StepChangedCallback = ( args: StepChangedEventArguments ) => void;
+export type PaymentMethodChangedCallback = ( method: string ) => void;
 export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
 export type PaymentErrorCallback = ( args: {
 	paymentMethodId: string | null;
@@ -133,6 +134,12 @@ export type CheckoutPageErrorCallback = (
 	errorMessage: string,
 	errorData?: Record< string, string | number | undefined >
 ) => void;
+
+export type StepChangedEventArguments = {
+	stepNumber: number | null;
+	previousStepNumber: number;
+	paymentMethodId: string;
+};
 
 export type PaymentEventCallbackArguments = {
 	paymentMethodId: string | null;

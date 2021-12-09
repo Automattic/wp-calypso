@@ -1,6 +1,7 @@
 import { NextButton } from '@automattic/onboarding';
 import { Icon, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
@@ -60,12 +61,19 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 		isValid && urlValue && runProcess();
 	};
 
+	const showSubmitButton = isValid && urlValue && ! analyzerError;
+
 	return (
 		<>
 			{ ! isAnalyzing && (
 				<div className="import-layout__center">
 					<div className="capture__content">
-						<form className="capture__input-wrapper" onSubmit={ onFormSubmit.bind( this ) }>
+						<form
+							className={ classnames( 'capture__input-wrapper', {
+								'capture__input-wrapper-padding': showSubmitButton,
+							} ) }
+							onSubmit={ onFormSubmit.bind( this ) }
+						>
 							<input
 								className="capture__input"
 								// eslint-disable-next-line jsx-a11y/no-autofocus
@@ -77,7 +85,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 								onChange={ onInputChange }
 								value={ urlValue }
 							/>
-							{ isValid && urlValue && ! analyzerError && (
+							{ showSubmitButton && (
 								<NextButton type={ 'submit' }>
 									<Icon icon={ chevronRight } />
 								</NextButton>

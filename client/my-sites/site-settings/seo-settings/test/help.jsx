@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { shallow } from 'enzyme';
 import { SeoSettingsHelpCard } from '../help';
 

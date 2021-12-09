@@ -13,6 +13,8 @@
 	line-height: 1;
 	color: var( --color-text-inverted );
 	text-transform: uppercase;
+
+	white-space: nowrap;
 }
 
 .plan-pill.is-in-signup {

@@ -10,6 +10,7 @@ class QueryRewindBackupStatus extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		// We want to run this only once: when the page is loaded. In such case, there is not known download Id.
 		// If there's a download Id here it means this was mounted during an action requesting progress for a

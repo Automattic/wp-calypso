@@ -11,7 +11,6 @@ import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { reduxGetState } from 'calypso/lib/redux-bridge';
 import scrollTo from 'calypso/lib/scroll-to';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
@@ -180,29 +179,29 @@ class ReaderStream extends Component {
 	};
 
 	toggleLikeOnSelectedPost = () => {
-		const { selectedPost: post } = this.props;
+		const { selectedPost } = this.props;
 
 		// only toggle a like on a x-post if we have the appropriate metadata,
 		// and original post is full screen
-		const xPostMetadata = XPostHelper.getXPostMetadata( post );
+		const xPostMetadata = XPostHelper.getXPostMetadata( selectedPost );
 		if ( xPostMetadata.postURL ) {
 			return;
 		}
 
-		if ( shouldShowLikes( post ) ) {
-			this.toggleLikeAction( post.site_ID, post.ID );
+		if ( shouldShowLikes( selectedPost ) ) {
+			this.toggleLikeAction();
 		}
 	};
 
-	toggleLikeAction( siteId, postId ) {
-		const liked = isLikedPost( reduxGetState(), siteId, postId );
-		if ( liked === null ) {
+	toggleLikeAction() {
+		const { likedPost, selectedPost } = this.props;
+		if ( likedPost === null ) {
 			// unknown... ignore for now
 			return;
 		}
 
-		const toggler = liked ? this.props.unlikePost : this.props.likePost;
-		toggler( siteId, postId, { source: 'reader' } );
+		const toggler = likedPost ? this.props.unlikePost : this.props.likePost;
+		toggler( selectedPost.site_ID, selectedPost.ID, { source: 'reader' } );
 	}
 
 	goToTop = () => {
@@ -450,6 +449,7 @@ class ReaderStream extends Component {
 export default connect(
 	( state, { streamKey, recsStreamKey, shouldCombineCards = true } ) => {
 		const stream = getStream( state, streamKey );
+		const selectedPost = getPostByKey( state, stream.selected );
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -461,10 +461,11 @@ export default connect(
 			stream,
 			recsStream: getStream( state, recsStreamKey ),
 			selectedPostKey: stream.selected,
-			selectedPost: getPostByKey( state, stream.selected ),
+			selectedPost,
 			lastPage: stream.lastPage,
 			isRequesting: stream.isRequesting,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
+			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 		};
 	},
 	{

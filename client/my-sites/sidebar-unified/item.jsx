@@ -23,13 +23,17 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
-	isHappychatSessionActive,
-	isJetpackNonAtomicSite,
+	shouldOpenExternalLinksInCurrentTab,
 	canNavigate,
 } ) => {
 	const reduxDispatch = useDispatch();
 
-	const onNavigate = () => {
+	const onNavigate = ( event ) => {
+		if ( ! canNavigate( url ) ) {
+			event?.preventDefault();
+			return;
+		}
+
 		reduxDispatch( collapseAllMySitesSidebarSections() );
 		window.scrollTo( 0, 0 );
 	};
@@ -40,10 +44,10 @@ export const MySitesSidebarUnifiedItem = ( {
 			count={ count }
 			label={ title }
 			link={ url }
-			onNavigate={ ( event ) => canNavigate( url, event ) && onNavigate() }
+			onNavigate={ onNavigate }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink={ ! isHappychatSessionActive && ! isJetpackNonAtomicSite }
+			forceInternalLink={ shouldOpenExternalLinksInCurrentTab }
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
@@ -59,8 +63,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	slug: PropTypes.string,
 	title: PropTypes.string,
 	url: PropTypes.string,
-	isHappychatSessionActive: PropTypes.bool.isRequired,
-	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
+	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	canNavigate: PropTypes.func.isRequired,
 };
 

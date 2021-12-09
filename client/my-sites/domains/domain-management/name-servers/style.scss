@@ -6,14 +6,18 @@
 
 .name-servers__dns {
 	.name-servers__toggle {
-		display: inline-block;
-		float: right;
+		.components-base-control__field {
+			justify-content: space-between;
 
-		.components-toggle-control .components-base-control__field .components-form-toggle {
-			margin-right: 0;
+			.components-toggle-control__label {
+				font-size: $font-body;
+			}
+			.components-form-toggle {
+				order: 1;
+				margin-right: 0;
+			}
 		}
 	}
-
 	.name-servers__explanation {
 		animation: appear 0.5s ease-in-out;
 		color: var( --color-text-subtle );

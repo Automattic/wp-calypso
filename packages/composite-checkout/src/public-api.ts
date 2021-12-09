@@ -36,7 +36,6 @@ import {
 } from './components/order-review-line-items';
 import RadioButton from './components/radio-button';
 import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
-import useEvents from './components/use-events';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
 import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
@@ -51,15 +50,6 @@ import {
 	makeRedirectResponse,
 	makeErrorResponse,
 } from './lib/payment-processors';
-import {
-	createRegistry,
-	defaultRegistry,
-	registerStore,
-	useDispatch,
-	useRegisterStore,
-	useRegistry,
-	useSelect,
-} from './lib/registry';
 import checkoutTheme from './lib/theme';
 import { useTransactionStatus } from './lib/transaction-status';
 export * from './types';
@@ -95,8 +85,6 @@ export {
 	RadioButton,
 	SubmitButtonWrapper,
 	checkoutTheme,
-	createRegistry,
-	defaultRegistry,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
@@ -105,10 +93,7 @@ export {
 	makeManualResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
-	registerStore,
 	useAllPaymentMethods,
-	useDispatch,
-	useEvents,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -119,9 +104,6 @@ export {
 	usePaymentProcessor,
 	usePaymentProcessors,
 	useProcessPayment,
-	useRegisterStore,
-	useRegistry,
-	useSelect,
 	useSetStepComplete,
 	useTotal,
 	useTransactionStatus,

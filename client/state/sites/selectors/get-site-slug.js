@@ -3,6 +3,7 @@ import { withoutHttp, urlToSlug } from 'calypso/lib/url';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import getSiteOption from './get-site-option';
+import getSiteOptions from './get-site-options';
 import isSiteConflicting from './is-site-conflicting';
 
 /**
@@ -25,5 +26,5 @@ export default createSelector(
 
 		return urlToSlug( site.URL );
 	},
-	[ getSitesItems ]
+	( state, siteId ) => [ getSitesItems( state ), getSiteOptions( state, siteId ) ]
 );

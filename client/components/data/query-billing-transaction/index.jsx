@@ -1,44 +1,31 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestBillingTransaction } from 'calypso/state/billing-transactions/individual-transactions/actions';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 import isRequestingBillingTransaction from 'calypso/state/selectors/is-requesting-billing-transaction';
 
-class QueryBillingTransaction extends Component {
-	fetch( props ) {
-		const { transaction, transactionId, requestingBillingTransaction } = props;
+const request = ( transactionId ) => ( dispatch, getState ) => {
+	const transaction = getPastBillingTransaction( getState(), transactionId );
+	const isRequesting = isRequestingBillingTransaction( getState(), transactionId );
 
-		if ( transaction || requestingBillingTransaction ) {
-			return;
-		}
-
-		props.requestBillingTransaction( transactionId );
+	if ( ! transaction && ! isRequesting ) {
+		dispatch( requestBillingTransaction( transactionId ) );
 	}
+};
 
-	componentDidMount() {
-		this.fetch( this.props );
-	}
+function QueryBillingTransaction( { transactionId } ) {
+	const dispatch = useDispatch();
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.fetch( nextProps );
-	}
+	useEffect( () => {
+		dispatch( request( transactionId ) );
+	}, [ dispatch, transactionId ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryBillingTransaction.propTypes = {
 	transactionId: PropTypes.string.isRequired,
 };
 
-export default connect(
-	( state, { transactionId } ) => ( {
-		transaction: getPastBillingTransaction( state, transactionId ),
-		requestingBillingTransaction: isRequestingBillingTransaction( state, transactionId ),
-	} ),
-	{
-		requestBillingTransaction,
-	}
-)( QueryBillingTransaction );
+export default QueryBillingTransaction;
