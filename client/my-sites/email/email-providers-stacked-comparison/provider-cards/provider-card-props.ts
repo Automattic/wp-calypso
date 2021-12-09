@@ -44,7 +44,7 @@ export type EmailProvidersStackedCardProps = {
 	source: string;
 	intervalLength: IntervalLength;
 	titanMailMonthlyProduct?: any;
-	titanMailAnnuallyProduct?: any;
+	titanMailYearlyProduct?: any;
 	onExpandedChange?: ( providerKey: string, expand: boolean ) => void;
 };
 
