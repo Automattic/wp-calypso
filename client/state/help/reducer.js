@@ -1,7 +1,6 @@
 import { withStorageKey } from '@automattic/state-utils';
 import { HELP_CONTACT_FORM_SITE_SELECT, SUPPORT_HISTORY_SET } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
-import courses from './courses/reducer';
 import directly from './directly/reducer';
 import ticket from './ticket/reducer';
 
@@ -40,7 +39,6 @@ export const supportHistory = ( state = [], { type, items } ) => {
 };
 
 const combinedReducer = combineReducers( {
-	courses,
 	directly,
 	ticket,
 	selectedSiteId,
