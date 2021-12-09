@@ -111,12 +111,17 @@ const PluginsBrowserListElement = ( props ) => {
 								{ translate( 'by ' ) }
 								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
 							</div>
-							{ dateFromNow && (
-								<div className="plugins-browser-item__last-updated">
-									{ translate( 'Last updated ' ) }
-									<span className="plugins-browser-item__last-updated-value">{ dateFromNow }</span>
-								</div>
-							) }
+
+							<div className="plugins-browser-item__last-updated">
+								{ dateFromNow && (
+									<>
+										{ translate( 'Last updated ' ) }
+										<span className="plugins-browser-item__last-updated-value">
+											{ dateFromNow }
+										</span>
+									</>
+								) }
+							</div>
 						</>
 					) }
 					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
