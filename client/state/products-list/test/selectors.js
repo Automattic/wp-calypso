@@ -371,21 +371,40 @@ describe( 'selectors', () => {
 		const state = {
 			productsList: {
 				items: {
-					product1: { product_type: 'jetpack' },
-					product2: { product_type: 'marketplace_plugin' },
+					jetpack: { product_type: 'jetpack' },
+					woocommerce_bookings_monthly: { product_type: 'marketplace_plugin' },
+					woocommerce_bookings_yearly: { product_type: 'marketplace_plugin' },
+					'woocommerce-subscriptions-monthly': { product_type: 'marketplace_plugin' },
+					'woocommerce-subscriptions-yearly': { product_type: 'marketplace_plugin' },
 				},
 			},
 		};
 		test( "should return false when the product isn't in the products list", () => {
-			expect( isMarketplaceProduct( state, 'product0' ) ).toBe( false );
+			expect( isMarketplaceProduct( state, 'yoast' ) ).toBe( false );
 		} );
 
 		test( "should return false when the product isn't a marketplace product", () => {
-			expect( isMarketplaceProduct( state, 'product1' ) ).toBe( false );
+			expect( isMarketplaceProduct( state, 'jetpack' ) ).toBe( false );
 		} );
 
-		test( 'should return true when the product is a marketplace product', () => {
-			expect( isMarketplaceProduct( state, 'product2' ) ).toBe( true );
+		describe( 'product is a marketplace product', () => {
+			test( 'should return true when the product slug contains underscores', () => {
+				expect( isMarketplaceProduct( state, 'woocommerce_bookings' ) ).toBe( true );
+			} );
+
+			test( 'should return true when the product slug contains dashes', () => {
+				expect( isMarketplaceProduct( state, 'woocommerce-subscriptions' ) ).toBe( true );
+			} );
+
+			test( 'should return true when the product slug if suffixed with `monthly`', () => {
+				expect( isMarketplaceProduct( state, 'woocommerce_bookings_monthly' ) ).toBe( true );
+				expect( isMarketplaceProduct( state, 'woocommerce-subscriptions-monthly' ) ).toBe( true );
+			} );
+
+			test( 'should return true when the product slug if suffixed with `yearly`', () => {
+				expect( isMarketplaceProduct( state, 'woocommerce_bookings_yearly' ) ).toBe( true );
+				expect( isMarketplaceProduct( state, 'woocommerce-subscriptions-yearly' ) ).toBe( true );
+			} );
 		} );
 	} );
 } );
