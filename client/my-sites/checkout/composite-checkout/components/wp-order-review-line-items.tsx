@@ -1,3 +1,4 @@
+import { isPremium } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import {
 	getCouponLineItemFromCart,
@@ -10,6 +11,7 @@ import {
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -85,7 +87,7 @@ export function WPOrderReviewLineItems( {
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
-							hasDeleteButton={ canItemBeDeleted( product, responseCart.products ) }
+							hasDeleteButton={ canItemBeDeleted( product, responseCart ) }
 							removeProductFromCart={ removeProductFromCart }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -142,19 +144,14 @@ WPOrderReviewLineItems.propTypes = {
 	createUserAndSiteBeforeTransaction: PropTypes.bool,
 };
 
-function canItemBeDeleted(
-	item: ResponseCartProduct,
-	cartProducts: Array< ResponseCartProduct >
-): boolean {
+function canItemBeDeleted( item: ResponseCartProduct, cartProducts: ResponseCart ): boolean {
 	const itemTypesThatCannotBeDeleted = [ 'domain_redemption' ];
 	if ( itemTypesThatCannotBeDeleted.includes( item.product_slug ) ) {
 		return false;
 	}
 
 	// The Premium plan cannot be deleted when in combination with the DIFM lite product
-	const isPremiumPlanProduct = item.product_slug === 'value_bundle';
-	const hasDifmLiteProductInCart = cartProducts.some( ( p ) => p.product_slug === 'wp_difm_lite' );
-	if ( isPremiumPlanProduct && hasDifmLiteProductInCart ) {
+	if ( isPremium( item ) && hasDIFMProduct( cartProducts ) ) {
 		return false;
 	}
 	return true;
