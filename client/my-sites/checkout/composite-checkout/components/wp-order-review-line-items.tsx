@@ -85,7 +85,7 @@ export function WPOrderReviewLineItems( {
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
-							hasDeleteButton={ canItemBeDeleted( product ) }
+							hasDeleteButton={ canItemBeDeleted( product, responseCart.products ) }
 							removeProductFromCart={ removeProductFromCart }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -142,7 +142,20 @@ WPOrderReviewLineItems.propTypes = {
 	createUserAndSiteBeforeTransaction: PropTypes.bool,
 };
 
-function canItemBeDeleted( item: ResponseCartProduct ): boolean {
+function canItemBeDeleted(
+	item: ResponseCartProduct,
+	cartProducts: Array< ResponseCartProduct >
+): boolean {
 	const itemTypesThatCannotBeDeleted = [ 'domain_redemption' ];
-	return ! itemTypesThatCannotBeDeleted.includes( item.product_slug );
+	if ( itemTypesThatCannotBeDeleted.includes( item.product_slug ) ) {
+		return false;
+	}
+
+	// The Premium plan cannot be deleted when in combination with the DIFM lite product
+	const isPremiumPlanProduct = item.product_slug === 'value_bundle';
+	const hasDifmLiteProductInCart = cartProducts.some( ( p ) => p.product_slug === 'wp_difm_lite' );
+	if ( isPremiumPlanProduct && hasDifmLiteProductInCart ) {
+		return false;
+	}
+	return true;
 }
