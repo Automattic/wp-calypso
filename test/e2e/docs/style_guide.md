@@ -1,3 +1,5 @@
+Return to [Top Page](../README.md).
+
 # Style Guide
 
 <!-- TOC -->

@@ -1,11 +1,13 @@
+Return to [Top Page](../README.md).
+
 # Overview
 
 <!-- TOC -->
 
 - [Overview](#overview)
-  - [What is this?](#what-is-this)
-  - [Our Goals](#our-goals)
-  - [What is tested?](#what-is-tested)
+    - [What is this?](#what-is-this)
+    - [Our Goals](#our-goals)
+    - [What is tested?](#what-is-tested)
 
 <!-- /TOC -->
 
@@ -33,3 +35,4 @@ At the high level, each test file (or `spec`) fall under one of the following fl
 | Jetpack              | `specs/specs-jetpack`    |
 
 Core code for Jetpack, WooCommerce and Gutenberg are hosted in other repositories and they have separate e2e testing infrastructure. Tests within `test/e2e` are meant to test interactions between their respective components and Calypso/WordPress.com.
+

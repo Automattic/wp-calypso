@@ -1,3 +1,5 @@
+Return to [Top Page](../README.md).
+
 # Running tests on your machine
 
 <!-- TOC -->
@@ -11,6 +13,7 @@
     - [Save authentication cookies](#save-authentication-cookies)
     - [Target local webapp](#target-local-webapp)
     - [Debug mode](#debug-mode)
+      - [Notes on TypeScript](#notes-on-typescript)
 
 <!-- /TOC -->
 

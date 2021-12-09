@@ -1,13 +1,15 @@
+Return to [Top Page](../README.md).
+
 # Test Environment
 
 <!-- TOC -->
 
 - [Test Environment](#test-environment)
-  - [Environment Variables](#environment-variables)
-  - [Secrets file](#secrets-file)
-  - [Non-secret configuration file](#non-secret-configuration-file)
-    - [Default config](#default-config)
-    - [Custom configs](#custom-configs)
+    - [Environment Variables](#environment-variables)
+    - [Secrets file](#secrets-file)
+    - [Non-secret configuration file](#non-secret-configuration-file)
+        - [Default config](#default-config)
+        - [Custom configs](#custom-configs)
 
 <!-- /TOC -->
 
@@ -65,3 +67,5 @@ The `local-` prefix ensures that custom configurations [will be ignored][https:/
 Values found in the local configuration file will override ones found in `default.json`.
 
 For the full list of possible configuration values, refer to the following page: [config values](config_values.md).
+
+<p align="left"><a href="./setup.md"><-- Setup</a></p>

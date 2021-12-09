@@ -1,3 +1,5 @@
+Return to [Top Page](../README.md).
+
 # Debugging
 
 The Playwright [project page](https://playwright.dev/docs/debug/) has in-depth coverage of various debugging tools. This page will cover debugging scenarios unique to WordPress.com and Calypso.
