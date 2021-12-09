@@ -54,7 +54,12 @@ const domainMappingThankYouProps = ( {
 				],
 			},
 		],
-		thankYouImage: { alt: translate( 'Domain Connected' ), src: domainConnectedSuccess },
+		thankYouImage: {
+			alt: translate( 'Domain Connected' ),
+			src: domainConnectedSuccess,
+			width: '150px',
+			height: 'auto',
+		},
 		thankYouTitle: translate( 'Congratulations on your purchase!' ),
 		thankYouSubtitle: translate(
 			'You can now connect {{strong}}%(domain)s{{/strong}} to your site',

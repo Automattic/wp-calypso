@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
+import Illustration from 'calypso/assets/images/domains/domain.svg';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import { canCurrentUserCreateSiteFromDomainOnly } from 'calypso/lib/domains';

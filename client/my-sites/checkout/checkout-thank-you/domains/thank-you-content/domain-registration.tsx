@@ -54,7 +54,12 @@ const DomainRegistrationThankYouProps = ( {
 				],
 			},
 		],
-		thankYouImage: { alt: translate( 'Domain Registered' ), src: domainRegisteredSuccess },
+		thankYouImage: {
+			alt: translate( 'Domain Registered' ),
+			src: domainRegisteredSuccess,
+			width: '150px',
+			height: 'auto',
+		},
 		thankYouTitle: translate( 'Congratulations on your purchase!' ),
 		thankYouSubtitle: translate(
 			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',
