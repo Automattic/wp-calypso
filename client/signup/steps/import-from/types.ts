@@ -21,3 +21,13 @@ export interface ImportJob {
 		attachment: { completed: number; total: number };
 	};
 }
+
+export interface ImportJobParams {
+	engine: Importer;
+	importerStatus: ImportJob;
+	params: { engine: Importer };
+	site: { ID: number };
+	targetSiteUrl: string;
+	supportedContent: string[];
+	unsupportedContent: string[];
+}

@@ -9,7 +9,7 @@ import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
-import { Importer, ImportJob } from '../types';
+import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
 import DoneButton from './done-button';
 
@@ -21,7 +21,7 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
-	importSite: ( params: { [ key: string ]: any } ) => void;
+	importSite: ( params: ImportJobParams ) => void;
 	startImport: ( siteId: number, type: string ) => void;
 	resetImport: ( siteId: number, importerId: string ) => void;
 }
@@ -49,12 +49,12 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
-	function prepareImportParams() {
+	function prepareImportParams(): ImportJobParams {
 		const targetSiteUrl = fromSite.startsWith( 'http' ) ? fromSite : 'https://' + fromSite;
 
 		return {
 			engine: importer,
-			importerStatus: job,
+			importerStatus: job as ImportJob,
 			params: { engine: importer },
 			site: { ID: siteId },
 			targetSiteUrl,
