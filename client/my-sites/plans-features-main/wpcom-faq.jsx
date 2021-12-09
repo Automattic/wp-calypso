@@ -65,7 +65,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 				question={ translate( 'Can I install my own theme?' ) }
 				answer={ translate(
 					"Yes! With the WordPress.com Business or eCommerce plan you can install any theme you'd like." +
-						' All plans give you access to our {{a}}directory of free themes{{/a}}.' +
+						' All plans give you access to our {{a}}directory of free and premium themes{{/a}}.' +
 						' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
 					{
 						components: { a: <a href={ `/themes/${ siteSlug }` } /> },
