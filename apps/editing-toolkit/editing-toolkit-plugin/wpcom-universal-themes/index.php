@@ -26,8 +26,12 @@ function is_core_fse_active() {
 		return false;
 	}
 
+	$universal_theme_template = defined( 'IS_ATOMIC' ) && IS_ATOMIC
+		? 'blockase'
+		: 'pub/blockase';
+
 	// For universal themes, we check for our own option.
-	if ( 'pub/blockase' === get_option( 'template' ) ) {
+	if ( get_option( 'template' ) === $universal_theme_template ) {
 		return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
 	}
 
