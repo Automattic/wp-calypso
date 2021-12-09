@@ -17,7 +17,7 @@ export default function CheckoutModal( {
 	cancelAction = noop,
 	closeModal,
 	isVisible,
-	buttonCTA,
+	primaryButtonCTA,
 	secondaryButtonCTA,
 }: CheckoutModalProps ): JSX.Element | null {
 	const { __ } = useI18n();
@@ -60,7 +60,7 @@ export default function CheckoutModal( {
 							handleActionAndClose( primaryAction, closeModal );
 						} }
 					>
-						{ buttonCTA || __( 'Continue' ) }
+						{ primaryButtonCTA || __( 'Continue' ) }
 					</Button>
 				</CheckoutModalActions>
 			</CheckoutModalContent>
@@ -79,7 +79,7 @@ interface CheckoutModalProps {
 	cancelAction?: Callback;
 	isVisible: boolean;
 	className?: string;
-	buttonCTA?: React.ReactNode;
+	primaryButtonCTA?: React.ReactNode;
 	secondaryButtonCTA?: React.ReactNode;
 }
 
