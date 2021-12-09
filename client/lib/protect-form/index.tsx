@@ -108,7 +108,8 @@ function windowConfirm() {
 		return true;
 	}
 	const confirmText = i18n.translate(
-		'You have unsaved changes. Are you sure you want to leave this page?'
+		'You have unsaved changes. Are you sure you want to leave this page?',
+		{ textOnly: true }
 	);
 	return window.confirm( confirmText );
 }
