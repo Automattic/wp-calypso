@@ -274,7 +274,7 @@ const MarketplacePluginInstall = ( {
 					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
-						'This plugin already exists in your site. If you want to upgrade/ downgrade it please continue by uploading again from WP Admin.'
+						'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
 					) }
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
