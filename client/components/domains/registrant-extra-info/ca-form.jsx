@@ -11,7 +11,6 @@ import FormSelect from 'calypso/components/forms/form-select';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import { disableSubmitButton } from './disable-submit-button';
 
 const ciraAgreementUrl = 'https://cira.ca/agree';
 const defaultValues = {
@@ -136,10 +135,6 @@ export class RegistrantExtraInfoCaForm extends PureComponent {
 		return this.isCorporationLegalType( this.props.ccTldDetails?.legalType );
 	}
 
-	organizationFieldIsValid() {
-		return this.needsOrganization() ? isEmpty( this.getOrganizationErrorMessage() ) : true;
-	}
-
 	getOrganizationErrorMessage() {
 		let message =
 			this.props.contactDetailsValidationErrors?.organization ||
@@ -164,14 +159,11 @@ export class RegistrantExtraInfoCaForm extends PureComponent {
 	}
 
 	render() {
-		const { translate, children } = this.props;
+		const { translate } = this.props;
 		const { legalType, ciraAgreementAccepted } = {
 			...defaultValues,
 			...this.props.ccTldDetails,
 		};
-
-		const formIsValid = ciraAgreementAccepted && this.organizationFieldIsValid();
-		const validatingSubmitButton = formIsValid ? children : disableSubmitButton( children );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -216,7 +208,6 @@ export class RegistrantExtraInfoCaForm extends PureComponent {
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ validatingSubmitButton }
 			</form>
 		);
 	}

@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { camelCase, difference, filter, get, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -10,7 +10,6 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import { disableSubmitButton } from './disable-submit-button';
 
 const defaultValues = {
 	registrantType: 'IND',
@@ -192,14 +191,6 @@ export class RegistrantExtraInfoUkForm extends PureComponent {
 			...this.props.ccTldDetails,
 		};
 
-		const relevantExtraFields = filter( [
-			this.isTradingNameRequired( registrantType ) && 'tradingName',
-			this.isRegistrationNumberRequired( registrantType ) && 'registrationNumber',
-		] );
-		const isValid = Object.keys( this.props.contactDetailsValidationErrors?.extra?.uk ?? {} ).every(
-			( errorKey ) => ! relevantExtraFields.includes( errorKey )
-		);
-
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">
@@ -227,7 +218,6 @@ export class RegistrantExtraInfoUkForm extends PureComponent {
 
 				{ this.isRegistrationNumberRequired( registrantType ) &&
 					this.renderRegistrationNumberField() }
-				{ isValid ? this.props.children : disableSubmitButton( this.props.children ) }
 			</form>
 		);
 	}
