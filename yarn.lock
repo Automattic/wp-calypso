@@ -255,7 +255,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-jest@workspace:packages/calypso-jest"
   dependencies:
-    "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": ^7.16.0
