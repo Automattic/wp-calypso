@@ -213,9 +213,13 @@ function WPNonProductLineItem( {
 						closeModal={ () => {
 							setIsModalVisible( false );
 						} }
+						secondaryAction={ () => {
+							setIsModalVisible( false );
+						} }
 						primaryAction={ () => {
 							removeProductFromCart();
 						} }
+						secondaryButtonCTA={ String( 'Cancel' ) }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
@@ -800,6 +804,10 @@ function WPLineItem( {
 						cancelAction={ () => {
 							onRemoveProductCancel?.( label );
 						} }
+						secondaryAction={ () => {
+							onRemoveProductCancel?.( label );
+						} }
+						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
