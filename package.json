@@ -284,7 +284,7 @@
 		"yargs": "^17.0.1"
 	},
 	"optionalDependencies": {
-		"fsevents": "^2.1.2"
+		"fsevents": "^2.3.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
