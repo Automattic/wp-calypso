@@ -24,16 +24,16 @@ const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
 };
 
 const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
-	const [ tourReady, setTourReady ] = useState( false );
-	const tourContainerRef = useRef( null );
-	const [ popperElement, sePopperElement ] = useState< HTMLElement | null >( null );
+	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);
 	const [ isMinimized, setIsMinimized ] = useState( false );
-	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
-	const lastStepIndex = config.steps.length - 1;
+	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
+	const [ tourReady, setTourReady ] = useState( false );
+	const tourContainerRef = useRef( null );
 	const isMobile = useMobileBreakpoint();
+	const lastStepIndex = config.steps.length - 1;
 	const referenceElementSelector =
 		config.steps[ currentStepIndex ].referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || null;
 	const referenceElement = referenceElementSelector
@@ -64,7 +64,46 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		return ! isMinimized;
 	}, [ config.options?.effects?.overlay, isMinimized, showSpotlight ] );
 
-	const { styles: popperStyles, attributes: popperAttributes, update } = usePopper(
+	const handleDismiss = useCallback(
+		( source: string ) => {
+			return () => {
+				config.closeHandler( config.steps, currentStepIndex, source );
+			};
+		},
+		[ config, currentStepIndex ]
+	);
+
+	const handleNextStepProgression = useCallback( () => {
+		if ( lastStepIndex > currentStepIndex ) {
+			setCurrentStepIndex( currentStepIndex + 1 );
+		}
+		handleCallback( currentStepIndex, config.options?.callbacks?.onNextStep );
+	}, [ config.options?.callbacks?.onNextStep, currentStepIndex, lastStepIndex ] );
+
+	const handlePreviousStepProgression = useCallback( () => {
+		currentStepIndex && setCurrentStepIndex( currentStepIndex - 1 );
+		handleCallback( currentStepIndex, config.options?.callbacks?.onPreviousStep );
+	}, [ config.options?.callbacks?.onPreviousStep, currentStepIndex ] );
+
+	const handleGoToStep = useCallback(
+		( stepIndex: number ) => {
+			setCurrentStepIndex( stepIndex );
+			handleCallback( currentStepIndex, config.options?.callbacks?.onGoToStep );
+		},
+		[ config.options?.callbacks?.onGoToStep, currentStepIndex ]
+	);
+
+	const handleMinimize = useCallback( () => {
+		setIsMinimized( true );
+		handleCallback( currentStepIndex, config.options?.callbacks?.onMinimize );
+	}, [ config.options?.callbacks?.onMinimize, currentStepIndex ] );
+
+	const handleMaximize = useCallback( () => {
+		setIsMinimized( false );
+		handleCallback( currentStepIndex, config.options?.callbacks?.onMaximize );
+	}, [ config.options?.callbacks?.onMaximize, currentStepIndex ] );
+
+	const { styles: popperStyles, attributes: popperAttributes, update: popperUpdate } = usePopper(
 		referenceElement,
 		popperElement,
 		{
@@ -117,45 +156,6 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 			  }
 			: null;
 
-	const handleDismiss = useCallback(
-		( source: string ) => {
-			return () => {
-				config.closeHandler( config.steps, currentStepIndex, source );
-			};
-		},
-		[ config, currentStepIndex ]
-	);
-
-	const handleNextStepProgression = useCallback( () => {
-		if ( lastStepIndex > currentStepIndex ) {
-			setCurrentStepIndex( currentStepIndex + 1 );
-		}
-		handleCallback( currentStepIndex, config.options?.callbacks?.onNextStep );
-	}, [ config.options?.callbacks?.onNextStep, currentStepIndex, lastStepIndex ] );
-
-	const handlePreviousStepProgression = useCallback( () => {
-		currentStepIndex && setCurrentStepIndex( currentStepIndex - 1 );
-		handleCallback( currentStepIndex, config.options?.callbacks?.onPreviousStep );
-	}, [ config.options?.callbacks?.onPreviousStep, currentStepIndex ] );
-
-	const handleGoToStep = useCallback(
-		( stepIndex: number ) => {
-			setCurrentStepIndex( stepIndex );
-			handleCallback( currentStepIndex, config.options?.callbacks?.onGoToStep );
-		},
-		[ config.options?.callbacks?.onGoToStep, currentStepIndex ]
-	);
-
-	const handleMinimize = useCallback( () => {
-		setIsMinimized( true );
-		handleCallback( currentStepIndex, config.options?.callbacks?.onMinimize );
-	}, [ config.options?.callbacks?.onMinimize, currentStepIndex ] );
-
-	const handleMaximize = useCallback( () => {
-		setIsMinimized( false );
-		handleCallback( currentStepIndex, config.options?.callbacks?.onMaximize );
-	}, [ config.options?.callbacks?.onMaximize, currentStepIndex ] );
-
 	/*
 	 * Focus first interactive element when step renders.
 	 */
@@ -176,12 +176,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 
 		setTourReady( false );
 
-		if ( update ) {
-			update()
+		if ( popperUpdate ) {
+			popperUpdate()
 				.then( () => setTourReady( true ) )
 				.catch( () => setTourReady( true ) );
 		}
-	}, [ update, referenceElement ] );
+	}, [ popperUpdate, referenceElement ] );
 
 	const classNames = classnames(
 		'tour-kit-frame',
@@ -210,7 +210,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				) }
 				<div
 					className="tour-kit-frame__container"
-					ref={ sePopperElement }
+					ref={ setPopperElement }
 					{ ...stepRepositionProps }
 				>
 					{ showArrowIndicator() && (
