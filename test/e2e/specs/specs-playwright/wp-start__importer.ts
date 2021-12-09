@@ -1,4 +1,5 @@
 /**
+ * @group calypso-pr
  */
 
 import { DataHelper, LoginPage, setupHooks, StartImportFlow } from '@automattic/calypso-e2e';
