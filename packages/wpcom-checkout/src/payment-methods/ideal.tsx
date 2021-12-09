@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
 import debugFactory from 'debug';
 import { Fragment } from 'react';
 import Field from '../field';
@@ -140,15 +139,11 @@ function BankSelector( {
 } ) {
 	const { __ } = useI18n();
 	const bankOptions = getBankOptions( __ );
-	const classes = classNames( 'form-select', {
-		'is-error': isError,
-	} );
 	return (
 		<SelectWrapper>
-			<label htmlFor={ id }>{ label }</label>
-			<select
+			<IdealBankLabel htmlFor={ id }>{ label }</IdealBankLabel>
+			<IdealSelect
 				id={ id }
-				className={ classes }
 				value={ value }
 				onChange={ ( event ) => onChange( event.target.value ) }
 				disabled={ disabled }
@@ -156,7 +151,7 @@ function BankSelector( {
 				{ bankOptions.map( ( bank ) => (
 					<BankOption key={ bank.value } value={ bank.value } label={ bank.label } />
 				) ) }
-			</select>
+			</IdealSelect>
 			<ErrorMessage isError={ isError } errorMessage={ errorMessage } />
 		</SelectWrapper>
 	);
@@ -190,7 +185,6 @@ const Description = styled.p< { isError: boolean } >`
 const IdealFormWrapper = styled.div`
 	padding: 16px;
 	position: relative;
-
 	::after {
 		display: block;
 		width: calc( 100% - 6px );
@@ -200,7 +194,6 @@ const IdealFormWrapper = styled.div`
 		position: absolute;
 		top: 0;
 		left: 3px;
-
 		.rtl & {
 			right: 3px;
 			left: auto;
@@ -214,6 +207,70 @@ const IdealField = styled( Field )`
 	:first-of-type {
 		margin-top: 0;
 	}
+`;
+const IdealBankLabel = styled.label`
+	font-size: 14px;
+	font-weight: 600;
+`;
+const IdealSelect = styled.select`
+	background: var( --color-surface )
+		url( 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPmFycm93LWRvd248L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4gICAgICAgIDxnIGlkPSJhcnJvdy1kb3duIiBza2V0Y2g6dHlwZT0iTVNBcnRib2FyZEdyb3VwIiBmaWxsPSIjQzhEN0UxIj4gICAgICAgICAgICA8cGF0aCBkPSJNMTUuNSw2IEwxNyw3LjUgTDEwLjI1LDE0LjI1IEwzLjUsNy41IEw1LDYgTDEwLjI1LDExLjI1IEwxNS41LDYgWiIgaWQ9IkRvd24tQXJyb3ciIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg==' )
+		no-repeat right 10px center;
+	border-color: var( --color-neutral-10 );
+	color: var( --color-neutral-70 );
+	cursor: pointer;
+	display: inline-block;
+	margin: 8px 0 1em;
+	overflow: hidden;
+	font-size: 1rem;
+    font-weight: 400;
+	line-height: 1.4em;
+	text-overflow: ellipsis;
+	box-sizing: border-box;
+	padding: 7px 32px 9px 14px; // Aligns the text to the 8px baseline grid and adds padding on right to allow for the arrow.
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+
+	// IE: Remove the default arrow
+	&::-ms-expand {
+		display: none;
+	}
+
+	// IE: Remove default background and color styles on focus
+	&::-ms-value {
+		background: none;
+		color: var( --color-neutral-70 );
+	}
+
+	// Firefox: Remove the focus outline, see http://stackoverflow.com/questions/3773430/remove-outline-from-select-box-in-ff/18853002#18853002
+	&:-moz-focusring {
+		color: transparent;
+		text-shadow: 0 0 0 var( --color-neutral-70 );
+	}
+
+	&.is-error {
+		border-color: var( --color-error );
+	}
+
+	&.is-error:hover {
+		border-color: var( --color-error-dark );
+	}
+
+	&:disabled {
+		color: var( --color-neutral-10 );
+	}
+
+	&:focus {
+		&.is-error {
+			box-shadow: 0 0 0 2px var( --color-error-10 );
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px var( --color-error-20 );
+		}
+	}
+}
 `;
 
 const SelectWrapper = styled.div`
@@ -326,6 +383,7 @@ function IdealLabel() {
 
 const IdealLogo = styled( IdealLogoSvg )`
 	height: 20px;
+	transform: translateY( -3px );
 `;
 
 function IdealLogoSvg( { className }: { className?: string } ) {
