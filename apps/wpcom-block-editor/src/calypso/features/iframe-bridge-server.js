@@ -1088,12 +1088,18 @@ function handleInlineHelpButton( calypsoPort ) {
 }
 
 /**
- * Check if the App Banner is visible.
- * Set the Editor Welcome Guide enabled if the app banner is not visible, not enabled otherwise.
+ * If WelcomeTour is set to show, check if the App Banner is visible.
+ * If App Banner is visible, we set the Welcome Tour to not show.
+ * When the App Banner gets dismissed, we set the Welcome Tour to show.
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function getIsAppBannerVisible( calypsoPort ) {
+	const isWelcomeGuideShown = select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown();
+	if ( ! isWelcomeGuideShown ) {
+		return;
+	}
+
 	const { port1, port2 } = new MessageChannel();
 	calypsoPort.postMessage(
 		{
@@ -1103,8 +1109,12 @@ function getIsAppBannerVisible( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { isAppBannerVisible } = data;
-		dispatch( 'automattic/wpcom-welcome-guide' ).setWelcomeGuideEnabled( ! isAppBannerVisible );
+		const { isAppBannerVisible, hasAppBannerBeenDismissed } = data;
+		if ( hasAppBannerBeenDismissed ) {
+			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true );
+		} else if ( isAppBannerVisible ) {
+			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( false );
+		}
 	};
 }
 
