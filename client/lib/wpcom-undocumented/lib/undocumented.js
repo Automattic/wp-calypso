@@ -71,10 +71,6 @@ Undocumented.prototype.launchSite = function ( siteIdOrSlug, fn ) {
 	return this.wpcom.req.post( path, fn );
 };
 
-Undocumented.prototype.resendIcannVerification = function ( domain, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/resend-icann/', callback );
-};
-
 Undocumented.prototype.fetchDns = function ( domainName, fn ) {
 	return this.wpcom.req.get( '/domains/' + domainName + '/dns', fn );
 };
@@ -203,10 +199,6 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 		{ redirect_uri: redirectUri },
 		callback
 	);
-};
-
-Undocumented.prototype.domainsVerifyRegistrantEmail = function ( domain, email, token ) {
-	return this.wpcom.req.get( `/domains/${ domain }/verify-email`, { email, token } );
 };
 
 Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function (
