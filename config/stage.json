@@ -103,7 +103,6 @@
 		"support-user": true,
 		"themes/premium": false,
 		"tools/migrate": true,
-		"upgrades/checkout": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,

@@ -78,7 +78,6 @@
 		"site-indicator": true,
 		"support-user": true,
 		"themes/premium": true,
-		"upgrades/checkout": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
