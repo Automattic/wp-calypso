@@ -30,18 +30,16 @@ function SiteInformationCollection( {
 	submitSignupStep,
 	goToNextStep,
 } ) {
+	const { username: signupUsername, selectedSiteCategory } = useSelector(
+		getSignupDependencyStore
+	);
 	const dispatch = useDispatch();
-
-	const { selectedDesign, username: signupUsername } = useSelector( getSignupDependencyStore );
 	const loggedInUsername = useSelector( getCurrentUserName );
-
-	const selectedVertical = selectedDesign?.categories[ 0 ]?.name;
-
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [ dispatch, stepName ] );
 
-	const nextStep = () => {
+	const onTypeformSubmission = ( typeformSubmissionId ) => {
 		const cartItem = { product_slug: WPCOM_DIFM_LITE };
 		const step = {
 			stepName,
@@ -50,6 +48,7 @@ function SiteInformationCollection( {
 		};
 		submitSignupStep( step, {
 			cartItem,
+			typeformResponseId: typeformSubmissionId,
 		} );
 		goToNextStep();
 	};
@@ -59,7 +58,7 @@ function SiteInformationCollection( {
 			<Widget
 				hidden={ {
 					username: signupUsername || loggedInUsername,
-					vertical: selectedVertical,
+					vertical: selectedSiteCategory,
 				} }
 				id={ getTypeformId() }
 				style={ {
@@ -69,7 +68,7 @@ function SiteInformationCollection( {
 					padding: '0',
 					marginTop: '50px',
 				} }
-				onSubmit={ nextStep }
+				onSubmit={ ( { responseId } ) => onTypeformSubmission( responseId ) }
 				disableAutoFocus={ true }
 			/>
 		</Container>

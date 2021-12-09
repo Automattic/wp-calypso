@@ -818,8 +818,6 @@ export function getInitialWpcomStoreState(
 	contactDetails: ManagedContactDetails
 ): WpcomStoreState {
 	return {
-		siteId: '',
-		siteSlug: '',
 		recaptchaClientId: -1,
 		transactionResult: undefined,
 		contactDetails,

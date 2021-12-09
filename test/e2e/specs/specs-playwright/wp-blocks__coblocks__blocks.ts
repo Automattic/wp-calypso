@@ -2,76 +2,60 @@
  * @group gutenberg
  * @group coblocks
  */
-
 import {
 	setupHooks,
+	BrowserHelper,
 	DataHelper,
 	MediaHelper,
-	LoginPage,
-	NewPostFlow,
 	GutenbergEditorPage,
-	PricingTableBlock,
+	TestFile,
+	ClicktoTweetBlock,
 	DynamicHRBlock,
 	HeroBlock,
-	ClicktoTweetBlock,
 	LogosBlock,
-	TestFile,
-	BrowserHelper,
+	PricingTableBlock,
+	NewPostFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
+let user: string;
+if ( BrowserHelper.targetCoBlocksEdge() ) {
+	user = 'coBlocksSimpleSiteEdgeUser';
+} else if ( BrowserHelper.targetGutenbergEdge() ) {
+	user = 'gutenbergSimpleSiteEdgeUser';
+} else {
+	user = 'gutenbergSimpleSiteUser';
+}
+
+describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
+	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
-	let page: Page;
 	let logoImage: TestFile;
 
-	let user: string;
-	if ( BrowserHelper.targetCoBlocksEdge() ) {
-		user = 'coBlocksSimpleSiteEdgeUser';
-	} else if ( BrowserHelper.targetGutenbergEdge() ) {
-		user = 'gutenbergSimpleSiteEdgeUser';
-	} else {
-		user = 'gutenbergSimpleSiteUser';
-	}
-
-	// Test data
-	const pricingTableBlockPrice = 888;
-	const heroBlockHeading = 'Hero heading';
-	const clicktoTweetBlockTweet =
-		'The foolish man seeks happiness in the distance. The wise grows it under his feet. — James Oppenheim';
-
-	setupHooks( ( args: { page: Page } ) => {
+	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
+	// Test data
+	const pricingTableBlockPrices = [ 4.99, 9.99 ];
+	const heroBlockHeading = 'Hero heading';
+	const clicktoTweetBlockTweet = 'Tweet text';
+
 	beforeAll( async () => {
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
+		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
 	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: user } );
-	} );
-
-	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( page );
-		await newPostFlow.newPostFromNavbar();
-		gutenbergEditorPage = new GutenbergEditorPage( page );
-	} );
-
-	it( 'Enter post title', async function () {
-		await gutenbergEditorPage.enterTitle( DataHelper.getRandomPhrase() );
-	} );
-
-	it( `Insert ${ PricingTableBlock.blockName } block and enter price to left table`, async function () {
+	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {
 		const blockHandle = await gutenbergEditorPage.addBlock(
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
 		pricingTableBlock = new PricingTableBlock( blockHandle );
-		await pricingTableBlock.enterPrice( 1, pricingTableBlockPrice );
+		await pricingTableBlock.enterPrice( 1, pricingTableBlockPrices[ 0 ] );
+		await pricingTableBlock.enterPrice( 2, pricingTableBlockPrices[ 1 ] );
 	} );
 
 	it( `Insert ${ DynamicHRBlock.blockName } block`, async function () {
@@ -108,14 +92,14 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 		await logosBlock.upload( logoImage.fullpath );
 	} );
 
-	it( 'Publish and visit post', async function () {
+	it( 'Publish and visit the post', async function () {
 		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 
 	// Pass in a 1D array of values or text strings to validate each block.
 	it.each`
 		block                  | content
-		${ PricingTableBlock } | ${ [ pricingTableBlockPrice ] }
+		${ PricingTableBlock } | ${ pricingTableBlockPrices }
 		${ DynamicHRBlock }    | ${ null }
 		${ HeroBlock }         | ${ [ heroBlockHeading ] }
 		${ ClicktoTweetBlock } | ${ [ clicktoTweetBlockTweet ] }

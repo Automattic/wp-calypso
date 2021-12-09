@@ -341,6 +341,7 @@ export interface ResponseCartProductExtra {
 	premium?: boolean;
 	new_quantity?: number;
 	domain_to_bundle?: string;
+	email_users?: TitanProductUser[];
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	purchaseType?: string;
@@ -354,6 +355,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	auth_code?: string;
 }
 
 export interface GSuiteProductUser {
@@ -361,6 +363,15 @@ export interface GSuiteProductUser {
 	lastname: string;
 	email: string;
 	password: string;
+}
+
+export interface TitanProductUser {
+	alternative_email?: string;
+	email: string;
+	encrypted_password?: string;
+	is_admin?: boolean;
+	name?: string;
+	password?: string;
 }
 
 export type DomainContactDetails = {

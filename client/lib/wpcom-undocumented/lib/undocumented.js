@@ -38,22 +38,6 @@ Undocumented.prototype.checkAuthCode = function ( domain, authCode, fn ) {
 };
 
 /**
- * Get the inbound transfer status for this domain
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getInboundTransferStatus = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-status`,
-		},
-		fn
-	);
-};
-
-/**
  * Starts an inbound domain transfer that is in the pending_start state.
  *
  * @param {number|string} siteId The site ID
@@ -85,10 +69,6 @@ Undocumented.prototype.launchSite = function ( siteIdOrSlug, fn ) {
 	const path = `/sites/${ siteIdOrSlug }/launch`;
 	debug( path );
 	return this.wpcom.req.post( path, fn );
-};
-
-Undocumented.prototype.resendIcannVerification = function ( domain, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/resend-icann/', callback );
 };
 
 Undocumented.prototype.fetchDns = function ( domainName, fn ) {
@@ -219,10 +199,6 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 		{ redirect_uri: redirectUri },
 		callback
 	);
-};
-
-Undocumented.prototype.domainsVerifyRegistrantEmail = function ( domain, email, token ) {
-	return this.wpcom.req.get( `/domains/${ domain }/verify-email`, { email, token } );
 };
 
 Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function (

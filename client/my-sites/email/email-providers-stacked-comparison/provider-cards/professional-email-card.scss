@@ -12,6 +12,7 @@
 .professional-email-card__price-badge {
 	.promo-card__price {
 		margin-top: 12px;
+
 		.price__discount {
 			text-decoration: line-through;
 			color: var( --studio-gray-60 );
@@ -19,6 +20,6 @@
 	}
 }
 
-.professional-email-card__discount {
+.professional-email-card__discount.badge {
 	margin-bottom: 12px;
 }

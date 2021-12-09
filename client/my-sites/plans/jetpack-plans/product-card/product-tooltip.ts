@@ -15,7 +15,7 @@ export default function productTooltip(
 	product: SelectorProduct,
 	tiers: PriceTierEntry[]
 ): null | TranslateResult {
-	if ( ! JETPACK_SEARCH_PRODUCTS.includes( product.productSlug ) ) {
+	if ( ! ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( product.productSlug ) ) {
 		return null;
 	}
 

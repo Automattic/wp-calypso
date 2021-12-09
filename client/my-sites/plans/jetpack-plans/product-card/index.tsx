@@ -44,7 +44,7 @@ interface ProductCardProps {
 	currencyCode: string | null;
 	selectedTerm?: Duration;
 	isAligned?: boolean;
-	featuredPlans?: string[];
+	isFeatured?: boolean;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
 	scrollCardIntoView: ScrollCardIntoViewCallback;
@@ -58,7 +58,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	currencyCode,
 	selectedTerm,
 	isAligned,
-	featuredPlans,
+	isFeatured,
 	featuredLabel,
 	hideSavingLabel,
 	scrollCardIntoView,
@@ -177,7 +177,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
 			}
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
-			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
+			isFeatured={ isFeatured }
 			isOwned={ isOwned }
 			isIncludedInPlan={ isIncludedInPlan || isSuperseded }
 			isDeprecated={ isDeprecated }

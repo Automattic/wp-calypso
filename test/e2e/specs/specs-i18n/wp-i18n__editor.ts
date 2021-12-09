@@ -52,14 +52,12 @@ const translations: Translations = {
 
 			// Jetpack
 			{
-				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Contact Form',
 				blockEditorSelector: '[data-type="jetpack/contact-form"]',
 				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
 				blockPanelTitle: 'Form',
 			},
 			{
-				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Business Hours',
 				blockEditorSelector: '[data-type="jetpack/business-hours"]',
 				blockEditorContent: [
@@ -95,7 +93,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("Image")',
-					'.jetpack-external-media-button-menu:text("Select Image")', // Jetpack extension
+					'.jetpack-external-media-button-menu:text("Sélectionner une image")', // Jetpack extension
 				],
 				blockPanelTitle: 'Image',
 			},
@@ -116,21 +114,19 @@ const translations: Translations = {
 
 			// Jetpack
 			{
-				// @todo: Update when Jetpack translations get fixed.
-				blockName: 'Contact Form',
+				blockName: 'Formulaire de contact',
 				blockEditorSelector: '[data-type="jetpack/contact-form"]',
-				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
-				blockPanelTitle: 'Form',
+				blockEditorContent: [ ':text("Nom")', ':text("E-mail")', ':text("Message")' ],
+				blockPanelTitle: 'Formulaire',
 			},
 			{
-				// @todo: Update when Jetpack translations get fixed.
-				blockName: 'Business Hours',
+				blockName: 'Heures d’ouverture',
 				blockEditorSelector: '[data-type="jetpack/business-hours"]',
 				blockEditorContent: [
 					'.business-hours__day-name:text("lundi")',
-					'.business-hours__hours:has-text("Add Hours")',
+					'.business-hours__hours:has-text("Ajouter les heures")',
 				],
-				blockPanelTitle: 'Business Hours',
+				blockPanelTitle: 'Heures d’ouverture',
 			},
 
 			// Crowdsignal Forms
@@ -159,7 +155,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("תמונה")',
-					'.jetpack-external-media-button-menu:text("Select Image")', // Jetpack extension
+					'.jetpack-external-media-button-menu:text("לבחור תמונה")', // Jetpack extension
 				],
 				blockPanelTitle: 'תמונה',
 			},
@@ -178,21 +174,19 @@ const translations: Translations = {
 
 			// Jetpack
 			{
-				// @todo: Update when Jetpack translations get fixed.
-				blockName: 'Contact Form',
+				blockName: 'טופס יצירת קשר',
 				blockEditorSelector: '[data-type="jetpack/contact-form"]',
-				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
-				blockPanelTitle: 'Form',
+				blockEditorContent: [ ':text("שם")', ':text("אימייל")', ':text("הודעה")' ],
+				blockPanelTitle: 'טופס',
 			},
 			{
-				// @todo: Update when Jetpack translations get fixed.
-				blockName: 'Business Hours',
+				blockName: 'שעות פעילות',
 				blockEditorSelector: '[data-type="jetpack/business-hours"]',
 				blockEditorContent: [
 					'.business-hours__day-name:text("יום שני")',
-					'.business-hours__hours:has-text("Add Hours")',
+					'.business-hours__hours:has-text("הוספת שעות")',
 				],
-				blockPanelTitle: 'Business Hours',
+				blockPanelTitle: 'שעות פעילות',
 			},
 
 			// Crowdsignal Forms
