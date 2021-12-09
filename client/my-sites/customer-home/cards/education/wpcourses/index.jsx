@@ -1,26 +1,32 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import webinarIllustration from 'calypso/assets/images/customer-home/illustration-webinars.svg';
+import freePhotoLibraryVideoPrompt from 'calypso/assets/images/customer-home/illustration--secondary-wp-courses.svg';
+import { EDUCATION_WPCOURSES } from 'calypso/my-sites/customer-home/cards/constants';
 import EducationalContent from '../educational-content';
 
-const Webinars = () => {
-	const translate = useTranslate();
+const WpCourses = () => {
+	const { localeSlug } = useTranslate();
+	const isEnglish = config( 'english_locales' ).includes( localeSlug );
+
+	if ( ! isEnglish ) {
+		return null;
+	}
 
 	return (
 		<EducationalContent
-			title={ translate( 'Learn from the pros' ) }
-			description={ translate(
-				'Free webinars with Happiness Engineers teach you to build a website, start a blog, or make money on your site.'
-			) }
+			title="The official WordPress.com blogging guide"
+			description="Learn everything you need to know to build a popular blog in this course taught by world-class WordPress experts."
 			links={ [
 				{
 					externalLink: true,
-					url: 'https://wordpress.com/webinars/',
-					text: translate( 'Register for free' ),
+					url: 'https://wpcourses.com/course/blogging-beginners-course/',
+					text: 'Learn more',
 				},
 			] }
-			illustration={ webinarIllustration }
+			illustration={ freePhotoLibraryVideoPrompt }
+			cardName={ EDUCATION_WPCOURSES }
 		/>
 	);
 };
 
-export default Webinars;
+export default WpCourses;
