@@ -26,7 +26,10 @@ function InvitesListEnd( { shown, found } ) {
 					{ translate(
 						'Showing %(shown)d invite of %(found)d.',
 						'Showing %(shown)d invites of %(found)d.',
-						{ args: { shown, found } }
+						{
+							count: shown,
+							args: { shown, found },
+						}
 					) }
 					<br />
 					{ translate( 'To view more invites, clear some of your existing invites first.' ) }
