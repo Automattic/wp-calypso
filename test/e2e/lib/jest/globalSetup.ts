@@ -1,4 +1,4 @@
-import { mkdir, stat, access, unlink } from 'fs/promises';
+import { mkdir, stat, unlink } from 'fs/promises';
 import path from 'path';
 import config from 'config';
 import { chromium } from 'playwright';
@@ -43,9 +43,17 @@ export default async (): Promise< void > => {
 		// instead of checking that cookies are older than 3 days, this checks whether the cookies
 		// are newer than 3 days. If so, presumably the cookies are still good to use and the iteration
 		// is short-circuited.
+		let stats = undefined;
 		try {
-			await access( cookiePath );
-			const stats = await stat( cookiePath );
+			stats = await stat( cookiePath );
+		} catch {
+			// noop
+			// Do not re-throw the error here, as doing so would halt Jest entirely.
+			// A previous cookie file not having been found is perfectly accpetable
+			// eg. running tests for the first time.
+		}
+
+		if ( stats ) {
 			const createdTime = Math.trunc( stats.birthtimeMs );
 			const currentTime = new Date();
 
@@ -57,11 +65,6 @@ export default async (): Promise< void > => {
 				// overwrite files.
 				await unlink( cookiePath );
 			}
-		} catch {
-			// noop
-			// Do not re-throw the error here, as doing so would halt Jest entirely.
-			// A previous cookie file not having been found is perfectly accpetable
-			// eg. running tests for the first time.
 		}
 
 		const [ username, password ] = config.get( 'testAccounts' )[ user ];
