@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -40,17 +39,10 @@ class ListHeader extends PureComponent {
 		}
 	};
 
-	renderAddDomainToThisSiteButton() {
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			return null;
-		}
-		return <OptionsDomainButton specificSiteActions={ true } />;
-	}
-
 	renderDefaultHeaderContent() {
 		return (
 			<SectionHeader label={ this.props.translate( 'Your site domains' ) }>
-				{ ! this.props.isManagingAllSites && this.renderAddDomainToThisSiteButton() }
+				{ ! this.props.isManagingAllSites && <OptionsDomainButton specificSiteActions /> }
 			</SectionHeader>
 		);
 	}
