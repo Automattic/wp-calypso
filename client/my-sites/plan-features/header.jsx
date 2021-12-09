@@ -301,7 +301,7 @@ export class PlanFeaturesHeader extends Component {
 				args: { discountRate },
 			} );
 
-			return <span className="plan-features__header-discounted-info">{ annualDiscountText }</span>;
+			return <div className="plan-features__header-discounted-info">{ annualDiscountText }</div>;
 		}
 		return null;
 	}
