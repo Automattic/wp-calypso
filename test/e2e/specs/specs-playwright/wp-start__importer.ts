@@ -1,4 +1,5 @@
 /**
+ * @group calypso-pr
  */
 
 import { DataHelper, LoginPage, setupHooks, StartImportFlow } from '@automattic/calypso-e2e';
@@ -37,7 +38,6 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 
 		it( 'Start a WordPress import', async () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
-			await startImportFlow.validateScanningPage();
 			await startImportFlow.validateImportPage();
 			await startImportFlow.clickButton( 'Import your content' );
 
@@ -57,7 +57,6 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 
 		it( `Start an invalid WordPress import (${ reason })`, async () => {
 			await startImportFlow.enterURL( url );
-			await startImportFlow.validateScanningPage();
 			await startImportFlow.validateBuildingPage( reason );
 			await startImportFlow.startBuilding();
 			await startImportFlow.validateSetupPage();
@@ -73,7 +72,6 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		it( 'Start an invalid WordPress import typo', async () => {
 			// 1.example.com is guaranteed never to be a valid DNS
 			await startImportFlow.enterURL( '1.example.com' );
-			await startImportFlow.validateScanningPage();
 			await startImportFlow.validateErrorCapturePage(
 				'The address you entered is not valid. Please try again.'
 			);
