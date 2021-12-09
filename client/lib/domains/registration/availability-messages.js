@@ -373,7 +373,6 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					args: { domain, tld },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
 					},
 				}
 			);
