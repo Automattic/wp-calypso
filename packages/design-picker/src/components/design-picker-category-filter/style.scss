@@ -11,12 +11,12 @@ $design-picker-category-filter-text-color-active: var( --studio-gray-100 );
 		padding-right: 1rem;
 	}
 
-	.design-picker-category-filter__menu-item {
-		padding-left: 0;
-		padding-right: 0;
+	button.components-button.design-picker-category-filter__menu-item {
+		padding: 0;
 		color: $design-picker-category-filter-text-color;
 		display: block;
 		width: auto;
+		font-size: 1rem;
 
 		&:hover:not( :disabled ),
 		&:active:not( :disabled ) {
