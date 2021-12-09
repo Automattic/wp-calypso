@@ -365,10 +365,12 @@ export interface GSuiteProductUser {
 }
 
 export interface TitanProductUser {
-	alternative_email: string;
+	alternative_email?: string;
 	email: string;
-	name: string;
-	password: string;
+	encrypted_password?: string;
+	is_admin?: boolean;
+	name?: string;
+	password?: string;
 }
 
 export type DomainContactDetails = {
