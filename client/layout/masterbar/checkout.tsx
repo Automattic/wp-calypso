@@ -119,6 +119,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 				title={ modalTitleText }
 				copy={ modalBodyText }
 				closeModal={ () => setIsModalVisible( false ) }
+				hideCancelButton
 				isVisible={ isModalVisible }
 				buttonCTA={ modalPrimaryText }
 				primaryAction={ leaveCheckout }
