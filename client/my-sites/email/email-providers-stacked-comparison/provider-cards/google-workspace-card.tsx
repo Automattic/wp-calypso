@@ -89,11 +89,11 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 
 	const priceWithInterval = (
 		<PriceWithInterval
-			className={ 'google-workspace-card' }
 			intervalLength={ intervalLength }
 			cost={ gSuiteProduct?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
 			hasDiscount={ productIsDiscounted }
+			sale={ gSuiteProduct?.sale_cost ?? null }
 		/>
 	);
 

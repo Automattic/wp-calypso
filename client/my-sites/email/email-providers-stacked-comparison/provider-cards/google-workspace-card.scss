@@ -4,12 +4,8 @@
 	width: 48px;
 }
 
-.google-workspace-card__keep-main-price {
-	color: var( --studio-green-50 );
-	text-decoration: none;
-}
 
-google-workspace-card__price-badge {
+.google-workspace-card__price-badge {
 	.promo-card__price {
 		margin-top: 12px;
 
@@ -23,20 +19,3 @@ google-workspace-card__price-badge {
 .google-workspace-icon {
 	max-width: 36px;
 }
-
-.email-provider-stacked-card__title-price-badge {
-	.promo-card__price {
-		.price__cost {
-			.google-workspace-card__interval, .google-workspace-card__mailbox {
-				font-size: 0.875rem;
-				color: var( --studio-gray-80 );
-			}
-
-			.google-workspace-card__sale {
-				color: var( --studio-green-50 );
-			}
-		}
-	}
-}
-
-
