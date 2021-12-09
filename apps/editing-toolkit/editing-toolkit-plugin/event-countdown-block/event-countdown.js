@@ -13,9 +13,16 @@
 			continue;
 		}
 
-		// parse date into unix time
 		const dtstr = eventDateElem[ 0 ].innerHTML;
-		const eventTime = new Date( dtstr ).getTime();
+
+		let eventTime;
+		if ( ! Number.isNaN( dtstr ) ) {
+			eventTime = eventDateElem[ 0 ].innerHTML * 1000;
+		} else {
+			// backwards compatibility, event date was stored as YYYY-MM-DDTHH:mm:ss
+			// parse date into unix time
+			eventTime = new Date( dtstr ).getTime();
+		}
 		if ( isNaN( eventTime ) ) {
 			continue;
 		}
