@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -46,7 +45,7 @@ class PlansNavigation extends Component {
 		const { site, shouldShowMyPlan, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
-		const hasPinnedItems = isMobile() && config.isEnabled( 'upgrades/checkout' ) && site;
+		const hasPinnedItems = isMobile() && site;
 
 		return (
 			site && (
@@ -100,7 +99,7 @@ function CartToggleButton( {
 	path,
 	closeSectionNavMobilePanel,
 } ) {
-	if ( ! config.isEnabled( 'upgrades/checkout' ) || ! site ) {
+	if ( ! site ) {
 		return null;
 	}
 
