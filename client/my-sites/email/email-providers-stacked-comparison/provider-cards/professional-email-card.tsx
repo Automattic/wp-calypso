@@ -6,8 +6,8 @@ import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import {
-	titanMailAnnually,
 	titanMailMonthly,
+	titanMailYearly,
 	TitanProductProps,
 } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -80,7 +80,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		selectedDomainName,
 		intervalLength,
 		titanMailMonthlyProduct,
-		titanMailAnnuallyProduct,
+		titanMailYearlyProduct,
 		comparisonContext,
 		productsList,
 		shoppingCartManager,
@@ -93,7 +93,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 
 	const titanMailProduct =
-		intervalLength === IntervalLength.MONTHLY ? titanMailMonthlyProduct : titanMailAnnuallyProduct;
+		intervalLength === IntervalLength.MONTHLY ? titanMailMonthlyProduct : titanMailYearlyProduct;
 
 	const [ titanMailbox, setTitanMailbox ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
@@ -141,7 +141,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		const cartItem =
 			intervalLength === IntervalLength.MONTHLY
 				? titanMailMonthly( props )
-				: titanMailAnnually( props );
+				: titanMailYearly( props );
 
 		addToCartAndCheckout(
 			shoppingCartManager,
@@ -220,6 +220,6 @@ export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
 		productsList: getProductsList( state ),
 		selectedSite,
 		titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
-		titanMailAnnuallyProduct: getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG ),
+		titanMailYearlyProduct: getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG ),
 	};
 } )( withCartKey( withShoppingCart( ProfessionalEmailCard ) ) );

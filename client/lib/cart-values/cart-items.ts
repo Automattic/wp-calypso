@@ -428,9 +428,9 @@ function titanMailProduct(
 }
 
 /**
- * Creates a new shopping cart item for Titan Mail Annually.
+ * Creates a new shopping cart item for Titan Mail Yearly.
  */
-export function titanMailAnnually( properties: TitanProductProps ): IncompleteRequestCartProduct {
+export function titanMailYearly( properties: TitanProductProps ): IncompleteRequestCartProduct {
 	return titanMailProduct( properties, TITAN_MAIL_YEARLY_SLUG );
 }
 
