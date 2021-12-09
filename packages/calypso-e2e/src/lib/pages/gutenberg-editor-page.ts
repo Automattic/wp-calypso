@@ -47,9 +47,14 @@ const selectors = {
 	// corner. This addresses the bug where the post-publish panel is immediately
 	// closed when publishing with certain blocks on the editor canvas.
 	// See https://github.com/Automattic/wp-calypso/issues/54421.
+<<<<<<< HEAD
 	viewButton: 'text=/View (Post|Page)/',
+=======
+	viewButton: 'a.components-button:has-text("View"):visible',
+>>>>>>> 8752a238c9 (Change approach used in GutenbergEditorPage to detect for the presence of welcome tour.)
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
+	snackbarViewButton: 'a.components-snackbar__action:has-text("View Post"):visible',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
@@ -424,6 +429,7 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Obtains the published article's URL from post-publish panels.
 	 *
 	 * This method is only able to obtain the published article's URL if immediately
@@ -431,11 +437,21 @@ export class GutenbergEditorPage {
 	 * being visible.
 	 *
 	 * @returns {Promise<string>} Published article's URL.
+=======
+	 *
+	 * @returns
+>>>>>>> 8752a238c9 (Change approach used in GutenbergEditorPage to detect for the presence of welcome tour.)
 	 */
 	async getPublishedURL(): Promise< string > {
 		const frame = await this.getEditorFrame();
 
+<<<<<<< HEAD
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
+=======
+		const viewPublishedArticleButton = await frame.waitForSelector(
+			`${ selectors.viewButton }, ${ selectors.snackbarViewButton }`
+		);
+>>>>>>> 8752a238c9 (Change approach used in GutenbergEditorPage to detect for the presence of welcome tour.)
 		return ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 	}
 
