@@ -127,26 +127,6 @@ export class RegistrantExtraInfoCaForm extends PureComponent {
 		}
 	};
 
-	isCorporationLegalType( legalType ) {
-		return legalType === 'CCO';
-	}
-
-	needsOrganization() {
-		return this.isCorporationLegalType( this.props.ccTldDetails?.legalType );
-	}
-
-	getOrganizationErrorMessage() {
-		let message =
-			this.props.contactDetailsValidationErrors?.organization ||
-			( this.state.errorMessages.organization || [] ).join( '\n' );
-		if ( this.needsOrganization() && isEmpty( this.props.contactDetails.organization ) ) {
-			message = this.props.translate(
-				'An organization name is required for Canadian corporations'
-			);
-		}
-		return message;
-	}
-
 	getCiraAgreementAcceptedErrorMessage() {
 		if ( this.props.isManaged ) {
 			return (
