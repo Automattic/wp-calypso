@@ -1,4 +1,4 @@
-import { TITAN_MAIL_ANNUALLY_SLUG, TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
@@ -220,6 +220,6 @@ export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
 		productsList: getProductsList( state ),
 		selectedSite,
 		titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
-		titanMailAnnuallyProduct: getProductBySlug( state, TITAN_MAIL_ANNUALLY_SLUG ),
+		titanMailAnnuallyProduct: getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG ),
 	};
 } )( withCartKey( withShoppingCart( ProfessionalEmailCard ) ) );

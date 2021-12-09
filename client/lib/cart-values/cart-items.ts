@@ -34,8 +34,8 @@ import {
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 	isDIFMProduct,
-	TITAN_MAIL_ANNUALLY_SLUG,
 	TITAN_MAIL_MONTHLY_SLUG,
+	TITAN_MAIL_YEARLY_SLUG,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
@@ -431,7 +431,7 @@ function titanMailProduct(
  * Creates a new shopping cart item for Titan Mail Annually.
  */
 export function titanMailAnnually( properties: TitanProductProps ): IncompleteRequestCartProduct {
-	return titanMailProduct( properties, TITAN_MAIL_ANNUALLY_SLUG );
+	return titanMailProduct( properties, TITAN_MAIL_YEARLY_SLUG );
 }
 
 /**
