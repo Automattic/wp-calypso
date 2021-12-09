@@ -158,7 +158,7 @@ __metadata:
     css-loader: ^5.2.7
     css-minimizer-webpack-plugin: ^3.2.0
     duplicate-package-checker-webpack-plugin: ^3.0.0
-    mini-css-extract-plugin: ^1.6.0
+    mini-css-extract-plugin: ^1.6.2
     postcss-custom-properties: ^11.0.0
     postcss-loader: ^6.2.0
     recursive-copy: ^2.0.10
@@ -1228,7 +1228,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@romainberger/css-diff": ^1.0.3
     css-loader: ^5.2.7
-    mini-css-extract-plugin: ^1.6.0
+    mini-css-extract-plugin: ^1.6.2
     rtlcss: ^3.1.2
     webpack: ^5.65.0
   peerDependencies:
@@ -25439,16 +25439,16 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"mini-css-extract-plugin@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "mini-css-extract-plugin@npm:1.6.0"
+"mini-css-extract-plugin@npm:^1.6.2":
+  version: 1.6.2
+  resolution: "mini-css-extract-plugin@npm:1.6.2"
   dependencies:
     loader-utils: ^2.0.0
     schema-utils: ^3.0.0
     webpack-sources: ^1.1.0
   peerDependencies:
     webpack: ^4.4.0 || ^5.0.0
-  checksum: 8e71f7e7abf6760a7b3216e8f76aa8b4ee205ee32ecf2ca27d465a59858ff6f4faf76b8031875139a3889360a05a2f69b438fea6abc08c59da27026cd795ca45
+  checksum: 138c008f8a510012266d2834227e75181feeffd09e89e9cde0a63f17be3d64ea3ddbba01036aac9c8a969462c0142285659a20c294e8d01ba948aa1124affdc2
   languageName: node
   linkType: hard
 
@@ -37666,7 +37666,7 @@ testarmada-magellan@11.0.10:
     loader-utils: ^1.2.3
     lodash: ^4.17.21
     lunr: ^2.3.8
-    mini-css-extract-plugin: ^1.6.0
+    mini-css-extract-plugin: ^1.6.2
     mixedindentlint: ^1.2.0
     mkdirp: ^1.0.4
     ncp: ^2.0.0
