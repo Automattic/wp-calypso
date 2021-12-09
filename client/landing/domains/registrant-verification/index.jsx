@@ -230,7 +230,7 @@ class RegistrantVerificationPage extends Component {
 		this.setState( this.getLoadingState() );
 
 		wp.req
-			.post( `/domains/${ domain }/resend-icann/` )
+			.post( `/domains/${ domain }/resend-icann` )
 			.then( () => {
 				this.setState( {
 					title: translate( 'Email sent!' ),
