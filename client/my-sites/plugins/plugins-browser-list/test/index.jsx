@@ -42,7 +42,7 @@ describe( 'PluginsBrowserList basic tests', () => {
 
 	test( 'should render a given number of list items when the size prop is set', () => {
 		const comp = shallow( <PluginsBrowserList { ...props } size={ 2 } /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 2 );
+		expect( comp.find( 'PluginsBrowserListElement' ).length ).toBe( 2 );
 	} );
 } );
 
@@ -54,19 +54,19 @@ describe( 'InfiniteScroll variant', () => {
 
 	test( 'should show placeholders if there are no plugins', () => {
 		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } plugins={ [] } /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
+		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
 	} );
 
 	test( 'should append placeholders if there are plugins and `showPlaceholders` is set', () => {
 		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } showPlaceholders /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 9 );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
+		expect( comp.find( 'PluginsBrowserListElement' ).length ).toBe( 9 );
+		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
 	} );
 
 	test( 'should not show placeholders if there are plugins and the `showPlaceholders` is not set', () => {
 		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 3 );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 0 );
+		expect( comp.find( 'PluginsBrowserListElement' ).length ).toBe( 3 );
+		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 0 );
 	} );
 } );
 
@@ -78,18 +78,18 @@ describe( 'Paginated variant', () => {
 
 	test( 'should show placeholders if there are no plugins', () => {
 		const comp = shallow( <PluginsBrowserList { ...paginatedProps } plugins={ [] } /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
+		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
 	} );
 
 	test( 'should show placeholders if there are plugins and `showPlaceholders` is set', () => {
 		const comp = shallow( <PluginsBrowserList { ...paginatedProps } showPlaceholders /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
+		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
 	} );
 
 	test( 'should not show placeholders if there are plugins and the `showPlaceholders` is not set', () => {
 		const comp = shallow( <PluginsBrowserList { ...paginatedProps } /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 3 );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 0 );
+		expect( comp.find( 'PluginsBrowserListElement' ).length ).toBe( 3 );
+		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 0 );
 	} );
 } );
 
@@ -101,14 +101,14 @@ describe( 'Fixed variant', () => {
 
 	test( 'should show placeholders if there are no plugins', () => {
 		const comp = shallow( <PluginsBrowserList { ...fixedProps } plugins={ [] } /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
+		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
 	} );
 
 	test( 'should not show placeholders regardless of the `showPlaceholders` prop', () => {
 		let comp = shallow( <PluginsBrowserList { ...fixedProps } showPlaceholders /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 0 );
+		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 0 );
 
 		comp = shallow( <PluginsBrowserList { ...fixedProps } /> );
-		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 0 );
+		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 0 );
 	} );
 } );
