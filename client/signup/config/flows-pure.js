@@ -10,7 +10,6 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
-	getImportDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 } = {} ) {
