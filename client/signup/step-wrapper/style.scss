@@ -136,6 +136,10 @@
 		.step-wrapper__header {
 			display: block;
 			margin-top: 0;
+
+			@include break-small {
+				padding-right: 20px;
+			}
 		}
 	}
 
