@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import domainRegisteredSuccess from 'calypso/assets/images/illustrations/domain-registration-success.svg';
+import domainRegisteredSuccess from 'calypso/assets/images/domains/domain.svg';
 import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -54,7 +54,12 @@ const DomainRegistrationThankYouProps = ( {
 				],
 			},
 		],
-		thankYouImage: { alt: translate( 'Domain Registered' ), src: domainRegisteredSuccess },
+		thankYouImage: {
+			alt: translate( 'Domain Registered' ),
+			src: domainRegisteredSuccess,
+			width: '150px',
+			height: 'auto',
+		},
 		thankYouTitle: translate( 'Congratulations on your purchase!' ),
 		thankYouSubtitle: translate(
 			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',

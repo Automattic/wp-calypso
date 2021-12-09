@@ -28,7 +28,7 @@ import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
-import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
+import Illustration from 'calypso/assets/images/domains/domain.svg';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
@@ -648,7 +648,7 @@ class RegisterDomainStep extends Component {
 					title=""
 					className="register-domain-step__placeholder"
 					illustration={ Illustration }
-					illustrationWidth={ 180 }
+					illustrationWidth={ 280 }
 				/>
 			</>
 		);
