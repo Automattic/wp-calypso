@@ -422,6 +422,11 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__header-discounted-info {
+	color: var( --studio-green-60 );
+	font-weight: 600;
+}
+
 .plan-features__header-credit-label {
 	font-size: $font-body-extra-small;
 	line-height: 20px;

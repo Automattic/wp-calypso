@@ -150,7 +150,9 @@ export class PlanFeaturesHeader extends Component {
 					) }
 				</header>
 				<div className="plan-features__pricing">
-					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+					{ this.getPlanFeaturesPrices() }
+					{ this.getBillingTimeframe() }
+					{ this.getDiscountInfo() }
 					{ this.getIntervalDiscount() }
 				</div>
 			</span>
@@ -196,7 +198,8 @@ export class PlanFeaturesHeader extends Component {
 					<ProductIcon slug={ planType } />
 				</div>
 				<div className="plan-features__pricing">
-					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+					{ this.getPlanFeaturesPrices() }
+					{ this.getBillingTimeframe() }
 					{ this.getIntervalDiscount() }
 				</div>
 			</div>
@@ -245,9 +248,12 @@ export class PlanFeaturesHeader extends Component {
 		if (
 			( isInSignup || isLoggedInMonthlyPricing ) &&
 			! isMonthlyPlan &&
-			planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } )
+			planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } ) &&
+			relatedYearlyPlan
 		) {
-			return translate( 'billed annually' );
+			return translate( 'billed as %(price)s annually', {
+				args: { price: relatedYearlyPlan.formatted_price },
+			} );
 		}
 
 		if (
@@ -280,6 +286,24 @@ export class PlanFeaturesHeader extends Component {
 				components: { br: <br /> },
 			}
 		);
+	}
+
+	getDiscountInfo() {
+		const { translate, relatedYearlyPlan, relatedMonthlyPlan, isYearly } = this.props;
+
+		if ( isYearly && relatedMonthlyPlan && relatedYearlyPlan ) {
+			const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
+			const discountRate = Math.round(
+				( 100 * ( relatedMonthlyPlan.raw_price - annualPricePerMonth ) ) /
+					relatedMonthlyPlan.raw_price
+			);
+			const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
+				args: { discountRate },
+			} );
+
+			return <span className="plan-features__header-discounted-info">{ annualDiscountText }</span>;
+		}
+		return null;
 	}
 
 	getBillingTimeframe() {
@@ -550,7 +574,7 @@ export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isYearly,
-		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
+		relatedYearlyPlan: getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
 } )( localize( PlanFeaturesHeader ) );
