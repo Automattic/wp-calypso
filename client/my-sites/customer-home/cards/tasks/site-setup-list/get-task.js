@@ -51,12 +51,11 @@ export const getTask = (
 		menusUrl,
 		siteId,
 		siteSlug,
-		siteIntent,
 		taskUrls,
 		userEmail,
+		isBlogger,
 	} = {}
 ) => {
-	const isBlogger = siteIntent === 'write';
 	let taskData = {};
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:

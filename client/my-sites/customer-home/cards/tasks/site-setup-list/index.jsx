@@ -129,6 +129,7 @@ const SiteSetupList = ( {
 		).length > 0;
 
 	const siteIntent = useSiteOption( 'site_intent' );
+	const isBlogger = siteIntent === 'write';
 
 	// Move to first incomplete task on first load.
 	useEffect( () => {
@@ -182,9 +183,9 @@ const SiteSetupList = ( {
 				menusUrl,
 				siteId,
 				siteSlug,
-				siteIntent,
 				taskUrls,
 				userEmail,
+				isBlogger,
 			} );
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
@@ -199,10 +200,10 @@ const SiteSetupList = ( {
 		menusUrl,
 		siteId,
 		siteSlug,
-		siteIntent,
 		tasks,
 		taskUrls,
 		userEmail,
+		isBlogger,
 	] );
 
 	useEffect( () => {
@@ -253,10 +254,12 @@ const SiteSetupList = ( {
 			) }
 
 			<div className="site-setup-list__nav">
-				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
+				<CardHeading>
+					{ isBlogger ? translate( 'Blog setup' ) : translate( 'Site setup' ) }
+				</CardHeading>
 				<ul className="site-setup-list__list">
 					{ tasks.map( ( task ) => {
-						const enhancedTask = getTask( task, { siteIntent } );
+						const enhancedTask = getTask( task, { isBlogger } );
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
 
