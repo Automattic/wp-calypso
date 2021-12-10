@@ -39,7 +39,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'simpleSitePersonalPlanUser' } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( 'simpleSitePersonalPlanUser' );
 	} );
 
 	it( 'Start new post', async function () {

@@ -26,7 +26,8 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( user );
 		} );
 
 		it( 'Navigate to Tools > Marketing', async function () {

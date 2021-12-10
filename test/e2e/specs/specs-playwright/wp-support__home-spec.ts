@@ -20,7 +20,8 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( user );
 		} );
 
 		it( 'Displays default entries', async function () {

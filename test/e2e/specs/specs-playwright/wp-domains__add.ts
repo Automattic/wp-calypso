@@ -33,7 +33,8 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'calypsoPreReleaseUser' } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( 'calypsoPreReleaseUser' );
 	} );
 
 	it( 'Set store cookie', async function () {

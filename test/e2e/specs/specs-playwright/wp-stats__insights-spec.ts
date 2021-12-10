@@ -25,7 +25,8 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	`( 'View Insights ($siteType)', function ( { user } ) {
 		it( 'Log In', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( user );
 		} );
 
 		it( 'Navigate to Stats', async function () {

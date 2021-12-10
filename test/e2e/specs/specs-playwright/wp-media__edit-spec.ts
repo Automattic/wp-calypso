@@ -35,7 +35,8 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( user );
 		} );
 
 		it( 'Navigate to Media', async function () {

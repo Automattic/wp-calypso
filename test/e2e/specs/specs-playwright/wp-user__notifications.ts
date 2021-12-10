@@ -30,7 +30,8 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	describe( `Leave a comment as ${ commentingUser }`, function () {
 		it( `Log in as ${ commentingUser }`, async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: commentingUser }, { landingUrl: '**/read' } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( commentingUser );
 		} );
 
 		it( 'View site', async function () {
@@ -67,7 +68,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 		it( `Log in as ${ notificationsUser }`, async function () {
 			const loginPage = new LoginPage( notificationsPage );
-			await loginPage.login( { account: notificationsUser } );
+			await loginPage.logInWithTestAccount( notificationsUser );
 		} );
 
 		it( 'Open notification using keyboard shortcut', async function () {

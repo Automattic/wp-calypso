@@ -41,7 +41,8 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 
 		it( 'Log In', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( user );
 		} );
 
 		it( 'Navigate to Media', async function () {

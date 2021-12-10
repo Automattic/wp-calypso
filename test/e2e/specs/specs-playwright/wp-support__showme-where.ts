@@ -27,7 +27,8 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( user );
 		} );
 
 		it( 'Search for help: Create a site', async function () {

@@ -20,7 +20,8 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'eCommerceUser' } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( 'eCommerceUser' );
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {

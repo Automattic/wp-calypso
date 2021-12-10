@@ -30,7 +30,8 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		describe( 'Editor set up', function () {
 			it( 'Log in and start a new post', async function () {
 				const loginPage = new LoginPage( page );
-				await loginPage.login( { account: 'gutenbergSimpleSiteUser' } );
+				await loginPage.visit();
+				await loginPage.logInWithTestAccount( 'gutenbergSimpleSiteUser' );
 
 				const newPostFlow = new NewPostFlow( page );
 				await newPostFlow.newPostFromNavbar();

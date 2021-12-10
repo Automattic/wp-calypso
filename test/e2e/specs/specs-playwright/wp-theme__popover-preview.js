@@ -28,7 +28,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: user } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( user );
 	} );
 
 	it( 'Navigate to Themes', async function () {

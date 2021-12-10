@@ -25,7 +25,8 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: user } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( user );
 	} );
 
 	// @todo: Refactor/Abstract these steps into a WidgetsEditor component

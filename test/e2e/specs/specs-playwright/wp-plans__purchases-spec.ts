@@ -26,7 +26,8 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	describe( 'Initial navigation', function () {
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: 'defaultUser' } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( 'defaultUser' );
 		} );
 
 		it( 'Navigate to Upgrades > Plans', async function () {

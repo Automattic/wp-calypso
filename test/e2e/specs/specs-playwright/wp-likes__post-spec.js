@@ -35,7 +35,8 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: postingUser } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( postingUser );
 		} );
 
 		it( 'Start new post', async function () {
@@ -81,7 +82,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 			await Promise.all( [
 				page.on( 'popup', async ( popup ) => {
 					const loginPage = new LoginPage( popup );
-					await loginPage.loginFromPopup( { account: likeUser } );
+					await loginPage.logInWithTestAccount( likeUser );
 					await popup.waitForEvent( 'close' );
 				} ),
 				publishedPostPage.likePost(),

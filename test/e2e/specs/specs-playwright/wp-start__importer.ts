@@ -17,7 +17,8 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	// Login in default page.
 	it( 'Log in', async () => {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'defaultUser' } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( 'defaultUser' );
 	} );
 
 	/**

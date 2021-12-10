@@ -41,7 +41,8 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: invitingUser } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( invitingUser );
 		} );
 
 		it( 'Navigate to Users > All Users', async function () {
@@ -110,7 +111,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 
 		it( 'Log in as inviting user', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: invitingUser } );
+			await loginPage.logInWithTestAccount( invitingUser );
 		} );
 
 		it( 'Navigate to Users > All Users', async function () {

@@ -34,7 +34,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'defaultUser' } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( 'defaultUser' );
 	} );
 
 	it( 'Navigate to Users > All Users', async function () {

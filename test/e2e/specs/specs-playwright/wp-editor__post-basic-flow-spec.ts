@@ -39,7 +39,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: user } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( user );
 	} );
 
 	it( 'Start new post', async function () {

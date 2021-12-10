@@ -21,7 +21,8 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'defaultUser' } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( 'defaultUser' );
 	} );
 
 	it( 'Navigate to Tools > Import', async function () {

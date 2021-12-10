@@ -26,7 +26,8 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), fu
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+			await loginPage.visit();
+			await loginPage.logInWithTestAccount( user );
 		} );
 
 		it( 'Open Settings page', async function () {

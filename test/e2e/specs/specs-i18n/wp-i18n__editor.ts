@@ -228,7 +228,8 @@ describe( 'I18N: Editor', function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'i18nUser' } );
+		await loginPage.visit();
+		await loginPage.logInWithTestAccount( 'i18nUser' );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
