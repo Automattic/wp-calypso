@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 import { Locator, Page, Response } from 'playwright';
-import { getAccountCredentials, getCalypsoURL } from '../../data-helper';
+import { getAccountCredential, getCalypsoURL } from '../../data-helper';
 
 interface UsernameAuthPayload {
 	code: number;
@@ -8,20 +8,27 @@ interface UsernameAuthPayload {
 
 export class LoginPage {
 	private page: Page;
-	readonly pageUrl: string;
 
 	constructor( page: Page ) {
 		this.page = page;
-		this.pageUrl = getCalypsoURL( 'log-in' );
 	}
 
+	/**
+	 * Opens the login page.
+	 *
+	 * @see {link https://wordpress.com/log-in}
+	 * @returns The main resource response.
+	 */
 	async visit(): Promise< Response | null > {
-		return await this.page.goto( this.pageUrl );
+		return await this.page.goto( getCalypsoURL( 'log-in' ) );
 	}
 
-	async logInWithUsername( accountType: string ): Promise< void > {
-		const { username, password } = getAccountCredentials( accountType );
+	async logInWithTestAccount( account: string ): Promise< void > {
+		const credentials = getAccountCredential( account );
+		return await this.logInWithCredentials( ...credentials );
+	}
 
+	async logInWithCredentials( username: string, password: string ): Promise< void > {
 		await this.fillUsername( username );
 
 		const [ usernameAuthResponse ] = await Promise.all( [
@@ -124,7 +131,7 @@ export class LoginPage {
 	}
 
 	async waitForUsernameAuthResponse( username: string ): Promise< Response > {
-		return await this.page.waitForResponse( `**/${ username }/auth-options` );
+		return await this.page.waitForResponse( `**/${ username }/auth-options**` );
 	}
 
 	async waitForLoginAuthResponse(): Promise< Response > {
