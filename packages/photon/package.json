@@ -5,6 +5,7 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
+	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -22,6 +23,10 @@
 		"api",
 		"library"
 	],
+	"files": [
+		"dist",
+		"src"
+	],
 	"author": "Automattic Inc.",
 	"contributors": [
 		"Nathan Rajlich <nathan@automattic.com>"
@@ -37,11 +42,12 @@
 		"seed-random": "^2.2.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@types/seed-random": "^2.2.1"
 	},
 	"scripts": {
-		"clean": "rm -rf dist",
-		"build": "transpile",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build"
 	}
 }

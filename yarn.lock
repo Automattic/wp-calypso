@@ -6920,6 +6920,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/seed-random@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "@types/seed-random@npm:2.2.1"
+  checksum: 4efc78a6c2786b3c7d84c85ebef9b6d14a9e861d1852893b835eea8fb838fd602244b2a79cef6da6feedaefc89ecac7a3728746471e3f33265e5ccef533a21ab
+  languageName: node
+  linkType: hard
+
 "@types/semver@npm:^7.3.4":
   version: 7.3.9
   resolution: "@types/semver@npm:7.3.9"
@@ -28026,6 +28033,7 @@ fsevents@~2.1.2:
   resolution: "photon@workspace:packages/photon"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@types/seed-random": ^2.2.1
     crc32: ^0.2.2
     debug: ^4.0.0
     seed-random: ^2.2.0
