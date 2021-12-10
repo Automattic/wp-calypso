@@ -1,3 +1,4 @@
+import { isPremium } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import {
 	getCouponLineItemFromCart,
@@ -10,6 +11,7 @@ import {
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -80,12 +82,15 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => {
 				const isRenewal = isWpComProductRenewal( product );
-				const shouldShowVariantSelector = onChangePlanLength && ! isRenewal;
+				const shouldShowVariantSelector =
+					onChangePlanLength &&
+					! isRenewal &&
+					! isPremiumPlanWithDIFMInTheCart( product, responseCart );
 				return (
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
-							hasDeleteButton={ canItemBeDeleted( product ) }
+							hasDeleteButton={ canItemBeDeleted( product, responseCart ) }
 							removeProductFromCart={ removeProductFromCart }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -142,7 +147,26 @@ WPOrderReviewLineItems.propTypes = {
 	createUserAndSiteBeforeTransaction: PropTypes.bool,
 };
 
-function canItemBeDeleted( item: ResponseCartProduct ): boolean {
+/**
+ * Checks if the given item is the premium plan product and the DIFM product exists in the provided shopping cart object
+ *
+ * @param item The shopping basket line item
+ * @param cartProducts The shopping cart object
+ * @returns boolean
+ */
+function isPremiumPlanWithDIFMInTheCart( item: ResponseCartProduct, cartProducts: ResponseCart ) {
+	return isPremium( item ) && hasDIFMProduct( cartProducts );
+}
+
+function canItemBeDeleted( item: ResponseCartProduct, cartProducts: ResponseCart ): boolean {
 	const itemTypesThatCannotBeDeleted = [ 'domain_redemption' ];
-	return ! itemTypesThatCannotBeDeleted.includes( item.product_slug );
+	if ( itemTypesThatCannotBeDeleted.includes( item.product_slug ) ) {
+		return false;
+	}
+
+	// The Premium plan cannot be removed from the cart when in combination with the DIFM lite product
+	if ( isPremiumPlanWithDIFMInTheCart( item, cartProducts ) ) {
+		return false;
+	}
+	return true;
 }
