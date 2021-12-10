@@ -1,0 +1,14 @@
+.intro-pricing-banner-v2 {
+	display: flex;
+	flex-direction: row;
+
+	justify-content: center;
+	.intro-pricing-banner-v2__discount,
+	.intro-pricing-banner-v2__guarantee {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+
+		font-size: $font-body;
+	}
+}
