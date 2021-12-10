@@ -1030,6 +1030,9 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 }
 
+/**
+ * Skip the step if the user does not have any existing sites
+ */
 export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { existingSiteCount } = nextProps;
 	if ( ! existingSiteCount || 0 === existingSiteCount ) {

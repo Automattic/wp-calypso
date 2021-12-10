@@ -36,12 +36,12 @@ export default function NewOrExistingSiteChoice( props: Props ): React.ReactElem
 				<div className="new-or-existing-site__choice-button">
 					<Button
 						css={ css`
-							border-radius: 4px; /* stylelint-disable-line */
+							border-radius: 4px;
 							margin-top: 0.5rem;
 							min-width: 130px;
 							box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
 							color: #101517;
-							font-weight: 500; /* stylelint-disable-line scales/font-weights */
+							font-weight: 500;
 						` }
 						onClick={ handleClickChoice }
 					>

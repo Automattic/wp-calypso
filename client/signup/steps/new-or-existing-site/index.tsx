@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { removeSiteSlugDependency } from 'calypso/state/signup/actions';
-import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import NewOrExistingSiteScreen from './new-or-existing-site';
 import { ChoiceType } from './types';
 
@@ -27,16 +27,18 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 	}, [ dispatch, props.stepName ] );
 
 	const newOrExistingSiteSelected = ( value: ChoiceType ) => {
-		props.submitSignupStep(
-			{ stepName: props.stepName },
-			{
-				newOrExistingSiteChoice: value,
-			}
+		dispatch(
+			submitSignupStep(
+				{ stepName: props.stepName },
+				{
+					newOrExistingSiteChoice: value,
+				}
+			)
 		);
 		if ( 'existing-site' === value ) {
 			props.goToNextStep();
 		} else {
-			props.submitSignupStep( { stepName: 'difm-site-picker', wasSkipped: true } );
+			dispatch( submitSignupStep( { stepName: 'difm-site-picker', wasSkipped: true } ) );
 			props.goToStep( 'difm-design-setup-site' );
 		}
 	};

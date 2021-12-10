@@ -41,6 +41,11 @@ export default function NewOrExistingSiteScreen( props: Props ): React.ReactElem
 		},
 	];
 
+	/**
+	 * Usually, the products list is queried in the domains step.
+	 * However, the domains step will be skipped if the user chooses DIFM
+	 * for an existing site. So we load the product list as early as possible in this flow.
+	 */
 	return (
 		<ChoicesContainer>
 			{ ! productsLoaded && <QueryProductsList /> }

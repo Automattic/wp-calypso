@@ -6,7 +6,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SiteSelector from 'calypso/components/site-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteDomain, getSiteSlug } from 'calypso/state/sites/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
 
@@ -14,6 +14,7 @@ interface Props {
 	stepSectionName: string | null;
 	stepName: string;
 	goToStep: () => void;
+	goToNextStep: () => void;
 }
 
 const DIFMSitePicker = ( {
@@ -21,7 +22,7 @@ const DIFMSitePicker = ( {
 	onSiteSelect,
 }: {
 	filter: ( site: SiteData ) => boolean;
-	onSiteSelect: ( siteId: string ) => void;
+	onSiteSelect: ( siteId: number ) => void;
 } ) => {
 	return (
 		<Card className="difm-site-picker__wrapper">
@@ -33,7 +34,8 @@ const DIFMSitePicker = ( {
 export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ siteId, setSiteId ] = useState< string | null >( null );
+	const { goToNextStep } = props;
+	const [ siteId, setSiteId ] = useState< number | null >( null );
 	const [ confirmDomain, setConfirmDomain ] = useState( '' );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -44,12 +46,12 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
 	}, [ dispatch, props.stepName ] );
 
-	const handleSiteSelect = ( siteId: string ) => {
+	const handleSiteSelect = ( siteId: number ) => {
 		setSiteId( siteId );
 	};
 
 	const filterSites = ( site: SiteData ) => {
-		return site.capabilities.manage_options && ! site.jetpack;
+		return site.capabilities?.manage_options && ! site.jetpack;
 	};
 
 	const onCloseDialog = () => {
@@ -57,31 +59,35 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	};
 
 	const onConfirmDelete = () => {
-		props.submitSignupStep(
-			{
-				stepName: props.stepName,
-				stepSectionName: props.stepSectionName,
-				siteId,
-				siteSlug,
-			},
-			{
-				siteId,
-				siteSlug,
-			}
+		dispatch(
+			submitSignupStep(
+				{
+					stepName: props.stepName,
+					stepSectionName: props.stepSectionName,
+					siteId,
+					siteSlug,
+				},
+				{
+					siteId,
+					siteSlug,
+				}
+			)
 		);
 		//Skip domains step
-		props.submitSignupStep(
-			{
-				stepName: 'domains',
-				wasSkipped: true,
-			},
-			{
-				domainItem: undefined,
-				themeItem: undefined,
-			}
+		dispatch(
+			submitSignupStep(
+				{
+					stepName: 'domains',
+					wasSkipped: true,
+				},
+				{
+					domainItem: undefined,
+					themeItem: undefined,
+				}
+			)
 		);
 
-		props.goToNextStep();
+		goToNextStep();
 	};
 
 	if ( siteId ) {
@@ -116,7 +122,9 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 				<FormTextInput
 					autoCapitalize="off"
 					className="difm-site-picker__confirm-input"
-					onChange={ ( event ) => setConfirmDomain( event.target.value ) }
+					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+						setConfirmDomain( event.target.value )
+					}
 					value={ confirmDomain }
 					aria-required="true"
 					id="confirmDomainChangeInput"
