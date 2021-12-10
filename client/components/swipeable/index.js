@@ -57,6 +57,13 @@ function getDragPositionAndTime( event ) {
 	return { x: touch.clientX, y: touch.clientY, timeStamp };
 }
 
+function getPagesWidth( pageWidth, numPages ) {
+	if ( ! pageWidth ) {
+		return null;
+	}
+	return pageWidth * numPages;
+}
+
 export const Swipeable = ( {
 	hasDynamicHeight = false,
 	children,
@@ -80,17 +87,6 @@ export const Swipeable = ( {
 	const resizeObserverRef = useRef();
 	const numPages = Children.count( children );
 
-	const getWidth = useCallback( () => {
-		return resizeObserverRef.current?.getBoundingClientRect().width;
-	}, [ resizeObserverRef ] );
-
-	const getPagesWidth = useCallback( () => {
-		if ( ! pageWidth ) {
-			return null;
-		}
-		return pageWidth * numPages;
-	}, [ pageWidth, numPages ] );
-
 	const getOffset = useCallback(
 		( index ) => {
 			const offset = pageWidth * index;
@@ -107,28 +103,22 @@ export const Swipeable = ( {
 			transform: `translate3d(${ offset }px, 0px, 0px)`,
 			transitionDuration: hasTransitionDuration ? `300ms` : `0ms`,
 		};
-
-		let height = { height: null };
+		let height = {};
 		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
-
 		if ( targetHeight && pagesStyle?.height !== targetHeight ) {
-			height = { height: null };
+			height = { height: targetHeight };
 		}
-		setPageWidth( getWidth() );
+		setPageWidth( resizeObserverRef.current?.getBoundingClientRect().width );
 		setSwipeableArea( pagesRef.current?.getBoundingClientRect() );
 		setPagesStyle( { ...pagesStyle, ...height, ...transform } );
 	} );
 
-	useEffect( () => {
-		if ( currentPage >= numPages ) {
-			onPageSelect( numPages - 1 );
-		}
-	}, [ numPages, currentPage, onPageSelect ] );
-
 	const handleDragStart = useCallback(
 		( event ) => {
 			const position = getDragPositionAndTime( event );
+			setSwipeableArea( pagesRef.current?.getBoundingClientRect() );
 			setDragStartData( position );
+			setPageWidth( resizeObserverRef.current?.getBoundingClientRect().width );
 			setPagesStyle( { ...pagesStyle, transitionDuration: `0ms` } ); // Set transition Duration to 0 for smooth dragging.
 		},
 		[ pagesStyle ]
@@ -164,6 +154,7 @@ export const Swipeable = ( {
 			}
 			const offset = getOffset( newIndex );
 			setPagesStyle( {
+				...pagesStyle,
 				transform: `translate3d(${ offset }px, 0px, 0px)`,
 				transitionDuration: `300ms`,
 			} );
@@ -178,6 +169,7 @@ export const Swipeable = ( {
 			hasSwipedToPreviousPage,
 			numPages,
 			onPageSelect,
+			pagesStyle,
 		]
 	);
 
@@ -186,9 +178,9 @@ export const Swipeable = ( {
 			if ( ! dragStartData ) {
 				return;
 			}
+
 			const dragPosition = getDragPositionAndTime( event );
 			const delta = dragPosition.x - dragStartData.x;
-
 			const offset = getOffset( currentPage ) + delta;
 
 			// Allow for swipe left or right
@@ -206,7 +198,6 @@ export const Swipeable = ( {
 			if ( ! swipeableArea ) {
 				return;
 			}
-
 			// Did the user swipe out of the swipeable area?
 			if (
 				dragPosition.x < swipeableArea.left ||
@@ -237,6 +228,7 @@ export const Swipeable = ( {
 				onPointerMove: handleDrag,
 				onPointerUp: handleDragEnd,
 				onPointerCancel: handleDragEnd,
+				onPointerLeave: handleDragEnd,
 			};
 		}
 
@@ -271,7 +263,7 @@ export const Swipeable = ( {
 			>
 				<div
 					className={ classnames( 'swipeable__pages', containerClassName ) }
-					style={ { ...pagesStyle, width: getPagesWidth() } }
+					style={ { ...pagesStyle, width: getPagesWidth( pageWidth, numPages ) } }
 				>
 					{ Children.map( children, ( child, index ) => (
 						<div
