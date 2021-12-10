@@ -15,12 +15,6 @@ function Undocumented( wpcom ) {
 	this.wpcom = wpcom;
 }
 
-Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
-	debug( '/sites/:site_id:/jetpack-connect/is-user-connected query' );
-	const endpointUrl = '/sites/' + siteId + '/jetpack-connect/is-user-connected';
-	return this.wpcom.req.get( { path: endpointUrl, apiNamespace: 'wpcom/v2' } );
-};
-
 /**
  * Get the inbound transfer status for this domain
  *

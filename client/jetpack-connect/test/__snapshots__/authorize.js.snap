@@ -22,7 +22,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
       <QuerySitePurchases
         siteId={98765}
       />
-      <Connect(QueryUserConnection)
+      <QueryUserConnection
         siteId={98765}
         siteIsOnSitesList={false}
       />
