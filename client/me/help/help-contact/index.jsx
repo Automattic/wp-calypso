@@ -8,13 +8,13 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
-import QuerySupportHistory from 'calypso/components/data/query-support-history';
 import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import withActiveSupportTickets from 'calypso/data/help/with-active-support-tickets';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
@@ -48,7 +48,6 @@ import {
 	getTicketSupportRequestError,
 } from 'calypso/state/help/ticket/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import getActiveSupportTickets from 'calypso/state/selectors/get-active-support-tickets';
 import getInlineHelpSupportVariation, {
 	SUPPORT_CHAT_OVERFLOW,
 	SUPPORT_DIRECTLY,
@@ -719,7 +718,6 @@ class HelpContact extends Component {
 				{ ! this.props.compact && ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className="help-contact__form">{ this.getView() }</Card>
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
-				{ ! this.props.compact && <QuerySupportHistory email={ this.props.currentUser.email } /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases />
 				<QueryLanguageNames />
@@ -754,7 +752,6 @@ export default connect(
 			shouldStartHappychatConnection: ! isRequestingSites( state ) && selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			supportVariation: getInlineHelpSupportVariation( state ),
-			activeSupportTickets: getActiveSupportTickets( state ),
 		};
 	},
 	{
@@ -766,4 +763,4 @@ export default connect(
 		sendHappychatMessage,
 		sendUserInfo,
 	}
-)( localize( HelpContact ) );
+)( localize( withActiveSupportTickets( HelpContact ) ) );
