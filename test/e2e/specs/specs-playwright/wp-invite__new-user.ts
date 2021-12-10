@@ -30,6 +30,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 
 	let adjustedInviteLink: string;
 	let page: Page;
+	let loginPage: LoginPage;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -40,7 +41,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		let sidebarComponent: SidebarComponent;
 
 		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
+			loginPage = new LoginPage( page );
 			await loginPage.visit();
 			await loginPage.logInWithTestAccount( invitingUser );
 		} );
@@ -110,7 +111,8 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		let sidebarComponent: SidebarComponent;
 
 		it( 'Log in as inviting user', async function () {
-			const loginPage = new LoginPage( page );
+			await loginPage.visit();
+			await loginPage.clickChangeAccount();
 			await loginPage.logInWithTestAccount( invitingUser );
 		} );
 
