@@ -177,6 +177,7 @@ function getNewSiteParams( {
 			difm_lite_site_options: {
 				difm_lite_site_category: selectedSiteCategory || undefined,
 				difm_lite_typeform_response_id: typeformResponseId || undefined,
+				difm_lite_selected_design: selectedDesign || undefined,
 			},
 		},
 		validate: false,
@@ -268,9 +269,15 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	}
 
 	if ( 'do-it-for-me' === flowToCheck ) {
-		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
-		const siteId = getSiteId( state, siteSlug );
-		if ( siteId && siteSlug ) {
+		const newOrExistingSiteChoice = get(
+			getSignupDependencyStore( state ),
+			'newOrExistingSiteChoice',
+			undefined
+		);
+		// Do not create a new site if the user chose that they want DIFM Lite on an existing site
+		if ( 'existing-site' === newOrExistingSiteChoice ) {
+			const siteId = get( getSignupDependencyStore( state ), 'siteId', false );
+			const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', false );
 			defer( () =>
 				callback( undefined, {
 					siteId,
@@ -348,6 +355,20 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		.post( `/sites/${ siteSlug }/themes/mine`, { theme } )
 		.then( () => callback() )
 		.catch( ( error ) => callback( [ error ] ) );
+}
+
+export function setDesignIfNewSite( callback, dependencies, step, reduxStore ) {
+	const state = reduxStore.getState();
+	const newOrExistingSiteChoice = get(
+		getSignupDependencyStore( state ),
+		'newOrExistingSiteChoice',
+		null
+	);
+	if ( 'new-site' === newOrExistingSiteChoice ) {
+		setDesignOnSite( callback, dependencies );
+	} else {
+		defer( callback );
+	}
 }
 
 export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
