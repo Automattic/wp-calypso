@@ -376,6 +376,8 @@ describe( 'selectors', () => {
 					woocommerce_bookings_yearly: { product_type: 'marketplace_plugin' },
 					'woocommerce-subscriptions-monthly': { product_type: 'marketplace_plugin' },
 					'woocommerce-subscriptions-yearly': { product_type: 'marketplace_plugin' },
+					'woocommerce-test-plugin': { product_type: 'plugin' },
+					'woocommerce-test-plugin-advanced': { product_type: 'marketplace_plugin' },
 				},
 			},
 		};
@@ -385,6 +387,10 @@ describe( 'selectors', () => {
 
 		test( "should return false when the product isn't a marketplace product", () => {
 			expect( isMarketplaceProduct( state, 'jetpack' ) ).toBe( false );
+		} );
+
+		test( 'should return false when a product slug also partly matches a marketplace product', () => {
+			expect( isMarketplaceProduct( state, 'woocommerce-test-plugin' ) ).toBe( false );
 		} );
 
 		describe( 'product is a marketplace product', () => {

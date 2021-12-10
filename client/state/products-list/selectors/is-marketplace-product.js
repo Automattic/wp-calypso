@@ -1,13 +1,10 @@
 import 'calypso/state/products-list/init';
 
-const productSlugToSubscriptionSlug = ( productSlug ) => productSlug.replace( '-', '_' );
+const cleanSlug = ( slug ) => slug.replace( /_/g, '-' ).split( /-(monthly|yearly|2y)/ )[ 0 ];
 
 export const isMarketplaceProduct = ( state, productSlug ) =>
-	Boolean(
-		Object.entries( state.productsList?.items ).find(
-			( [ slug, { product_type } ] ) =>
-				( slug.startsWith( productSlug ) ||
-					slug.startsWith( productSlugToSubscriptionSlug( productSlug ) ) ) &&
-				product_type.startsWith( 'marketplace' )
-		)
+	Object.entries( state.productsList?.items ).some(
+		( [ subscriptionSlug, { product_type } ] ) =>
+			cleanSlug( productSlug ) === cleanSlug( subscriptionSlug ) &&
+			product_type.startsWith( 'marketplace' )
 	);
