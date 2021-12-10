@@ -1,0 +1,42 @@
+.action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    $parent: &;
+
+    &__main {
+        @at-root {
+            div #{$parent}__heading {
+                margin: 0;
+                font-weight: 600;
+                line-height: 24px;
+                font-size: $font-body;
+            }
+        }
+
+        p {
+            margin-bottom: 16px;
+            font-size: $font-body-small;
+            color: var( --studio-gray-50 );
+        }
+    }
+
+    div &__button-container {
+        align-self: unset;
+
+        > .button {
+            margin-left: 0;
+            padding: 7px 12px;
+        }
+    }
+
+    &.domain-info-card {
+        padding: 24px 0;
+        box-shadow: none;
+
+        & ~ & {
+            border-top: 1px solid var( --studio-gray-5 );
+        }
+    }
+}
