@@ -9,6 +9,7 @@ export interface ProviderCard {
 	billingPeriod?: TranslateResult;
 	description: TranslateResult;
 	detailsExpanded?: boolean;
+	disabled: boolean;
 	discount?: ReactElement | null;
 	footerBadge?: ReactElement | null;
 	expandButtonLabel: TranslateResult;

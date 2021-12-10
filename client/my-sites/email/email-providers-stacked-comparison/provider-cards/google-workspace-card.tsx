@@ -57,6 +57,7 @@ const getGoogleFeatures = () => {
 const googleWorkspaceCardInformation: ProviderCard = {
 	detailsExpanded: false,
 	expandButtonLabel: translate( 'Select' ),
+	disabled: false,
 	onExpandedChange: noop,
 	providerKey: 'google',
 	showExpandButton: true,
@@ -81,6 +82,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	} = props;
 	const googleWorkspace: ProviderCard = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = detailsExpanded;
+	googleWorkspace.disabled = intervalLength === IntervalLength.MONTHLY;
 
 	const gSuiteProduct =
 		intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
