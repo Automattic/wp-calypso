@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
+import { getSiteFragment } from 'calypso/lib/route';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -17,7 +18,6 @@ import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
-import { getSiteFragment } from 'calypso/lib/route';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
