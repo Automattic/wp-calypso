@@ -4,7 +4,7 @@ import { Children, useState, useEffect, useRef, useCallback } from 'react';
 
 import './style.scss';
 
-const OFFSET_THRESHOLD = 100; // Number of pixels to travel before we trigger the slider to move to the desired slide.
+const OFFSET_THRESHOLD_PERCENTAGE = 0.45; // Percentage of width to travel before we trigger the slider to move to the desired slide.
 const VELOCITY_THRESHOLD = 0.5; // Speed of drag above, before we trigger the slider to move to the desired slide.
 
 function useUpdateLayout( enabled, currentPageIndex, updateLayout ) {
@@ -142,7 +142,8 @@ export const Swipeable = ( {
 			const absoluteDelta = Math.abs( delta );
 			const velocity = absoluteDelta / ( dragPosition.timeStamp - dragStartData.timeStamp );
 
-			const hasMetThreshold = absoluteDelta > OFFSET_THRESHOLD || velocity > VELOCITY_THRESHOLD;
+			const hasMetThreshold =
+				absoluteDelta > OFFSET_THRESHOLD_PERCENTAGE * pageWidth || velocity > VELOCITY_THRESHOLD;
 
 			let newIndex = currentPage;
 			if ( hasSwipedToNextPage( delta ) && hasMetThreshold && numPages !== currentPage + 1 ) {
@@ -170,6 +171,7 @@ export const Swipeable = ( {
 			numPages,
 			onPageSelect,
 			pagesStyle,
+			pageWidth,
 		]
 	);
 
