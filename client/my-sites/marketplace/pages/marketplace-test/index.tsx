@@ -1,4 +1,4 @@
-import { YOAST_PREMIUM, YOAST_FREE, WOO_UPS_SHIPPING } from '@automattic/calypso-products';
+import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
 import { Button, Card, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -12,9 +12,6 @@ import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { YOAST, WOO } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
-import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
-import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -29,6 +26,8 @@ import {
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -59,6 +58,10 @@ export default function MarketplaceTest(): JSX.Element {
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
 	const { data = [], isFetching } = useWPCOMPlugins( 'all' );
 
+	// Site type
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
+	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
+
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
 	);
@@ -75,22 +78,29 @@ export default function MarketplaceTest(): JSX.Element {
 	const dispatch = useDispatch();
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
 	const eligibilityDetails = useSelector( ( state ) => getEligibility( state, selectedSiteId ) );
+
+	const shouldUpgrade = ! (
+		isBusiness( selectedSite?.plan ) ||
+		isEnterprise( selectedSite?.plan ) ||
+		isEcommerce( selectedSite?.plan ) ||
+		isJetpack ||
+		isVip
+	);
+
 	const marketplacePages = [
 		{
-			name: 'Yoast Premium Details Page',
-			path: `/marketplace/product/details/${ YOAST }/${ YOAST_PREMIUM }`,
+			name: 'Pay & Install Woocommerce Subscription',
+			path: `/checkout/${ selectedSiteSlug }/woocommerce_subscriptions_monthly${
+				shouldUpgrade ? ',business' : ''
+			}?redirect_to=/marketplace/thank-you/woocommerce-subscriptions/${ selectedSiteSlug }#step2`,
 		},
 		{
-			name: 'Yoast Free Details Page',
-			path: `/marketplace/product/details/${ YOAST }/${ YOAST_FREE }`,
+			name: 'Pay & Install Yoast Premium',
+			path: `/checkout/${ selectedSiteSlug }/business,wordpress_seo_premium_monthly?redirect_to=/marketplace/thank-you/wordpress-seo-premium-monthly/${ selectedSiteSlug }#step2`,
 		},
-		{
-			name: 'UPS Shipping Details Page',
-			path: `/marketplace/product/details/${ WOO }/${ WOO_UPS_SHIPPING }`,
-		},
-		{ name: 'Loading Page', path: '/marketplace/product/setup' },
+		{ name: 'Install Page', path: `/marketplace/test/install/${ selectedSiteSlug }?` },
+		{ name: 'Thank You Page', path: '/marketplace/thank-you/woocommerce' },
 		{ name: 'Domains Page', path: '/marketplace/domain' },
-		{ name: 'Thank You Page', path: '/marketplace/thank-you' },
 	];
 
 	useEffect( () => {
@@ -116,6 +126,7 @@ export default function MarketplaceTest(): JSX.Element {
 	);
 	const hasHardBlock =
 		isAtomicSiteWithoutBusinessPlan( holds ) || hardBlockSingleMessages.length > 0;
+
 	return (
 		<Container>
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
@@ -240,7 +251,6 @@ export default function MarketplaceTest(): JSX.Element {
 								</div>
 							) ) }
 					</Card>
-
 					<Card key="yoast-free">
 						Yoast Free plugin Query : Type of yoastFreePluginOnSite -
 						{ typeof yoastFreePluginOnSite }
@@ -282,8 +292,6 @@ export default function MarketplaceTest(): JSX.Element {
 							</Card>
 						) ) }
 			</Card>
-			<ComponentDemo />
-			<AdminMenuFetch />
 		</Container>
 	);
 }
