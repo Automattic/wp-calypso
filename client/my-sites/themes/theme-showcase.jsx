@@ -377,6 +377,8 @@ class ThemeShowcase extends Component {
 				),
 		};
 
+		const isNonAtomicJetpackSite = this.props.isJetpackSite && ! this.props.isAtomic;
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -398,7 +400,7 @@ class ThemeShowcase extends Component {
 						onSearch={ this.doSearch }
 						search={ filterString + search }
 						tier={ tier }
-						showTierThemesControl={ ! isMultisite }
+						showTierThemesControl={ ! isMultisite && ! isNonAtomicJetpackSite }
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (
