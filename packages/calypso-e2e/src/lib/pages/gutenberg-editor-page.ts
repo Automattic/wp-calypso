@@ -1,6 +1,7 @@
 import assert from 'assert';
-import { Page, Frame, ElementHandle } from 'playwright';
+import { Page, Frame, ElementHandle, Response } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import { NavbarComponent } from '../components';
 
@@ -72,6 +73,17 @@ export class GutenbergEditorPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Opens the new post/page page.
+	 *
+	 * @see {link https://wordpress.com/post}
+	 * @param type Type of the target page - can be "post" or "page".
+	 * @returns The main resource response.
+	 */
+	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
+		return await this.page.goto( getCalypsoURL( type ) );
 	}
 
 	/**

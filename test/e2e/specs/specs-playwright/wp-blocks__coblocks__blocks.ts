@@ -14,22 +14,23 @@ import {
 	HeroBlock,
 	LogosBlock,
 	PricingTableBlock,
-	NewPostFlow,
+	LoginPage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-let user: string;
+let testAccount: string;
 if ( BrowserHelper.targetCoBlocksEdge() ) {
-	user = 'coBlocksSimpleSiteEdgeUser';
+	testAccount = 'coBlocksSimpleSiteEdgeUser';
 } else if ( BrowserHelper.targetGutenbergEdge() ) {
-	user = 'gutenbergSimpleSiteEdgeUser';
+	testAccount = 'gutenbergSimpleSiteEdgeUser';
 } else {
-	user = 'gutenbergSimpleSiteUser';
+	testAccount = 'gutenbergSimpleSiteUser';
 }
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	let page: Page;
+	let loginPage: LoginPage;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let logoImage: TestFile;
@@ -45,7 +46,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 
 	beforeAll( async () => {
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
+		loginPage = new LoginPage( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+
+		gutenbergEditorPage.visit( 'post' );
+		loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {

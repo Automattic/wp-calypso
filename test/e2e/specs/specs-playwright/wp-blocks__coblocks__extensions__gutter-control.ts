@@ -6,25 +6,25 @@ import {
 	setupHooks,
 	BrowserHelper,
 	DataHelper,
+	LoginPage,
 	GutenbergEditorPage,
 	PricingTableBlock,
-	NewPostFlow,
 } from '@automattic/calypso-e2e';
-import { Frame, Page } from 'playwright';
+import { Page } from 'playwright';
 
-let user: string;
+let testAccount: string;
 if ( BrowserHelper.targetCoBlocksEdge() ) {
-	user = 'coBlocksSimpleSiteEdgeUser';
+	testAccount = 'coBlocksSimpleSiteEdgeUser';
 } else if ( BrowserHelper.targetGutenbergEdge() ) {
-	user = 'gutenbergSimpleSiteEdgeUser';
+	testAccount = 'gutenbergSimpleSiteEdgeUser';
 } else {
-	user = 'gutenbergSimpleSiteUser';
+	testAccount = 'gutenbergSimpleSiteUser';
 }
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	let page: Page;
+	let loginPage: LoginPage;
 	let gutenbergEditorPage: GutenbergEditorPage;
-	let editorFrame: Frame;
 	let pricingTableBlock: PricingTableBlock;
 
 	setupHooks( ( args ) => {
@@ -32,8 +32,13 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	} );
 
 	beforeAll( async () => {
-		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
-		editorFrame = await gutenbergEditorPage.getEditorFrame();
+		loginPage = new LoginPage( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+	} );
+
+	it( 'Go to the new post page', async () => {
+		await gutenbergEditorPage.visit( 'post' );
+		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( 'Insert Pricing Table block', async () => {
@@ -51,6 +56,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	it.each( PricingTableBlock.gutterValues )(
 		'Verify "%s" gutter button is present',
 		async ( value ) => {
+			const editorFrame = await gutenbergEditorPage.getEditorFrame();
 			await editorFrame.waitForSelector( `button[aria-label="${ value }"]` );
 		}
 	);

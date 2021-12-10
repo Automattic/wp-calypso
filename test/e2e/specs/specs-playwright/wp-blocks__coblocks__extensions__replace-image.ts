@@ -8,25 +8,26 @@ import {
 	DataHelper,
 	MediaHelper,
 	ElementHelper,
+	LoginPage,
 	GutenbergEditorPage,
 	TestFile,
 	ImageBlock,
-	NewPostFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-let user: string;
+let testAccount: string;
 if ( BrowserHelper.targetCoBlocksEdge() ) {
-	user = 'coBlocksSimpleSiteEdgeUser';
+	testAccount = 'coBlocksSimpleSiteEdgeUser';
 } else if ( BrowserHelper.targetGutenbergEdge() ) {
-	user = 'gutenbergSimpleSiteEdgeUser';
+	testAccount = 'gutenbergSimpleSiteEdgeUser';
 } else {
-	user = 'gutenbergSimpleSiteUser';
+	testAccount = 'gutenbergSimpleSiteUser';
 }
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), () => {
 	let page: Page;
+	let loginPage: LoginPage;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let imageBlock: ImageBlock;
 	let imageFile: TestFile;
@@ -39,7 +40,13 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 
 	beforeAll( async () => {
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
+		loginPage = new LoginPage( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+	} );
+
+	it( 'Go to the new post page', async () => {
+		await gutenbergEditorPage.visit( 'post' );
+		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( `Insert ${ ImageBlock.blockName } block and upload image`, async () => {
@@ -55,13 +62,13 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 
 	it( `Replace uploaded image`, async () => {
 		const editorFrame = await gutenbergEditorPage.getEditorFrame();
-
 		await editorFrame.click( 'button:text("Replace")' );
 		await editorFrame.setInputFiles(
 			'.components-form-file-upload input[type="file"]',
 			imageFile.fullpath
 		);
 		await imageBlock.waitUntilUploaded();
+
 		const newImage = await imageBlock.getImage();
 		newImageURL = ( await newImage.getAttribute( 'src' ) ) as string;
 		newImageURL = newImageURL.split( '?' )[ 0 ];
