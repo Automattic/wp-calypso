@@ -19,16 +19,19 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 	} );
 
 	describe.each( [
-		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'eCommerceUser' },
-	] )( 'Search and view a support article ($siteType)', function ( { user } ) {
+		{ siteType: 'Simple', testAccount: 'defaultUser' },
+		{ siteType: 'Atomic', testAccount: 'eCommerceUser' },
+	] )( 'Search and view a support article ($siteType)', function ( { testAccount } ) {
 		let supportComponent: SupportComponent;
 		let gutenboardingFlow: GutenboardingFlow;
 
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.visit();
-			await loginPage.logInWithTestAccount( user );
+			if ( testAccount !== 'defaultUser' ) {
+				await loginPage.clickChangeAccount();
+			}
+			await loginPage.logInWithTestAccount( testAccount );
 		} );
 
 		it( 'Search for help: Create a site', async function () {
