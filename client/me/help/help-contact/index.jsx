@@ -121,12 +121,7 @@ class HelpContact extends Component {
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
 
-		if ( this.props.activeSupportTicketCount > 0 ) {
-			recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
-				support_type: 'chat',
-				active_ticket_count: this.props.activeSupportTicketCount,
-			} );
-		}
+		this.recordSubmitWithActiveTickets( 'chat' );
 
 		this.setState( {
 			isSubmitting: false,
@@ -163,12 +158,7 @@ class HelpContact extends Component {
 			page( '/help' );
 		}
 
-		if ( this.props.activeSupportTicketCount > 0 ) {
-			recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
-				support_type: 'directly',
-				active_ticket_count: this.props.activeSupportTicketCount,
-			} );
-		}
+		this.recordSubmitWithActiveTickets( 'directly' );
 	};
 
 	submitKayakoTicket = ( contactForm ) => {
@@ -220,12 +210,7 @@ class HelpContact extends Component {
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
 				} );
 
-				if ( this.props.activeSupportTicketCount > 0 ) {
-					recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
-						support_type: 'email',
-						active_ticket_count: this.props.activeSupportTicketCount,
-					} );
-				}
+				this.recordSubmitWithActiveTickets( 'email' );
 			} )
 			.catch( ( error ) => {
 				// TODO: bump a stat here
@@ -341,13 +326,7 @@ class HelpContact extends Component {
 				} );
 
 				recordTracksEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
-
-				if ( this.props.activeSupportTicketCount > 0 ) {
-					recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
-						support_type: 'forum',
-						active_ticket_count: this.props.activeSupportTicketCount,
-					} );
-				}
+				this.recordSubmitWithActiveTickets( 'forum' );
 			} )
 			.catch( ( error ) => {
 				// TODO: bump a stat here
@@ -366,6 +345,15 @@ class HelpContact extends Component {
 			} );
 		}
 	};
+
+	recordSubmitWithActiveTickets( type ) {
+		if ( this.props.activeSupportTicketCount > 0 ) {
+			this.props.recordTracksEventAction( 'calypso_help_contact_submit_with_active_tickets', {
+				support_type: type,
+				active_ticket_count: this.props.activeSupportTicketCount,
+			} );
+		}
+	}
 
 	getContactFormPropsVariation = ( variationSlug ) => {
 		const { isSubmitting } = this.state;
