@@ -4,7 +4,7 @@
 	"description": "Vanilla helpers for tracking viewport changes",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
 	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
