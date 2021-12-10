@@ -156,10 +156,6 @@ class EmailProvidersComparison extends Component {
 		};
 	}
 
-	shouldPromoteGoogleWorkspace( { gSuiteProduct, isGSuiteSupported, source } ) {
-		return isGSuiteSupported && ( source === 'google-sale' || hasDiscount( gSuiteProduct ) );
-	}
-
 	onExpandedStateChange = ( providerKey, isExpanded ) => {
 		const expandedEntries = Object.entries( this.state.expanded ).map( ( entry ) => {
 			const [ key, currentExpanded ] = entry;
@@ -760,7 +756,6 @@ class EmailProvidersComparison extends Component {
 			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
-			shouldPromoteGoogleWorkspace,
 			source,
 		} = this.props;
 
@@ -770,21 +765,6 @@ class EmailProvidersComparison extends Component {
 		// - We have added an email forward from this component
 		const shouldShowEmailForwardWarning =
 			! hideEmailForwardingCard && ! isSubmittingEmailForward && ! this.state.emailForwardAdded;
-
-		const googleCard = this.renderGoogleCard();
-		const titanCard = this.renderTitanCard();
-
-		const paidCards = shouldPromoteGoogleWorkspace ? (
-			<>
-				{ googleCard }
-				{ titanCard }
-			</>
-		) : (
-			<>
-				{ titanCard }
-				{ googleCard }
-			</>
-		);
 
 		return (
 			<Main wideLayout>
@@ -805,7 +785,9 @@ class EmailProvidersComparison extends Component {
 					/>
 				) }
 
-				{ paidCards }
+				{ this.renderTitanCard() }
+
+				{ this.renderGoogleCard() }
 
 				{ ! hideEmailForwardingCard && this.renderEmailForwardingCard() }
 
