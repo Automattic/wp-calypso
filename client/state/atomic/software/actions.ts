@@ -17,7 +17,7 @@ interface AtomicSoftwareAction {
 interface AtomicSoftwareStatus {
 	blog_id: number;
 	software_set: Record< string, { path: string; state: string } >;
-	applided: boolean;
+	applied: boolean;
 }
 
 /**
