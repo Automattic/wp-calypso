@@ -53,18 +53,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
 	);
 };
 
-/**
- * Launches a private site
- *
- * @param {string} siteIdOrSlug - ID or slug of the site to be launched
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.launchSite = function ( siteIdOrSlug, fn ) {
-	const path = `/sites/${ siteIdOrSlug }/launch`;
-	debug( path );
-	return this.wpcom.req.post( path, fn );
-};
-
 Undocumented.prototype.fetchDns = function ( domainName, fn ) {
 	return this.wpcom.req.get( '/domains/' + domainName + '/dns', fn );
 };

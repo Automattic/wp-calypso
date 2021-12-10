@@ -529,15 +529,10 @@ function addPrivacyProtectionIfSupported( item, state ) {
 export function launchSiteApi( callback, dependencies ) {
 	const { siteSlug } = dependencies;
 
-	wpcom.undocumented().launchSite( siteSlug, function ( error ) {
-		if ( error ) {
-			callback( error );
-
-			return;
-		}
-
-		callback();
-	} );
+	wpcom.req
+		.post( `/sites/${ siteSlug }/launch` )
+		.then( () => callback( null ) )
+		.catch( ( error ) => callback( error ) );
 }
 
 export function createAccount(
