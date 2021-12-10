@@ -111,7 +111,7 @@ const MarketplacePluginInstall = ( {
 		if ( ! isWporgPluginFetched ) {
 			dispatch( wporgFetchPluginData( productSlug ) );
 		}
-	}, [ isWporgPluginFetched, productSlug ] );
+	}, [ isWporgPluginFetched, productSlug, dispatch ] );
 
 	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
 	// if not, check again in 2s and show an error message
@@ -179,6 +179,7 @@ const MarketplacePluginInstall = ( {
 		siteId,
 		wporgPlugin,
 		productSlug,
+		dispatch,
 	] );
 
 	// Validate completition of atomic transfer flow
@@ -186,7 +187,7 @@ const MarketplacePluginInstall = ( {
 		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
 			setCurrentStep( 2 );
 		}
-	}, [ atomicFlow, automatedTransferStatus ] );
+	}, [ atomicFlow, automatedTransferStatus, currentStep ] );
 
 	// Validate plugin is already installed and activate
 	useEffect( () => {

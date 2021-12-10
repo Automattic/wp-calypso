@@ -151,7 +151,7 @@ WPOrderReviewLineItems.propTypes = {
  * Checks if the given item is the premium plan product and the DIFM product exists in the provided shopping cart object
  *
  * @param item The shopping basket line item
- * @param cartProducts The shopping cart object
+ * @param responseCart The shopping cart object
  * @returns boolean
  */
 function isPremiumPlanWithDIFMInTheCart( item: ResponseCartProduct, responseCart: ResponseCart ) {
@@ -162,7 +162,7 @@ function isPremiumPlanWithDIFMInTheCart( item: ResponseCartProduct, responseCart
  * Checks if the given item is the business plan product and a marketplace product exists in the provided shopping cart object
  *
  * @param item The shopping basket line item
- * @param cartProducts The shopping cart object
+ * @param responseCart The shopping cart object
  * @returns boolean
  */
 function isMarketplaceProductInTheCart( item: ResponseCartProduct, responseCart: ResponseCart ) {
