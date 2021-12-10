@@ -22,7 +22,9 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ): J
 	return ! emailAddresses.length ? (
 		<DomainInfoCard
 			title={ translate( 'Email' ) }
-			description={ translate( 'Send and receive emails from youremail@travelingwithkids.com' ) }
+			description={ translate( 'Send and receive emails from youremail@%(domainName)s', {
+				args: { domainName: domain.name },
+			} ) }
 			ctaText={ translate( 'Add professional email' ) }
 			isPrimary={ true }
 		/>
