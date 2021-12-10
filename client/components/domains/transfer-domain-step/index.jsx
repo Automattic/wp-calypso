@@ -630,29 +630,27 @@ class TransferDomainStep extends Component {
 		this.setState( { submittingWhois: true } );
 
 		return new Promise( ( resolve ) => {
-			checkInboundTransferStatus(
-				getFixedDomainSearch( this.state.searchQuery ),
-				( error, result ) => {
+			checkInboundTransferStatus( getFixedDomainSearch( this.state.searchQuery ) ).then(
+				( result ) => {
 					this.setState( { submittingWhois: false } );
 
-					if ( ! isEmpty( error ) ) {
+					if ( ! isEmpty( result.error ) ) {
 						resolve();
 						return;
 					}
 
 					const inboundTransferStatus = {
-						creationDate: result.creation_date,
-						email: result.admin_email,
+						creationDate: result.data.creation_date,
+						email: result.data.admin_email,
 						loading: false,
-						losingRegistrar: result.registrar,
-						losingRegistrarIanaId: result.registrar_iana_id,
-						privacy: result.privacy,
-						termMaximumInYears: result.term_maximum_in_years,
-						transferEligibleDate: result.transfer_eligible_date,
-						transferRestrictionStatus: result.transfer_restriction_status,
-						unlocked: result.unlocked,
+						losingRegistrar: result.data.registrar,
+						losingRegistrarIanaId: result.data.registrar_iana_id,
+						privacy: result.data.privacy,
+						termMaximumInYears: result.data.term_maximum_in_years,
+						transferEligibleDate: result.data.transfer_eligible_date,
+						transferRestrictionStatus: result.data.transfer_restriction_status,
+						unlocked: result.data.unlocked,
 					};
-
 					this.setState( { inboundTransferStatus } );
 					resolve( { inboundTransferStatus } );
 				}
