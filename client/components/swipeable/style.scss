@@ -19,7 +19,7 @@
 	transition-property: transform, height;
 	@include reduce-motion( 'transition' );
 }
-.swipeable__resize-observer {} /* stylelint-disable-line block-no-empty */
+
 
 .swipeable__page {
 	width: 100%;
