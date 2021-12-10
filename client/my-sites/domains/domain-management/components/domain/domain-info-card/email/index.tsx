@@ -3,7 +3,7 @@ import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
 import { getEmailAddress } from 'calypso/lib/emails';
 import DomainInfoCard from '..';
 import { DomainInfoCardProps } from '../types';
-import { Mailbox } from './types';
+import { EmailAccount } from './types';
 
 const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ): JSX.Element => {
 	const translate = useTranslate();
@@ -12,10 +12,14 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ): J
 	const { data, error, isLoading } = useEmailAccountsQuery( selectedSite.ID, domain.name );
 
 	if ( ! isLoading && ! error ) {
-		const [ mailAccount ]: [ { emails: Mailbox[] } ] = data?.accounts;
+		const emailAccounts: EmailAccount[] = data?.accounts;
 
-		if ( mailAccount ) {
-			emailAddresses = mailAccount.emails.map( getEmailAddress ).filter( ( email ) => email );
+		if ( emailAccounts.length ) {
+			emailAddresses = emailAccounts
+				.map( ( a ) => a.emails )
+				.flat()
+				.map( getEmailAddress )
+				.filter( ( email ) => email );
 		}
 	}
 

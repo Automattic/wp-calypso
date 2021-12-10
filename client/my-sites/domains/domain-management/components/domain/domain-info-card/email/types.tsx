@@ -5,5 +5,5 @@ export type Mailbox = {
 
 export type EmailAccount = {
 	account_type: string;
-	emails: Mailbox;
+	emails: Mailbox[];
 };
