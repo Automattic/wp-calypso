@@ -86,9 +86,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 			const plugins = getPluginsToInstall( productGroupSlug, productSlugInstalled );
 			if ( ! Array.isArray( plugins ) || plugins.length === 0 ) {
 				marketplaceDebugger(
-					`::MARKETPLACE::ERROR:: There is an error in plugin setup page, plugins to install are not available ${
-						( productGroupSlug, productSlugInstalled )
-					}`
+					`::MARKETPLACE::ERROR:: There is an error in plugin setup page, plugins to install are not available ${ productGroupSlug }, ${ productSlugInstalled }`
 				);
 				page( `/home/${ selectedSiteSlug }` );
 			} else {
