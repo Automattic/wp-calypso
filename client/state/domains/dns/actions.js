@@ -27,69 +27,59 @@ export const fetchDns = ( domainName, forceReload = false ) => ( dispatch, getSt
 
 	dispatch( { type: DOMAINS_DNS_FETCH, domainName } );
 
-	wpcom
-		.undocumented()
-		.fetchDns( domainName )
-		.then(
-			( { records } ) => dispatch( { type: DOMAINS_DNS_FETCH_COMPLETED, domainName, records } ),
-			() => dispatch( { type: DOMAINS_DNS_FETCH_FAILED, domainName } )
-		);
+	wpcom.req
+		.get( `/domains/${ domainName }/dns` )
+		.then( ( { records } ) =>
+			dispatch( { type: DOMAINS_DNS_FETCH_COMPLETED, domainName, records } )
+		)
+		.catch( () => dispatch( { type: DOMAINS_DNS_FETCH_FAILED, domainName } ) );
 };
+
+const updateDnsRequest = ( domainName, records ) =>
+	wpcom.req.post( `/domains/${ domainName }/dns`, {
+		dns: JSON.stringify( records ),
+	} );
 
 export const addDns = ( domainName, record ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_DNS_ADD, domainName, record } );
 
-	const addResult = wpcom.undocumented().updateDns( domainName, { records_to_add: [ record ] } );
-
-	addResult.then(
-		( { records } ) => dispatch( { type: DOMAINS_DNS_ADD_COMPLETED, domainName, records } ),
-		() => dispatch( { type: DOMAINS_DNS_ADD_FAILED, domainName, record } )
-	);
-
-	return addResult;
+	return updateDnsRequest( domainName, { records_to_add: [ record ] } )
+		.then( ( { records } ) => dispatch( { type: DOMAINS_DNS_ADD_COMPLETED, domainName, records } ) )
+		.catch( () => dispatch( { type: DOMAINS_DNS_ADD_FAILED, domainName, record } ) );
 };
 
 export const deleteDns = ( domainName, record ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_DNS_DELETE, domainName, record } );
 
-	const updateResult = wpcom
-		.undocumented()
-		.updateDns( domainName, { records_to_remove: [ record ] } );
-
-	updateResult.then(
-		( { records } ) => dispatch( { type: DOMAINS_DNS_DELETE_COMPLETED, domainName, records } ),
-		() => dispatch( { type: DOMAINS_DNS_DELETE_FAILED, domainName, record } )
-	);
-
-	return updateResult;
+	return updateDnsRequest( domainName, { records_to_remove: [ record ] } )
+		.then( ( { records } ) =>
+			dispatch( { type: DOMAINS_DNS_DELETE_COMPLETED, domainName, records } )
+		)
+		.catch( () => dispatch( { type: DOMAINS_DNS_DELETE_FAILED, domainName, record } ) );
 };
 
 export const applyDnsTemplate = ( domainName, provider, service, variables ) => ( dispatch ) => {
-	const applyResult = wpcom
-		.undocumented()
-		.applyDnsTemplate( domainName, provider, service, variables );
-
-	applyResult.then(
-		( { records } ) =>
-			dispatch( { type: DOMAINS_DNS_APPLY_TEMPLATE_COMPLETED, records, domainName } ),
-		() => {} // swallow the error to avoid unhandled promise warnings. Caller will handle it.
-	);
-
-	return applyResult;
+	return wpcom.req
+		.post( `/domains/${ domainName }/dns/providers/${ provider }/services/${ service }`, {
+			variables,
+		} )
+		.then( ( { records } ) =>
+			dispatch( { type: DOMAINS_DNS_APPLY_TEMPLATE_COMPLETED, records, domainName } )
+		)
+		.catch( () => {
+			// swallow the error to avoid unhandled promise warnings. Caller will handle it.
+		} );
 };
 
 export const updateDns = ( domainName, recordsToAdd, recordsToRemove ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_DNS_UPDATE, recordsToAdd, recordsToRemove } );
 
-	const updateResult = wpcom.undocumented().updateDns( domainName, {
+	return updateDnsRequest( domainName, {
 		records_to_add: recordsToAdd,
 		records_to_remove: recordsToRemove,
-	} );
-
-	updateResult.then(
-		( { records } ) => dispatch( { type: DOMAINS_DNS_UPDATE_COMPLETED, domainName, records } ),
-		() => dispatch( { type: DOMAINS_DNS_UPDATE_FAILED, domainName } )
-	);
-
-	return updateResult;
+	} )
+		.then( ( { records } ) =>
+			dispatch( { type: DOMAINS_DNS_UPDATE_COMPLETED, domainName, records } )
+		)
+		.catch( () => dispatch( { type: DOMAINS_DNS_UPDATE_FAILED, domainName } ) );
 };
