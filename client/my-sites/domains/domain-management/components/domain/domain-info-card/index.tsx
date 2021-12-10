@@ -1,35 +1,39 @@
 import { Button } from '@automattic/components';
 import ActionCard from 'calypso/components/action-card';
-import type { CardProps, GenericDomainInfoCardProps } from './types';
+import type { CardProps, GenericActionCardProps } from './types';
 
 import './style.scss';
 
-const DomainInfoCard = ( {
-	title,
-	description,
-	ctaText,
-	isPrimary,
-}: GenericDomainInfoCardProps ): JSX.Element => {
+const DomainInfoCard = ( props: GenericActionCardProps ): JSX.Element => {
+	const { title, description, type } = props;
 	const cardProps: CardProps = {
 		headerText: title,
 		mainText: description,
 		classNames: 'domain-info-card',
 	};
 
-	if ( ctaText ) {
-		cardProps.buttonText = ctaText;
-		cardProps.buttonPrimary = isPrimary;
-	}
+	switch ( type ) {
+		case 'href':
+			return (
+				<ActionCard { ...cardProps }>
+					<Button compact primary={ props.isPrimary } href={ props.href }>
+						{ props.ctaText }
+					</Button>
+				</ActionCard>
+			);
 
-	return (
-		<ActionCard { ...cardProps }>
-			{ ctaText && (
-				<Button compact primary={ isPrimary }>
-					{ ctaText }
-				</Button>
-			) }
-		</ActionCard>
-	);
+		case 'click':
+			return (
+				<ActionCard { ...cardProps }>
+					<Button compact primary={ props.isPrimary } onClick={ props.onClick }>
+						{ props.ctaText }
+					</Button>
+				</ActionCard>
+			);
+
+		default:
+			return <ActionCard { ...cardProps } />;
+	}
 };
 
 export default DomainInfoCard;
