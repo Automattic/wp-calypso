@@ -7,14 +7,17 @@ import 'calypso/state/data-layer/wpcom/sites/atomic/software';
 import 'calypso/state/atomic/init';
 
 interface AtomicSoftwareAction {
-	type: string;
+	type:
+		| typeof ATOMIC_PLUGIN_INSTALL_INITIATE
+		| typeof ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS
+		| typeof ATOMIC_PLUGIN_INSTALL_SET_STATUS;
 	siteId: number;
 	softwareSet: string;
 	status?: AtomicSoftwareStatus;
 	meta?: { dataLayer?: { trackRequest: boolean; requestKey: string } };
 }
 
-interface AtomicSoftwareStatus {
+export interface AtomicSoftwareStatus {
 	blog_id: number;
 	software_set: Record< string, { path: string; state: string } >;
 	applied: boolean;

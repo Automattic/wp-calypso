@@ -19,15 +19,15 @@ interface AtomicTransferAction {
 	// transfer?: AtomicTransfer;
 }
 
-// interface AtomicTransfer {
-// 	atomic_transfer_id: number;
-// 	blog_id: number;
-// 	status: string;
-// 	created_at: string;
-// 	is_stuck: boolean;
-// 	is_stuck_reset: boolean;
-// 	in_lossless_revert: boolean;
-// }
+export interface AtomicTransfer {
+	atomic_transfer_id: number;
+	blog_id: number;
+	status: string;
+	created_at: string;
+	is_stuck: boolean;
+	is_stuck_reset: boolean;
+	in_lossless_revert: boolean;
+}
 
 /**
  * Initiate Atomic transfer with plugin install.
