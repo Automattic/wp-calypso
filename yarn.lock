@@ -1182,6 +1182,7 @@ __metadata:
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: ^4.5.3
   languageName: unknown
   linkType: soft
 
