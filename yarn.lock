@@ -33581,7 +33581,7 @@ resolve@^2.0.0-next.3:
     "@automattic/calypso-typescript-config": "workspace:^"
   peerDependencies:
     mocha: ^8.1.3
-    mocha-junit-reporter: ^2.0.0
+    mocha-junit-reporter: ^2.0.2
   languageName: unknown
   linkType: soft
 
