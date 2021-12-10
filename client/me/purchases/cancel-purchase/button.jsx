@@ -199,6 +199,8 @@ class CancelPurchaseButton extends Component {
 		);
 	};
 
+	onAcceptFreeMonthOffering = () => {};
+
 	submitCancelAndRefundPurchase = () => {
 		const refundable = hasAmountAvailableToRefund( this.props.purchase );
 
@@ -283,6 +285,7 @@ class CancelPurchaseButton extends Component {
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog }
 					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
+					onAcceptFreeMonthOffering={ this.onAcceptFreeMonthOffering }
 					downgradeClick={ this.downgradeClick }
 					flowType={ this.getCancellationFlowType() }
 				/>

@@ -70,6 +70,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
+		"retention/free-month-offer": false,
 		"rum-tracking/logstash": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

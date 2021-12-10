@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
@@ -39,7 +40,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import HappychatButton from 'calypso/components/happychat/button';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getName, isRefundable } from 'calypso/lib/purchases';
+import { getName, isRefundable, isMonthlyPurchase } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
@@ -86,6 +87,7 @@ class CancelPurchaseForm extends Component {
 		onInputChange: PropTypes.func.isRequired,
 		onClose: PropTypes.func.isRequired,
 		onClickFinalConfirm: PropTypes.func.isRequired,
+		onAcceptFreeMonthOffering: PropTypes.func.isRequired,
 		flowType: PropTypes.string.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
 		translate: PropTypes.func,
@@ -198,22 +200,23 @@ class CancelPurchaseForm extends Component {
 			const { purchase } = this.props;
 			if ( value === 'couldNotInstall' && isWpComBusinessPlan( purchase.productSlug ) ) {
 				newState.upsell = 'business-atomic';
-			}
-
-			if (
+			} else if (
 				value === 'couldNotInstall' &&
 				( isWpComPremiumPlan( purchase.productSlug ) ||
 					isWpComPersonalPlan( purchase.productSlug ) )
 			) {
 				newState.upsell = 'upgrade-atomic';
-			}
-
-			if (
+			} else if (
 				value === 'onlyNeedFree' &&
 				isWpComPremiumPlan( purchase.productSlug ) &&
 				!! this.props.downgradeClick
 			) {
 				newState.upsell = 'downgrade-personal';
+			} else if (
+				config.isEnabled( 'retention/free-month-offer' ) &&
+				isMonthlyPurchase( purchase.productSlug )
+			) {
+				newState.upsell = 'free-month-offer';
 			}
 		}
 
@@ -433,6 +436,18 @@ class CancelPurchaseForm extends Component {
 							planCost={ planCost }
 							refundAmount={ this.getRefundAmount() }
 						/>
+					</Upsell>
+				);
+			case 'free-month-offer':
+				// It's intentional that the actionText is not wrapped in `translate` for now.
+				// The copy isn't finalized yet.
+				return (
+					<Upsell
+						actionOnClick={ this.onAcceptFreeMonthOffering }
+						actionText={ 'Accept offer' }
+						image={ downgradeImage }
+					>
+						Place holder for the free month offer.
 					</Upsell>
 				);
 			default:

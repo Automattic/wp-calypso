@@ -84,6 +84,7 @@
 		"privacy-policy": true,
 		"reader": true,
 		"reader/list-management": true,
+		"retention/free-month-offer": false,
 		"safari-idb-mitigation": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

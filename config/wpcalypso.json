@@ -95,6 +95,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
+		"retention/free-month-offer": false,
 		"recommend-plugins": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
