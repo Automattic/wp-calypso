@@ -120,10 +120,12 @@ class EmailProvidersComparison extends Component {
 	constructor( props ) {
 		super( props );
 
+		const { selectedDomainName, shouldPromoteGoogleWorkspace } = props;
+
 		this.state = {
 			googleUsers: [],
-			titanMailboxes: [ buildNewTitanMailbox( props.selectedDomainName, false ) ],
-			expanded: this.getDefaultExpandedState( props.source ),
+			titanMailboxes: [ buildNewTitanMailbox( selectedDomainName, false ) ],
+			expanded: this.getDefaultExpandedState( shouldPromoteGoogleWorkspace ),
 			addingToCart: false,
 			emailForwardAdded: false,
 			validatedTitanMailboxUuids: [],
@@ -138,14 +140,15 @@ class EmailProvidersComparison extends Component {
 		this.isMounted = false;
 	}
 
-	getDefaultExpandedState( source ) {
-		if ( source === 'google-sale' ) {
+	getDefaultExpandedState( shouldPromoteGoogleWorkspace ) {
+		if ( shouldPromoteGoogleWorkspace ) {
 			return {
 				forwarding: false,
 				google: true,
 				titan: false,
 			};
 		}
+
 		return {
 			forwarding: false,
 			google: false,
@@ -818,6 +821,7 @@ export default connect(
 		const isGSuiteSupported =
 			canUserPurchaseGSuite( state ) &&
 			( hasCartDomain || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) );
+		const gSuiteProduct = getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY );
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
@@ -825,13 +829,15 @@ export default connect(
 			domain,
 			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
-			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
+			gSuiteProduct,
 			hasCartDomain,
 			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
+			shouldPromoteGoogleWorkspace:
+				isGSuiteSupported && ( ownProps.source === 'google-sale' || hasDiscount( gSuiteProduct ) ),
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},
