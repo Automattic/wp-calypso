@@ -33,7 +33,7 @@
 		"@types/node-fetch": "^2.5.12",
 		"@wordpress/i18n": "^4.2.4",
 		"asana-phrase": "^0.0.8",
-		"node-fetch": "^2.6.1",
+		"node-fetch": "^2.6.6",
 		"typescript": "^4.5.3"
 	},
 	"scripts": {

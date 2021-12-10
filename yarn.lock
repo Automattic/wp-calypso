@@ -236,7 +236,7 @@ __metadata:
     asana-phrase: ^0.0.8
     config: ^3.3.6
     mailosaur: ^7.3.1
-    node-fetch: ^2.6.1
+    node-fetch: ^2.6.6
     playwright: 1.14.0
     totp-generator: ^0.0.12
     typescript: ^4.5.3
@@ -26187,7 +26187,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.2.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1":
+"node-fetch@npm:^2.2.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6":
   version: 2.6.6
   resolution: "node-fetch@npm:2.6.6"
   dependencies:
@@ -37638,7 +37638,7 @@ testarmada-magellan@11.0.10:
     mkdirp: ^1.0.4
     ncp: ^2.0.0
     nock: ^12.0.3
-    node-fetch: ^2.6.1
+    node-fetch: ^2.6.6
     npm-merge-driver: ^2.3.5
     npm-package-json-lint: ^5.0.0
     npm-run-all: ^4.1.5
