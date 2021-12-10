@@ -14,10 +14,6 @@ export class UpgradeATStep extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	static defaultProps = {
-		translate: noop,
-	};
-
 	onClick = () => {
 		this.props.recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 	};
