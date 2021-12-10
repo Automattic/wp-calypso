@@ -26,6 +26,7 @@ export interface AtomicTransfer {
 	is_stuck: boolean;
 	is_stuck_reset: boolean;
 	in_lossless_revert: boolean;
+	error?: string;
 }
 
 /**

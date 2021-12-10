@@ -35,6 +35,7 @@ const receiveInstallError = ( action, error ) => [
 	errorNotice(
 		translate( "Sorry, we've hit a snag. Please contact support so we can help you out." )
 	),
+	setAtomicSoftwareStatus( action.siteId, error ),
 ];
 
 const requestSoftware = ( action ) =>
@@ -52,7 +53,7 @@ const receiveSoftwareResponse = ( action, response ) => [
 ];
 
 const receiveSoftwareError = ( action, error ) => [
-	setAtomicSoftwareStatus( action.siteId, action.softwareSet, error.error ),
+	setAtomicSoftwareStatus( action.siteId, action.softwareSet, error ),
 ];
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/software', {
