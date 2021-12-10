@@ -20,7 +20,7 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 
 	const purchase = getByPurchaseId( state, purchaseId );
 
-	const isAtomicSupported = ( productSlug ) =>
+	const isAtomicSupportedProduct = ( productSlug ) =>
 		isWpComBusinessPlan( productSlug ) ||
 		isWpComEcommercePlan( productSlug ) ||
 		isMarketplaceProduct( state, productSlug );
@@ -28,7 +28,7 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 	if (
 		! purchase ||
 		! isSiteAutomatedTransfer( state, purchase.siteId ) ||
-		! isAtomicSupported( purchase.productSlug )
+		! isAtomicSupportedProduct( purchase.productSlug )
 	) {
 		return false;
 	}
@@ -38,6 +38,6 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 	// the site needs to be kept in the Atomic infra.
 	return ! getSitePurchases( state, purchase.siteId ).some(
 		( sitePurchase ) =>
-			sitePurchase.id !== purchaseId && isAtomicSupported( sitePurchase.productSlug )
+			sitePurchase.id !== purchaseId && isAtomicSupportedProduct( sitePurchase.productSlug )
 	);
 };
