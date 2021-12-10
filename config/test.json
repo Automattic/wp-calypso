@@ -48,6 +48,7 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/more-informative-scan": true,
+		"jetpack/pricing-page-annual-only": false,
 		"jetpack/simplify-pricing-structure": false,
 		"jitms": true,
 		"lasagna": false,

@@ -60,6 +60,10 @@
 	}
 }
 
+.product-grid__plan-grid.has-top-padding {
+	padding-top: 32px;
+}
+
 .product-grid__plan-grid:not( .is-wrapping ) {
 	margin-top: 72px;
 	gap: 16px 0;
