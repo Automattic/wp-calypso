@@ -7,6 +7,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card';
+import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -14,7 +15,6 @@ import SettingsHeader from './settings-header';
 import { SettingsPageConnectedProps, SettingsPagePassedProps, SettingsPageProps } from './types';
 
 const Settings = ( props: SettingsPageProps ): JSX.Element => {
-	const domain = props.domains && getSelectedDomain( props );
 	const translate = useTranslate();
 
 	const renderBreadcrumbs = () => {
@@ -45,12 +45,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 
 	const renderSettingsCards = () => (
 		<>
-			<DomainInfoCard
-				title={ translate( 'Email' ) }
-				description={ translate( 'Send and receive emails from youremail@travelingwithkids.com' ) }
-				ctaText={ translate( 'Add professional email' ) }
-				isPrimary={ true }
-			/>
+			<DomainEmailInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
 			<DomainInfoCard
 				title={ translate( 'Transfer' ) }
 				description={ translate( 'Transfer lock on' ) }
@@ -68,7 +63,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 		<Main wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
-			<SettingsHeader domain={ domain } />
+			<SettingsHeader domain={ props.domain } />
 			<TwoColumnsLayout
 				content={
 					<>
