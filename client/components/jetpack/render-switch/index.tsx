@@ -1,4 +1,4 @@
-import { ReactComponent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 /**
  * @typedef RenderSwitchArgs
@@ -24,7 +24,7 @@ type RenderSwitchArgs = {
  * @param {ReactNode} [props.trueComponent] - The component to render when the renderCondition evaluates to true.
  * @param {ReactNode} [props.falseComponent] - The component to render when the renderCondition evaluates to false.
  */
-const RenderSwitch: ReactComponent = ( {
+const RenderSwitch: ReactNode = ( {
 	loadingCondition = () => false,
 	renderCondition,
 	queryComponent,

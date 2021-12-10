@@ -14,6 +14,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { navigate } from 'calypso/lib/navigate';
 import {
 	withStopPerformanceTrackingProp,
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore - PerformanceTrackProps is defined calypso/lib/performance-tracking/index.web.js
 	PerformanceTrackProps,
 } from 'calypso/lib/performance-tracking';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
