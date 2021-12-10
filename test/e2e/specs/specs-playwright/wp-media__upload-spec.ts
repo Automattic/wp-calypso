@@ -18,6 +18,7 @@ import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_UNSUPPORTED_FILE_PATH } from '..
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
 	let page: Page;
+	let loginPage: LoginPage;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -29,20 +30,25 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 			audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
 			unsupported: await MediaHelper.createTestFile( TEST_UNSUPPORTED_FILE_PATH ),
 		};
+		loginPage = new LoginPage( page );
+		await loginPage.visit();
 	} );
 
 	// Parametrized test.
 	describe.each`
-		siteType      | user
+		siteType      | testAccount
 		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
-	`( 'Upload media files ($siteType)', ( { user } ) => {
+	`( 'Upload media files ($siteType)', ( { testAccount } ) => {
 		let mediaPage: MediaPage;
 
-		it( 'Log In', async function () {
-			const loginPage = new LoginPage( page );
+		afterAll( async () => {
 			await loginPage.visit();
-			await loginPage.logInWithTestAccount( user );
+			await loginPage.clickChangeAccount();
+		} );
+
+		it( `Log in with ${ testAccount }`, async function () {
+			await loginPage.logInWithTestAccount( testAccount );
 		} );
 
 		it( 'Navigate to Media', async function () {

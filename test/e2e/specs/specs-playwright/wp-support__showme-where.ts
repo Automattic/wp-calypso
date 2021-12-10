@@ -13,9 +13,15 @@ import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 	let page: Page;
+	let loginPage: LoginPage;
 
 	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
+	} );
+
+	beforeAll( async () => {
+		loginPage = new LoginPage( page );
+		await loginPage.visit();
 	} );
 
 	describe.each( [
@@ -25,12 +31,12 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 		let supportComponent: SupportComponent;
 		let gutenboardingFlow: GutenboardingFlow;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
+		afterAll( async () => {
 			await loginPage.visit();
-			if ( testAccount !== 'defaultUser' ) {
-				await loginPage.clickChangeAccount();
-			}
+			await loginPage.clickChangeAccount();
+		} );
+
+		it( `Log in with ${ testAccount }`, async function () {
 			await loginPage.logInWithTestAccount( testAccount );
 		} );
 

@@ -17,6 +17,7 @@ import { TEST_IMAGE_PATH } from '../constants';
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	let testImage: TestFile;
 	let page: Page;
+	let loginPage: LoginPage;
 
 	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
@@ -24,19 +25,24 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 
 	beforeAll( async () => {
 		testImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
+		loginPage = new LoginPage( page );
+		await loginPage.visit();
 	} );
 
 	describe.each`
-		siteType      | user
+		siteType      | testAccount
 		${ 'Simple' } | ${ 'simpleSitePersonalPlanUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
-	`( 'Edit Image ($siteType)', function ( { user } ) {
+	`( 'Edit Image ($siteType)', function ( { testAccount } ) {
 		let mediaPage: MediaPage;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
+		afterAll( async () => {
 			await loginPage.visit();
-			await loginPage.logInWithTestAccount( user );
+			await loginPage.clickChangeAccount();
+		} );
+
+		it( `Log in with ${ testAccount }`, async function () {
+			await loginPage.logInWithTestAccount( testAccount );
 		} );
 
 		it( 'Navigate to Media', async function () {

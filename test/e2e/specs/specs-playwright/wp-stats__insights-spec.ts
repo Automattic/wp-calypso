@@ -13,20 +13,29 @@ import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	let page: Page;
+	let loginPage: LoginPage;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
+	beforeAll( async () => {
+		loginPage = new LoginPage( page );
+		await loginPage.visit();
+	} );
+
 	describe.each`
-		siteType      | user
+		siteType      | testAccount
 		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
-	`( 'View Insights ($siteType)', function ( { user } ) {
-		it( 'Log In', async function () {
-			const loginPage = new LoginPage( page );
+	`( 'View Insights ($siteType)', function ( { testAccount } ) {
+		afterAll( async () => {
 			await loginPage.visit();
-			await loginPage.logInWithTestAccount( user );
+			await loginPage.clickChangeAccount();
+		} );
+
+		it( `Log in with ${ testAccount }`, async function () {
+			await loginPage.logInWithTestAccount( testAccount );
 		} );
 
 		it( 'Navigate to Stats', async function () {

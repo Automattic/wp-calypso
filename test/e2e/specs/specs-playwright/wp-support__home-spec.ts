@@ -7,21 +7,30 @@ import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 	let page: Page;
+	let loginPage: LoginPage;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
+	beforeAll( async () => {
+		loginPage = new LoginPage( page );
+		await loginPage.visit();
+	} );
+
 	describe.each( [
-		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'eCommerceUser' },
-	] )( 'Search from Support Card ($siteType)', function ( { user } ) {
+		{ siteType: 'Simple', testAccount: 'defaultUser' },
+		{ siteType: 'Atomic', testAccount: 'eCommerceUser' },
+	] )( 'Search from Support Card ($siteType)', function ( { testAccount } ) {
 		let supportComponent: SupportComponent;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
+		afterAll( async () => {
 			await loginPage.visit();
-			await loginPage.logInWithTestAccount( user );
+			await loginPage.clickChangeAccount();
+		} );
+
+		it( `Log in with ${ testAccount }`, async function () {
+			await loginPage.logInWithTestAccount( testAccount );
 		} );
 
 		it( 'Displays default entries', async function () {

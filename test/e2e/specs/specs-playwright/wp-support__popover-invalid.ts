@@ -13,21 +13,30 @@ import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), function () {
 	let page: Page;
+	let loginPage: LoginPage;
 
 	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
+	beforeAll( async () => {
+		loginPage = new LoginPage( page );
+		await loginPage.visit();
+	} );
+
 	describe.each( [
-		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'eCommerceUser' },
-	] )( 'Unsupported search keywords ($siteType)', function ( { user } ) {
+		{ siteType: 'Simple', testAccount: 'defaultUser' },
+		{ siteType: 'Atomic', testAccount: 'eCommerceUser' },
+	] )( 'Unsupported search keywords ($siteType)', function ( { testAccount } ) {
 		let supportComponent: SupportComponent;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
+		afterAll( async () => {
 			await loginPage.visit();
-			await loginPage.logInWithTestAccount( user );
+			await loginPage.clickChangeAccount();
+		} );
+
+		it( `Log in with ${ testAccount }`, async function () {
+			await loginPage.logInWithTestAccount( testAccount );
 		} );
 
 		it( 'Open Settings page', async function () {
