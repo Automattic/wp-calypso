@@ -10,6 +10,10 @@
 			display: none;
 		}
 	}
+
+	&.loading .social-buttons__service-name {
+		@include placeholder();
+	}
 }
 
 .social-buttons__service-name {

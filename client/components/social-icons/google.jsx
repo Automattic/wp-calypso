@@ -8,6 +8,7 @@ import './style.scss';
 export default class GoogleIcon extends PureComponent {
 	static propTypes = {
 		isDisabled: PropTypes.bool,
+		isLoading: PropTypes.bool,
 		width: PropTypes.number,
 		height: PropTypes.number,
 	};
@@ -26,6 +27,7 @@ export default class GoogleIcon extends PureComponent {
 				className={ classNames( 'social-icons social-icons__google', {
 					'social-icons--enabled': ! this.props.isDisabled,
 					'social-icons--disabled': !! this.props.isDisabled,
+					placeholder: this.props.isLoading,
 				} ) }
 				width={ this.props.width }
 				height={ this.props.height }

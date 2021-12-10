@@ -3,7 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { cloneElement, Component, Fragment } from 'react';
+import { cloneElement, Component } from 'react';
 import { connect } from 'react-redux';
 import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -42,6 +42,7 @@ class GoogleLoginButton extends Component {
 		showError: false,
 		errorRef: null,
 		isDisabled: true,
+		isLoading: true,
 	};
 
 	constructor( props ) {
@@ -96,7 +97,10 @@ class GoogleLoginButton extends Component {
 			)
 			.then( ( gapi ) =>
 				this.initializeAuth2( gapi ).then( () => {
-					this.setState( { isDisabled: false } );
+					this.setState( {
+						isLoading: false,
+						isDisabled: false,
+					} );
 
 					const googleAuth = gapi.auth2.getAuthInstance();
 					const currentUser = googleAuth.currentUser.get();
@@ -111,6 +115,10 @@ class GoogleLoginButton extends Component {
 			)
 			.catch( ( error ) => {
 				this.initialized = null;
+
+				this.setState( {
+					isLoading: false,
+				} );
 
 				if ( 'idpiframe_initialization_failed' === error.error ) {
 					// This error is caused by 3rd party cookies being blocked.
@@ -190,6 +198,7 @@ class GoogleLoginButton extends Component {
 		const isDisabled = Boolean(
 			this.state.isDisabled || this.props.isFormDisabled || this.state.error
 		);
+		const { isLoading } = this.state;
 
 		const { children } = this.props;
 		let customButton = null;
@@ -208,12 +217,15 @@ class GoogleLoginButton extends Component {
 		}
 
 		return (
-			<Fragment>
+			<>
 				{ customButton ? (
 					customButton
 				) : (
 					<button
-						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+						className={ classNames( 'social-buttons__button button', {
+							disabled: isDisabled && ! isLoading,
+							loading: isLoading,
+						} ) }
 						onMouseOver={ this.showError }
 						onFocus={ this.showError }
 						onBlur={ this.hideError }
@@ -221,6 +233,7 @@ class GoogleLoginButton extends Component {
 					>
 						<GoogleIcon
 							isDisabled={ isDisabled }
+							isLoading={ isLoading }
 							width={ this.props.isReskinned ? 19 : 20 }
 							height={ this.props.isReskinned ? 19 : 20 }
 						/>
@@ -244,7 +257,7 @@ class GoogleLoginButton extends Component {
 				>
 					{ preventWidows( this.state.error ) }
 				</Popover>
-			</Fragment>
+			</>
 		);
 	}
 }
