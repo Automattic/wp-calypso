@@ -1,0 +1,18 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.two-columns-layout {
+	@include break-xlarge {
+		display: grid;
+		grid-template-columns: 1fr 315px;
+		column-gap: 48px;
+	}
+
+	&__content {
+		grid-column: 1 2;
+	}
+
+	&__sidebar {
+		grid-column: 2 3;
+	}
+}

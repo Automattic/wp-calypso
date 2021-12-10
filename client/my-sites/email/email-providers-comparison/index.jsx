@@ -238,14 +238,8 @@ class EmailProvidersComparison extends Component {
 			.then( () => {
 				if ( this.isMounted ) {
 					this.setState( { addingToCart: false } );
+					page( '/checkout/' + selectedSite.slug );
 				}
-				const { errors } = this.props?.cart?.messages;
-				if ( errors && errors.length ) {
-					// Stay on the page to show the relevant error(s)
-					return;
-				}
-
-				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
 
@@ -304,16 +298,8 @@ class EmailProvidersComparison extends Component {
 			.then( () => {
 				if ( this.isMounted ) {
 					this.setState( { addingToCart: false } );
+					page( '/checkout/' + selectedSite.slug );
 				}
-
-				const { errors } = this.props?.cart?.messages;
-
-				if ( errors && errors.length ) {
-					// Stay on the page to show the relevant error(s)
-					return;
-				}
-
-				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
 
@@ -393,7 +379,7 @@ class EmailProvidersComparison extends Component {
 					comment:
 						'{{fullPrice/}} is the formatted full price, e.g. $20; {{discountedPrice/}} is the discounted, formatted price, e.g. $10',
 			  } )
-			: translate( '{{price/}} /mailbox /month billed annually', {
+			: translate( '{{price/}} /mailbox /month (billed annually)', {
 					components: {
 						price: <span>{ monthlyPrice }</span>,
 					},
@@ -527,15 +513,10 @@ class EmailProvidersComparison extends Component {
 
 		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 
-		const now = Date.now();
-		const showBlackFridaySale =
-			new Date( '2021-11-26T00:05:00Z' ) < now &&
-			now < new Date( '2021-12-01T07:55:00Z' ).getTime();
-
 		const formattedPriceClassName = classNames( {
-			'email-providers-comparison__highlight-main-price': showBlackFridaySale,
 			'email-providers-comparison__keep-main-price': ! isEligibleForFreeTrial,
 		} );
+
 		const formattedPrice = translate( '{{price/}} /mailbox /month (billed monthly)', {
 			components: {
 				price: (
@@ -547,22 +528,7 @@ class EmailProvidersComparison extends Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const blackFridayDiscount = showBlackFridaySale ? (
-			<span
-				className={ classNames( {
-					'email-providers-comparison__discount-and-free-trial': isEligibleForFreeTrial,
-				} ) }
-			>
-				{ translate( '30% off applied for all renewals' ) }
-			</span>
-		) : null;
-
-		const discount = (
-			<>
-				{ isEligibleForFreeTrial ? translate( '3 months free' ) : null }
-				{ blackFridayDiscount }
-			</>
-		);
+		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
 
 		const logo = (
 			<Gridicon

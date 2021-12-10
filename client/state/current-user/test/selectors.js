@@ -2,7 +2,6 @@ import {
 	getCurrentUserId,
 	getCurrentUser,
 	getCurrentUserLocale,
-	getCurrentUserLocaleVariant,
 	getCurrentUserDate,
 	isUserLoggedIn,
 	getCurrentUserEmail,
@@ -93,45 +92,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( locale ).toBe( 'fr' );
-		} );
-	} );
-
-	describe( '#getCurrentUserLocaleVariant', () => {
-		test( 'should return null if the current user is not set', () => {
-			const locale = getCurrentUserLocaleVariant( {
-				currentUser: {
-					id: null,
-				},
-			} );
-
-			expect( locale ).toBeNull();
-		} );
-
-		test( 'should return null if the current user locale slug is not set', () => {
-			const locale = getCurrentUserLocaleVariant( {
-				currentUser: {
-					id: 73705554,
-					user: { ID: 73705554, login: 'testonesite2014' },
-				},
-			} );
-
-			expect( locale ).toBeNull();
-		} );
-
-		test( 'should return the current user locale variant slug', () => {
-			const locale = getCurrentUserLocaleVariant( {
-				currentUser: {
-					id: 73705554,
-					user: {
-						ID: 73705554,
-						login: 'testonesite2014',
-						localeSlug: 'fr',
-						localeVariant: 'fr_formal',
-					},
-				},
-			} );
-
-			expect( locale ).toBe( 'fr_formal' );
 		} );
 	} );
 

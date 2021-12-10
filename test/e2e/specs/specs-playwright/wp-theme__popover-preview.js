@@ -46,6 +46,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = new ThemesPage( page );
+		// 2021-11-29: Turn this on when premium themes are activated for everyone. -mreishus
+		// await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 

@@ -325,7 +325,7 @@ export function generateSteps( {
 		},
 		'domain-only': {
 			stepName: 'domain-only',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
+			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
@@ -541,24 +541,6 @@ export function generateSteps( {
 			],
 		},
 
-		/* Import onboarding */
-		'import-url': {
-			stepName: 'import-url',
-			providesDependencies: [
-				'importSiteEngine',
-				'importSiteFavicon',
-				'importSiteUrl',
-				'siteTitle',
-				'suggestedDomain',
-				'themeSlugWithRepo',
-			],
-		},
-
-		'import-preview': {
-			stepName: 'import-preview',
-			dependencies: [ 'importSiteEngine', 'importSiteFavicon', 'importSiteUrl', 'siteTitle' ],
-		},
-
 		'reader-landing': {
 			stepName: 'reader-landing',
 			providesDependencies: [],
@@ -741,8 +723,8 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
@@ -753,7 +735,7 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
 				hideSkip: true,
@@ -764,13 +746,14 @@ export function generateSteps( {
 			},
 		},
 		'difm-design': {
+			// TODO: Temporary step to be deleted
 			stepName: 'difm-design',
 			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'siteSlug', 'selectedDesign' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'typeformResponseId' ],
 			apiRequestFunction: addPlanToCart,
 		},
 
@@ -789,33 +772,19 @@ export function generateSteps( {
 		},
 
 		// Woocommerce Install steps
-		'select-site': {
-			stepName: 'select-site',
-			providesDependencies: [ 'siteId' ],
-			props: {
-				headerText: i18n.translate( 'Select a site' ),
-				subHeaderText: i18n.translate(
-					'Pick which site you would like to use to set up your new store.'
-				),
-			},
-		},
 		confirm: {
 			stepName: 'confirm',
 			props: {
-				headerTitle: i18n.translate( 'Your new store' ),
-				headerDescription: (
-					<>
-						{ i18n.translate( 'This will be your new store domain.' ) }
-						<br />
-						{ i18n.translate( 'You can change it later and get a custom one.' ) }
-					</>
+				headerTitle: i18n.translate( 'One final step' ),
+				headerDescription: i18n.translate(
+					'We’ve highlighted a few important details you should review before we create your store. '
 				),
 			},
-			dependencies: [ 'siteId' ],
+			dependencies: [ 'site' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-			dependencies: [ 'siteId' ],
+			dependencies: [ 'site' ],
 		},
 	};
 }

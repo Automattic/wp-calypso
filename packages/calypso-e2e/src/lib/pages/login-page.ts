@@ -148,6 +148,15 @@ export class LoginPage {
 		return { username: username, password: password };
 	}
 
+	/**
+	 * Fills and submits the login form with given credentials.
+	 *
+	 * @param {LoginCredentials | TestAccount} credentials
+	 */
+	async fillAndSubmit( credentials: LoginCredentials | TestAccount ): Promise< void > {
+		await this.baseflow( await this.resolveUserCredentials( credentials ) );
+	}
+
 	/* Log in methods */
 
 	/**
@@ -179,12 +188,14 @@ export class LoginPage {
 				await Promise.all( [
 					// Shorter than usual timoout, because with a cookie file the login process
 					// should not take more than a few seconds.
-					this.page.waitForNavigation( { url: landingUrl, waitUntil: 'load', timeout: 15 * 1000 } ),
+					this.page.waitForNavigation( { url: landingUrl, waitUntil: 'load', timeout: 7 * 1000 } ),
 					this.page.goto( getCalypsoURL( '/' ) ),
 				] );
 				return;
-			} catch {
-				console.log( 'Unable to log in using cookie file, retrying a normal login.' );
+			} catch ( err: unknown ) {
+				if ( err instanceof Error ) {
+					console.log( `${ err.message }, retrying username/password based authentication.` );
+				}
 				// noop
 			}
 		}

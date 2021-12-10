@@ -9,7 +9,10 @@ import {
 	sanitizeEmailSuggestion,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
-import TitanNewMailbox from 'calypso/my-sites/email/titan-new-mailbox';
+import TitanNewMailbox, {
+	TITAN_FULL_NAME_FIELD,
+	TITAN_PASSWORD_RESET_FIELD,
+} from 'calypso/my-sites/email/titan-new-mailbox';
 
 import './style.scss';
 
@@ -17,6 +20,7 @@ const noop = () => {};
 
 const TitanNewMailboxList = ( {
 	children,
+	hiddenFieldNames = [],
 	selectedDomainName,
 	mailboxes,
 	onMailboxesChange,
@@ -44,7 +48,7 @@ const TitanNewMailboxList = ( {
 			return updatedMailbox;
 		} );
 
-		onMailboxesChange( validateMailboxes( updatedMailboxes ) );
+		onMailboxesChange( validateMailboxes( updatedMailboxes, hiddenFieldNames ) );
 	};
 
 	const onMailboxAdd = () => {
@@ -85,6 +89,7 @@ const TitanNewMailboxList = ( {
 						mailbox={ mailbox }
 						onReturnKeyPress={ onReturnKeyPress }
 						showAllErrors={ validatedMailboxUuids.includes( mailbox.uuid ) }
+						hiddenFieldNames={ hiddenFieldNames }
 					/>
 
 					<div className="titan-new-mailbox-list__actions">
@@ -123,6 +128,9 @@ TitanNewMailboxList.propTypes = {
 	onMailboxesChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func,
 	showAddAnotherMailboxButton: PropTypes.bool,
+	hiddenFieldNames: PropTypes.arrayOf(
+		PropTypes.oneOf( [ TITAN_FULL_NAME_FIELD, TITAN_PASSWORD_RESET_FIELD ] )
+	),
 };
 
 export default TitanNewMailboxList;

@@ -16,7 +16,7 @@
 	}
 
 	& &__domain-illustration {
-		//margin-top: 56px;
+		margin-bottom: 36px;
 	}
 
 	& &__domain-input-fieldset {
@@ -50,7 +50,6 @@
 			flex-direction: row;
 		}
 
-
 		&-fieldset {
 			flex-grow: 1;
 		}
@@ -78,5 +77,3 @@ button.action_buttons__button.action-buttons__back.use-my-domain__go-back {
 	margin: 16px 0 0 16px;
 	text-decoration: none;
 }
-
-

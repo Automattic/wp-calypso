@@ -81,9 +81,10 @@ export function getAvailableDesigns( {
 		designs.featured = shuffle( designs.featured );
 	}
 
-	// Force blank canvas design to always be first in the list
+	// Force designs using a "featured" term in the theme_picks taxonomy to always be first in the list.
+	// For example: Blank Canvas.
 	designs.featured = designs.featured.sort(
-		( a, b ) => Number( isBlankCanvasDesign( b ) ) - Number( isBlankCanvasDesign( a ) )
+		( a, b ) => Number( !! b.is_featured_picks ) - Number( !! a.is_featured_picks )
 	);
 
 	return designs;

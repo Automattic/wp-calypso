@@ -37,7 +37,7 @@
 		font-size: $font-title-small;
 		font-weight: 500;
 
-		&[class*='search-'] {
+		&[class*='plugins-browser-list__search-for'] {
 			font-weight: 400;
 		}
 	}

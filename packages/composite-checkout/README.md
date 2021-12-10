@@ -30,7 +30,6 @@ Most components of this package require being inside a [CheckoutProvider](#check
 Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
 
 - [useAllPaymentMethods](#useAllPaymentMethods)
-- [useEvents](#useEvents)
 - [useFormStatus](#useFormStatus)
 - [useTransactionStatus](#useTransactionStatus)
 - [usePaymentProcessor](#usePaymentProcessor)
@@ -156,7 +155,7 @@ It has the following props.
 - `onPaymentError?: ({paymentMethodId: string | null, transactionError: string | null }) => null`. A function to call for payment methods when payment is not successful.
 - `onPageLoadError?: ( errorType: string, errorMessage: string, errorData?: Record< string, string | number | undefined > ) => void`. A function to call when an internal error boundary triggered.
 - `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
-- `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
+- `onPaymentMethodChanged?: (method: string) => void`. A function to call when the active payment method is changed. The argument will be the method's id.
 - `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods).
 - `paymentProcessors: object`. A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
 - `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to [`.LOADING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
@@ -380,10 +379,6 @@ An action creator function to be used by a [payment processor function](#payment
 ### useAllPaymentMethods
 
 A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
-
-### useEvents
-
-A React Hook that will return the `onEvent` callback as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### useFormStatus
 

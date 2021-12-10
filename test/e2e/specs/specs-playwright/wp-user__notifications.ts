@@ -1,5 +1,5 @@
 /**
- * @group calypso-pr
+ * @group quarantined
  */
 
 import {

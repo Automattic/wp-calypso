@@ -37,12 +37,12 @@ import {
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
-import { getForCurrentCROIteration, Iterations } from './iterations';
+import type { Iterations } from './iterations';
 import type { SelectorProduct } from './types';
 import type { JetpackPlanSlug } from '@automattic/calypso-products';
 
 export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
-export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 40;
+export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 50;
 
 // Types of items. This determines the card UI.
 export const ITEM_TYPE_PLAN = 'item-type-plan';
@@ -170,18 +170,9 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record<
  * Constants that contain products including option and regular types.
  */
 
-export const SELECTOR_PLANS = getForCurrentCROIteration( {
-	[ Iterations.ONLY_REALTIME_PRODUCTS ]: [
-		PLAN_JETPACK_SECURITY_T1_YEARLY,
-		PLAN_JETPACK_SECURITY_T1_MONTHLY,
-		PLAN_JETPACK_COMPLETE,
-		PLAN_JETPACK_COMPLETE_MONTHLY,
-	],
-} ) ?? [
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	PLAN_JETPACK_SECURITY_REALTIME,
-	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+export const SELECTOR_PLANS = [
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];

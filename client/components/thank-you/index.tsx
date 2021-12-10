@@ -148,9 +148,9 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	const {
-		headerBackgroundColor = '#0675C4',
+		headerBackgroundColor = 'var( --studio-blue-50 )',
 		headerClassName,
-		headerTextColor = 'white',
+		headerTextColor = 'var( --studio-white )',
 		containerClassName,
 		sections,
 		showSupportSection = true,
@@ -177,8 +177,8 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		background-color: ${ headerBackgroundColor };
 		min-height: 352px;
 		img {
-			width: auto;
-			height: 200px;
+			width: ${ thankYouImage.width ? null : 'auto' };
+			height: ${ thankYouImage.height ? null : '200px' };
 			margin-bottom: 14px;
 		}
 	`;

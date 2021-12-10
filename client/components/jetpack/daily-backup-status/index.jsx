@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useRef } from 'react';
@@ -131,14 +130,13 @@ DailyBackupStatus.propTypes = {
 };
 
 const Wrapper = ( props ) => {
-	const displayRulesEnabled = isEnabled( 'activity-log/display-rules' );
 	const siteId = useSelector( getSelectedSiteId );
 
 	// Fetch the status of the most recent backups
 	// to see if there's a backup currently in progress
 	return (
 		<Card className="daily-backup-status">
-			{ displayRulesEnabled && <QueryRewindPolicies siteId={ siteId } /> }
+			<QueryRewindPolicies siteId={ siteId } />
 			<QueryRewindBackups siteId={ siteId } />
 			<DailyBackupStatus { ...props } />
 		</Card>

@@ -1,5 +1,6 @@
-import { useEvents } from '@automattic/composite-checkout';
 import { useState, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export type CouponFieldStateProps = {
 	couponFieldValue: string;
@@ -13,7 +14,7 @@ export type CouponFieldStateProps = {
 export default function useCouponFieldState(
 	applyCoupon: ( couponId: string ) => void
 ): CouponFieldStateProps {
-	const onEvent = useEvents();
+	const reduxDispatch = useDispatch();
 	const [ couponFieldValue, setCouponFieldValue ] = useState< string >( '' );
 
 	// Used to hide the `Apply` button
@@ -34,21 +35,23 @@ export default function useCouponFieldState(
 		const trimmedValue = couponFieldValue.trim();
 
 		if ( isCouponValid( trimmedValue ) ) {
-			onEvent( {
-				type: 'a8c_checkout_add_coupon',
-				payload: { coupon: trimmedValue },
-			} );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_coupon_add_submit', {
+					coupon: trimmedValue,
+				} )
+			);
 
 			applyCoupon( trimmedValue );
 
 			return;
 		}
 
-		onEvent( {
-			type: 'a8c_checkout_add_coupon_error',
-			payload: { type: 'Invalid code' },
-		} );
-	}, [ couponFieldValue, onEvent, applyCoupon ] );
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_composite_coupon_add_error', {
+				error_type: 'Invalid code',
+			} )
+		);
+	}, [ couponFieldValue, reduxDispatch, applyCoupon ] );
 
 	return {
 		couponFieldValue,
