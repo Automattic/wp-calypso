@@ -16,6 +16,7 @@ import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	let page: Page;
+	let loginPage: LoginPage;
 	let publishedPostsListPage: PublishedPostsListPage;
 	let notificationsComponent: NotificationsComponent;
 
@@ -29,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {
 		it( `Log in as ${ commentingUser }`, async function () {
-			const loginPage = new LoginPage( page );
+			loginPage = new LoginPage( page );
 			await loginPage.visit();
 			await loginPage.logInWithTestAccount( commentingUser );
 		} );
@@ -67,7 +68,8 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 		} );
 
 		it( `Log in as ${ notificationsUser }`, async function () {
-			const loginPage = new LoginPage( notificationsPage );
+			await loginPage.visit();
+			await loginPage.clickChangeAccount();
 			await loginPage.logInWithTestAccount( notificationsUser );
 		} );
 
