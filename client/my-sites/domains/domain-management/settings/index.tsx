@@ -11,7 +11,7 @@ import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/dom
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import SettingsHeader from './settings-header';
-import { SettingsPageProps } from './types';
+import { SettingsPageConnectedProps, SettingsPagePassedProps, SettingsPageProps } from './types';
 
 const Settings = ( props: SettingsPageProps ): JSX.Element => {
 	const domain = props.domains && getSelectedDomain( props );
@@ -94,9 +94,12 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 	);
 };
 
-export default connect( ( state, ownProps: SettingsPageProps ) => {
-	return {
-		currentRoute: getCurrentRoute( state ),
-		hasDomainOnlySite: isDomainOnlySite( state, ownProps.selectedSite!.ID ),
-	};
-} )( Settings );
+export default connect(
+	( state, ownProps: SettingsPagePassedProps ): SettingsPageConnectedProps => {
+		return {
+			domain: getSelectedDomain( ownProps )!,
+			currentRoute: getCurrentRoute( state ),
+			hasDomainOnlySite: Boolean( isDomainOnlySite( state, ownProps.selectedSite!.ID ) ),
+		};
+	}
+)( Settings );
