@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { englishLocales } from '@automattic/i18n-utils';
-import { localize, LocalizeProps, getLocaleSlug } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
 import { write, play, design } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
@@ -30,9 +29,7 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 			icon: play,
 			value: 'courses',
 			actionText: translate( 'Start learning' ),
-			disabled: ! (
-				isEnabled( 'signup/starting-point-courses' ) && englishLocales.includes( getLocaleSlug() )
-			),
+			disabled: ! isEnabled( 'signup/starting-point-courses' ),
 		},
 		{
 			key: 'design',
