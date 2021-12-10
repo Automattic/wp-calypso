@@ -1,7 +1,10 @@
+import { translate } from 'i18n-calypso';
 import { ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 const initiateAtomicTransferandInstall = ( action ) =>
 	http(
@@ -16,15 +19,23 @@ const initiateAtomicTransferandInstall = ( action ) =>
 		action
 	);
 
-export const receiveError = ( error ) => {
-	return error;
-};
+const receiveResponse = () => [
+	recordTracksEvent( 'calypso_atomic_transfer_inititate_success', {
+		context: 'atomic_transfer',
+	} ),
+];
 
-export const receiveResponse = ( action, { success } ) => {
-	return success;
-};
+const receiveError = ( action, error ) => [
+	recordTracksEvent( 'calypso_atomic_transfer_inititate_failure', {
+		context: 'atomic_transfer',
+		error: error.error,
+	} ),
+	errorNotice(
+		translate( "Sorry, we've hit a snag. Please contact support so we can help you out." )
+	),
+];
 
-registerHandlers( 'state/data-layer/wpcom/sites/atomic-transfers/initiate', {
+registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfers', {
 	[ ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER ]: [
 		dispatchRequest( {
 			fetch: initiateAtomicTransferandInstall,

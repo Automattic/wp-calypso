@@ -1,0 +1,54 @@
+import {
+	ATOMIC_PLUGIN_INSTALL_INITIATE,
+	ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS,
+	ATOMIC_PLUGIN_INSTALL_SET_STATUS,
+} from 'calypso/state/action-types';
+import 'calypso/state/data-layer/wpcom/sites/atomic/software';
+import 'calypso/state/atomic/init';
+
+/**
+ * Initiate plugin install and activation.
+ *
+ * @param {string} siteId Site ID.
+ * @param {string} softwareSet Software set slug.
+ * @returns {object} An action object.
+ */
+export const requestAtomicSoftwareInstall = ( siteId: number, softwareSet: string ) => ( {
+	type: ATOMIC_PLUGIN_INSTALL_INITIATE,
+	siteId,
+	softwareSet,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+			requestKey: `${ ATOMIC_PLUGIN_INSTALL_INITIATE }-${ siteId }-${ softwareSet }`,
+		},
+	},
+} );
+
+/**
+ * Fetch install status.
+ *
+ * @param {string} siteId Site ID.
+ * @param {string} softwareSet Software set slug.
+ * @returns {object} An action object.
+ */
+export const requestAtomicSoftwareStatus = ( siteId: number, softwareSet: string ) => ( {
+	type: ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS,
+	siteId,
+	softwareSet,
+} );
+
+/**
+ * Set the install status.
+ *
+ * @param {number} siteId The site id to which the status belongs.
+ * @param {string} softwareSet The software set slug.
+ * @param {string} status The new status of the transfer.
+ * @returns {object} An action object
+ */
+export const setAtomicSoftwareStatus = ( siteId: number, softwareSet: string, status: any ) => ( {
+	type: ATOMIC_PLUGIN_INSTALL_SET_STATUS,
+	siteId,
+	softwareSet,
+	status,
+} );
