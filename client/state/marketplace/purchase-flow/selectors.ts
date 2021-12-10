@@ -1,6 +1,4 @@
 import 'calypso/state/marketplace/init';
-import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
-import { getProductDefinition } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import {
 	IPurchaseFlowState,
 	MARKETPLACE_ASYNC_PROCESS_STATUS,
@@ -11,22 +9,6 @@ import { IAppState } from 'calypso/state/types';
 
 export function getPrimaryDomainCandidate( state: IAppState ): string | null {
 	return state.marketplace.purchaseFlow.primaryDomain;
-}
-
-export function getIsPluginInstalledDuringPurchase( state: IAppState ): boolean | null {
-	const { productSlugInstalled: productSlug, productGroupSlug } = state.marketplace.purchaseFlow;
-	if ( productSlug === null || productGroupSlug === null ) {
-		marketplaceDebugger( 'Product slug to be installed not set' );
-		return null;
-	}
-
-	const productDefinition = getProductDefinition( productGroupSlug, productSlug );
-	const { isPurchasableProduct } = productDefinition ?? {};
-	if ( isPurchasableProduct === null || isPurchasableProduct === undefined ) {
-		marketplaceDebugger( 'isPurchasableProduct not set in product definition' );
-		return null;
-	}
-	return isPurchasableProduct;
 }
 
 export function getPurchaseFlowState( state: IAppState ): IPurchaseFlowState {

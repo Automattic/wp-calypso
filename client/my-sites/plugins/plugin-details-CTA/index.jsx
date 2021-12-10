@@ -173,7 +173,7 @@ function onClickInstallPlugin( { dispatch, selectedSite, slug, upgradeAndInstall
 		} )
 	);
 
-	dispatch( productToBeInstalled( null, slug, selectedSite.slug ) );
+	dispatch( productToBeInstalled( slug, selectedSite.slug ) );
 
 	const installPluginURL = `/marketplace/${ slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {
