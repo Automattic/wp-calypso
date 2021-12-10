@@ -43,6 +43,12 @@
 
 	list-style-type: none;
 
+	@include break-small {
+		grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+	}
+}
+
+.product-grid__plan-grid {
 	> li.is-featured {
 		// Put featured item(s) in first position
 		order: -2;
@@ -51,10 +57,6 @@
 	> li:last-child {
 		// Put last item below featured items
 		order: -1;
-	}
-
-	@include break-small {
-		grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
 	}
 }
 
