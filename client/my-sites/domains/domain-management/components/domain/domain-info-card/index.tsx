@@ -31,6 +31,9 @@ const DomainInfoCard = ( props: GenericActionCardProps ): JSX.Element => {
 				</ActionCard>
 			);
 
+		case 'custom':
+			return <ActionCard { ...cardProps }>{ props.cta }</ActionCard>;
+
 		default:
 			return <ActionCard { ...cardProps } />;
 	}

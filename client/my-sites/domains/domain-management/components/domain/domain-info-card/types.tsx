@@ -2,6 +2,7 @@ import { TranslateResult } from 'i18n-calypso';
 import ActionCard from 'calypso/components/action-card';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 type ActionCardPropsBase = {
 	title: TranslateResult;
@@ -22,6 +23,11 @@ type ActionCardPropsWithCallback = ActionCardPropsWithCta & {
 	onClick: () => void;
 };
 
+type ActionCardPropsWithCustomCta = ActionCardPropsBase & {
+	type: 'custom';
+	cta: React.ReactNode;
+};
+
 type ActionCardPropsWithHref = ActionCardPropsWithCta & {
 	type: 'href';
 	href: string;
@@ -30,11 +36,17 @@ type ActionCardPropsWithHref = ActionCardPropsWithCta & {
 export type GenericActionCardProps =
 	| ActionCardPropsWithHref
 	| ActionCardPropsWithCallback
+	| ActionCardPropsWithCustomCta
 	| ActionCardPropsInfoOnly;
 
 export type DomainInfoCardProps = {
 	domain: ResponseDomain;
 	selectedSite: SiteData;
+};
+export type DomainDeleteInfoCardProps = DomainInfoCardProps & {
+	selectedSite: SiteData;
+	purchase: Purchase | null;
+	isLoadingPurchase: boolean;
 };
 
 export type CardProps = Partial< React.ComponentProps< typeof ActionCard > > & {

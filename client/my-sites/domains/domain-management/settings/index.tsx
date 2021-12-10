@@ -6,7 +6,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import DomainInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card';
+import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -48,11 +48,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 		<>
 			<DomainEmailInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
 			<DomainTransferInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
-			<DomainInfoCard
-				title={ translate( 'Delete' ) }
-				description={ translate( 'Remove this domain permanently' ) }
-				ctaText={ translate( 'Delete' ) }
-			/>
+			<DomainDeleteInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
 		</>
 	);
 
