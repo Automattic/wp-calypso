@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
@@ -33,48 +32,44 @@ const identity = ( theme ) => theme;
 function getAllThemeOptions( { translate, blockEditorSettings } ) {
 	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 
-	const purchase = config.isEnabled( 'upgrades/checkout' )
-		? {
-				label: translate( 'Purchase', {
-					context: 'verb',
-				} ),
-				extendedLabel: translate( 'Purchase this design' ),
-				header: translate( 'Purchase on:', {
-					context: 'verb',
-					comment: 'label for selecting a site for which to purchase a theme',
-				} ),
-				getUrl: getThemePurchaseUrl,
-				hideForTheme: ( state, themeId, siteId ) =>
-					isJetpackSite( state, siteId ) || // No individual theme purchase on a JP site
-					! isUserLoggedIn( state ) || // Not logged in
-					! isThemePremium( state, themeId ) || // Not a premium theme
-					isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
-					isThemeActive( state, themeId, siteId ), // Already active
-		  }
-		: {};
+	const purchase = {
+		label: translate( 'Purchase', {
+			context: 'verb',
+		} ),
+		extendedLabel: translate( 'Purchase this design' ),
+		header: translate( 'Purchase on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to purchase a theme',
+		} ),
+		getUrl: getThemePurchaseUrl,
+		hideForTheme: ( state, themeId, siteId ) =>
+			isJetpackSite( state, siteId ) || // No individual theme purchase on a JP site
+			! isUserLoggedIn( state ) || // Not logged in
+			! isThemePremium( state, themeId ) || // Not a premium theme
+			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
+			isThemeActive( state, themeId, siteId ), // Already active
+	};
 
-	const upgradePlan = config.isEnabled( 'upgrades/checkout' )
-		? {
-				label: translate( 'Upgrade to activate', {
-					comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
-				} ),
-				extendedLabel: translate( 'Upgrade to activate', {
-					comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
-				} ),
-				header: translate( 'Upgrade on:', {
-					context: 'verb',
-					comment: 'label for selecting a site for which to upgrade a plan',
-				} ),
-				getUrl: ( state, themeId, siteId ) =>
-					getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
-				hideForTheme: ( state, themeId, siteId ) =>
-					! isJetpackSite( state, siteId ) ||
-					! isUserLoggedIn( state ) ||
-					! isThemePremium( state, themeId ) ||
-					isThemeActive( state, themeId, siteId ) ||
-					isPremiumThemeAvailable( state, themeId, siteId ),
-		  }
-		: {};
+	const upgradePlan = {
+		label: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		getUrl: ( state, themeId, siteId ) =>
+			getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
+		hideForTheme: ( state, themeId, siteId ) =>
+			! isJetpackSite( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! isThemePremium( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
 
 	const activate = {
 		label: translate( 'Activate' ),
