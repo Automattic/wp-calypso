@@ -47,7 +47,23 @@ const isServer = typeof window === 'undefined' || ! window.matchMedia;
 
 const noop = () => null;
 
-export type MinimalMediaQueryList = { matches: boolean };
+export type ListenerCallback = ( matches: boolean ) => void;
+export type UnsubcribeCallback = () => void;
+export type MinimalMediaQueryList = {
+	matches: boolean;
+	addListener: MediaQueryList[ 'addListener' ];
+	removeListener: MediaQueryList[ 'removeListener' ];
+};
+
+function addListenerFunctions(
+	obj: Pick< MinimalMediaQueryList, 'matches' >
+): MinimalMediaQueryList {
+	return {
+		addListener: () => undefined,
+		removeListener: () => undefined,
+		...obj,
+	};
+}
 
 function createMediaQueryList(
 	args: undefined | { min?: number; max?: number }
@@ -55,19 +71,19 @@ function createMediaQueryList(
 	const { min, max } = args ?? {};
 	if ( min !== undefined && max !== undefined ) {
 		return isServer
-			? { matches: SERVER_WIDTH > min && SERVER_WIDTH <= max }
+			? addListenerFunctions( { matches: SERVER_WIDTH > min && SERVER_WIDTH <= max } )
 			: window.matchMedia( `(min-width: ${ min + 1 }px) and (max-width: ${ max }px)` );
 	}
 
 	if ( min !== undefined ) {
 		return isServer
-			? { matches: SERVER_WIDTH > min }
+			? addListenerFunctions( { matches: SERVER_WIDTH > min } )
 			: window.matchMedia( `(min-width: ${ min + 1 }px)` );
 	}
 
 	if ( max !== undefined ) {
 		return isServer
-			? { matches: SERVER_WIDTH <= max }
+			? addListenerFunctions( { matches: SERVER_WIDTH <= max } )
 			: window.matchMedia( `(max-width: ${ max }px)` );
 	}
 
@@ -120,9 +136,6 @@ export function isWithinBreakpoint( breakpoint: string ): boolean {
 	const mediaQueryList = getMediaQueryList( breakpoint );
 	return mediaQueryList ? mediaQueryList.matches : false;
 }
-
-export type ListenerCallback = ( matches: boolean ) => void;
-export type UnsubcribeCallback = () => void;
 
 /**
  * Registers a listener to be notified of changes to breakpoint matching status.
