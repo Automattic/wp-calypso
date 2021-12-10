@@ -6,8 +6,6 @@ import {
 } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React, { FunctionComponent, ReactElement } from 'react';
-import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
@@ -85,75 +83,4 @@ export const recordTracksEventAddToCartClick = (
 		user_can_add_email: userCanAddEmail,
 		user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
 	} );
-};
-
-type PriceWithIntervalProps = {
-	className: string;
-	cost: number;
-	currencyCode: string;
-	hasDiscount: boolean;
-	sale?: number | null;
-	intervalLength: IntervalLength;
-};
-
-export const PriceWithInterval: FunctionComponent< PriceWithIntervalProps > = ( props ) => {
-	const { className, cost, currencyCode, hasDiscount, sale, intervalLength } = props;
-
-	const costClassName = `${ className }__${ hasDiscount ? 'discounted-price' : 'keep-main-price' }`;
-	const intervalLengthClassName = `${ className }__interval`;
-	const mailboxClassName = `${ className }__mailbox`;
-	const saleClassName = `${ className }__sale`;
-
-	const showSale = sale && sale !== 0;
-
-	const lineThrough = {
-		textDecoration: hasDiscount || showSale ? 'line-through' : 'solid ',
-	};
-
-	const priceSpan = (
-		<span style={ lineThrough } className={ costClassName }>
-			{ formatCurrency( cost ?? 0, currencyCode ) }
-		</span>
-	);
-	const saleSpan = (
-		<span className={ saleClassName }>{ formatCurrency( sale ?? 0, currencyCode ) }</span>
-	);
-	const intervalLengthSpan =
-		intervalLength === 'annually' ? (
-			<span className={ intervalLengthClassName }>/{ translate( 'annually' ) }</span>
-		) : (
-			<span className={ intervalLengthClassName }>/{ translate( 'monthly' ) }</span>
-		);
-
-	const mailboxSpan = <span className={ mailboxClassName }> /{ translate( 'mailbox' ) } </span>;
-
-	return (
-		<>
-			{ priceSpan } { showSale && saleSpan } { mailboxSpan } { intervalLengthSpan }
-		</>
-	);
-};
-
-type PriceBadgeProps = {
-	additionalPriceInformationComponent?: ReactElement | null;
-	className: string;
-	priceComponent: ReactElement;
-};
-
-export const PriceBadge: FunctionComponent< PriceBadgeProps > = ( props ) => {
-	const { additionalPriceInformationComponent, className, priceComponent } = props;
-	const priceBadgeClass = `${ className }__price-badge`;
-	const additionalPriceInformationClass = `${ className }__provider-additional-price-information`;
-	return (
-		<div className={ priceBadgeClass }>
-			<PromoCardPrice
-				formattedPrice={ priceComponent }
-				additionalPriceInformation={
-					<span className={ additionalPriceInformationClass }>
-						{ additionalPriceInformationComponent }
-					</span>
-				}
-			/>
-		</div>
-	);
 };

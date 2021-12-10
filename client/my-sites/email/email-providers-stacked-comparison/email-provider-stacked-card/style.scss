@@ -213,7 +213,7 @@ h2.action-panel__title {
 			width: $width-left-panel-card;
 		}
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include break-xlarge {
 			margin-top: 0;
 		}
 
@@ -256,6 +256,7 @@ h2.action-panel__title {
 			margin-top: 12px;
 			width: calc( 100% - 10px );
 			margin-left: 10px;
+
 			@include break-large {
 				margin-top: 0px;
 				margin-left: 10px;
@@ -299,16 +300,24 @@ h2.action-panel__title {
 
 	@include break-small {
 		min-width: $width-left-panel-card;
+		max-width: $width-left-panel-card;
 		flex-basis: content;
 	}
 }
 
-.form-text-input-with-affixes__suffix {
-	font-weight: normal;
+.gsuite-new-user-list__new-user-email {
+	.form-label {
+		.form-text-input-with-affixes {
+			.form-text-input-with-affixes__suffix {
+				font-weight: normal;
+			}
+		}
+	}
 }
 
 .email-providers-stacked-comparison__main.main {
 	margin: 12px auto;
+
 	@include break-mobile {
 		flex-direction: row;
 	}
@@ -316,12 +325,14 @@ h2.action-panel__title {
 	.card.action-panel.promo-card.email-providers-stacked-comparison__provider-card {
 		display: flex;
 		flex-direction: row;
+
 		.action-panel__figure {
 			margin-top: 3px;
 
 			@include break-mobile {
 				max-width: 24px;
 				order: 1;
+
 				&.align-left {
 					order: -1;
 				}
@@ -330,13 +341,13 @@ h2.action-panel__title {
 	}
 }
 
-
 .email-provider-stacked-features__toggle-button {
 	overflow: visible;
 	white-space: nowrap;
 	cursor: pointer;
 	display: flex;
 	justify-content: space-between;
+	margin-top: 8px;
 	width: calc( 100% - 26px );
 	.gridicon {
 		margin-left: 5px;

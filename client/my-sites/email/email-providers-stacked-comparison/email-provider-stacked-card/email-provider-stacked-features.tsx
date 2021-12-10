@@ -1,10 +1,12 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, MouseEventHandler } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { TranslateResult } from 'i18n-calypso';
+import type { FunctionComponent, MouseEventHandler } from 'react';
 
 import './style.scss';
+import * as React from 'react';
+import { ESCAPE } from '@wordpress/keycodes';
 
 export interface EmailProviderStackedFeatureProps {
 	title: TranslateResult;
@@ -61,18 +63,13 @@ export const EmailProviderStackedFeaturesToggleButton: FunctionComponent< EmailP
 	const { handleClick, isRelatedContentExpanded } = props;
 
 	return (
-		// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/interactive-supports-focus
-		<span
-			role="button"
-			className="email-provider-stacked-features__toggle-button"
-			onClick={ handleClick }
-		>
+		<button className="email-provider-stacked-features__toggle-button" onClick={ handleClick }>
 			<span className="email-provider-stacked-features__toggle-text">
 				{ translate( 'Show all features' ) }
 			</span>
 
 			<Gridicon icon={ isRelatedContentExpanded ? 'chevron-up' : 'chevron-down' } />
-		</span>
+		</button>
 	);
 };
 

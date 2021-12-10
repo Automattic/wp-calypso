@@ -1,13 +1,14 @@
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
-import { FunctionComponent, useState } from 'react';
+import { useState } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import {
 	EmailProviderStackedFeatures,
 	EmailProviderStackedFeaturesToggleButton,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
 import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
+import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
