@@ -27,8 +27,9 @@ function LaunchWpcomWelcomeTour() {
 	} ) );
 
 	const localeSlug = useLocale();
+
 	// Preload first card image (others preloaded after open state confirmed)
-	new window.Image().src = usePrefetchTourAssets( [ getTourSteps( localeSlug )[ 0 ] ] );
+	usePrefetchTourAssets( [ getTourSteps( localeSlug )[ 0 ] ] );
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
