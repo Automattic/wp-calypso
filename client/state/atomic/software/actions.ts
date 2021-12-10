@@ -6,6 +6,20 @@ import {
 import 'calypso/state/data-layer/wpcom/sites/atomic/software';
 import 'calypso/state/atomic/init';
 
+interface AtomicSoftwareAction {
+	type: string;
+	siteId: number;
+	softwareSet: string;
+	status?: AtomicSoftwareStatus;
+	meta?: { dataLayer?: { trackRequest: boolean; requestKey: string } };
+}
+
+interface AtomicSoftwareStatus {
+	blog_id: number;
+	software_set: Record< string, { path: string; state: string } >;
+	applided: boolean;
+}
+
 /**
  * Initiate plugin install and activation.
  *
@@ -13,7 +27,10 @@ import 'calypso/state/atomic/init';
  * @param {string} softwareSet Software set slug.
  * @returns {object} An action object.
  */
-export const requestAtomicSoftwareInstall = ( siteId: number, softwareSet: string ) => ( {
+export const requestAtomicSoftwareInstall = (
+	siteId: number,
+	softwareSet: string
+): AtomicSoftwareAction => ( {
 	type: ATOMIC_PLUGIN_INSTALL_INITIATE,
 	siteId,
 	softwareSet,
@@ -32,7 +49,10 @@ export const requestAtomicSoftwareInstall = ( siteId: number, softwareSet: strin
  * @param {string} softwareSet Software set slug.
  * @returns {object} An action object.
  */
-export const requestAtomicSoftwareStatus = ( siteId: number, softwareSet: string ) => ( {
+export const requestAtomicSoftwareStatus = (
+	siteId: number,
+	softwareSet: string
+): AtomicSoftwareAction => ( {
 	type: ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS,
 	siteId,
 	softwareSet,
@@ -43,10 +63,14 @@ export const requestAtomicSoftwareStatus = ( siteId: number, softwareSet: string
  *
  * @param {number} siteId The site id to which the status belongs.
  * @param {string} softwareSet The software set slug.
- * @param {string} status The new status of the transfer.
+ * @param {object} status The new status of the transfer.
  * @returns {object} An action object
  */
-export const setAtomicSoftwareStatus = ( siteId: number, softwareSet: string, status: any ) => ( {
+export const setAtomicSoftwareStatus = (
+	siteId: number,
+	softwareSet: string,
+	status: AtomicSoftwareStatus
+): AtomicSoftwareAction => ( {
 	type: ATOMIC_PLUGIN_INSTALL_SET_STATUS,
 	siteId,
 	softwareSet,
