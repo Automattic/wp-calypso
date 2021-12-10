@@ -349,7 +349,7 @@ __metadata:
     lodash: ^4.17.21
     prop-types: ^15.7.2
     react-modal: ^3.14.3
-    sass-loader: ^10.1.1
+    sass-loader: ^10.2.0
     style-loader: ^1.2.1
     typescript: ^4.5.3
     utility-types: ^3.10.0
@@ -382,7 +382,7 @@ __metadata:
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    sass-loader: ^10.1.1
+    sass-loader: ^10.2.0
     style-loader: ^1.2.1
     typescript: ^4.5.3
     webpack: ^5.65.0
@@ -1044,7 +1044,7 @@ __metadata:
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
     redux: ^4.1.2
-    sass-loader: ^10.1.1
+    sass-loader: ^10.2.0
     style-loader: ^1.2.1
     tslib: ^2.3.0
     typescript: ^4.5.3
@@ -1136,7 +1136,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
-    sass-loader: ^10.1.1
+    sass-loader: ^10.2.0
     style-loader: ^1.2.1
     typescript: ^4.5.3
     webpack: ^5.65.0
@@ -32464,7 +32464,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"sass-loader@npm:^10.1.1":
+"sass-loader@npm:^10.2.0":
   version: 10.2.0
   resolution: "sass-loader@npm:10.2.0"
   dependencies:
