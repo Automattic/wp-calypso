@@ -95,7 +95,7 @@ export const DotPager = ( {
 
 	const handleSelectPage = ( index ) => {
 		setCurrentPage( index );
-		onPageSelected && onPageSelected( index );
+		onPageSelected?.( index );
 	};
 
 	return (
