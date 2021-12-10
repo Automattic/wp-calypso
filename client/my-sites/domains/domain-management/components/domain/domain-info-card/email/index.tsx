@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import Count from 'calypso/components/count';
 import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
 import { getEmailAddress } from 'calypso/lib/emails';
 import { emailManagement } from 'calypso/my-sites/email/paths';
@@ -39,7 +40,12 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ): J
 		<DomainInfoCard
 			type="href"
 			href={ emailManagement( selectedSite.slug, domain.name ) }
-			title={ translate( 'Email' ) }
+			title={
+				<>
+					{ translate( 'Email' ) }
+					<Count count={ emailAddresses.length }></Count>
+				</>
+			}
 			description={ emailAddresses.join( '\n' ) }
 			ctaText={ translate( 'View emails' ) }
 		/>
