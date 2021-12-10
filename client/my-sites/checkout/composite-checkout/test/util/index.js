@@ -16,7 +16,6 @@ export const processorOptions = {
 	includeGSuiteDetails: false,
 	createUserAndSiteBeforeTransaction: false,
 	stripeConfiguration,
-	recordEvent: () => null,
 	reduxDispatch: () => null,
 	responseCart: getEmptyResponseCart(),
 	getThankYouUrl: () => '',

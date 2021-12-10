@@ -52,7 +52,9 @@ export const addToCartAndCheckout = (
 		.addProductsToCart( [ fillInSingleCartItemAttributes( cartItem, productList ) ] )
 		.then( ( response: ResponseCart ) => {
 			setAddingToCart( false );
+
 			const errors = response?.messages?.errors;
+
 			if ( errors && errors.length ) {
 				// Stay on the page to show the relevant error(s)
 				return;
@@ -60,7 +62,7 @@ export const addToCartAndCheckout = (
 
 			page( `/checkout/${ selectedSite }` );
 		} )
-		.then( () => {
+		.catch( () => {
 			setAddingToCart( false );
 		} );
 };
@@ -72,8 +74,8 @@ export const recordTracksEventAddToCartClick = (
 	provider: string,
 	source: string,
 	userCanAddEmail: boolean,
-	userCannotAddEmailReason: any
-) => {
+	userCannotAddEmailReason?: { code: string } | null
+): void => {
 	recordTracksEvent( 'calypso_email_providers_add_click', {
 		context: comparisonContext,
 		mailbox_count: validatedMailboxUuids.length,

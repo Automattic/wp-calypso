@@ -19,26 +19,17 @@
 	}
 }
 
-.email-providers-stacked-comparison__main.main {
-	margin: 12px auto;
-	@include break-mobile {
-		flex-direction: row;
-	}
+.email-provider-stacked-card__title-price-badge {
+	.promo-card__price {
+		.price__cost {
+			.provider-cards__price-with-interval-price-discounted {
+				text-decoration: line-through;
+			}
 
-	.card.action-panel.promo-card.email-providers-stacked-comparison__provider-card {
-		display: flex;
-		flex-direction: row;
-		.action-panel__figure {
-			margin-top: 3px;
-
-			@include breakpoint-deprecated('>480px') {
-				max-width: 24px;
-				order: 1;
-
-				&.align-left {
-					order: -1;
-				}
+			.provider-cards__price-with-interval-sale-price {
+				color: var( --studio-green-50 );
 			}
 		}
 	}
 }
+

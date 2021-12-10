@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { omit } from 'lodash';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 
@@ -23,34 +22,6 @@ Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
 };
 
 /**
- * GET/POST site settings
- *
- * @param {number|string} [siteId] The site ID
- * @param {string} [method] The request method
- * @param {object} [data] The POST data
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, fn ) {
-	debug( '/sites/:site_id:/settings query' );
-	if ( 'function' === typeof method ) {
-		fn = method;
-		method = 'get';
-		data = {};
-	}
-
-	// If no apiVersion was specified, use the settings api version with the widest support (1.1)
-	const apiVersion = data.apiVersion || '1.1';
-	const body = omit( data, [ 'apiVersion' ] );
-	const path = '/sites/' + siteId + '/settings';
-
-	if ( 'get' === method ) {
-		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
-
-	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
-};
-
-/**
  * Get the inbound transfer status for this domain
  *
  * @param {string} domain - The domain name to check.
@@ -62,22 +33,6 @@ Undocumented.prototype.checkAuthCode = function ( domain, authCode, fn ) {
 	return this.wpcom.req.get(
 		`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-check-auth-code`,
 		{ auth_code: authCode },
-		fn
-	);
-};
-
-/**
- * Get the inbound transfer status for this domain
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getInboundTransferStatus = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-status`,
-		},
 		fn
 	);
 };
@@ -105,21 +60,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
 };
 
 /**
- *
- * @param domain {string}
- * @param fn {function}
- */
-Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		`/domains/${ encodeURIComponent( domain ) }/price`,
-		{
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Launches a private site
  *
  * @param {string} siteIdOrSlug - ID or slug of the site to be launched
@@ -129,10 +69,6 @@ Undocumented.prototype.launchSite = function ( siteIdOrSlug, fn ) {
 	const path = `/sites/${ siteIdOrSlug }/launch`;
 	debug( path );
 	return this.wpcom.req.post( path, fn );
-};
-
-Undocumented.prototype.resendIcannVerification = function ( domain, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/resend-icann/', callback );
 };
 
 Undocumented.prototype.fetchDns = function ( domainName, fn ) {
@@ -251,20 +187,6 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 	return this.wpcom.req.get( '/connect/site-info', { url: inputUrl } );
 };
 
-/**
- * Fetch the status of an Automated Transfer.
- *
- * @param {number} siteId -- the ID of the site being transferred
- * @param {number} transferId -- ID of the specific transfer
- * @returns {Promise} promise for handling result
- */
-Undocumented.prototype.transferStatus = function ( siteId, transferId ) {
-	debug( '/sites/:site_id/automated-transfers/status/:transfer_id' );
-	return this.wpcom.req.get( {
-		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`,
-	} );
-};
-
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 	domain,
 	providerId,
@@ -277,10 +199,6 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 		{ redirect_uri: redirectUri },
 		callback
 	);
-};
-
-Undocumented.prototype.domainsVerifyRegistrantEmail = function ( domain, email, token ) {
-	return this.wpcom.req.get( `/domains/${ domain }/verify-email`, { email, token } );
 };
 
 Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function (

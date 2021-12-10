@@ -112,17 +112,6 @@ function getDestinationFromIntent( dependencies ) {
 	return getChecklistThemeDestination( dependencies );
 }
 
-function getImportDestination( { importSiteEngine, importSiteUrl, siteSlug } ) {
-	return addQueryArgs(
-		{
-			engine: importSiteEngine || null,
-			'from-site': importSiteUrl || null,
-			signup: 1,
-		},
-		`/import/${ siteSlug }`
-	);
-}
-
 function getDIFMSignupDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
@@ -135,7 +124,6 @@ const flows = generateFlows( {
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
-	getImportDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 } );

@@ -36,6 +36,7 @@ import {
 	isDIFMProduct,
 	TITAN_MAIL_ANNUALLY_SLUG,
 	TITAN_MAIL_MONTHLY_SLUG,
+	TITAN_MAIL_YEARLY_SLUG,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
@@ -400,30 +401,6 @@ export function googleAppsExtraLicenses( properties: {
 }
 
 /**
- * Creates a new shopping cart item for Titan Mail.
- */
-function titanMailProduct(
-	properties: {
-		meta?: string;
-		domain?: string;
-		source?: string;
-		quantity?: number | null;
-		extra?: RequestCartProductExtra;
-	},
-	productSlug: string
-) {
-	const domainName = properties.meta ?? properties.domain;
-	if ( ! domainName ) {
-		throw new Error( 'Titan mail requires a domain' );
-	}
-	return {
-		...domainItem( productSlug, domainName, properties.source ),
-		quantity: properties.quantity,
-		extra: properties.extra,
-	};
-}
-
-/**
  * Creates a new shopping cart item for Titan Mail Annually.
  */
 export function titanMailAnnually( properties: {
@@ -436,16 +413,45 @@ export function titanMailAnnually( properties: {
 	return titanMailProduct( properties, TITAN_MAIL_ANNUALLY_SLUG );
 }
 
-/**
- * Creates a new shopping cart item for Titan Mail Monthly.
- */
-export function titanMailMonthly( properties: {
-	meta?: string;
+export interface TitanProductProps {
 	domain?: string;
+	meta?: string;
 	source?: string;
 	quantity?: number | null;
 	extra?: RequestCartProductExtra;
-} ): IncompleteRequestCartProduct {
+}
+
+/**
+ * Creates a new shopping cart item for Titan Mail.
+ */
+function titanMailProduct(
+	properties: TitanProductProps,
+	productSlug: string
+): IncompleteRequestCartProduct {
+	const domainName = properties.meta ?? properties.domain;
+
+	if ( ! domainName ) {
+		throw new Error( 'Titan mail requires a domain' );
+	}
+
+	return {
+		...domainItem( productSlug, domainName, properties.source ),
+		quantity: properties.quantity,
+		extra: properties.extra,
+	};
+}
+
+/**
+ * Creates a new shopping cart item for Titan Mail Yearly.
+ */
+export function titanMailYearly( properties: TitanProductProps ): IncompleteRequestCartProduct {
+	return titanMailProduct( properties, TITAN_MAIL_YEARLY_SLUG );
+}
+
+/**
+ * Creates a new shopping cart item for Titan Mail Monthly.
+ */
+export function titanMailMonthly( properties: TitanProductProps ): IncompleteRequestCartProduct {
 	return titanMailProduct( properties, TITAN_MAIL_MONTHLY_SLUG );
 }
 
@@ -523,7 +529,7 @@ export function getRenewalItemFromProduct(
 	product: ( WithCamelCaseSlug | WithSnakeCaseSlug ) & {
 		is_domain_registration?: boolean;
 		isDomainRegistration?: boolean;
-		id: string;
+		id: string | number;
 	} & Partial< RequestCartProduct > & {
 			domain?: string;
 			users?: GSuiteProductUser[];
@@ -593,7 +599,7 @@ export function getRenewalItemFromProduct(
  */
 export function getRenewalItemFromCartItem< T extends Partial< RequestCartProduct > >(
 	cartItem: T,
-	properties: { id: string }
+	properties: { id: string | number }
 ): T {
 	return {
 		...cartItem,
@@ -614,10 +620,10 @@ export function hasDomainInCart( cart: ResponseCart, domain: string ): boolean {
 /**
  * Changes presence of a privacy protection for the given domain cart item.
  */
-export function updatePrivacyForDomain(
-	item: ResponseCartProduct,
+export function updatePrivacyForDomain< T extends IncompleteRequestCartProduct >(
+	item: T,
 	value: boolean
-): ResponseCartProduct {
+): T {
 	return {
 		...item,
 		extra: {

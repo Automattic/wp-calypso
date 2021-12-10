@@ -413,7 +413,7 @@ class CancelPurchaseForm extends Component {
 						actionText={ translate( 'Upgrade my site' ) }
 						image={ pluginsThemesImage }
 					>
-						<UpgradeATStep />
+						<UpgradeATStep selectedSite={ site } />
 					</Upsell>
 				);
 			case 'downgrade-personal':

@@ -13,7 +13,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-stacked-comparison/billing-selector/billing-interval-toggle';
+import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-stacked-comparison/billing-interval-toggle';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
@@ -53,16 +53,18 @@ type EmailProvidersStackedComparisonProps = {
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
 	props
 ) => {
-	const translate = useTranslate();
-	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
 	const { comparisonContext, isGSuiteSupported, selectedDomainName, selectedSite, source } = props;
-	const [ expanded, setExpanded ] = useState( {
+
+	const translate = useTranslate();
+
+	const [ intervalLength, setIntervalLength ] = useState( IntervalLength.MONTHLY );
+	const [ detailsExpanded, setDetailsExpanded ] = useState( {
 		titan: true,
 		google: false,
 	} );
 
 	const onExpandedStateChange = ( providerKey: string, isExpanded: boolean ) => {
-		const expandedEntries = Object.entries( expanded ).map( ( entry ) => {
+		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
 			const [ key, currentExpanded ] = entry;
 			if ( isExpanded ) {
 				return [ key, key === providerKey ];
@@ -76,7 +78,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			} );
 		}
 
-		setExpanded( Object.fromEntries( expandedEntries ) );
+		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
 	};
 
 	return (
@@ -88,26 +90,28 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			<h1 className="email-providers-stacked-comparison__header wp-brand-font">
 				{ translate( 'Pick an email solution' ) }
 			</h1>
+
 			<BillingIntervalToggle
-				onIntervalChange={ setBillingPeriod }
-				intervalLength={ billingPeriod }
+				onIntervalChange={ setIntervalLength }
+				intervalLength={ intervalLength }
 			/>
+
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
-				detailsExpanded={ expanded.titan }
+				detailsExpanded={ detailsExpanded.titan }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
-				intervalLength={ billingPeriod }
+				intervalLength={ intervalLength }
 				onExpandedChange={ onExpandedStateChange }
 			/>
 
 			{ isGSuiteSupported && (
 				<GoogleWorkspaceCard
 					comparisonContext={ comparisonContext }
-					detailsExpanded={ expanded.google }
+					detailsExpanded={ detailsExpanded.google }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
-					intervalLength={ billingPeriod }
+					intervalLength={ intervalLength }
 					onExpandedChange={ onExpandedStateChange }
 				/>
 			) }

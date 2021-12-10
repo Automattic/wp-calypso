@@ -12,7 +12,7 @@
 
 	box-sizing: border-box;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include break-medium {
 		flex-direction: row;
 	}
 
@@ -40,7 +40,7 @@
 			}
 		}
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include break-medium {
 			padding-bottom: 0;
 		}
 	}
@@ -83,17 +83,19 @@
 }
 
 .plans-filter-bar__discount-message {
-	font-size: 0.8125rem;
-	font-weight: 600;
 	padding-top: 2px;
 	color: var( --color-primary );
 	white-space: nowrap;
 	text-align: center;
+	font-weight: 700;
+	font-size: 16px;
+	padding-left: 10px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include break-medium {
+		padding-top: 0;
 		position: absolute;
 		left: calc( 100% + 12px );
-		top: 3px;
+		top: 0;
 	}
 
 	.plans-filter-bar__discount-message-text {

@@ -12,6 +12,7 @@ import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -171,6 +172,8 @@ function onClickInstallPlugin( { dispatch, selectedSite, slug, upgradeAndInstall
 			plugin: slug,
 		} )
 	);
+
+	dispatch( productToBeInstalled( null, slug, selectedSite.slug ) );
 
 	const installPluginURL = `/marketplace/${ slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {

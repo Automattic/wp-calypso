@@ -5,8 +5,6 @@ import RegistrantExtraInfoFrForm from '../fr-form';
 import RegistrantExtraInfoForm from '../index';
 import RegistrantExtraInfoUkForm from '../uk-form';
 
-jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
-
 describe( 'Switcher Form', () => {
 	test( 'should render correct form for fr', () => {
 		const wrapper = shallow( <RegistrantExtraInfoForm tld="fr" /> );

@@ -1,4 +1,5 @@
 import debugFactory from 'debug';
+import { CartActionError, CartActionConnectionError, CartActionResponseError } from './errors';
 import {
 	getShoppingCartManagerState,
 	createSubscriptionManager,
@@ -34,11 +35,23 @@ function createDispatchAndWaitForValid(
 	actionPromises: ActionPromises
 ): DispatchAndWaitForValid {
 	return ( action ) => {
-		return new Promise< ResponseCart >( ( resolve ) => {
-			actionPromises.add( resolve );
+		return new Promise< ResponseCart >( ( resolve, reject ) => {
+			actionPromises.add( { resolve, reject } );
 			dispatch( action );
 		} );
 	};
+}
+
+function getErrorFromState( state: ShoppingCartState ): undefined | CartActionError {
+	if ( state.loadingError ) {
+		return new CartActionConnectionError( state.loadingError, state.loadingErrorType );
+	}
+	const errorMessages = state.responseCart.messages?.errors ?? [];
+	if ( errorMessages.length > 0 ) {
+		const firstMessage = errorMessages[ 0 ];
+		return new CartActionResponseError( firstMessage.message, firstMessage.code );
+	}
+	return undefined;
 }
 
 function createShoppingCartManager(
@@ -60,10 +73,21 @@ function createShoppingCartManager(
 		const isStateChanged = newState !== state;
 		state = newState;
 
+		if ( state.cacheStatus === 'error' ) {
+			actionPromises.reject(
+				new CartActionConnectionError( state.loadingError, state.loadingErrorType )
+			);
+		}
+
 		if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
 			// action promises are resolved even if state hasn't changed so that
 			// noop actions resolve immediately.
-			actionPromises.resolve( state.responseCart );
+			const error = getErrorFromState( state );
+			if ( error ) {
+				actionPromises.reject( error );
+			} else {
+				actionPromises.resolve( state.responseCart );
+			}
 		}
 
 		if ( isStateChanged ) {
@@ -93,12 +117,16 @@ function createShoppingCartManager(
 	let didInitialFetch = false;
 	const initialFetch = () => {
 		if ( didInitialFetch ) {
+			const error = getErrorFromState( state );
+			if ( error ) {
+				return Promise.reject( error );
+			}
 			return Promise.resolve( state.lastValidResponseCart );
 		}
 		didInitialFetch = true;
 		takeActionsBasedOnState( state, dispatch );
-		return new Promise< ResponseCart >( ( resolve ) => {
-			actionPromises.add( resolve );
+		return new Promise< ResponseCart >( ( resolve, reject ) => {
+			actionPromises.add( { resolve, reject } );
 		} );
 	};
 

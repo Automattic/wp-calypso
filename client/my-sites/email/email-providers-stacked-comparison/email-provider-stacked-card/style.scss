@@ -469,6 +469,30 @@ h2.action-panel__title {
 	}
 }
 
+.email-providers-stacked-comparison__main.main {
+	margin: 12px auto;
+	@include break-mobile {
+		flex-direction: row;
+	}
+
+	.card.action-panel.promo-card.email-providers-stacked-comparison__provider-card {
+		display: flex;
+		flex-direction: row;
+		.action-panel__figure {
+			margin-top: 3px;
+
+			@include break-mobile {
+				max-width: 24px;
+				order: 1;
+				&.align-left {
+					order: -1;
+				}
+			}
+		}
+	}
+}
+
+
 .email-provider-stacked-features__toggle-button {
 	overflow: visible;
 	white-space: nowrap;

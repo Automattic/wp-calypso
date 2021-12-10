@@ -24,6 +24,7 @@ export const registrar = {
 export const domainAvailability = {
 	AVAILABLE: 'available',
 	AVAILABLE_PREMIUM: 'available_premium',
+	AVAILABLE_RESERVED: 'available_reserved',
 	AVAILABILITY_CHECK_ERROR: 'availability_check_error',
 	CONFLICTING_CNAME_EXISTS: 'conflicting_cname_exists',
 	DISALLOWED: 'blacklisted_domain',

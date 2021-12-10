@@ -50,6 +50,11 @@ export const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStack
 	);
 };
 
+export interface EmailProviderStackedFeaturesProps {
+	features: TranslateResult[];
+}
+
+
 export const EmailProviderStackedFeaturesToggleButton: FunctionComponent< EmailProviderStackedFeaturesToggleButton > = (
 	props
 ) => {
