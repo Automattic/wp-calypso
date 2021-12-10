@@ -8,7 +8,7 @@ const withActiveSupportTickets = createHigherOrderComponent(
 		const email = useSelector( getCurrentUserEmail );
 		const { data } = useActiveSupportTicketsQuery( email );
 
-		return <Wrapped { ...props } activeSupportTickets={ data ?? [] } />;
+		return <Wrapped { ...props } activeSupportTicketCount={ data?.length ?? 0 } />;
 	},
 	'WithActiveSupportTickets'
 );

@@ -121,10 +121,10 @@ class HelpContact extends Component {
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
 
-		if ( this.props.activeSupportTickets.length > 0 ) {
+		if ( this.props.activeSupportTicketCount > 0 ) {
 			recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
 				support_type: 'chat',
-				active_ticket_count: this.props.activeSupportTickets.length,
+				active_ticket_count: this.props.activeSupportTicketCount,
 			} );
 		}
 
@@ -163,10 +163,10 @@ class HelpContact extends Component {
 			page( '/help' );
 		}
 
-		if ( this.props.activeSupportTickets.length > 0 ) {
+		if ( this.props.activeSupportTicketCount > 0 ) {
 			recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
 				support_type: 'directly',
-				active_ticket_count: this.props.activeSupportTickets.length,
+				active_ticket_count: this.props.activeSupportTicketCount,
 			} );
 		}
 	};
@@ -220,10 +220,10 @@ class HelpContact extends Component {
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
 				} );
 
-				if ( this.props.activeSupportTickets.length > 0 ) {
+				if ( this.props.activeSupportTicketCount > 0 ) {
 					recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
 						support_type: 'email',
-						active_ticket_count: this.props.activeSupportTickets.length,
+						active_ticket_count: this.props.activeSupportTicketCount,
 					} );
 				}
 			} )
@@ -342,10 +342,10 @@ class HelpContact extends Component {
 
 				recordTracksEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
 
-				if ( this.props.activeSupportTickets.length > 0 ) {
+				if ( this.props.activeSupportTicketCount > 0 ) {
 					recordTracksEvent( 'calypso_help_contact_submit_with_active_tickets', {
 						support_type: 'forum',
-						active_ticket_count: this.props.activeSupportTickets.length,
+						active_ticket_count: this.props.activeSupportTicketCount,
 					} );
 				}
 			} )
@@ -597,7 +597,7 @@ class HelpContact extends Component {
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
-		const { activeSupportTickets, compact, supportVariation, translate } = this.props;
+		const { activeSupportTicketCount, compact, supportVariation, translate } = this.props;
 
 		debug( { supportVariation } );
 
@@ -651,12 +651,10 @@ class HelpContact extends Component {
 		const isUserAffectedByLiveChatClosure =
 			[ SUPPORT_DIRECTLY, SUPPORT_FORUM, SUPPORT_UPWORK_TICKET ].indexOf( supportVariation ) === -1;
 
-		const activeTicketCount = activeSupportTickets.length;
-
 		return (
 			<div>
-				{ activeTicketCount > 0 && (
-					<ActiveTicketsNotice count={ activeTicketCount } compact={ compact } />
+				{ activeSupportTicketCount > 0 && (
+					<ActiveTicketsNotice count={ activeSupportTicketCount } compact={ compact } />
 				) }
 
 				{ isUserAffectedByLiveChatClosure && (
