@@ -1,4 +1,4 @@
-import { isPremium } from '@automattic/calypso-products';
+import { isPremium, isMarketplaceProduct } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import {
 	getCouponLineItemFromCart,
@@ -154,18 +154,39 @@ WPOrderReviewLineItems.propTypes = {
  * @param cartProducts The shopping cart object
  * @returns boolean
  */
-function isPremiumPlanWithDIFMInTheCart( item: ResponseCartProduct, cartProducts: ResponseCart ) {
-	return isPremium( item ) && hasDIFMProduct( cartProducts );
+function isPremiumPlanWithDIFMInTheCart( item: ResponseCartProduct, responseCart: ResponseCart ) {
+	return isPremium( item ) && hasDIFMProduct( responseCart );
 }
 
-function canItemBeDeleted( item: ResponseCartProduct, cartProducts: ResponseCart ): boolean {
+/**
+ * Checks if the given item is the business plan product and a marketplace product exists in the provided shopping cart object
+ *
+ * @param item The shopping basket line item
+ * @param cartProducts The shopping cart object
+ * @returns boolean
+ */
+function isMarketplaceProductInTheCart( item: ResponseCartProduct, responseCart: ResponseCart ) {
+	return (
+		item.product_slug === 'business-bundle' &&
+		responseCart.products.some( ( product: ResponseCartProduct ) =>
+			isMarketplaceProduct( product.product_slug )
+		)
+	);
+}
+
+function canItemBeDeleted( item: ResponseCartProduct, responseCart: ResponseCart ): boolean {
 	const itemTypesThatCannotBeDeleted = [ 'domain_redemption' ];
 	if ( itemTypesThatCannotBeDeleted.includes( item.product_slug ) ) {
 		return false;
 	}
 
 	// The Premium plan cannot be removed from the cart when in combination with the DIFM lite product
-	if ( isPremiumPlanWithDIFMInTheCart( item, cartProducts ) ) {
+	if ( isPremiumPlanWithDIFMInTheCart( item, responseCart ) ) {
+		return false;
+	}
+
+	// The Business plan cannot be removed from the cart when in combination with a marketplace product
+	if ( isMarketplaceProductInTheCart( item, responseCart ) ) {
 		return false;
 	}
 	return true;
