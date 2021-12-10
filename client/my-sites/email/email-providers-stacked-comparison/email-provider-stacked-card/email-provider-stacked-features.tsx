@@ -5,8 +5,6 @@ import type { TranslateResult } from 'i18n-calypso';
 import type { FunctionComponent, MouseEventHandler } from 'react';
 
 import './style.scss';
-import * as React from 'react';
-import { ESCAPE } from '@wordpress/keycodes';
 
 export interface EmailProviderStackedFeatureProps {
 	title: TranslateResult;
