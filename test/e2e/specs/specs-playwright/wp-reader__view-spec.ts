@@ -14,6 +14,7 @@ import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function () {
 	let page: Page;
+	let loginPage: LoginPage;
 	let readerPage: ReaderPage;
 	let notificationsComponent: NotificationsComponent;
 	const comment = DataHelper.getRandomPhrase() + ' wp-reader__view-spec';
@@ -22,13 +23,15 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 		page = args.page;
 	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'commentingUser' }, { landingUrl: '**/read' } );
+	it( 'Log in as commenting user', async function () {
+		loginPage = new LoginPage( page );
+		readerPage = new ReaderPage( page );
+
+		await readerPage.visit();
+		await loginPage.logInWithTestAccount( 'commentingUser' );
 	} );
 
 	it( 'View the Reader stream', async function () {
-		readerPage = new ReaderPage( page );
 		const testSiteForNotifications = DataHelper.config.get( 'testSiteForNotifications' );
 		const siteOfLatestPost = await readerPage.siteOfLatestPost();
 		expect( siteOfLatestPost ).toEqual( testSiteForNotifications );
@@ -42,9 +45,10 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 		await readerPage.comment( comment );
 	} );
 
-	it( 'Log in as test site owner', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'notificationsUser' } );
+	it( 'Log in as a site owner', async function () {
+		await loginPage.visit();
+		await loginPage.clickChangeAccount();
+		await loginPage.logInWithTestAccount( 'notificationsUser' );
 	} );
 
 	it( 'Open Notifications panel', async function () {

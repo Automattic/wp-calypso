@@ -1,4 +1,5 @@
-import { Page } from 'playwright';
+import { Page, Response } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	// Reader main stream
@@ -28,6 +29,16 @@ export class ReaderPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Opens the Reader page.
+	 *
+	 * @see {link https://wordpress.com/read}
+	 * @returns The main resource response.
+	 */
+	async visit(): Promise< Response | null > {
+		return await this.page.goto( getCalypsoURL( 'read' ) );
 	}
 
 	/**
