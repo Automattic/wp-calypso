@@ -261,7 +261,7 @@ object RunAllUnitTests : BuildType({
 					set +e
 					yarn tsc --build client 2>&1 | tee tsc_out
 					mkdir -p checkstyle_results
-					yarn run typescript-checkstyle < tsc_out > ./checkstyle_results/tsc.xml
+					yarn run typescript-checkstyle < tsc_out | sed -e "s#${'$'}HOME#~#g" > ./checkstyle_results/tsc.xml
 					cat ./checkstyle_results/tsc.xml
 				)
 			"""
