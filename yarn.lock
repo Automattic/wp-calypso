@@ -449,7 +449,6 @@ __metadata:
     "@wordpress/url": ^3.3.1
     classnames: ^2.3.1
     jest: ^27.3.1
-    jest-canvas-mock: ^2.3.0
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -938,7 +937,6 @@ __metadata:
     classnames: ^2.3.1
     debug: ^4.1.1
     jest: ^27.3.1
-    jest-canvas-mock: ^2.3.0
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -14293,13 +14291,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssfontparser@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "cssfontparser@npm:1.2.1"
-  checksum: ceb9b2976d503dbff3ac2aff0229b263affb4fb221a6947b357682cd8a952f6995253646ca5f820020d2fe05b5e29b56dbdd2343388c32203e8dd0ed15bdc1ca
-  languageName: node
-  linkType: hard
-
 "cssnano-preset-default@npm:^5.1.8":
   version: 5.1.8
   resolution: "cssnano-preset-default@npm:5.1.8"
@@ -21602,16 +21593,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jest-canvas-mock@npm:^2.3.0":
-  version: 2.3.1
-  resolution: "jest-canvas-mock@npm:2.3.1"
-  dependencies:
-    cssfontparser: ^1.2.1
-    moo-color: ^1.0.2
-  checksum: 50b956fad957da15dba432081890647cbe2211df263b420f0dfc01145a13243d20b57d445098dc194afcb66f866a9d1071d50bb356c8980347b23c151543478e
-  languageName: node
-  linkType: hard
-
 "jest-changed-files@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-changed-files@npm:26.6.2"
@@ -25799,15 +25780,6 @@ fsevents@~2.1.2:
   version: 2.27.0
   resolution: "moment@npm:2.27.0"
   checksum: ea5b2fd73c8ad9070fc82c21ccb6226f7556c27a6a305e64371a3d1223729e9f9e75da59c3114160f21f9181e74f6d245534093179825eb20bf0f40ec7495d92
-  languageName: node
-  linkType: hard
-
-"moo-color@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "moo-color@npm:1.0.2"
-  dependencies:
-    color-name: ^1.1.4
-  checksum: 9528dfca2c7567b8d5ad47ea2b7e1aaf36e6e91915260f3979acb82d247e7b5f76d3f95cd30e7186bddbd0eefbca7dca03243363b28e9f249aab6374a01f4a2d
   languageName: node
   linkType: hard
 
