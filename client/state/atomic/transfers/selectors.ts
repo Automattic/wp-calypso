@@ -3,5 +3,5 @@ import type { AppState } from 'calypso/types';
 
 import 'calypso/state/atomic/init';
 
-export const getAtomicTransferStatus = ( state: AppState, siteId: number ): AtomicTransfer =>
+export const getAtomicTransfer = ( state: AppState, siteId: number ): AtomicTransfer =>
 	state?.atomicTransfers?.[ siteId ] || {};

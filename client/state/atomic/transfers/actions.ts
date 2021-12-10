@@ -15,8 +15,7 @@ interface AtomicTransferAction {
 	siteId: number;
 	softwareSet?: string;
 	meta?: { dataLayer?: { trackRequest: boolean; requestKey: string } };
-	status?: string;
-	// transfer?: AtomicTransfer;
+	transfer?: AtomicTransfer;
 }
 
 export interface AtomicTransfer {
@@ -30,15 +29,16 @@ export interface AtomicTransfer {
 }
 
 /**
- * Initiate Atomic transfer with plugin install.
+ * Initiate Atomic transfer, optionally with software set install.
  *
  * @param {string} siteId Site ID.
- * @param {string} softwareSet Software set slug.
+ * @param {object} options Transfer options.
+ * @param {string} options.softwareSet Software set to install.
  * @returns {object} An action object.
  */
-export const initiateAtomicTransferWithPluginInstall = (
+export const initiateAtomicTransfer = (
 	siteId: number,
-	softwareSet: string
+	{ softwareSet }: { softwareSet: string }
 ): AtomicTransferAction => ( {
 	type: ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER,
 	siteId,
@@ -52,28 +52,28 @@ export const initiateAtomicTransferWithPluginInstall = (
 } );
 
 /**
- * Fetch transfer status.
+ * Fetch transfer.
  *
  * @param {string} siteId Site ID.
  * @returns {object} An action object.
  */
-export const requestAtomicTransferStatus = ( siteId: number ): AtomicTransferAction => ( {
+export const requestLatestAtomicTransfer = ( siteId: number ): AtomicTransferAction => ( {
 	type: ATOMIC_PLUGIN_INSTALL_REQUEST_TRANSFER_STATUS,
 	siteId,
 } );
 
 /**
- * Set the transfer status.
+ * Set the transfer.
  *
  * @param {number} siteId The site id to which the status belongs.
- * @param {object} status The new status of the transfer.
+ * @param {object} transfer The new status of the transfer.
  * @returns {object} An action object
  */
-export const setAtomicTransferStatus = (
+export const setLatestAtomicTransfer = (
 	siteId: number,
-	status: string
+	transfer: AtomicTransfer
 ): AtomicTransferAction => ( {
 	type: ATOMIC_PLUGIN_INSTALL_SET_TRANSFER_STATUS,
 	siteId,
-	status,
+	transfer,
 } );

@@ -1,6 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -33,6 +34,7 @@ const receiveError = ( action, error ) => [
 	errorNotice(
 		translate( "Sorry, we've hit a snag. Please contact support so we can help you out." )
 	),
+	setLatestAtomicTransfer( action.siteId, error ),
 ];
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfers', {
