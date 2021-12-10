@@ -4,7 +4,7 @@
 	"description": "JavaScript library for the WordPress.com Photon image manipulation service",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
 	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
