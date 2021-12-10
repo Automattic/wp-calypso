@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getMediaQueryList } from '@automattic/viewport';
+import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -65,7 +65,7 @@ function WelcomeTourCard( {
 						<source
 							srcSet={ imgSrc.mobile.src }
 							type={ imgSrc.mobile.type }
-							media={ getMediaQueryList( '<480px' )?.media }
+							media={ getMediaQueryList( MOBILE_BREAKPOINT )?.media }
 						/>
 					) }
 					<img
@@ -155,7 +155,9 @@ function CardNavigation( {
 }
 
 function CardOverlayControls( { onMinimize, onDismiss } ) {
-	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls' );
+	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
+		'welcome-tour-card__overlay-controls__absolute': ! isMobile(),
+	} );
 
 	return (
 		<div className={ buttonClasses }>
