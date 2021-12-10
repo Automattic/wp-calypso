@@ -13,9 +13,9 @@ const SwipeableExample = () => {
 			pageClassName="example-page-component-class"
 			hasDynamicHeight
 		>
-			<div>Page 1</div>
-			<div>Page 2</div>
-			<div>Page 3</div>
+			<div>Page 1 - Swipe Left</div>
+			<div>Page 2 - Swipe Left or Right</div>
+			<div>Page 3 - Swipe Right</div>
 		</Swipeable>
 	);
 };
