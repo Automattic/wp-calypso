@@ -32,7 +32,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import AsyncLoad from 'calypso/components/async-load';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -59,10 +58,7 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
-import {
-	isMarketplaceProduct,
-	isProductsListFetching,
-} from 'calypso/state/products-list/selectors';
+import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
@@ -391,7 +387,6 @@ export class CheckoutThankYou extends Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let wasMarketplaceProduct = false;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainProduct = false;
@@ -408,9 +403,6 @@ export class CheckoutThankYou extends Component {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
-			wasMarketplaceProduct = purchases.some( ( product ) =>
-				this.props.marketplaceProduct( product.productSlug )
-			);
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
 					isDomainMapping( purchase ) ||
@@ -456,11 +448,7 @@ export class CheckoutThankYou extends Component {
 			);
 		}
 
-		if ( wasMarketplaceProduct ) {
-			return (
-				<AsyncLoad require="calypso/my-sites/marketplace/pages/marketplace-plugin-setup-status" />
-			);
-		} else if ( wasEcommercePlanPurchased ) {
+		if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
@@ -758,8 +746,6 @@ export default connect(
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
 			site: getSite( state, siteId ),
-			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			marketplaceProduct: ( slug ) => isMarketplaceProduct( state, slug ),
 		};
 	},
 	{
