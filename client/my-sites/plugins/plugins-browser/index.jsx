@@ -65,7 +65,7 @@ import './style.scss';
 const SHORT_LIST_LENGTH = 6;
 const SEARCH_RESULTS_LIST_LENGTH = 12;
 
-const PluginsBrowser = ( props ) => {
+export const PluginsBrowser = ( props ) => {
 	const { trackPageViews = true, category, search } = props;
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
