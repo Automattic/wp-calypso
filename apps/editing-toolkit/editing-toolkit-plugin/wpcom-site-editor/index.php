@@ -28,7 +28,11 @@ function wpcom_site_editor_script() {
 		wp_localize_script(
 			'wpcom-site-editor-script',
 			'wpcomSiteEditorParagraphPlaceholder',
-			fixme__( "Start writing or type '/' to insert a block", '', 'full-site-editing' )
+			translation_with_fallback(
+				"Start writing or type '/' to insert a block",
+				__( "Start writing or type '/' to insert a block", 'full-site-editing' ),
+				''
+			)
 		);
 	}
 }
@@ -51,7 +55,11 @@ function is_post_with_write_intent( $post ) {
  */
 function enter_title_here( $text, $post ) {
 	if ( is_post_with_write_intent( $post ) ) {
-		return fixme__( 'Add a post title', $text, 'full-site-editing' );
+		return translation_with_fallback(
+			'Add a post title',
+			__( 'Add a post title', 'full-site-editing' ),
+			$text
+		);
 	}
 
 	return $text;
@@ -66,9 +74,30 @@ add_filter( 'enter_title_here', __NAMESPACE__ . '\enter_title_here', 0, 2 );
  */
 function write_your_story( $text, $post ) {
 	if ( is_post_with_write_intent( $post ) ) {
-		return fixme__( "Start writing or type '/' to insert a block", $text, 'full-site-editing' );
+		return translation_with_fallback(
+			"Start writing or type '/' to insert a block",
+			__( "Start writing or type '/' to insert a block", 'full-site-editing' ),
+			$text
+		);
 	}
 
 	return $text;
 }
 add_filter( 'write_your_story', __NAMESPACE__ . '\write_your_story', 0, 2 );
+
+/**
+ * Translation with fallback message if it's not ready because fixme__ function doesn't work on atomic site
+ *
+ * @param string $new_text          New text without translation.
+ * @param string $new_translation   New text with translation.
+ * @param string $old_translation   Old text with translation.
+ */
+function translation_with_fallback( $new_text, $new_translation, $old_translation ) {
+	$is_english = 'en' === substr( get_locale(), 0, 2 );
+
+	if ( $is_english || $new_translation !== $new_text ) {
+		return $new_translation;
+	}
+
+	return $old_translation;
+}
