@@ -1,0 +1,38 @@
+import { useTranslate } from 'i18n-calypso';
+import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import { getEmailAddress } from 'calypso/lib/emails';
+import DomainInfoCard from '..';
+import { DomainInfoCardProps } from '../types';
+import { Mailbox } from './types';
+
+const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ): JSX.Element => {
+	const translate = useTranslate();
+	let emailAddresses: string[] = [];
+
+	const { data, error, isLoading } = useEmailAccountsQuery( selectedSite.ID, domain.name );
+
+	if ( ! isLoading && ! error ) {
+		const [ mailAccount ]: [ { emails: Mailbox[] } ] = data?.accounts;
+
+		if ( mailAccount ) {
+			emailAddresses = mailAccount.emails.map( getEmailAddress ).filter( ( email ) => email );
+		}
+	}
+
+	return ! emailAddresses.length ? (
+		<DomainInfoCard
+			title={ translate( 'Email' ) }
+			description={ translate( 'Send and receive emails from youremail@travelingwithkids.com' ) }
+			ctaText={ translate( 'Add professional email' ) }
+			isPrimary={ true }
+		/>
+	) : (
+		<DomainInfoCard
+			title={ translate( 'Email' ) }
+			description={ emailAddresses.join( '\n' ) }
+			ctaText={ translate( 'View emails' ) }
+		/>
+	);
+};
+
+export default DomainEmailInfoCard;
