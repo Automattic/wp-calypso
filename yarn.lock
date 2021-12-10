@@ -28037,6 +28037,7 @@ fsevents@~2.1.2:
     crc32: ^0.2.2
     debug: ^4.0.0
     seed-random: ^2.2.0
+    typescript: ^4.5.3
   languageName: unknown
   linkType: soft
 
