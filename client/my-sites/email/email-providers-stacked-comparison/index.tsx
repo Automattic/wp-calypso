@@ -26,6 +26,7 @@ import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -91,6 +92,25 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 		setIntervalLengthPure( interval );
 	};
 
+	const getDisabledReason = (
+		interval: IntervalLength,
+		isGSuiteSupported: boolean
+	): TranslateResult => {
+		if ( interval === IntervalLength.MONTHLY ) {
+			return translate( 'Monthly billing not supported.' );
+		} else if ( ! isGSuiteSupported ) {
+			return translate(
+				"{{strong}}%(domainName)s's{{/strong}} DNS records need to be configured.",
+				{
+					components: { strong: <strong /> },
+					args: { domainName: selectedDomainName },
+					context: 'Notice for mapped subdomain that has DNS records need to set up',
+				}
+			);
+		}
+		return null;
+	};
+
 	return (
 		<Main className="email-providers-stacked-comparison__main" wideLayout>
 			<QueryProductsList />
@@ -115,16 +135,16 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				onExpandedChange={ onExpandedChange }
 			/>
 
-			{ isGSuiteSupported && (
-				<GoogleWorkspaceCard
-					comparisonContext={ comparisonContext }
-					detailsExpanded={ detailsExpanded.google }
-					selectedDomainName={ selectedDomainName }
-					source={ source }
-					intervalLength={ intervalLength }
-					onExpandedChange={ onExpandedChange }
-				/>
-			) }
+			<GoogleWorkspaceCard
+				comparisonContext={ comparisonContext }
+				detailsExpanded={ detailsExpanded.google }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
+				intervalLength={ intervalLength }
+				disabled={ intervalLength === IntervalLength.MONTHLY || ! isGSuiteSupported }
+				disabledReason={ getDisabledReason( intervalLength, isGSuiteSupported ) }
+				onExpandedChange={ onExpandedChange }
+			/>
 		</Main>
 	);
 };

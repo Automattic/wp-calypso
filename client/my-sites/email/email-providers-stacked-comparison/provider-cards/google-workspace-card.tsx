@@ -73,6 +73,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	const {
 		currencyCode = '',
 		detailsExpanded,
+		disabledReason,
 		domain,
 		gSuiteProductMonthly,
 		gSuiteProductYearly,
@@ -83,6 +84,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	const googleWorkspace: ProviderCard = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = detailsExpanded;
 	googleWorkspace.disabled = intervalLength === IntervalLength.MONTHLY;
+	googleWorkspace.disabledReason = disabledReason;
 
 	const gSuiteProduct =
 		intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;

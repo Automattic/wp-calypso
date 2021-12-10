@@ -18,6 +18,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		description,
 		detailsExpanded,
 		disabled,
+		disabledReason,
 		expandButtonLabel,
 		features,
 		footerBadge,
@@ -42,24 +43,36 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		onExpandedChange( providerKey, ! detailsExpanded );
 	};
 
+	const reasonClass = classnames( 'email-provider-stacked-card__title-price-badge', {
+		'email-provider-stacked-card__disabled-reason': disabled,
+	} );
 	const header = (
 		<div className="email-provider-stacked-card__header">
 			<div className="email-provider-stacked-card__title-container">
 				<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
 				<p>{ description }</p>
 			</div>
-			<div className="email-provider-stacked-card__title-price-badge">{ priceBadge }</div>
-			<div className="email-provider-stacked-card__provider-card-main-details">
-				{ showExpandButton && ! disabled && (
-					<Button
-						primary={ false }
-						onClick={ toggleVisibility }
-						className="email-provider-stacked-card__provider-expand-cta"
-					>
-						{ expandButtonLabel }
-					</Button>
+			<div className={ reasonClass }>
+				{ ! disabled && priceBadge }
+				{ disabled && (
+					<span className={ 'email-provider-stacked-card__disabled-reason' }>
+						{ disabledReason }
+					</span>
 				) }
 			</div>
+			{ ! disabled && (
+				<div className="email-provider-stacked-card__provider-card-main-details">
+					{ showExpandButton && ! disabled && (
+						<Button
+							primary={ false }
+							onClick={ toggleVisibility }
+							className="email-provider-stacked-card__provider-expand-cta"
+						>
+							{ expandButtonLabel }
+						</Button>
+					) }
+				</div>
+			) }
 		</div>
 	);
 
@@ -90,7 +103,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 				</div>
 			</div>
 
-			{ children }
+			{ ! disabled && children }
 		</PromoCard>
 	);
 };
