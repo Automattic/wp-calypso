@@ -1,2 +1,5 @@
-const storybookDefaultConfig = require( '../../../bin/storybook-default-config' );
-module.exports = storybookDefaultConfig();
+const path = require('path');
+const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
+module.exports = storybookDefaultConfig({
+	babelCacheDirectory: path.join(__dirname, "../../../.cache/babel-storybook")
+});

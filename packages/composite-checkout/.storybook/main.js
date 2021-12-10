@@ -1,9 +1,10 @@
 const { join } = require( 'path' );
-const storybookDefaultConfig = require( '../../../bin/storybook-default-config' );
+const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
 
 module.exports = storybookDefaultConfig( {
 	stories: [ '../demo/*.js' ],
 	webpackAliases: {
 		'@automattic/composite-checkout': join( __dirname, '../src/public-api.ts' ),
 	},
+	babelCacheDirectory: join(__dirname, "../../../.cache/babel-storybook")
 } );
