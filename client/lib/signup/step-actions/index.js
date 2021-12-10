@@ -532,7 +532,7 @@ export function launchSiteApi( callback, dependencies ) {
 
 	wpcom.req
 		.post( `/sites/${ siteSlug }/launch` )
-		.then( () => callback() )
+		.then( () => callback( null ) )
 		.catch( ( error ) => callback( error ) );
 }
 
