@@ -1,13 +1,11 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
-import debugFactory from 'debug';
-import page from 'page';
 import { useCallback, useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import useValidCheckoutBackUrl from './use-valid-checkout-back-url';
 import type { RemoveProductFromCart, ResponseCart } from '@automattic/shopping-cart';
-
-const debug = debugFactory( 'calypso:composite-checkout:use-redirect-if-cart-empty' );
 
 export default function useRemoveFromCartAndRedirect(
 	siteSlug: string | undefined,
@@ -16,41 +14,29 @@ export default function useRemoveFromCartAndRedirect(
 	isRemovingProductFromCart: boolean;
 	removeProductFromCartAndMaybeRedirect: RemoveProductFromCart;
 } {
+	const previousPath = useSelector( getPreviousPath );
+	const dispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { removeProductFromCart } = useShoppingCart( cartKey );
 
 	// In some cases, the cloud.jetpack.com/pricing page sends a `checkoutBackUrl` url query param to checkout.
-	const checkoutBackUrl = useValidCheckoutBackUrl( siteSlug );
+	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 
 	const redirectDueToEmptyCart = useCallback( () => {
-		debug( 'cart is empty; redirecting...' );
-		let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
-
-		if ( createUserAndSiteBeforeTransaction ) {
-			cartEmptyRedirectUrl = siteSlug ? `/plans/${ siteSlug }` : '/start';
-		}
-
-		debug( 'Before redirect, first clear redirect url cookie' );
-		clearSignupDestinationCookie();
-
-		if ( createUserAndSiteBeforeTransaction ) {
-			try {
-				window.localStorage.removeItem( 'shoppingCart' );
-				window.localStorage.removeItem( 'siteParams' );
-			} catch ( err ) {}
-
-			// We use window.location instead of page.redirect() so that if the user already has an account and site at
-			// this point, then window.location will reload with the cookies applied and takes to the /plans page.
-			// (page.redirect() will take to the log in page instead).
-			window.location.href = cartEmptyRedirectUrl;
-			return;
-		}
-		if ( checkoutBackUrl ) {
-			window.location.href = checkoutBackUrl;
-		} else {
-			page.redirect( cartEmptyRedirectUrl );
-		}
-	}, [ createUserAndSiteBeforeTransaction, siteSlug, checkoutBackUrl ] );
+		leaveCheckout( {
+			siteSlug,
+			jetpackCheckoutBackUrl,
+			createUserAndSiteBeforeTransaction,
+			previousPath,
+			dispatch,
+		} );
+	}, [
+		createUserAndSiteBeforeTransaction,
+		siteSlug,
+		jetpackCheckoutBackUrl,
+		previousPath,
+		dispatch,
+	] );
 
 	const isMounted = useRef( true );
 	useEffect( () => {
