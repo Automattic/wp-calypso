@@ -144,24 +144,6 @@ Undocumented.prototype.transferToSite = function ( siteId, domainName, targetSit
 	);
 };
 
-/*
- * Change the theme of a given site.
- *
- * @param {string} [siteSlug]
- * @param {string} [data]
- * @param {Function} fn
- */
-Undocumented.prototype.changeTheme = function ( siteSlug, data, fn ) {
-	debug( '/site/:site_id/themes/mine' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + siteSlug + '/themes/mine',
-			body: data,
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.isSiteImportable = function ( site_url ) {
 	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
 
