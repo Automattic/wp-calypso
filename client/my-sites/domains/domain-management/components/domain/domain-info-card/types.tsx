@@ -1,9 +1,10 @@
+import { TranslateResult } from 'i18n-calypso';
 import ActionCard from 'calypso/components/action-card';
 
 export type DomainInfoCardProps = {
-	title: boolean;
-	description: string;
-	ctaText?: string;
+	title: TranslateResult;
+	description: TranslateResult;
+	ctaText?: TranslateResult;
 	isPrimary?: boolean;
 };
 
