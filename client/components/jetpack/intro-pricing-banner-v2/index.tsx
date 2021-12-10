@@ -1,3 +1,4 @@
+import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -16,6 +17,7 @@ interface Props {
 
 const IntroPricingBannerV2: FunctionComponent< Props > = ( { jetpackSaleCoupon } ) => {
 	const translate = useTranslate();
+	const isNotMobile = useViewportMatch( 'mobile', '>=' );
 
 	const discountPercentage =
 		jetpackSaleCoupon !== null ? jetpackSaleCoupon.discount : INTRO_PRICING_DISCOUNT_PERCENTAGE;
@@ -41,23 +43,25 @@ const IntroPricingBannerV2: FunctionComponent< Props > = ( { jetpackSaleCoupon }
 					) }
 				</span>
 			</div>
-			<div className="intro-pricing-banner-v2__guarantee">
-				<img
-					src={ guaranteeBadge }
-					alt={ translate( 'Money Back %(days)d-Day Guarantee Badge', {
-						args: { days: GUARANTEE_DAYS },
-						textOnly: true,
-					} ) }
-				/>
-				<span>
-					{ preventWidows(
-						translate( '%(days)d day money back guarantee.**', {
+			{ isNotMobile && (
+				<div className="intro-pricing-banner-v2__guarantee">
+					<img
+						src={ guaranteeBadge }
+						alt={ translate( 'Money Back %(days)d-Day Guarantee Badge', {
 							args: { days: GUARANTEE_DAYS },
-							comment: '** clause describing the money back guarantee',
-						} )
-					) }
-				</span>
-			</div>
+							textOnly: true,
+						} ) }
+					/>
+					<span>
+						{ preventWidows(
+							translate( '%(days)d day money back guarantee.**', {
+								args: { days: GUARANTEE_DAYS },
+								comment: '** clause describing the money back guarantee',
+							} )
+						) }
+					</span>
+				</div>
+			) }
 		</div>
 	);
 };
