@@ -16,9 +16,16 @@
         }
 
         p {
-            margin-bottom: 16px;
+            margin: 5px 0 16px;
             font-size: $font-body-small;
             color: var( --studio-gray-50 );
+            display: flex;
+            align-items: center;
+
+            svg {
+                fill: var( --studio-gray-50 );
+                margin: 0 8px 0 3px;
+            }
         }
     }
 
