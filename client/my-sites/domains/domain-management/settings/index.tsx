@@ -8,6 +8,7 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
+import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -46,11 +47,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 	const renderSettingsCards = () => (
 		<>
 			<DomainEmailInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
-			<DomainInfoCard
-				title={ translate( 'Transfer' ) }
-				description={ translate( 'Transfer lock on' ) }
-				ctaText={ translate( 'Transfer' ) }
-			/>
+			<DomainTransferInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
 			<DomainInfoCard
 				title={ translate( 'Delete' ) }
 				description={ translate( 'Remove this domain permanently' ) }
