@@ -18,6 +18,7 @@ import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
@@ -127,6 +128,8 @@ const SiteSetupList = ( {
 			( task ) => task.id === CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED && ! task.isCompleted
 		).length > 0;
 
+	const siteIntent = useSiteOption( 'site_intent' );
+
 	// Move to first incomplete task on first load.
 	useEffect( () => {
 		if ( ! currentTaskId && tasks.length ) {
@@ -179,6 +182,7 @@ const SiteSetupList = ( {
 				menusUrl,
 				siteId,
 				siteSlug,
+				siteIntent,
 				taskUrls,
 				userEmail,
 			} );
@@ -195,6 +199,7 @@ const SiteSetupList = ( {
 		menusUrl,
 		siteId,
 		siteSlug,
+		siteIntent,
 		tasks,
 		taskUrls,
 		userEmail,
@@ -251,7 +256,7 @@ const SiteSetupList = ( {
 				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
 				<ul className="site-setup-list__list">
 					{ tasks.map( ( task ) => {
-						const enhancedTask = getTask( task );
+						const enhancedTask = getTask( task, { siteIntent } );
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
 
