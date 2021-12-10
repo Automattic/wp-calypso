@@ -3,7 +3,7 @@ import ActionCard from 'calypso/components/action-card';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 
-export type GenericDomainInfoCardProps = {
+export type GenericActionCardProps = {
 	title: TranslateResult;
 	description: TranslateResult;
 	ctaText?: TranslateResult;
@@ -16,7 +16,8 @@ export type DomainInfoCardProps = {
 };
 
 export type CardProps = Partial< React.ComponentProps< typeof ActionCard > > & {
-	mainText: GenericDomainInfoCardProps[ 'description' ];
-	headerText: GenericDomainInfoCardProps[ 'title' ];
+	mainText: GenericActionCardProps[ 'description' ];
+
+	headerText: GenericActionCardProps[ 'title' ];
 	classNames: string;
 };
