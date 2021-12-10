@@ -399,19 +399,6 @@ export function googleAppsExtraLicenses( properties: {
 	};
 }
 
-/**
- * Creates a new shopping cart item for Titan Mail Annually.
- */
-export function titanMailAnnually( properties: {
-	meta?: string;
-	domain?: string;
-	source?: string;
-	quantity?: number | null;
-	extra?: RequestCartProductExtra;
-} ) {
-	return titanMailProduct( properties, TITAN_MAIL_YEARLY_SLUG );
-}
-
 export interface TitanProductProps {
 	domain?: string;
 	meta?: string;
