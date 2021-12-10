@@ -22,7 +22,6 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 	const subHeaderText = '';
 
 	useEffect( () => {
-		dispatch( removeSiteSlugDependency() );
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
 	}, [ dispatch, props.stepName ] );
 
@@ -38,6 +37,7 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 		if ( 'existing-site' === value ) {
 			props.goToNextStep();
 		} else {
+			dispatch( removeSiteSlugDependency() );
 			dispatch( submitSignupStep( { stepName: 'difm-site-picker', wasSkipped: true } ) );
 			props.goToStep( 'difm-design-setup-site' );
 		}

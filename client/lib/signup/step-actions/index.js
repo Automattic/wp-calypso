@@ -260,14 +260,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	const isManageSiteFlow = get( getSignupDependencyStore( state ), 'isManageSiteFlow', false );
 
-	if ( isManageSiteFlow ) {
-		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
-		const siteId = getSiteId( state, siteSlug );
-		const providedDependencies = { domainItem, siteId, siteSlug, themeItem };
-		addDomainToCart( callback, dependencies, stepData, reduxStore, siteSlug, providedDependencies );
-		return;
-	}
-
 	if ( 'do-it-for-me' === flowToCheck ) {
 		const newOrExistingSiteChoice = get(
 			getSignupDependencyStore( state ),
@@ -276,16 +268,17 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		);
 		// Do not create a new site if the user chose that they want DIFM Lite on an existing site
 		if ( 'existing-site' === newOrExistingSiteChoice ) {
-			const siteId = get( getSignupDependencyStore( state ), 'siteId', false );
-			const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', false );
-			defer( () =>
-				callback( undefined, {
-					siteId,
-					siteSlug,
-				} )
-			);
+			defer( callback );
 			return;
 		}
+	}
+
+	if ( isManageSiteFlow ) {
+		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
+		const siteId = getSiteId( state, siteSlug );
+		const providedDependencies = { domainItem, siteId, siteSlug, themeItem };
+		addDomainToCart( callback, dependencies, stepData, reduxStore, siteSlug, providedDependencies );
+		return;
 	}
 
 	const newSiteParams = getNewSiteParams( {
@@ -357,6 +350,12 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		.catch( ( error ) => callback( [ error ] ) );
 }
 
+/**
+ * Call the `setDesignOnSite` function (see below) only if the user
+ * chose to buy DIFM Lite for a new site.
+ * Do nothing if the user chose an existing site since we do not want any changes
+ * to an existing site before checkout.
+ */
 export function setDesignIfNewSite( callback, dependencies, step, reduxStore ) {
 	const state = reduxStore.getState();
 	const newOrExistingSiteChoice = get(
