@@ -34,7 +34,6 @@ import {
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 	isDIFMProduct,
-	TITAN_MAIL_ANNUALLY_SLUG,
 	TITAN_MAIL_MONTHLY_SLUG,
 	TITAN_MAIL_YEARLY_SLUG,
 } from '@automattic/calypso-products';
@@ -410,7 +409,7 @@ export function titanMailAnnually( properties: {
 	quantity?: number | null;
 	extra?: RequestCartProductExtra;
 } ) {
-	return titanMailProduct( properties, TITAN_MAIL_ANNUALLY_SLUG );
+	return titanMailProduct( properties, TITAN_MAIL_YEARLY_SLUG );
 }
 
 export interface TitanProductProps {
