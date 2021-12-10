@@ -11,5 +11,5 @@ export function checkAuthCode( domainName, authCode, onComplete ) {
 			auth_code: authCode,
 		} )
 		.then( ( data ) => onComplete( null, data ) )
-		.catch( ( error ) => onComplete( { error: error.error, message: error.message } ) );
+		.catch( ( error ) => onComplete( error ) );
 }
