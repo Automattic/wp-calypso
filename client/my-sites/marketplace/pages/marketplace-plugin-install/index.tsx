@@ -313,10 +313,10 @@ const MarketplacePluginInstall = ( {
 			/>
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar>
-				<WordPressWordmark className="marketplace-plugin-upload-status__wpcom-wordmark" />
+				<WordPressWordmark className="marketplace-plugin-upload-install__wpcom-wordmark" />
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
-			<div className="marketplace-plugin-upload-status__root">
+			<div className="marketplace-plugin-upload-install__root">
 				{ renderError() || <MarketplaceProgressBar steps={ steps } currentStep={ currentStep } /> }
 			</div>
 		</ThemeProvider>
