@@ -47,7 +47,12 @@ const isServer = typeof window === 'undefined' || ! window.matchMedia;
 
 const noop = () => null;
 
-function createMediaQueryList( { min, max } = {} ) {
+export type MinimalMediaQueryList = { matches: boolean };
+
+function createMediaQueryList(
+	args: undefined | { min?: number; max?: number }
+): false | MinimalMediaQueryList | MediaQueryList {
+	const { min, max } = args ?? {};
 	if ( min !== undefined && max !== undefined ) {
 		return isServer
 			? { matches: SERVER_WIDTH > min && SERVER_WIDTH <= max }
@@ -69,7 +74,7 @@ function createMediaQueryList( { min, max } = {} ) {
 	return false;
 }
 
-const mediaQueryLists = {
+const mediaQueryLists: Record< string, false | MinimalMediaQueryList | MediaQueryList > = {
 	'<480px': createMediaQueryList( { max: 480 } ),
 	'<660px': createMediaQueryList( { max: 660 } ),
 	'<782px': createMediaQueryList( { max: 782 } ),
@@ -91,7 +96,9 @@ const mediaQueryLists = {
 	'480px-960px': createMediaQueryList( { min: 480, max: 960 } ),
 };
 
-export function getMediaQueryList( breakpoint ) {
+export function getMediaQueryList(
+	breakpoint: string
+): undefined | false | MinimalMediaQueryList | MediaQueryList {
 	if ( ! mediaQueryLists.hasOwnProperty( breakpoint ) ) {
 		try {
 			// eslint-disable-next-line no-console
@@ -107,23 +114,27 @@ export function getMediaQueryList( breakpoint ) {
  * Returns whether the current window width matches a breakpoint.
  *
  * @param {string} breakpoint The breakpoint to consider.
- *
  * @returns {boolean} Whether the provided breakpoint is matched.
  */
-export function isWithinBreakpoint( breakpoint ) {
+export function isWithinBreakpoint( breakpoint: string ): boolean {
 	const mediaQueryList = getMediaQueryList( breakpoint );
-	return mediaQueryList ? mediaQueryList.matches : undefined;
+	return mediaQueryList ? mediaQueryList.matches : false;
 }
+
+export type ListenerCallback = ( matches: boolean ) => void;
+export type UnsubcribeCallback = () => void;
 
 /**
  * Registers a listener to be notified of changes to breakpoint matching status.
  *
  * @param {string} breakpoint The breakpoint to consider.
  * @param {Function} listener The listener to be called on change.
- *
  * @returns {Function} The function to be called when unsubscribing.
  */
-export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
+export function subscribeIsWithinBreakpoint(
+	breakpoint: string,
+	listener: ListenerCallback
+): UnsubcribeCallback {
 	if ( ! listener ) {
 		return noop;
 	}
@@ -131,7 +142,7 @@ export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
 	const mediaQueryList = getMediaQueryList( breakpoint );
 
 	if ( mediaQueryList && ! isServer ) {
-		const wrappedListener = ( evt ) => listener( evt.matches );
+		const wrappedListener = ( evt: { matches: boolean } ) => listener( evt.matches );
 		mediaQueryList.addListener( wrappedListener );
 		// Return unsubscribe function.
 		return () => mediaQueryList.removeListener( wrappedListener );
@@ -145,7 +156,7 @@ export function subscribeIsWithinBreakpoint( breakpoint, listener ) {
  *
  * @returns {boolean} Whether the mobile breakpoint is matched.
  */
-export function isMobile() {
+export function isMobile(): boolean {
 	return isWithinBreakpoint( MOBILE_BREAKPOINT );
 }
 
@@ -153,10 +164,9 @@ export function isMobile() {
  * Registers a listener to be notified of changes to mobile breakpoint matching status.
  *
  * @param {Function} listener The listener to be called on change.
- *
  * @returns {Function} The registered subscription; undefined if none.
  */
-export function subscribeIsMobile( listener ) {
+export function subscribeIsMobile( listener: ListenerCallback ): UnsubcribeCallback {
 	return subscribeIsWithinBreakpoint( MOBILE_BREAKPOINT, listener );
 }
 
@@ -165,7 +175,7 @@ export function subscribeIsMobile( listener ) {
  *
  * @returns {boolean} Whether the desktop breakpoint is matched.
  */
-export function isDesktop() {
+export function isDesktop(): boolean {
 	return isWithinBreakpoint( DESKTOP_BREAKPOINT );
 }
 
@@ -173,10 +183,9 @@ export function isDesktop() {
  * Registers a listener to be notified of changes to desktop breakpoint matching status.
  *
  * @param {Function} listener The listener to be called on change.
- *
  * @returns {Function} The registered subscription; undefined if none.
  */
-export function subscribeIsDesktop( listener ) {
+export function subscribeIsDesktop( listener: ListenerCallback ): UnsubcribeCallback {
 	return subscribeIsWithinBreakpoint( DESKTOP_BREAKPOINT, listener );
 }
 
@@ -186,7 +195,7 @@ export function subscribeIsDesktop( listener ) {
  *
  * @returns {number} The current window width, in pixels.
  */
-export function getWindowInnerWidth() {
+export function getWindowInnerWidth(): number {
 	return isServer ? SERVER_WIDTH : window.innerWidth;
 }
 
@@ -196,7 +205,7 @@ export function getWindowInnerWidth() {
 /******************************************/
 
 //TODO: To be refactored using above using the DESKTOP_BREAKPOINT constant
-export function isTabletResolution() {
+export function isTabletResolution(): boolean {
 	if ( ! isServer ) {
 		return window.innerWidth < 1040;
 	}
@@ -207,7 +216,7 @@ export const DEVICE_MOBILE = 'mobile';
 export const DEVICE_TABLET = 'tablet';
 export const DEVICE_DESKTOP = 'desktop';
 
-export function resolveDeviceTypeByViewPort() {
+export function resolveDeviceTypeByViewPort(): string {
 	if ( isMobile() ) {
 		return DEVICE_MOBILE;
 	} else if ( isTabletResolution() ) {
