@@ -11,7 +11,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-const user = BrowserHelper.targetGutenbergEdge()
+const testAccount = BrowserHelper.targetGutenbergEdge()
 	? 'gutenbergSimpleSiteEdgeUser'
 	: 'gutenbergSimpleSiteUser';
 
@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
 		await loginPage.visit();
-		await loginPage.logInWithTestAccount( user );
+		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	// @todo: Refactor/Abstract these steps into a WidgetsEditor component

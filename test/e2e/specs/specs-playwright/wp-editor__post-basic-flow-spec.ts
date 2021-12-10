@@ -29,7 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	let publishedPostPage: PublishedPostPage;
-	const user = BrowserHelper.targetGutenbergEdge()
+	const testAccount = BrowserHelper.targetGutenbergEdge()
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'simpleSitePersonalPlanUser';
 
@@ -40,7 +40,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
 		await loginPage.visit();
-		await loginPage.logInWithTestAccount( user );
+		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( 'Start new post', async function () {

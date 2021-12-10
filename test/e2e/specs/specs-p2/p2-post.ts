@@ -19,7 +19,7 @@ describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 	let p2Page: P2Page;
 	let isolatedBlockEditorComponent: IsolatedBlockEditorComponent;
 
-	const user = 'p2User';
+	const testAccount = 'p2User';
 	const postContent = DataHelper.getTimestamp();
 
 	setupHooks( ( args: { page: Page } ) => {
@@ -29,7 +29,7 @@ describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 	it( 'Log In', async function () {
 		const loginPage = new LoginPage( page );
 		await loginPage.visit();
-		await loginPage.logInWithTestAccount( user );
+		await loginPage.logInWithTestAccount( testAccount );
 
 		// Normally setup for a const will be located outside of the test step for
 		// organization purposes. However, TOTP codes are time-sensitive and so as
@@ -40,7 +40,7 @@ describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 	} );
 
 	it( 'View P2', async function () {
-		await page.goto( DataHelper.getAccountSiteURL( user ), { waitUntil: 'networkidle' } );
+		await page.goto( DataHelper.getAccountSiteURL( testAccount ), { waitUntil: 'networkidle' } );
 	} );
 
 	it( 'Add a Paragraph block', async function () {

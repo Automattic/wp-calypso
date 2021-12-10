@@ -22,8 +22,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	let page;
 	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
-	const user = 'defaultUser';
-	const siteURL = DataHelper.getAccountSiteURL( user, { protocol: false } );
+	const testAccount = 'defaultUser';
+	const siteURL = DataHelper.getAccountSiteURL( testAccount, { protocol: false } );
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -32,7 +32,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
 		await loginPage.visit();
-		await loginPage.logInWithTestAccount( user );
+		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( 'Navigate to Appearance > Themes', async function () {
