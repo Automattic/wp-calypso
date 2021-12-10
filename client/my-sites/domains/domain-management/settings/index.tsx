@@ -1,10 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
+import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -41,21 +43,53 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
 	};
 
+	const renderSettingsCards = () => (
+		<>
+			<DomainInfoCard
+				title={ translate( 'Email' ) }
+				description={ translate( 'Send and receive emails from youremail@travelingwithkids.com' ) }
+				ctaText={ translate( 'Add professional email' ) }
+				isPrimary={ true }
+			/>
+			<DomainInfoCard
+				title={ translate( 'Transfer' ) }
+				description={ translate( 'Transfer lock on' ) }
+				ctaText={ translate( 'Transfer' ) }
+			/>
+			<DomainInfoCard
+				title={ translate( 'Delete' ) }
+				description={ translate( 'Remove this domain permanently' ) }
+				ctaText={ translate( 'Delete' ) }
+			/>
+		</>
+	);
+
 	return (
 		<Main wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<SettingsHeader domain={ domain } />
-			Page goes here.
-			{ /* Placeholder to test accordion */ }
-			<div style={ { marginTop: '30px' } }>
-				<Accordion title="First element title" subtitle="First element subtitle" expanded={ true }>
-					<div>Component placeholder: this one is exapanded by default</div>
-				</Accordion>
-				<Accordion title="Second element title" subtitle="Second element subtitle">
-					<div>Component placeholder: this one i'snt exapanded by default</div>
-				</Accordion>
-			</div>
+			<TwoColumnsLayout
+				content={
+					<>
+						Page goes here.
+						{ /* Placeholder to test accordion */ }
+						<div style={ { marginTop: '30px' } }>
+							<Accordion
+								title="First element title"
+								subtitle="First element subtitle"
+								expanded={ true }
+							>
+								<div>Component placeholder: this one is exapanded by default</div>
+							</Accordion>
+							<Accordion title="Second element title" subtitle="Second element subtitle">
+								<div>Component placeholder: this one i'snt exapanded by default</div>
+							</Accordion>
+						</div>
+					</>
+				}
+				sidebar={ renderSettingsCards() }
+			/>
 		</Main>
 	);
 };
