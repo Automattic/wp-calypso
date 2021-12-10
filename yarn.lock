@@ -30138,13 +30138,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-refresh@npm:^0.8.3":
-  version: 0.8.3
-  resolution: "react-refresh@npm:0.8.3"
-  checksum: 74ad7a7e2f29163163b9e13c9aa868faba58d76113acf910f165c18c022086a590750fd93bc8d9468e73cacc3874ad5c061ded7e931ef299aa3dfa3a663fe665
-  languageName: node
-  linkType: hard
-
 "react-resize-aware@npm:^3.1.0":
   version: 3.1.1
   resolution: "react-resize-aware@npm:3.1.1"
