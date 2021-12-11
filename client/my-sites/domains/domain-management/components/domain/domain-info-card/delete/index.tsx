@@ -14,8 +14,12 @@ const DomainDeleteInfoCard = ( {
 	domain,
 	selectedSite,
 	purchase,
-}: DomainDeleteInfoCardProps ): JSX.Element => {
+	isLoadingPurchase,
+}: DomainDeleteInfoCardProps ): JSX.Element | null => {
 	const translate = useTranslate();
+
+	if ( ! isLoadingPurchase && ! purchase ) return null;
+
 	const removePurchaseClassName = 'is-compact button';
 
 	const title =
@@ -32,22 +36,26 @@ const DomainDeleteInfoCard = ( {
 		}
 	};
 
+	const removePurchaseRenderedComponent = (
+		<RemovePurchase
+			hasLoadedSites={ true }
+			hasLoadedUserPurchasesFromServer={ true }
+			site={ selectedSite }
+			purchase={ purchase }
+			className={ removePurchaseClassName }
+		>
+			{ translate( 'Delete' ) }
+		</RemovePurchase>
+	);
+
+	if ( ! removePurchaseRenderedComponent ) return null;
+
 	return (
 		<DomainInfoCard
 			type="custom"
 			title={ title }
 			description={ getDescription() }
-			cta={
-				<RemovePurchase
-					hasLoadedSites={ true }
-					hasLoadedUserPurchasesFromServer={ true }
-					site={ selectedSite }
-					purchase={ purchase }
-					className={ removePurchaseClassName }
-				>
-					{ translate( 'Delete' ) }
-				</RemovePurchase>
-			}
+			cta={ removePurchaseRenderedComponent }
 		/>
 	);
 };
@@ -55,7 +63,7 @@ const DomainDeleteInfoCard = ( {
 export default connect( ( state, ownProps: DomainInfoCardProps ) => {
 	const { subscriptionId } = ownProps.domain;
 	return {
-		purchase: getByPurchaseId( state, Number( subscriptionId ) )!,
+		purchase: getByPurchaseId( state, Number( subscriptionId ) ),
 		isLoadingPurchase:
 			isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
 	};
