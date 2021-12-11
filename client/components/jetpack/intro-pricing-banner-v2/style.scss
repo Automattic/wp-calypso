@@ -3,6 +3,7 @@
 	flex-direction: row;
 
 	justify-content: center;
+
 	.intro-pricing-banner-v2__discount,
 	.intro-pricing-banner-v2__guarantee {
 		display: flex;
@@ -10,5 +11,9 @@
 		align-items: center;
 
 		font-size: $font-body;
+	}
+
+	> :not( :last-child ) {
+		margin-right: 16px;
 	}
 }
