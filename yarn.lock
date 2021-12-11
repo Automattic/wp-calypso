@@ -25663,18 +25663,18 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"mocha-junit-reporter@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "mocha-junit-reporter@npm:2.0.0"
+"mocha-junit-reporter@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "mocha-junit-reporter@npm:2.0.2"
   dependencies:
     debug: ^2.2.0
     md5: ^2.1.0
     mkdirp: ~0.5.1
-    strip-ansi: ^4.0.0
+    strip-ansi: ^6.0.1
     xml: ^1.0.0
   peerDependencies:
     mocha: ">=2.2.5"
-  checksum: eb82e71b70410fd8ef0c038b5aee83fd086550350963b767e4948915cd88a990ef33b6823aad4708221be7def45d6e8d2b6594015bd1aeddaf5a496f79052476
+  checksum: 6221f43ff0061e73c1a98f6feec6f07caa9b6fb634f527b0bcba6602911d8c98bb0f8dabaebcc1095d9f5d835ea2fdb59c21c6631ae4e4764c01b479d4973f33
   languageName: node
   linkType: hard
 
@@ -37723,7 +37723,7 @@ testarmada-magellan@11.0.10:
     lodash: ^4.17.20
     mailosaur: ^4.0.0
     mocha: ^8.1.3
-    mocha-junit-reporter: ^2.0.0
+    mocha-junit-reporter: ^2.0.2
     mocha-multi-reporters: ^1.5.1
     mocha-teamcity-reporter: ^3.0.0
     playwright: 1.14.0
