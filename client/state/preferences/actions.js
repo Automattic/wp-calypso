@@ -70,7 +70,7 @@ export const setPreference = ( key, value ) => ( {
  * Returns an action thunk that stores a preference and saves it to API.
  *
  * @param   {string|number}               key User preference key
- * @param   {string|number|object}      value User preference value
+ * @param   {string|number|object|null}      value User preference value
  * @returns { Function }                      Action thunk
  */
 export const savePreference = ( key, value ) => ( dispatch ) => {
