@@ -1,5 +1,5 @@
-import { ResponseDomain } from 'calypso/lib/domains/types';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 export type SettingsPagePassedProps = {
 	domains: ResponseDomain[] | null;

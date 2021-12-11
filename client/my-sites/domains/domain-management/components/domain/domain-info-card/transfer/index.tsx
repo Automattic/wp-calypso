@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { type as domainType } from 'calypso/lib/domains/constants';
 import { domainManagementTransfer } from 'calypso/my-sites/domains/paths';
 import DomainInfoCard from '..';
-import { DomainInfoCardProps } from '../types';
+import type { DomainInfoCardProps } from '../types';
 
 const DomainTransferInfoCard = ( {
 	domain,

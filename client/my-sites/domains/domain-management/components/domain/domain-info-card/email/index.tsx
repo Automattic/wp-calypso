@@ -4,8 +4,8 @@ import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
 import { getEmailAddress } from 'calypso/lib/emails';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import DomainInfoCard from '..';
-import { DomainInfoCardProps } from '../types';
-import { EmailAccount } from './types';
+import type { DomainInfoCardProps } from '../types';
+import type { EmailAccount } from './types';
 
 const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ): JSX.Element => {
 	const translate = useTranslate();

@@ -1,8 +1,8 @@
-import { TranslateResult } from 'i18n-calypso';
 import ActionCard from 'calypso/components/action-card';
-import { ResponseDomain } from 'calypso/lib/domains/types';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { TranslateResult } from 'i18n-calypso';
 
 type ActionCardPropsBase = {
 	title: TranslateResult;

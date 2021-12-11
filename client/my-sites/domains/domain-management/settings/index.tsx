@@ -13,7 +13,11 @@ import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/dom
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import SettingsHeader from './settings-header';
-import { SettingsPageConnectedProps, SettingsPagePassedProps, SettingsPageProps } from './types';
+import type {
+	SettingsPageConnectedProps,
+	SettingsPagePassedProps,
+	SettingsPageProps,
+} from './types';
 
 const Settings = ( props: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();

@@ -8,7 +8,7 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import DomainInfoCard from '..';
-import { DomainDeleteInfoCardProps, DomainInfoCardProps } from '../types';
+import type { DomainDeleteInfoCardProps, DomainInfoCardProps } from '../types';
 
 const DomainDeleteInfoCard = ( {
 	domain,
