@@ -18,12 +18,15 @@ const DomainDeleteInfoCard = ( {
 	const translate = useTranslate();
 	const removePurchaseClassName = 'is-compact button';
 
+	const title =
+		domain.type === domainType.TRANSFER ? translate( 'Cancel transfer' ) : translate( 'Delete' );
+
 	const getDescription = () => {
 		switch ( domain.type ) {
 			case domainType.MAPPED:
 				return translate( 'Remove this domain connection permanently' );
 			case domainType.TRANSFER:
-				return translate( 'Remove this domain transfer permanently' );
+				return translate( 'Cancel this domain transfer' );
 			default:
 				return translate( 'Remove this domain permanently' );
 		}
@@ -32,7 +35,7 @@ const DomainDeleteInfoCard = ( {
 	return (
 		<DomainInfoCard
 			type="custom"
-			title={ translate( 'Delete' ) }
+			title={ title }
 			description={ getDescription() }
 			cta={
 				<RemovePurchase

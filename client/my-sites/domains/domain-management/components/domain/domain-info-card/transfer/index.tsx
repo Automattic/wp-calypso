@@ -5,8 +5,13 @@ import { domainManagementTransfer } from 'calypso/my-sites/domains/paths';
 import DomainInfoCard from '..';
 import { DomainInfoCardProps } from '../types';
 
-const DomainTransferInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ): JSX.Element => {
+const DomainTransferInfoCard = ( {
+	domain,
+	selectedSite,
+}: DomainInfoCardProps ): JSX.Element | null => {
 	const translate = useTranslate();
+
+	if ( domain.type === domainType.TRANSFER ) return null;
 
 	const getDescription = () => {
 		switch ( domain.type ) {
