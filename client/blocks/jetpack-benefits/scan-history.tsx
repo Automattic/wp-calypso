@@ -11,6 +11,7 @@ import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress'
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
 import isRequestingJetpackScanThreatCounts from 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts';
+import type { AppState } from 'calypso/types';
 
 interface Props {
 	siteId: number;
@@ -27,7 +28,7 @@ const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone }
 		isRequestingJetpackScanThreatCounts( state, siteId )
 	);
 	const threatCounts = useSelector(
-		( state ) => state?.jetpackScan?.threatCounts?.data?.[ siteId ]
+		( state: AppState ) => state?.jetpackScan?.threatCounts?.data?.[ siteId ]
 	);
 
 	// site scan state can be provisioning, scanning or idle. If missing from the state after request is ended, can assume an error
@@ -40,7 +41,9 @@ const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone }
 			<JetpackBenefitsCard
 				jestMarker="scanning"
 				headline={ translate( 'Site Scan' ) }
-				description={ <ProgressBar value={ siteScanProgress } total={ 100 } color="#069E08" /> }
+				description={
+					<ProgressBar value={ siteScanProgress ?? 0 } total={ 100 } color="#069E08" />
+				}
 				stat={ translate( 'In Progress' ) }
 			/>
 		);
@@ -123,7 +126,7 @@ const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone }
 
 	let cardStat: TranslateResult = '';
 	let cardDescription: TranslateResult = '';
-	if ( threats.length > 0 ) {
+	if ( threats && threats.length > 0 ) {
 		cardStat = translate( '%(threatCount)d threat found', '%(threatCount)d threats found', {
 			count: threats.length,
 			args: {
