@@ -8,7 +8,7 @@ import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
-import wp from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
@@ -32,8 +32,6 @@ import type {
 } from './types';
 
 import './style.scss';
-
-const wpcom = wp.undocumented();
 
 export class TransferDomainToOtherSite extends Component< TransferDomainToOtherSiteProps > {
 	state = {
@@ -69,7 +67,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		targetSite: TransferDomainToOtherSiteProps[ 'selectedSite' ],
 		closeDialog: () => void
 	): void => {
-		const { selectedDomainName } = this.props;
+		const { selectedDomainName, selectedSite } = this.props;
 		const targetSiteTitle = targetSite.title;
 		const successMessage = this.props.translate(
 			'%(selectedDomainName)s has been transferred to site: %(targetSiteTitle)s',
@@ -83,8 +81,10 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		);
 
 		this.setState( { disableDialogButtons: true } );
-		wpcom
-			.transferToSite( this.props.selectedSite.ID, this.props.selectedDomainName, targetSite.ID )
+		wpcom.req
+			.post(
+				`/sites/${ selectedSite.ID }/domains/${ selectedDomainName }/transfer-to-site/${ targetSite.ID }`
+			)
 			.then(
 				() => {
 					this.props.successNotice( successMessage, { duration: 10000, isPersistent: true } );

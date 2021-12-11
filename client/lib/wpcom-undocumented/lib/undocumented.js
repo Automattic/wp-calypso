@@ -87,29 +87,6 @@ Undocumented.prototype.getDnsTemplateRecords = function (
 	);
 };
 
-Undocumented.prototype.transferToUser = function ( siteId, domainName, targetUserId, fn ) {
-	return this.wpcom.req.post(
-		'/sites/' + siteId + '/domains/' + domainName + '/transfer-to-user/' + targetUserId,
-		fn
-	);
-};
-
-/**
- * Transfers a domain to the specified site
- *
- * @param {number} siteId The site ID
- * @param {string} [domainName] Name of the domain
- * @param {number} [targetSiteId] The target site ID
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.transferToSite = function ( siteId, domainName, targetSiteId, fn ) {
-	return this.wpcom.req.post(
-		`/sites/${ siteId }/domains/${ domainName }/transfer-to-site/${ targetSiteId }`,
-		fn
-	);
-};
-
 Undocumented.prototype.isSiteImportable = function ( site_url ) {
 	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
 
