@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { type as domainType } from 'calypso/lib/domains/constants';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import {
 	getByPurchaseId,
@@ -10,17 +11,29 @@ import DomainInfoCard from '..';
 import { DomainDeleteInfoCardProps, DomainInfoCardProps } from '../types';
 
 const DomainDeleteInfoCard = ( {
+	domain,
 	selectedSite,
 	purchase,
 }: DomainDeleteInfoCardProps ): JSX.Element => {
 	const translate = useTranslate();
 	const removePurchaseClassName = 'is-compact button';
 
+	const getDescription = () => {
+		switch ( domain.type ) {
+			case domainType.MAPPED:
+				return translate( 'Remove this domain connection permanently' );
+			case domainType.TRANSFER:
+				return translate( 'Remove this domain transfer permanently' );
+			default:
+				return translate( 'Remove this domain permanently' );
+		}
+	};
+
 	return (
 		<DomainInfoCard
 			type="custom"
 			title={ translate( 'Delete' ) }
-			description={ translate( 'Remove this domain permanently' ) }
+			description={ getDescription() }
 			cta={
 				<RemovePurchase
 					hasLoadedSites={ true }
