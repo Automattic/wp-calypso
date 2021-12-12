@@ -125,7 +125,21 @@ export class UserStep extends Component {
 		if ( oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
 		}
-		if ( flowName === 'onboarding' ) {
+		const signupFlows = [
+			'onboarding',
+			'free',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'with-theme',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+			'with-design-picker',
+		];
+		if ( signupFlows.includes( flowName ) ) {
 			const experimentCheck = this.state.isDesktop
 				? 'registration_email_only_desktop_random_usernames'
 				: 'registration_email_only_mobile_random_usernames';
