@@ -103,6 +103,39 @@ export class UserStep extends Component {
 		isDesktop: isDesktop(),
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		if (
+			this.props.flowName !== nextProps.flowName ||
+			this.props.locale !== nextProps.locale ||
+			this.props.subHeaderText !== nextProps.subHeaderText
+		) {
+			this.setSubHeaderText( nextProps );
+		}
+	}
+
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
+	UNSAFE_componentWillMount() {
+		const { oauth2Signup, initialContext, flowName } = this.props;
+
+		const clientId = get( initialContext, 'query.oauth2_client_id', null );
+
+		this.setSubHeaderText( this.props );
+
+		if ( oauth2Signup && clientId ) {
+			this.props.fetchOAuth2ClientData( clientId );
+		}
+		if ( flowName === 'onboarding' ) {
+			const experimentCheck = this.state.isDesktop
+				? 'registration_email_only_desktop_random_usernames'
+				: 'registration_email_only_mobile_random_usernames';
+
+			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
+				this.setState( { experiment: experimentName } );
+			} );
+		}
+	}
+
 	componentDidUpdate() {
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			// It looks like the user just completed the User Registartion Step

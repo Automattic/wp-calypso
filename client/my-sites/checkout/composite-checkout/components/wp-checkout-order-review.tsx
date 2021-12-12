@@ -4,13 +4,16 @@ import {
 	isDomainTransfer,
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { ExperimentAssignment } from '@automattic/explat-client';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -65,6 +68,12 @@ const CouponEnableButton = styled.button`
 	}
 `;
 
+const GeneratedNameNote = styled.p`
+	font-size: 0.75rem;
+	font-style: italic;
+	margin-top: 4px;
+`;
+
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
@@ -86,10 +95,22 @@ export default function WPCheckoutOrderReview( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
+	const [ experiment, setExperiment ] = useState< ExperimentAssignment | null >( null );
 	const cartKey = useCartKey();
 	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
+	const isDesktop = useViewportMatch( 'mobile', '>=' );
 	const reduxDispatch = useDispatch();
+
+	useEffect( () => {
+		const experimentCheck = isDesktop
+			? 'registration_email_only_desktop_random_usernames'
+			: 'registration_email_only_mobile_random_usernames';
+
+		loadExperimentAssignment( experimentCheck ).then( ( experimentObject ) => {
+			setExperiment( experimentObject );
+		} );
+	}, [] );
 
 	const onRemoveProductCancel = useCallback( () => {
 		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
@@ -143,7 +164,15 @@ export default function WPCheckoutOrderReview( {
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
 		>
 			{ ! planIsP2Plus && domainUrl && 'no-user' !== domainUrl && (
-				<SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary>
+				<SiteSummary>
+					{ translate( 'Site: %s', { args: domainUrl } ) }
+
+					{ experiment?.variationName && (
+						<GeneratedNameNote>
+							{ translate( 'You can change this name at any time in your account settings.' ) }
+						</GeneratedNameNote>
+					) }
+				</SiteSummary>
 			) }
 			{ planIsP2Plus && selectedSiteData?.name && (
 				<SiteSummary>
