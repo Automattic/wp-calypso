@@ -518,7 +518,6 @@ export class PluginsBrowser extends Component {
 				{ isEnabled( 'marketplace-v0.5' ) && (
 					<AnnouncementModal
 						announcementId="plugins-page-revamp"
-						className="plugins-browser__announcement"
 						pages={ this.getAnnoncementPages() }
 						finishButtonText={ translate( "Let's explore!" ) }
 					/>

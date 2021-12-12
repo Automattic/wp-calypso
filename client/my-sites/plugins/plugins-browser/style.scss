@@ -58,21 +58,3 @@
 		}
 	}
 }
-
-.plugins-browser__announcement {
-	$modal-height: 480px;
-
-	&.announcement-modal {
-		@include break-xlarge {
-			@media ( min-height: $modal-height ) {
-				&.components-modal__frame {
-					height: $modal-height;
-				}
-
-				.components-guide__page {
-					height: $modal-height;
-				}
-			}
-		}
-	}
-}
