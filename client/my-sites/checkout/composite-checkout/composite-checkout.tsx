@@ -73,10 +73,8 @@ import payPalProcessor from './lib/paypal-express-processor';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import weChatProcessor from './lib/we-chat-processor';
 import webPayProcessor from './lib/web-pay-processor';
-import createAnalyticsEventHandler from './record-analytics';
 import { StoredCard } from './types/stored-cards';
 import { emptyManagedContactDetails } from './types/wpcom-store-state';
-import type { ReactStandardAction } from './types/analytics';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -147,11 +145,6 @@ export default function CompositeCheckout( {
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
 	const reduxDispatch = useDispatch();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const recordEvent: ( action: ReactStandardAction ) => void = useCallback(
-		createAnalyticsEventHandler( reduxDispatch ),
-		[]
-	);
 	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
@@ -440,7 +433,6 @@ export default function CompositeCheckout( {
 			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
-			recordEvent,
 			reduxDispatch,
 			responseCart,
 			siteId: updatedSiteId,
@@ -455,7 +447,6 @@ export default function CompositeCheckout( {
 			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
-			recordEvent,
 			reduxDispatch,
 			responseCart,
 			updatedSiteId,
@@ -779,7 +770,6 @@ export default function CompositeCheckout( {
 				onPageLoadError={ onPageLoadError }
 				onStepChanged={ handleStepChanged }
 				onPaymentMethodChanged={ handlePaymentMethodChanged }
-				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }
 				isLoading={ isLoading }

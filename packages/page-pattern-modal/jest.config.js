@@ -3,5 +3,4 @@ module.exports = {
 	globals: {
 		configData: {},
 	},
-	setupFilesAfterEnv: [ 'jest-canvas-mock' ],
 };

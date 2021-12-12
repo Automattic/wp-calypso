@@ -148,6 +148,15 @@ export class LoginPage {
 		return { username: username, password: password };
 	}
 
+	/**
+	 * Fills and submits the login form with given credentials.
+	 *
+	 * @param {LoginCredentials | TestAccount} credentials
+	 */
+	async fillAndSubmit( credentials: LoginCredentials | TestAccount ): Promise< void > {
+		await this.baseflow( await this.resolveUserCredentials( credentials ) );
+	}
+
 	/* Log in methods */
 
 	/**

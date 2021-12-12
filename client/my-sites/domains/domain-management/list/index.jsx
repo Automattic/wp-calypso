@@ -1,6 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
-import config from '@automattic/calypso-config';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -141,7 +139,7 @@ export class List extends Component {
 							selectedSite={ this.props.selectedSite }
 							currentRoute={ this.props.currentRoute }
 						/>
-						{ this.optionsDomainButton() }
+						<OptionsDomainButton />
 					</div>
 				</div>
 
@@ -255,14 +253,6 @@ export class List extends Component {
 				.subtract( 30, 'minutes' )
 				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
-	}
-
-	optionsDomainButton() {
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			return null;
-		}
-
-		return <OptionsDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {

@@ -1,8 +1,6 @@
 import debugFactory from 'debug';
-import { omit } from 'lodash';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
-const { Blob } = globalThis; // The linter complains if I don't do this...?
 
 /**
  * Create an `Undocumented` instance
@@ -16,40 +14,6 @@ function Undocumented( wpcom ) {
 	}
 	this.wpcom = wpcom;
 }
-
-Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
-	debug( '/sites/:site_id:/jetpack-connect/is-user-connected query' );
-	const endpointUrl = '/sites/' + siteId + '/jetpack-connect/is-user-connected';
-	return this.wpcom.req.get( { path: endpointUrl, apiNamespace: 'wpcom/v2' } );
-};
-
-/**
- * GET/POST site settings
- *
- * @param {number|string} [siteId] The site ID
- * @param {string} [method] The request method
- * @param {object} [data] The POST data
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, fn ) {
-	debug( '/sites/:site_id:/settings query' );
-	if ( 'function' === typeof method ) {
-		fn = method;
-		method = 'get';
-		data = {};
-	}
-
-	// If no apiVersion was specified, use the settings api version with the widest support (1.1)
-	const apiVersion = data.apiVersion || '1.1';
-	const body = omit( data, [ 'apiVersion' ] );
-	const path = '/sites/' + siteId + '/settings';
-
-	if ( 'get' === method ) {
-		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
-
-	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
-};
 
 /**
  * Get the inbound transfer status for this domain
@@ -65,75 +29,6 @@ Undocumented.prototype.checkAuthCode = function ( domain, authCode, fn ) {
 		{ auth_code: authCode },
 		fn
 	);
-};
-
-/**
- * Get the inbound transfer status for this domain
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getInboundTransferStatus = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-status`,
-		},
-		fn
-	);
-};
-
-/**
- * Starts an inbound domain transfer that is in the pending_start state.
- *
- * @param {number|string} siteId The site ID
- * @param {string} domain The domain name
- * @param {string} authCode The auth code for the transfer
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCode, fn ) {
-	let query = {};
-	if ( authCode && authCode !== '' ) {
-		query = { auth_code: authCode };
-	}
-
-	return this.wpcom.req.get(
-		`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
-		query,
-		fn
-	);
-};
-
-/**
- *
- * @param domain {string}
- * @param fn {function}
- */
-Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		`/domains/${ encodeURIComponent( domain ) }/price`,
-		{
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
- * Launches a private site
- *
- * @param {string} siteIdOrSlug - ID or slug of the site to be launched
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.launchSite = function ( siteIdOrSlug, fn ) {
-	const path = `/sites/${ siteIdOrSlug }/launch`;
-	debug( path );
-	return this.wpcom.req.post( path, fn );
-};
-
-Undocumented.prototype.resendIcannVerification = function ( domain, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/resend-icann/', callback );
 };
 
 Undocumented.prototype.fetchDns = function ( domainName, fn ) {
@@ -192,47 +87,6 @@ Undocumented.prototype.getDnsTemplateRecords = function (
 	);
 };
 
-Undocumented.prototype.transferToUser = function ( siteId, domainName, targetUserId, fn ) {
-	return this.wpcom.req.post(
-		'/sites/' + siteId + '/domains/' + domainName + '/transfer-to-user/' + targetUserId,
-		fn
-	);
-};
-
-/**
- * Transfers a domain to the specified site
- *
- * @param {number} siteId The site ID
- * @param {string} [domainName] Name of the domain
- * @param {number} [targetSiteId] The target site ID
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.transferToSite = function ( siteId, domainName, targetSiteId, fn ) {
-	return this.wpcom.req.post(
-		`/sites/${ siteId }/domains/${ domainName }/transfer-to-site/${ targetSiteId }`,
-		fn
-	);
-};
-
-/*
- * Change the theme of a given site.
- *
- * @param {string} [siteSlug]
- * @param {string} [data]
- * @param {Function} fn
- */
-Undocumented.prototype.changeTheme = function ( siteSlug, data, fn ) {
-	debug( '/site/:site_id/themes/mine' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + siteSlug + '/themes/mine',
-			body: data,
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.isSiteImportable = function ( site_url ) {
 	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
 
@@ -252,46 +106,6 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 	return this.wpcom.req.get( '/connect/site-info', { url: inputUrl } );
 };
 
-/**
- * Requests streamlined approval to WordAds program
- *
- * @param {number}       siteId            The site ID
- * @returns {Promise} A promise representing the request
- */
-Undocumented.prototype.wordAdsApprove = function ( siteId ) {
-	debug( '/sites/:site:/wordads/approve' );
-	return this.wpcom.req.post( '/sites/' + siteId + '/wordads/approve' );
-};
-
-/**
- * Fetch the status of an Automated Transfer.
- *
- * @param {number} siteId -- the ID of the site being transferred
- * @param {number} transferId -- ID of the specific transfer
- * @returns {Promise} promise for handling result
- */
-Undocumented.prototype.transferStatus = function ( siteId, transferId ) {
-	debug( '/sites/:site_id/automated-transfers/status/:transfer_id' );
-	return this.wpcom.req.get( {
-		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`,
-	} );
-};
-
-/**
- * Get OAuth2 Client data for a given client ID
- *
- * @param {string}     clientId       The client ID
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.oauth2ClientId = function ( clientId, fn ) {
-	return this.wpcom.req.get(
-		`/oauth2/client-data/${ clientId }`,
-		{ apiNamespace: 'wpcom/v2' },
-		fn
-	);
-};
-
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 	domain,
 	providerId,
@@ -304,10 +118,6 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 		{ redirect_uri: redirectUri },
 		callback
 	);
-};
-
-Undocumented.prototype.domainsVerifyRegistrantEmail = function ( domain, email, token ) {
-	return this.wpcom.req.get( `/domains/${ domain }/verify-email`, { email, token } );
 };
 
 Undocumented.prototype.domainsVerifyOutboundTransferConfirmation = function (
@@ -342,66 +152,6 @@ Undocumented.prototype.startMigration = function ( sourceSiteId, targetSiteId ) 
 		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
 		apiNamespace: 'wpcom/v2',
 	} );
-};
-
-Undocumented.prototype.getAtomicSiteMediaViaProxy = function (
-	siteIdOrSlug,
-	mediaPath,
-	{ query = '', maxSize }
-) {
-	const safeQuery = query.replace( /^\?/, '' );
-	const params = {
-		path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file?path=${ mediaPath }&${ safeQuery }`,
-		apiNamespace: 'wpcom/v2',
-	};
-
-	return new Promise( ( resolve, _reject ) => {
-		const fetchMedia = () =>
-			this.wpcom.req.get( { ...params, responseType: 'blob' }, ( error, data ) => {
-				if ( error || ! ( data instanceof Blob ) ) {
-					_reject( error );
-				} else {
-					resolve( data );
-				}
-			} );
-
-		if ( ! maxSize ) {
-			return fetchMedia();
-		}
-
-		return this.wpcom.req.get( { ...params, method: 'HEAD' }, ( err, data, headers ) => {
-			if ( headers[ 'Content-Length' ] > maxSize ) {
-				_reject( { message: 'exceeded_max_size' } );
-				return;
-			}
-
-			fetchMedia();
-		} );
-	} );
-};
-
-Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
-	siteIdOrSlug,
-	mediaPath,
-	options
-) {
-	let retries = 0;
-	const request = () =>
-		this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options ).catch( ( error ) => {
-			// Retry three times with exponential backoff times
-			if ( retries < 3 ) {
-				return new Promise( ( resolve ) => {
-					++retries;
-					setTimeout( () => {
-						resolve( request() );
-					}, ( retries * retries * 1000 ) / 2 );
-				} );
-			}
-
-			return Promise.reject( error );
-		} );
-
-	return request();
 };
 
 /**

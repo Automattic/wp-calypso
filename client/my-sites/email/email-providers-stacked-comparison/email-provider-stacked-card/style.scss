@@ -1,8 +1,8 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-$width-right-panel-card: 40%;
-$width-left-panel-card: calc( 60% - 48px );
+$width-right-panel-card: calc( 45% - 130px );
+$width-left-panel-card: calc( 55% );
 
 .email-provider-stacked-features__whats-included {
 	color: var( --studio-gray-20 );
@@ -177,11 +177,6 @@ h2.action-panel__title {
 	width: $width-right-panel-card;
 }
 
-.email-provider-stacked-card__provider-additional-price-information {
-	color: var( --studio-gray-60 );
-	margin-left: 4px;
-}
-
 .email-provider-stacked-card__provider-form-and-right-panel {
 	display: none;
 }
@@ -194,9 +189,10 @@ h2.action-panel__title {
 	.email-provider-stacked-card__provider-form-and-right-panel {
 		display: flex;
 		flex-direction: column-reverse;
-		justify-content: space-between;
+		justify-content: start;
 		margin-top: 1em;
 		line-height: 1.5;
+		padding-right: 20px;
 
 		@include breakpoint-deprecated( '>1040px' ) {
 			flex-direction: row;
@@ -205,6 +201,7 @@ h2.action-panel__title {
 
 	.email-provider-stacked-card__provider-form {
 		margin-bottom: 20px;
+		margin-right: 20px;
 		width: $width-left-panel-card;
 
 		@include breakpoint-deprecated( '>1040px' ) {
@@ -257,6 +254,10 @@ h2.action-panel__title {
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
+}
+
+.email-provider-stacked-card__provider-card-main-details {
+	width: 120px;
 }
 
 .email-provider-stacked-card__title-container {

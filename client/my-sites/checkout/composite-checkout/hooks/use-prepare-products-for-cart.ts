@@ -233,7 +233,7 @@ function useAddProductsFromLocalStorage( {
 		}
 
 		const productsForCart: RequestCartProduct[] = getCartFromLocalStorage().map( ( product ) =>
-			fillInSingleCartItemAttributes( product, products )
+			createRequestCartProduct( fillInSingleCartItemAttributes( product, products ) )
 		);
 
 		if ( productsForCart.length < 1 ) {

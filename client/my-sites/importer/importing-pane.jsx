@@ -32,7 +32,7 @@ const sum = ( a, b ) => a + b;
  *     …
  * }
  */
-const calculateProgress = ( progress ) => {
+export const calculateProgress = ( progress ) => {
 	const { attachment = {} } = progress;
 
 	if ( attachment.total > 0 && attachment.completed >= 0 ) {

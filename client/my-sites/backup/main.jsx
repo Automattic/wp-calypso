@@ -17,10 +17,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
@@ -108,10 +104,6 @@ const AdminContent = ( { selectedDate } ) => {
 	const onDateChange = ( date ) =>
 		page( backupMainPath( siteSlug, { date: date.format( INDEX_FORMAT ) } ) );
 
-	const backupStorageSpace = getForCurrentCROIteration( {
-		[ Iterations.ONLY_REALTIME_PRODUCTS ]: <BackupStorageSpace />,
-	} );
-
 	return (
 		<>
 			<QueryRewindCapabilities siteId={ siteId } />
@@ -129,7 +121,7 @@ const AdminContent = ( { selectedDate } ) => {
 							{ needCredentials && <EnableRestoresBanner /> }
 
 							<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
-							{ backupStorageSpace }
+							<BackupStorageSpace />
 							<BackupStatus selectedDate={ selectedDate } />
 						</div>
 					</div>

@@ -160,9 +160,8 @@ export function pollThemeTransferStatus(
 				dispatch( transferStatusFailure( siteId, transferId, 'client timeout' ) );
 				return resolve();
 			}
-			return wpcom
-				.undocumented()
-				.transferStatus( siteId, transferId )
+			return wpcom.req
+				.get( `/sites/${ siteId }/automated-transfers/status/${ transferId }` )
 				.then( ( { status, message, uploaded_theme_slug } ) => {
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {

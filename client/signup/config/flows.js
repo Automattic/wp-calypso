@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
@@ -73,7 +74,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 	}
 
 	// Initially ship to English users only, then ship to all users when translations complete
-	if ( englishLocales.includes( localeSlug ) ) {
+	if ( englishLocales.includes( localeSlug ) || isEnabled( 'signup/hero-flow-non-en' ) ) {
 		return addQueryArgs( queryParam, '/start/setup-site' );
 	}
 
@@ -111,17 +112,6 @@ function getDestinationFromIntent( dependencies ) {
 	return getChecklistThemeDestination( dependencies );
 }
 
-function getImportDestination( { importSiteEngine, importSiteUrl, siteSlug } ) {
-	return addQueryArgs(
-		{
-			engine: importSiteEngine || null,
-			'from-site': importSiteUrl || null,
-			signup: 1,
-		},
-		`/import/${ siteSlug }`
-	);
-}
-
 function getDIFMSignupDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
@@ -134,7 +124,6 @@ const flows = generateFlows( {
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
-	getImportDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 } );

@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { isEnabled } from '@automattic/calypso-config';
 import { isFreePlan } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
@@ -609,9 +608,7 @@ class ActivityLog extends Component {
 				<QuerySitePurchases siteId={ siteId } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
-				{ siteId && isEnabled( 'activity-log/display-rules' ) && (
-					<QueryRewindPolicies siteId={ siteId } />
-				) }
+				{ siteId && <QueryRewindPolicies siteId={ siteId } /> }
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
@@ -646,40 +643,31 @@ export default connect(
 			! siteHasScanProductPurchase( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 
-		const displayRulesEnabled = isEnabled( 'activity-log/display-rules' );
-		const displayRulesLoaded = displayRulesEnabled
-			? getRewindPoliciesRequestStatus( state, siteId ) === 'success'
-			: true;
-		const visibleDays = displayRulesEnabled
-			? getActivityLogVisibleDays( state, siteId )
+		const displayRulesLoaded = getRewindPoliciesRequestStatus( state, siteId ) === 'success';
+		const visibleDays = getActivityLogVisibleDays( state, siteId );
+		const oldestVisibleDate = Number.isFinite( visibleDays )
+			? applySiteOffset( Date.now(), { gmtOffset, timezone } )
+					.subtract( visibleDays, 'days' )
+					.startOf( 'day' )
 			: undefined;
-		const oldestVisibleDate =
-			displayRulesEnabled && Number.isFinite( visibleDays )
-				? applySiteOffset( Date.now(), { gmtOffset, timezone } )
-						.subtract( visibleDays, 'days' )
-						.startOf( 'day' )
-				: undefined;
 
 		const logs = siteId && requestActivityLogs( siteId, filter );
 		const allLogEntries = logs?.data ?? emptyList;
-		const visibleLogEntries =
-			displayRulesEnabled && oldestVisibleDate
-				? // This could slightly degrade performance, but it's likely
-				  // this entire component tree gets refactored or removed soon,
-				  // in favor of calypso/my-sites/activity/activity-log-v2.
-				  //
-				  // eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-				  allLogEntries.filter( ( log ) =>
-						applySiteOffset( log.activityDate, { gmtOffset, timezone } ).isSameOrAfter(
-							oldestVisibleDate,
-							'day'
-						)
-				  )
-				: allLogEntries;
+		const visibleLogEntries = oldestVisibleDate
+			? // This could slightly degrade performance, but it's likely
+			  // this entire component tree gets refactored or removed soon,
+			  // in favor of calypso/my-sites/activity/activity-log-v2.
+			  //
+			  // eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			  allLogEntries.filter( ( log ) =>
+					applySiteOffset( log.activityDate, { gmtOffset, timezone } ).isSameOrAfter(
+						oldestVisibleDate,
+						'day'
+					)
+			  )
+			: allLogEntries;
 
-		const allLogsVisible = displayRulesEnabled
-			? visibleLogEntries.length === allLogEntries.length
-			: false;
+		const allLogsVisible = visibleLogEntries.length === allLogEntries.length;
 
 		return {
 			gmtOffset,

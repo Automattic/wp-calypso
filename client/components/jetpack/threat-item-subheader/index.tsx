@@ -13,7 +13,7 @@ import './style.scss';
 
 interface Props {
 	threat: Threat;
-	isFixable: bool;
+	isFixable: boolean;
 }
 
 const entryActionClassNames = ( threat: Threat ) => {

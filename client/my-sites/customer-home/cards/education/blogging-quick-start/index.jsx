@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import playImage from 'calypso/assets/images/customer-home/plain-play.png';
@@ -7,18 +6,15 @@ import EducationalContent from '../educational-content';
 import BloggingQuickStartModal from './blogging-quick-start-modal';
 
 const BloggingQuickStart = () => {
-	const { localeSlug } = useTranslate();
-	const isEnglish = config( 'english_locales' ).includes( localeSlug );
+	const translate = useTranslate();
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-
-	if ( ! isEnglish ) {
-		return null;
-	}
 
 	return (
 		<EducationalContent
-			title="Blog like an expert from day one"
-			description="Learn the fundamentals from our bite-sized video course &mdash; you'll be up and running in just nine minutes."
+			title={ translate( 'Blog like an expert from day one' ) }
+			description={ translate(
+				"Learn the fundamentals from our bite-sized video course — you'll be up and running in just nine minutes."
+			) }
 			modalLinks={ [
 				{
 					ModalComponent: BloggingQuickStartModal,
@@ -30,7 +26,7 @@ const BloggingQuickStart = () => {
 						},
 					},
 					onClick: () => setIsModalVisible( true ),
-					text: 'Start learning',
+					text: translate( 'Start learning' ),
 				},
 			] }
 			illustration={ playImage }

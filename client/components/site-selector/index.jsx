@@ -46,6 +46,7 @@ class SiteSelector extends Component {
 		filter: PropTypes.func,
 		groups: PropTypes.bool,
 		onSiteSelect: PropTypes.func,
+		searchPlaceholder: PropTypes.string,
 		showRecentSites: PropTypes.bool,
 		recentSites: PropTypes.array,
 		selectedSite: PropTypes.object,
@@ -409,6 +410,7 @@ class SiteSelector extends Component {
 				<Search
 					onSearch={ this.onSearch }
 					delaySearch={ true }
+					placeholder={ this.props.searchPlaceholder }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus={ this.props.autoFocus }
 					disabled={ ! this.props.hasLoadedSites }

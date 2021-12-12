@@ -1,3 +1,4 @@
+import type { CartActionError } from './errors';
 import type { Dispatch } from 'react';
 
 export type ShoppingCartReducerDispatch = ( action: ShoppingCartAction ) => void;
@@ -138,11 +139,19 @@ export type ShoppingCartState = {
 	responseCart: TempResponseCart;
 	lastValidResponseCart: ResponseCart;
 	couponStatus: CouponStatus;
-	cacheStatus: CacheStatus;
-	loadingError?: string;
-	loadingErrorType?: ShoppingCartError;
 	queuedActions: ShoppingCartAction[];
-};
+} & (
+	| {
+			cacheStatus: Exclude< CacheStatus, 'error' >;
+			loadingError?: undefined;
+			loadingErrorType?: undefined;
+	  }
+	| {
+			cacheStatus: 'error';
+			loadingError: string;
+			loadingErrorType: ShoppingCartError;
+	  }
+ );
 
 export interface WithShoppingCartProps {
 	shoppingCartManager: UseShoppingCart;
@@ -153,9 +162,15 @@ export type CartValidCallback = ( cart: ResponseCart ) => void;
 
 export type DispatchAndWaitForValid = ( action: ShoppingCartAction ) => Promise< ResponseCart >;
 
+export type SavedActionPromise = {
+	resolve: ( responseCart: ResponseCart ) => void;
+	reject: ( error: CartActionError ) => void;
+};
+
 export interface ActionPromises {
 	resolve: ( tempResponseCart: TempResponseCart ) => void;
-	add: ( resolve: ( value: ResponseCart ) => void ) => void;
+	reject: ( error: CartActionError ) => void;
+	add: ( actionPromise: SavedActionPromise ) => void;
 }
 
 export interface CartSyncManager {
@@ -341,6 +356,7 @@ export interface ResponseCartProductExtra {
 	premium?: boolean;
 	new_quantity?: number;
 	domain_to_bundle?: string;
+	email_users?: TitanProductUser[];
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	purchaseType?: string;
@@ -354,6 +370,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	auth_code?: string;
 }
 
 export interface GSuiteProductUser {
@@ -361,6 +378,15 @@ export interface GSuiteProductUser {
 	lastname: string;
 	email: string;
 	password: string;
+}
+
+export interface TitanProductUser {
+	alternative_email?: string;
+	email: string;
+	encrypted_password?: string;
+	is_admin?: boolean;
+	name?: string;
+	password?: string;
 }
 
 export type DomainContactDetails = {

@@ -161,7 +161,6 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 .welcome-tour-card__overlay-controls {
 	left: 0;
 	padding: $grid-unit-15;
-	position: absolute;
 	right: 0;
 	z-index: 1; // z-index is needed because overlay controls are written before components-card__media, and so ends up under the image
 
@@ -198,8 +197,20 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
+.welcome-tour-card__overlay-controls__absolute {
+	position: absolute;
+}
+
 .welcome-tour-card__next-btn {
 	margin-left: $grid-unit-15;
 	justify-content: center;
 	min-width: 85px;
+}
+
+// TODO: Remove once @wordpress/components/src/card/styles/card-styles.js is updated
+.welcome-tour-card__media img {
+	display: block;
+	height: auto;
+	max-width: 100%;
+	width: 100%;
 }

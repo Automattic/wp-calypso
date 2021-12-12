@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import transferIllustration from 'calypso/assets/images/customer-home/illustration-webinars.svg';
-import connectIllustration from 'calypso/assets/images/illustrations/domain-connected.svg';
+import connectIllustration from 'calypso/assets/images/domains/connect.svg';
+import transferIllustration from 'calypso/assets/images/domains/transfer.svg';
 import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 
 const optionTitleText = {

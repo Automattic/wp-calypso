@@ -7,10 +7,6 @@ import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected
 import Upsell from 'calypso/components/jetpack/upsell';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import Main from 'calypso/components/main';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -63,20 +59,12 @@ const BackupsUpsellBody: FunctionComponent = () => {
 	const translate = useTranslate();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const dispatch = useDispatch();
-
-	const bodyText =
-		getForCurrentCROIteration( {
-			[ Iterations.ONLY_REALTIME_PRODUCTS ]: translate(
-				'Get peace of mind knowing your work will be saved, add backups today.'
-			),
-		} ) ??
-		translate(
-			'Get peace of mind knowing your work will be saved, add backups today. Choose from real time or daily backups.'
-		);
 	return (
 		<Upsell
 			headerText={ translate( 'Your site does not have backups' ) }
-			bodyText={ bodyText }
+			bodyText={ translate(
+				'Get peace of mind knowing your work will be saved, add backups today.'
+			) }
 			buttonLink={ `https://jetpack.com/upgrade/backup/?site=${ selectedSiteSlug }` }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ) }
 			iconComponent={ <BackupsUpsellIcon /> }

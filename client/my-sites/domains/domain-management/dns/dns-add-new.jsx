@@ -266,7 +266,7 @@ class DnsAddNew extends React.Component {
 		);
 		const buttonLabel = recordToEdit
 			? translate( 'Update DNS record' )
-			: translate( 'Add new DNS record' );
+			: translate( 'Add DNS record' );
 
 		return (
 			<form className="dns__form">

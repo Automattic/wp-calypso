@@ -58,9 +58,8 @@ export function requestSiteSettings( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.settings( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/settings`, { apiVersion: '1.4' } )
 			.then( ( { name, description, settings } ) => {
 				const savedSettings = {
 					...normalizeSettings( settings ),
@@ -84,16 +83,15 @@ export function requestSiteSettings( siteId ) {
 	};
 }
 
-export function saveSiteSettings( siteId, settings ) {
+export function saveSiteSettings( siteId, settings = {} ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_SETTINGS_SAVE,
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.settings( siteId, 'post', settings )
+		return wpcom.req
+			.post( '/sites/' + siteId + '/settings', { apiVersion: '1.4' }, settings )
 			.then( ( body ) => {
 				dispatch( updateSiteSettings( siteId, normalizeSettings( body.updated ) ) );
 				dispatch( {

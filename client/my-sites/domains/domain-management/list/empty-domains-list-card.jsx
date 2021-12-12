@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
+import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/domains/free-domain.svg';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -69,7 +69,11 @@ function EmptyDomainsListCard( {
 	);
 
 	return (
-		<Card className="empty-domains-list-card">
+		<Card
+			className={ classNames( 'empty-domains-list-card', {
+				'has-non-wpcom-domains': hasNonWpcomDomains,
+			} ) }
+		>
 			<div
 				className={ classNames( 'empty-domains-list-card__wrapper', {
 					'is-compact': isCompact,

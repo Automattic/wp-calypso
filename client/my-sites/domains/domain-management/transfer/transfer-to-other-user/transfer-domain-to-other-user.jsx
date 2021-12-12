@@ -13,7 +13,7 @@ import Main from 'calypso/components/main';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
-import wp from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
@@ -30,8 +30,6 @@ import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
-
-const wpcom = wp.undocumented();
 
 const getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
 
@@ -77,7 +75,8 @@ class TransferDomainToOtherUser extends Component {
 	};
 
 	handleConfirmTransferDomain( closeDialog ) {
-		const { selectedDomainName } = this.props;
+		const { selectedDomainName, selectedSite } = this.props;
+		const { selectedUserId } = this.state;
 		const selectedUserDisplay = this.getSelectedUserDisplayName();
 		const successMessage = this.props.translate(
 			'%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s',
@@ -85,17 +84,13 @@ class TransferDomainToOtherUser extends Component {
 		);
 		const defaultErrorMessage = this.props.translate(
 			'Failed to transfer %(selectedDomainName)s, please try again or contact support.',
-			{
-				args: { selectedDomainName },
-			}
+			{ args: { selectedDomainName } }
 		);
 
 		this.setState( { disableDialogButtons: true } );
-		wpcom
-			.transferToUser(
-				this.props.selectedSite.ID,
-				this.props.selectedDomainName,
-				this.state.selectedUserId
+		wpcom.req
+			.post(
+				`/sites/${ selectedSite.ID }/domains/${ selectedDomainName }/transfer-to-user/${ selectedUserId }`
 			)
 			.then(
 				() => {
