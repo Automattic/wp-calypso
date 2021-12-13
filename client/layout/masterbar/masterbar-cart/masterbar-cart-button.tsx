@@ -53,6 +53,7 @@ export function MasterbarCartButton( {
 				onClose={ onClose }
 				context={ cartButtonRef.current }
 				position="bottom left"
+				className="masterbar-cart-button__popover"
 			>
 				<CheckoutErrorBoundary errorMessage="Error">
 					<MiniCart selectedSiteSlug={ selectedSiteSlug } goToCheckout={ goToCheckout } />

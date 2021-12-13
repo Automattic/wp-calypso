@@ -17,3 +17,18 @@
 	color: var( --color-text-inverted );
 	background-color: var( --color-accent );
 }
+
+.masterbar-cart-button__popover .popover__arrow {
+	@include breakpoint-deprecated( '<480px' ) {
+		display: none;
+	}
+}
+
+.masterbar-cart-button__popover.popover.is-bottom .popover__inner,
+.masterbar-cart-button__popover.popover.is-bottom-left .popover__inner,
+.masterbar-cart-button__popover.popover.is-bottom-right .popover__inner,
+.masterbar-cart-button__popover.popover .popover__inner {
+	@include breakpoint-deprecated( '<480px' ) {
+		top: 0;
+	}
+}
