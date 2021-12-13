@@ -1,4 +1,5 @@
 import { translate, TranslateResult } from 'i18n-calypso';
+import { ReactNode } from 'react';
 
 export interface LinkAndInfo {
 	info?: TranslateResult;
@@ -15,23 +16,23 @@ enum InfoTypes {
 
 export interface Text {
 	type: InfoTypes.Text;
-	text: string;
+	text: ReactNode;
 }
 
 export interface Link {
 	type: InfoTypes.Link;
-	text: string;
+	text: ReactNode;
 	link: string;
 }
 
 export interface UnorderedList {
 	type: InfoTypes.UnorderedList;
-	items: string[];
+	items: ReactNode[];
 }
 
 export interface OrderedList {
 	type: InfoTypes.OrderedList;
-	items: string[];
+	items: ReactNode[];
 }
 
 export interface Line {
@@ -99,16 +100,13 @@ export const topHosts: Host[] = [
 						type: InfoTypes.UnorderedList,
 						items: [
 							translate(
-								'FTP (File Transfer Protocol): the original standard for transferring files between servers.',
-								{ textOnly: true }
+								'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
 							),
 							translate(
-								'SFTP (Secure File Transfer Protocol): is like FTP, but adds a layer of security (SSH encryption).',
-								{ textOnly: true }
+								'SFTP (Secure File Transfer Protocol): is like FTP, but adds a layer of security (SSH encryption).'
 							),
 							translate(
-								'SFTP/SSH is the preferred method to choose. Both methods are supported by Bluehost.',
-								{ textOnly: true }
+								'SFTP/SSH is the preferred method to choose. Both methods are supported by Bluehost.'
 							),
 						],
 					},
@@ -118,7 +116,7 @@ export const topHosts: Host[] = [
 					},
 					{
 						type: InfoTypes.Link,
-						text: translate( 'Read more', { textOnly: true } ),
+						text: translate( 'Read more' ),
 						link: 'https://my.bluehost.com/cgi/help/ftpaccounts',
 					},
 				],
@@ -127,16 +125,13 @@ export const topHosts: Host[] = [
 						type: InfoTypes.UnorderedList,
 						items: [
 							translate(
-								'FTP (File Transfer Protocol): the original standard for transferring files between servers.',
-								{ textOnly: true }
+								'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
 							),
 							translate(
-								'SFTP (Secure File Transfer Protocol): is like FTP, but adds a layer of security (SSH encryption).',
-								{ textOnly: true }
+								'SFTP (Secure File Transfer Protocol): is like FTP, but adds a layer of security (SSH encryption).'
 							),
 							translate(
-								'SFTP/SSH is the preferred method to choose. Both methods are supported by Bluehost.',
-								{ textOnly: true }
+								'SFTP/SSH is the preferred method to choose. Both methods are supported by Bluehost.'
 							),
 						],
 					},
@@ -146,7 +141,7 @@ export const topHosts: Host[] = [
 					},
 					{
 						type: InfoTypes.Link,
-						text: translate( 'Read more', { textOnly: true } ),
+						text: translate( 'Read more' ),
 						link: 'https://www.bluehost.com/help/article/ssh-access',
 					},
 				],
@@ -155,8 +150,7 @@ export const topHosts: Host[] = [
 				{
 					type: InfoTypes.Text,
 					text: translate(
-						'Your Domain Name or server IP address. Both are available from the Bluehost cPanel.',
-						{ textOnly: true }
+						'Your Domain Name or server IP address. Both are available from the Bluehost cPanel.'
 					),
 				},
 				{
@@ -164,7 +158,7 @@ export const topHosts: Host[] = [
 				},
 				{
 					type: InfoTypes.Link,
-					text: translate( 'Visit my Bluehost cPanel', { textOnly: true } ),
+					text: translate( 'Visit my Bluehost cPanel' ),
 					link: 'https://my.bluehost.com/cgi-bin/cplogin',
 				},
 			],
@@ -172,15 +166,14 @@ export const topHosts: Host[] = [
 				ftp: [
 					{
 						type: InfoTypes.Text,
-						text: translate( 'Enter port 21 for Bluehost’s FTP service.', { textOnly: true } ),
+						text: translate( 'Enter port 21 for Bluehost’s FTP service.' ),
 					},
 				],
 				sftp: [
 					{
 						type: InfoTypes.Text,
 						text: translate(
-							'Port 2222 would be used for Bluehost shared and reseller accounts. 22 is the default for Bluehost dedicated & VPS accounts.',
-							{ textOnly: true }
+							'Port 2222 would be used for Bluehost shared and reseller accounts. 22 is the default for Bluehost dedicated & VPS accounts.'
 						),
 					},
 				],
@@ -190,22 +183,20 @@ export const topHosts: Host[] = [
 					{
 						type: InfoTypes.OrderedList,
 						items: [
-							translate( 'Login to your Bluehost cPanel', { textOnly: true } ),
+							translate( 'Login to your Bluehost cPanel' ),
 							translate( 'Click the "Advanced" tab towards the left side of the account.', {
 								textOnly: true,
 							} ),
 							translate(
-								'Choose FTP from the sub-menu, or click the FTP Accounts icon from the Files section.',
-								{ textOnly: true }
+								'Choose FTP from the sub-menu, or click the FTP Accounts icon from the Files section.'
 							),
-							translate( 'Create a new FTP account', { textOnly: true } ),
+							translate( 'Create a new FTP account' ),
 						],
 					},
 					{
 						type: InfoTypes.Text,
 						text: translate(
-							'Your Bluehost username will end with your domain (e.g. test@example.com).',
-							{ textOnly: true }
+							'Your Bluehost username will end with your domain (e.g. test@example.com).'
 						),
 					},
 					{
@@ -213,7 +204,7 @@ export const topHosts: Host[] = [
 					},
 					{
 						type: InfoTypes.Link,
-						text: translate( 'Vist my Bluehost cPanel', { textOnly: true } ),
+						text: translate( 'Vist my Bluehost cPanel' ),
 						link: 'https://my.bluehost.com/cgi-bin/cplogin',
 					},
 				],
@@ -227,8 +218,7 @@ export const topHosts: Host[] = [
 					{
 						type: InfoTypes.Text,
 						text: translate(
-							'If you enable shell access for individual cPanels, the SSH username and password would be the same as the cPanel username and password for those accounts.',
-							{ textOnly: true }
+							'If you enable shell access for individual cPanels, the SSH username and password would be the same as the cPanel username and password for those accounts.'
 						),
 					},
 				],
@@ -238,15 +228,14 @@ export const topHosts: Host[] = [
 					{
 						type: InfoTypes.OrderedList,
 						items: [
-							translate( 'Login to your Bluehost cPanel', { textOnly: true } ),
+							translate( 'Login to your Bluehost cPanel' ),
 							translate( 'Click the "Advanced" tab towards the left side of the account.', {
 								textOnly: true,
 							} ),
 							translate(
-								'Choose FTP from the sub-menu, or click the FTP Accounts icon from the Files section.',
-								{ textOnly: true }
+								'Choose FTP from the sub-menu, or click the FTP Accounts icon from the Files section.'
 							),
-							translate( 'Create a new FTP account', { textOnly: true } ),
+							translate( 'Create a new FTP account' ),
 						],
 					},
 					{
@@ -260,7 +249,7 @@ export const topHosts: Host[] = [
 					},
 					{
 						type: InfoTypes.Link,
-						text: translate( 'Vist my Bluehost cPanel', { textOnly: true } ),
+						text: translate( 'Vist my Bluehost cPanel' ),
 						link: 'https://my.bluehost.com/cgi-bin/cplogin',
 					},
 				],
@@ -268,8 +257,7 @@ export const topHosts: Host[] = [
 					{
 						type: InfoTypes.Text,
 						text: translate(
-							'If you enable shell access for individual cPanels, the SSH username and password would be the same as the cPanel username and password for those accounts.',
-							{ textOnly: true }
+							'If you enable shell access for individual cPanels, the SSH username and password would be the same as the cPanel username and password for those accounts.'
 						),
 					},
 					{
@@ -277,7 +265,7 @@ export const topHosts: Host[] = [
 					},
 					{
 						type: InfoTypes.Link,
-						text: translate( 'Vist my Bluehost cPanel', { textOnly: true } ),
+						text: translate( 'Vist my Bluehost cPanel' ),
 						link: 'https://my.bluehost.com/cgi-bin/cplogin',
 					},
 				],
@@ -286,8 +274,7 @@ export const topHosts: Host[] = [
 				{
 					type: InfoTypes.Text,
 					text: translate(
-						'The majority of Bluehost accounts require private key authentication. Bluehost VPS and Dedicated Servers also allow for username and password authentication as secondary option.',
-						{ textOnly: true }
+						'The majority of Bluehost accounts require private key authentication. Bluehost VPS and Dedicated Servers also allow for username and password authentication as secondary option.'
 					),
 				},
 				{
@@ -295,7 +282,7 @@ export const topHosts: Host[] = [
 				},
 				{
 					type: InfoTypes.Link,
-					text: translate( 'Read more', { textOnly: true } ),
+					text: translate( 'Read more' ),
 					link: 'https://www.bluehost.com/help/article/ssh-access',
 				},
 			],
@@ -303,15 +290,15 @@ export const topHosts: Host[] = [
 				{
 					type: InfoTypes.OrderedList,
 					items: [
-						translate( 'Login to your Bluehost cPanel', { textOnly: true } ),
+						translate( 'Login to your Bluehost cPanel' ),
 						translate( 'Click the "Advanced" tab towards the left side of the account.', {
 							textOnly: true,
 						} ),
 						translate( 'Click the Shell Access icon under the Security section.', {
 							textOnly: true,
 						} ),
-						translate( 'Click the Manage SSH Keys button', { textOnly: true } ),
-						translate( 'Choose generate a new key and complete the form', { textOnly: true } ),
+						translate( 'Click the Manage SSH Keys button' ),
+						translate( 'Choose generate a new key and complete the form' ),
 					],
 				},
 				{
@@ -319,7 +306,7 @@ export const topHosts: Host[] = [
 				},
 				{
 					type: InfoTypes.Link,
-					text: translate( 'Vist my Bluehost cPanel', { textOnly: true } ),
+					text: translate( 'Vist my Bluehost cPanel' ),
 					link: 'https://my.bluehost.com/cgi-bin/cplogin',
 				},
 			],
