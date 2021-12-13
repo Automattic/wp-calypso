@@ -8,5 +8,4 @@ module.exports = storybookDefaultConfig({
 			process: 'process/browser.js',
 		} ),
 	],
-	babelCacheDirectory: path.join(__dirname, "../../../.cache/babel-storybook")
 });

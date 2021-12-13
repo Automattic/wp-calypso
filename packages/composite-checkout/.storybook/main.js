@@ -6,5 +6,4 @@ module.exports = storybookDefaultConfig( {
 	webpackAliases: {
 		'@automattic/composite-checkout': join( __dirname, '../src/public-api.ts' ),
 	},
-	babelCacheDirectory: join(__dirname, "../../../.cache/babel-storybook")
 } );

@@ -1,10 +1,11 @@
+const path = require( 'path' );
 const calypsoBabelConfig = require( '@automattic/calypso-babel-config' );
 
 module.exports = function storybookDefaultConfig( {
 	stories,
 	plugins = [],
 	webpackAliases = {},
-	babelCacheDirectory,
+	babelCacheDirectory = path.join( __dirname, '../../../.cache/babel-storybook' ),
 } = {} ) {
 	return {
 		core: {
@@ -24,9 +25,7 @@ module.exports = function storybookDefaultConfig( {
 			const baseConfig = calypsoBabelConfig();
 			return {
 				...storybookConfig,
-				// Cache is set via parameters, as each consumer of this plugin may want a different folder
-				// and we certainly don't want to harcode paths here.
-				...( babelCacheDirectory ? { cacheDirectory: babelCacheDirectory } : {} ),
+				cacheDirectory: babelCacheDirectory,
 
 				// Reuse presets and plugins from the base Calypso config
 				presets: [ ...( storybookConfig.presets ?? [] ), ...( baseConfig.presets ?? [] ) ],
