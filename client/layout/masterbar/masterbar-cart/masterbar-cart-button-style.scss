@@ -13,11 +13,13 @@
 	text-align: center;
 	position: absolute;
 	top: 2px;
-	right: 2px;
+	right: 50%;
 	color: var( --color-text-inverted );
 	background-color: var( --color-accent );
+	transform: translateX( 24px );
 }
 
+/* The next several rules make the popover nearly fullscreen at mobile widths */
 .masterbar-cart-button__popover .popover__arrow {
 	@include breakpoint-deprecated( '<480px' ) {
 		display: none;

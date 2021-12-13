@@ -41,6 +41,7 @@ export function MasterbarCartButton( {
 		<>
 			<MasterbarItem
 				className="masterbar-cart-button"
+				alwaysShowContent
 				icon="cart"
 				tooltip={ tooltip }
 				onClick={ onClick }
