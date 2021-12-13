@@ -92,9 +92,11 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	};
 
 	const modalTitleText = translate( 'You are about to leave checkout with items in your cart' );
-	const modalBodyText = translate( 'You can leave the items in the cart or clear your cart.' );
-	const modalPrimaryText = translate( 'Do not clear' );
-	const modalSecondaryText = translate( 'Clear cart' );
+	const modalBodyText = translate( 'You can leave the items in the cart or empty the cart.' );
+	/* translators: The label to a button that will exit checkout without removing items from the shopping cart. */
+	const modalPrimaryText = translate( 'Leave items' );
+	/* translators: The label to a button that will remove all items from the shopping cart. */
+	const modalSecondaryText = translate( 'Empty cart' );
 	const clearCartAndLeave = () => {
 		replaceProductsInCart( [] );
 		leaveCheckout();
