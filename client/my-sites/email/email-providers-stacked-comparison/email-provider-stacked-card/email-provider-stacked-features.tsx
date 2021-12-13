@@ -50,8 +50,9 @@ export const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStack
 	);
 };
 
-export interface EmailProviderStackedFeaturesProps {
-	features: TranslateResult[];
+interface EmailProviderStackedFeaturesToggleButton {
+	handleClick: MouseEventHandler< HTMLButtonElement >;
+	isRelatedContentExpanded: boolean;
 }
 
 export const EmailProviderStackedFeaturesToggleButton: FunctionComponent< EmailProviderStackedFeaturesToggleButton > = (
@@ -70,8 +71,3 @@ export const EmailProviderStackedFeaturesToggleButton: FunctionComponent< EmailP
 		</button>
 	);
 };
-
-interface EmailProviderStackedFeaturesToggleButton {
-	handleClick: MouseEventHandler< HTMLButtonElement >;
-	isRelatedContentExpanded: boolean;
-}
