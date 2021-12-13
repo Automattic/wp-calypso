@@ -1,7 +1,6 @@
-import React from 'react';
-import './style.scss';
 import FoldableCard from 'calypso/components/foldable-card';
 import { AccordionProps } from './types';
+import './style.scss';
 
 const Accordion = ( {
 	title,
