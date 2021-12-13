@@ -19,7 +19,6 @@ import {
 	getTheme,
 	getThemeDetailsUrl,
 	getThemeHelpUrl,
-	getThemePurchaseUrl,
 	getThemeSignupUrl,
 	isPremiumThemeAvailable,
 	isThemeActive,
@@ -31,24 +30,6 @@ const identity = ( theme ) => theme;
 
 function getAllThemeOptions( { translate, blockEditorSettings } ) {
 	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
-
-	const purchase = {
-		label: translate( 'Purchase', {
-			context: 'verb',
-		} ),
-		extendedLabel: translate( 'Purchase this design' ),
-		header: translate( 'Purchase on:', {
-			context: 'verb',
-			comment: 'label for selecting a site for which to purchase a theme',
-		} ),
-		getUrl: getThemePurchaseUrl,
-		hideForTheme: ( state, themeId, siteId ) =>
-			isJetpackSite( state, siteId ) || // No individual theme purchase on a JP site
-			! isUserLoggedIn( state ) || // Not logged in
-			! isThemePremium( state, themeId ) || // Not a premium theme
-			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
-			isThemeActive( state, themeId, siteId ), // Already active
-	};
 
 	const upgradePlan = {
 		label: translate( 'Upgrade to activate', {
@@ -174,7 +155,6 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 	return {
 		customize,
 		preview,
-		purchase,
 		upgradePlan,
 		activate,
 		tryandcustomize,
