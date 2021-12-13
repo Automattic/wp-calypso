@@ -1,8 +1,8 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-$width-right-panel-card: 35%;
-$width-left-panel-card: 65%;
+$width-right-panel-card: 45%;
+$width-left-panel-card: 55%;
 
 .email-provider-stacked-features__whats-included {
 	color: var( --studio-gray-20 );
@@ -35,6 +35,7 @@ $width-left-panel-card: 65%;
 		fill: var( --studio-gray-20 );
 		margin-left: -28px;
 		margin-right: 10px;
+		min-width: 24px;
 	}
 }
 
@@ -202,23 +203,17 @@ h2.action-panel__title {
 		margin-top: 1em;
 		line-height: 1.5;
 
-		@include break-small {
-			flex-direction: column;
-		}
-
-		@include break-large {
+		@include break-mobile {
 			flex-direction: row;
 		}
 	}
 
 	.email-provider-stacked-card__provider-form {
 		margin-bottom: 20px;
-		margin-right: 20px;
 		width: 100%;
 
-		@include break-large {
+		@include break-mobile {
 			width: $width-left-panel-card;
-			margin-top: 0;
 		}
 
 		> .form-fieldset {
@@ -234,6 +229,8 @@ h2.action-panel__title {
 }
 
 .email-provider-stacked-card__provider-right-panel {
+	margin-left: 24px;
+
 	img {
 		margin-top: 40px;
 	}
@@ -249,6 +246,7 @@ h2.action-panel__title {
 .email-provider-stacked-card__title-container {
 	p {
 		margin-bottom: 0;
+		margin-right: 10px;
 	}
 }
 
@@ -294,13 +292,13 @@ h2.action-panel__title {
 
 .email-provider-stacked-card__title-container {
 	width: 100%;
-	display:flex;
+	display: flex;
 	flex-direction: column;
 	padding-left: 12px;
 	max-width: 100%;
 
 	@include break-small {
-		max-width: 65%;
+		width: $width-left-panel-card;
 	}
 }
 
@@ -344,7 +342,7 @@ h2.action-panel__title {
 	display: flex;
 	justify-content: space-between;
 	margin-top: 8px;
-	width: calc( 100% - 26px );
+	width: 100%;
 	.gridicon {
 		margin-left: 5px;
 	}

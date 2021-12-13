@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .professional-email-card__logo {
 	color: var( --color-wordpress-com );
 	height: 48px;
@@ -22,4 +25,14 @@
 
 .professional-email-card__discount.badge {
 	margin-bottom: 12px;
+}
+
+.email-provider-stacked-card__provider-form {
+	.titan-new-mailbox-list__main {
+		max-width: 100%;
+
+		@include break-mobile {
+			max-width: 440px;
+		}
+	}
 }
