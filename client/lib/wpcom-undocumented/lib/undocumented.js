@@ -31,30 +31,6 @@ Undocumented.prototype.checkAuthCode = function ( domain, authCode, fn ) {
 	);
 };
 
-Undocumented.prototype.fetchDns = function ( domainName, fn ) {
-	return this.wpcom.req.get( '/domains/' + domainName + '/dns', fn );
-};
-
-Undocumented.prototype.updateDns = function ( domain, records, fn ) {
-	const body = { dns: JSON.stringify( records ) };
-
-	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
-};
-
-Undocumented.prototype.applyDnsTemplate = function (
-	domain,
-	provider,
-	service,
-	variables,
-	callback
-) {
-	return this.wpcom.req.post(
-		'/domains/' + domain + '/dns/providers/' + provider + '/services/' + service,
-		{ variables },
-		callback
-	);
-};
-
 Undocumented.prototype.applyDnsTemplateSyncFlow = function (
 	domain,
 	provider,

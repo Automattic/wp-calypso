@@ -27,19 +27,21 @@ export const fetchDns = ( domainName, forceReload = false ) => ( dispatch, getSt
 
 	dispatch( { type: DOMAINS_DNS_FETCH, domainName } );
 
-	wpcom
-		.undocumented()
-		.fetchDns( domainName )
-		.then(
-			( { records } ) => dispatch( { type: DOMAINS_DNS_FETCH_COMPLETED, domainName, records } ),
-			() => dispatch( { type: DOMAINS_DNS_FETCH_FAILED, domainName } )
-		);
+	wpcom.req.get( `/domains/${ domainName }/dns` ).then(
+		( { records } ) => dispatch( { type: DOMAINS_DNS_FETCH_COMPLETED, domainName, records } ),
+		() => dispatch( { type: DOMAINS_DNS_FETCH_FAILED, domainName } )
+	);
 };
+
+const updateDnsRequest = ( domainName, records ) =>
+	wpcom.req.post( `/domains/${ domainName }/dns`, {
+		dns: JSON.stringify( records ),
+	} );
 
 export const addDns = ( domainName, record ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_DNS_ADD, domainName, record } );
 
-	const addResult = wpcom.undocumented().updateDns( domainName, { records_to_add: [ record ] } );
+	const addResult = updateDnsRequest( domainName, { records_to_add: [ record ] } );
 
 	addResult.then(
 		( { records } ) => dispatch( { type: DOMAINS_DNS_ADD_COMPLETED, domainName, records } ),
@@ -52,9 +54,7 @@ export const addDns = ( domainName, record ) => ( dispatch ) => {
 export const deleteDns = ( domainName, record ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_DNS_DELETE, domainName, record } );
 
-	const updateResult = wpcom
-		.undocumented()
-		.updateDns( domainName, { records_to_remove: [ record ] } );
+	const updateResult = updateDnsRequest( domainName, { records_to_remove: [ record ] } );
 
 	updateResult.then(
 		( { records } ) => dispatch( { type: DOMAINS_DNS_DELETE_COMPLETED, domainName, records } ),
@@ -65,9 +65,12 @@ export const deleteDns = ( domainName, record ) => ( dispatch ) => {
 };
 
 export const applyDnsTemplate = ( domainName, provider, service, variables ) => ( dispatch ) => {
-	const applyResult = wpcom
-		.undocumented()
-		.applyDnsTemplate( domainName, provider, service, variables );
+	const applyResult = wpcom.req.post(
+		`/domains/${ domainName }/dns/providers/${ provider }/services/${ service }`,
+		{
+			variables,
+		}
+	);
 
 	applyResult.then(
 		( { records } ) =>
@@ -81,7 +84,7 @@ export const applyDnsTemplate = ( domainName, provider, service, variables ) => 
 export const updateDns = ( domainName, recordsToAdd, recordsToRemove ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_DNS_UPDATE, recordsToAdd, recordsToRemove } );
 
-	const updateResult = wpcom.undocumented().updateDns( domainName, {
+	const updateResult = updateDnsRequest( domainName, {
 		records_to_add: recordsToAdd,
 		records_to_remove: recordsToRemove,
 	} );
