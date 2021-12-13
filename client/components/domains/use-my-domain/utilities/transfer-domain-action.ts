@@ -33,10 +33,11 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 	if ( ! selectedSite ) return onDone( { message: transferDomainError.NO_SELECTED_SITE } );
 
 	try {
-		const wpcomDomain = wpcom.domain( domain );
 		const authCode = verificationData.ownership_verification_data.verification_data;
-
-		const authCodeCheckResult = await wpcomDomain.checkAuthCode( authCode );
+		const authCodeCheckResult = await wpcom.req.get(
+			`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-check-auth-code`,
+			{ auth_code: authCode }
+		);
 
 		if ( ! authCodeCheckResult.success )
 			return onDone( {

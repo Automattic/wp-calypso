@@ -188,21 +188,6 @@ class Domain {
 		const body = { mode };
 		return this.wpcom.req.post( root + this._id + '/mapping-status', query, body, fn );
 	}
-
-	/**
-	 * Checks the auth code for transferring this domain
-	 *
-	 * @param {string} authCode - The auth code for the given domain to check.
-	 * @param {Function} fn The callback function
-	 * @returns {Promise} A promise that resolves when the request completes
-	 */
-	checkAuthCode = function ( authCode, fn ) {
-		return this.wpcom.req.get(
-			`${ root + encodeURIComponent( this._id ) }/inbound-transfer-check-auth-code`,
-			{ auth_code: authCode },
-			fn
-		);
-	};
 }
 
 /**
