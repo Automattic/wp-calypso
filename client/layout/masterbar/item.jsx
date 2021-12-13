@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component, Fragment, forwardRef } from 'react';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
 const noop = () => {};
@@ -61,6 +61,7 @@ class MasterbarItem extends Component {
 			className: itemClasses,
 			onTouchStart: this.preload,
 			onMouseEnter: this.preload,
+			ref: this.props.innerRef,
 		};
 
 		if ( this.props.url ) {
@@ -75,4 +76,4 @@ class MasterbarItem extends Component {
 	}
 }
 
-export default MasterbarItem;
+export default forwardRef( ( props, ref ) => <MasterbarItem innerRef={ ref } { ...props } /> );
