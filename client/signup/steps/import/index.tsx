@@ -69,7 +69,10 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 
 	const goToImporterPage = ( platform: ImporterPlatform ): void => {
 		let importerUrl;
-		if ( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
+		if (
+			( platform === 'medium' && isEnabled( 'gutenboarding/import-from-medium' ) ) ||
+			( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) )
+		) {
 			importerUrl = getWpComOnboardingUrl( signupDependencies.siteSlug, platform, urlData.url );
 		} else {
 			importerUrl = getImporterUrl( signupDependencies.siteSlug, platform, urlData.url );
