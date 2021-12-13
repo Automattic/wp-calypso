@@ -3,11 +3,11 @@
 
 <br><br>
 
-# Troubleshooting & Debugging
+# Troubleshooting
 
 <!-- TOC -->
 
-- [Troubleshooting & Debugging](#troubleshooting--debugging)
+- [Troubleshooting](#troubleshooting)
   - [git pre-commit hook/husky](#git-pre-commit-hookhusky)
   - [Chromium binary is not available for arm64](#chromium-binary-is-not-available-for-arm64)
   - [Package 'lcms2', required by 'vips', not found](#package-lcms2-required-by-vips-not-found)
