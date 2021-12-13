@@ -59,16 +59,6 @@ Undocumented.prototype.getDnsTemplateRecords = function (
 	);
 };
 
-/**
- * Check different info about WordPress and Jetpack status on a url
- *
- * @param  {string}  inputUrl The url of the site to check. Must use http or https protocol.
- * @returns {Promise} promise  Request promise
- */
-Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
-	return this.wpcom.req.get( '/connect/site-info', { url: inputUrl } );
-};
-
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 	domain,
 	providerId,
