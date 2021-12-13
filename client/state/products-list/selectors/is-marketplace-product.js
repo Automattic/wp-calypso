@@ -1,10 +1,8 @@
 import 'calypso/state/products-list/init';
+import { hasMarketplaceProduct } from '@automattic/calypso-products';
+import { getProductsList } from '../selectors/get-products-list';
 
-const cleanSlug = ( slug ) => slug.replace( /_/g, '-' ).split( /-(monthly|yearly|2y)/ )[ 0 ];
-
-export const isMarketplaceProduct = ( state, productSlug ) =>
-	Object.entries( state.productsList?.items ).some(
-		( [ subscriptionSlug, { product_type } ] ) =>
-			cleanSlug( productSlug ) === cleanSlug( subscriptionSlug ) &&
-			product_type.startsWith( 'marketplace' )
-	);
+export const isMarketplaceProduct = ( state, productSlug ) => {
+	const productsList = getProductsList( state );
+	return hasMarketplaceProduct( productsList, productSlug );
+};

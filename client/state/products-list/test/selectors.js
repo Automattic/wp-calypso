@@ -12,7 +12,6 @@ import {
 	planSlugToPlanProduct,
 	computeFullAndMonthlyPricesForPlan,
 	computeProductsWithPrices,
-	isMarketplaceProduct,
 } from '../selectors';
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
@@ -364,53 +363,6 @@ describe( 'selectors', () => {
 		test( 'should return true when productsList.isFetching is true', () => {
 			const state = { productsList: { isFetching: true } };
 			expect( isProductsListFetching( state ) ).toBe( true );
-		} );
-	} );
-
-	describe( '#isMarketplaceProduct()', () => {
-		const state = {
-			productsList: {
-				items: {
-					jetpack: { product_type: 'jetpack' },
-					woocommerce_bookings_monthly: { product_type: 'marketplace_plugin' },
-					woocommerce_bookings_yearly: { product_type: 'marketplace_plugin' },
-					'woocommerce-subscriptions-monthly': { product_type: 'marketplace_plugin' },
-					'woocommerce-subscriptions-yearly': { product_type: 'marketplace_plugin' },
-					'woocommerce-test-plugin': { product_type: 'plugin' },
-					'woocommerce-test-plugin-advanced': { product_type: 'marketplace_plugin' },
-				},
-			},
-		};
-		test( "should return false when the product isn't in the products list", () => {
-			expect( isMarketplaceProduct( state, 'yoast' ) ).toBe( false );
-		} );
-
-		test( "should return false when the product isn't a marketplace product", () => {
-			expect( isMarketplaceProduct( state, 'jetpack' ) ).toBe( false );
-		} );
-
-		test( 'should return false when a product slug also partly matches a marketplace product', () => {
-			expect( isMarketplaceProduct( state, 'woocommerce-test-plugin' ) ).toBe( false );
-		} );
-
-		describe( 'product is a marketplace product', () => {
-			test( 'should return true when the product slug contains underscores', () => {
-				expect( isMarketplaceProduct( state, 'woocommerce_bookings' ) ).toBe( true );
-			} );
-
-			test( 'should return true when the product slug contains dashes', () => {
-				expect( isMarketplaceProduct( state, 'woocommerce-subscriptions' ) ).toBe( true );
-			} );
-
-			test( 'should return true when the product slug if suffixed with `monthly`', () => {
-				expect( isMarketplaceProduct( state, 'woocommerce_bookings_monthly' ) ).toBe( true );
-				expect( isMarketplaceProduct( state, 'woocommerce-subscriptions-monthly' ) ).toBe( true );
-			} );
-
-			test( 'should return true when the product slug if suffixed with `yearly`', () => {
-				expect( isMarketplaceProduct( state, 'woocommerce_bookings_yearly' ) ).toBe( true );
-				expect( isMarketplaceProduct( state, 'woocommerce-subscriptions-yearly' ) ).toBe( true );
-			} );
 		} );
 	} );
 } );
