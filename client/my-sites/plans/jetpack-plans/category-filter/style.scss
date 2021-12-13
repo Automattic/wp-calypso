@@ -5,6 +5,7 @@
 
 	list-style-type: none;
 
+	font-size: 1.25rem;
 	font-weight: 700;
 
 	> li {
@@ -17,6 +18,10 @@
 		color: var( --color-text );
 
 		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 
 	&.is-selected {

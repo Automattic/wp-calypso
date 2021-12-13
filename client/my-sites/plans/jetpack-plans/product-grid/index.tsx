@@ -4,7 +4,9 @@ import {
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	JETPACK_GROWTH_CATEGORY,
 } from '@automattic/calypso-products';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
@@ -99,6 +101,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	createButtonURL,
 } ) => {
 	const translate = useTranslate();
+	const isDesktop = useDesktopBreakpoint();
+	const showProductCategories = ! isDesktop;
 
 	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
 	const [ category, setCategory ] = useState< JetpackProductCategory >();
@@ -145,9 +149,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 
 		return [ allItems.slice( 0, 3 ), allItems.slice( 3 ) ];
 	}, [ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ] );
-	const filteredItems = category
-		? otherItems.filter( ( { categories } ) => categories?.includes( category ) )
-		: otherItems;
+	const filteredItems =
+		showProductCategories && category
+			? otherItems.filter( ( { categories } ) => categories?.includes( category ) )
+			: otherItems;
 
 	const showFreeCard = useSelector( getShowFreeCard );
 
@@ -253,14 +258,18 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			</ProductGridSection>
 			<ProductGridSection title={ translate( 'More Products' ) }>
 				<>
-					<div className="product-grid__category-filter">
-						<CategoryFilter onChange={ onCategoryChange } />
-					</div>
+					{ showProductCategories && (
+						<div className="product-grid__category-filter">
+							<CategoryFilter onChange={ onCategoryChange } />
+						</div>
+					) }
 					<ul className="product-grid__product-grid">
 						{ filteredItems.map( getOtherItemsProductCard ) }
-						<li>
-							<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
-						</li>
+						{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
+							<li>
+								<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+							</li>
+						) }
 						{ showFreeCard && (
 							<li>
 								<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
