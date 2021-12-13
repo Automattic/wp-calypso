@@ -34,7 +34,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
-	const isViewportSizeLowerThan480px = useBreakpoint( '<=480px' );
+	const isViewportSizeLowerThan480px = useBreakpoint( '<480px' );
 
 	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan480px;
 

@@ -1,7 +1,8 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-$width-right-panel-card: 45%;
+$width-right-panel-card:  calc( 45% - 120px );
+$width-right-panel-card-expanded:  45%;
 $width-left-panel-card: 55%;
 
 .email-provider-stacked-features__whats-included {
@@ -212,7 +213,7 @@ h2.action-panel__title {
 		margin-bottom: 20px;
 		width: 100%;
 
-		@include break-mobile {
+		@media screen and ( min-width: 481px ) {
 			width: $width-left-panel-card;
 		}
 
@@ -281,6 +282,13 @@ h2.action-panel__title {
 
 			@include break-small {
 				flex-direction: row;
+			}
+
+			.email-provider-stacked-card__title-price-badge {
+				width: 100%;
+				@include break-small {
+					width: $width-right-panel-card-expanded;
+				}
 			}
 		}
 	}

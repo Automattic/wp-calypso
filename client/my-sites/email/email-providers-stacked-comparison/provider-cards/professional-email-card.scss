@@ -36,3 +36,24 @@
 		}
 	}
 }
+
+.email-provider-stacked-card__provider-form > * .form-text-input-with-affixes {
+	flex-direction: column;
+
+	.form-text-input-with-affixes__suffix {
+		border-top-width: 0;
+		border-left-width: 1px;
+		border-left-style: solid;
+		border-left-color: var( --color-neutral-10 );
+	}
+
+	@include break-small {
+		flex-direction: row;
+		.form-text-input-with-affixes__suffix {
+			border-left-width: 0;
+			border-top-width: 1px;
+			border-top-style: solid;
+			border-left-color: var( --color-neutral-10 );
+		}
+	}
+}
