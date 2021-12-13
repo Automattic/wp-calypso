@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-$width-right-panel-card:  calc( 45% - 120px );
+$width-right-panel-card:  calc( 45% - 110px );
 $width-right-panel-card-expanded:  45%;
 $width-left-panel-card: 55%;
 
@@ -255,6 +255,7 @@ h2.action-panel__title {
 	.email-provider-stacked-card__header {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 
 		@include break-small {
 			flex-direction: row;
