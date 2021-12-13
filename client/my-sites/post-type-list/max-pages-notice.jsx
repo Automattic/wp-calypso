@@ -32,6 +32,7 @@ class PostTypeListMaxPagesNotice extends Component {
 					'Showing %(displayedPosts)d post of %(totalPosts)d.',
 					'Showing %(displayedPosts)d posts of %(totalPosts)d.',
 					{
+						count: displayedPosts,
 						args: {
 							displayedPosts,
 							totalPosts,
