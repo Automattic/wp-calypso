@@ -116,7 +116,7 @@ class SectionMigrate extends Component {
 	};
 
 	requestMigrationReset = async ( targetSiteId ) => {
-		return await wpcom.req
+		await wpcom.req
 			.post( {
 				path: `/sites/${ targetSiteId }/reset-migration`,
 				apiNamespace: 'wpcom/v2',
