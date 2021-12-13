@@ -22,6 +22,7 @@ const selectors = {
 
 	// Status & Visibility
 	visibilityToggle: '.edit-post-post-visibility__toggle',
+	visibilityPopover: '.components-popover__content',
 	visibilityOption: ( option: PostVisibilityOptions ) => `input[value="${ option.toLowerCase() }"]`,
 	postPasswordInput: '.editor-post-visibility__dialog-password-input',
 
@@ -89,15 +90,15 @@ export class EditorSettingsSidebarComponent {
 	async setVisibility( visibility: PostVisibilityOptions ): Promise< void > {
 		await this.expandSection( 'Status & Visibility' );
 		await this.frame.click( selectors.visibilityToggle );
+		const popoverHandle = await this.frame.waitForSelector( selectors.visibilityPopover );
+		await popoverHandle.waitForElementState( 'stable' );
 
-		// Visibility of 'Private' requires the post to be published at the time
-		// by accepting the dialog box.
-		if ( visibility === 'Private' ) {
-			// Set up a handler to accept the dialog instead of dismissing it.
-			this.page.on( 'dialog', ( dialog ) => dialog.accept() );
-		}
-
-		await this.frame.click( selectors.visibilityOption( visibility ) );
+		// Private posts display a dialog that when accepted will publish the post.
+		// For non-Private posts, this handler has no effect.
+		await Promise.all( [
+			this.page.on( 'dialog', ( dialog ) => dialog.accept() ),
+			this.frame.click( selectors.visibilityOption( visibility ) ),
+		] );
 	}
 
 	/**
