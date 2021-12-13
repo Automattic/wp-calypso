@@ -19,6 +19,7 @@ interface MasterbarItemProps {
 	preloadSection?: () => void;
 	hasUnseen?: boolean;
 	children?: ReactNode;
+	alwaysShowContent?: boolean;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -32,6 +33,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		isActive: PropTypes.bool,
 		preloadSection: PropTypes.func,
 		hasUnseen: PropTypes.bool,
+		alwaysShowContent: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -68,6 +70,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		const itemClasses = classNames( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
 			'has-unseen': this.props.hasUnseen,
+			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 		} );
 
 		const attributes = {
