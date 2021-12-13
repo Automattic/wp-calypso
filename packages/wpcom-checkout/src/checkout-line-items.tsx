@@ -226,7 +226,13 @@ function WPNonProductLineItem( {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRenewal: boolean } ) {
+function EmailMeta( {
+	product,
+	isRenewal,
+}: {
+	product: ResponseCartProduct;
+	isRenewal: boolean;
+} ): JSX.Element | null {
 	const translate = useTranslate();
 
 	if ( isRenewal ) {
@@ -241,7 +247,7 @@ function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRe
 		}
 
 		if ( numberOfMailboxes === null ) {
-			return;
+			return null;
 		}
 
 		return (
