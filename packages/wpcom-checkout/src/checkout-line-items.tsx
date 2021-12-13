@@ -23,9 +23,11 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
 import type {
+	GSuiteProductUser,
 	ResponseCart,
 	RemoveProductFromCart,
 	ResponseCartProduct,
+	TitanProductUser,
 } from '@automattic/shopping-cart';
 
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
@@ -267,7 +269,7 @@ function EmailMeta( {
 		);
 	}
 
-	let mailboxes = [];
+	let mailboxes: GSuiteProductUser[] | TitanProductUser[] | [  ] = [];
 
 	if (
 		isGoogleWorkspaceProductSlug( product.product_slug ) ||
@@ -569,7 +571,7 @@ function LineItemSublabelAndPrice( {
 		}
 
 		if ( billingInterval === null ) {
-			return sublabel;
+			return <>{ sublabel }</>;
 		}
 
 		return (
