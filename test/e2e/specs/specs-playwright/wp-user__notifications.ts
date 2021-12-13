@@ -4,7 +4,6 @@
 
 import {
 	setupHooks,
-	BrowserManager,
 	DataHelper,
 	LoginPage,
 	PublishedPostsListPage,
@@ -26,16 +25,16 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	setupHooks( ( args ) => {
 		page = args.page;
+		loginPage = new LoginPage( page );
 	} );
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {
 		it( `Log in as ${ commentingUser }`, async function () {
-			loginPage = new LoginPage( page );
 			await loginPage.visit();
 			await loginPage.logInWithTestAccount( commentingUser );
 		} );
 
-		it( 'View site', async function () {
+		it( 'Visit published site', async function () {
 			// TODO make a utility to obtain a blog URL without string substitution.
 			const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;
 			await page.goto( siteURL );
@@ -53,20 +52,6 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	} );
 
 	describe( `Trash comment as ${ notificationsUser }`, function () {
-		let notificationsPage: Page;
-
-		afterAll( async function () {
-			if ( notificationsPage ) {
-				await BrowserManager.closePage( notificationsPage, { closeContext: true } );
-			}
-		} );
-
-		it( 'Launch new context', async function () {
-			notificationsPage = await BrowserManager.newPage( {
-				context: await BrowserManager.newBrowserContext(),
-			} );
-		} );
-
 		it( `Log in as ${ notificationsUser }`, async function () {
 			await loginPage.visit();
 			await loginPage.clickChangeAccount();
@@ -74,12 +59,12 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 		} );
 
 		it( 'Open notification using keyboard shortcut', async function () {
-			const navbarComponent = new NavbarComponent( notificationsPage );
+			const navbarComponent = new NavbarComponent( page );
 			await navbarComponent.openNotificationsPanel( { useKeyboard: true } );
 		} );
 
 		it( `See and click notification for the comment left by ${ commentingUser }`, async function () {
-			notificationsComponent = new NotificationsComponent( notificationsPage );
+			notificationsComponent = new NotificationsComponent( page );
 			await notificationsComponent.clickNotification( comment );
 		} );
 
