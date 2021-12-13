@@ -208,11 +208,13 @@ function PluginDetails( props ) {
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QueryProductsList />
 			<FixedNavigationHeader navigationItems={ getNavigationItems() }>
-				<PlansIntervalToggle
-					intervalType={ billingPeriod }
-					onChange={ setBillingPeriod }
-					className="plugin-details__pricing-toggle"
-				/>
+				<>
+					<div className="plugin-details__price-toggle">
+						<span className="plugin-details__price-toggle-label">{ translate( 'Price' ) }</span>
+
+						<PlansIntervalToggle intervalType={ billingPeriod } onChange={ setBillingPeriod } />
+					</div>
+				</>
 			</FixedNavigationHeader>
 			<PluginNotices
 				pluginId={ fullPlugin.id }
@@ -233,6 +235,7 @@ function PluginDetails( props ) {
 							selectedSite={ selectedSite }
 							isPluginInstalledOnsite={ isPluginInstalledOnsite }
 							isPlaceholder={ showPlaceholder }
+							billingPeriod={ billingPeriod }
 						/>
 					</div>
 				</div>
