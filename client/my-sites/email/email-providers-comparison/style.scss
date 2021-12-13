@@ -2,9 +2,9 @@
 @import '@wordpress/base-styles/mixins';
 
 .email-providers-comparison__action-panel {
-
 	&.is-primary {
 		flex-direction: column;
+
 		@include break-mobile {
 			flex-direction: row;
 		}
@@ -59,17 +59,12 @@
 
 .email-providers-comparison__providers-wordpress-com-email {
 	color: var( --color-wordpress-com );
-	height: 48px;
-	width: 48px;
+	margin-left: -2px;
+	height: 42px;
+	width: 42px;
 }
 
 .email-providers-comparison__action-panel {
-	@include breakpoint-deprecated( '>1040px' ) {
-		&.is-primary {
-			padding-left: 73px;
-		}
-	}
-
 	&.is-primary .action-panel__figure {
 		max-width: 170px;
 	}
@@ -93,7 +88,7 @@
 		&.align-left {
 			float: left;
 			margin-left: 0;
-			margin-right: 24px;
+			margin-right: 0;
 			width: unset;
 		}
 
