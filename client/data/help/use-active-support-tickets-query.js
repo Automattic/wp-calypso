@@ -17,6 +17,9 @@ export const useActiveSupportTicketsQuery = ( email, queryOptions = {} ) =>
 				data.filter(
 					( item ) => item.type === 'Zendesk_History' && ACTIVE_STATUSES.includes( item.status )
 				),
+			meta: {
+				persist: false,
+			},
 			...queryOptions,
 		}
 	);
