@@ -1,5 +1,6 @@
+import { PlansIntervalToggle } from '@automattic/plans-grid';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -91,6 +92,7 @@ function PluginDetails( props ) {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const [ billingPeriod, setBillingPeriod ] = useState( 'ANNUALLY' );
 
 	// Determine if the plugin is WPcom or WPorg hosted
 	const productsList = useSelector( ( state ) => getProductsList( state ) );
@@ -205,7 +207,13 @@ function PluginDetails( props ) {
 			<SidebarNavigation />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QueryProductsList />
-			<FixedNavigationHeader navigationItems={ getNavigationItems() } />
+			<FixedNavigationHeader navigationItems={ getNavigationItems() }>
+				<PlansIntervalToggle
+					intervalType={ billingPeriod }
+					onChange={ setBillingPeriod }
+					className="plugin-details__pricing-toggle"
+				/>
+			</FixedNavigationHeader>
 			<PluginNotices
 				pluginId={ fullPlugin.id }
 				sites={ sitesWithPlugins }
