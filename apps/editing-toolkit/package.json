@@ -97,7 +97,7 @@
 		"@wordpress/url": "3.3.1",
 		"classnames": "^2.3.1",
 		"enzyme": "^3.11.0",
-		"eslint": "^7.32.0",
+		"eslint": "^8.4.1",
 		"jest": "^27.3.1",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
