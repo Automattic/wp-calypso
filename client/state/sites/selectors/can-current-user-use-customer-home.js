@@ -26,5 +26,5 @@ export default function canCurrentUserUseCustomerHome( state, siteId = null ) {
 	}
 
 	const site = getSite( state, siteId );
-	return site && canCurrentUser( state, siteId, 'manage_options' );
+	return site && canCurrentUser( state, siteId, 'edit_posts' );
 }
