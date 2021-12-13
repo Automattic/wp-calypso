@@ -2,15 +2,31 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component, Fragment, forwardRef } from 'react';
-import TranslatableString from 'calypso/components/translatable/proptype';
+import type { ReactNode, LegacyRef } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-class MasterbarItem extends Component {
+interface MasterbarItemProps {
+	url?: string;
+	innerRef?: LegacyRef< HTMLButtonElement >;
+	tipTarget?: string;
+	onClick?: () => void;
+	tooltip?: string;
+	icon?: ReactNode;
+	className?: string;
+	isActive?: boolean;
+	preloadSection?: () => void;
+	hasUnseen?: boolean;
+	children?: ReactNode;
+}
+
+class MasterbarItem extends Component< MasterbarItemProps > {
 	static propTypes = {
 		url: PropTypes.string,
+		tipTarget: PropTypes.string,
 		onClick: PropTypes.func,
-		tooltip: TranslatableString,
+		tooltip: PropTypes.string,
 		icon: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
 		className: PropTypes.string,
 		isActive: PropTypes.bool,
@@ -61,7 +77,6 @@ class MasterbarItem extends Component {
 			className: itemClasses,
 			onTouchStart: this.preload,
 			onMouseEnter: this.preload,
-			ref: this.props.innerRef,
 		};
 
 		if ( this.props.url ) {
@@ -72,8 +87,14 @@ class MasterbarItem extends Component {
 			);
 		}
 
-		return <button { ...attributes }>{ this.renderChildren() }</button>;
+		return (
+			<button { ...attributes } ref={ this.props.innerRef }>
+				{ this.renderChildren() }
+			</button>
+		);
 	}
 }
 
-export default forwardRef( ( props, ref ) => <MasterbarItem innerRef={ ref } { ...props } /> );
+export default forwardRef< HTMLButtonElement, MasterbarItemProps >( ( props, ref ) => (
+	<MasterbarItem innerRef={ ref } { ...props } />
+) );
