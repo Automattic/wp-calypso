@@ -91,7 +91,7 @@ export default function MarketplaceTest(): JSX.Element {
 		{
 			name: 'Pay & Install Woocommerce Subscription',
 			path: `/checkout/${ selectedSiteSlug }/woocommerce_subscriptions_monthly${
-				shouldUpgrade ? ',business' : ''
+				shouldUpgrade ? ',business' : '' // or business-monthly if user has selected monthly pricing
 			}?redirect_to=/marketplace/thank-you/woocommerce-subscriptions/${ selectedSiteSlug }#step2`,
 		},
 		{
