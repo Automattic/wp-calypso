@@ -1,6 +1,6 @@
 <div style="width: 45%; float:left" align="left"><a href="./style_guide.md"><-- Style Guide</a> </div>
 <div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./troubleshooting.md">St --> Troubleshooting</a> </div>
+<div style="width: 45%; float:right"align="right"><a href="./troubleshooting.md">--> Troubleshooting</a> </div>
 
 <br><br>
 

@@ -1,4 +1,4 @@
-<div style="width: 45%; float:left" align="left"><a href="./tests_ci.md"><-- Running tests on CI</a> </div>
+<div style="width: 45%; float:left" align="left"><a href="./tests_local.md"><-- Running tests on your machine</a> </div>
 <div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
 <div style="width: 45%; float:right"align="right"><a href="./writing_tests.md">Writing Tests --></a> </div>
 
