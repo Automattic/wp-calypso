@@ -66,44 +66,52 @@ class DomainConnectAuthorize extends Component {
 
 	handleClickConfirm = () => {
 		const { providerId, serviceId, params, translate } = this.props;
-		const { domain } = params;
 
 		this.setState( {
 			action: actionType.SUBMITTING,
 			noticeType: null,
 		} );
 
-		wpcom.applyDnsTemplateSyncFlow( domain, providerId, serviceId, params ).then(
-			( result ) => {
-				let action = actionType.CLOSE;
-				let noticeMessage = translate( 'Hurray! Your new service is now all set up.' );
-				if ( result.redirect_uri ) {
-					action = actionType.REDIRECTING;
-					noticeMessage = translate(
-						"Please wait while we redirect you back to the service provider's site to finalize this update."
-					);
-					window.location.assign( result.redirect_uri );
-				}
-				this.setState( {
-					action,
-					noticeMessage,
-					noticeType: noticeType.SUCCESS,
-				} );
-			},
-			( error ) => {
-				const errorMessage =
-					error.message ||
-					translate(
-						"We weren't able to add the DNS records needed for this service. Please try again."
-					);
+		wpcom.req
+			.get(
+				'/domain-connect/authorize/v2/domainTemplates/providers/' +
+					providerId +
+					'/services/' +
+					serviceId +
+					'/apply/authorized',
+				Object.assign( {}, { apiVersion: '1.3' }, params )
+			)
+			.then(
+				( result ) => {
+					let action = actionType.CLOSE;
+					let noticeMessage = translate( 'Hurray! Your new service is now all set up.' );
+					if ( result.redirect_uri ) {
+						action = actionType.REDIRECTING;
+						noticeMessage = translate(
+							"Please wait while we redirect you back to the service provider's site to finalize this update."
+						);
+						window.location.assign( result.redirect_uri );
+					}
+					this.setState( {
+						action,
+						noticeMessage,
+						noticeType: noticeType.SUCCESS,
+					} );
+				},
+				( error ) => {
+					const errorMessage =
+						error.message ||
+						translate(
+							"We weren't able to add the DNS records needed for this service. Please try again."
+						);
 
-				this.setState( {
-					action: actionType.READY_TO_SUBMIT,
-					noticeMessage: errorMessage,
-					noticeType: noticeType.ERROR,
-				} );
-			}
-		);
+					this.setState( {
+						action: actionType.READY_TO_SUBMIT,
+						noticeMessage: errorMessage,
+						noticeType: noticeType.ERROR,
+					} );
+				}
+			);
 	};
 
 	handleClickClose = () => {
