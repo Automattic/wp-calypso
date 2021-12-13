@@ -782,7 +782,7 @@ __metadata:
   resolution: "@automattic/material-design-icons@workspace:packages/material-design-icons"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    svgstore-cli: ^1.3.1
+    svgstore-cli: ^1.3.2
   languageName: unknown
   linkType: soft
 
@@ -34515,16 +34515,16 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"svgstore-cli@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "svgstore-cli@npm:1.3.1"
+"svgstore-cli@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "svgstore-cli@npm:1.3.2"
   dependencies:
     glob: ^7.0.5
     svgstore: ^2.0.2
     yargs-parser: ^5.0.0
   bin:
     svgstore: ./bin/svgstore
-  checksum: c0b3532d0b1000c80fcac28691b3052ec914c996690d93a4aa4a4fb5d2413540261ac1586109bf89a8faf0b9e13f9ddebcb21c8017469f4b45835e232cc9a847
+  checksum: 21d33b1c9069deabbf2a4743515c567d61d1d64939f68e3e92a150697e30e0fad57dce53e41a36440242481ff3c946ce72c6d017492d1fb33ab136e717478c6a
   languageName: node
   linkType: hard
 
