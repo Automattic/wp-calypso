@@ -3,13 +3,16 @@ import { connect } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import SettingsHeader from './settings-header';
 import { SettingsPageProps } from './types';
 
 const Settings = ( props: SettingsPageProps ): JSX.Element => {
+	const domain = props.domains && getSelectedDomain( props );
 	const translate = useTranslate();
 
 	const renderBreadcrumbs = () => {
@@ -42,6 +45,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 		<Main wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
+			<SettingsHeader domain={ domain } />
 			Page goes here.
 			{ /* Placeholder to test accordion */ }
 			<div style={ { marginTop: '30px' } }>
