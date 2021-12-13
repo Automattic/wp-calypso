@@ -32,6 +32,7 @@
 		"checkout/google-pay": true,
 		"jetpack-cloud": true,
 		"jetpack/backups-date-picker": true,
+		"jetpack/more-informative-scan": false,
 		"jetpack/search-product": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,
