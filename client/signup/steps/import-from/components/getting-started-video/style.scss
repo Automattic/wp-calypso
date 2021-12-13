@@ -5,4 +5,13 @@
 	iframe {
 		width: 100%;
 	}
+
+	p {
+		color: var( --studio-gray-50 );
+	}
+
+	strong {
+		font-weight: 500; /* stylelint-disable-line */
+		color: var( --studio-gray-100 );
+	}
 }
