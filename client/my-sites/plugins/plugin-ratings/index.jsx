@@ -116,7 +116,7 @@ class PluginRatings extends Component {
 					{ inlineNumRatings && numRatings && (
 						<span className="plugin-ratings__num-ratings">
 							(
-							{ rating && Number.isInteger( numRatings )
+							{ Number.isInteger( numRatings )
 								? numRatings.toLocaleString( getLocaleSlug() )
 								: null }
 							)
