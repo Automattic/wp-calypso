@@ -1,4 +1,4 @@
-import { PlansIntervalToggle } from '@automattic/plans-grid';
+import { PlansIntervalToggle } from '@automattic/plans-grid/src';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
