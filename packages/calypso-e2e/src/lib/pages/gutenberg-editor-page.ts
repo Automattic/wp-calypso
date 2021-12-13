@@ -42,9 +42,10 @@ const selectors = {
 	// corner. This addresses the bug where the post-publish panel is immediately
 	// closed when publishing with certain blocks on the editor canvas.
 	// See https://github.com/Automattic/wp-calypso/issues/54421.
-	viewButton: 'text=/View (Post|Page)/',
+	viewButton: 'a.components-button:has-text("View"):visible',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
+	snackbarViewButton: 'a.components-snackbar__action:has-text("View Post"):visible',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
@@ -80,33 +81,7 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		// `page.on` construct is used here instead of the more common `page.waitForResponse`.
-		// Using the latter causes this method to hang until the timeout is reached, since
-		// the `waitForResponse` method begins observing the network requests after the
-		// `nux?_envelope=1` request has been completed.
-		// On the other hand, `page.on` is able to monitor every request, including the
-		// one to the `nux` endpoint.
-		this.page.on( 'requestfinished', async ( request ) => {
-			const response = await request.response();
-			if ( ! response ) {
-				return;
-			}
-
-			if ( ! response.url().includes( 'nux?_envelope=1' ) ) {
-				return;
-			}
-
-			interface NuxPayload {
-				body: {
-					show_welcome_guide: boolean;
-				};
-			}
-
-			const body = ( await response.json() ) as NuxPayload;
-			if ( body?.body?.show_welcome_guide === true ) {
-				await this.dismissWelcomeTour();
-			}
-		} );
+		await this.dismissWelcomeTour();
 
 		const frame = await this.getEditorFrame();
 		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
@@ -118,12 +93,26 @@ export class GutenbergEditorPage {
 
 	/**
 	 * Dismisses the Welcome Tour (card) if it is present.
+	 *
+	 * The network request to `nux` endpoint is retrived and the value of
+	 * `show_welcome_guide` is checked. If true the action to click on the
+	 * close button is fired.
 	 */
 	async dismissWelcomeTour(): Promise< void > {
-		const frame = await this.getEditorFrame();
-		const locator = frame.locator( selectors.welcomeTourCloseButton );
+		const response = await this.page.waitForResponse( /.*nux\?_envelope.*/ );
+		interface NuxPayload {
+			body: {
+				show_welcome_guide: boolean;
+			};
+		}
 
-		await locator.click( { timeout: 10 * 1000 } );
+		const body = ( await response.json() ) as NuxPayload;
+		if ( body.body.show_welcome_guide === true ) {
+			const frame = await this.getEditorFrame();
+			const locator = frame.locator( selectors.welcomeTourCloseButton );
+
+			await locator.click();
+		}
 	}
 
 	/**
@@ -358,14 +347,25 @@ export class GutenbergEditorPage {
 
 		await frame.click( selectors.publishButton( selectors.postToolbar ) );
 		await frame.click( selectors.publishButton( selectors.publishPanel ) );
-
-		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
-		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
+		const publishedURL = await this.getPublishedURL();
 
 		if ( visit ) {
 			await this.visitPublishedPost( publishedURL );
 		}
 		return publishedURL;
+	}
+
+	/**
+	 *
+	 * @returns
+	 */
+	async getPublishedURL(): Promise< string > {
+		const frame = await this.getEditorFrame();
+
+		const viewPublishedArticleButton = await frame.waitForSelector(
+			`${ selectors.viewButton }, ${ selectors.snackbarViewButton }`
+		);
+		return ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 	}
 
 	/**
