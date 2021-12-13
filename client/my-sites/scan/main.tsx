@@ -147,6 +147,46 @@ class ScanPage extends Component< Props > {
 		);
 	}
 
+	renderScanningNew() {
+		const { scanProgress = 0, isInitialScan } = this.props;
+
+		const heading =
+			scanProgress === 0 ? translate( 'Preparing to scan' ) : translate( 'Scanning files' );
+
+		return (
+			<>
+				<Card>
+					<SecurityIcon icon="in-progress" />
+					{ this.renderHeader( heading ) }
+					{ isInitialScan && (
+						<p className="scan__initial-scan-message">
+							{ translate(
+								'Welcome to Jetpack Scan. We are starting your first scan now. ' +
+									'Scan results will be ready soon.'
+							) }
+						</p>
+					) }
+					<p className="scan__progress-bar-percent">{ scanProgress }%</p>
+					<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
+					<p>
+						{ translate(
+							'{{strong}}Did you know{{/strong}} {{br/}}' +
+								'We will send you an email if security threats are found. In the meantime feel ' +
+								'free to continue to use your site as normal, you can check back on ' +
+								'progress at any time.',
+							{
+								components: {
+									strong: <strong />,
+									br: <br />,
+								},
+							}
+						) }
+					</p>
+				</Card>
+			</>
+		);
+	}
+
 	renderScanning() {
 		const { scanProgress = 0, isInitialScan } = this.props;
 
@@ -215,10 +255,22 @@ class ScanPage extends Component< Props > {
 		// because it disrupts the fluidity of the progress bar
 
 		if ( scanState?.state === 'provisioning' ) {
+			if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
+				return (
+					<>
+						{ ' ' }
+						<Card> { this.renderProvisioning() } </Card>{ ' ' }
+					</>
+				);
+			}
 			return this.renderProvisioning();
 		}
 
 		if ( scanState?.state === 'scanning' ) {
+			if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
+				return this.renderScanningNew();
+			}
+
 			return this.renderScanning();
 		}
 
@@ -231,6 +283,14 @@ class ScanPage extends Component< Props > {
 		// We should have a scanState by now, since we're not requesting an update;
 		// if we don't, that's an error condition and we should display that
 		if ( ! scanState ) {
+			if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
+				return (
+					<>
+						{ ' ' }
+						<Card> { this.renderScanError() } </Card>{ ' ' }
+					</>
+				);
+			}
 			return this.renderScanError();
 		}
 
@@ -247,7 +307,25 @@ class ScanPage extends Component< Props > {
 		}
 
 		if ( errorFound ) {
+			if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
+				return (
+					<>
+						{ ' ' }
+						<Card> { this.renderScanError() } </Card>{ ' ' }
+					</>
+				);
+			}
+
 			return this.renderScanError();
+		}
+
+		if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
+			return (
+				<>
+					{ ' ' }
+					<Card> { this.renderScanOkay() } </Card>{ ' ' }
+				</>
+			);
 		}
 
 		return this.renderScanOkay();
