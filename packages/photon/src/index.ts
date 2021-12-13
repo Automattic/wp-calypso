@@ -7,20 +7,12 @@ const debug = debugFactory( 'photon' );
 /**
  * Options argument to query string parameter mappings.
  */
-function optionToQueryParam( key: string ) {
-	switch ( key ) {
-		case 'width':
-			return 'w';
-		case 'height':
-			return 'h';
-		case 'letterboxing':
-			return 'lb';
-		case 'removeLetterboxing':
-			return 'ulb';
-		default:
-			return key;
-	}
-}
+const mappings: Record< string, string > = {
+	width: 'w',
+	height: 'h',
+	letterboxing: 'lb',
+	removeLetterboxing: 'ulb',
+};
 
 const PARSE_BASE_HOST = '__domain__.invalid';
 const PARSE_BASE_URL = `https://${ PARSE_BASE_HOST }`;
@@ -35,6 +27,8 @@ type PhotonOpts = {
 	zoom?: number;
 	resize?: string;
 	fit?: string;
+	letterboxing?: string;
+	removeLetterBoxing?: boolean;
 };
 
 /**
@@ -46,7 +40,7 @@ type PhotonOpts = {
  * Photon documentation: http://developer.wordpress.com/docs/photon/
  *
  * @param imageUrl - the URL of the image to run through Photon
- * @param [opts] - optional options object with Photon options
+ * @param [opts]   - optional options object with Photon options
  * @returns The generated Photon URL string
  */
 export default function photon( imageUrl: string, opts?: PhotonOpts ): string | null {
@@ -97,7 +91,7 @@ export default function photon( imageUrl: string, opts?: PhotonOpts ): string | 
 				photonUrl.protocol = 'http:';
 				continue;
 			}
-			photonUrl.searchParams.set( optionToQueryParam( opt ), value.toString() );
+			photonUrl.searchParams.set( mappings[ opt ] ?? opt, value.toString() );
 		}
 	}
 
