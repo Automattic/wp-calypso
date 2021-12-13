@@ -8,7 +8,7 @@
 
 	background-color: var( --color-surface );
 
-	font-family: 'Noto Sans', $sans;
+	font-family: 'Inter', $sans;
 
 	h2 {
 		line-height: inherit;
@@ -31,7 +31,7 @@
 
 			color: var( --color-text );
 
-			font-size: rem( 21px );
+			font-size: rem( 21px ); /* stylelint-disable declaration-property-unit-allowed-list */
 
 			@include break-medium {
 				margin: 1.5rem 0 40px;
