@@ -1,5 +1,5 @@
-import { Button } from '@automattic/components';
-import { Icon, home, moreVertical, redo, plus } from '@wordpress/icons';
+import { Button, Gridicon } from '@automattic/components';
+import { Icon, home, info, moreVertical, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -469,6 +469,28 @@ class DomainRow extends PureComponent {
 				<div className="domain-row__mobile-container3">
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
+				</div>
+				<div className="domain-row__domain-notice">
+					<Icon
+						icon={ info }
+						size={ 18 }
+						className="domain-row__domain-notice-icon gridicon"
+						viewBox="2 2 20 20"
+					/>
+					<div className="domain-row__domain-notice-message">
+						{ translate(
+							'Maecenas sed diam eget risus varius {{strong}}blandit sit amet{{/strong}} non magna. Donec sed odio dui. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. {{a}}Euismod Malesuada{{/a}}',
+							{
+								components: {
+									strong: <strong />,
+									a: <a href="#" target="_blank" rel="noopener noreferrer" />,
+								},
+							}
+						) }
+					</div>
+					<Button className="domain-row__domain-notice-dismiss" href="#" plain>
+						<Gridicon icon="cross" size={ 16 } />
+					</Button>
 				</div>
 				{ this.renderOverlay() }
 			</div>

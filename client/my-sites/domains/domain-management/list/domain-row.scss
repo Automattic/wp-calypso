@@ -7,6 +7,7 @@
 	border-bottom: 1px solid var( --studio-gray-5 );
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-50 );
+	flex-wrap: wrap;
 
 	@include break-mobile {
 		display: flex;
@@ -74,6 +75,7 @@
 	flex: 233 233 0;
 	overflow: hidden;
 	display: flex;
+	flex-basis: 100%;
 }
 
 .domain-row__mobile-container2 {
@@ -94,6 +96,39 @@
 
 	@include break-mobile {
 		display: none;
+	}
+}
+
+.domain-row__domain-notice {
+	flex-basis: 100%;
+	background-color: var( --studio-gray-0 );
+	display: flex;
+	align-items: center;
+	padding: 5px;
+	margin-top: 12px;
+	gap: 8px;
+	border-radius: 2px;
+
+	.domain-row__domain-notice-icon.gridicon {
+		align-self: flex-start;
+		min-width: 18px;
+		fill: var( --studio-orange-40 );
+		position: relative;
+		top: 2px;
+	}
+
+	.domain-row__domain-notice-message {
+		font-weight: 400;
+		font-size: $font-body-small;
+		color: var( --studio-gray-80 );
+	}
+
+	.domain-row__domain-notice-dismiss {
+		margin-left: auto;
+		.gridicon {
+			fill: var( --studio-gray-20 );
+			vertical-align: middle;
+		}
 	}
 }
 
