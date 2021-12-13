@@ -1,17 +1,23 @@
 import { useTranslate } from 'i18n-calypso';
 import Count from 'calypso/components/count';
 import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import { type as domainType } from 'calypso/lib/domains/constants';
 import { getEmailAddress } from 'calypso/lib/emails';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import DomainInfoCard from '..';
 import type { DomainInfoCardProps } from '../types';
 import type { EmailAccount } from './types';
 
-const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ): JSX.Element => {
+const DomainEmailInfoCard = ( {
+	domain,
+	selectedSite,
+}: DomainInfoCardProps ): JSX.Element | null => {
 	const translate = useTranslate();
+	const { data, error, isLoading } = useEmailAccountsQuery( selectedSite.ID, domain.name );
+
 	let emailAddresses: string[] = [];
 
-	const { data, error, isLoading } = useEmailAccountsQuery( selectedSite.ID, domain.name );
+	if ( domain.type === domainType.TRANSFER ) return null;
 
 	if ( ! isLoading && ! error ) {
 		const emailAccounts: EmailAccount[] = data?.accounts;
