@@ -237,6 +237,7 @@ export const getTask = (
 					"See how your site looks to site visitors. Remember, your blog is a work in progress — you can always choose a new theme or tweak your site's design."
 				),
 				actionText: translate( 'Preview blog' ),
+				actionUrl: `/view/${ siteSlug }`,
 				isSkippable: true,
 			};
 			break;
@@ -248,6 +249,7 @@ export const getTask = (
 					"Choose the perfect look for your site — one that reflects your site's personality."
 				),
 				actionText: translate( 'Browse themes' ),
+				actionUrl: `/themes/${ siteSlug }`,
 				isSkippable: true,
 			};
 			break;
@@ -259,6 +261,7 @@ export const getTask = (
 					"See how your site looks to site visitors. Remember, your blog is a work in progress — you can always choose a new theme or tweak your site's design."
 				),
 				actionText: translate( 'Draft a post' ),
+				actionUrl: `/post/${ siteSlug }`,
 				isSkippable: true,
 			};
 			break;
@@ -270,6 +273,7 @@ export const getTask = (
 					"Allow blog visitors to share your posts to social media such as Twitter, Facebook, and LinkedIn. It's a great way to help you build your audience."
 				),
 				actionText: translate( 'Enable sharing' ),
+				actionUrl: `/marketing/sharing-buttons/${ siteSlug }`,
 				isSkippable: true,
 			};
 			break;
