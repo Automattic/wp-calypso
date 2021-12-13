@@ -14,6 +14,7 @@ function EmailProviderCard( {
 	children,
 	providerKey,
 	logo,
+	logos,
 	title,
 	badge,
 	description,
@@ -91,7 +92,7 @@ function EmailProviderCard( {
 				</div>
 
 				{ ( ! showFeaturesToggleButton || areFeaturesExpanded ) && (
-					<EmailProviderFeatures features={ features } />
+					<EmailProviderFeatures features={ features } logos={ logos } />
 				) }
 			</div>
 
@@ -103,6 +104,7 @@ function EmailProviderCard( {
 EmailProviderCard.propTypes = {
 	providerKey: PropTypes.string.isRequired,
 	logo: PropTypes.object.isRequired,
+	logos: PropTypes.arrayOf( PropTypes.object ),
 	title: PropTypes.string.isRequired,
 	badge: PropTypes.object,
 	description: PropTypes.string,

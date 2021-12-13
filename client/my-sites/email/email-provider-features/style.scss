@@ -26,6 +26,18 @@
 	}
 }
 
+.email-provider-features__logos {
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: 21px;
+	margin-top: 20px;
+
+	img {
+		margin-left: 5px;
+		width: 40px;
+	}
+}
+
 .email-provider-features__toggle-button {
 	overflow: visible;
 	white-space: nowrap;
