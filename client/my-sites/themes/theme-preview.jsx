@@ -18,6 +18,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { connectOptions } from './theme-options';
+import isSiteWPForTeams from "calypso/state/selectors/is-site-wpforteams";
 
 class ThemePreview extends Component {
 	static displayName = 'ThemePreview';
@@ -95,9 +96,10 @@ class ThemePreview extends Component {
 	};
 
 	render() {
-		const { themeId, siteId, demoUrl, children } = this.props;
+		const { themeId, siteId, demoUrl, children, isWPForTeamsSite } = this.props;
 		const { showActionIndicator } = this.state;
-		if ( ! themeId ) {
+
+		if ( ! themeId || isWPForTeamsSite ) {
 			return null;
 		}
 
@@ -147,6 +149,7 @@ export default connect(
 			isActive: isThemeActive( state, themeId, siteId ),
 			isActivating: isActivatingTheme( state, siteId ),
 			demoUrl: getThemeDemoUrl( state, themeId, siteId ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			options: [
 				'activate',
 				'preview',

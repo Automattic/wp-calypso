@@ -67,6 +67,7 @@ import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
 
 import './style.scss';
+import isSiteWPForTeams from "calypso/state/selectors/is-site-wpforteams";
 
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
@@ -236,7 +237,8 @@ class ThemeSheet extends Component {
 	};
 
 	shouldRenderPreviewButton() {
-		return this.isThemeAvailable() && ! this.isThemeCurrentOne();
+		const { isWPForTeamsSite } = this.props;
+		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite;
 	}
 
 	isThemeCurrentOne() {
@@ -647,6 +649,7 @@ class ThemeSheet extends Component {
 			translate,
 			canUserUploadThemes,
 			previousRoute,
+			isWPForTeamsSite,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -766,7 +769,7 @@ class ThemeSheet extends Component {
 					backText={ previousRoute ? translate( 'Back' ) : translate( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
-					{ ! retired && ! hasWpOrgThemeUpsellBanner && this.renderButton() }
+					{ ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite && this.renderButton() }
 				</HeaderCake>
 				<div className="theme__sheet-columns">
 					<div className="theme__sheet-column-left">
@@ -862,6 +865,7 @@ export default connect(
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			previousRoute: getPreviousRoute( state ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		};
 	},
 	{
