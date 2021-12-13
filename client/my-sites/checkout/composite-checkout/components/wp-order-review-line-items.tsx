@@ -1,4 +1,4 @@
-import { isPremium, isMarketplaceProduct } from '@automattic/calypso-products';
+import { isPremium, isBusiness } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import {
 	getCouponLineItemFromCart,
@@ -11,7 +11,9 @@ import {
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -77,6 +79,11 @@ export function WPOrderReviewLineItems( {
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const hasMarketplaceProduct = useSelector( ( state ) =>
+		responseCart.products.some( ( product: ResponseCartProduct ) =>
+			isMarketplaceProduct( state, product.product_slug )
+		)
+	);
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -90,7 +97,7 @@ export function WPOrderReviewLineItems( {
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
-							hasDeleteButton={ canItemBeDeleted( product, responseCart ) }
+							hasDeleteButton={ canItemBeDeleted( product, responseCart, hasMarketplaceProduct ) }
 							removeProductFromCart={ removeProductFromCart }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -154,19 +161,11 @@ function isPremiumPlanWithDIFMInTheCart( item: ResponseCartProduct, responseCart
 	return isPremium( item ) && hasDIFMProduct( responseCart );
 }
 
-/**
- * Checks if the given item is the business plan product and a marketplace product exists in the provided shopping cart object
- */
-function isMarketplaceProductInTheCart( item: ResponseCartProduct, responseCart: ResponseCart ) {
-	return (
-		item.product_slug === 'business-bundle' &&
-		responseCart.products.some( ( product: ResponseCartProduct ) =>
-			isMarketplaceProduct( product.product_slug )
-		)
-	);
-}
-
-function canItemBeDeleted( item: ResponseCartProduct, responseCart: ResponseCart ): boolean {
+function canItemBeDeleted(
+	item: ResponseCartProduct,
+	responseCart: ResponseCart,
+	hasMarketplaceProduct: boolean
+): boolean {
 	const itemTypesThatCannotBeDeleted = [ 'domain_redemption' ];
 	if ( itemTypesThatCannotBeDeleted.includes( item.product_slug ) ) {
 		return false;
@@ -178,7 +177,7 @@ function canItemBeDeleted( item: ResponseCartProduct, responseCart: ResponseCart
 	}
 
 	// The Business plan cannot be removed from the cart when in combination with a marketplace product
-	if ( isMarketplaceProductInTheCart( item, responseCart ) ) {
+	if ( isBusiness( item ) && hasMarketplaceProduct ) {
 		return false;
 	}
 	return true;
