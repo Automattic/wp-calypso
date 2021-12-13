@@ -2,10 +2,6 @@
 import { Locator, Page, Response } from 'playwright';
 import { getAccountCredential, getCalypsoURL } from '../../data-helper';
 
-interface UsernameAuthPayload {
-	code: number;
-}
-
 export class LoginPage {
 	private page: Page;
 
@@ -25,32 +21,14 @@ export class LoginPage {
 
 	async logInWithTestAccount( account: string ): Promise< void > {
 		const credentials = getAccountCredential( account );
-		return await this.logInWithCredentials( ...credentials );
+		await this.logInWithCredentials( ...credentials );
 	}
 
 	async logInWithCredentials( username: string, password: string ): Promise< void > {
 		await this.fillUsername( username );
-
-		const [ usernameAuthResponse ] = await Promise.all( [
-			this.waitForUsernameAuthResponse( username ),
-			this.clickSubmit(),
-		] );
-
-		const usernameAuthPayload = ( await usernameAuthResponse.json() ) as UsernameAuthPayload;
-		if ( usernameAuthPayload.code === 404 ) {
-			throw new Error( 'Invalid username' );
-		}
-
+		await this.clickSubmit();
 		await this.fillPassword( password );
-
-		const [ loginAuthResponse ] = await Promise.all( [
-			this.waitForLoginAuthResponse(),
-			this.clickSubmit(),
-		] );
-
-		if ( loginAuthResponse.status() === 400 ) {
-			throw new Error( `Login error:\n${ await this.getInputValidationErrorText() }` );
-		}
+		await Promise.all( [ this.page.waitForNavigation(), this.clickSubmit() ] );
 	}
 
 	async fillUsername( value: string ): Promise< Locator > {
@@ -128,26 +106,5 @@ export class LoginPage {
 		await locator.click();
 
 		return locator;
-	}
-
-	async waitForUsernameAuthResponse( username: string ): Promise< Response > {
-		return await this.page.waitForResponse( `**/${ username }/auth-options**` );
-	}
-
-	async waitForLoginAuthResponse(): Promise< Response > {
-		return await this.page.waitForResponse( '**/wp-login.php?action=login-endpoint' );
-	}
-
-	async waitForVerificationCodeResponse(): Promise< Response > {
-		return await this.page.waitForResponse(
-			'**/wp-login.php?action=two-step-authentication-endpoint'
-		);
-	}
-
-	async getInputValidationErrorText(): Promise< string > {
-		const locator = await this.page.locator( '.form-input-validation.is-error' );
-		const innerTexts = await locator.allInnerTexts();
-
-		return innerTexts.join( '/' );
 	}
 }
