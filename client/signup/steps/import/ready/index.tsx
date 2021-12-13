@@ -2,8 +2,8 @@ import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding'
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import * as React from 'react';
-import { UrlData, GoToStep } from '../types';
+import React, { useEffect } from 'react';
+import { UrlData, GoToStep, RecordTracksEvent } from '../types';
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
@@ -11,18 +11,47 @@ import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+const trackEventName = 'calypso_signup_step_start';
+const trackEventParams = {
+	flow: 'importer',
+	step: 'ready',
+};
+
 interface ReadyPreviewProps {
 	urlData: UrlData;
 	siteSlug: string;
 	goToImporterPage: ( platform: string ) => void;
+	recordTracksEvent: RecordTracksEvent;
 }
 
 const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 	urlData,
 	goToImporterPage,
+	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
+
+	const recordReadyScreenEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'preview',
+			platform: urlData.platform,
+		} );
+	};
+
+	const recordImportGuideEvent = () => {
+		if ( ! isModalDetailsOpen ) return;
+
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'guide-modal',
+			platform: urlData.platform,
+		} );
+	};
+
+	useEffect( recordReadyScreenEvent, [] );
+	useEffect( recordImportGuideEvent, [ isModalDetailsOpen ] );
 
 	return (
 		<>
@@ -75,10 +104,35 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 
 interface ReadyNotProps {
 	goToStep: GoToStep;
+	recordTracksEvent: RecordTracksEvent;
 }
 
-const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) => {
+const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
+	goToStep,
+	recordTracksEvent,
+} ) => {
 	const { __ } = useI18n();
+
+	const recordReadyScreenEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'not',
+		} );
+	};
+
+	const recordBackToStartEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'back-to-start',
+		} );
+	};
+
+	const onBackBtnClick = () => {
+		recordBackToStartEvent();
+		goToStep( 'capture' );
+	};
+
+	useEffect( recordReadyScreenEvent, [] );
 
 	return (
 		<div className="import-layout__center">
@@ -96,9 +150,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) 
 							{ __( 'Start building' ) }
 						</NextButton>
 						<div>
-							<BackButton onClick={ () => goToStep( 'capture' ) }>
-								{ __( 'Back to start' ) }
-							</BackButton>
+							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
 					</div>
 				</div>
@@ -110,12 +162,23 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) 
 interface ReadyProps {
 	platform: string;
 	goToImporterPage: ( platform: string ) => void;
+	recordTracksEvent: RecordTracksEvent;
 }
 
 const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
-	const { platform, goToImporterPage } = props;
+	const { platform, goToImporterPage, recordTracksEvent } = props;
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
+
+	const recordReadyScreenEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'regular',
+			platform,
+		} );
+	};
+
+	useEffect( recordReadyScreenEvent, [] );
 
 	return (
 		<div className="import-layout__center">
@@ -161,13 +224,37 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 interface ReadyWpComProps {
 	urlData: UrlData;
 	goToStep: GoToStep;
+	recordTracksEvent: RecordTracksEvent;
 }
 
 const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 	urlData,
 	goToStep,
+	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
+
+	const recordReadyScreenEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'already-wpcom',
+			platform: urlData.platform,
+		} );
+	};
+
+	const recordBackToStartEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'back-to-start',
+		} );
+	};
+
+	const onBackBtnClick = () => {
+		recordBackToStartEvent();
+		goToStep( 'capture' );
+	};
+
+	useEffect( recordReadyScreenEvent, [] );
 
 	return (
 		<div className="import-layout__center">
@@ -194,9 +281,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 							{ __( 'Start building' ) }
 						</NextButton>
 						<div>
-							<BackButton onClick={ () => goToStep( 'capture' ) }>
-								{ __( 'Back to start' ) }
-							</BackButton>
+							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
 					</div>
 				</div>
