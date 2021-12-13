@@ -13,9 +13,13 @@ const initiateAtomicTransfer = ( action ) =>
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			path: `/sites/${ action.siteId }/atomic/transfers/`,
-			body: {
-				software_set: action.softwareSet,
-			},
+			...( action.softwareSet
+				? {
+						body: {
+							software_set: action.softwareSet,
+						},
+				  }
+				: {} ),
 		},
 		action
 	);
