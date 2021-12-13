@@ -250,6 +250,7 @@ object RunAllUnitTests : BuildType({
 			name = "Run type checks"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
+				set -x
 				export NODE_ENV="test"
 
 				# These are not expected to fail
@@ -262,7 +263,7 @@ object RunAllUnitTests : BuildType({
 					set +e
 					yarn tsc --build client 2>&1 | tee tsc_out
 					mkdir -p checkstyle_results
-					yarn run typescript-checkstyle < tsc_out > ./checkstyle_results/tsc.xml
+					yarn run typescript-checkstyle < tsc_out | sed -e "s#${'$'}PWD#~#g" > ./checkstyle_results/tsc.xml
 					cat ./checkstyle_results/tsc.xml
 				)
 			"""
