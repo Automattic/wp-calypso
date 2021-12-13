@@ -296,6 +296,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-storybook@workspace:^, @automattic/calypso-storybook@workspace:packages/calypso-storybook":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-storybook@workspace:packages/calypso-storybook"
+  dependencies:
+    "@automattic/calypso-babel-config": "workspace:^"
+    "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-actions": ^6.4.9
+    "@storybook/builder-webpack5": ^6.4.9
+    "@storybook/manager-webpack5": ^6.4.9
+    "@storybook/preset-scss": ^1.0.3
+    css-loader: ^3.6.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    sass-loader: ^12.1.0
+    style-loader: ^1.2.1
+    webpack: ^5.65.0
+  peerDependencies:
+    "@storybook/react": ^6.4.9
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-stripe@workspace:^, @automattic/calypso-stripe@workspace:packages/calypso-stripe":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-stripe@workspace:packages/calypso-stripe"
@@ -337,23 +359,18 @@ __metadata:
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
     "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@storybook/addon-actions": ^6.4.9
-    "@storybook/preset-scss": ^1.0.3
+    "@storybook/react": ^6.4.9
     "@wordpress/base-styles": ^4.0.4
     classnames: ^2.3.1
-    css-loader: ^3.6.0
-    enzyme: ^3.11.0
     gridicons: ^3.4.0
     i18n-calypso: "workspace:^"
     lodash: ^4.17.21
     prop-types: ^15.7.2
     react-modal: ^3.14.3
-    sass-loader: ^10.1.1
-    style-loader: ^1.2.1
     typescript: ^4.5.3
     utility-types: ^3.10.0
-    webpack: ^5.65.0
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -364,28 +381,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/composite-checkout@workspace:packages/composite-checkout"
   dependencies:
-    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
-    "@storybook/addon-actions": ^6.4.9
-    "@storybook/preset-scss": ^1.0.3
+    "@storybook/react": ^6.4.9
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@wordpress/i18n": ^4.2.4
     "@wordpress/react-i18n": ^3.0.4
-    css-loader: ^3.6.0
     debug: ^4.1.1
-    enzyme: ^3.11.0
-    jest: ^27.3.1
-    postcss: ^8.3.11
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    sass-loader: ^10.1.1
-    style-loader: ^1.2.1
     typescript: ^4.5.3
-    webpack: ^5.65.0
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -1020,13 +1029,11 @@ __metadata:
   resolution: "@automattic/search@workspace:packages/search"
   dependencies:
     "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@babel/runtime": ^7.16.3
-    "@storybook/addon-actions": ^6.4.9
-    "@storybook/builder-webpack5": ^6.4.9
-    "@storybook/manager-webpack5": ^6.4.9
-    "@storybook/preset-scss": ^1.0.3
+    "@storybook/react": ^6.4.9
     "@testing-library/dom": ^8.11.1
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
@@ -1038,14 +1045,11 @@ __metadata:
     "@wordpress/is-shallow-equal": ^4.2.1
     "@wordpress/react-i18n": ^3.0.4
     classnames: ^2.3.1
-    css-loader: ^3.6.0
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
     redux: ^4.1.2
-    sass-loader: ^10.1.1
-    style-loader: ^1.2.1
     tslib: ^2.3.0
     typescript: ^4.5.3
     webpack: ^5.65.0
@@ -1127,19 +1131,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/tour-kit@workspace:packages/tour-kit"
   dependencies:
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@popperjs/core": ^2.10.2
-    "@storybook/preset-scss": ^1.0.3
+    "@storybook/react": ^6.4.9
     classnames: ^2.3.1
-    css-loader: ^3.6.0
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
-    sass-loader: ^10.1.1
-    style-loader: ^1.2.1
     typescript: ^4.5.3
-    webpack: ^5.65.0
   peerDependencies:
     "@wordpress/element": ^4.0.4
   languageName: unknown
@@ -32464,31 +32465,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"sass-loader@npm:^10.1.1":
-  version: 10.2.0
-  resolution: "sass-loader@npm:10.2.0"
-  dependencies:
-    klona: ^2.0.4
-    loader-utils: ^2.0.0
-    neo-async: ^2.6.2
-    schema-utils: ^3.0.0
-    semver: ^7.3.2
-  peerDependencies:
-    fibers: ">= 3.1.0"
-    node-sass: ^4.0.0 || ^5.0.0 || ^6.0.0
-    sass: ^1.3.0
-    webpack: ^4.36.0 || ^5.0.0
-  peerDependenciesMeta:
-    fibers:
-      optional: true
-    node-sass:
-      optional: true
-    sass:
-      optional: true
-  checksum: c328f4e26855a0c9c31fedb1a2258ed2c8aa9ea6f064f5d73454abfacac4d1eab1c1829e3d6730f53503ab8eb3434db1a8608831070340e6ac0257b502d57643
-  languageName: node
-  linkType: hard
-
 "sass-loader@npm:^12.1.0":
   version: 12.1.0
   resolution: "sass-loader@npm:12.1.0"
@@ -37540,7 +37516,6 @@ testarmada-magellan@11.0.10:
     "@babel/runtime": ^7.16.3
     "@bartekbp/typescript-checkstyle": ^5.0.0
     "@signal-noise/stylelint-scales": ^2.0.0
-    "@storybook/react": ^6.4.9
     "@typeform/embed-react": ^1.1.0
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7

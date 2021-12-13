@@ -124,11 +124,10 @@
 		"update-deps": "rm -rf yarn.lock && yarn run distclean && PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn install && replace --silent 'http://' 'https://' . --recursive --include='yarn.lock' && touch -m node_modules",
 		"whybundled": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-client && whybundled client/stats.json",
 		"whybundled:server": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-server && whybundled client/stats-server.json",
-		"composite-checkout-demo": "echo 'Deprecated, run `yarn run composite-checkout:storybook:start` instead'",
-		"components:storybook:start": "BABEL_ENV=storybook start-storybook -c packages/components/.storybook",
-		"search:storybook:start": "BABEL_ENV=storybook start-storybook -c packages/search/.storybook",
-		"composite-checkout:storybook:start": "BABEL_ENV=storybook start-storybook -c packages/composite-checkout/.storybook",
-		"tour-kit:storybook:start": "BABEL_ENV=storybook start-storybook -c packages/tour-kit/.storybook"
+		"components:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/components run storybook` instead'",
+		"search:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/search run storybook` instead'",
+		"composite-checkout:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/composite-checkout run storybook` instead'",
+		"tour-kit:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/tour-kit run storybook` instead'"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
@@ -148,7 +147,6 @@
 		"@babel/register": "^7.16.0",
 		"@babel/runtime": "^7.16.3",
 		"@signal-noise/stylelint-scales": "^2.0.0",
-		"@storybook/react": "^6.4.9",
 		"@typeform/embed-react": "^1.1.0",
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
