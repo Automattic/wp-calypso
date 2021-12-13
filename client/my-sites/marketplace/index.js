@@ -26,22 +26,20 @@ export default function () {
 		page( '/marketplace/domain/:site?', renderDomainsPage, makeLayout, clientRender );
 	}
 
-	if ( config.isEnabled( 'marketplace-v0.5' ) ) {
-		page(
-			'/marketplace/:productSlug?/install/:site?',
-			siteSelection,
-			renderPluginsInstallPage,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/marketplace/thank-you/:productSlug/:site?',
-			siteSelection,
-			renderMarketplaceThankYou,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/marketplace/:productSlug?/install/:site?',
+		siteSelection,
+		renderPluginsInstallPage,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/marketplace/thank-you/:productSlug/:site?',
+		siteSelection,
+		renderMarketplaceThankYou,
+		makeLayout,
+		clientRender
+	);
 
 	page( '/marketplace/*', redirectToHome );
 }

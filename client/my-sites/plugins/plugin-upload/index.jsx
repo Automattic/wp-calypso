@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card, ProgressBar } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
@@ -13,7 +12,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
@@ -58,28 +56,10 @@ class PluginUpload extends Component {
 			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
 
-		if ( nextProps.complete ) {
-			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
-		}
-
-		if ( config.isEnabled( 'marketplace-v0.5' ) && nextProps.inProgress ) {
-			this.props.productToBeInstalled( nextProps.pluginId, nextProps.siteSlug );
+		if ( nextProps.inProgress ) {
+			this.props.productToBeInstalled( null, nextProps.pluginId, nextProps.siteSlug );
 
 			page( `/marketplace/install/${ nextProps.siteSlug }` );
-		}
-
-		const { COMPLETE } = transferStates;
-
-		if (
-			this.props.automatedTransferStatus !== COMPLETE &&
-			nextProps.automatedTransferStatus === COMPLETE
-		) {
-			nextProps.successNotice(
-				nextProps.translate( "You've successfully uploaded the %(pluginId)s plugin.", {
-					args: { pluginId: nextProps.pluginId },
-				} ),
-				{ duration: 8000 }
-			);
 		}
 	}
 
@@ -99,10 +79,7 @@ class PluginUpload extends Component {
 			: this.props.initiateAutomatedTransferWithPluginZip;
 
 		return (
-			<Card>
-				{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }
-				{ inProgress && ! config.isEnabled( 'marketplace-v0.5' ) && this.renderProgressBar() }
-			</Card>
+			<Card>{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }</Card>
 		);
 	}
 

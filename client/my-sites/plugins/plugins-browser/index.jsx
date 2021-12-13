@@ -515,13 +515,11 @@ export class PluginsBrowser extends Component {
 				{ this.renderPageViewTracker() }
 				<DocumentHead title={ translate( 'Plugins' ) } />
 				<SidebarNavigation />
-				{ isEnabled( 'marketplace-v0.5' ) && (
-					<AnnouncementModal
-						announcementId="plugins-page-revamp"
-						pages={ this.getAnnoncementPages() }
-						finishButtonText={ translate( "Let's explore!" ) }
-					/>
-				) }
+				<AnnouncementModal
+					announcementId="plugins-page-revamp"
+					pages={ this.getAnnoncementPages() }
+					finishButtonText={ translate( "Let's explore!" ) }
+				/>
 				{ ! this.props.hideHeader && (
 					<FixedNavigationHeader
 						className="plugins-browser__header"
