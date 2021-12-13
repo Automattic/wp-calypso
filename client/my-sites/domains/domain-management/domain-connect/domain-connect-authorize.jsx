@@ -31,8 +31,17 @@ class DomainConnectAuthorize extends Component {
 		const { providerId, serviceId, params, translate } = this.props;
 		const { domain } = params;
 
-		wpcom
-			.getDnsTemplateRecords( domain, providerId, serviceId, params )
+		wpcom.req
+			.post(
+				'/domains/' +
+					domain +
+					'/dns/providers/' +
+					providerId +
+					'/services/' +
+					serviceId +
+					'/preview',
+				{ params }
+			)
 			.then(
 				( data ) => {
 					this.setState( {
