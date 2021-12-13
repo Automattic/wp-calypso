@@ -99,7 +99,16 @@ export class GutenbergEditorPage {
 	 * close button is fired.
 	 */
 	async dismissWelcomeTour(): Promise< void > {
-		const response = await this.page.waitForResponse( /.*nux\?_envelope.*/ );
+		let response;
+
+		try {
+			response = await this.page.waitForResponse( /.*nux\?_envelope.*/, {
+				timeout: 105 * 1000,
+			} );
+		} catch {
+			return;
+		}
+
 		interface NuxPayload {
 			body: {
 				show_welcome_guide: boolean;
