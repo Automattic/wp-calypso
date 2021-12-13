@@ -5,8 +5,10 @@ describe( 'hasMarketplaceProduct', () => {
 		jetpack: { product_type: 'jetpack' },
 		woocommerce_bookings_monthly: { product_type: 'marketplace_plugin' },
 		woocommerce_bookings_yearly: { product_type: 'marketplace_plugin' },
+		woocommerce_bookings_2y: { product_type: 'marketplace_plugin' },
 		'woocommerce-subscriptions-monthly': { product_type: 'marketplace_plugin' },
 		'woocommerce-subscriptions-yearly': { product_type: 'marketplace_plugin' },
+		'woocommerce-subscriptions-2y': { product_type: 'marketplace_plugin' },
 		'woocommerce-test-plugin': { product_type: 'plugin' },
 		'woocommerce-test-plugin-advanced': { product_type: 'marketplace_plugin' },
 	};
@@ -43,6 +45,11 @@ describe( 'hasMarketplaceProduct', () => {
 			expect( hasMarketplaceProduct( productsList, 'woocommerce-subscriptions-yearly' ) ).toBe(
 				true
 			);
+		} );
+
+		test( 'should return true when the product slug if suffixed with `2y`', () => {
+			expect( hasMarketplaceProduct( productsList, 'woocommerce_bookings_2y' ) ).toBe( true );
+			expect( hasMarketplaceProduct( productsList, 'woocommerce-subscriptions-2y' ) ).toBe( true );
 		} );
 	} );
 } );

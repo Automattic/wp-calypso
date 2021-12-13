@@ -61,7 +61,6 @@ const defaultProps = {
 	},
 	loadTrackingTool: () => {},
 	fetchReceipt: () => {},
-	marketplaceProduct: () => false,
 };
 
 describe( 'CheckoutThankYou', () => {
