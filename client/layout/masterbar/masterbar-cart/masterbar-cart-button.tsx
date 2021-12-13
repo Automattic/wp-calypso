@@ -38,21 +38,27 @@ export function MasterbarCartButton( {
 	const tooltip = translate( 'My shopping cart' );
 
 	return (
-		<div className="masterbar-cart-button" ref={ cartButtonRef }>
-			<CheckoutErrorBoundary errorMessage="Error">
-				<MasterbarItem icon="cart" tooltip={ tooltip } onClick={ onClick }>
-					<MasterbarCartCount productsInCart={ responseCart.products.length } />
-				</MasterbarItem>
-				<Popover
-					isVisible={ isActive }
-					onClose={ onClose }
-					context={ cartButtonRef.current }
-					position="bottom left"
-				>
+		<>
+			<MasterbarItem
+				className="masterbar-cart-button"
+				icon="cart"
+				tooltip={ tooltip }
+				onClick={ onClick }
+				ref={ cartButtonRef }
+			>
+				<MasterbarCartCount productsInCart={ responseCart.products.length } />
+			</MasterbarItem>
+			<Popover
+				isVisible={ isActive }
+				onClose={ onClose }
+				context={ cartButtonRef.current }
+				position="bottom left"
+			>
+				<CheckoutErrorBoundary errorMessage="Error">
 					<MiniCart selectedSiteSlug={ selectedSiteSlug } goToCheckout={ goToCheckout } />
-				</Popover>
-			</CheckoutErrorBoundary>
-		</div>
+				</CheckoutErrorBoundary>
+			</Popover>
+		</>
 	);
 }
 
