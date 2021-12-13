@@ -19,23 +19,20 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 		page = args.page;
 	} );
 
-	beforeAll( async () => {
-		loginPage = new LoginPage( page );
-		await loginPage.visit();
-	} );
-
 	describe.each( [
 		{ siteType: 'Simple', testAccount: 'defaultUser' },
 		{ siteType: 'Atomic', testAccount: 'eCommerceUser' },
 	] )( 'Search and view a support article ($siteType)', function ( { testAccount } ) {
 		let supportComponent: SupportComponent;
 
-		afterAll( async () => {
-			await loginPage.visit();
-			await loginPage.clickChangeAccount();
-		} );
-
 		it( `Log in with ${ testAccount }`, async function () {
+			if ( ! loginPage ) {
+				loginPage = new LoginPage( page );
+				await loginPage.visit();
+			} else {
+				await loginPage.visit();
+				await loginPage.clickChangeAccount();
+			}
 			await loginPage.logInWithTestAccount( testAccount );
 		} );
 

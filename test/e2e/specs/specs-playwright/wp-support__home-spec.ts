@@ -13,23 +13,20 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		page = args.page;
 	} );
 
-	beforeAll( async () => {
-		loginPage = new LoginPage( page );
-		await loginPage.visit();
-	} );
-
 	describe.each( [
 		{ siteType: 'Simple', testAccount: 'defaultUser' },
 		{ siteType: 'Atomic', testAccount: 'eCommerceUser' },
 	] )( 'Search from Support Card ($siteType)', function ( { testAccount } ) {
 		let supportComponent: SupportComponent;
 
-		afterAll( async () => {
-			await loginPage.visit();
-			await loginPage.clickChangeAccount();
-		} );
-
 		it( `Log in with ${ testAccount }`, async function () {
+			if ( ! loginPage ) {
+				loginPage = new LoginPage( page );
+				await loginPage.visit();
+			} else {
+				await loginPage.visit();
+				await loginPage.clickChangeAccount();
+			}
 			await loginPage.logInWithTestAccount( testAccount );
 		} );
 

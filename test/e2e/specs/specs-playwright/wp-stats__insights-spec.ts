@@ -19,22 +19,19 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		page = args.page;
 	} );
 
-	beforeAll( async () => {
-		loginPage = new LoginPage( page );
-		await loginPage.visit();
-	} );
-
 	describe.each`
 		siteType      | testAccount
 		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
 	`( 'View Insights ($siteType)', function ( { testAccount } ) {
-		afterAll( async () => {
-			await loginPage.visit();
-			await loginPage.clickChangeAccount();
-		} );
-
 		it( `Log in with ${ testAccount }`, async function () {
+			if ( ! loginPage ) {
+				loginPage = new LoginPage( page );
+				await loginPage.visit();
+			} else {
+				await loginPage.visit();
+				await loginPage.clickChangeAccount();
+			}
 			await loginPage.logInWithTestAccount( testAccount );
 		} );
 

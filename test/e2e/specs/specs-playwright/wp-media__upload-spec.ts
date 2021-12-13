@@ -30,8 +30,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 			audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
 			unsupported: await MediaHelper.createTestFile( TEST_UNSUPPORTED_FILE_PATH ),
 		};
-		loginPage = new LoginPage( page );
-		await loginPage.visit();
 	} );
 
 	// Parametrized test.
@@ -42,12 +40,14 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	`( 'Upload media files ($siteType)', ( { testAccount } ) => {
 		let mediaPage: MediaPage;
 
-		afterAll( async () => {
-			await loginPage.visit();
-			await loginPage.clickChangeAccount();
-		} );
-
 		it( `Log in with ${ testAccount }`, async function () {
+			if ( ! loginPage ) {
+				loginPage = new LoginPage( page );
+				await loginPage.visit();
+			} else {
+				await loginPage.visit();
+				await loginPage.clickChangeAccount();
+			}
 			await loginPage.logInWithTestAccount( testAccount );
 		} );
 

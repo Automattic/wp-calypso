@@ -25,8 +25,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 
 	beforeAll( async () => {
 		testImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		loginPage = new LoginPage( page );
-		await loginPage.visit();
 	} );
 
 	describe.each`
@@ -36,12 +34,14 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	`( 'Edit Image ($siteType)', function ( { testAccount } ) {
 		let mediaPage: MediaPage;
 
-		afterAll( async () => {
-			await loginPage.visit();
-			await loginPage.clickChangeAccount();
-		} );
-
 		it( `Log in with ${ testAccount }`, async function () {
+			if ( ! loginPage ) {
+				loginPage = new LoginPage( page );
+				await loginPage.visit();
+			} else {
+				await loginPage.visit();
+				await loginPage.clickChangeAccount();
+			}
 			await loginPage.logInWithTestAccount( testAccount );
 		} );
 
