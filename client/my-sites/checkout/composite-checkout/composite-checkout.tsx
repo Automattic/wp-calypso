@@ -624,11 +624,11 @@ export default function CompositeCheckout( {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_step_complete', {
 					step: 2,
-					step_name: "payment-method-step",
+					step_name: 'payment-method-step',
 				} )
 			);
 		},
-		[ onPaymentComplete, onAfterPaymentComplete ]
+		[ onPaymentComplete, onAfterPaymentComplete, reduxDispatch ]
 	);
 
 	const handlePaymentError = useCallback(
