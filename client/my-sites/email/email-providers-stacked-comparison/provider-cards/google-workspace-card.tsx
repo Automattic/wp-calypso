@@ -4,7 +4,7 @@ import {
 } from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
-import React, { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

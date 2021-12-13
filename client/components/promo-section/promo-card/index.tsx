@@ -53,6 +53,13 @@ const PromoCard: FunctionComponent< Props > = ( {
 		<Badge className="promo-card__title-badge">{ badge }</Badge>
 	) : null;
 
+	const titleComponentHeader = titleComponent && (
+		<>
+			{ titleComponent }
+			{ badgeComponent }
+		</>
+	);
+
 	return (
 		<ActionPanel className={ classes }>
 			{ image && (
@@ -62,11 +69,13 @@ const PromoCard: FunctionComponent< Props > = ( {
 					) : (
 						image
 					) }
+					{ titleComponentHeader }
 				</ActionPanelFigure>
 			) }
 			{ icon && (
 				<ActionPanelFigure inlineBodyText={ false } align="left">
 					<Gridicon icon={ icon } size="32" />
+					{ titleComponentHeader }
 				</ActionPanelFigure>
 			) }
 			<ActionPanelBody>
@@ -75,12 +84,6 @@ const PromoCard: FunctionComponent< Props > = ( {
 						{ title }
 						{ badgeComponent }
 					</ActionPanelTitle>
-				) }
-				{ titleComponent && (
-					<>
-						{ titleComponent }
-						{ badgeComponent }
-					</>
 				) }
 				{ isPrimary
 					? Children.map( children, ( child ) => {
