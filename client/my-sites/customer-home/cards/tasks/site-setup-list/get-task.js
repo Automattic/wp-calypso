@@ -238,6 +238,10 @@ export const getTask = (
 				),
 				actionText: translate( 'Preview blog' ),
 				actionUrl: `/view/${ siteSlug }`,
+				...( ! task.isCompleted && {
+					actionDispatch: requestSiteChecklistTaskUpdate,
+					actionDispatchArgs: [ siteId, task.id ],
+				} ),
 				isSkippable: true,
 			};
 			break;
@@ -250,6 +254,10 @@ export const getTask = (
 				),
 				actionText: translate( 'Browse themes' ),
 				actionUrl: `/themes/${ siteSlug }`,
+				...( ! task.isCompleted && {
+					actionDispatch: requestSiteChecklistTaskUpdate,
+					actionDispatchArgs: [ siteId, task.id ],
+				} ),
 				isSkippable: true,
 			};
 			break;
