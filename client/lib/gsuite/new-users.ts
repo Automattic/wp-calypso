@@ -9,7 +9,7 @@ import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
 } from 'calypso/lib/gsuite';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -337,24 +337,27 @@ const transformUserForCart = ( {
 } );
 
 const getItemsForCart = (
-	domains: { name: string },
+	domains: { name: string; googleAppsSubscription?: { status?: string } }[],
 	productSlug: string,
 	users: GSuiteNewUser[]
-): MinimalRequestCartProduct => {
+): IncompleteRequestCartProduct[] => {
 	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
 		groupBy( users, 'domain.value' ),
 		( groupedUsers ) => groupedUsers.map( transformUserForCart )
 	);
 
 	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domainName: string ) => {
-		const properties = { domain: domainName, users: groupedUsers };
+		const properties: Record< string, unknown > = { domain: domainName, users: groupedUsers };
 
 		const domain = find( domains, [ 'name', domainName ] );
 
 		const isExtraLicense = domain && hasGSuiteWithUs( domain );
 
 		if ( isGSuiteProductSlug( productSlug ) && isExtraLicense ) {
-			return googleAppsExtraLicenses( properties );
+			return googleAppsExtraLicenses( {
+				domain: domainName,
+				users: groupedUsers,
+			} );
 		}
 
 		if ( isGoogleWorkspaceProductSlug( productSlug ) && isExtraLicense ) {

@@ -45,11 +45,11 @@ export function CheckoutProvider( {
 	onPaymentError,
 	onPageLoadError,
 	onStepChanged,
+	onPaymentMethodChanged,
 	redirectToUrl,
 	theme,
 	paymentMethods,
 	paymentProcessors,
-	onEvent,
 	isLoading,
 	isValidating,
 	initiallySelectedPaymentMethodId = null,
@@ -62,7 +62,6 @@ export function CheckoutProvider( {
 		theme,
 		paymentMethods,
 		paymentProcessors,
-		onEvent,
 		isLoading,
 		isValidating,
 		children,
@@ -113,17 +112,16 @@ export function CheckoutProvider( {
 			allPaymentMethods: paymentMethods,
 			paymentMethodId,
 			setPaymentMethodId,
-			onEvent: onEvent || noop,
 			formStatus,
 			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
 			onPageLoadError,
 			onStepChanged,
+			onPaymentMethodChanged,
 		} ),
 		[
 			formStatus,
-			onEvent,
 			paymentMethodId,
 			paymentMethods,
 			setFormStatus,
@@ -131,6 +129,7 @@ export function CheckoutProvider( {
 			paymentProcessors,
 			onPageLoadError,
 			onStepChanged,
+			onPaymentMethodChanged,
 		]
 	);
 
@@ -156,9 +155,6 @@ export function CheckoutProvider( {
 		</CheckoutErrorBoundary>
 	);
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop(): void {}
 
 function CheckoutProviderPropValidator( {
 	propsToValidate,

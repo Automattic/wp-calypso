@@ -10,6 +10,7 @@ import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
@@ -27,6 +28,10 @@ import ActionBox from './action-box';
 import './style.scss';
 
 export const QuickLinks = ( {
+	canEditPages,
+	canCustomize,
+	canSwitchThemes,
+	canManageSite,
 	customizeUrl,
 	isStaticHomePage,
 	showCustomizer,
@@ -59,98 +64,104 @@ export const QuickLinks = ( {
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
-			{ isStaticHomePage ? (
-				<ActionBox
-					href={ editHomePageUrl }
-					hideLinkIndicator
-					onClick={ trackEditHomepageAction }
-					label={ translate( 'Edit homepage' ) }
-					materialIcon="laptop"
-				/>
+			{ isStaticHomePage && canEditPages ? (
+				<>
+					<ActionBox
+						href={ editHomePageUrl }
+						hideLinkIndicator
+						onClick={ trackEditHomepageAction }
+						label={ translate( 'Edit homepage' ) }
+						materialIcon="laptop"
+					/>
+					<ActionBox
+						href={ `/page/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackAddPageAction }
+						label={ translate( 'Add a page' ) }
+						materialIcon="insert_drive_file"
+					/>
+					<ActionBox
+						href={ `/post/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackWritePostAction }
+						label={ translate( 'Write blog post' ) }
+						materialIcon="edit"
+					/>
+				</>
 			) : (
+				<>
+					<ActionBox
+						href={ `/post/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackWritePostAction }
+						label={ translate( 'Write blog post' ) }
+						materialIcon="edit"
+					/>
+					<ActionBox
+						href={ `/comments/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackManageCommentsAction }
+						label={ translate( 'Manage comments' ) }
+						materialIcon="mode_comment"
+					/>
+					{ canEditPages && (
+						<ActionBox
+							href={ `/page/${ siteSlug }` }
+							hideLinkIndicator
+							onClick={ trackAddPageAction }
+							label={ translate( 'Add a page' ) }
+							materialIcon="insert_drive_file"
+						/>
+					) }
+				</>
+			) }
+			{ showCustomizer && canCustomize && (
+				<>
+					<ActionBox
+						href={ menusUrl }
+						hideLinkIndicator
+						onClick={ trackEditMenusAction }
+						label={ translate( 'Edit menus' ) }
+						materialIcon="list"
+					/>
+					<ActionBox
+						href={ customizeUrl }
+						hideLinkIndicator
+						onClick={ trackCustomizeThemeAction }
+						label={ translate( 'Customize theme' ) }
+						materialIcon="palette"
+					/>
+				</>
+			) }
+			{ canSwitchThemes && (
 				<ActionBox
-					href={ `/post/${ siteSlug }` }
+					href={ `/themes/${ siteSlug }` }
 					hideLinkIndicator
-					onClick={ trackWritePostAction }
-					label={ translate( 'Write blog post' ) }
-					materialIcon="edit"
+					onClick={ trackChangeThemeAction }
+					label={ translate( 'Change theme' ) }
+					materialIcon="view_quilt"
 				/>
 			) }
-			{ isStaticHomePage ? (
-				<ActionBox
-					href={ `/page/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackAddPageAction }
-					label={ translate( 'Add a page' ) }
-					materialIcon="insert_drive_file"
-				/>
-			) : (
-				<ActionBox
-					href={ `/comments/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackManageCommentsAction }
-					label={ translate( 'Manage comments' ) }
-					materialIcon="mode_comment"
-				/>
-			) }
-			{ isStaticHomePage ? (
-				<ActionBox
-					href={ `/post/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackWritePostAction }
-					label={ translate( 'Write blog post' ) }
-					materialIcon="edit"
-				/>
-			) : (
-				<ActionBox
-					href={ `/page/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackAddPageAction }
-					label={ translate( 'Add a page' ) }
-					materialIcon="insert_drive_file"
-				/>
-			) }
-			{ showCustomizer && (
-				<ActionBox
-					href={ menusUrl }
-					hideLinkIndicator
-					onClick={ trackEditMenusAction }
-					label={ translate( 'Edit menus' ) }
-					materialIcon="list"
-				/>
-			) }
-			{ showCustomizer && (
-				<ActionBox
-					href={ customizeUrl }
-					hideLinkIndicator
-					onClick={ trackCustomizeThemeAction }
-					label={ translate( 'Customize theme' ) }
-					materialIcon="palette"
-				/>
-			) }
-			<ActionBox
-				href={ `/themes/${ siteSlug }` }
-				hideLinkIndicator
-				onClick={ trackChangeThemeAction }
-				label={ translate( 'Change theme' ) }
-				materialIcon="view_quilt"
-			/>
-			{ canAddEmail ? (
-				<ActionBox
-					href={ `/email/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackAddEmailAction }
-					label={ translate( 'Add email' ) }
-					materialIcon="email"
-				/>
-			) : (
-				<ActionBox
-					href={ `/domains/add/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackAddDomainAction }
-					label={ translate( 'Add a domain' ) }
-					gridicon="domains"
-				/>
+			{ canManageSite && (
+				<>
+					{ canAddEmail ? (
+						<ActionBox
+							href={ `/email/${ siteSlug }` }
+							hideLinkIndicator
+							onClick={ trackAddEmailAction }
+							label={ translate( 'Add email' ) }
+							materialIcon="email"
+						/>
+					) : (
+						<ActionBox
+							href={ `/domains/add/${ siteSlug }` }
+							hideLinkIndicator
+							onClick={ trackAddDomainAction }
+							label={ translate( 'Add a domain' ) }
+							gridicon="domains"
+						/>
+					) }
+				</>
 			) }
 			{ isUnifiedNavEnabled && siteAdminUrl && (
 				<ActionBox
@@ -160,28 +171,32 @@ export const QuickLinks = ( {
 					label={ translate( 'WP Admin Dashboard' ) }
 				/>
 			) }
-			<ActionBox
-				href="https://wp.me/logo-maker/?utm_campaign=my_home"
-				onClick={ trackDesignLogoAction }
-				target="_blank"
-				label={
-					getLocaleSlug() === 'en' ||
-					getLocaleSlug() === 'en-gb' ||
-					i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
-						? translate( 'Create a logo with Fiverr' )
-						: translate( 'Create a logo' )
-				}
-				external
-				iconSrc={ fiverrIcon }
-			/>
-			<ActionBox
-				href="https://anchor.fm/wordpressdotcom"
-				onClick={ trackAnchorPodcastAction }
-				target="_blank"
-				label={ translate( 'Create a podcast with Anchor' ) }
-				external
-				iconSrc={ anchorLogoIcon }
-			/>
+			{ canManageSite && (
+				<>
+					<ActionBox
+						href="https://wp.me/logo-maker/?utm_campaign=my_home"
+						onClick={ trackDesignLogoAction }
+						target="_blank"
+						label={
+							getLocaleSlug() === 'en' ||
+							getLocaleSlug() === 'en-gb' ||
+							i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
+								? translate( 'Create a logo with Fiverr' )
+								: translate( 'Create a logo' )
+						}
+						external
+						iconSrc={ fiverrIcon }
+					/>
+					<ActionBox
+						href="https://anchor.fm/wordpressdotcom"
+						onClick={ trackAnchorPodcastAction }
+						target="_blank"
+						label={ translate( 'Create a podcast with Anchor' ) }
+						external
+						iconSrc={ anchorLogoIcon }
+					/>
+				</>
+			) }
 		</div>
 	);
 
@@ -338,6 +353,10 @@ const mapStateToProps = ( state ) => {
 	const canAddEmail = getDomainsThatCanAddEmail( domains ).length > 0;
 
 	return {
+		canEditPages: canCurrentUser( state, siteId, 'edit_pages' ),
+		canCustomize: canCurrentUser( state, siteId, 'customize' ),
+		canSwitchThemes: canCurrentUser( state, siteId, 'switch_themes' ),
+		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),

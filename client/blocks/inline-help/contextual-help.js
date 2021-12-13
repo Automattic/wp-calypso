@@ -8,7 +8,7 @@ import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 
 /* eslint-disable inclusive-language/use-inclusive-words */
 // All usage of the word "master" here refers to the verb (ie. "to learn"), not a synonym of "primary".
-const fallbackLinks = [
+const defaultFallbackLinks = [
 	{
 		get link() {
 			return localizeUrl(
@@ -77,6 +77,57 @@ const fallbackLinks = [
 		},
 		get description() {
 			return translate( 'Limit your site’s visibility or make it completely private.' );
+		},
+	},
+];
+
+const bloggerFallbackLinks = [
+	{
+		get link() {
+			return localizeUrl( 'https://wordpress.com/support/posts/' );
+		},
+		get title() {
+			return translate( 'All about blog posts' );
+		},
+	},
+	{
+		get link() {
+			return localizeUrl( 'https://wordpress.com/support/subscriptions-and-newsletters/' );
+		},
+		get title() {
+			return translate( 'Encourage visitors to subscribe to your content' );
+		},
+	},
+	{
+		get link() {
+			return localizeUrl( 'https://wordpress.com/support/publicize/' );
+		},
+		get title() {
+			return translate( 'Share your content to social media automatically' );
+		},
+	},
+	{
+		get link() {
+			return localizeUrl( 'https://wordpress.com/support/sharing/' );
+		},
+		get title() {
+			return translate( 'Encourage visitors to share your content' );
+		},
+	},
+	{
+		get link() {
+			return localizeUrl( 'https://wordpress.com/support/seo/' );
+		},
+		get title() {
+			return translate( 'Learn about how to get noticed by search engines' );
+		},
+	},
+	{
+		get link() {
+			return localizeUrl( 'https://wordpress.com/support/site-verification-services/' );
+		},
+		get title() {
+			return translate( 'Verify your site with Google and other services' );
 		},
 	},
 ];
@@ -2195,12 +2246,13 @@ const toursForSection = {
 	],
 };
 
-export function getContextResults( section ) {
+export function getContextResults( section, siteIntent ) {
 	// Posts and Pages have a common help section
 	if ( section === 'posts' || section === 'pages' ) {
 		section = 'posts-pages';
 	}
 
+	const fallbackLinks = siteIntent === 'write' ? bloggerFallbackLinks : defaultFallbackLinks;
 	// make sure editorially to show at most one tour and one video at once
 	// `first` is a safe-guard in case that fails
 	const video = videosForSection[ section ]?.[ 0 ];

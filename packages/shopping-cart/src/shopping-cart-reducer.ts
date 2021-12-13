@@ -124,11 +124,21 @@ function shoppingCartReducer(
 			};
 
 		case 'FETCH_INITIAL_RESPONSE_CART':
-			return { ...state, cacheStatus: 'fresh-pending' };
+			return {
+				...state,
+				cacheStatus: 'fresh-pending',
+				loadingError: undefined,
+				loadingErrorType: undefined,
+			};
 
 		case 'CART_RELOAD':
 			debug( 'reloading cart from server' );
-			return { ...state, cacheStatus: 'fresh' };
+			return {
+				...state,
+				cacheStatus: 'fresh',
+				loadingError: undefined,
+				loadingErrorType: undefined,
+			};
 
 		case 'CLEAR_QUEUED_ACTIONS':
 			return { ...state, queuedActions: [] };
@@ -140,6 +150,8 @@ function shoppingCartReducer(
 				...state,
 				responseCart: removeItemFromResponseCart( state.responseCart, uuidToRemove ),
 				cacheStatus: 'invalid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
 			};
 		}
 
@@ -149,6 +161,8 @@ function shoppingCartReducer(
 				...state,
 				responseCart: addItemsToResponseCart( state.responseCart, action.products ),
 				cacheStatus: 'invalid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
 			};
 
 		case 'CART_PRODUCTS_REPLACE_ALL':
@@ -157,6 +171,8 @@ function shoppingCartReducer(
 				...state,
 				responseCart: replaceAllItemsInResponseCart( state.responseCart, action.products ),
 				cacheStatus: 'invalid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
 			};
 
 		case 'CART_PRODUCT_REPLACE': {
@@ -179,6 +195,8 @@ function shoppingCartReducer(
 					action.productPropertiesToChange
 				),
 				cacheStatus: 'invalid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
 			};
 		}
 
@@ -193,6 +211,8 @@ function shoppingCartReducer(
 				responseCart: removeCouponFromResponseCart( state.responseCart ),
 				couponStatus: 'fresh',
 				cacheStatus: 'invalid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
 			};
 
 		case 'ADD_COUPON': {
@@ -210,6 +230,8 @@ function shoppingCartReducer(
 				responseCart: addCouponToResponseCart( state.responseCart, newCoupon ),
 				couponStatus: 'pending',
 				cacheStatus: 'invalid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
 			};
 		}
 
@@ -220,6 +242,8 @@ function shoppingCartReducer(
 				responseCart: response,
 				couponStatus: getUpdatedCouponStatus( couponStatus, response ),
 				cacheStatus: 'valid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
 			};
 		}
 
@@ -227,6 +251,8 @@ function shoppingCartReducer(
 			return {
 				...state,
 				cacheStatus: 'pending',
+				loadingError: undefined,
+				loadingErrorType: undefined,
 			};
 
 		case 'RECEIVE_UPDATED_RESPONSE_CART': {
@@ -242,6 +268,8 @@ function shoppingCartReducer(
 				responseCart: response,
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
 			};
 		}
 
@@ -281,6 +309,8 @@ function shoppingCartReducer(
 					...state,
 					responseCart: addLocationToResponseCart( state.responseCart, action.location ),
 					cacheStatus: 'invalid',
+					loadingError: undefined,
+					loadingErrorType: undefined,
 				};
 			}
 			debug( 'cart location is the same; not updating' );

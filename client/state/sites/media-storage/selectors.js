@@ -10,17 +10,6 @@ export function getMediaStorage( state, siteId ) {
 }
 
 /**
- * Returns true, if we're currently requesting media storage limits.
- *
- * @param   {object}  state  Global state tree
- * @param   {number}  siteId Site ID
- * @returns {boolean}        If media storage is requested
- */
-export function isRequestingMediaStorage( state, siteId ) {
-	return !! state.sites.mediaStorage.fetchingItems[ siteId ];
-}
-
-/**
  * Returns true, if a site is over current plan limits
  *
  * @param   {object}  state  Global state tree

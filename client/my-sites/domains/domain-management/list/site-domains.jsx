@@ -56,6 +56,7 @@ import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import { filterDomainsByOwner } from './helpers';
 import {
+	countDomainsInOrangeStatus,
 	filterOutWpcomDomains,
 	getDomainManagementPath,
 	getSimpleSortFunctionBy,
@@ -140,6 +141,13 @@ export class SiteDomains extends Component {
 					},
 					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
+				bubble: countDomainsInOrangeStatus(
+					nonWpcomDomains.map( ( domain ) =>
+						resolveDomainStatus( domain, null, {
+							getMappingErrors: true,
+						} )
+					)
+				),
 			},
 			{
 				name: 'registered-until',
@@ -157,14 +165,6 @@ export class SiteDomains extends Component {
 		return (
 			<>
 				{ ! hasProductsList && <QueryProductsList /> }
-
-				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
-					<EmptyDomainsListCard
-						selectedSite={ selectedSite }
-						hasDomainCredit={ this.props.hasDomainCredit }
-						hasNonWpcomDomains={ false }
-					/>
-				) }
 
 				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
@@ -187,6 +187,14 @@ export class SiteDomains extends Component {
 						hasLoadedPurchases={ ! isFetchingPurchases }
 					/>
 				</div>
+
+				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
+					<EmptyDomainsListCard
+						selectedSite={ selectedSite }
+						hasDomainCredit={ this.props.hasDomainCredit }
+						hasNonWpcomDomains={ false }
+					/>
+				) }
 
 				{ ! this.isLoading() && nonWpcomDomains.length > 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
@@ -248,7 +256,7 @@ export class SiteDomains extends Component {
 			{
 				label: 'All my domains',
 				value: 'all-my-domains',
-				path: domainManagementRoot(),
+				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: null,
 			},
 		];

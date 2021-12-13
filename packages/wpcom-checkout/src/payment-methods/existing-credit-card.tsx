@@ -1,10 +1,4 @@
-import {
-	Button,
-	FormStatus,
-	useLineItems,
-	useFormStatus,
-	useEvents,
-} from '@automattic/composite-checkout';
+import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -142,7 +136,6 @@ function ExistingCardPayButton( {
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -158,7 +151,6 @@ function ExistingCardPayButton( {
 			disabled={ disabled }
 			onClick={ () => {
 				debug( 'submitting existing card payment' );
-				onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
 				onClick( 'existing-card', {
 					items,
 					name: cardholderName,

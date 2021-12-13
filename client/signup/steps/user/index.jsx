@@ -11,6 +11,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
@@ -136,6 +137,19 @@ export class UserStep extends Component {
 		}
 	}
 
+	componentDidUpdate() {
+		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
+			// It looks like the user just completed the User Registartion Step
+			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
+			const url = new URL( window.location );
+			const searchParams = url.searchParams;
+			searchParams.set( 'user_completed', true );
+			url.search = searchParams.toString();
+			// Redirect to itself and append ?user_completed
+			window.location.replace( url.toString() );
+		}
+	}
+
 	componentDidMount() {
 		if ( flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha ) {
 			this.initGoogleRecaptcha();
@@ -242,6 +256,10 @@ export class UserStep extends Component {
 						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 					}
 				);
+			}
+
+			if ( this.props.userLoggedIn ) {
+				subHeaderText = '';
 			}
 		}
 
@@ -366,6 +384,10 @@ export class UserStep extends Component {
 
 	userCreationComplete() {
 		return this.props.step && 'completed' === this.props.step.status;
+	}
+
+	userCreationCompletedAndHasHistory( props ) {
+		return 'completed' === props.step?.status && detectHistoryNavigation.loadedViaHistory();
 	}
 
 	userCreationPending() {
@@ -517,6 +539,10 @@ export class UserStep extends Component {
 	render() {
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
+		}
+
+		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
+			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
 		return (

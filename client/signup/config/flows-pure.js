@@ -10,7 +10,6 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
-	getImportDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 } = {} ) {
@@ -332,26 +331,6 @@ export function generateFlows( {
 			pageTitle: translate( 'Launch your site' ),
 		},
 		{
-			name: 'import',
-			steps: [ 'user', 'from-url', 'domains', 'plans-import' ],
-			destination: getImportDestination,
-			description: 'A flow to kick off an import during signup',
-			disallowResume: true,
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		},
-		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
-		// when switching from the onboarding flow.
-		{
-			name: 'import-onboarding',
-			steps: [ 'user', 'site-type', 'import-url', 'import-preview', 'domains', 'plans-import' ],
-			destination: getImportDestination,
-			description: 'Import flow that can be used from the onboarding flow',
-			disallowResume: true,
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		},
-		{
 			name: 'importer',
 			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
 			destination: '/',
@@ -437,12 +416,8 @@ export function generateFlows( {
 		},
 		{
 			name: 'setup-site',
-			steps: isEnabled( 'signup/hero-flow' )
-				? [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ]
-				: [ 'design-setup-site' ],
-			destination: isEnabled( 'signup/hero-flow' )
-				? getDestinationFromIntent
-				: getChecklistThemeDestination,
+			steps: [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ],
+			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
 			lastModified: '2021-10-14',
@@ -461,12 +436,10 @@ export function generateFlows( {
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: [ 'select-site', 'confirm', 'transfer' ],
+			steps: [ 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
-			providesDependenciesInQuery: [ 'siteSlug' ],
-			optionalDependenciesInQuery: [ 'siteSlug' ],
-			disallowResume: true,
+			providesDependenciesInQuery: [ 'site' ],
 			lastModified: '2021-11-11',
 		},
 	];

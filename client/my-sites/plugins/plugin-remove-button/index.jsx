@@ -179,7 +179,7 @@ class PluginRemoveButton extends Component {
 
 		if ( this.props.menuItem ) {
 			return (
-				<PopoverMenuItem onClick={ handleClick } className="plugin-remove-button__remove-icon">
+				<PopoverMenuItem onClick={ handleClick } className="plugin-remove-button__remove-button">
 					{ label }
 				</PopoverMenuItem>
 			);
@@ -193,8 +193,8 @@ class PluginRemoveButton extends Component {
 				disabledInfo={ disabledInfo }
 				className="plugin-remove-button__remove-link"
 			>
-				<Button onClick={ handleClick } className="plugin-remove-button__remove-icon">
-					<Icon icon={ trash } />
+				<Button onClick={ handleClick } className="plugin-remove-button__remove-button">
+					<Icon icon={ trash } className="plugin-remove-button__remove-icon" />
 					{ label }
 				</Button>
 			</PluginAction>

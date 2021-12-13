@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -163,10 +162,6 @@ class ListAll extends Component {
 	};
 
 	headerButtons() {
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			return null;
-		}
-
 		return (
 			<Button primary compact className="list-all__add-a-domain" onClick={ this.clickAddDomain }>
 				{ this.props.translate( 'Add a domain' ) }

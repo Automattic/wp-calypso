@@ -112,7 +112,7 @@ export function resolveDomainStatus(
 					return {
 						statusText: translate( 'Connection error' ),
 						statusClass: 'status-alert',
-						status: translate( 'Verifying' ),
+						status: translate( 'Error' ),
 						icon: 'info',
 						listStatusText: status,
 						listStatusClass: 'alert',
@@ -133,11 +133,11 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Verifying connection' ),
 					statusClass: 'status-verifying',
-					status: translate( 'Verifying' ),
+					status: translate( 'Complete setup' ),
 					icon: 'verifying',
 					listStatusText: status,
 					listStatusClass: 'verifying',
-					listStatusWeight: 200,
+					listStatusWeight: 600,
 				};
 			}
 
@@ -147,6 +147,7 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Action required' ),
 					icon: 'info',
+					listStatusWeight: 600,
 				};
 			}
 
@@ -167,7 +168,7 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: pendingRenewalMessage,
 					listStatusClass: 'warning',
-					listStatusWeight: 800,
+					listStatusWeight: 400,
 				};
 			}
 
@@ -186,6 +187,7 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Action required' ),
 					icon: 'info',
+					listStatusWeight: 600,
 				};
 			}
 
@@ -195,6 +197,7 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Suspended' ),
 					icon: 'info',
+					listStatusWeight: 800,
 				};
 			}
 
@@ -204,6 +207,7 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Action required' ),
 					icon: 'info',
+					listStatusWeight: 600,
 				};
 			}
 
@@ -271,6 +275,7 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Action required' ),
 					icon: 'info',
+					listStatusWeight: 600,
 				};
 			}
 
@@ -332,6 +337,7 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Action required' ),
 					icon: 'info',
+					listStatusWeight: 600,
 				};
 			}
 

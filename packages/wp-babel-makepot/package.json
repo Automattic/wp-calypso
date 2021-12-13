@@ -20,7 +20,7 @@
 	"bin": "./cli.js",
 	"scripts": {
 		"start": "./cli.js",
-		"test": "npx rimraf test/output && jest"
+		"test": "rm -rf test/output && jest"
 	},
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
@@ -41,6 +41,6 @@
 		"i18n-calypso": "workspace:^",
 		"jest": "^27.3.1",
 		"react": "^17.0.2",
-		"rimraf": "^3.0.0"
+		"rimraf": "^3.0.2"
 	}
 }

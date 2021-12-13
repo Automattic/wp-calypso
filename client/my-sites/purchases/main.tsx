@@ -91,7 +91,7 @@ export function PurchaseDetails( {
 	const logPurchasesError = useLogPurchasesError( 'site level purchase details load error' );
 
 	return (
-		<Main wideLayout className="purchases">
+		<Main wideLayout className="purchases manage-purchase">
 			<DocumentHead title={ titles.managePurchase } />
 			<FormattedHeader
 				brandFont

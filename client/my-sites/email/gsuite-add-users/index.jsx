@@ -216,6 +216,7 @@ class GSuiteAddUsers extends Component {
 						>
 							<div className="gsuite-add-users__buttons">
 								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
+
 								<Button primary disabled={ ! canContinue } onClick={ this.handleContinue }>
 									{ translate( 'Continue' ) }
 								</Button>

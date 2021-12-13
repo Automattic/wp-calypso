@@ -49,6 +49,8 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
+import './style.scss';
+
 class TitanAddMailboxes extends Component {
 	state = {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
@@ -162,14 +164,13 @@ class TitanAddMailboxes extends Component {
 				.then( () => {
 					if ( this.isMounted ) {
 						this.setState( { isAddingToCart: false } );
+						page( '/checkout/' + selectedSite.slug );
 					}
-					const { errors } = this.props?.cart?.messages;
-					if ( errors && errors.length ) {
-						// Stay on the page to show the relevant error
-						return;
+				} )
+				.catch( () => {
+					if ( this.isMounted ) {
+						this.setState( { isAddingToCart: false } );
 					}
-
-					return this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}
 	};
@@ -215,17 +216,17 @@ class TitanAddMailboxes extends Component {
 						onMailboxesChange={ this.onMailboxesChange }
 						validatedMailboxUuids={ this.state.validatedMailboxUuids }
 					>
-						<Button className="titan-add-mailboxes__action-cancel" onClick={ this.handleCancel }>
-							{ translate( 'Cancel' ) }
-						</Button>
-						<Button
-							className="titan-add-mailboxes__action-continue"
-							primary
-							busy={ this.state.isAddingToCart || this.state.isCheckingAvailability }
-							onClick={ this.handleContinue }
-						>
-							{ translate( 'Continue' ) }
-						</Button>
+						<div className="titan-add-mailboxes__buttons">
+							<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
+
+							<Button
+								primary
+								busy={ this.state.isAddingToCart || this.state.isCheckingAvailability }
+								onClick={ this.handleContinue }
+							>
+								{ translate( 'Continue' ) }
+							</Button>
+						</div>
 					</TitanNewMailboxList>
 				</Card>
 			</>

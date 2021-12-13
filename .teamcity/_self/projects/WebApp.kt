@@ -17,8 +17,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WebApp : Project({
 	id("WebApp")
@@ -178,10 +178,11 @@ object RunAllUnitTests : BuildType({
 				# The "name" property refers to the code of the message (like YN0002).
 
 				# Generate a JSON array of the errors we care about:
-				# 1. Select warning YN0002 (Unmet peer dependencies.)
-				# 2. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
-				# 3. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
-				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 68 or (.type == "error" and .name != 0)) ]')
+				# 1. Select warning YN0002 (Missing peer dependencies.)
+				# 2. Select warning ZN0060 (Invalid peer dependency.)
+				# 3. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
+				# 4. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
+				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 60 or .name == 68 or (.type == "error" and .name != 0)) ]')
 
 				num_errors=${'$'}(jq length <<< "${'$'}yarn_errors")
 				if [ "${'$'}num_errors" -gt 0 ] ; then
@@ -249,6 +250,7 @@ object RunAllUnitTests : BuildType({
 			name = "Run type checks"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
+				set -x
 				export NODE_ENV="test"
 
 				# These are not expected to fail
@@ -261,7 +263,7 @@ object RunAllUnitTests : BuildType({
 					set +e
 					yarn tsc --build client 2>&1 | tee tsc_out
 					mkdir -p checkstyle_results
-					yarn run typescript-checkstyle < tsc_out > ./checkstyle_results/tsc.xml
+					yarn run typescript-checkstyle < tsc_out | sed -e "s#${'$'}PWD#~#g" > ./checkstyle_results/tsc.xml
 					cat ./checkstyle_results/tsc.xml
 				)
 			"""
@@ -270,48 +272,44 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for client"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				unset NODE_ENV
 				unset CALYPSO_ENV
 
 				# Run client tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
 			name = "Run unit tests for server"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				unset NODE_ENV
 				unset CALYPSO_ENV
 
 				# Run server tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
 			name = "Run unit tests for packages"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				unset NODE_ENV
 				unset CALYPSO_ENV
 
 				# Run packages tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
 			name = "Run unit tests for build tools"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				unset NODE_ENV
 				unset CALYPSO_ENV
 
 				# Run build-tools tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
 		}
 		bashNodeScript {
@@ -337,19 +335,24 @@ object RunAllUnitTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 10
-	}
 
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
+			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
+			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+			stopBuildOnFailure = true
+		}
+
+	}
 	features {
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "checkstyle")
 			param("xmlReportParsing.reportDirs", "checkstyle_results/*.xml")
 			param("xmlReportParsing.verboseOutput", "true")
-		}
-		feature {
-			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "test_results/**/*.xml")
 		}
 		perfmon {
 		}

@@ -24,6 +24,7 @@ class AutoRenewToggle extends Component {
 		siteDomain: PropTypes.string.isRequired,
 		planName: PropTypes.string.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
+		shouldDisable: PropTypes.bool,
 		isAtomicSite: PropTypes.bool.isRequired,
 		fetchingUserPurchases: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -35,6 +36,7 @@ class AutoRenewToggle extends Component {
 	};
 
 	static defaultProps = {
+		shouldDisable: false,
 		fetchingUserPurchases: false,
 		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 	};
@@ -203,7 +205,7 @@ class AutoRenewToggle extends Component {
 	}
 
 	render() {
-		const { planName, siteDomain, purchase, withTextStatus } = this.props;
+		const { planName, siteDomain, purchase, withTextStatus, shouldDisable } = this.props;
 
 		if ( ! this.shouldRender( purchase ) ) {
 			return null;
@@ -213,7 +215,7 @@ class AutoRenewToggle extends Component {
 			<>
 				<ToggleControl
 					checked={ this.getToggleUiStatus() }
-					disabled={ this.isUpdatingAutoRenew() }
+					disabled={ this.isUpdatingAutoRenew() || shouldDisable }
 					onChange={ this.onToggleAutoRenew }
 					label={ withTextStatus && this.renderTextStatus() }
 				/>

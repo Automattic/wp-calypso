@@ -17,9 +17,7 @@ import {
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import MShotsImage from './mshots-image';
 import type { Categorization } from '../hooks/use-categorization';
-export { default as MShotsImage } from './mshots-image';
 import type { Design } from '../types';
-
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -206,6 +204,7 @@ export interface DesignPickerProps {
 	highResThumbnails?: boolean;
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
+	categoriesFooter?: React.ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -221,6 +220,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	categoriesHeading,
+	categoriesFooter,
 	categorization,
 } ) => {
 	const filteredDesigns = useMemo( () => {
@@ -240,6 +240,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					selectedCategory={ categorization.selection }
 					onSelect={ categorization.onSelect }
 					heading={ categoriesHeading }
+					footer={ categoriesFooter }
 				/>
 			) }
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>

@@ -13,9 +13,10 @@ import {
 	NewPostFlow,
 	setupHooks,
 	PublishedPostPage,
+	ImageBlock,
 	skipItIf,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, ElementHandle } from 'playwright';
 
 const quote =
 	'The problem with quotes on the Internet is that it is hard to verify their authenticity. \n— Abraham Lincoln';
@@ -36,7 +37,9 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		page = args.page;
 	} );
 
-	describe( 'Starting and populating post data', function () {
+	describe( 'Block editor', function () {
+		let blockHandle: ElementHandle;
+
 		it( 'Log in', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.login( { account: user } );
@@ -54,6 +57,17 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		it( 'Enter post text', async function () {
 			await gutenbergEditorPage.enterText( quote );
+		} );
+
+		it( 'Add image block', async function () {
+			blockHandle = await gutenbergEditorPage.addBlock(
+				ImageBlock.blockName,
+				ImageBlock.blockEditorSelector
+			);
+		} );
+
+		it( 'Remove image block', async function () {
+			await gutenbergEditorPage.removeBlock( blockHandle );
 		} );
 
 		it( 'Open editor settings sidebar for post', async function () {
@@ -87,9 +101,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		// Editor Preview behaves depends on the device type.
 		// On desktop and tablet, preview applies CSS attributes to modify the preview in-editor.
 		// On mobile web, preview button opens a new tab.
-
-		// TODO: step skipped for non-mobile due to https://github.com/Automattic/wp-calypso/issues/57128.
-		skipItIf( targetDevice !== 'mobile' )( 'Launch preview', async function () {
+		it( 'Launch preview', async function () {
 			if ( BrowserHelper.getTargetDeviceName() === 'mobile' ) {
 				previewPage = await gutenbergEditorPage.openPreviewAsMobile();
 			} else {
@@ -97,8 +109,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		} );
 
-		// TODO: step skipped for non-mobile due to https://github.com/Automattic/wp-calypso/issues/57128.
-		skipItIf( targetDevice !== 'mobile' )( 'Close preview', async function () {
+		it( 'Close preview', async function () {
 			// Mobile path.
 			if ( previewPage ) {
 				await previewPage.close();
@@ -108,7 +119,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		} );
 
-		// TODO: step skipped for mobile, since previewing naturally saves the post, rendering this step unnecessary.
+		// Step skipped for mobile, since previewing naturally saves the post, rendering this step unnecessary.
 		skipItIf( targetDevice === 'mobile' )( 'Save draft', async function () {
 			await gutenbergEditorPage.saveDraft();
 		} );

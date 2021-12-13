@@ -34,7 +34,7 @@
 		"README.md"
 	],
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},

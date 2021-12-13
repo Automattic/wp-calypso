@@ -64,14 +64,17 @@ class PluginAction extends Component {
 
 	renderToggle() {
 		return (
-			<ToggleControl
-				onChange={ this.props.action }
-				checked={ this.props.status }
-				disabled={ this.props.inProgress || this.props.disabled || !! this.props.disabledInfo }
-				id={ this.props.htmlFor }
-				label={ this.renderLabel() }
-				aria-label={ this.props.label }
-			/>
+			<>
+				<ToggleControl
+					onChange={ this.props.action }
+					checked={ this.props.status }
+					disabled={ this.props.inProgress || this.props.disabled || !! this.props.disabledInfo }
+					id={ this.props.htmlFor }
+					label={ this.renderLabel() }
+					aria-label={ this.props.label }
+				/>
+				{ this.props.toggleExtraContent }
+			</>
 		);
 	}
 
