@@ -50,9 +50,8 @@ export function checkUrl( url, isUrlOnSites, allowWPCOMSite ) {
 				url: url,
 			} );
 		}, 1 );
-		wpcom
-			.undocumented()
-			.getSiteConnectInfo( url )
+		wpcom.req
+			.get( '/connect/site-info', { url } )
 			.then( ( data ) => {
 				_fetching[ url ] = null;
 				debug( 'jetpack-connect state checked for url', url, data );
