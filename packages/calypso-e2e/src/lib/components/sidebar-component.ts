@@ -82,9 +82,8 @@ export class SidebarComponent {
 		}
 
 		// Verify the expected item or subitem is selected.
-		await this.page.waitForSelector( '.focus-content' );
 		const locator = this.page.locator( selectedMenuItem );
-		await locator.elementHandle();
+		await locator.waitFor( { state: 'attached' } );
 	}
 
 	/**
