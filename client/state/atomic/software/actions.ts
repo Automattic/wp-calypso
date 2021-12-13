@@ -1,21 +1,10 @@
 import {
-	ATOMIC_PLUGIN_INSTALL_INITIATE,
-	ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS,
-	ATOMIC_PLUGIN_INSTALL_SET_STATUS,
+	ATOMIC_SOFTWARE_INITIATE_INSTALL,
+	ATOMIC_SOFTWARE_REQUEST_STATUS,
+	ATOMIC_SOFTWARE_SET_STATUS,
 } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/atomic/software';
 import 'calypso/state/atomic/init';
-
-interface AtomicSoftwareAction {
-	type:
-		| typeof ATOMIC_PLUGIN_INSTALL_INITIATE
-		| typeof ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS
-		| typeof ATOMIC_PLUGIN_INSTALL_SET_STATUS;
-	siteId: number;
-	softwareSet: string;
-	status?: AtomicSoftwareStatus;
-	meta?: { dataLayer?: { trackRequest: boolean; requestKey: string } };
-}
 
 export interface AtomicSoftwareStatus {
 	blog_id: number;
@@ -31,20 +20,18 @@ export interface AtomicSoftwareStatus {
  * @param {string} softwareSet Software set slug.
  * @returns {object} An action object.
  */
-export const requestAtomicSoftwareInstall = (
-	siteId: number,
-	softwareSet: string
-): AtomicSoftwareAction => ( {
-	type: ATOMIC_PLUGIN_INSTALL_INITIATE,
-	siteId,
-	softwareSet,
-	meta: {
-		dataLayer: {
-			trackRequest: true,
-			requestKey: `${ ATOMIC_PLUGIN_INSTALL_INITIATE }-${ siteId }-${ softwareSet }`,
+export const requestAtomicSoftwareInstall = ( siteId: number, softwareSet: string ) =>
+	( {
+		type: ATOMIC_SOFTWARE_INITIATE_INSTALL,
+		siteId,
+		softwareSet,
+		meta: {
+			dataLayer: {
+				trackRequest: true,
+				requestKey: `${ ATOMIC_SOFTWARE_INITIATE_INSTALL }-${ siteId }-${ softwareSet }`,
+			},
 		},
-	},
-} );
+	} as const );
 
 /**
  * Fetch install status.
@@ -53,14 +40,12 @@ export const requestAtomicSoftwareInstall = (
  * @param {string} softwareSet Software set slug.
  * @returns {object} An action object.
  */
-export const requestAtomicSoftwareStatus = (
-	siteId: number,
-	softwareSet: string
-): AtomicSoftwareAction => ( {
-	type: ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS,
-	siteId,
-	softwareSet,
-} );
+export const requestAtomicSoftwareStatus = ( siteId: number, softwareSet: string ) =>
+	( {
+		type: ATOMIC_SOFTWARE_REQUEST_STATUS,
+		siteId,
+		softwareSet,
+	} as const );
 
 /**
  * Set the install status.
@@ -74,9 +59,10 @@ export const setAtomicSoftwareStatus = (
 	siteId: number,
 	softwareSet: string,
 	status: AtomicSoftwareStatus
-): AtomicSoftwareAction => ( {
-	type: ATOMIC_PLUGIN_INSTALL_SET_STATUS,
-	siteId,
-	softwareSet,
-	status,
-} );
+) =>
+	( {
+		type: ATOMIC_SOFTWARE_SET_STATUS,
+		siteId,
+		softwareSet,
+		status,
+	} as const );

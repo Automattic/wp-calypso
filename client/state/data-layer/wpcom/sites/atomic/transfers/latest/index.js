@@ -1,4 +1,4 @@
-import { ATOMIC_PLUGIN_INSTALL_REQUEST_TRANSFER_STATUS } from 'calypso/state/action-types';
+import { ATOMIC_TRANSFER_REQUEST_LATEST } from 'calypso/state/action-types';
 import { setLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -21,7 +21,7 @@ const receiveResponse = ( action, response ) => [
 ];
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfers/latest', {
-	[ ATOMIC_PLUGIN_INSTALL_REQUEST_TRANSFER_STATUS ]: [
+	[ ATOMIC_TRANSFER_REQUEST_LATEST ]: [
 		dispatchRequest( {
 			fetch: requestLatestAtomicTransfer,
 			onSuccess: receiveResponse,

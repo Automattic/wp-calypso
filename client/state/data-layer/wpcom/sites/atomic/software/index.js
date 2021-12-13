@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import {
-	ATOMIC_PLUGIN_INSTALL_INITIATE,
-	ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS,
+	ATOMIC_SOFTWARE_INITIATE_INSTALL,
+	ATOMIC_SOFTWARE_REQUEST_STATUS,
 } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setAtomicSoftwareStatus } from 'calypso/state/atomic/software/actions';
@@ -57,14 +57,14 @@ const receiveSoftwareError = ( action, error ) => [
 ];
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/software', {
-	[ ATOMIC_PLUGIN_INSTALL_INITIATE ]: [
+	[ ATOMIC_SOFTWARE_INITIATE_INSTALL ]: [
 		dispatchRequest( {
 			fetch: installSoftware,
 			onSuccess: receiveInstallResponse,
 			onError: receiveInstallError,
 		} ),
 	],
-	[ ATOMIC_PLUGIN_INSTALL_REQUEST_STATUS ]: [
+	[ ATOMIC_SOFTWARE_REQUEST_STATUS ]: [
 		dispatchRequest( {
 			fetch: requestSoftware,
 			onSuccess: receiveSoftwareResponse,

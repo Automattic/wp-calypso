@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER } from 'calypso/state/action-types';
+import { ATOMIC_TRANSFER_INITIATE_TRANSFER } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -7,7 +7,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 
-const initiateAtomicTransferandInstall = ( action ) =>
+const initiateAtomicTransfer = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -38,9 +38,9 @@ const receiveError = ( action, error ) => [
 ];
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfers', {
-	[ ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER ]: [
+	[ ATOMIC_TRANSFER_INITIATE_TRANSFER ]: [
 		dispatchRequest( {
-			fetch: initiateAtomicTransferandInstall,
+			fetch: initiateAtomicTransfer,
 			onSuccess: receiveResponse,
 			onError: receiveError,
 		} ),

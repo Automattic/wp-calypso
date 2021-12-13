@@ -1,22 +1,11 @@
 import {
-	ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER,
-	ATOMIC_PLUGIN_INSTALL_REQUEST_TRANSFER_STATUS,
-	ATOMIC_PLUGIN_INSTALL_SET_TRANSFER_STATUS,
+	ATOMIC_TRANSFER_INITIATE_TRANSFER,
+	ATOMIC_TRANSFER_REQUEST_LATEST,
+	ATOMIC_TRANSFER_SET_LATEST,
 } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/atomic/transfers';
 import 'calypso/state/data-layer/wpcom/sites/atomic/transfers/latest';
 import 'calypso/state/atomic/init';
-
-interface AtomicTransferAction {
-	type:
-		| typeof ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER
-		| typeof ATOMIC_PLUGIN_INSTALL_REQUEST_TRANSFER_STATUS
-		| typeof ATOMIC_PLUGIN_INSTALL_SET_TRANSFER_STATUS;
-	siteId: number;
-	softwareSet?: string;
-	meta?: { dataLayer?: { trackRequest: boolean; requestKey: string } };
-	transfer?: AtomicTransfer;
-}
 
 export interface AtomicTransfer {
 	atomic_transfer_id: number;
@@ -40,17 +29,18 @@ export interface AtomicTransfer {
 export const initiateAtomicTransfer = (
 	siteId: number,
 	{ softwareSet }: { softwareSet: string }
-): AtomicTransferAction => ( {
-	type: ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER,
-	siteId,
-	softwareSet,
-	meta: {
-		dataLayer: {
-			trackRequest: true,
-			requestKey: `${ ATOMIC_PLUGIN_INSTALL_INITIATE_WITH_TRANSFER }-${ siteId }-${ softwareSet }`,
+) =>
+	( {
+		type: ATOMIC_TRANSFER_INITIATE_TRANSFER,
+		siteId,
+		softwareSet,
+		meta: {
+			dataLayer: {
+				trackRequest: true,
+				requestKey: `${ ATOMIC_TRANSFER_INITIATE_TRANSFER }-${ siteId }-${ softwareSet }`,
+			},
 		},
-	},
-} );
+	} as const );
 
 /**
  * Fetch transfer.
@@ -58,10 +48,11 @@ export const initiateAtomicTransfer = (
  * @param {string} siteId Site ID.
  * @returns {object} An action object.
  */
-export const requestLatestAtomicTransfer = ( siteId: number ): AtomicTransferAction => ( {
-	type: ATOMIC_PLUGIN_INSTALL_REQUEST_TRANSFER_STATUS,
-	siteId,
-} );
+export const requestLatestAtomicTransfer = ( siteId: number ) =>
+	( {
+		type: ATOMIC_TRANSFER_REQUEST_LATEST,
+		siteId,
+	} as const );
 
 /**
  * Set the transfer.
@@ -70,11 +61,9 @@ export const requestLatestAtomicTransfer = ( siteId: number ): AtomicTransferAct
  * @param {object} transfer The new status of the transfer.
  * @returns {object} An action object
  */
-export const setLatestAtomicTransfer = (
-	siteId: number,
-	transfer: AtomicTransfer
-): AtomicTransferAction => ( {
-	type: ATOMIC_PLUGIN_INSTALL_SET_TRANSFER_STATUS,
-	siteId,
-	transfer,
-} );
+export const setLatestAtomicTransfer = ( siteId: number, transfer: AtomicTransfer ) =>
+	( {
+		type: ATOMIC_TRANSFER_SET_LATEST,
+		siteId,
+		transfer,
+	} as const );
