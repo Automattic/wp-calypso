@@ -1,13 +1,17 @@
-.action-card {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+.domain-info-card {
+    &.action-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px 0;
+        box-shadow: none;
 
-    $parent: &;
+        & ~ & {
+            border-top: 1px solid var( --studio-gray-5 );
+        }
 
-    &__main {
-        @at-root {
-            div #{$parent}__heading {
+        .action-card__main {
+            .action-card__heading {
                 margin: 0;
                 font-weight: 600;
                 line-height: 24px;
@@ -16,42 +20,33 @@
                 column-gap: 8px;
                 align-items: center;
             }
-        }
 
-        p {
-            margin: 5px 0 16px;
-            font-size: $font-body-small;
-            color: var( --studio-gray-50 );
-            display: flex;
-            align-items: center;
+            p {
+                margin: 5px 0 16px;
+                font-size: $font-body-small;
+                color: var( --studio-gray-50 );
+                display: flex;
+                align-items: center;
 
-            svg {
-                fill: var( --studio-gray-50 );
-                margin: 0 8px 0 3px;
+                svg {
+                    fill: var( --studio-gray-50 );
+                    margin: 0 8px 0 3px;
+                }
             }
         }
-    }
 
-    div &__button-container {
-        align-self: unset;
+        .action-card__button-container {
+            align-self: unset;
 
-        > .button {
-            margin-left: 0;
-            padding: 7px 12px;
-            box-shadow: none;
+            > .button {
+                margin-left: 0;
+                padding: 7px 12px;
+                box-shadow: none;
 
-            &:hover {
-                color: var( --color-text-subtle );
+                &:hover {
+                    color: var( --color-text-subtle );
+                }
             }
-        }
-    }
-
-    &.domain-info-card {
-        padding: 24px 0;
-        box-shadow: none;
-
-        & ~ & {
-            border-top: 1px solid var( --studio-gray-5 );
         }
     }
 }
