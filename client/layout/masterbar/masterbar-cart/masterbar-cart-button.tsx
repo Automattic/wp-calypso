@@ -35,7 +35,7 @@ export function MasterbarCartButton( {
 		} );
 	};
 	const onClose = () => setIsActive( false );
-	const tooltip = translate( 'My shopping cart' );
+	const tooltip = String( translate( 'My shopping cart' ) );
 
 	return (
 		<>
