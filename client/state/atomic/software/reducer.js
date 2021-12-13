@@ -5,7 +5,12 @@ import { keyedReducer } from 'calypso/state/utils';
 function software( state = {}, action ) {
 	switch ( action.type ) {
 		case ATOMIC_SOFTWARE_SET_STATUS:
-			return { ...state, softwareSet: action.softwareSet, ...action.status };
+			return {
+				...state,
+				siteId: action.siteId,
+				softwareSet: action.softwareSet,
+				...action?.status,
+			};
 	}
 }
 
