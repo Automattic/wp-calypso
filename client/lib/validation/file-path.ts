@@ -13,18 +13,18 @@ const validateFilePath: validator< string > = (
 	}
 	if ( filePathBackSlashRegExp.test( pathToValidate ) ) {
 		return {
-			message: translate( 'Use forward slashes, "/", in path.', { textOnly: true } ),
+			message: translate( 'Use forward slashes, "/", in path.' ),
 		};
 	}
 
 	if ( filePathMultiSlashRegExp.test( pathToValidate ) ) {
 		return {
-			message: translate( 'Use only single slashes, "/", in path.', { textOnly: true } ),
+			message: translate( 'Use only single slashes, "/", in path.' ),
 		};
 	}
 
 	return {
-		message: translate( 'Not a valid file path.', { textOnly: true } ),
+		message: translate( 'Not a valid file path.' ),
 	};
 };
 
