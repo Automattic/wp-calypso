@@ -17,7 +17,7 @@ const CategoryFilterItem: React.FC< Props > = ( { value, text, target, isSelecte
 	return (
 		<a
 			className={ classNames( 'category-filter__link', { 'is-selected': isSelected } ) }
-			href={ `#${ target }` }
+			href={ target }
 			onClick={ cb }
 		>
 			{ text }

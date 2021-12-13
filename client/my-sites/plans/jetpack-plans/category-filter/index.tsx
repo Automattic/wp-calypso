@@ -18,32 +18,44 @@ type Props = {
 	onChange: ( category: JetpackProductCategory ) => void;
 };
 
+const targetify = ( str: string ): string =>
+	`#${ encodeURIComponent( str.trim().toLowerCase().replace( /\s+/g, '-' ) ) }`;
+
 const CategoryFilter: React.FC< Props > = ( { className, defaultValue, onChange } ) => {
 	const [ value, setValue ] = useState< JetpackProductCategory | undefined >( defaultValue );
 	const translate = useTranslate();
 	const translations = useMemo(
 		() => ( {
-			[ JETPACK_SECURITY_CATEGORY ]: translate( 'Security' ),
-			[ JETPACK_PERFORMANCE_CATEGORY ]: translate( 'Performance' ),
-			[ JETPACK_GROWTH_CATEGORY ]: translate( 'Growth' ),
+			[ JETPACK_SECURITY_CATEGORY ]: translate( 'Security', {
+				comment: 'Filter category for Jetpack products',
+			} ),
+			[ JETPACK_PERFORMANCE_CATEGORY ]: translate( 'Performance', {
+				comment: 'Filter category for Jetpack products',
+			} ),
+			[ JETPACK_GROWTH_CATEGORY ]: translate( 'Growth', {
+				comment: 'Filter category for Jetpack products',
+			} ),
 		} ),
 		[ translate ]
 	);
 	const targets = useMemo(
 		() => ( {
-			[ JETPACK_SECURITY_CATEGORY ]: translate( 'security' ) as string,
-			[ JETPACK_PERFORMANCE_CATEGORY ]: translate( 'performance' ) as string,
-			[ JETPACK_GROWTH_CATEGORY ]: translate( 'growth' ) as string,
+			[ JETPACK_SECURITY_CATEGORY ]: targetify(
+				translations[ JETPACK_SECURITY_CATEGORY ] as string
+			),
+			[ JETPACK_PERFORMANCE_CATEGORY ]: targetify(
+				translations[ JETPACK_PERFORMANCE_CATEGORY ] as string
+			),
+			[ JETPACK_GROWTH_CATEGORY ]: targetify( translations[ JETPACK_GROWTH_CATEGORY ] as string ),
 		} ),
-		[ translate ]
+		[ translations ]
 	);
 	const onClick = useCallback( ( value ) => setValue( value ), [ setValue ] );
 
 	useEffect( () => {
 		if ( ! value ) {
 			const targetValue = Object.keys( targets ).find(
-				( key ) =>
-					targets[ key as JetpackProductCategory ] === window.location.hash.replace( '#', '' )
+				( key ) => targets[ key as JetpackProductCategory ] === window.location.hash
 			);
 
 			if ( targetValue ) {
@@ -65,7 +77,7 @@ const CategoryFilter: React.FC< Props > = ( { className, defaultValue, onChange 
 					<CategoryFilterItem
 						value={ cat }
 						text={ translations[ cat ] }
-						target={ targets[ cat ] as string }
+						target={ targets[ cat ] }
 						isSelected={ cat === value }
 						onClick={ onClick }
 					/>
