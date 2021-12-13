@@ -1,7 +1,3 @@
-import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
-
 /**
  * Create an `Undocumented` instance
  *
@@ -60,15 +56,6 @@ Undocumented.prototype.getDnsTemplateRecords = function (
 		'/domains/' + domain + '/dns/providers/' + provider + '/services/' + service + '/preview',
 		{ variables },
 		callback
-	);
-};
-
-Undocumented.prototype.isSiteImportable = function ( site_url ) {
-	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
-
-	return this.wpcom.req.get(
-		{ path: '/imports/is-site-importable', apiNamespace: 'wpcom/v2' },
-		{ site_url }
 	);
 };
 
