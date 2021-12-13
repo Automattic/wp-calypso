@@ -115,11 +115,13 @@ class SectionMigrate extends Component {
 		this.props.navigateToSelectedSourceSite( this.state.selectedSiteSlug );
 	};
 
-	requestMigrationReset = ( targetSiteId ) => {
-		return wpcom.req.post( {
-			path: `/sites/${ targetSiteId }/reset-migration`,
-			apiNamespace: 'wpcom/v2',
-		} );
+	requestMigrationReset = async ( targetSiteId ) => {
+		return await wpcom.req
+			.post( {
+				path: `/sites/${ targetSiteId }/reset-migration`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.catch( () => {} );
 	};
 
 	finishMigration = () => {
