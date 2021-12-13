@@ -558,29 +558,29 @@ function LineItemSublabelAndPrice( {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product )
 	) {
-		let interval = null;
+		let billingInterval = null;
 
 		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			interval = translate( 'billed annually' );
+			billingInterval = translate( 'billed annually' );
 		}
 
 		if ( product.months_per_bill_period === 1 ) {
-			interval = translate( 'billed monthly' );
+			billingInterval = translate( 'billed monthly' );
 		}
 
-		if ( interval === null ) {
+		if ( billingInterval === null ) {
 			return sublabel;
 		}
 
 		return (
 			<>
-				{ translate( '%(productType)s: %(interval)s', {
+				{ translate( '%(productDescription)s: %(billingInterval)s', {
 					args: {
-						productType: sublabel,
-						interval,
+						productDescription: sublabel,
+						billingInterval,
 					},
 					comment:
-						"Product type and billing interval separated by a colon (e.g. 'Productivity Tools and Mailboxes: billed annually')",
+						"Product description and billing interval (already translated) separated by a colon (e.g. 'Productivity Tools and Mailboxes: billed annually')",
 				} ) }
 			</>
 		);
