@@ -67,8 +67,12 @@
 		}
 
 		.site-setup-list__nav-item-email {
-			color: var( --studio-gray-50 );
+			color: var( --studio-gray-40 );
 			display: block;
+			@include break-mobile {
+				font-weight: 400;
+				color: var( --studio-gray-40 );
+			}
 		}
 
 		.site-setup-list__task-description-email {
