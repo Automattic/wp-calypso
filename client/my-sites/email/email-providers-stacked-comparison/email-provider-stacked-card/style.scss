@@ -214,7 +214,8 @@ h2.action-panel__title {
 		width: 100%;
 
 		@media screen and ( min-width: 481px ) {
-			width: $width-left-panel-card;
+			min-width: $width-left-panel-card;
+			max-width: $width-left-panel-card;
 		}
 
 		> .form-fieldset {
