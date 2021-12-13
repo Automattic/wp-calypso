@@ -317,9 +317,7 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				set -x
-				yarn components:storybook:start --ci --smoke-test
-				yarn search:storybook:start --ci --smoke-test
-				yarn composite-checkout:storybook:start --ci --smoke-test
+				yarn workspaces foreach --verbose --parallel run storybook --ci --smoke-test
 			"""
 		}
 	}
