@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { FunctionComponent } from 'react';
 import CountrySpecificPaymentFieldsUnstyled from 'calypso/my-sites/checkout/checkout/country-specific-payment-fields';
 
 export type CountrySpecificPaymentFieldsProps = {
@@ -11,9 +10,7 @@ export type CountrySpecificPaymentFieldsProps = {
 	disableFields: boolean;
 };
 
-const CountrySpecificPaymentFields: FunctionComponent< CountrySpecificPaymentFieldsProps > = styled(
-	CountrySpecificPaymentFieldsUnstyled
-)`
+const CountrySpecificPaymentFields = styled( CountrySpecificPaymentFieldsUnstyled )`
 	margin-top: 0;
 
 	& .checkout__form-info-text {

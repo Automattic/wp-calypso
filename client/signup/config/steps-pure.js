@@ -325,7 +325,7 @@ export function generateSteps( {
 		},
 		'domain-only': {
 			stepName: 'domain-only',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
+			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
@@ -541,24 +541,6 @@ export function generateSteps( {
 			],
 		},
 
-		/* Import onboarding */
-		'import-url': {
-			stepName: 'import-url',
-			providesDependencies: [
-				'importSiteEngine',
-				'importSiteFavicon',
-				'importSiteUrl',
-				'siteTitle',
-				'suggestedDomain',
-				'themeSlugWithRepo',
-			],
-		},
-
-		'import-preview': {
-			stepName: 'import-preview',
-			dependencies: [ 'importSiteEngine', 'importSiteFavicon', 'importSiteUrl', 'siteTitle' ],
-		},
-
 		'reader-landing': {
 			stepName: 'reader-landing',
 			providesDependencies: [],
@@ -741,8 +723,8 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
@@ -753,7 +735,7 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
 				hideSkip: true,
@@ -764,13 +746,14 @@ export function generateSteps( {
 			},
 		},
 		'difm-design': {
+			// TODO: Temporary step to be deleted
 			stepName: 'difm-design',
 			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'siteSlug', 'selectedDesign' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'typeformResponseId' ],
 			apiRequestFunction: addPlanToCart,
 		},
 

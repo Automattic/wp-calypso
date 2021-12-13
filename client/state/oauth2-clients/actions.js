@@ -23,7 +23,9 @@ export const fetchOAuth2ClientData = ( clientId ) => async ( dispatch ) => {
 	try {
 		let data = cache.get( cacheKey );
 		if ( data === undefined ) {
-			data = await wpcom.undocumented().oauth2ClientId( clientId );
+			data = await wpcom.req.get( `/oauth2/client-data/${ clientId }`, {
+				apiNamespace: 'wpcom/v2',
+			} );
 			cache.set( cacheKey, data );
 		}
 

@@ -9,5 +9,5 @@ import 'calypso/state/happychat/init';
  * @returns {boolean}        true, when precancellation is available
  */
 export default function isPrecancellationChatAvailable( state ) {
-	return get( state, 'happychat.user.isPresalesPrecancellationEligible.precancellation', false );
+	return get( state, 'happychat.user.availability.precancellation', false );
 }

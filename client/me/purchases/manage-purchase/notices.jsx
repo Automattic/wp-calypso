@@ -180,7 +180,7 @@ class PurchaseNotice extends Component {
 	renderRenewNoticeAction( onClick ) {
 		const { changePaymentMethodPath, purchase, translate } = this.props;
 
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
+		if ( ! this.props.selectedSite ) {
 			return null;
 		}
 

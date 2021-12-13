@@ -1,6 +1,27 @@
 import { addLocaleToPath } from 'calypso/lib/i18n-utils';
 import { addQueryArgs } from 'calypso/lib/url';
 
+/**
+ * @param {{
+	isJetpack?: boolean;
+	isGutenboarding?: boolean;
+	isWhiteLogin?: boolean;
+	locale?: string;
+	redirectTo?: string;
+	twoFactorAuthType?: string;
+	socialConnect?: boolean;
+	emailAddress?: string;
+	socialService?: string;
+	oauth2ClientId?: string | number;
+	wccomFrom?: string;
+	site?: string;
+	useMagicLink?: boolean;
+	from?: string;
+	allowSiteConnection?: boolean;
+	signupUrl?: string;
+ }} args The arguments
+ * @returns {string}
+ */
 export function login( {
 	isJetpack = undefined,
 	isGutenboarding = undefined,

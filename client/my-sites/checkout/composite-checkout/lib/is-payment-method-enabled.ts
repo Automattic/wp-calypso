@@ -12,6 +12,11 @@ export default function isPaymentMethodEnabled(
 		return true;
 	}
 
+	// If new cards are supported, so are existing cards.
+	if ( slug.startsWith( 'existingCard' ) && allowedPaymentMethods?.includes( 'card' ) ) {
+		return true;
+	}
+
 	// Some country-specific payment methods should only be available if that
 	// country is selected in the contact information.
 	if ( slug === 'netbanking' && countryCode !== 'IN' ) {

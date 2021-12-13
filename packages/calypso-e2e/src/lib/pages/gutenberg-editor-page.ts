@@ -26,6 +26,7 @@ const selectors = {
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
 	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
+	closeSettingsButton: 'button[aria-label="Close settings"]:visible',
 	saveDraftButton: '.editor-post-save-draft',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
@@ -41,7 +42,7 @@ const selectors = {
 	// corner. This addresses the bug where the post-publish panel is immediately
 	// closed when publishing with certain blocks on the editor canvas.
 	// See https://github.com/Automattic/wp-calypso/issues/54421.
-	viewButton: 'text=/View (Post|Page)/i',
+	viewButton: 'text=/View (Post|Page)/',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
 
@@ -79,27 +80,50 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		await this.page.waitForLoadState( 'load' );
+		// `page.on` construct is used here instead of the more common `page.waitForResponse`.
+		// Using the latter causes this method to hang until the timeout is reached, since
+		// the `waitForResponse` method begins observing the network requests after the
+		// `nux?_envelope=1` request has been completed.
+		// On the other hand, `page.on` is able to monitor every request, including the
+		// one to the `nux` endpoint.
+		this.page.on( 'requestfinished', async ( request ) => {
+			const response = await request.response();
+			if ( ! response ) {
+				return;
+			}
+
+			if ( ! response.url().includes( 'nux?_envelope=1' ) ) {
+				return;
+			}
+
+			interface NuxPayload {
+				body: {
+					show_welcome_guide: boolean;
+				};
+			}
+
+			const body = ( await response.json() ) as NuxPayload;
+			if ( body?.body?.show_welcome_guide === true ) {
+				await this.dismissWelcomeTour();
+			}
+		} );
 
 		const frame = await this.getEditorFrame();
 		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
 		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
 		await frame.waitForSelector( selectors.editorTitle );
 
-		await this.dismissWelcomeTourIfPresent();
 		return frame;
 	}
 
 	/**
 	 * Dismisses the Welcome Tour (card) if it is present.
 	 */
-	async dismissWelcomeTourIfPresent(): Promise< void > {
+	async dismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		try {
-			await frame.click( selectors.welcomeTourCloseButton, { timeout: 5 * 1000 } );
-		} catch ( err ) {
-			// noop - welcome tour was not found, which is great.
-		}
+		const locator = frame.locator( selectors.welcomeTourCloseButton );
+
+		await locator.click( { timeout: 10 * 1000 } );
 	}
 
 	/**
@@ -108,10 +132,16 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		const elementHandle = await this.page.waitForSelector( selectors.editorFrame, {
+		const locator = this.page.locator( selectors.editorFrame );
+
+		const elementHandle = await locator.elementHandle( {
 			timeout: 105 * 1000,
-			state: 'attached',
 		} );
+
+		if ( ! elementHandle ) {
+			throw new Error( 'Could not locate editor iframe.' );
+		}
+
 		return ( await elementHandle.contentFrame() ) as Frame;
 	}
 
@@ -280,16 +310,22 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Opens the settings sidebar.
-	 *
-	 * @returns {Promise<void>} No return value.
+	 * @returns Whether the Settings sidebar is open or not.
+	 */
+	async isSettingsSidebarOpen(): Promise< boolean > {
+		const frame = await this.getEditorFrame();
+		return await frame.$eval( selectors.settingsToggle, ( element ) =>
+			element.classList.contains( 'is-pressed' )
+		);
+	}
+
+	/**
+	 * Opens the Settings sidebar.
 	 */
 	async openSettings(): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		const isSidebarOpen = await frame.$eval( selectors.settingsToggle, ( element ) =>
-			element.classList.contains( 'is-pressed' )
-		);
+		const isSidebarOpen = await this.isSettingsSidebarOpen();
 		if ( ! isSidebarOpen ) {
 			await frame.click( selectors.settingsToggle );
 		}
@@ -301,6 +337,17 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Closes the Settings sidebar.
+	 */
+	async closeSettings(): Promise< void > {
+		const isSidebarOpen = await this.isSettingsSidebarOpen();
+		if ( ! isSidebarOpen ) {
+			return;
+		}
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.closeSettingsButton );
+	}
+	/**
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
@@ -311,6 +358,7 @@ export class GutenbergEditorPage {
 
 		await frame.click( selectors.publishButton( selectors.postToolbar ) );
 		await frame.click( selectors.publishButton( selectors.publishPanel ) );
+
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 

@@ -43,19 +43,20 @@ const Paid: React.FC< OwnProps > = ( {
 	const couponDiscountedPrice = parseFloat(
 		( ( discountedPrice ?? originalPrice ) * DISCOUNT_PERCENTAGE ).toFixed( 2 )
 	);
+
 	const discountElt =
 		billingTerm === TERM_ANNUALLY
-			? translate( 'Save %(percent)d%% for the first year ✢', {
+			? translate( 'Save %(percent)d%% for the first year *', {
 					args: {
 						percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
 					},
-					comment: '✢ clause describing the displayed price adjustment',
+					comment: '* clause describing the displayed price adjustment',
 			  } )
-			: translate( 'You Save %(percent)d%% ✢', {
+			: translate( 'Switch to yearly to save %(percent)d%% *', {
 					args: {
 						percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
 					},
-					comment: '✢ clause describing the displayed price adjustment',
+					comment: '* clause describing the displayed price adjustment',
 			  } );
 
 	const loading = ! currencyCode || ! originalPrice;
@@ -68,39 +69,65 @@ const Paid: React.FC< OwnProps > = ( {
 		);
 	}
 
+	const renderDiscountedPrice = () => {
+		return (
+			<>
+				{ /*
+				 * Price should be displayed from left-to-right, even in right-to-left
+				 * languages. `PlanPrice` seems to keep the ltr direction no matter
+				 * what when seen in the dev docs page, but somehow it doesn't in
+				 * the pricing page.
+				 */ }
+				<span dir="ltr">
+					<PlanPrice
+						original
+						className="display-price__original-price"
+						rawPrice={
+							( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
+						}
+						currencyCode={ currencyCode }
+					/>
+				</span>
+				<span dir="ltr">
+					<PlanPrice
+						discounted
+						rawPrice={ couponDiscountedPrice as number }
+						currencyCode={ currencyCode }
+					/>
+				</span>
+			</>
+		);
+	};
+
+	const renderNonDiscountedPrice = () => (
+		<span dir="ltr">
+			<PlanPrice
+				discounted
+				rawPrice={
+					( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
+				}
+				currencyCode={ currencyCode }
+			/>
+		</span>
+	);
+
+	const renderPrice = () =>
+		billingTerm === TERM_ANNUALLY ? renderDiscountedPrice() : renderNonDiscountedPrice();
+
+	const getSavingsLabelClassName = () =>
+		billingTerm === TERM_ANNUALLY ? 'display-price__you-save' : 'display-price__no-savings';
+
 	return (
 		<>
 			{ displayFrom && <span className="display-price__from">from</span> }
-			{ /*
-			 * Price should be displayed from left-to-right, even in right-to-left
-			 * languages. `PlanPrice` seems to keep the ltr direction no matter
-			 * what when seen in the dev docs page, but somehow it doesn't in
-			 * the pricing page.
-			 */ }
-			<span dir="ltr">
-				<PlanPrice
-					original
-					className="display-price__original-price"
-					rawPrice={
-						( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
-					}
-					currencyCode={ currencyCode }
-				/>
-			</span>
-			<span dir="ltr">
-				<PlanPrice
-					discounted
-					rawPrice={ couponDiscountedPrice as number }
-					currencyCode={ currencyCode }
-				/>
-			</span>
+			{ renderPrice() }
 			{ tooltipText && (
 				<InfoPopover position="top" className="display-price__price-tooltip">
 					{ tooltipText }
 				</InfoPopover>
 			) }
 			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-			{ ! hideSavingLabel && <span className="display-price__you-save">{ discountElt }</span> }
+			{ ! hideSavingLabel && <span className={ getSavingsLabelClassName() }>{ discountElt }</span> }
 		</>
 	);
 };

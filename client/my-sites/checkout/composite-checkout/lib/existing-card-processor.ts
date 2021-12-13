@@ -6,6 +6,7 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -44,6 +45,7 @@ export default async function existingCardProcessor(
 	if ( ! stripe ) {
 		throw new Error( 'Stripe is required to submit an existing card payment' );
 	}
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'existingCard' } ) );
 
 	const domainDetails = getDomainDetails( contactDetails, {
 		includeDomainDetails,

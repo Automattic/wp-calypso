@@ -11,6 +11,7 @@ import {
 } from 'calypso/components/domains/connect-domain-step/types';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { domainTransfer, updatePrivacyForDomain } from 'calypso/lib/cart-values/cart-items';
+import { startInboundTransfer } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
@@ -78,20 +79,10 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 
 		const startInboundTransferAndReload = async () => {
 			try {
-				const result = await wpcom
-					.undocumented()
-					.startInboundTransfer( selectedSite.ID, domain, authCode );
-				if ( result.success ) {
-					page( domainManagementTransferIn( selectedSite.slug, domain ) );
-				} else {
-					return onDone( {
-						message: transferDomainError.GENERIC_ERROR,
-					} );
-				}
+				await startInboundTransfer( selectedSite.ID, domain, authCode );
+				page( domainManagementTransferIn( selectedSite.slug, domain ) );
 			} catch ( error ) {
-				return onDone( {
-					message: transferDomainError.GENERIC_ERROR,
-				} );
+				onDone( { message: transferDomainError.GENERIC_ERROR } );
 			}
 		};
 

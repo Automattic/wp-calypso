@@ -6,19 +6,12 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-
-const noop = () => {};
 
 export class UpgradeATStep extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		translate: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		translate: noop,
 	};
 
 	onClick = () => {
@@ -55,9 +48,6 @@ export class UpgradeATStep extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => ( {
-	selectedSite: getSelectedSite( state ),
-} );
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeATStep ) );
+export default connect( null, mapDispatchToProps )( localize( UpgradeATStep ) );

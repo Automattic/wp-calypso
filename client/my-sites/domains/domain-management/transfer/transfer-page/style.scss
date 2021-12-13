@@ -17,21 +17,24 @@
 	}
 
 	.card {
+		color: var( --studio-gray-50 );
 		padding: 16px;
 
 		@include break-mobile {
 			padding: 24px;
 		}
 
+		.card-heading,
+		.action-card__heading {
+			margin: 0;
+			font-weight: 600;
+			font-size: $font-body;
+			color: var( --studio-gray-80 );
+		}
+
 		.action-card {
 			padding: 0;
 			box-shadow: none;
-
-			.action-card__heading {
-				margin: 0;
-				font-weight: 600;
-				font-size: $font-body;
-			}
 
 			.action-card__button-container {
 				margin-top: 16px;
@@ -91,6 +94,39 @@
 			}
 		}
 	}
+	
+	.transfer-page__transfer-lock {
+		margin: 8px 0 16px;
+	}
+
+	.transfer-page__transfer-lock-label {
+		display: flex;
+		font-size: $font-body-small;
+		color: var( --studio-gray-80 );
+
+		svg {
+			margin-right: 8px;
+		}
+	}
+
+	.transfer-page__advanced-transfer-options {
+		margin-top: 24px;
+
+		p {
+			font-size: $font-body-small;
+		}
+
+		.card-heading {
+			margin: 0;
+		}
+	}
+
+	.transfer-page__transfer-lock-placeholder {
+		display: block;
+		width: 120px;
+		margin-bottom: 8px;
+		@include placeholder();
+	}
 
 	@include breakpoint-deprecated( '>1280px' ) {
 		.layout__column--main {
@@ -101,5 +137,4 @@
 			padding-left: 24px;
 		}
 	}
-	
 }

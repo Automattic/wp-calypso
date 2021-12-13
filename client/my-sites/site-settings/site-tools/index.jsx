@@ -78,11 +78,6 @@ class SiteTools extends Component {
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
-		let changeAddressText = translate( "Register a new domain or change your site's address." );
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			changeAddressText = translate( 'Change your site address.' );
-		}
-
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
@@ -92,7 +87,7 @@ class SiteTools extends Component {
 						href={ changeAddressLink }
 						onClick={ this.trackChangeAddress }
 						title={ changeSiteAddress }
-						description={ changeAddressText }
+						description={ translate( "Register a new domain or change your site's address." ) }
 					/>
 				) }
 				{ showClone && (

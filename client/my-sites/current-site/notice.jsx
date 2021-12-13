@@ -1,8 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import formatCurrency from '@automattic/format-currency/src';
 import { localize } from 'i18n-calypso';
-import { get, reject } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -14,8 +12,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'calypso/lib/domains';
-import { preventWidows } from 'calypso/lib/formatting';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -74,135 +70,6 @@ export class SiteNotice extends Component {
 		);
 	}
 
-	domainCreditNotice() {
-		if ( ! this.props.hasDomainCredit || ! this.props.canManageOptions ) {
-			return null;
-		}
-
-		if ( this.props.isSiteWPForTeams ) {
-			return null;
-		}
-
-		const eventName = 'calypso_domain_credit_reminder_impression';
-		const eventProperties = { cta_name: 'current_site_domain_notice' };
-		const { translate } = this.props;
-		const noticeText = preventWidows( translate( 'Free domain available' ) );
-		const ctaText = translate( 'Claim' );
-
-		return (
-			<UpsellNudge
-				callToAction={ ctaText }
-				compact
-				event={ eventName }
-				forceHref={ true }
-				forceDisplay={ true }
-				href={ `/domains/add/${ this.props.site.slug }` }
-				title={ noticeText }
-				tracksClickName="calypso_domain_credit_reminder_click"
-				tracksClickProperties={ eventProperties }
-				tracksImpressionName={ eventName }
-				tracksImpressionProperties={ eventProperties }
-			/>
-		);
-	}
-
-	domainUpsellNudge() {
-		if ( ! this.props.isPlanOwner || this.props.domainUpsellNudgeDismissedDate ) {
-			return null;
-		}
-
-		if ( this.props.isJetpack ) {
-			return null;
-		}
-
-		if ( this.props.isSiteWPForTeams ) {
-			return null;
-		}
-
-		const eligibleDomains = reject(
-			this.props.domains,
-			( domain ) =>
-				domain.isWPCOMDomain ||
-				domain.name.endsWith( '.wpcomstaging.com' ) ||
-				( domain.registrationDate && moment( domain.registrationDate ).add( 7, 'days' ).isAfter() )
-		);
-
-		if ( eligibleDomains.length !== 1 ) {
-			return null;
-		}
-
-		const { site, currencyCode, productsList, translate } = this.props;
-
-		const priceAndSaleInfo = Object.entries( productsList ).reduce(
-			function ( result, [ key, value ] ) {
-				if ( value.is_domain_registration && value.available ) {
-					const regularPrice = getUnformattedDomainPrice( key, productsList );
-					const minRegularPrice = get( result, 'minRegularPrice', regularPrice );
-					result.minRegularPrice = Math.min( minRegularPrice, regularPrice );
-
-					const salePrice = getUnformattedDomainSalePrice( key, productsList );
-					if ( salePrice ) {
-						const minSalePrice = get( result, 'minSalePrice', salePrice );
-						result.minSalePrice = Math.min( minSalePrice, salePrice );
-						result.saleTlds.push( value.tld );
-					}
-				}
-
-				return result;
-			},
-			{ saleTlds: [] }
-		);
-
-		if ( ! priceAndSaleInfo.minSalePrice && ! priceAndSaleInfo.minRegularPrice ) {
-			return null;
-		}
-
-		let noticeText;
-
-		if ( priceAndSaleInfo.minSalePrice ) {
-			if ( get( priceAndSaleInfo, 'saleTlds.length', 0 ) === 1 ) {
-				noticeText = translate( 'Get a .%(tld)s domain for just %(salePrice)s for a limited time', {
-					args: {
-						tld: priceAndSaleInfo.saleTlds[ 0 ],
-						salePrice: formatCurrency( priceAndSaleInfo.minSalePrice, currencyCode ),
-					},
-				} );
-			} else {
-				noticeText = translate( 'Domains on sale starting at %(minSalePrice)s', {
-					args: {
-						minSalePrice: formatCurrency( priceAndSaleInfo.minSalePrice, currencyCode ),
-					},
-				} );
-			}
-		} else {
-			noticeText = translate( 'Add another domain from %(minDomainPrice)s', {
-				args: {
-					minDomainPrice: formatCurrency( priceAndSaleInfo.minRegularPrice, currencyCode ),
-				},
-			} );
-		}
-
-		return (
-			<UpsellNudge
-				callToAction={ translate( 'Add' ) }
-				compact
-				href={ `/domains/add/${ site.slug }` }
-				onDismissClick={ this.props.clickDomainUpsellDismiss }
-				dismissPreferenceName="calypso_upgrade_nudge_cta_click"
-				event="calypso_upgrade_nudge_impression"
-				forceDisplay={ true }
-				horizontal={ true }
-				title={ preventWidows( noticeText ) }
-				tracksClickName="calypso_upgrade_nudge_cta_click"
-				tracksClickProperties={ { cta_name: 'domain-upsell-nudge' } }
-				tracksImpressionName="calypso_upgrade_nudge_impression"
-				tracksImpressionProperties={ { cta_name: 'domain-upsell-nudge' } }
-				tracksDismissName="calypso_upgrade_nudge_cta_click"
-				tracksDismissProperties={ { cta_name: 'domain-upsell-nudge-dismiss' } }
-			/>
-		);
-	}
-
 	activeDiscountNotice() {
 		if ( ! this.props.activeDiscount ) {
 			return null;
@@ -245,14 +112,13 @@ export class SiteNotice extends Component {
 	}
 
 	render() {
-		const { site, isMigrationInProgress, hasJITM } = this.props;
+		const { site, isMigrationInProgress } = this.props;
 		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
 
 		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
-		const domainCreditNotice = this.domainCreditNotice();
 
 		const showJitms =
 			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
@@ -271,8 +137,6 @@ export class SiteNotice extends Component {
 					/>
 				) }
 				<QuerySitePlans siteId={ site.ID } />
-				{ ! hasJITM && domainCreditNotice }
-				{ ! ( hasJITM || discountOrFreeToPaid || domainCreditNotice ) && this.domainUpsellNudge() }
 			</div>
 		);
 	}

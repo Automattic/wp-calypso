@@ -123,7 +123,10 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 	return (
 		<Main wideLayout className="purchases">
 			<MySitesSidebarNavigation />
-			<PageViewTracker path={ '/purchases/add-payment-method' } title={ titles.addPaymentMethod } />
+			<PageViewTracker
+				path={ '/purchases/add-payment-method' }
+				title={ String( titles.addPaymentMethod ) }
+			/>
 			<DocumentHead title={ titles.addPaymentMethod } />
 			<FormattedHeader
 				brandFont

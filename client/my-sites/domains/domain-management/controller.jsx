@@ -81,14 +81,15 @@ export default {
 	},
 
 	domainManagementEdit( pageContext, next ) {
+		let component = DomainManagement.Edit;
 		if ( config.isEnabled( 'domains/settings-page-redesign' ) ) {
-			// TODO: set different component for the new domain settings page
+			component = DomainManagement.Settings;
 		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.Edit }
+				component={ component }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -319,14 +320,15 @@ export default {
 	},
 
 	domainManagementTransferToOtherSite( pageContext, next ) {
+		let transferComponent = DomainManagement.TransferToOtherSite;
 		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
-			// TODO: set different component for the new transfer page
+			transferComponent = DomainManagement.TransferDomainToOtherSite;
 		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToOtherSite( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other Site"
-				component={ DomainManagement.TransferToOtherSite }
+				component={ transferComponent }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }

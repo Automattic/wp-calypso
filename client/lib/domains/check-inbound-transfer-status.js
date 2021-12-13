@@ -6,12 +6,12 @@ export function checkInboundTransferStatus( domainName, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().getInboundTransferStatus( domainName, function ( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
-
-		onComplete( null, result );
-	} );
+	wpcom.req
+		.get( `/domains/${ encodeURIComponent( domainName ) }/inbound-transfer-status` )
+		.then( ( data ) => {
+			onComplete( null, data );
+		} )
+		.catch( ( error ) => {
+			onComplete( error.error );
+		} );
 }

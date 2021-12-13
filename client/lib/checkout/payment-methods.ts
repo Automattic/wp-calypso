@@ -13,20 +13,33 @@ export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS ];
 
 export interface PaymentMethod {
-	card?: string;
+	added: string;
+	card: string;
+	card_type: string;
 	email: string;
-	card_type?: string;
-	payment_partner: string;
-	name: string;
 	expiry: string;
+	is_expired: boolean;
+	last_service: string;
+	last_used: string;
+	meta: PaymentMethodMeta[];
+	mp_ref: string;
+	name: string;
+	payment_partner: string;
+	remember: '1' | '0';
 	stored_details_id: string;
-	is_expired?: boolean;
+	user_id: string;
 }
 
-export const isPaymentAgreement = ( method: PaymentMethod ) =>
+export interface PaymentMethodMeta {
+	meta_key: string;
+	meta_value: string;
+	stored_details_id: string;
+}
+
+export const isPaymentAgreement = ( method: PaymentMethod ): boolean =>
 	PAYMENT_AGREEMENTS_PARTNERS.includes( method.payment_partner );
 
-export const isCreditCard = ( method: PaymentMethod ) => ! isPaymentAgreement( method );
+export const isCreditCard = ( method: PaymentMethod ): boolean => ! isPaymentAgreement( method );
 
 interface ImagePathsMap {
 	[ key: string ]: string;

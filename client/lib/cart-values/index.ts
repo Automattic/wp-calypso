@@ -5,6 +5,7 @@ import type {
 	ResponseCart,
 	ResponseCartProduct,
 	RequestCartProduct,
+	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
 
 export function canRemoveFromCart( cart: ResponseCart, cartItem: ResponseCartProduct ): boolean {
@@ -19,13 +20,16 @@ export function canRemoveFromCart( cart: ResponseCart, cartItem: ResponseCartPro
 	return true;
 }
 
+export type RequestCartProductWithoutId = Partial< RequestCartProduct > &
+	Pick< RequestCartProduct, 'product_slug' >;
+
 /**
  * Add a product_id to a incomplete RequestCartProduct
  */
 export function fillInSingleCartItemAttributes(
-	cartItem: Omit< RequestCartProduct, 'product_id' > | RequestCartProduct,
+	cartItem: RequestCartProductWithoutId,
 	products: Record< string, { product_id: number } >
-): RequestCartProduct {
+): MinimalRequestCartProduct {
 	if ( ( cartItem as RequestCartProduct ).product_id ) {
 		return cartItem as RequestCartProduct;
 	}

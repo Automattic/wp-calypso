@@ -16,7 +16,6 @@ const selectors = {
 	analyzeError: ( text: string ) => `div.capture__input-error-msg:text("${ text }")`,
 
 	// Headers
-	scanningHeader: 'h1:text("Scanning your site")',
 	setupHeader: 'h1:text("Themes")',
 	startBuildingHeader: ( text: string ) => `h1.onboarding-title:text("${ text }")`,
 
@@ -72,13 +71,6 @@ export class StartImportFlow {
 	 */
 	async validateErrorCapturePage( error: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.analyzeError( error ) );
-	}
-
-	/**
-	 * Validates that we've landed on the scanning page.
-	 */
-	async validateScanningPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.scanningHeader );
 	}
 
 	/**

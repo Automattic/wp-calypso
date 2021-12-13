@@ -28,7 +28,7 @@ import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
-import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
+import Illustration from 'calypso/assets/images/domains/domain.svg';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
@@ -648,7 +648,7 @@ class RegisterDomainStep extends Component {
 					title=""
 					className="register-domain-step__placeholder"
 					illustration={ Illustration }
-					illustrationWidth={ 180 }
+					illustrationWidth={ 280 }
 				/>
 			</>
 		);
@@ -674,17 +674,15 @@ class RegisterDomainStep extends Component {
 		this.save();
 
 		Object.keys( this.state.premiumDomains ).map( ( premiumDomain ) => {
-			this.fetchDomainPricePromise( premiumDomain )
-				.catch( () => [] )
-				.then( ( domainPrice ) => {
-					this.setState( ( state ) => {
-						const newPremiumDomains = { ...state.premiumDomains };
-						newPremiumDomains[ premiumDomain ] = domainPrice;
-						return {
-							premiumDomains: newPremiumDomains,
-						};
-					} );
+			this.fetchDomainPrice( premiumDomain ).then( ( domainPrice ) => {
+				this.setState( ( state ) => {
+					const newPremiumDomains = { ...state.premiumDomains };
+					newPremiumDomains[ premiumDomain ] = domainPrice;
+					return {
+						premiumDomains: newPremiumDomains,
+					};
 				} );
+			} );
 		} );
 	};
 
@@ -842,25 +840,19 @@ class RegisterDomainStep extends Component {
 			.catch( noop );
 	};
 
-	fetchDomainPricePromise = ( domain ) => {
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getDomainPrice( domain, ( serverError, result ) => {
-				if ( serverError ) {
-					resolve( {
-						pending: true,
-						error: serverError,
-					} );
-					return;
-				}
-
-				resolve( {
-					pending: false,
-					is_premium: result.is_premium,
-					cost: result.cost,
-					is_price_limit_exceeded: result?.is_price_limit_exceeded,
-				} );
-			} );
-		} );
+	fetchDomainPrice = ( domain ) => {
+		return wpcom.req
+			.get( `/domains/${ encodeURIComponent( domain ) }/price` )
+			.then( ( data ) => ( {
+				pending: false,
+				is_premium: data.is_premium,
+				cost: data.cost,
+				is_price_limit_exceeded: data.is_price_limit_exceeded,
+			} ) )
+			.catch( ( error ) => ( {
+				pending: true,
+				error,
+			} ) );
 	};
 
 	preCheckDomainAvailability = ( domain ) => {

@@ -166,14 +166,6 @@ export class SiteDomains extends Component {
 			<>
 				{ ! hasProductsList && <QueryProductsList /> }
 
-				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
-					<EmptyDomainsListCard
-						selectedSite={ selectedSite }
-						hasDomainCredit={ this.props.hasDomainCredit }
-						hasNonWpcomDomains={ false }
-					/>
-				) }
-
 				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
 				<div className="domain-management-list__items">
@@ -195,6 +187,14 @@ export class SiteDomains extends Component {
 						hasLoadedPurchases={ ! isFetchingPurchases }
 					/>
 				</div>
+
+				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
+					<EmptyDomainsListCard
+						selectedSite={ selectedSite }
+						hasDomainCredit={ this.props.hasDomainCredit }
+						hasNonWpcomDomains={ false }
+					/>
+				) }
 
 				{ ! this.isLoading() && nonWpcomDomains.length > 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
@@ -256,7 +256,7 @@ export class SiteDomains extends Component {
 			{
 				label: 'All my domains',
 				value: 'all-my-domains',
-				path: domainManagementRoot(),
+				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: null,
 			},
 		];

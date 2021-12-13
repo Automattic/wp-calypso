@@ -279,9 +279,9 @@ const validateMailboxName = ( { value, error }, { value: domainName, error: doma
 	return { value, error };
 };
 
-const validateName = ( name ) => {
+const validateName = ( { value, error } ) => {
 	// TODO: validate the user's name
-	return name;
+	return { value, error };
 };
 
 /**

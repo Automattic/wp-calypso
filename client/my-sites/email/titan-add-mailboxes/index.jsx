@@ -164,14 +164,13 @@ class TitanAddMailboxes extends Component {
 				.then( () => {
 					if ( this.isMounted ) {
 						this.setState( { isAddingToCart: false } );
+						page( '/checkout/' + selectedSite.slug );
 					}
-					const { errors } = this.props?.cart?.messages;
-					if ( errors && errors.length ) {
-						// Stay on the page to show the relevant error
-						return;
+				} )
+				.catch( () => {
+					if ( this.isMounted ) {
+						this.setState( { isAddingToCart: false } );
 					}
-
-					return this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}
 	};

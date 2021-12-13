@@ -1,5 +1,10 @@
 import config from '@automattic/calypso-config';
-import { FEATURE_UPLOAD_THEMES, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	FEATURE_PREMIUM_THEMES,
+	FEATURE_UPLOAD_THEMES,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -149,7 +154,11 @@ class ThemeSheet extends Component {
 	getValidSections = () => {
 		const validSections = [];
 		validSections.push( '' ); // Default section
-		this.props.supportDocumentation && validSections.push( 'setup' );
+
+		if ( ! this.props.isPremium && this.props.supportDocumentation ) {
+			validSections.push( 'setup' );
+		}
+
 		validSections.push( 'support' );
 		return validSections;
 	};
@@ -630,6 +639,7 @@ class ThemeSheet extends Component {
 			siteId,
 			siteSlug,
 			retired,
+			hasUnlimitedPremiumThemes,
 			isPremium,
 			isJetpack,
 			isWpcomTheme,
@@ -680,7 +690,9 @@ class ThemeSheet extends Component {
 
 		let pageUpsellBanner;
 		let previewUpsellBanner;
-		const hasWpComThemeUpsellBanner = ! isJetpack && isPremium && ! isVip && ! retired;
+
+		const hasWpComThemeUpsellBanner =
+			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
 		const hasWpOrgThemeUpsellBanner =
 			! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
 		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
@@ -844,6 +856,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
+			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),

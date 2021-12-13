@@ -1,8 +1,6 @@
 import { shallow } from 'enzyme';
 import { RegistrantExtraInfoCaForm } from '../ca-form';
 
-jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
-
 const mockProps = {
 	translate: ( string ) => string,
 	updateContactDetailsCache: () => {},

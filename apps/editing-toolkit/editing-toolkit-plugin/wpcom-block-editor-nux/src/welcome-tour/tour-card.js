@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -57,8 +58,21 @@ function WelcomeTourCard( {
 	return (
 		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
-			<CardMedia>
-				<img alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) } src={ imgSrc } />
+			{ /* TODO: Update selector for images in @wordpress/components/src/card/styles/card-styles.js */ }
+			<CardMedia className="welcome-tour-card__media">
+				<picture>
+					{ imgSrc.mobile && (
+						<source
+							srcSet={ imgSrc.mobile.src }
+							type={ imgSrc.mobile.type }
+							media={ getMediaQueryList( MOBILE_BREAKPOINT )?.media }
+						/>
+					) }
+					<img
+						alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) }
+						src={ imgSrc.desktop?.src }
+					/>
+				</picture>
 			</CardMedia>
 			<CardBody>
 				<h2 className="welcome-tour-card__heading">{ heading }</h2>
@@ -141,7 +155,9 @@ function CardNavigation( {
 }
 
 function CardOverlayControls( { onMinimize, onDismiss } ) {
-	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls' );
+	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
+		'welcome-tour-card__overlay-controls__absolute': ! isMobile(),
+	} );
 
 	return (
 		<div className={ buttonClasses }>

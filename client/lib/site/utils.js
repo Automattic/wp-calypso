@@ -66,39 +66,6 @@ export function getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 		.filter( ( reason ) => reason );
 }
 
-export function canUpdateFiles( site ) {
-	if ( ! site ) {
-		return false;
-	}
-
-	if ( ! isMainNetworkSite( site ) ) {
-		return false;
-	}
-
-	const options = site.options;
-
-	if ( options.is_multi_network ) {
-		return false;
-	}
-
-	return ! (
-		options.file_mod_disabled &&
-		( -1 < options.file_mod_disabled.indexOf( 'disallow_file_mods' ) ||
-			-1 < options.file_mod_disabled.indexOf( 'has_no_file_system_write_access' ) )
-	);
-}
-
-export function canAutoupdateFiles( site ) {
-	if ( ! this.canUpdateFiles( site ) ) {
-		return false;
-	}
-
-	return ! (
-		site.options.file_mod_disabled &&
-		-1 < site.options.file_mod_disabled.indexOf( 'automatic_updater_disabled' )
-	);
-}
-
 export function isMainNetworkSite( site ) {
 	if ( ! site ) {
 		return false;

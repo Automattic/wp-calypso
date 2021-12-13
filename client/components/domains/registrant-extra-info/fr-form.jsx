@@ -13,7 +13,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import validateContactDetails from './fr-validate-contact-details';
-import { disableSubmitButton } from './with-contact-details-validation';
 
 const noop = () => {};
 const identity = ( value ) => value;
@@ -117,9 +116,8 @@ class RegistrantExtraInfoFrForm extends PureComponent {
 	};
 
 	render() {
-		const { ccTldDetails, contactDetailsValidationErrors, translate } = this.props;
+		const { ccTldDetails, translate } = this.props;
 		const registrantType = get( ccTldDetails, 'registrantType', defaultRegistrantType );
-		const formIsValid = isEmpty( contactDetailsValidationErrors );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -152,8 +150,6 @@ class RegistrantExtraInfoFrForm extends PureComponent {
 				</FormFieldset>
 
 				{ 'organization' === registrantType && this.renderOrganizationFields() }
-
-				{ formIsValid ? this.props.children : disableSubmitButton( this.props.children ) }
 			</form>
 		);
 	}

@@ -11,7 +11,7 @@
 	}
 }
 
-.security-2fa-sms-settings__fieldset-container .form-fieldset__country {
+.security-2fa-sms-settings__fieldset-container .form-phone-input__country {
 	flex: 1;
 	padding-right: 0;
 
@@ -26,7 +26,7 @@
 	overflow: ellipsis;
 }
 
-.security-2fa-sms-settings__fieldset-container .form-fieldset__phone-number {
+.security-2fa-sms-settings__fieldset-container .form-phone-input__phone-number {
 	flex: 2;
 	margin-bottom: 5px;
 }

@@ -111,7 +111,8 @@ const useItemPrice = (
 		originalPrice = itemCost;
 		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
 			originalPrice = monthlyItemCost;
-			discountedPrice = itemCost / 12;
+			// we are now displaying the discount WITHOUT the additionally monthly changes
+			discountedPrice = monthlyItemCost;
 		}
 	}
 

@@ -17,7 +17,6 @@ import {
 import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import { whoisType } from '../../../lib/domains/whois/constants';
 import { domainWhoisSchema } from './schema';
-import { validationSchemas } from './validation-schemas/reducer';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
@@ -159,7 +158,6 @@ export default combineReducers( {
 	isRequestingContactDetailsCache,
 	isRequestingWhois,
 	isSaving,
-	validationSchemas,
 } );
 
 /**

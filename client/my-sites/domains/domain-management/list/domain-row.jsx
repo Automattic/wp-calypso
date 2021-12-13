@@ -94,7 +94,7 @@ class DomainRow extends PureComponent {
 			return (
 				<div className="domain-row__site-cell">
 					<Button href={ createSiteFromDomainOnly( site?.slug, site?.siteId ) } plain>
-						{ translate( 'Create site' ) } <MaterialIcon icon="add" />
+						<MaterialIcon icon="add" /> { translate( 'Create site' ) }
 					</Button>
 				</div>
 			);
@@ -284,7 +284,7 @@ class DomainRow extends PureComponent {
 
 		return (
 			<a href="#" onClick={ this.addEmailClick }>
-				{ translate( 'Add +', { context: 'Button label' } ) }
+				{ translate( '+ Add', { context: 'Button label' } ) }
 			</a>
 		);
 	};
