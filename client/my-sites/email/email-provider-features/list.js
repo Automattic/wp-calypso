@@ -10,18 +10,7 @@ const getEmailForwardingFeatures = () => {
 	return [ translate( 'No billing' ), translate( 'Receive emails sent to your custom domain' ) ];
 };
 
-const getGoogleFeatures = () => {
-	return [
-		translate( 'Annual billing' ),
-		translate( 'Send and receive from your custom domain' ),
-		translate( '30GB storage' ),
-		translate( 'Email, calendars, and contacts' ),
-		translate( 'Video calls, docs, spreadsheets, and more' ),
-		translate( 'Work from anywhere on any device – even offline' ),
-	];
-};
-
-const getGoogleLogos = () => {
+const getGoogleAppLogos = () => {
 	return [
 		{
 			image: gmailIcon,
@@ -34,14 +23,14 @@ const getGoogleLogos = () => {
 			title: 'Google Calendar',
 		},
 		{
-			image: googleDocsIcon,
-			imageAltText: translate( 'Google Docs icon' ),
-			title: 'Google Docs',
-		},
-		{
 			image: googleDriveIcon,
 			imageAltText: translate( 'Google Drive icon' ),
 			title: 'Google Drive',
+		},
+		{
+			image: googleDocsIcon,
+			imageAltText: translate( 'Google Docs icon' ),
+			title: 'Google Docs',
 		},
 		{
 			image: googleSheetsIcon,
@@ -56,6 +45,17 @@ const getGoogleLogos = () => {
 	];
 };
 
+const getGoogleFeatures = () => {
+	return [
+		translate( 'Annual billing' ),
+		translate( 'Send and receive from your custom domain' ),
+		translate( '30GB storage' ),
+		translate( 'Email, calendars, and contacts' ),
+		translate( 'Video calls, docs, spreadsheets, and more' ),
+		translate( 'Work from anywhere on any device – even offline' ),
+	];
+};
+
 const getTitanFeatures = () => {
 	return [
 		translate( 'Monthly billing' ),
@@ -66,4 +66,4 @@ const getTitanFeatures = () => {
 	];
 };
 
-export { getEmailForwardingFeatures, getGoogleFeatures, getGoogleLogos, getTitanFeatures };
+export { getEmailForwardingFeatures, getGoogleAppLogos, getGoogleFeatures, getTitanFeatures };

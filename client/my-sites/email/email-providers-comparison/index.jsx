@@ -59,8 +59,8 @@ import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwa
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailForwardingFeatures,
+	getGoogleAppLogos,
 	getGoogleFeatures,
-	getGoogleLogos,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
 import { emailManagement } from 'calypso/my-sites/email/paths';
@@ -498,7 +498,7 @@ class EmailProvidersComparison extends Component {
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ expandButtonLabel }
 				features={ getGoogleFeatures() }
-				logos={ getGoogleLogos() }
+				appLogos={ getGoogleAppLogos() }
 			/>
 		);
 	}
