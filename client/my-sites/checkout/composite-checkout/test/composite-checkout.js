@@ -17,6 +17,7 @@ import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -46,6 +47,7 @@ jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
@@ -62,6 +64,7 @@ describe( 'CompositeCheckout', () => {
 		} ) );
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
+		isMarketplaceProduct.mockImplementation( () => false );
 
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
