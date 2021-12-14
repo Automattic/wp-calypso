@@ -278,14 +278,10 @@ export const getTask = (
 				timing: 5,
 				title: translate( 'Enable post sharing' ),
 				description: translate(
-					"Allow blog visitors to share your posts to social media such as Twitter, Facebook, and LinkedIn. It's a great way to help you build your audience."
+					'Enable post sharing to automatically share your new blog posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
 				),
 				actionText: translate( 'Enable sharing' ),
-				actionUrl: `/marketing/sharing-buttons/${ siteSlug }`,
-				...( ! task.isCompleted && {
-					actionDispatch: requestSiteChecklistTaskUpdate,
-					actionDispatchArgs: [ siteId, task.id ],
-				} ),
+				actionUrl: `/marketing/connections/${ siteSlug }`,
 				isSkippable: true,
 			};
 			break;
