@@ -25,6 +25,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
+import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
@@ -78,6 +79,8 @@ const PluginsBrowser = ( {
 
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
+
+	const { data: paidPlugins = [], isFetchingPaidPlugins } = useWPCOMPlugins( 'all' );
 	const recommendedPlugins =
 		useSelector( ( state ) => getRecommendedPlugins( state, selectedSite?.ID ) ) || [];
 	const popularPlugins = useSelector( ( state ) => getPluginsListByCategory( state, 'popular' ) );
@@ -135,6 +138,7 @@ const PluginsBrowser = ( {
 		() => isEnabled( 'recommend-plugins' ) && !! selectedSite?.ID && selectedSite?.jetpack,
 		[ selectedSite ]
 	);
+	const isPaidPluginsEnabled = isEnabled( 'marketplace-v1' );
 
 	const shouldShowManageButton = useMemo( () => {
 		if ( isJetpack ) {
@@ -280,10 +284,13 @@ const PluginsBrowser = ( {
 				pluginsByCategory={ pluginsByCategory }
 				recommendedPlugins={ recommendedPlugins }
 				isRequestingRecommendedPlugins={ isRequestingRecommendedPlugins }
+				paidPlugins={ paidPlugins }
+				isFetchingPaidPlugins={ isFetchingPaidPlugins }
 				sites={ sites }
 				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
 				isRecommendedPluginsEnabled={ isRecommendedPluginsEnabled }
+				isPaidPluginsEnabled={ isPaidPluginsEnabled }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 		</MainComponent>
@@ -384,6 +391,10 @@ const translateCategory = ( { category, translate } ) => {
 			return translate( 'Featured', {
 				context: 'Category description for the plugin browser.',
 			} );
+		case 'paid':
+			return translate( 'Featured', {
+				context: 'Category description for the plugin browser.',
+			} );
 		case 'recommended':
 			return recommendedText;
 	}
@@ -422,6 +433,8 @@ const PluginSingleListView = ( {
 	isFetchingPluginsByCategoryPopular,
 	pluginsByCategoryFeatured,
 	isFetchingPluginsByCategoryFeatured,
+	paidPlugins,
+	isFetchingPaidPlugins,
 	siteSlug,
 	sites,
 } ) => {
@@ -438,6 +451,9 @@ const PluginSingleListView = ( {
 	} else if ( category === 'featured' ) {
 		plugins = pluginsByCategoryFeatured;
 		isFetching = isFetchingPluginsByCategoryFeatured;
+	} else if ( category === 'paid' ) {
+		plugins = paidPlugins;
+		isFetching = isFetchingPaidPlugins;
 	} else {
 		return null;
 	}
@@ -497,11 +513,15 @@ const PluginBrowserContent = ( props ) => {
 
 	return (
 		<>
-			{ props.isRecommendedPluginsEnabled ? (
+			{ /* eslint-disable no-nested-ternary */ }
+			{ props.isPaidPluginsEnabled ? (
+				<PluginSingleListView { ...props } category="paid" />
+			) : props.isRecommendedPluginsEnabled ? (
 				<RecommendedPluginListView { ...props } />
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
 			) }
+			{ /* eslint-enable no-nested-ternary */ }
 
 			<PluginSingleListView { ...props } category="popular" />
 			<PluginSingleListView { ...props } category="new" />
