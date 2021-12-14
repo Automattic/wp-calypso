@@ -14,7 +14,6 @@ function EmailProviderCard( {
 	children,
 	providerKey,
 	logo,
-	appLogos,
 	title,
 	badge,
 	description,
@@ -28,6 +27,7 @@ function EmailProviderCard( {
 	showExpandButton = true,
 	expandButtonLabel,
 	features,
+	appLogos,
 } ) {
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
@@ -104,7 +104,6 @@ function EmailProviderCard( {
 EmailProviderCard.propTypes = {
 	providerKey: PropTypes.string.isRequired,
 	logo: PropTypes.object.isRequired,
-	appLogos: PropTypes.arrayOf( PropTypes.object ),
 	title: PropTypes.string.isRequired,
 	badge: PropTypes.object,
 	description: PropTypes.string,
@@ -116,6 +115,7 @@ EmailProviderCard.propTypes = {
 	showExpandButton: PropTypes.bool,
 	expandButtonLabel: PropTypes.string,
 	features: PropTypes.arrayOf( PropTypes.string ),
+	appLogos: PropTypes.arrayOf( PropTypes.object ),
 	onExpandedChange: PropTypes.func,
 };
 
