@@ -54,7 +54,7 @@ class PluginUpload extends Component {
 		}
 
 		if ( nextProps.inProgress ) {
-			this.props.productToBeInstalled( null, nextProps.pluginId, nextProps.siteSlug );
+			this.props.productToBeInstalled( nextProps.pluginId, nextProps.siteSlug );
 
 			page( `/marketplace/install/${ nextProps.siteSlug }` );
 		}
