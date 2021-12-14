@@ -12,6 +12,7 @@ import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
@@ -139,6 +140,7 @@ const PluginsBrowserListElement = ( props ) => {
 						<InstalledInOrPricing
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
+							plugin={ plugin }
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
@@ -167,8 +169,15 @@ const PluginsBrowserListElement = ( props ) => {
 	);
 };
 
-const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled } ) => {
+const InstalledInOrPricing = ( {
+	sitesWithPlugin,
+	isWpcomPreinstalled,
+	plugin,
+	period = 'monthly',
+} ) => {
 	const translate = useTranslate();
+	const priceSlug = `${ plugin?.slug?.replaceAll( '-', '_' ) }_${ period }`;
+	const price = useSelector( ( state ) => getProductDisplayCost( state, priceSlug ) );
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		return (
@@ -181,7 +190,7 @@ const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled } ) => {
 		);
 	}
 
-	return <div className="plugins-browser-item__pricing">{ translate( 'Free' ) }</div>;
+	return <div className="plugins-browser-item__pricing">{ price || translate( 'Free' ) }</div>;
 };
 
 const Placeholder = ( { iconSize } ) => {

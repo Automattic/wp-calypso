@@ -19,6 +19,7 @@ import announcementImage from 'calypso/assets/images/marketplace/plugins-revamp.
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
@@ -224,6 +225,7 @@ const PluginsBrowser = ( {
 					<QueryWporgPlugins category="featured" />
 				</>
 			) }
+			{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && <QueryProductsList /> }
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
@@ -485,13 +487,11 @@ const PluginBrowserContent = ( props ) => {
 
 	return (
 		<>
-			{ /* eslint-disable no-nested-ternary */ }
 			{ isEnabled( 'marketplace-v1' ) && ! props.jetpackNonAtomic ? (
 				<PluginSingleListView { ...props } category="paid" />
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
 			) }
-			{ /* eslint-enable no-nested-ternary */ }
 
 			<PluginSingleListView { ...props } category="popular" />
 			<PluginSingleListView { ...props } category="new" />
