@@ -4898,17 +4898,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@signal-noise/stylelint-scales@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@signal-noise/stylelint-scales@npm:2.0.0"
+"@signal-noise/stylelint-scales@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@signal-noise/stylelint-scales@npm:2.0.3"
   dependencies:
     css-global-keywords: ^1.0.1
     font-family: ^0.2.0
     parse-css-font: ^4.0.0
-    postcss-values-parser: ^4.0.0
-  peerDependencies:
-    stylelint: ^13.0.0
-  checksum: 8834aa12f88c2fdf0b987336af1c582d1344597a0014603b7e566d769d843da6edd81bc066e0ed37aec393c60891175ffcc75fb1567f4907ef297985dc27d995
+    postcss-values-parser: ^6.0.1
+  checksum: 09b948c7615b3fc2b946a3ee59ac4772861abce98ce1509030c239355f389d61efa97a10154dbd8a207ed0d65784ed2b8b00d7b46db359b1c87f9dc2c5eb6dea
   languageName: node
   linkType: hard
 
@@ -28975,6 +28973,19 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"postcss-values-parser@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "postcss-values-parser@npm:6.0.1"
+  dependencies:
+    color-name: ^1.1.4
+    is-url-superb: ^4.0.0
+    quote-unquote: ^1.0.0
+  peerDependencies:
+    postcss: ^8.2.9
+  checksum: 8506326a4b5e242b98fb791153be920eb32b55778b4e2338b5f890ed60743fa7a5181f87e6c1af06a28bc3b3e98afdd409dcfc58bb2a4bad651965a3fd67be11
+  languageName: node
+  linkType: hard
+
 "postcss@npm:5 - 7, postcss@npm:^7.0.14, postcss@npm:^7.0.16, postcss@npm:^7.0.2, postcss@npm:^7.0.21, postcss@npm:^7.0.26, postcss@npm:^7.0.32, postcss@npm:^7.0.35, postcss@npm:^7.0.36, postcss@npm:^7.0.5, postcss@npm:^7.0.6":
   version: 7.0.39
   resolution: "postcss@npm:7.0.39"
@@ -29655,6 +29666,13 @@ fsevents@~2.1.2:
   version: 5.1.1
   resolution: "quick-lru@npm:5.1.1"
   checksum: a24cba5da8cec30d70d2484be37622580f64765fb6390a928b17f60cd69e8dbd32a954b3ff9176fa1b86d86ff2ba05252fae55dc4d40d0291c60412b0ad096da
+  languageName: node
+  linkType: hard
+
+"quote-unquote@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "quote-unquote@npm:1.0.0"
+  checksum: eba86bb7f68ada486f5608c5c71cc155235f0408b8a0a180436cdf2457ae86f56a17de6b0bc5a1b7ae5f27735b3b789662cdf7f3b8195ac816cd0289085129ec
   languageName: node
   linkType: hard
 
@@ -37735,7 +37753,7 @@ testarmada-magellan@11.0.10:
     "@babel/register": ^7.16.5
     "@babel/runtime": ^7.16.5
     "@bartekbp/typescript-checkstyle": ^5.0.0
-    "@signal-noise/stylelint-scales": ^2.0.0
+    "@signal-noise/stylelint-scales": ^2.0.3
     "@typeform/embed-react": ^1.1.0
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7
