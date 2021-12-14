@@ -15,6 +15,7 @@ import { recordPaymentSettingsClick } from 'calypso/my-sites/domains/domain-mana
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getSiteIsDomainOnly from 'calypso/state/selectors/is-domain-only-site';
+import type { DetailsCardConnectedProps, DetailsCardProps } from './types';
 
 import './style.scss';
 
@@ -25,7 +26,7 @@ const Details = ( {
 	purchase,
 	redemptionProduct,
 	selectedSite,
-} ) => {
+}: DetailsCardProps ) => {
 	const translate = useTranslate();
 
 	const renderRegisteredUntil = () => {
@@ -33,7 +34,7 @@ const Details = ( {
 	};
 
 	const renderRegisteredOn = () => {
-		return moment( domain.registration_date ).format( 'LL' );
+		return moment( domain.registrationDate ).format( 'LL' );
 	};
 
 	const renderAutoRenewToggle = () => {
@@ -162,7 +163,7 @@ const Details = ( {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	( state, ownProps: DetailsCardProps ): DetailsCardConnectedProps => {
 		return {
 			isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
