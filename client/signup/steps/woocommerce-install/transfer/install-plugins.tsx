@@ -18,6 +18,7 @@ export default function InstallPlugins(): ReactElement | null {
 	const softwareStatus = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
+	const softwareApplied = softwareStatus?.applied;
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	const [ progress, setProgress ] = useState( 0.6 );
@@ -39,7 +40,7 @@ export default function InstallPlugins(): ReactElement | null {
 			setProgress( progress + 0.2 );
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
-		softwareStatus.applied ? null : 3000
+		softwareApplied ? null : 3000
 	);
 
 	// Redirect to wc-admin once software installation is confirmed.
@@ -48,14 +49,14 @@ export default function InstallPlugins(): ReactElement | null {
 			return;
 		}
 
-		if ( softwareStatus.applied ) {
+		if ( softwareApplied ) {
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
 				window.location.href = wcAdmin;
-			}, 1000 );
+			}, 500 );
 		}
-	}, [ siteId, softwareStatus, wcAdmin ] );
+	}, [ siteId, softwareApplied, wcAdmin ] );
 
 	// todo: Need error handling on these requests
 	return <Progress progress={ progress } />;

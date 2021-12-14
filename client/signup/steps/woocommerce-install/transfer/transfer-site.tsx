@@ -26,9 +26,10 @@ export default function TransferSite(): ReactElement | null {
 	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
 	const transferStatus = transfer?.status;
 	const transferFailed = !! transfer?.error;
-	const softwareStatus = useSelector( ( state ) =>
+	const software = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
+	const softwareApplied = software?.applied;
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	// Initiate Atomic transfer or software install
@@ -52,7 +53,7 @@ export default function TransferSite(): ReactElement | null {
 		() => {
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
-		softwareStatus?.applied ? null : 3000
+		softwareApplied ? null : 3000
 	);
 
 	// Watch transfer status
@@ -87,14 +88,14 @@ export default function TransferSite(): ReactElement | null {
 			return;
 		}
 
-		if ( softwareStatus?.applied ) {
+		if ( softwareApplied ) {
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
 				window.location.href = wcAdmin;
-			}, 1000 );
+			}, 500 );
 		}
-	}, [ siteId, softwareStatus, wcAdmin ] );
+	}, [ siteId, softwareApplied, wcAdmin ] );
 
 	// todo: transferFailed states need testing and if required, pass the message through correctly
 	return (
