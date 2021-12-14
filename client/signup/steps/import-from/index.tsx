@@ -76,7 +76,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function hasPermission(): boolean {
-		return canImport && false;
+		return canImport;
 	}
 
 	function checkInitialRunState() {
