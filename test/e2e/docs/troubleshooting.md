@@ -1,8 +1,13 @@
-# Troubleshooting & Debugging
+<div style="width: 45%; float:left" align="left"><a href="./debugging.md"><-- Debugging</a> </div>
+<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
+
+<br><br>
+
+# Troubleshooting
 
 <!-- TOC -->
 
-- [Troubleshooting & Debugging](#troubleshooting--debugging)
+- [Troubleshooting](#troubleshooting)
   - [git pre-commit hook/husky](#git-pre-commit-hookhusky)
   - [Chromium binary is not available for arm64](#chromium-binary-is-not-available-for-arm64)
   - [Package 'lcms2', required by 'vips', not found](#package-lcms2-required-by-vips-not-found)

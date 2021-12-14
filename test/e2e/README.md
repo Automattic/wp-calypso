@@ -76,10 +76,11 @@ cd wp-calypso
 yarn install
 ```
 
-9. [decrypt](docs/test_environment.md) the secrets file.
+9. export required [environment variables](docs/test_environment.md).
 
 ```
-npm run decryptconfig
+export NODE_CONFIG_ENV=<name_of_decrypted_config_to_use>
+export CONFIG_KEY=<decryption_key_from_a8c_store>
 ```
 
 10. navigate to e2e directory.
@@ -88,13 +89,19 @@ npm run decryptconfig
 cd test/e2e
 ```
 
-11. transpile the `@automattic/calypso-e2e` package.
+11. [decrypt](docs/test_environment.md) the secrets file.
+
+```
+npm run decryptconfig
+```
+
+12. transpile the `@automattic/calypso-e2e` package.
 
 ```
 yarn workspace @automattic/calypso-e2e build
 ```
 
-12. run test.
+13. run test.
 
 ```
 yarn jest specs/specs-playwright/<spec_name>
@@ -106,7 +113,7 @@ Please refer to the [Advanced Setup](docs/setup.md) page.
 
 ## Contribute to E2E tests
 
-Please refer to the [] pages.
+Please refer to the [Writing Tests](docs/writing_tests.md) and [Style Guide](docs/style_guide.md) pages.
 
 ## Troubleshooting
 
