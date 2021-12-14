@@ -29,7 +29,7 @@ export interface Props {
 	image?: Image | ReactElement;
 	title?: string | TranslateResult;
 	titleComponent?: ReactElement;
-	titleLocation?: TitleLocation;
+	titleComponentLocation?: TitleLocation;
 	isPrimary?: boolean;
 	badge?: string | ReactElement;
 	className?: string;
@@ -40,7 +40,7 @@ const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnP
 const PromoCard: FunctionComponent< Props > = ( {
 	title,
 	titleComponent,
-	titleLocation = TitleLocation.body,
+	titleComponentLocation = TitleLocation.body,
 	icon,
 	image,
 	isPrimary,
@@ -76,13 +76,13 @@ const PromoCard: FunctionComponent< Props > = ( {
 					) : (
 						image
 					) }
-					{ titleLocation === TitleLocation.figure && titleComponentHeader }
+					{ titleComponentLocation === TitleLocation.figure && titleComponentHeader }
 				</ActionPanelFigure>
 			) }
 			{ icon && (
 				<ActionPanelFigure inlineBodyText={ false } align="left">
 					<Gridicon icon={ icon } size="32" />
-					{ titleLocation === TitleLocation.figure && titleComponentHeader }
+					{ titleComponentLocation === TitleLocation.figure && titleComponentHeader }
 				</ActionPanelFigure>
 			) }
 			<ActionPanelBody>
@@ -92,7 +92,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 						{ badgeComponent }
 					</ActionPanelTitle>
 				) }
-				{ titleLocation === TitleLocation.body && titleComponentHeader }
+				{ titleComponentLocation === TitleLocation.body && titleComponentHeader }
 				{ isPrimary
 					? Children.map( children, ( child ) => {
 							return child && PromoCardCta === child.type
