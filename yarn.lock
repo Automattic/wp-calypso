@@ -258,7 +258,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": ^7.16.5
-    "@wojtekmaj/enzyme-adapter-react-17": ^0.6.3
+    "@wojtekmaj/enzyme-adapter-react-17": ^0.6.6
     babel-jest: ^27.3.1
     enhanced-resolve: ^5.8.2
     enzyme: ^3.11.0
@@ -7840,38 +7840,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wojtekmaj/enzyme-adapter-react-17@npm:^0.6.1, @wojtekmaj/enzyme-adapter-react-17@npm:^0.6.3":
-  version: 0.6.3
-  resolution: "@wojtekmaj/enzyme-adapter-react-17@npm:0.6.3"
+"@wojtekmaj/enzyme-adapter-react-17@npm:^0.6.1, @wojtekmaj/enzyme-adapter-react-17@npm:^0.6.6":
+  version: 0.6.6
+  resolution: "@wojtekmaj/enzyme-adapter-react-17@npm:0.6.6"
   dependencies:
-    "@wojtekmaj/enzyme-adapter-utils": ^0.1.1
+    "@wojtekmaj/enzyme-adapter-utils": ^0.1.2
     enzyme-shallow-equal: ^1.0.0
     has: ^1.0.0
-    object.assign: ^4.1.0
-    object.values: ^1.1.0
     prop-types: ^15.7.0
-    react-is: ^17.0.2
+    react-is: ^17.0.0
     react-test-renderer: ^17.0.0
   peerDependencies:
     enzyme: ^3.0.0
     react: ^17.0.0-0
     react-dom: ^17.0.0-0
-  checksum: 9ae609c1542a0d4433841618ab2c014419242cf8ad5cb8dc0882a297dd92105d0d5b4dfa41d067cf3ca35175241554fe45b3a16ff9994111ea5ec3d424c281d9
+  checksum: a251aa94696e7b6634b3a6764130a7a97885b3792f439dcb4b8c00f03926777792228679e475f247f2b2be23ac6772224d14c98418b2d3e3c2ccae7af977a6ab
   languageName: node
   linkType: hard
 
-"@wojtekmaj/enzyme-adapter-utils@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@wojtekmaj/enzyme-adapter-utils@npm:0.1.1"
+"@wojtekmaj/enzyme-adapter-utils@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@wojtekmaj/enzyme-adapter-utils@npm:0.1.2"
   dependencies:
     function.prototype.name: ^1.1.0
     has: ^1.0.0
-    object.assign: ^4.1.0
     object.fromentries: ^2.0.0
     prop-types: ^15.7.0
   peerDependencies:
     react: ^17.0.0-0
-  checksum: c2737627e9ceb36f642ff3f1c84557f0f7d9f4bad5c47c1ed4a56ca345638ebbcf1993b3836d9820ca3a98deb74a2ff6913440952d859f80073c3abc966b443a
+  checksum: caa271475622a2b3a00cb521191382bd91986181ae4d48ff076faa94a3978c56b668a20eee1f809f1e96b809c0852fd25eb0666cb48ad78283d8d9ddb47a1b14
   languageName: node
   linkType: hard
 
@@ -30085,7 +30082,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.1, react-is@npm:^17.0.2":
+"react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.0, react-is@npm:^17.0.1, react-is@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 2bdb6b93fbb1820b024b496042cce405c57e2f85e777c9aabd55f9b26d145408f9f74f5934676ffdc46f3dcff656d78413a6e43968e7b3f92eea35b3052e9053
