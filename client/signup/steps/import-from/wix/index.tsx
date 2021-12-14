@@ -10,9 +10,9 @@ import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import GettingStartedVideo from '../components/getting-started-video';
+import DoneButton from '../done-button';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
-import DoneButton from './done-button';
 
 import './style.scss';
 

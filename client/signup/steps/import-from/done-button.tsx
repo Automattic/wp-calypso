@@ -2,7 +2,7 @@ import { NextButton } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import React from 'react';
-import { ImportJob } from '../types';
+import { ImportJob } from './types';
 
 interface Props {
 	job: ImportJob;
