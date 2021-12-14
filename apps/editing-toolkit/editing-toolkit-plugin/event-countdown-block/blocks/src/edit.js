@@ -18,6 +18,7 @@ const TIMEZONELESS_FORMAT = 'YYYY-MM-DDTHH:mm:ss';
  * @returns a moment instance
  */
 function assignTimezone( date, offset, format = TIMEZONELESS_FORMAT ) {
+	// passing the `true` flag to `utcOffset` keeps the date unaltered, only adds a tz
 	return moment( date, format ).utcOffset( offset * 60, true );
 }
 
@@ -30,6 +31,7 @@ const edit = ( { attributes, setAttributes, className } ) => {
 	if ( attributes.eventTimestamp ) {
 		label = dateI18n(
 			settings.formats.datetimeAbbreviated,
+			// eventTimestamp is UNIX (in seconds), Date expect milliseconds
 			new Date( attributes.eventTimestamp * 1000 )
 		);
 
