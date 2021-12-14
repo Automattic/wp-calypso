@@ -199,7 +199,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
-    "@types/node": ^16.11.12
+    "@types/node": ^16.11.13
     cookie: ^0.4.0
     tslib: ^2.3.0
     typescript: ^4.5.3
@@ -229,7 +229,7 @@ __metadata:
     "@jest/globals": ^27.3.1
     "@types/config": ^0.0.40
     "@types/jest": ^27.0.3
-    "@types/node": ^16.11.12
+    "@types/node": ^16.11.13
     "@types/node-fetch": ^2.5.12
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.2.4
@@ -6669,10 +6669,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.12":
-  version: 16.11.12
-  resolution: "@types/node@npm:16.11.12"
-  checksum: 941afac5fc5816106521f9846be969ce7460b2ad8e72eb1d675666d6418eb3cc0254085b4d0a5e85b64a155eac8b83bba8689416a1faf94a9b40bbc219d3eb8c
+"@types/node@npm:*, @types/node@npm:^16.11.13":
+  version: 16.11.13
+  resolution: "@types/node@npm:16.11.13"
+  checksum: 333857420b4672b88144fa4e67e5ce9b13776b2bf10f60e5f12d15515bcb5bbe9852dba53ed1777253c53215c666ce14c8f1b7d2d5367d7d002f1ef2a8d10bea
   languageName: node
   linkType: hard
 
@@ -37742,7 +37742,7 @@ testarmada-magellan@11.0.10:
     "@types/enzyme": ^3.10.10
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/lodash": ^4.14.178
-    "@types/node": ^16.11.12
+    "@types/node": ^16.11.13
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^17.0.37
