@@ -586,8 +586,7 @@ class ManagePurchase extends Component {
 
 		if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
 			return translate(
-				"Replaces your site's free address, %(domain)s, with the domain, " +
-					'making it easier to remember and easier to share.',
+				'Custom domains are easier to remember and share. When you upgrade to a paid plan, you have the option to replace your free WordPress.com site address with a custom domain.',
 				{
 					args: {
 						domain: purchase.domain,
