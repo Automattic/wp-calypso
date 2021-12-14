@@ -1,6 +1,8 @@
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
 import React from 'react';
+import { getStepUrl } from 'calypso/signup/utils';
 import { GoToStep } from '../../../import/types';
 
 import './style.scss';
@@ -9,11 +11,19 @@ import './style.scss';
 
 interface Props {
 	goToStep: GoToStep;
+	siteSlug: string;
 }
 
 const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { goToStep } = props;
+	const { goToStep, siteSlug } = props;
+
+	/**
+	 ↓ Methods
+	 */
+	const backToStart = (): void => {
+		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
+	};
 
 	return (
 		<div className="import-layout__center">
@@ -27,9 +37,7 @@ const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 							{ __( 'Start building' ) }
 						</NextButton>
 						<div>
-							<BackButton onClick={ () => goToStep( 'capture' ) }>
-								{ __( 'Back to start' ) }
-							</BackButton>
+							<BackButton onClick={ backToStart }>{ __( 'Back to start' ) }</BackButton>
 						</div>
 					</div>
 				</div>

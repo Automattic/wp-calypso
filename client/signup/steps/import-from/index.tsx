@@ -114,7 +114,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									/**
 									 * Permission screen
 									 */
-									return <NotAuthorized goToStep={ goToStep } />;
+									return <NotAuthorized goToStep={ goToStep } siteSlug={ siteSlug } />;
 								} else if ( engine === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
 									/**
 									 * Wix importer
