@@ -155,7 +155,7 @@ __metadata:
     autoprefixer: ^10.2.5
     babel-loader: ^8.2.3
     browserslist: ^4.8.2
-    css-loader: ^5.2.7
+    css-loader: ^6.5.1
     css-minimizer-webpack-plugin: ^3.2.0
     duplicate-package-checker-webpack-plugin: ^3.0.0
     mini-css-extract-plugin: ^1.6.2
@@ -307,7 +307,7 @@ __metadata:
     "@storybook/builder-webpack5": ^6.4.9
     "@storybook/manager-webpack5": ^6.4.9
     "@storybook/preset-scss": ^1.0.3
-    css-loader: ^3.6.0
+    css-loader: ^6.5.1
     react: ^17.0.2
     react-dom: ^17.0.2
     sass-loader: ^12.1.0
@@ -1226,7 +1226,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@romainberger/css-diff": ^1.0.3
-    css-loader: ^5.2.7
+    css-loader: ^6.5.1
     mini-css-extract-plugin: ^1.6.2
     rtlcss: ^3.1.2
     webpack: ^5.65.0
@@ -14222,7 +14222,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:^5.0.1, css-loader@npm:^5.2.7":
+"css-loader@npm:^5.0.1":
   version: 5.2.7
   resolution: "css-loader@npm:5.2.7"
   dependencies:
@@ -14242,9 +14242,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "css-loader@npm:6.2.0"
+"css-loader@npm:^6.2.0, css-loader@npm:^6.5.1":
+  version: 6.5.1
+  resolution: "css-loader@npm:6.5.1"
   dependencies:
     icss-utils: ^5.1.0
     postcss: ^8.2.15
@@ -14256,7 +14256,7 @@ __metadata:
     semver: ^7.3.5
   peerDependencies:
     webpack: ^5.0.0
-  checksum: a3938e310cb1af9ddc1534110f9215d2d7886ce070e857ff60ea97ce0edf7e83d69251f3d69c69acb87dce41289bb697dc23f4cd7e78170b9e40f107bbc9210d
+  checksum: 06fbc837b2961b14f02fd54cb870b1646f64c1380896c1ad48199afdb49cac50aec714398d114ac9ef2b6f806aa3f3c528479d152d0ee5907f30bfc41e0a9922
   languageName: node
   linkType: hard
 
@@ -37809,7 +37809,7 @@ testarmada-magellan@11.0.10:
     concurrently: ^5.1.0
     config: ^3.3.6
     core-js-bundle: ^3.6.4
-    css-loader: ^3.6.0
+    css-loader: ^6.5.1
     debug: ^4.1.1
     doctrine: ^3.0.0
     eslint: ^8.4.1
