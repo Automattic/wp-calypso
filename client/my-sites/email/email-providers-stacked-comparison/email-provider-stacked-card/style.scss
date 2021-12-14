@@ -130,13 +130,6 @@ $width-left-panel-card: 55%;
 	display: none;
 }
 
-.email-providers-stacked-comparison__main.main .card.action-panel.promo-card.email-providers-stacked-comparison__provider-card .action-panel__figure {
-	margin-right: unset;
-	@include break-mobile {
-		margin-right: 20px;
-	}
-}
-
 .is-expanded {
 	.email-provider-stacked-card__provider-expand-cta {
 		display: none;
@@ -296,16 +289,34 @@ $width-left-panel-card: 55%;
 .email-provider-stacked-card__provider-form > * .form-text-input-with-affixes {
 	flex-direction: column;
 
+	.form-text-input {
+		@include breakpoint-deprecated( '<480px' ) {
+			max-width: 100%;
+		}
+	}
+
 	.form-text-input-with-affixes__suffix {
 		border-top-width: 0;
 		border-left-width: 1px;
 		border-left-style: solid;
 		border-left-color: var( --color-neutral-10 );
+		display:inline-block;
+		overflow: hidden;
+		text-overflow:ellipsis;
+		white-space:nowrap;
+		max-width: 140px;
+		@include breakpoint-deprecated( '<660px' ) {
+			max-width: 350px;
+		}
+		@include breakpoint-deprecated( '<480px' ) {
+			max-width: 100%;
+		}
 	}
 
 	//This needs to use deprecated breakpoint as we are using "UseBreakpoing" from "@automattic/viewport"
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
+
 		.form-text-input-with-affixes__suffix {
 			border-left-width: 0;
 			border-top-width: 1px;
