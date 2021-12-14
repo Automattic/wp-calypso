@@ -298,6 +298,9 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 
 					mkdir -p logs
 					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+					mkdir -p trace
+					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 				""".trimIndent()
 			}
 		}
