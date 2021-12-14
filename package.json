@@ -52,7 +52,7 @@
 	},
 	"engines": {
 		"node": "^16.11.1",
-		"yarn": "^3.1.0"
+		"yarn": "^3.1.1"
 	},
 	"scripts": {
 		"analyze-bundles": "yarn run build-client-stats && webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
@@ -298,7 +298,7 @@
 		"@types/react": "^17.0.37",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0"
 	},
-	"packageManager": "yarn@3.1.0",
+	"packageManager": "yarn@3.1.1",
 	"dependenciesMeta": {
 		"@react-spring/core@9.3.0": {
 			"built": false
