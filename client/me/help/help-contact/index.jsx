@@ -101,7 +101,8 @@ class HelpContact extends Component {
 	}
 
 	backToHelp = () => {
-		page( '/help' );
+		const searchParams = new URLSearchParams( window.location.search );
+		page( searchParams.get( 'redirect_to' ) ?? '/help' );
 	};
 
 	clearSavedContactForm = () => {
