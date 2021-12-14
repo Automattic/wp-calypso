@@ -2,9 +2,8 @@ import { Button, Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
 import { domainManagementEditContactInfo } from 'calypso/my-sites/domains/paths';
 import {
 	enableDomainPrivacy,
@@ -141,13 +140,6 @@ class ContactsPrivacyCard extends Component {
 						{ this.getPrivacyProtection() }
 						{ this.getContactInfoDisclosed() }
 					</div>
-					<p className="contacts-privacy__settings-explanation">
-						{ translate( '{{a}}Learn more{{/a}} about private registration and GDPR protection.', {
-							components: {
-								a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
-							},
-						} ) }
-					</p>
 				</Card>
 			</div>
 		);
