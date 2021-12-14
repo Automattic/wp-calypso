@@ -82,6 +82,7 @@ class DnsRecords extends Component {
 
 		const mobileButtons = [
 			<DnsAddNewRecordButton
+				key="mobile-add-new-record-button"
 				site={ selectedSite.slug }
 				domain={ selectedDomainName }
 				isMobile={ true }
