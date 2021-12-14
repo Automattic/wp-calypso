@@ -1,11 +1,16 @@
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { useTranslate } from 'i18n-calypso';
+import * as React from 'react';
+import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isExpiring } from 'calypso/lib/purchases';
+import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { recordPaymentSettingsClick } from 'calypso/my-sites/domains/domain-management/edit/payment-settings-analytics';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import {
@@ -14,18 +19,9 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import getSiteIsDomainOnly from 'calypso/state/selectors/is-domain-only-site';
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
-
-const noop = () => {};
 
 const Details = ( props ) => {
 	const translate = useTranslate();
-
-	console.log( props );
-	console.log( '=====' );
 
 	const renderRegisteredUntil = () => {
 		return props.moment( props.domain.expiry ).format( 'LL' );
@@ -50,7 +46,7 @@ const Details = ( props ) => {
 			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } );
 		}
 
-		const autoRenewAdditionalText = ! isExpiring( props.purchase )
+		const autoRenewAdditionalText = ! isExpiring( props.purchase ) // is this the right way to test if auto-renew is turned on?
 			? translate( 'We will attempt to renew on %(renewalDate)s for %(price)s', {
 					args: {
 						renewalDate: props.moment( props.domain.autoRenewalDate ).format( 'LL' ),
@@ -88,8 +84,18 @@ const Details = ( props ) => {
 				</div>
 				<div>{ renderAutoRenewToggle() }</div>
 				<div>
-					<Button onClick={ noop }>Renew now</Button>
-					<Button onClick={ noop }>Payment details</Button>
+					<RenewButton
+						purchase={ props.purchase }
+						selectedSite={ props.selectedSite }
+						subscriptionId={ parseInt( props.domain.subscriptionId, 10 ) }
+						tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
+						customLabel={ translate( 'Renew now' ) }
+					/>
+					<Button
+						href={ getManagePurchaseUrlFor( props.selectedSite.slug, props.domain.subscriptionId ) }
+					>
+						{ translate( 'Payment details' ) }
+					</Button>
 				</div>
 			</React.Fragment>
 		);
