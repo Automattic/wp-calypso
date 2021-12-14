@@ -355,23 +355,13 @@ export class GutenbergEditorPage {
 
 		await frame.click( selectors.publishButton( selectors.postToolbar ) );
 		await frame.click( selectors.publishButton( selectors.publishPanel ) );
-		const publishedURL = await this.getPublishedURL();
+		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
+		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
 		if ( visit ) {
 			await this.visitPublishedPost( publishedURL );
 		}
 		return publishedURL;
-	}
-
-	/**
-	 *
-	 * @returns
-	 */
-	async getPublishedURL(): Promise< string > {
-		const frame = await this.getEditorFrame();
-
-		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
-		return ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 	}
 
 	/**
