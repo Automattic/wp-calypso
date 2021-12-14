@@ -8,22 +8,15 @@ import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 export class SiteNotice extends Component {
 	static propTypes = {
@@ -114,7 +107,6 @@ export class SiteNotice extends Component {
 
 		return (
 			<div className="current-site__notices">
-				<QueryProductsList />
 				<QueryActivePromotions />
 				{ siteRedirectNotice }
 				{ showJitms && (
@@ -138,13 +130,7 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		isDomainOnly: isDomainOnlySite( state, siteId ),
-		isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
-		isJetpack: isJetpackSite( state, siteId ),
 		activeDiscount: getActiveDiscount( state ),
-		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-		productsList: getProductsList( state ),
-		domains: getDomainsBySiteId( state, siteId ),
-		currencyCode: getCurrentUserCurrencyCode( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		isMigrationInProgress,
 	};
