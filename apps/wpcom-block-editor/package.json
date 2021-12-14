@@ -24,7 +24,7 @@
 	},
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
-		"@babel/runtime": "^7.16.3",
+		"@babel/runtime": "^7.16.5",
 		"@wordpress/base-styles": "^4.0.4",
 		"@wordpress/block-editor": "^8.0.9",
 		"@wordpress/blocks": "^11.1.4",

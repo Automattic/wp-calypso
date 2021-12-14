@@ -57,17 +57,17 @@ declare namespace i18nCalypso {
 
 	// Translate hooks, like component interpolation or highlighting untranslated strings,
 	// force us to declare the return type as a generic React node, not as just string.
-	export type TranslateResult = React.ReactNode;
+	export type TranslateResult = React.ReactChild;
 
-	export function translate( options: DeprecatedTranslateOptions ): React.ReactNode;
-	export function translate( original: string ): React.ReactNode;
-	export function translate( original: string, options: TranslateOptions ): React.ReactNode;
+	export function translate( options: DeprecatedTranslateOptions ): React.ReactChild;
+	export function translate( original: string ): React.ReactChild;
+	export function translate( original: string, options: TranslateOptions ): React.ReactChild;
 	export function translate( original: string, options: TranslateOptionsText ): string;
 	export function translate(
 		original: string,
 		plural: string,
 		options: TranslateOptionsPlural
-	): React.ReactNode;
+	): React.ReactChild;
 	export function translate(
 		original: string,
 		plural: string,
@@ -114,9 +114,9 @@ declare namespace i18nCalypso {
 	export function reRenderTranslations(): void;
 
 	export type TranslateHook = (
-		translation: React.ReactNode,
+		translation: React.ReactChild,
 		options: NormalizedTranslateArgs
-	) => React.ReactNode;
+	) => React.ReactChild;
 	export function registerTranslateHook( hook: TranslateHook ): void;
 
 	export type ComponentUpdateHook = ( ...args: any ) => any;

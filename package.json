@@ -52,7 +52,7 @@
 	},
 	"engines": {
 		"node": "^16.11.1",
-		"yarn": "^3.1.0"
+		"yarn": "^3.1.1"
 	},
 	"scripts": {
 		"analyze-bundles": "yarn run build-client-stats && webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
@@ -142,10 +142,10 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@babel/core": "^7.16.0",
-		"@babel/eslint-parser": "^7.16.3",
-		"@babel/register": "^7.16.0",
-		"@babel/runtime": "^7.16.3",
+		"@babel/core": "^7.16.5",
+		"@babel/eslint-parser": "^7.16.5",
+		"@babel/register": "^7.16.5",
+		"@babel/runtime": "^7.16.5",
 		"@signal-noise/stylelint-scales": "^2.0.0",
 		"@typeform/embed-react": "^1.1.0",
 		"@types/cookie": "^0.4.1",
@@ -298,7 +298,7 @@
 		"@types/react": "^17.0.37",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0"
 	},
-	"packageManager": "yarn@3.1.0",
+	"packageManager": "yarn@3.1.1",
 	"dependenciesMeta": {
 		"@react-spring/core@9.3.0": {
 			"built": false
