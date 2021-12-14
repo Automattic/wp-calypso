@@ -16754,19 +16754,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-mocha@npm:^10.0.2":
-  version: 10.0.2
-  resolution: "eslint-plugin-mocha@npm:10.0.2"
-  dependencies:
-    eslint-utils: ^3.0.0
-    ramda: ^0.27.1
-  peerDependencies:
-    eslint: ">=7.0.0"
-  checksum: 77884930d89338b8cb66e5c7b4d950de5606f8aa87f8bf2ce93762a33b1e5b01e328081c8b193038a92e0e677b7f60687ef839087ee365a9049db11ef3e979a5
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-mocha@npm:^10.0.3":
+"eslint-plugin-mocha@npm:^10.0.2, eslint-plugin-mocha@npm:^10.0.3":
   version: 10.0.3
   resolution: "eslint-plugin-mocha@npm:10.0.3"
   dependencies:
