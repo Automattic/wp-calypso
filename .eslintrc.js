@@ -169,6 +169,7 @@ module.exports = {
 				'jsdoc/require-param': 'off',
 				'jsdoc/check-param-names': 'off',
 				'@typescript-eslint/no-empty-function': 'off',
+				'prettier/prettier': [ 'error', { parser: 'babel' } ],
 			},
 		},
 	],
