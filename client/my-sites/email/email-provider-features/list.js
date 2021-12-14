@@ -15,32 +15,32 @@ const getGoogleAppLogos = () => {
 		{
 			image: gmailIcon,
 			imageAltText: translate( 'Gmail icon' ),
-			title: 'Gmail',
+			title: translate( 'Gmail' ),
 		},
 		{
 			image: googleCalendarIcon,
 			imageAltText: translate( 'Google Calendar icon' ),
-			title: 'Google Calendar',
+			title: translate( 'Google Calendar' ),
 		},
 		{
 			image: googleDriveIcon,
 			imageAltText: translate( 'Google Drive icon' ),
-			title: 'Google Drive',
+			title: translate( 'Google Drive' ),
 		},
 		{
 			image: googleDocsIcon,
 			imageAltText: translate( 'Google Docs icon' ),
-			title: 'Google Docs',
+			title: translate( 'Google Docs' ),
 		},
 		{
 			image: googleSheetsIcon,
 			imageAltText: translate( 'Google Sheets icon' ),
-			title: 'Google Sheets',
+			title: translate( 'Google Sheets' ),
 		},
 		{
 			image: googleSlidesIcon,
 			imageAltText: translate( 'Google Slides icon' ),
-			title: 'Google Slides',
+			title: translate( 'Google Slides' ),
 		},
 	];
 };
