@@ -44,7 +44,7 @@
 		"jest": "^27.3.1",
 		"lodash": "^4.17.21",
 		"playwright": "1.16",
-		"postcss": "^8.3.11",
+		"postcss": "^8.4.5",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"webpack": "^5.65.0",
