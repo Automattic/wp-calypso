@@ -248,28 +248,6 @@ const IdealSelect = styled.select`
 		color: transparent;
 		text-shadow: 0 0 0 var( --color-neutral-70 );
 	}
-
-	&.is-error {
-		border-color: var( --color-error );
-	}
-
-	&.is-error:hover {
-		border-color: var( --color-error-dark );
-	}
-
-	&:disabled {
-		color: var( --color-neutral-10 );
-	}
-
-	&:focus {
-		&.is-error {
-			box-shadow: 0 0 0 2px var( --color-error-10 );
-		}
-
-		&.is-error:hover {
-			box-shadow: 0 0 0 2px var( --color-error-20 );
-		}
-	}
 }
 `;
 
