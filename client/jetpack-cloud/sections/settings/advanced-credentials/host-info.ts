@@ -1,5 +1,5 @@
 import { translate, TranslateResult } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { ReactChild } from 'react';
 
 export interface LinkAndInfo {
 	info?: TranslateResult;
@@ -16,23 +16,23 @@ enum InfoTypes {
 
 export interface Text {
 	type: InfoTypes.Text;
-	text: ReactNode;
+	text: ReactChild;
 }
 
 export interface Link {
 	type: InfoTypes.Link;
-	text: ReactNode;
+	text: ReactChild;
 	link: string;
 }
 
 export interface UnorderedList {
 	type: InfoTypes.UnorderedList;
-	items: ReactNode[];
+	items: ReactChild[];
 }
 
 export interface OrderedList {
 	type: InfoTypes.OrderedList;
-	items: ReactNode[];
+	items: ReactChild[];
 }
 
 export interface Line {
@@ -184,9 +184,7 @@ export const topHosts: Host[] = [
 						type: InfoTypes.OrderedList,
 						items: [
 							translate( 'Login to your Bluehost cPanel' ),
-							translate( 'Click the "Advanced" tab towards the left side of the account.', {
-								textOnly: true,
-							} ),
+							translate( 'Click the "Advanced" tab towards the left side of the account.' ),
 							translate(
 								'Choose FTP from the sub-menu, or click the FTP Accounts icon from the Files section.'
 							),
@@ -211,9 +209,7 @@ export const topHosts: Host[] = [
 				sftp: [
 					{
 						type: InfoTypes.Text,
-						text: translate( 'For Bluehost VPS and dedicated servers, the login will be `root`.', {
-							textOnly: true,
-						} ),
+						text: translate( 'For Bluehost VPS and dedicated servers, the login will be `root`.' ),
 					},
 					{
 						type: InfoTypes.Text,
@@ -229,9 +225,7 @@ export const topHosts: Host[] = [
 						type: InfoTypes.OrderedList,
 						items: [
 							translate( 'Login to your Bluehost cPanel' ),
-							translate( 'Click the "Advanced" tab towards the left side of the account.', {
-								textOnly: true,
-							} ),
+							translate( 'Click the "Advanced" tab towards the left side of the account.' ),
 							translate(
 								'Choose FTP from the sub-menu, or click the FTP Accounts icon from the Files section.'
 							),
@@ -240,9 +234,7 @@ export const topHosts: Host[] = [
 					},
 					{
 						type: InfoTypes.Text,
-						text: translate( 'Your Bluehost FTP password is chosen by you using the tools above.', {
-							textOnly: true,
-						} ),
+						text: translate( 'Your Bluehost FTP password is chosen by you using the tools above.' ),
 					},
 					{
 						type: InfoTypes.Line,
@@ -291,12 +283,8 @@ export const topHosts: Host[] = [
 					type: InfoTypes.OrderedList,
 					items: [
 						translate( 'Login to your Bluehost cPanel' ),
-						translate( 'Click the "Advanced" tab towards the left side of the account.', {
-							textOnly: true,
-						} ),
-						translate( 'Click the Shell Access icon under the Security section.', {
-							textOnly: true,
-						} ),
+						translate( 'Click the "Advanced" tab towards the left side of the account.' ),
+						translate( 'Click the Shell Access icon under the Security section.' ),
 						translate( 'Click the Manage SSH Keys button' ),
 						translate( 'Choose generate a new key and complete the form' ),
 					],
