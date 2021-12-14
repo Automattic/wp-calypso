@@ -1,0 +1,36 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+
+.details-card {
+	.details-card__section {
+		margin-top: 16px;
+
+		&.dates {
+			display: flex;
+			margin-top: 0;
+		}
+
+		.details-card__date {
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
+		}
+
+		.details-card__date-label,
+		.details-card__autorenew-text {
+			font-size: $font-body-small;
+			color: var( --studio-gray-50 );
+		}
+
+		.components-base-control__field {
+			margin-bottom: 4px;
+		}
+
+		& .button {
+			color: var( --studio-gray-80 );
+		}
+		& .button:not( :first-child ) {
+			margin-left: 16px;
+		}
+	}
+}

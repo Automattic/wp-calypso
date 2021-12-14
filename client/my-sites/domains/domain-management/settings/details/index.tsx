@@ -1,7 +1,8 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
@@ -13,6 +14,8 @@ import { recordPaymentSettingsClick } from 'calypso/my-sites/domains/domain-mana
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getSiteIsDomainOnly from 'calypso/state/selectors/is-domain-only-site';
+
+import './style.scss';
 
 const Details = ( props ) => {
 	const translate = useTranslate();
@@ -50,7 +53,7 @@ const Details = ( props ) => {
 			: null;
 
 		return (
-			<div>
+			<>
 				<AutoRenewToggle
 					planName={ props.selectedSite.plan.product_name_short }
 					siteDomain={ props.selectedSite.domain }
@@ -58,26 +61,28 @@ const Details = ( props ) => {
 					withTextStatus={ true }
 					toggleSource="registered-domain-status"
 				/>
-				{ autoRenewAdditionalText && <span>{ autoRenewAdditionalText } </span> }
-			</div>
+				{ autoRenewAdditionalText && (
+					<span className="details-card__autorenew-text">{ autoRenewAdditionalText } </span>
+				) }
+			</>
 		);
 	};
 
 	const renderRegisteredDomainInfo = () => {
 		return (
-			<React.Fragment>
-				<div>
-					<div>
-						<div>Registered until</div>
+			<div className="details-card">
+				<div className="details-card__section dates">
+					<div className="details-card__date">
+						<div className="details-card__date-label">Registered until</div>
 						<div>{ renderRegisteredUntil() }</div>
 					</div>
-					<div>
-						<div>Registered on</div>
+					<div className="details-card__date">
+						<div className="details-card__date-label">Registered on</div>
 						<div>{ renderRegisteredOn() }</div>
 					</div>
 				</div>
-				<div>{ renderAutoRenewToggle() }</div>
-				<div>
+				<div className="details-card__section">{ renderAutoRenewToggle() }</div>
+				<div className="details-card__section">
 					<RenewButton
 						purchase={ props.purchase }
 						selectedSite={ props.selectedSite }
@@ -91,7 +96,7 @@ const Details = ( props ) => {
 						{ translate( 'Payment details' ) }
 					</Button>
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	};
 
