@@ -80,7 +80,10 @@ const PluginsBrowser = ( {
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 
-	const { data: paidPlugins = [], isFetchingPaidPlugins } = useWPCOMPlugins( 'all' );
+	const { data: paidPluginsRawList = [], isFetchingPaidPlugins } = useWPCOMPlugins( 'all' );
+	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
+		paidPluginsRawList,
+	] );
 	const recommendedPlugins =
 		useSelector( ( state ) => getRecommendedPlugins( state, selectedSite?.ID ) ) || [];
 	const popularPlugins = useSelector( ( state ) => getPluginsListByCategory( state, 'popular' ) );
@@ -643,6 +646,21 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
 
 	return null;
 };
+
+/**
+ * Multiply the wpcom rating to match the wporg value.
+ * wpcom rating is from 1 to 5 while wporg is from 1 to 100.
+ *
+ * @param plugin
+ * @returns
+ */
+function updateWpComRating( plugin ) {
+	if ( ! plugin || ! plugin.rating ) return plugin;
+
+	plugin.rating *= 20;
+
+	return plugin;
+}
 
 /**
  * Filter the popular plugins list.
