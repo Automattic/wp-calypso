@@ -195,7 +195,6 @@ $width-left-panel-card: 55%;
 	.email-provider-stacked-card__header {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
 
 		@include break-small {
 			flex-direction: row;
@@ -214,14 +213,12 @@ $width-left-panel-card: 55%;
 
 		.email-provider-stacked-card__header {
 			flex-direction: column;
-			width: 100%;
 
 			@include break-small {
 				flex-direction: row;
 			}
 
 			.email-provider-stacked-card__title-price-badge {
-				width: 100%;
 				@include break-small {
 					width: $width-right-panel-card-expanded;
 				}
