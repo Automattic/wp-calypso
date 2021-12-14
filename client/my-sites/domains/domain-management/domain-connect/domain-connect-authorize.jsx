@@ -33,14 +33,8 @@ class DomainConnectAuthorize extends Component {
 
 		wpcom.req
 			.post(
-				'/domains/' +
-					domain +
-					'/dns/providers/' +
-					providerId +
-					'/services/' +
-					serviceId +
-					'/preview',
-				{ params }
+				`/domains/'${ domain }/dns/providers/${ providerId }/services/${ serviceId }/preview`,
+				{ variables: params }
 			)
 			.then(
 				( data ) => {
@@ -83,12 +77,8 @@ class DomainConnectAuthorize extends Component {
 
 		wpcom.req
 			.get(
-				'/domain-connect/authorize/v2/domainTemplates/providers/' +
-					providerId +
-					'/services/' +
-					serviceId +
-					'/apply/authorized',
-				Object.assign( {}, { apiVersion: '1.3' }, params )
+				`/domain-connect/authorize/v2/domainTemplates/providers/${ providerId }/services/${ serviceId }/apply/authorized`,
+				{ apiVersion: '1.3', ...params }
 			)
 			.then(
 				( result ) => {
