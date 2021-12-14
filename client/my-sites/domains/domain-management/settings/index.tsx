@@ -82,6 +82,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 							wpcomDomainName={ wpcomDomain?.domain }
 							selectedSite={ props.selectedSite }
 							purchase={ props.purchase }
+							isLoadingPurchase={ props.isLoadingPurchase }
 						/>
 						<Accordion title="Second element title" subtitle="Second element subtitle">
 							<div>Component placeholder: this one i'snt exapanded by default</div>

@@ -29,6 +29,10 @@ const Details = ( props ) => {
 	};
 
 	const renderAutoRenewToggle = () => {
+		if ( props.isLoadingPurchase ) {
+			return <p className="details-card__autorenew-placeholder" />;
+		}
+
 		if ( ! props.purchase ) {
 			return null;
 		}

@@ -32,6 +32,12 @@
 			color: var( --studio-gray-50 );
 		}
 
+        .details-card__autorenew-placeholder {
+            display: block;
+            width: 80px;
+            @include placeholder();
+        }
+
 		.components-base-control__field {
 			margin-bottom: 4px;
 		}
