@@ -72,10 +72,9 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Patterns', function () {
-		const patternName = 'Two images side by side';
+		const patternName = 'Event details';
 
-		it( 'Add pattern', async function () {
-			await page.pause();
+		it( `Add ${ patternName }`, async function () {
 			await gutenbergEditorPage.addPattern( patternName );
 		} );
 	} );
