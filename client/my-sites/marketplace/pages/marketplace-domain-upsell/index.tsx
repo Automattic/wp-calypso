@@ -17,7 +17,6 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
-import MarketplaceShoppingCart from 'calypso/my-sites/marketplace/components/marketplace-shopping-cart';
 import {
 	MARKETPLACE_FLOW_ID,
 	ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION,
@@ -182,16 +181,6 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 						currentDomain={ selectedDomain }
 						showRecommendationLabel={ false }
 						onUseYourDomainClick={ redirectToUseDomainFlow }
-					/>
-				</div>
-				<div className="marketplace-domain-upsell__shopping-cart-container">
-					<MarketplaceShoppingCart
-						onCheckout={ () =>
-							page( `/checkout${ selectedSite ? `/${ selectedSite.slug }` : '' }` )
-						}
-						selectedDomainProductUUID={ selectedDomainProductUUID }
-						isExpandedBasketView={ isExpandedBasketView }
-						toggleExpandedBasketView={ () => setIsExpandedBasketView( ! isExpandedBasketView ) }
 					/>
 				</div>
 			</div>

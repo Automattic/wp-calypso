@@ -111,7 +111,7 @@ const MarketplacePluginInstall = ( {
 		if ( ! isWporgPluginFetched ) {
 			dispatch( wporgFetchPluginData( productSlug ) );
 		}
-	}, [ isWporgPluginFetched, productSlug ] );
+	}, [ isWporgPluginFetched, productSlug, dispatch ] );
 
 	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
 	// if not, check again in 2s and show an error message
@@ -179,6 +179,7 @@ const MarketplacePluginInstall = ( {
 		siteId,
 		wporgPlugin,
 		productSlug,
+		dispatch,
 	] );
 
 	// Validate completition of atomic transfer flow
@@ -186,7 +187,7 @@ const MarketplacePluginInstall = ( {
 		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
 			setCurrentStep( 2 );
 		}
-	}, [ atomicFlow, automatedTransferStatus ] );
+	}, [ atomicFlow, automatedTransferStatus, currentStep ] );
 
 	// Validate plugin is already installed and activate
 	useEffect( () => {
@@ -313,10 +314,10 @@ const MarketplacePluginInstall = ( {
 			/>
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar>
-				<WordPressWordmark className="marketplace-plugin-upload-status__wpcom-wordmark" />
+				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
-			<div className="marketplace-plugin-upload-status__root">
+			<div className="marketplace-plugin-install__root">
 				{ renderError() || <MarketplaceProgressBar steps={ steps } currentStep={ currentStep } /> }
 			</div>
 		</ThemeProvider>
