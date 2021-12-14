@@ -29,12 +29,19 @@ const Details = ( {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
-	const renderRegisteredUntil = () => {
-		return moment( domain.expiry ).format( 'LL' );
-	};
-
-	const renderRegisteredOn = () => {
-		return moment( domain.registrationDate ).format( 'LL' );
+	const renderDates = () => {
+		return (
+			<>
+				<div className="details-card__date">
+					<div className="details-card__date-label">Registered until</div>
+					<div>{ moment( domain.expiry ).format( 'LL' ) }</div>
+				</div>
+				<div className="details-card__date">
+					<div className="details-card__date-label">Registered on</div>
+					<div>{ moment( domain.registrationDate ).format( 'LL' ) }</div>
+				</div>
+			</>
+		);
 	};
 
 	const renderAutoRenewToggle = () => {
@@ -124,16 +131,7 @@ const Details = ( {
 	const renderRegisteredDomainInfo = () => {
 		return (
 			<div className="details-card">
-				<div className="details-card__section dates">
-					<div className="details-card__date">
-						<div className="details-card__date-label">Registered until</div>
-						<div>{ renderRegisteredUntil() }</div>
-					</div>
-					<div className="details-card__date">
-						<div className="details-card__date-label">Registered on</div>
-						<div>{ renderRegisteredOn() }</div>
-					</div>
-				</div>
+				<div className="details-card__section dates">{ renderDates() }</div>
 				<div className="details-card__section">{ renderAutoRenewToggle() }</div>
 				<div className="details-card__section">
 					{ renderRenewButton() }
@@ -143,23 +141,19 @@ const Details = ( {
 		);
 	};
 
-	const renderMainInfo = () => {
-		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
-		return (
-			<>
-				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-				<Accordion
-					title={ translate( 'Details' ) }
-					subtitle={ translate( 'Registration and auto-renew' ) }
-					expanded
-				>
-					{ renderRegisteredDomainInfo() }
-				</Accordion>
-			</>
-		);
-	};
-
-	return renderMainInfo();
+	// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
+	return (
+		<>
+			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
+			<Accordion
+				title={ translate( 'Details' ) }
+				subtitle={ translate( 'Registration and auto-renew' ) }
+				expanded
+			>
+				{ renderRegisteredDomainInfo() }
+			</Accordion>
+		</>
+	);
 };
 
 export default connect(
