@@ -212,7 +212,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    chalk: ^4.1.0
+    chalk: ^4.1.2
     yargs: ^17.0.1
   bin:
     calypso-doctor: ./cli.js
@@ -1117,7 +1117,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    chalk: ^4.1.0
+    chalk: ^4.1.2
     coffee-script: ^1.12.7
     lodash: ^4.17.21
     mocha: ^8.1.3
@@ -12149,7 +12149,7 @@ __metadata:
     browserslist-useragent: ^3.0.3
     bunyan: ^1.8.15
     chai: ^4.3.4
-    chalk: ^4.0.0
+    chalk: ^4.1.2
     chrono-node: ^2.3.2
     circular-dependency-plugin: ^5.2.0
     classnames: ^2.3.1
@@ -12484,13 +12484,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "chalk@npm:4.1.1"
+"chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.1, chalk@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "chalk@npm:4.1.2"
   dependencies:
     ansi-styles: ^4.1.0
     supports-color: ^7.1.0
-  checksum: 3866c8b96eca56b5ff4e1e9a243b65e4f77694a486a2cc49316d54af9dae463d2c52bd99b9f0b7a924b87faf3a16dd6ed12d3a7442ac385b608f285e54696c18
+  checksum: 4a3fef5cc34975c898ffe77141450f679721df9dde00f6c304353fa9c8b571929123b26a0e4617bde5018977eb655b31970c297b91b63ee83bb82aeb04666880
   languageName: node
   linkType: hard
 
@@ -37784,7 +37784,7 @@ testarmada-magellan@11.0.10:
     caniuse-lite: ^1.0.30001173
     capture-website: ^1.0.0
     chai: ^4.3.4
-    chalk: ^4.0.0
+    chalk: ^4.1.2
     check-node-version: ^4.0.2
     cheerio: ^1.0.0-rc.3
     chroma-js: ^2.1.0
