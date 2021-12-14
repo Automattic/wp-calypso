@@ -18,44 +18,50 @@ import getSiteIsDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 
 import './style.scss';
 
-const Details = ( props ) => {
+const Details = ( {
+	domain,
+	isLoadingPurchase,
+	moment,
+	purchase,
+	redemptionProduct,
+	selectedSite,
+} ) => {
 	const translate = useTranslate();
 
 	const renderRegisteredUntil = () => {
-		return props.moment( props.domain.expiry ).format( 'LL' );
+		return moment( domain.expiry ).format( 'LL' );
 	};
 
 	const renderRegisteredOn = () => {
-		return props.moment( props.domain.registration_date ).format( 'LL' );
+		return moment( domain.registration_date ).format( 'LL' );
 	};
 
 	const renderAutoRenewToggle = () => {
-		if ( ! props.domain.currentUserCanManage ) {
+		if ( ! domain.currentUserCanManage ) {
 			return null;
 		}
 
-		if ( props.isLoadingPurchase ) {
+		if ( isLoadingPurchase ) {
 			return <p className="details-card__autorenew-placeholder" />;
 		}
 
-		if ( ! props.purchase ) {
+		if ( ! purchase ) {
 			return null;
 		}
 
 		let formattedPrice = '';
 
-		if ( props.purchase && props.selectedSite.ID ) {
+		if ( purchase && selectedSite.ID ) {
 			const renewalPrice =
-				getRenewalPrice( props.purchase ) +
-				( props.redemptionProduct ? props.redemptionProduct.cost : 0 );
-			const currencyCode = props.purchase.currencyCode;
+				getRenewalPrice( purchase ) + ( redemptionProduct ? redemptionProduct.cost : 0 );
+			const currencyCode = purchase.currencyCode;
 			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } );
 		}
 
-		const autoRenewAdditionalText = ! isExpiring( props.purchase ) // is this the right way to test if auto-renew is turned on?
+		const autoRenewAdditionalText = ! isExpiring( purchase ) // is this the right way to test if auto-renew is turned on?
 			? translate( 'We will attempt to renew on %(renewalDate)s for %(price)s', {
 					args: {
-						renewalDate: props.moment( props.domain.autoRenewalDate ).format( 'LL' ),
+						renewalDate: moment( domain.autoRenewalDate ).format( 'LL' ),
 						price: formattedPrice,
 					},
 			  } )
@@ -64,9 +70,9 @@ const Details = ( props ) => {
 		return (
 			<>
 				<AutoRenewToggle
-					planName={ props.selectedSite.plan.product_name_short }
-					siteDomain={ props.selectedSite.domain }
-					purchase={ props.purchase }
+					planName={ selectedSite.plan.product_name_short }
+					siteDomain={ selectedSite.domain }
+					purchase={ purchase }
 					withTextStatus={ true }
 					toggleSource="registered-domain-status"
 				/>
@@ -78,39 +84,37 @@ const Details = ( props ) => {
 	};
 
 	const renderRenewButton = () => {
-		if ( props.domain.isPendingRenewal ) {
+		if ( domain.isPendingRenewal ) {
 			return null;
 		}
 
-		if ( ! props.domain.currentUserCanManage ) {
+		if ( ! domain.currentUserCanManage ) {
 			return null;
 		}
 
-		if ( props.domain.expired || isExpiringSoon( props.domain, 30 ) ) {
+		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
 			return null;
 		}
 
-		if ( ! props.isLoadingPurchase && ! props.purchase ) {
+		if ( ! isLoadingPurchase && ! purchase ) {
 			return null;
 		}
 
 		return (
 			<RenewButton
-				purchase={ props.purchase }
-				selectedSite={ props.selectedSite }
-				subscriptionId={ parseInt( props.domain.subscriptionId, 10 ) }
+				purchase={ purchase }
+				selectedSite={ selectedSite }
+				subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
 				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
 				customLabel={ translate( 'Renew now' ) }
-				disabled={ props.isLoadingPurchase }
+				disabled={ isLoadingPurchase }
 			/>
 		);
 	};
 
 	const renderPaymentDetailsButton = () => {
 		return (
-			<Button
-				href={ getManagePurchaseUrlFor( props.selectedSite.slug, props.domain.subscriptionId ) }
-			>
+			<Button href={ getManagePurchaseUrlFor( selectedSite.slug, domain.subscriptionId ) }>
 				{ translate( 'Payment details' ) }
 			</Button>
 		);
@@ -140,11 +144,9 @@ const Details = ( props ) => {
 
 	const renderMainInfo = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
-		const { selectedSite } = props;
-
 		return (
 			<>
-				{ selectedSite.ID && ! props.purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
+				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<Accordion
 					title={ translate( 'Details' ) }
 					subtitle={ translate( 'Registration and auto-renew' ) }

@@ -23,12 +23,18 @@ import Details from './details';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
 
-const Settings = ( props: SettingsPageProps ): JSX.Element => {
+const Settings = ( {
+	currentRoute,
+	domain,
+	domains,
+	isLoadingPurchase,
+	purchase,
+	selectedDomainName,
+	selectedSite,
+}: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	const renderBreadcrumbs = () => {
-		const { selectedSite, currentRoute, selectedDomainName } = props;
-
 		const previousPath = domainManagementEdit(
 			selectedSite?.slug,
 			selectedDomainName,
@@ -54,35 +60,33 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 
 	const renderSettingsCards = () => (
 		<>
-			<DomainEmailInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
-			<DomainTransferInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
-			<DomainDeleteInfoCard selectedSite={ props.selectedSite } domain={ props.domain } />
+			<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
+			<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
+			<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
 		</>
 	);
 
-	if ( ! props.domain ) {
+	if ( ! domain ) {
 		return <span>Loading placeholder</span>;
 	}
 
-	const wpcomDomain = getWpcomDomain( props.domains );
+	const wpcomDomain = getWpcomDomain( domains );
 
 	return (
 		<Main wideLayout className="settings">
-			{ props.selectedSite.ID && ! props.purchase && (
-				<QuerySitePurchases siteId={ props.selectedSite.ID } />
-			) }
+			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
-			<SettingsHeader domain={ props.domain } />
+			<SettingsHeader domain={ domain } />
 			<TwoColumnsLayout
 				content={
 					<>
 						<Details
-							domain={ props.domain }
+							domain={ domain }
 							wpcomDomainName={ wpcomDomain?.domain }
-							selectedSite={ props.selectedSite }
-							purchase={ props.purchase }
-							isLoadingPurchase={ props.isLoadingPurchase }
+							selectedSite={ selectedSite }
+							purchase={ purchase }
+							isLoadingPurchase={ isLoadingPurchase }
 						/>
 						<Accordion title="Second element title" subtitle="Second element subtitle">
 							<div>Component placeholder: this one i'snt exapanded by default</div>
