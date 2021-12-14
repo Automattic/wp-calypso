@@ -10697,10 +10697,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autosize@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "autosize@npm:4.0.2"
-  checksum: 35124acbe2b9c6363854e74c0c604989a4a54afa06fb62163b9b2f29e0320a78e8fc078977dc2ae77857d7ef301e74990c6a57a6f7faf16b6c415cb72ab10c3d
+"autosize@npm:^4.0.2, autosize@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "autosize@npm:4.0.4"
+  checksum: 3397348ff385702a4eca49b65b45e27c6e1881414e4eddc9ceaa6dbcda9dda24b5c01d021d2888ea745ebcc6353395dc5f5735ad5e76f076c864dd95e2ffb71d
   languageName: node
   linkType: hard
 
@@ -12146,7 +12146,7 @@ __metadata:
     "@wordpress/viewport": ^4.0.6
     "@wordpress/warning": ^2.2.2
     autoprefixer: ^10.2.5
-    autosize: ^4.0.2
+    autosize: ^4.0.4
     body-parser: ^1.19.0
     browser-filesaver: ^1.1.1
     browserslist-useragent: ^3.0.3
