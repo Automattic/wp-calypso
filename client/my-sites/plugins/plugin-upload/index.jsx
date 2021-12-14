@@ -17,10 +17,7 @@ import {
 	isEligibleForAutomatedTransfer,
 	getAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
-import {
-	pluginInstallationStateChange,
-	productToBeInstalled,
-} from 'calypso/state/marketplace/purchase-flow/actions';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
@@ -177,7 +174,6 @@ const flowRightArgs = [
 		initiateAutomatedTransferWithPluginZip,
 		successNotice,
 		productToBeInstalled,
-		pluginInstallationStateChange,
 	} ),
 	localize,
 ];
