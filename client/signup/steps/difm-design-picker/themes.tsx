@@ -6,6 +6,10 @@ export default [
 					name: 'Creative Arts',
 					slug: 'creative-arts',
 				},
+				{
+					name: 'Blog',
+					slug: 'blog',
+				},
 			],
 		},
 		id: 'russell',
@@ -18,6 +22,10 @@ export default [
 					name: 'Creative Arts',
 					slug: 'creative-arts',
 				},
+				{
+					name: 'Blog',
+					slug: 'blog',
+				},
 			],
 		},
 		id: 'zoologist',
@@ -25,13 +33,27 @@ export default [
 	},
 	{
 		taxonomies: {
-			theme_subject: [ { name: 'Professional Services', slug: 'professional-services' } ],
+			theme_subject: [
+				{ name: 'Professional Services', slug: 'professional-services' },
+				{
+					name: 'Blog',
+					slug: 'blog',
+				},
+			],
 		},
 		id: 'quadrat',
 		name: 'Quadrat',
 	},
 	{
-		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		taxonomies: {
+			theme_subject: [
+				{ name: 'Creative Arts', slug: 'creative-arts' },
+				{
+					name: 'Blog',
+					slug: 'blog',
+				},
+			],
+		},
 		id: 'geologist',
 		name: 'Geologist',
 	},
@@ -68,6 +90,10 @@ export default [
 				{
 					name: 'Creative Arts',
 					slug: 'creative-arts',
+				},
+				{
+					name: 'Blog',
+					slug: 'blog',
 				},
 			],
 		},
@@ -216,6 +242,10 @@ export default [
 					name: 'Creative Arts',
 					slug: 'creative-arts',
 				},
+				{
+					name: 'Blog',
+					slug: 'blog',
+				},
 			],
 		},
 		id: 'independent-publisher-2',
@@ -227,6 +257,11 @@ export default [
 				{
 					name: 'Local Services',
 					slug: 'local-services',
+				},
+
+				{
+					name: 'Blog',
+					slug: 'blog',
 				},
 			],
 		},
@@ -240,6 +275,10 @@ export default [
 					name: 'Creative Arts',
 					slug: 'creative-arts',
 				},
+				{
+					name: 'Blog',
+					slug: 'blog',
+				},
 			],
 		},
 		id: 'twentyfifteen',
@@ -251,6 +290,10 @@ export default [
 				{
 					name: 'Creative Arts',
 					slug: 'creative-arts',
+				},
+				{
+					name: 'Blog',
+					slug: 'blog',
 				},
 			],
 		},
