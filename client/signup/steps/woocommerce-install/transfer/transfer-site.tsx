@@ -1,4 +1,3 @@
-import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
@@ -18,7 +17,6 @@ import Progress from './progress';
 import './style.scss';
 
 export default function TransferSite(): ReactElement | null {
-	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
 	const [ progress, setProgress ] = useState( 0.1 );
@@ -33,7 +31,7 @@ export default function TransferSite(): ReactElement | null {
 	);
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
-	// Initiate Atomic transfer
+	// Initiate Atomic transfer or software install
 	useEffect( () => {
 		if ( ! siteId ) {
 			return;
@@ -46,7 +44,7 @@ export default function TransferSite(): ReactElement | null {
 		() => {
 			dispatch( requestLatestAtomicTransfer( siteId ) );
 		},
-		transferStatus === transferStates.COMPLETED || transferFailed ? null : 3000
+		transferStatus === transferStates.COMPLETED ? null : 3000
 	);
 
 	// Poll for software status
@@ -71,21 +69,32 @@ export default function TransferSite(): ReactElement | null {
 				setProgress( 0.4 );
 				break;
 			case transferStates.PROVISIONED:
-				setProgress( 0.6 );
+				setProgress( 0.5 );
 				break;
 			case transferStates.COMPLETED:
-				if ( softwareStatus?.applied ) {
-					setProgress( 1 );
-					window.location.href = wcAdmin;
-				}
-				setProgress( 0.9 );
+				setProgress( 0.7 );
 				break;
 		}
 
 		if ( transferFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
 		}
-	}, [ siteId, transferStatus, transferFailed, softwareStatus, wcAdmin, __ ] );
+	}, [ siteId, transferStatus, transferFailed ] );
+
+	// Redirect to wc-admin once software installation is confirmed.
+	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		if ( softwareStatus?.applied ) {
+			setProgress( 1 );
+			// Allow progress bar to complete
+			setTimeout( () => {
+				window.location.href = wcAdmin;
+			}, 1000 );
+		}
+	}, [ siteId, softwareStatus, wcAdmin ] );
 
 	// todo: transferFailed states need testing and if required, pass the message through correctly
 	return (
