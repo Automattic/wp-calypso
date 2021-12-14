@@ -124,13 +124,6 @@ export class PluginMeta extends Component {
 		);
 	}
 
-	getPlan() {
-		if ( ! this.props.selectedSite ) {
-			return false;
-		}
-		return this.props.selectedSite.plan();
-	}
-
 	isWpcomPreinstalled = () => {
 		const installedPlugins = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
 
