@@ -59,4 +59,29 @@
 		}
 		margin-bottom: 1.5em;
 	}
+
+	&--redesigned {
+		padding: 0;
+		box-shadow: none;
+
+		.contacts-privacy__main {
+			padding-bottom: 24px;
+		}
+
+		.contact-display {
+			padding-bottom: 16px;
+
+			&__content {
+				background-color: transparent;
+				padding: 0;
+				line-height: 20px;
+				font-size: $font-body-small;
+				color: var( --studio-gray-80 );
+
+				p {
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
 }

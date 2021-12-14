@@ -12,6 +12,7 @@ import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/com
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import ContactsPrivacyCard from 'calypso/my-sites/domains/domain-management/contacts-privacy/contacts-card';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
@@ -155,7 +156,20 @@ const Settings = ( {
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<SettingsHeader domain={ domain } />
-			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
+			<TwoColumnsLayout
+				content={
+					<>
+						{ renderMainContent() }
+						<Accordion title="Second element title" subtitle="Second element subtitle">
+							<ContactsPrivacyCard
+								selectedSite={ selectedSite }
+								selectedDomainName={ selectedDomainName }
+							></ContactsPrivacyCard>
+						</Accordion>
+					</>
+				}
+				sidebar={ renderSettingsCards() }
+			/>
 		</Main>
 	);
 };
