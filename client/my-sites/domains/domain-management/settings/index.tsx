@@ -5,6 +5,7 @@ import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layo
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { getWpcomDomain } from 'calypso/lib/domains/get-wpcom-domain';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -18,6 +19,7 @@ import type {
 	SettingsPagePassedProps,
 	SettingsPageProps,
 } from './types';
+import Details from './details';
 
 const Settings = ( props: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
@@ -56,28 +58,28 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 		</>
 	);
 
+	if ( ! domain ) {
+		return <span>Loading placeholder</span>;
+	}
+
+	const wpcomDomain = getWpcomDomain( props.domains );
+
 	return (
-		<Main wideLayout>
+		<Main wideLayout className="domain-settings">
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<SettingsHeader domain={ props.domain } />
 			<TwoColumnsLayout
 				content={
 					<>
-						Page goes here.
-						{ /* Placeholder to test accordion */ }
-						<div style={ { marginTop: '30px' } }>
-							<Accordion
-								title="First element title"
-								subtitle="First element subtitle"
-								expanded={ true }
-							>
-								<div>Component placeholder: this one is exapanded by default</div>
-							</Accordion>
-							<Accordion title="Second element title" subtitle="Second element subtitle">
-								<div>Component placeholder: this one i'snt exapanded by default</div>
-							</Accordion>
-						</div>
+						<Details
+							domain={ domain }
+							wpcomDomainName={ wpcomDomain?.domain }
+							selectedSite={ props.selectedSite }
+						/>
+						<Accordion title="Second element title" subtitle="Second element subtitle">
+							<div>Component placeholder: this one i'snt exapanded by default</div>
+						</Accordion>
 					</>
 				}
 				sidebar={ renderSettingsCards() }
