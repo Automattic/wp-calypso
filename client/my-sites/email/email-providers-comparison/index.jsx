@@ -427,6 +427,15 @@ class EmailProvidersComparison extends Component {
 			</span>
 		) : null;
 
+		const starLabel = productIsDiscounted
+			? translate( '%(discount)d%% off!', {
+					args: {
+						discount: gSuiteProduct.sale_coupon.discount,
+					},
+					comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
+			  } )
+			: null;
+
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
 			( this.state.googleUsers ?? [] ).length === 0
@@ -486,6 +495,7 @@ class EmailProvidersComparison extends Component {
 				providerKey="google"
 				logo={ { path: googleWorkspaceIcon } }
 				title={ getGoogleMailServiceFamily() }
+				starLabel={ starLabel }
 				description={ translate(
 					'Professional email integrated with Google Meet and other productivity tools from Google.'
 				) }
