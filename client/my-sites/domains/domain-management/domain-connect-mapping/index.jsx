@@ -20,8 +20,6 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-const wpcom = wp.undocumented();
-
 class DomainConnectMapping extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
@@ -186,12 +184,13 @@ class DomainConnectMapping extends Component {
 			'?' +
 			this.getRedirectUriStatusString();
 
-		wpcom
-			.getDomainConnectSyncUxUrl(
-				this.props.selectedDomainName,
-				'WordPress.com',
-				'hosting',
-				redirectUri
+		const providerId = 'WordPress.com';
+		const serviceId = 'hosting';
+
+		wp.req
+			.get(
+				`/domains/${ this.props.selectedDomainName }/dns/providers/${ providerId }/services/${ serviceId }/syncurl`,
+				{ redirect_uri: redirectUri }
 			)
 			.then(
 				( data ) => {

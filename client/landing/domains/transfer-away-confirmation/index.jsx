@@ -7,8 +7,6 @@ import DomainsLandingContentCard from '../content-card';
 import DomainsLandingHeader from '../header';
 import { getMaintenanceMessageFromError } from '../utils';
 
-const wpcom = wp.undocumented();
-
 const VerifyConfirmationCommand = {
 	acceptTransfer: 'accept-transfer',
 	denyTransfer: 'deny-transfer',
@@ -29,7 +27,7 @@ class TransferAwayConfirmationPage extends Component {
 		const { domain, recipientId, token } = this.props;
 		const { verifyEmail } = VerifyConfirmationCommand;
 
-		wpcom.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, verifyEmail ).then(
+		this.verifyOutboundTransferConfirmation( domain, recipientId, token, verifyEmail ).then(
 			() => {
 				this.setState( this.getConfirmationSelectState() );
 			},
@@ -37,6 +35,14 @@ class TransferAwayConfirmationPage extends Component {
 				this.setErrorState( error );
 			}
 		);
+	}
+
+	verifyOutboundTransferConfirmation( domain, recipientId, token, command ) {
+		return wp.req.get( `/domains/${ domain }/outbound-transfer-confirmation-check`, {
+			recipient_id: recipientId,
+			token,
+			command,
+		} );
 	}
 
 	getLoadingState() {
@@ -57,16 +63,14 @@ class TransferAwayConfirmationPage extends Component {
 
 		this.setState( { isProcessingRequest: true } );
 
-		wpcom
-			.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, acceptTransfer )
-			.then(
-				() => {
-					this.setSuccessState( 'accept_transfer_success' );
-				},
-				() => {
-					this.setErrorState( { error: 'accept_transfer_failed' } );
-				}
-			);
+		this.verifyOutboundTransferConfirmation( domain, recipientId, token, acceptTransfer ).then(
+			() => {
+				this.setSuccessState( 'accept_transfer_success' );
+			},
+			() => {
+				this.setErrorState( { error: 'accept_transfer_failed' } );
+			}
+		);
 	};
 
 	cancelTransfer = () => {
@@ -75,16 +79,14 @@ class TransferAwayConfirmationPage extends Component {
 
 		this.setState( { isProcessingRequest: true } );
 
-		wpcom
-			.domainsVerifyOutboundTransferConfirmation( domain, recipientId, token, denyTransfer )
-			.then(
-				() => {
-					this.setSuccessState( 'cancel_transfer_success' );
-				},
-				() => {
-					this.setErrorState( { error: 'cancel_transfer_failed' } );
-				}
-			);
+		this.verifyOutboundTransferConfirmation( domain, recipientId, token, denyTransfer ).then(
+			() => {
+				this.setSuccessState( 'cancel_transfer_success' );
+			},
+			() => {
+				this.setErrorState( { error: 'cancel_transfer_failed' } );
+			}
+		);
 	};
 
 	getConfirmationSelectState = () => {
