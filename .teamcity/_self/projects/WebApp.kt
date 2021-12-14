@@ -3,6 +3,7 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.playwright.prepareEnvironment
+import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
@@ -167,6 +168,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	steps {
+		mergeTrunk()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """

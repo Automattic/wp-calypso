@@ -2,7 +2,7 @@ package _self.lib.wpcom
 
 import Settings
 import _self.bashNodeScript
-import _self.yarn_install_cmd
+import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParametrizedWithType
@@ -83,28 +83,11 @@ open class WPComPluginBuild(
 		}
 
 		steps {
+			mergeTrunk()
 			bashNodeScript {
 				name = "Prepare environment"
 				scriptContent = """
 					set -x
-
-					# Merge the trunk branch first. This way, our builds and tests
-					# include the latest merged version of the plugin being built.
-					# Otherwise, we can get into a situation where the current plugin
-					# build appears "different", but that's just because it's older.
-					if [[ "%teamcity.build.branch.is_default%" != "true" ]] ; then
-						# git operations will fail if no user is set.
-						git config --local user.email "tcbuildagent@example.com"
-						git config --local user.name "TeamCity Build Agent"
-						# Note that `trunk` is already up-to-date from the `teamcity.git.fetchAllHeads`
-						# parameter in the project settings.
-						if ! git merge trunk ; then
-							echo "##teamcity[buildProblem description='There is a merge conflict with trunk. Rebase on trunk to resolve this problem.' identity='merge_conflict']]"
-							exit
-						fi
-						# See if the trunk commit shows up:
-						git --no-pager log --oneline -n 5
-					fi
 
 					# Update composer
 					composer install

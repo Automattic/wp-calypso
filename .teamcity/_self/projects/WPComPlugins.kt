@@ -13,7 +13,6 @@ object WPComPlugins : Project({
 	params {
 		param("docker_image", "registry.a8c.com/calypso/ci-wpcom:latest")
 		param("build.prefix", "1")
-		param("teamcity.git.fetchAllHeads", "true")
 	}
 
 	buildType(EditingToolkit)
