@@ -19,10 +19,12 @@ class RenewButton extends Component {
 		customLabel: PropTypes.string,
 		tracksProps: PropTypes.object,
 		purchase: PropTypes.object,
+		disabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		tracksProps: {},
+		disabled: false,
 	};
 
 	handleRenew = () => {
@@ -40,6 +42,7 @@ class RenewButton extends Component {
 			reactivate,
 			customLabel,
 			subscriptionId,
+			disabled,
 		} = this.props;
 
 		if ( ! subscriptionId ) {
@@ -78,6 +81,7 @@ class RenewButton extends Component {
 					primary={ this.props.primary }
 					className={ buttonClasses }
 					onClick={ this.handleRenew }
+					disabled={ disabled }
 				>
 					{ buttonLabel }
 				</Button>

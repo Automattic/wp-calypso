@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
@@ -29,6 +30,10 @@ const Details = ( props ) => {
 	};
 
 	const renderAutoRenewToggle = () => {
+		if ( ! props.domain.currentUserCanManage ) {
+			return null;
+		}
+
 		if ( props.isLoadingPurchase ) {
 			return <p className="details-card__autorenew-placeholder" />;
 		}
@@ -72,6 +77,45 @@ const Details = ( props ) => {
 		);
 	};
 
+	const renderRenewButton = () => {
+		if ( props.domain.isPendingRenewal ) {
+			return null;
+		}
+
+		if ( ! props.domain.currentUserCanManage ) {
+			return null;
+		}
+
+		if ( props.domain.expired || isExpiringSoon( props.domain, 30 ) ) {
+			return null;
+		}
+
+		if ( ! props.isLoadingPurchase && ! props.purchase ) {
+			return null;
+		}
+
+		return (
+			<RenewButton
+				purchase={ props.purchase }
+				selectedSite={ props.selectedSite }
+				subscriptionId={ parseInt( props.domain.subscriptionId, 10 ) }
+				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
+				customLabel={ translate( 'Renew now' ) }
+				disabled={ props.isLoadingPurchase }
+			/>
+		);
+	};
+
+	const renderPaymentDetailsButton = () => {
+		return (
+			<Button
+				href={ getManagePurchaseUrlFor( props.selectedSite.slug, props.domain.subscriptionId ) }
+			>
+				{ translate( 'Payment details' ) }
+			</Button>
+		);
+	};
+
 	const renderRegisteredDomainInfo = () => {
 		return (
 			<div className="details-card">
@@ -87,18 +131,8 @@ const Details = ( props ) => {
 				</div>
 				<div className="details-card__section">{ renderAutoRenewToggle() }</div>
 				<div className="details-card__section">
-					<RenewButton
-						purchase={ props.purchase }
-						selectedSite={ props.selectedSite }
-						subscriptionId={ parseInt( props.domain.subscriptionId, 10 ) }
-						tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
-						customLabel={ translate( 'Renew now' ) }
-					/>
-					<Button
-						href={ getManagePurchaseUrlFor( props.selectedSite.slug, props.domain.subscriptionId ) }
-					>
-						{ translate( 'Payment details' ) }
-					</Button>
+					{ renderRenewButton() }
+					{ renderPaymentDetailsButton() }
 				</div>
 			</div>
 		);
