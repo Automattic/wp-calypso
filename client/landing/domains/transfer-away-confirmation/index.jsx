@@ -22,8 +22,7 @@ class TransferAwayConfirmationPage extends Component {
 
 	state = this.getLoadingState();
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		const { domain, recipientId, token } = this.props;
 		const { verifyEmail } = VerifyConfirmationCommand;
 
