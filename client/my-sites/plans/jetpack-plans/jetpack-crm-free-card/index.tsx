@@ -81,6 +81,7 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { duration, siteId } ) =
 			buttonLabel={ translate( 'Get CRM' ) }
 			buttonURL={ CRM_FREE_URL }
 			onButtonClick={ onButtonClick }
+			collapseFeaturesOnMobile
 		/>
 	);
 };
