@@ -43,11 +43,11 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 			.then( () => {
 				setEmailResendCount( emailResendCount + 1 );
 				dispatch(
-					successNotice( translate( 'Verification mail resent. Please check your inbox.' ) )
+					successNotice( translate( 'Verification email resent. Please check your inbox.' ) )
 				);
 			} )
 			.catch( () => {
-				dispatch( errorNotice( translate( 'Unable to resend mail. Please try again later.' ) ) );
+				dispatch( errorNotice( translate( 'Unable to resend email. Please try again later.' ) ) );
 			} );
 	};
 
