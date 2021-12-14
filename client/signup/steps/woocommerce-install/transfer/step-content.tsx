@@ -6,7 +6,7 @@ export default function StepContent( {
 	subtitle,
 	children,
 }: {
-	title: string;
+	title?: string;
 	subtitle?: string;
 	children: ReactElement | null;
 } ): ReactElement {
@@ -14,7 +14,7 @@ export default function StepContent( {
 		<>
 			<div className="transfer__heading-wrapper woocommerce-install__heading-wrapper">
 				<div className="transfer__heading woocommerce-install__heading">
-					<Title>{ title }</Title>
+					{ title && <Title>{ title }</Title> }
 					{ subtitle && <SubTitle>{ subtitle }</SubTitle> }
 				</div>
 			</div>

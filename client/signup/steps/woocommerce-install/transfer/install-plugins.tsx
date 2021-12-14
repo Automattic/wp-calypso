@@ -1,4 +1,3 @@
-import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -15,7 +14,6 @@ import StepContent from './step-content';
 import './style.scss';
 
 export default function InstallPlugins(): ReactElement | null {
-	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -60,7 +58,7 @@ export default function InstallPlugins(): ReactElement | null {
 	return (
 		<>
 			{
-				<StepContent title={ __( 'Building your store' ) }>
+				<StepContent>
 					<LoadingEllipsis />
 				</StepContent>
 			}
