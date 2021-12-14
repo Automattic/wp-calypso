@@ -75,7 +75,6 @@
 		"network-connection": true,
 		"p2/p2-plus": true,
 		"p2/preapproved-domains": false,
-		"perfmon": true,
 		"plans/personal-plan": true,
 		"post-editor/checkout-overlay": true,
 		"publicize-preview": true,
