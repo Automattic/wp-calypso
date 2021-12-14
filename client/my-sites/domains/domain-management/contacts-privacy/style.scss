@@ -63,6 +63,7 @@
 	&--redesigned {
 		padding: 0;
 		box-shadow: none;
+		margin-bottom: 0;
 
 		.contacts-privacy {
 			&__main {
@@ -79,6 +80,7 @@
 				&-item {
 					font-size: $font-body-small;
 					color: var( --studio-gray-80 );
+					margin-bottom: 0;
 
 					flex: 1 0 100%;
 
