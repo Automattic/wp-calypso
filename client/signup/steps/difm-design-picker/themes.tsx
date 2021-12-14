@@ -91,6 +91,10 @@ export default [
 					name: 'Creative Arts',
 					slug: 'creative-arts',
 				},
+				{
+					name: 'Blog',
+					slug: 'blog',
+				},
 			],
 		},
 		id: 'spearhead',
@@ -237,6 +241,10 @@ export default [
 				{
 					name: 'Creative Arts',
 					slug: 'creative-arts',
+				},
+				{
+					name: 'Blog',
+					slug: 'blog',
 				},
 			],
 		},
