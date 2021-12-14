@@ -35,6 +35,7 @@
 		"jetpack/more-informative-scan": false,
 		"jetpack/search-product": true,
 		"jetpack/pricing-page": true,
+		"jetpack/pricing-page-annual-only": false,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,

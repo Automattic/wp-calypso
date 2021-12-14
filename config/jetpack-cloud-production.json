@@ -37,6 +37,7 @@
 		"jetpack/backups-date-picker": true,
 		"jetpack/more-informative-scan": false,
 		"jetpack/pricing-page": true,
+		"jetpack/pricing-page-annual-only": false,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
