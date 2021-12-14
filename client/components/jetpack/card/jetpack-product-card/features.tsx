@@ -1,52 +1,57 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import FeaturesItem from './features-item';
 import type { ProductCardFeatures, ProductCardFeaturesItem } from './types';
 
 export interface Props {
 	className?: string;
+	productSlug?: string;
 	features: ProductCardFeatures;
 	collapseFeaturesOnMobile?: boolean;
 }
 
 const JetpackProductCardFeatures: React.FC< Props > = ( {
 	className,
+	productSlug,
 	features: { items },
 	collapseFeaturesOnMobile,
 } ) => {
 	const translate = useTranslate();
+	const listRef = useRef< HTMLUListElement >();
 	const [ isExpanded, expand ] = useState( ! collapseFeaturesOnMobile );
+	const listId = `${ productSlug }-features-list`;
 
+	const focusOnList = useCallback( () => listRef.current?.focus?.(), [ listRef ] );
 	const onClick = useCallback( () => expand( ! isExpanded ), [ expand, isExpanded ] );
-	const onKeyPress = useCallback(
-		( { code } ) => {
-			if ( code === 'Enter' ) {
-				expand( ! isExpanded );
-			}
-		},
-		[ expand, isExpanded ]
-	);
+
+	useEffect( () => {
+		if ( collapseFeaturesOnMobile && isExpanded ) {
+			focusOnList();
+		}
+	}, [ collapseFeaturesOnMobile, isExpanded, focusOnList ] );
 
 	return (
 		<section className={ classnames( className, 'jetpack-product-card__features' ) }>
 			{ collapseFeaturesOnMobile && (
-				<header
-					className="jetpack-product-card__features-header"
-					role="button"
-					tabIndex={ 0 }
+				<button
+					className="jetpack-product-card__features-button"
 					onClick={ onClick }
-					onKeyPress={ onKeyPress }
+					aria-controls={ listId }
+					aria-expanded={ isExpanded }
 				>
 					<span>{ translate( 'Features include' ) }</span>
 					<Gridicon icon={ `chevron-${ isExpanded ? 'up' : 'down' }` } size={ 18 } />
-				</header>
+				</button>
 			) }
 			<ul
+				id={ listId }
 				className={ classnames( className, 'jetpack-product-card__features-list', {
 					'is-collapsed': ! isExpanded,
 				} ) }
+				tabIndex={ -1 }
+				ref={ listRef }
 			>
 				{ ( items as ProductCardFeaturesItem[] ).map( ( item, i ) => (
 					<FeaturesItem key={ i } item={ item } />

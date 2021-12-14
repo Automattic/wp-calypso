@@ -173,6 +173,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 				{ item.features && item.features.items.length > 0 && (
 					<JetpackProductCardFeatures
+						productSlug={ item.productSlug }
 						features={ item.features }
 						collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
 					/>

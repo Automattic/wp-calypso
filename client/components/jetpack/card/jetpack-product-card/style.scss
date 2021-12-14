@@ -172,18 +172,27 @@
 	}
 }
 
-.jetpack-product-card__features-header {
+.jetpack-product-card__features-button {
 	display: flex;
 	align-content: center;
 
+	margin-bottom: 1rem;
+
 	color: var( --color-text-subtle );
 
+	font-family: inherit;
+	font-size: 1rem;
 	font-weight: 700;
 
 	cursor: pointer;
 
+	&:focus-visible {
+		outline: 1px dotted;
+		outline-offset: 2px;
+	}
+
 	.gridicon {
-		margin: 3px 0 0 0.5rem;
+		margin: 1px 0 0 0.5rem;
 	}
 
 	@include break-small {
