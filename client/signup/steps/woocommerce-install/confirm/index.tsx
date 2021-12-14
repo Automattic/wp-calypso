@@ -126,7 +126,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			);
 		}
 
-		if ( warnings.length || isAtomicSite ) {
+		if ( warnings.length ) {
 			return (
 				<WarningsOrHoldsSection>
 					<Divider />
