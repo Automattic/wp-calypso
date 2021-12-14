@@ -203,7 +203,6 @@ $width-left-panel-card: 55%;
 
 		.email-provider-stacked-card__provider-card-main-details {
 			margin-top: 12px;
-			width: 100px;
 			margin-left: auto;
 
 			@include break-small {
@@ -231,12 +230,7 @@ $width-left-panel-card: 55%;
 	}
 }
 
-.email-provider-stacked-card__provider-card-main-details {
-	width: 120px;
-}
-
 .email-provider-stacked-card__title-container {
-	width: 100%;
 	display: flex;
 	flex-direction: column;
 	padding-left: 12px;
@@ -247,40 +241,33 @@ $width-left-panel-card: 55%;
 	}
 }
 
-.email-providers-stacked-comparison__main.main {
-	margin: 12px auto;
+.card.action-panel.promo-card.email-providers-stacked-comparison__provider-card {
+	display: flex;
+	flex-direction: column;
 
-	@include break-mobile {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
 	}
 
-	.card.action-panel.promo-card.email-providers-stacked-comparison__provider-card {
+	.action-panel__figure {
 		display: flex;
-		flex-direction: column;
-		@include breakpoint-deprecated( '>660px' ) {
-			flex-direction: row;
+		margin-top: 3px;
+		flex-direction: row;
+		text-align: left;
+		margin-bottom: 0px;
+		.professional-email-card__logo {
+			min-width: 48px;
 		}
 
-		.action-panel__figure {
-			display: flex;
-			margin-top: 3px;
-			flex-direction: row;
-			text-align: left;
-			margin-bottom: 0px;
-			.professional-email-card__logo {
-				min-width: 48px;
-			}
+		@include breakpoint-deprecated( '<660px' ) {
+			max-width: 100%;
+		}
 
-			@include breakpoint-deprecated( '<660px' ) {
-				max-width: 100%;
-			}
+		@include break-mobile {
+			order: 1;
 
-			@include break-mobile {
-				order: 1;
-
-				&.align-left {
-					order: -1;
-				}
+			&.align-left {
+				order: -1;
 			}
 		}
 	}
