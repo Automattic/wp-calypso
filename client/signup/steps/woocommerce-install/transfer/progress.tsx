@@ -24,9 +24,9 @@ export default function Progress( { progress }: { progress: number } ): ReactEle
 			}
 		}, 1000 );
 
-		if ( simulatedProgress >= 0.8 ) {
+		if ( simulatedProgress >= 0.8 || progress >= 0.8 ) {
 			setStep( __( 'Turning on the lights' ) );
-		} else if ( simulatedProgress >= 0.6 ) {
+		} else if ( simulatedProgress >= 0.6 || progress >= 0.6 ) {
 			setStep( __( 'Last paint touchups' ) );
 		} else if ( simulatedProgress >= 0 ) {
 			setStep( __( 'Building your store' ) );
@@ -39,7 +39,9 @@ export default function Progress( { progress }: { progress: number } ): ReactEle
 		<StepContent title={ step }>
 			<div
 				className="transfer__progress-bar"
-				style={ { '--progress': simulatedProgress } as React.CSSProperties }
+				style={
+					{ '--progress': simulatedProgress > 1 ? 1 : simulatedProgress } as React.CSSProperties
+				}
 			/>
 		</StepContent>
 	);

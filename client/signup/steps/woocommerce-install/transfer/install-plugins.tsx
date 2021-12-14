@@ -1,6 +1,5 @@
-import { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import {
 	requestAtomicSoftwareStatus,
@@ -9,8 +8,7 @@ import {
 import { getAtomicSoftwareStatus } from 'calypso/state/atomic/software/selectors';
 import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import StepContent from './step-content';
-
+import Progress from './progress';
 import './style.scss';
 
 export default function InstallPlugins(): ReactElement | null {
@@ -22,6 +20,7 @@ export default function InstallPlugins(): ReactElement | null {
 	);
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
+	const [ progress, setProgress ] = useState( 0.6 );
 	// Install Woo on plans software set
 	useEffect( () => {
 		if ( ! siteId ) {
@@ -37,7 +36,7 @@ export default function InstallPlugins(): ReactElement | null {
 			if ( ! siteId ) {
 				return;
 			}
-
+			setProgress( progress + 0.2 );
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		softwareStatus.applied ? null : 3000
@@ -50,18 +49,14 @@ export default function InstallPlugins(): ReactElement | null {
 		}
 
 		if ( softwareStatus.applied ) {
-			window.location.href = wcAdmin;
+			setProgress( 1 );
+			// Allow progress bar to complete
+			setTimeout( () => {
+				window.location.href = wcAdmin;
+			}, 1000 );
 		}
 	}, [ siteId, softwareStatus, wcAdmin ] );
 
 	// todo: Need error handling on these requests
-	return (
-		<>
-			{
-				<StepContent>
-					<LoadingEllipsis />
-				</StepContent>
-			}
-		</>
-	);
+	return <Progress progress={ progress } />;
 }
