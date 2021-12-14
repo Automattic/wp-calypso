@@ -1,19 +1,29 @@
-@import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .details-card {
 	.details-card__section {
 		margin-top: 16px;
 
 		&.dates {
-			display: flex;
-			margin-top: 0;
+			display: block;
+
+			@include break-mobile {
+				display: flex;
+				margin-top: 0;
+			}
 		}
 
 		.details-card__date {
-			display: flex;
-			flex-direction: column;
-			flex-grow: 1;
+			display: block;
+			margin-top: 16px;
+
+			@include break-mobile {
+				display: flex;
+				flex-direction: column;
+				flex-grow: 1;
+				margin-top: 0;
+			}
 		}
 
 		.details-card__date-label,
@@ -24,6 +34,9 @@
 
 		.components-base-control__field {
 			margin-bottom: 4px;
+		}
+		.components-toggle-control__label {
+			font-size: $font-body-small;
 		}
 
 		& .button {
