@@ -548,7 +548,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG_ENV=test
 					export PLAYWRIGHT_BROWSERS_PATH=0
 					export TEAMCITY_VERSION=2021
-					export HEADLESS=true
+					export HEADLESS=false
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
@@ -559,7 +559,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -684,12 +684,12 @@ object PreReleaseE2ETests : BuildType({
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
-				export HEADLESS=true
+				export HEADLESS=false
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -784,12 +784,12 @@ object QuarantinedE2ETests: BuildType( {
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
-				export HEADLESS=true
+				export HEADLESS=false
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
