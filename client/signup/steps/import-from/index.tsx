@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Title } from '@automattic/onboarding';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -14,6 +13,8 @@ import {
 } from 'calypso/state/imports/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
+import { GoToStep } from '../import/types';
+import NotAuthorized from './components/not-authorized';
 import { Importer, QueryObject, ImportJob } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
@@ -34,6 +35,7 @@ interface Props {
 	isImporterStatusHydrated: boolean;
 	siteImports: ImportJob[];
 	fetchImporterState: ( siteId: number ) => void;
+	goToStep: GoToStep;
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const {
@@ -44,6 +46,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		siteImports,
 		isImporterStatusHydrated,
 		fromSite,
+		goToStep,
 	} = props;
 
 	/**
@@ -73,7 +76,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function hasPermission(): boolean {
-		return canImport;
+		return canImport && false;
 	}
 
 	function checkInitialRunState() {
@@ -111,7 +114,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									/**
 									 * Permission screen
 									 */
-									return <Title>You are not authorized to view this page</Title>;
+									return <NotAuthorized goToStep={ goToStep } />;
 								} else if ( engine === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
 									/**
 									 * Wix importer
