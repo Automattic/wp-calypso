@@ -11,13 +11,7 @@ import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-tog
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { recordPaymentSettingsClick } from 'calypso/my-sites/domains/domain-management/edit/payment-settings-analytics';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import {
-	getByPurchaseId,
-	isFetchingSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
 import getSiteIsDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 
 const Details = ( props ) => {
@@ -124,17 +118,8 @@ const Details = ( props ) => {
 
 export default connect(
 	( state, ownProps ) => {
-		const { subscriptionId } = ownProps.domain;
-		const currentUserId = getCurrentUserId( state );
-		const purchase = subscriptionId
-			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
-			: null;
-
 		return {
 			isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
-			isLoadingPurchase:
-				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},
