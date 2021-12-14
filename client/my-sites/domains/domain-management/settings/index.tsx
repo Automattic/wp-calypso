@@ -19,14 +19,9 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import Details from './details';
 import SettingsHeader from './settings-header';
-import type {
-	SettingsPageConnectedProps,
-	SettingsPagePassedProps,
-	SettingsPageProps,
-} from './types';
+import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
 
 const Settings = ( props: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
@@ -65,7 +60,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 		</>
 	);
 
-	if ( ! domain ) {
+	if ( ! props.domain ) {
 		return <span>Loading placeholder</span>;
 	}
 
@@ -83,7 +78,7 @@ const Settings = ( props: SettingsPageProps ): JSX.Element => {
 				content={
 					<>
 						<Details
-							domain={ domain }
+							domain={ props.domain }
 							wpcomDomainName={ wpcomDomain?.domain }
 							selectedSite={ props.selectedSite }
 							purchase={ props.purchase }
@@ -111,7 +106,6 @@ export default connect(
 		return {
 			currentRoute: getCurrentRoute( state ),
 			domain: getSelectedDomain( ownProps )!,
-			hasDomainOnlySite: isDomainOnlySite( state, ownProps.selectedSite!.ID ),
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
