@@ -654,6 +654,11 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
  * @param {Array} featuredPlugins
  */
 function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
+	// when marketplace-v1 is enabled no featured plugins will be showed
+	if ( isEnabled( 'marketplace-v1' ) ) {
+		featuredPlugins = [];
+	}
+
 	const displayedFeaturedSlugsMap = new Map(
 		featuredPlugins
 			.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins
