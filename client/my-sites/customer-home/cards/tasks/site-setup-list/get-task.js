@@ -282,6 +282,10 @@ export const getTask = (
 				),
 				actionText: translate( 'Enable sharing' ),
 				actionUrl: `/marketing/sharing-buttons/${ siteSlug }`,
+				...( ! task.isCompleted && {
+					actionDispatch: requestSiteChecklistTaskUpdate,
+					actionDispatchArgs: [ siteId, task.id ],
+				} ),
 				isSkippable: true,
 			};
 			break;
