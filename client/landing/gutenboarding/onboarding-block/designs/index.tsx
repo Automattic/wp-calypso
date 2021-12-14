@@ -38,7 +38,7 @@ const Header: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const isAnchorFmSignup = useIsAnchorFm();
-	const { isEnrollingInFseBeta } = useSelect( ( select ) =>
+	const isEnrollingInFseBeta = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).isEnrollingInFseBeta()
 	);
 	const isDesignPickerCategoriesEnabled =
