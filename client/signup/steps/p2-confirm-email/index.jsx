@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
-/**
- * Internal dependencies
- */
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
