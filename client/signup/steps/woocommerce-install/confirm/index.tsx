@@ -63,7 +63,7 @@ function SupportLink() {
 	return (
 		<SupportLinkContainer>
 			{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
-				a: <SupportLinkStyle href="#support-link" />,
+				a: <SupportLinkStyle href="/help/contact" />,
 			} ) }
 		</SupportLinkContainer>
 	);
