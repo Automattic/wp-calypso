@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
@@ -22,11 +22,11 @@ import './style.scss';
 const Details = ( {
 	domain,
 	isLoadingPurchase,
-	moment,
 	purchase,
 	redemptionProduct,
 	selectedSite,
 }: DetailsCardProps ) => {
+	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	const renderRegisteredUntil = () => {
@@ -172,4 +172,4 @@ export default connect(
 	{
 		recordPaymentSettingsClick,
 	}
-)( withLocalizedMoment( Details ) );
+)( Details );
