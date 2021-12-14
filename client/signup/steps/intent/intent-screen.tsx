@@ -10,6 +10,7 @@ type Intent = SelectItem< IntentFlag >;
 type IntentAlt = SelectAltItem< IntentFlag >;
 
 interface Props {
+	canImport: boolean;
 	onSelect: ( value: IntentFlag ) => void;
 	translate: LocalizeProps[ 'translate' ];
 }
@@ -35,7 +36,10 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 	];
 };
 
-const useIntentsAlt = ( { translate }: Pick< Props, 'translate' > ): IntentAlt[] => {
+const useIntentsAlt = ( {
+	canImport,
+	translate,
+}: Pick< Props, 'canImport' | 'translate' > ): IntentAlt[] => {
 	return [
 		{
 			show: isEnabled( 'gutenboarding/import' ),
@@ -43,13 +47,22 @@ const useIntentsAlt = ( { translate }: Pick< Props, 'translate' > ): IntentAlt[]
 			description: translate( 'Already have an existing website?' ),
 			value: 'import',
 			actionText: translate( 'Import your site content' ),
+			disable: ! canImport,
+			disableText: translate(
+				"You're not authorized to import content.{{br/}}Please check with your site admin.",
+				{
+					components: {
+						br: <br />,
+					},
+				}
+			),
 		},
 	];
 };
 
-const IntentScreen: React.FC< Props > = ( { onSelect, translate } ) => {
+const IntentScreen: React.FC< Props > = ( { canImport, onSelect, translate } ) => {
 	const intents = useIntents( { translate } );
-	const intentsAlt = useIntentsAlt( { translate } );
+	const intentsAlt = useIntentsAlt( { translate, canImport } );
 
 	return (
 		<>

@@ -59,8 +59,12 @@
 			margin-top: 0;
 		}
 
-		&:hover {
+		&:not( [disabled] ):hover {
 			color: var( --color-neutral-70 );
 		}
+	}
+
+	&-disabled-info svg {
+		fill: var( --color-neutral-20 );
 	}
 }
