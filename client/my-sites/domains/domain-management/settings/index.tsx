@@ -7,6 +7,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -15,6 +16,8 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import ContactsPrivacyCard from 'calypso/my-sites/domains/domain-management/contacts-privacy/contacts-card';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { requestWhois } from 'calypso/state/domains/management/actions';
+import { getWhoisData } from 'calypso/state/domains/management/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
@@ -36,6 +39,8 @@ const Settings = ( {
 	purchase,
 	selectedDomainName,
 	selectedSite,
+	whoisData,
+	requestWhois,
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
 
@@ -150,6 +155,34 @@ const Settings = ( {
 		return <DomainMainPlaceholder breadcrumbs={ renderBreadcrumbs } />;
 	}
 
+	const getContactInformationAccordion = () => {
+		const { privateDomain } = domain;
+
+		const contactInformation = findRegistrantWhois( whoisData );
+
+		if ( ! contactInformation ) {
+			requestWhois( selectedDomainName );
+			return null;
+		}
+
+		const contactInfoFullName = `${ contactInformation.fname } ${ contactInformation.lname }`;
+		const privacyProtectionLabel = privateDomain
+			? translate( 'privacy protection on' )
+			: translate( 'privacy protection off' );
+
+		return (
+			<Accordion
+				title="Contact information"
+				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel }` }
+			>
+				<ContactsPrivacyCard
+					selectedSite={ selectedSite }
+					selectedDomainName={ selectedDomainName }
+				></ContactsPrivacyCard>
+			</Accordion>
+		);
+	};
+
 	return (
 		<Main wideLayout className="settings">
 			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -160,12 +193,7 @@ const Settings = ( {
 				content={
 					<>
 						{ renderMainContent() }
-						<Accordion title="Second element title" subtitle="Second element subtitle">
-							<ContactsPrivacyCard
-								selectedSite={ selectedSite }
-								selectedDomainName={ selectedDomainName }
-							></ContactsPrivacyCard>
-						</Accordion>
+						{ getContactInformationAccordion() }
 					</>
 				}
 				sidebar={ renderSettingsCards() }
@@ -184,11 +212,15 @@ export default connect(
 			: null;
 
 		return {
+			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			currentRoute: getCurrentRoute( state ),
 			domain: getSelectedDomain( ownProps )!,
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 		};
+	},
+	{
+		requestWhois,
 	}
 )( Settings );
