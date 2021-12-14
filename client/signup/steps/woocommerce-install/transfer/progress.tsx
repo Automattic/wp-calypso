@@ -39,7 +39,7 @@ export default function Progress( { progress }: { progress: number } ): ReactEle
 		<StepContent title={ step }>
 			<div
 				className="transfer__progress-bar"
-				style={ { '--progress': progress } as React.CSSProperties }
+				style={ { '--progress': simulatedProgress } as React.CSSProperties }
 			/>
 		</StepContent>
 	);
