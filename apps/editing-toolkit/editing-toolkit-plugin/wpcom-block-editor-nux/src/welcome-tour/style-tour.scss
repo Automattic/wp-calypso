@@ -70,6 +70,12 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	box-shadow: none;
 }
 
+.wpcom-editor-welcome-tour.is-desktop {
+	.welcome-tour-card__overlay-controls {
+		position: absolute;
+	}
+}
+
 .welcome-tour-card {
 	width: 400px;
 	max-width: 92vw;
@@ -195,10 +201,6 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 			}
 		}
 	}
-}
-
-.welcome-tour-card__overlay-controls__absolute {
-	position: absolute;
 }
 
 .welcome-tour-card__next-btn {

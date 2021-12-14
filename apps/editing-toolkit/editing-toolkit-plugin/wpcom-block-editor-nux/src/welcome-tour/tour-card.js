@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
+import { getMediaQueryList, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -155,9 +155,7 @@ function CardNavigation( {
 }
 
 function CardOverlayControls( { onMinimize, onDismiss } ) {
-	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
-		'welcome-tour-card__overlay-controls__absolute': ! isMobile(),
-	} );
+	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls' );
 
 	return (
 		<div className={ buttonClasses }>

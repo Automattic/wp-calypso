@@ -4,8 +4,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import TourKit from '@automattic/tour-kit';
+import { isMobile } from '@automattic/viewport';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
+import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
@@ -122,7 +124,9 @@ function WelcomeTour() {
 					[]
 				),
 			],
-			className: 'wpcom-editor-welcome-tour',
+			className: classNames( 'wpcom-editor-welcome-tour', {
+				'is-desktop': ! isMobile(),
+			} ),
 		},
 	};
 
