@@ -69,7 +69,7 @@
 		"login/magic-login": true,
 		"mailchimp": true,
 		"marketplace-test": false,
-		"marketplace-v0.5": true,
+		"marketplace-v1": false,
 		"marketplace": false,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
