@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -94,7 +93,7 @@ function PluginDetails( props ) {
 
 	// Determine if the plugin is WPcom or WPorg hosted
 	const productsList = useSelector( ( state ) => getProductsList( state ) );
-	const isProductListFetched = ! isEmpty( productsList );
+	const isProductListFetched = Object.values( productsList ).length > 0;
 
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, props.pluginSlug )
@@ -136,7 +135,6 @@ function PluginDetails( props ) {
 	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched ] );
 
 	const existingPlugin = useMemo( () => {
-		// ( ! isMarketplaceProduct && ( isWporgPluginFetching || ! isWporgPluginFetched ) ) ||
 		if (
 			( ! isMarketplaceProduct && ( isWporgPluginFetching || ! isWporgPluginFetched ) ) ||
 			( isMarketplaceProduct && ( isWpComPluginFetching || ! isWpComPluginFetched ) )
