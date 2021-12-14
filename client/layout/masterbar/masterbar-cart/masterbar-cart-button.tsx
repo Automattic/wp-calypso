@@ -57,7 +57,11 @@ export function MasterbarCartButton( {
 				className="masterbar-cart-button__popover"
 			>
 				<CheckoutErrorBoundary errorMessage="Error">
-					<MiniCart selectedSiteSlug={ selectedSiteSlug } goToCheckout={ goToCheckout } />
+					<MiniCart
+						selectedSiteSlug={ selectedSiteSlug }
+						goToCheckout={ goToCheckout }
+						closeCart={ onClose }
+					/>
 				</CheckoutErrorBoundary>
 			</Popover>
 		</>
