@@ -155,7 +155,7 @@
 		"percentage-regex": "^3.0.0",
 		"phone": "^2.4.2",
 		"photon": "workspace:^",
-		"postcss": "^8.3.11",
+		"postcss": "^8.4.5",
 		"prismjs": "^1.17.1",
 		"prop-types": "^15.7.2",
 		"qrcode.react": "^1.0.1",

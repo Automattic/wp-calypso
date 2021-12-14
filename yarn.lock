@@ -170,7 +170,7 @@ __metadata:
     typescript: ^4.5.3
     webpack-cli: ^4.9.1
   peerDependencies:
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     webpack: ^5.65.0
   bin:
     calypso-build: ./bin/calypso-build.js
@@ -186,7 +186,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/color-studio": 2.5.0
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     postcss-custom-properties: ^11.0.0
     sass: ^1.37.5
   languageName: unknown
@@ -458,7 +458,7 @@ __metadata:
     "@wordpress/url": ^3.3.1
     classnames: ^2.3.1
     jest: ^27.3.1
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
@@ -711,7 +711,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     enzyme: ^3.11.0
     jest: ^27.3.1
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
     redux: ^4.1.2
@@ -850,7 +850,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     jest: ^27.3.1
     page: ^1.11.5
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     postcss-custom-properties: ^11.0.0
     prop-types: ^15.7.2
     react: ^17.0.2
@@ -892,7 +892,7 @@ __metadata:
     lodash: ^4.17.21
     moment: ^2.26.0
     new-github-issue-url: ^0.2.1
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
@@ -1317,7 +1317,7 @@ __metadata:
     jquery: ^1.12.3
     lodash: ^4.17.21
     npm-run-all: ^4.1.5
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
@@ -1425,7 +1425,7 @@ __metadata:
     lodash: ^4.17.21
     moment: ^2.26.0
     npm-run-all: ^4.1.5
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
@@ -9588,7 +9588,7 @@ __metadata:
     lodash: ^4.17.21
     make-dir: ^3.1.0
     playwright: 1.16
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
     semver: ^7.3.2
@@ -12219,7 +12219,7 @@ __metadata:
     phone: ^2.4.2
     photon: "workspace:^"
     pkg-dir: ^5.0.0
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     prismjs: ^1.17.1
     prop-types: ^15.7.2
     qrcode.react: ^1.0.1
@@ -29008,14 +29008,14 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.2.15, postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5":
-  version: 8.4.4
-  resolution: "postcss@npm:8.4.4"
+"postcss@npm:^8.2.15, postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.5":
+  version: 8.4.5
+  resolution: "postcss@npm:8.4.5"
   dependencies:
     nanoid: ^3.1.30
     picocolors: ^1.0.0
     source-map-js: ^1.0.1
-  checksum: 2de71775edc7e3cbcdeb2a068fd790c2fcb35f70016ce1feb4618c63d71feb1630ef2a3ecc8a9dbba3216a0340a7b4a68a71869f69550c19e1152a09f700dee2
+  checksum: e019240473575fc39d6ec38bfa748250c302dacdf3b1660df5f736c6d0279d067e0a4dd6aae2bf0999a0a687fe77ef7a887d550fdf91eeccf9e67dda969ea716
   languageName: node
   linkType: hard
 
@@ -37838,7 +37838,7 @@ testarmada-magellan@11.0.10:
     npm-package-json-lint: ^5.0.0
     npm-run-all: ^4.1.5
     photon: "workspace:^"
-    postcss: ^8.3.11
+    postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
     prettier: "npm:wp-prettier@2.2.1-beta-1"
