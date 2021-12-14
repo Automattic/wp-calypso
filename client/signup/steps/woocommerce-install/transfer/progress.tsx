@@ -6,7 +6,7 @@ export default function Progress( { progress }: { progress: number } ): ReactEle
 	const { __ } = useI18n();
 	const [ step, setStep ] = useState( __( 'Building your store' ) );
 
-	// Progress smoothing, works out to be around 40seconds unless transfer step polling dictates otherwise
+	// Progress smoothing, works out to be around 40seconds unless step polling dictates otherwise
 	const [ simulatedProgress, setSimulatedProgress ] = useState( 0.01 );
 	useEffect( () => {
 		const timeoutReference = setTimeout( () => {
