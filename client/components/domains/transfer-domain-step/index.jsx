@@ -629,9 +629,8 @@ class TransferDomainStep extends Component {
 	getInboundTransferStatus = () => {
 		this.setState( { submittingWhois: true } );
 
-		checkInboundTransferStatus( getFixedDomainSearch( this.state.searchQuery ) )
+		return checkInboundTransferStatus( getFixedDomainSearch( this.state.searchQuery ) )
 			.then( ( result ) => {
-				this.setState( { submittingWhois: false } );
 				const inboundTransferStatus = {
 					creationDate: result.creation_date,
 					email: result.admin_email,
@@ -644,12 +643,11 @@ class TransferDomainStep extends Component {
 					transferRestrictionStatus: result.transfer_restriction_status,
 					unlocked: result.unlocked,
 				};
-				this.setState( { inboundTransferStatus } );
+				this.setState( { submittingWhois: false, inboundTransferStatus } );
 				return { inboundTransferStatus };
 			} )
 			.catch( () => {
 				this.setState( { submittingWhois: false } );
-				return;
 			} );
 	};
 
