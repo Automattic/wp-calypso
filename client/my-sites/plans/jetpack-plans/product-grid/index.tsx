@@ -4,6 +4,7 @@ import {
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	JETPACK_SECURITY_CATEGORY,
 	JETPACK_GROWTH_CATEGORY,
 } from '@automattic/calypso-products';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -260,7 +261,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				<>
 					{ showProductCategories && (
 						<div className="product-grid__category-filter">
-							<CategoryFilter onChange={ onCategoryChange } />
+							<CategoryFilter
+								defaultValue={ JETPACK_SECURITY_CATEGORY }
+								onChange={ onCategoryChange }
+							/>
 						</div>
 					) }
 					<ul className="product-grid__product-grid">
