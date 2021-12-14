@@ -22,6 +22,7 @@ import {
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import RegisteredDomainDetails from './cards/registered-domain-details';
+import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
 
@@ -95,9 +96,18 @@ const Settings = ( {
 		return null;
 	};
 
+	const renderSetAsPrimaryDomainSection = () => {
+		return <SetAsPrimary domain={ domain } selectedSite={ selectedSite } />;
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
-		return <>{ renderDetailsSection() }</>;
+		return (
+			<>
+				{ renderDetailsSection() }
+				{ renderSetAsPrimaryDomainSection() }
+			</>
+		);
 	};
 
 	const renderSettingsCards = () => (
