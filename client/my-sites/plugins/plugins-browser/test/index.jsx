@@ -1,5 +1,8 @@
 /** @jest-environment jsdom */
 
+jest.mock( 'react-query', () => ( {
+	useQuery: () => [],
+} ) );
 jest.mock( 'calypso/lib/wporg', () => ( {
 	getWporgLocaleCode: () => 'it_US',
 	fetchPluginsList: () => Promise.resolve( [] ),
