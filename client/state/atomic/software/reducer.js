@@ -12,6 +12,7 @@ function software( state = {}, action ) {
 				...action?.status,
 			};
 	}
+	return state;
 }
 
 export default withStorageKey(

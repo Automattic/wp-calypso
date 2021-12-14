@@ -7,6 +7,7 @@ function transfers( state = {}, action ) {
 		case ATOMIC_TRANSFER_SET_LATEST:
 			return { ...state, siteId: action.siteId, ...action.transfer };
 	}
+	return state;
 }
 
 export default withStorageKey( 'atomicTransfers', keyedReducer( 'siteId', transfers ) );

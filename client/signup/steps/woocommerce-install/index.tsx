@@ -1,8 +1,9 @@
-import type { GoToStep } from '../../types';
+import type { GoToStep, GoToNextStep } from '../../types';
 
 export interface WooCommerceInstallProps {
 	siteId: number;
 	goToStep: GoToStep;
+	goToNextStep: GoToNextStep;
 	stepName: string;
 	stepSectionName: string;
 	isReskinned: boolean;
