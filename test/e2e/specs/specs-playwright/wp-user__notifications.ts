@@ -4,8 +4,7 @@
 
 import {
 	DataHelper,
-	PublishedPostsListPage,
-	CommentsComponent,
+	ReaderPage,
 	NavbarComponent,
 	NotificationsComponent,
 	TestAccount,
@@ -20,8 +19,8 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	const comment = DataHelper.getRandomPhrase() + ' notifications-trash-spec';
 
 	let page: Page;
-	let publishedPostsListPage: PublishedPostsListPage;
 	let notificationsComponent: NotificationsComponent;
+	let readerPage: ReaderPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -30,30 +29,23 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	describe( `Leave a comment as ${ commentingUser }`, function () {
 		let testAccount: TestAccount;
 
-		beforeAll( async () => {
+		beforeAll( async function() {
 			testAccount = new TestAccount( commentingUser );
 			await testAccount.authenticate( page );
 		} );
 
-		it( 'Visit published site', async function () {
-			// TODO make a utility to obtain a blog URL without string substitution.
-			const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;
-			await page.goto( siteURL );
+		it( 'Visit latest post', async function () {
+			readerPage = new ReaderPage( page );
+			await readerPage.visitPost( { index: 1 } );
 		} );
 
-		it( 'View first post', async function () {
-			publishedPostsListPage = new PublishedPostsListPage( page );
-			publishedPostsListPage.visitPost( 1 );
-		} );
-
-		it( 'Comment on the post', async function () {
-			const commentsComponent = new CommentsComponent( page );
-			await commentsComponent.postComment( comment );
+		it( 'Comment and confirm it is shown', async function () {
+			await readerPage.comment( comment );
 		} );
 	} );
 
 	describe( `Trash comment as ${ notificationsUser }`, function () {
-		beforeAll( async () => {
+		beforeAll( async function() {
 			const testAccount = new TestAccount( notificationsUser );
 			await testAccount.authenticate( page );
 		} );
