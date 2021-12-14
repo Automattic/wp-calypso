@@ -65,7 +65,7 @@ import './style.scss';
 const SHORT_LIST_LENGTH = 6;
 const SEARCH_RESULTS_LIST_LENGTH = 12;
 
-export const PluginsBrowser = ( {
+const PluginsBrowser = ( {
 	trackPageViews = true,
 	category,
 	search,

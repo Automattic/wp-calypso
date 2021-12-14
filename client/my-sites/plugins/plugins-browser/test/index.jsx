@@ -37,7 +37,7 @@ import { merge } from 'lodash';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { PluginsBrowser } from '../';
+import PluginsBrowser from '../';
 
 window.__i18n_text_domain__ = JSON.stringify( 'default' );
 const initialReduxState = {
@@ -59,6 +59,7 @@ const initialReduxState = {
 		},
 	},
 	documentHead: {},
+	preferences: { remoteValues: {} },
 };
 
 function mountWithRedux( ui, overrideState ) {
