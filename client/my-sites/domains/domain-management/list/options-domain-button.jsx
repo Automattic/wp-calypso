@@ -59,7 +59,7 @@ class AddDomainButton extends Component {
 	};
 
 	renderOptions = () => {
-		const { specificSiteActions, translate } = this.props;
+		const { selectedSiteSlug, specificSiteActions, translate } = this.props;
 
 		if ( specificSiteActions ) {
 			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
@@ -82,7 +82,9 @@ class AddDomainButton extends Component {
 					{ translate( 'Add a domain to a new site' ) }
 				</PopoverMenuItem>
 				<PopoverMenuItem icon="create" href="/domains/add" onClick={ this.trackMenuClick }>
-					{ translate( 'Add a domain to a different site' ) }
+					{ selectedSiteSlug
+						? translate( 'Add a domain to a different site' )
+						: translate( 'Add a domain to an existing site' ) }
 				</PopoverMenuItem>
 				<PopoverMenuItem icon="domains" href="/start/domain" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain without a site' ) }
