@@ -93,7 +93,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		if ( isDataReady && ( isAtomicSite || isReadyForTransfer ) ) {
 			return goToStep( 'transfer' );
 		}
-	}, [ goToStep, isDataReady, isAtomicSite, isReadyForTransfer, wpcomDomain ] );
+	}, [ goToStep, isDataReady, isAtomicSite, isReadyForTransfer ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
