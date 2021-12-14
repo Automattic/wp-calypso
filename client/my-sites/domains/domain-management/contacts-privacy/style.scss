@@ -48,7 +48,7 @@
 		.contact-display__content {
 			background-color: var( --color-neutral-0 );
 			color: var( --color-neutral );
-			font-size: $font-body-extra-small;
+			font-size: $font-body-small;
 			line-height: 140%;
 			margin: 0;
 			padding: 16px;
@@ -64,8 +64,34 @@
 		padding: 0;
 		box-shadow: none;
 
-		.contacts-privacy__main {
-			padding-bottom: 24px;
+		.contacts-privacy {
+			&__main {
+				padding-bottom: 24px;
+			}
+
+			&__toggle {
+				&-container {
+					display: flex;
+					flex-wrap: wrap;
+					row-gap: 8px;
+				}
+
+				&-item {
+					font-size: $font-body-small;
+					color: var( --studio-gray-80 );
+
+					flex: 1 0 100%;
+
+					.components-base-control {
+						font-size: inherit;
+						color: inherit;
+						
+						&__field {
+							margin-bottom: 0;
+						}
+					}
+				}
+			}
 		}
 
 		.contact-display {

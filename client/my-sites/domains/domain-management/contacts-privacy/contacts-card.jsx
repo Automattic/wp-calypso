@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -50,28 +50,33 @@ class ContactsPrivacyCard extends Component {
 		const { privateDomain, privacyAvailable } = this.props;
 		const { translate, isUpdatingPrivacy } = this.props;
 
+		const label = privateDomain
+			? translate( 'Privacy protection on' )
+			: translate( 'Privacy protection off' );
+
 		let privacyProtectionNote;
 		if ( ! privacyAvailable ) {
 			privacyProtectionNote = (
-				<div className="contacts-privacy__settings warning">
-					<Gridicon icon="info-outline" size={ 18 } />
-					<p>{ translate( 'Privacy settings can not be changed for this domain' ) }</p>
-				</div>
+				<p className="contacts-privacy__toggle-item">
+					{ translate(
+						'Privacy protection is not available due to the registry’s policies. Learn more'
+					) }
+				</p>
 			);
 		}
 
 		return (
-			<Fragment>
-				<div className="contacts-privacy__settings">
+			<>
+				<div className="contacts-privacy__toggle-item">
 					<ToggleControl
 						checked={ privateDomain }
 						disabled={ isUpdatingPrivacy || ! privacyAvailable }
 						onChange={ this.togglePrivacy }
-						label={ translate( 'Privacy Protection' ) }
+						label={ label }
 					/>
 				</div>
 				{ privacyProtectionNote }
-			</Fragment>
+			</>
 		);
 	}
 
@@ -91,20 +96,18 @@ class ContactsPrivacyCard extends Component {
 		}
 
 		const contactVerificationNotice = isPendingIcannVerification ? (
-			<div className="contacts-privacy__settings warning">
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p>
-					{ translate(
-						'You need to verify the contact information for the domain before you can disclose it publicly.'
-					) }
-				</p>
-			</div>
+			<p className="contacts-privacy__toggle-item">
+				{ translate(
+					'You need to verify the contact information for the domain before you can disclose it publicly.'
+				) }
+			</p>
 		) : null;
 
 		return (
-			<Fragment>
-				<div className="contacts-privacy__settings">
+			<>
+				<div className="contacts-privacy__toggle-item">
 					<ToggleControl
+						className="contacts-privacy__toggle-button"
 						checked={ contactInfoDisclosed }
 						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
 						onChange={ this.toggleContactInfo }
@@ -112,7 +115,7 @@ class ContactsPrivacyCard extends Component {
 					/>
 				</div>
 				{ contactVerificationNotice }
-			</Fragment>
+			</>
 		);
 	}
 
