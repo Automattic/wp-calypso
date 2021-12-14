@@ -108,6 +108,7 @@ export class PlansPage {
 		plan: Plan;
 		buttonText: PlanActionButton;
 	} ): Promise< void > {
+		await this.waitUntilLoaded();
 		const selector = selectors.actionButton( {
 			viewport: getTargetDeviceName(),
 			plan: plan,
