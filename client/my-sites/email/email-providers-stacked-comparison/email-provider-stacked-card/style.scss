@@ -56,70 +56,6 @@ $width-left-panel-card: 55%;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
-
-	.promo-card {
-		width: calc( 33% - 0.5em );
-		margin: 8px 0;
-
-		&.no-gsuite {
-			width: calc( 50% - 0.5em );
-		}
-
-		&.no-titan {
-			width: calc( 50% - 0.5em );
-		}
-
-		&.gsuite .action-panel__figure img {
-			max-width: 24px;
-		}
-
-		&.titan {
-			.promo-card__title-badge {
-				background: none;
-				padding: 0;
-
-				img {
-					max-height: 14px;
-				}
-			}
-		}
-	}
-}
-
-.action-panel__figure {
-	float: right;
-	max-width: 208px;
-	margin-bottom: 0.5em;
-	margin-top: 0;
-
-	&.is-inline-body-text {
-		margin-top: 40px;
-	}
-
-	&.align-left {
-		float: left;
-		margin-left: 0;
-		margin-right: 24px;
-		width: unset;
-	}
-
-	&.align-right {
-		margin: 0 0 24px 24px;
-	}
-}
-
-.is-expanded .promo-card__title-badge {
-	background: none;
-	display: inline-block;
-	padding: 0;
-
-	img {
-		max-height: 18px;
-	}
-}
-
-h2.action-panel__title {
-	margin-top: 8px;
 }
 
 .email-provider-stacked-card__provider__provider-card-main-details {
@@ -144,6 +80,19 @@ h2.action-panel__title {
 	justify-content: space-between;
 	margin-bottom: 1em;
 	order: 3;
+
+	.email-provider-stacked-features__toggle-button {
+		display: flex;
+		margin-top: 8px;
+		overflow: visible;
+		text-align: left;
+		width: 100%;
+
+		.gridicon {
+			margin-left: auto;
+			top: 0;
+		}
+	}
 }
 
 .email-provider-stacked-card__provider__provider-expand-cta {
@@ -184,12 +133,8 @@ h2.action-panel__title {
 .email-providers-stacked-comparison__main.main .card.action-panel.promo-card.email-providers-stacked-comparison__provider-card .action-panel__figure {
 	margin-right: unset;
 	@include break-mobile {
-		margin-right: 24px;
+		margin-right: 20px;
 	}
-}
-
-.email-provider-stacked-card__provider-expand-cta {
-	width: 110px;
 }
 
 .is-expanded {
@@ -204,16 +149,17 @@ h2.action-panel__title {
 		margin-top: 1em;
 		line-height: 1.5;
 
-		@include break-mobile {
+		//This needs to use deprecated breakpoint as we are using "UseBreakpoing" from "@automattic/viewport"
+		@include breakpoint-deprecated( '>660px' ) {
 			flex-direction: row;
 		}
 	}
 
 	.email-provider-stacked-card__provider-form {
 		margin-bottom: 20px;
-		width: 100%;
 
-		@media screen and ( min-width: 481px ) {
+		//This needs to use deprecated breakpoint as we are using "UseBreakpoing" from "@automattic/viewport"
+		@include breakpoint-deprecated( '>660px' ) {
 			min-width: $width-left-panel-card;
 			max-width: $width-left-panel-card;
 		}
@@ -270,10 +216,6 @@ h2.action-panel__title {
 			@include break-small {
 				margin-left: 10px;
 			}
-
-			.email-provider-stacked-card__provider-expand-cta {
-				width: 100%;
-			}
 		}
 	}
 	&.is-expanded {
@@ -322,16 +264,22 @@ h2.action-panel__title {
 	.card.action-panel.promo-card.email-providers-stacked-comparison__provider-card {
 		display: flex;
 		flex-direction: column;
+		@include breakpoint-deprecated( '>660px' ) {
+			flex-direction: row;
+		}
 
 		.action-panel__figure {
 			display: flex;
 			margin-top: 3px;
 			flex-direction: row;
-			max-width: 100%;
 			text-align: left;
 			margin-bottom: 0px;
 			.professional-email-card__logo {
 				min-width: 48px;
+			}
+
+			@include breakpoint-deprecated( '<660px' ) {
+				max-width: 100%;
 			}
 
 			@include break-mobile {
@@ -345,15 +293,25 @@ h2.action-panel__title {
 	}
 }
 
-.email-provider-stacked-features__toggle-button {
-	overflow: visible;
-	white-space: nowrap;
-	cursor: pointer;
-	display: flex;
-	justify-content: space-between;
-	margin-top: 8px;
-	width: 100%;
-	.gridicon {
-		margin-left: 5px;
+.email-provider-stacked-card__provider-form > * .form-text-input-with-affixes {
+	flex-direction: column;
+
+	.form-text-input-with-affixes__suffix {
+		border-top-width: 0;
+		border-left-width: 1px;
+		border-left-style: solid;
+		border-left-color: var( --color-neutral-10 );
+	}
+
+	//This needs to use deprecated breakpoint as we are using "UseBreakpoing" from "@automattic/viewport"
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-direction: row;
+		.form-text-input-with-affixes__suffix {
+			border-left-width: 0;
+			border-top-width: 1px;
+			border-top-style: solid;
+			border-left-color: var( --color-neutral-10 );
+		}
 	}
 }
+

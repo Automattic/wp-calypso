@@ -16,8 +16,9 @@
 	.google-workspace-card__form-fieldset {
 		max-width: 100%;
 
-		@include break-mobile {
-			max-width: 440px;
+		//This needs to use deprecated breakpoint as we are using "UseBreakpoing" from "@automattic/viewport"
+		@include breakpoint-deprecated( '>660px' ) {
+			max-width: 380px;
 		}
 	}
 }

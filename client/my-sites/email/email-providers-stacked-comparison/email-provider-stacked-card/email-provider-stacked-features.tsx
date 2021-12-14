@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { TranslateResult } from 'i18n-calypso';
@@ -62,12 +62,16 @@ export const EmailProviderStackedFeaturesToggleButton: FunctionComponent< EmailP
 	const { handleClick, isRelatedContentExpanded } = props;
 
 	return (
-		<button className="email-provider-stacked-features__toggle-button" onClick={ handleClick }>
+		<Button
+			borderless
+			className="email-provider-stacked-features__toggle-button"
+			onClick={ handleClick }
+		>
 			<span className="email-provider-stacked-features__toggle-text">
 				{ translate( 'Show all features' ) }
 			</span>
 
 			<Gridicon icon={ isRelatedContentExpanded ? 'chevron-up' : 'chevron-down' } />
-		</button>
+		</Button>
 	);
 };

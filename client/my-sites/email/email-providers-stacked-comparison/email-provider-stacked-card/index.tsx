@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useState } from 'react';
-import PromoCard from 'calypso/components/promo-section/promo-card';
+import PromoCard, { TitleLocation } from 'calypso/components/promo-section/promo-card';
 import {
 	EmailProviderStackedFeatures,
 	EmailProviderStackedFeaturesToggleButton,
@@ -34,9 +34,9 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
-	const isViewportSizeLowerThan480px = useBreakpoint( '<480px' );
+	const isViewportSizeLowerThan660px = useBreakpoint( '<660px' );
 
-	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan480px;
+	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan660px;
 
 	const toggleVisibility = ( event: React.MouseEvent ): void => {
 		event.preventDefault();
@@ -72,6 +72,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 			} ) }
 			image={ logo }
 			titleComponent={ header }
+			titleLocation={ isViewportSizeLowerThan660px ? TitleLocation.figure : TitleLocation.body }
 			icon={ '' }
 		>
 			<div className="email-provider-stacked-card__provider-price-and-button">
