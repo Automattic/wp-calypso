@@ -65,8 +65,14 @@ import './style.scss';
 const SHORT_LIST_LENGTH = 6;
 const SEARCH_RESULTS_LIST_LENGTH = 12;
 
-export const PluginsBrowser = ( props ) => {
-	const { trackPageViews = true, category, search } = props;
+export const PluginsBrowser = ( {
+	trackPageViews = true,
+	category,
+	search,
+	searchTitle,
+	hideHeader,
+	doSearch,
+} ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
@@ -161,7 +167,7 @@ export const PluginsBrowser = ( props ) => {
 	];
 
 	useEffect( () => {
-		if ( search && props.searchTitle ) {
+		if ( search && searchTitle ) {
 			dispatch(
 				recordTracksEvent( 'calypso_plugins_search_noresults_recommendations_show', {
 					search_query: search,
@@ -221,31 +227,30 @@ export const PluginsBrowser = ( props ) => {
 			/>
 			<DocumentHead title={ translate( 'Plugins' ) } />
 			<SidebarNavigation />
-		
-				<AnnouncementModal
-					announcementId="plugins-page-revamp"
-					pages={ annoncementPages }
-					finishButtonText={ translate( "Let's explore!" ) }
-				/>
-			{ ! props.hideHeader && (
+
+			<AnnouncementModal
+				announcementId="plugins-page-revamp"
+				pages={ annoncementPages }
+				finishButtonText={ translate( "Let's explore!" ) }
+			/>
+			{ ! hideHeader && (
 				<FixedNavigationHeader
 					className="plugins-browser__header"
 					navigationItems={ navigationItems }
 				>
 					<div className="plugins-browser__main-buttons">
-					
-							<ManageButton
-								shouldShowManageButton={ shouldShowManageButton }
-								siteAdminUrl={ siteAdminUrl }
-								siteSlug={ siteSlug }
-								jetpackNonAtomic={ jetpackNonAtomic }
-							/>
-						
+						<ManageButton
+							shouldShowManageButton={ shouldShowManageButton }
+							siteAdminUrl={ siteAdminUrl }
+							siteSlug={ siteSlug }
+							jetpackNonAtomic={ jetpackNonAtomic }
+						/>
+
 						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
 					</div>
 
 					<div className="plugins-browser__searchbox">
-						{ <SearchBox isMobile={ isMobile } doSearch={ props.doSearch } search={ search } /> }
+						{ <SearchBox isMobile={ isMobile } doSearch={ doSearch } search={ search } /> }
 					</div>
 				</FixedNavigationHeader>
 			) }
@@ -276,7 +281,7 @@ export const PluginsBrowser = ( props ) => {
 				recommendedPlugins={ recommendedPlugins }
 				isRequestingRecommendedPlugins={ isRequestingRecommendedPlugins }
 				sites={ sites }
-				searchTitle={ props.searchTitle }
+				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
 				isRecommendedPluginsEnabled={ isRecommendedPluginsEnabled }
 			/>
