@@ -4,8 +4,6 @@ import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import Accordion from 'calypso/components/domains/accordion';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
@@ -123,31 +121,15 @@ const Details = ( { domain, isLoadingPurchase, purchase, selectedSite }: Details
 		);
 	};
 
-	const renderRegisteredDomainInfo = () => {
-		return (
-			<div className="details-card">
-				<div className="details-card__section dates">{ renderDates() }</div>
-				<div className="details-card__section">{ renderAutoRenewToggle() }</div>
-				<div className="details-card__section">
-					{ renderRenewButton() }
-					{ renderPaymentDetailsButton() }
-				</div>
-			</div>
-		);
-	};
-
-	// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 	return (
-		<>
-			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-			<Accordion
-				title={ translate( 'Details' ) }
-				subtitle={ translate( 'Registration and auto-renew' ) }
-				expanded
-			>
-				{ renderRegisteredDomainInfo() }
-			</Accordion>
-		</>
+		<div className="details-card">
+			<div className="details-card__section dates">{ renderDates() }</div>
+			<div className="details-card__section">{ renderAutoRenewToggle() }</div>
+			<div className="details-card__section">
+				{ renderRenewButton() }
+				{ renderPaymentDetailsButton() }
+			</div>
+		</div>
 	);
 };
 

@@ -56,6 +56,29 @@ const Settings = ( {
 		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
 	};
 
+	const renderMainContent = () => {
+		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
+		return (
+			<>
+				<Accordion
+					title={ translate( 'Details' ) }
+					subtitle={ translate( 'Registration and auto-renew' ) }
+					expanded
+				>
+					<Details
+						domain={ domain }
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				</Accordion>
+				<Accordion title="Second element title" subtitle="Second element subtitle">
+					<div>Component placeholder: this one i'snt exapanded by default</div>
+				</Accordion>
+			</>
+		);
+	};
+
 	const renderSettingsCards = () => (
 		<>
 			<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
@@ -74,22 +97,7 @@ const Settings = ( {
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<SettingsHeader domain={ domain } />
-			<TwoColumnsLayout
-				content={
-					<>
-						<Details
-							domain={ domain }
-							selectedSite={ selectedSite }
-							purchase={ purchase }
-							isLoadingPurchase={ isLoadingPurchase }
-						/>
-						<Accordion title="Second element title" subtitle="Second element subtitle">
-							<div>Component placeholder: this one i'snt exapanded by default</div>
-						</Accordion>
-					</>
-				}
-				sidebar={ renderSettingsCards() }
-			/>
+			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);
 };
