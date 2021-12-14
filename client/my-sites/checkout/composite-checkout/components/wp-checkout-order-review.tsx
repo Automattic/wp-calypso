@@ -154,6 +154,7 @@ export default function WPCheckoutOrderReview( {
 	};
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
+	const shouldShowDomainNote = experiment?.variationName && domainUrl?.includes( 'wordpress.com' );
 	const isPwpoUser = useSelector(
 		( state ) =>
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
@@ -167,7 +168,7 @@ export default function WPCheckoutOrderReview( {
 				<SiteSummary>
 					{ translate( 'Site: %s', { args: domainUrl } ) }
 
-					{ experiment?.variationName && (
+					{ shouldShowDomainNote && (
 						<GeneratedNameNote>
 							{ translate( 'You can change this name at any time in your account settings.' ) }
 						</GeneratedNameNote>
