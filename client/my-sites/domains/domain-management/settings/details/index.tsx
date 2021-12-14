@@ -3,7 +3,7 @@
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -11,23 +11,18 @@ import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
-import { recordPaymentSettingsClick } from 'calypso/my-sites/domains/domain-management/edit/payment-settings-analytics';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import getSiteIsDomainOnly from 'calypso/state/selectors/is-domain-only-site';
-import type { DetailsCardConnectedProps, DetailsCardProps } from './types';
+import type { DetailsCardProps } from './types';
 
 import './style.scss';
 
-const Details = ( {
-	domain,
-	isLoadingPurchase,
-	purchase,
-	redemptionProduct,
-	selectedSite,
-}: DetailsCardProps ) => {
+const Details = ( { domain, isLoadingPurchase, purchase, selectedSite }: DetailsCardProps ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
+	const redemptionProduct = useSelector( ( state ) =>
+		getProductBySlug( state, 'domain_redemption' )
+	);
 
 	const renderDates = () => {
 		return (
@@ -156,14 +151,4 @@ const Details = ( {
 	);
 };
 
-export default connect(
-	( state, ownProps: DetailsCardProps ): DetailsCardConnectedProps => {
-		return {
-			isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
-			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
-		};
-	},
-	{
-		recordPaymentSettingsClick,
-	}
-)( Details );
+export default Details;

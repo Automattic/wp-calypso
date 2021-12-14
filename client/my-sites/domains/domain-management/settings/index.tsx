@@ -6,7 +6,6 @@ import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layo
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { getWpcomDomain } from 'calypso/lib/domains/get-wpcom-domain';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -26,7 +25,6 @@ import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
 const Settings = ( {
 	currentRoute,
 	domain,
-	domains,
 	isLoadingPurchase,
 	purchase,
 	selectedDomainName,
@@ -70,8 +68,6 @@ const Settings = ( {
 		return <span>Loading placeholder</span>;
 	}
 
-	const wpcomDomain = getWpcomDomain( domains );
-
 	return (
 		<Main wideLayout className="settings">
 			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -83,7 +79,6 @@ const Settings = ( {
 					<>
 						<Details
 							domain={ domain }
-							wpcomDomainName={ wpcomDomain?.domain }
 							selectedSite={ selectedSite }
 							purchase={ purchase }
 							isLoadingPurchase={ isLoadingPurchase }
