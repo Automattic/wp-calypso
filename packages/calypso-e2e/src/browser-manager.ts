@@ -1,9 +1,9 @@
-import { readFile, access, stat } from 'fs/promises';
+import fs from 'fs/promises';
 import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
 import { getHeadless, getLaunchConfiguration } from './browser-helper';
-import { COOKIES_PATH } from './environment';
+import { LoginPage } from './lib/pages/login-page';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
@@ -189,31 +189,61 @@ export async function setStoreCookie(
 /**
  *
  * @param page
- * @param accountType
+ * @param testAccount
  */
-export async function setLoginCookie( page: Page, accountType: string ): Promise< void > {
-	const browserContext = page.context();
-	const cookiePath = path.join( COOKIES_PATH, `${ accountType }.json` );
-	try {
-		await access( cookiePath );
-	} catch {
-		throw new Error( `Cookie file ${ cookiePath } not found on disk.` );
+export async function authenticateTestAccount( page: Page, testAccount: string ): Promise< void > {
+	const { SAVE_AUTH_COOKIES, COOKIES_PATH } = process.env;
+	let storageStateFilePath;
+
+	/**
+	 * Load auth cookies from the storage state file if available.
+	 */
+	if ( COOKIES_PATH ) {
+		storageStateFilePath = path.join( COOKIES_PATH, `${ testAccount }.json` );
+
+		try {
+			const { birthtimeMs } = await fs.stat( storageStateFilePath );
+			const isFresh = birthtimeMs > Date.now() - 3 * 24 * 60 * 1000; // 3 days
+
+			if ( isFresh ) {
+				const storageStateFile = await fs.readFile( storageStateFilePath, { encoding: 'utf8' } );
+				const { cookies } = JSON.parse( storageStateFile );
+				const browserContext = await page.context();
+
+				console.info( `Using stored authentication cookies for the "${ testAccount }" account.` );
+				await browserContext.addCookies( cookies );
+				return;
+			}
+
+			console.info( `Removing stale storage state file for the "${ testAccount }" account.` );
+			await fs.rm( storageStateFilePath );
+		} catch ( error: unknown ) {
+			const { code } = error as NodeJS.ErrnoException;
+			if ( code === 'ENOENT' ) {
+				// No worries if the storage file for given account is unavailable as it
+				// will be created with the first successful log in.
+			} else {
+				throw error;
+			}
+		}
 	}
 
-	// Check the creation time of the cookie.
-	// WordPress.com cookies are valid for a limited time, typically less than 3 days.
-	// So if a cookie file is found, but the creation time is older than 3 days, pretend that
-	// a cookie file did not exist.
-	// This is only an issue when running the tests locally.
-	const stats = await stat( cookiePath );
-	const createdTime = Math.trunc( stats.birthtimeMs );
-	const currentTime = new Date();
+	/**
+	 * Login via UI if storage state file is unavailable.
+	 */
+	const loginPage = new LoginPage( page );
 
-	if ( createdTime < currentTime.setDate( currentTime.getDate() - 3 ) ) {
-		throw new Error( `Cookie file is stale: created time is ${ stats.birthtime }` );
+	console.info( `Logging in as "${ testAccount }"` );
+	await loginPage.visit();
+	await loginPage.logInWithTestAccount( testAccount );
+
+	/**
+	 * Save storage state file.
+	 */
+	if ( SAVE_AUTH_COOKIES === 'true' ) {
+		const browserContext = await page.context();
+
+		console.info( `Saving storage state file for the "${ testAccount }" account.` );
+		await browserContext.storageState( { path: storageStateFilePath } );
 	}
-
-	const cookie = JSON.parse( await readFile( cookiePath, 'utf8' ) );
-
-	await browserContext.addCookies( cookie.cookies );
 }
