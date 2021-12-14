@@ -1,12 +1,17 @@
+@import '@automattic/onboarding/styles/mixins';
+
 .jetpack-product-card .display-price {
 	.is-disabled & {
 		opacity: 0.4;
 	}
 
 	&.is-free {
-		min-height: 130px;
 		margin-block-start: -4px;
 		padding-block-start: 24px;
+
+		@include break-medium {
+			min-height: 130px;
+		}
 
 		// Adjust leading margin so that different UI fonts
 		// still align to the price the same way
