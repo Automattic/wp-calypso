@@ -35790,11 +35790,11 @@ testarmada-magellan@11.0.10:
 
 "typescript@patch:typescript@^4.5.3#~builtin<compat/typescript>":
   version: 4.5.3
-  resolution: "typescript@patch:typescript@npm%3A4.5.3#~builtin<compat/typescript>::version=4.5.3&hash=ddd1e8"
+  resolution: "typescript@patch:typescript@npm%3A4.5.3#~builtin<compat/typescript>::version=4.5.3&hash=493e53"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 88a804c81c38ec30ec2c2f14398336104f4cdd5af4e1f005cbc4e060a00b35de3510ed96bc92d5923817dc4c83ce2c79eb99c6c4c89f4e20c77d22d4f1733e9a
+  checksum: 8ca34a334349ce8303c30e9d94eabcd49ee6dd87b2798acef806436aa2a98ff01bf40eb260eb9d753a9d41293b4855d11461f2f0da12c712ed3c1780b599b991
   languageName: node
   linkType: hard
 
