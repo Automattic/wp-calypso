@@ -216,6 +216,8 @@ function has_legacy_FSE_template_edits( $blog_id ) {
 	dangerously_load_full_site_editing_files();
 
 	// Get saved template part markup
+	$template_inserter = new WP_Template_Inserter( $theme_slug );
+	$template_inserter->register_template_post_types();
 	$template_manager = new WP_Template();
 	$header_content = $template_manager->get_template_content( 'header' );
 	$footer_content = $template_manager->get_template_content( 'footer' );
