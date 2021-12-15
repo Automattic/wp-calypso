@@ -198,7 +198,14 @@ const CTAButton = ( {
 					} );
 				} }
 			>
-				{ shouldUpgrade ? translate( 'Upgrade and install' ) : translate( 'Install and activate' ) }
+				{
+					// eslint-disable-next-line no-nested-ternary
+					isMarketplaceProduct
+						? translate( 'Pay and install' )
+						: shouldUpgrade
+						? translate( 'Upgrade and install' )
+						: translate( 'Install and activate' )
+				}
 			</Button>
 		</>
 	);
