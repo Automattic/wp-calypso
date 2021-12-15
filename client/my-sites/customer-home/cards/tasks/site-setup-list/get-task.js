@@ -277,9 +277,13 @@ export const getTask = (
 			taskData = {
 				timing: 5,
 				title: translate( 'Enable post sharing' ),
-				description: translate(
-					'Enable post sharing to automatically share your new blog posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
-				),
+				description: isBlogger
+					? translate(
+							'Enable post sharing to automatically share your new blog posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
+					  )
+					: translate(
+							'Enable post sharing to automatically share your new posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
+					  ),
 				actionText: translate( 'Enable sharing' ),
 				actionUrl: `/marketing/connections/${ siteSlug }`,
 				isSkippable: true,
