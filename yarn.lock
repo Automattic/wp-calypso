@@ -1182,6 +1182,7 @@ __metadata:
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: ^4.5.4
   languageName: unknown
   linkType: soft
 
@@ -1375,6 +1376,7 @@ __metadata:
     "@automattic/plans-grid": "workspace:^"
     "@automattic/tour-kit": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
     "@babel/core": ^7.16.5
     "@emotion/react": ^11.4.1
@@ -6917,6 +6919,13 @@ __metadata:
   version: 0.16.1
   resolution: "@types/scheduler@npm:0.16.1"
   checksum: 78aa5a8b19b42b7b6dc1dc3fb64c1ef2cb87b685292a0951d06d15ac4de8926c9a219bd027f438c3cb701cf525cf1f233bc09a90af5488ae8b98af2ec84b656a
+  languageName: node
+  linkType: hard
+
+"@types/seed-random@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "@types/seed-random@npm:2.2.1"
+  checksum: 4efc78a6c2786b3c7d84c85ebef9b6d14a9e861d1852893b835eea8fb838fd602244b2a79cef6da6feedaefc89ecac7a3728746471e3f33265e5ccef533a21ab
   languageName: node
   linkType: hard
 
@@ -28026,9 +28035,11 @@ fsevents@~2.1.2:
   resolution: "photon@workspace:packages/photon"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@types/seed-random": ^2.2.1
     crc32: ^0.2.2
     debug: ^4.0.0
     seed-random: ^2.2.0
+    typescript: ^4.5.4
   languageName: unknown
   linkType: soft
 
