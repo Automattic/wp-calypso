@@ -239,7 +239,7 @@ function PluginDetails( props ) {
 
 					<div className="plugin-details__layout-col-right">
 						<PluginDetailsCTA
-							pluginSlug={ props.pluginSlug }
+							plugin={ fullPlugin }
 							siteIds={ siteIds }
 							selectedSite={ selectedSite }
 							isPluginInstalledOnsite={ isPluginInstalledOnsite }

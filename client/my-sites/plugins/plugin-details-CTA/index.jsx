@@ -18,15 +18,17 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { PluginPrice } from '../plugin-price';
 import './style.scss';
 
 const PluginDetailsCTA = ( {
-	pluginSlug,
+	plugin,
 	selectedSite,
 	isPluginInstalledOnsite,
 	siteIds,
 	isPlaceholder,
 } ) => {
+	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
 
 	const requestingPluginsForSites = useSelector( ( state ) =>
@@ -74,7 +76,24 @@ const PluginDetailsCTA = ( {
 
 	return (
 		<div className="plugin-details-CTA__container">
-			<div className="plugin-details-CTA__price">{ translate( 'Free' ) }</div>
+			<div className="plugin-details-CTA__price">
+				<PluginPrice plugin={ plugin }>
+					{ ( { isFetching, price, period } ) =>
+						! isFetching && (
+							<>
+								{ price ? (
+									<>
+										{ price + ' ' }
+										<span className="plugin-details-CTA__period">{ period }</span>
+									</>
+								) : (
+									translate( 'Free' )
+								) }
+							</>
+						)
+					}
+				</PluginPrice>
+			</div>
 			<div className="plugin-details-CTA__install">
 				<CTAButton
 					slug={ pluginSlug }

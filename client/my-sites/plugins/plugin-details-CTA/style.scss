@@ -11,6 +11,12 @@
 	margin: 16px 0;
 }
 
+.plugin-details-CTA__period {
+	font-family: $sans;
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-50 );
+}
+
 .plugin-details-CTA__install {
 	margin-bottom: 20px;
 
@@ -28,12 +34,12 @@
 }
 
 .plugin-details-CTA__t-and-c {
-    font-size: $font-body-extra-small;
-    color: var( --studio-gray-50 );
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-50 );
 
-    @media screen and ( max-width: 1040px ) {
-        padding-bottom: 40px;
-    }
+	@media screen and ( max-width: 1040px ) {
+		padding-bottom: 40px;
+	}
 }
 
 .is-placeholder {
@@ -42,5 +48,4 @@
 	.plugin-details-CTA__t-and-c {
 		@extend %placeholder;
 	}
-
 }
