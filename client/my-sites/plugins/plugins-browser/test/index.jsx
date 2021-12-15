@@ -63,6 +63,7 @@ const initialReduxState = {
 	},
 	documentHead: {},
 	preferences: { remoteValues: {} },
+	productsList: {},
 };
 
 function mountWithRedux( ui, overrideState ) {
@@ -83,7 +84,6 @@ describe( 'Search view', () => {
 		const comp = mountWithRedux( <PluginsBrowser { ...myProps } /> );
 		expect( comp.find( 'NoResults' ).length ).toBe( 1 );
 	} );
-
 	test( 'should show plugin list when there are results', () => {
 		const comp = mountWithRedux( <PluginsBrowser { ...myProps } />, {
 			plugins: { wporg: { lists: { search: { searchterm: [ {} ] } } } },

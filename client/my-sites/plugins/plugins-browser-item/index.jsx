@@ -12,7 +12,10 @@ import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import {
+	getProductDisplayCost,
+	isProductsListFetching as getIsProductsListFetching,
+} from 'calypso/state/products-list/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
@@ -169,15 +172,12 @@ const PluginsBrowserListElement = ( props ) => {
 	);
 };
 
-const InstalledInOrPricing = ( {
-	sitesWithPlugin,
-	isWpcomPreinstalled,
-	plugin,
-	period = 'monthly',
-} ) => {
+const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled, plugin } ) => {
 	const translate = useTranslate();
+	const period = 'monthly'; // TODO: get period data from state
 	const priceSlug = plugin?.variations?.[ period ]?.product_slug;
 	const price = useSelector( ( state ) => getProductDisplayCost( state, priceSlug ) );
+	const isProductsListFetching = useSelector( getIsProductsListFetching );
 
 	const getPeriodText = ( periodValue ) => {
 		switch ( periodValue ) {
@@ -203,13 +203,17 @@ const InstalledInOrPricing = ( {
 
 	return (
 		<div className="plugins-browser-item__pricing">
-			{ price ? (
+			{ ! isProductsListFetching && (
 				<>
-					{ price + ' ' }
-					<span className="plugins-browser-item__period">{ getPeriodText( period ) }</span>
+					{ price ? (
+						<>
+							{ price + ' ' }
+							<span className="plugins-browser-item__period">{ getPeriodText( period ) }</span>
+						</>
+					) : (
+						translate( 'Free' )
+					) }
 				</>
-			) : (
-				translate( 'Free' )
 			) }
 		</div>
 	);
