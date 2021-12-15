@@ -138,6 +138,7 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 	const { activityLogs, isLoadingActivityLogs } = useActivityLogs( siteId, {
 		before: moment( selectedDate ).endOf( 'day' ).toISOString(),
 		after: moment( selectedDate ).startOf( 'day' ).toISOString(),
+		action: BACKUP_ACTIONS,
 	} );
 
 	const {
