@@ -1,16 +1,17 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import {
 	getProductDisplayCost,
-	isProductsListFetching as getIsProductsListFetching,
+	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
 
-export const PluginPrice = ( { plugin, children } ) => {
+export const PluginPrice = ( { plugin, billingPeriod, children } ) => {
 	const translate = useTranslate();
-	const period = 'monthly'; // TODO: get period data from state
-	const priceSlug = plugin?.variations?.[ period ]?.product_slug;
+	const variationPeriod = getPeriodVariationValue( billingPeriod );
+	const priceSlug = plugin?.variations?.[ variationPeriod ]?.product_slug;
 	const price = useSelector( ( state ) => getProductDisplayCost( state, priceSlug ) );
-	const isFetching = useSelector( getIsProductsListFetching );
+	const isFetching = useSelector( isProductsListFetching );
 
 	const getPeriodText = ( periodValue ) => {
 		switch ( periodValue ) {
@@ -26,6 +27,18 @@ export const PluginPrice = ( { plugin, children } ) => {
 	return children( {
 		isFetching,
 		price,
-		period: getPeriodText( period ),
+		period: getPeriodText( variationPeriod ),
 	} );
 };
+
+function getPeriodVariationValue( billingPeriod ) {
+	switch ( billingPeriod ) {
+		case IntervalLength.MONTHLY:
+			return 'monthly';
+		case IntervalLength.ANNUALLY:
+			return 'yearly';
+
+		default:
+			return '';
+	}
+}

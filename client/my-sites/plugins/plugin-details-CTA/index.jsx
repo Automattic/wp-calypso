@@ -27,6 +27,7 @@ const PluginDetailsCTA = ( {
 	isPluginInstalledOnsite,
 	siteIds,
 	isPlaceholder,
+	billingPeriod,
 } ) => {
 	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
@@ -77,7 +78,7 @@ const PluginDetailsCTA = ( {
 	return (
 		<div className="plugin-details-CTA__container">
 			<div className="plugin-details-CTA__price">
-				<PluginPrice plugin={ plugin }>
+				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 					{ ( { isFetching, price, period } ) =>
 						! isFetching && (
 							<>
