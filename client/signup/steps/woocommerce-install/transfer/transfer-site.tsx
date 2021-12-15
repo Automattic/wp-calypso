@@ -52,6 +52,10 @@ export default function TransferSite(): ReactElement | null {
 	// Poll for software status
 	useInterval(
 		() => {
+			// Only poll if the transfer is completed
+			if ( transferFailed || ! transferStates.COMPLETED ) {
+				return;
+			}
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		softwareApplied ? null : 3000
