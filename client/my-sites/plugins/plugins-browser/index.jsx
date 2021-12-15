@@ -18,7 +18,6 @@ import announcementImage from 'calypso/assets/images/marketplace/plugins-revamp.
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
-import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
@@ -46,7 +45,6 @@ import {
 	getPluginsListPagination,
 } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -84,8 +82,6 @@ const PluginsBrowser = ( {
 	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
 		paidPluginsRawList,
 	] );
-	const recommendedPlugins =
-		useSelector( ( state ) => getRecommendedPlugins( state, selectedSite?.ID ) ) || [];
 	const popularPlugins = useSelector( ( state ) => getPluginsListByCategory( state, 'popular' ) );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -102,7 +98,6 @@ const PluginsBrowser = ( {
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
-	const isRequestingRecommendedPlugins = ! Array.isArray( recommendedPlugins );
 	const pluginsByCategory = useSelector( ( state ) => getPluginsListByCategory( state, category ) );
 	const pluginsByCategoryNew = useSelector( ( state ) => getPluginsListByCategory( state, 'new' ) );
 	const pluginsByCategoryFeatured = useSelector( ( state ) =>
@@ -137,10 +132,7 @@ const PluginsBrowser = ( {
 	const translate = useTranslate();
 
 	const [ isMobile, setIsMobile ] = useState();
-	const isRecommendedPluginsEnabled = useMemo(
-		() => isEnabled( 'recommend-plugins' ) && !! selectedSite?.ID && selectedSite?.jetpack,
-		[ selectedSite ]
-	);
+
 	const isPaidPluginsEnabled = isEnabled( 'marketplace-v1' );
 
 	const shouldShowManageButton = useMemo( () => {
@@ -226,7 +218,6 @@ const PluginsBrowser = ( {
 					<QueryWporgPlugins category="featured" />
 				</>
 			) }
-			{ isRecommendedPluginsEnabled && <QuerySiteRecommendedPlugins siteId={ selectedSite?.ID } /> }
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
@@ -285,14 +276,11 @@ const PluginsBrowser = ( {
 				category={ category }
 				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				pluginsByCategory={ pluginsByCategory }
-				recommendedPlugins={ recommendedPlugins }
-				isRequestingRecommendedPlugins={ isRequestingRecommendedPlugins }
 				paidPlugins={ paidPlugins }
 				isFetchingPaidPlugins={ isFetchingPaidPlugins }
 				sites={ sites }
 				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
-				isRecommendedPluginsEnabled={ isRecommendedPluginsEnabled }
 				isPaidPluginsEnabled={ isPaidPluginsEnabled }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
@@ -377,10 +365,6 @@ const SearchListView = ( {
 };
 
 const translateCategory = ( { category, translate } ) => {
-	const recommendedText = translate( 'Recommended', {
-		context: 'Category description for the plugin browser.',
-	} );
-
 	switch ( category ) {
 		case 'new':
 			return translate( 'New', {
@@ -398,8 +382,6 @@ const translateCategory = ( { category, translate } ) => {
 			return translate( 'Featured', {
 				context: 'Category description for the plugin browser.',
 			} );
-		case 'recommended':
-			return recommendedText;
 	}
 };
 
@@ -478,34 +460,6 @@ const PluginSingleListView = ( {
 	);
 };
 
-const RecommendedPluginListView = ( {
-	recommendedPlugins,
-	isRequestingRecommendedPlugins,
-	sites,
-	siteSlug,
-} ) => {
-	const translate = useTranslate();
-
-	if ( recommendedPlugins && recommendedPlugins.length === 0 ) {
-		return null;
-	}
-
-	return (
-		<PluginsBrowserList
-			currentSites={ sites }
-			expandedListLink={ false }
-			listName="recommended"
-			plugins={ recommendedPlugins }
-			showPlaceholders={ isRequestingRecommendedPlugins }
-			site={ siteSlug }
-			size={ SHORT_LIST_LENGTH }
-			title={ translateCategory( { category: 'recommended', translate } ) }
-			variant={ PluginsBrowserListVariant.Fixed }
-			extended
-		/>
-	);
-};
-
 const PluginBrowserContent = ( props ) => {
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
@@ -519,8 +473,6 @@ const PluginBrowserContent = ( props ) => {
 			{ /* eslint-disable no-nested-ternary */ }
 			{ props.isPaidPluginsEnabled ? (
 				<PluginSingleListView { ...props } category="paid" />
-			) : props.isRecommendedPluginsEnabled ? (
-				<RecommendedPluginListView { ...props } />
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
 			) }
