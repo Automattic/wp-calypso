@@ -41,7 +41,7 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 	const headerText = translate( 'Choose where you want us to build your site.' );
-	const subHeaderText = translate( 'Some sites may be hidden ' );
+	const subHeaderText = translate( 'Some unsupported sites may be hidden.' );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
