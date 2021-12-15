@@ -41,7 +41,7 @@ interface Props {
 const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false } ) => {
 	const translate = useTranslate();
 	const back = translate( 'Back' ) as string;
-	if ( compact ) {
+	if ( compact && items.length > 1 ) {
 		// Show only the exactly previous page
 		items = items.slice( -2, -1 );
 		items[ 0 ].label = back;
