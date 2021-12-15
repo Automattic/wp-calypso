@@ -33,7 +33,7 @@ class DomainConnectAuthorize extends Component {
 
 		wpcom.req
 			.post(
-				`/domains/'${ domain }/dns/providers/${ providerId }/services/${ serviceId }/preview`,
+				`/domains/${ domain }/dns/providers/${ providerId }/services/${ serviceId }/preview`,
 				{ variables: params }
 			)
 			.then(
