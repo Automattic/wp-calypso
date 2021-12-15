@@ -16,7 +16,17 @@ const PlansIntervalToggleLabel = styled.span`
 	margin-right: 10px;
 `;
 
-const BillingIntervalSwitcher = ( { billingPeriod, onChange, compact } ) => {
+type Props = {
+	onChange: ( selectedValue: 'MONTHLY' | 'ANNUALLY' ) => void;
+	billingPeriod: IntervalLength;
+	compact: boolean;
+};
+
+const BillingIntervalSwitcher: React.FunctionComponent< Props > = ( {
+	billingPeriod,
+	onChange,
+	compact,
+} ) => {
 	const translate = useTranslate();
 	const monthlyLabel = translate( 'Monthly price' );
 	const annualLabel = translate( 'Annual price' );
@@ -34,8 +44,8 @@ const BillingIntervalSwitcher = ( { billingPeriod, onChange, compact } ) => {
 						{ monthlyLabel }
 					</SelectDropdown.Item>
 					<SelectDropdown.Item
-						selected={ billingPeriod === IntervalLength.ANNUALY }
-						onClick={ () => onChange( IntervalLength.ANNUALY ) }
+						selected={ billingPeriod === IntervalLength.ANNUALLY }
+						onClick={ () => onChange( IntervalLength.ANNUALLY ) }
 					>
 						{ annualLabel }
 					</SelectDropdown.Item>
