@@ -1,13 +1,12 @@
 import { Button, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
-import Clipboard from 'clipboard';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -43,20 +42,6 @@ class Security2faBackupCodesList extends Component {
 	printCodesButtonRef = createRef();
 	downloadCodesButtonRef = createRef();
 
-	componentDidMount() {
-		// Configure clipboard to be triggered on clipboard button press
-		const button = ReactDom.findDOMNode( this.copyCodesButtonRef.current );
-		this.clipboard = new Clipboard( button, {
-			text: () => this.getBackupCodePlainText( this.props.backupCodes ),
-		} );
-		this.clipboard.on( 'success', this.onCopy );
-	}
-
-	componentWillUnmount() {
-		// Cleanup clipboard object
-		this.clipboard.destroy();
-	}
-
 	openPopup = () => {
 		this.popup = window.open();
 
@@ -91,11 +76,11 @@ class Security2faBackupCodesList extends Component {
 		saveAs( toSave, `${ this.props.username }-backup-codes.txt` );
 	};
 
-	getBackupCodePlainText( backupCodes ) {
+	getBackupCodePlainText = ( backupCodes = this.props.backupCodes ) => {
 		if ( backupCodes.length > 0 ) {
 			return backupCodes.join( '\n' );
 		}
-	}
+	};
 
 	enableDownloadCodesTooltip = () => {
 		this.setState( { downloadCodesTooltip: true } );
@@ -276,15 +261,17 @@ class Security2faBackupCodesList extends Component {
 						} ) }
 					</FormButton>
 					<ButtonGroup>
-						<Button
+						<ClipboardButton
 							className="security-2fa-backup-codes-list__copy"
 							disabled={ ! this.props.backupCodes.length }
 							onMouseEnter={ this.enableCopyCodesTooltip }
 							onMouseLeave={ this.disableCopyCodesTooltip }
+							onCopy={ this.onCopy }
+							text={ this.getBackupCodePlainText }
 							ref={ this.copyCodesButtonRef }
 						>
 							<Gridicon icon="clipboard" />
-						</Button>
+						</ClipboardButton>
 						<Button
 							className="security-2fa-backup-codes-list__print"
 							disabled={ ! this.props.backupCodes.length }
