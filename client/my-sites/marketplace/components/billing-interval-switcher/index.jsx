@@ -17,26 +17,24 @@ const PlansIntervalToggleLabel = styled.span`
 
 const BillingIntervalSwitcher = ( { billingPeriod, onChange, compact } ) => {
 	const translate = useTranslate();
+	const monthlyLabel = translate( 'Monthly price' );
+	const annualLabel = translate( 'Annual price' );
 
 	if ( compact ) {
 		return (
 			<Container>
-				<SelectDropdown
-					selectedText={
-						billingPeriod === 'MONTHLY' ? translate( 'Monthly price' ) : translate( 'Annual price' )
-					}
-				>
+				<SelectDropdown selectedText={ billingPeriod === 'MONTHLY' ? monthlyLabel : annualLabel }>
 					<SelectDropdown.Item
 						selected={ billingPeriod === 'MONTHLY' }
 						onClick={ () => onChange( 'MONTHLY' ) }
 					>
-						{ translate( 'Monthly price' ) }
+						{ monthlyLabel }
 					</SelectDropdown.Item>
 					<SelectDropdown.Item
 						selected={ billingPeriod === 'ANNUALLY' }
 						onClick={ () => onChange( 'ANNUALLY' ) }
 					>
-						{ translate( 'Annual price' ) }
+						{ annualLabel }
 					</SelectDropdown.Item>
 				</SelectDropdown>
 			</Container>
