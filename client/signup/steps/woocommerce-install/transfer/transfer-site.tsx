@@ -35,7 +35,7 @@ export default function TransferSite( {
 	const isErrorTransferStatus =
 		Number.isInteger( Number( transferStatus ) ) &&
 		transferStatus &&
-		2 !== Math.floor( Number( transferStatus ) / 100 );
+		5 === Math.floor( Number( transferStatus ) / 100 );
 
 	const transferFailed = !! transfer?.error || isErrorTransferStatus;
 
