@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 import { Key } from 'react';
 
 const StyledUl = styled.ul`
@@ -34,14 +35,23 @@ const StyledGridicon = styled( Gridicon )`
 
 interface Props {
 	items: { label: string; href?: string }[];
+	compact?: boolean;
 }
 
-const Breadcrumb: React.FunctionComponent< Props > = ( { items } ) => {
+const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false } ) => {
+	const translate = useTranslate();
+	const back = translate( 'Back' ) as string;
+	if ( compact ) {
+		// Show only the exactly previous page
+		items = items.slice( -2, -1 );
+		items.map( ( item ) => ( item.label = back ) );
+	}
 	return (
 		<StyledUl>
 			{ items.map( ( item: { href?: string; label: string }, index: Key ) => {
 				return (
 					<StyledLi key={ index }>
+						{ compact && <StyledGridicon icon="chevron-left" size={ 18 } /> }
 						{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 18 } /> }
 						{ item.href ? <a href={ item.href }>{ item.label }</a> : <span>{ item.label }</span> }
 					</StyledLi>
