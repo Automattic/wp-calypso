@@ -216,7 +216,7 @@ function PluginDetails( props ) {
 				navigationItems={ getNavigationItems() }
 				compactBreadcrumb={ ! isWide }
 			>
-				{ isEnabled( 'marketplace-v1' ) && (
+				{ isEnabled( 'marketplace-v1' ) && isMarketplaceProduct && (
 					<BillingIntervalSwitcher
 						billingPeriod={ billingPeriod }
 						onChange={ setBillingPeriod }
