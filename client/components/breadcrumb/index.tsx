@@ -44,7 +44,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false 
 	if ( compact ) {
 		// Show only the exactly previous page
 		items = items.slice( -2, -1 );
-		items.map( ( item ) => ( item.label = back ) );
+		items[ 0 ].label = back;
 	}
 	return (
 		<StyledUl>
