@@ -1182,7 +1182,7 @@ __metadata:
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: ^4.5.3
+    typescript: ^4.5.4
   languageName: unknown
   linkType: soft
 
@@ -28039,7 +28039,7 @@ fsevents@~2.1.2:
     crc32: ^0.2.2
     debug: ^4.0.0
     seed-random: ^2.2.0
-    typescript: ^4.5.3
+    typescript: ^4.5.4
   languageName: unknown
   linkType: soft
 
