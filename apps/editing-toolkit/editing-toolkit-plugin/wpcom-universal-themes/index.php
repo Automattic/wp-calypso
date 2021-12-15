@@ -26,6 +26,8 @@ function is_core_fse_active() {
 		return false;
 	}
 
+	// We identify universal themes by assuming that they will all use blockbase as the
+	// default template.
 	$universal_theme_template = defined( 'IS_ATOMIC' ) && IS_ATOMIC
 		? 'blockbase'
 		: 'pub/blockbase';
