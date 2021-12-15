@@ -110,7 +110,7 @@ export default function WPCheckoutOrderReview( {
 		loadExperimentAssignment( experimentCheck ).then( ( experimentObject ) => {
 			setExperiment( experimentObject );
 		} );
-	}, [] );
+	}, [ isDesktop ] );
 
 	const onRemoveProductCancel = useCallback( () => {
 		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
@@ -167,7 +167,6 @@ export default function WPCheckoutOrderReview( {
 			{ ! planIsP2Plus && domainUrl && 'no-user' !== domainUrl && (
 				<SiteSummary>
 					{ translate( 'Site: %s', { args: domainUrl } ) }
-
 					{ shouldShowDomainNote && (
 						<GeneratedNameNote>
 							{ translate( 'You can change this name at any time in your account settings.' ) }
