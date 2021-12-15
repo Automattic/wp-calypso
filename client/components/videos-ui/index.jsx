@@ -1,16 +1,19 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useState, useMemo } from 'react';
+import Notice from 'calypso/components/notice';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { HeaderBar, FooterBar } ) => {
+const VideosUi = ( { HeaderBar, FooterBar, areVideosTranslated = true } ) => {
 	const translate = useTranslate();
+	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
 
 	const courseSlug = 'blogging-quick-start';
 	const { data: course } = useCourseQuery( courseSlug, { retry: false } );
@@ -22,6 +25,11 @@ const VideosUi = ( { HeaderBar, FooterBar } ) => {
 	useEffect( () => {
 		setUserCourseProgression( initialUserCourseProgression );
 	}, [ initialUserCourseProgression ] );
+
+	const [ shouldShowVideoTranslationNotice, setShouldShowVideoTranslationNotice ] = useState(
+		// @TODO remove the '&& false' as soon as notification text is translated
+		! isEnglish && ! areVideosTranslated && false
+	);
 
 	const completedVideoCount = Object.keys( userCourseProgression ).length;
 	const courseChapterCount = course ? Object.keys( course.videos ).length : 0;
@@ -120,6 +128,18 @@ const VideosUi = ( { HeaderBar, FooterBar } ) => {
 			<div className="videos-ui__body">
 				<div className="videos-ui__body-title">
 					<h3>{ course && course.title }</h3>
+					{ currentVideo && shouldShowVideoTranslationNotice && (
+						<Notice onDismissClick={ () => setShouldShowVideoTranslationNotice( false ) }>
+							{ translate(
+								'These videos are currently only available in English. Please {{supportLink}}let us know{{/supportLink}} if you would like them translated.',
+								{
+									components: {
+										supportLink: <a href="mailto:support@wordpress.com" />,
+									},
+								}
+							) }
+						</Notice>
+					) }
 				</div>
 				<div className="videos-ui__video-content">
 					{ currentVideo && (

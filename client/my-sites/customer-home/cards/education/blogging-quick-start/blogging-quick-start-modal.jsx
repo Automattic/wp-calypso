@@ -19,6 +19,7 @@ const BloggingQuickStartModal = ( props ) => {
 						FooterBar={ ( footerProps ) => (
 							<ModalFooterBar onBackClick={ onClose } { ...footerProps } />
 						) }
+						areVideosTranslated={ false }
 					/>
 				</BlankCanvas.Content>
 			</BlankCanvas>
