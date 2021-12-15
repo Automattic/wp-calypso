@@ -51,6 +51,7 @@ const JetpackFreeCard: FC< OwnProps > = ( { siteId, urlQueryArgs } ) => {
 			buttonLabel={ translate( 'Start for free' ) }
 			buttonURL={ buttonHref }
 			onButtonClick={ onButtonClick }
+			collapseFeaturesOnMobile
 		/>
 	);
 };

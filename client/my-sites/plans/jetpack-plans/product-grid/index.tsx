@@ -180,6 +180,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				selectedTerm={ duration }
 				scrollCardIntoView={ scrollCardIntoView }
 				createButtonURL={ createButtonURL }
+				collapseFeaturesOnMobile
 			/>
 		</li>
 	);

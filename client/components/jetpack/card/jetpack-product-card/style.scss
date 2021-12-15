@@ -1,4 +1,5 @@
-@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .jetpack-product-card {
 	position: relative;
@@ -171,6 +172,34 @@
 	}
 }
 
+.jetpack-product-card__features-button {
+	display: flex;
+	align-content: center;
+
+	margin-bottom: 1rem;
+
+	color: var( --color-text-subtle );
+
+	font-family: inherit;
+	font-size: 1rem;
+	font-weight: 700;
+
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 1px dotted;
+		outline-offset: 2px;
+	}
+
+	.gridicon {
+		margin: 1px 0 0 0.5rem;
+	}
+
+	@include break-small {
+		display: none;
+	}
+}
+
 .jetpack-product-card__features-list {
 	margin: 0 16px 12px;
 
@@ -180,6 +209,14 @@
 
 	@include break-medium {
 		margin-block-end: 2rem;
+	}
+
+	&.is-collapsed {
+		display: none;
+
+		@include break-small {
+			display: block;
+		}
 	}
 }
 
