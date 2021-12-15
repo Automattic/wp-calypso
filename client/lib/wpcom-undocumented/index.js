@@ -1,7 +1,6 @@
 import debugFactory from 'debug';
 import inherits from 'inherits';
 import wpcomFactory from 'wpcom';
-import Undocumented from './lib/undocumented';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented' );
 
@@ -43,15 +42,6 @@ function WPCOMUndocumented( token, reqHandler ) {
 }
 
 inherits( WPCOMUndocumented, wpcomFactory );
-
-/**
- * Get `Undocumented` object instance
- *
- * @returns {Undocumented} Undocumented instance
- */
-WPCOMUndocumented.prototype.undocumented = function () {
-	return new Undocumented( this );
-};
 
 /**
  * Add a token to this instance of WPCOM.
