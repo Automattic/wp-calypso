@@ -147,17 +147,6 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
-.plugin-details__price-toggle {
-	.plugin-details__price-toggle-label {
-		font-size: $font-body-small;
-		color: var( --studio-gray-60 );
-		margin-right: 10px;
-	}
-	.plans-interval-toggle {
-		display: inline-flex;
-	}
-}
-
 .plugin-details__body {
 	border-top: 1px solid var( --studio-gray-5 );
 

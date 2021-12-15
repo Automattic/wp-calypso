@@ -1,4 +1,5 @@
-import { PlansIntervalToggle } from '@automattic/plans-grid/src';
+import { isEnabled } from '@automattic/calypso-config';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,6 +14,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -92,7 +94,10 @@ function PluginDetails( props ) {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
-	const [ billingPeriod, setBillingPeriod ] = useState( 'ANNUALLY' );
+
+	// Header Navigation and billing period switcher.
+	const isWide = useBreakpoint( '>1280px' );
+	const [ billingPeriod, setBillingPeriod ] = useState( 'MONTHLY' );
 
 	// Determine if the plugin is WPcom or WPorg hosted
 	const productsList = useSelector( ( state ) => getProductsList( state ) );
@@ -207,14 +212,17 @@ function PluginDetails( props ) {
 			<SidebarNavigation />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QueryProductsList />
-			<FixedNavigationHeader navigationItems={ getNavigationItems() }>
-				<>
-					<div className="plugin-details__price-toggle">
-						<span className="plugin-details__price-toggle-label">{ translate( 'Price' ) }</span>
-
-						<PlansIntervalToggle intervalType={ billingPeriod } onChange={ setBillingPeriod } />
-					</div>
-				</>
+			<FixedNavigationHeader
+				navigationItems={ getNavigationItems() }
+				compactBreadcrumb={ ! isWide }
+			>
+				{ isEnabled( 'marketplace-v1' ) && (
+					<BillingIntervalSwitcher
+						billingPeriod={ billingPeriod }
+						onChange={ setBillingPeriod }
+						compact={ ! isWide }
+					/>
+				) }
 			</FixedNavigationHeader>
 			<PluginNotices
 				pluginId={ fullPlugin.id }
