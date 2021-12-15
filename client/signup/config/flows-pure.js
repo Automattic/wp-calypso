@@ -441,6 +441,7 @@ export function generateFlows( {
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'site' ],
 			lastModified: '2021-11-11',
+			disallowResume: false,
 		},
 	];
 
