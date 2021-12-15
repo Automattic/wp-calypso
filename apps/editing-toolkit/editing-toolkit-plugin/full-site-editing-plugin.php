@@ -339,7 +339,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  */
 function load_wpcom_site_editor() {
 	// This is no longer needed after Gutenberg 12.1 due to the Navigation menu no longer being inscrutable.
-	if ( defined( 'GUTENBERG_VERSION' ) && version_compare( GUTENBERG_VERSION, '12.1.0', '>=' ) ) {
+	if ( defined( 'GUTENBERG_VERSION' ) && version_compare( GUTENBERG_VERSION, '12.2.0', '>=' ) ) {
 		return;
 	}
 	require_once __DIR__ . '/wpcom-site-editor/index.php';
