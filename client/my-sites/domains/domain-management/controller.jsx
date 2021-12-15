@@ -195,17 +195,11 @@ export default {
 	},
 
 	domainManagementDns( pageContext, next ) {
-		let component = DomainManagement.Dns;
-
-		if ( config.isEnabled( 'domains/dns-records-redesign' ) ) {
-			component = DomainManagement.DnsRecords;
-		}
-
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementDns( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Name Servers and DNS > DNS Records"
-				component={ component }
+				component={ DomainManagement.DnsRecords }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
 			/>

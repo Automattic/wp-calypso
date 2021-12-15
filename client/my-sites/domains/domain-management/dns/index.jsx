@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
@@ -101,8 +100,13 @@ class Dns extends Component {
 		};
 
 		const buttons = [
-			<DnsAddNewRecordButton site={ selectedSite.slug } domain={ selectedDomainName } />,
+			<DnsAddNewRecordButton
+				key="add-new-record-button"
+				site={ selectedSite.slug }
+				domain={ selectedDomainName }
+			/>,
 			<DnsMenuOptionsButton
+				key="menu-options-button"
 				domain={ selectedDomainName }
 				onSuccess={ this.onRestoreSuccess }
 				onError={ this.onRestoreError }
@@ -120,11 +124,7 @@ class Dns extends Component {
 	}
 
 	renderPlaceholder() {
-		return config.isEnabled( 'domains/dns-records-redesign' ) ? (
-			<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />
-		) : (
-			<DomainMainPlaceholder goBack={ this.goBack } />
-		);
+		<DomainMainPlaceholder breadcrumbs={ this.renderBreadcrumbs } />;
 	}
 
 	renderMain() {
