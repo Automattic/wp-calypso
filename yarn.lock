@@ -1880,12 +1880,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.1.6, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.12.7, @babel/parser@npm:^7.14.0, @babel/parser@npm:^7.16.0, @babel/parser@npm:^7.16.5, @babel/parser@npm:^7.4.3, @babel/parser@npm:^7.5.5, @babel/parser@npm:^7.7.2, @babel/parser@npm:^7.8.4":
-  version: 7.16.5
-  resolution: "@babel/parser@npm:7.16.5"
+"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.1.6, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.12.7, @babel/parser@npm:^7.14.0, @babel/parser@npm:^7.16.0, @babel/parser@npm:^7.16.5, @babel/parser@npm:^7.16.6, @babel/parser@npm:^7.4.3, @babel/parser@npm:^7.5.5, @babel/parser@npm:^7.7.2, @babel/parser@npm:^7.8.4":
+  version: 7.16.6
+  resolution: "@babel/parser@npm:7.16.6"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: 8c00c5585fb2fda66cb1843f70aeffc374b6410b23578d5e68f55f37a4ea3a426c582fc4d629bfba0d2b4fb7cd0e03504c48b5819e7676c6ad8f8ca5b9df833d
+  checksum: f34f088382403a9d8ad895f2b5b1db48f01e0e652e90a01873f549e9d8a979c0391e6bfb029daf906f4687b2e0c74339c62d41c0878e08cb4c300b4bc48bfc3d
   languageName: node
   linkType: hard
 
@@ -16839,7 +16839,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": ^7.16.5
     "@babel/eslint-parser": ^7.16.5
-    "@babel/parser": ^7.16.5
+    "@babel/parser": ^7.16.6
     eslint: ">=8.4.1"
   peerDependencies:
     "@babel/core": ">=7.16.5"

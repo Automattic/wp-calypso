@@ -32,7 +32,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@babel/core": "^7.16.5",
 		"@babel/eslint-parser": "^7.16.5",
-		"@babel/parser": "^7.16.5",
+		"@babel/parser": "^7.16.6",
 		"eslint": ">=8.4.1"
 	}
 }
