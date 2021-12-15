@@ -16691,9 +16691,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^37.2.0":
-  version: 37.2.0
-  resolution: "eslint-plugin-jsdoc@npm:37.2.0"
+"eslint-plugin-jsdoc@npm:^37.2.2":
+  version: 37.2.2
+  resolution: "eslint-plugin-jsdoc@npm:37.2.2"
   dependencies:
     "@es-joy/jsdoccomment": 0.13.0
     comment-parser: 1.3.0
@@ -16706,7 +16706,7 @@ __metadata:
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: c28d2dc5447c83b5872191235b74fc98b644592dc18a6124b0a2564372c4fea84d7cb4abf7264c98f78e889b007b492b12f3dd9691b24b798bd9d8010e8e7772
+  checksum: c1d8f525f6b8a48bd87817a2df53128668317be1bc093971a4a16d1ac6de8fc3c23eae4eb9bcd7ac09e012e4a9be764efab8cf20fc3495b9a52da27c0ec2c7df
   languageName: node
   linkType: hard
 
@@ -16846,7 +16846,7 @@ __metadata:
     "@babel/core": ">=7.16.5"
     eslint: ">=8.4.1"
     eslint-plugin-inclusive-language: ^2.2.0
-    eslint-plugin-jsdoc: ^37.2.0
+    eslint-plugin-jsdoc: ^37.2.2
     eslint-plugin-react-hooks: ^4.3.0
   languageName: unknown
   linkType: soft
@@ -37805,7 +37805,7 @@ testarmada-magellan@11.0.10:
     eslint-plugin-import: ^2.25.3
     eslint-plugin-inclusive-language: ^2.2.0
     eslint-plugin-jest: ^25.3.0
-    eslint-plugin-jsdoc: ^37.2.0
+    eslint-plugin-jsdoc: ^37.2.2
     eslint-plugin-jsx-a11y: ^6.5.1
     eslint-plugin-md: ^1.0.19
     eslint-plugin-mocha: ^10.0.3
