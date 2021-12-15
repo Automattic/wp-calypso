@@ -2,9 +2,15 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.playwright.prepareEnvironment
+import _self.lib.e2e.prepareEnvironment
+import _self.lib.e2e.collectResults
+import _self.lib.e2e.runTests
+import _self.lib.e2e.artifactRules
+import _self.lib.e2e.wpCalypsoVCS
+import _self.lib.customBuildType.calypsoE2EBuildType
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -583,38 +589,23 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	return BuildType {
-		id("Calypso_E2E_Playwright_$targetDevice")
-		uuid = buildUuid
-		name = "E2E Tests ($targetDevice)"
-		description = "Runs Calypso e2e tests on $targetDevice size"
-
-		artifactRules = """
-			logs.tgz => logs.tgz
-			screenshots => screenshots
-			trace => trace
-		""".trimIndent()
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		params {
-			checkbox(
-				name = "env.AUTHENTICATE_ACCOUNTS",
-				value = "simpleSitePersonalPlanUser,eCommerceUser,defaultUser",
-				label = "List of accounts to pre-authenticate",
-				description = "Login once and reuse auth cookies for all specs",
-				checked = "true",
-				unchecked = "false"
-			)
-		}
-
-		steps {
-			prepareEnvironment()
-
+fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): calypsoE2EBuildType {
+	return calypsoE2EBuildType(
+		buildId = "Calypso_E2E_Playwright_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "E2E Tests ($targetDevice)",
+		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
+		buildParams = {
+			param("env.SAVE_AUTH_COOKIES", "true")
+			param("env.LIVEBRANCHES", "true")
+			param("env.TARGET_DEVICE", "$targetDevice")
+		},
+		buildSteps = {
+			// runTests(
+			// 	stepName = "Run e2e tests ($targetDevice)",
+			// 	testGroup = "calypso-pr",
+			// 	dockerBuildNumber = "${BuildDockerImage.depParamRefs.buildNumber}",
+			// )
 			bashNodeScript {
 				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """
@@ -632,47 +623,18 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					cd test/e2e
 					mkdir temp
 
-					export LIVEBRANCHES=true
-					export NODE_CONFIG_ENV=test
-					export PLAYWRIGHT_BROWSERS_PATH=0
-					export TEAMCITY_VERSION=2021
-					export HEADLESS=false
-
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
 					# Run the test
-					export TARGET_DEVICE=$targetDevice
-					export LOCALE=en
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-					export DEBUG=pw:api
 
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
-			bashNodeScript {
-				name = "Collect results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					mkdir -p screenshots
-					find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-					mkdir -p logs
-					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-					mkdir -p trace
-					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-			}
-		}
-
-		features {
-			perfmon {
-			}
+		},
+		buildFeatures = {
 			pullRequests {
 				vcsRootExtId = "${Settings.WpCalypso.id}"
 				provider = github {
@@ -682,18 +644,8 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 				}
 			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
-			}
-		}
-
-		triggers {
+		},
+		buildTriggers = {
 			vcs {
 				branchFilter = """
 					+:*
@@ -701,29 +653,21 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					-:trunk
 				""".trimIndent()
 			}
-		}
-
-		failureConditions {
-			executionTimeoutMin = 20
-			// Do not fail on non-zero exit code to permit passing builds with muted tests.
-			nonZeroExitCode = false
-			failOnMetricChange {
-				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-				threshold = 50
-				units = BuildFailureOnMetric.MetricUnit.PERCENTS
-				comparison = BuildFailureOnMetric.MetricComparison.LESS
-				compareTo = build {
-					buildRule = lastSuccessful()
+			schedule {
+				schedulingPolicy = cron {
+					minutes = "0/30"
 				}
+				branchFilter = "+:trunk"
+				triggerBuild = always()
+				withPendingChangesOnly = false
 			}
-		}
-
-		dependencies {
+		},
+		buildDependencies = {
 			snapshot(BuildDockerImage) {
 				onDependencyFailure = FailureAction.FAIL_TO_START
 			}
 		}
-	}
+	)
 }
 
 object PreReleaseE2ETests : BuildType({
@@ -733,63 +677,23 @@ object PreReleaseE2ETests : BuildType({
 	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
 	maxRunningBuilds = 1
 
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
+	artifactRules = artifactRules()
 
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
+	wpCalypsoVCS()
 
 	steps {
 		prepareEnvironment()
-		bashNodeScript {
-			name = "Run pre-release e2e tests"
-			scriptContent = """
-				shopt -s globstar
-				set -x
 
-				cd test/e2e
-				mkdir temp
+		runTests(
+			stepName = "Run pre-release e2e tests",
+			testGroup = "calypso-release",
+			// envVars = mapOf(
+			// 	"TARGET_DEVICE" to "desktop",
+			// 	"URL" to "https://wpcalypso.wordpress.com"
+			// )
+		)
 
-				export URL="https://wpcalypso.wordpress.com"
-
-				export NODE_CONFIG_ENV=test
-				export PLAYWRIGHT_BROWSERS_PATH=0
-				export TEAMCITY_VERSION=2021
-				export TARGET_DEVICE=desktop
-				export LOCALE=en
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export DEBUG=pw:api
-				export HEADLESS=false
-
-				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
-
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
+		collectResults()
 	}
 
 	features {
@@ -833,63 +737,22 @@ object QuarantinedE2ETests: BuildType( {
 	description = "E2E tests quarantined due to intermittent failures."
 	maxRunningBuilds = 1
 
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
+	artifactRules = artifactRules()
 
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
+	wpCalypsoVCS()
 
 	steps {
 		prepareEnvironment()
-		bashNodeScript {
-			name = "Run e2e tests"
-			scriptContent = """
-				shopt -s globstar
-				set -x
 
-				cd test/e2e
-				mkdir temp
+		runTests(
+			stepName = "Run quarantined E2E tests",
+			testGroup = "quarantined",
+			// envVars = mapOf(
+			// 	"TARGET_DEVICE" to "desktop"
+			// )
+		)
 
-				export URL="https://wpcalypso.wordpress.com"
-
-				export NODE_CONFIG_ENV=test
-				export PLAYWRIGHT_BROWSERS_PATH=0
-				export TEAMCITY_VERSION=2021
-				export TARGET_DEVICE=desktop
-				export LOCALE=en
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export DEBUG=pw:api
-				export HEADLESS=false
-
-				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
-
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
+		collectResults()
 	}
 
 	features {
@@ -925,3 +788,4 @@ object QuarantinedE2ETests: BuildType( {
 		nonZeroExitCode = false
 	}
 })
+

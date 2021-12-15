@@ -1,0 +1,114 @@
+package _self.lib.customBuildType
+
+import Settings
+import _self.lib.e2e.prepareEnvironment
+import _self.lib.e2e.collectResults
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.ParametrizedWithType
+import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildFeatures
+import jetbrains.buildServer.configs.kotlin.v2019_2.Triggers
+import jetbrains.buildServer.configs.kotlin.v2019_2.Dependencies
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+
+open class calypsoE2EBuildType(
+	var buildId: String,
+	var buildUuid: String,
+	var buildName: String,
+	var buildDescription: String,
+	var buildParams: ParametrizedWithType.() -> Unit = {},
+	var buildSteps: BuildSteps.() -> Unit,
+	var buildFeatures: BuildFeatures.() -> Unit,
+	var buildTriggers: Triggers.() -> Unit,
+	var buildDependencies: Dependencies.() -> Unit = {},
+
+): BuildType() {
+	init {
+		val buildParams = buildParams
+		val buildSteps = buildSteps
+		val buildFeatures = buildFeatures
+		val buildTriggers = buildTriggers
+		val buildDependencies = buildDependencies
+		val params = params
+
+		id( buildId )
+		uuid = buildUuid
+		name = buildName
+		description = buildDescription
+
+		artifactRules = """
+			logs.tgz => logs.tgz
+			screenshots => screenshots
+			trace => trace
+		""".trimIndent()
+
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
+		params {
+			param("env.NODE_CONFIG_ENV", "test")
+			param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
+			param("env.TEAMCITY_VERSION", "2021")
+			param("env.HEADLESS", "false")
+			param("env.LOCALE", "en")
+			param("env.DEBUG", "pw:api")
+			buildParams()
+		}
+
+		steps {
+			prepareEnvironment()
+
+			buildSteps()
+
+			collectResults()
+		}
+
+		features {
+			perfmon {
+			}
+			commitStatusPublisher {
+				vcsRootExtId = "${Settings.WpCalypso.id}"
+				publisher = github {
+					githubUrl = "https://api.github.com"
+					authType = personalToken {
+						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+					}
+				}
+			}
+			buildFeatures()
+		}
+
+		triggers {buildTriggers()}
+
+		dependencies.buildDependencies()
+
+		failureConditions {
+			executionTimeoutMin = 20
+			// Do not fail on non-zero exit code to permit passing builds with muted tests.
+			nonZeroExitCode = false
+			failOnMetricChange {
+				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+				threshold = 50
+				units = BuildFailureOnMetric.MetricUnit.PERCENTS
+				comparison = BuildFailureOnMetric.MetricComparison.LESS
+				compareTo = build {
+					buildRule = lastSuccessful()
+				}
+			}
+		}
+	}
+}
