@@ -2,6 +2,7 @@ import { PlansIntervalToggle } from '@automattic/plans-grid/src';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { IntervalLength } from './constants';
 
 const Container = styled.div`
 	.plans-interval-toggle {
@@ -23,16 +24,18 @@ const BillingIntervalSwitcher = ( { billingPeriod, onChange, compact } ) => {
 	if ( compact ) {
 		return (
 			<Container>
-				<SelectDropdown selectedText={ billingPeriod === 'MONTHLY' ? monthlyLabel : annualLabel }>
+				<SelectDropdown
+					selectedText={ billingPeriod === IntervalLength.MONTHLY ? monthlyLabel : annualLabel }
+				>
 					<SelectDropdown.Item
-						selected={ billingPeriod === 'MONTHLY' }
-						onClick={ () => onChange( 'MONTHLY' ) }
+						selected={ billingPeriod === IntervalLength.MONTHLY }
+						onClick={ () => onChange( IntervalLength.MONTHLY ) }
 					>
 						{ monthlyLabel }
 					</SelectDropdown.Item>
 					<SelectDropdown.Item
-						selected={ billingPeriod === 'ANNUALLY' }
-						onClick={ () => onChange( 'ANNUALLY' ) }
+						selected={ billingPeriod === IntervalLength.ANNUALY }
+						onClick={ () => onChange( IntervalLength.ANNUALY ) }
 					>
 						{ annualLabel }
 					</SelectDropdown.Item>

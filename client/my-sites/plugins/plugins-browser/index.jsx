@@ -29,6 +29,7 @@ import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-quer
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import NoResults from 'calypso/my-sites/no-results';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -79,7 +80,7 @@ const PluginsBrowser = ( {
 
 	// Billing period switcher.
 	const isWide = useBreakpoint( '>1280px' );
-	const [ billingPeriod, setBillingPeriod ] = useState( 'MONTHLY' );
+	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
 
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
