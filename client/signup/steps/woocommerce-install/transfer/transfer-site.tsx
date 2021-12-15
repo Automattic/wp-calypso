@@ -31,7 +31,7 @@ export default function TransferSite( {
 	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
 	const transferStatus = transfer?.status;
 
-	// Check transfer status code 2xx.
+	// Check transfer status code (5xx).
 	const isErrorTransferStatus =
 		Number.isInteger( Number( transferStatus ) ) &&
 		transferStatus &&
