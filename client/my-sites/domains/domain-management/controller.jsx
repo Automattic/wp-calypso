@@ -302,15 +302,11 @@ export default {
 	},
 
 	domainManagementTransfer( pageContext, next ) {
-		let component = DomainManagement.Transfer;
-		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
-			component = DomainManagement.TransferPage;
-		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransfer( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer"
-				component={ component }
+				component={ DomainManagement.TransferPage }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
@@ -320,15 +316,11 @@ export default {
 	},
 
 	domainManagementTransferToOtherSite( pageContext, next ) {
-		let transferComponent = DomainManagement.TransferToOtherSite;
-		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
-			transferComponent = DomainManagement.TransferDomainToOtherSite;
-		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToOtherSite( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other Site"
-				component={ transferComponent }
+				component={ DomainManagement.TransferDomainToOtherSite }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
@@ -338,15 +330,11 @@ export default {
 	},
 
 	domainManagementTransferToOtherUser( pageContext, next ) {
-		let transferComponent = DomainManagement.TransferToOtherUser;
-		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
-			transferComponent = DomainManagement.TransferDomainToOtherUser;
-		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Other User"
-				component={ transferComponent }
+				component={ DomainManagement.TransferDomainToOtherUser }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
