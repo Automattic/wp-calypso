@@ -3,6 +3,7 @@ import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
 import { getHeadless, getLaunchConfiguration } from './browser-helper';
+import { getCalypsoURL } from './data-helper';
 import { LoginPage } from './lib/pages/login-page';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
@@ -193,7 +194,10 @@ export async function setStoreCookie(
  */
 export async function authenticateTestAccount( page: Page, testAccount: string ): Promise< void > {
 	const { SAVE_AUTH_COOKIES, COOKIES_PATH } = process.env;
+	const browserContext = await page.context();
 	let storageStateFilePath;
+
+	await browserContext.clearCookies();
 
 	/**
 	 * Load auth cookies from the storage state file if available.
@@ -208,10 +212,10 @@ export async function authenticateTestAccount( page: Page, testAccount: string )
 			if ( isFresh ) {
 				const storageStateFile = await fs.readFile( storageStateFilePath, { encoding: 'utf8' } );
 				const { cookies } = JSON.parse( storageStateFile );
-				const browserContext = await page.context();
 
 				console.info( `Using stored authentication cookies for the "${ testAccount }" account.` );
 				await browserContext.addCookies( cookies );
+				await page.goto( getCalypsoURL( '/' ) );
 				return;
 			}
 
@@ -220,8 +224,7 @@ export async function authenticateTestAccount( page: Page, testAccount: string )
 		} catch ( error: unknown ) {
 			const { code } = error as NodeJS.ErrnoException;
 			if ( code === 'ENOENT' ) {
-				// No worries if the storage file for given account is unavailable as it
-				// will be created with the first successful log in.
+				console.info( `Couldn't find storage state file for the "${ testAccount }" account.` );
 			} else {
 				throw error;
 			}
@@ -241,8 +244,6 @@ export async function authenticateTestAccount( page: Page, testAccount: string )
 	 * Save storage state file.
 	 */
 	if ( SAVE_AUTH_COOKIES === 'true' ) {
-		const browserContext = await page.context();
-
 		console.info( `Saving storage state file for the "${ testAccount }" account.` );
 		await browserContext.storageState( { path: storageStateFilePath } );
 	}
