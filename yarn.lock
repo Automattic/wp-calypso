@@ -1880,16 +1880,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.1.6, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.12.7, @babel/parser@npm:^7.14.0, @babel/parser@npm:^7.16.0, @babel/parser@npm:^7.16.5, @babel/parser@npm:^7.16.6, @babel/parser@npm:^7.4.3, @babel/parser@npm:^7.5.5, @babel/parser@npm:^7.7.2, @babel/parser@npm:^7.8.4":
-  version: 7.16.6
-  resolution: "@babel/parser@npm:7.16.6"
-  bin:
-    parser: ./bin/babel-parser.js
-  checksum: f34f088382403a9d8ad895f2b5b1db48f01e0e652e90a01873f549e9d8a979c0391e6bfb029daf906f4687b2e0c74339c62d41c0878e08cb4c300b4bc48bfc3d
-  languageName: node
-  linkType: hard
-
-"@babel/parser@npm:^7.13.16":
+"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.1.6, @babel/parser@npm:^7.12.11, @babel/parser@npm:^7.12.7, @babel/parser@npm:^7.13.16, @babel/parser@npm:^7.14.0, @babel/parser@npm:^7.16.0, @babel/parser@npm:^7.16.5, @babel/parser@npm:^7.16.6, @babel/parser@npm:^7.4.3, @babel/parser@npm:^7.5.5, @babel/parser@npm:^7.7.2, @babel/parser@npm:^7.8.4":
   version: 7.16.6
   resolution: "@babel/parser@npm:7.16.6"
   bin:
@@ -2236,18 +2227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-syntax-flow@npm:^7.0.0, @babel/plugin-syntax-flow@npm:^7.16.0, @babel/plugin-syntax-flow@npm:^7.2.0":
-  version: 7.16.0
-  resolution: "@babel/plugin-syntax-flow@npm:7.16.0"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.14.5
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: e7f5230027a4a520adf5cf16419e8f0794a637cf4acebc0185a5b25f71f17a91b1d3ed67c48270dcf79dacc452532e9acf4961663548646847ba4ee69742fc06
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-syntax-flow@npm:^7.16.5":
+"@babel/plugin-syntax-flow@npm:^7.0.0, @babel/plugin-syntax-flow@npm:^7.16.5, @babel/plugin-syntax-flow@npm:^7.2.0":
   version: 7.16.5
   resolution: "@babel/plugin-syntax-flow@npm:7.16.5"
   dependencies:
@@ -2522,19 +2502,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-flow-strip-types@npm:^7.0.0, @babel/plugin-transform-flow-strip-types@npm:^7.12.1":
-  version: 7.16.0
-  resolution: "@babel/plugin-transform-flow-strip-types@npm:7.16.0"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.14.5
-    "@babel/plugin-syntax-flow": ^7.16.0
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: c90807566e57cec4915c3424724f9e71ba5990e8247a23f869a7af455372de11f0ddef4b2fec5c5fd9b1fbd677aa7bd854b1233ad7de7955a788857e3fa2a349
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-transform-flow-strip-types@npm:^7.16.5":
+"@babel/plugin-transform-flow-strip-types@npm:^7.0.0, @babel/plugin-transform-flow-strip-types@npm:^7.16.5":
   version: 7.16.5
   resolution: "@babel/plugin-transform-flow-strip-types@npm:7.16.5"
   dependencies:
@@ -3008,19 +2976,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-flow@npm:^7.0.0, @babel/preset-flow@npm:^7.12.1":
-  version: 7.12.1
-  resolution: "@babel/preset-flow@npm:7.12.1"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.10.4
-    "@babel/plugin-transform-flow-strip-types": ^7.12.1
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 833819be74b83e37b0e52009714714ff4ef636b937358b62a4b24c552a13c80a94203767907be5b63a6a9ec8abe317c46abdf94f91deaa457658f1d421979134
-  languageName: node
-  linkType: hard
-
-"@babel/preset-flow@npm:^7.13.13":
+"@babel/preset-flow@npm:^7.0.0, @babel/preset-flow@npm:^7.12.1, @babel/preset-flow@npm:^7.13.13":
   version: 7.16.5
   resolution: "@babel/preset-flow@npm:7.16.5"
   dependencies:
