@@ -31,7 +31,7 @@ export const PluginPrice = ( { plugin, billingPeriod, children } ) => {
 	} );
 };
 
-function getPeriodVariationValue( billingPeriod ) {
+export function getPeriodVariationValue( billingPeriod ) {
 	switch ( billingPeriod ) {
 		case IntervalLength.MONTHLY:
 			return 'monthly';

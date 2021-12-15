@@ -245,6 +245,7 @@ function PluginDetails( props ) {
 							isPluginInstalledOnsite={ isPluginInstalledOnsite }
 							isPlaceholder={ showPlaceholder }
 							billingPeriod={ billingPeriod }
+							isMarketplaceProduct={ isMarketplaceProduct }
 						/>
 					</div>
 				</div>
