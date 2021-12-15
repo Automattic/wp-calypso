@@ -20288,7 +20288,7 @@ fsevents@~2.1.2:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    commander: ^5.0.0
+    commander: ^5.1.0
     debug: ^4.0.0
     globby: ^10.0.0
     xgettext-js: ^3.0.0
