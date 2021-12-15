@@ -13,7 +13,7 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import type { DetailsCardProps } from './types';
 
-import './style.scss';
+import '../details-card.scss';
 
 const Details = ( { domain, isLoadingPurchase, purchase, selectedSite }: DetailsCardProps ) => {
 	const moment = useLocalizedMoment();

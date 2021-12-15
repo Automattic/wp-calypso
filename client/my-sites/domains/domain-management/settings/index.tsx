@@ -6,6 +6,7 @@ import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layo
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -19,6 +20,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import ConnectedDomainDetails from './connected-domain-details';
 import Details from './details';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
@@ -57,10 +59,13 @@ const Settings = ( {
 		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
 	};
 
-	const renderMainContent = () => {
-		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
-		return (
-			<>
+	const renderDetailsSection = () => {
+		if ( ! [ domainTypes.REGISTERED, domainTypes.MAPPED ].includes( domain.type ) ) {
+			return null;
+		}
+
+		if ( domain.type === domainTypes.REGISTERED ) {
+			return (
 				<Accordion
 					title={ translate( 'Details' ) }
 					subtitle={ translate( 'Registration and auto-renew' ) }
@@ -73,11 +78,28 @@ const Settings = ( {
 						isLoadingPurchase={ isLoadingPurchase }
 					/>
 				</Accordion>
-				<Accordion title="Second element title" subtitle="Second element subtitle">
-					<div>Component placeholder: this one i'snt exapanded by default</div>
+			);
+		} else if ( domain.type === domainTypes.MAPPED ) {
+			return (
+				<Accordion
+					title={ translate( 'Details' ) }
+					subtitle={ translate( 'Domain connection details' ) }
+					expanded
+				>
+					<ConnectedDomainDetails
+						domain={ domain }
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
 				</Accordion>
-			</>
-		);
+			);
+		}
+	};
+
+	const renderMainContent = () => {
+		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
+		return <>{ renderDetailsSection() }</>;
 	};
 
 	const renderSettingsCards = () => (
