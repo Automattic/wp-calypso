@@ -26,8 +26,8 @@ function is_core_fse_active() {
 		return false;
 	}
 
-	// For universal themes, we check for our own option. To identify universal themes, we
-	// assume that they will all use blockbase as their default template.
+	// To identify universal themes, we assume that child themes will all use blockbase as
+	// their default template. If it is universal, we check for our own option.
 	if ( 'blockbase' === basename( get_template() ) ) {
 		return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
 	}
