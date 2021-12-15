@@ -207,7 +207,7 @@ export async function authenticateTestAccount( page: Page, testAccount: string )
 
 		try {
 			const { birthtimeMs } = await fs.stat( storageStateFilePath );
-			const isFresh = birthtimeMs > Date.now() - 3 * 24 * 60 * 1000; // 3 days
+			const isFresh = birthtimeMs > Date.now() - 3 * 24 * 60 * 60 * 1000; // 3 days
 
 			if ( isFresh ) {
 				const storageStateFile = await fs.readFile( storageStateFilePath, { encoding: 'utf8' } );
