@@ -182,12 +182,9 @@ class DomainConnectMapping extends Component {
 			'?' +
 			this.getRedirectUriStatusString();
 
-		const providerId = 'WordPress.com';
-		const serviceId = 'hosting';
-
 		wp.req
 			.get(
-				`/domains/${ selectedDomainName }/dns/providers/${ providerId }/services/${ serviceId }/syncurl`,
+				`/domains/${ selectedDomainName }/dns/providers/WordPress.com/services/hosting/syncurl`,
 				{ redirect_uri: redirectUri }
 			)
 			.then(
