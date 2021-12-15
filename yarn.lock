@@ -12686,12 +12686,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chroma-js@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "chroma-js@npm:2.1.0"
+"chroma-js@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "chroma-js@npm:2.1.2"
   dependencies:
     cross-env: ^6.0.3
-  checksum: abd7f1f0fad7cc6b016bc69afff98aac2f741d81d0b5f707267cceb29b673767e49de062d3a77a0adbe0b6d9ce20ffc25873d219ded205d547588aa3139a66c6
+  checksum: f3760059b76240bab7387f335c798bbf55a4edf937534be7bc5c16ecad9b358dcfd891ca4fffa2c34742f45d5c3e96c8927c6a9906a13905da2bfa4c9ad30418
   languageName: node
   linkType: hard
 
@@ -37805,7 +37805,7 @@ testarmada-magellan@11.0.10:
     chalk: ^4.1.2
     check-node-version: ^4.0.2
     cheerio: ^1.0.0-rc.3
-    chroma-js: ^2.1.0
+    chroma-js: ^2.1.2
     concurrently: ^5.1.0
     config: ^3.3.6
     core-js-bundle: ^3.6.4
