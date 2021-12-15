@@ -22,7 +22,7 @@
 		"5to6-codemod": "^1.8.0",
 		"@babel/core": "^7.16.5",
 		"@babel/preset-env": "^7.16.5",
-		"jscodeshift": "^0.9.0",
+		"jscodeshift": "^0.13.0",
 		"lodash": "^4.17.21",
 		"react-codemod": "^5.0.5"
 	},
