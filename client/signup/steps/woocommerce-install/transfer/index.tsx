@@ -27,7 +27,7 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 	}
 
 	// if the user gets to this screen and needs a plan upgrade send it back to the confirm screen.
-	if ( siteUpgrading ) {
+	if ( siteUpgrading.required ) {
 		goToStep( 'confirm' );
 		return null;
 	}
