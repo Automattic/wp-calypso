@@ -299,6 +299,7 @@ const PluginsBrowser = ( {
 				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
 				jetpackNonAtomic={ jetpackNonAtomic }
+				billingPeriod={ billingPeriod }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 		</MainComponent>
@@ -439,6 +440,7 @@ const PluginSingleListView = ( {
 	isFetchingPaidPlugins,
 	siteSlug,
 	sites,
+	billingPeriod,
 } ) => {
 	const translate = useTranslate();
 
@@ -472,6 +474,7 @@ const PluginSingleListView = ( {
 			showPlaceholders={ isFetching }
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
+			billingPeriod={ billingPeriod }
 			extended
 		/>
 	);

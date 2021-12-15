@@ -38,6 +38,7 @@ class PluginsBrowserList extends Component {
 							? PluginsBrowserElementVariant.Extended
 							: PluginsBrowserElementVariant.Compact
 					}
+					billingPeriod={ this.props.billingPeriod }
 				/>
 			);
 		} );

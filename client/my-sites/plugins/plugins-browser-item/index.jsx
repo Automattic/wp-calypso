@@ -8,6 +8,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import version_compare from 'calypso/lib/version-compare';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -32,6 +33,7 @@ const PluginsBrowserListElement = ( props ) => {
 		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
+		billingPeriod,
 	} = props;
 
 	const translate = useTranslate();
@@ -144,6 +146,7 @@ const PluginsBrowserListElement = ( props ) => {
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
+							billingPeriod={ billingPeriod }
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
@@ -172,10 +175,15 @@ const PluginsBrowserListElement = ( props ) => {
 	);
 };
 
-const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled, plugin } ) => {
+const InstalledInOrPricing = ( {
+	sitesWithPlugin,
+	isWpcomPreinstalled,
+	plugin,
+	billingPeriod,
+} ) => {
 	const translate = useTranslate();
-	const period = 'monthly'; // TODO: get period data from state
-	const priceSlug = plugin?.variations?.[ period ]?.product_slug;
+	const variationPeriod = getPeriodVariationValue( billingPeriod );
+	const priceSlug = plugin?.variations?.[ variationPeriod ]?.product_slug;
 	const price = useSelector( ( state ) => getProductDisplayCost( state, priceSlug ) );
 	const isProductsListFetching = useSelector( getIsProductsListFetching );
 
@@ -208,7 +216,9 @@ const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled, plugin } 
 					{ price ? (
 						<>
 							{ price + ' ' }
-							<span className="plugins-browser-item__period">{ getPeriodText( period ) }</span>
+							<span className="plugins-browser-item__period">
+								{ getPeriodText( variationPeriod ) }
+							</span>
 						</>
 					) : (
 						translate( 'Free' )
@@ -233,5 +243,17 @@ const Placeholder = ( { iconSize } ) => {
 		</li>
 	);
 };
+
+function getPeriodVariationValue( billingPeriod ) {
+	switch ( billingPeriod ) {
+		case IntervalLength.MONTHLY:
+			return 'monthly';
+		case IntervalLength.ANNUALLY:
+			return 'yearly';
+
+		default:
+			return '';
+	}
+}
 
 export default PluginsBrowserListElement;
