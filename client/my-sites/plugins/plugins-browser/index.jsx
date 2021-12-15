@@ -133,8 +133,6 @@ const PluginsBrowser = ( {
 
 	const [ isMobile, setIsMobile ] = useState();
 
-	const isPaidPluginsEnabled = isEnabled( 'marketplace-v1' );
-
 	const shouldShowManageButton = useMemo( () => {
 		if ( isJetpack ) {
 			return true;
@@ -281,7 +279,6 @@ const PluginsBrowser = ( {
 				sites={ sites }
 				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
-				isPaidPluginsEnabled={ isPaidPluginsEnabled }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 		</MainComponent>
@@ -471,7 +468,7 @@ const PluginBrowserContent = ( props ) => {
 	return (
 		<>
 			{ /* eslint-disable no-nested-ternary */ }
-			{ props.isPaidPluginsEnabled ? (
+			{ isEnabled( 'marketplace-v1' ) ? (
 				<PluginSingleListView { ...props } category="paid" />
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
