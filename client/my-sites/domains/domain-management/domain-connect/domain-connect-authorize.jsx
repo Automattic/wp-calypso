@@ -4,15 +4,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import wp from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import { actionType, noticeType } from './constants';
 import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
 import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
 import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
 
 import './domain-connect-authorize.scss';
-
-const wpcom = wp.undocumented();
 
 class DomainConnectAuthorize extends Component {
 	static propTypes = {
