@@ -1,46 +1,36 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import Clipboard from 'clipboard';
-import PropTypes from 'prop-types';
-import { useRef, useEffect } from 'react';
-import ReactDom from 'react-dom';
+import { forwardRef } from 'react';
+import type { ButtonProps } from '@automattic/components';
+import type { ForwardRefRenderFunction } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-function ClipboardButton( { className, text, onCopy = noop, ...rest } ) {
-	const buttonRef = useRef();
+interface ClipboardProps extends ButtonProps {
+	text: string | ( () => string );
+	onCopy?: () => void;
+}
 
-	const textCallback = useRef();
-	const successCallback = useRef();
-
-	// update the callbacks on rerenders that change `text` or `onCopy`
-	useEffect( () => {
-		textCallback.current = () => text;
-		successCallback.current = onCopy;
-	}, [ text, onCopy ] );
-
-	// create the `Clipboard` object on mount and destroy on unmount
-	useEffect( () => {
-		const buttonEl = ReactDom.findDOMNode( buttonRef.current );
-		const clipboard = new Clipboard( buttonEl, { text: () => textCallback.current() } );
-		clipboard.on( 'success', () => successCallback.current() );
-
-		return () => clipboard.destroy();
-	}, [] );
+// A button which, when clicked, copies the given text to the clipboard.
+const ClipboardButton: ForwardRefRenderFunction< HTMLButtonElement, ClipboardProps > = (
+	{ className, text, onCopy = noop, ...rest },
+	ref
+) => {
+	const copyText = () => {
+		// Allow function to get text to avoid calling it on every render.
+		const copyText = typeof text === 'string' ? text : text();
+		navigator.clipboard.writeText( copyText ).then( onCopy );
+	};
 
 	return (
 		<Button
 			{ ...rest }
-			ref={ buttonRef }
+			ref={ ref }
+			onClick={ copyText }
 			className={ classNames( 'clipboard-button', className ) }
 		/>
 	);
-}
-
-ClipboardButton.propTypes = {
-	className: PropTypes.string,
-	text: PropTypes.string,
-	onCopy: PropTypes.func,
 };
 
-export default ClipboardButton;
+export default forwardRef( ClipboardButton );
