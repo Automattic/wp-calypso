@@ -77,11 +77,7 @@ export class IndividualPurchasePage {
 	 * Click the "Upgrade" button to navigate to the plans page.
 	 */
 	async clickUpgradeButton(): Promise< void > {
-		// This triggers a real navigation to the `/checkout/<site_name>` endpoint.
-		await Promise.all( [
-			this.page.waitForNavigation( { timeout: 45 * 1000, waitUntil: 'networkidle' } ),
-			this.page.click( selectors.upgradeButton ),
-		] );
+		await this.page.click( selectors.upgradeButton );
 	}
 
 	/**
