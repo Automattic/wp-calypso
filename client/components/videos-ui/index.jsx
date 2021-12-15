@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -16,7 +16,7 @@ const VideosUi = ( { HeaderBar, FooterBar } ) => {
 	const { data: course } = useCourseQuery( courseSlug, { retry: false } );
 	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
 
-	const initialUserCourseProgression = course?.completions ?? [];
+	const initialUserCourseProgression = useMemo( () => course?.completions ?? [], [ course ] );
 
 	const [ userCourseProgression, setUserCourseProgression ] = useState( [] );
 	useEffect( () => {
