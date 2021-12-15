@@ -6,7 +6,8 @@ const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
 const _ = require( 'lodash' );
 const mkdirp = require( 'mkdirp' );
-const fetch = require( 'node-fetch' );
+// Dynamic import because node-fetch is now ESM. See https://github.com/node-fetch/node-fetch#commonjs
+const fetch = ( ...args ) => import( 'node-fetch' ).then( ( { default: f } ) => f( ...args ) );
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
