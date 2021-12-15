@@ -105,7 +105,8 @@ const PluginsBrowser = ( {
 	);
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
-		pluginsByCategoryFeatured
+		pluginsByCategoryFeatured,
+		jetpackNonAtomic
 	);
 	const pluginsBySearchTerm = useSelector( ( state ) =>
 		getPluginsListBySearchTerm( state, search )
@@ -279,6 +280,7 @@ const PluginsBrowser = ( {
 				sites={ sites }
 				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
+				jetpackNonAtomic={ jetpackNonAtomic }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 		</MainComponent>
@@ -468,7 +470,7 @@ const PluginBrowserContent = ( props ) => {
 	return (
 		<>
 			{ /* eslint-disable no-nested-ternary */ }
-			{ isEnabled( 'marketplace-v1' ) ? (
+			{ isEnabled( 'marketplace-v1' ) && ! props.jetpackNonAtomic ? (
 				<PluginSingleListView { ...props } category="paid" />
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
@@ -620,9 +622,11 @@ function updateWpComRating( plugin ) {
  * @param {Array} popularPlugins
  * @param {Array} featuredPlugins
  */
-function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
+function filterPopularPlugins( popularPlugins = [], featuredPlugins = [], jetpackNonAtomic ) {
 	// when marketplace-v1 is enabled no featured plugins will be showed
-	if ( isEnabled( 'marketplace-v1' ) ) {
+	// since paid plugins will not be available for Jetpack self hosted sites,
+	// continue with filtering the popular plugins.
+	if ( isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic ) {
 		featuredPlugins = [];
 	}
 
