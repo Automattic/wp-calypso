@@ -176,8 +176,19 @@ const InstalledInOrPricing = ( {
 	period = 'monthly',
 } ) => {
 	const translate = useTranslate();
-	const priceSlug = `${ plugin?.slug?.replaceAll( '-', '_' ) }_${ period }`;
+	const priceSlug = plugin?.variations?.[ period ]?.product_slug;
 	const price = useSelector( ( state ) => getProductDisplayCost( state, priceSlug ) );
+
+	const getPeriodText = ( periodValue ) => {
+		switch ( periodValue ) {
+			case 'monthly':
+				return translate( 'monthly' );
+			case 'yearly':
+				return translate( 'per year' );
+			default:
+				return '';
+		}
+	};
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		return (
@@ -190,7 +201,18 @@ const InstalledInOrPricing = ( {
 		);
 	}
 
-	return <div className="plugins-browser-item__pricing">{ price || translate( 'Free' ) }</div>;
+	return (
+		<div className="plugins-browser-item__pricing">
+			{ price ? (
+				<>
+					{ price + ' ' }
+					<span className="plugins-browser-item__period">{ getPeriodText( period ) }</span>
+				</>
+			) : (
+				translate( 'Free' )
+			) }
+		</div>
+	);
 };
 
 const Placeholder = ( { iconSize } ) => {
