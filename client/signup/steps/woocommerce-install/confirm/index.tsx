@@ -19,7 +19,7 @@ import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 import './style.scss';
 
-const SupportLinkStyle = styled.a`
+export const SupportLinkStyle = styled.a`
 	/* Gray / Gray 100 - have to find the var value for this color */
 	color: #101517 !important;
 	text-decoration: underline;
