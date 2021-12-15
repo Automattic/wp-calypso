@@ -117,6 +117,13 @@ export const DELTA_ACTIVITIES = [
 	'user__invite_accepted',
 ];
 
+export const BACKUP_ACTIONS = [
+	'backup_complete_full',
+	'backup_only_complete_full',
+	'backup_complete_initial',
+	'backup_only_complete_initial',
+];
+
 export const getDeltaActivities = ( logs ) => {
 	return logs.filter( ( { activityName } ) => DELTA_ACTIVITIES.includes( activityName ) );
 };

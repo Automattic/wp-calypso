@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
+	BACKUP_ACTIONS,
 	DELTA_ACTIVITIES,
 	getDeltaActivities,
 	getDeltaActivitiesByType,
@@ -24,6 +25,7 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, shouldE
 		before: before ? before.toISOString() : undefined,
 		after: after ? after.toISOString() : undefined,
 		number,
+		action: BACKUP_ACTIONS,
 	};
 
 	const isValidRequest = filter.before && filter.after;
@@ -50,6 +52,7 @@ const useRawBackupDeltas = (
 		before: before ? before.toISOString() : undefined,
 		after: after ? after.toISOString() : undefined,
 		number,
+		action: BACKUP_ACTIONS,
 	};
 
 	const isValidRequest = filter.before && filter.after;
