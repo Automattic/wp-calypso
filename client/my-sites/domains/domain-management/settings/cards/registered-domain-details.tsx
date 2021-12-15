@@ -42,17 +42,17 @@ const RegisteredDomainDetails = ( {
 		);
 	};
 
+	const shouldNotRenderAutoRenewToggle = () => {
+		return ! domain.currentUserCanManage || ( ! isLoadingPurchase && ! purchase );
+	};
+
 	const renderAutoRenewToggle = () => {
-		if ( ! domain.currentUserCanManage ) {
+		if ( shouldNotRenderAutoRenewToggle() ) {
 			return null;
 		}
 
 		if ( isLoadingPurchase ) {
 			return <p className="details-card__autorenew-placeholder" />;
-		}
-
-		if ( ! purchase ) {
-			return null;
 		}
 
 		let formattedPrice = '';
@@ -89,20 +89,18 @@ const RegisteredDomainDetails = ( {
 		);
 	};
 
+	const shouldNotRenderRenewButton = () => {
+		return (
+			domain.isPendingRenewal ||
+			! domain.currentUserCanManage ||
+			domain.expired ||
+			isExpiringSoon( domain, 30 ) || // from `registered-domain-type` and `mapped-domain-type`
+			( ! isLoadingPurchase && ! purchase )
+		);
+	};
+
 	const renderRenewButton = () => {
-		if ( domain.isPendingRenewal ) {
-			return null;
-		}
-
-		if ( ! domain.currentUserCanManage ) {
-			return null;
-		}
-
-		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
-			return null;
-		}
-
-		if ( ! isLoadingPurchase && ! purchase ) {
+		if ( shouldNotRenderRenewButton() ) {
 			return null;
 		}
 

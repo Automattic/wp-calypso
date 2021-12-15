@@ -3,7 +3,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import type { DetailsCardProps } from './types';
 
