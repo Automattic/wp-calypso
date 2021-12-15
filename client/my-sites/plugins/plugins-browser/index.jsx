@@ -10,6 +10,7 @@ import {
 import { Button } from '@automattic/components';
 import Search from '@automattic/search';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -27,6 +28,8 @@ import { PaginationVariant } from 'calypso/components/pagination/constants';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
+import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import NoResults from 'calypso/my-sites/no-results';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -74,6 +77,10 @@ const PluginsBrowser = ( {
 } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
+
+	// Billing period switcher.
+	const isWide = useBreakpoint( '>1280px' );
+	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
 
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
@@ -235,6 +242,15 @@ const PluginsBrowser = ( {
 					className="plugins-browser__header"
 					navigationItems={ navigationItems }
 				>
+					{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && (
+						<div className="plugins-browser__billling-interval-switcher">
+							<BillingIntervalSwitcher
+								billingPeriod={ billingPeriod }
+								onChange={ setBillingPeriod }
+								compact={ ! isWide }
+							/>
+						</div>
+					) }
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
 							shouldShowManageButton={ shouldShowManageButton }
