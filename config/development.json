@@ -55,7 +55,6 @@
 		"domains/premium-domain-purchases": true,
 		"domains/management-list-redesign": true,
 		"domains/settings-page-redesign": true,
-		"domains/contact-info-redesign": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
 		"external-media/google-photos": true,
