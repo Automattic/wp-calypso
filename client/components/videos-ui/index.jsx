@@ -27,7 +27,8 @@ const VideosUi = ( { HeaderBar, FooterBar, areVideosTranslated = true } ) => {
 	}, [ initialUserCourseProgression ] );
 
 	const [ shouldShowVideoTranslationNotice, setShouldShowVideoTranslationNotice ] = useState(
-		! isEnglish && ! areVideosTranslated
+		// @TODO remove the '&& false' as soon as notification text is translated
+		! isEnglish && ! areVideosTranslated && false
 	);
 
 	const completedVideoCount = Object.keys( userCourseProgression ).length;
