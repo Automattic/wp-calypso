@@ -26,7 +26,15 @@ export default function TransferSite(): ReactElement | null {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
 	const transferStatus = transfer?.status;
-	const transferFailed = !! transfer?.error;
+
+	// Check transfer status code 2xx.
+	const isErrorTransferStatus =
+		Number.isInteger( Number( transferStatus ) ) &&
+		transferStatus &&
+		2 !== Math.floor( Number( transferStatus ) / 100 );
+
+	const transferFailed = !! transfer?.error || isErrorTransferStatus;
+
 	const software = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
@@ -52,7 +60,7 @@ export default function TransferSite(): ReactElement | null {
 	// Poll for software status
 	useInterval(
 		() => {
-			// Only poll if the transfer is completed
+			// Only poll if the transfer is completed and not failed
 			if ( transferFailed || ! transferStates.COMPLETED ) {
 				return;
 			}
