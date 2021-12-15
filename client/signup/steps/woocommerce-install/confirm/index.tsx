@@ -61,7 +61,7 @@ const StyledNextButton = styled( NextButton )`
 	}
 `;
 
-function SupportLink( { domain }: { domain: string } ): ReactElement {
+export function SupportLink( { domain }: { domain: string } ): ReactElement {
 	return (
 		<SupportLinkContainer>
 			{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
