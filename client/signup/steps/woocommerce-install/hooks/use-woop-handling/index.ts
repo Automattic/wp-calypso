@@ -3,6 +3,8 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
+import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { requestEligibility } from 'calypso/state/automated-transfer/actions';
 import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import {
@@ -54,12 +56,28 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 
 		dispatch( requestEligibility( siteId ) );
 		dispatch( requestProductsList() );
+		dispatch( requestLatestAtomicTransfer( siteId ) );
 	}, [ siteId, dispatch ] );
 
 	// Get eligibility data.
 	const { eligibilityHolds, eligibilityWarnings }: EligibilityData = useSelector( ( state ) =>
 		getEligibility( state, siteId )
 	);
+
+	/*
+	 * Inspect transfer status to detect blockers.
+	 * It's considered blocked when code:
+	 * has the 5xx shape.
+	 * Is `active`.
+	 */
+	const transferStatus = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) )
+		?.status;
+
+	const isBlockByTransferStatus =
+		( Number.isInteger( Number( transferStatus ) ) &&
+			transferStatus &&
+			5 === Math.floor( Number( transferStatus ) / 100 ) ) ||
+		[ 'active' ].includes( transferStatus );
 
 	/*
 	 * Filter warnings:
@@ -83,7 +101,12 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
-	const transferringDataIsAvailable = typeof transferringBlockers !== 'undefined';
+	if ( isBlockByTransferStatus ) {
+		transferringBlockers?.push( 'transfer_blocked' );
+	}
+
+	const transferringDataIsAvailable =
+		typeof transferringBlockers !== 'undefined' && typeof transferStatus !== 'undefined';
 
 	// Check whether the site has transferring blockers. True as default.
 	const hasBlockers = ! transferringDataIsAvailable || transferringBlockers?.length > 0;
