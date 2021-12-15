@@ -85,6 +85,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 		const cartItemForBusinessPlan = 'WordPress.com Business';
 
 		it( 'Click on "Upgrade" button for WordPress.com Business plan', async function () {
+			await purchasesPage.clickUpgradeButton();
 			await plansPage.clickPlanActionButton( { plan: 'Business', buttonText: 'Upgrade' } );
 		} );
 
