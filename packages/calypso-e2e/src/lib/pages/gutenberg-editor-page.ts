@@ -78,7 +78,13 @@ export class GutenbergEditorPage {
 	 * @returns The main resource response.
 	 */
 	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
-		return await this.page.goto( getCalypsoURL( type ) );
+		const request = await this.page.goto( getCalypsoURL( type ) );
+
+		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
+		// the next line should be removed.
+		await this.forceDismissWelcomeTour();
+
+		return request;
 	}
 
 	/**
@@ -119,6 +125,20 @@ export class GutenbergEditorPage {
 				.setShowWelcomeGuide( false );
 
 			return actionPayload.show === false;
+		} );
+	}
+
+	/**
+	 * Forcefully dismisses the Welcome Tour via action dispatch.
+	 */
+	async forceDismissWelcomeTour(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.waitForFunction( async () => {
+			const actionPayload = await ( window as any ).wp.data
+				.dispatch( 'automattic/wpcom-welcome-guide' )
+				.setShowWelcomeGuide( false );
+
+			return ! actionPayload.show;
 		} );
 	}
 
