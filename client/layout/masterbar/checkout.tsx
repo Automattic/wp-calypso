@@ -59,7 +59,6 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 		<Masterbar>
 			<div className="masterbar__secure-checkout">
 				<Item
-					url={ '#' }
 					icon="cross"
 					className="masterbar__close-button"
 					onClick={ clickClose }
