@@ -7,7 +7,7 @@ const debug = debugFactory( 'photon' );
 /**
  * Options argument to query string parameter mappings.
  */
-const mappings = {
+const mappings: Record< string, string > = {
 	width: 'w',
 	height: 'h',
 	letterboxing: 'lb',
@@ -18,6 +18,19 @@ const PARSE_BASE_HOST = '__domain__.invalid';
 const PARSE_BASE_URL = `https://${ PARSE_BASE_HOST }`;
 const PHOTON_BASE_URL = 'https://i0.wp.com';
 
+type PhotonOpts = {
+	width?: number;
+	height?: number;
+	hostname?: string;
+	host?: string;
+	secure?: boolean;
+	zoom?: number;
+	resize?: string;
+	fit?: string;
+	letterboxing?: string;
+	removeLetterBoxing?: boolean;
+};
+
 /**
  * Returns a "photon" URL from the given image URL.
  *
@@ -26,11 +39,11 @@ const PHOTON_BASE_URL = 'https://i0.wp.com';
  *
  * Photon documentation: http://developer.wordpress.com/docs/photon/
  *
- * @param {string} imageUrl - the URL of the image to run through Photon
- * @param {object} [opts] - optional options object with Photon options
- * @returns {string} The generated Photon URL string
+ * @param imageUrl - the URL of the image to run through Photon
+ * @param [opts]   - optional options object with Photon options
+ * @returns The generated Photon URL string
  */
-export default function photon( imageUrl, opts ) {
+export default function photon( imageUrl: string, opts?: PhotonOpts ): string | null {
 	let parsedUrl;
 	try {
 		parsedUrl = new URL( imageUrl, PARSE_BASE_URL );
@@ -64,25 +77,21 @@ export default function photon( imageUrl, opts ) {
 		photonUrl.pathname = formattedUrl;
 		photonUrl.hostname = serverFromUrlParts( formattedUrl, photonUrl.protocol === 'https:' );
 		if ( wasSecure ) {
-			photonUrl.searchParams.set( 'ssl', 1 );
+			photonUrl.searchParams.set( 'ssl', '1' );
 		}
 	}
 
 	if ( opts ) {
-		for ( const i in opts ) {
-			// allow configurable "hostname"
-			if ( i === 'host' || i === 'hostname' ) {
-				photonUrl.hostname = opts[ i ];
+		for ( const [ opt, value ] of Object.entries( opts ) ) {
+			if ( opt === 'host' || opt === 'hostname' ) {
+				photonUrl.hostname = value as string;
 				continue;
 			}
-
-			// allow non-secure access
-			if ( i === 'secure' && ! opts[ i ] ) {
+			if ( opt === 'secure' && ! value ) {
 				photonUrl.protocol = 'http:';
 				continue;
 			}
-
-			photonUrl.searchParams.set( mappings[ i ] || i, opts[ i ] );
+			photonUrl.searchParams.set( mappings[ opt ] ?? opt, value.toString() );
 		}
 	}
 
@@ -92,7 +101,7 @@ export default function photon( imageUrl, opts ) {
 	return photonUrl.href;
 }
 
-function isAlreadyPhotoned( host ) {
+function isAlreadyPhotoned( host: string ) {
 	return /^i[0-2]\.wp\.com$/.test( host );
 }
 
@@ -107,7 +116,7 @@ function isAlreadyPhotoned( host ) {
  * @param  {boolean} isSecure Whether we're constructing a HTTPS URL or a HTTP one
  * @returns {string}          The hostname for the pathname
  */
-function serverFromUrlParts( pathname, isSecure ) {
+function serverFromUrlParts( pathname: string, isSecure: boolean ) {
 	if ( isSecure ) {
 		return 'i0.wp.com';
 	}
