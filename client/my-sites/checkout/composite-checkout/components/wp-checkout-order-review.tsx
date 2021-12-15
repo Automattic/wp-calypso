@@ -106,10 +106,15 @@ export default function WPCheckoutOrderReview( {
 		const experimentCheck = isDesktop
 			? 'registration_email_only_desktop_random_usernames'
 			: 'registration_email_only_mobile_random_usernames';
-
+		let shouldCheck = true;
 		loadExperimentAssignment( experimentCheck ).then( ( experimentObject ) => {
-			setExperiment( experimentObject );
+			if ( shouldCheck ) {
+				setExperiment( experimentObject );
+			}
 		} );
+		return () => {
+			shouldCheck = false;
+		};
 	}, [ isDesktop ] );
 
 	const onRemoveProductCancel = useCallback( () => {
