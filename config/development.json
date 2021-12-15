@@ -107,7 +107,6 @@
 		"mailchimp": true,
 		"manage/export/guided-transfer": true,
 		"manage/import/site-importer-endpoints": true,
-		"manage/plugins/compatibility-warning": false,
 		"marketplace-test": true,
 		"marketplace-v1": true,
 		"marketplace": true,
