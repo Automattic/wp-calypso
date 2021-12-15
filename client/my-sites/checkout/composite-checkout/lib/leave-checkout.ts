@@ -1,10 +1,10 @@
+import debugFactory from 'debug';
 import { useDispatch } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/*
- */
+const debug = debugFactory( 'calypso:leave-checkout' );
 
 export const leaveCheckout = ( {
 	siteSlug,
@@ -20,6 +20,12 @@ export const leaveCheckout = ( {
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): void => {
 	dispatch( recordTracksEvent( 'calypso_masterbar_close_clicked' ) );
+	debug( 'leaving checkout with args', {
+		siteSlug,
+		jetpackCheckoutBackUrl,
+		previousPath,
+		createUserAndSiteBeforeTransaction,
+	} );
 
 	if ( jetpackCheckoutBackUrl ) {
 		window.location.href = jetpackCheckoutBackUrl;
