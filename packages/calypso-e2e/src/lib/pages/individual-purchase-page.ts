@@ -14,7 +14,7 @@ const selectors = {
 	renewNowCardButton: 'button.card:has-text("Renew Now")',
 	cancelAndRefundButton: 'a:text("Cancel Subscription and Refund")',
 	cancelSubscriptionButton: 'button:text("Cancel Subscription")',
-	upgradeButton: 'button:text("Upgrade")',
+	upgradeButton: 'a:text("Upgrade")',
 
 	// Purchased item actions: domains
 	deleteDomainCard: 'a:has-text("Delete your domain permanently")',
