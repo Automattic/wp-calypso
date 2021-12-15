@@ -18,13 +18,13 @@ import announcementImage from 'calypso/assets/images/marketplace/plugins-revamp.
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
-import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
+import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
@@ -45,7 +45,6 @@ import {
 	getPluginsListPagination,
 } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -78,8 +77,11 @@ const PluginsBrowser = ( {
 
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
-	const recommendedPlugins =
-		useSelector( ( state ) => getRecommendedPlugins( state, selectedSite?.ID ) ) || [];
+
+	const { data: paidPluginsRawList = [], isFetchingPaidPlugins } = useWPCOMPlugins( 'featured' );
+	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
+		paidPluginsRawList,
+	] );
 	const popularPlugins = useSelector( ( state ) => getPluginsListByCategory( state, 'popular' ) );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -96,7 +98,6 @@ const PluginsBrowser = ( {
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
-	const isRequestingRecommendedPlugins = ! Array.isArray( recommendedPlugins );
 	const pluginsByCategory = useSelector( ( state ) => getPluginsListByCategory( state, category ) );
 	const pluginsByCategoryNew = useSelector( ( state ) => getPluginsListByCategory( state, 'new' ) );
 	const pluginsByCategoryFeatured = useSelector( ( state ) =>
@@ -104,7 +105,8 @@ const PluginsBrowser = ( {
 	);
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
-		pluginsByCategoryFeatured
+		pluginsByCategoryFeatured,
+		jetpackNonAtomic
 	);
 	const pluginsBySearchTerm = useSelector( ( state ) =>
 		getPluginsListBySearchTerm( state, search )
@@ -131,10 +133,6 @@ const PluginsBrowser = ( {
 	const translate = useTranslate();
 
 	const [ isMobile, setIsMobile ] = useState();
-	const isRecommendedPluginsEnabled = useMemo(
-		() => isEnabled( 'recommend-plugins' ) && !! selectedSite?.ID && selectedSite?.jetpack,
-		[ selectedSite ]
-	);
 
 	const shouldShowManageButton = useMemo( () => {
 		if ( isJetpack ) {
@@ -219,7 +217,6 @@ const PluginsBrowser = ( {
 					<QueryWporgPlugins category="featured" />
 				</>
 			) }
-			{ isRecommendedPluginsEnabled && <QuerySiteRecommendedPlugins siteId={ selectedSite?.ID } /> }
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
@@ -278,12 +275,12 @@ const PluginsBrowser = ( {
 				category={ category }
 				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				pluginsByCategory={ pluginsByCategory }
-				recommendedPlugins={ recommendedPlugins }
-				isRequestingRecommendedPlugins={ isRequestingRecommendedPlugins }
+				paidPlugins={ paidPlugins }
+				isFetchingPaidPlugins={ isFetchingPaidPlugins }
 				sites={ sites }
 				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
-				isRecommendedPluginsEnabled={ isRecommendedPluginsEnabled }
+				jetpackNonAtomic={ jetpackNonAtomic }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 		</MainComponent>
@@ -367,10 +364,6 @@ const SearchListView = ( {
 };
 
 const translateCategory = ( { category, translate } ) => {
-	const recommendedText = translate( 'Recommended', {
-		context: 'Category description for the plugin browser.',
-	} );
-
 	switch ( category ) {
 		case 'new':
 			return translate( 'New', {
@@ -384,8 +377,10 @@ const translateCategory = ( { category, translate } ) => {
 			return translate( 'Featured', {
 				context: 'Category description for the plugin browser.',
 			} );
-		case 'recommended':
-			return recommendedText;
+		case 'paid':
+			return translate( 'Featured', {
+				context: 'Category description for the plugin browser.',
+			} );
 	}
 };
 
@@ -422,6 +417,8 @@ const PluginSingleListView = ( {
 	isFetchingPluginsByCategoryPopular,
 	pluginsByCategoryFeatured,
 	isFetchingPluginsByCategoryFeatured,
+	paidPlugins,
+	isFetchingPaidPlugins,
 	siteSlug,
 	sites,
 } ) => {
@@ -438,6 +435,9 @@ const PluginSingleListView = ( {
 	} else if ( category === 'featured' ) {
 		plugins = pluginsByCategoryFeatured;
 		isFetching = isFetchingPluginsByCategoryFeatured;
+	} else if ( category === 'paid' ) {
+		plugins = paidPlugins;
+		isFetching = isFetchingPaidPlugins;
 	} else {
 		return null;
 	}
@@ -459,34 +459,6 @@ const PluginSingleListView = ( {
 	);
 };
 
-const RecommendedPluginListView = ( {
-	recommendedPlugins,
-	isRequestingRecommendedPlugins,
-	sites,
-	siteSlug,
-} ) => {
-	const translate = useTranslate();
-
-	if ( recommendedPlugins && recommendedPlugins.length === 0 ) {
-		return null;
-	}
-
-	return (
-		<PluginsBrowserList
-			currentSites={ sites }
-			expandedListLink={ false }
-			listName="recommended"
-			plugins={ recommendedPlugins }
-			showPlaceholders={ isRequestingRecommendedPlugins }
-			site={ siteSlug }
-			size={ SHORT_LIST_LENGTH }
-			title={ translateCategory( { category: 'recommended', translate } ) }
-			variant={ PluginsBrowserListVariant.Fixed }
-			extended
-		/>
-	);
-};
-
 const PluginBrowserContent = ( props ) => {
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
@@ -497,11 +469,13 @@ const PluginBrowserContent = ( props ) => {
 
 	return (
 		<>
-			{ props.isRecommendedPluginsEnabled ? (
-				<RecommendedPluginListView { ...props } />
+			{ /* eslint-disable no-nested-ternary */ }
+			{ isEnabled( 'marketplace-v1' ) && ! props.jetpackNonAtomic ? (
+				<PluginSingleListView { ...props } category="paid" />
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
 			) }
+			{ /* eslint-enable no-nested-ternary */ }
 
 			<PluginSingleListView { ...props } category="popular" />
 			<PluginSingleListView { ...props } category="new" />
@@ -625,6 +599,21 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
 };
 
 /**
+ * Multiply the wpcom rating to match the wporg value.
+ * wpcom rating is from 1 to 5 while wporg is from 1 to 100.
+ *
+ * @param plugin
+ * @returns
+ */
+function updateWpComRating( plugin ) {
+	if ( ! plugin || ! plugin.rating ) return plugin;
+
+	plugin.rating *= 20;
+
+	return plugin;
+}
+
+/**
  * Filter the popular plugins list.
  *
  * Remove the incompatible plugins and the displayed featured
@@ -633,7 +622,14 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
  * @param {Array} popularPlugins
  * @param {Array} featuredPlugins
  */
-function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
+function filterPopularPlugins( popularPlugins = [], featuredPlugins = [], jetpackNonAtomic ) {
+	// when marketplace-v1 is enabled no featured plugins will be showed
+	// since paid plugins will not be available for Jetpack self hosted sites,
+	// continue with filtering the popular plugins.
+	if ( isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic ) {
+		featuredPlugins = [];
+	}
+
 	const displayedFeaturedSlugsMap = new Map(
 		featuredPlugins
 			.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins
