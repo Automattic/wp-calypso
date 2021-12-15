@@ -80,9 +80,6 @@ export class RegistrantExtraInfoCaForm extends PureComponent {
 		) );
 
 		this.legalTypeOptions = legalTypeOptions;
-		this.state = {
-			errorMessages: {},
-		};
 	}
 
 	componentDidMount() {
