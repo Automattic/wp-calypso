@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isBusiness } from '@automattic/calypso-products';
 import page from 'page';
 import { createElement } from 'react';
 import { makeLayout } from 'calypso/controller';
@@ -29,9 +30,9 @@ function setup( context, next ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
 
-	// Only allow AT sites to access, unless the woop feature flag is enabled.
+	// Only allow AT and Simple Business sites to access, unless the woop feature flag is enabled.
 	// todo: remove redirect and rely on plan eligibility checks in the landing page component
-	if ( ! isEnabled( 'woop' ) && ! isAtomicSite( state, siteId ) ) {
+	if ( isEnabled( 'woop' ) && ! isAtomicSite( state, siteId ) && ! isBusiness( site.plan ) ) {
 		return page.redirect( `/home/${ site.slug }` );
 	}
 
