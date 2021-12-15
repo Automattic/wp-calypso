@@ -117,11 +117,12 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 					</div>
 				</div>
 			</div>
-			<div className="videos-ui__body">
+			<div className={ `videos-ui__body ${ course ? '' : 'is-loading' }` }>
 				<div className="videos-ui__body-title">
 					<h3>{ course && course.title }</h3>
 				</div>
 				<div className="videos-ui__video-content">
+					{ ! currentVideo && <div className="videos-ui__video-placeholder" /> }
 					{ currentVideo && (
 						<VideoPlayer
 							videoData={ { ...currentVideo, ...{ slug: currentVideoKey } } }
