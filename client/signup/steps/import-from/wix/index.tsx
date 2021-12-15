@@ -34,19 +34,29 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Effects
 	 */
-	useEffect( runImport, [ job ] );
+	useEffect( handleRunFlagChange, [ run ] );
+	useEffect( handleJobStateTransition, [ job ] );
 
 	/**
 	 ↓ Methods
 	 */
-	function runImport() {
-		if ( ! run ) return;
-
-		// If there is no existing import job, start a new
+	function handleJobStateTransition() {
+		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
 			startImport( siteId, getImporterTypeForEngine( importer ) );
-		} else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
+		}
+		// If the job is in a ready state, start the import process
+		else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
 			importSite( prepareImportParams() );
+		}
+	}
+
+	function handleRunFlagChange() {
+		if ( ! run || ! job ) return;
+
+		// the run flag means to start a new job, but previously reset existing finished jobs
+		if ( job.importerState === appStates.IMPORT_SUCCESS ) {
+			resetImport( siteId, job?.importerId );
 		}
 	}
 
