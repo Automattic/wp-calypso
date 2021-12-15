@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	findFirstSimilarPlanKey,
 	FEATURE_UPLOAD_PLUGINS,
@@ -6,6 +6,8 @@ import {
 	isBusiness,
 	isEcommerce,
 	isEnterprise,
+	isPremium,
+	isPersonal,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -119,6 +121,9 @@ export class PluginMeta extends Component {
 			return false;
 		}
 		return (
+			( isEnabled( 'woop' ) &&
+				( isPersonal( this.props.selectedSite.plan ) ||
+					isPremium( this.props.selectedSite.plan ) ) ) ||
 			isBusiness( this.props.selectedSite.plan ) ||
 			isEnterprise( this.props.selectedSite.plan ) ||
 			isEcommerce( this.props.selectedSite.plan )
