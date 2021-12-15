@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { MShotsImage } from '@automattic/onboarding';
-import { Button, Tooltip } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -53,7 +53,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	locale,
 	onSelect,
 	design,
-	premiumBadge,
+	premiumBadge = null,
 	highRes,
 	disabled,
 	hideDesignTitle,
@@ -105,14 +105,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					{ ! hideDesignTitle && (
 						<span className="design-picker__option-name">{ designTitle }</span>
 					) }
-					{ design.is_premium && premiumBadge && (
-						<Tooltip
-							position="bottom center"
-							text={ __( 'Requires a Personal plan or above', __i18n_text_domain__ ) }
-						>
-							<div className="design-picker__premium-container">{ premiumBadge }</div>
-						</Tooltip>
-					) }
+					{ design.is_premium && premiumBadge }
 				</span>
 			</span>
 		</button>
