@@ -121,7 +121,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									isEnabled( 'gutenboarding/import-from-medium' )
 								) {
 									/**
-									 * Wix importer
+									 * Medium importer
 									 */
 									return (
 										<MediumImporter
