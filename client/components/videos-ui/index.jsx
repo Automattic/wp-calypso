@@ -2,14 +2,14 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { cloneElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { headerBar, footerBar } ) => {
+const VideosUi = ( { HeaderBar, FooterBar } ) => {
 	const translate = useTranslate();
 
 	const courseSlug = 'blogging-quick-start';
@@ -90,7 +90,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
-				{ course && cloneElement( headerBar, { course: course } ) }
+				<HeaderBar course={ course } />
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
 						<h2>{ translate( 'Watch five videos.' ) }</h2>
@@ -205,8 +205,7 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 					</div>
 				</div>
 			</div>
-			{ course &&
-				cloneElement( footerBar, { course: course, isCourseComplete: isCourseComplete } ) }
+			<FooterBar course={ course } isCourseComplete={ isCourseComplete } />
 		</div>
 	);
 };

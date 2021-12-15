@@ -13,8 +13,12 @@ const BloggingQuickStartModal = ( props ) => {
 			<BlankCanvas className={ 'blogging-quick-start-modal' }>
 				<BlankCanvas.Content>
 					<VideosUi
-						headerBar={ <ModalHeaderBar onClose={ onClose } /> }
-						footerBar={ <ModalFooterBar onBackClick={ onClose } /> }
+						HeaderBar={ ( headerProps ) => (
+							<ModalHeaderBar onClose={ onClose } { ...headerProps } />
+						) }
+						FooterBar={ ( footerProps ) => (
+							<ModalFooterBar onBackClick={ onClose } { ...footerProps } />
+						) }
 					/>
 				</BlankCanvas.Content>
 			</BlankCanvas>
