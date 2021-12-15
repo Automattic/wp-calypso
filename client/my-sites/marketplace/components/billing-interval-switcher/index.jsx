@@ -20,24 +20,26 @@ const BillingIntervalSwitcher = ( { billingPeriod, onChange, compact } ) => {
 
 	if ( compact ) {
 		return (
-			<SelectDropdown
-				selectedText={
-					billingPeriod === 'MONTHLY' ? translate( 'Monthly price' ) : translate( 'Annual price' )
-				}
-			>
-				<SelectDropdown.Item
-					selected={ billingPeriod === 'MONTHLY' }
-					onClick={ () => onChange( 'MONTHLY' ) }
+			<Container>
+				<SelectDropdown
+					selectedText={
+						billingPeriod === 'MONTHLY' ? translate( 'Monthly price' ) : translate( 'Annual price' )
+					}
 				>
-					{ translate( 'Monthly price' ) }
-				</SelectDropdown.Item>
-				<SelectDropdown.Item
-					selected={ billingPeriod === 'ANNUALLY' }
-					onClick={ () => onChange( 'ANNUALLY' ) }
-				>
-					{ translate( 'Annual price' ) }
-				</SelectDropdown.Item>
-			</SelectDropdown>
+					<SelectDropdown.Item
+						selected={ billingPeriod === 'MONTHLY' }
+						onClick={ () => onChange( 'MONTHLY' ) }
+					>
+						{ translate( 'Monthly price' ) }
+					</SelectDropdown.Item>
+					<SelectDropdown.Item
+						selected={ billingPeriod === 'ANNUALLY' }
+						onClick={ () => onChange( 'ANNUALLY' ) }
+					>
+						{ translate( 'Annual price' ) }
+					</SelectDropdown.Item>
+				</SelectDropdown>
+			</Container>
 		);
 	}
 
