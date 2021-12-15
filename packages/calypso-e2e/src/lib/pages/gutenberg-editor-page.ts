@@ -278,7 +278,9 @@ export class GutenbergEditorPage {
 		await this.searchBlockInserter( blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
-		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
+		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected`, {
+			state: 'attached',
+		} );
 	}
 
 	/**
