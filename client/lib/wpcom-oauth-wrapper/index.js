@@ -1,8 +1,5 @@
-import debugFactory from 'debug';
 import inherits from 'inherits';
 import wpcomFactory from 'wpcom';
-
-const debug = debugFactory( 'calypso:wpcom-oauth-wrapper' );
 
 /**
  * Class inherited from `WPCOMUnpublished` class and adds
@@ -37,8 +34,6 @@ function WPCOMOAuthWrapper( token, reqHandler ) {
 
 		return reqHandler( params, fn );
 	} );
-
-	debug( 'Extending wpcom with undocumented endpoints.' );
 }
 
 inherits( WPCOMOAuthWrapper, wpcomFactory );
