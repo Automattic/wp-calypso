@@ -20,8 +20,8 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import ConnectedDomainDetails from './connected-domain-details';
-import Details from './details';
+import ConnectedDomainDetails from './cards/connected-domain-details';
+import RegisteredDomainDetails from './cards/registered-domain-details';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
 
@@ -71,7 +71,7 @@ const Settings = ( {
 					subtitle={ translate( 'Registration and auto-renew' ) }
 					expanded
 				>
-					<Details
+					<RegisteredDomainDetails
 						domain={ domain }
 						selectedSite={ selectedSite }
 						purchase={ purchase }

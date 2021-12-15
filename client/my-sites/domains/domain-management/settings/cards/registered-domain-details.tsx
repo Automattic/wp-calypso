@@ -13,9 +13,14 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import type { DetailsCardProps } from './types';
 
-import '../details-card.scss';
+import './style.scss';
 
-const Details = ( { domain, isLoadingPurchase, purchase, selectedSite }: DetailsCardProps ) => {
+const RegisteredDomainDetails = ( {
+	domain,
+	isLoadingPurchase,
+	purchase,
+	selectedSite,
+}: DetailsCardProps ): JSX.Element => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const redemptionProduct = useSelector( ( state ) =>
@@ -133,4 +138,4 @@ const Details = ( { domain, isLoadingPurchase, purchase, selectedSite }: Details
 	);
 };
 
-export default Details;
+export default RegisteredDomainDetails;

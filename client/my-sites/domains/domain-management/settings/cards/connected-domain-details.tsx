@@ -7,19 +7,15 @@ import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import type { DetailsCardProps } from './types';
 
-import '../details-card.scss';
+import './style.scss';
 
 const ConnectedDomainDetails = ( {
 	domain,
 	isLoadingPurchase,
 	selectedSite,
-}: DetailsCardProps ): JSX.Element | null => {
+}: DetailsCardProps ): JSX.Element => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
-
-	if ( domain.type !== domainTypes.MAPPED ) {
-		return null;
-	}
 
 	const renderPlanDetailsButton = () => {
 		return (
