@@ -26,9 +26,7 @@ function is_core_fse_active() {
 		return false;
 	}
 
-	// To identify universal themes, we assume that child themes will all use blockbase as
-	// their default template. If it is universal, we check for our own option.
-	if ( 'blockbase' === basename( get_template() ) ) {
+	if ( is_universal_theme() ) {
 		return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
 	}
 
@@ -48,6 +46,17 @@ function is_core_fse_active() {
  */
 function is_fse_theme() {
 	return function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
+}
+
+/**
+ * To identify universal themes, we assume that child themes will
+ * all use blockbase as their default theme template. This
+ * function checks if the current template is a blockbase template.
+ *
+ * @return boolean
+ */
+function is_universal_theme() {
+	return 'blockbase' === basename( get_template() );
 }
 
 /**
@@ -122,8 +131,13 @@ function load_helpers() {
 	if ( apply_filters( 'a8c_hide_core_fse_activation', false ) ) {
 		return;
 	}
+	// This menu toggles site editor visibility for universal themes.
+	// It's unnecessary for block themes because the site editor
+	// will always be visible.
+	if ( is_universal_theme() ) {
+		add_action( 'admin_menu', __NAMESPACE__ . '\add_submenu' );
+	}
 	add_action( 'admin_notices', __NAMESPACE__ . '\theme_nag' );
-	add_action( 'admin_menu', __NAMESPACE__ . '\add_submenu' );
 	add_action( 'admin_init', __NAMESPACE__ . '\init_settings' );
 }
 
