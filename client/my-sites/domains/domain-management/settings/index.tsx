@@ -13,7 +13,7 @@ import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/com
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import ContactsPrivacyCard from 'calypso/my-sites/domains/domain-management/contacts-privacy/contacts-card';
+import ContactsPrivacyInfo from 'calypso/my-sites/domains/domain-management/contacts-privacy/contacts-privacy-info';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { requestWhois } from 'calypso/state/domains/management/actions';
@@ -35,6 +35,7 @@ import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
 const Settings = ( {
 	currentRoute,
 	domain,
+	domains,
 	isLoadingPurchase,
 	purchase,
 	selectedDomainName,
@@ -175,10 +176,11 @@ const Settings = ( {
 				title="Contact information"
 				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel }` }
 			>
-				<ContactsPrivacyCard
+				<ContactsPrivacyInfo
+					domains={ domains }
 					selectedSite={ selectedSite }
 					selectedDomainName={ selectedDomainName }
-				></ContactsPrivacyCard>
+				></ContactsPrivacyInfo>
 			</Accordion>
 		);
 	};

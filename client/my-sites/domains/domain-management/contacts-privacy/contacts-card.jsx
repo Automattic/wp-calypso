@@ -4,7 +4,10 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { domainManagementEditContactInfo } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementManageConsent,
+	domainManagementEditContactInfo,
+} from 'calypso/my-sites/domains/paths';
 import {
 	enableDomainPrivacy,
 	disableDomainPrivacy,
@@ -119,7 +122,7 @@ class ContactsPrivacyCard extends Component {
 	}
 
 	render() {
-		const { translate, selectedDomainName } = this.props;
+		const { translate, selectedDomainName, canManageConsent } = this.props;
 
 		return (
 			<div>
@@ -135,6 +138,17 @@ class ContactsPrivacyCard extends Component {
 						>
 							{ translate( 'Edit' ) }
 						</Button>
+						{ canManageConsent && (
+							<Button
+								href={ domainManagementManageConsent(
+									this.props.selectedSite.slug,
+									this.props.selectedDomainName,
+									this.props.currentRoute
+								) }
+							>
+								{ translate( 'Manage consent' ) }
+							</Button>
+						) }
 					</div>
 					<div className="contacts-privacy__toggle-container">
 						{ this.getPrivacyProtection() }
