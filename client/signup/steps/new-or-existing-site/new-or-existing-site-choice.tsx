@@ -10,8 +10,10 @@ interface Props {
 
 const ChoiceContainer = styled.div`
 	flex: 1;
-	margin: 12px;
 	text-align: center;
+	@media ( max-width: 480px ) {
+		margin: 12px;
+	}
 `;
 
 const ChoiceDescription = styled.p`
@@ -24,16 +26,19 @@ export default function NewOrExistingSiteChoice( props: Props ): React.ReactElem
 	};
 
 	return (
-		<ChoiceContainer
-			className="new-or-existing-site__choice"
-			data-e2e-type={ props.choice.type }
-			key={ props.choice.type }
-		>
-			<Card compact className="new-or-existing-site__choice-image">
+		<ChoiceContainer data-e2e-type={ props.choice.type } key={ props.choice.type }>
+			<Card
+				compact
+				css={ css`
+					@media ( max-width: 480px ) {
+						display: none;
+					}
+				` }
+			>
 				{ props.choice.image }
 			</Card>
-			<Card compact className="new-or-existing-site__choice-text">
-				<div className="new-or-existing-site__choice-button">
+			<Card compact>
+				<div>
 					<Button
 						css={ css`
 							border-radius: 4px;

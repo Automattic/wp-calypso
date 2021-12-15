@@ -16,6 +16,7 @@ interface Props {
 const ChoicesContainer = styled.div`
 	display: flex;
 	flex-flow: row wrap;
+	gap: 24px;
 `;
 
 export default function NewOrExistingSiteScreen( props: Props ): React.ReactElement {
