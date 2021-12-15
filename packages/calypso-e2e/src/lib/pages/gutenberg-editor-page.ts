@@ -38,11 +38,6 @@ const selectors = {
 
 	// Publish panel (including post-publish)
 	publishPanel: '.editor-post-publish-panel',
-	// With the selector below, we're targeting both "View Post" buttons: the one
-	// in the post-publish pane, and the one that pops up in the bottom-left
-	// corner. This addresses the bug where the post-publish panel is immediately
-	// closed when publishing with certain blocks on the editor canvas.
-	// See https://github.com/Automattic/wp-calypso/issues/54421.
 	viewButton: 'text=/View (Post|Page)/',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
@@ -438,6 +433,19 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	private async visitPublishedPost( url: string ): Promise< void > {
+		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
+		// panel to close immediately and leave the post in the unsaved state for
+		// some reason. Since the post state is unsaved, the warning dialog will be
+		// displayed on the published post link click. By default, Playwright will
+		// dismiss the dialog so we need this listener to accept it and open the
+		// published post.
+		//
+		// Once https://github.com/Automattic/wp-calypso/issues/54421 is resolved,
+		// this listener can be removed.
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
+
 		const frame = await this.getEditorFrame();
 
 		await Promise.all( [
