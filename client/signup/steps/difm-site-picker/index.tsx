@@ -7,7 +7,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import SiteSelector from 'calypso/components/site-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteDomain, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteDomain, getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
 
 interface Props {
@@ -39,8 +39,9 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	const [ confirmDomain, setConfirmDomain ] = useState( '' );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 	const headerText = translate( 'Choose where you want us to build your site.' );
-	const subHeaderText = '';
+	const subHeaderText = translate( 'Some sites may be hidden ' );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
@@ -51,7 +52,12 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	};
 
 	const filterSites = ( site: SiteData ) => {
-		return site.capabilities?.manage_options && ! site.jetpack;
+		return (
+			site.capabilities?.manage_options &&
+			! site.jetpack &&
+			! site.options?.is_wpforteams_site &&
+			! site.options?.is_difm_lite_in_progress
+		);
 	};
 
 	const onCloseDialog = () => {
@@ -103,14 +109,31 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 
 		return (
 			<Dialog isVisible={ true } buttons={ buttons } onClose={ onCloseDialog }>
-				<h1 className="difm-site-picker__confirm-header">{ translate( 'Confirm delete site' ) }</h1>
-				<FormLabel htmlFor="confirmDomainChangeInput" className="difm-site-picker__confirm-label">
+				<h1>{ translate( 'Confirm delete content' ) }</h1>
+				<p>
 					{ translate(
-						'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
-							'Your site will then be gone forever.',
+						'The contents of your site {{strong}}%(siteTitle)s{{/strong}} (%(siteAddress)s) will be permanently deleted. ' +
+							'This includes all posts, pages, media, and comments. ' +
+							'Once you complete the purchase, your site will remain inaccessible while we rebuild your site.',
 						{
 							components: {
-								warn: <span className="difm-site-picker__target-domain" />,
+								strong: <strong />,
+							},
+							args: {
+								siteTitle,
+								siteAddress: siteDomain,
+							},
+						}
+					) }
+				</p>
+				<p>{ translate( 'The content will be deleted only after the purchase.' ) }</p>
+				<FormLabel htmlFor="confirmDomainChangeInput">
+					{ translate(
+						'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
+							"Your site's content will then be gone forever.",
+						{
+							components: {
+								warn: <span />,
 							},
 							args: {
 								siteAddress: siteId && siteDomain,
@@ -121,7 +144,6 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 
 				<FormTextInput
 					autoCapitalize="off"
-					className="difm-site-picker__confirm-input"
 					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 						setConfirmDomain( event.target.value )
 					}
@@ -137,7 +159,6 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 		<StepWrapper
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
-			// headerImageUrl={ intentImageUrl }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={ <DIFMSitePicker filter={ filterSites } onSiteSelect={ handleSiteSelect } /> }
