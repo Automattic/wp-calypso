@@ -2,7 +2,7 @@ import debugFactory from 'debug';
 import inherits from 'inherits';
 import wpcomFactory from 'wpcom';
 
-const debug = debugFactory( 'calypso:wpcom-undocumented' );
+const debug = debugFactory( 'calypso:wpcom-oauth-wrapper' );
 
 /**
  * Class inherited from `WPCOMUnpublished` class and adds
@@ -10,11 +10,11 @@ const debug = debugFactory( 'calypso:wpcom-undocumented' );
  *
  * @param {string} [token] - oauth token
  * @param {Function} [reqHandler] - request handler
- * @returns {wpcomFactory} WPCOMUndocumented instance
+ * @returns {wpcomFactory} WPCOMOAuthWrapper instance
  */
-function WPCOMUndocumented( token, reqHandler ) {
-	if ( ! ( this instanceof WPCOMUndocumented ) ) {
-		return new WPCOMUndocumented( token, reqHandler );
+function WPCOMOAuthWrapper( token, reqHandler ) {
+	if ( ! ( this instanceof WPCOMOAuthWrapper ) ) {
+		return new WPCOMOAuthWrapper( token, reqHandler );
 	}
 
 	if ( 'function' === typeof token ) {
@@ -41,7 +41,7 @@ function WPCOMUndocumented( token, reqHandler ) {
 	debug( 'Extending wpcom with undocumented endpoints.' );
 }
 
-inherits( WPCOMUndocumented, wpcomFactory );
+inherits( WPCOMOAuthWrapper, wpcomFactory );
 
 /**
  * Add a token to this instance of WPCOM.
@@ -58,11 +58,11 @@ wpcomFactory.prototype.loadToken = function ( token ) {
  *
  * @returns {string} oauth token
  */
-WPCOMUndocumented.prototype.isTokenLoaded = function () {
+WPCOMOAuthWrapper.prototype.isTokenLoaded = function () {
 	return this._token !== undefined;
 };
 
 /**
- * Expose `WPCOMUndocumented`
+ * Expose `WPCOMOAuthWrapper`
  */
-export default WPCOMUndocumented;
+export default WPCOMOAuthWrapper;
