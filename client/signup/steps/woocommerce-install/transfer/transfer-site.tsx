@@ -17,7 +17,11 @@ import Progress from './progress';
 
 import './style.scss';
 
-export default function TransferSite(): ReactElement | null {
+export default function TransferSite( {
+	onFailure,
+}: {
+	onFailure: () => void;
+} ): ReactElement | null {
 	const dispatch = useDispatch();
 
 	const [ progress, setProgress ] = useState( 0.1 );
@@ -92,8 +96,9 @@ export default function TransferSite(): ReactElement | null {
 
 		if ( transferFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
+			onFailure();
 		}
-	}, [ siteId, transferStatus, transferFailed ] );
+	}, [ siteId, transferStatus, transferFailed, onFailure ] );
 
 	// Redirect to wc-admin once software installation is confirmed.
 	useEffect( () => {
@@ -113,7 +118,7 @@ export default function TransferSite(): ReactElement | null {
 	// todo: transferFailed states need testing and if required, pass the message through correctly
 	return (
 		<>
-			{ transferFailed && <Error message={ transferStatus || '' } /> }
+			{ transferFailed && <Error /> }
 			{ ! transferFailed && <Progress progress={ progress } /> }
 		</>
 	);
