@@ -16840,11 +16840,11 @@ __metadata:
     "@babel/core": ^7.16.5
     "@babel/eslint-parser": ^7.16.5
     "@babel/parser": ^7.16.5
-    eslint: ">=7.32.0"
+    eslint: ">=8.4.1"
   peerDependencies:
     "@babel/core": ">=7.16.5"
-    eslint: ">=7.32.0"
-    eslint-plugin-inclusive-language: ^2.1.1
+    eslint: ">=8.4.1"
+    eslint-plugin-inclusive-language: ^2.2.0
     eslint-plugin-jsdoc: ^37.2.0
     eslint-plugin-react-hooks: ^4.3.0
   languageName: unknown
@@ -16949,7 +16949,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:>=7.32.0, eslint@npm:^8.4.1":
+"eslint@npm:>=8.4.1, eslint@npm:^8.4.1":
   version: 8.4.1
   resolution: "eslint@npm:8.4.1"
   dependencies:
