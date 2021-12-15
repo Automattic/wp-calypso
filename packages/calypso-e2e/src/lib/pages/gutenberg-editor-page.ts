@@ -80,50 +80,31 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		// `page.on` construct is used here instead of the more common `page.waitForResponse`.
-		// Using the latter causes this method to hang until the timeout is reached, since
-		// the `waitForResponse` method begins observing the network requests after the
-		// `nux?_envelope=1` request has been completed.
-		// On the other hand, `page.on` is able to monitor every request, including the
-		// one to the `nux` endpoint.
-		this.page.on( 'requestfinished', async ( request ) => {
-			const response = await request.response();
-			if ( ! response ) {
-				return;
-			}
-
-			if ( ! response.url().includes( 'nux?_envelope=1' ) ) {
-				return;
-			}
-
-			interface NuxPayload {
-				body: {
-					show_welcome_guide: boolean;
-				};
-			}
-
-			const body = ( await response.json() ) as NuxPayload;
-			if ( body?.body?.show_welcome_guide === true ) {
-				await this.dismissWelcomeTour();
-			}
-		} );
-
+		await this.forceDismissWelcomeTour();
 		const frame = await this.getEditorFrame();
-		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
-		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
+		// Traditionally we try to avoid waits not related to the current flow.
+		// However, we need a stable way to identify loading being done. NetworkIdle
+		// takes too long here, so the most reliable alternative is the title being
+		// visible.
 		await frame.waitForSelector( selectors.editorTitle );
 
 		return frame;
 	}
 
 	/**
-	 * Dismisses the Welcome Tour (card) if it is present.
+	 * Forcefully dismisses the Welcome Tour via action dispatch.
+	 *
+	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
-	async dismissWelcomeTour(): Promise< void > {
+	async forceDismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		const locator = frame.locator( selectors.welcomeTourCloseButton );
+		await frame.waitForFunction( async () => {
+			const actionPayload = await ( window as any ).wp.data
+				.dispatch( 'automattic/wpcom-welcome-guide' )
+				.setShowWelcomeGuide( false );
 
-		await locator.click( { timeout: 10 * 1000 } );
+			return ! actionPayload.show;
+		} );
 	}
 
 	/**
