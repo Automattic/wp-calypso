@@ -27,8 +27,8 @@ function is_core_fse_active() {
 	}
 
 	$universal_theme_template = defined( 'IS_ATOMIC' ) && IS_ATOMIC
-		? 'blockase'
-		: 'pub/blockase';
+		? 'blockbase'
+		: 'pub/blockbase';
 
 	// For universal themes, we check for our own option.
 	if ( get_option( 'template' ) === $universal_theme_template ) {
