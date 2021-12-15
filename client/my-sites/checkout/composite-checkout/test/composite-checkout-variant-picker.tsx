@@ -4,6 +4,7 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { render, fireEvent, screen, within } from '@testing-library/react';
+import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -76,6 +77,20 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		};
 
 		const store = createTestReduxStore();
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+		Object.defineProperty( window, 'matchMedia', {
+			writable: true,
+			value: jest.fn().mockImplementation( ( query ) => ( {
+				matches: false,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(), // deprecated
+				removeListener: jest.fn(), // deprecated
+				addEventListener: jest.fn(),
+				removeEventListener: jest.fn(),
+				dispatchEvent: jest.fn(),
+			} ) ),
+		} );
 
 		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
 			const managerClient = createShoppingCartManagerClient( {
@@ -151,6 +166,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 			fireEvent.click( editOrderButton );

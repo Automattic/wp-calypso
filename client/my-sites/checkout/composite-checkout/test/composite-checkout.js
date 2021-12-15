@@ -148,7 +148,6 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'renders the line items with prices', async () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			screen
@@ -158,7 +157,6 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'renders the tax amount', async () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			screen
@@ -168,7 +166,6 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'renders the total amount', async () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			screen
@@ -185,7 +182,6 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'does not render the full credits payment method option when no credits are available', async () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
@@ -194,7 +190,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not render the full credits payment method option when partial credits are available', async () => {
 		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
@@ -203,7 +198,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders the paypal payment method option when partial credits are available', async () => {
 		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'PayPal' ) ).toBeInTheDocument();
@@ -217,7 +211,6 @@ describe( 'CompositeCheckout', () => {
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
@@ -231,7 +224,6 @@ describe( 'CompositeCheckout', () => {
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.queryByText( 'PayPal' ) ).not.toBeInTheDocument();
@@ -239,7 +231,6 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'does not render the free payment method option when the purchase is not free', async () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
@@ -248,7 +239,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not render the paypal payment method option when the purchase is free', async () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.queryByText( 'PayPal' ) ).not.toBeInTheDocument();
@@ -266,7 +256,6 @@ describe( 'CompositeCheckout', () => {
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
@@ -275,7 +264,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders the free payment method option when the purchase is free', async () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Free Purchase' ) ).toBeInTheDocument();
@@ -284,7 +272,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not render the contact step when the purchase is free', async () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect(
@@ -294,7 +281,6 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
@@ -303,7 +289,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
@@ -314,7 +299,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders the domain fields when a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
@@ -325,7 +309,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
@@ -336,7 +319,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
@@ -351,7 +333,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
@@ -369,7 +350,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
@@ -382,7 +362,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
@@ -395,7 +374,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
@@ -410,7 +388,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
@@ -427,7 +404,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not complete the contact step when the contact step button has not been clicked', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
@@ -531,7 +507,6 @@ describe( 'CompositeCheckout', () => {
 						success: email === 'passes',
 					};
 				} );
-			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 
 			render(
 				<MyCheckout
@@ -589,7 +564,6 @@ describe( 'CompositeCheckout', () => {
 	);
 
 	it( 'renders the checkout summary', async () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Purchase Details' ) ).toBeInTheDocument();
@@ -599,7 +573,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
@@ -619,7 +592,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'removes a product from the cart after clicking to remove it outside of edit mode', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
@@ -637,7 +609,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'redirects to the plans page if the cart is empty after removing the last product', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
@@ -655,7 +626,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
@@ -673,7 +643,6 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not redirect to the plans page if the cart is empty when it loads', async () => {
 		const cartChanges = { products: [] };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( async () => {
 			expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
@@ -683,7 +652,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'does not redirect if the cart is empty when it loads but the url has a plan alias', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -696,7 +664,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the aliased plan to the cart when the url has a plan alias', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -714,7 +681,6 @@ describe( 'CompositeCheckout', () => {
 
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -732,7 +698,6 @@ describe( 'CompositeCheckout', () => {
 
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan,jetpack_backup_daily' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -762,7 +727,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the domain mapping product to the cart when the url has a concierge session', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'concierge-session' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -781,7 +745,6 @@ describe( 'CompositeCheckout', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
 		await act( async () => {
-			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 				container
@@ -793,7 +756,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -812,7 +774,6 @@ describe( 'CompositeCheckout', () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
 		await act( async () => {
-			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 				container
@@ -824,7 +785,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the domain mapping product to the cart when the url has a domain map', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -843,7 +803,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds renewal product to the cart when the url has a renewal', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal-bundle', purchaseId: '12345' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -858,7 +817,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds renewal product to the cart when the url has a renewal with a domain registration', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'domain_reg:foo.cash', purchaseId: '12345' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -872,7 +830,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'domain_map:bar.com', purchaseId: '12345' };
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -889,7 +846,6 @@ describe( 'CompositeCheckout', () => {
 			productAliasFromUrl: 'domain_map:bar.com,domain_reg:bar.com',
 			purchaseId: '12345,54321',
 		};
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
@@ -908,7 +864,6 @@ describe( 'CompositeCheckout', () => {
 			coupon_savings_total_integer: 10,
 			coupon_savings_total_display: '$R10',
 		};
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		render(
 			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
 			container
