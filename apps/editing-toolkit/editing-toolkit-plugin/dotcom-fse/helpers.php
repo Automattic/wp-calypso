@@ -208,3 +208,51 @@ function populate_wp_template_data() {
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
 add_action( 'switch_theme', __NAMESPACE__ . '\populate_wp_template_data' );
+
+function has_legacy_FSE_template_edits( $blog_id ) {
+	switch_to_blog( $blog_id );
+	$theme_slug = normalize_theme_slug( get_stylesheet() );
+
+	dangerously_load_full_site_editing_files();
+
+	// Get saved template part markup
+	$template_manager = new WP_Template();
+	$header_content = $template_manager->get_template_content( 'header' );
+	$footer_content = $template_manager->get_template_content( 'footer' );
+
+	// Get default template part markup
+	$request_url = 'https://public-api.wordpress.com/wpcom/v2/full-site-editing/templates';
+	$request_args = array(
+		'body' => array( 'theme_slug' => $theme_slug ),
+	);
+	$response = custom_fetch_retry( $request_url, $request_args );
+	if ( $response ) {
+		$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( ! ( ! empty( $api_response['code'] ) && 'not_found' === $api_response['code'] ) ) {
+			$default_header_content = $api_response['headers'][0];
+			$default_footer_content = $api_response['footers'][0];
+		}
+	}
+
+	restore_current_blog();
+
+	return array( 'current-header' => $header_content, 'default-header' => $default_header_content );
+}
+
+function custom_fetch_retry( $request_url, $request_args = null, $attempt = 1 ) {
+	$max_retries = 3;
+
+	$response = wp_remote_get( $request_url, $request_args );
+
+	if ( ! is_wp_error( $response ) ) {
+		return $response;
+	}
+
+	if ( $attempt > $max_retries ) {
+		return;
+	}
+
+	sleep( pow( 2, $attempt ) );
+	$attempt++;
+	custom_fetch_retry( $request_url, $request_args, $attempt );
+}
