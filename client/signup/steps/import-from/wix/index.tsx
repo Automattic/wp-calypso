@@ -9,8 +9,8 @@ import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
+import DoneButton from '../components/done-button';
 import GettingStartedVideo from '../components/getting-started-video';
-import DoneButton from '../done-button';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
 

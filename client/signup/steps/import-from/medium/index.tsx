@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
-import DoneButton from '../done-button';
+import DoneButton from '../components/done-button';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
 import './style.scss';
