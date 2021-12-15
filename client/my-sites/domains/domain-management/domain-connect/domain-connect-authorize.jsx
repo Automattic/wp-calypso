@@ -32,10 +32,9 @@ class DomainConnectAuthorize extends Component {
 		const { domain } = params;
 
 		wpcom.req
-			.post(
-				`/domains/${ domain }/dns/providers/${ providerId }/services/${ serviceId }/preview`,
-				{ variables: params }
-			)
+			.post( `/domains/${ domain }/dns/providers/${ providerId }/services/${ serviceId }/preview`, {
+				variables: params,
+			} )
 			.then(
 				( data ) => {
 					this.setState( {
