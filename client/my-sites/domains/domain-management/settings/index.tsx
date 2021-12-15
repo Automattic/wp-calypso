@@ -157,13 +157,22 @@ const Settings = ( {
 	}
 
 	const getContactInformationAccordion = () => {
-		const { privateDomain } = domain;
+		const placeholderAccordion = (
+			<Accordion
+				title="Contact information"
+				subtitle="Contact information"
+				isPlaceholder
+			></Accordion>
+		);
 
+		if ( ! domain ) return placeholderAccordion;
+
+		const { privateDomain } = domain;
 		const contactInformation = findRegistrantWhois( whoisData );
 
 		if ( ! contactInformation ) {
 			requestWhois( selectedDomainName );
-			return null;
+			return placeholderAccordion;
 		}
 
 		const contactInfoFullName = `${ contactInformation.fname } ${ contactInformation.lname }`;
