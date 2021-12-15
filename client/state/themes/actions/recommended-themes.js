@@ -26,13 +26,13 @@ export function receiveRecommendedThemes( themes, filter ) {
  * @param {string} filter A filter string for a theme query
  * @returns {Function} Action thunk
  */
-export function getRecommendedThemes( filter ) {
+export function getRecommendedThemes( filter, tier = '' ) {
 	return async ( dispatch ) => {
 		dispatch( { type: RECOMMENDED_THEMES_FETCH, filter } );
 		const query = {
 			search: '',
 			number: 50,
-			tier: '',
+			tier,
 			filter,
 			apiVersion: '1.2',
 		};

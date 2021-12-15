@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import DesignPicker, {
 	FeaturedPicksButtons,
+	PremiumBadge,
 	isBlankCanvasDesign,
 	getDesignUrl,
 	useCategorization,
@@ -22,6 +24,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import DIFMThemes from '../difm-design-picker/themes';
 import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
@@ -37,7 +40,12 @@ export default function DesignPickerStep( props ) {
 		showLetUsChoose,
 		hideFullScreenPreview,
 		hideDesignTitle,
+		siteId,
 	} = props;
+
+	const hasUnlimitedPremiumThemes = useSelector( ( state ) =>
+		hasFeature( state, siteId, FEATURE_PREMIUM_THEMES )
+	);
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -50,7 +58,7 @@ export default function DesignPickerStep( props ) {
 	const scrollTop = useRef( 0 );
 
 	const { data: apiThemes = [] } = useThemeDesignsQuery(
-		{ tier: 'free' },
+		{ tier: hasUnlimitedPremiumThemes ? 'all' : 'free' },
 		{ enabled: ! props.useDIFMThemes }
 	);
 
@@ -158,6 +166,7 @@ export default function DesignPickerStep( props ) {
 					'design-picker-step__has-categories': showDesignPickerCategories,
 				} ) }
 				highResThumbnails
+				premiumBadge={ <PremiumBadge /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
 				categoriesHeading={
 					<FormattedHeader
