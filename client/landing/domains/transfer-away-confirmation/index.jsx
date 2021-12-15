@@ -7,12 +7,6 @@ import DomainsLandingContentCard from '../content-card';
 import DomainsLandingHeader from '../header';
 import { getMaintenanceMessageFromError } from '../utils';
 
-const VerifyConfirmationCommand = {
-	acceptTransfer: 'accept-transfer',
-	denyTransfer: 'deny-transfer',
-	verifyEmail: 'verify-email',
-};
-
 class TransferAwayConfirmationPage extends Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
@@ -24,9 +18,8 @@ class TransferAwayConfirmationPage extends Component {
 
 	componentDidMount() {
 		const { domain, recipientId, token } = this.props;
-		const { verifyEmail } = VerifyConfirmationCommand;
 
-		this.verifyOutboundTransferConfirmation( domain, recipientId, token, verifyEmail ).then(
+		this.verifyOutboundTransferConfirmation( domain, recipientId, token, 'verify-email' ).then(
 			() => {
 				this.setState( this.getConfirmationSelectState() );
 			},
@@ -58,11 +51,10 @@ class TransferAwayConfirmationPage extends Component {
 
 	acceptTransfer = () => {
 		const { domain, recipientId, token } = this.props;
-		const { acceptTransfer } = VerifyConfirmationCommand;
 
 		this.setState( { isProcessingRequest: true } );
 
-		this.verifyOutboundTransferConfirmation( domain, recipientId, token, acceptTransfer ).then(
+		this.verifyOutboundTransferConfirmation( domain, recipientId, token, 'accept-transfer' ).then(
 			() => {
 				this.setSuccessState( 'accept_transfer_success' );
 			},
@@ -74,11 +66,10 @@ class TransferAwayConfirmationPage extends Component {
 
 	cancelTransfer = () => {
 		const { domain, recipientId, token } = this.props;
-		const { denyTransfer } = VerifyConfirmationCommand;
 
 		this.setState( { isProcessingRequest: true } );
 
-		this.verifyOutboundTransferConfirmation( domain, recipientId, token, denyTransfer ).then(
+		this.verifyOutboundTransferConfirmation( domain, recipientId, token, 'deny-transfer' ).then(
 			() => {
 				this.setSuccessState( 'cancel_transfer_success' );
 			},
