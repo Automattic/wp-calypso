@@ -10,6 +10,7 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
@@ -88,7 +89,8 @@ const Settings = ( {
 	);
 
 	if ( ! domain ) {
-		return <span>Loading placeholder</span>;
+		// TODO: Update this placeholder
+		return <DomainMainPlaceholder breadcrumbs={ renderBreadcrumbs } />;
 	}
 
 	return (
