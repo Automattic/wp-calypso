@@ -44,7 +44,7 @@ function SiteInformationCollection( {
 
 	const onTypeformSubmission = ( typeformSubmissionId ) => {
 		const extra = {
-			difm_lite_selected_design: selectedDesign,
+			difm_lite_selected_design: selectedDesign?.theme,
 			difm_lite_site_category: selectedSiteCategory,
 			difm_lite_typeform_response_id: typeformSubmissionId,
 			difm_lite_new_or_existing_site_choice: newOrExistingSiteChoice,
