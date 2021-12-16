@@ -5,6 +5,7 @@
 @import '@wordpress/base-styles/z-index';
 
 $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
+$welcome-tour-card-media-extra-padding: 14%;
 
 .welcome-tour-card__heading {
 	font-size: 1.125rem; /* stylelint-disable-line */
@@ -128,12 +129,19 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 		padding-top: math.percentage( math.div( math.ceil( math.div( 1, 1.53 ) * 100 ), 100 ) ); // img width:height ratio (1:1.53)
 		position: relative;
 		width: 100%;
+		background-color: #e7eaeb;
 
 		img {
 			left: 0;
 			position: absolute;
 			top: 0;
 			width: 100%;
+		}
+
+		&.with-extra-padding img {
+			left: $welcome-tour-card-media-extra-padding;
+			top: $welcome-tour-card-media-extra-padding;
+			width: 100% - $welcome-tour-card-media-extra-padding;
 		}
 	}
 
@@ -163,6 +171,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	padding: $grid-unit-15;
 	right: 0;
 	z-index: 1; // z-index is needed because overlay controls are written before components-card__media, and so ends up under the image
+	position: absolute;
 
 	.components-button {
 		width: 32px;
@@ -195,10 +204,6 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 			}
 		}
 	}
-}
-
-.welcome-tour-card__overlay-controls__absolute {
-	position: absolute;
 }
 
 .welcome-tour-card__next-btn {
