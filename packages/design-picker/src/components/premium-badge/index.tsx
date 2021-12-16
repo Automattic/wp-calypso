@@ -16,6 +16,7 @@ const PremiumBadge: FunctionComponent< Props > = ( { className } ) => {
 	return (
 		<Tooltip
 			position="top center"
+			delay={ 300 }
 			text={ __(
 				'Premium themes are built by professional designers with quality, functionality, and ease of use in mind.',
 				__i18n_text_domain__
