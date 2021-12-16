@@ -580,7 +580,7 @@ class RequiredPluginsInstallView extends Component {
 			return (
 				<>
 					<SetupNotices />
-					<WoopLandingPage siteId={ siteId } />
+					<WoopLandingPage siteId={ siteId } startSetup={ this.startSetup } />
 				</>
 			);
 		}
