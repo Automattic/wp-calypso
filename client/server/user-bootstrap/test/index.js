@@ -129,7 +129,6 @@ describe( 'User bootstrap', () => {
 
 	describe( 'with support session header', () => {
 		let request;
-		let upstreamRequest;
 
 		beforeEach( () => {
 			request = mockRequest( {
@@ -140,7 +139,7 @@ describe( 'User bootstrap', () => {
 					'x-support-session': 'session-id',
 				},
 			} );
-			upstreamRequest = configureUpstreamRequest( {
+			configureUpstreamRequest( {
 				headers: {
 					// Hardcoded value resulting from hashing "key" + "session-id"
 					Authorization: 'X-WPCALYPSO-SUPPORT-SESSION bc8844a622734cad18a2ec733e11b296',
@@ -172,7 +171,6 @@ describe( 'User bootstrap', () => {
 
 	describe( 'with auth session', () => {
 		let request;
-		let upstreamRequest;
 
 		beforeEach( () => {
 			request = mockRequest( {
@@ -180,7 +178,7 @@ describe( 'User bootstrap', () => {
 					wordpress_logged_in: 'auth-cookie',
 				},
 			} );
-			upstreamRequest = configureUpstreamRequest( {
+			configureUpstreamRequest( {
 				headers: {
 					// Hardcoded value resulting from hashing "key" + "auth-cookie"
 					Authorization: 'X-WPCALYPSO 26be6ad9e36fde3770b1e81a559db109',
