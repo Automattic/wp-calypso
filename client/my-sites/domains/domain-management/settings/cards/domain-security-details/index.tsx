@@ -2,6 +2,7 @@
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { sslStatuses } from 'calypso/lib/domains/constants';
+import { getSslReadableStatus } from '../../helpers';
 import type { DetailsCardProps } from '../types';
 
 import './style.scss';
@@ -33,18 +34,6 @@ const DomainSecurityDetails = ( { domain }: DetailsCardProps ): JSX.Element | nu
 		}
 	};
 
-	const getSslSubtitle = () => {
-		switch ( sslStatus ) {
-			case sslStatuses.SSL_ACTIVE:
-				return translate( 'SSL certificate active' );
-			case sslStatuses.SSL_PENDING:
-				return translate( 'SSL certificate pending' );
-			case sslStatuses.SSL_DISABLED:
-			default:
-				return translate( 'Problem with SSL certificate' );
-		}
-	};
-
 	const sslStatusMessage = getSslStatusMessage();
 
 	return (
@@ -56,7 +45,7 @@ const DomainSecurityDetails = ( { domain }: DetailsCardProps ): JSX.Element | nu
 			>
 				<>
 					<Icon icon={ lock } size={ 18 } viewBox="0 0 22 22" />
-					{ getSslSubtitle() }
+					{ getSslReadableStatus( domain ) }
 				</>
 			</div>
 			<div className="domain-security-details__description">
