@@ -129,6 +129,7 @@ $welcome-tour-card-media-extra-padding: 14%;
 		padding-top: math.percentage( math.div( math.ceil( math.div( 1, 1.53 ) * 100 ), 100 ) ); // img width:height ratio (1:1.53)
 		position: relative;
 		width: 100%;
+        // TODO CLK: use welcome-tour-card class to keep specific to welcome tour
 		background-color: #e7eaeb;
 
 		img {
