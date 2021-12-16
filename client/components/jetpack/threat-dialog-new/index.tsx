@@ -74,12 +74,18 @@ const ThreatDialog: React.FC< Props > = ( {
 		>
 			<>
 				<p>
-					{ translate( 'Jetpack will fix the %(severity)s threat item:', {
-						args: { severity: getThreatSeverityText( threat ) },
-					} ) }
+					{ action === 'fix' &&
+						translate( 'Jetpack will fix the %(severity)s threat:', {
+							args: { severity: getThreatSeverityText( threat ) },
+						} ) }
+
+					{ action === 'ignore' &&
+						translate( 'Jetpack will ignore the %(severity)s threat:', {
+							args: { severity: getThreatSeverityText( threat ) },
+						} ) }
 				</p>
 				<h3 className="threat-dialog-new__threat-title">
-					{ <ThreatFixHeader threat={ threat } /> }
+					{ <ThreatFixHeader threat={ threat } action={ action } /> }
 				</h3>
 			</>
 		</ServerCredentialsWizardDialog>

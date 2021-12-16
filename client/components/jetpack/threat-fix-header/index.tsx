@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { FixableThreat } from 'calypso/components/jetpack/threat-item-new/types';
@@ -12,9 +13,15 @@ interface Props {
 	threat: FixableThreat;
 	fixAllDialog?: bool;
 	onCheckFix?: callable;
+	action: 'fix' | 'ignore';
 }
 
-export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix } ): React.FC< Props > {
+export default function ThreatFixHeader( {
+	threat,
+	fixAllDialog,
+	onCheckFix,
+	action,
+} ): React.FC< Props > {
 	const [ checkedFix, setCheckedFix ] = useState( true );
 
 	const checkFix = ( event ) => {
@@ -42,7 +49,8 @@ export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix } ):
 					) }
 				>
 					<Gridicon className="threat-fix-header__warning-icon" icon="info-outline" size={ 18 } />
-					{ getThreatFix( threat.fixable ) }
+					{ action === 'fix' && getThreatFix( threat.fixable ) }
+					{ action === 'ignore' && translate( 'Jetpack will ignore the threat.' ) }
 				</span>
 			</div>
 			<div className="threat-fix-header__autofix-checkbox">
