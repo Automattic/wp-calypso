@@ -341,3 +341,11 @@ function load_wpcom_site_editor() {
 	require_once __DIR__ . '/wpcom-site-editor/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_site_editor', 11 ); // load just after the Gutenberg plugin.
+
+/**
+ * Load paragraph block
+ */
+function load_paragraph_block() {
+	require_once __DIR__ . '/paragraph-block/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
