@@ -28,14 +28,21 @@ const RegisteredDomainDetails = ( {
 	);
 
 	const renderDates = () => {
+		const untilDateLabel = domain.expired
+			? // translators: this is followed by a date, e.g. Expired on December 15, 2021
+			  translate( 'Expired on' )
+			: // translators: this is followed by a date, e.g. Registered until January 21, 2023
+			  translate( 'Registered until' );
+
 		return (
 			<>
 				<div className="details-card__date">
-					<div className="details-card__date-label">Registered until</div>
+					<div className="details-card__date-label">{ untilDateLabel }</div>
 					<div>{ moment( domain.expiry ).format( 'LL' ) }</div>
 				</div>
 				<div className="details-card__date">
-					<div className="details-card__date-label">Registered on</div>
+					{ /* translators: this is followed by a date, e.g. Registered on November 15, 2021 */ }
+					<div className="details-card__date-label">{ translate( 'Registered on' ) }</div>
 					<div>{ moment( domain.registrationDate ).format( 'LL' ) }</div>
 				</div>
 			</>
@@ -64,7 +71,7 @@ const RegisteredDomainDetails = ( {
 			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } )!;
 		}
 
-		const autoRenewAdditionalText = ! isExpiring( purchase ) // is this the right way to test if auto-renew is turned on?
+		const autoRenewAdditionalText = ! isExpiring( purchase )
 			? translate( 'We will attempt to renew on %(renewalDate)s for %(price)s', {
 					args: {
 						renewalDate: moment( domain.autoRenewalDate ).format( 'LL' ),

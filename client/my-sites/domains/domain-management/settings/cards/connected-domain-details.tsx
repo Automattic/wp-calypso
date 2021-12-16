@@ -31,19 +31,25 @@ const ConnectedDomainDetails = ( {
 		);
 	};
 
-	const args = {
-		args: {
-			expirationDate: moment( domain.expiry ).format( 'LL' ),
-		},
-	};
+	const getDescriptionText = () => {
+		const args = {
+			args: {
+				expirationDate: moment( domain.expiry ).format( 'LL' ),
+			},
+		};
 
-	const text = domain.bundledPlanSubscriptionId
-		? translate( 'Domain connection expires with your plan on %(expirationDate)s', args )
-		: translate( 'Domain connection expires on %(expirationDate)s', args );
+		if ( domain.expired ) {
+			return translate( 'Domain connection expired on %(expirationDate)s', args );
+		}
+
+		return domain.bundledPlanSubscriptionId
+			? translate( 'Domain connection expires with your plan on %(expirationDate)s', args )
+			: translate( 'Domain connection expires on %(expirationDate)s', args );
+	};
 
 	return (
 		<div className="details-card">
-			<div className="details-card__section">{ text }</div>
+			<div className="details-card__section">{ getDescriptionText() }</div>
 			<div className="details-card__section">{ renderPlanDetailsButton() }</div>
 		</div>
 	);
