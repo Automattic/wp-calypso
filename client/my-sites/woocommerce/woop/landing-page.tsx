@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import { useSelector } from 'react-redux';
 import Image01 from 'calypso/assets/images/woocommerce/woop-cta-image01.jpeg';
 import Image02 from 'calypso/assets/images/woocommerce/woop-cta-image02.jpeg';
 import Image03 from 'calypso/assets/images/woocommerce/woop-cta-image03.jpeg';
@@ -14,7 +13,6 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import MasonryWave from 'calypso/components/masonry-wave';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 import './style.scss';
 
@@ -35,10 +33,9 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	const ctaRef = useRef( null );
 
 	const { hasBlockers, wpcomDomain, isDataReady } = useWooCommerceOnPlansEligibility( siteId );
-	const isAtomic = !! useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	function onCTAClickHandler() {
-		if ( isEnabled( 'woop' ) && ! isAtomic ) {
+		if ( isEnabled( 'woop' ) ) {
 			return page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
 		}
 

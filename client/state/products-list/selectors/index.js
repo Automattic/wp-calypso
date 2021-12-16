@@ -10,3 +10,4 @@ export { getProductPriceTierList } from './get-product-price-tiers';
 export { getProductsList } from './get-products-list';
 export { isProductsListFetching } from './is-products-list-fetching';
 export { planSlugToPlanProduct } from './plan-slug-to-plan-product';
+export { isMarketplaceProduct } from './is-marketplace-product';

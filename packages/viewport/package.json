@@ -31,6 +31,7 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.5.4"
 	}
 }

@@ -70,6 +70,7 @@ const ThreatItem: React.FC< Props > = ( {
 		[ isFixing, onFixThreat, threat ]
 	);
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const getFix = React.useCallback( (): i18nCalypso.TranslateResult | undefined => {
 		if ( threat.status === 'fixed' ) {
 			return;
@@ -116,6 +117,7 @@ const ThreatItem: React.FC< Props > = ( {
 
 		return <p className="threat-description__section-text">{ getThreatFix( threat.fixable ) }</p>;
 	}, [ contactSupportUrl, threat ] );
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	const isFixable = React.useMemo(
 		() => threat.fixable && ( threat.status === 'current' || threat.status === 'ignored' ),

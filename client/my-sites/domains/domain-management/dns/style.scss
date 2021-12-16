@@ -86,7 +86,7 @@ body.dns__body-white {
 
 			&.is-header {
 				border-bottom: 1px solid $gray-20;
-				font-weight: 500; /* stylelint-disable-line */
+				font-weight: 600; /* stylelint-disable-line */
 				display: none;
 
 				@include break-mobile {
@@ -131,7 +131,6 @@ body.dns__body-white {
 					}
 
 					&.dns-records-list-item__type {
-						color: $gray-900;
 						overflow-wrap: break-word;
 
 						@include break-mobile {
@@ -195,6 +194,12 @@ body.dns__body-white {
 
 		svg {
 			fill: var( --studio-gray-90 );
+		}
+
+		&:disabled, &:disabled:hover {
+			svg {
+				fill: var( --color-neutral-20 );
+			}
 		}
 	}
 

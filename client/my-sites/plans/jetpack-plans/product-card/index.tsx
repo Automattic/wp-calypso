@@ -48,6 +48,7 @@ interface ProductCardProps {
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
 	scrollCardIntoView: ScrollCardIntoViewCallback;
+	collapseFeaturesOnMobile?: boolean;
 }
 
 const ProductCard: React.FC< ProductCardProps > = ( {
@@ -62,6 +63,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	featuredLabel,
 	hideSavingLabel,
 	scrollCardIntoView,
+	collapseFeaturesOnMobile,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -190,6 +192,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			featuredLabel={ featuredLabel }
 			hideSavingLabel={ hideSavingLabel }
 			scrollCardIntoView={ scrollCardIntoView }
+			collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
 		/>
 	);
 };

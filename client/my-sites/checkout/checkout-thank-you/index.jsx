@@ -22,7 +22,6 @@ import {
 	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
 	shouldFetchSitePlans,
-	isMarketplaceProduct,
 	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
@@ -33,7 +32,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import AsyncLoad from 'calypso/components/async-load';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -389,7 +387,6 @@ export class CheckoutThankYou extends Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let wasMarketplaceProduct = false;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainProduct = false;
@@ -406,7 +403,6 @@ export class CheckoutThankYou extends Component {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
-			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
 					isDomainMapping( purchase ) ||
@@ -452,11 +448,7 @@ export class CheckoutThankYou extends Component {
 			);
 		}
 
-		if ( wasMarketplaceProduct ) {
-			return (
-				<AsyncLoad require="calypso/my-sites/marketplace/pages/marketplace-plugin-setup-status" />
-			);
-		} else if ( wasEcommercePlanPurchased ) {
+		if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />

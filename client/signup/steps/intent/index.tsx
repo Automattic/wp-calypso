@@ -1,13 +1,15 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import IntentScreen from './intent-screen';
 import type { IntentFlag } from './types';
 
@@ -39,6 +41,11 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	const subHeaderText = translate( 'You can change your mind at any time.' );
 	const branchSteps = useBranchSteps( stepName );
 
+	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
+	const canImport = useSelector( ( state ) =>
+		canCurrentUser( state, siteId as number, 'manage_options' )
+	);
+
 	const submitIntent = ( intent: IntentFlag ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
 
@@ -63,7 +70,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 			headerImageUrl={ intentImageUrl }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			stepContent={ <IntentScreen onSelect={ submitIntent } /> }
+			stepContent={ <IntentScreen canImport={ canImport } onSelect={ submitIntent } /> }
 			align={ 'left' }
 			hideSkip
 			isHorizontalLayout={ true }

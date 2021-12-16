@@ -1,10 +1,15 @@
+import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-import { FunctionComponent, useCallback } from 'react';
+import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import { navigate } from 'calypso/lib/navigate';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Item from './item';
@@ -29,17 +34,17 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
 	const isJetpack = isJetpackCheckout || isJetpackNotAtomic;
 
-	const clickClose = useCallback( () => {
+	const leaveCheckout = useCallback( () => {
 		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
 
 		dispatch( recordTracksEvent( 'calypso_masterbar_close_clicked' ) );
 
 		if ( checkoutBackUrl ) {
-			window.location.href = checkoutBackUrl;
-			return;
+			closeUrl = checkoutBackUrl;
 		}
 
 		if (
+			! checkoutBackUrl &&
 			previousPath &&
 			'' !== previousPath &&
 			previousPath !== window.location.href &&
@@ -59,12 +64,11 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			// user there after checkout by putting the previous page's path in the
 			// `redirect_to` query param. When leaving checkout via the close button,
 			// we probably want to return to that location also.
-			if ( searchParams.has( 'redirect_to' ) ) {
+			if ( ! checkoutBackUrl && searchParams.has( 'redirect_to' ) ) {
 				const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
 				// Only allow redirecting to relative paths.
 				if ( redirectPath.startsWith( '/' ) ) {
-					page( redirectPath );
-					return;
+					closeUrl = redirectPath;
 				}
 			}
 		} catch ( error ) {
@@ -73,9 +77,30 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			console.error( 'Error getting query string in close button' );
 		}
 
-		window.location.href = closeUrl;
+		navigate( closeUrl );
 	}, [ siteSlug, checkoutBackUrl, previousPath, dispatch ] );
 
+	const cartKey = useCartKey();
+	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
+	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const clickClose = () => {
+		if ( responseCart.products.length > 0 ) {
+			setIsModalVisible( true );
+			return;
+		}
+		leaveCheckout();
+	};
+
+	const modalTitleText = translate( 'You are about to leave checkout with items in your cart' );
+	const modalBodyText = translate( 'You can leave the items in the cart or empty the cart.' );
+	/* translators: The label to a button that will exit checkout without removing items from the shopping cart. */
+	const modalPrimaryText = translate( 'Leave items' );
+	/* translators: The label to a button that will remove all items from the shopping cart. */
+	const modalSecondaryText = translate( 'Empty cart' );
+	const clearCartAndLeave = () => {
+		replaceProductsInCart( [] );
+		leaveCheckout();
+	};
 	return (
 		<Masterbar>
 			<div className="masterbar__secure-checkout">
@@ -92,8 +117,26 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			<Item className="masterbar__item-title">{ title }</Item>
+			<CheckoutModal
+				title={ modalTitleText }
+				copy={ modalBodyText }
+				closeModal={ () => setIsModalVisible( false ) }
+				isVisible={ isModalVisible }
+				primaryButtonCTA={ modalPrimaryText }
+				primaryAction={ leaveCheckout }
+				secondaryButtonCTA={ modalSecondaryText }
+				secondaryAction={ clearCartAndLeave }
+			/>
 		</Masterbar>
 	);
 };
 
-export default CheckoutMasterbar;
+export default function CheckoutMasterbarWrapper( props: Props ): JSX.Element {
+	return (
+		<CalypsoShoppingCartProvider>
+			<ThemeProvider theme={ checkoutTheme }>
+				<CheckoutMasterbar { ...props } />
+			</ThemeProvider>
+		</CalypsoShoppingCartProvider>
+	);
+}

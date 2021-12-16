@@ -41,6 +41,7 @@ type OwnProps = {
 	hideSavingLabel?: boolean;
 	showAbovePriceText?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
+	collapseFeaturesOnMobile?: boolean;
 };
 
 type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
@@ -77,6 +78,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	showAbovePriceText,
 	aboveButtonText = null,
 	scrollCardIntoView,
+	collapseFeaturesOnMobile,
 } ) => {
 	const translate = useTranslate();
 
@@ -170,7 +172,11 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 				{ item.features && item.features.items.length > 0 && (
-					<JetpackProductCardFeatures features={ item.features } />
+					<JetpackProductCardFeatures
+						productSlug={ item.productSlug }
+						features={ item.features }
+						collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
+					/>
 				) }
 			</div>
 		</div>

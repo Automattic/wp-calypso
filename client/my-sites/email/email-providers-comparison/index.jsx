@@ -59,6 +59,7 @@ import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwa
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailForwardingFeatures,
+	getGoogleAppLogos,
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
@@ -426,6 +427,15 @@ class EmailProvidersComparison extends Component {
 			</span>
 		) : null;
 
+		const starLabel = productIsDiscounted
+			? translate( '%(discount)d%% off!', {
+					args: {
+						discount: gSuiteProduct.sale_coupon.discount,
+					},
+					comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
+			  } )
+			: null;
+
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
 			( this.state.googleUsers ?? [] ).length === 0
@@ -485,6 +495,7 @@ class EmailProvidersComparison extends Component {
 				providerKey="google"
 				logo={ { path: googleWorkspaceIcon } }
 				title={ getGoogleMailServiceFamily() }
+				starLabel={ starLabel }
 				description={ translate(
 					'Professional email integrated with Google Meet and other productivity tools from Google.'
 				) }
@@ -497,6 +508,7 @@ class EmailProvidersComparison extends Component {
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ expandButtonLabel }
 				features={ getGoogleFeatures() }
+				appLogos={ getGoogleAppLogos() }
 			/>
 		);
 	}
@@ -756,6 +768,7 @@ class EmailProvidersComparison extends Component {
 			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
+			shouldPromoteGoogleWorkspace,
 			source,
 		} = this.props;
 
@@ -785,9 +798,11 @@ class EmailProvidersComparison extends Component {
 					/>
 				) }
 
+				{ shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
+
 				{ this.renderTitanCard() }
 
-				{ this.renderGoogleCard() }
+				{ ! shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
 
 				{ ! hideEmailForwardingCard && this.renderEmailForwardingCard() }
 

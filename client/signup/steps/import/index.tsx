@@ -5,11 +5,12 @@ import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAnalyzing, getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep } from './ready';
-import { GoToStep, GoToNextStep, UrlData } from './types';
+import { GoToStep, GoToNextStep, UrlData, RecordTracksEvent, ImporterPlatform } from './types';
 import { getImporterUrl, getWpComOnboardingUrl } from './util';
 import './style.scss';
 
@@ -22,6 +23,7 @@ type Props = ConnectedProps< typeof connector > & {
 		siteSlug: string;
 	};
 	urlData: UrlData;
+	recordTracksEvent: RecordTracksEvent;
 };
 
 const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
@@ -33,6 +35,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 		isAnalyzing,
 		signupDependencies,
 		urlData,
+		recordTracksEvent,
 	} = props;
 
 	const shouldHideBackBtn = ( stepName: string ): boolean => {
@@ -64,9 +67,12 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 		page( getStepWithQueryParamUrl( stepName, stepSectionName, flowName, dependency ) );
 	};
 
-	const goToImporterPage = ( platform: string ): void => {
+	const goToImporterPage = ( platform: ImporterPlatform ): void => {
 		let importerUrl;
-		if ( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
+		if (
+			( platform === 'medium' && isEnabled( 'gutenboarding/import-from-medium' ) ) ||
+			( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) )
+		) {
 			importerUrl = getWpComOnboardingUrl( signupDependencies.siteSlug, platform, urlData.url );
 		} else {
 			importerUrl = getImporterUrl( signupDependencies.siteSlug, platform, urlData.url );
@@ -109,20 +115,32 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 					{ stepName === 'list' && <ListStep goToStep={ goToStepWithDependencies } /> }
 
 					{ stepName === 'ready' && ! stepSectionName && (
-						<ReadyStep goToImporterPage={ goToImporterPage } platform={ urlData.platform } />
+						<ReadyStep
+							platform={ urlData.platform }
+							goToImporterPage={ goToImporterPage }
+							recordTracksEvent={ recordTracksEvent }
+						/>
 					) }
 					{ stepName === 'ready' && stepSectionName === 'not' && (
-						<ReadyNotStep goToStep={ goToStepWithDependencies } />
+						<ReadyNotStep
+							goToStep={ goToStepWithDependencies }
+							recordTracksEvent={ recordTracksEvent }
+						/>
 					) }
 					{ stepName === 'ready' && stepSectionName === 'preview' && (
 						<ReadyPreviewStep
 							urlData={ urlData }
 							goToImporterPage={ goToImporterPage }
 							siteSlug={ signupDependencies.siteSlug }
+							recordTracksEvent={ recordTracksEvent }
 						/>
 					) }
 					{ stepName === 'ready' && stepSectionName === 'wpcom' && (
-						<ReadyAlreadyOnWPCOMStep urlData={ urlData } goToStep={ goToStepWithDependencies } />
+						<ReadyAlreadyOnWPCOMStep
+							urlData={ urlData }
+							goToStep={ goToStepWithDependencies }
+							recordTracksEvent={ recordTracksEvent }
+						/>
 					) }
 				</div>
 			}
@@ -135,7 +153,9 @@ const connector = connect(
 		urlData: getUrlData( state ),
 		isAnalyzing: isAnalyzing( state ),
 	} ),
-	{}
+	{
+		recordTracksEvent,
+	}
 );
 
 export default connector( ImportOnboarding );

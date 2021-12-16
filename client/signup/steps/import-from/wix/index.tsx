@@ -9,9 +9,10 @@ import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
+import DoneButton from '../components/done-button';
+import GettingStartedVideo from '../components/getting-started-video';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
-import DoneButton from './done-button';
 
 import './style.scss';
 
@@ -78,6 +79,10 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		return job && job.importerState === appStates.IMPORT_SUCCESS;
 	}
 
+	function showVideoComponent() {
+		return checkProgress() || checkIsSuccess();
+	}
+
 	return (
 		<>
 			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
@@ -125,6 +130,8 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 						);
 					}
 				} )() }
+
+				{ showVideoComponent() && <GettingStartedVideo /> }
 			</div>
 		</>
 	);

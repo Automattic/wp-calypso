@@ -93,6 +93,7 @@ export function getAllowedPluginData( plugin ) {
 		'tested',
 		'update',
 		'updating',
+		'variations',
 		'version',
 		'wp_admin_settings_page_url'
 	);

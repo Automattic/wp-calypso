@@ -25,14 +25,5 @@ module.exports = ( { isBrowser = true, outputPOT = 'build' } = {} ) => ( {
 			presets: [ [ '@babel/preset-env', { targets: { node: 'current' } } ] ],
 			plugins: [ 'babel-plugin-dynamic-import-node' ],
 		},
-		storybook: {
-			// Forces some plugins to load in loose mode, used by Storybook.
-			// See https://github.com/storybookjs/storybook/issues/14805
-			plugins: [
-				[ require.resolve( '@babel/plugin-proposal-private-property-in-object' ), { loose: true } ],
-				[ require.resolve( '@babel/plugin-proposal-class-properties' ), { loose: true } ],
-				[ require.resolve( '@babel/plugin-proposal-private-methods' ), { loose: true } ],
-			],
-		},
 	},
 } );

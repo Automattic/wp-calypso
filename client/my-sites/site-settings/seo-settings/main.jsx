@@ -1,61 +1,28 @@
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { errorNotice } from 'calypso/state/notices/actions';
-import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	getPurchasesError,
-} from 'calypso/state/purchases/selectors';
+import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-export class SeoSettings extends Component {
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.purchasesError && nextProps.purchasesError ) {
-			this.props.errorNotice( nextProps.purchasesError );
+export function SeoSettings() {
+	const dispatch = useDispatch();
+	const siteId = useSelector( getSelectedSiteId );
+	const purchasesError = useSelector( getPurchasesError );
+
+	useEffect( () => {
+		if ( purchasesError ) {
+			dispatch( errorNotice( purchasesError ) );
 		}
-	}
+	}, [ dispatch, purchasesError ] );
 
-	render() {
-		const { siteId } = this.props;
-
-		return (
-			<div>
-				<QuerySiteSettings siteId={ siteId } />
-				<QuerySitePurchases siteId={ siteId } />
-				<AsyncLoad
-					require="calypso/my-sites/site-settings/seo-settings/form"
-					placeholder={ null }
-				/>
-			</div>
-		);
-	}
+	return (
+		<>
+			<QuerySitePurchases siteId={ siteId } />
+			<AsyncLoad require="calypso/my-sites/site-settings/seo-settings/form" placeholder={ null } />
+		</>
+	);
 }
 
-SeoSettings.propTypes = {
-	section: PropTypes.string,
-	//connected
-	hasLoadedSitePurchasesFromServer: PropTypes.bool,
-	purchasesError: PropTypes.string,
-	sitePurchases: PropTypes.array,
-	siteId: PropTypes.number,
-};
-
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		return {
-			siteId,
-			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
-			purchasesError: getPurchasesError( state ),
-			sitePurchases: getSitePurchases( state, siteId ),
-		};
-	},
-	{
-		errorNotice,
-	}
-)( SeoSettings );
+export default SeoSettings;

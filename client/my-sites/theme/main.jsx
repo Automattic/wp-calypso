@@ -55,6 +55,7 @@ import {
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
 	getCanonicalTheme,
+	getPremiumThemePrice,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
@@ -78,6 +79,7 @@ class ThemeSheet extends Component {
 		author: PropTypes.string,
 		screenshot: PropTypes.string,
 		screenshots: PropTypes.array,
+		price: PropTypes.string,
 		description: PropTypes.string,
 		descriptionLong: PropTypes.oneOfType( [
 			PropTypes.string,
@@ -606,9 +608,25 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	renderPrice = () => {
+		let price = this.props.price;
+		if ( ! this.isLoaded() || this.props.isActive ) {
+			price = '';
+		} else if ( ! this.props.isPremium ) {
+			price = this.props.translate( 'Free' );
+		}
+
+		const className = classNames( 'theme__sheet-action-bar-cost', {
+			'theme__sheet-action-bar-cost-upgrade': ! /\d/g.test( this.props.price ),
+		} );
+
+		return price ? <span className={ className }>{ price }</span> : '';
+	};
+
 	renderButton = () => {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
+		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const { isActive } = this.props;
 
@@ -621,6 +639,11 @@ class ThemeSheet extends Component {
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
+				{ price && this.props.isWpcomTheme && (
+					<Badge type="info" className="theme__sheet-badge-beta">
+						{ price }
+					</Badge>
+				) }
 			</Button>
 		);
 	};
@@ -846,6 +869,7 @@ export default connect(
 		return {
 			...theme,
 			id,
+			price: getPremiumThemePrice( state, id, siteId ),
 			error,
 			siteId,
 			siteSlug,

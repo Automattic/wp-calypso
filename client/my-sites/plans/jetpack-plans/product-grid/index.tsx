@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
@@ -94,6 +95,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
@@ -148,16 +150,17 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	};
 
 	const filterBar = useMemo(
-		() => (
-			<div className="product-grid__filter-bar">
-				<PlansFilterBar
-					showDiscountMessage
-					onDurationChange={ onDurationChange }
-					duration={ duration }
-				/>
-			</div>
-		),
-		[ onDurationChange, duration ]
+		() =>
+			showAnnualPlansOnly ? null : (
+				<div className="product-grid__filter-bar">
+					<PlansFilterBar
+						showDiscountMessage
+						onDurationChange={ onDurationChange }
+						duration={ duration }
+					/>
+				</div>
+			),
+		[ onDurationChange, duration, showAnnualPlansOnly ]
 	);
 
 	const featuredPlans = [
@@ -177,6 +180,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				selectedTerm={ duration }
 				scrollCardIntoView={ scrollCardIntoView }
 				createButtonURL={ createButtonURL }
+				collapseFeaturesOnMobile
 			/>
 		</li>
 	);
@@ -196,6 +200,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
 						'is-wrapping': shouldWrapGrid,
+						'has-top-padding': showAnnualPlansOnly,
 					} ) }
 					ref={ gridRef }
 				>
