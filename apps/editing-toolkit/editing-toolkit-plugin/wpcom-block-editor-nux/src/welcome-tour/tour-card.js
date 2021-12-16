@@ -54,9 +54,9 @@ function WelcomeTourCard( {
 			is_gutenboarding: isGutenboarding,
 		} );
 	} );
-    // TODO CLK: welcome tour only mod for mobile fixes
+	// TODO CLK: welcome tour only mod for mobile fixes
 	const cardMediaClass = classNames( 'welcome-tour-card__media', {
-		'with-extra-padding': isMobile() && imgNeedsPadding,
+		'is-with-extra-padding': isMobile() && imgNeedsPadding,
 	} );
 
 	return (
