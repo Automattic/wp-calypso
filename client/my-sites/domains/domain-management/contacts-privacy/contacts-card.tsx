@@ -80,7 +80,8 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 	};
 
 	const getPrivacyProtectionRecommendationText = () => {
-		return (
+		const { privacyAvailable } = props;
+		return privacyAvailable ? (
 			<p className="contacts-privacy__toggle-item">
 				{ translate( 'We recommend keeping privacy protection on. {{a}}Learn more{{/a}}', {
 					components: {
@@ -88,7 +89,7 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 					},
 				} ) }
 			</p>
-		);
+		) : null;
 	};
 
 	const getContactInfoDisclosed = () => {
