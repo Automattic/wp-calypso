@@ -86,7 +86,7 @@ const Settings = ( {
 		};
 
 		return (
-			<Accordion title={ translate( 'Domain security' ) } subtitle={ getSubtitle() } expanded>
+			<Accordion title={ translate( 'Domain security' ) } subtitle={ getSubtitle() } key="security">
 				{ domainSecurityCard }
 			</Accordion>
 		);
@@ -99,6 +99,7 @@ const Settings = ( {
 				<Accordion
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
+					key="main"
 					expanded
 				>
 					<RegisteredDomainDetails
@@ -114,6 +115,7 @@ const Settings = ( {
 				<Accordion
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Domain connection details', { textOnly: true } ) }
+					key="main"
 					expanded
 				>
 					<ConnectedDomainDetails
