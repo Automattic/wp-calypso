@@ -67,8 +67,8 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	/*
 	 * Inspect transfer status to detect blockers.
 	 * It's considered blocked when code:
-	 * has the 5xx shape.
-	 * Is `active`.
+	 * - has the 5xx shape.
+	 * - its value is one of: [ `active`,...] @todo: add more codes.
 	 */
 	const transferStatus = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) )
 		?.status;
@@ -102,7 +102,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	);
 
 	if ( isBlockByTransferStatus ) {
-		transferringBlockers?.push( 'transfer_blocked' );
+		transferringBlockers?.push( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER );
 	}
 
 	const transferringDataIsAvailable =
