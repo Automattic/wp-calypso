@@ -55,8 +55,11 @@ export const QuickLinks = ( {
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
+	blockEditorSettings,
 	areBlockEditorSettingsLoading,
 } ) => {
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
+
 	const translate = useTranslate();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
@@ -64,16 +67,28 @@ export const QuickLinks = ( {
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 
+	const customizerLinks =
+		isStaticHomePage && canEditPages ? (
+			<ActionBox
+				href={ editHomePageUrl }
+				hideLinkIndicator
+				onClick={ trackEditHomepageAction }
+				label={ translate( 'Edit homepage' ) }
+				materialIcon="laptop"
+			/>
+		) : null;
+
 	const quickLinks = (
 		<div className="quick-links__boxes">
-			{ Boolean( isStaticHomePage && canEditPages ) && (
+			{ isFSEActive ? (
 				<ActionBox
-					href={ editHomePageUrl }
+					href={ `/site-editor/${ siteSlug }` }
 					hideLinkIndicator
-					onClick={ trackEditHomepageAction }
-					label={ translate( 'Edit homepage' ) }
+					label={ translate( 'Edit site' ) }
 					materialIcon="laptop"
 				/>
+			) : (
+				customizerLinks
 			) }
 			<ActionBox
 				href={ `/post/${ siteSlug }` }
