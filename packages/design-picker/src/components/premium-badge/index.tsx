@@ -18,7 +18,7 @@ const PremiumBadge: FunctionComponent< Props > = ( { className } ) => {
 			position="top center"
 			delay={ 300 }
 			text={ __(
-				'Premium themes are built by professional designers with quality, functionality, and ease of use in mind.',
+				'Let your site stand out from the crowd with a modern and stylish Premium theme.',
 				__i18n_text_domain__
 			) }
 		>
