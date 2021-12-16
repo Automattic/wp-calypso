@@ -16,9 +16,9 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
-	importSite: ( params: ImportJobParams ) => void;
-	startImport: ( siteId: number, type: string ) => void;
-	resetImport: ( siteId: number, importerId: string ) => void;
+	importSite?: ( params: ImportJobParams ) => void;
+	startImport?: ( siteId: number, type: string ) => void;
+	resetImport?: ( siteId: number, importerId: string ) => void;
 }
 export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'medium';
