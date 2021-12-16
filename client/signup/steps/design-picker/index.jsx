@@ -43,9 +43,10 @@ export default function DesignPickerStep( props ) {
 		siteId,
 	} = props;
 
-	const hasUnlimitedPremiumThemes = useSelector( ( state ) =>
-		hasFeature( state, siteId, FEATURE_PREMIUM_THEMES )
-	);
+	const { userLoggedIn, hasUnlimitedPremiumThemes } = useSelector( ( state ) => ( {
+		userLoggedIn: isUserLoggedIn( state ),
+		hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
+	} ) );
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -89,8 +90,6 @@ export default function DesignPickerStep( props ) {
 			timeoutID && window.clearTimeout( timeoutID );
 		};
 	}, [ props.stepSectionName ] );
-
-	const userLoggedIn = useSelector( isUserLoggedIn );
 
 	const { designs, featuredPicksDesigns } = useMemo( () => {
 		return {
