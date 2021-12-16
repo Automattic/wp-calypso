@@ -6,7 +6,7 @@ import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layo
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { sslStatuses, type as domainTypes } from 'calypso/lib/domains/constants';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -21,6 +21,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
+import DomainSecurityDetails from './cards/domain-security-details';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
@@ -60,9 +61,41 @@ const Settings = ( {
 		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
 	};
 
+	const renderSecurityAccordion = () => {
+		const domainSecurityCard = (
+			<DomainSecurityDetails
+				domain={ domain }
+				selectedSite={ selectedSite }
+				purchase={ purchase }
+				isLoadingPurchase={ isLoadingPurchase }
+			/>
+		);
+
+		if ( ! domainSecurityCard ) return null;
+
+		const getSubtitle = () => {
+			switch ( domain.sslStatus ) {
+				case sslStatuses.SSL_ACTIVE:
+					return translate( 'SSL certificate active', { textOnly: true } );
+				case sslStatuses.SSL_PENDING:
+					return translate( 'SSL certificate pending', { textOnly: true } );
+				case sslStatuses.SSL_DISABLED:
+				default:
+					return translate( 'Problem with SSL certificate', { textOnly: true } );
+			}
+		};
+
+		return (
+			<Accordion title={ translate( 'Domain security' ) } subtitle={ getSubtitle() } expanded>
+				{ domainSecurityCard }
+			</Accordion>
+		);
+	};
+
 	const renderDetailsSection = () => {
+		const accordions: JSX.Element[] = [];
 		if ( domain.type === domainTypes.REGISTERED ) {
-			return (
+			accordions.push(
 				<Accordion
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
@@ -77,7 +110,7 @@ const Settings = ( {
 				</Accordion>
 			);
 		} else if ( domain.type === domainTypes.MAPPED ) {
-			return (
+			accordions.push(
 				<Accordion
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Domain connection details', { textOnly: true } ) }
@@ -93,7 +126,12 @@ const Settings = ( {
 			);
 		}
 
-		return null;
+		const securityAccordion = renderSecurityAccordion();
+		if ( securityAccordion ) {
+			accordions.push( securityAccordion );
+		}
+
+		return accordions;
 	};
 
 	const renderSetAsPrimaryDomainSection = () => {
