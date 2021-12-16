@@ -11,6 +11,7 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
@@ -20,6 +21,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -120,6 +122,7 @@ class DomainsStep extends Component {
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
 		this.state = {
 			currentStep: null,
+			experiment: null,
 		};
 	}
 
@@ -142,10 +145,6 @@ class DomainsStep extends Component {
 
 		return isPlansStepExistsInFutureOfFlow && ! isPlanStepSkipped;
 	};
-
-	isEligibleVariantForDomainTest() {
-		return this.showTestCopy;
-	}
 
 	getLocale() {
 		return ! this.props.userLoggedIn ? this.props.locale : '';
@@ -177,6 +176,10 @@ class DomainsStep extends Component {
 			this.submitWithDomain();
 		} );
 	};
+
+	isExperiment() {
+		return this.state.experiment?.variationName === 'treatment';
+	}
 
 	isPurchasingTheme = () => {
 		return this.props.queryObject && this.props.queryObject.premium;
@@ -525,54 +528,92 @@ class DomainsStep extends Component {
 		const trueNamePromoTlds = TRUENAME_COUPONS.includes( this.props?.queryObject?.coupon )
 			? TRUENAME_TLDS
 			: null;
+		const domainTestEligibleSignupFlows = [
+				'onboarding',
+				'launch-site',
+				'free',
+				'personal',
+				'premium',
+				'business',
+				'ecommerce',
+				'personal-monthly',
+				'premium-monthly',
+				'business-monthly',
+				'ecommerce-monthly',
+			];
 
 		return (
-			<CalypsoShoppingCartProvider>
-				<RegisterDomainStep
-					key="domainForm"
-					path={ this.props.path }
-					initialState={ initialState }
-					onAddDomain={ this.handleAddDomain }
-					products={ this.props.productsList }
-					basePath={ this.props.path }
-					promoTlds={ trueNamePromoTlds }
-					mapDomainUrl={ this.getUseYourDomainUrl() }
-					transferDomainUrl={ this.getUseYourDomainUrl() }
-					useYourDomainUrl={ this.getUseYourDomainUrl() }
-					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
-					onSave={ this.handleSave.bind( this, 'domainForm' ) }
-					offerUnavailableOption={ ! this.props.isDomainOnly }
-					isDomainOnly={ this.props.isDomainOnly }
-					analyticsSection={ this.getAnalyticsSection() }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
-					includeDotBlogSubdomain={
-						trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
-					}
-					isSignupStep
-					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
-					showExampleSuggestions={ showExampleSuggestions }
-					suggestion={ initialQuery }
-					designType={ this.getDesignType() }
-					vendor={ getSuggestionsVendor( {
-						isSignup: true,
-						isDomainOnly: this.props.isDomainOnly,
-					} ) }
-					deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
-					selectedSite={ this.props.selectedSite }
-					showSkipButton={ this.props.showSkipButton }
-					vertical={ this.props.vertical }
-					onSkip={ this.handleSkip }
-					hideFreePlan={ this.handleSkip }
-					forceHideFreeDomainExplainerAndStrikeoutUi={
-						this.props.forceHideFreeDomainExplainerAndStrikeoutUi
-					}
-					isReskinned={ this.props.isReskinned }
-					reskinSideContent={ this.getSideContent() }
-				/>
-			</CalypsoShoppingCartProvider>
+		<ProvideExperimentData
+			name="domain_step_copy_test_202201"
+			options={ {
+				isEligible: domainTestEligibleSignupFlows.includes( this.props.flowName ),
+			} }
+		>
+			{ ( isLoading, experimentAssignment ) => {
+				if ( isLoading ) {
+					return this.renderLoading();
+				}
+				const isTreatment = experimentAssignment?.variationName === 'treatment';
+
+				return (
+					<CalypsoShoppingCartProvider>
+						<RegisterDomainStep
+							key="domainForm"
+							path={ this.props.path }
+							initialState={ initialState }
+							onAddDomain={ this.handleAddDomain }
+							products={ this.props.productsList }
+							basePath={ this.props.path }
+							promoTlds={ trueNamePromoTlds }
+							mapDomainUrl={ this.getUseYourDomainUrl() }
+							transferDomainUrl={ this.getUseYourDomainUrl() }
+							useYourDomainUrl={ this.getUseYourDomainUrl() }
+							onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
+							onSave={ this.handleSave.bind( this, 'domainForm' ) }
+							offerUnavailableOption={ ! this.props.isDomainOnly }
+							isDomainOnly={ this.props.isDomainOnly }
+							analyticsSection={ this.getAnalyticsSection() }
+							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+							includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
+							includeDotBlogSubdomain={
+								trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
+							}
+							isSignupStep
+							isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
+							showExampleSuggestions={ showExampleSuggestions }
+							suggestion={ initialQuery }
+							designType={ this.getDesignType() }
+							vendor={ getSuggestionsVendor( {
+								isSignup: true,
+								isDomainOnly: this.props.isDomainOnly,
+							} ) }
+							deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
+							selectedSite={ this.props.selectedSite }
+							showSkipButton={ this.props.showSkipButton }
+							vertical={ this.props.vertical }
+							onSkip={ this.handleSkip }
+							hideFreePlan={ this.handleSkip }
+							forceHideFreeDomainExplainerAndStrikeoutUi={
+								this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+							}
+							isReskinned={ this.props.isReskinned }
+							isCopyExperiment={ isTreatment }
+							reskinSideContent={ this.getSideContent() }
+						/>
+					</CalypsoShoppingCartProvider>
+				);
+			} }
+		</ProvideExperimentData>
 		);
 	};
+
+	renderLoading() {
+		return (
+			<div className="plans__loading">
+				<LoadingEllipsis active />
+			</div>
+		);
+	}
 
 	onUseMyDomainConnect = ( { domain } ) => {
 		this.handleAddMapping( 'useYourDomainForm', domain );
@@ -638,7 +679,18 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
+<<<<<<< HEAD
 			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
+=======
+			if ( this.isExperiment ) {
+				return 'A domain name is a first step in branding your website, and helps you choose your web address, too.';
+			}
+
+			return (
+				! stepSectionName &&
+				translate( "Enter your site's name or some descriptive keywords to get started" )
+			);
+>>>>>>> 0d1cef91aa (Domains page copy experiment (signup flow))
 		}
 
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
@@ -671,6 +723,9 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
+			if ( this.isExperiment() && ! stepSectionName ) {
+				return 'Find a domain';
+			}
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
