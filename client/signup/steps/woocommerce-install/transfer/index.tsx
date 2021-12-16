@@ -36,7 +36,7 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 			hideSkip={ true }
 			hideFormattedHeader={ true }
 			isWideLayout={ props.isReskinned }
-			backUrl={ hasFailed ? `/woocommerce-installation/${ domain }` : null }
+			backUrl={ `/woocommerce-installation/${ domain }` }
 			stepContent={
 				<>
 					{ isAtomic && <InstallPlugins /> }
