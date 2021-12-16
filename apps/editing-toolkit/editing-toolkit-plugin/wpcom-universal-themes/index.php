@@ -135,14 +135,14 @@ function unload_helpers() {
  * @return void
  */
 function add_submenu() {
-	add_theme_page(
-		__( 'Site Editor (beta)', 'full-site-editing' ),
+	add_options_page(
+		__( 'Full Site Editing (beta)', 'full-site-editing' ),
 		sprintf(
 		/* translators: %s: "beta" label. */
-			__( 'Site Editor %s', 'full-site-editing' ),
+			__( 'Full Site Editing %s', 'full-site-editing' ),
 			'<span class="awaiting-mod">' . esc_html__( 'beta', 'full-site-editing' ) . '</span>'
 		),
-		'edit_theme_options',
+		'manage_options',
 		'site-editor-toggle',
 		__NAMESPACE__ . '\menu_page'
 	);
@@ -243,7 +243,7 @@ function menu_page() {
 		id="site-editor-toggle"
 		class="wrap"
 	>
-	<h1><?php esc_html_e( 'Site Editor (beta)', 'full-site-editing' ); ?></h1>
+	<h1><?php esc_html_e( 'Full Site Editing (beta)', 'full-site-editing' ); ?></h1>
 	<?php settings_errors(); ?>
 	<form method="post" action="options.php">
 		<?php settings_fields( 'site-editor-toggle' ); ?>
