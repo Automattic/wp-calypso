@@ -220,8 +220,8 @@ function has_legacy_FSE_template_edits( $blog_id ) {
 	$template_inserter->register_template_post_types();
 	$template_manager = new WP_Template();
 	// Filter img src to prevent false failure (images from defaults are resaved with a different src)
-	$header_content = filter_img_src( $template_manager->get_template_content( 'header' ) );
-	$footer_content = filter_img_src( $template_manager->get_template_content( 'footer' ) );
+	$header_content = filter_markup( $template_manager->get_template_content( 'header' ) );
+	$footer_content = filter_markup( $template_manager->get_template_content( 'footer' ) );
 
 	// Get default template part markup
 	$request_url = 'https://public-api.wordpress.com/wpcom/v2/full-site-editing/templates';
@@ -232,8 +232,8 @@ function has_legacy_FSE_template_edits( $blog_id ) {
 	if ( $response ) {
 		$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( ! ( ! empty( $api_response['code'] ) && 'not_found' === $api_response['code'] ) ) {
-			$default_header_content = filter_img_src( $api_response['headers'][0] );
-			$default_footer_content = filter_img_src( $api_response['footers'][0] );
+			$default_header_content = filter_markup( $api_response['headers'][0] );
+			$default_footer_content = filter_markup( $api_response['footers'][0] );
 		}
 	}
 
@@ -265,6 +265,12 @@ function custom_fetch_retry( $request_url, $request_args = null, $attempt = 1 ) 
 	custom_fetch_retry( $request_url, $request_args, $attempt );
 }
 
+/**
+ * Removes the first src attribute from html markup string.
+ * ex)
+ * input: '<img src="things-and-stuff" other-goo>'
+ * output: '<img other-goo>'
+ */
 function filter_img_src( $markup ) {
 	$filtered_markup = $markup;
 	$start = strpos( $markup, ' src="' );
@@ -275,3 +281,17 @@ function filter_img_src( $markup ) {
 	}
 	return $filtered_markup;
   }
+
+function filter_empty_paragraphs( $markup ) {
+	$empty_paragraph_markup = '<!-- wp:paragraph -->
+<p></p>
+<!-- /wp:paragraph -->';
+
+	return str_replace( $empty_paragraph_markup, '', $markup );
+}
+
+function filter_markup( $markup ) {
+	$filtered_markup = filter_img_src( $markup );
+	$filtered_markup = filter_empty_paragraphs( $filtered_markup );
+	return trim( $filtered_markup );
+}
