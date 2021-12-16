@@ -58,19 +58,16 @@ export default function TransferSite( {
 		() => {
 			dispatch( requestLatestAtomicTransfer( siteId ) );
 		},
-		transferStatus === transferStates.COMPLETED ? null : 3000
+		transferFailed || transferStatus === transferStates.COMPLETED ? null : 3000
 	);
 
 	// Poll for software status
 	useInterval(
 		() => {
-			// Only poll if the transfer is completed and not failed
-			if ( transferFailed || ! transferStates.COMPLETED ) {
-				return;
-			}
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
-		softwareApplied ? null : 3000
+		// Only poll if the transfer is completed and not failed
+		transferFailed || transferStates.COMPLETED !== transferStatus || softwareApplied ? null : 3000
 	);
 
 	// Watch transfer status
