@@ -3,6 +3,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import { withAddMedia } from 'calypso/data/media/use-add-media';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { VideoPressFileTypes } from 'calypso/lib/media/constants';
 import {
@@ -11,7 +12,6 @@ import {
 } from 'calypso/lib/media/utils';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { clearMediaItemErrors } from 'calypso/state/media/actions';
-import { addMedia } from 'calypso/state/media/thunks';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 import './upload-button.scss';
@@ -102,6 +102,6 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps, { addMedia, clearMediaItemErrors } )(
-	MediaLibraryUploadButton
+export default connect( mapStateToProps, { clearMediaItemErrors } )(
+	withAddMedia( MediaLibraryUploadButton )
 );

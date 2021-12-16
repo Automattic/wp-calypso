@@ -11,6 +11,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import Image from 'calypso/components/image';
 import Spinner from 'calypso/components/spinner';
+import { withAddMedia } from 'calypso/data/media/use-add-media';
 import { createTransientMediaId } from 'calypso/lib/media/utils';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
@@ -21,7 +22,6 @@ import {
 	getImageEditorCrop,
 	getImageEditorTransform,
 } from 'calypso/state/editor/image-editor/selectors';
-import { addMedia } from 'calypso/state/media/thunks';
 import getMediaItem from 'calypso/state/media/thunks/get-media-item';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
@@ -295,7 +295,6 @@ export default connect(
 	{
 		resetAllImageEditorState,
 		setEditorMediaModalView,
-		addMedia,
 		getMediaItem,
 	}
-)( localize( PodcastCoverImageSetting ) );
+)( localize( withAddMedia( PodcastCoverImageSetting ) ) );
