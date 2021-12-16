@@ -28,6 +28,8 @@ import {
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
 	domainManagementRoot,
+	domainManagementDnsAddRecord,
+	domainManagementDnsEditRecord,
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
@@ -169,6 +171,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	const allPaths = [
 		domainManagementContactsPrivacy,
 		domainManagementDns,
+		domainManagementDnsAddRecord,
+		domainManagementDnsEditRecord,
 		domainManagementEdit,
 		domainManagementEditContactInfo,
 		domainManagementList,
