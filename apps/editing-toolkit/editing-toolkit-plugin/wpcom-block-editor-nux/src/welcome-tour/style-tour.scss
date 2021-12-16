@@ -137,7 +137,7 @@ $welcome-tour-card-media-extra-padding: 14%;
 			top: 0;
 			width: 100%;
 		}
-
+    // TODO CLK: use welcome-tour-card class to keep specific to welcome tour
 		&.with-extra-padding img {
 			left: $welcome-tour-card-media-extra-padding;
 			top: $welcome-tour-card-media-extra-padding;
