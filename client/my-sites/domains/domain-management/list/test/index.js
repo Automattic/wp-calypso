@@ -16,11 +16,6 @@ import { List as DomainList } from '..';
 const noop = () => {};
 
 jest.mock( 'calypso/lib/wp', () => ( {
-	undocumented: () => ( {
-		getProducts: () => {},
-		getSitePlans: () => {},
-		getSiteFeatures: () => {},
-	} ),
 	req: {
 		get: () => Promise.reject( new Error( '.get() not implemented in mock' ) ),
 	},
