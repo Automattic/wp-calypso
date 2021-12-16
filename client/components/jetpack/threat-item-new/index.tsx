@@ -5,12 +5,12 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header-new';
-import { Threat } from 'calypso/components/jetpack/threat-item-new-new/types';
 import { getThreatFix } from 'calypso/components/jetpack/threat-item-new/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description-new';
+import type { Threat } from 'calypso/components/jetpack/threat-item-new/types';
 
 import './style.scss';
 interface Props {
