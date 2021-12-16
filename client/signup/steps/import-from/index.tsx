@@ -15,6 +15,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { GoToStep } from '../import/types';
 import NotAuthorized from './components/not-authorized';
+import NotFound from './components/not-found';
 import { MediumImporter } from './medium';
 import { Importer, QueryObject, ImportJob } from './types';
 import { getImporterTypeForEngine } from './util';
@@ -106,10 +107,15 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 					<div className="import__onboarding-page import-layout__center">
 						<div className="import-layout__center">
 							{ ( () => {
-								/**
-								 * Loading screen
-								 */
-								if ( isLoading() ) {
+								if ( ! siteSlug ) {
+									/**
+									 * Not found
+									 */
+									return <NotFound />;
+								} else if ( isLoading() ) {
+									/**
+									 * Loading screen
+									 */
 									return <LoadingEllipsis />;
 								} else if ( ! hasPermission() ) {
 									/**
