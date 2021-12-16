@@ -200,7 +200,7 @@ function isValueTruthy< T >( value: T ): value is Exclude< T, null | undefined |
 	return !! value;
 }
 
-function compact( elements: ( string | false | undefined | false )[] ): string[] {
+function compact( elements: ( string | false | undefined | null )[] ): string[] {
 	return elements.filter( isValueTruthy );
 }
 
