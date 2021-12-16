@@ -39,7 +39,9 @@ const ContactsPrivacy = ( props: ContactsPrivacyInfoProps ): JSX.Element => {
 
 	const renderForOthers = () => {
 		const { domains, selectedDomainName } = props;
-		return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
+		return (
+			<NonOwnerCard redesigned domains={ domains } selectedDomainName={ selectedDomainName } />
+		);
 	};
 
 	const domain = getSelectedDomain( props );
