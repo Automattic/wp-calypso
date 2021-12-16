@@ -103,30 +103,58 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 		const buttons = [
 			<Button onClick={ onCloseDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary scary disabled={ deleteDisabled } onClick={ onConfirmDelete }>
-				{ translate( 'Delete this site' ) }
+				{ translate( 'Delete site content' ) }
 			</Button>,
 		];
 
 		return (
 			<Dialog isVisible={ true } buttons={ buttons } onClose={ onCloseDialog }>
-				<h1>{ translate( 'Confirm delete content' ) }</h1>
+				<h1>{ translate( 'Site Reset Confirmation' ) }</h1>
+				<p>{ translate( 'After completing your purchase:' ) }</p>
+				<ul>
+					<li>
+						{ translate(
+							'The current content of your website {{strong}}%(siteTitle)s{{/strong}} (%(siteAddress)s) will be deleted, so we can start your website build on an empty site. ' +
+								'This includes pages, posts, media, and comments.',
+							{
+								components: {
+									strong: <strong />,
+								},
+								args: {
+									siteTitle,
+									siteAddress: siteDomain,
+								},
+							}
+						) }
+					</li>
+					<li>
+						{ translate(
+							'Any WordPress.com subscriptions on your site such as custom domains and emails will not be affected.'
+						) }
+					</li>
+					<li>
+						{ translate(
+							'Your site will be inaccessible in {{i}}Coming Soon{{/i}} mode while we build your new site.',
+							{
+								components: {
+									i: <i />,
+								},
+							}
+						) }
+					</li>
+				</ul>
 				<p>
 					{ translate(
-						'The contents of your site {{strong}}%(siteTitle)s{{/strong}} (%(siteAddress)s) will be permanently deleted. ' +
-							'This includes all posts, pages, media, and comments. ' +
-							'Once you complete the purchase, your site will remain inaccessible while we rebuild your site.',
+						'If you don’t want your site content to be deleted, we can instead create a new site on your account for the website build. ' +
+							'You can then transfer the existing content to the new site once it’s complete. ' +
+							'Click {{a}}here{{/a}} to go back and choose "New Site".',
 						{
 							components: {
-								strong: <strong />,
-							},
-							args: {
-								siteTitle,
-								siteAddress: siteDomain,
+								a: <a href="/start/do-it-for-me" />,
 							},
 						}
 					) }
 				</p>
-				<p>{ translate( 'The content will be deleted only after the purchase.' ) }</p>
 				<FormLabel htmlFor="confirmDomainChangeInput">
 					{ translate(
 						'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +

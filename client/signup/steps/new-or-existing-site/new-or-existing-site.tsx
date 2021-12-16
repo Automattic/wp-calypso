@@ -36,8 +36,23 @@ export default function NewOrExistingSiteScreen( props: Props ): React.ReactElem
 			type: 'existing-site',
 			label: translate( 'Existing WordPress.com site' ),
 			image: <ExistingSiteImage />,
-			description: translate(
-				'Use with a site you already started. We will delete all content and your site will be upgraded if required.'
+			description: (
+				<div>
+					{ translate(
+						'Use with a site you already started. ' +
+							'We will delete all of your existing content, and your site will be upgraded to the Premium plan. ',
+						{
+							components: {
+								small: <small />,
+							},
+						}
+					) }
+					<p>
+						{ translate(
+							'(Don’t worry, you’ll have the opportunity to upload the content you want on your new site in the content submission form.)'
+						) }
+					</p>
+				</div>
 			),
 		},
 	];
