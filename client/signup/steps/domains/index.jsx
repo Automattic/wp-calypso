@@ -123,6 +123,7 @@ class DomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 			experiment: null,
+			experimentLoaded: false,
 		};
 	}
 
@@ -679,9 +680,6 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-<<<<<<< HEAD
-			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
-=======
 			if ( this.isExperiment ) {
 				return 'A domain name is a first step in branding your website, and helps you choose your web address, too.';
 			}
@@ -690,7 +688,6 @@ class DomainsStep extends Component {
 				! stepSectionName &&
 				translate( "Enter your site's name or some descriptive keywords to get started" )
 			);
->>>>>>> 0d1cef91aa (Domains page copy experiment (signup flow))
 		}
 
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
