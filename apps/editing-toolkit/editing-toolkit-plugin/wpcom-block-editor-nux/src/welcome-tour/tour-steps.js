@@ -82,6 +82,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				),
 				imgSrc: getTourAssets( 'welcome' ),
 				animation: null,
+				imgNeedsPadding: true,
 			},
 		},
 		{
@@ -106,6 +107,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				),
 				imgSrc: getTourAssets( 'addBlock' ),
 				animation: 'block-inserter',
+				imgNeedsPadding: true,
 			},
 		},
 		{
@@ -127,6 +129,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				description: __( 'Click the settings icon to see even more options.', 'full-site-editing' ),
 				imgSrc: getTourAssets( 'moreOptions' ),
 				animation: null,
+				imgNeedsPadding: true,
 			},
 		},
 		{
@@ -145,6 +148,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				description: __( 'To move blocks around, click and drag the handle.', 'full-site-editing' ),
 				imgSrc: getTourAssets( 'moveBlock' ),
 				animation: 'undo-button',
+				imgNeedsPadding: true,
 			},
 		},
 		{
