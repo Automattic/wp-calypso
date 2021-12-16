@@ -211,7 +211,15 @@ add_action( 'switch_theme', __NAMESPACE__ . '\populate_wp_template_data' );
 
 function has_legacy_FSE_template_edits( $blog_id ) {
 	switch_to_blog( $blog_id );
+
+	$is_fse = has_blog_sticker( 'full-site-editing' );
 	$theme_slug = normalize_theme_slug( get_stylesheet() );
+	$fse_themes = array( 'maywood', 'morden', 'alves', 'stow', 'hever', 'shawburn', 'exford' );
+
+	if ( ! $is_fse || ! in_array( $theme_slug, $fse_themes )) {
+		restore_current_blog();
+		return 'not-fse';
+	}
 
 	dangerously_load_full_site_editing_files();
 
