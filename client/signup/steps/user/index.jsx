@@ -206,32 +206,28 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
-		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
-			subHeaderText = translate( 'First, create your WordPress.com account.' );
+		if ( isReskinned && 0 === positionInFlow ) {
+			const loginUrl = login( {
+				isJetpack: 'jetpack-connect' === sectionName,
+				from,
+				redirectTo: getRedirectToAfterLoginUrl( this.props ),
+				locale,
+				oauth2ClientId: oauth2Client?.id,
+				wccomFrom,
+				isWhiteLogin: isReskinned,
+				signupUrl: window.location.pathname + window.location.search,
+			} );
 
-			if ( isReskinned ) {
-				const loginUrl = login( {
-					isJetpack: 'jetpack-connect' === sectionName,
-					from,
-					redirectTo: getRedirectToAfterLoginUrl( this.props ),
-					locale,
-					oauth2ClientId: oauth2Client?.id,
-					wccomFrom,
-					isWhiteLogin: isReskinned,
-					signupUrl: window.location.pathname + window.location.search,
-				} );
+			subHeaderText = translate(
+				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+				{
+					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+				}
+			);
+		}
 
-				subHeaderText = translate(
-					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
-					{
-						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-					}
-				);
-			}
-
-			if ( this.props.userLoggedIn ) {
-				subHeaderText = '';
-			}
+		if ( this.props.userLoggedIn ) {
+			subHeaderText = '';
 		}
 
 		return subHeaderText;
