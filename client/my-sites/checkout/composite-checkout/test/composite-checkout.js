@@ -13,8 +13,8 @@ import {
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
 import nock from 'nock';
-import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
+import { navigate } from 'calypso/lib/navigate';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
@@ -48,10 +48,7 @@ jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-
-jest.mock( 'page', () => ( {
-	redirect: jest.fn(),
-} ) );
+jest.mock( 'calypso/lib/navigate' );
 
 describe( 'CompositeCheckout', () => {
 	let container;
@@ -554,7 +551,7 @@ describe( 'CompositeCheckout', () => {
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Purchase Details' ) ).toBeInTheDocument();
-			expect( page.redirect ).not.toHaveBeenCalled();
+			expect( navigate ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -607,7 +604,7 @@ describe( 'CompositeCheckout', () => {
 		const confirmButton = await screen.findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( () => {
-			expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
+			expect( navigate ).toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
 	} );
 
@@ -624,7 +621,7 @@ describe( 'CompositeCheckout', () => {
 		const confirmButton = await screen.findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( async () => {
-			expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
+			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
 	} );
 
@@ -632,7 +629,7 @@ describe( 'CompositeCheckout', () => {
 		const cartChanges = { products: [] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( async () => {
-			expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
+			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
 	} );
 
@@ -644,7 +641,7 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( async () => {
-			expect( page.redirect ).not.toHaveBeenCalled();
+			expect( navigate ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -708,7 +705,7 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		expect( page.redirect ).not.toHaveBeenCalled();
+		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a concierge session', async () => {
@@ -737,7 +734,7 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		expect( page.redirect ).not.toHaveBeenCalled();
+		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
@@ -766,7 +763,7 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		expect( page.redirect ).not.toHaveBeenCalled();
+		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a domain map', async () => {
