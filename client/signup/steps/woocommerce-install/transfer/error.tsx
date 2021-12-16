@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
-import { SupportLink } from '../confirm';
+import SupportCard from '../components/support-card';
 import StepContent from './step-content';
 
 const WarningsOrHoldsSection = styled.div`
@@ -19,7 +19,7 @@ export default function Error(): ReactElement {
 			) }
 		>
 			<WarningsOrHoldsSection>
-				<SupportLink />
+				<SupportCard />
 			</WarningsOrHoldsSection>
 		</StepContent>
 	);
