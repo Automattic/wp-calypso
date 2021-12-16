@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { ReactElement, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
@@ -59,11 +60,17 @@ const StyledNextButton = styled( NextButton )`
 	}
 `;
 
-function SupportLink() {
+function SupportLink( { domain }: { domain: string } ): ReactElement {
 	return (
 		<SupportLinkContainer>
 			{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
-				a: <SupportLinkStyle href="/help/contact" />,
+				a: (
+					<SupportLinkStyle
+						href={ addQueryArgs( '/help/contact', {
+							redirect_to: `/start/woocommerce-install/confirm?site=${ domain }`,
+						} ) }
+					/>
+				),
 			} ) }
 		</SupportLinkContainer>
 	);
@@ -147,7 +154,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					{ getCheckoutContent() }
 					{ getWarningsOrHoldsSection() }
 					<ActionSection>
-						<SupportLink />
+						<SupportLink domain={ wpcomDomain } />
 						<StyledNextButton
 							disabled={ hasBlockers || ! isDataReady }
 							onClick={ () => {
