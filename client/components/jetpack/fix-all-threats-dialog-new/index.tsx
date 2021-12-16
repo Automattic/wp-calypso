@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import { useMemo, useState, useEffect } from 'react';
 import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
 import ThreatFixHeader from 'calypso/components/jetpack/threat-fix-header';
-import { FixableThreat } from 'calypso/components/jetpack/threat-item/types';
+import { FixableThreat, Threat } from 'calypso/components/jetpack/threat-item/types';
 
 import './style.scss';
 

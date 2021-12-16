@@ -11,7 +11,7 @@ import './style.scss';
 
 interface Props {
 	threat: FixableThreat;
-	fixAllDialog?: bool;
+	fixAllDialog?: boolean;
 	onCheckFix?: callable;
 	action: 'fix' | 'ignore';
 }
