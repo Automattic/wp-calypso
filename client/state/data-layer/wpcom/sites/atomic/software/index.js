@@ -4,7 +4,10 @@ import {
 	ATOMIC_SOFTWARE_REQUEST_STATUS,
 } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setAtomicSoftwareStatus } from 'calypso/state/atomic/software/actions';
+import {
+	setAtomicSoftwareStatus,
+	setAtomicSoftwareError,
+} from 'calypso/state/atomic/software/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
@@ -36,7 +39,7 @@ const receiveInstallError = ( action, error ) => [
 	errorNotice(
 		translate( "Sorry, we've hit a snag. Please contact support so we can help you out." )
 	),
-	setAtomicSoftwareStatus( action.siteId, error ),
+	setAtomicSoftwareError( action.siteId, action.softwareSet, error ),
 ];
 
 const requestSoftware = ( action ) =>
@@ -55,7 +58,7 @@ const receiveSoftwareResponse = ( action, response ) => [
 ];
 
 const receiveSoftwareError = ( action, error ) => [
-	setAtomicSoftwareStatus( action.siteId, action.softwareSet, error ),
+	setAtomicSoftwareError( action.siteId, action.softwareSet, error ),
 ];
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/software', {
