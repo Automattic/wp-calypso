@@ -33,7 +33,6 @@ const stepNameToModuleName = {
 	'plans-store-nux': 'plans-atomic-store',
 	'select-domain': 'domains',
 	site: 'site',
-	'rebrand-cities-welcome': 'rebrand-cities-welcome',
 	'rewind-migrate': 'rewind-migrate',
 	'rewind-were-backing': 'rewind-were-backing',
 	'rewind-form-creds': 'rewind-form-creds',

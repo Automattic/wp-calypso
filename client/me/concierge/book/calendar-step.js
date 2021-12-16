@@ -39,7 +39,6 @@ class CalendarStep extends Component {
 			lastname: signupForm.lastname,
 			message: signupForm.message,
 			timezone: signupForm.timezone,
-			isRebrandCitiesSite: signupForm.isRebrandCitiesSite,
 			phoneNumber: signupForm.phoneNumber,
 		};
 
