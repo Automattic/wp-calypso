@@ -18,6 +18,8 @@ const proxyOrigin = 'https://public-api.wordpress.com';
  */
 const origin = window.location.protocol + '//' + window.location.host;
 
+let onStreamRecord = null;
+
 /**
  * Detecting support for the structured clone algorithm. IE8 and 9, and Firefox
  * 6.0 and below only support strings as postMessage's message. This browsers
@@ -159,7 +161,7 @@ const makeRequest = ( originalParams, fn ) => {
 
 	if ( 'function' === typeof params.onStreamRecord ) {
 		// remove onStreamRecord param, which can’t be cloned
-		//console.log( 'params.onStreamRecord contains: ', params.onStreamRecord );
+		onStreamRecord = params.onStreamRecord;
 		delete params.onStreamRecord;
 
 		// FIXME @azabani implement stream mode processing
@@ -410,11 +412,15 @@ function onmessage( e ) {
 	let statusCode = data[ 1 ];
 	const headers = data[ 2 ];
 
-	if ( statusCode === 207 ) {
+	// We don't want to delete requests while we're processing stream messages
+	const processingStreamMode = ( typeof headers === 'object' && shouldProcessInStreamMode( headers[ 'Content-Type' ] ) );
+	if ( statusCode === 207 || processingStreamMode ) {
 		// 207 is a signal from rest-proxy. It means, "this isn't the final
 		// response to the query." The proxy supports WebSocket connections
 		// by invoking the original success callback for each message received.
+		console.log( 'processing streams: ', headers );
 	} else {
+
 		// this is the final response to this query
 		delete requests[ id ];
 	}
@@ -432,10 +438,10 @@ function onmessage( e ) {
 		// FIXME @azabani remove once stream mode processing is implemented
 		if ( shouldProcessInStreamMode( headers[ 'Content-Type' ] ) ) {
 			//console.log( 'the xhr request contains: ', xhr );
-			const error = new Error(
-				'stream mode processing is not yet implemented for wpcom-proxy-request'
-			);
-			reject( xhr, error, headers );
+			console.log( 'statusCode: ', statusCode );
+			console.log( 'header status: ', headers[ 'status ' ] );
+			console.log( 'passing body to the next layer: ', body );
+			onStreamRecord( body );
 			return;
 		}
 	}
