@@ -226,8 +226,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 
 	return (
 		<>
-			<Card>
-				<SecurityIcon icon={ securityIcon } />
+			<Card className="scan-threats-new__card-header">
+				<SecurityIcon icon={ securityIcon } className="scan-threats-new security-icon-new" />
 				<h1 className="scan-threats-new scan__header">{ headerMessage }</h1>
 				<p className="scan-threats-new__header-message">
 					{ headerSummary }{ ' ' }
@@ -283,23 +283,28 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							isPlaceholder={ false }
 						/>
 					) ) }
-				<div className="scan-threats-new__low-risk">
-					<FoldableCard header={ <ThreatLowRiskItemHeader threatCount={ countMap.low } /> }>
-						{ highSeverityThreats &&
-							lowSeverityThreats &&
-							lowSeverityThreats.map( ( threat ) => (
-								<ThreatItem
-									key={ threat.id }
-									threat={ threat }
-									onFixThreat={ () => openDialog( 'fix', threat ) }
-									onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-									isFixing={ isFixing( threat ) }
-									contactSupportUrl={ contactSupportUrl( site.URL ) }
-									isPlaceholder={ false }
-								/>
-							) ) }
-					</FoldableCard>
-				</div>
+				{ lowSeverityThreats.length > 0 && (
+					<div className="scan-threats-new__low-risk">
+						<FoldableCard
+							clickableHeader={ true }
+							header={ <ThreatLowRiskItemHeader threatCount={ countMap.low } /> }
+						>
+							{ highSeverityThreats &&
+								lowSeverityThreats &&
+								lowSeverityThreats.map( ( threat ) => (
+									<ThreatItem
+										key={ threat.id }
+										threat={ threat }
+										onFixThreat={ () => openDialog( 'fix', threat ) }
+										onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
+										isFixing={ isFixing( threat ) }
+										contactSupportUrl={ contactSupportUrl( site.URL ) }
+										isPlaceholder={ false }
+									/>
+								) ) }
+						</FoldableCard>
+					</div>
+				) }
 			</div>
 
 			{ ! error && (

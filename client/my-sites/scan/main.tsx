@@ -351,14 +351,19 @@ class ScanPage extends Component< Props > {
 	render() {
 		const { siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
+		let mainClass = 'scan';
 
 		if ( ! siteId ) {
 			return;
 		}
 
+		if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
+			mainClass = 'scan-new';
+		}
+
 		return (
 			<Main
-				className={ classNames( 'scan', {
+				className={ classNames( mainClass, {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }
 			>
