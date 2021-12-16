@@ -44,6 +44,19 @@ function setValidEnvFiles() {
 	} );
 }
 
+function setEmptySecrets() {
+	mockFs( {
+		'/valid-path/secrets.json': JSON.stringify( {
+			secret: 'very',
+		} ),
+		'/valid-path/_shared.json': JSON.stringify( {
+			features: {
+				'wpcom-user-bootstrap': true,
+			},
+		} ),
+	} );
+}
+
 describe( 'parser', () => {
 	let realProcessEnv;
 	beforeEach( () => {
@@ -52,9 +65,7 @@ describe( 'parser', () => {
 
 	afterEach( () => {
 		mockFs.restore();
-		for ( const [ env, value ] of Object.entries( realProcessEnv ) ) {
-			process.env[ env ] = value;
-		}
+		process.env = { ...realProcessEnv };
 	} );
 
 	test( 'should return empty objects for an invalid path', () => {
@@ -125,5 +136,17 @@ describe( 'parser', () => {
 
 		expect( serverData.wpcom_calypso_rest_api_key ).toBe( 'foo' );
 		expect( serverData.wpcom_calypso_support_session_rest_api_key ).toBe( 'bar' );
+	} );
+
+	test( 'should explicitly set user-bootstrapping to false if there are no real secrets', () => {
+		setEmptySecrets();
+		const errorSpy = jest.fn();
+		global.console = { error: errorSpy };
+
+		const { serverData, clientData } = parser( '/valid-path' );
+
+		expect( serverData.features[ 'wpcom-user-bootstrap' ] ).toBe( false );
+		expect( clientData.features[ 'wpcom-user-bootstrap' ] ).toBe( false );
+		expect( errorSpy ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

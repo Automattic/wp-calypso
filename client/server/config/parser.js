@@ -72,5 +72,19 @@ module.exports = function ( configPath, defaultOpts ) {
 		process.env.WPCOM_CALYPSO_SUPPORT_SESSION_REST_API_KEY ??
 		serverData.wpcom_calypso_support_session_rest_api_key;
 
+	if (
+		data.features &&
+		data.features[ 'wpcom-user-bootstrap' ] &&
+		! (
+			serverData.wpcom_calypso_rest_api_key || serverData.wpcom_calypso_support_session_rest_api_key
+		)
+	) {
+		console.error(
+			'Disabling server-side user-bootstrapping because of missing wpcom_calypso_rest_api_key or wpcom_calypso_support_session_rest_api_key'
+		);
+		serverData.features[ 'wpcom-user-bootstrap' ] = false;
+		clientData.features[ 'wpcom-user-bootstrap' ] = false;
+	}
+
 	return { serverData, clientData };
 };
