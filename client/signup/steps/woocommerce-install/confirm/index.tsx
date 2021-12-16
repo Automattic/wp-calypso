@@ -14,6 +14,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
@@ -61,7 +62,10 @@ const StyledNextButton = styled( NextButton )`
 	}
 `;
 
-export function SupportLink( { domain }: { domain: string } ): ReactElement {
+export function SupportLink(): ReactElement {
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+
 	return (
 		<SupportLinkContainer>
 			{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
@@ -157,7 +161,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					{ getCheckoutContent() }
 					{ getWarningsOrHoldsSection() }
 					<ActionSection>
-						<SupportLink domain={ wpcomDomain } />
+						<SupportLink />
 						<StyledNextButton
 							disabled={ hasBlockers || ! isDataReady }
 							onClick={ () => {
