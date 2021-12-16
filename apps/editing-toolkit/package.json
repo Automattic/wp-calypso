@@ -26,6 +26,7 @@
 		"build:global-styles-customizer-fonts": "calypso-build --env source='global-styles/customizer-fonts'",
 		"build:jetpack-timeline": "calypso-build --env source='jetpack-timeline'",
 		"build:newspack-blocks": "npm run sync:newspack-blocks -- --nodemodules && calypso-build --env source='newspack-blocks/blog-posts-block-editor','newspack-blocks/blog-posts-block-view','newspack-blocks/carousel-block-editor','newspack-blocks/carousel-block-view'",
+		"build:paragraph-block": "calypso-build --env source='paragraph-block'",
 		"build:posts-list-block": "calypso-build --env source='posts-list-block'",
 		"build:starter-page-templates": "calypso-build --env source='starter-page-templates'",
 		"build:tags-education": "calypso-build --env source='tags-education'",
