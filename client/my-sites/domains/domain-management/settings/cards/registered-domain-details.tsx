@@ -61,7 +61,7 @@ const RegisteredDomainDetails = ( {
 			const renewalPrice =
 				getRenewalPrice( purchase ) + ( redemptionProduct ? redemptionProduct.cost : 0 );
 			const currencyCode = purchase.currencyCode;
-			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } );
+			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } )!;
 		}
 
 		const autoRenewAdditionalText = ! isExpiring( purchase ) // is this the right way to test if auto-renew is turned on?
@@ -91,6 +91,7 @@ const RegisteredDomainDetails = ( {
 
 	const shouldNotRenderRenewButton = () => {
 		return (
+			! domain.subscriptionId ||
 			domain.isPendingRenewal ||
 			! domain.currentUserCanManage ||
 			domain.expired ||
@@ -108,7 +109,7 @@ const RegisteredDomainDetails = ( {
 			<RenewButton
 				purchase={ purchase }
 				selectedSite={ selectedSite }
-				subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+				subscriptionId={ parseInt( domain.subscriptionId!, 10 ) }
 				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
 				customLabel={ translate( 'Renew now' ) }
 				disabled={ isLoadingPurchase }
@@ -117,6 +118,9 @@ const RegisteredDomainDetails = ( {
 	};
 
 	const renderPaymentDetailsButton = () => {
+		if ( ! domain.subscriptionId ) {
+			return null;
+		}
 		return (
 			<Button href={ getManagePurchaseUrlFor( selectedSite.slug, domain.subscriptionId ) }>
 				{ translate( 'Payment details' ) }

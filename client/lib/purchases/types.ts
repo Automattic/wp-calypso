@@ -1,6 +1,7 @@
 // TODO: complete this type
 export interface Purchase {
 	id: number;
+	userId: number;
 	saleAmount?: number;
 	amount: number;
 	meta?: string;

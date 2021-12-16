@@ -17,6 +17,10 @@ const ConnectedDomainDetails = ( {
 	const translate = useTranslate();
 
 	const renderPlanDetailsButton = () => {
+		if ( ! domain.bundledPlanSubscriptionId ) {
+			return null;
+		}
+
 		return (
 			<Button
 				href={ getManagePurchaseUrlFor( selectedSite.slug, domain.bundledPlanSubscriptionId ) }
