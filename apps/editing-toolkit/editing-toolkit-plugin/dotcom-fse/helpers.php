@@ -214,9 +214,8 @@ function has_legacy_FSE_template_edits( $blog_id ) {
 
 	$is_fse = has_blog_sticker( 'full-site-editing' );
 	$theme_slug = normalize_theme_slug( get_stylesheet() );
-	$fse_themes = array( 'maywood', 'morden', 'alves', 'stow', 'hever', 'shawburn', 'exford' );
 
-	if ( ! $is_fse || ! in_array( $theme_slug, $fse_themes )) {
+	if ( ! $is_fse || ! in_array( $theme_slug, get_supported_themes() )) {
 		restore_current_blog();
 		return 'not-fse';
 	}
@@ -298,8 +297,27 @@ function filter_empty_paragraphs( $markup ) {
 	return str_replace( $empty_paragraph_markup, '', $markup );
 }
 
+// Some social links default urls are different bcause of '\\' additions
+function filter_escaping( $markup ) {
+	return str_replace( '\\', '', $markup );
+}
+
+
+/**
+ * Notes
+ *
+ * Saved social links markup differently (effects morden, stow, hever, shawburn, exford)
+ * Sometimes with initial urls (like in Morden):
+ * before saving: '<!-- wp:social-link-twitter {"url":"add_your_email@address.com"} /-->'
+ * after saving: '<!-- wp:social-link {"url":"add_your_email@address.com","service":"twitter"} /-->'
+ * Sometimes without initial urls (like in Stow):
+ * before saving: '<!-- wp:social-link-twitter /-->'
+ * after saving: '<!-- wp:social-link {"service":"twitter"} /-->'
+ */
+
 function filter_markup( $markup ) {
 	$filtered_markup = filter_img_src( $markup );
 	$filtered_markup = filter_empty_paragraphs( $filtered_markup );
+	$filtered_markup = filter_escaping( $filtered_markup );
 	return trim( $filtered_markup );
 }
