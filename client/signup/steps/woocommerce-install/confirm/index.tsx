@@ -4,6 +4,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import page from 'page';
 import { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
@@ -16,7 +17,6 @@ import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
-
 import './style.scss';
 
 const SupportLinkStyle = styled.a`
@@ -163,7 +163,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 							onClick={ () => {
 								dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
 								if ( siteUpgrading.required ) {
-									return ( window.location.href = siteUpgrading.checkoutUrl );
+									page( siteUpgrading.checkoutUrl );
+									return;
 								}
 								goToStep( 'transfer' );
 							} }
