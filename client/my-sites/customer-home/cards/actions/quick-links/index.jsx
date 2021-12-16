@@ -43,6 +43,7 @@ export const QuickLinks = ( {
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
+	trackEditSiteAction,
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
@@ -84,6 +85,7 @@ export const QuickLinks = ( {
 				<ActionBox
 					href={ `/site-editor/${ siteSlug }` }
 					hideLinkIndicator
+					onClick={ trackEditSiteAction }
 					label={ translate( 'Edit site' ) }
 					materialIcon="laptop"
 				/>
@@ -276,6 +278,12 @@ const trackEditMenusAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_edit_menus' )
 	);
 
+const trackEditSiteAction = () =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_my_site_site_editor_link' ),
+		bumpStat( 'calypso_customer_home', 'my_site_site_editor' )
+	);
+
 const trackCustomizeThemeAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_my_site_customize_theme_click', {
@@ -381,6 +389,7 @@ const mapDispatchToProps = {
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
+	trackEditSiteAction,
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
