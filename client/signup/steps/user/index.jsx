@@ -206,7 +206,7 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
-		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
+		if ( positionInFlow === 0 ) {
 			subHeaderText = translate( 'First, create your WordPress.com account.' );
 
 			if ( isReskinned ) {
