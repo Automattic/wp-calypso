@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -10,16 +9,11 @@ import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
 import ContactsPrivacyCard from './contacts-card';
+import type { ContactsPrivacyInfoPassedProps, ContactsPrivacyInfoProps } from './types';
 
 import './style.scss';
 
-class ContactsPrivacy extends PureComponent {
-	static propTypes = {
-		domains: PropTypes.array.isRequired,
-		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-	};
-
+class ContactsPrivacy extends PureComponent< ContactsPrivacyInfoProps > {
 	renderForOwner() {
 		const domain = getSelectedDomain( this.props );
 		const {
@@ -68,9 +62,9 @@ class ContactsPrivacy extends PureComponent {
 	};
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect( ( state, ownProps: ContactsPrivacyInfoPassedProps ) => {
 	return {
 		currentRoute: getCurrentRoute( state ),
 		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
 	};
-} )( localize( ContactsPrivacy ) );
+} )( ContactsPrivacy );

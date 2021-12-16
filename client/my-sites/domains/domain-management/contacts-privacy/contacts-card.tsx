@@ -1,7 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import {
@@ -16,18 +15,9 @@ import {
 } from 'calypso/state/sites/domains/actions';
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
 import ContactDisplay from './contact-display';
+import type { ContactsPrivacyCardPassedProps, ContactsPrivacyCardProps } from './types';
 
-class ContactsPrivacyCard extends Component {
-	static propTypes = {
-		privateDomain: PropTypes.bool.isRequired,
-		privacyAvailable: PropTypes.bool.isRequired,
-		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		contactInfoDisclosureAvailable: PropTypes.bool.isRequired,
-		contactInfoDisclosed: PropTypes.bool.isRequired,
-		isPendingIcannVerification: PropTypes.bool.isRequired,
-	};
-
+class ContactsPrivacyCard extends Component< ContactsPrivacyCardProps > {
 	togglePrivacy = () => {
 		const { selectedSite, privateDomain, selectedDomainName: name } = this.props;
 
@@ -163,7 +153,7 @@ class ContactsPrivacyCard extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
+	( state, ownProps: ContactsPrivacyCardPassedProps ) => ( {
 		isUpdatingPrivacy: isUpdatingDomainPrivacy(
 			state,
 			ownProps.selectedSite.ID,
