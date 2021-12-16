@@ -1,46 +1,47 @@
 import { Button, Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
-import { Component } from 'react';
+import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import {
-	domainManagementManageConsent,
 	domainManagementEditContactInfo,
+	domainManagementManageConsent,
 } from 'calypso/my-sites/domains/paths';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
-	enableDomainPrivacy,
 	disableDomainPrivacy,
 	discloseDomainContactInfo,
+	enableDomainPrivacy,
 	redactDomainContactInfo,
 } from 'calypso/state/sites/domains/actions';
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
 import ContactDisplay from './contact-display';
 import type { ContactsPrivacyCardPassedProps, ContactsPrivacyCardProps } from './types';
 
-class ContactsPrivacyCard extends Component< ContactsPrivacyCardProps > {
-	togglePrivacy = () => {
-		const { selectedSite, privateDomain, selectedDomainName: name } = this.props;
+const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => {
+	const translate = useTranslate();
+	const togglePrivacy = () => {
+		const { selectedSite, privateDomain, selectedDomainName: name } = props;
 
 		if ( privateDomain ) {
-			this.props.disableDomainPrivacy( selectedSite.ID, name );
+			props.disableDomainPrivacy( selectedSite.ID, name );
 		} else {
-			this.props.enableDomainPrivacy( selectedSite.ID, name );
+			props.enableDomainPrivacy( selectedSite.ID, name );
 		}
 	};
 
-	toggleContactInfo = () => {
-		const { selectedSite, contactInfoDisclosed, selectedDomainName: name } = this.props;
+	const toggleContactInfo = () => {
+		const { selectedSite, contactInfoDisclosed, selectedDomainName: name } = props;
 
 		if ( contactInfoDisclosed ) {
-			this.props.redactDomainContactInfo( selectedSite.ID, name );
+			props.redactDomainContactInfo( selectedSite.ID, name );
 		} else {
-			this.props.discloseDomainContactInfo( selectedSite.ID, name );
+			props.discloseDomainContactInfo( selectedSite.ID, name );
 		}
 	};
 
-	getPrivacyProtection() {
-		const { privateDomain, privacyAvailable } = this.props;
-		const { translate, isUpdatingPrivacy } = this.props;
+	const getPrivacyProtection = () => {
+		const { privateDomain, privacyAvailable } = props;
+		const { isUpdatingPrivacy } = props;
 
 		const label = privateDomain
 			? translate( 'Privacy protection on' )
@@ -63,16 +64,16 @@ class ContactsPrivacyCard extends Component< ContactsPrivacyCardProps > {
 					<ToggleControl
 						checked={ privateDomain }
 						disabled={ isUpdatingPrivacy || ! privacyAvailable }
-						onChange={ this.togglePrivacy }
+						onChange={ togglePrivacy }
 						label={ label }
 					/>
 				</div>
 				{ privacyProtectionNote }
 			</>
 		);
-	}
+	};
 
-	getContactInfoDisclosed() {
+	const getContactInfoDisclosed = () => {
 		const {
 			contactInfoDisclosed,
 			contactInfoDisclosureAvailable,
@@ -80,8 +81,7 @@ class ContactsPrivacyCard extends Component< ContactsPrivacyCardProps > {
 			isUpdatingPrivacy,
 			privacyAvailable,
 			privateDomain,
-			translate,
-		} = this.props;
+		} = props;
 
 		if ( ! privacyAvailable || ! contactInfoDisclosureAvailable || privateDomain ) {
 			return false;
@@ -102,58 +102,57 @@ class ContactsPrivacyCard extends Component< ContactsPrivacyCardProps > {
 						className="contacts-privacy__toggle-button"
 						checked={ contactInfoDisclosed }
 						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
-						onChange={ this.toggleContactInfo }
+						onChange={ toggleContactInfo }
 						label={ translate( 'Display my contact information in public WHOIS' ) }
 					/>
 				</div>
 				{ contactVerificationNotice }
 			</>
 		);
-	}
+	};
 
-	render() {
-		const { translate, selectedDomainName, canManageConsent } = this.props;
+	const { selectedDomainName, canManageConsent } = props;
 
-		return (
-			<div>
-				<Card className="contacts-privacy__card--redesigned">
-					<div className="contacts-privacy__main">
-						<ContactDisplay selectedDomainName={ selectedDomainName } />
-						<div className="contacts-privacy__button-container">
+	return (
+		<div>
+			<Card className="contacts-privacy__card--redesigned">
+				<div className="contacts-privacy__main">
+					<ContactDisplay selectedDomainName={ selectedDomainName } />
+					<div className="contacts-privacy__button-container">
+						<Button
+							href={ domainManagementEditContactInfo(
+								props.selectedSite.slug,
+								props.selectedDomainName,
+								props.currentRoute
+							) }
+						>
+							{ translate( 'Edit' ) }
+						</Button>
+						{ canManageConsent && (
 							<Button
-								href={ domainManagementEditContactInfo(
-									this.props.selectedSite.slug,
-									this.props.selectedDomainName,
-									this.props.currentRoute
+								href={ domainManagementManageConsent(
+									props.selectedSite.slug,
+									props.selectedDomainName,
+									props.currentRoute
 								) }
 							>
-								{ translate( 'Edit' ) }
+								{ translate( 'Manage consent' ) }
 							</Button>
-							{ canManageConsent && (
-								<Button
-									href={ domainManagementManageConsent(
-										this.props.selectedSite.slug,
-										this.props.selectedDomainName,
-										this.props.currentRoute
-									) }
-								>
-									{ translate( 'Manage consent' ) }
-								</Button>
-							) }
-						</div>
+						) }
 					</div>
-					<div className="contacts-privacy__toggle-container">
-						{ this.getPrivacyProtection() }
-						{ this.getContactInfoDisclosed() }
-					</div>
-				</Card>
-			</div>
-		);
-	}
-}
+				</div>
+				<div className="contacts-privacy__toggle-container">
+					{ getPrivacyProtection() }
+					{ getContactInfoDisclosed() }
+				</div>
+			</Card>
+		</div>
+	);
+};
 
 export default connect(
 	( state, ownProps: ContactsPrivacyCardPassedProps ) => ( {
+		currentRoute: getCurrentRoute( state ),
 		isUpdatingPrivacy: isUpdatingDomainPrivacy(
 			state,
 			ownProps.selectedSite.ID,
@@ -166,4 +165,4 @@ export default connect(
 		discloseDomainContactInfo,
 		redactDomainContactInfo,
 	}
-)( localize( ContactsPrivacyCard ) );
+)( ContactsPrivacyCard );

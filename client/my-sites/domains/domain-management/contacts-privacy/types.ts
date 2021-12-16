@@ -25,7 +25,6 @@ export type ContactsPrivacyInfoProps = ContactsPrivacyInfoPassedProps &
 export type ContactsPrivacyCardPassedProps = {
 	selectedSite: SiteData;
 	selectedDomainName: string;
-	currentRoute: string;
 
 	privateDomain: boolean;
 	privacyAvailable: boolean;
@@ -36,6 +35,7 @@ export type ContactsPrivacyCardPassedProps = {
 };
 
 export type ContactsPrivacyCardConnectedProps = {
+	currentRoute: string;
 	isUpdatingPrivacy: boolean;
 };
 
