@@ -60,10 +60,6 @@ const Settings = ( {
 	};
 
 	const renderDetailsSection = () => {
-		if ( ! [ domainTypes.REGISTERED, domainTypes.MAPPED ].includes( domain.type ) ) {
-			return null;
-		}
-
 		if ( domain.type === domainTypes.REGISTERED ) {
 			return (
 				<Accordion
@@ -95,6 +91,8 @@ const Settings = ( {
 				</Accordion>
 			);
 		}
+
+		return null;
 	};
 
 	const renderMainContent = () => {
