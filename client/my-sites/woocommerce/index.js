@@ -28,7 +28,7 @@ function setup( context, next ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
 
-	// Only allow AT and Simple Business sites to access, unless the woop feature flag is enabled.
+	// Redirect unless the woop feature flag is enabled.
 	// todo: remove redirect and rely on plan eligibility checks in the landing page component
 	if ( ! isEnabled( 'woop' ) ) {
 		return page.redirect( `/home/${ site.slug }` );
