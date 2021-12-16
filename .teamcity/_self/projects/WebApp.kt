@@ -340,6 +340,7 @@ object RunAllUnitTests : BuildType({
 			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
 			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
 			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			threshold = 0
 			compareTo = build {
 				buildRule = lastSuccessful()
 			}
