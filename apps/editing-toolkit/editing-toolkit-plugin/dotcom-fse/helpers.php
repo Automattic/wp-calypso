@@ -219,8 +219,9 @@ function has_legacy_FSE_template_edits( $blog_id ) {
 	$template_inserter = new WP_Template_Inserter( $theme_slug );
 	$template_inserter->register_template_post_types();
 	$template_manager = new WP_Template();
-	$header_content = $template_manager->get_template_content( 'header' );
-	$footer_content = $template_manager->get_template_content( 'footer' );
+	// Filter img src to prevent false failure (images from defaults are resaved with a different src)
+	$header_content = filter_img_src( $template_manager->get_template_content( 'header' ) );
+	$footer_content = filter_img_src( $template_manager->get_template_content( 'footer' ) );
 
 	// Get default template part markup
 	$request_url = 'https://public-api.wordpress.com/wpcom/v2/full-site-editing/templates';
@@ -231,14 +232,19 @@ function has_legacy_FSE_template_edits( $blog_id ) {
 	if ( $response ) {
 		$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( ! ( ! empty( $api_response['code'] ) && 'not_found' === $api_response['code'] ) ) {
-			$default_header_content = $api_response['headers'][0];
-			$default_footer_content = $api_response['footers'][0];
+			$default_header_content = filter_img_src( $api_response['headers'][0] );
+			$default_footer_content = filter_img_src( $api_response['footers'][0] );
 		}
 	}
 
 	restore_current_blog();
 
-	return array( 'current-header' => $header_content, 'default-header' => $default_header_content );
+	return array( 	'current-header' => $header_content,
+					'default-header' => $default_header_content,
+					'current-footer' => $footer_content,
+					'default-footer' => $default_footer_content,
+					'headers' => $header_content === $default_header_content,
+					'footers' => $footer_content === $default_footer_content );
 }
 
 function custom_fetch_retry( $request_url, $request_args = null, $attempt = 1 ) {
@@ -258,3 +264,14 @@ function custom_fetch_retry( $request_url, $request_args = null, $attempt = 1 ) 
 	$attempt++;
 	custom_fetch_retry( $request_url, $request_args, $attempt );
 }
+
+function filter_img_src( $markup ) {
+	$filtered_markup = $markup;
+	$start = strpos( $markup, ' src="' );
+
+	if ( $start ) {
+	  $end = strpos( $markup, '"', $start + 6 );
+	  $filtered_markup = substr( $markup, 0, $start ) . substr( $markup, $end + 1 );
+	}
+	return $filtered_markup;
+  }
