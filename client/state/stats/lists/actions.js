@@ -30,9 +30,25 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
 }
 
 const wpcomV1Endpoints = {
-	statsInsights: 'stats/insights',
-	statsFileDownloads: 'stats/file-downloads',
+	stats: 'stats',
 	statsAds: 'wordads/stats',
+	statsClicks: 'stats/clicks',
+	statsCommentFollowers: 'stats/comment-followers',
+	statsComments: 'stats/comments',
+	statsCountryViews: 'stats/country-views',
+	statsFileDownloads: 'stats/file-downloads',
+	statsFollowers: 'stats/followers',
+	statsInsights: 'stats/insights',
+	statsPublicize: 'stats/publicize',
+	statsReferrers: 'stats/referrers',
+	statsSearchTerms: 'stats/search-terms',
+	statsStreak: 'stats/streak',
+	statsSummary: 'stats/summary',
+	statsTags: 'stats/tags',
+	statsTopAuthors: 'stats/top-authors',
+	statsTopPosts: 'stats/top-posts',
+	statsVideoPlays: 'stats/video-plays',
+	statsVisits: 'stats/visits',
 };
 
 const wpcomV2Endpoints = {
@@ -64,6 +80,7 @@ export function requestSiteStats( siteId, statType, query ) {
 
 		let subpath;
 		let apiNamespace;
+		let options = query;
 		if ( wpcomV1Endpoints.hasOwnProperty( statType ) ) {
 			subpath = wpcomV1Endpoints[ statType ];
 		} else if ( wpcomV2Endpoints.hasOwnProperty( statType ) ) {
@@ -71,18 +88,13 @@ export function requestSiteStats( siteId, statType, query ) {
 			apiNamespace = 'wpcom/v2';
 		}
 
-		const options = 'statsVideo' === statType ? query.postId : query;
-		const requestStats = subpath
-			? wpcom.req.get(
-					{
-						path: `/sites/${ siteId }/${ subpath }`,
-						apiNamespace,
-					},
-					options
-			  )
-			: wpcom.site( siteId )[ statType ]( options );
+		if ( 'statsVideo' === statType ) {
+			subpath += `/${ query.postId }`;
+			options = {};
+		}
 
-		return requestStats
+		return wpcom.req
+			.get( { path: `/sites/${ siteId }/${ subpath }`, apiNamespace }, options )
 			.then( ( data ) => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )
 			.catch( ( error ) => {
 				dispatch( {

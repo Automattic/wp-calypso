@@ -207,9 +207,8 @@ class P2Site extends Component {
 							WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS.forEach( ( suffix ) => {
 								const suggestedSubdomain = `${ fields.site }${ suffix }`;
 
-								wpcom
-									.domains()
-									.suggestions( {
+								wpcom.req
+									.get( '/domains/suggestions', {
 										quantity: 1,
 										query: suggestedSubdomain,
 										only_wordpressdotcom: true,

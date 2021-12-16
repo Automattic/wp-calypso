@@ -1,20 +1,11 @@
 import debugModule from 'debug';
-import Batch from './lib/batch';
-import Domain from './lib/domain';
-import Domains from './lib/domains';
-import Me from './lib/me';
-import Plans from './lib/plans';
-import Site from './lib/site';
-import Users from './lib/users';
 import Pinghub from './lib/util/pinghub';
 import Request from './lib/util/request';
-import sendRequest from './lib/util/send-request';
 
 /**
  * Local module constants
  */
 const debug = debugModule( 'wpcom' );
-const DEFAULT_ASYNC_TIMEOUT = 30000;
 
 /**
  * XMLHttpRequest (and CORS) API access method.
@@ -59,138 +50,4 @@ export default function WPCOM( token, reqHandler ) {
 
 	// Default api version;
 	this.apiVersion = '1.1';
-}
-
-/**
- * Return `Me` object instance
- *
- * @returns {Me} Me instance
- */
-WPCOM.prototype.me = function () {
-	return new Me( this );
-};
-
-/**
- * Return `Domains` object instance
- *
- * @returns {Domains} Domains instance
- */
-WPCOM.prototype.domains = function () {
-	return new Domains( this );
-};
-
-/**
- * Return `Domain` object instance
- *
- * @param {string} domainId - domain identifier
- * @returns {Domain} Domain instance
- */
-WPCOM.prototype.domain = function ( domainId ) {
-	return new Domain( domainId, this );
-};
-
-/**
- * Return `Site` object instance
- *
- * @param {string} id - site identifier
- * @returns {Site} Site instance
- */
-WPCOM.prototype.site = function ( id ) {
-	return new Site( id, this );
-};
-
-/**
- * Return `Users` object instance
- *
- * @returns {Users} Users instance
- */
-WPCOM.prototype.users = function () {
-	return new Users( this );
-};
-
-/**
- * Return `Plans` object instance
- *
- * @returns {Plans} Plans instance
- */
-WPCOM.prototype.plans = function () {
-	return new Plans( this );
-};
-
-/**
- * Return `Batch` object instance
- *
- * @returns {Batch} Batch instance
- */
-WPCOM.prototype.batch = function () {
-	return new Batch( this );
-};
-
-/**
- * List Freshly Pressed Posts
- *
- * @param {object} [query] - query object
- * @param {Function} fn - callback function
- * @returns {Function} request handler
- */
-WPCOM.prototype.freshlyPressed = function ( query, fn ) {
-	return this.req.get( '/freshly-pressed', query, fn );
-};
-
-// Expose send-request
-// TODO: use `this.req` instead of this method
-WPCOM.prototype.sendRequest = function ( params, query, body, fn ) {
-	const msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
-
-	/* eslint-disable no-console */
-	if ( console && console.warn ) {
-		console.warn( msg );
-	} else {
-		console.log( msg );
-	}
-	/* eslint-enable no-console */
-
-	return sendRequest.call( this, params, query, body, fn );
-};
-
-/**
- * Re-export all the class types.
- */
-WPCOM.Batch = Batch;
-WPCOM.Domain = Domain;
-WPCOM.Domains = Domains;
-WPCOM.Me = Me;
-WPCOM.Pinghub = Pinghub;
-WPCOM.Plans = Plans;
-WPCOM.Request = Request;
-WPCOM.Site = Site;
-WPCOM.Users = Users;
-
-if ( ! Promise.prototype.timeout ) {
-	/**
-	 * Returns a new promise with a deadline
-	 *
-	 * After the timeout interval, the promise will
-	 * reject. If the actual promise settles before
-	 * the deadline, the timer is cancelled.
-	 *
-	 * @param {number} delay how many ms to wait
-	 * @returns {Promise} promise
-	 */
-	Promise.prototype.timeout = function ( delay = DEFAULT_ASYNC_TIMEOUT ) {
-		let timer;
-
-		const timeout = new Promise( ( resolve, reject ) => {
-			timer = setTimeout( () => {
-				reject( new Error( 'Action timed out while waiting for response.' ) );
-			}, delay );
-		} );
-
-		const cancelTimeout = () => {
-			clearTimeout( timer );
-			return this;
-		};
-
-		return Promise.race( [ this.then( cancelTimeout ).catch( cancelTimeout ), timeout ] );
-	};
 }
