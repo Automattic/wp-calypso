@@ -5,8 +5,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import StickyPanel from 'calypso/components/sticky-panel';
+import { withAddExternalMedia } from 'calypso/data/media/use-add-external-media';
 import { changeMediaSource } from 'calypso/state/media/actions';
-import { addExternalMedia, fetchNextMediaPage } from 'calypso/state/media/thunks';
+import { fetchNextMediaPage } from 'calypso/state/media/thunks';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 import MediaLibraryScale from './scale';
 
@@ -151,7 +152,6 @@ const mapStateToProps = ( state, { site } ) => ( {
 } );
 
 export default connect( mapStateToProps, {
-	addExternalMedia,
 	changeMediaSource,
 	fetchNextMediaPage,
-} )( localize( MediaLibraryExternalHeader ) );
+} )( localize( withAddExternalMedia( MediaLibraryExternalHeader ) ) );
