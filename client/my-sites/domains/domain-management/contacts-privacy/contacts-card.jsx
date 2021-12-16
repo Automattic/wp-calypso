@@ -129,26 +129,28 @@ class ContactsPrivacyCard extends Component {
 				<Card className="contacts-privacy__card--redesigned">
 					<div className="contacts-privacy__main">
 						<ContactDisplay selectedDomainName={ selectedDomainName } />
-						<Button
-							href={ domainManagementEditContactInfo(
-								this.props.selectedSite.slug,
-								this.props.selectedDomainName,
-								this.props.currentRoute
-							) }
-						>
-							{ translate( 'Edit' ) }
-						</Button>
-						{ canManageConsent && (
+						<div className="contacts-privacy__button-container">
 							<Button
-								href={ domainManagementManageConsent(
+								href={ domainManagementEditContactInfo(
 									this.props.selectedSite.slug,
 									this.props.selectedDomainName,
 									this.props.currentRoute
 								) }
 							>
-								{ translate( 'Manage consent' ) }
+								{ translate( 'Edit' ) }
 							</Button>
-						) }
+							{ canManageConsent && (
+								<Button
+									href={ domainManagementManageConsent(
+										this.props.selectedSite.slug,
+										this.props.selectedDomainName,
+										this.props.currentRoute
+									) }
+								>
+									{ translate( 'Manage consent' ) }
+								</Button>
+							) }
+						</div>
 					</div>
 					<div className="contacts-privacy__toggle-container">
 						{ this.getPrivacyProtection() }

@@ -94,6 +94,11 @@
 					}
 				}
 			}
+
+			&__button-container {
+				display: flex;
+				column-gap: 16px;
+			}
 		}
 
 		.contact-display {
