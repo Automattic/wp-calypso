@@ -2,6 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { PRIVACY_PROTECTION, PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
 import {
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
@@ -52,7 +53,12 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 			privacyProtectionNote = (
 				<p className="contacts-privacy__toggle-item">
 					{ translate(
-						'Privacy protection is not available due to the registry’s policies. Learn more'
+						'Privacy protection is not available due to the registry’s policies. {{a}}Learn more{{/a}}',
+						{
+							components: {
+								a: <a href={ PRIVACY_PROTECTION } />,
+							},
+						}
 					) }
 				</p>
 			);
@@ -70,6 +76,18 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 				</div>
 				{ privacyProtectionNote }
 			</>
+		);
+	};
+
+	const getPrivacyProtectionRecommendationText = () => {
+		return (
+			<p className="contacts-privacy__toggle-item">
+				{ translate( 'We recommend keeping privacy protection on. {{a}}Learn more{{/a}}', {
+					components: {
+						a: <a href={ PUBLIC_VS_PRIVATE } />,
+					},
+				} ) }
+			</p>
 		);
 	};
 
@@ -144,6 +162,7 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 				<div className="contacts-privacy__toggle-container">
 					{ getPrivacyProtection() }
 					{ getContactInfoDisclosed() }
+					{ getPrivacyProtectionRecommendationText() }
 				</div>
 			</Card>
 		</div>
