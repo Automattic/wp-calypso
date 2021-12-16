@@ -31,6 +31,10 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 			width: 740px;
 			max-height: 80vh;
 		}
+
+		@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
+			max-height: $modal-content-min-height-landscape;
+		}
 	}
 
 	* {
