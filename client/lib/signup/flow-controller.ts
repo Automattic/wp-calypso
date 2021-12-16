@@ -381,6 +381,7 @@ export default class SignupFlowController {
 			this._processingSteps.delete( step.stepName );
 			recordTracksEvent( 'calypso_signup_actions_complete_step', {
 				step: step.stepName,
+				flow: this._flowName,
 			} );
 			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
 			return;
