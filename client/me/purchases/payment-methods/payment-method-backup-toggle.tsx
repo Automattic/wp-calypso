@@ -80,7 +80,7 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 						supportLink: (
 							<InlineSupportLink
 								showText={ false }
-								supportContext="payment_methods_manage"
+								supportContext="backup_payment_methods"
 								iconSize={ 16 }
 							/>
 						),
