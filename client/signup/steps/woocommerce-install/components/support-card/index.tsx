@@ -21,7 +21,7 @@ const SupportLinkStyle = styled.a`
 	font-weight: bold;
 `;
 
-export default function SupportLink(): ReactElement {
+export default function SupportCard(): ReactElement {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
