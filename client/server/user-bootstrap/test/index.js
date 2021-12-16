@@ -35,15 +35,7 @@ const withConfig = ( keys ) => {
 	config.mockImplementation( ( key ) => keys[ key ] );
 };
 
-const withEnv = ( env = {} ) => {
-	for ( const [ k, v ] of Object.entries( env ) ) {
-		process.env[ k ] = v;
-	}
-};
-
 describe( 'User bootstrap', () => {
-	const realProcessEnv = { ...process.env };
-
 	beforeEach( () => {
 		// Default value for most tests. Some tests will overwrite this to simulate missing key
 		withConfig( {
@@ -54,9 +46,6 @@ describe( 'User bootstrap', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		jest.resetAllMocks();
-		for ( const [ env, value ] of Object.entries( realProcessEnv ) ) {
-			process.env[ env ] = value;
-		}
 	} );
 
 	it( 'throws if there is no auth cookie', async () => {
@@ -112,23 +101,6 @@ describe( 'User bootstrap', () => {
 			},
 			headers: {
 				'x-geoip-country-code': 'es',
-			},
-		} );
-
-		await getBootstrappedUser( request );
-
-		expect( upstreamRequest.isDone() ).toBe( true );
-	} );
-
-	it( 'sets the auth session cookie', async () => {
-		const upstreamRequest = configureUpstreamRequest( {
-			headers: {
-				cookie: 'wordpress_logged_in=auth-cookie',
-			},
-		} );
-		const request = mockRequest( {
-			cookies: {
-				wordpress_logged_in: 'auth-cookie',
 			},
 		} );
 
@@ -198,32 +170,6 @@ describe( 'User bootstrap', () => {
 
 			expect( upstreamRequest.isDone() ).toBe( true );
 		} );
-
-		it( 'reads support session API key from env variables', async () => {
-			withConfig( {
-				wpcom_calypso_support_session_rest_api_key: undefined,
-			} );
-			withEnv( {
-				WPCOM_CALYPSO_SUPPORT_SESSION_REST_API_KEY: 'key',
-			} );
-
-			await getBootstrappedUser( request );
-
-			expect( upstreamRequest.isDone() ).toBe( true );
-		} );
-
-		it( 'support session API key from env variable overrides config', async () => {
-			withConfig( {
-				wpcom_calypso_support_session_rest_api_key: 'old_key',
-			} );
-			withEnv( {
-				WPCOM_CALYPSO_SUPPORT_SESSION_REST_API_KEY: 'key',
-			} );
-
-			await getBootstrappedUser( request );
-
-			expect( upstreamRequest.isDone() ).toBe( true );
-		} );
 	} );
 
 	describe( 'with auth session', () => {
@@ -240,6 +186,7 @@ describe( 'User bootstrap', () => {
 				headers: {
 					// Hardcoded value resulting from hashing "key" + "auth-cookie"
 					Authorization: 'X-WPCALYPSO 26be6ad9e36fde3770b1e81a559db109',
+					cookie: ( cookie ) => cookie.includes( 'wordpress_logged_in=auth-cookie' ),
 				},
 			} );
 		} );
@@ -254,35 +201,9 @@ describe( 'User bootstrap', () => {
 			);
 		} );
 
-		it( 'sets the authorization header', async () => {
+		it( 'sets the authorization header and cookie', async () => {
 			withConfig( {
 				wpcom_calypso_rest_api_key: 'key',
-			} );
-
-			await getBootstrappedUser( request );
-
-			expect( upstreamRequest.isDone() ).toBe( true );
-		} );
-
-		it( 'reads API key from env variables', async () => {
-			withConfig( {
-				wpcom_calypso_rest_api_key: undefined,
-			} );
-			withEnv( {
-				WPCOM_CALYPSO_REST_API_KEY: 'key',
-			} );
-
-			await getBootstrappedUser( request );
-
-			expect( upstreamRequest.isDone() ).toBe( true );
-		} );
-
-		it( 'API key from env variable overrides config', async () => {
-			withConfig( {
-				wpcom_calypso_rest_api_key: 'old_key',
-			} );
-			withEnv( {
-				WPCOM_CALYPSO_REST_API_KEY: 'key',
 			} );
 
 			await getBootstrappedUser( request );

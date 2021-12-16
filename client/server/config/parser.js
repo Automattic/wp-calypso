@@ -65,5 +65,12 @@ module.exports = function ( configPath, defaultOpts ) {
 	const serverData = Object.assign( {}, data, getDataFromFile( secretsPath ) );
 	const clientData = Object.assign( {}, data );
 
+	// Optionally override API secrets with env values, only for server data
+	serverData.wpcom_calypso_rest_api_key =
+		process.env.WPCOM_CALYPSO_REST_API_KEY ?? serverData.wpcom_calypso_rest_api_key;
+	serverData.wpcom_calypso_support_session_rest_api_key =
+		process.env.WPCOM_CALYPSO_SUPPORT_SESSION_REST_API_KEY ??
+		serverData.wpcom_calypso_support_session_rest_api_key;
+
 	return { serverData, clientData };
 };

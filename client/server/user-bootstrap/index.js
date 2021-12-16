@@ -16,11 +16,8 @@ const apiQuery = new URLSearchParams( {
 } );
 const url = `${ API_PATH }?${ apiQuery.toString() }`;
 
-const getApiKey = () =>
-	process.env.WPCOM_CALYPSO_REST_API_KEY ?? config( 'wpcom_calypso_rest_api_key' );
-const getSupportSessionApiKey = () =>
-	process.env.WPCOM_CALYPSO_SUPPORT_SESSION_REST_API_KEY ??
-	config( 'wpcom_calypso_support_session_rest_api_key' );
+const getApiKey = () => config( 'wpcom_calypso_rest_api_key' );
+const getSupportSessionApiKey = () => config( 'wpcom_calypso_support_session_rest_api_key' );
 
 /**
  * Requests the current user for user bootstrap.
