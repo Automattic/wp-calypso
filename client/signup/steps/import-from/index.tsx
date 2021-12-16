@@ -15,6 +15,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { GoToStep } from '../import/types';
 import NotAuthorized from './components/not-authorized';
+import { MediumImporter } from './medium';
 import { Importer, QueryObject, ImportJob } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
@@ -115,6 +116,22 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									 * Permission screen
 									 */
 									return <NotAuthorized goToStep={ goToStep } siteSlug={ siteSlug } />;
+								} else if (
+									engine === 'medium' &&
+									isEnabled( 'gutenboarding/import-from-medium' )
+								) {
+									/**
+									 * Medium importer
+									 */
+									return (
+										<MediumImporter
+											job={ getImportJob( engine ) }
+											run={ runImportInitially }
+											siteId={ siteId }
+											siteSlug={ siteSlug }
+											fromSite={ fromSite }
+										/>
+									);
 								} else if ( engine === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
 									/**
 									 * Wix importer

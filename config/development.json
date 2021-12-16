@@ -67,6 +67,7 @@
 		"gutenboarding/alpha-templates": false,
 		"gutenboarding/show-vertical-input": false,
 		"gutenboarding/import": true,
+		"gutenboarding/import-from-medium": false,
 		"gutenboarding/import-from-wix": true,
 		"help": true,
 		"home/layout-dev": true,
