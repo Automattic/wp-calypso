@@ -5,7 +5,7 @@ import Accordion from 'calypso/components/domains/accordion';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
@@ -165,7 +165,14 @@ const Settings = ( {
 			></Accordion>
 		);
 
-		if ( ! domain ) return placeholderAccordion;
+		if ( ! domain || ! domains ) return placeholderAccordion;
+
+		if (
+			domain.type !== domainTypes.REGISTERED ||
+			( ! isDomainUpdateable( domain ) && ! isDomainInGracePeriod( domain ) )
+		) {
+			return null;
+		}
 
 		const { privateDomain } = domain;
 		const contactInformation = findRegistrantWhois( whoisData );
