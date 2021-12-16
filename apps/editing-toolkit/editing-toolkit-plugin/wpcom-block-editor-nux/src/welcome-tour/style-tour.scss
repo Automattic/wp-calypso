@@ -5,7 +5,7 @@
 @import '@wordpress/base-styles/z-index';
 
 $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
-$welcome-tour-card-media-extra-padding: 14%;
+$welcome-tour-card-media-extra-padding: 14%; // temporary value, to match the padding of the desktop instructional graphics
 
 .welcome-tour-card__heading {
 	font-size: 1.125rem; /* stylelint-disable-line */
