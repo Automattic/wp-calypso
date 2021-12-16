@@ -35,6 +35,12 @@ const withConfig = ( keys ) => {
 	config.mockImplementation( ( key ) => keys[ key ] );
 };
 
+/**
+ * These tests rely on nock to intercept the requets and return a pre-defined response.
+ *
+ * If `getBootstrappedUser()` sends a request that doesn't match any of the requests configured in `nock`, it will throw. In most
+ * tests we just assert that `getBootstrappedUser()` returns a resolved promise, as it proves that it sent the expected request.
+ */
 describe( 'User bootstrap', () => {
 	beforeEach( () => {
 		// Default value for most tests. Some tests will overwrite this to simulate missing key
@@ -73,7 +79,7 @@ describe( 'User bootstrap', () => {
 	} );
 
 	it( 'sets the user agent in the upstream request', async () => {
-		const upstreamRequest = configureUpstreamRequest( {
+		configureUpstreamRequest( {
 			headers: {
 				'User-Agent': 'WordPress.com Calypso',
 			},
@@ -84,13 +90,11 @@ describe( 'User bootstrap', () => {
 			},
 		} );
 
-		await getBootstrappedUser( request );
-
-		expect( upstreamRequest.isDone() ).toBe( true );
+		await expect( getBootstrappedUser( request ) ).resolves.not.toThrow();
 	} );
 
 	it( 'sets the geo country code in the upstream request', async () => {
-		const upstreamRequest = configureUpstreamRequest( {
+		configureUpstreamRequest( {
 			headers: {
 				'X-Forwarded-GeoIP-Country-Code': 'es',
 			},
@@ -104,13 +108,11 @@ describe( 'User bootstrap', () => {
 			},
 		} );
 
-		await getBootstrappedUser( request );
-
-		expect( upstreamRequest.isDone() ).toBe( true );
+		await expect( getBootstrappedUser( request ) ).resolves.not.toThrow();
 	} );
 
 	it( 'sets the support session cookie', async () => {
-		const upstreamRequest = configureUpstreamRequest( {
+		configureUpstreamRequest( {
 			headers: {
 				cookie: ( val ) => val.includes( 'support_session_id=session-id' ),
 			},
@@ -122,9 +124,7 @@ describe( 'User bootstrap', () => {
 			},
 		} );
 
-		await getBootstrappedUser( request );
-
-		expect( upstreamRequest.isDone() ).toBe( true );
+		await expect( getBootstrappedUser( request ) ).resolves.not.toThrow();
 	} );
 
 	describe( 'with support session header', () => {
@@ -166,9 +166,7 @@ describe( 'User bootstrap', () => {
 				wpcom_calypso_support_session_rest_api_key: 'key',
 			} );
 
-			await getBootstrappedUser( request );
-
-			expect( upstreamRequest.isDone() ).toBe( true );
+			await expect( getBootstrappedUser( request ) ).resolves.not.toThrow();
 		} );
 	} );
 
@@ -206,9 +204,7 @@ describe( 'User bootstrap', () => {
 				wpcom_calypso_rest_api_key: 'key',
 			} );
 
-			await getBootstrappedUser( request );
-
-			expect( upstreamRequest.isDone() ).toBe( true );
+			await expect( getBootstrappedUser( request ) ).resolves.not.toThrow();
 		} );
 	} );
 
@@ -252,7 +248,7 @@ describe( 'User bootstrap', () => {
 	} );
 
 	it( 'adds bootstrapped property to the response', async () => {
-		const upstreamRequest = configureUpstreamRequest();
+		configureUpstreamRequest();
 
 		const request = mockRequest( {
 			cookies: {
@@ -262,7 +258,6 @@ describe( 'User bootstrap', () => {
 
 		const user = await getBootstrappedUser( request );
 
-		expect( upstreamRequest.isDone() ).toBe( true );
 		expect( user.bootstrapped ).toBe( true );
 	} );
 
