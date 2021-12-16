@@ -22,10 +22,6 @@ import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import {
-	getSelectedImportEngine,
-	getNuxUrlInputValue,
-} from 'calypso/state/importer-nux/temp-selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -126,7 +122,6 @@ function getNewSiteParams( {
 	dependencies,
 	flowToCheck,
 	isPurchasingDomainItem,
-	lastKnownFlow,
 	themeSlugWithRepo,
 	siteUrl,
 	state,
@@ -200,14 +195,6 @@ function getNewSiteParams( {
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingDomainItem;
-	}
-
-	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
-		// If `siteTitle` wasn't inferred by the site detection api, use
-		// the `siteUrl` until an import replaces it with an actual title.
-		newSiteParams.blog_title = siteTitle || siteUrl;
-		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
-		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
 	}
 
 	if ( selectedDesign ) {
