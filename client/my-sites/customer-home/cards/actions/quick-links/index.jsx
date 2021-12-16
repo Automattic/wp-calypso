@@ -5,6 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -54,6 +55,7 @@ export const QuickLinks = ( {
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
+	areBlockEditorSettingsLoading,
 } ) => {
 	const translate = useTranslate();
 	const [
@@ -188,6 +190,10 @@ export const QuickLinks = ( {
 			flushDebouncedUpdateHomeQuickLinksToggleStatus();
 		};
 	}, [] );
+
+	if ( areBlockEditorSettingsLoading ) {
+		return null;
+	}
 
 	return (
 		<FoldableCard
@@ -390,4 +396,10 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( QuickLinks );
+const ConnectedQuickLinks = connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( QuickLinks );
+
+export default withBlockEditorSettings( ConnectedQuickLinks );
