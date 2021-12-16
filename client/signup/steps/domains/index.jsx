@@ -444,15 +444,32 @@ class DomainsStep extends Component {
 		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
+	shouldHideDomainExplainer = () => {
+		const { flowName } = this.props;
+		return [
+			'free',
+			'personal',
+			'personal-monthly',
+			'premium',
+			'premium-monthly',
+			'business',
+			'business-monthly',
+			'ecommerce',
+			'ecommerce-monthly',
+		].includes( flowName );
+	};
+
 	getSideContent = () => {
 		return (
 			<div className="domains__domain-side-content-container">
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer
-						onClick={ this.handleDomainExplainerClick }
-						type={ 'free-domain-explainer' }
-					/>
-				</div>
+				{ ! this.shouldHideDomainExplainer() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-explainer' }
+						/>
+					</div>
+				) }
 				<div className="domains__domain-side-content">
 					<ReskinSideExplainer
 						onClick={ this.handleUseYourDomainClick }

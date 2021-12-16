@@ -182,7 +182,16 @@
 		"do-it-for-me",
 		"importer",
 		"from",
-		"woocommerce-install"
+		"woocommerce-install",
+		"free",
+		"personal",
+		"personal-monthly",
+		"premium",
+		"premium-monthly",
+		"business",
+		"business-monthly",
+		"ecommerce",
+		"ecommerce-monthly"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"difm_typeform_id": "YMiXMYId",
