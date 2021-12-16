@@ -27,7 +27,7 @@ function paragraph_block_script() {
 	if ( isset( $post ) && is_post_with_write_intent( $post ) ) {
 		wp_localize_script(
 			'paragraph-block-script',
-			'paragraphBlockPlaceholder',
+			'wpcomParagraphBlockPlaceholder',
 			translation_with_fallback(
 				"Start writing or type '/' to insert a block",
 				__( "Start writing or type '/' to insert a block", 'full-site-editing' ),

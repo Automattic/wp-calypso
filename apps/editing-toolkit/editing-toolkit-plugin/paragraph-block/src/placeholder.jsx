@@ -2,9 +2,9 @@ import { addFilter } from '@wordpress/hooks';
 
 addFilter(
 	'blocks.registerBlockType',
-	'full-site-editing/paragraph-block/placeholder',
+	'full-site-editing/wpcom-paragraph-block/placeholder',
 	( settings, name ) => {
-		if ( name !== 'core/paragraph' || ! window.paragraphBlockPlaceholder ) {
+		if ( name !== 'core/paragraph' || ! window.wpcomParagraphBlockPlaceholder ) {
 			return settings;
 		}
 
@@ -14,7 +14,7 @@ addFilter(
 				...settings.attributes,
 				placeholder: {
 					...settings.attributes.placeholder,
-					default: window.paragraphBlockPlaceholder,
+					default: window.wpcomParagraphBlockPlaceholder,
 				},
 			},
 		};
