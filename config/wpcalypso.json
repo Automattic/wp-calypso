@@ -54,7 +54,6 @@
 		"inline-help": true,
 		"i18n/translation-scanner": true,
 		"jetpack/api-cache": true,
-		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/features-section/atomic": true,
