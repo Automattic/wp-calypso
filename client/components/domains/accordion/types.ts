@@ -1,4 +1,4 @@
-import { TranslateResult } from 'i18n-calypso';
+import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 
 export type AccordionProps = {
