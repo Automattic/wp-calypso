@@ -98,7 +98,7 @@ const SetAsPrimary = ( props: SetAsPrimaryProps ): JSX.Element | null => {
 				<p className="set-as-primary__content">
 					{ translate( 'Your current primary site address is %(domainName)s', {
 						args: {
-							domainName: domain.name,
+							domainName: selectedSite.domain,
 						},
 					} ) }
 				</p>
