@@ -57,7 +57,6 @@ const referenceElements = [
 			'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
 	},
 	{
-		mobile: '.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
 		desktop: '.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
 	},
 	{
@@ -136,6 +135,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				description: __( "Click the Undo button if you've made a mistake.", 'full-site-editing' ),
 				imgSrc: getTourAssets( 'undo' ),
 				animation: 'undo-button',
+				isDesktopOnly: true,
 			},
 		},
 		{
