@@ -156,7 +156,7 @@ describe( 'User bootstrap', () => {
 
 			await expect( getBootstrappedUser( request ) ).rejects.toThrow(
 				new Error(
-					'Unable to boostrap user because of invalid SUPPORT SESSION API key in secrets.json'
+					'Unable to bootstrap user because of invalid SUPPORT SESSION API key in secrets.json'
 				)
 			);
 		} );
@@ -197,7 +197,7 @@ describe( 'User bootstrap', () => {
 			} );
 
 			await expect( getBootstrappedUser( request ) ).rejects.toThrow(
-				new Error( 'Unable to boostrap user because of invalid API key in secrets.json' )
+				new Error( 'Unable to bootstrap user because of invalid API key in secrets.json' )
 			);
 		} );
 
