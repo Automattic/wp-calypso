@@ -16,7 +16,7 @@ const SupportLinkContainer = styled.p`
 
 const SupportLinkStyle = styled.a`
 	/* Gray / Gray 100 - have to find the var value for this color */
-	color: #101517 !important;
+	color: var( --studio-gray-100 ) !important;
 	text-decoration: underline;
 	font-weight: bold;
 `;
