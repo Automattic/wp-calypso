@@ -64,56 +64,39 @@ export const QuickLinks = ( {
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
-			{ isStaticHomePage && canEditPages ? (
-				<>
-					<ActionBox
-						href={ editHomePageUrl }
-						hideLinkIndicator
-						onClick={ trackEditHomepageAction }
-						label={ translate( 'Edit homepage' ) }
-						materialIcon="laptop"
-					/>
-					<ActionBox
-						href={ `/page/${ siteSlug }` }
-						hideLinkIndicator
-						onClick={ trackAddPageAction }
-						label={ translate( 'Add a page' ) }
-						materialIcon="insert_drive_file"
-					/>
-					<ActionBox
-						href={ `/post/${ siteSlug }` }
-						hideLinkIndicator
-						onClick={ trackWritePostAction }
-						label={ translate( 'Write blog post' ) }
-						materialIcon="edit"
-					/>
-				</>
-			) : (
-				<>
-					<ActionBox
-						href={ `/post/${ siteSlug }` }
-						hideLinkIndicator
-						onClick={ trackWritePostAction }
-						label={ translate( 'Write blog post' ) }
-						materialIcon="edit"
-					/>
-					<ActionBox
-						href={ `/comments/${ siteSlug }` }
-						hideLinkIndicator
-						onClick={ trackManageCommentsAction }
-						label={ translate( 'Manage comments' ) }
-						materialIcon="mode_comment"
-					/>
-					{ canEditPages && (
-						<ActionBox
-							href={ `/page/${ siteSlug }` }
-							hideLinkIndicator
-							onClick={ trackAddPageAction }
-							label={ translate( 'Add a page' ) }
-							materialIcon="insert_drive_file"
-						/>
-					) }
-				</>
+			{ Boolean( isStaticHomePage && canEditPages ) && (
+				<ActionBox
+					href={ editHomePageUrl }
+					hideLinkIndicator
+					onClick={ trackEditHomepageAction }
+					label={ translate( 'Edit homepage' ) }
+					materialIcon="laptop"
+				/>
+			) }
+			<ActionBox
+				href={ `/post/${ siteSlug }` }
+				hideLinkIndicator
+				onClick={ trackWritePostAction }
+				label={ translate( 'Write blog post' ) }
+				materialIcon="edit"
+			/>
+			{ ! isStaticHomePage && (
+				<ActionBox
+					href={ `/comments/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackManageCommentsAction }
+					label={ translate( 'Manage comments' ) }
+					materialIcon="mode_comment"
+				/>
+			) }
+			{ canEditPages && (
+				<ActionBox
+					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackAddPageAction }
+					label={ translate( 'Add a page' ) }
+					materialIcon="insert_drive_file"
+				/>
 			) }
 			{ showCustomizer && canCustomize && (
 				<>
