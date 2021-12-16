@@ -45,6 +45,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDomainRegistrationAgreementUrl,
 	getDisplayName,
@@ -648,7 +649,9 @@ class ManagePurchase extends Component {
 				<span className="manage-purchase__description">{ this.getPurchaseDescription() }</span>
 
 				<span className="manage-purchase__settings-link">
-					{ site && <ProductLink purchase={ purchase } selectedSite={ site } /> }
+					{ ! isJetpackCloud() && site && (
+						<ProductLink purchase={ purchase } selectedSite={ site } />
+					) }
 				</span>
 
 				{ registrationAgreementUrl && (

@@ -41,6 +41,8 @@
 	.checkout-submit-button .checkout-button {
 		width: auto;
 
+		background-color: var( --color-accent );
+
 		&:focus {
 			outline: var( --color-primary-light ) solid 2px;
 		}
