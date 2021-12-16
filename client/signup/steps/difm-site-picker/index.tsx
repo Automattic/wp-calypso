@@ -97,9 +97,9 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	};
 
 	if ( siteId ) {
-		const deleteDisabled = false;
-		// typeof confirmDomain !== 'string' ||
-		// confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;
+		const deleteDisabled =
+			typeof confirmDomain !== 'string' ||
+			confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;
 		const buttons = [
 			<Button onClick={ onCloseDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary scary disabled={ deleteDisabled } onClick={ onConfirmDelete }>
