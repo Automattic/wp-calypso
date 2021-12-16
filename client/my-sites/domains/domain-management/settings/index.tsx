@@ -63,8 +63,8 @@ const Settings = ( {
 		if ( domain.type === domainTypes.REGISTERED ) {
 			return (
 				<Accordion
-					title={ translate( 'Details' ) }
-					subtitle={ translate( 'Registration and auto-renew' ) }
+					title={ translate( 'Details', { textOnly: true } ) }
+					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
 					expanded
 				>
 					<RegisteredDomainDetails
@@ -78,8 +78,8 @@ const Settings = ( {
 		} else if ( domain.type === domainTypes.MAPPED ) {
 			return (
 				<Accordion
-					title={ translate( 'Details' ) }
-					subtitle={ translate( 'Domain connection details' ) }
+					title={ translate( 'Details', { textOnly: true } ) }
+					subtitle={ translate( 'Domain connection details', { textOnly: true } ) }
 					expanded
 				>
 					<ConnectedDomainDetails
