@@ -247,10 +247,6 @@ export function getImporters( params = {} ) {
 	return importers;
 }
 
-export function getFileImporters( params = {} ) {
-	return filter( getImporters( params ), ( importer ) => importer.type === 'file' );
-}
-
 export function getImporterByKey( key, params = {} ) {
 	return filter( getImporters( params ), ( importer ) => importer.key === key )[ 0 ];
 }
