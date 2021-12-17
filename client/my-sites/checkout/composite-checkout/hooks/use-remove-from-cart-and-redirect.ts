@@ -29,6 +29,7 @@ export default function useRemoveFromCartAndRedirect(
 			createUserAndSiteBeforeTransaction,
 			previousPath,
 			dispatch,
+			tracksEvent: 'calypso_masterbar_close_clicked',
 		} );
 	}, [
 		createUserAndSiteBeforeTransaction,

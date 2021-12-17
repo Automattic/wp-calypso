@@ -34,7 +34,13 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const closeAndLeave = () =>
-		leaveCheckout( { siteSlug, jetpackCheckoutBackUrl, previousPath, dispatch } );
+		leaveCheckout( {
+			siteSlug,
+			jetpackCheckoutBackUrl,
+			previousPath,
+			dispatch,
+			tracksEvent: 'calypso_masterbar_close_clicked',
+		} );
 
 	const clickClose = () => {
 		if ( responseCart.products.length > 0 ) {
