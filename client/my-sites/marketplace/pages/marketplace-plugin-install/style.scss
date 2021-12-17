@@ -33,3 +33,25 @@ body.is-section-marketplace.theme-default.color-scheme {
 		max-width: 509px;
 	}
 }
+
+.marketplace-plugin-install__direct-install-container {
+	margin-top: 0;
+	padding-top: 0;
+
+	.empty-content__title {
+		margin-bottom: 30px;
+	}
+
+	.empty-content__line {
+		margin-bottom: 20px;
+	}
+
+	.marketplace-plugin-install__direct-install-actions {
+		display: flex;
+		justify-content: center;
+
+		.button.is-primary {
+			margin-left: 10px;
+		}
+	}
+}

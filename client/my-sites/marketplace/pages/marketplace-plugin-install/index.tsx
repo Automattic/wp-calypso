@@ -1,4 +1,5 @@
 import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -52,6 +53,7 @@ const MarketplacePluginInstall = ( {
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
 	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
 	const [ noDirectAccessError, setNoDirectAccessError ] = useState( false );
+	const [ directInstallationAllowed, setDirectInstallationAllowed ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -153,7 +155,7 @@ const MarketplacePluginInstall = ( {
 	// Installing plugin flow startup
 	useEffect( () => {
 		if (
-			marketplacePluginInstallationInProgress &&
+			( marketplacePluginInstallationInProgress || directInstallationAllowed ) &&
 			! isUploadFlow &&
 			! initializeInstallFlow &&
 			wporgPlugin &&
@@ -179,6 +181,7 @@ const MarketplacePluginInstall = ( {
 		}
 	}, [
 		marketplacePluginInstallationInProgress,
+		directInstallationAllowed,
 		isUploadFlow,
 		initializeInstallFlow,
 		selectedSite,
@@ -251,7 +254,7 @@ const MarketplacePluginInstall = ( {
 				/>
 			);
 		}
-		if ( isUploadFlow && noDirectAccessError ) {
+		if ( isUploadFlow && noDirectAccessError && ! directInstallationAllowed ) {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
@@ -264,17 +267,26 @@ const MarketplacePluginInstall = ( {
 				/>
 			);
 		}
-		if ( noDirectAccessError ) {
+		if ( noDirectAccessError && ! directInstallationAllowed ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
-					title={ null }
-					line={ translate(
-						'This URL should not be accessed directly. Please click the Install button on the plugin page.'
-					) }
-					action={ translate( 'Go to the plugin page' ) }
-					actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
-				/>
+					className="marketplace-plugin-install__direct-install-container"
+					illustration={ wporgPlugin?.icon || '/calypso/images/illustrations/error.svg' }
+					illustrationWidth={ wporgPlugin?.icon && 128 }
+					title={ wporgPlugin?.name || productSlug }
+					line={ translate( 'Do you want to install the plugin %(plugin)s?', {
+						args: { plugin: wporgPlugin?.name || productSlug },
+					} ) }
+				>
+					<div className="marketplace-plugin-install__direct-install-actions">
+						<Button href={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }>
+							{ translate( 'Go to the plugin page' ) }
+						</Button>
+						<Button primary onClick={ () => setDirectInstallationAllowed( true ) }>
+							{ translate( 'Install plugin' ) }
+						</Button>
+					</div>
+				</EmptyContent>
 			);
 		}
 		if ( pluginExists ) {
