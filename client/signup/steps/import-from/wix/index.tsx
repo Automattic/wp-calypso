@@ -2,10 +2,12 @@ import { ProgressBar } from '@automattic/components';
 import { Progress, Title, SubTitle, Hooray } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import page from 'page';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
+import { getStepUrl } from 'calypso/signup/utils';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
@@ -34,12 +36,19 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Effects
 	 */
+	useEffect( handleImporterReadiness, [] );
 	useEffect( handleRunFlagChange, [ run ] );
 	useEffect( handleJobStateTransition, [ job ] );
 
 	/**
 	 ↓ Methods
 	 */
+	function handleImporterReadiness() {
+		if ( ! checkIsImporterReady() ) {
+			redirectToImportCapturePage();
+		}
+	}
+
 	function handleJobStateTransition() {
 		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
@@ -52,11 +61,14 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function handleRunFlagChange() {
-		if ( ! run || ! job ) return;
+		if ( ! run ) return;
 
-		// the run flag means to start a new job, but previously reset existing finished jobs
-		if ( job.importerState === appStates.IMPORT_SUCCESS ) {
-			resetImport( siteId, job?.importerId );
+		switch ( job?.importerState ) {
+			case appStates.IMPORT_SUCCESS:
+			case appStates.EXPIRED:
+				// the run flag means to start a new job,
+				// but previously reset existing finished jobs
+				return resetImport( siteId, job?.importerId );
 		}
 	}
 
@@ -74,11 +86,19 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
+	function redirectToImportCapturePage() {
+		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
+	}
+
 	function checkLoading() {
 		return (
 			job?.importerState === appStates.READY_FOR_UPLOAD ||
 			job?.importerState === appStates.UPLOAD_SUCCESS
 		);
+	}
+
+	function checkIsImporterReady() {
+		return job || run;
 	}
 
 	function checkProgress() {
