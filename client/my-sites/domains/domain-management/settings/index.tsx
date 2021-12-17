@@ -76,7 +76,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title={ translate( 'Domain security' ) }
+				title={ translate( 'Domain security', { textOnly: true } ) }
 				subtitle={ getSslReadableStatus( domain ) }
 				key="security"
 			>
@@ -86,9 +86,8 @@ const Settings = ( {
 	};
 
 	const renderDetailsSection = () => {
-		const accordions: JSX.Element[] = [];
 		if ( domain.type === domainTypes.REGISTERED ) {
-			accordions.push(
+			return (
 				<Accordion
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
@@ -104,7 +103,7 @@ const Settings = ( {
 				</Accordion>
 			);
 		} else if ( domain.type === domainTypes.MAPPED ) {
-			accordions.push(
+			return (
 				<Accordion
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Domain connection details', { textOnly: true } ) }
@@ -120,17 +119,14 @@ const Settings = ( {
 				</Accordion>
 			);
 		}
-
-		const securityAccordion = renderSecurityAccordion();
-		if ( securityAccordion ) {
-			accordions.push( securityAccordion );
-		}
-
-		return accordions;
 	};
 
 	const renderSetAsPrimaryDomainSection = () => {
-		return <SetAsPrimary domain={ domain } selectedSite={ selectedSite } />;
+		return <SetAsPrimary domain={ domain } selectedSite={ selectedSite } key="set-as-primary" />;
+	};
+
+	const renderDomainSecuritySection = () => {
+		return renderSecurityAccordion();
 	};
 
 	const renderMainContent = () => {
@@ -139,6 +135,7 @@ const Settings = ( {
 			<>
 				{ renderDetailsSection() }
 				{ renderSetAsPrimaryDomainSection() }
+				{ renderDomainSecuritySection() }
 			</>
 		);
 	};
