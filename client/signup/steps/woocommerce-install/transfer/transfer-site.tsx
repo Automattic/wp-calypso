@@ -2,14 +2,13 @@ import page from 'page';
 import { ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
-import { requestAtomicSoftwareStatus } from 'calypso/state/atomic/software/actions';
-import { getAtomicSoftwareStatus } from 'calypso/state/atomic/software/selectors';
+import { getSoftwareStatus, fetchSoftwareStatus } from 'calypso/state/atomic-v2/software';
 import {
-	initiateAtomicTransfer,
-	requestLatestAtomicTransfer,
-} from 'calypso/state/atomic/transfers/actions';
-import { transferStates } from 'calypso/state/atomic/transfers/constants';
-import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
+	getLatestTransfer,
+	initiateTransfer,
+	fetchLatestTransfer,
+	transferStates,
+} from 'calypso/state/atomic-v2/transfers';
 import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
@@ -24,12 +23,10 @@ export default function TransferSite(): ReactElement | null {
 
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+	const transfer = useSelector( ( state ) => getLatestTransfer( state, siteId ) );
 	const transferStatus = transfer?.status;
 	const transferFailed = !! transfer?.error;
-	const software = useSelector( ( state ) =>
-		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
-	);
+	const software = useSelector( ( state ) => getSoftwareStatus( state, siteId, 'woo-on-plans' ) );
 	const softwareApplied = software?.applied;
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
@@ -38,13 +35,13 @@ export default function TransferSite(): ReactElement | null {
 		if ( ! siteId ) {
 			return;
 		}
-		dispatch( initiateAtomicTransfer( siteId, { softwareSet: 'woo-on-plans' } ) );
+		dispatch( initiateTransfer( siteId, { softwareSet: 'woo-on-plans' } ) );
 	}, [ dispatch, siteId ] );
 
 	// Poll for transfer status
 	useInterval(
 		() => {
-			dispatch( requestLatestAtomicTransfer( siteId ) );
+			dispatch( fetchLatestTransfer( siteId ) );
 		},
 		transferStatus === transferStates.COMPLETED ? null : 3000
 	);
@@ -52,7 +49,7 @@ export default function TransferSite(): ReactElement | null {
 	// Poll for software status
 	useInterval(
 		() => {
-			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
+			dispatch( fetchSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		softwareApplied ? null : 3000
 	);
