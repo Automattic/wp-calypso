@@ -1,6 +1,6 @@
 import * as BrowserHelper from './browser-helper';
 import * as BrowserManager from './browser-manager';
-import * as dataHelper from './data-helper.js';
+import * as DataHelper from './data-helper';
 import * as ElementHelper from './element-helper';
 import * as TestEnvironment from './environment';
 import * as MediaHelper from './media-helper';
