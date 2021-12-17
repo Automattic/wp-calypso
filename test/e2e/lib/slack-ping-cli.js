@@ -1,4 +1,4 @@
-import * as slackNotifier from './slack-notifier';
+import * as slackNotifier from './slack-notifier.js';
 
 if ( process.argv.length !== 3 ) {
 	console.log( `Usage: babel-node --presets es2015 ${ process.argv[ 1 ] }` );

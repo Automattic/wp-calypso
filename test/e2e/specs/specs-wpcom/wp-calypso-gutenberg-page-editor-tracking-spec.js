@@ -5,10 +5,10 @@ import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
-import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component.js';
 import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests.js';
 import { clearEventsStack, getEventsStack } from '../../lib/gutenberg/tracking/utils.js';
-import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar';
+import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

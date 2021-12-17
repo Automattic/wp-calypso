@@ -1,7 +1,7 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
+import AsyncBaseContainer from '../async-base-container.js';
 import * as driverHelper from '../driver-helper.js';
-import * as slackNotifier from '../slack-notifier';
+import * as slackNotifier from '../slack-notifier.js';
 
 const searchInputLocator = By.className( 'search-component__input' );
 

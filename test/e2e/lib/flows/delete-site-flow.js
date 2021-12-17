@@ -1,6 +1,6 @@
-import * as dataHelper from '../data-helper';
-import SettingsPage from '../pages/settings-page';
-import * as SlackNotifier from '../slack-notifier';
+import * as dataHelper from '../data-helper.js';
+import SettingsPage from '../pages/settings-page.js';
+import * as SlackNotifier from '../slack-notifier.js';
 
 export default class DeleteSiteFlow {
 	constructor( driver ) {

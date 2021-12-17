@@ -1,13 +1,13 @@
-import { kebabCase } from 'lodash';
+import { kebabCase } from 'lodash-es';
 import webdriver, { By } from 'selenium-webdriver';
-import AbstractEditorComponent from '../components/abstract-editor-component';
+import AbstractEditorComponent from '../components/abstract-editor-component.js';
 import GuideComponent from '../components/guide-component.js';
-import * as driverHelper from '../driver-helper';
+import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager.js';
-import { ContactFormBlockComponent } from './blocks';
-import { FileBlockComponent } from './blocks/file-block-component';
-import { ImageBlockComponent } from './blocks/image-block-component';
-import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
+import { FileBlockComponent } from './blocks/file-block-component.js';
+import { ImageBlockComponent } from './blocks/image-block-component.js';
+import { ContactFormBlockComponent } from './blocks/index.js';
+import { ShortcodeBlockComponent } from './blocks/shortcode-block-component.js';
 
 export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	constructor( driver, url, editorType = 'iframe' ) {

@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
-import localizationData from '../../localization-data.json';
-import AsyncBaseContainer from '../async-base-container';
+import localizationData from '../../localization-data.json.js';
+import AsyncBaseContainer from '../async-base-container.js';
 
 export default class WPHomePage extends AsyncBaseContainer {
 	constructor( driver, url = 'https://wordpress.com/' ) {

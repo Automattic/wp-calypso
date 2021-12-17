@@ -1,17 +1,17 @@
 import NavBarComponent from '../components/nav-bar-component.js';
 import SidebarComponent from '../components/sidebar-component.js';
-import * as dataHelper from '../data-helper';
-import * as driverHelper from '../driver-helper';
-import * as driverManager from '../driver-manager';
-import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
-import * as loginCookieHelper from '../login-cookie-helper';
-import CustomerHome from '../pages/customer-home-page';
-import EditorPage from '../pages/editor-page';
+import * as dataHelper from '../data-helper.js';
+import * as driverHelper from '../driver-helper.js';
+import * as driverManager from '../driver-manager.js';
+import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component.js';
+import * as loginCookieHelper from '../login-cookie-helper.js';
+import CustomerHome from '../pages/customer-home-page.js';
+import EditorPage from '../pages/editor-page.js';
 import LoginPage from '../pages/login-page.js';
-import PagesPage from '../pages/pages-page';
-import PluginsBrowserPage from '../pages/plugins-browser-page';
+import PagesPage from '../pages/pages-page.js';
+import PluginsBrowserPage from '../pages/plugins-browser-page.js';
 import ReaderPage from '../pages/reader-page.js';
-import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
+import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page.js';
 
 const host = dataHelper.getJetpackHost();
 

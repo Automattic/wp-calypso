@@ -6,6 +6,7 @@
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"private": true,
+	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",

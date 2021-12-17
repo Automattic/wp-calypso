@@ -1,6 +1,6 @@
-import FindADomainComponent from '../components/find-a-domain-component';
-import MyHomePage from '../pages/my-home-page';
-import PickAPlanPage from '../pages/signup/pick-a-plan-page';
+import FindADomainComponent from '../components/find-a-domain-component.js';
+import MyHomePage from '../pages/my-home-page.js';
+import PickAPlanPage from '../pages/signup/pick-a-plan-page.js';
 
 export default class LaunchSiteFlow {
 	constructor( driver ) {

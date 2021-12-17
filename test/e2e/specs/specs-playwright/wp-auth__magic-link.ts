@@ -4,7 +4,7 @@
 
 import { setupHooks, DataHelper, EmailClient, LoginPage } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
-import type { Message } from 'mailosaur/lib/models';
+import type { Message } from 'mailosaur/lib/models.js';
 
 describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function () {
 	const inboxId = DataHelper.config.get( 'defaultUserInboxId' ) as string;

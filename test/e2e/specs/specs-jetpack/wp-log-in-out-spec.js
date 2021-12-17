@@ -1,12 +1,12 @@
 import config from 'config';
-import LoggedOutMasterbarComponent from '../../lib/components/logged-out-masterbar-component';
+import LoggedOutMasterbarComponent from '../../lib/components/logged-out-masterbar-component.js';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
-import * as dataHelper from '../../lib/data-helper';
+import * as dataHelper from '../../lib/data-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
-import LoginFlow from '../../lib/flows/login-flow';
-import ProfilePage from '../../lib/pages/profile-page';
-import ReaderPage from '../../lib/pages/reader-page';
-import StatsPage from '../../lib/pages/stats-page';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import ProfilePage from '../../lib/pages/profile-page.js';
+import ReaderPage from '../../lib/pages/reader-page.js';
+import StatsPage from '../../lib/pages/stats-page.js';
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );

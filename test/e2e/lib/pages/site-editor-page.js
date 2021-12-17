@@ -1,6 +1,6 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import * as dataHelper from '../data-helper';
+import AsyncBaseContainer from '../async-base-container.js';
+import * as dataHelper from '../data-helper.js';
 
 export default class SiteEditorPage extends AsyncBaseContainer {
 	constructor( driver, url ) {

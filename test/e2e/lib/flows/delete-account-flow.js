@@ -1,7 +1,7 @@
-import LoggedOutMasterbarComponent from '../components/logged-out-masterbar-component';
-import AccountSettingsPage from '../pages/account/account-settings-page';
-import CloseAccountPage from '../pages/account/close-account-page';
-import * as SlackNotifier from '../slack-notifier';
+import LoggedOutMasterbarComponent from '../components/logged-out-masterbar-component.js';
+import AccountSettingsPage from '../pages/account/account-settings-page.js';
+import CloseAccountPage from '../pages/account/close-account-page.js';
+import * as SlackNotifier from '../slack-notifier.js';
 
 export default class DeleteAccountFlow {
 	constructor( driver ) {

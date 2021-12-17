@@ -1,6 +1,5 @@
 bail: true
 require:
-  - 'esm'
   - 'lib/hooks-playwright/index.ts'
 file:
   - 'lib/before.js'

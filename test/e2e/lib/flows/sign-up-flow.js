@@ -1,11 +1,11 @@
 import config from 'config';
-import * as dataHelper from '../data-helper';
-import * as driverManager from '../driver-manager';
-import EmailClient from '../email-client';
-import ReaderPage from '../pages/reader-page';
-import CreateYourAccountPage from '../pages/signup/create-your-account-page';
-import SignupProcessingPage from '../pages/signup/signup-processing-page';
-import StartPage from '../pages/signup/start-page';
+import * as dataHelper from '../data-helper.js';
+import * as driverManager from '../driver-manager.js';
+import EmailClient from '../email-client.js';
+import ReaderPage from '../pages/reader-page.js';
+import CreateYourAccountPage from '../pages/signup/create-your-account-page.js';
+import SignupProcessingPage from '../pages/signup/signup-processing-page.js';
+import StartPage from '../pages/signup/start-page.js';
 
 const signupInboxId = config.get( 'signupInboxId' );
 

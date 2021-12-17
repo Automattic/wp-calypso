@@ -1,18 +1,18 @@
 import config from 'config';
-import SidebarComponent from '../components/sidebar-component';
-import * as dataHelper from '../data-helper';
-import * as driverHelper from '../driver-helper';
-import * as driverManager from '../driver-manager';
-import JetpackAuthorizePage from '../pages/jetpack-authorize-page';
-import PickAPlanPage from '../pages/signup/pick-a-plan-page';
-import WPAdminInPlaceApprovePage from '../pages/wp-admin/wp-admin-in-place-approve-page';
-import WPAdminInPlacePlansPage from '../pages/wp-admin/wp-admin-in-place-plans-page';
+import SidebarComponent from '../components/sidebar-component.js';
+import * as dataHelper from '../data-helper.js';
+import * as driverHelper from '../driver-helper.js';
+import * as driverManager from '../driver-manager.js';
+import JetpackAuthorizePage from '../pages/jetpack-authorize-page.js';
+import PickAPlanPage from '../pages/signup/pick-a-plan-page.js';
+import WPAdminInPlaceApprovePage from '../pages/wp-admin/wp-admin-in-place-approve-page.js';
+import WPAdminInPlacePlansPage from '../pages/wp-admin/wp-admin-in-place-plans-page.js';
 import WPAdminJetpackPage from '../pages/wp-admin/wp-admin-jetpack-page.js';
-import WPAdminLogonPage from '../pages/wp-admin/wp-admin-logon-page';
+import WPAdminLogonPage from '../pages/wp-admin/wp-admin-logon-page.js';
 import WPAdminSidebar from '../pages/wp-admin/wp-admin-sidebar.js';
-import WporgCreatorPage from '../pages/wporg-creator-page';
-import LoginFlow from './login-flow';
-// import NoticesComponent from '../components/notices-component';
+import WporgCreatorPage from '../pages/wporg-creator-page.js';
+import LoginFlow from './login-flow.js';
+// import NoticesComponent from '../components/notices-component.js';
 
 export default class JetpackConnectFlow {
 	constructor( driver, account, template ) {

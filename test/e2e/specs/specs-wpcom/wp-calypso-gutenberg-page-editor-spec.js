@@ -1,14 +1,14 @@
 import assert from 'assert';
 import config from 'config';
 import * as dataHelper from '../../lib/data-helper.js';
-import * as driverHelper from '../../lib/driver-helper';
+import * as driverHelper from '../../lib/driver-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
-import SimplePaymentsBlockComponent from '../../lib/gutenberg/blocks/payment-block-component';
-import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
-import GutenbergEditorSidebarComponent from '../../lib/gutenberg/gutenberg-editor-sidebar-component';
+import SimplePaymentsBlockComponent from '../../lib/gutenberg/blocks/payment-block-component.js';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component.js';
+import GutenbergEditorSidebarComponent from '../../lib/gutenberg/gutenberg-editor-sidebar-component.js';
 import * as mediaHelper from '../../lib/media-helper.js';
-import PaypalCheckoutPage from '../../lib/pages/external/paypal-checkout-page';
+import PaypalCheckoutPage from '../../lib/pages/external/paypal-checkout-page.js';
 import NotFoundPage from '../../lib/pages/not-found-page.js';
 import ViewPagePage from '../../lib/pages/view-page-page.js';
 

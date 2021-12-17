@@ -1,6 +1,6 @@
 import config from 'config';
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
+import AsyncBaseContainer from '../async-base-container.js';
 
 export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
 	constructor( driver ) {

@@ -1,7 +1,7 @@
 import config from 'config';
 import { By } from 'selenium-webdriver';
-import * as driverHelper from '../driver-helper';
-import WPAdminLogonPage from '../pages/wp-admin/wp-admin-logon-page';
+import * as driverHelper from '../driver-helper.js';
+import WPAdminLogonPage from '../pages/wp-admin/wp-admin-logon-page.js';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 

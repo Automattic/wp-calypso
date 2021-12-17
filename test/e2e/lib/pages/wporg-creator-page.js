@@ -1,8 +1,8 @@
 import config from 'config';
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import * as dataHelper from '../data-helper';
-import * as driverHelper from '../driver-helper';
+import AsyncBaseContainer from '../async-base-container.js';
+import * as dataHelper from '../data-helper.js';
+import * as driverHelper from '../driver-helper.js';
 
 const host = dataHelper.getJetpackHost();
 const jurassicNinjaCreateURL = 'http://jurassic.ninja/create';

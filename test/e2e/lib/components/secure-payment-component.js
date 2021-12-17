@@ -1,9 +1,9 @@
 import config from 'config';
 import { By, promise } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import { getJetpackHost } from '../data-helper';
+import AsyncBaseContainer from '../async-base-container.js';
+import { getJetpackHost } from '../data-helper.js';
 import * as driverHelper from '../driver-helper.js';
-import { currentScreenSize } from '../driver-manager';
+import { currentScreenSize } from '../driver-manager.js';
 
 export default class SecurePaymentComponent extends AsyncBaseContainer {
 	constructor( driver ) {

@@ -9,8 +9,8 @@ import {
 	WebElement,
 	WebElementCondition,
 } from 'selenium-webdriver';
-import * as dataHelper from './data-helper';
-import * as driverManager from './driver-manager';
+import * as dataHelper from './data-helper.js';
+import * as driverManager from './driver-manager.js';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 

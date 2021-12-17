@@ -1,7 +1,7 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import NoticesComponent from '../components/notices-component';
-import SectionNavComponent from '../components/section-nav-component';
+import AsyncBaseContainer from '../async-base-container.js';
+import NoticesComponent from '../components/notices-component.js';
+import SectionNavComponent from '../components/section-nav-component.js';
 import * as driverHelper from '../driver-helper.js';
 import DisconnectSurveyPage from './disconnect-survey-page.js';
 

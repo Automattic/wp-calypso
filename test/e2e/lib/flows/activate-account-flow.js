@@ -1,5 +1,5 @@
 import config from 'config';
-import EmailClient from '../email-client';
+import EmailClient from '../email-client.js';
 
 const signupInboxId = config.get( 'signupInboxId' );
 

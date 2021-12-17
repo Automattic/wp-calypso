@@ -1,9 +1,9 @@
 import assert from 'assert';
 import config from 'config';
-import { getJetpackHost } from '../../lib/data-helper';
-import * as driverManager from '../../lib/driver-manager';
-import LoginFlow from '../../lib/flows/login-flow';
-import PluginsBrowserPage from '../../lib/pages/plugins-browser-page';
+import { getJetpackHost } from '../../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import PluginsBrowserPage from '../../lib/pages/plugins-browser-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

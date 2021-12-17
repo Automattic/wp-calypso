@@ -1,9 +1,9 @@
 import config from 'config';
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../../async-base-container';
+import AsyncBaseContainer from '../../async-base-container.js';
 import { getJetpackHost } from '../../data-helper.js';
 import * as driverHelper from '../../driver-helper.js';
-import * as driverManager from '../../driver-manager';
+import * as driverManager from '../../driver-manager.js';
 
 export default class PickAPlanPage extends AsyncBaseContainer {
 	constructor( driver ) {

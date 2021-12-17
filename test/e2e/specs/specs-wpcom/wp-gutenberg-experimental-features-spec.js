@@ -1,7 +1,7 @@
 import assert from 'assert';
 import config from 'config';
-import * as dataHelper from '../../lib/data-helper';
-import * as driverManager from '../../lib/driver-manager';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );

@@ -1,15 +1,15 @@
 import { getChromeVersion } from '@testim/chrome-version';
 import chromedriver from 'chromedriver';
 import config from 'config';
-import { times } from 'lodash';
+import { times } from 'lodash-es';
 import SauceLabs from 'saucelabs';
 import webdriver from 'selenium-webdriver';
-import chrome from 'selenium-webdriver/chrome';
-import firefox from 'selenium-webdriver/firefox';
-import proxy from 'selenium-webdriver/proxy';
-import * as remote from 'selenium-webdriver/remote';
-import * as dataHelper from './data-helper';
-import { generatePath } from './test-utils';
+import chrome from 'selenium-webdriver/chrome.js';
+import firefox from 'selenium-webdriver/firefox.js';
+import proxy from 'selenium-webdriver/proxy.js';
+import * as remote from 'selenium-webdriver/remote/index.js';
+import * as dataHelper from './data-helper.js';
+import { generatePath } from './test-utils.js';
 
 const webDriverImplicitTimeOutMS = 2000;
 const webDriverPageLoadTimeOutMS = 60000;

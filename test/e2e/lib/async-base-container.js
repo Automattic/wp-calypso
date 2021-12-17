@@ -1,6 +1,6 @@
 import config from 'config';
-import * as driverHelper from './driver-helper';
-import * as driverManager from './driver-manager';
+import * as driverHelper from './driver-helper.js';
+import * as driverManager from './driver-manager.js';
 
 export default class AsyncBaseContainer {
 	constructor(

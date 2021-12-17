@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
+import AsyncBaseContainer from '../async-base-container.js';
 import * as driverHelper from '../driver-helper.js';
 
 const searchInputLocators = By.css(

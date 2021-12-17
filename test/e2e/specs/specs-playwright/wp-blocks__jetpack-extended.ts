@@ -3,7 +3,7 @@
  */
 
 import { InstagramBlockFlow, TwitterBlockFlow, BlockFlow } from '@automattic/calypso-e2e';
-import { createBlockTests } from './shared-specs/block-testing';
+import { createBlockTests } from './shared-specs/block-testing.js';
 
 const blockFlows: BlockFlow[] = [
 	new InstagramBlockFlow( {

@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-const JestEnvironmentNode = require( 'jest-environment-node' );
+import JestEnvironmentNode from 'jest-environment-node';
 
 class JestEnvironmentE2E extends JestEnvironmentNode {
 	testFailed = false;
@@ -70,4 +70,4 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 	}
 }
 
-module.exports = JestEnvironmentE2E;
+export default JestEnvironmentE2E;

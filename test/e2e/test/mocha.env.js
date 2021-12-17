@@ -1,4 +1,7 @@
-const execa = require( 'execa' );
+import { createRequire } from 'module';
+import execa from 'execa';
+
+const require = createRequire( import.meta.url );
 
 process.env.SELENIUM_PROMISE_MANAGER = '0';
 

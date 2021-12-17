@@ -1,8 +1,8 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import * as dataHelper from '../data-helper';
-import * as driverHelper from '../driver-helper';
-import * as driverManager from '../driver-manager';
+import AsyncBaseContainer from '../async-base-container.js';
+import * as dataHelper from '../data-helper.js';
+import * as driverHelper from '../driver-helper.js';
+import * as driverManager from '../driver-manager.js';
 
 export default class StatsPage extends AsyncBaseContainer {
 	constructor( driver, url = dataHelper.getCalypsoURL( 'stats/day' ) ) {

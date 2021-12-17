@@ -1,6 +1,6 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import NoticesComponent from '../components/notices-component';
+import AsyncBaseContainer from '../async-base-container.js';
+import NoticesComponent from '../components/notices-component.js';
 import * as driverHelper from '../driver-helper.js';
 
 export default class CancelDomainPage extends AsyncBaseContainer {

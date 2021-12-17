@@ -1,6 +1,6 @@
 import config from 'config';
-import { buildHooks as buildFramebufferHooks, getFreeDisplay } from './framebuffer';
-import { buildHooks as buildVideoHooks } from './video-recorder';
+import { buildHooks as buildFramebufferHooks, getFreeDisplay } from './framebuffer.js';
+import { buildHooks as buildVideoHooks } from './video-recorder.js';
 
 export const isVideoEnabled = () => {
 	const video = config.has( 'useTestVideo' )

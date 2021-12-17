@@ -1,9 +1,9 @@
 import { By, Key } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
+import AsyncBaseContainer from '../async-base-container.js';
 import * as driverHelper from '../driver-helper.js';
-import * as driverManager from '../driver-manager';
-import PostsPage from '../pages/posts-page';
-import GutenbergEditorComponent from './gutenberg-editor-component';
+import * as driverManager from '../driver-manager.js';
+import PostsPage from '../pages/posts-page.js';
+import GutenbergEditorComponent from './gutenberg-editor-component.js';
 
 export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {

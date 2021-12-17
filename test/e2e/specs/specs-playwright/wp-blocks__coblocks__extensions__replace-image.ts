@@ -14,7 +14,7 @@ import {
 	NewPostFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
-import { TEST_IMAGE_PATH } from '../constants';
+import { TEST_IMAGE_PATH } from '../constants.js';
 
 let user: string;
 if ( BrowserHelper.targetCoBlocksEdge() ) {

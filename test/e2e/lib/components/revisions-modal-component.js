@@ -1,6 +1,6 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import * as driverHelper from '../driver-helper';
+import AsyncBaseContainer from '../async-base-container.js';
+import * as driverHelper from '../driver-helper.js';
 
 export default class RevisionsModalComponent extends AsyncBaseContainer {
 	constructor( driver ) {

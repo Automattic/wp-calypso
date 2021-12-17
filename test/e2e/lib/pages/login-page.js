@@ -1,9 +1,9 @@
 import { By, Key } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import * as dataHelper from '../data-helper';
+import AsyncBaseContainer from '../async-base-container.js';
+import * as dataHelper from '../data-helper.js';
 import * as driverHelper from '../driver-helper.js';
-import * as driverManager from '../driver-manager';
-import * as SlackNotifier from '../slack-notifier';
+import * as driverManager from '../driver-manager.js';
+import * as SlackNotifier from '../slack-notifier.js';
 
 // This is the Calypso WordPress.com login page
 // For the wp-admin login page see /wp-admin/wp-admin-logon-page

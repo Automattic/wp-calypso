@@ -1,7 +1,7 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../../async-base-container';
-import * as driverHelper from '../../driver-helper';
-import PressableSiteSettingsPage from './pressable-site-settings-page';
+import AsyncBaseContainer from '../../async-base-container.js';
+import * as driverHelper from '../../driver-helper.js';
+import PressableSiteSettingsPage from './pressable-site-settings-page.js';
 
 export default class PressableSitesPage extends AsyncBaseContainer {
 	constructor( driver, url = 'https://my.pressable.com/sites' ) {

@@ -16,7 +16,7 @@ import {
 	TestFile,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
-import { TEST_IMAGE_PATH, TEST_AUDIO_PATH } from '../constants';
+import { TEST_IMAGE_PATH, TEST_AUDIO_PATH } from '../constants.js';
 
 describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	let gutenbergEditorPage: GutenbergEditorPage;

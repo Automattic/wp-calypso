@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import { accessSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
-import { getTestNameWithTime } from '../../test-utils';
+import { getTestNameWithTime } from '../../test-utils.js';
 
 export const getFreeDisplay = () => {
 	while ( true ) {

@@ -1,5 +1,5 @@
-import { createBrowser, closeBrowser } from './browser';
-import { saveBrowserLogs } from './browser-logs';
+import { saveBrowserLogs } from './browser-logs.js';
+import { createBrowser, closeBrowser } from './browser.js';
 
 export const buildHooks = () => {
 	let driver;

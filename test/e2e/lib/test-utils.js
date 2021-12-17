@@ -1,4 +1,7 @@
 import path from 'path';
+import { URL } from 'url';
+
+const __dirname = new URL( '.', import.meta.url ).pathname;
 
 const BASE_PATH = process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' );
 

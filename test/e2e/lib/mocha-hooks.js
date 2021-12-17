@@ -2,7 +2,7 @@
 
 import assert from 'assert';
 import config from 'config';
-import * as driverManager from './driver-manager';
+import * as driverManager from './driver-manager.js';
 
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 

@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
-import SiteEditorComponent from '../../components/site-editor-component';
-import * as driverHelper from '../../driver-helper';
-import GutenbergEditorComponent from '../gutenberg-editor-component';
-import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils';
+import SiteEditorComponent from '../../components/site-editor-component.js';
+import * as driverHelper from '../../driver-helper.js';
+import GutenbergEditorComponent from '../gutenberg-editor-component.js';
+import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils.js';
 
 // eslint-disable-next-line jest/no-export
 export function createGeneralTests( { it, editorType, postType, baseContext = undefined } ) {

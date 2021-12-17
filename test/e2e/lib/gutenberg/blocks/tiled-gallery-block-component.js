@@ -1,5 +1,5 @@
 import { By } from 'selenium-webdriver';
-import GutenbergBlockComponent from './gutenberg-block-component';
+import GutenbergBlockComponent from './gutenberg-block-component.js';
 
 class TiledGalleryBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Tiled Gallery';

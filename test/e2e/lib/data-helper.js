@@ -1,7 +1,7 @@
 import fs from 'fs';
 import phrase from 'asana-phrase';
 import config from 'config';
-import { difference, map } from 'lodash';
+import { difference, map } from 'lodash-es';
 
 String.prototype.toProperCase = function () {
 	return this.replace( /\w\S*/g, function ( txt ) {

@@ -1,7 +1,7 @@
 import { By } from 'selenium-webdriver';
-import * as driverHelper from '../../driver-helper';
-import { currentScreenSize } from '../../driver-manager';
-import GutenbergBlockComponent from './gutenberg-block-component';
+import * as driverHelper from '../../driver-helper.js';
+import { currentScreenSize } from '../../driver-manager.js';
+import GutenbergBlockComponent from './gutenberg-block-component.js';
 
 class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Layout Grid';

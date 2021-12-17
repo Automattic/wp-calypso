@@ -1,8 +1,8 @@
 import config from 'config';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
-import SiteEditorComponent from '../../lib/components/site-editor-component';
-import * as dataHelper from '../../lib/data-helper';
-import * as driverManager from '../../lib/driver-manager';
+import SiteEditorComponent from '../../lib/components/site-editor-component.js';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
 import SiteEditorPage from '../../lib/pages/site-editor-page.js';
 

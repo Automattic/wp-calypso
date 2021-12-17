@@ -1,11 +1,11 @@
 import assert from 'assert';
 import config from 'config';
-import NoticesComponent from '../../lib/components/notices-component';
-import { getJetpackHost } from '../../lib/data-helper';
-import * as driverManager from '../../lib/driver-manager';
-import LoginFlow from '../../lib/flows/login-flow';
-import PluginDetailsPage from '../../lib/pages/plugin-details-page';
-import PluginsPage from '../../lib/pages/plugins-page';
+import NoticesComponent from '../../lib/components/notices-component.js';
+import { getJetpackHost } from '../../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import PluginDetailsPage from '../../lib/pages/plugin-details-page.js';
+import PluginsPage from '../../lib/pages/plugins-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

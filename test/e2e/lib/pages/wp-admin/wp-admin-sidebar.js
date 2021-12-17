@@ -1,7 +1,7 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../../async-base-container';
-import * as driverHelper from '../../driver-helper';
-import * as driverManager from '../../driver-manager';
+import AsyncBaseContainer from '../../async-base-container.js';
+import * as driverHelper from '../../driver-helper.js';
+import * as driverManager from '../../driver-manager.js';
 
 export default class WPAdminSidebar extends AsyncBaseContainer {
 	constructor( driver ) {

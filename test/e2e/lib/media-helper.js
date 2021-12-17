@@ -1,8 +1,11 @@
 import path from 'path';
 import { PassThrough } from 'stream';
+import { URL } from 'url';
 import fs from 'fs-extra';
 import pngitxt from 'png-itxt';
 import sanitize from 'sanitize-filename';
+
+const __dirname = new URL( '.', import.meta.url ).pathname;
 
 export function createFile( notRandom, uploadDirectoryName = 'image-uploads' ) {
 	let randomImageNumber = Math.floor( Math.random() * 2 );

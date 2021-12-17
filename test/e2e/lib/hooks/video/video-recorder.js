@@ -3,7 +3,7 @@ import { createWriteStream } from 'fs';
 import { rename, mkdir, unlink } from 'fs/promises';
 import path from 'path';
 import ffmpeg from 'ffmpeg-static';
-import { getTestNameWithTime } from '../../test-utils';
+import { getTestNameWithTime } from '../../test-utils.js';
 
 const kill = ( proc ) =>
 	new Promise( ( resolve ) => {

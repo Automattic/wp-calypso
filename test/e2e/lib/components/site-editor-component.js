@@ -1,8 +1,8 @@
 import { By } from 'selenium-webdriver';
-import * as driverHelper from '../driver-helper';
-import * as driverManager from '../driver-manager';
-import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
-import AbstractEditorComponent from './abstract-editor-component';
+import * as driverHelper from '../driver-helper.js';
+import * as driverManager from '../driver-manager.js';
+import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component.js';
+import AbstractEditorComponent from './abstract-editor-component.js';
 
 export default class SiteEditorComponent extends AbstractEditorComponent {
 	constructor( driver, url, editorType = 'iframe' ) {

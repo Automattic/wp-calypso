@@ -1,7 +1,7 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import PaymentButtonFrontEndComponent from '../components/payment-button-front-end-component';
-import * as driverHelper from '../driver-helper';
+import AsyncBaseContainer from '../async-base-container.js';
+import PaymentButtonFrontEndComponent from '../components/payment-button-front-end-component.js';
+import * as driverHelper from '../driver-helper.js';
 
 export default class ViewPostPage extends AsyncBaseContainer {
 	constructor( driver ) {

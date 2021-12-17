@@ -1,9 +1,9 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import SectionNavComponent from '../components/section-nav-component';
-import * as dataHelper from '../data-helper';
-import * as driverHelper from '../driver-helper';
-import { currentScreenSize } from '../driver-manager';
+import AsyncBaseContainer from '../async-base-container.js';
+import SectionNavComponent from '../components/section-nav-component.js';
+import * as dataHelper from '../data-helper.js';
+import * as driverHelper from '../driver-helper.js';
+import { currentScreenSize } from '../driver-manager.js';
 
 const host = dataHelper.getJetpackHost();
 

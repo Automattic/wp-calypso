@@ -1,7 +1,7 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
-import SectionNavComponent from '../components/section-nav-component';
-import * as driverHelper from '../driver-helper';
+import AsyncBaseContainer from '../async-base-container.js';
+import SectionNavComponent from '../components/section-nav-component.js';
+import * as driverHelper from '../driver-helper.js';
 
 export default class MyPlanPage extends AsyncBaseContainer {
 	constructor( driver ) {

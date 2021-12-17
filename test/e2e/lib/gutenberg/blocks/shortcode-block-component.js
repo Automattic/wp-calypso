@@ -1,6 +1,6 @@
 import { By } from 'selenium-webdriver';
-import * as driverHelper from '../../driver-helper';
-import GutenbergBlockComponent from './gutenberg-block-component';
+import * as driverHelper from '../../driver-helper.js';
+import GutenbergBlockComponent from './gutenberg-block-component.js';
 
 export class ShortcodeBlockComponent extends GutenbergBlockComponent {
 	async enterShortcode( shortcode ) {

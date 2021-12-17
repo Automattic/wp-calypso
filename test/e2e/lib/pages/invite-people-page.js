@@ -1,5 +1,5 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
+import AsyncBaseContainer from '../async-base-container.js';
 import NavBarComponent from '../components/nav-bar-component.js';
 import SidebarComponent from '../components/sidebar-component.js';
 import * as driverHelper from '../driver-helper.js';

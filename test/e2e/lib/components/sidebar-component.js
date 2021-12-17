@@ -1,9 +1,9 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
+import AsyncBaseContainer from '../async-base-container.js';
 // import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
-import * as dataHelper from '../data-helper';
+import * as dataHelper from '../data-helper.js';
 import * as driverHelper from '../driver-helper.js';
-import * as driverManager from '../driver-manager';
+import * as driverManager from '../driver-manager.js';
 
 const host = dataHelper.getJetpackHost();
 

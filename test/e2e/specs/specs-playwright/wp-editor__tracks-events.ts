@@ -10,7 +10,7 @@ import {
 	setupHooks,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
-import { getLatestEvent } from '../../lib/gutenberg/tracking/playwright-utils';
+import { getLatestEvent } from '../../lib/gutenberg/tracking/playwright-utils.js';
 
 describe( DataHelper.createSuiteTitle( `Tracks Events for Post Editor` ), function () {
 	let page: Page;

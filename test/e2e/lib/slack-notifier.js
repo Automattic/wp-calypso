@@ -1,7 +1,7 @@
 import config from 'config';
 import slack from 'slack-notify';
-import * as dataHelper from './data-helper';
-import * as driverManager from './driver-manager';
+import * as dataHelper from './data-helper.js';
+import * as driverManager from './driver-manager.js';
 
 const messages = [];
 

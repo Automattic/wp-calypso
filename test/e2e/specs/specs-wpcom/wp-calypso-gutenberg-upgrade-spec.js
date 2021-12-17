@@ -1,9 +1,9 @@
 import assert from 'assert';
 import config from 'config';
-import { times } from 'lodash';
+import { times } from 'lodash-es';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import * as dataHelper from '../../lib/data-helper.js';
-import * as driverHelper from '../../lib/driver-helper';
+import * as driverHelper from '../../lib/driver-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
 import {
@@ -19,10 +19,10 @@ import {
 	TiledGalleryBlockComponent,
 	YoutubeBlockComponent,
 	PremiumContentBlockComponent,
-} from '../../lib/gutenberg/blocks';
-import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
-import * as mediaHelper from '../../lib/media-helper';
-import ReaderPage from '../../lib/pages/reader-page';
+} from '../../lib/gutenberg/blocks/index.js';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component.js';
+import * as mediaHelper from '../../lib/media-helper.js';
+import ReaderPage from '../../lib/pages/reader-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

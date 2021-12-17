@@ -95,7 +95,7 @@ import { setupHooks, DataHelper, LoginPage } from '@automattic/calypso-e2e';
 
 3. Assign a test group.
 
-Specs are grouped into suites using [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups). **Specs must be explicitly added to suites to be run as part of CI pipelines.**  
+Specs are grouped into suites using [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups). **Specs must be explicitly added to suites to be run as part of CI pipelines.**
 To add your spec file to suites, add a JSDoc block at the top of the file, and use the `@group` tag. Multiple suites are supported.
 
 ```typescript
@@ -288,7 +288,7 @@ export class ExampleBlockFlow implements BlockFlow {
  */
 
 import { ExampleABlockFlow, ExampleBBlockFlow, BlockFlow } from '@automattic/calypso-e2e';
-import { createBlockTests } from './shared-specs/block-testing';
+import { createBlockTests } from './shared-specs/block-testing.js';
 
 const blockFlows: BlockFlow[] = [
 	new ExampleABlockFlow( {
