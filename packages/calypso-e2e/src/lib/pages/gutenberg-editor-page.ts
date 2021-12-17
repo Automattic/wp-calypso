@@ -80,7 +80,6 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		await this.forceDismissWelcomeTour();
 		const frame = await this.getEditorFrame();
 		// Traditionally we try to avoid waits not related to the current flow.
 		// However, we need a stable way to identify loading being done. NetworkIdle
