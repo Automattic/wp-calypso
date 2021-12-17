@@ -221,9 +221,9 @@ function has_legacy_FSE_template_edits( $blog_id ) {
 	$is_fse = has_blog_sticker( 'full-site-editing' );
 	$theme_slug = normalize_theme_slug( get_stylesheet() );
 
-	if ( ! $is_fse || ! in_array( $theme_slug, get_supported_themes() )) {
+	if ( ! $is_fse || ! in_array( $theme_slug, get_supported_themes() ) || ! $theme_slug || is_wp_error( $theme_slug ) ) {
 		restore_current_blog();
-		return 'not-fse';
+		return 'inconclusive';
 	}
 
 	dangerously_load_full_site_editing_files();
@@ -379,12 +379,12 @@ function count_customized_legacy_FSE_sites( $blog_ids ) {
 	$tally = array(
 		'customized' => 0,
 		'not-customized' => 0,
-		'not-fse' => 0
+		'inconclusive' => 0
 	);
 	foreach( $blog_ids as $blog_id ) {
 		$has_edits = has_legacy_FSE_template_edits($blog_id);
-		if( $has_edits && $has_edits === 'not-fse' ) {
-			$tally['not-fse'] += 1;
+		if( $has_edits && $has_edits === 'inconclusive' ) {
+			$tally['inconclusive'] += 1;
 		} else if ( $has_edits ) {
 			$tally['customized'] += 1;
 		} else {
