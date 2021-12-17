@@ -74,7 +74,7 @@ class SitePlugin {
 		const body = {
 			slug: this._slug,
 		};
-		return this.wpcom.req.post( `/install`, query, body, fn );
+		return this.wpcom.req.post( `${ root }/${ this._sid }/plugins/install`, query, body, fn );
 	}
 
 	/**
