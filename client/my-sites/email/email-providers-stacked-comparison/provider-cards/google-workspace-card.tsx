@@ -11,7 +11,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
-import { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
 import { canCurrentUserAddEmail, getSelectedDomain } from 'calypso/lib/domains';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
@@ -36,6 +35,7 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { addToCartAndCheckout, recordTracksEventAddToCartClick, IntervalLength } from './utils';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 import './google-workspace-card.scss';
 
@@ -183,7 +183,7 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 
 		setAddingToCart( true );
 
-		const cartItems: IncompleteRequestCartProduct[] = getItemsForCart(
+		const cartItems: MinimalRequestCartProduct[] = getItemsForCart(
 			domains,
 			gSuiteProduct.productSlug,
 			googleUsers
