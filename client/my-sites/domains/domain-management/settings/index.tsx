@@ -132,7 +132,7 @@ const Settings = ( {
 		return renderSecurityAccordion();
 	};
 
-	const getContactInformationAccordion = () => {
+	const renderContactInformationSecion = () => {
 		const placeholderAccordion = (
 			<Accordion
 				title="Contact information"
@@ -183,7 +183,7 @@ const Settings = ( {
 			<>
 				{ renderDetailsSection() }
 				{ renderSetAsPrimaryDomainSection() }
-				{ getContactInformationAccordion() }
+				{ renderContactInformationSecion() }
 				{ renderDomainSecuritySection() }
 			</>
 		);
