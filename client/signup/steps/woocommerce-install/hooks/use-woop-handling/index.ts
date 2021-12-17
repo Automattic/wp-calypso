@@ -25,15 +25,13 @@ const TRANSFERRING_NOT_BLOCKERS = [
 ];
 
 type EligibilityHook = {
-	eligibilityHolds?: string[];
-	eligibilityWarnings?: EligibilityWarning[];
 	warnings: EligibilityWarning[];
 	wpcomDomain: string | null;
 	stagingDomain: string | null;
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
 	transferringBlockers: string[];
 	isDataReady: boolean;
-	hasBlockers: boolean;
+	isTransferringBlocked: boolean;
 	siteUpgrading: {
 		required: boolean;
 		checkoutUrl: string;
@@ -108,8 +106,11 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const transferringDataIsAvailable =
 		typeof transferringBlockers !== 'undefined' && typeof transferStatus !== 'undefined';
 
-	// Check whether the site has transferring blockers. True as default.
-	const hasBlockers = ! transferringDataIsAvailable || transferringBlockers?.length > 0;
+	/*
+	 * Check whether the site transferring is blocked.
+	 * True as default, meaning it's True when requesting data.
+	 */
+	const isTransferringBlocked = ! transferringDataIsAvailable || transferringBlockers?.length > 0;
 
 	/*
 	 * Plan site and `woop` site feature.
@@ -168,19 +169,16 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	};
 
 	return {
-		eligibilityHolds,
-		eligibilityWarnings,
 		warnings,
 		wpcomDomain,
 		stagingDomain,
 		wpcomSubdomainWarning,
-
 		transferringBlockers: transferringBlockers || [],
-		hasBlockers,
+		isTransferringBlocked,
 		siteUpgrading,
 		isDataReady: transferringDataIsAvailable,
 		isReadyForTransfer: transferringDataIsAvailable
-			? ! hasBlockers && ! ( eligibilityWarnings && eligibilityWarnings.length )
+			? ! isTransferringBlocked && ! ( eligibilityWarnings && eligibilityWarnings.length )
 			: false,
 		isAtomicSite: !! useSelector( ( state ) => isAtomicSite( state, siteId ) ),
 	};

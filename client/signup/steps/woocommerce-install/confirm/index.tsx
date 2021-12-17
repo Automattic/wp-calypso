@@ -58,7 +58,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		stagingDomain,
 		wpcomSubdomainWarning,
 		siteUpgrading,
-		hasBlockers,
+		isTransferringBlocked,
 		isDataReady,
 		warnings,
 		isAtomicSite,
@@ -92,7 +92,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	}
 
 	function getWarningsOrHoldsSection() {
-		if ( hasBlockers ) {
+		if ( isTransferringBlocked ) {
 			return (
 				<WarningsOrHoldsSection>
 					<WarningCard
@@ -127,7 +127,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					<ActionSection>
 						<SupportCard />
 						<StyledNextButton
-							disabled={ hasBlockers || ! isDataReady }
+							disabled={ isTransferringBlocked || ! isDataReady }
 							onClick={ () => {
 								dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
 								if ( siteUpgrading.required ) {
