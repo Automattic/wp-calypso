@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
-        run: yarn install
+        run: yarn install --inline-builds
       - name: Build ICFY stats
         env:
           NODE_ENV: production
