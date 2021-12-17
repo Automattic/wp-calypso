@@ -66,7 +66,7 @@ const professionalEmailCardInformation: ProviderCard = {
 	description: translate( 'Integrated email solution for your WordPress.com site.' ),
 	logo,
 	productName: getTitanProductName(),
-	badge,
+	footerBadge: badge,
 	features: getTitanFeatures(),
 };
 

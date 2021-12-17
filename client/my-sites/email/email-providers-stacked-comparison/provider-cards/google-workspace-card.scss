@@ -5,20 +5,13 @@
 	color: var( --color-wordpress-com );
 	height: 48px;
 	width: 48px;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		padding-right: 12px;
+	}
 }
 
 .google-workspace-icon {
 	max-width: 48px;
 	height: 48px;
-}
-
-.email-provider-stacked-card__provider-form {
-	.google-workspace-card__form-fieldset {
-		max-width: 100%;
-
-		// We need to use breakpoint-deprecated() as we are using the useBreakpoint() hook from the @automattic/viewport package
-		@include breakpoint-deprecated( '>660px' ) {
-			max-width: 380px;
-		}
-	}
 }

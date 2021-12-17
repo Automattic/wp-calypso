@@ -142,17 +142,14 @@ $width-left-panel-card: 55%;
 		margin-top: 1em;
 		line-height: 1.5;
 
-		// We need to use breakpoint-deprecated() as we are using the useBreakpoint() hook from the @automattic/viewport package
-		@include breakpoint-deprecated( '>660px' ) {
+		@include break-large {
 			flex-direction: row;
 		}
 	}
 
 	.email-provider-stacked-card__provider-form {
-		margin-bottom: 20px;
 
-		// We need to use breakpoint-deprecated() as we are using the useBreakpoint() hook from the @automattic/viewport package
-		@include breakpoint-deprecated( '>660px' ) {
+		@include break-large {
 			min-width: $width-left-panel-card;
 			max-width: $width-left-panel-card;
 		}
@@ -170,10 +167,12 @@ $width-left-panel-card: 55%;
 }
 
 .email-provider-stacked-card__provider-right-panel {
-	margin-left: 24px;
+	@include break-large {
+		margin-left: 24px;
+	}
 
 	img {
-		margin-top: 40px;
+		margin-top: 1em;
 	}
 }
 
@@ -204,7 +203,7 @@ $width-left-panel-card: 55%;
 		.email-provider-stacked-card__provider-card-main-details {
 			margin-top: 12px;
 
-			@include break-small {
+			@include break-large {
 				margin-left: 10px;
 			}
 
@@ -238,7 +237,6 @@ $width-left-panel-card: 55%;
 .email-provider-stacked-card__title-container {
 	display: flex;
 	flex-direction: column;
-	padding-left: 12px;
 	max-width: 100%;
 
 	@include break-large {
@@ -259,13 +257,15 @@ $width-left-panel-card: 55%;
 		margin-top: 3px;
 		flex-direction: row;
 		text-align: left;
-		margin-bottom: 0px;
+		margin-bottom: 0;
+		padding-right: 12px;
 		.professional-email-card__logo {
 			min-width: 48px;
 		}
 
 		@include breakpoint-deprecated( '<660px' ) {
 			max-width: 100%;
+			padding-right: 0;
 		}
 
 		@include break-mobile {
@@ -279,12 +279,7 @@ $width-left-panel-card: 55%;
 }
 
 .email-provider-stacked-card__provider-form > * .form-text-input-with-affixes {
-	.form-text-input {
-		@include breakpoint-deprecated( '<480px' ) {
-			max-width: 100%;
-		}
-	}
-
+	flex-direction: column;
 	.form-text-input-with-affixes__suffix {
 		border-top-width: 0;
 		border-left-width: 1px;
@@ -294,54 +289,9 @@ $width-left-panel-card: 55%;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		max-width: 140px;
-		@include breakpoint-deprecated( '<660px' ) {
-			max-width: 100%;
-		}
 	}
 
-	// We need to use breakpoint-deprecated() as we are using the useBreakpoint() hook from the @automattic/viewport package
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-direction: column;
-
-		.form-text-input-with-affixes__suffix {
-			border-top-width: 0;
-			border-left-width: 1px;
-			border-left-style: solid;
-			border-left-color: var( --color-neutral-10 );
-			display: inline-block;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			max-width: 140px;
-			@include breakpoint-deprecated( '<960px' ) {
-				max-width: 100%;
-			}
-		}
-	}
-
-	// We need to use breakpoint-deprecated() as we are using the useBreakpoint() hook from the @automattic/viewport package
-	@include breakpoint-deprecated( '<960px' ) {
-		flex-direction: column;
-
-		.form-text-input-with-affixes__suffix {
-			border-top-width: 0;
-			border-left-width: 1px;
-			border-left-style: solid;
-			border-left-color: var( --color-neutral-10 );
-			display: inline-block;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			max-width: 140px;
-			@include breakpoint-deprecated( '<960px' ) {
-				max-width: 100%;
-			}
-		}
-	}
-
-	// We need to use breakpoint-deprecated() as we are using the useBreakpoint() hook from the @automattic/viewport package
-	@include breakpoint-deprecated( '<660px' ) {
+	@include break-xlarge {
 		flex-direction: row;
 
 		.form-text-input-with-affixes__suffix {
@@ -349,38 +299,6 @@ $width-left-panel-card: 55%;
 			border-top-width: 1px;
 			border-top-style: solid;
 			border-left-color: var( --color-neutral-10 );
-		}
-	}
-
-	// We need to use breakpoint-deprecated() as we are using the useBreakpoint() hook from the @automattic/viewport package
-	@include breakpoint-deprecated( '>960px' ) {
-		flex-direction: row;
-
-		.form-text-input-with-affixes__suffix {
-			border-left-width: 0;
-			border-top-width: 1px;
-			border-top-style: solid;
-			border-left-color: var( --color-neutral-10 );
-		}
-	}
-
-	// We need to use breakpoint-deprecated() as we are using the useBreakpoint() hook from the @automattic/viewport package
-	@include breakpoint-deprecated( '<480px' ) {
-		flex-direction: column;
-
-		.form-text-input-with-affixes__suffix {
-			border-top-width: 0;
-			border-left-width: 1px;
-			border-left-style: solid;
-			border-left-color: var( --color-neutral-10 );
-			display: inline-block;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			max-width: 140px;
-			@include breakpoint-deprecated( '<960px' ) {
-				max-width: 100%;
-			}
 		}
 	}
 }

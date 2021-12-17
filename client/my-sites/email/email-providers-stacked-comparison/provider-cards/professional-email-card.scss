@@ -5,6 +5,10 @@
 	color: var( --color-wordpress-com );
 	height: 48px;
 	width: 48px;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		padding-right: 12px;
+	}
 }
 
 .professional-email-card__keep-main-price {
@@ -25,15 +29,4 @@
 
 .professional-email-card__discount.badge {
 	margin-bottom: 12px;
-}
-
-.email-provider-stacked-card__provider-form {
-	.titan-new-mailbox-list__main {
-		max-width: 100%;
-
-		// We need to use breakpoint-deprecated() as we are using the useBreakpoint() hook from the @automattic/viewport package
-		@include breakpoint-deprecated( '>660px' ) {
-			max-width: 380px;
-		}
-	}
 }
