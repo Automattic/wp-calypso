@@ -12,6 +12,7 @@ import './style.scss';
 
 const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	const { __ } = useI18n();
+	let badgeCounter = 0;
 
 	const renderCircle = () => (
 		<SVG viewBox="0 0 24 24">
@@ -20,7 +21,10 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	);
 
 	const renderSuccessBadge = ( description: TranslateResult, icon?: JSX.Element ) => (
-		<Badge className="settings-header__badge settings-header__badge--success">
+		<Badge
+			className="settings-header__badge settings-header__badge--success"
+			key={ `badge${ badgeCounter++ }` }
+		>
 			{ icon ? (
 				<Icon icon={ icon } size={ 14 } />
 			) : (
@@ -31,21 +35,30 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	);
 
 	const renderWarningBadge = ( description: TranslateResult ) => (
-		<Badge className="settings-header__badge settings-header__badge--warning">
+		<Badge
+			className="settings-header__badge settings-header__badge--warning"
+			key={ `badge${ badgeCounter++ }` }
+		>
 			<div className="settings-header__badge-indicator">{ renderCircle() }</div>
 			{ description }
 		</Badge>
 	);
 
 	const renderPremiumBadge = () => (
-		<Badge className="settings-header__badge settings-header__badge--premium">
+		<Badge
+			className="settings-header__badge settings-header__badge--premium"
+			key={ `badge${ badgeCounter++ }` }
+		>
 			{ __( 'Premium domain' ) }
 			<Icon icon={ info } size={ 17 } />
 		</Badge>
 	);
 
 	const renderNeutralBadge = ( description: TranslateResult ) => (
-		<Badge className="settings-header__badge settings-header__badge--neutral">
+		<Badge
+			className="settings-header__badge settings-header__badge--neutral"
+			key={ `badge${ badgeCounter++ }` }
+		>
 			{ description }
 		</Badge>
 	);
