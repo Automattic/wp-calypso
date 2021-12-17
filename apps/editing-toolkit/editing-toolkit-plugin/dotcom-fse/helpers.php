@@ -209,6 +209,12 @@ function populate_wp_template_data() {
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
 add_action( 'switch_theme', __NAMESPACE__ . '\populate_wp_template_data' );
 
+/**
+ * Determines whether or not the specified site has template part customizations for its active
+ * theme.
+ * @param int $blog_id The site's blog_id.
+ * @return string|boolean True/False boolean if the site is using legacy FSE, string 'non-fse' otherwise.
+ */
 function has_legacy_FSE_template_edits( $blog_id ) {
 	switch_to_blog( $blog_id );
 
@@ -246,14 +252,11 @@ function has_legacy_FSE_template_edits( $blog_id ) {
 
 	restore_current_blog();
 
-	return array( 	'current-header' => $header_content,
-					'default-header' => $default_header_content,
-					'current-footer' => $footer_content,
-					'default-footer' => $default_footer_content,
-					'headers' => $header_content === $default_header_content,
-					'footers' => $footer_content === $default_footer_content );
+	return $header_content !== $default_header_content || $footer_content !== $default_footer_content;
 }
 
+// Copy pasta from the template inserter class. Since fetching the default templates from there
+// requires the retry handling, I have added it here as well.
 function custom_fetch_retry( $request_url, $request_args = null, $attempt = 1 ) {
 	$max_retries = 3;
 
@@ -273,10 +276,13 @@ function custom_fetch_retry( $request_url, $request_args = null, $attempt = 1 ) 
 }
 
 /**
- * Removes the first src attribute from html markup string.
- * ex)
- * input: '<img src="things-and-stuff" other-goo>'
- * output: '<img other-goo>'
+ * Removes the first src attribute from html markup string. ex) input: '<img src="things-and-stuff"
+ * other-goo>' output: '<img other-goo>'
+ *
+ * notes - src for the default image is re-written for the site. in the event that this targets
+ * something other than the default image in saved markup, it means there were customizations
+ * anyways and the comparison will return false as expected. If the default image was cutomized or
+ * replaced by the user, other attributes in the markup will change as well.
  */
 function filter_img_src( $markup ) {
 	$filtered_markup = $markup;
@@ -302,22 +308,68 @@ function filter_escaping( $markup ) {
 	return str_replace( '\\', '', $markup );
 }
 
+// Some headers have a columns with `"verticalAlignment":null`, which is removed on save (ex morden).
+function filter_null_alignment( $markup ) {
+	$filtered_markup = $markup;
+	return str_replace( '"verticalAlignment":null,', '', $filtered_markup );
+}
+
+function get_default_social_link_permutations() {
+	/**
+	 * Default markup for social links changes when the template part is saved regardless of any
+	 * edits to social links. The below array represents all permutations of default social link markup
+	 * supplied by legacy FSE template parts (both before and after saving in the editor).
+	 */
+	return array(
+		'<!-- wp:social-link-wordpress {"url":"https://wordpress.org"} /-->',
+		'<!-- wp:social-link-facebook /-->',
+		'<!-- wp:social-link-twitter /-->',
+		'<!-- wp:social-link-instagram /-->',
+		'<!-- wp:social-link-linkedin /-->',
+		'<!-- wp:social-link-youtube /-->',
+		'<!-- wp:social-link {"url":"https://wordpress.org","service":"wordpress"} /-->',
+		'<!-- wp:social-link {"service":"facebook"} /-->',
+		'<!-- wp:social-link {"service":"twitter"} /-->',
+		'<!-- wp:social-link {"service":"instagram"} /-->',
+		'<!-- wp:social-link {"service":"linkedin"} /-->',
+		'<!-- wp:social-link {"service":"youtube"} /-->',
+		'<!-- wp:social-link-facebook {"url":"add_your_email@address.com"} /-->',
+		'<!-- wp:social-link-instagram {"url":"add_your_email@address.com"} /-->',
+		'<!-- wp:social-link-twitter {"url":"add_your_email@address.com"} /-->',
+		'<!-- wp:social-link {"url":"add_your_email@address.com","service":"facebook"} /-->',
+		'<!-- wp:social-link {"url":"add_your_email@address.com","service":"instagram"} /-->',
+		'<!-- wp:social-link {"url":"add_your_email@address.com","service":"twitter"} /-->',
+		'<!-- wp:social-link-linkedin {"url":"add_your_email@address.com"} /-->',
+		'<!-- wp:social-link-wordpress {"url":"https://wordpress.com"} /-->',
+		'<!-- wp:social-link {"url":"add_your_email@address.com","service":"linkedin"} /-->',
+		'<!-- wp:social-link {"url":"https://wordpress.com","service":"wordpress"} /-->',
+	);
+}
 
 /**
- * Notes
- *
- * Saved social links markup differently (effects morden, stow, hever, shawburn, exford)
- * Sometimes with initial urls (like in Morden):
- * before saving: '<!-- wp:social-link-twitter {"url":"add_your_email@address.com"} /-->'
- * after saving: '<!-- wp:social-link {"url":"add_your_email@address.com","service":"twitter"} /-->'
- * Sometimes without initial urls (like in Stow):
- * before saving: '<!-- wp:social-link-twitter /-->'
- * after saving: '<!-- wp:social-link {"service":"twitter"} /-->'
+ * Removing the default social links from the markup for camparison has some tradeoffs. It does not
+ * consider deleting a single social link as a customization. Editing a social link in any other way
+ * or removing the parent social links block would count as a customization. This seems like a fair
+ * trade off as opposed to trying to normalize all these default social links to a single form. An
+ * unedited or individual deleted social link reverting to a basic placeholder seems acceptable,
+ * while we are able to catch the larger concern of losing an actual link the user has added or edited.
  */
+function filter_default_social_links( $markup ) {
+	$filtered_markup = $markup;
+
+	foreach( get_default_social_link_permutations() as $permutation ) {
+		$filtered_markup = str_replace( $permutation, '', $filtered_markup );
+	}
+	return $filtered_markup;
+}
 
 function filter_markup( $markup ) {
 	$filtered_markup = filter_img_src( $markup );
 	$filtered_markup = filter_empty_paragraphs( $filtered_markup );
 	$filtered_markup = filter_escaping( $filtered_markup );
+	$filtered_markup = filter_null_alignment( $filtered_markup );
+	$filtered_markup = filter_default_social_links( $filtered_markup );
 	return trim( $filtered_markup );
 }
+
+
