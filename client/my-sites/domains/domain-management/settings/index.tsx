@@ -31,6 +31,7 @@ import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
+import DnsRecords from './dns';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
@@ -190,6 +191,17 @@ const Settings = ( {
 		);
 	};
 
+	const renderDnsRecords = () => {
+		return (
+			<Accordion
+				title={ translate( 'DNS records', { textOnly: true } ) }
+				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
+			>
+				<DnsRecords />
+			</Accordion>
+		);
+	};
+
 	const renderSetAsPrimaryDomainSection = () => {
 		if ( ! domain ) {
 			return null;
@@ -271,6 +283,7 @@ const Settings = ( {
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderContactInformationSecion() }
 				{ renderDomainSecuritySection() }
+				{ renderDnsRecords() }
 			</>
 		);
 	};
