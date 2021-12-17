@@ -45,6 +45,7 @@
 		"inline-help": true,
 		"i18n/empathy-mode": true,
 		"jetpack/api-cache": true,
+		"jetpack/backups-date-picker": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/mobile-app-flow": true,
