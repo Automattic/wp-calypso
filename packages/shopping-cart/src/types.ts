@@ -371,6 +371,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
+	privacy_available?: boolean;
 }
 
 export interface GSuiteProductUser {
