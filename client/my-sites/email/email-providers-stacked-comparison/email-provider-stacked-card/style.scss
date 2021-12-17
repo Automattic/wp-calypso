@@ -194,7 +194,6 @@ $width-left-panel-card: 55%;
 	.email-provider-stacked-card__header {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
 
 		@include break-large {
 			flex-direction: row;
@@ -207,7 +206,7 @@ $width-left-panel-card: 55%;
 				margin-left: 10px;
 			}
 
-			button {
+			.button {
 				width: 100%;
 
 				@include break-large {
