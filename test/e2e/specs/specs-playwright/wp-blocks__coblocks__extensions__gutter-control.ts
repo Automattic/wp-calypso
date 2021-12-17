@@ -27,18 +27,18 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
-	} );
-
-	beforeAll( async () => {
 		loginPage = new LoginPage( page );
 		gutenbergEditorPage = new GutenbergEditorPage( page );
 	} );
 
+	it( `Log in as ${ testAccount }`, async () => {
+		await loginPage.logInWithTestAccount( testAccount );
+	} );
+
 	it( 'Go to the new post page', async () => {
 		await gutenbergEditorPage.visit( 'post' );
-		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( 'Insert Pricing Table block', async () => {

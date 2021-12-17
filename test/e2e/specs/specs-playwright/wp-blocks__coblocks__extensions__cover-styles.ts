@@ -31,19 +31,19 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 	let imageFile: TestFile;
 	let coverBlock: CoverBlock;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
-	} );
-
-	beforeAll( async () => {
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		loginPage = new LoginPage( page );
 		gutenbergEditorPage = new GutenbergEditorPage( page );
 	} );
 
+	it( `Log in as ${ testAccount }`, async () => {
+		await loginPage.logInWithTestAccount( testAccount );
+	} );
+
 	it( 'Go to the new post page', async () => {
 		await gutenbergEditorPage.visit( 'post' );
-		await loginPage.logInWithTestAccount( testAccount );
 	} );
 
 	it( 'Insert Cover block', async () => {

@@ -35,22 +35,24 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	let pricingTableBlock: PricingTableBlock;
 	let logoImage: TestFile;
 
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
-
 	// Test data
 	const pricingTableBlockPrices = [ 4.99, 9.99 ];
 	const heroBlockHeading = 'Hero heading';
 	const clicktoTweetBlockTweet = 'Tweet text';
 
-	beforeAll( async () => {
+	setupHooks( async ( args ) => {
+		page = args.page;
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		loginPage = new LoginPage( page );
 		gutenbergEditorPage = new GutenbergEditorPage( page );
+	} );
 
-		gutenbergEditorPage.visit( 'post' );
-		loginPage.logInWithTestAccount( testAccount );
+	it( `Log in as ${ testAccount }`, async () => {
+		await loginPage.logInWithTestAccount( testAccount );
+	} );
+
+	it( 'Go to the new post page', async () => {
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {
