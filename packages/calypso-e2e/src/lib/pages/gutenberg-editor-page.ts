@@ -99,11 +99,13 @@ export class GutenbergEditorPage {
 	async forceDismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		await frame.waitForFunction( async () =>
-			( window as any ).wp.data
-				.select( 'automattic/wpcom-welcome-guide' )
-				.isWelcomeGuideStatusLoaded()
+		await frame.waitForFunction(
+			async () =>
+				await ( window as any ).wp.data
+					.select( 'automattic/wpcom-welcome-guide' )
+					.isWelcomeGuideStatusLoaded()
 		);
+
 		await frame.waitForFunction( async () => {
 			const actionPayload = await ( window as any ).wp.data
 				.dispatch( 'automattic/wpcom-welcome-guide' )
