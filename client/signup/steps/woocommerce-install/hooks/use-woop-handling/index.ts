@@ -101,7 +101,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
-	// Add blocked transfer hold when somwthign is wrong in the transfer status.
+	// Add blocked transfer hold when something is wrong in the transfer status.
 	if (
 		! transferringBlockers?.includes( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER ) &&
 		( isBlockByTransferStatus || isTransferStuck )
