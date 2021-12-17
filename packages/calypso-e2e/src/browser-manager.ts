@@ -3,8 +3,6 @@ import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
 import { getHeadless, getLaunchConfiguration } from './browser-helper';
-import { getCalypsoURL } from './data-helper';
-import { LoginPage } from './lib/pages/login-page';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
@@ -189,62 +187,37 @@ export async function setStoreCookie(
 
 /**
  *
- * @param page
+ * @param browserContext
  * @param testAccount
  */
-export async function authenticateTestAccount( page: Page, testAccount: string ): Promise< void > {
-	const { SAVE_AUTH_COOKIES, COOKIES_PATH } = process.env;
-	const browserContext = await page.context();
-	let storageStateFilePath;
-
-	await browserContext.clearCookies();
-
-	/**
-	 * Load auth cookies from the storage state file if available.
-	 */
-	if ( COOKIES_PATH ) {
-		storageStateFilePath = path.join( COOKIES_PATH, `${ testAccount }.json` );
-
-		try {
-			const { birthtimeMs } = await fs.stat( storageStateFilePath );
-			const isFresh = birthtimeMs > Date.now() - 3 * 24 * 60 * 60 * 1000; // 3 days
-
-			if ( isFresh ) {
-				const storageStateFile = await fs.readFile( storageStateFilePath, { encoding: 'utf8' } );
-				const { cookies } = JSON.parse( storageStateFile );
-
-				console.info( `Using stored authentication cookies for the "${ testAccount }" account.` );
-				await browserContext.addCookies( cookies );
-				await page.goto( getCalypsoURL( '/' ) );
-				return;
-			}
-
-			console.info( `Removing stale storage state file for the "${ testAccount }" account.` );
-			await fs.rm( storageStateFilePath );
-		} catch ( error: unknown ) {
-			const { code } = error as NodeJS.ErrnoException;
-			if ( code === 'ENOENT' ) {
-				console.info( `Couldn't find storage state file for the "${ testAccount }" account.` );
-			} else {
-				throw error;
-			}
-		}
+export async function loadAuthCookiesForTestAccount(
+	browserContext: BrowserContext,
+	testAccount: string
+): Promise< boolean > {
+	const { COOKIES_PATH } = process.env;
+	if ( ! COOKIES_PATH ) {
+		return false;
 	}
 
-	/**
-	 * Login via UI if storage state file is unavailable.
-	 */
-	const loginPage = new LoginPage( page );
+	const storageStateFilePath = path.join( COOKIES_PATH, `${ testAccount }.json` );
+	let hasFreshCookies;
 
-	console.info( `Logging in as "${ testAccount }"` );
-	await loginPage.visit();
-	await loginPage.logInWithTestAccount( testAccount );
-
-	/**
-	 * Save storage state file.
-	 */
-	if ( SAVE_AUTH_COOKIES === 'true' ) {
-		console.info( `Saving storage state file for the "${ testAccount }" account.` );
-		await browserContext.storageState( { path: storageStateFilePath } );
+	try {
+		const { birthtimeMs } = await fs.stat( storageStateFilePath );
+		hasFreshCookies = birthtimeMs > Date.now() - 3 * 24 * 60 * 60 * 1000; // less than 3 days
+	} catch {
+		hasFreshCookies = false;
 	}
+
+	if ( ! hasFreshCookies ) {
+		return false;
+	}
+
+	const storageStateFile = await fs.readFile( storageStateFilePath, { encoding: 'utf8' } );
+	const { cookies } = JSON.parse( storageStateFile );
+
+	console.info( `Using stored authentication cookies for the "${ testAccount }" account.` );
+	await browserContext.addCookies( cookies );
+
+	return true;
 }

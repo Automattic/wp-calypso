@@ -1,5 +1,6 @@
 /* eslint-disable require-jsdoc */
 import { Locator, Page, Response } from 'playwright';
+import { loadAuthCookiesForTestAccount } from '../../browser-manager';
 import { getAccountCredential, getCalypsoURL } from '../../data-helper';
 
 export class LoginPage {
@@ -20,8 +21,14 @@ export class LoginPage {
 	}
 
 	async logInWithTestAccount( account: string ): Promise< void > {
-		const credentials = getAccountCredential( account );
-		await this.logInWithCredentials( ...credentials );
+		const cookiesLoaded = await loadAuthCookiesForTestAccount( await this.page.context(), account );
+		if ( cookiesLoaded ) {
+			await this.page.goto( getCalypsoURL( '/' ) );
+		} else {
+			const credentials = getAccountCredential( account );
+			await this.visit();
+			await this.logInWithCredentials( ...credentials );
+		}
 	}
 
 	async logInWithCredentials( username: string, password: string ): Promise< void > {
