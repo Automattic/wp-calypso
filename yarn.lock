@@ -12167,7 +12167,7 @@ __metadata:
     component-file-picker: ^0.2.1
     component-query: ^0.0.3
     cookie: ^0.4.0
-    cookie-parser: ^1.4.5
+    cookie-parser: ^1.4.6
     core-js-bundle: ^3.6.4
     cpf_cnpj: ^0.2.0
     creditcards: ^3.1.0
@@ -13702,13 +13702,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-parser@npm:^1.4.5":
-  version: 1.4.5
-  resolution: "cookie-parser@npm:1.4.5"
+"cookie-parser@npm:^1.4.6":
+  version: 1.4.6
+  resolution: "cookie-parser@npm:1.4.6"
   dependencies:
-    cookie: 0.4.0
+    cookie: 0.4.1
     cookie-signature: 1.0.6
-  checksum: 18bef74f90f0151024440faa9e6e82f8022a6668e3975d0aec21e973d91278b590ebdd7783d65877080a37d3b5256313486e1a2b5117272cd33c977a81f4a565
+  checksum: 9c2ade5459290802cd472a2d2a6e46fbd7de3e8514e02bfed5edfde892d77733c7f89d9d2015f752a9087680429b416972d7aba748bf6824e21eb680c8556383
   languageName: node
   linkType: hard
 
@@ -13719,10 +13719,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:0.4.0, cookie@npm:^0.4.0":
+"cookie@npm:0.4.0":
   version: 0.4.0
   resolution: "cookie@npm:0.4.0"
   checksum: 71508a1c8a4e97bb88f42635542ef24ebe7e713f82573ac61e9b289616334d14bfb28210d7979d9ada24b0254f5fb563af938cac13bc8c0c3f60f47a2257f791
+  languageName: node
+  linkType: hard
+
+"cookie@npm:0.4.1, cookie@npm:^0.4.0":
+  version: 0.4.1
+  resolution: "cookie@npm:0.4.1"
+  checksum: 4d7bc798df3d0f34035977949cd6b7d05bbab47d7dcb868667f460b578a550cd20dec923832b8a3a107ef35aba091a3975e14f79efacf6e39282dc0fed6db4a1
   languageName: node
   linkType: hard
 
