@@ -94,8 +94,8 @@ const SetAsPrimary = ( props: SetAsPrimaryProps ): JSX.Element | null => {
 	return (
 		<div className="set-as-primary">
 			<Accordion
-				title={ translate( 'Set as primary' ) }
-				subtitle={ translate( 'Make this domain your primary site address' ) }
+				title={ translate( 'Set as primary', { textOnly: true } ) }
+				subtitle={ translate( 'Make this domain your primary site address', { textOnly: true } ) }
 			>
 				<p className="set-as-primary__content">
 					{ translate( 'Your current primary site address is {{strong}}%(domainName)s{{/strong}}', {
