@@ -48,7 +48,7 @@
 		.contact-display__content {
 			background-color: var( --color-neutral-0 );
 			color: var( --color-neutral );
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
 			line-height: 140%;
 			margin: 0;
 			padding: 16px;
@@ -58,87 +58,5 @@
 			}
 		}
 		margin-bottom: 1.5em;
-	}
-
-	&--redesigned {
-		padding: 0;
-		box-shadow: none;
-		margin-bottom: 0;
-
-		.contacts-privacy {
-			&__main {
-				padding-bottom: 24px;
-			}
-
-			&__toggle {
-				&-container {
-					display: flex;
-					flex-wrap: wrap;
-					row-gap: 8px;
-				}
-
-				&-item {
-					font-size: $font-body-small;
-					color: var( --studio-gray-80 );
-					margin-bottom: 0;
-
-					flex: 1 0 100%;
-
-					.components-base-control {
-						font-size: inherit;
-						color: inherit;
-						
-						&__field {
-							margin-bottom: 0;
-						}
-					}
-				}
-			}
-
-			&__button-container {
-				display: flex;
-				column-gap: 16px;
-			}
-		}
-
-		.contact-display {
-			padding-bottom: 16px;
-
-			&__content {
-				background-color: transparent;
-				padding: 0;
-				line-height: 20px;
-				font-size: $font-body-small;
-				color: var( --studio-gray-80 );
-
-				p {
-					margin-bottom: 0;
-				}
-			}
-		}
-	}
-}
-
-.non-owner-card {
-	flex-basis: 100%;
-	background-color: var( --studio-gray-0 );
-	display: flex;
-	align-items: center;
-	padding: 8px;
-	gap: 8px;
-	border-radius: 2px;
-
-	&__icon.gridicon {
-		align-self: flex-start;
-		min-width: 18px;
-		fill: var( --studio-orange-40 );
-		position: relative;
-		top: 2px;
-	}
-
-	&__message {
-		font-weight: 400;
-		font-size: $font-body-small;
-		color: var( --studio-gray-80 );
 	}
 }

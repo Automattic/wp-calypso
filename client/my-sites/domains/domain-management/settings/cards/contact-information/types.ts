@@ -7,22 +7,21 @@ import {
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
-export type ContactsPrivacyInfoConnectedProps = {
+export type ContactsInfoConnectedProps = {
 	currentRoute: string;
 	isRequestingWhois: boolean;
 };
 
-export type ContactsPrivacyInfoPassedProps = {
+export type ContactsInfoPassedProps = {
 	domains: ResponseDomain[];
 
 	selectedDomainName: string;
 	selectedSite: SiteData;
 };
 
-export type ContactsPrivacyInfoProps = ContactsPrivacyInfoPassedProps &
-	ContactsPrivacyInfoConnectedProps;
+export type ContactsInfoProps = ContactsInfoPassedProps & ContactsInfoConnectedProps;
 
-export type ContactsPrivacyCardPassedProps = {
+export type ContactsCardPassedProps = {
 	selectedSite: SiteData;
 	selectedDomainName: string;
 
@@ -34,18 +33,18 @@ export type ContactsPrivacyCardPassedProps = {
 	isPendingIcannVerification: boolean;
 };
 
-export type ContactsPrivacyCardConnectedProps = {
+export type ContactsCardConnectedProps = {
 	currentRoute: string;
 	isUpdatingPrivacy: boolean;
 };
 
-export type ContactsPrivacyCardConnectedDispatchProps = {
+export type ContactsCardConnectedDispatchProps = {
 	enableDomainPrivacy: typeof enableDomainPrivacy;
 	disableDomainPrivacy: typeof disableDomainPrivacy;
 	discloseDomainContactInfo: typeof discloseDomainContactInfo;
 	redactDomainContactInfo: typeof redactDomainContactInfo;
 };
 
-export type ContactsPrivacyCardProps = ContactsPrivacyCardPassedProps &
-	ContactsPrivacyCardConnectedProps &
-	ContactsPrivacyCardConnectedDispatchProps;
+export type ContactsCardProps = ContactsCardPassedProps &
+	ContactsCardConnectedProps &
+	ContactsCardConnectedDispatchProps;

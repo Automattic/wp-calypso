@@ -3,6 +3,7 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { PRIVACY_PROTECTION, PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
+import ContactDisplay from 'calypso/my-sites/domains/domain-management/contacts-privacy/contact-display';
 import {
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
@@ -15,10 +16,9 @@ import {
 	redactDomainContactInfo,
 } from 'calypso/state/sites/domains/actions';
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
-import ContactDisplay from './contact-display';
-import type { ContactsPrivacyCardPassedProps, ContactsPrivacyCardProps } from './types';
+import type { ContactsCardPassedProps, ContactsCardProps } from './types';
 
-const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => {
+const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 	const translate = useTranslate();
 	const togglePrivacy = () => {
 		const { selectedSite, privateDomain, selectedDomainName: name } = props;
@@ -51,7 +51,7 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 		let privacyProtectionNote;
 		if ( ! privacyAvailable ) {
 			privacyProtectionNote = (
-				<p className="contacts-privacy__toggle-item">
+				<p className="contact-information__toggle-item">
 					{ translate(
 						'Privacy protection is not available due to the registry’s policies. {{a}}Learn more{{/a}}',
 						{
@@ -66,7 +66,7 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 
 		return (
 			<>
-				<div className="contacts-privacy__toggle-item">
+				<div className="contact-information__toggle-item">
 					<ToggleControl
 						checked={ privateDomain }
 						disabled={ isUpdatingPrivacy || ! privacyAvailable }
@@ -82,7 +82,7 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 	const getPrivacyProtectionRecommendationText = () => {
 		const { privacyAvailable } = props;
 		return privacyAvailable ? (
-			<p className="contacts-privacy__toggle-item">
+			<p className="contact-information__toggle-item">
 				{ translate( 'We recommend keeping privacy protection on. {{a}}Learn more{{/a}}', {
 					components: {
 						a: <a href={ PUBLIC_VS_PRIVATE } />,
@@ -107,7 +107,7 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 		}
 
 		const contactVerificationNotice = isPendingIcannVerification ? (
-			<p className="contacts-privacy__toggle-item">
+			<p className="contact-information__toggle-item">
 				{ translate(
 					'You need to verify the contact information for the domain before you can disclose it publicly.'
 				) }
@@ -116,9 +116,9 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 
 		return (
 			<>
-				<div className="contacts-privacy__toggle-item">
+				<div className="contact-information__toggle-item">
 					<ToggleControl
-						className="contacts-privacy__toggle-button"
+						className="contact-information__toggle-button"
 						checked={ contactInfoDisclosed }
 						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
 						onChange={ toggleContactInfo }
@@ -134,10 +134,10 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 
 	return (
 		<div>
-			<Card className="contacts-privacy__card--redesigned">
-				<div className="contacts-privacy__main">
+			<Card className="contact-information__card">
+				<div className="contact-information__main">
 					<ContactDisplay selectedDomainName={ selectedDomainName } />
-					<div className="contacts-privacy__button-container">
+					<div className="contact-information__button-container">
 						<Button
 							href={ domainManagementEditContactInfo(
 								props.selectedSite.slug,
@@ -160,7 +160,7 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 						) }
 					</div>
 				</div>
-				<div className="contacts-privacy__toggle-container">
+				<div className="contact-information__toggle-container">
 					{ getPrivacyProtection() }
 					{ getContactInfoDisclosed() }
 					{ getPrivacyProtectionRecommendationText() }
@@ -171,7 +171,7 @@ const ContactsPrivacyCard = ( props: ContactsPrivacyCardProps ): JSX.Element => 
 };
 
 export default connect(
-	( state, ownProps: ContactsPrivacyCardPassedProps ) => ( {
+	( state, ownProps: ContactsCardPassedProps ) => ( {
 		currentRoute: getCurrentRoute( state ),
 		isUpdatingPrivacy: isUpdatingDomainPrivacy(
 			state,

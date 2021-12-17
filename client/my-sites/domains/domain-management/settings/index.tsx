@@ -13,7 +13,6 @@ import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/com
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import ContactsPrivacyInfo from 'calypso/my-sites/domains/domain-management/contacts-privacy/contacts-privacy-info';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { requestWhois } from 'calypso/state/domains/management/actions';
@@ -25,6 +24,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
+import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
