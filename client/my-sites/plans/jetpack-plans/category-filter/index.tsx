@@ -53,14 +53,12 @@ const CategoryFilter: React.FC< Props > = ( { className, defaultValue, onChange 
 	const onClick = useCallback( ( value ) => setValue( value ), [ setValue ] );
 
 	useEffect( () => {
-		if ( ! value ) {
-			const targetValue = Object.keys( targets ).find(
-				( key ) => targets[ key as JetpackProductCategory ] === window.location.hash
-			);
+		const targetValue = Object.keys( targets ).find(
+			( key ) => targets[ key as JetpackProductCategory ] === window.location.hash
+		);
 
-			if ( targetValue ) {
-				setValue( targetValue as JetpackProductCategory );
-			}
+		if ( targetValue ) {
+			setValue( targetValue as JetpackProductCategory );
 		}
 	}, [] );
 
