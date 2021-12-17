@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import DesignPicker, {
 	FeaturedPicksButtons,
 	PremiumBadge,
@@ -24,7 +24,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import DIFMThemes from '../difm-design-picker/themes';
 import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
@@ -40,12 +39,12 @@ export default function DesignPickerStep( props ) {
 		showLetUsChoose,
 		hideFullScreenPreview,
 		hideDesignTitle,
-		siteId,
+		sitePlanSlug,
 	} = props;
 
-	const { userLoggedIn, hasUnlimitedPremiumThemes } = useSelector( ( state ) => ( {
+	const { userLoggedIn, isPremiumThemesAvailable } = useSelector( ( state ) => ( {
 		userLoggedIn: isUserLoggedIn( state ),
-		hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
+		isPremiumThemesAvailable: planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
 	} ) );
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
@@ -59,7 +58,7 @@ export default function DesignPickerStep( props ) {
 	const scrollTop = useRef( 0 );
 
 	const { data: apiThemes = [] } = useThemeDesignsQuery(
-		{ tier: hasUnlimitedPremiumThemes ? 'all' : 'free' },
+		{ tier: isPremiumThemesAvailable ? 'all' : 'free' },
 		{ enabled: ! props.useDIFMThemes }
 	);
 
