@@ -33,6 +33,7 @@ export const QuickLinks = ( {
 	canCustomize,
 	canSwitchThemes,
 	canManageSite,
+	canModerateComments,
 	customizeUrl,
 	isStaticHomePage,
 	showCustomizer,
@@ -99,7 +100,7 @@ export const QuickLinks = ( {
 				label={ translate( 'Write blog post' ) }
 				materialIcon="edit"
 			/>
-			{ ! isStaticHomePage && (
+			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
 					href={ `/comments/${ siteSlug }` }
 					hideLinkIndicator
@@ -369,6 +370,7 @@ const mapStateToProps = ( state ) => {
 		canCustomize: canCurrentUser( state, siteId, 'customize' ),
 		canSwitchThemes: canCurrentUser( state, siteId, 'switch_themes' ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
+		canModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
