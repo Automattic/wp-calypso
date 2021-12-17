@@ -3,10 +3,10 @@ import { ReactElement, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import {
-	requestAtomicSoftwareStatus,
-	requestAtomicSoftwareInstall,
-} from 'calypso/state/atomic/software/actions';
-import { getAtomicSoftwareStatus } from 'calypso/state/atomic/software/selectors';
+	getSoftwareStatus,
+	installSoftware,
+	fetchSoftwareStatus,
+} from 'calypso/state/atomic-v2/software';
 import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Progress from './progress';
@@ -17,9 +17,10 @@ export default function InstallPlugins(): ReactElement | null {
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const softwareStatus = useSelector( ( state ) =>
-		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
+		getSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
-	const softwareApplied = softwareStatus?.applied;
+	console.log( softwareStatus );
+	const softwareApplied = softwareStatus?.status?.applied;
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	const [ progress, setProgress ] = useState( 0.6 );
@@ -29,7 +30,7 @@ export default function InstallPlugins(): ReactElement | null {
 			return;
 		}
 
-		dispatch( requestAtomicSoftwareInstall( siteId, 'woo-on-plans' ) );
+		dispatch( installSoftware( siteId, 'woo-on-plans' ) );
 	}, [ dispatch, siteId ] );
 
 	// Poll for status of installation
@@ -39,7 +40,7 @@ export default function InstallPlugins(): ReactElement | null {
 				return;
 			}
 			setProgress( progress + 0.2 );
-			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
+			dispatch( fetchSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		softwareApplied ? null : 3000
 	);
