@@ -329,7 +329,7 @@ object RunAllUnitTests : BuildType({
 				set -x
 
 				if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
-					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/`
+					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
 				fi
 			""".trimIndent()
 		}
