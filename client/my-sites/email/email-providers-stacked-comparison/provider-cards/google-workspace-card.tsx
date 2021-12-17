@@ -4,7 +4,7 @@ import {
 } from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
-import React, { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -32,7 +32,7 @@ import {
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { addToCartAndCheckout, recordTracksEventAddToCartClick, IntervalLength } from './utils';
@@ -42,7 +42,9 @@ import './google-workspace-card.scss';
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-const identityMap = ( item: any ) => item;
+function identityMap< T >( item: T ): T {
+	return item;
+}
 
 const getGoogleFeatures = () => {
 	return [
@@ -152,7 +154,6 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			gSuiteProductMonthly,
 			gSuiteProductYearly,
 			hasCartDomain,
-			productsList,
 			selectedSite,
 			shoppingCartManager,
 			source,
@@ -191,7 +192,6 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		addToCartAndCheckout(
 			shoppingCartManager,
 			cartItems[ 0 ],
-			productsList,
 			setAddingToCart,
 			selectedSite?.slug ?? ''
 		);
@@ -244,7 +244,6 @@ export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
 		domain,
 		domainName: resolvedDomainName,
 		hasCartDomain,
-		productsList: getProductsList( state ),
 		selectedSite,
 		gSuiteProductYearly: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 		gSuiteProductMonthly: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY ),
