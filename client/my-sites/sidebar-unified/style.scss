@@ -613,7 +613,7 @@ $font-size: rem( 14px );
 				position: absolute;
 				left: var( --sidebar-width-max );
 				min-width: 160px;
-				width: fit-content;
+				width: max-content;
 				box-shadow: 0 3px 5px rgba( 0, 0, 0, 0.2 );
 
 				> ul {
