@@ -63,14 +63,16 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	);
 
 	/*
-	 * Inspect transfer status to detect blockers.
-	 * It's considered blocked when code:
-	 * - has the 5xx shape.
-	 * - its value is one of: [ `active`,...] @todo: add more codes.
+	 * Inspect transfer to detect blockers.
+	 * It's considered blocked when:
+	 * - status code value has the 5xx shape.
+	 * - status code value is one of: [ `active`,...] @todo: add more codes.
+	 * - is_stuck value is True.
 	 */
-	const transferStatus = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) )
-		?.status;
+	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+	const isTransferStuck = transfer?.is_stuck;
 
+	const transferStatus = transfer?.status;
 	const isBlockByTransferStatus =
 		( Number.isInteger( Number( transferStatus ) ) &&
 			transferStatus &&
@@ -94,12 +96,16 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		( { id } ) => id === 'wordpress_subdomain'
 	);
 
-	// Transferring blockers
+	// Filter the Woop transferring blockers
 	const transferringBlockers = eligibilityHolds?.filter(
 		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
-	if ( isBlockByTransferStatus ) {
+	// Add blocked transfer hold when somwthign is wrong in the transfer status.
+	if (
+		! transferringBlockers?.includes( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER ) &&
+		( isBlockByTransferStatus || isTransferStuck )
+	) {
 		transferringBlockers?.push( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER );
 	}
 
