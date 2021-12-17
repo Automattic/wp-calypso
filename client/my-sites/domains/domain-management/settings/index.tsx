@@ -133,16 +133,6 @@ const Settings = ( {
 	};
 
 	const renderContactInformationSecion = () => {
-		const placeholderAccordion = (
-			<Accordion
-				title="Contact information"
-				subtitle="Contact information"
-				isPlaceholder
-			></Accordion>
-		);
-
-		if ( ! domain || ! domains ) return placeholderAccordion;
-
 		if (
 			domain.type !== domainTypes.REGISTERED ||
 			( ! isDomainUpdateable( domain ) && ! isDomainInGracePeriod( domain ) )
@@ -150,29 +140,52 @@ const Settings = ( {
 			return null;
 		}
 
-		const { privateDomain } = domain;
+		const getPlaceholderAccordion = () => (
+			<Accordion
+				title="Contact information"
+				subtitle="Contact information"
+				isPlaceholder
+			></Accordion>
+		);
+
+		if ( ! domain || ! domains ) return getPlaceholderAccordion();
+
+		const getContactsPrivacyInfo = () => (
+			<ContactsPrivacyInfo
+				domains={ domains }
+				selectedSite={ selectedSite }
+				selectedDomainName={ selectedDomainName }
+			></ContactsPrivacyInfo>
+		);
+
 		const contactInformation = findRegistrantWhois( whoisData );
+
+		const { privateDomain } = domain;
+		const privacyProtectionLabel = privateDomain
+			? translate( 'Privacy protection on', { textOnly: true } )
+			: translate( 'Privacy protection off', { textOnly: true } );
+
+		if ( ! domain.currentUserCanManage ) {
+			return (
+				<Accordion title="Contact information" subtitle={ `${ privacyProtectionLabel }` }>
+					{ getContactsPrivacyInfo() }
+				</Accordion>
+			);
+		}
 
 		if ( ! contactInformation ) {
 			requestWhois( selectedDomainName );
-			return placeholderAccordion;
+			return getPlaceholderAccordion();
 		}
 
 		const contactInfoFullName = `${ contactInformation.fname } ${ contactInformation.lname }`;
-		const privacyProtectionLabel = privateDomain
-			? translate( 'privacy protection on' )
-			: translate( 'privacy protection off' );
 
 		return (
 			<Accordion
 				title="Contact information"
-				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel }` }
+				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }` }
 			>
-				<ContactsPrivacyInfo
-					domains={ domains }
-					selectedSite={ selectedSite }
-					selectedDomainName={ selectedDomainName }
-				></ContactsPrivacyInfo>
+				{ getContactsPrivacyInfo() }
 			</Accordion>
 		);
 	};
