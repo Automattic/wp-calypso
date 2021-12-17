@@ -1,6 +1,5 @@
 import { mkdtemp } from 'fs/promises';
 import path from 'path';
-import { URL } from 'url';
 import config from 'config';
 import { buildHooks as buildBrowserHooks } from './browser/index.js';
 import { buildHooks as buildVideoHooks, isVideoEnabled } from './video/index.js';

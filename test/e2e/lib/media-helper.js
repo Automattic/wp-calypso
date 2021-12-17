@@ -1,6 +1,5 @@
 import path from 'path';
 import { PassThrough } from 'stream';
-import { URL } from 'url';
 import fs from 'fs-extra';
 import pngitxt from 'png-itxt';
 import sanitize from 'sanitize-filename';
