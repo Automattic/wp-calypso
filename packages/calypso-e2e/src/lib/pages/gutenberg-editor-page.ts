@@ -103,7 +103,7 @@ export class GutenbergEditorPage {
 				.dispatch( 'automattic/wpcom-welcome-guide' )
 				.setShowWelcomeGuide( false );
 
-			return ! actionPayload.show;
+			return actionPayload.show === false;
 		} );
 	}
 
