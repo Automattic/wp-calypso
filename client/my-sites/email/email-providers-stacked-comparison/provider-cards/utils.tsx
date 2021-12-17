@@ -5,7 +5,6 @@ import {
 } from '@automattic/shopping-cart';
 import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
 
 export enum IntervalLength {
@@ -16,14 +15,13 @@ export enum IntervalLength {
 export const addToCartAndCheckout = (
 	shoppingCartManager: ShoppingCartManagerActions,
 	cartItem: RequestCartProduct | IncompleteRequestCartProduct,
-	productList: Record< string, { product_id: number } >,
 	setAddingToCart: ( addingToCart: boolean ) => void,
 	selectedSite: string
 ): void => {
 	setAddingToCart( true );
 
 	shoppingCartManager
-		.addProductsToCart( [ fillInSingleCartItemAttributes( cartItem, productList ) ] )
+		.addProductsToCart( [ cartItem ] )
 		.then( ( response: ResponseCart ) => {
 			setAddingToCart( false );
 
