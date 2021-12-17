@@ -11,8 +11,11 @@ import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getSiteChecklistTask from 'calypso/state/selectors/get-site-checklist-task';
 import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -53,6 +56,8 @@ class PreviewMain extends Component {
 		if ( typeof window !== 'undefined' ) {
 			window.addEventListener( 'resize', this.debouncedUpdateLayout );
 		}
+
+		this.updateTask();
 	}
 
 	componentWillUnmount() {
@@ -95,6 +100,13 @@ class PreviewMain extends Component {
 		}
 	}
 
+	updateTask() {
+		const { siteId, blogPreviewedTask, completeTask } = this.props;
+		if ( blogPreviewedTask && ! blogPreviewedTask.isCompleted ) {
+			completeTask( siteId, blogPreviewedTask.id );
+		}
+	}
+
 	getBasePreviewUrl() {
 		return this.props.site.options.unmapped_url;
 	}
@@ -123,6 +135,7 @@ class PreviewMain extends Component {
 		if ( this.props.siteId !== prevProps.siteId ) {
 			debug( 'site change detected' );
 			this.updateUrl();
+			this.updateTask();
 		}
 	}
 
@@ -202,10 +215,16 @@ const mapState = ( state ) => {
 		siteId: selectedSiteId,
 		canEditPages: canCurrentUser( state, selectedSiteId, 'edit_pages' ),
 		editorURL: getEditorUrl( state, selectedSiteId, homePagePostId, 'page' ),
+		blogPreviewedTask: getSiteChecklistTask(
+			state,
+			selectedSiteId,
+			CHECKLIST_KNOWN_TASKS.BLOG_PREVIEWED
+		),
 	};
 };
 
 export default connect( mapState, {
 	recordTracksEvent,
 	setLayoutFocus,
+	completeTask: requestSiteChecklistTaskUpdate,
 } )( localize( PreviewMain ) );

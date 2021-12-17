@@ -12,6 +12,8 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
+import { useRequestSiteChecklistTaskUpdate } from 'calypso/state/checklist/hooks';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -69,6 +71,8 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 			);
 		}
 	}
+
+	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
 	return (
 		<Main fullWidthLayout className="themes">

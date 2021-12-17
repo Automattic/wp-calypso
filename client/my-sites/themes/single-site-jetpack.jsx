@@ -5,6 +5,8 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
+import { useRequestSiteChecklistTaskUpdate } from 'calypso/state/checklist/hooks';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
@@ -58,6 +60,8 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			showIcon={ true }
 		/>
 	);
+
+	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
 	return (
 		<Main fullWidthLayout className="themes">
