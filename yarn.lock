@@ -17101,13 +17101,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esm@npm:^3.2.25":
-  version: 3.2.25
-  resolution: "esm@npm:3.2.25"
-  checksum: 8e60e8075506a7ce28681c30c8f54623fe18a251c364cd481d86719fc77f58aa055b293d80632d9686d5408aaf865ffa434897dc9fd9153c8b3f469fad23f094
-  languageName: node
-  linkType: hard
-
 "espree@npm:^6.1.2":
   version: 6.1.2
   resolution: "espree@npm:6.1.2"
@@ -37846,7 +37839,6 @@ testarmada-magellan@11.0.10:
     eslint: ^7.28.0
     eslint-plugin-jest: ^25.3.0
     eslint-plugin-mocha: ^10.0.2
-    esm: ^3.2.25
     execa: ^5.0.0
     ffmpeg-static: ^2.4.0
     fs-extra: ^0.22.1
@@ -37856,7 +37848,7 @@ testarmada-magellan@11.0.10:
     jest-runner: ^27.0.6
     jest-runner-groups: ^2.1.0
     jest-teamcity: ^1.9.0
-    lodash: ^4.17.20
+    lodash-es: ^4.17.21
     mailosaur: ^4.0.0
     mocha: ^9.1.3
     mocha-junit-reporter: ^2.0.2
