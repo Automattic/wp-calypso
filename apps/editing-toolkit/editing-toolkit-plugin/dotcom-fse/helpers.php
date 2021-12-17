@@ -372,4 +372,24 @@ function filter_markup( $markup ) {
 	return trim( $filtered_markup );
 }
 
-
+/**
+ * Given an array of blog_ids, tallys the numbers for customized, non-customized, and non-fse sites.
+ */
+function count_customized_legacy_FSE_sites( $blog_ids ) {
+	$tally = array(
+		'customized' => 0,
+		'not-customized' => 0,
+		'not-fse' => 0
+	);
+	foreach( $blog_ids as $blog_id ) {
+		$has_edits = has_legacy_FSE_template_edits($blog_id);
+		if( $has_edits && $has_edits === 'not-fse' ) {
+			$tally['not-fse'] += 1;
+		} else if ( $has_edits ) {
+			$tally['customized'] += 1;
+		} else {
+			$tally['not-customized'] += 1;
+		}
+	}
+	return $tally;
+}
