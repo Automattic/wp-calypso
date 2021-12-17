@@ -1,9 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { settingsPath, purchasesPath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -29,7 +29,7 @@ export default ( { path } ) => {
 	);
 
 	const shouldShowPurchases =
-		isEnabled( 'jetpack/purchases' ) &&
+		isSectionNameEnabled( 'site-purchases' ) &&
 		useSelector( ( state ) => canCurrentUser( state, siteId, 'own_site' ) );
 
 	return (
