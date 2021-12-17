@@ -32,7 +32,9 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
 	const ctaRef = useRef( null );
 
-	const { hasBlockers, wpcomDomain, isDataReady } = useWooCommerceOnPlansEligibility( siteId );
+	const { isTransferringBlocked, wpcomDomain, isDataReady } = useWooCommerceOnPlansEligibility(
+		siteId
+	);
 
 	function onCTAClickHandler() {
 		if ( isEnabled( 'woop' ) ) {
@@ -43,7 +45,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	}
 
 	function renderWarningNotice() {
-		if ( ! hasBlockers || ! isDataReady ) {
+		if ( ! isTransferringBlocked || ! isDataReady ) {
 			return null;
 		}
 
@@ -61,7 +63,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	return (
 		<div className="woop__landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
-				<Button onClick={ onCTAClickHandler } primary disabled={ hasBlockers }>
+				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
 					{ __( 'Set up my store!' ) }
 				</Button>
 			</FixedNavigationHeader>
@@ -70,7 +72,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 				headline={ __( 'Build exactly the eCommerce website you want.' ) }
 				buttonText={ __( 'Set up my store!' ) }
 				buttonAction={ onCTAClickHandler }
-				buttonDisabled={ hasBlockers }
+				buttonDisabled={ isTransferringBlocked }
 				ctaRef={ ctaRef }
 				notice={ renderWarningNotice() }
 			>

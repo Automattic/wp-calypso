@@ -2,6 +2,7 @@ import { ATOMIC_TRANSFER_REQUEST_LATEST } from 'calypso/state/action-types';
 import { setLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const requestLatestAtomicTransfer = ( action ) =>
@@ -10,6 +11,7 @@ const requestLatestAtomicTransfer = ( action ) =>
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
 			path: `/sites/${ action.siteId }/atomic/transfers/latest`,
+			retryPolicy: noRetry(),
 		},
 		action
 	);
