@@ -7,12 +7,14 @@ import {
 	CheckoutSubmitButton,
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
@@ -149,7 +151,11 @@ export default function PaymentMethodSelector( {
 				paymentMethods
 			) }
 		>
-			<Card className="payment-method-selector__content">
+			<Card
+				className={ classNames( 'payment-method-selector__content', {
+					'is-jetpack-cloud': isJetpackCloud(),
+				} ) }
+			>
 				<QueryPaymentCountries />
 				{ currentPaymentMethodNotAvailable && purchase && (
 					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
