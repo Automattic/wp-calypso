@@ -17,9 +17,10 @@ export class LoginPage {
 	/**
 	 * Opens the login page.
 	 *
+	 * @param {{path: string}: string } param1 Key/value pair of the path to be appended to /log-in. E.g. /log-in/new is the reskinned login page.
 	 * Example: {@link https://wordpress.com/log-in}
 	 */
-	async visit( path?: string ): Promise< Response | null > {
+	async visit( { path }: { path: string } = { path: '' } ): Promise< Response | null > {
 		const targetUrl = path ? `log-in/${ path }` : 'log-in';
 		return await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
 	}
