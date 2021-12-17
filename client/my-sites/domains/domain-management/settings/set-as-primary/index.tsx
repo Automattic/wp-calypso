@@ -25,7 +25,7 @@ import type {
 	SetAsPrimaryProps,
 	SetAsPrimaryPassedProps,
 	SetAsPrimaryStateProps,
-	ChangePrimaryFunctionSignature,
+	ChangePrimaryFunction,
 } from './types';
 
 const SetAsPrimary = ( props: SetAsPrimaryProps ): JSX.Element | null => {
@@ -88,7 +88,9 @@ const SetAsPrimary = ( props: SetAsPrimaryProps ): JSX.Element | null => {
 			setIsSettingPrimaryDomain( false );
 		}
 	};
+
 	if ( ! canSetAsPrimary() ) return null;
+
 	return (
 		<div className="set-as-primary">
 			<Accordion
@@ -96,9 +98,12 @@ const SetAsPrimary = ( props: SetAsPrimaryProps ): JSX.Element | null => {
 				subtitle={ translate( 'Make this domain your primary site address' ) }
 			>
 				<p className="set-as-primary__content">
-					{ translate( 'Your current primary site address is %(domainName)s', {
+					{ translate( 'Your current primary site address is {{strong}}%(domainName)s{{/strong}}', {
 						args: {
 							domainName: selectedSite.domain,
+						},
+						components: {
+							strong: <strong />,
 						},
 					} ) }
 				</p>
@@ -110,11 +115,11 @@ const SetAsPrimary = ( props: SetAsPrimaryProps ): JSX.Element | null => {
 	);
 };
 
-const changePrimary: ChangePrimaryFunctionSignature = ( domain, mode ) =>
+const changePrimary: ChangePrimaryFunction = ( domain, mode ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
-			'Changed Primary Domain to in Settings',
+			'Changed Primary Domain in Settings',
 			'Domain Name',
 			domain.name
 		),

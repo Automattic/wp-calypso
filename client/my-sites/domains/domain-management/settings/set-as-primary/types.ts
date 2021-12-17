@@ -19,13 +19,13 @@ export type SetAsPrimaryStateProps = {
 	isManagingAllSites: boolean;
 };
 
-export type ChangePrimaryFunctionSignature = ( domain: ResponseDomain, mode: string ) => void;
+export type ChangePrimaryFunction = ( domain: ResponseDomain, mode: string ) => void;
 
 export type SetAsPrimaryDispatchProps = {
 	setPrimaryDomain: typeof setPrimaryDomain;
 	showUpdatePrimaryDomainErrorNotice: ReturnType< typeof showUpdatePrimaryDomainErrorNotice >;
 	showUpdatePrimaryDomainSuccessNotice: ReturnType< typeof showUpdatePrimaryDomainSuccessNotice >;
-	changePrimary: ChangePrimaryFunctionSignature;
+	changePrimary: ChangePrimaryFunction;
 };
 
 export type SetAsPrimaryProps = SetAsPrimaryPassedProps &
