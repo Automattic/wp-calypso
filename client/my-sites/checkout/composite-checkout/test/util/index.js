@@ -312,10 +312,10 @@ export async function mockSetCartEndpoint( _, requestCart ) {
 
 function convertRequestProductToResponseProduct( currency ) {
 	return ( product ) => {
-		const { product_id } = product;
+		const { product_slug } = product;
 
-		switch ( product_id ) {
-			case 1009: // WPCOM Personal Bundle
+		switch ( product_slug ) {
+			case 'personal-bundle': // WPCOM Personal Bundle
 				return {
 					product_id: 1009,
 					product_name: 'WordPress.com Personal',
@@ -332,7 +332,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					volume: 1,
 					extra: {},
 				};
-			case 5:
+			case 'domain_map':
 				return {
 					product_id: 5,
 					product_name: 'Domain Mapping',
@@ -349,7 +349,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					volume: 1,
 					extra: {},
 				};
-			case 6:
+			case 'domain_reg':
 				return {
 					product_id: 6,
 					product_name: 'Domain Registration',
@@ -366,7 +366,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					volume: 1,
 					extra: {},
 				};
-			case 9:
+			case 'gapps':
 				return {
 					product_id: 9,
 					product_name: 'G Suite',
@@ -383,7 +383,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					volume: 1,
 					extra: {},
 				};
-			case 39:
+			case 'premium_theme':
 				return {
 					product_id: 39,
 					product_name: 'Premium Theme: Ovation',
@@ -399,7 +399,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					volume: 1,
 					extra: {},
 				};
-			case 371:
+			case 'concierge-session':
 				return {
 					product_id: 371,
 					product_name: 'Support Session',
@@ -415,7 +415,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					volume: 1,
 					extra: {},
 				};
-			case 2106:
+			case 'jetpack_scan':
 				return {
 					product_id: 2106,
 					product_name: 'Jetpack Scan Daily',
@@ -432,7 +432,7 @@ function convertRequestProductToResponseProduct( currency ) {
 					volume: 1,
 					extra: {},
 				};
-			case 2100:
+			case 'jetpack_backup_daily':
 				return {
 					product_id: 2100,
 					product_name: 'Jetpack Backup (Daily)',
@@ -452,8 +452,8 @@ function convertRequestProductToResponseProduct( currency ) {
 		}
 
 		return {
-			product_id: product_id,
-			product_name: `Unknown mocked product: ${ product_id }`,
+			product_id: Math.ceil( Math.random() * 3000 ),
+			product_name: `Unknown mocked product: ${ product_slug }`,
 			product_slug: 'unknown',
 			currency: currency,
 			is_domain_registration: false,
