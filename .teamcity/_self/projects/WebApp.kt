@@ -322,6 +322,17 @@ object RunAllUnitTests : BuildType({
 				yarn workspaces foreach --verbose --parallel run storybook --ci --smoke-test
 			"""
 		}
+		bashNodeScript {
+			name = "Tag build"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			scriptContent = """
+				set -x
+
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
+					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
+				fi
+			""".trimIndent()
+		}
 	}
 
 	triggers {
@@ -342,7 +353,9 @@ object RunAllUnitTests : BuildType({
 			comparison = BuildFailureOnMetric.MetricComparison.MORE
 			threshold = 0
 			compareTo = build {
-				buildRule = lastSuccessful()
+				buildRule = buildWithTag {
+					tag = "release-candidate"
+				}
 			}
 			stopBuildOnFailure = true
 		}
