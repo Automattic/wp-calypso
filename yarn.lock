@@ -16726,6 +16726,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-json-es@npm:^1.5.4":
+  version: 1.5.4
+  resolution: "eslint-plugin-json-es@npm:1.5.4"
+  dependencies:
+    eslint-visitor-keys: ^3.0.0
+    espree: ^9.0.0
+  peerDependencies:
+    eslint: ">= 7"
+  checksum: c557fd6b375a2cca07a62e36061b8992f4e8be28cd00ea2664dabf6dbb2bfe54151290962ee7b6ec96e9ad600b8e6521c838f189caa8ac150c217dfff1265738
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-jsx-a11y@npm:^6.4.1, eslint-plugin-jsx-a11y@npm:^6.5.1":
   version: 6.5.1
   resolution: "eslint-plugin-jsx-a11y@npm:6.5.1"
@@ -17140,7 +17152,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"espree@npm:^9.2.0":
+"espree@npm:^9.0.0, espree@npm:^9.2.0":
   version: 9.2.0
   resolution: "espree@npm:9.2.0"
   dependencies:
@@ -37824,6 +37836,7 @@ testarmada-magellan@11.0.10:
     eslint-plugin-inclusive-language: ^2.2.0
     eslint-plugin-jest: ^25.3.0
     eslint-plugin-jsdoc: ^37.2.2
+    eslint-plugin-json-es: ^1.5.4
     eslint-plugin-jsx-a11y: ^6.5.1
     eslint-plugin-md: ^1.0.19
     eslint-plugin-mocha: ^10.0.3

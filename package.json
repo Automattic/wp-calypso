@@ -288,6 +288,7 @@
 		"@bartekbp/typescript-checkstyle": "^5.0.0",
 		"bunyan": "^1.8.15",
 		"eslint-nibble": "^8.0.0",
+		"eslint-plugin-json-es": "^1.5.4",
 		"husky": "^7.0.4"
 	},
 	"resolutions": {
