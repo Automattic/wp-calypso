@@ -274,20 +274,25 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		} );
 
 		it( 'Zip screenshots and upload', async function () {
+			const zipFilename = 'tos-screenshots.zip';
 			const archive = archiver( 'zip', {
 				zlib: { level: 9 }, // Sets the compression level.
 			} );
-			const output = fs.createWriteStream( 'test-screenshots-1.zip' );
+			const output = fs.createWriteStream( zipFilename );
 			archive.pipe( output );
 			archive.glob( 'tos_*' );
 			archive.finalize();
 
 			output.on( 'close', function () {
 				const form = new FormData();
-				form.append( 'zip_file', fs.createReadStream( 'test-screenshots-1.zip' ) );
+				const bearerToken = DataHelper.getTosUploadToken();
+				form.append( 'zip_file', fs.createReadStream( zipFilename ) );
 				fetch( 'https://public-api.wordpress.com/wpcom/v2/screenshots', {
 					method: 'POST',
 					body: form,
+					headers: {
+						Authorization: `Bearer ${ bearerToken }`,
+					},
 				} )
 					.then( ( response ) => response.json() )
 					.then( ( response ) => expect( response?.upload_status ).toStrictEqual( 'success' ) );
