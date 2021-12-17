@@ -22,7 +22,6 @@ import {
 	TASK_VERIFY_EMAIL,
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
-	TASK_DIFM_LITE_IN_PROGRESS,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -30,7 +29,6 @@ import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
 import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
-import DIFMLiteInProgress from 'calypso/my-sites/customer-home/cards/tasks/difm-lite-in-progress';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
@@ -50,7 +48,6 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
 	[ TASK_CLOUDFLARE ]: Cloudflare,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
-	[ TASK_DIFM_LITE_IN_PROGRESS ]: DIFMLiteInProgress,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
 	[ TASK_FIND_DOMAIN ]: FindDomain,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
