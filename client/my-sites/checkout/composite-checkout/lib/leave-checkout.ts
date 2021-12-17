@@ -11,15 +11,17 @@ export const leaveCheckout = ( {
 	jetpackCheckoutBackUrl,
 	previousPath,
 	dispatch,
+	tracksEvent,
 	createUserAndSiteBeforeTransaction,
 }: {
 	siteSlug?: string;
 	jetpackCheckoutBackUrl?: string;
 	previousPath?: string;
 	dispatch: ReturnType< typeof useDispatch >;
+	tracksEvent: string;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): void => {
-	dispatch( recordTracksEvent( 'calypso_masterbar_close_clicked' ) );
+	dispatch( recordTracksEvent( tracksEvent ) );
 	debug( 'leaving checkout with args', {
 		siteSlug,
 		jetpackCheckoutBackUrl,
