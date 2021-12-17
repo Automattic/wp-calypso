@@ -1,6 +1,26 @@
 {
 	"featured": [
 		{
+			"title": "Ames",
+			"slug": "ames",
+			"template": "ames",
+			"theme": "ames",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Ames",
+			"slug": "ames",
+			"template": "ames",
+			"theme": "ames",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": false,
+			"features": []
+		},
+		{
 			"title": "Arbutus",
 			"slug": "arbutus",
 			"template": "arbutus",
@@ -15,6 +35,46 @@
 			"slug": "arbutus",
 			"template": "arbutus",
 			"theme": "arbutus",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": false,
+			"features": []
+		},
+		{
+			"title": "Jackson",
+			"slug": "jackson",
+			"template": "jackson",
+			"theme": "jackson",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Jackson",
+			"slug": "jackson",
+			"template": "jackson",
+			"theme": "jackson",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": false,
+			"features": []
+		},
+		{
+			"title": "Kingsley",
+			"slug": "kingsley",
+			"template": "kingsley",
+			"theme": "kingsley",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Kingsley",
+			"slug": "kingsley",
+			"template": "kingsley",
+			"theme": "kingsley",
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": false,
