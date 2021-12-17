@@ -1,5 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`TourKitSpotlight Spotlight should render 1`] = `
+<Fragment>
+  <TourKitOverlay
+    visible={false}
+  />
+  <div
+    className="tour-kit-spotlight --visible"
+    style="test-popper"
+  />
+</Fragment>
+`;
+
 exports[`TourKitSpotlight should render 1`] = `
 <Fragment>
   <TourKitOverlay
