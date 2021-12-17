@@ -703,7 +703,7 @@ export default function CompositeCheckout( {
 			if ( searchParams.has( 'cancel_to' ) ) {
 				const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
 				// Only allow redirecting to relative paths.
-				if ( cancelPath.match( /^\/[^/]?/ ) ) {
+				if ( cancelPath.match( /^\/(?!\/)/ ) ) {
 					page( cancelPath );
 					return;
 				}
@@ -716,7 +716,7 @@ export default function CompositeCheckout( {
 			if ( searchParams.has( 'redirect_to' ) ) {
 				const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
 				// Only allow redirecting to relative paths.
-				if ( redirectPath.match( /^\/[^/]?/ ) ) {
+				if ( redirectPath.match( /^\/(?!\/)/ ) ) {
 					page( redirectPath );
 					return;
 				}
