@@ -29,7 +29,7 @@ const images = [ { src: Image01 }, { src: Image02 }, { src: Image03 }, { src: Im
 
 const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId } ) => {
 	const { __ } = useI18n();
-	const navigationItems = [ { label: 'WooCommerce', href: `/woocommerce-installation` } ];
+	const navigationItems = [ { label: 'WooCommerce' } ];
 	const ctaRef = useRef( null );
 
 	const { isTransferringBlocked, wpcomDomain, isDataReady } = useWooCommerceOnPlansEligibility(
