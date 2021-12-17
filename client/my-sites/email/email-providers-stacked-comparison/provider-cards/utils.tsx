@@ -1,11 +1,11 @@
-import {
+import page from 'page';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import type {
 	RequestCartProduct,
 	ResponseCart,
 	ShoppingCartManagerActions,
+	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
-import page from 'page';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
 
 export enum IntervalLength {
 	ANNUALLY = 'annually',
@@ -14,7 +14,7 @@ export enum IntervalLength {
 
 export const addToCartAndCheckout = (
 	shoppingCartManager: ShoppingCartManagerActions,
-	cartItem: RequestCartProduct | IncompleteRequestCartProduct,
+	cartItem: RequestCartProduct | MinimalRequestCartProduct,
 	setAddingToCart: ( addingToCart: boolean ) => void,
 	selectedSite: string
 ): void => {
