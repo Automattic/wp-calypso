@@ -82,7 +82,7 @@ export const QuickLinks = ( {
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
-			{ isFSEActive ? (
+			{ isFSEActive && canManageSite ? (
 				<ActionBox
 					href={ `/site-editor/${ siteSlug }` }
 					hideLinkIndicator
