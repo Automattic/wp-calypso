@@ -132,30 +132,6 @@ const Settings = ( {
 		return renderSecurityAccordion();
 	};
 
-	const renderMainContent = () => {
-		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
-		return (
-			<>
-				{ renderDetailsSection() }
-				{ renderSetAsPrimaryDomainSection() }
-				{ renderDomainSecuritySection() }
-			</>
-		);
-	};
-
-	const renderSettingsCards = () => (
-		<>
-			<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
-			<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
-			<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
-		</>
-	);
-
-	if ( ! domain ) {
-		// TODO: Update this placeholder
-		return <DomainMainPlaceholder breadcrumbs={ renderBreadcrumbs } />;
-	}
-
 	const getContactInformationAccordion = () => {
 		const placeholderAccordion = (
 			<Accordion
@@ -201,21 +177,38 @@ const Settings = ( {
 		);
 	};
 
+	const renderMainContent = () => {
+		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
+		return (
+			<>
+				{ renderDetailsSection() }
+				{ renderSetAsPrimaryDomainSection() }
+				{ getContactInformationAccordion() }
+				{ renderDomainSecuritySection() }
+			</>
+		);
+	};
+
+	const renderSettingsCards = () => (
+		<>
+			<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
+			<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
+			<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+		</>
+	);
+
+	if ( ! domain ) {
+		// TODO: Update this placeholder
+		return <DomainMainPlaceholder breadcrumbs={ renderBreadcrumbs } />;
+	}
+
 	return (
 		<Main wideLayout className="settings">
 			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<SettingsHeader domain={ domain } />
-			<TwoColumnsLayout
-				content={
-					<>
-						{ renderMainContent() }
-						{ getContactInformationAccordion() }
-					</>
-				}
-				sidebar={ renderSettingsCards() }
-			/>
+			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);
 };
