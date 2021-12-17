@@ -80,13 +80,13 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		await this.forceDismissWelcomeTour();
 		const frame = await this.getEditorFrame();
 		// Traditionally we try to avoid waits not related to the current flow.
 		// However, we need a stable way to identify loading being done. NetworkIdle
 		// takes too long here, so the most reliable alternative is the title being
 		// visible.
 		await frame.waitForSelector( selectors.editorTitle );
+		await this.forceDismissWelcomeTour();
 
 		return frame;
 	}
@@ -98,6 +98,12 @@ export class GutenbergEditorPage {
 	 */
 	async forceDismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
+
+		await frame.waitForFunction( async () =>
+			( window as any ).wp.data
+				.select( 'automattic/wpcom-welcome-guide' )
+				.isWelcomeGuideStatusLoaded()
+		);
 		await frame.waitForFunction( async () => {
 			const actionPayload = await ( window as any ).wp.data
 				.dispatch( 'automattic/wpcom-welcome-guide' )
