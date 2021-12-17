@@ -1,3 +1,4 @@
+import page from 'page';
 import { ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
@@ -92,7 +93,7 @@ export default function TransferSite(): ReactElement | null {
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
-				window.location.href = wcAdmin;
+				page( wcAdmin );
 			}, 500 );
 		}
 	}, [ siteId, softwareApplied, wcAdmin ] );

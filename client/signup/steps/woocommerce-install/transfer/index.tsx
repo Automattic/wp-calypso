@@ -14,6 +14,16 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
+	const {
+		goToStep,
+		signupDependencies: { siteConfirmed },
+	} = props;
+
+	if ( siteConfirmed !== siteId ) {
+		goToStep( 'confirm' );
+		return null;
+	}
+
 	return (
 		<StepWrapper
 			className="transfer__step-wrapper"

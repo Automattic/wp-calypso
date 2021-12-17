@@ -103,7 +103,7 @@ class HelpContact extends Component {
 	backToHelp = () => {
 		const searchParams = new URLSearchParams( window.location.search );
 		const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
-		if ( redirectPath.match( /^\/[^/]?/ ) ) {
+		if ( redirectPath.match( /^\/(?!\/)/ ) ) {
 			page( redirectPath );
 			return;
 		}

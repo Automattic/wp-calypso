@@ -4,18 +4,19 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import page from 'page';
 import { ReactElement, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
 import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
-
 import './style.scss';
 
 const SupportLinkStyle = styled.a`
@@ -79,6 +80,7 @@ function SupportLink( { domain }: { domain: string } ): ReactElement {
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
 	const { goToStep, isReskinned, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -97,10 +99,11 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 	useEffect( () => {
 		// Automatically start the transfer process when it's ready.
-		if ( isDataReady && ( isAtomicSite || isReadyForTransfer ) ) {
-			return goToStep( 'transfer' );
+		if ( siteId && isDataReady && ( isAtomicSite || isReadyForTransfer ) ) {
+			dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
+			goToStep( 'transfer' );
 		}
-	}, [ goToStep, isDataReady, isAtomicSite, isReadyForTransfer ] );
+	}, [ dispatch, goToStep, siteId, isDataReady, isAtomicSite, isReadyForTransfer ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
@@ -158,8 +161,10 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 						<StyledNextButton
 							disabled={ hasBlockers || ! isDataReady }
 							onClick={ () => {
+								dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
 								if ( siteUpgrading.required ) {
-									return ( window.location.href = siteUpgrading.checkoutUrl );
+									page( siteUpgrading.checkoutUrl );
+									return;
 								}
 								goToStep( 'transfer' );
 							} }
