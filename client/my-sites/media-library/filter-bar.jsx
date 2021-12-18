@@ -13,7 +13,7 @@ import DataSource from './data-source';
 // These source supply very large images, and there are instances such as
 // the site icon editor, where we want to disable them because the editor
 // can't handle the large images.
-const largeImageSources = [ 'pexels', 'google_photos' ];
+const largeImageSources = [ 'google_photos', 'openverse', 'pexels' ];
 
 const noop = () => {};
 
@@ -100,7 +100,7 @@ export class MediaLibraryFilterBar extends Component {
 	};
 
 	getFiltersForSource( source ) {
-		if ( source === 'pexels' ) {
+		if ( source === 'pexels' || source === 'openverse' ) {
 			return [];
 		}
 
@@ -155,7 +155,7 @@ export class MediaLibraryFilterBar extends Component {
 		return (
 			<Search
 				// eslint-disable-next-line jsx-a11y/no-autofocus
-				autoFocus={ source === 'pexels' }
+				autoFocus={ source === 'pexels' || source === 'openverse' }
 				key={ source }
 				analyticsGroup="Media"
 				pinned={ isPinned }

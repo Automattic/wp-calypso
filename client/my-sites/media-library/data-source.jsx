@@ -10,6 +10,7 @@ import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import OpenverseIcon from './openverse-icon';
 import PexelsIcon from './pexels-icon';
 
 export class MediaLibraryDataSource extends Component {
@@ -61,6 +62,11 @@ export class MediaLibraryDataSource extends Component {
 				value: 'pexels',
 				label: translate( 'Pexels free photos' ),
 				icon: <PexelsIcon className="gridicon" />, // eslint-disable-line wpcalypso/jsx-classname-namespace
+			} );
+			sources.push( {
+				value: 'openverse',
+				label: translate( 'Openverse free photos' ),
+				icon: <OpenverseIcon className="gridicon" />, // eslint-disable-line wpcalypso/jsx-classname-namespace
 			} );
 		}
 		return sources.filter( ( { value } ) => ! includes( disabledSources, value ) );
