@@ -26,6 +26,7 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
+import NameServers from './cards/name-servers';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
@@ -124,6 +125,22 @@ const Settings = ( {
 		}
 	};
 
+	const renderNameServersSection = () => {
+		const subtitle = domain.hasWpcomNameservers
+			? translate( 'Your domain is pointing to WordPress.com', { textOnly: true } )
+			: translate( 'Your domain is pointing to custom name servers', { textOnly: true } );
+
+		return (
+			<Accordion title={ translate( 'Name servers', { textOnly: true } ) } subtitle={ subtitle }>
+				<NameServers
+					domain={ domain }
+					selectedSite={ selectedSite }
+					selectedDomainName={ selectedDomainName }
+				/>
+			</Accordion>
+		);
+	};
+
 	const renderSetAsPrimaryDomainSection = () => {
 		return <SetAsPrimary domain={ domain } selectedSite={ selectedSite } key="set-as-primary" />;
 	};
@@ -195,6 +212,7 @@ const Settings = ( {
 		return (
 			<>
 				{ renderDetailsSection() }
+				{ renderNameServersSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderContactInformationSecion() }
 				{ renderDomainSecuritySection() }
