@@ -7,6 +7,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setAtomicSoftwareStatus } from 'calypso/state/atomic/software/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 
@@ -44,6 +45,7 @@ const requestSoftware = ( action ) =>
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
 			path: `/sites/${ action.siteId }/atomic/software/${ action.softwareSet }`,
+			retryPolicy: noRetry(),
 		},
 		action
 	);

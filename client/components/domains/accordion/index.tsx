@@ -1,5 +1,5 @@
 import FoldableCard from 'calypso/components/foldable-card';
-import { AccordionProps } from './types';
+import type { AccordionProps } from './types';
 import './style.scss';
 
 const Accordion = ( {

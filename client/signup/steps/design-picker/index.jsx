@@ -29,7 +29,16 @@ import './style.scss';
 
 // Ideally this data should come from the themes API, maybe by a tag that's applied to
 // themes? e.g. `link-in-bio` or `no-fold`
-const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
+const STATIC_PREVIEWS = [
+	'bantry',
+	'sigler',
+	'miller',
+	'pollard',
+	'paxton',
+	'jones',
+	'baker',
+	'kingsley',
+];
 
 export default function DesignPickerStep( props ) {
 	const { flowName, stepName, isReskinned, queryParams, showDesignPickerCategories } = props;

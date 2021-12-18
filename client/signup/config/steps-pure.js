@@ -781,10 +781,11 @@ export function generateSteps( {
 				),
 			},
 			dependencies: [ 'site' ],
+			providesDependencies: [ 'siteConfirmed' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-			dependencies: [ 'site' ],
+			dependencies: [ 'site', 'siteConfirmed' ],
 		},
 	};
 }

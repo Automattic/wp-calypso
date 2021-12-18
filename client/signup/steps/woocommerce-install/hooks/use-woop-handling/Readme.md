@@ -37,7 +37,7 @@ The hook returns an object with the following properties:
 
 ### transferringBlockers
 
-### hasBlockers
+### isTransferringBlocked
 
 ### siteUpgrading
 

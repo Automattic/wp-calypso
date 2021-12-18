@@ -1,3 +1,4 @@
+import page from 'page';
 import { ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
@@ -16,7 +17,11 @@ import Progress from './progress';
 
 import './style.scss';
 
-export default function TransferSite(): ReactElement | null {
+export default function TransferSite( {
+	onFailure,
+}: {
+	onFailure: () => void;
+} ): ReactElement | null {
 	const dispatch = useDispatch();
 
 	const [ progress, setProgress ] = useState( 0.1 );
@@ -25,7 +30,15 @@ export default function TransferSite(): ReactElement | null {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
 	const transferStatus = transfer?.status;
-	const transferFailed = !! transfer?.error;
+
+	// Check transfer status code (5xx).
+	const isErrorTransferStatus =
+		Number.isInteger( Number( transferStatus ) ) &&
+		transferStatus &&
+		5 === Math.floor( Number( transferStatus ) / 100 );
+
+	const transferFailed = !! transfer?.error || isErrorTransferStatus;
+
 	const software = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
@@ -45,7 +58,7 @@ export default function TransferSite(): ReactElement | null {
 		() => {
 			dispatch( requestLatestAtomicTransfer( siteId ) );
 		},
-		transferStatus === transferStates.COMPLETED ? null : 3000
+		transferFailed || transferStatus === transferStates.COMPLETED ? null : 3000
 	);
 
 	// Poll for software status
@@ -53,7 +66,8 @@ export default function TransferSite(): ReactElement | null {
 		() => {
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
-		softwareApplied ? null : 3000
+		// Only poll if the transfer is completed and not failed
+		transferFailed || transferStates.COMPLETED !== transferStatus || softwareApplied ? null : 3000
 	);
 
 	// Watch transfer status
@@ -79,8 +93,9 @@ export default function TransferSite(): ReactElement | null {
 
 		if ( transferFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
+			onFailure();
 		}
-	}, [ siteId, transferStatus, transferFailed ] );
+	}, [ siteId, transferStatus, transferFailed, onFailure ] );
 
 	// Redirect to wc-admin once software installation is confirmed.
 	useEffect( () => {
@@ -92,7 +107,7 @@ export default function TransferSite(): ReactElement | null {
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
-				window.location.href = wcAdmin;
+				page( wcAdmin );
 			}, 500 );
 		}
 	}, [ siteId, softwareApplied, wcAdmin ] );
@@ -100,7 +115,7 @@ export default function TransferSite(): ReactElement | null {
 	// todo: transferFailed states need testing and if required, pass the message through correctly
 	return (
 		<>
-			{ transferFailed && <Error message={ transferStatus || '' } /> }
+			{ transferFailed && <Error /> }
 			{ ! transferFailed && <Progress progress={ progress } /> }
 		</>
 	);
