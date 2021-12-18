@@ -79,6 +79,7 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": false,
+			"preview": "static",
 			"features": []
 		},
 		{
