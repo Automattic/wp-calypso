@@ -12,6 +12,7 @@ import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import DoneButton from '../components/done-button';
+import ErrorMessage from '../components/error-message';
 import GettingStartedVideo from '../components/getting-started-video';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
@@ -106,6 +107,10 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		return job && job.importerState === appStates.IMPORT_SUCCESS;
 	}
 
+	function checkIsFailed() {
+		return job && job.importerState === appStates.IMPORT_FAILURE;
+	}
+
 	function showVideoComponent() {
 		return checkProgress() || checkIsSuccess();
 	}
@@ -150,6 +155,8 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 								/>
 							</Hooray>
 						);
+					} else if ( checkIsFailed() ) {
+						return <ErrorMessage siteSlug={ siteSlug } />;
 					}
 
 					/**
