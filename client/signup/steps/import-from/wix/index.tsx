@@ -90,19 +90,16 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
 	}
 
-	function checkLoading() {
-		return (
-			job?.importerState === appStates.READY_FOR_UPLOAD ||
-			job?.importerState === appStates.UPLOAD_SUCCESS
-		);
-	}
-
 	function checkIsImporterReady() {
 		return job || run;
 	}
 
 	function checkProgress() {
-		return job && job.importerState === appStates.IMPORTING;
+		return (
+			job?.importerState === appStates.IMPORTING ||
+			job?.importerState === appStates.READY_FOR_UPLOAD ||
+			job?.importerState === appStates.UPLOAD_SUCCESS
+		);
 	}
 
 	function checkIsSuccess() {
@@ -117,16 +114,11 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		<>
 			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
 				{ ( () => {
-					if ( checkLoading() ) {
-						/**
-						 * Loading screen
-						 */
-						return <LoadingEllipsis />;
-					} else if ( checkProgress() ) {
+					if ( checkProgress() ) {
 						/**
 						 * Progress screen
 						 */
-						const progress = calculateProgress( job?.progress );
+						const progress = job?.progress ? calculateProgress( job?.progress ) : 0;
 						return (
 							<Progress>
 								<Title>{ __( 'Importing' ) }...</Title>
@@ -159,6 +151,11 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 							</Hooray>
 						);
 					}
+
+					/**
+					 * Loading screen
+					 */
+					return <LoadingEllipsis />;
 				} )() }
 
 				{ showVideoComponent() && <GettingStartedVideo /> }
