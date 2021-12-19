@@ -13,7 +13,6 @@ import {
 } from 'calypso/state/imports/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import { GoToStep } from '../import/types';
 import NotAuthorized from './components/not-authorized';
 import NotFound from './components/not-found';
 import { MediumImporter } from './medium';
@@ -37,7 +36,6 @@ interface Props {
 	isImporterStatusHydrated: boolean;
 	siteImports: ImportJob[];
 	fetchImporterState: ( siteId: number ) => void;
-	goToStep: GoToStep;
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const {
@@ -48,7 +46,6 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		siteImports,
 		isImporterStatusHydrated,
 		fromSite,
-		goToStep,
 	} = props;
 
 	/**
@@ -121,7 +118,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									/**
 									 * Permission screen
 									 */
-									return <NotAuthorized goToStep={ goToStep } siteSlug={ siteSlug } />;
+									return <NotAuthorized siteSlug={ siteSlug } />;
 								} else if (
 									engine === 'medium' &&
 									isEnabled( 'gutenboarding/import-from-medium' )
