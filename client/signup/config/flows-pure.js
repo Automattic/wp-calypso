@@ -150,7 +150,6 @@ export function generateFlows( {
 			lastModified: '2017-11-20',
 			disallowResume: true,
 			allowContinue: false,
-			hideFlowProgress: true,
 		},
 		{
 			name: 'rewind-switch',
@@ -161,7 +160,6 @@ export function generateFlows( {
 			lastModified: '2018-01-27',
 			disallowResume: true,
 			allowContinue: false,
-			hideFlowProgress: true,
 		},
 		{
 			name: 'rewind-setup',
@@ -171,7 +169,6 @@ export function generateFlows( {
 			lastModified: '2019-11-11',
 			disallowResume: true,
 			allowContinue: false,
-			hideFlowProgress: true,
 			forceLogin: true,
 		},
 		{
@@ -183,7 +180,6 @@ export function generateFlows( {
 			lastModified: '2018-02-13',
 			disallowResume: true,
 			allowContinue: false,
-			hideFlowProgress: true,
 		},
 		{
 			name: 'simple',
@@ -329,7 +325,6 @@ export function generateFlows( {
 			description: 'A new import flow that can be used from the onboarding flow',
 			lastModified: '2021-10-18',
 			disallowResume: true,
-			hideFlowProgress: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
 		},
 		{
@@ -339,7 +334,6 @@ export function generateFlows( {
 			pageTitle: translate( 'Import your site content' ),
 			description: 'Onboarding - start from importer',
 			lastModified: '2021-11-15',
-			hideFlowProgress: true,
 			enableBranchSteps: true,
 		},
 		{
