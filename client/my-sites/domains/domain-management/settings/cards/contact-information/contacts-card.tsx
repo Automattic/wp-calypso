@@ -56,7 +56,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 						'Privacy protection is not available due to the registry’s policies. {{a}}Learn more{{/a}}',
 						{
 							components: {
-								a: <a href={ PRIVACY_PROTECTION } />,
+								a: <a href={ PRIVACY_PROTECTION } target="blank" />,
 							},
 						}
 					) }
@@ -85,7 +85,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 			<p className="contact-information__toggle-item">
 				{ translate( 'We recommend keeping privacy protection on. {{a}}Learn more{{/a}}', {
 					components: {
-						a: <a href={ PUBLIC_VS_PRIVATE } />,
+						a: <a href={ PUBLIC_VS_PRIVATE } target="blank" />,
 					},
 				} ) }
 			</p>
