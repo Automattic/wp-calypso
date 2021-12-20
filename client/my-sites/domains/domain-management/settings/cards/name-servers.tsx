@@ -26,6 +26,7 @@ import './style.scss';
 const NameServers = ( props ) => {
 	const translate = useTranslate();
 	const [ nameservers, setNameservers ] = useState( props.nameservers || null );
+	const [ shouldUpdateNameservers, setShouldUpdateNameservers ] = useState( false ); // TODO: Rename this
 	const [ isEditingNameservers, setIsEditingNameservers ] = useState( false );
 
 	useEffect( () => {
@@ -33,6 +34,13 @@ const NameServers = ( props ) => {
 			setNameservers( props.nameservers );
 		}
 	}, [ props.isLoadingNameservers ] );
+
+	useEffect( () => {
+		if ( shouldUpdateNameservers ) {
+			props.updateNameservers( nameservers );
+			setShouldUpdateNameservers( false );
+		}
+	}, [ nameservers ] );
 
 	// static propTypes = {
 	// 	domains: PropTypes.array.isRequired,
@@ -124,6 +132,7 @@ const NameServers = ( props ) => {
 	const handleToggle = () => {
 		if ( hasWpcomNameservers() ) {
 			setNameservers( [] );
+			setIsEditingNameservers( true );
 		} else {
 			resetToWpcomNameservers();
 		}
@@ -134,7 +143,7 @@ const NameServers = ( props ) => {
 			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
 		} else {
 			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
-			saveNameservers();
+			setShouldUpdateNameservers( true );
 		}
 	};
 
