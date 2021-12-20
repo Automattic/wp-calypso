@@ -44,6 +44,8 @@ export type SettingsPageNameServerHocProps = {
 
 export type SettingsPageConnectedDispatchProps = {
 	requestWhois: ( domain: string ) => void;
+	dns: any;
+	isRequestingDomains: boolean;
 };
 
 export type SettingsHeaderProps = {
