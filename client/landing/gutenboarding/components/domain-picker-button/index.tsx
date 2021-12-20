@@ -20,7 +20,7 @@ const DomainPickerButton: FunctionComponent = () => {
 		select( ONBOARD_STORE ).getState()
 	);
 
-	// Use site title or vertical as search query for a domain suggestion
+	// Use site title as search query for a domain suggestion
 	const suggestionQuery = siteTitle || '';
 	const isValidQuery = suggestionQuery.length > 1;
 
@@ -57,7 +57,7 @@ const DomainPickerButton: FunctionComponent = () => {
 			/* translators: domain name is available, eg: "yourname.com is available" */
 			return sprintf( __( '%s is available' ), domainSuggestion.domain_name );
 		}
-		// If there is no selected domain and no site title / vertical, show a static button
+		// If there is no selected domain and no site title, show a static button
 		return __( 'Choose a domain' );
 	};
 
