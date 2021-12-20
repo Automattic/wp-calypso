@@ -43,6 +43,7 @@ class GoogleLoginButton extends Component {
 		errorRef: null,
 		isDisabled: true,
 		isLoading: true,
+		isTemporarilyNotLoading: true,
 	};
 
 	constructor( props ) {
@@ -53,10 +54,13 @@ class GoogleLoginButton extends Component {
 		this.handleClick = this.handleClick.bind( this );
 		this.showError = this.showError.bind( this );
 		this.hideError = this.hideError.bind( this );
+		this.updateTemporarilyNotLoading = this.updateTemporarilyNotLoading.bind( this );
 	}
 
 	componentDidMount() {
 		this.initialize();
+		// Removes the loaded state after 2 seconds.
+		window.setTimeout( this.updateTemporarilyNotLoading, 2000 );
 	}
 
 	async loadDependency() {
@@ -80,6 +84,12 @@ class GoogleLoginButton extends Component {
 			redirect_uri: this.props.redirectUri,
 		} );
 		auth2InitDone = true;
+	}
+
+	updateTemporarilyNotLoading() {
+		this.setState( {
+			isTemporarilyNotLoading: false,
+		} );
 	}
 
 	initialize() {
@@ -198,7 +208,7 @@ class GoogleLoginButton extends Component {
 		const isDisabled = Boolean(
 			this.state.isDisabled || this.props.isFormDisabled || this.state.error
 		);
-		const { isLoading } = this.state;
+		const { isLoading, isTemporarilyNotLoading } = this.state;
 
 		const { children } = this.props;
 		let customButton = null;
@@ -215,7 +225,8 @@ class GoogleLoginButton extends Component {
 
 			customButton = cloneElement( children, childProps );
 		}
-
+		const isDisabledComponent = isTemporarilyNotLoading ? false : isDisabled;
+		const isLoadingComponent = isTemporarilyNotLoading ? false : isLoading;
 		return (
 			<>
 				{ customButton ? (
@@ -223,8 +234,8 @@ class GoogleLoginButton extends Component {
 				) : (
 					<button
 						className={ classNames( 'social-buttons__button button', {
-							disabled: isDisabled && ! isLoading,
-							loading: isLoading,
+							disabled: isDisabledComponent && ! isLoadingComponent,
+							loading: isLoadingComponent,
 						} ) }
 						onMouseOver={ this.showError }
 						onFocus={ this.showError }
@@ -232,8 +243,8 @@ class GoogleLoginButton extends Component {
 						onClick={ this.handleClick }
 					>
 						<GoogleIcon
-							isDisabled={ isDisabled }
-							isLoading={ isLoading }
+							isDisabled={ isDisabledComponent }
+							isLoading={ isLoadingComponent }
 							width={ this.props.isReskinned ? 19 : 20 }
 							height={ this.props.isReskinned ? 19 : 20 }
 						/>
