@@ -20,6 +20,7 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import NameServersToggle from './name-servers-toggle';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { NameServersCardProps } from './types';
 
 import './style.scss';
@@ -41,10 +42,8 @@ const NameServersCard = ( {
 	const [ isEditingNameservers, setIsEditingNameservers ] = useState( false );
 
 	useEffect( () => {
-		if ( isLoadingNameservers === false ) {
-			setNameservers( nameserversProps );
-		}
-	}, [ isLoadingNameservers ] );
+		setNameservers( nameserversProps );
+	}, [ nameserversProps ] );
 
 	useEffect( () => {
 		if ( shouldPersistNameservers ) {
@@ -151,11 +150,10 @@ const NameServersCard = ( {
 	};
 
 	const renderCustomNameserversForm = () => {
-		if ( hasWpcomNameservers() || isPendingTransfer() ) {
+		if ( ! nameservers || hasWpcomNameservers() || isPendingTransfer() ) {
 			return null;
 		}
 
-		// TODO: Check how this one appears
 		if ( needsVerification() ) {
 			return (
 				<IcannVerificationCard
@@ -184,7 +182,7 @@ const NameServersCard = ( {
 
 		return (
 			<div className="name-servers-card__name-server-list">
-				{ nameservers!.map( ( nameserver ) => (
+				{ nameservers.map( ( nameserver ) => (
 					<p key={ nameserver }>{ nameserver }</p>
 				) ) }
 				<Button
@@ -198,7 +196,7 @@ const NameServersCard = ( {
 		);
 	};
 
-	const renderPlanUpsellForNonPrimaryDomain = ( domain ) => {
+	const renderPlanUpsellForNonPrimaryDomain = ( domain: ResponseDomain ) => {
 		return (
 			<NonPrimaryDomainPlanUpsell
 				tracksImpressionName="calypso_non_primary_domain_ns_plan_upsell_impression"
@@ -216,7 +214,7 @@ const NameServersCard = ( {
 		return domain.isPendingIcannVerification;
 	};
 
-	const handleChange = ( nameservers ) => {
+	const handleChange = ( nameservers: string[] ) => {
 		setNameservers( nameservers );
 	};
 
@@ -229,13 +227,14 @@ const NameServersCard = ( {
 		setIsEditingNameservers( false );
 	};
 
+	if ( isLoading() ) {
+		return <p className="name-servers-card__loading" />;
+	}
+
 	if ( loadingNameserversError ) {
 		return <FetchError selectedDomainName={ selectedDomainName } />;
 	}
 
-	if ( isLoading() ) {
-		return <>LOADING</>;
-	}
 
 	return (
 		<div className="name-servers-card">
