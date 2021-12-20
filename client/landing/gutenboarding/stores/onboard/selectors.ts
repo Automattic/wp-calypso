@@ -11,7 +11,6 @@ export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
-export const getSelectedVertical = ( state: State ) => state.siteVertical;
 export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {
@@ -31,8 +30,7 @@ export const wasVerticalSkipped = ( state: State ): boolean => state.wasVertical
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
 export const getDomainSearch = ( state: State ) =>
 	state.domainSearch ||
-	( isGoodDefaultDomainQuery( getSelectedSiteTitle( state ) ) && getSelectedSiteTitle( state ) ) ||
-	getSelectedVertical( state )?.label;
+	( isGoodDefaultDomainQuery( getSelectedSiteTitle( state ) ) && getSelectedSiteTitle( state ) );
 
 export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 

@@ -16,9 +16,7 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { getSelectedVertical, getSelectedSiteTitle, hasSiteTitle } = useSelect( ( select ) =>
-		select( STORE_KEY )
-	);
+	const { getSelectedSiteTitle, hasSiteTitle } = useSelect( ( select ) => select( STORE_KEY ) );
 
 	const siteTitleRef = React.useRef< HTMLInputElement >();
 
@@ -27,8 +25,6 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const { goBack, goNext } = useStepNavigation();
 
 	useTrackStep( 'IntentGathering', () => ( {
-		selected_vertical_slug: getSelectedVertical()?.slug,
-		selected_vertical_label: getSelectedVertical()?.label,
 		has_selected_site_title: hasSiteTitle(),
 	} ) );
 
