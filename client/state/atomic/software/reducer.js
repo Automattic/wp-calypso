@@ -1,5 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { ATOMIC_SOFTWARE_SET_STATUS, ATOMIC_SOFTWARE_SET_ERROR } from 'calypso/state/action-types';
+import { ATOMIC_SOFTWARE_SET_STATUS } from 'calypso/state/action-types';
 import { keyedReducer } from 'calypso/state/utils';
 
 function software( state = {}, action ) {
@@ -10,14 +10,6 @@ function software( state = {}, action ) {
 				softwareSet: action.softwareSet,
 				status: action?.status || null,
 				error: action?.error || null,
-			};
-
-		case ATOMIC_SOFTWARE_SET_ERROR:
-			return {
-				...state,
-				siteId: action.siteId,
-				softwareSet: action.softwareSet,
-				error: action.error,
 			};
 	}
 	return state;
