@@ -21,7 +21,9 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
+import DomainSecurityDetails from './cards/domain-security-details';
 import RegisteredDomainDetails from './cards/registered-domain-details';
+import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
@@ -60,12 +62,32 @@ const Settings = ( {
 		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
 	};
 
+	const renderSecurityAccordion = () => {
+		if ( ! isSecuredWithUs( domain ) ) return null;
+
+		return (
+			<Accordion
+				title={ translate( 'Domain security', { textOnly: true } ) }
+				subtitle={ getSslReadableStatus( domain ) }
+				key="security"
+			>
+				<DomainSecurityDetails
+					domain={ domain }
+					selectedSite={ selectedSite }
+					purchase={ purchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
+			</Accordion>
+		);
+	};
+
 	const renderDetailsSection = () => {
 		if ( domain.type === domainTypes.REGISTERED ) {
 			return (
 				<Accordion
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
+					key="main"
 					expanded
 				>
 					<RegisteredDomainDetails
@@ -81,6 +103,7 @@ const Settings = ( {
 				<Accordion
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Domain connection details', { textOnly: true } ) }
+					key="main"
 					expanded
 				>
 					<ConnectedDomainDetails
@@ -92,12 +115,14 @@ const Settings = ( {
 				</Accordion>
 			);
 		}
-
-		return null;
 	};
 
 	const renderSetAsPrimaryDomainSection = () => {
-		return <SetAsPrimary domain={ domain } selectedSite={ selectedSite } />;
+		return <SetAsPrimary domain={ domain } selectedSite={ selectedSite } key="set-as-primary" />;
+	};
+
+	const renderDomainSecuritySection = () => {
+		return renderSecurityAccordion();
 	};
 
 	const renderMainContent = () => {
@@ -106,6 +131,7 @@ const Settings = ( {
 			<>
 				{ renderDetailsSection() }
 				{ renderSetAsPrimaryDomainSection() }
+				{ renderDomainSecuritySection() }
 			</>
 		);
 	};
