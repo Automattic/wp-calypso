@@ -59,7 +59,7 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
-		"jetpack/more-informative-scan": false,
+		"jetpack/more-informative-scan": true,
 		"jetpack/pricing-page-annual-only": false,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,

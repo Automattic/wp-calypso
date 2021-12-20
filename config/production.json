@@ -53,7 +53,7 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/magic-link-signup": true,
-		"jetpack/more-informative-scan": false,
+		"jetpack/more-informative-scan": true,
 		"jetpack/pricing-page-annual-only": false,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/simplify-pricing-structure": false,
