@@ -67,6 +67,7 @@
 		"gutenboarding/import": true,
 		"gutenboarding/import-from-medium": false,
 		"gutenboarding/import-from-wix": true,
+		"gutenboarding/import-from-wordpress": true,
 		"help": true,
 		"home/layout-dev": true,
 		"importers/substack": true,
