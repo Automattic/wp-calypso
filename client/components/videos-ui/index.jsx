@@ -117,7 +117,11 @@ const VideosUi = ( { headerBar, footerBar } ) => {
 					</div>
 				</div>
 			</div>
-			<div className={ `videos-ui__body ${ course ? '' : 'is-loading' }` }>
+			<div
+				className={ classNames( 'videos-ui__body', {
+					'is-loading': ! course,
+				} ) }
+			>
 				<div className="videos-ui__body-title">
 					<h3>{ course && course.title }</h3>
 				</div>
