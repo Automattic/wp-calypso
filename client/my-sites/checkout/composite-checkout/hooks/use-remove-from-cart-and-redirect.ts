@@ -1,6 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
@@ -15,7 +15,6 @@ export default function useRemoveFromCartAndRedirect(
 	removeProductFromCartAndMaybeRedirect: RemoveProductFromCart;
 } {
 	const previousPath = useSelector( getPreviousPath );
-	const dispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { removeProductFromCart } = useShoppingCart( cartKey );
 
@@ -28,15 +27,9 @@ export default function useRemoveFromCartAndRedirect(
 			jetpackCheckoutBackUrl,
 			createUserAndSiteBeforeTransaction,
 			previousPath,
-			dispatch,
+			tracksEvent: 'calypso_empty_cart_redirect',
 		} );
-	}, [
-		createUserAndSiteBeforeTransaction,
-		siteSlug,
-		jetpackCheckoutBackUrl,
-		previousPath,
-		dispatch,
-	] );
+	}, [ createUserAndSiteBeforeTransaction, siteSlug, jetpackCheckoutBackUrl, previousPath ] );
 
 	const isMounted = useRef( true );
 	useEffect( () => {
