@@ -4,6 +4,9 @@ import {
 	isEnterprise,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+	PLAN_BLOGGER,
 } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -240,10 +243,10 @@ function onClickInstallPlugin( {
 		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
 		if ( upgradeAndInstall ) {
 			// We also need to add a business plan to the cart.
-			const plan_slug =
-				billingPeriod === IntervalLength.MONTHLY ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS;
 			return page(
-				`/checkout/${ selectedSite.slug }/${ product_slug },${ plan_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
+				`/checkout/${ selectedSite.slug }/${ product_slug },${ businessPlanToAdd(
+					selectedSite?.plan
+				) }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
 			);
 		}
 
@@ -257,12 +260,25 @@ function onClickInstallPlugin( {
 	if ( upgradeAndInstall ) {
 		// We also need to add a business plan to the cart.
 		return page(
-			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=${ installPluginURL }#step2`
+			`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
+				selectedSite?.plan
+			) }?redirect_to=${ installPluginURL }#step2`
 		);
 	}
 
 	// No need to go through chekout, go to install page directly.
 	return page( installPluginURL );
+}
+
+// Return the correct business plan slug depending on current plan and pluginBillingPeriod
+function businessPlanToAdd( currentPlan, pluginBillingPeriod = null ) {
+	if ( [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BLOGGER ].includes( currentPlan.product_slug ) ) {
+		// since these plans are annual, return an annual business plan.
+		return PLAN_BUSINESS;
+	}
+
+	// Return annual plan if selected, monthly otherwise.
+	return pluginBillingPeriod === IntervalLength.ANNUALLY ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
 }
 
 export default PluginDetailsCTA;
