@@ -172,6 +172,25 @@ module.exports = {
 				'prettier/prettier': [ 'error', { parser: 'babel' } ],
 			},
 		},
+		{
+			files: [ '*.json' ],
+			parser: 'eslint-plugin-json-es',
+			plugins: [ 'eslint-plugin-json-es' ],
+			extends: [ 'plugin:eslint-plugin-json-es/recommended' ],
+			rules: {
+				'comma-dangle': 'off',
+				'json-es/no-comments': 'error',
+			},
+			overrides: [
+				{
+					// These files are parsed as jsonc (JSON With Comments)
+					files: [ 'tsconfig.json' ],
+					rules: {
+						'json-es/no-comments': 'off',
+					},
+				},
+			],
+		},
 	],
 	env: {
 		jest: true,
