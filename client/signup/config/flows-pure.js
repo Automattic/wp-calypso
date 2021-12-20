@@ -346,7 +346,6 @@ export function generateFlows( {
 			description: "Crowdsignal's custom WordPress.com Connect signup flow",
 			lastModified: '2018-11-14',
 			disallowResume: true,
-			autoContinue: true,
 			showRecaptcha: true,
 		},
 		{
