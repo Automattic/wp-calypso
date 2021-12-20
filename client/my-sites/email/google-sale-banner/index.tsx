@@ -107,7 +107,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 				args: {
 					discount: googleWorkspaceProduct.sale_coupon.discount,
 				},
-				comment: '%(discount)d is a percentage discount, e.g. 50',
+				comment: "%(discount)d is a numeric percentage discount (e.g. '50')",
 			} ) }
 			tracksClickName="calypso_email_google_workspace_sale_banner_cta_click"
 			tracksImpressionName="calypso_email_google_workspace_sale_banner_impression"
