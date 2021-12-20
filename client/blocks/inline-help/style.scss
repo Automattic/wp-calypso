@@ -6,12 +6,6 @@
 	z-index: z-index( 'root', '.floating-help' );
 }
 
-.button.inline-help__classic-editor-toggle,
-.button.inline-help__gutenberg-editor-toggle {
-	margin-bottom: 16px;
-	width: calc( 100% - 32px );
-}
-
 .button.is-borderless.is-compact.inline-help__button {
 	position: absolute;
 	right: 0;
