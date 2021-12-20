@@ -30,7 +30,7 @@ const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 		<div className="import-layout__center">
 			<div className="import__header">
 				<div className="import__heading  import__heading-center">
-					<Title>{ __( 'Your are not authorized to import content' ) }</Title>
+					<Title>{ __( 'You are not authorized to import content' ) }</Title>
 					<SubTitle>{ __( 'Please check with your site admin.' ) }</SubTitle>
 
 					<div className="import__buttons-group">
