@@ -2,7 +2,6 @@ import {
 	ATOMIC_SOFTWARE_INITIATE_INSTALL,
 	ATOMIC_SOFTWARE_REQUEST_STATUS,
 	ATOMIC_SOFTWARE_SET_STATUS,
-	ATOMIC_SOFTWARE_SET_ERROR,
 } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/atomic/software';
 import 'calypso/state/atomic/init';
