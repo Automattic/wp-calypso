@@ -34,6 +34,8 @@ import {
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 	isDIFMProduct,
+	TITAN_MAIL_MONTHLY_SLUG,
+	TITAN_MAIL_YEARLY_SLUG,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
@@ -42,7 +44,6 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from 'calypso/lib/gsuite/constants';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type {
 	ResponseCart,
@@ -50,6 +51,7 @@ import type {
 	RequestCartProduct,
 	RequestCartProductExtra,
 	GSuiteProductUser,
+	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
 
 export function getAllCartItems( cart: ResponseCart ): ResponseCartProduct[] {
@@ -249,22 +251,19 @@ export function supportsPrivacyProtectionPurchase(
 	return product?.is_privacy_protection_product_purchase_allowed ?? false;
 }
 
-export type IncompleteRequestCartProduct = Partial< RequestCartProduct > &
-	Pick< RequestCartProduct, 'product_slug' >;
-
 /**
  * Creates a new shopping cart item for a domain.
  *
  * @param {string} productSlug - the unique string that identifies the product
  * @param {string} domain - domain name
  * @param {string|undefined} [source] - optional source for the domain item, e.g. `getdotblog`.
- * @returns {IncompleteRequestCartProduct} the new item
+ * @returns {MinimalRequestCartProduct} the new item
  */
 export function domainItem(
 	productSlug: string,
 	domain: string,
 	source?: string
-): IncompleteRequestCartProduct {
+): MinimalRequestCartProduct {
 	const extra = source ? { extra: { source: source } } : undefined;
 
 	return Object.assign(
@@ -281,9 +280,9 @@ export function domainItem(
  *
  * @param {string} themeSlug - the unique string that identifies the product
  * @param {string} [source] - optional source for the domain item, e.g. `getdotblog`.
- * @returns {IncompleteRequestCartProduct} the new item
+ * @returns {MinimalRequestCartProduct} the new item
  */
-export function themeItem( themeSlug: string, source?: string ): IncompleteRequestCartProduct {
+export function themeItem( themeSlug: string, source?: string ): MinimalRequestCartProduct {
 	return {
 		product_slug: 'premium_theme',
 		meta: themeSlug,
@@ -301,7 +300,7 @@ export function domainRegistration( properties: {
 	domain: string;
 	source?: string;
 	extra?: RequestCartProductExtra;
-} ): IncompleteRequestCartProduct {
+} ): MinimalRequestCartProduct {
 	return {
 		...domainItem( properties.productSlug, properties.domain, properties.source ),
 		...( properties.extra ? { extra: properties.extra } : {} ),
@@ -314,7 +313,7 @@ export function domainRegistration( properties: {
 export function domainMapping( properties: {
 	domain: string;
 	source?: string;
-} ): IncompleteRequestCartProduct {
+} ): MinimalRequestCartProduct {
 	return domainItem( 'domain_map', properties.domain, properties.source );
 }
 
@@ -324,7 +323,7 @@ export function domainMapping( properties: {
 export function siteRedirect( properties: {
 	domain?: string;
 	source?: string;
-} ): IncompleteRequestCartProduct {
+} ): MinimalRequestCartProduct {
 	if ( ! properties.domain ) {
 		throw new Error( 'Site redirect product requires a domain' );
 	}
@@ -338,7 +337,7 @@ export function domainTransfer( properties: {
 	domain: string;
 	source?: string;
 	extra: RequestCartProductExtra;
-} ): IncompleteRequestCartProduct {
+} ): MinimalRequestCartProduct {
 	return {
 		...domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),
 		...( properties.extra ? { extra: properties.extra } : {} ),
@@ -363,7 +362,7 @@ export function googleApps(
 		quantity?: number | null;
 		users?: GSuiteProductUser[];
 	} & ( WithCamelCaseSlug | WithSnakeCaseSlug )
-): IncompleteRequestCartProduct {
+): MinimalRequestCartProduct {
 	const { quantity, new_quantity, users } = properties;
 
 	const domainName = 'meta' in properties ? properties.meta : properties.domain;
@@ -389,7 +388,7 @@ export function googleAppsExtraLicenses( properties: {
 	domain: string;
 	source?: string;
 	users: GSuiteProductUser[];
-} ): IncompleteRequestCartProduct {
+} ): MinimalRequestCartProduct {
 	const item = domainItem( GSUITE_EXTRA_LICENSE_SLUG, properties.domain, properties.source );
 
 	return {
@@ -398,25 +397,46 @@ export function googleAppsExtraLicenses( properties: {
 	};
 }
 
-/**
- * Creates a new shopping cart item for Titan Mail Monthly.
- */
-export function titanMailMonthly( properties: {
-	meta?: string;
+export interface TitanProductProps {
 	domain?: string;
+	meta?: string;
 	source?: string;
 	quantity?: number | null;
 	extra?: RequestCartProductExtra;
-} ): IncompleteRequestCartProduct {
+}
+
+/**
+ * Creates a new shopping cart item for Titan Mail.
+ */
+function titanMailProduct(
+	properties: TitanProductProps,
+	productSlug: string
+): MinimalRequestCartProduct {
 	const domainName = properties.meta ?? properties.domain;
+
 	if ( ! domainName ) {
 		throw new Error( 'Titan mail requires a domain' );
 	}
+
 	return {
-		...domainItem( TITAN_MAIL_MONTHLY_SLUG, domainName, properties.source ),
+		...domainItem( productSlug, domainName, properties.source ),
 		quantity: properties.quantity,
 		extra: properties.extra,
 	};
+}
+
+/**
+ * Creates a new shopping cart item for Titan Mail Yearly.
+ */
+export function titanMailYearly( properties: TitanProductProps ): MinimalRequestCartProduct {
+	return titanMailProduct( properties, TITAN_MAIL_YEARLY_SLUG );
+}
+
+/**
+ * Creates a new shopping cart item for Titan Mail Monthly.
+ */
+export function titanMailMonthly( properties: TitanProductProps ): MinimalRequestCartProduct {
+	return titanMailProduct( properties, TITAN_MAIL_MONTHLY_SLUG );
 }
 
 export function hasGoogleApps( cart: ResponseCart ): boolean {
@@ -427,37 +447,37 @@ export function hasTitanMail( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isTitanMail );
 }
 
-export function customDesignItem(): IncompleteRequestCartProduct {
+export function customDesignItem(): MinimalRequestCartProduct {
 	return {
 		product_slug: 'custom-design',
 	};
 }
 
-export function noAdsItem(): IncompleteRequestCartProduct {
+export function noAdsItem(): MinimalRequestCartProduct {
 	return {
 		product_slug: 'no-adverts/no-adverts.php',
 	};
 }
 
-export function videoPressItem(): IncompleteRequestCartProduct {
+export function videoPressItem(): MinimalRequestCartProduct {
 	return {
 		product_slug: 'videopress',
 	};
 }
 
-export function unlimitedSpaceItem(): IncompleteRequestCartProduct {
+export function unlimitedSpaceItem(): MinimalRequestCartProduct {
 	return {
 		product_slug: 'unlimited_space',
 	};
 }
 
-export function unlimitedThemesItem(): IncompleteRequestCartProduct {
+export function unlimitedThemesItem(): MinimalRequestCartProduct {
 	return {
 		product_slug: 'unlimited_themes',
 	};
 }
 
-export function spaceUpgradeItem( slug: string ): IncompleteRequestCartProduct {
+export function spaceUpgradeItem( slug: string ): MinimalRequestCartProduct {
 	return {
 		product_slug: slug,
 	};
@@ -466,7 +486,7 @@ export function spaceUpgradeItem( slug: string ): IncompleteRequestCartProduct {
 /**
  * Creates a new shopping cart item for a jetpack product.
  */
-export function jetpackProductItem( slug: string ): IncompleteRequestCartProduct {
+export function jetpackProductItem( slug: string ): MinimalRequestCartProduct {
 	return {
 		product_slug: slug,
 	};
@@ -493,13 +513,13 @@ export function getRenewalItemFromProduct(
 	product: ( WithCamelCaseSlug | WithSnakeCaseSlug ) & {
 		is_domain_registration?: boolean;
 		isDomainRegistration?: boolean;
-		id: string;
+		id: string | number;
 	} & Partial< RequestCartProduct > & {
 			domain?: string;
 			users?: GSuiteProductUser[];
 		},
 	properties: { domain?: string }
-): IncompleteRequestCartProduct {
+): MinimalRequestCartProduct {
 	const slug = camelOrSnakeSlug( product );
 	let cartItem;
 
@@ -561,9 +581,9 @@ export function getRenewalItemFromProduct(
 /**
  * Returns a renewal CartItem object from the given cartItem and properties.
  */
-export function getRenewalItemFromCartItem< T extends Partial< RequestCartProduct > >(
+export function getRenewalItemFromCartItem< T extends MinimalRequestCartProduct >(
 	cartItem: T,
-	properties: { id: string }
+	properties: { id: string | number }
 ): T {
 	return {
 		...cartItem,
@@ -584,10 +604,10 @@ export function hasDomainInCart( cart: ResponseCart, domain: string ): boolean {
 /**
  * Changes presence of a privacy protection for the given domain cart item.
  */
-export function updatePrivacyForDomain(
-	item: ResponseCartProduct,
+export function updatePrivacyForDomain< T extends MinimalRequestCartProduct >(
+	item: T,
 	value: boolean
-): ResponseCartProduct {
+): T {
 	return {
 		...item,
 		extra: {

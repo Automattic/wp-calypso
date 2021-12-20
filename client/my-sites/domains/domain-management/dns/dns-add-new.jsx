@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { includes, find, flatMap } from 'lodash';
 import page from 'page';
@@ -184,9 +183,6 @@ class DnsAddNew extends React.Component {
 				formState.getAllFieldValues( this.state.fields ),
 				selectedDomainName
 			);
-			if ( ! config.isEnabled( 'domains/dns-records-redesign' ) ) {
-				this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
-			}
 
 			if ( recordToEdit ) {
 				this.props.updateDns( selectedDomainName, [ normalizedData ], [ recordToEdit ] ).then(
@@ -287,11 +283,9 @@ class DnsAddNew extends React.Component {
 						{ buttonLabel }
 					</FormButton>
 
-					{ config.isEnabled( 'domains/dns-records-redesign' ) && (
-						<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
-							{ translate( 'Cancel' ) }
-						</FormButton>
-					) }
+					<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
+						{ translate( 'Cancel' ) }
+					</FormButton>
 				</div>
 			</form>
 		);

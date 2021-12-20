@@ -1,3 +1,4 @@
+import type { CartActionError } from './errors';
 import type { Dispatch } from 'react';
 
 export type ShoppingCartReducerDispatch = ( action: ShoppingCartAction ) => void;
@@ -138,11 +139,19 @@ export type ShoppingCartState = {
 	responseCart: TempResponseCart;
 	lastValidResponseCart: ResponseCart;
 	couponStatus: CouponStatus;
-	cacheStatus: CacheStatus;
-	loadingError?: string;
-	loadingErrorType?: ShoppingCartError;
 	queuedActions: ShoppingCartAction[];
-};
+} & (
+	| {
+			cacheStatus: Exclude< CacheStatus, 'error' >;
+			loadingError?: undefined;
+			loadingErrorType?: undefined;
+	  }
+	| {
+			cacheStatus: 'error';
+			loadingError: string;
+			loadingErrorType: ShoppingCartError;
+	  }
+ );
 
 export interface WithShoppingCartProps {
 	shoppingCartManager: UseShoppingCart;
@@ -153,9 +162,15 @@ export type CartValidCallback = ( cart: ResponseCart ) => void;
 
 export type DispatchAndWaitForValid = ( action: ShoppingCartAction ) => Promise< ResponseCart >;
 
+export type SavedActionPromise = {
+	resolve: ( responseCart: ResponseCart ) => void;
+	reject: ( error: CartActionError ) => void;
+};
+
 export interface ActionPromises {
 	resolve: ( tempResponseCart: TempResponseCart ) => void;
-	add: ( resolve: ( value: ResponseCart ) => void ) => void;
+	reject: ( error: CartActionError ) => void;
+	add: ( actionPromise: SavedActionPromise ) => void;
 }
 
 export interface CartSyncManager {
@@ -187,7 +202,7 @@ export type RequestCartTaxData = null | {
 
 export interface RequestCartProduct {
 	product_slug: string;
-	product_id: number;
+	product_id?: number;
 	meta: string;
 	volume: number;
 	quantity: number | null;
@@ -195,7 +210,7 @@ export interface RequestCartProduct {
 }
 
 export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
-	Pick< RequestCartProduct, 'product_slug' | 'product_id' >;
+	Pick< RequestCartProduct, 'product_slug' >;
 
 export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number | string;
@@ -341,6 +356,7 @@ export interface ResponseCartProductExtra {
 	premium?: boolean;
 	new_quantity?: number;
 	domain_to_bundle?: string;
+	email_users?: TitanProductUser[];
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	purchaseType?: string;
@@ -354,6 +370,8 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	auth_code?: string;
+	privacy_available?: boolean;
 }
 
 export interface GSuiteProductUser {
@@ -361,6 +379,15 @@ export interface GSuiteProductUser {
 	lastname: string;
 	email: string;
 	password: string;
+}
+
+export interface TitanProductUser {
+	alternative_email?: string;
+	email: string;
+	encrypted_password?: string;
+	is_admin?: boolean;
+	name?: string;
+	password?: string;
 }
 
 export type DomainContactDetails = {

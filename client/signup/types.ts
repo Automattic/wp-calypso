@@ -17,3 +17,5 @@ export interface Flow {
 }
 
 export type GoToStep = ( stepName: string, stepSectionName?: string, flowName?: string ) => void;
+
+export type GoToNextStep = ( nextFlowName?: string ) => void;

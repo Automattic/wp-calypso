@@ -75,9 +75,9 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 			await cartCheckoutPage.removeCartItem( cartItemForPremiumPlan );
 		} );
 
-		it( 'Automatically return to Plans page', async function () {
-			plansPage = new PlansPage( page );
-			await plansPage.validateActiveNavigationTab( 'Plans' );
+		it( 'Automatically return to purchase page', async function () {
+			purchasesPage = new IndividualPurchasePage( page );
+			await purchasesPage.validatePurchaseTitle( cartItemForPremiumPlan );
 		} );
 	} );
 
@@ -85,6 +85,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 		const cartItemForBusinessPlan = 'WordPress.com Business';
 
 		it( 'Click on "Upgrade" button for WordPress.com Business plan', async function () {
+			await purchasesPage.clickUpgradeButton();
 			await plansPage.clickPlanActionButton( { plan: 'Business', buttonText: 'Upgrade' } );
 		} );
 

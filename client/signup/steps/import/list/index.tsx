@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 import { urlDataUpdate } from 'calypso/state/imports/url-analyzer/actions';
-import { GoToStep, UrlData } from '../types';
+import { GoToStep, ImporterPlatform, UrlData } from '../types';
 import type * as React from 'react';
 import './style.scss';
 
@@ -20,7 +20,7 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const { goToStep, urlDataUpdate } = props;
 
-	const onButtonClick = ( platform: string ): void => {
+	const onButtonClick = ( platform: ImporterPlatform ): void => {
 		urlDataUpdate( {
 			url: '',
 			platform,

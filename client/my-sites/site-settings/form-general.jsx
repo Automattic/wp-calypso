@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import languages from '@automattic/languages';
@@ -173,22 +172,25 @@ export class SiteSettingsFormGeneral extends Component {
 
 	blogAddress() {
 		const { site, siteIsJetpack, siteSlug, translate, isWPForTeamsSite } = this.props;
-		let customAddress = '';
-		let addressDescription = '';
-
 		if ( ! site || siteIsJetpack || isWPForTeamsSite ) {
 			return null;
 		}
 
-		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
-			customAddress = (
-				<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
-					<Gridicon icon="plus" />{ ' ' }
-					{ translate( 'Add custom address', { context: 'Site address, domain' } ) }
-				</Button>
-			);
-
-			addressDescription = (
+		return (
+			<FormFieldset className="site-settings__has-divider">
+				<FormLabel htmlFor="blogaddress">{ translate( 'Site address' ) }</FormLabel>
+				<div className="site-settings__blogaddress-settings">
+					<FormInput
+						name="blogaddress"
+						id="blogaddress"
+						value={ site.domain }
+						disabled="disabled"
+					/>
+					<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
+						<Gridicon icon="plus" />{ ' ' }
+						{ translate( 'Add custom address', { context: 'Site address, domain' } ) }
+					</Button>
+				</div>
 				<FormSettingExplanation>
 					{ translate(
 						'Buy a {{domainSearchLink}}custom domain{{/domainSearchLink}}, ' +
@@ -221,22 +223,6 @@ export class SiteSettingsFormGeneral extends Component {
 						</a>
 					) }
 				</FormSettingExplanation>
-			);
-		}
-
-		return (
-			<FormFieldset className="site-settings__has-divider">
-				<FormLabel htmlFor="blogaddress">{ translate( 'Site address' ) }</FormLabel>
-				<div className="site-settings__blogaddress-settings">
-					<FormInput
-						name="blogaddress"
-						id="blogaddress"
-						value={ site.domain }
-						disabled="disabled"
-					/>
-					{ customAddress }
-				</div>
-				{ addressDescription }
 			</FormFieldset>
 		);
 	}

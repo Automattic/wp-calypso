@@ -5,12 +5,12 @@ import { useSelector } from 'react-redux';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { ResponseCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { ResponseCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 export type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
 	responseCart: PartialCart;
-	addItemToCart: ( item: RequestCartProduct ) => void;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	isCartPendingUpdate: boolean;
 }
 

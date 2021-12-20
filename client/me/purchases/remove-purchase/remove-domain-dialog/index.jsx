@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { Dialog } from '@automattic/components';
+import { Icon, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -38,7 +40,7 @@ class RemoveDomainDialog extends Component {
 	renderDomainDeletionWarning( productName ) {
 		const { translate, hasTitanWithUs, slug, currentRoute } = this.props;
 
-		return (
+		return ! config.isEnabled( 'domains/settings-page-redesign' ) ? (
 			<Fragment>
 				<p>
 					{ translate(
@@ -81,6 +83,34 @@ class RemoveDomainDialog extends Component {
 							) }
 				</p>
 			</Fragment>
+		) : (
+			<Fragment>
+				<p>
+					{ translate(
+						'Deleting a domain will make all services connected to it unreachable, including your email and website. It will also make the domain available for someone else to register.',
+						{
+							args: { domain: productName },
+						}
+					) }
+				</p>
+				<p>
+					{ translate(
+						'If you want to use {{strong}}%(domain)s{{/strong}} with another provider you can {{moveAnchor}}move it to another service{{/moveAnchor}} or {{transferAnchor}}transfer it to another provider{{/transferAnchor}}.',
+						{
+							args: { domain: productName },
+							components: {
+								strong: <strong />,
+								moveAnchor: (
+									<a href={ domainManagementNameServers( slug, productName, currentRoute ) } />
+								),
+								transferAnchor: (
+									<a href={ domainManagementTransferOut( slug, productName, currentRoute ) } />
+								),
+							},
+						}
+					) }
+				</p>
+			</Fragment>
 		);
 	}
 
@@ -90,10 +120,15 @@ class RemoveDomainDialog extends Component {
 		return (
 			<Fragment>
 				<FormSectionHeading>
-					{ translate( '{{strong}}You are deleting %(domain)s from the web.{{/strong}}', {
-						args: { domain: productName },
-						components: { strong: <strong /> },
-					} ) }
+					{ ! config.isEnabled( 'domains/settings-page-redesign' )
+						? translate( '{{strong}}You are deleting %(domain)s from the web.{{/strong}}', {
+								args: { domain: productName },
+								components: { strong: <strong /> },
+						  } )
+						: translate( '{{strong}}Delete %(domain)s{{/strong}}', {
+								args: { domain: productName },
+								components: { strong: <strong /> },
+						  } ) }
 				</FormSectionHeading>
 
 				{ this.renderDomainDeletionWarning( productName ) }
@@ -165,9 +200,17 @@ class RemoveDomainDialog extends Component {
 					) }
 				</FormFieldset>
 				<p>
-					{ translate(
-						'This domain name will be deleted. Any services related to it will cease to function. Are you sure you wish to proceed?'
-					) }
+					{ ! config.isEnabled( 'domains/settings-page-redesign' )
+						? translate(
+								'This domain name will be deleted. Any services related to it will cease to function. Are you sure you wish to proceed?'
+						  )
+						: translate(
+								'{{strong}}%(domain)s{{/strong}} will be deleted. Any services related to it will stop working. Are you sure you want to proceed?',
+								{
+									args: { domain: productName },
+									components: { strong: <strong /> },
+								}
+						  ) }
 				</p>
 			</Fragment>
 		);
@@ -231,23 +274,49 @@ class RemoveDomainDialog extends Component {
 	render() {
 		const { purchase, translate, chatButton } = this.props;
 		const productName = getName( purchase );
-		const buttons = [
-			{
-				action: 'cancel',
-				disabled: this.props.isRemoving,
-				isPrimary: true,
-				label: translate( 'Never Mind' ),
-			},
-			{
-				action: 'remove',
-				additionalClassNames: [
-					this.props.isRemoving || this.state.isCheckingEmail ? 'is-busy' : '',
-					'is-scary',
-				],
-				label: translate( 'Delete this Domain' ),
-				onClick: this.nextStep,
-			},
-		];
+		const buttons = ! config.isEnabled( 'domains/settings-page-redesign' )
+			? [
+					{
+						action: 'cancel',
+						disabled: this.props.isRemoving,
+						isPrimary: true,
+						label: translate( 'Never Mind' ),
+					},
+					{
+						action: 'remove',
+						additionalClassNames: [
+							this.props.isRemoving || this.state.isCheckingEmail ? 'is-busy' : '',
+							'is-scary',
+						],
+						label: translate( 'Delete this Domain' ),
+						onClick: this.nextStep,
+					},
+			  ]
+			: [
+					{
+						action: 'cancel',
+						disabled: this.props.isRemoving,
+						label: this.state.step === 3 ? translate( 'Nevermind' ) : translate( 'Cancel' ),
+					},
+					{
+						action: 'remove',
+						additionalClassNames: [
+							this.props.isRemoving || this.state.isCheckingEmail ? 'is-busy' : '',
+							'dialog__button--domains-remove',
+						],
+						isPrimary: true,
+						label:
+							this.state.step === 3 ? (
+								<>
+									<Icon icon={ trash } size={ 18 } />
+									{ translate( 'Delete this domain' ) }
+								</>
+							) : (
+								translate( 'Continue' )
+							),
+						onClick: this.nextStep,
+					},
+			  ];
 
 		if ( chatButton ) {
 			buttons.unshift( chatButton );

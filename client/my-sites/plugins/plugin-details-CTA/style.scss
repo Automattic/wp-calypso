@@ -9,6 +9,13 @@
 	font-size: $font-title-large;
 	color: var( --studio-gray-100 );
 	margin: 16px 0;
+	min-height: 48px;
+}
+
+.plugin-details-CTA__period {
+	font-family: $sans;
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-50 );
 }
 
 .plugin-details-CTA__install {
@@ -28,12 +35,12 @@
 }
 
 .plugin-details-CTA__t-and-c {
-    font-size: $font-body-extra-small;
-    color: var( --studio-gray-50 );
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-50 );
 
-    @media screen and ( max-width: 1040px ) {
-        padding-bottom: 40px;
-    }
+	@media screen and ( max-width: 1040px ) {
+		padding-bottom: 40px;
+	}
 }
 
 .is-placeholder {
@@ -42,5 +49,4 @@
 	.plugin-details-CTA__t-and-c {
 		@extend %placeholder;
 	}
-
 }

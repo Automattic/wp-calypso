@@ -30,6 +30,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -46,7 +47,7 @@ import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
-import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
@@ -130,7 +131,7 @@ export default function WPCheckout( {
 	siteId: number | undefined;
 	siteUrl: string | undefined;
 	countriesList: CountryListItem[];
-	addItemToCart: ( item: Partial< RequestCartProduct > ) => void;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	showErrorMessageBriefly: ( error: string ) => void;
 	isLoggedOutCart: boolean;
 	infoMessage?: JSX.Element;
@@ -302,7 +303,15 @@ export default function WPCheckout( {
 					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
 					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
-					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					goToNextStep={ () => {
+						setIsOrderReviewActive( ! isOrderReviewActive );
+						reduxDispatch(
+							recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+								step: 0,
+								step_name: 'review-order-step',
+							} )
+						);
+					} }
 					activeStepContent={
 						<WPCheckoutOrderReview
 							removeProductFromCart={ removeProductFromCart }
@@ -349,7 +358,17 @@ export default function WPCheckout( {
 									reduxDispatch,
 									translate,
 									true
-								);
+								).then( ( response ) => {
+									if ( response ) {
+										reduxDispatch(
+											recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+												step: 1,
+												step_name: 'contact-form',
+											} )
+										);
+									}
+									return response;
+								} );
 							} }
 							activeStepContent={
 								<WPContactForm

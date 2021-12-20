@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 export const PaymentMethodLogos = styled.span`
 	text-align: right;
 	transform: translateY( 3px );
-
 	.rtl & {
 		text-align: left;
 	}

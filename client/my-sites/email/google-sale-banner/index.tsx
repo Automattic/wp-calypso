@@ -103,7 +103,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 				currentRoute,
 				'google-sale'
 			) }
-			title={ translate( 'Get %(discount)d% off Google Workspace for a limited time!', {
+			title={ translate( 'Get %(discount)d%% off Google Workspace for a limited time!', {
 				args: {
 					discount: googleWorkspaceProduct.sale_coupon.discount,
 				},

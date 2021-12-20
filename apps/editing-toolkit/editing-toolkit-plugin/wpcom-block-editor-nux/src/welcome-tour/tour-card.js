@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -35,7 +36,7 @@ function WelcomeTourCard( {
 	isGutenboarding,
 	setInitialFocusedElement,
 } ) {
-	const { description, heading, imgSrc } = cardContent;
+	const { description, heading, imgSrc, imgNeedsPadding } = cardContent;
 	const isLastStep = currentStepIndex === lastStepIndex;
 
 	// Ensure tracking is recorded once per slide view
@@ -53,12 +54,29 @@ function WelcomeTourCard( {
 			is_gutenboarding: isGutenboarding,
 		} );
 	} );
+	// TODO CLK: welcome tour only mod for mobile fixes
+	const cardMediaClass = classNames( 'welcome-tour-card__media', {
+		'is-with-extra-padding': isMobile() && imgNeedsPadding,
+	} );
 
 	return (
 		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
-			<CardMedia>
-				<img alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) } src={ imgSrc } />
+			{ /* TODO: Update selector for images in @wordpress/components/src/card/styles/card-styles.js */ }
+			<CardMedia className={ cardMediaClass }>
+				<picture>
+					{ imgSrc.mobile && (
+						<source
+							srcSet={ imgSrc.mobile.src }
+							type={ imgSrc.mobile.type }
+							media={ getMediaQueryList( MOBILE_BREAKPOINT )?.media }
+						/>
+					) }
+					<img
+						alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) }
+						src={ imgSrc.desktop?.src }
+					/>
+				</picture>
 			</CardMedia>
 			<CardBody>
 				<h2 className="welcome-tour-card__heading">{ heading }</h2>
@@ -141,10 +159,8 @@ function CardNavigation( {
 }
 
 function CardOverlayControls( { onMinimize, onDismiss } ) {
-	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls' );
-
 	return (
-		<div className={ buttonClasses }>
+		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
 				<Button
 					label={ __( 'Minimize Tour', 'full-site-editing' ) }

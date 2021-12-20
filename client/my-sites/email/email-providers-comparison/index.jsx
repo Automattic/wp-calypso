@@ -26,7 +26,6 @@ import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import {
 	canCurrentUserAddEmail,
@@ -59,6 +58,7 @@ import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwa
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailForwardingFeatures,
+	getGoogleAppLogos,
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
@@ -66,7 +66,7 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -106,7 +106,6 @@ class EmailProvidersComparison extends Component {
 		hasCartDomain: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
 		isSubmittingEmailForward: PropTypes.bool,
-		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
 		titanMailProduct: PropTypes.object,
 	};
@@ -120,10 +119,12 @@ class EmailProvidersComparison extends Component {
 	constructor( props ) {
 		super( props );
 
+		const { selectedDomainName, shouldPromoteGoogleWorkspace } = props;
+
 		this.state = {
 			googleUsers: [],
-			titanMailboxes: [ buildNewTitanMailbox( props.selectedDomainName, false ) ],
-			expanded: this.getDefaultExpandedState( props.source ),
+			titanMailboxes: [ buildNewTitanMailbox( selectedDomainName, false ) ],
+			expanded: this.getDefaultExpandedState( shouldPromoteGoogleWorkspace ),
 			addingToCart: false,
 			emailForwardAdded: false,
 			validatedTitanMailboxUuids: [],
@@ -138,14 +139,15 @@ class EmailProvidersComparison extends Component {
 		this.isMounted = false;
 	}
 
-	getDefaultExpandedState( source ) {
-		if ( source === 'google-sale' ) {
+	getDefaultExpandedState( shouldPromoteGoogleWorkspace ) {
+		if ( shouldPromoteGoogleWorkspace ) {
 			return {
 				forwarding: false,
 				google: true,
 				titan: false,
 			};
 		}
+
 		return {
 			forwarding: false,
 			google: false,
@@ -220,7 +222,7 @@ class EmailProvidersComparison extends Component {
 			return;
 		}
 
-		const { productsList, selectedSite, shoppingCartManager } = this.props;
+		const { selectedSite, shoppingCartManager } = this.props;
 
 		const cartItem = titanMailMonthly( {
 			domain: domainName,
@@ -233,20 +235,12 @@ class EmailProvidersComparison extends Component {
 
 		this.setState( { addingToCart: true } );
 
-		shoppingCartManager
-			.addProductsToCart( [ fillInSingleCartItemAttributes( cartItem, productsList ) ] )
-			.then( () => {
-				if ( this.isMounted ) {
-					this.setState( { addingToCart: false } );
-				}
-				const { errors } = this.props?.cart?.messages;
-				if ( errors && errors.length ) {
-					// Stay on the page to show the relevant error(s)
-					return;
-				}
-
-				this.isMounted && page( '/checkout/' + selectedSite.slug );
-			} );
+		shoppingCartManager.addProductsToCart( [ cartItem ] ).then( () => {
+			if ( this.isMounted ) {
+				this.setState( { addingToCart: false } );
+				page( '/checkout/' + selectedSite.slug );
+			}
+		} );
 	};
 
 	onGoogleUsersChange = ( changedUsers ) => {
@@ -290,30 +284,18 @@ class EmailProvidersComparison extends Component {
 			return;
 		}
 
-		const { productsList, selectedSite, shoppingCartManager } = this.props;
+		const { selectedSite, shoppingCartManager } = this.props;
 		const domains = domain ? [ domain ] : [];
 
 		this.setState( { addingToCart: true } );
 
 		shoppingCartManager
-			.addProductsToCart(
-				getItemsForCart( domains, gSuiteProduct.product_slug, googleUsers ).map( ( item ) =>
-					fillInSingleCartItemAttributes( item, productsList )
-				)
-			)
+			.addProductsToCart( getItemsForCart( domains, gSuiteProduct.product_slug, googleUsers ) )
 			.then( () => {
 				if ( this.isMounted ) {
 					this.setState( { addingToCart: false } );
+					page( '/checkout/' + selectedSite.slug );
 				}
-
-				const { errors } = this.props?.cart?.messages;
-
-				if ( errors && errors.length ) {
-					// Stay on the page to show the relevant error(s)
-					return;
-				}
-
-				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
 
@@ -437,6 +419,15 @@ class EmailProvidersComparison extends Component {
 			</span>
 		) : null;
 
+		const starLabel = productIsDiscounted
+			? translate( '%(discount)d%% off!', {
+					args: {
+						discount: gSuiteProduct.sale_coupon.discount,
+					},
+					comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
+			  } )
+			: null;
+
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
 			( this.state.googleUsers ?? [] ).length === 0
@@ -496,6 +487,7 @@ class EmailProvidersComparison extends Component {
 				providerKey="google"
 				logo={ { path: googleWorkspaceIcon } }
 				title={ getGoogleMailServiceFamily() }
+				starLabel={ starLabel }
 				description={ translate(
 					'Professional email integrated with Google Meet and other productivity tools from Google.'
 				) }
@@ -508,6 +500,7 @@ class EmailProvidersComparison extends Component {
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ expandButtonLabel }
 				features={ getGoogleFeatures() }
+				appLogos={ getGoogleAppLogos() }
 			/>
 		);
 	}
@@ -767,6 +760,7 @@ class EmailProvidersComparison extends Component {
 			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
+			shouldPromoteGoogleWorkspace,
 			source,
 		} = this.props;
 
@@ -796,9 +790,11 @@ class EmailProvidersComparison extends Component {
 					/>
 				) }
 
+				{ shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
+
 				{ this.renderTitanCard() }
 
-				{ this.renderGoogleCard() }
+				{ ! shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
 
 				{ ! hideEmailForwardingCard && this.renderEmailForwardingCard() }
 
@@ -832,6 +828,7 @@ export default connect(
 		const isGSuiteSupported =
 			canUserPurchaseGSuite( state ) &&
 			( hasCartDomain || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) );
+		const gSuiteProduct = getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY );
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
@@ -839,13 +836,14 @@ export default connect(
 			domain,
 			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
-			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
+			gSuiteProduct,
 			hasCartDomain,
 			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			isGSuiteSupported,
-			productsList: getProductsList( state ),
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
+			shouldPromoteGoogleWorkspace:
+				isGSuiteSupported && ( ownProps.source === 'google-sale' || hasDiscount( gSuiteProduct ) ),
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},

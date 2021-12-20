@@ -390,8 +390,8 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	const currentPlan = getPlan( currentPlanSlug );
 
 	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
-		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan.term } );
-		return planKey ? getPlan( planKey )?.getPathSlug() : undefined;
+		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
+		return planKey ? getPlan( planKey )?.getPathSlug?.() : undefined;
 	}
 
 	return;

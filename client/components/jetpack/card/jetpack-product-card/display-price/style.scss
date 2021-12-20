@@ -1,12 +1,17 @@
+@import '@automattic/onboarding/styles/mixins';
+
 .jetpack-product-card .display-price {
 	.is-disabled & {
 		opacity: 0.4;
 	}
 
 	&.is-free {
-		min-height: 130px;
 		margin-block-start: -4px;
 		padding-block-start: 24px;
+
+		@include break-medium {
+			min-height: 130px;
+		}
 
 		// Adjust leading margin so that different UI fonts
 		// still align to the price the same way
@@ -90,28 +95,24 @@
 	}
 
 	&__you-save,
-	&__get-started {
+	&__get-started,
+	&__no-savings {
 		display: inline-block;
 		margin-block-start: 24px;
 		border-radius: 4px; /* stylelint-disable-line scales/radii */
-		padding: 4px 24px 4px 8px;
+		padding: 4px 8px;
 
 		font-size: $font-body-small;
 		font-weight: 700;
-
-		/* To make the slanted right edge */
-		clip-path: polygon(
-			0 0,
-			calc( 100% + 1px ) 0,
-			calc( 100% - 6px ) calc( 100% - 4px ),
-			calc( 100% - 8px ) calc( 100% - 1px ),
-			calc( 100% - 10px ) 100%,
-			0 100%
-		);
 	}
 
 	&__you-save {
 		background-color: var( --studio-yellow-10 );
+	}
+
+	&__no-savings {
+		background-color: var( --studio-gray-5 );
+		font-weight: 400;
 	}
 
 	&__get-started {

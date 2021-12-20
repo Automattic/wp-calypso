@@ -3,6 +3,8 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
+import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { requestEligibility } from 'calypso/state/automated-transfer/actions';
 import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import {
@@ -23,15 +25,13 @@ const TRANSFERRING_NOT_BLOCKERS = [
 ];
 
 type EligibilityHook = {
-	eligibilityHolds?: string[];
-	eligibilityWarnings?: EligibilityWarning[];
 	warnings: EligibilityWarning[];
 	wpcomDomain: string | null;
 	stagingDomain: string | null;
 	wpcomSubdomainWarning: EligibilityWarning | undefined;
 	transferringBlockers: string[];
 	isDataReady: boolean;
-	hasBlockers: boolean;
+	isTransferringBlocked: boolean;
 	siteUpgrading: {
 		required: boolean;
 		checkoutUrl: string;
@@ -54,12 +54,30 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 
 		dispatch( requestEligibility( siteId ) );
 		dispatch( requestProductsList() );
+		dispatch( requestLatestAtomicTransfer( siteId ) );
 	}, [ siteId, dispatch ] );
 
 	// Get eligibility data.
 	const { eligibilityHolds, eligibilityWarnings }: EligibilityData = useSelector( ( state ) =>
 		getEligibility( state, siteId )
 	);
+
+	/*
+	 * Inspect transfer to detect blockers.
+	 * It's considered blocked when:
+	 * - status code value has the 5xx shape.
+	 * - status code value is one of: [ `active`,...] @todo: add more codes.
+	 * - is_stuck value is True.
+	 */
+	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+	const isTransferStuck = transfer?.is_stuck;
+
+	const transferStatus = transfer?.status;
+	const isBlockByTransferStatus =
+		( Number.isInteger( Number( transferStatus ) ) &&
+			transferStatus &&
+			5 === Math.floor( Number( transferStatus ) / 100 ) ) ||
+		[ 'active' ].includes( transferStatus );
 
 	/*
 	 * Filter warnings:
@@ -78,15 +96,27 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		( { id } ) => id === 'wordpress_subdomain'
 	);
 
-	// Transferring blockers
+	// Filter the Woop transferring blockers
 	const transferringBlockers = eligibilityHolds?.filter(
 		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
-	const transferringDataIsAvailable = typeof transferringBlockers !== 'undefined';
+	// Add blocked transfer hold when something is wrong in the transfer status.
+	if (
+		! transferringBlockers?.includes( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER ) &&
+		( isBlockByTransferStatus || isTransferStuck )
+	) {
+		transferringBlockers?.push( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER );
+	}
 
-	// Check whether the site has transferring blockers. True as default.
-	const hasBlockers = ! transferringDataIsAvailable || transferringBlockers?.length > 0;
+	const transferringDataIsAvailable =
+		typeof transferringBlockers !== 'undefined' && typeof transferStatus !== 'undefined';
+
+	/*
+	 * Check whether the site transferring is blocked.
+	 * True as default, meaning it's True when requesting data.
+	 */
+	const isTransferringBlocked = ! transferringDataIsAvailable || transferringBlockers?.length > 0;
 
 	/*
 	 * Plan site and `woop` site feature.
@@ -122,7 +152,8 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
 			{
-				redirect_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/confirm' ),
+				redirect_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/transfer' ),
+				cancel_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/confirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan.product_slug }`
 		),
@@ -144,19 +175,16 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	};
 
 	return {
-		eligibilityHolds,
-		eligibilityWarnings,
 		warnings,
 		wpcomDomain,
 		stagingDomain,
 		wpcomSubdomainWarning,
-
 		transferringBlockers: transferringBlockers || [],
-		hasBlockers,
+		isTransferringBlocked,
 		siteUpgrading,
 		isDataReady: transferringDataIsAvailable,
 		isReadyForTransfer: transferringDataIsAvailable
-			? ! hasBlockers && ! ( eligibilityWarnings && eligibilityWarnings.length )
+			? ! isTransferringBlocked && ! ( eligibilityWarnings && eligibilityWarnings.length )
 			: false,
 		isAtomicSite: !! useSelector( ( state ) => isAtomicSite( state, siteId ) ),
 	};

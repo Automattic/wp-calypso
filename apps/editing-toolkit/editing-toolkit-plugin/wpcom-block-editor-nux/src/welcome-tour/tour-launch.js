@@ -4,16 +4,17 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import TourKit from '@automattic/tour-kit';
+import { isMobile } from '@automattic/viewport';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
+import { usePrefetchTourAssets } from './hooks';
 import { WelcomeTourContextProvider, useWelcomeTourContext } from './tour-context';
 import WelcomeTourMinimized from './tour-minimized-renderer';
 import WelcomeTourStep from './tour-step-renderer';
 import getTourSteps from './tour-steps';
-
 import './style-tour.scss';
 
 function LaunchWpcomWelcomeTour() {
@@ -27,8 +28,9 @@ function LaunchWpcomWelcomeTour() {
 	} ) );
 
 	const localeSlug = useLocale();
+
 	// Preload first card image (others preloaded after open state confirmed)
-	new window.Image().src = getTourSteps( localeSlug )[ 0 ].meta.imgSrc;
+	usePrefetchTourAssets( [ getTourSteps( localeSlug )[ 0 ] ] );
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
@@ -60,11 +62,13 @@ function WelcomeTour() {
 	const isWelcomeTourNext = () => {
 		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
-	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() );
+	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() ).filter(
+		( step ) => ! ( step.meta.isDesktopOnly && isMobile() )
+	);
 	const { setJustMaximized } = useWelcomeTourContext();
 
 	// Preload card images
-	tourSteps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
+	usePrefetchTourAssets( tourSteps );
 
 	const tourConfig = {
 		steps: tourSteps,

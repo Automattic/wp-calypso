@@ -1,4 +1,10 @@
-import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
+import {
+	isBusiness,
+	isEcommerce,
+	isEnterprise,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -6,26 +12,32 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { userCan } from 'calypso/lib/site/utils';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { PluginPrice, getPeriodVariationValue } from '../plugin-price';
 import './style.scss';
 
 const PluginDetailsCTA = ( {
-	pluginSlug,
+	plugin,
 	selectedSite,
 	isPluginInstalledOnsite,
 	siteIds,
 	isPlaceholder,
+	billingPeriod,
+	isMarketplaceProduct,
 } ) => {
+	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
 
 	const requestingPluginsForSites = useSelector( ( state ) =>
@@ -73,16 +85,35 @@ const PluginDetailsCTA = ( {
 
 	return (
 		<div className="plugin-details-CTA__container">
-			<div className="plugin-details-CTA__price">{ translate( 'Free' ) }</div>
+			<div className="plugin-details-CTA__price">
+				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+					{ ( { isFetching, price, period } ) =>
+						! isFetching && (
+							<>
+								{ price ? (
+									<>
+										{ price + ' ' }
+										<span className="plugin-details-CTA__period">{ period }</span>
+									</>
+								) : (
+									translate( 'Free' )
+								) }
+							</>
+						)
+					}
+				</PluginPrice>
+			</div>
 			<div className="plugin-details-CTA__install">
 				<CTAButton
-					slug={ pluginSlug }
+					plugin={ plugin }
 					isPluginInstalledOnsite={ isPluginInstalledOnsite }
 					isJetpackSelfHosted={ isJetpackSelfHosted }
 					selectedSite={ selectedSite }
 					isJetpack={ isJetpack }
 					isVip={ isVip }
 					hasEligibilityMessages={ hasEligibilityMessages }
+					isMarketplaceProduct={ isMarketplaceProduct }
+					billingPeriod={ billingPeriod }
 				/>
 			</div>
 			<div className="plugin-details-CTA__t-and-c">
@@ -109,7 +140,15 @@ const PluginDetailsCTAPlaceholder = () => {
 	);
 };
 
-const CTAButton = ( { slug, selectedSite, isJetpack, isVip, hasEligibilityMessages } ) => {
+const CTAButton = ( {
+	plugin,
+	selectedSite,
+	isJetpack,
+	isVip,
+	hasEligibilityMessages,
+	isMarketplaceProduct,
+	billingPeriod,
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
@@ -135,8 +174,10 @@ const CTAButton = ( { slug, selectedSite, isJetpack, isVip, hasEligibilityMessag
 						onClickInstallPlugin( {
 							dispatch,
 							selectedSite,
-							slug,
+							plugin,
 							upgradeAndInstall: shouldUpgrade,
+							isMarketplaceProduct,
+							billingPeriod,
 						} )
 					}
 				/>
@@ -150,34 +191,78 @@ const CTAButton = ( { slug, selectedSite, isJetpack, isVip, hasEligibilityMessag
 					onClickInstallPlugin( {
 						dispatch,
 						selectedSite,
-						slug,
+						plugin,
 						upgradeAndInstall: shouldUpgrade,
+						isMarketplaceProduct,
+						billingPeriod,
 					} );
 				} }
 			>
-				{ shouldUpgrade ? translate( 'Upgrade and install' ) : translate( 'Install and activate' ) }
+				{
+					// eslint-disable-next-line no-nested-ternary
+					isMarketplaceProduct
+						? translate( 'Pay and install' )
+						: shouldUpgrade
+						? translate( 'Upgrade and install' )
+						: translate( 'Install and activate' )
+				}
 			</Button>
 		</>
 	);
 };
 
-function onClickInstallPlugin( { dispatch, selectedSite, slug, upgradeAndInstall } ) {
+function onClickInstallPlugin( {
+	dispatch,
+	selectedSite,
+	plugin,
+	upgradeAndInstall,
+	isMarketplaceProduct,
+	billingPeriod,
+} ) {
 	dispatch( removePluginStatuses( 'completed', 'error' ) );
 
-	dispatch( recordGoogleEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', slug ) );
+	dispatch(
+		recordGoogleEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug )
+	);
 	dispatch(
 		recordGoogleEvent( 'calypso_plugin_install_click_from_plugin_info', {
 			site: selectedSite?.ID,
-			plugin: slug,
+			plugin: plugin.slug,
 		} )
 	);
 
-	const installPluginURL = `/marketplace/${ slug }/install/${ selectedSite.slug }`;
-	if ( upgradeAndInstall ) {
-		page( `/checkout/${ selectedSite.slug }/business?redirect_to=${ installPluginURL }#step2` );
-	} else {
-		page( installPluginURL );
+	dispatch( productToBeInstalled( plugin.slug, selectedSite.slug ) );
+
+	if ( isMarketplaceProduct ) {
+		// We need to add the product to the  cart.
+		// Plugin install is handled on the backend by activating the subscription.
+		const variationPeriod = getPeriodVariationValue( billingPeriod );
+		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+		if ( upgradeAndInstall ) {
+			// We also need to add a business plan to the cart.
+			const plan_slug =
+				billingPeriod === IntervalLength.MONTHLY ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS;
+			return page(
+				`/checkout/${ selectedSite.slug }/${ product_slug },${ plan_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
+			);
+		}
+
+		return page(
+			`/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
+		);
 	}
+
+	// After buying a plan we need to redirect to the plugin install page.
+	const installPluginURL = `/marketplace/${ plugin.slug }/install/${ selectedSite.slug }`;
+	if ( upgradeAndInstall ) {
+		// We also need to add a business plan to the cart.
+		return page(
+			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=${ installPluginURL }#step2`
+		);
+	}
+
+	// No need to go through chekout, go to install page directly.
+	return page( installPluginURL );
 }
 
 export default PluginDetailsCTA;

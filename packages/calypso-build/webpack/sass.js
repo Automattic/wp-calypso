@@ -23,7 +23,9 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 				// typically use `/` to indicate the start of the base URL,
 				// but starting with css-loader v4, it started trying to handle
 				// absolute paths itself.
-				url: ( path ) => ! path.startsWith( '/' ),
+				url: {
+					filter: ( path ) => ! path.startsWith( '/' ),
+				},
 			},
 		},
 		{

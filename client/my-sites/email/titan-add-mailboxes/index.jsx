@@ -12,7 +12,6 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
@@ -40,7 +39,7 @@ import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxe
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
 	getDomainsBySiteId,
@@ -158,20 +157,17 @@ class TitanAddMailboxes extends Component {
 			this.setState( { isAddingToCart: true } );
 
 			this.props.shoppingCartManager
-				.addProductsToCart( [
-					fillInSingleCartItemAttributes( this.getCartItem(), this.props.productsList ),
-				] )
+				.addProductsToCart( [ this.getCartItem() ] )
 				.then( () => {
 					if ( this.isMounted ) {
 						this.setState( { isAddingToCart: false } );
+						page( '/checkout/' + selectedSite.slug );
 					}
-					const { errors } = this.props?.cart?.messages;
-					if ( errors && errors.length ) {
-						// Stay on the page to show the relevant error
-						return;
+				} )
+				.catch( () => {
+					if ( this.isMounted ) {
+						this.setState( { isAddingToCart: false } );
 					}
-
-					return this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}
 	};
@@ -308,7 +304,6 @@ export default connect(
 			selectedSite,
 			isLoadingDomains,
 			currentRoute: getCurrentRoute( state ),
-			productsList: getProductsList( state ),
 			maxTitanMailboxCount: hasTitanMailWithUs( selectedDomain )
 				? getMaxTitanMailboxCount( selectedDomain )
 				: 0,

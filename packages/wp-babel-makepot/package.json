@@ -25,11 +25,11 @@
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
 		"@babel/cli": "^7.16.0",
-		"@babel/core": "^7.16.0",
-		"@babel/plugin-proposal-class-properties": "^7.16.0",
-		"@babel/preset-env": "^7.16.4",
-		"@babel/preset-react": "^7.16.0",
-		"@babel/preset-typescript": "^7.16.0",
+		"@babel/core": "^7.16.5",
+		"@babel/plugin-proposal-class-properties": "^7.16.5",
+		"@babel/preset-env": "^7.16.5",
+		"@babel/preset-react": "^7.16.5",
+		"@babel/preset-typescript": "^7.16.5",
 		"commander": "^5.1.0",
 		"gettext-parser": "^4.0.3",
 		"glob": "^7.1.6",
@@ -41,6 +41,6 @@
 		"i18n-calypso": "workspace:^",
 		"jest": "^27.3.1",
 		"react": "^17.0.2",
-		"rimraf": "^3.0.0"
+		"rimraf": "^3.0.2"
 	}
 }

@@ -12,7 +12,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
 import { useSelector } from 'react-redux';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
@@ -218,7 +217,6 @@ function useAddProductsFromLocalStorage( {
 	const products: Record<
 		string,
 		{
-			product_id: number;
 			product_slug: string;
 		}
 	> = useSelector( getProductsList );
@@ -233,7 +231,7 @@ function useAddProductsFromLocalStorage( {
 		}
 
 		const productsForCart: RequestCartProduct[] = getCartFromLocalStorage().map( ( product ) =>
-			fillInSingleCartItemAttributes( product, products )
+			createRequestCartProduct( product )
 		);
 
 		if ( productsForCart.length < 1 ) {
@@ -301,7 +299,7 @@ function useAddRenewalItems( {
 					} );
 					return null;
 				}
-				return createRenewalItemToAddToCart( productSlug, product.product_id, subscriptionId );
+				return createRenewalItemToAddToCart( productSlug, subscriptionId );
 			} )
 			.filter( isValueTruthy );
 
@@ -356,7 +354,6 @@ function useAddProductFromSlug( {
 	const products: Record<
 		string,
 		{
-			product_id: number;
 			product_slug: string;
 		}
 	> = useSelector( getProductsList );
@@ -401,7 +398,6 @@ function useAddProductFromSlug( {
 			createItemToAddToCart( {
 				productSlug: product.product_slug,
 				productAlias: product.internal_product_alias,
-				productId: product.product_id,
 				isJetpackCheckout,
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
@@ -468,7 +464,6 @@ function getProductSlugFromAlias( productAlias: string ): string {
 
 function createRenewalItemToAddToCart(
 	productAlias: string,
-	productId: string | number,
 	purchaseId: string | number | undefined | null
 ): RequestCartProduct | null {
 	const [ slug, meta ] = productAlias.split( ':' );
@@ -489,7 +484,6 @@ function createRenewalItemToAddToCart(
 		quantity: null,
 		volume: 1,
 		product_slug: productSlug,
-		product_id: parseInt( String( productId ), 10 ),
 		extra: renewalItemExtra,
 	};
 }
@@ -522,19 +516,17 @@ function getJetpackSearchForSite( productAlias: string, isJetpackNotAtomic: bool
 function createItemToAddToCart( {
 	productSlug,
 	productAlias,
-	productId,
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 }: {
 	productSlug: string;
-	productId: number;
 	productAlias: string;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 } ): RequestCartProduct {
-	debug( 'creating product with', productSlug, productAlias, productId );
+	debug( 'creating product with', productSlug, productAlias );
 	const [ , meta ] = productAlias.split( ':' );
 	// Some meta values contain slashes, so we decode them
 	const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
@@ -543,7 +535,6 @@ function createItemToAddToCart( {
 		debug( 'creating theme product' );
 		return addContextToProduct(
 			createRequestCartProduct( {
-				product_id: productId,
 				product_slug: productSlug,
 				meta: cartMeta,
 			} )
@@ -554,7 +545,6 @@ function createItemToAddToCart( {
 		debug( 'creating domain mapping product' );
 		return addContextToProduct(
 			createRequestCartProduct( {
-				product_id: productId,
 				product_slug: productSlug,
 				meta: cartMeta,
 			} )
@@ -563,7 +553,6 @@ function createItemToAddToCart( {
 
 	return addContextToProduct(
 		createRequestCartProduct( {
-			product_id: productId,
 			product_slug: productSlug,
 			extra: { isJetpackCheckout, jetpackSiteSlug, jetpackPurchaseToken },
 		} )

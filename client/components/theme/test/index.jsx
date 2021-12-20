@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { parse } from 'url';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import { createElement } from 'react';
@@ -60,16 +61,24 @@ describe( 'Theme', () => {
 			test( 'should include photon parameters', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
 				const src = imgNode.getAttribute( 'src' );
-				const url = new URL( src );
-				const params = new URLSearchParams( url.search );
-				const fitParam = params.get( 'fit' );
-				expect( fitParam ).toEqual( expect.stringMatching( /\d+,\d+/ ) );
+				const { query } = parse( src, true );
+
+				expect( query ).toMatchObject( {
+					fit: expect.stringMatching( /\d+,\d+/ ),
+				} );
 			} );
 
 			test( 'should call onScreenshotClick() on click on screenshot', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
 				TestUtils.Simulate.click( imgNode );
 				assert( props.onScreenshotClick.calledOnce, 'onClick did not trigger onScreenshotClick' );
+			} );
+
+			test( 'should not show a price when there is none', () => {
+				assert(
+					themeNode.getElementsByClassName( 'price' ).length === 0,
+					'price should not appear'
+				);
 			} );
 
 			test( 'should render a More button', () => {
@@ -115,6 +124,19 @@ describe( 'Theme', () => {
 		test( 'should render a <div> with an is-placeholder class', () => {
 			assert( themeNode.nodeName === 'DIV', 'nodeName doesn\'t equal "DIV"' );
 			assert.include( themeNode.className, 'is-placeholder', 'no is-placeholder' );
+		} );
+	} );
+
+	describe( 'when the theme has a price', () => {
+		beforeEach( () => {
+			const themeElement = TestUtils.renderIntoDocument(
+				createElement( Theme, { ...props, price: '$50' } )
+			);
+			themeNode = ReactDom.findDOMNode( themeElement );
+		} );
+
+		test( 'should show a price', () => {
+			assert( themeNode.getElementsByClassName( 'theme__badge-price' )[ 0 ].textContent === '$50' );
 		} );
 	} );
 } );

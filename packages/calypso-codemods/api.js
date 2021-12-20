@@ -39,6 +39,7 @@ function generateBinArgs( name ) {
 
 function runCodemod( codemodName, transformTargets ) {
 	const binArgs = [
+		jscodeshiftBin,
 		...config.jscodeshiftArgs,
 		...generateBinArgs( codemodName ),
 		...transformTargets,
@@ -46,13 +47,14 @@ function runCodemod( codemodName, transformTargets ) {
 
 	process.stdout.write( `\nRunning ${ codemodName } on ${ transformTargets.join( ' ' ) }\n` );
 
-	child_process.spawnSync( jscodeshiftBin, binArgs, {
+	child_process.spawnSync( process.execPath, binArgs, {
 		stdio: [ 'ignore', process.stdout, process.stderr ],
 	} );
 }
 
 function runCodemodDry( codemodName, filepath ) {
 	const binArgs = [
+		jscodeshiftBin,
 		...config.jscodeshiftArgs,
 		...generateBinArgs( codemodName ),
 		'--dry',
@@ -60,7 +62,9 @@ function runCodemodDry( codemodName, filepath ) {
 		'--silent',
 		filepath,
 	];
-	const result = child_process.spawnSync( jscodeshiftBin, binArgs, {
+	// The script referenced by `jscodeshiftBin` has strange line endings (see https://github.com/facebook/jscodeshift/issues/424)
+	// which makes it fail when called directly. Calling it via `node script.js` fixes it.
+	const result = child_process.spawnSync( process.execPath, binArgs, {
 		stdio: 'pipe',
 	} );
 

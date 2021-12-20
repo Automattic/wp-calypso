@@ -93,16 +93,16 @@ describe( 'useShoppingCart', () => {
 			} );
 		} );
 
-		it( 'throws an error if the product is missing a product_id', async () => {
+		it( 'throws an error if the product is missing a product_slug', async () => {
 			render(
 				<MockProvider>
-					<TestComponent products={ [ { product_slug: planOne.product_slug } ] } />
+					<TestComponent products={ [ { product_id: planOne.product_id } ] } />
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
 			await waitFor( () => {
 				expect( testRunErrors ).toHaveLength( 1 );
-				expect( String( testRunErrors[ 0 ] ) ).toMatch( /product_id/ );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /product_slug/ );
 			} );
 		} );
 
@@ -307,14 +307,14 @@ describe( 'useShoppingCart', () => {
 			expect( screen.getByText( planTwo.product_name ) ).toBeInTheDocument();
 		} );
 
-		it( 'throws an error if a product is missing a product_id', async () => {
+		it( 'throws an error if a product is missing a product_slug', async () => {
 			mockGetCart.mockResolvedValue( {
 				...emptyResponseCart,
 				products: [ planOne ],
 			} );
 			render(
 				<MockProvider getCartOverride={ mockGetCart }>
-					<TestComponent products={ [ { product_slug: planTwo.product_slug } ] } />
+					<TestComponent products={ [ { product_id: planTwo.product_id } ] } />
 				</MockProvider>
 			);
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
@@ -322,7 +322,7 @@ describe( 'useShoppingCart', () => {
 			fireEvent.click( screen.getByText( 'Click me' ) );
 			await waitFor( () => {
 				expect( testRunErrors ).toHaveLength( 1 );
-				expect( String( testRunErrors[ 0 ] ) ).toMatch( /product_id/ );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /product_slug/ );
 			} );
 			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
 		} );

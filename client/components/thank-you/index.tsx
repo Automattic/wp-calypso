@@ -177,8 +177,8 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		background-color: ${ headerBackgroundColor };
 		min-height: 352px;
 		img {
-			width: auto;
-			height: 200px;
+			width: ${ thankYouImage.width ? null : 'auto' };
+			height: ${ thankYouImage.height ? null : '200px' };
 			margin-bottom: 14px;
 		}
 	`;

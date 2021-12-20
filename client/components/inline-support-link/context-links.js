@@ -3,6 +3,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,
 	},
+	backup_payment_methods: {
+		link: 'https://wordpress.com/support/payment/#backup-payment-methods',
+		post_id: 76237,
+	},
 	billing: {
 		link: 'https://wordpress.com/support/billing-history/',
 		post_id: 40792,

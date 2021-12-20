@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isPersonal,
 	isPremium,
@@ -213,10 +212,6 @@ class ManagePurchase extends Component {
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 
-		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
-			return null;
-		}
-
 		if ( isPartnerPurchase( purchase ) || ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;
 		}
@@ -268,10 +263,6 @@ class ManagePurchase extends Component {
 
 	renderRenewalNavItem( content, onClick ) {
 		const { purchase } = this.props;
-
-		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
-			return null;
-		}
 
 		if ( ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;

@@ -26,6 +26,7 @@ const selectors = {
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
 	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
+	closeSettingsButton: 'button[aria-label="Close settings"]:visible',
 	saveDraftButton: '.editor-post-save-draft',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
@@ -41,7 +42,7 @@ const selectors = {
 	// corner. This addresses the bug where the post-publish panel is immediately
 	// closed when publishing with certain blocks on the editor canvas.
 	// See https://github.com/Automattic/wp-calypso/issues/54421.
-	viewButton: 'text=/View (Post|Page)/i',
+	viewButton: 'text=/View (Post|Page)/',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
 
@@ -272,13 +273,8 @@ export class GutenbergEditorPage {
 	 */
 	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
-
-		// Click on the editor title. This has the effect of dismissing the block inserter
-		// if open, and restores focus back to the editor root container, allowing insertion
-		// of blocks.
-		await frame.click( selectors.editorTitle );
 		await this.openBlockInserter();
-		await frame.fill( selectors.blockSearch, blockName );
+		await this.searchBlockInserter( blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
 		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
@@ -297,28 +293,66 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Adds a pattern from the block inserter panel.
+	 *
+	 * The name is expected to be formatted in the same manner as it
+	 * appears on the label when visible in the block inserter panel.
+	 *
+	 * Example:
+	 * 		- Two images side by side
+	 *
+	 * @param {string} patternName Name of the pattern to insert.
+	 */
+	async addPattern( patternName: string ): Promise< ElementHandle > {
+		const frame = await this.getEditorFrame();
+		await this.openBlockInserter();
+		await this.searchBlockInserter( patternName );
+		await frame.click( `div[aria-label="${ patternName }"]` );
+		return await frame.waitForSelector( `:text('Block pattern "${ patternName }" inserted.')` );
+	}
+
+	/**
 	 * Open the block inserter panel.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openBlockInserter(): Promise< void > {
 		const frame = await this.getEditorFrame();
-
+		// Click on the editor title. This has the effect of dismissing the block inserter
+		// if open, and restores focus back to the editor root container, allowing insertion
+		// of blocks.
+		await frame.click( selectors.editorTitle );
 		await frame.click( selectors.blockInserterToggle );
 		await frame.waitForSelector( selectors.blockInserterPanel );
 	}
 
 	/**
-	 * Opens the settings sidebar.
+	 * Given a string, enters the said string to the block inserter search bar.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @param {string} text Text to search.
+	 */
+	async searchBlockInserter( text: string ): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.fill( selectors.blockSearch, text );
+	}
+
+	/**
+	 * @returns Whether the Settings sidebar is open or not.
+	 */
+	async isSettingsSidebarOpen(): Promise< boolean > {
+		const frame = await this.getEditorFrame();
+		return await frame.$eval( selectors.settingsToggle, ( element ) =>
+			element.classList.contains( 'is-pressed' )
+		);
+	}
+
+	/**
+	 * Opens the Settings sidebar.
 	 */
 	async openSettings(): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		const isSidebarOpen = await frame.$eval( selectors.settingsToggle, ( element ) =>
-			element.classList.contains( 'is-pressed' )
-		);
+		const isSidebarOpen = await this.isSettingsSidebarOpen();
 		if ( ! isSidebarOpen ) {
 			await frame.click( selectors.settingsToggle );
 		}
@@ -330,6 +364,17 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Closes the Settings sidebar.
+	 */
+	async closeSettings(): Promise< void > {
+		const isSidebarOpen = await this.isSettingsSidebarOpen();
+		if ( ! isSidebarOpen ) {
+			return;
+		}
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.closeSettingsButton );
+	}
+	/**
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
@@ -340,6 +385,7 @@ export class GutenbergEditorPage {
 
 		await frame.click( selectors.publishButton( selectors.postToolbar ) );
 		await frame.click( selectors.publishButton( selectors.publishPanel ) );
+
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 

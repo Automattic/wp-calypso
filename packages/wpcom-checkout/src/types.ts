@@ -121,6 +121,7 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	gstin?: string;
 	nik?: string;
 	useForAllSubscriptions?: boolean;
+	eventSource?: string;
 };
 
 // The data model used in ContactDetailsFormFields and related components.

@@ -10,6 +10,7 @@ import QueryMedia from 'calypso/components/data/query-media';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -20,7 +21,6 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
-import { editMedia } from 'calypso/state/media/thunks';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
@@ -450,9 +450,6 @@ const mapStateToProps = ( state, { mediaId } ) => {
 	};
 };
 
-export default connect( mapStateToProps, {
-	editMedia,
-	selectMediaItems,
-	changeMediaSource,
-	clearSite,
-} )( localize( withDeleteMedia( Media ) ) );
+export default connect( mapStateToProps, { selectMediaItems, changeMediaSource, clearSite } )(
+	localize( withDeleteMedia( withEditMedia( Media ) ) )
+);

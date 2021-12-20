@@ -17,7 +17,6 @@ const stepNameToModuleName = {
 	'domains-theme-preselected': 'domains',
 	'domains-launch': 'domains',
 	'from-url': 'import-url',
-	'import-preview': 'import-preview',
 	/* import-url will eventually replace from-url step. Forgive temporary naming. */
 	'import-url': 'import-url-onboarding',
 	'intent-screen': 'intent-screen',
@@ -34,7 +33,6 @@ const stepNameToModuleName = {
 	'plans-store-nux': 'plans-atomic-store',
 	'select-domain': 'domains',
 	site: 'site',
-	'rebrand-cities-welcome': 'rebrand-cities-welcome',
 	'rewind-migrate': 'rewind-migrate',
 	'rewind-were-backing': 'rewind-were-backing',
 	'rewind-form-creds': 'rewind-form-creds',

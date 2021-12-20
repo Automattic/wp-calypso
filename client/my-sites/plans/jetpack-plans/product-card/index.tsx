@@ -44,10 +44,11 @@ interface ProductCardProps {
 	currencyCode: string | null;
 	selectedTerm?: Duration;
 	isAligned?: boolean;
-	featuredPlans?: string[];
+	isFeatured?: boolean;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
 	scrollCardIntoView: ScrollCardIntoViewCallback;
+	collapseFeaturesOnMobile?: boolean;
 }
 
 const ProductCard: React.FC< ProductCardProps > = ( {
@@ -58,10 +59,11 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	currencyCode,
 	selectedTerm,
 	isAligned,
-	featuredPlans,
+	isFeatured,
 	featuredLabel,
 	hideSavingLabel,
 	scrollCardIntoView,
+	collapseFeaturesOnMobile,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -177,7 +179,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
 			}
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
-			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
+			isFeatured={ isFeatured }
 			isOwned={ isOwned }
 			isIncludedInPlan={ isIncludedInPlan || isSuperseded }
 			isDeprecated={ isDeprecated }
@@ -190,6 +192,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			featuredLabel={ featuredLabel }
 			hideSavingLabel={ hideSavingLabel }
 			scrollCardIntoView={ scrollCardIntoView }
+			collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
 		/>
 	);
 };

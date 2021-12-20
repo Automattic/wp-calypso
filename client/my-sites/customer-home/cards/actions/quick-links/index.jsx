@@ -5,11 +5,13 @@ import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
@@ -27,6 +29,11 @@ import ActionBox from './action-box';
 import './style.scss';
 
 export const QuickLinks = ( {
+	canEditPages,
+	canCustomize,
+	canSwitchThemes,
+	canManageSite,
+	canModerateComments,
 	customizeUrl,
 	isStaticHomePage,
 	showCustomizer,
@@ -37,6 +44,7 @@ export const QuickLinks = ( {
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
+	trackEditSiteAction,
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
@@ -49,7 +57,11 @@ export const QuickLinks = ( {
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
+	blockEditorSettings,
+	areBlockEditorSettingsLoading,
 } ) => {
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
+
 	const translate = useTranslate();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
@@ -57,34 +69,38 @@ export const QuickLinks = ( {
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 
+	const customizerLinks =
+		isStaticHomePage && canEditPages ? (
+			<ActionBox
+				href={ editHomePageUrl }
+				hideLinkIndicator
+				onClick={ trackEditHomepageAction }
+				label={ translate( 'Edit homepage' ) }
+				materialIcon="laptop"
+			/>
+		) : null;
+
 	const quickLinks = (
 		<div className="quick-links__boxes">
-			{ isStaticHomePage ? (
+			{ isFSEActive && canManageSite ? (
 				<ActionBox
-					href={ editHomePageUrl }
+					href={ `/site-editor/${ siteSlug }` }
 					hideLinkIndicator
-					onClick={ trackEditHomepageAction }
-					label={ translate( 'Edit homepage' ) }
+					onClick={ trackEditSiteAction }
+					label={ translate( 'Edit site' ) }
 					materialIcon="laptop"
 				/>
 			) : (
-				<ActionBox
-					href={ `/post/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackWritePostAction }
-					label={ translate( 'Write blog post' ) }
-					materialIcon="edit"
-				/>
+				customizerLinks
 			) }
-			{ isStaticHomePage ? (
-				<ActionBox
-					href={ `/page/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackAddPageAction }
-					label={ translate( 'Add a page' ) }
-					materialIcon="insert_drive_file"
-				/>
-			) : (
+			<ActionBox
+				href={ `/post/${ siteSlug }` }
+				hideLinkIndicator
+				onClick={ trackWritePostAction }
+				label={ translate( 'Write blog post' ) }
+				materialIcon="edit"
+			/>
+			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
 					href={ `/comments/${ siteSlug }` }
 					hideLinkIndicator
@@ -93,15 +109,7 @@ export const QuickLinks = ( {
 					materialIcon="mode_comment"
 				/>
 			) }
-			{ isStaticHomePage ? (
-				<ActionBox
-					href={ `/post/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackWritePostAction }
-					label={ translate( 'Write blog post' ) }
-					materialIcon="edit"
-				/>
-			) : (
+			{ canEditPages && (
 				<ActionBox
 					href={ `/page/${ siteSlug }` }
 					hideLinkIndicator
@@ -110,47 +118,53 @@ export const QuickLinks = ( {
 					materialIcon="insert_drive_file"
 				/>
 			) }
-			{ showCustomizer && (
+			{ showCustomizer && canCustomize && (
+				<>
+					<ActionBox
+						href={ menusUrl }
+						hideLinkIndicator
+						onClick={ trackEditMenusAction }
+						label={ translate( 'Edit menus' ) }
+						materialIcon="list"
+					/>
+					<ActionBox
+						href={ customizeUrl }
+						hideLinkIndicator
+						onClick={ trackCustomizeThemeAction }
+						label={ translate( 'Customize theme' ) }
+						materialIcon="palette"
+					/>
+				</>
+			) }
+			{ canSwitchThemes && (
 				<ActionBox
-					href={ menusUrl }
+					href={ `/themes/${ siteSlug }` }
 					hideLinkIndicator
-					onClick={ trackEditMenusAction }
-					label={ translate( 'Edit menus' ) }
-					materialIcon="list"
+					onClick={ trackChangeThemeAction }
+					label={ translate( 'Change theme' ) }
+					materialIcon="view_quilt"
 				/>
 			) }
-			{ showCustomizer && (
-				<ActionBox
-					href={ customizeUrl }
-					hideLinkIndicator
-					onClick={ trackCustomizeThemeAction }
-					label={ translate( 'Customize theme' ) }
-					materialIcon="palette"
-				/>
-			) }
-			<ActionBox
-				href={ `/themes/${ siteSlug }` }
-				hideLinkIndicator
-				onClick={ trackChangeThemeAction }
-				label={ translate( 'Change theme' ) }
-				materialIcon="view_quilt"
-			/>
-			{ canAddEmail ? (
-				<ActionBox
-					href={ `/email/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackAddEmailAction }
-					label={ translate( 'Add email' ) }
-					materialIcon="email"
-				/>
-			) : (
-				<ActionBox
-					href={ `/domains/add/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackAddDomainAction }
-					label={ translate( 'Add a domain' ) }
-					gridicon="domains"
-				/>
+			{ canManageSite && (
+				<>
+					{ canAddEmail ? (
+						<ActionBox
+							href={ `/email/${ siteSlug }` }
+							hideLinkIndicator
+							onClick={ trackAddEmailAction }
+							label={ translate( 'Add email' ) }
+							materialIcon="email"
+						/>
+					) : (
+						<ActionBox
+							href={ `/domains/add/${ siteSlug }` }
+							hideLinkIndicator
+							onClick={ trackAddDomainAction }
+							label={ translate( 'Add a domain' ) }
+							gridicon="domains"
+						/>
+					) }
+				</>
 			) }
 			{ isUnifiedNavEnabled && siteAdminUrl && (
 				<ActionBox
@@ -160,28 +174,32 @@ export const QuickLinks = ( {
 					label={ translate( 'WP Admin Dashboard' ) }
 				/>
 			) }
-			<ActionBox
-				href="https://wp.me/logo-maker/?utm_campaign=my_home"
-				onClick={ trackDesignLogoAction }
-				target="_blank"
-				label={
-					getLocaleSlug() === 'en' ||
-					getLocaleSlug() === 'en-gb' ||
-					i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
-						? translate( 'Create a logo with Fiverr' )
-						: translate( 'Create a logo' )
-				}
-				external
-				iconSrc={ fiverrIcon }
-			/>
-			<ActionBox
-				href="https://anchor.fm/wordpressdotcom"
-				onClick={ trackAnchorPodcastAction }
-				target="_blank"
-				label={ translate( 'Create a podcast with Anchor' ) }
-				external
-				iconSrc={ anchorLogoIcon }
-			/>
+			{ canManageSite && (
+				<>
+					<ActionBox
+						href="https://wp.me/logo-maker/?utm_campaign=my_home"
+						onClick={ trackDesignLogoAction }
+						target="_blank"
+						label={
+							getLocaleSlug() === 'en' ||
+							getLocaleSlug() === 'en-gb' ||
+							i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
+								? translate( 'Create a logo with Fiverr' )
+								: translate( 'Create a logo' )
+						}
+						external
+						iconSrc={ fiverrIcon }
+					/>
+					<ActionBox
+						href="https://anchor.fm/wordpressdotcom"
+						onClick={ trackAnchorPodcastAction }
+						target="_blank"
+						label={ translate( 'Create a podcast with Anchor' ) }
+						external
+						iconSrc={ anchorLogoIcon }
+					/>
+				</>
+			) }
 		</div>
 	);
 
@@ -190,6 +208,10 @@ export const QuickLinks = ( {
 			flushDebouncedUpdateHomeQuickLinksToggleStatus();
 		};
 	}, [] );
+
+	if ( areBlockEditorSettingsLoading ) {
+		return null;
+	}
 
 	return (
 		<FoldableCard
@@ -255,6 +277,12 @@ const trackEditMenusAction = ( isStaticHomePage ) =>
 			is_static_home_page: isStaticHomePage,
 		} ),
 		bumpStat( 'calypso_customer_home', 'my_site_edit_menus' )
+	);
+
+const trackEditSiteAction = () =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_my_site_site_editor_link' ),
+		bumpStat( 'calypso_customer_home', 'my_site_site_editor' )
 	);
 
 const trackCustomizeThemeAction = ( isStaticHomePage ) =>
@@ -338,6 +366,11 @@ const mapStateToProps = ( state ) => {
 	const canAddEmail = getDomainsThatCanAddEmail( domains ).length > 0;
 
 	return {
+		canEditPages: canCurrentUser( state, siteId, 'edit_pages' ),
+		canCustomize: canCurrentUser( state, siteId, 'customize' ),
+		canSwitchThemes: canCurrentUser( state, siteId, 'switch_themes' ),
+		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
+		canModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
@@ -358,6 +391,7 @@ const mapDispatchToProps = {
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
+	trackEditSiteAction,
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
@@ -388,4 +422,10 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( QuickLinks );
+const ConnectedQuickLinks = connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( QuickLinks );
+
+export default withBlockEditorSettings( ConnectedQuickLinks );

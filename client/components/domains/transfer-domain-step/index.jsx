@@ -297,14 +297,14 @@ class TransferDomainStep extends Component {
 	startPendingInboundTransfer = ( domain, authCode ) => {
 		const { selectedSite, translate } = this.props;
 
-		startInboundTransfer( selectedSite.ID, domain, authCode, ( error, result ) => {
-			if ( result ) {
+		startInboundTransfer( selectedSite.ID, domain, authCode )
+			.then( () => {
 				this.props.fetchSiteDomains( selectedSite.ID );
 				page( domainManagementTransferIn( selectedSite.slug, domain ) );
-			} else {
+			} )
+			.catch( () => {
 				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
-			}
-		} );
+			} );
 	};
 
 	getTransferDomainPrecheck() {

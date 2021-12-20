@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
@@ -35,7 +34,6 @@ import {
 	CLOUDFLARE_NAMESERVERS_REGEX,
 } from './constants';
 import CustomNameserversForm from './custom-nameservers-form';
-import DnsTemplates from './dns-templates';
 import FetchError from './fetch-error';
 import withDomainNameservers from './with-domain-nameservers';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
@@ -163,13 +161,9 @@ class NameServers extends Component {
 				</VerticalNav>
 
 				<VerticalNav>
-					{ this.hasWpcomNameservers() &&
-						! this.isPendingTransfer() &&
-						( config.isEnabled( 'domains/dns-records-redesign' ) ? (
-							<EmailSetup selectedDomainName={ this.props.selectedDomainName } />
-						) : (
-							<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
-						) ) }
+					{ this.hasWpcomNameservers() && ! this.isPendingTransfer() && (
+						<EmailSetup selectedDomainName={ this.props.selectedDomainName } />
+					) }
 				</VerticalNav>
 			</Fragment>
 		);
@@ -182,9 +176,7 @@ class NameServers extends Component {
 
 		return (
 			<Main wideLayout className={ classes }>
-				{ config.isEnabled( 'domains/dns-records-redesign' )
-					? this.renderBreadcrumbs()
-					: this.header() }
+				{ this.renderBreadcrumbs() }
 				{ this.getContent() }
 			</Main>
 		);
