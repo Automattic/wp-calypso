@@ -31,7 +31,6 @@ registerStore< State >( STORE_KEY, {
 		'selectedFonts',
 		'selectedSite',
 		'siteTitle',
-		'siteVertical',
 		'isEnrollingInFseBeta',
 	],
 } );

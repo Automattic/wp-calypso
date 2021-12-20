@@ -1,6 +1,5 @@
 import { combineReducers } from '@wordpress/data';
 import type { OnboardAction } from './actions';
-import type { SiteVertical } from './types';
 import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 import type { Design, FontPair } from '@automattic/design-picker';
 import type { Reducer } from 'redux';
@@ -189,13 +188,6 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -236,7 +228,6 @@ const reducer = combineReducers( {
 	selectedDesign,
 	selectedSite,
 	siteTitle,
-	siteVertical,
 	showSignupDialog,
 	planProductId,
 	randomizedDesigns,

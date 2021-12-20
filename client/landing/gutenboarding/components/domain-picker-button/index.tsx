@@ -16,12 +16,12 @@ const DomainPickerButton: FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const makePath = usePath();
-	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) =>
+	const { domain, selectedDesign, siteTitle } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 
 	// Use site title or vertical as search query for a domain suggestion
-	const suggestionQuery = siteTitle || siteVertical?.label || '';
+	const suggestionQuery = siteTitle || '';
 	const isValidQuery = suggestionQuery.length > 1;
 
 	const domainSuggestion = useSelect(

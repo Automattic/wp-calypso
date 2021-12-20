@@ -51,7 +51,6 @@ export function* createSite( {
 		selectedDesign,
 		selectedFonts,
 		siteTitle,
-		siteVertical,
 		selectedFeatures,
 		isEnrollingInFseBeta,
 	}: State = yield select( ONBOARD_STORE, 'getState' );
@@ -66,13 +65,6 @@ export function* createSite( {
 		blog_title: blogTitle,
 		public: visibility,
 		options: {
-			site_vertical: siteVertical?.id,
-			site_vertical_name: siteVertical?.label,
-			// untranslated vertical slug
-			// so we can match directories in
-			// https://github.com/Automattic/wp-calypso/tree/HEAD/static/page-templates/verticals
-			// TODO: determine default vertical should user input match no official vertical
-			site_vertical_slug: siteVertical?.slug,
 			site_information: {
 				title: blogTitle,
 			},
