@@ -35,6 +35,10 @@
 }
 
 .email-providers-stacked-comparison__how-they-compare-link {
-	margin-left: 0.5em;
 	cursor: pointer;
+	color: var( --color-link );
+	font-size: $font-body;
+	margin-left: 0.5em;
+	padding-top: 0;
+	text-decoration: underline;
 }

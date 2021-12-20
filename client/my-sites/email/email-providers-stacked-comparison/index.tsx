@@ -2,8 +2,9 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	TITAN_MAIL_MONTHLY_SLUG,
 } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { translate, useTranslate } from "i18n-calypso";
+import { translate, useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -28,7 +29,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
-import { InDepthComparison, ProviderComparison } from "./in-depth-comparison";
+import { InDepthComparison, ProviderComparison } from './in-depth-comparison';
 
 type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
@@ -53,19 +54,19 @@ type EmailProvidersStackedComparisonProps = {
 
 const ProfessionalEmailComparisonObject: ProviderComparison = {
 	header: <h1> Professional Email </h1>,
-	tools: translate( 'Integrated email management, Inbox, calendar and contacts.'),
+	tools: translate( 'Integrated email management, Inbox, calendar and contacts.' ),
 	storage: translate( '30 GB storage.' ),
-	importing: translate( 'One-click import of existing email and contacts.'),
-	support: translate( '24/7 support via email.')
-}
+	importing: translate( 'One-click import of existing email and contacts.' ),
+	support: translate( '24/7 support via email.' ),
+};
 
 const GoogleWorkspaceComparisonObject: ProviderComparison = {
 	header: <h1> Google </h1>,
-	tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Sliders and more.'),
+	tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Sliders and more.' ),
 	storage: translate( '30 GB storage.' ),
-	importing: translate( 'Easy to import.'),
-	support: translate( '24/7 support via email.')
-}
+	importing: translate( 'Easy to import.' ),
+	support: translate( '24/7 support via email.' ),
+};
 
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
 	props
@@ -114,12 +115,14 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			</h1>
 
 			<div className="email-providers-stacked-comparison__how-they-compare">
-				{ translate( 'Not sure how to start?') }
-				<a
+				{ translate( 'Not sure how to start?' ) }
+				<Button
+					borderless
 					className="email-providers-stacked-comparison__how-they-compare-link"
-				   	onClick={ () => setInDepthComparison( ! inDepthComparison )}>
-					{ translate( 'See how they compare.') }
-				</a>
+					onClick={ () => setInDepthComparison( ! inDepthComparison ) }
+				>
+					{ translate( 'See how they compare.' ) }
+				</Button>
 			</div>
 
 			<BillingIntervalToggle
@@ -127,22 +130,25 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				intervalLength={ intervalLength }
 			/>
 
-			{ inDepthComparison &&
+			{ inDepthComparison && (
 				<InDepthComparison
-					comparisonObject={
-						[ProfessionalEmailComparisonObject,
-						GoogleWorkspaceComparisonObject ]
-					}/> }
+					comparisonObject={ [
+						ProfessionalEmailComparisonObject,
+						GoogleWorkspaceComparisonObject,
+					] }
+				/>
+			) }
 
-
-			{ ! inDepthComparison && <ProfessionalEmailCard
-				comparisonContext={comparisonContext}
-				detailsExpanded={detailsExpanded.titan}
-				selectedDomainName={selectedDomainName}
-				source={source}
-				intervalLength={intervalLength}
-				onExpandedChange={onExpandedChange}
-			/>}
+			{ ! inDepthComparison && (
+				<ProfessionalEmailCard
+					comparisonContext={ comparisonContext }
+					detailsExpanded={ detailsExpanded.titan }
+					selectedDomainName={ selectedDomainName }
+					source={ source }
+					intervalLength={ intervalLength }
+					onExpandedChange={ onExpandedChange }
+				/>
+			) }
 
 			{ ! inDepthComparison && isGSuiteSupported && (
 				<GoogleWorkspaceCard
