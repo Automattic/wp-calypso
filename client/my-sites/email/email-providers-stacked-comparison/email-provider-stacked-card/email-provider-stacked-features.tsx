@@ -50,16 +50,16 @@ export const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStack
 	);
 };
 
-interface EmailProviderStackedFeaturesToggleButton {
+interface EmailProviderStackedFeaturesToggleButtonProps {
 	handleClick: MouseEventHandler< HTMLButtonElement >;
 	isRelatedContentExpanded: boolean;
 }
 
-export const EmailProviderStackedFeaturesToggleButton: FunctionComponent< EmailProviderStackedFeaturesToggleButton > = (
-	props
-) => {
+export const EmailProviderStackedFeaturesToggleButton: FunctionComponent< EmailProviderStackedFeaturesToggleButtonProps > = ( {
+	handleClick,
+	isRelatedContentExpanded,
+} ) => {
 	const translate = useTranslate();
-	const { handleClick, isRelatedContentExpanded } = props;
 
 	return (
 		<Button

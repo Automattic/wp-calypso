@@ -63,16 +63,16 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 		google: false,
 	} );
 
-	const onExpandedStateChange = ( providerKey: string, isExpanded: boolean ) => {
+	const onExpandedStateChange = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
 			const [ key, currentExpanded ] = entry;
-			if ( isExpanded ) {
+			if ( isCurrentlyExpanded ) {
 				return [ key, key === providerKey ];
 			}
-			return [ key, key === providerKey ? isExpanded : currentExpanded ];
+			return [ key, key === providerKey ? isCurrentlyExpanded : currentExpanded ];
 		} );
 
-		if ( isExpanded ) {
+		if ( isCurrentlyExpanded ) {
 			recordTracksEvent( 'calypso_email_providers_expand_section_click', {
 				provider: providerKey,
 			} );

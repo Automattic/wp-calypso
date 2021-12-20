@@ -20,8 +20,8 @@ export interface Image {
 }
 
 export enum TitleLocation {
-	body,
-	figure,
+	BODY,
+	FIGURE,
 }
 
 export interface Props {
@@ -40,7 +40,7 @@ const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnP
 const PromoCard: FunctionComponent< Props > = ( {
 	title,
 	titleComponent,
-	titleComponentLocation = TitleLocation.body,
+	titleComponentLocation = TitleLocation.BODY,
 	icon,
 	image,
 	isPrimary,
@@ -76,13 +76,13 @@ const PromoCard: FunctionComponent< Props > = ( {
 					) : (
 						image
 					) }
-					{ titleComponentLocation === TitleLocation.figure && titleComponentHeader }
+					{ titleComponentLocation === TitleLocation.FIGURE && titleComponentHeader }
 				</ActionPanelFigure>
 			) }
 			{ icon && (
 				<ActionPanelFigure inlineBodyText={ false } align="left">
 					<Gridicon icon={ icon } size="32" />
-					{ titleComponentLocation === TitleLocation.figure && titleComponentHeader }
+					{ titleComponentLocation === TitleLocation.FIGURE && titleComponentHeader }
 				</ActionPanelFigure>
 			) }
 			<ActionPanelBody>
@@ -92,7 +92,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 						{ badgeComponent }
 					</ActionPanelTitle>
 				) }
-				{ titleComponentLocation === TitleLocation.body && titleComponentHeader }
+				{ titleComponentLocation === TitleLocation.BODY && titleComponentHeader }
 				{ isPrimary
 					? Children.map( children, ( child ) => {
 							return child && PromoCardCta === child.type

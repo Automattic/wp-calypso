@@ -73,7 +73,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 			image={ logo }
 			titleComponent={ header }
 			titleComponentLocation={
-				isViewportSizeLowerThan660px ? TitleLocation.figure : TitleLocation.body
+				isViewportSizeLowerThan660px ? TitleLocation.FIGURE : TitleLocation.BODY
 			}
 			icon={ '' }
 		>
