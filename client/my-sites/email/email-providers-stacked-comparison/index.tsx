@@ -26,10 +26,11 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { InDepthComparison, ProviderComparison } from './in-depth-comparison';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
-import { InDepthComparison, ProviderComparison } from './in-depth-comparison';
+
 
 type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
@@ -52,20 +53,25 @@ type EmailProvidersStackedComparisonProps = {
 	gSuiteAnnualProduct?: any;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
 const ProfessionalEmailComparisonObject: ProviderComparison = {
 	header: <h1> Professional Email </h1>,
-	tools: translate( 'Integrated email management, Inbox, calendar and contacts.' ),
-	storage: translate( '30 GB storage.' ),
-	importing: translate( 'One-click import of existing email and contacts.' ),
-	support: translate( '24/7 support via email.' ),
+	tools: translate( 'Integrated email management, Inbox, calendar and contacts' ),
+	storage: translate( '30 GB storage' ),
+	importing: translate( 'One-click import of existing email and contacts' ),
+	support: translate( '24/7 support via email' ),
+	selectCallback: noop,
 };
 
 const GoogleWorkspaceComparisonObject: ProviderComparison = {
 	header: <h1> Google </h1>,
-	tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Sliders and more.' ),
-	storage: translate( '30 GB storage.' ),
-	importing: translate( 'Easy to import.' ),
-	support: translate( '24/7 support via email.' ),
+	tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Sliders and more' ),
+	storage: translate( '30 GB storage' ),
+	importing: translate( 'Easy to import' ),
+	support: translate( '24/7 support via email' ),
+	selectCallback: noop,
 };
 
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
