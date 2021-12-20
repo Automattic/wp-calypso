@@ -14,6 +14,7 @@ import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-f
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const installSoftware = ( action ) => [
+	// Clean up the status in case it's an installing reattempt.
 	cleanAtomicSoftwareStatus( action.siteId, action.softwareSet ),
 	http(
 		{
