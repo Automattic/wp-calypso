@@ -45,13 +45,8 @@ export default function InstallPlugins( {
 			return;
 		}
 
-		// Do not dispatch when something went wrong.
-		if ( installFailed ) {
-			return;
-		}
-
 		dispatch( requestAtomicSoftwareInstall( siteId, 'woo-on-plans' ) );
-	}, [ dispatch, siteId, installFailed ] );
+	}, [ dispatch, siteId ] );
 
 	// Call onFailure callback when install fails.
 	useEffect( () => {
