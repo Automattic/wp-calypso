@@ -10,14 +10,14 @@
 
         .contact-display {
             padding-bottom: 16px;
-    
+
             &__content {
                 background-color: transparent;
                 padding: 0;
                 line-height: 20px;
                 font-size: $font-body-small;
                 color: var( --studio-gray-80 );
-    
+
                 p {
                     margin-bottom: 0;
                 }
@@ -42,7 +42,7 @@
             .components-base-control {
                 font-size: inherit;
                 color: inherit;
-                
+
                 &__field {
                     margin-bottom: 0;
                 }
