@@ -19,6 +19,7 @@ import { MediumImporter } from './medium';
 import { Importer, QueryObject, ImportJob } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
+import WordpressImporter from './wordpress';
 
 import './style.scss';
 
@@ -145,6 +146,14 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 											fromSite={ fromSite }
 										/>
 									);
+								} else if (
+									engine === 'wordpress' &&
+									isEnabled( 'gutenboarding/import-from-wordpress' )
+								) {
+									/**
+									 * WordPress importer
+									 */
+									return <WordpressImporter />;
 								}
 							} )() }
 						</div>
