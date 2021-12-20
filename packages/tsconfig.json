@@ -29,11 +29,14 @@
 		{ "path": "./launch" },
 		{ "path": "./onboarding" },
 		{ "path": "./page-pattern-modal" },
+		{ "path": "./photon" },
 		{ "path": "./plans-grid" },
 		{ "path": "./search" },
 		{ "path": "./shopping-cart" },
 		{ "path": "./state-utils" },
 		{ "path": "./tree-select" },
+		{ "path": "./viewport" },
+		{ "path": "./viewport-react" },
 		{ "path": "./wpcom-checkout" }
 	]
 }

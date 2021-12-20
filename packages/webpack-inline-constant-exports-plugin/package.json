@@ -25,7 +25,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"rimraf": "^3.0.0",
+		"rimraf": "^3.0.2",
 		"webpack": "^5.65.0"
 	},
 	"files": [

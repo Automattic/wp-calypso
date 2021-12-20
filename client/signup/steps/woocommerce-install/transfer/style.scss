@@ -3,6 +3,15 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
+.transfer__step-wrapper {
+	.step-wrapper__content {
+		padding: 1em;
+		max-width: 540px;
+		text-align: center;
+		margin: 32vh auto;
+	}
+}
+
 $progress-duration: 800ms;
 
 .transfer__progress-bar {
@@ -23,42 +32,5 @@ $progress-duration: 800ms;
 		right: 0;
 		bottom: 0;
 		transition: transform $progress-duration ease-out;
-	}
-}
-
-.transfer__step-wrapper {
-	.step-wrapper__content {
-		padding: 1em;
-		max-width: 540px;
-		text-align: center;
-		margin: 32vh auto;
-
-		&.is-force-centered {
-			position: fixed;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.transfer__progress-steps {
-			margin-top: 0.7em;
-			padding: 1em;
-			text-align: center;
-			color: var( --studio-gray-40 );
-		}
-
-		.transfer__progress-step {
-			@include onboarding-font-recoleta;
-			/* stylelint-disable-next-line scales/font-sizes */
-			font-size: 1.625rem;
-			line-height: 40px;
-			text-align: center;
-			vertical-align: middle;
-			margin: 0;
-		}
 	}
 }

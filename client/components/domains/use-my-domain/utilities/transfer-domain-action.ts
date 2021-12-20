@@ -11,6 +11,7 @@ import {
 } from 'calypso/components/domains/connect-domain-step/types';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { domainTransfer, updatePrivacyForDomain } from 'calypso/lib/cart-values/cart-items';
+import { startInboundTransfer } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
@@ -32,10 +33,11 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 	if ( ! selectedSite ) return onDone( { message: transferDomainError.NO_SELECTED_SITE } );
 
 	try {
-		const wpcomDomain = wpcom.domain( domain );
 		const authCode = verificationData.ownership_verification_data.verification_data;
-
-		const authCodeCheckResult = await wpcomDomain.checkAuthCode( authCode );
+		const authCodeCheckResult = await wpcom.req.get(
+			`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-check-auth-code`,
+			{ auth_code: authCode }
+		);
 
 		if ( ! authCodeCheckResult.success )
 			return onDone( {
@@ -78,20 +80,10 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 
 		const startInboundTransferAndReload = async () => {
 			try {
-				const result = await wpcom
-					.undocumented()
-					.startInboundTransfer( selectedSite.ID, domain, authCode );
-				if ( result.success ) {
-					page( domainManagementTransferIn( selectedSite.slug, domain ) );
-				} else {
-					return onDone( {
-						message: transferDomainError.GENERIC_ERROR,
-					} );
-				}
+				await startInboundTransfer( selectedSite.ID, domain, authCode );
+				page( domainManagementTransferIn( selectedSite.slug, domain ) );
 			} catch ( error ) {
-				return onDone( {
-					message: transferDomainError.GENERIC_ERROR,
-				} );
+				onDone( { message: transferDomainError.GENERIC_ERROR } );
 			}
 		};
 

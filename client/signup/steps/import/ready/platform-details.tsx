@@ -2,13 +2,13 @@ import { Modal } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, close, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { FeatureName, FeatureList } from '../types';
+import { FeatureName, FeatureList, ImporterPlatform } from '../types';
 import type * as React from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface DetailsProps {
-	platform: string;
+	platform: ImporterPlatform;
 	onClose: () => void;
 }
 
@@ -60,7 +60,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 		plugins: __( 'Plugins' ),
 	};
 
-	const getTitle = ( _platform: string ): string => {
+	const getTitle = ( _platform: ImporterPlatform ): string => {
 		switch ( _platform ) {
 			case 'wix':
 				return __( 'Importing content from Wix' );
@@ -77,7 +77,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 		}
 	};
 
-	const getInfo = ( _platform: string ): string => {
+	const getInfo = ( _platform: ImporterPlatform ): string => {
 		switch ( _platform ) {
 			case 'wix':
 				return __(

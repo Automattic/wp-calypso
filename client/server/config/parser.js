@@ -57,15 +57,6 @@ module.exports = function ( configPath, defaultOpts ) {
 		} );
 	}
 
-	if (
-		secretsPath !== realSecretsPath &&
-		data.features &&
-		data.features[ 'wpcom-user-bootstrap' ]
-	) {
-		console.error( 'Disabling server-side user-bootstrapping because of a missing secrets.json' );
-		data.features[ 'wpcom-user-bootstrap' ] = false;
-	}
-
 	// `protocol`, `hostname` and `port` config values can be overridden by env variables
 	data.protocol = process.env.PROTOCOL || data.protocol;
 	data.hostname = process.env.HOST || data.hostname;
@@ -73,6 +64,25 @@ module.exports = function ( configPath, defaultOpts ) {
 
 	const serverData = Object.assign( {}, data, getDataFromFile( secretsPath ) );
 	const clientData = Object.assign( {}, data );
+
+	// Optionally override API secrets with env values, only for server data
+	serverData.wpcom_calypso_rest_api_key =
+		process.env.WPCOM_CALYPSO_REST_API_KEY ?? serverData.wpcom_calypso_rest_api_key;
+	serverData.wpcom_calypso_support_session_rest_api_key =
+		process.env.WPCOM_CALYPSO_SUPPORT_SESSION_REST_API_KEY ??
+		serverData.wpcom_calypso_support_session_rest_api_key;
+
+	if (
+		data.features &&
+		data.features[ 'wpcom-user-bootstrap' ] &&
+		! serverData.wpcom_calypso_rest_api_key
+	) {
+		console.error(
+			'Disabling server-side user-bootstrapping because of missing wpcom_calypso_rest_api_key'
+		);
+		serverData.features[ 'wpcom-user-bootstrap' ] = false;
+		clientData.features[ 'wpcom-user-bootstrap' ] = false;
+	}
 
 	return { serverData, clientData };
 };

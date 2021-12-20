@@ -1,34 +1,3 @@
 .plan-thank-you-card .thank-you-card__main-icon {
 	margin-bottom: 8px;
 }
-
-.plan-thank-you-card.checkout-thank-you__rebrand-cities {
-	.thank-you-card__main-icon {
-		width: 100%;
-		max-width: 200px;
-	}
-
-	.thank-you-card {
-		background: var( --color-surface );
-		color: var( --color-neutral-70 );
-	}
-
-	.thank-you-card__header {
-		background: var( --color-accent );
-		color: var( --color-text-inverted );
-	}
-
-	.thank-you-card__price {
-		color: var( --color-neutral-0 );
-	}
-
-	.thank-you-card__description {
-		width: auto;
-	}
-
-	.thank-you-card__button {
-		background: var( --color-neutral-70 );
-		color: var( --color-text-inverted );
-		border: 0;
-	}
-}

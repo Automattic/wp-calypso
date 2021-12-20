@@ -27,10 +27,11 @@ class Sites extends Component {
 	}
 
 	filterSites = ( site ) => {
-		// only show Jetpack sites with the full Plugin
+		// only show Jetpack sites with the full Plugin or Backup Plugin
 		if (
 			site?.options?.jetpack_connection_active_plugins &&
-			! site.options.jetpack_connection_active_plugins.includes( 'jetpack' )
+			! site.options.jetpack_connection_active_plugins.includes( 'jetpack' ) &&
+			! site.options.jetpack_connection_active_plugins.includes( 'jetpack-backup' )
 		) {
 			return false;
 		}

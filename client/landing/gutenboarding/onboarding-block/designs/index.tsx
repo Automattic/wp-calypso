@@ -38,8 +38,11 @@ const Header: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const isAnchorFmSignup = useIsAnchorFm();
+	const isEnrollingInFseBeta = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).isEnrollingInFseBeta()
+	);
 	const isDesignPickerCategoriesEnabled =
-		! isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
+		! isAnchorFmSignup && ! isEnrollingInFseBeta && isEnabled( 'signup/design-picker-categories' );
 
 	const { goBack } = useStepNavigation();
 	const title = isDesignPickerCategoriesEnabled ? __( 'Themes' ) : __( 'Choose a design' );
@@ -78,26 +81,29 @@ const Designs: React.FunctionComponent = () => {
 	const { setSelectedDesign, setFonts, resetFonts, setRandomizedDesigns } = useDispatch(
 		ONBOARD_STORE
 	);
-	const {
-		getSelectedDesign,
-		hasPaidDesign,
-		getRandomizedDesigns,
-		isEnrollingInFseBeta,
-	} = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const isAnchorFmSignup = useIsAnchorFm();
+	const { selectedDesign, hasPaidDesign, randomizedDesigns, isEnrollingInFseBeta } = useSelect(
+		( select ) => {
+			const onboardSelect = select( ONBOARD_STORE );
 
-	const selectedDesign = getSelectedDesign();
-	const isFse = isEnrollingInFseBeta();
+			return {
+				selectedDesign: onboardSelect.getSelectedDesign(),
+				hasPaidDesign: onboardSelect.hasPaidDesign(),
+				randomizedDesigns: onboardSelect.getRandomizedDesigns(),
+				isEnrollingInFseBeta: onboardSelect.isEnrollingInFseBeta(),
+			};
+		}
+	);
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	// As the amount of the anchorfm related designs is little, we don't need to enable categories filter
 	const isDesignPickerCategoriesEnabled =
-		! isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
+		! isAnchorFmSignup && ! isEnrollingInFseBeta && isEnabled( 'signup/design-picker-categories' );
 
 	const useFeaturedPicksButtons =
 		isDesignPickerCategoriesEnabled &&
 		isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 
-	const allDesigns = getRandomizedDesigns().featured.filter(
+	const allDesigns = randomizedDesigns.featured.filter(
 		( design ) =>
 			// TODO Add finalized design templates to available designs config
 			// along with `is_anchorfm` prop (config is stored in the
@@ -121,7 +127,7 @@ const Designs: React.FunctionComponent = () => {
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: selectedDesign?.slug,
-		is_selected_design_premium: hasPaidDesign(),
+		is_selected_design_premium: hasPaidDesign,
 	} ) );
 
 	const [ userHasSelectedDesign, setUserHasSelectedDesign ] = React.useState( false );
@@ -152,11 +158,11 @@ const Designs: React.FunctionComponent = () => {
 		// Make sure we're using the right designs since we can't rely on config variables
 		// any more and `getRandomizedDesigns` is auto-populated in a state-agnostic way.
 		const availableDesigns = getAvailableDesigns( {
-			useFseDesigns: isFse,
+			useFseDesigns: isEnrollingInFseBeta,
 			randomize: true,
 		} );
 		setRandomizedDesigns( availableDesigns );
-	}, [ isFse, setRandomizedDesigns ] );
+	}, [ isEnrollingInFseBeta, setRandomizedDesigns ] );
 
 	return (
 		<div className="gutenboarding-page designs">

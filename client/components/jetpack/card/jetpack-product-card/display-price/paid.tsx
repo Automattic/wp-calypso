@@ -40,9 +40,7 @@ const Paid: React.FC< OwnProps > = ( {
 			: 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100;
 
 	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
-	const couponDiscountedPrice = parseFloat(
-		( ( discountedPrice ?? originalPrice ) * DISCOUNT_PERCENTAGE ).toFixed( 2 )
-	);
+	const couponDiscountedPrice = Math.floor( couponOriginalPrice * DISCOUNT_PERCENTAGE * 100 ) / 100;
 
 	const discountElt =
 		billingTerm === TERM_ANNUALLY

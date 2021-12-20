@@ -4,9 +4,11 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { render, fireEvent, screen, within } from '@testing-library/react';
+import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import CompositeCheckout from '../composite-checkout';
@@ -32,6 +34,7 @@ jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 
 /* eslint-disable jest/no-conditional-expect */
 
@@ -45,6 +48,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		} ) );
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
+		isMarketplaceProduct.mockImplementation( () => false );
 
 		const initialCart = {
 			coupon: '',
@@ -73,6 +77,20 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		};
 
 		const store = createTestReduxStore();
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+		Object.defineProperty( window, 'matchMedia', {
+			writable: true,
+			value: jest.fn().mockImplementation( ( query ) => ( {
+				matches: false,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(), // deprecated
+				removeListener: jest.fn(), // deprecated
+				addEventListener: jest.fn(),
+				removeEventListener: jest.fn(),
+				dispatchEvent: jest.fn(),
+			} ) ),
+		} );
 
 		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
 			const managerClient = createShoppingCartManagerClient( {
@@ -148,6 +166,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 			fireEvent.click( editOrderButton );

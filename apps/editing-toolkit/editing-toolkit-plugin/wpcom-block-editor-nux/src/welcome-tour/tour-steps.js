@@ -57,7 +57,6 @@ const referenceElements = [
 			'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
 	},
 	{
-		mobile: '.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
 		desktop: '.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
 	},
 	{
@@ -82,6 +81,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				),
 				imgSrc: getTourAssets( 'welcome' ),
 				animation: null,
+				imgNeedsPadding: true,
 			},
 		},
 		{
@@ -106,6 +106,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				),
 				imgSrc: getTourAssets( 'addBlock' ),
 				animation: 'block-inserter',
+				imgNeedsPadding: true,
 			},
 		},
 		{
@@ -127,6 +128,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				description: __( 'Click the settings icon to see even more options.', 'full-site-editing' ),
 				imgSrc: getTourAssets( 'moreOptions' ),
 				animation: null,
+				imgNeedsPadding: true,
 			},
 		},
 		{
@@ -136,6 +138,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				description: __( "Click the Undo button if you've made a mistake.", 'full-site-editing' ),
 				imgSrc: getTourAssets( 'undo' ),
 				animation: 'undo-button',
+				isDesktopOnly: true,
 			},
 		},
 		{
@@ -145,6 +148,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				description: __( 'To move blocks around, click and drag the handle.', 'full-site-editing' ),
 				imgSrc: getTourAssets( 'moveBlock' ),
 				animation: 'undo-button',
+				imgNeedsPadding: true,
 			},
 		},
 		{

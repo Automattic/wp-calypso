@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import version_compare from 'calypso/lib/version-compare';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
@@ -28,6 +29,7 @@ const PluginsBrowserListElement = ( props ) => {
 		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
+		billingPeriod,
 	} = props;
 
 	const translate = useTranslate();
@@ -139,6 +141,8 @@ const PluginsBrowserListElement = ( props ) => {
 						<InstalledInOrPricing
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
+							plugin={ plugin }
+							billingPeriod={ billingPeriod }
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
@@ -167,7 +171,12 @@ const PluginsBrowserListElement = ( props ) => {
 	);
 };
 
-const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled } ) => {
+const InstalledInOrPricing = ( {
+	sitesWithPlugin,
+	isWpcomPreinstalled,
+	plugin,
+	billingPeriod,
+} ) => {
 	const translate = useTranslate();
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
@@ -181,7 +190,26 @@ const InstalledInOrPricing = ( { sitesWithPlugin, isWpcomPreinstalled } ) => {
 		);
 	}
 
-	return <div className="plugins-browser-item__pricing">{ translate( 'Free' ) }</div>;
+	return (
+		<div className="plugins-browser-item__pricing">
+			<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+				{ ( { isFetching, price, period } ) =>
+					! isFetching && (
+						<>
+							{ price ? (
+								<>
+									{ price + ' ' }
+									<span className="plugins-browser-item__period">{ period }</span>
+								</>
+							) : (
+								translate( 'Free' )
+							) }
+						</>
+					)
+				}
+			</PluginPrice>
+		</div>
+	);
 };
 
 const Placeholder = ( { iconSize } ) => {

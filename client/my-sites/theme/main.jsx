@@ -45,6 +45,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -55,6 +56,7 @@ import {
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
 	getCanonicalTheme,
+	getPremiumThemePrice,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
@@ -77,6 +79,7 @@ class ThemeSheet extends Component {
 		author: PropTypes.string,
 		screenshot: PropTypes.string,
 		screenshots: PropTypes.array,
+		price: PropTypes.string,
 		description: PropTypes.string,
 		descriptionLong: PropTypes.oneOfType( [
 			PropTypes.string,
@@ -236,7 +239,8 @@ class ThemeSheet extends Component {
 	};
 
 	shouldRenderPreviewButton() {
-		return this.isThemeAvailable() && ! this.isThemeCurrentOne();
+		const { isWPForTeamsSite } = this.props;
+		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite;
 	}
 
 	isThemeCurrentOne() {
@@ -604,9 +608,25 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	renderPrice = () => {
+		let price = this.props.price;
+		if ( ! this.isLoaded() || this.props.isActive ) {
+			price = '';
+		} else if ( ! this.props.isPremium ) {
+			price = this.props.translate( 'Free' );
+		}
+
+		const className = classNames( 'theme__sheet-action-bar-cost', {
+			'theme__sheet-action-bar-cost-upgrade': ! /\d/g.test( this.props.price ),
+		} );
+
+		return price ? <span className={ className }>{ price }</span> : '';
+	};
+
 	renderButton = () => {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
+		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const { isActive } = this.props;
 
@@ -619,6 +639,11 @@ class ThemeSheet extends Component {
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
+				{ price && this.props.isWpcomTheme && (
+					<Badge type="info" className="theme__sheet-badge-beta">
+						{ price }
+					</Badge>
+				) }
 			</Button>
 		);
 	};
@@ -647,6 +672,7 @@ class ThemeSheet extends Component {
 			translate,
 			canUserUploadThemes,
 			previousRoute,
+			isWPForTeamsSite,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -766,7 +792,7 @@ class ThemeSheet extends Component {
 					backText={ previousRoute ? translate( 'Back' ) : translate( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
-					{ ! retired && ! hasWpOrgThemeUpsellBanner && this.renderButton() }
+					{ ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite && this.renderButton() }
 				</HeaderCake>
 				<div className="theme__sheet-columns">
 					<div className="theme__sheet-column-left">
@@ -843,6 +869,7 @@ export default connect(
 		return {
 			...theme,
 			id,
+			price: getPremiumThemePrice( state, id, siteId ),
 			error,
 			siteId,
 			siteSlug,
@@ -862,6 +889,7 @@ export default connect(
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			previousRoute: getPreviousRoute( state ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		};
 	},
 	{

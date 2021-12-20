@@ -125,6 +125,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		[ updatingThreats ]
 	);
 
+	/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 	return (
 		<>
 			<SecurityIcon icon="error" />
@@ -242,5 +243,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		</>
 	);
 };
+/* eslint-enable wpcalypso/i18n-mismatched-placeholders */
 
 export default ScanThreats;

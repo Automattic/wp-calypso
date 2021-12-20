@@ -56,15 +56,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'rebrand-cities',
-			steps: [ 'rebrand-cities-welcome', 'user' ],
-			destination: function ( dependencies ) {
-				return '/plans/select/business/' + dependencies.siteSlug;
-			},
-			description: 'Create an account for REBRAND cities partnership',
-			lastModified: '2019-06-17',
-		},
-		{
 			name: 'with-theme',
 			steps: [ 'domains-theme-preselected', 'plans', 'user' ],
 			destination: getChecklistThemeDestination,
@@ -441,6 +432,7 @@ export function generateFlows( {
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'site' ],
 			lastModified: '2021-11-11',
+			disallowResume: false,
 		},
 	];
 

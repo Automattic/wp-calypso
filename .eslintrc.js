@@ -169,7 +169,27 @@ module.exports = {
 				'jsdoc/require-param': 'off',
 				'jsdoc/check-param-names': 'off',
 				'@typescript-eslint/no-empty-function': 'off',
+				'prettier/prettier': [ 'error', { parser: 'babel' } ],
 			},
+		},
+		{
+			files: [ '*.json' ],
+			parser: 'eslint-plugin-json-es',
+			plugins: [ 'eslint-plugin-json-es' ],
+			extends: [ 'plugin:eslint-plugin-json-es/recommended' ],
+			rules: {
+				'comma-dangle': 'off',
+				'json-es/no-comments': 'error',
+			},
+			overrides: [
+				{
+					// These files are parsed as jsonc (JSON With Comments)
+					files: [ 'tsconfig.json' ],
+					rules: {
+						'json-es/no-comments': 'off',
+					},
+				},
+			],
 		},
 	],
 	env: {

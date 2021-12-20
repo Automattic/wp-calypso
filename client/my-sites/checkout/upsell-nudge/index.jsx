@@ -54,10 +54,9 @@ import {
 } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
-import { ConciergeQuickstartSession } from './concierge-quickstart-session';
-import { ConciergeSupportSession } from './concierge-support-session';
 import PurchaseModal from './purchase-modal';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
+import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 
 import './style.scss';
 
@@ -290,7 +289,6 @@ export class UpsellNudge extends Component {
 			receiptId,
 			currencyCode,
 			productCost,
-			productDisplayCost,
 			planRawPrice,
 			planDiscountedRawPrice,
 			isLoggedIn,
@@ -303,32 +301,14 @@ export class UpsellNudge extends Component {
 
 		switch ( upsellType ) {
 			case CONCIERGE_QUICKSTART_SESSION:
-				return (
-					<ConciergeQuickstartSession
-						currencyCode={ currencyCode }
-						productCost={ productCost }
-						productDisplayCost={ productDisplayCost }
-						isLoggedIn={ isLoggedIn }
-						receiptId={ receiptId }
-						translate={ translate }
-						siteSlug={ siteSlug }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-					/>
-				);
-
 			case CONCIERGE_SUPPORT_SESSION:
 				return (
-					<ConciergeSupportSession
-						currencyCode={ currencyCode }
-						productCost={ productCost }
-						productDisplayCost={ productDisplayCost }
+					<QuickstartSessionsRetirement
+						handleClickDecline={ this.handleClickDecline }
 						isLoggedIn={ isLoggedIn }
 						receiptId={ receiptId }
-						translate={ translate }
 						siteSlug={ siteSlug }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
+						upsellType={ upsellType }
 					/>
 				);
 

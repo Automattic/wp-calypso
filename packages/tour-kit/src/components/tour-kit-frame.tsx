@@ -145,8 +145,11 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		setTimeout( () => initialFocusedElement?.focus() );
 	}, [ initialFocusedElement ] );
 
-	const classNames = classnames( 'tour-kit-frame', config.options?.className );
-
+	const classNames = classnames(
+		'tour-kit-frame',
+		config.options?.className,
+		isMobile ? 'is-mobile' : 'is-desktop'
+	);
 	return (
 		<>
 			<KeyboardNavigation

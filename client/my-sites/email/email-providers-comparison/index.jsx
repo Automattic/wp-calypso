@@ -59,6 +59,7 @@ import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwa
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailForwardingFeatures,
+	getGoogleAppLogos,
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
@@ -120,10 +121,12 @@ class EmailProvidersComparison extends Component {
 	constructor( props ) {
 		super( props );
 
+		const { selectedDomainName, shouldPromoteGoogleWorkspace } = props;
+
 		this.state = {
 			googleUsers: [],
-			titanMailboxes: [ buildNewTitanMailbox( props.selectedDomainName, false ) ],
-			expanded: this.getDefaultExpandedState( props.source ),
+			titanMailboxes: [ buildNewTitanMailbox( selectedDomainName, false ) ],
+			expanded: this.getDefaultExpandedState( shouldPromoteGoogleWorkspace ),
 			addingToCart: false,
 			emailForwardAdded: false,
 			validatedTitanMailboxUuids: [],
@@ -138,14 +141,15 @@ class EmailProvidersComparison extends Component {
 		this.isMounted = false;
 	}
 
-	getDefaultExpandedState( source ) {
-		if ( source === 'google-sale' ) {
+	getDefaultExpandedState( shouldPromoteGoogleWorkspace ) {
+		if ( shouldPromoteGoogleWorkspace ) {
 			return {
 				forwarding: false,
 				google: true,
 				titan: false,
 			};
 		}
+
 		return {
 			forwarding: false,
 			google: false,
@@ -423,6 +427,15 @@ class EmailProvidersComparison extends Component {
 			</span>
 		) : null;
 
+		const starLabel = productIsDiscounted
+			? translate( '%(discount)d%% off!', {
+					args: {
+						discount: gSuiteProduct.sale_coupon.discount,
+					},
+					comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
+			  } )
+			: null;
+
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
 			( this.state.googleUsers ?? [] ).length === 0
@@ -482,6 +495,7 @@ class EmailProvidersComparison extends Component {
 				providerKey="google"
 				logo={ { path: googleWorkspaceIcon } }
 				title={ getGoogleMailServiceFamily() }
+				starLabel={ starLabel }
 				description={ translate(
 					'Professional email integrated with Google Meet and other productivity tools from Google.'
 				) }
@@ -494,6 +508,7 @@ class EmailProvidersComparison extends Component {
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ expandButtonLabel }
 				features={ getGoogleFeatures() }
+				appLogos={ getGoogleAppLogos() }
 			/>
 		);
 	}
@@ -753,6 +768,7 @@ class EmailProvidersComparison extends Component {
 			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
+			shouldPromoteGoogleWorkspace,
 			source,
 		} = this.props;
 
@@ -782,9 +798,11 @@ class EmailProvidersComparison extends Component {
 					/>
 				) }
 
+				{ shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
+
 				{ this.renderTitanCard() }
 
-				{ this.renderGoogleCard() }
+				{ ! shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
 
 				{ ! hideEmailForwardingCard && this.renderEmailForwardingCard() }
 
@@ -818,6 +836,7 @@ export default connect(
 		const isGSuiteSupported =
 			canUserPurchaseGSuite( state ) &&
 			( hasCartDomain || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) );
+		const gSuiteProduct = getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY );
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
@@ -825,13 +844,15 @@ export default connect(
 			domain,
 			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
-			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
+			gSuiteProduct,
 			hasCartDomain,
 			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
+			shouldPromoteGoogleWorkspace:
+				isGSuiteSupported && ( ownProps.source === 'google-sale' || hasDiscount( gSuiteProduct ) ),
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},

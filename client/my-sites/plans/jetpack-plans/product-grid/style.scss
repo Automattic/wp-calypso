@@ -3,8 +3,8 @@
 
 .product-grid__section {
 	margin-bottom: 70px;
-	padding-left: 20px;
-	padding-right: 20px;
+	padding-left: 16px;
+	padding-right: 16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		padding-left: 0;
@@ -43,14 +43,25 @@
 
 	list-style-type: none;
 
-	> li.is-featured {
-		// Put feature item(s) in first position
-		order: -1;
-	}
-
 	@include break-small {
 		grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
 	}
+}
+
+.product-grid__plan-grid {
+	> li.is-featured {
+		// Put featured item(s) in first position
+		order: -2;
+	}
+
+	> li:last-child {
+		// Put last item below featured items
+		order: -1;
+	}
+}
+
+.product-grid__plan-grid.has-top-padding {
+	padding-top: 32px;
 }
 
 .product-grid__plan-grid:not( .is-wrapping ) {
@@ -59,6 +70,9 @@
 
 	// Considering there are 3 plans
 	> li {
+		// Reset mobile and tablet positions
+		order: 0;
+
 		&:first-child {
 			position: relative;
 			left: 8px;
@@ -90,4 +104,9 @@
 
 .product-grid__more.is-detached {
 	margin-top: 48px;
+}
+
+.product-grid__category-filter {
+	display: flex;
+	justify-content: center;
 }

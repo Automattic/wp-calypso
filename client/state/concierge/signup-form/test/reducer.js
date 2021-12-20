@@ -12,7 +12,6 @@ import signupForm, {
 	countryCode,
 	phoneNumberWithoutCountryCode,
 	status,
-	isRebrandCitiesSite,
 } from '../reducer';
 
 describe( 'concierge/signupForm/reducer', () => {
@@ -25,7 +24,6 @@ describe( 'concierge/signupForm/reducer', () => {
 		countryCode: 'IN',
 		phoneNumberWithoutCountryCode: '987654321',
 		status: 'booking',
-		isRebrandCitiesSite: true,
 	};
 	const mockStatus = 'booking';
 
@@ -121,18 +119,6 @@ describe( 'concierge/signupForm/reducer', () => {
 		} );
 	} );
 
-	describe( 'isRebrandCitiesSite', () => {
-		test( 'should be defaulted as false', () => {
-			expect( isRebrandCitiesSite( undefined, {} ) ).toBe( false );
-		} );
-
-		test( 'should return isRebrandCitiesSite from the update action', () => {
-			expect( isRebrandCitiesSite( undefined, updateForm ) ).toEqual(
-				mockSignupForm.isRebrandCitiesSite
-			);
-		} );
-	} );
-
 	describe( 'signupForm', () => {
 		test( 'should combine all defaults as null.', () => {
 			expect( signupForm( undefined, {} ) ).toEqual( {
@@ -144,7 +130,6 @@ describe( 'concierge/signupForm/reducer', () => {
 				countryCode: '',
 				phoneNumberWithoutCountryCode: '',
 				status: null,
-				isRebrandCitiesSite: false,
 			} );
 		} );
 

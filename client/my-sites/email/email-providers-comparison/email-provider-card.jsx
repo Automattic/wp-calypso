@@ -16,6 +16,7 @@ function EmailProviderCard( {
 	logo,
 	title,
 	badge,
+	starLabel,
 	description,
 	formattedPrice,
 	discount,
@@ -27,6 +28,7 @@ function EmailProviderCard( {
 	showExpandButton = true,
 	expandButtonLabel,
 	features,
+	appLogos,
 } ) {
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
@@ -42,9 +44,12 @@ function EmailProviderCard( {
 
 	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;
 
+	const showStar = detailsExpanded && starLabel;
+
 	return (
 		<PromoCard
 			className={ classnames( 'email-providers-comparison__provider-card', {
+				'has-star': showStar,
 				'is-expanded': detailsExpanded,
 				'is-forwarding': providerKey === 'forwarding',
 			} ) }
@@ -52,6 +57,16 @@ function EmailProviderCard( {
 			title={ title }
 			badge={ badge }
 		>
+			{ showStar && (
+				<div className="email-providers-comparison__provider-card-star">
+					<span>
+						<span>
+							<span>{ starLabel }</span>
+						</span>
+					</span>
+				</div>
+			) }
+
 			<div className="email-providers-comparison__provider-card-main-details">
 				<p>{ description }</p>
 
@@ -91,7 +106,7 @@ function EmailProviderCard( {
 				</div>
 
 				{ ( ! showFeaturesToggleButton || areFeaturesExpanded ) && (
-					<EmailProviderFeatures features={ features } />
+					<EmailProviderFeatures features={ features } logos={ appLogos } />
 				) }
 			</div>
 
@@ -105,6 +120,7 @@ EmailProviderCard.propTypes = {
 	logo: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	badge: PropTypes.object,
+	starLabel: PropTypes.string,
 	description: PropTypes.string,
 	formattedPrice: PropTypes.node,
 	discount: PropTypes.node,
@@ -114,6 +130,7 @@ EmailProviderCard.propTypes = {
 	showExpandButton: PropTypes.bool,
 	expandButtonLabel: PropTypes.string,
 	features: PropTypes.arrayOf( PropTypes.string ),
+	appLogos: PropTypes.arrayOf( PropTypes.object ),
 	onExpandedChange: PropTypes.func,
 };
 

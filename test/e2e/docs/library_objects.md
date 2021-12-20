@@ -1,3 +1,9 @@
+<div style="width: 45%; float:left" align="left"><a href="./writing_tests.md"><-- Writing tests</a> </div>
+<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
+<div style="width: 45%; float:right"align="right"><a href="./style_guide.md">Style Guide --></a> </div>
+
+<br><br>
+
 # Library Objects
 
 The `@automattic/calypso-e2e` package offers a robust set of library objects patterned after the Page Object Model. When developing a new test spec, try to leverage these objects as much as possible for a seamless experience.

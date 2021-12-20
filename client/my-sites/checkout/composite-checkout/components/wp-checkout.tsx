@@ -30,6 +30,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -302,7 +303,15 @@ export default function WPCheckout( {
 					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
 					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
-					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					goToNextStep={ () => {
+						setIsOrderReviewActive( ! isOrderReviewActive );
+						reduxDispatch(
+							recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+								step: 0,
+								step_name: 'review-order-step',
+							} )
+						);
+					} }
 					activeStepContent={
 						<WPCheckoutOrderReview
 							removeProductFromCart={ removeProductFromCart }
@@ -349,7 +358,17 @@ export default function WPCheckout( {
 									reduxDispatch,
 									translate,
 									true
-								);
+								).then( ( response ) => {
+									if ( response ) {
+										reduxDispatch(
+											recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+												step: 1,
+												step_name: 'contact-form',
+											} )
+										);
+									}
+									return response;
+								} );
 							} }
 							activeStepContent={
 								<WPContactForm

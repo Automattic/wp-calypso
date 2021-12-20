@@ -1,15 +1,21 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -29,10 +35,14 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
-	isFetching as isWporgPluginFetching,
-	isFetched as isWporgPluginFetched,
-	getPlugin as getWporgPlugin,
+	isFetching as isWporgPluginFetchingSelector,
+	isFetched as isWporgPluginFetchedSelector,
+	getPlugin as getWporgPluginSelector,
 } from 'calypso/state/plugins/wporg/selectors';
+import {
+	isMarketplaceProduct as isMarketplaceProductSelector,
+	getProductsList,
+} from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
@@ -61,9 +71,13 @@ function PluginDetails( props ) {
 
 	// Plugin information.
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
-	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, props.pluginSlug ) );
-	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
-	const isFetched = useSelector( ( state ) => isWporgPluginFetched( state, props.pluginSlug ) );
+	const wporgPlugin = useSelector( ( state ) => getWporgPluginSelector( state, props.pluginSlug ) );
+	const isWporgPluginFetching = useSelector( ( state ) =>
+		isWporgPluginFetchingSelector( state, props.pluginSlug )
+	);
+	const isWporgPluginFetched = useSelector( ( state ) =>
+		isWporgPluginFetchedSelector( state, props.pluginSlug )
+	);
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
@@ -82,22 +96,58 @@ function PluginDetails( props ) {
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 
-	const fullPlugin = useMemo(
-		() => ( {
-			...plugin,
-			...wporgPlugin,
-		} ),
-		[ plugin, wporgPlugin ]
+	// Header Navigation and billing period switcher.
+	const isWide = useBreakpoint( '>1280px' );
+	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
+
+	// Determine if the plugin is WPcom or WPorg hosted
+	const productsList = useSelector( ( state ) => getProductsList( state ) );
+	const isProductListFetched = Object.values( productsList ).length > 0;
+
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, props.pluginSlug )
 	);
 
+	// Fetch WPorg plugin data if needed
 	useEffect( () => {
-		if ( ! isFetched ) {
+		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
 			dispatch( wporgFetchPluginData( props.pluginSlug ) );
 		}
-	}, [ isFetched, props.pluginSlug, dispatch ] );
+	}, [
+		isProductListFetched,
+		isMarketplaceProduct,
+		isWporgPluginFetched,
+		props.pluginSlug,
+		dispatch,
+	] );
+
+	// Fetch WPcom plugin data if needed
+	const {
+		data: wpComPluginData,
+		isFetched: isWpComPluginFetched,
+		isFetching: isWpComPluginFetching,
+	} = useWPCOMPlugin( props.pluginSlug, { enabled: isProductListFetched && isMarketplaceProduct } );
+
+	// Unify plugin details
+	const fullPlugin = useMemo( () => {
+		const wpcomPlugin = {
+			...wpComPluginData,
+			fetched: isWpComPluginFetched,
+			rating: ( wpComPluginData?.rating / 5 ) * 100,
+		};
+
+		return {
+			...plugin,
+			...wpcomPlugin,
+			...wporgPlugin,
+		};
+	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched ] );
 
 	const existingPlugin = useMemo( () => {
-		if ( isFetching || ! isFetched ) {
+		if (
+			( ! isMarketplaceProduct && ( isWporgPluginFetching || ! isWporgPluginFetched ) ) ||
+			( isMarketplaceProduct && ( isWpComPluginFetching || ! isWpComPluginFetched ) )
+		) {
 			return 'unknown';
 		}
 		if ( fullPlugin && fullPlugin.fetched ) {
@@ -105,7 +155,7 @@ function PluginDetails( props ) {
 		}
 
 		// If the plugin has at least one site then we know it exists
-		const pluginSites = Object.values( fullPlugin.sites );
+		const pluginSites = fullPlugin?.sites ? Object.values( fullPlugin.sites ) : [];
 		if ( pluginSites && pluginSites[ 0 ] ) {
 			return true;
 		}
@@ -115,7 +165,15 @@ function PluginDetails( props ) {
 		}
 
 		return false;
-	}, [ isFetching, isFetched, fullPlugin, requestingPluginsForSites ] );
+	}, [
+		isMarketplaceProduct,
+		isWpComPluginFetching,
+		isWpComPluginFetched,
+		isWporgPluginFetching,
+		isWporgPluginFetched,
+		fullPlugin,
+		requestingPluginsForSites,
+	] );
 
 	const getNavigationItems = () => {
 		// ToDo:
@@ -154,7 +212,19 @@ function PluginDetails( props ) {
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<SidebarNavigation />
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<FixedNavigationHeader navigationItems={ getNavigationItems() } />
+			<QueryProductsList />
+			<FixedNavigationHeader
+				navigationItems={ getNavigationItems() }
+				compactBreadcrumb={ ! isWide }
+			>
+				{ isEnabled( 'marketplace-v1' ) && isMarketplaceProduct && (
+					<BillingIntervalSwitcher
+						billingPeriod={ billingPeriod }
+						onChange={ setBillingPeriod }
+						compact={ ! isWide }
+					/>
+				) }
+			</FixedNavigationHeader>
 			<PluginNotices
 				pluginId={ fullPlugin.id }
 				sites={ sitesWithPlugins }
@@ -169,11 +239,13 @@ function PluginDetails( props ) {
 
 					<div className="plugin-details__layout-col-right">
 						<PluginDetailsCTA
-							pluginSlug={ props.pluginSlug }
+							plugin={ fullPlugin }
 							siteIds={ siteIds }
 							selectedSite={ selectedSite }
 							isPluginInstalledOnsite={ isPluginInstalledOnsite }
 							isPlaceholder={ showPlaceholder }
+							billingPeriod={ billingPeriod }
+							isMarketplaceProduct={ isMarketplaceProduct }
 						/>
 					</div>
 				</div>
@@ -233,7 +305,9 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, ...props 
 	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 
-	const isFetching = useSelector( ( state ) => isWporgPluginFetching( state, props.pluginSlug ) );
+	const isFetching = useSelector( ( state ) =>
+		isWporgPluginFetchingSelector( state, props.pluginSlug )
+	);
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, props.pluginSlug )
 	);

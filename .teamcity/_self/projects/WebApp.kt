@@ -3,6 +3,7 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.playwright.prepareEnvironment
+import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
@@ -167,6 +168,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	steps {
+		mergeTrunk()
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
@@ -178,10 +180,11 @@ object RunAllUnitTests : BuildType({
 				# The "name" property refers to the code of the message (like YN0002).
 
 				# Generate a JSON array of the errors we care about:
-				# 1. Select warning YN0002 (Unmet peer dependencies.)
-				# 2. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
-				# 3. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
-				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 68 or (.type == "error" and .name != 0)) ]')
+				# 1. Select warning YN0002 (Missing peer dependencies.)
+				# 2. Select warning ZN0060 (Invalid peer dependency.)
+				# 3. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
+				# 4. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
+				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 60 or .name == 68 or (.type == "error" and .name != 0)) ]')
 
 				num_errors=${'$'}(jq length <<< "${'$'}yarn_errors")
 				if [ "${'$'}num_errors" -gt 0 ] ; then
@@ -249,6 +252,7 @@ object RunAllUnitTests : BuildType({
 			name = "Run type checks"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
+				set -x
 				export NODE_ENV="test"
 
 				# These are not expected to fail
@@ -261,7 +265,7 @@ object RunAllUnitTests : BuildType({
 					set +e
 					yarn tsc --build client 2>&1 | tee tsc_out
 					mkdir -p checkstyle_results
-					yarn run typescript-checkstyle < tsc_out > ./checkstyle_results/tsc.xml
+					yarn run typescript-checkstyle < tsc_out | sed -e "s#${'$'}PWD#~#g" > ./checkstyle_results/tsc.xml
 					cat ./checkstyle_results/tsc.xml
 				)
 			"""
@@ -315,10 +319,19 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				set -x
-				yarn components:storybook:start --ci --smoke-test
-				yarn search:storybook:start --ci --smoke-test
-				yarn composite-checkout:storybook:start --ci --smoke-test
+				yarn workspaces foreach --verbose --parallel run storybook --ci --smoke-test
 			"""
+		}
+		bashNodeScript {
+			name = "Tag build"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			scriptContent = """
+				set -x
+
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
+					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
+				fi
+			""".trimIndent()
 		}
 	}
 
@@ -338,8 +351,11 @@ object RunAllUnitTests : BuildType({
 			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
 			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
 			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			threshold = 0
 			compareTo = build {
-				buildRule = lastSuccessful()
+				buildRule = buildWithTag {
+					tag = "release-candidate"
+				}
 			}
 			stopBuildOnFailure = true
 		}
@@ -546,7 +562,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG_ENV=test
 					export PLAYWRIGHT_BROWSERS_PATH=0
 					export TEAMCITY_VERSION=2021
-					export HEADLESS=true
+					export HEADLESS=false
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
@@ -557,7 +573,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -682,12 +698,12 @@ object PreReleaseE2ETests : BuildType({
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
-				export HEADLESS=true
+				export HEADLESS=false
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -782,12 +798,12 @@ object QuarantinedE2ETests: BuildType( {
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
-				export HEADLESS=true
+				export HEADLESS=false
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}

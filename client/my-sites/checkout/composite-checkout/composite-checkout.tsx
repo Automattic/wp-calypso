@@ -621,8 +621,14 @@ export default function CompositeCheckout( {
 		( args ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+					step: 2,
+					step_name: 'payment-method-step',
+				} )
+			);
 		},
-		[ onPaymentComplete, onAfterPaymentComplete ]
+		[ onPaymentComplete, onAfterPaymentComplete, reduxDispatch ]
 	);
 
 	const handlePaymentError = useCallback(
@@ -694,6 +700,15 @@ export default function CompositeCheckout( {
 				clearSignupDestinationCookie();
 			}
 
+			if ( searchParams.has( 'cancel_to' ) ) {
+				const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
+				// Only allow redirecting to relative paths.
+				if ( cancelPath.match( /^\/(?!\/)/ ) ) {
+					page( cancelPath );
+					return;
+				}
+			}
+
 			// Some places that open checkout (eg: purchase page renewals) return the
 			// user there after checkout by putting the previous page's path in the
 			// `redirect_to` query param. When leaving checkout via the close button,
@@ -701,7 +716,7 @@ export default function CompositeCheckout( {
 			if ( searchParams.has( 'redirect_to' ) ) {
 				const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
 				// Only allow redirecting to relative paths.
-				if ( redirectPath.startsWith( '/' ) ) {
+				if ( redirectPath.match( /^\/(?!\/)/ ) ) {
 					page( redirectPath );
 					return;
 				}

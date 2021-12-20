@@ -14,7 +14,6 @@ import type { AnyAction } from 'redux';
 export const defaultState: IPurchaseFlowState = {
 	primaryDomain: null,
 	productSlugInstalled: null,
-	productGroupSlug: null,
 	siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 	reasonForSiteTransferStatus: null,
@@ -37,7 +36,6 @@ const purchaseFlow = withSchemaValidation(
 					siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 					pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 					productSlugInstalled: action.productSlug,
-					productGroupSlug: action.productGroupSlug,
 					primaryDomain: action.primaryDomain,
 				};
 			case THEME_TRANSFER_INITIATE_REQUEST:

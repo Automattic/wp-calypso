@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { pick } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -23,12 +22,12 @@ export function checkUrl( url, isUrlOnSites, allowWPCOMSite ) {
 		if ( isUrlOnSites ) {
 			dispatch( {
 				type: JETPACK_CONNECT_CHECK_URL,
-				url: url,
+				url,
 			} );
 			setTimeout( () => {
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
-					url: url,
+					url,
 					data: {
 						exists: true,
 						isWordPress: true,
@@ -47,19 +46,18 @@ export function checkUrl( url, isUrlOnSites, allowWPCOMSite ) {
 		setTimeout( () => {
 			dispatch( {
 				type: JETPACK_CONNECT_CHECK_URL,
-				url: url,
+				url,
 			} );
 		}, 1 );
-		wpcom
-			.undocumented()
-			.getSiteConnectInfo( url )
+		wpcom.req
+			.get( '/connect/site-info', { url } )
 			.then( ( data ) => {
 				_fetching[ url ] = null;
 				debug( 'jetpack-connect state checked for url', url, data );
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
-					url: url,
-					data: data,
+					url,
+					data,
 					error: null,
 				} );
 
@@ -86,7 +84,7 @@ export function checkUrl( url, isUrlOnSites, allowWPCOMSite ) {
 				if ( errorCode ) {
 					dispatch(
 						recordTracksEvent( errorCode, {
-							url: url,
+							url,
 							type: instructionsType,
 						} )
 					);
@@ -96,15 +94,11 @@ export function checkUrl( url, isUrlOnSites, allowWPCOMSite ) {
 				_fetching[ url ] = null;
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
-					url: url,
+					url,
 					data: null,
-					error: pick( error, [ 'error', 'status', 'message' ] ),
+					error,
 				} );
-				dispatch(
-					recordTracksEvent( 'calypso_jpc_error_other', {
-						url: url,
-					} )
-				);
+				dispatch( recordTracksEvent( 'calypso_jpc_error_other', { url } ) );
 			} );
 	};
 }

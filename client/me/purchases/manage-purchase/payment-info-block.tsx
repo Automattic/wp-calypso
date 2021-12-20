@@ -46,9 +46,12 @@ export default function PaymentInfoBlock( {
 		const logoType = paymentLogoType( purchase );
 		const willNotBeBilled = !! ( isExpiring( purchase ) && purchase.payment.creditCard );
 		return (
-			<PaymentInfoBlockWrapper willNotBeBilled={ willNotBeBilled }>
-				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
-				{ purchase.payment.creditCard?.number ?? '' }
+			<PaymentInfoBlockWrapper>
+				<span className="manage-purchase__payment-method">
+					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+					{ purchase.payment.creditCard?.number ?? '' }
+				</span>
+				{ willNotBeBilled && <WillNotBeBilledNotice /> }
 				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
 			</PaymentInfoBlockWrapper>
 		);
@@ -62,13 +65,16 @@ export default function PaymentInfoBlock( {
 		const logoType = paymentLogoType( purchase );
 		const willNotBeBilled = isExpiring( purchase );
 		return (
-			<PaymentInfoBlockWrapper willNotBeBilled={ willNotBeBilled }>
-				<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
+			<PaymentInfoBlockWrapper>
+				<span className="manage-purchase__payment-method">
+					<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
+				</span>
 				{ translate( 'expiring %(cardExpiry)s', {
 					args: {
 						cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
 					},
 				} ) }
+				{ willNotBeBilled && <WillNotBeBilledNotice /> }
 				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
 			</PaymentInfoBlockWrapper>
 		);
@@ -78,8 +84,9 @@ export default function PaymentInfoBlock( {
 		const logoType = paymentLogoType( purchase );
 		const willNotBeBilled = isExpiring( purchase );
 		return (
-			<PaymentInfoBlockWrapper willNotBeBilled={ willNotBeBilled }>
+			<PaymentInfoBlockWrapper>
 				<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
+				{ willNotBeBilled && <WillNotBeBilledNotice /> }
 				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
 			</PaymentInfoBlockWrapper>
 		);
@@ -88,24 +95,22 @@ export default function PaymentInfoBlock( {
 	return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 }
 
-function PaymentInfoBlockWrapper( {
-	children,
-	willNotBeBilled,
-}: {
-	children: ReactNode;
-	willNotBeBilled?: boolean;
-} ) {
+function PaymentInfoBlockWrapper( { children }: { children: ReactNode } ) {
 	const translate = useTranslate();
 	return (
 		<aside aria-label={ String( translate( 'Payment method' ) ) }>
 			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
-			{ willNotBeBilled && (
-				<div className="manage-purchase__detail-label-subtitle">
-					{ translate( '(this will not be billed)' ) }
-				</div>
-			) }
 			<span className="manage-purchase__detail">{ children }</span>
 		</aside>
+	);
+}
+
+function WillNotBeBilledNotice() {
+	const translate = useTranslate();
+	return (
+		<div className="manage-purchase__detail-label-subtitle">
+			{ translate( '(this will not be billed)' ) }
+		</div>
 	);
 }
 

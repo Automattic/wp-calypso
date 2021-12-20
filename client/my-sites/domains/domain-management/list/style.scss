@@ -298,7 +298,20 @@
 	}
 }
 
+.empty-domains-list-card:not( .has-non-wpcom-domains ) {
+	box-shadow: none;
+}
+
 .domain-management-list__items + .empty-domains-list-card {
+	margin-top: 16px;
+	margin-bottom: 32px;
+
+	@include break-small {
+		margin-top: 0;
+	}
+}
+
+.domain-management-list__items + .empty-domains-list-card.has-non-wpcom-domains {
 	margin-top: 32px;
 	margin-bottom: 32px;
 }
@@ -475,11 +488,11 @@
 		display: flex;
 		width: 20px;
 		background: #d67709;
-		border-radius: 16px;
+		border-radius: 16px; /* stylelint-disable-line */
 		justify-content: center;
 		align-items: center;
 		color: #ffffff;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		height: 18px;
 		margin: 0 4px;
 		line-height: 20px;

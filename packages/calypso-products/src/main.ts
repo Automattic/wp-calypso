@@ -25,7 +25,6 @@ import {
 	isEnterprise,
 	isEcommerce,
 	isVipPlan,
-	isMarketplaceProduct,
 	getProductFromSlug,
 } from '.';
 import type {
@@ -656,11 +655,3 @@ export function planHasJetpackClassicSearch(
 			isVipPlan( plan ) )
 	);
 }
-
-/**
- * Determines if a product is supported by the Atomic sites infrastructure.
- */
-export const isAtomicSupportedProduct = ( productSlug: string ): boolean =>
-	isWpComBusinessPlan( productSlug ) ||
-	isWpComEcommercePlan( productSlug ) ||
-	isMarketplaceProduct( { productSlug } );

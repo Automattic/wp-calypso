@@ -47,7 +47,10 @@
 
 	&-info {
 		flex: 1;
-		padding-right: 6px;
+
+		@include break-mobile {
+			padding-right: 20px;
+		}
 	}
 
 	&-title {

@@ -117,16 +117,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
-		'rebrand-cities-welcome': {
-			stepName: 'rebrand-cities-welcome',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-			props: {
-				isDomainOnly: false,
-			},
-			delayApiRequestUntilComplete: true,
-		},
-
 		about: {
 			stepName: 'about',
 			providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
@@ -781,10 +771,11 @@ export function generateSteps( {
 				),
 			},
 			dependencies: [ 'site' ],
+			providesDependencies: [ 'siteConfirmed' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-			dependencies: [ 'site' ],
+			dependencies: [ 'site', 'siteConfirmed' ],
 		},
 	};
 }

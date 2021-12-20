@@ -1,3 +1,9 @@
+<div style="width: 45%; float:left" align="left"><a href="./library_objects.md"><-- Library objects</a> </div>
+<div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
+<div style="width: 45%; float:right"align="right"><a href="./debugging.md">Debugging --></a> </div>
+
+<br><br>
+
 # Style Guide
 
 <!-- TOC -->

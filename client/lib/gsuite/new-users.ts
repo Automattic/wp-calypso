@@ -38,10 +38,13 @@ export interface GSuiteProductUser {
  *
  * @param {object} user - user with a list of fields
  */
-const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
-	Object.keys( user )
-		.filter( ( key ) => 'uuid' !== key )
-		.map( ( key ) => user[ key ] );
+const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] => [
+	user.domain,
+	user.mailBox,
+	user.firstName,
+	user.lastName,
+	user.password,
+];
 
 /**
  * Retrieves the specified user after applying a callback to all of its fields.
@@ -49,14 +52,21 @@ const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
  * @param {object} user - user with a list of fields
  * @param {Function} callback - function to call for each field
  */
-const mapFieldValues = ( user: GSuiteNewUser, callback ): GSuiteNewUser =>
-	mapValues( user, ( fieldValue, fieldName ) => {
-		if ( 'uuid' === fieldName ) {
-			return fieldValue;
-		}
-
-		return callback( fieldValue, fieldName, user );
-	} );
+const mapFieldValues = (
+	user: GSuiteNewUser,
+	callback: (
+		fieldValue: GSuiteNewUserField,
+		fieldName: string,
+		user: GSuiteNewUser
+	) => GSuiteNewUserField
+): GSuiteNewUser => ( {
+	uuid: user.uuid,
+	domain: callback( user.domain, 'domain', user ),
+	mailBox: callback( user.mailBox, 'mailBox', user ),
+	firstName: callback( user.firstName, 'firstName', user ),
+	lastName: callback( user.lastName, 'lastName', user ),
+	password: callback( user.password, 'password', user ),
+} );
 
 /*
  * Clears all previous errors from the specified field.

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -98,44 +98,10 @@ export class UserStep extends Component {
 	};
 
 	state = {
-		subHeaderText: '',
 		recaptchaClientId: null,
 		experiment: null,
 		isDesktop: isDesktop(),
 	};
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			this.props.flowName !== nextProps.flowName ||
-			this.props.locale !== nextProps.locale ||
-			this.props.subHeaderText !== nextProps.subHeaderText
-		) {
-			this.setSubHeaderText( nextProps );
-		}
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		const { oauth2Signup, initialContext, flowName } = this.props;
-
-		const clientId = get( initialContext, 'query.oauth2_client_id', null );
-
-		this.setSubHeaderText( this.props );
-
-		if ( oauth2Signup && clientId ) {
-			this.props.fetchOAuth2ClientData( clientId );
-		}
-		if ( flowName === 'onboarding' ) {
-			const experimentCheck = this.state.isDesktop
-				? 'registration_email_only_desktop_relaunch'
-				: 'registration_email_only_mobile_relaunch';
-
-			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
-				this.setState( { experiment: experimentName } );
-			} );
-		}
-	}
 
 	componentDidUpdate() {
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
@@ -157,18 +123,37 @@ export class UserStep extends Component {
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
-		i18n.on( 'change', this.handleI18nChange );
+		const clientId = get( this.props.initialContext, 'query.oauth2_client_id', null );
+		if ( this.props.oauth2Signup && clientId ) {
+			this.props.fetchOAuth2ClientData( clientId );
+		}
+
+		const signupFlows = [
+			'onboarding',
+			'free',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'with-theme',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+			'with-design-picker',
+		];
+		if ( signupFlows.includes( this.props.flowName ) ) {
+			const experimentCheck = this.state.isDesktop
+				? 'registration_email_only_desktop_random_usernames'
+				: 'registration_email_only_mobile_random_usernames';
+
+			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
+				this.setState( { experiment: experimentName } );
+			} );
+		}
 	}
 
-	componentWillUnmount() {
-		i18n.off( 'change', this.handleI18nChange );
-	}
-
-	handleI18nChange = () => {
-		this.setSubHeaderText( this.props );
-	};
-
-	setSubHeaderText( props ) {
+	getSubHeaderText() {
 		const {
 			flowName,
 			oauth2Client,
@@ -180,9 +165,9 @@ export class UserStep extends Component {
 			sectionName,
 			from,
 			locale,
-		} = props;
+		} = this.props;
 
-		let subHeaderText = props.subHeaderText;
+		let subHeaderText = this.props.subHeaderText;
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
@@ -235,35 +220,31 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
-		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
-			subHeaderText = translate( 'First, create your WordPress.com account.' );
+		if ( isReskinned && 0 === positionInFlow ) {
+			const loginUrl = login( {
+				isJetpack: 'jetpack-connect' === sectionName,
+				from,
+				redirectTo: getRedirectToAfterLoginUrl( this.props ),
+				locale,
+				oauth2ClientId: oauth2Client?.id,
+				wccomFrom,
+				isWhiteLogin: isReskinned,
+				signupUrl: window.location.pathname + window.location.search,
+			} );
 
-			if ( isReskinned ) {
-				const loginUrl = login( {
-					isJetpack: 'jetpack-connect' === sectionName,
-					from,
-					redirectTo: getRedirectToAfterLoginUrl( props ),
-					locale,
-					oauth2ClientId: oauth2Client?.id,
-					wccomFrom,
-					isWhiteLogin: isReskinned,
-					signupUrl: window.location.pathname + window.location.search,
-				} );
-
-				subHeaderText = translate(
-					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
-					{
-						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-					}
-				);
-			}
-
-			if ( this.props.userLoggedIn ) {
-				subHeaderText = '';
-			}
+			subHeaderText = translate(
+				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+				{
+					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+				}
+			);
 		}
 
-		this.setState( { subHeaderText } );
+		if ( this.props.userLoggedIn ) {
+			subHeaderText = '';
+		}
+
+		return subHeaderText;
 	}
 
 	initGoogleRecaptcha() {
@@ -550,7 +531,7 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }
-				subHeaderText={ this.state.subHeaderText }
+				subHeaderText={ this.getSubHeaderText() }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }

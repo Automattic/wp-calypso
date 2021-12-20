@@ -94,7 +94,7 @@ class DomainRow extends PureComponent {
 			return (
 				<div className="domain-row__site-cell">
 					<Button href={ createSiteFromDomainOnly( site?.slug, site?.siteId ) } plain>
-						{ translate( 'Create site' ) } <MaterialIcon icon="add" />
+						<MaterialIcon icon="add" /> { translate( 'Create site' ) }
 					</Button>
 				</div>
 			);
@@ -152,21 +152,27 @@ class DomainRow extends PureComponent {
 	}
 
 	renderMobileExtraInfo( expiryDate, domainTypeText ) {
-		const { domain } = this.props;
+		const { domain, translate } = this.props;
 
 		let extraInfo = '';
 		if ( domainTypeText ) {
 			extraInfo = domainTypeText;
 		} else if ( domain.expired ) {
 			if ( expiryDate ) {
-				extraInfo = 'Expired on ' + expiryDate.format( 'LL' );
+				extraInfo = translate( 'Expired on %(expiryDate)s', {
+					args: { expiryDate: expiryDate.format( 'LL' ) },
+				} );
 			} else {
-				extraInfo = 'Expired';
+				extraInfo = translate( 'Expired' );
 			}
 		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
-			extraInfo = 'Renews on ' + moment.utc( domain.autoRenewalDate ).format( 'LL' );
+			extraInfo = translate( 'Renews on %(renewalDate)s', {
+				args: { renewalDate: moment.utc( domain.autoRenewalDate ).format( 'LL' ) },
+			} );
 		} else if ( expiryDate ) {
-			extraInfo = 'Expires on ' + expiryDate.format( 'LL' );
+			extraInfo = translate( 'Expires on %(expiryDate)s', {
+				args: { expiryDate: expiryDate.format( 'LL' ) },
+			} );
 		}
 
 		return <div className="domain-row__mobile-extra-info">{ extraInfo }</div>;
@@ -284,7 +290,7 @@ class DomainRow extends PureComponent {
 
 		return (
 			<a href="#" onClick={ this.addEmailClick }>
-				{ translate( 'Add +', { context: 'Button label' } ) }
+				{ translate( '+ Add', { context: 'Button label' } ) }
 			</a>
 		);
 	};
