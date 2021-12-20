@@ -1,17 +1,25 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import { domainConnect } from 'calypso/lib/domains/constants';
 import { DnsRecord, DNSRecordType } from 'calypso/lib/domains/types';
+import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import DnsRecordItem from './dns-record-item';
 import { DnsDetailsProps } from './types';
+
+import './style.scss';
 
 const DnsDetails = ( {
 	dns,
 	isRequestingDomains,
 	selectedDomainName,
+	currentRoute,
+	selectedSite,
 }: DnsDetailsProps ): JSX.Element => {
 	const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
+	const translate = useTranslate();
 
 	// This could be moved to an utils file?
 	const isDomainConnectRecord = ( dnsRecord: DnsRecord ) => {
@@ -63,6 +71,9 @@ const DnsDetails = ( {
 			<>
 				{ domains }
 				{ domainConnectRecordIsEnabled && getDomainConnectDnsRecord() }
+				<Button href={ domainManagementDns( selectedSite.slug, selectedDomainName, currentRoute ) }>
+					{ translate( 'Manage' ) }
+				</Button>
 			</>
 		);
 	};

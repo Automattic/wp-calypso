@@ -4,8 +4,8 @@ import { DnsRecordItemProps } from './types';
 const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ): JSX.Element => {
 	const translate = useTranslate();
 
-	const trimDot = ( str: unknown ) => {
-		return typeof str === 'string' ? str.replace( /\.$/, '' ) : str;
+	const trimDot = ( str?: string ) => {
+		return str ? str.replace( /\.$/, '' ) : '';
 	};
 
 	const handledBy = () => {
@@ -62,8 +62,10 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ):
 	};
 
 	return (
-		<div>
-			{ dnsRecord.type } - { getName() } - { handledBy() }
+		<div className="dns-record-item">
+			<div className="dns-record-item__type">{ dnsRecord.type }</div>
+			<div className="dns-record-item__name">{ getName() }</div>
+			<div className="dns-record-item__value">{ handledBy() }</div>
 		</div>
 	);
 };
