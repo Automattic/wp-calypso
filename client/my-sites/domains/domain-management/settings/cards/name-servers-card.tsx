@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
@@ -24,6 +24,7 @@ import NameServersToggle from './name-servers-toggle';
 import './style.scss';
 
 const NameServersCard = ( props ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ nameservers, setNameservers ] = useState( props.nameservers || null );
 	const [ shouldPersistNameservers, setShouldUpdateNameservers ] = useState( false );
@@ -111,7 +112,7 @@ const NameServersCard = ( props ) => {
 	};
 
 	const handleLearnMoreClick = () => {
-		props.customNameServersLearnMoreClick( props.selectedDomainName );
+		dispatch( customNameServersLearnMoreClick( props.selectedDomainName ) );
 	};
 
 	const renderWpcomNameserversToggle = () => {
@@ -264,6 +265,4 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 		)
 	);
 
-export default connect( null, {
-	customNameServersLearnMoreClick,
-} )( NameServersCard );
+export default NameServersCard;
