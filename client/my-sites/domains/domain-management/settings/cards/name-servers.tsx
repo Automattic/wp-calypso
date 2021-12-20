@@ -106,7 +106,7 @@ const NameServers = ( props ) => {
 		props.customNameServersLearnMoreClick( props.selectedDomainName );
 	};
 
-	const wpcomNameserversToggle = () => {
+	const renderWpcomNameserversToggle = () => {
 		if ( isPendingTransfer() ) {
 			return null;
 		}
@@ -141,11 +141,12 @@ const NameServers = ( props ) => {
 		props.updateNameservers( nameservers );
 	};
 
-	const customNameservers = () => {
+	const renderCustomNameservers = () => {
 		if ( hasWpcomNameservers() || isPendingTransfer() ) {
 			return null;
 		}
 
+		// TODO: Check how this one appears
 		if ( needsVerification() ) {
 			return (
 				<IcannVerificationCard
@@ -171,7 +172,7 @@ const NameServers = ( props ) => {
 		);
 	};
 
-	const planUpsellForNonPrimaryDomain = ( domain ) => {
+	const renderPlanUpsellForNonPrimaryDomain = ( domain ) => {
 		return (
 			<NonPrimaryDomainPlanUpsell
 				tracksImpressionName="calypso_non_primary_domain_ns_plan_upsell_impression"
@@ -218,9 +219,9 @@ const NameServers = ( props ) => {
 				selectedSite={ props.selectedSite }
 				allowedRules={ [ 'pendingTransfer' ] }
 			/>
-			{ planUpsellForNonPrimaryDomain( props.domain ) }
-			{ wpcomNameserversToggle() }
-			{ customNameservers() }
+			{ renderPlanUpsellForNonPrimaryDomain( props.domain ) }
+			{ renderWpcomNameserversToggle() }
+			{ renderCustomNameservers() }
 		</div>
 	);
 	// /render
