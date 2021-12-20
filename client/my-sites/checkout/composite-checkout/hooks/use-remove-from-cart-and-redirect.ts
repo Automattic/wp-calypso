@@ -50,15 +50,21 @@ export default function useRemoveFromCartAndRedirect(
 	const removeProductFromCartAndMaybeRedirect = useCallback(
 		( uuid: string ) => {
 			setIsRemovingFromCart( true );
-			return removeProductFromCart( uuid ).then( ( cart: ResponseCart ) => {
-				if ( cart.products.length === 0 ) {
-					redirectDueToEmptyCart();
-					// Don't turn off isRemovingProductFromCart if we are redirecting so that the loading page remains active.
+			return removeProductFromCart( uuid )
+				.then( ( cart: ResponseCart ) => {
+					if ( cart.products.length === 0 ) {
+						redirectDueToEmptyCart();
+						// Don't turn off isRemovingProductFromCart if we are redirecting so that the loading page remains active.
+						return cart;
+					}
+					isMounted.current && setIsRemovingFromCart( false );
 					return cart;
-				}
-				isMounted.current && setIsRemovingFromCart( false );
-				return cart;
-			} );
+				} )
+				.catch( ( error ) => {
+					isMounted.current && setIsRemovingFromCart( false );
+					// Re-throw error so that the consumer of this action can treat it the same as removeProductFromCart
+					throw error;
+				} );
 		},
 		[ redirectDueToEmptyCart, removeProductFromCart ]
 	);
