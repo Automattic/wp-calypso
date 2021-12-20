@@ -31,6 +31,9 @@ export type SettingsPageConnectedProps = {
 	currentRoute: string;
 	domain: ResponseDomain;
 	isLoadingPurchase: boolean;
+	isLoadingNameservers: boolean;
+	loadingNameserversError: any; // TODO
+	nameservers: string[] | null;
 	purchase: Purchase | null;
 
 	whoisData: WhoisData[];

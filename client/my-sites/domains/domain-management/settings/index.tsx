@@ -13,6 +13,8 @@ import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/com
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
+import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { requestWhois } from 'calypso/state/domains/management/actions';
@@ -38,11 +40,14 @@ const Settings = ( {
 	domain,
 	domains,
 	isLoadingPurchase,
+	isLoadingNameservers,
+	loadingNameserversError,
+	nameservers,
 	purchase,
+	requestWhois,
 	selectedDomainName,
 	selectedSite,
 	whoisData,
-	requestWhois,
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
 
@@ -125,13 +130,38 @@ const Settings = ( {
 		}
 	};
 
-	const renderNameServersSection = () => {
-		const subtitle = domain.hasWpcomNameservers
+	const areAllWpcomNameServers = () => {
+		if ( ! nameservers || nameservers.length === 0 ) {
+			return false;
+		}
+
+		return nameservers.every( ( nameserver ) => {
+			return ! nameserver || WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+		} );
+	};
+
+	const getNameServerSectionSubtitle = () => {
+		if ( isLoadingNameservers ) {
+			return <p className="name-servers-card__loading" />;
+		}
+
+		if ( loadingNameserversError ) {
+			return translate( 'There was an error loading the name servers for this domain', {
+				textOnly: true,
+			} );
+		}
+
+		return areAllWpcomNameServers()
 			? translate( 'Your domain is pointing to WordPress.com', { textOnly: true } )
 			: translate( 'Your domain is pointing to custom name servers', { textOnly: true } );
+	};
 
+	const renderNameServersSection = () => {
 		return (
-			<Accordion title={ translate( 'Name servers', { textOnly: true } ) } subtitle={ subtitle }>
+			<Accordion
+				title={ translate( 'Name servers', { textOnly: true } ) }
+				subtitle={ getNameServerSectionSubtitle() }
+			>
 				<NameServers
 					domain={ domain }
 					selectedSite={ selectedSite }
@@ -234,7 +264,7 @@ const Settings = ( {
 	}
 
 	return (
-		<Main wideLayout className="settings">
+		<Main wideLayout className="domain-settings-page">
 			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
@@ -265,4 +295,4 @@ export default connect(
 	{
 		requestWhois,
 	}
-)( Settings );
+)( withDomainNameservers( Settings ) ); // TODO: Check if the NS call will fail for transfers or domain connections

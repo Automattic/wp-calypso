@@ -119,3 +119,10 @@
 		}
 	}
 }
+
+.domain-settings-page {
+	.name-servers-card__loading {
+		@include placeholder();
+		width: 100%;
+	}
+}
