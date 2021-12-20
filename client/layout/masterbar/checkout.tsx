@@ -3,7 +3,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -26,7 +25,6 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
 	const isJetpack = isJetpackCheckout || isJetpackNotAtomic;
@@ -38,7 +36,6 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			siteSlug,
 			jetpackCheckoutBackUrl,
 			previousPath,
-			dispatch,
 			tracksEvent: 'calypso_masterbar_close_clicked',
 		} );
 

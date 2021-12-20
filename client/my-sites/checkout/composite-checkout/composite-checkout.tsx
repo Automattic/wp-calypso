@@ -678,7 +678,6 @@ export default function CompositeCheckout( {
 			siteSlug,
 			jetpackCheckoutBackUrl,
 			previousPath,
-			dispatch: reduxDispatch,
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
 
