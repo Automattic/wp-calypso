@@ -7,6 +7,7 @@ import { domainConnect } from 'calypso/lib/domains/constants';
 import { DnsRecord, DNSRecordType } from 'calypso/lib/domains/types';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import DnsRecordItem from './dns-record-item';
+import DnsRecordItemPlaceholder from './dns-record-item-placeholder';
 import { DnsDetailsProps } from './types';
 
 import './style.scss';
@@ -82,7 +83,15 @@ const DnsDetails = ( {
 		<>
 			<div className="dns-card">
 				<QueryDomainDns domain={ selectedDomainName } />
-				{ showPlaceholder ? 'Loading DNS' : renderDomains() }
+				{ showPlaceholder ? (
+					<>
+						<DnsRecordItemPlaceholder />
+						<DnsRecordItemPlaceholder />
+						<DnsRecordItemPlaceholder />
+					</>
+				) : (
+					renderDomains()
+				) }
 			</div>
 		</>
 	);

@@ -5,6 +5,17 @@
 .dns-record-item {
 	font-size: $font-body-small;
 	line-height: 1.7;
+	&.is-placeholder > div {
+		margin-bottom: 0.75em;
+		&::after {
+			animation: pulse-light 1.8s ease-in-out infinite;
+			background-color: var( --color-neutral-10 );
+			content: '';
+			display: block;
+			height: $font-body-small;
+
+		}
+	}
 	@include break-mobile {
 		display: flex;
 	}
