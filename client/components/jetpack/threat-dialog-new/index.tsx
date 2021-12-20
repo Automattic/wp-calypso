@@ -84,6 +84,10 @@ const ThreatDialog: React.FC< Props > = ( {
 				<h3 className="threat-dialog-new__threat-title">
 					{ <ThreatFixHeader threat={ threat } action={ action } /> }
 				</h3>
+				{ action === 'ignore' &&
+					translate(
+						'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
+					) }
 			</>
 		</ServerCredentialsWizardDialog>
 	);

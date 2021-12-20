@@ -9,12 +9,12 @@ export const getThreatMessage = ( threat: Threat ): string | i18nCalypso.Transla
 
 	switch ( getThreatType( threat ) ) {
 		case 'core':
-			return translate( 'Infected core file: %s', {
+			return translate( 'Compromised WordPress core file: %s', {
 				args: [ basename ],
 			} );
 
 		case 'file':
-			return translate( 'File contains malicious code: %s', {
+			return translate( 'Malicious code found in file: %s', {
 				args: [ basename ],
 			} );
 
