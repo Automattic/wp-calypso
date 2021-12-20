@@ -1,4 +1,4 @@
-import { Button, Popover, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
@@ -12,10 +12,11 @@ import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
+import './popover-content.scss';
 
 const noop = () => {};
 
-class InlineHelpPopover extends Component {
+class InlineHelpPopoverContent extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
@@ -173,25 +174,19 @@ class InlineHelpPopover extends Component {
 	};
 
 	render() {
-		const popoverClasses = {
+		const className = classNames( 'inline-help__popover-content', {
 			'is-secondary-view-active': this.state.activeSecondaryView,
-		};
+		} );
 
 		return (
-			<Popover
-				isVisible
-				onClose={ this.props.onClose }
-				position="top left"
-				context={ this.props.context }
-				className={ classNames( 'inline-help__popover', popoverClasses ) }
-			>
+			<div className={ className }>
 				{ this.renderPopoverContent() }
 				{ this.renderPopoverFooter() }
-			</Popover>
+			</div>
 		);
 	}
 }
 
 export default withMobileBreakpoint(
-	connect( null, { recordTracksEvent } )( localize( InlineHelpPopover ) )
+	connect( null, { recordTracksEvent } )( localize( InlineHelpPopoverContent ) )
 );
