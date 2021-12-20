@@ -27,6 +27,12 @@ import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
 import {
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+	getSignupCompleteFlowName,
+	wasSignupCheckoutPageUnloaded,
+} from './storageUtils';
+import {
 	getStepUrl,
 	canResumeFlow,
 	getFlowName,
@@ -289,6 +295,32 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
+		const searchParams = new URLSearchParams( window.location.search );
+		const isAddNewSiteFlow = searchParams.has( 'ref' );
+
+		if ( isAddNewSiteFlow ) {
+			clearSignupDestinationCookie();
+		}
+
+		// Checks if the user entered the signup flow via browser back from checkout page,
+		// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
+		// check pau2Xa-1Io-p2#comment-6759.
+		const signupDestinationCookieExists = retrieveSignupDestination();
+		const isReEnteringFlow = getSignupCompleteFlowName() === flowName;
+		const isReEnteringSignupViaBrowserBack =
+			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
+		const isManageSiteFlow = ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+
+		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
+		if (
+			! providesDependenciesInQuery?.includes( 'siteId' ) &&
+			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
+			! providesDependenciesInQuery?.includes( 'site' ) &&
+			! isManageSiteFlow
+		) {
+			context.store.dispatch( setSelectedSiteId( null ) );
+		}
+
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
@@ -301,18 +333,8 @@ export default {
 			stepSectionName,
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
+			isManageSiteFlow,
 		} );
-
-		const signupDependencies = getSignupDependencyStore( context.store.getState() );
-		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
-		if (
-			! providesDependenciesInQuery?.includes( 'siteId' ) &&
-			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
-			! providesDependenciesInQuery?.includes( 'site' ) &&
-			! signupDependencies.isManageSiteFlow
-		) {
-			context.store.dispatch( setSelectedSiteId( null ) );
-		}
 
 		next();
 	},
