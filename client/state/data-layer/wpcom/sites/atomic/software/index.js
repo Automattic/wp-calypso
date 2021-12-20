@@ -6,13 +6,15 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	setAtomicSoftwareStatus,
 	setAtomicSoftwareError,
+	cleanAtomicSoftwareStatus,
 } from 'calypso/state/atomic/software/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
-const installSoftware = ( action ) =>
+const installSoftware = ( action ) => [
+	cleanAtomicSoftwareStatus( action.siteId, action.softwareSet ),
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -21,7 +23,8 @@ const installSoftware = ( action ) =>
 			body: {}, // have to have an empty body to make wpcom-http happy
 		},
 		action
-	);
+	),
+];
 
 const receiveInstallResponse = () => [
 	recordTracksEvent( 'calypso_atomic_software_install_inititate_success', {
