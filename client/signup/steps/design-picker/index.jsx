@@ -39,7 +39,10 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
-	const { data: apiThemes = [] } = useThemeDesignsQuery( {}, { enabled: ! props.useDIFMThemes } );
+	const { data: apiThemes = [] } = useThemeDesignsQuery(
+		{ tier: 'free' },
+		{ enabled: ! props.useDIFMThemes }
+	);
 
 	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
