@@ -1,4 +1,4 @@
-import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { Dns, ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
@@ -44,7 +44,7 @@ export type SettingsPageNameServerHocProps = {
 
 export type SettingsPageConnectedDispatchProps = {
 	requestWhois: ( domain: string ) => void;
-	dns: any;
+	dns: Dns;
 	isRequestingDomains: boolean;
 };
 

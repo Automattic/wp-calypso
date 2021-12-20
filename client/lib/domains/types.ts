@@ -116,3 +116,27 @@ export type ResponseDomain = {
 	type: DomainType;
 	whoisUpdateUnmodifiableFields?: Array< string >;
 };
+
+export type DNSRecordType = 'MX' | 'A' | 'SRV' | 'TXT' | 'AAAA' | 'CNAME' | 'NS';
+
+export type DnsRecord = {
+	domain: string;
+	id: string;
+	name: string;
+	protected_field: boolean;
+	type: DNSRecordType;
+	target?: string;
+	data?: string;
+	weight?: number;
+	port?: number;
+	aux?: number;
+	service?: string;
+	protocol?: string;
+};
+
+export type Dns = {
+	hasLoadedFromServer: boolean;
+	isFetching: boolean;
+	isSubmittingForm: boolean;
+	records: Array< DnsRecord >;
+};

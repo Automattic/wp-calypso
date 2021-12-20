@@ -205,6 +205,7 @@ const Settings = ( {
 					dns={ dns }
 					isRequestingDomains={ isRequestingDomains }
 					selectedDomainName={ selectedDomainName }
+					selectedSite={ selectedSite }
 				/>
 			</Accordion>
 		);
