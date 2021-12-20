@@ -6,7 +6,6 @@ import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -488,10 +487,9 @@ function processItemCart(
 	}
 }
 
-function prepareItemForAddingToCart( item, state ) {
-	const productsList = getProductsList( state );
+function prepareItemForAddingToCart( item ) {
 	return {
-		...fillInSingleCartItemAttributes( item, productsList ),
+		...item,
 		extra: {
 			...item.extra,
 			context: 'signup',

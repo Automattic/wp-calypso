@@ -15,7 +15,6 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	hasPlan,
 	hasDomainInCart,
@@ -93,9 +92,7 @@ class DomainSearch extends Component {
 
 	handleAddTransfer = ( domain ) => {
 		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( domainTransfer( { domain } ), this.props.productsList ),
-			] )
+			.addProductsToCart( [ domainTransfer( { domain } ) ] )
 			.then( () => {
 				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
 			} );
@@ -148,9 +145,7 @@ class DomainSearch extends Component {
 		}
 
 		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( registration, this.props.productsList ),
-			] )
+			.addProductsToCart( [ registration ] )
 			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) );
 	}
 

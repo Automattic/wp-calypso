@@ -47,7 +47,7 @@ import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
-import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
@@ -131,7 +131,7 @@ export default function WPCheckout( {
 	siteId: number | undefined;
 	siteUrl: string | undefined;
 	countriesList: CountryListItem[];
-	addItemToCart: ( item: Partial< RequestCartProduct > ) => void;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	showErrorMessageBriefly: ( error: string ) => void;
 	isLoggedOutCart: boolean;
 	infoMessage?: JSX.Element;

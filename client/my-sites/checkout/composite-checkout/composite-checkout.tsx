@@ -24,7 +24,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
@@ -37,7 +36,6 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -395,8 +393,6 @@ export default function CompositeCheckout( {
 		checkoutFlow
 	);
 
-	const products = useSelector( ( state ) => getProductsList( state ) );
-
 	const changePlanLength = useCallback(
 		( uuidToReplace, newProductSlug, newProductId ) => {
 			reduxDispatch(
@@ -412,15 +408,12 @@ export default function CompositeCheckout( {
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
-	// Often products are added using just the product_slug but missing the
-	// product_id; this adds it.
-	const addItemWithEssentialProperties = useCallback(
+	const addItemAndLog = useCallback(
 		( cartItem ) => {
-			const adjustedItem = fillInSingleCartItemAttributes( cartItem, products );
-			recordAddEvent( adjustedItem );
-			addProductsToCart( [ adjustedItem ] );
+			recordAddEvent( cartItem );
+			addProductsToCart( [ cartItem ] );
 		},
-		[ addProductsToCart, products ]
+		[ addProductsToCart ]
 	);
 
 	const includeDomainDetails = contactDetailsType === 'domain';
@@ -747,7 +740,7 @@ export default function CompositeCheckout( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
-					addItemToCart={ addItemWithEssentialProperties }
+					addItemToCart={ addItemAndLog }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
