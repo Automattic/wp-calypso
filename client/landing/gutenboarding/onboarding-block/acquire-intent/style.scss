@@ -35,12 +35,6 @@
 		flex-wrap: wrap;
 		align-items: baseline;
 	}
-
-	.vertical-select + & {
-		@include break-medium {
-			margin-top: 20px;
-		}
-	}
 }
 
 .site-title__input-label {
@@ -114,11 +108,6 @@
 		margin-top: 40px;
 		justify-content: flex-start;
 	}
-}
-
-.acquire-intent__mobile-vertical-input {
-	display: flex;
-	flex-wrap: wrap;
 }
 
 .acquire-intent__mobile-next-arrow,
