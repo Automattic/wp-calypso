@@ -77,14 +77,6 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		setIsTouched( true );
 	};
 
-	// translators: label for site title input in Gutenboarding
-	let inputLabel;
-	if ( isAnchorFmSignup ) {
-		inputLabel = __( 'My podcast is called' );
-	} else {
-		inputLabel = __( 'My site is called' );
-	}
-
 	const placeHolder = useTyper( siteTitleExamples, ! siteTitle, {
 		delayBetweenCharacters: 70,
 	} );
@@ -99,7 +91,8 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 				className="site-title__input-label"
 				data-e2e-string="My site is called"
 			>
-				{ inputLabel }
+				{ /* translators: label for site title input in Gutenboarding */ }
+				{ isAnchorFmSignup ? __( 'My podcast is called' ) : __( 'My site is called' ) }
 			</label>
 			<div className="site-title__input-wrapper">
 				{ /* Adding key makes it more performant
