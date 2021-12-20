@@ -7,6 +7,10 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PERSONAL,
 	PLAN_BLOGGER,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BLOGGER_2_YEARS,
+	PLAN_PERSONAL_2_YEARS,
 } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -272,13 +276,21 @@ function onClickInstallPlugin( {
 
 // Return the correct business plan slug depending on current plan and pluginBillingPeriod
 function businessPlanToAdd( currentPlan, pluginBillingPeriod = null ) {
-	if ( [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BLOGGER ].includes( currentPlan.product_slug ) ) {
-		// since these plans are annual, return an annual business plan.
-		return PLAN_BUSINESS;
+	switch ( currentPlan.product_slug ) {
+		case PLAN_PERSONAL_2_YEARS:
+		case PLAN_PREMIUM_2_YEARS:
+		case PLAN_BLOGGER_2_YEARS:
+			return PLAN_BUSINESS_2_YEARS;
+		case PLAN_PERSONAL:
+		case PLAN_PREMIUM:
+		case PLAN_BLOGGER:
+			return PLAN_BUSINESS;
+		default:
+			// Return annual plan if selected, monthly otherwise.
+			return pluginBillingPeriod === IntervalLength.ANNUALLY
+				? PLAN_BUSINESS
+				: PLAN_BUSINESS_MONTHLY;
 	}
-
-	// Return annual plan if selected, monthly otherwise.
-	return pluginBillingPeriod === IntervalLength.ANNUALLY ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
 }
 
 export default PluginDetailsCTA;
