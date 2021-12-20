@@ -57,14 +57,6 @@
 /* Jetpack cloud overwrites */
 
 .payment-method-selector__content.is-jetpack-cloud {
-	[class*='RadioButtonWrapper']::before {
-		border-color: var( --studio-jetpack-green-50 );
-	}
-
-	[class*='Label']::after {
-		background-color: var( --studio-jetpack-green-50 );
-	}
-
 	.components-checkbox-control__input[type='checkbox']:checked {
 		background-color: var( --studio-jetpack-green-50 );
 	}

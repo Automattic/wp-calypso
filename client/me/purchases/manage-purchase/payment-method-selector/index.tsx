@@ -1,10 +1,12 @@
 import config from '@automattic/calypso-config';
 import { useStripe } from '@automattic/calypso-stripe';
+import colorStudio from '@automattic/color-studio';
 import { Card, Gridicon } from '@automattic/components';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
 	CheckoutSubmitButton,
+	checkoutTheme,
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import classNames from 'classnames';
@@ -35,6 +37,10 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
+
+const { colors } = colorStudio;
+const jetpackColors = isJetpackCloud() ? { highlight: colors[ 'Jetpack Green 50' ] } : {};
+const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
 function useLogError( message: string ): CheckoutPageErrorCallback {
 	return useCallback(
@@ -150,6 +156,7 @@ export default function PaymentMethodSelector( {
 				currentlyAssignedPaymentMethodId,
 				paymentMethods
 			) }
+			theme={ theme }
 		>
 			<Card
 				className={ classNames( 'payment-method-selector__content', {
