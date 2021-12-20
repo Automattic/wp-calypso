@@ -193,7 +193,7 @@ const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state
 	if ( action.type === 'SET_SITE_VERTICAL' ) {
 		return action.siteVertical;
 	}
-	if ( action.type === 'RESET_SITE_VERTICAL' || action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
 	}
 	return state;

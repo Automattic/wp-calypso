@@ -125,10 +125,6 @@ export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
 
-export const resetSiteVertical = () => ( {
-	type: 'RESET_SITE_VERTICAL' as const,
-} );
-
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
 	domain,
@@ -230,7 +226,6 @@ export type OnboardAction = ReturnType<
 	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
-	| typeof resetSiteVertical
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
