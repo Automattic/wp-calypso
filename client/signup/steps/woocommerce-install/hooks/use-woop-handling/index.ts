@@ -66,7 +66,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * Inspect transfer to detect blockers.
 	 * It's considered blocked when:
 	 * - status code value has the 5xx shape.
-	 * - status code value is one of: [ `active`,...] @todo: add more codes.
 	 * - is_stuck value is True.
 	 */
 	const { transfer, error: transferError } = useSelector( ( state ) =>
