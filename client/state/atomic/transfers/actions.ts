@@ -17,6 +17,13 @@ export interface AtomicTransfer {
 	in_lossless_revert: boolean;
 }
 
+export interface AtomicTransferError {
+	name: string; // "NotFoundError"
+	status: number; // 404
+	message: string; // "Transfer not found"
+	code: string; // "no_transfer_record"
+}
+
 /**
  * Initiate Atomic transfer, optionally with software set install.
  *
@@ -61,7 +68,7 @@ export const setLatestAtomicTransfer = ( siteId: number, transfer: AtomicTransfe
 		transfer,
 	} as const );
 
-export const setLatestAtomicTransferError = ( siteId: number, error: Error ) =>
+export const setLatestAtomicTransferError = ( siteId: number, error: AtomicTransferError ) =>
 	( {
 		type: ATOMIC_TRANSFER_SET_LATEST,
 		siteId,

@@ -69,16 +69,11 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * - status code value is one of: [ `active`,...] @todo: add more codes.
 	 * - is_stuck value is True.
 	 */
-	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+	const { transfer, error: transferError } = useSelector( ( state ) =>
+		getLatestAtomicTransfer( state, siteId )
+	);
 	const isTransferStuck = transfer?.is_stuck || false;
-
-	// todo this probably isn't valid anymore
-	const transferStatus = transfer?.status || '';
-	const isBlockByTransferStatus =
-		( Number.isInteger( Number( transferStatus ) ) &&
-			transferStatus &&
-			5 === Math.floor( Number( transferStatus ) / 100 ) ) ||
-		[ 'active' ].includes( transferStatus );
+	const isBlockByTransferStatus = transferError && transferError?.status >= 500;
 
 	/*
 	 * Filter warnings:
@@ -111,7 +106,8 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	}
 
 	const transferringDataIsAvailable =
-		typeof transferringBlockers !== 'undefined' && typeof transferStatus !== 'undefined';
+		typeof transferringBlockers !== 'undefined' &&
+		( typeof transfer !== 'undefined' || typeof transferError !== 'undefined' );
 
 	/*
 	 * Check whether the site transferring is blocked.

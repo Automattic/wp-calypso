@@ -13,6 +13,13 @@ export interface AtomicSoftwareStatus {
 	applied: boolean;
 }
 
+export interface AtomicSoftwareError {
+	name: string; // "NotFoundError"
+	status: number; // 404
+	message: string; // "Transfer not found"
+	code: string; // "no_transfer_record"
+}
+
 /**
  * Initiate plugin install and activation.
  *
@@ -66,10 +73,14 @@ export const setAtomicSoftwareStatus = (
  *
  * @param {number} siteId The site id to which the status belongs.
  * @param {string} softwareSet The software set slug.*
- * @param {object} error The error of the install.
+ * @param {AtomicSoftwareError} error The error of the install.
  * @returns {object} An action object
  */
-export const setAtomicSoftwareError = ( siteId: number, softwareSet: string, error: object ) =>
+export const setAtomicSoftwareError = (
+	siteId: number,
+	softwareSet: string,
+	error: AtomicSoftwareError
+) =>
 	( {
 		type: ATOMIC_SOFTWARE_SET_STATUS,
 		siteId,

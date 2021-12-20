@@ -11,6 +11,7 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
 import Progress from './progress';
+
 import './style.scss';
 
 // Timeout limit for the install to complete.
@@ -24,14 +25,15 @@ export default function InstallPlugins( {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const { status } = useSelector( ( state ) =>
+	const { status: softwareStatus, error: softwareError } = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
 
 	// Used to implement a timeout threshold for the install to complete.
 	const [ isTimeout, setIsTimeout ] = useState( false );
-	const softwareApplied = status?.applied;
-	const softwareError = status?.error;
+	
+	const softwareApplied = !! softwareStatus?.applied;
+
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	const installFailed = isTimeout || softwareError;
@@ -87,7 +89,7 @@ export default function InstallPlugins( {
 			setProgress( progress + 0.2 );
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
-		softwareApplied ? null : 3000
+		!! softwareError || softwareApplied ? null : 3000
 	);
 
 	// Redirect to wc-admin once software installation is confirmed.
@@ -105,7 +107,6 @@ export default function InstallPlugins( {
 		}
 	}, [ siteId, softwareApplied, wcAdmin, installFailed ] );
 
-	// todo: Need error handling on these requests
 	return (
 		<>
 			{ installFailed && <Error /> }
