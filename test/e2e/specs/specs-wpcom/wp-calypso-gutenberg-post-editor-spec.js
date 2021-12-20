@@ -46,7 +46,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-			return await this.loginFlow.loginAndStartNewPost( null, true );
+			return await this.loginFlow.loginAndStartNewPost( null );
 		} );
 
 		it( 'Can enter post title, content and image', async function () {
@@ -211,7 +211,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			it( 'Can log in', async function () {
 				this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-				return await this.loginFlow.loginAndStartNewPost( null, true );
+				return await this.loginFlow.loginAndStartNewPost( null );
 			} );
 
 			it( 'Can enter post title and content', async function () {
@@ -262,7 +262,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			it( 'Can log in', async function () {
 				this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-				return await this.loginFlow.loginAndStartNewPost( null, true );
+				return await this.loginFlow.loginAndStartNewPost( null );
 			} );
 
 			it( 'Can enter post title and content', async function () {
@@ -381,7 +381,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			it( 'Can log in', async function () {
 				const loginFlow = new LoginFlow( this.driver, gutenbergUser );
-				await loginFlow.loginAndStartNewPost( null, true );
+				await loginFlow.loginAndStartNewPost( null );
 			} );
 
 			it( 'Can enter post title and content and set to password protected', async function () {
@@ -638,7 +638,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			it( 'Can log in', async function () {
 				const loginFlow = new LoginFlow( this.driver, gutenbergUser );
-				return await loginFlow.loginAndStartNewPost( null, true );
+				return await loginFlow.loginAndStartNewPost( null );
 			} );
 
 			it( 'Can enter post title and content', async function () {
@@ -679,7 +679,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			it( 'Can log in', async function () {
 				const loginFlow = new LoginFlow( this.driver, gutenbergUser );
-				return await loginFlow.loginAndStartNewPost( null, true );
+				return await loginFlow.loginAndStartNewPost( null );
 			} );
 
 			it( 'Can enter post title and content', async function () {
@@ -816,7 +816,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			it( 'Can log in', async function () {
 				const loginFlow = new LoginFlow( this.driver, gutenbergUser );
-				return await loginFlow.loginAndStartNewPost( null, true );
+				return await loginFlow.loginAndStartNewPost( null );
 			} );
 
 			it( 'Can insert the contact form', async function () {
@@ -867,7 +867,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-			return await this.loginFlow.loginAndStartNewPost( null, true );
+			return await this.loginFlow.loginAndStartNewPost( null );
 		} );
 
 		it( 'Can insert the payment button', async function () {
@@ -954,7 +954,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		it( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( this.driver, gutenbergUser );
-			return await loginFlow.loginAndStartNewPost( null, true );
+			return await loginFlow.loginAndStartNewPost( null );
 		} );
 
 		it( 'Can insert an image in an Image block with the Media Modal', async function () {
@@ -971,7 +971,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			it( 'Can log in', async function () {
 				const loginFlow = new LoginFlow( this.driver, gutenbergUser );
-				return await loginFlow.loginAndStartNewPost( null, true );
+				return await loginFlow.loginAndStartNewPost( null );
 			} );
 
 			it( 'Can enter post title and content', async function () {
@@ -1017,7 +1017,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-			return await this.loginFlow.loginAndStartNewPost( null, true );
+			return await this.loginFlow.loginAndStartNewPost( null );
 		} );
 
 		it( 'Can start post', async function () {
@@ -1102,7 +1102,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		it( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( this.driver, gutenbergUser );
-			await loginFlow.loginAndStartNewPost( null, true );
+			await loginFlow.loginAndStartNewPost( null );
 		} );
 
 		it( 'Can enter post title and text content', async function () {
