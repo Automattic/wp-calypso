@@ -88,8 +88,7 @@ const NameServers = ( props ) => {
 		return (
 			<Notice status="is-warning" showDismiss={ false }>
 				{ translate(
-					'Your domain must use WordPress.com name servers for your ' +
-						'WordPress.com site to load & other features to be available.'
+					'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com.'
 				) }{ ' ' }
 				<a
 					href={ CHANGE_NAME_SERVERS }
@@ -166,6 +165,8 @@ const NameServers = ( props ) => {
 				onReset={ handleReset }
 				onSubmit={ handleSubmit }
 				submitDisabled={ isLoading() }
+				notice={ warning() }
+				redesign
 			/>
 		);
 	};
@@ -217,7 +218,6 @@ const NameServers = ( props ) => {
 				selectedSite={ props.selectedSite }
 				allowedRules={ [ 'pendingTransfer' ] }
 			/>
-			{ warning() }
 			{ planUpsellForNonPrimaryDomain( props.domain ) }
 			{ wpcomNameserversToggle() }
 			{ customNameservers() }

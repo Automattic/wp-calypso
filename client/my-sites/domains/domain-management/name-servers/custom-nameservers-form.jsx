@@ -23,6 +23,8 @@ class CustomNameserversForm extends PureComponent {
 		onSubmit: PropTypes.func.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		submitDisabled: PropTypes.bool.isRequired,
+		notice: PropTypes.element,
+		redesign: PropTypes.bool,
 	};
 
 	popularHostsMessage() {
@@ -96,21 +98,52 @@ class CustomNameserversForm extends PureComponent {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { redesign } = this.props;
 
 		if ( ! this.props.nameservers ) {
 			return null;
 		}
 
+		if ( redesign ) {
+			return <div className="name-servers__custom-nameservers-form">{ this.renderContent() }</div>;
+		}
+
 		return (
 			<Card compact className="name-servers__custom-nameservers-form">
-				<strong>{ translate( 'Use custom name servers:' ) }</strong>
+				{ this.renderContent() }
+			</Card>
+		);
+	}
+
+	renderContent() {
+		const { notice, redesign, translate } = this.props;
+
+		const title = redesign
+			? translate( 'Enter your custom name servers' )
+			: translate( 'Use custom name servers:' );
+		const subtitle = translate( '{{link}}Look up{{/link}} the name servers for popular hosts', {
+			components: {
+				link: (
+					<a
+						href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ this.handleLookUpClick }
+					/>
+				),
+			},
+		} );
+
+		return (
+			<>
+				<strong>{ title }</strong>
+				{ redesign && <p>{ subtitle }</p> }
 
 				<form>
 					{ this.rows() }
-					{ this.popularHostsMessage() }
-
-					<div>
+					{ ! redesign && this.popularHostsMessage() }
+					{ redesign && notice }
+					<div className='name-servers__custom-nameservers-form-buttons'>
 						<FormButton
 							isPrimary
 							onClick={ this.handleSubmit }
@@ -124,7 +157,7 @@ class CustomNameserversForm extends PureComponent {
 						</FormButton>
 					</div>
 				</form>
-			</Card>
+			</>
 		);
 	}
 

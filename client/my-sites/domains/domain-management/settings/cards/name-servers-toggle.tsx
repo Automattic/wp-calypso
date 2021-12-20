@@ -1,4 +1,3 @@
-import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
