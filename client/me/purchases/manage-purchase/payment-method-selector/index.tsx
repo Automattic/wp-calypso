@@ -32,6 +32,7 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
+import type { ReloadStripeConfiguration } from '@automattic/calypso-stripe';
 import type { CheckoutPageErrorCallback, PaymentMethod } from '@automattic/composite-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -74,14 +75,25 @@ export default function PaymentMethodSelector( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
+	const {
+		isStripeLoading,
+		stripe,
+		stripeConfiguration,
+		stripeLoadingError,
+		reloadStripeConfiguration,
+	} = useStripe();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
+
+	useEffect( () => {
+		// Regenerate the setup intent on mount just in case it's somehow been used before this was mounted.
+		reloadStripeConfiguration();
+	}, [ reloadStripeConfiguration ] );
 
 	const showRedirectMessage = useCallback( () => {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
-	const showErrorMessage = useCallback(
+	const handleChangeError = useCallback(
 		( { transactionError }: { transactionError: string | null } ) => {
 			reduxDispatch(
 				errorNotice(
@@ -89,8 +101,10 @@ export default function PaymentMethodSelector( {
 						translate( 'There was a problem assigning that payment method. Please try again.' )
 				)
 			);
+			// We need to regenerate the setup intent if the form was submitted.
+			reloadStripeConfiguration();
 		},
-		[ reduxDispatch, translate ]
+		[ reduxDispatch, translate, reloadStripeConfiguration ]
 	);
 
 	const showSuccessMessage = useCallback(
@@ -111,9 +125,17 @@ export default function PaymentMethodSelector( {
 			'There was a problem assigning that payment method. Please try again.'
 		);
 		reduxDispatch( errorNotice( message ) );
+		// We need to regenerate the setup intent if the form was submitted.
+		reloadStripeConfiguration();
 	} );
 	useHandleRedirectChangeComplete( () => {
-		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
+		onPaymentSelectComplete( {
+			successCallback,
+			translate,
+			showSuccessMessage,
+			purchase,
+			reloadStripeConfiguration,
+		} );
 	} );
 
 	useEffect( () => {
@@ -126,11 +148,17 @@ export default function PaymentMethodSelector( {
 
 	return (
 		<CheckoutProvider
-			onPaymentComplete={ () =>
-				onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } )
-			}
+			onPaymentComplete={ () => {
+				onPaymentSelectComplete( {
+					successCallback,
+					translate,
+					showSuccessMessage,
+					purchase,
+					reloadStripeConfiguration,
+				} );
+			} }
 			onPaymentRedirect={ showRedirectMessage }
-			onPaymentError={ showErrorMessage }
+			onPaymentError={ handleChangeError }
 			onPageLoadError={ logError }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
@@ -202,17 +230,21 @@ function onPaymentSelectComplete( {
 	translate,
 	showSuccessMessage,
 	purchase,
+	reloadStripeConfiguration,
 }: {
 	successCallback: () => void;
 	translate: ReturnType< typeof useTranslate >;
 	showSuccessMessage: ( message: string | TranslateResult ) => void;
 	purchase?: Purchase | undefined;
+	reloadStripeConfiguration: ReloadStripeConfiguration;
 } ) {
 	if ( purchase ) {
 		showSuccessMessage( translate( 'Your payment method has been set.' ) );
 	} else {
 		showSuccessMessage( translate( 'Your payment method has been added successfully.' ) );
 	}
+	// We need to regenerate the setup intent if the form was submitted.
+	reloadStripeConfiguration();
 	successCallback();
 }
 

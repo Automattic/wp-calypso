@@ -86,6 +86,10 @@ export async function assignNewCardProcessor(
 			throw new Error( String( translate( 'Failed to add card.' ) ) );
 		}
 
+		// If we've reached this point in the code and anything after this fails,
+		// we must regenerate the payment intent, which is done by calling
+		// reloadStripeConfiguration from `@automattic/calypso-stripe`.
+
 		if ( purchase ) {
 			const result = await updateCreditCard( {
 				purchase,
