@@ -935,7 +935,7 @@ __metadata:
   resolution: "@automattic/page-pattern-modal@workspace:packages/page-pattern-modal"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/design-picker": "workspace:^"
+    "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.2
     "@wordpress/blocks": ^11.1.4
