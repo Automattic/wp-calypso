@@ -53,6 +53,21 @@
 }
 
 .name-servers-card {
+	&__loading {
+		@include placeholder();
+	}
+
+	&__name-server-list {
+		p {
+			font-size: $font-body-small;
+			margin-bottom: 0;
+		}
+
+		p + .button {
+			margin-top: 24px;
+		}
+	}
+
 	.components-base-control__field {
 		margin-bottom: 16px;
 	}
@@ -67,16 +82,5 @@
 
 	.name-servers__custom-nameservers-subtitle {
 		color: var( --studio-gray-50 );
-	}
-
-	.name-servers-card__name-server-list {
-		p {
-			font-size: $font-body-small;
-			margin-bottom: 0;
-		}
-
-		p + .button {
-			margin-top: 24px;
-		}
 	}
 }
