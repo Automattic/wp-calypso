@@ -85,7 +85,7 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 								iconSize={ 16 }
 								supportLink={
 									isJetpackCloud()
-										? 'https://wordpress.com/support/payment/#manage-payment-methods'
+										? 'https://wordpress.com/support/payment/#backup-payment-methods'
 										: null
 								}
 							/>
