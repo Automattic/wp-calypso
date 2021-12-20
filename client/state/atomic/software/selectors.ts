@@ -6,4 +6,5 @@ export const getAtomicSoftwareStatus = (
 	state: AppState,
 	siteId: number,
 	softwareSet: string
-): AtomicSoftwareStatus => state?.atomicSoftware?.[ siteId ]?.[ softwareSet ] || {};
+): { status: AtomicSoftwareStatus; error: Error } =>
+	state?.atomicSoftware?.[ siteId ]?.[ softwareSet ] || { status: null, error: null };

@@ -24,15 +24,14 @@ export default function InstallPlugins( {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const softwareStatus = useSelector( ( state ) =>
+	const { status } = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
 
 	// Used to implement a timeout threshold for the install to complete.
 	const [ isTimeout, setIsTimeout ] = useState( false );
-
-	const softwareApplied = softwareStatus?.applied;
-	const softwareError = softwareStatus?.error;
+	const softwareApplied = status?.applied;
+	const softwareError = status?.error;
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	const installFailed = isTimeout || softwareError;

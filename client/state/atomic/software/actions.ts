@@ -11,7 +11,6 @@ export interface AtomicSoftwareStatus {
 	blog_id: number;
 	software_set: Record< string, { path: string; state: string } >;
 	applied: boolean;
-	error?: string;
 }
 
 /**
@@ -26,12 +25,6 @@ export const requestAtomicSoftwareInstall = ( siteId: number, softwareSet: strin
 		type: ATOMIC_SOFTWARE_INITIATE_INSTALL,
 		siteId,
 		softwareSet,
-		meta: {
-			dataLayer: {
-				trackRequest: true,
-				requestKey: `${ ATOMIC_SOFTWARE_INITIATE_INSTALL }-${ siteId }-${ softwareSet }`,
-			},
-		},
 	} as const );
 
 /**
@@ -78,7 +71,7 @@ export const setAtomicSoftwareStatus = (
  */
 export const setAtomicSoftwareError = ( siteId: number, softwareSet: string, error: object ) =>
 	( {
-		type: ATOMIC_SOFTWARE_SET_ERROR,
+		type: ATOMIC_SOFTWARE_SET_STATUS,
 		siteId,
 		softwareSet,
 		error,

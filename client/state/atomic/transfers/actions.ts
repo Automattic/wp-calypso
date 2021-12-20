@@ -15,7 +15,6 @@ export interface AtomicTransfer {
 	is_stuck: boolean;
 	is_stuck_reset: boolean;
 	in_lossless_revert: boolean;
-	error?: string;
 }
 
 /**
@@ -34,12 +33,6 @@ export const initiateAtomicTransfer = (
 		type: ATOMIC_TRANSFER_INITIATE_TRANSFER,
 		siteId,
 		softwareSet,
-		meta: {
-			dataLayer: {
-				trackRequest: true,
-				requestKey: `${ ATOMIC_TRANSFER_INITIATE_TRANSFER }-${ siteId }-${ softwareSet }`,
-			},
-		},
 	} as const );
 
 /**
@@ -66,4 +59,11 @@ export const setLatestAtomicTransfer = ( siteId: number, transfer: AtomicTransfe
 		type: ATOMIC_TRANSFER_SET_LATEST,
 		siteId,
 		transfer,
+	} as const );
+
+export const setLatestAtomicTransferError = ( siteId: number, error: Error ) =>
+	( {
+		type: ATOMIC_TRANSFER_SET_LATEST,
+		siteId,
+		error,
 	} as const );

@@ -69,10 +69,11 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * - status code value is one of: [ `active`,...] @todo: add more codes.
 	 * - is_stuck value is True.
 	 */
-	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
-	const isTransferStuck = transfer?.is_stuck;
+	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+	const isTransferStuck = transfer?.is_stuck || false;
 
-	const transferStatus = transfer?.status;
+	// todo this probably isn't valid anymore
+	const transferStatus = transfer?.status || '';
 	const isBlockByTransferStatus =
 		( Number.isInteger( Number( transferStatus ) ) &&
 			transferStatus &&
