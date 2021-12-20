@@ -190,9 +190,6 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 };
 
 const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_SITE_VERTICAL' ) {
-		return action.siteVertical;
-	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
 	}
