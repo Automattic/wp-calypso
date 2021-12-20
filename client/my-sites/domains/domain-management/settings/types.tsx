@@ -35,7 +35,7 @@ export type SettingsPageConnectedProps = {
 	loadingNameserversError: any; // TODO
 	nameservers: string[] | null;
 	purchase: Purchase | null;
-
+	updateNameservers: any; // TODO
 	whoisData: WhoisData[];
 };
 
