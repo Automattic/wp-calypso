@@ -47,6 +47,7 @@ const Settings = ( {
 	requestWhois,
 	selectedDomainName,
 	selectedSite,
+	updateNameservers,
 	whoisData,
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
@@ -166,6 +167,10 @@ const Settings = ( {
 					domain={ domain }
 					selectedSite={ selectedSite }
 					selectedDomainName={ selectedDomainName }
+					isLoadingNameservers={ isLoadingNameservers }
+					loadingNameserversError={ loadingNameserversError }
+					nameservers={ nameservers }
+					updateNameservers={ updateNameservers }
 				/>
 			</Accordion>
 		);

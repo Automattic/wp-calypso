@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +14,6 @@ import {
 } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import CustomNameserversForm from 'calypso/my-sites/domains/domain-management/name-servers/custom-nameservers-form';
 import FetchError from 'calypso/my-sites/domains/domain-management/name-servers/fetch-error';
-import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -26,6 +26,7 @@ import './style.scss';
 const NameServers = ( props ) => {
 	const translate = useTranslate();
 	const [ nameservers, setNameservers ] = useState( props.nameservers || null );
+	const [ isEditingNameservers, setIsEditingNameservers ] = useState( false );
 
 	useEffect( () => {
 		if ( props.isLoadingNameservers === false ) {
@@ -141,7 +142,7 @@ const NameServers = ( props ) => {
 		props.updateNameservers( nameservers );
 	};
 
-	const renderCustomNameservers = () => {
+	const renderCustomNameserversForm = () => {
 		if ( hasWpcomNameservers() || isPendingTransfer() ) {
 			return null;
 		}
@@ -157,18 +158,35 @@ const NameServers = ( props ) => {
 			);
 		}
 
+		if ( isEditingNameservers ) {
+			return (
+				<CustomNameserversForm
+					nameservers={ nameservers }
+					selectedSite={ props.selectedSite }
+					selectedDomainName={ props.selectedDomainName }
+					onChange={ handleChange }
+					onReset={ handleReset }
+					onSubmit={ handleSubmit }
+					submitDisabled={ isLoading() }
+					notice={ warning() }
+					redesign
+				/>
+			);
+		}
+
 		return (
-			<CustomNameserversForm
-				nameservers={ nameservers }
-				selectedSite={ props.selectedSite }
-				selectedDomainName={ props.selectedDomainName }
-				onChange={ handleChange }
-				onReset={ handleReset }
-				onSubmit={ handleSubmit }
-				submitDisabled={ isLoading() }
-				notice={ warning() }
-				redesign
-			/>
+			<div className="name-servers-card__name-server-list">
+				{ nameservers.map( ( nameserver ) => (
+					<p key={ nameserver }>{ nameserver }</p>
+				) ) }
+				<Button
+					onClick={ () => {
+						setIsEditingNameservers( true );
+					} }
+				>
+					Edit custom name servers
+				</Button>
+			</div>
 		);
 	};
 
@@ -200,6 +218,7 @@ const NameServers = ( props ) => {
 
 	const handleSubmit = () => {
 		saveNameservers();
+		setIsEditingNameservers( false );
 	};
 
 	// render()
@@ -221,7 +240,7 @@ const NameServers = ( props ) => {
 			/>
 			{ renderPlanUpsellForNonPrimaryDomain( props.domain ) }
 			{ renderWpcomNameserversToggle() }
-			{ renderCustomNameservers() }
+			{ renderCustomNameserversForm() }
 		</div>
 	);
 	// /render
@@ -243,4 +262,4 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 
 export default connect( null, {
 	customNameServersLearnMoreClick,
-} )( withDomainNameservers( NameServers ) );
+} )( NameServers );
