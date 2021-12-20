@@ -829,6 +829,16 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
 	} );
 
+	it( 'redirects to a Jetpack cloud redirectTo', () => {
+		const redirectTo =
+			'http://cloud.jetpack.com/purchases/add-payment-method/fast-hummingbird.jurassic.ninja';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+		} );
+		expect( url ).toBe( redirectTo );
+	} );
+
 	describe( 'Professional Email upsell', () => {
 		const domains = [
 			{
