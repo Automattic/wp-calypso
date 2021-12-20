@@ -28,7 +28,7 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
-import NameServers from './cards/name-servers';
+import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
@@ -163,7 +163,7 @@ const Settings = ( {
 				title={ translate( 'Name servers', { textOnly: true } ) }
 				subtitle={ getNameServerSectionSubtitle() }
 			>
-				<NameServers
+				<NameServersCard
 					domain={ domain }
 					selectedSite={ selectedSite }
 					selectedDomainName={ selectedDomainName }

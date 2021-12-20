@@ -23,10 +23,10 @@ import NameServersToggle from './name-servers-toggle';
 
 import './style.scss';
 
-const NameServers = ( props ) => {
+const NameServersCard = ( props ) => {
 	const translate = useTranslate();
 	const [ nameservers, setNameservers ] = useState( props.nameservers || null );
-	const [ shouldUpdateNameservers, setShouldUpdateNameservers ] = useState( false ); // TODO: Rename this
+	const [ shouldPersistNameservers, setShouldUpdateNameservers ] = useState( false );
 	const [ isEditingNameservers, setIsEditingNameservers ] = useState( false );
 
 	useEffect( () => {
@@ -36,14 +36,13 @@ const NameServers = ( props ) => {
 	}, [ props.isLoadingNameservers ] );
 
 	useEffect( () => {
-		if ( shouldUpdateNameservers ) {
+		if ( shouldPersistNameservers ) {
 			props.updateNameservers( nameservers );
 			setShouldUpdateNameservers( false );
 		}
-	}, [ nameservers ] );
+	}, [ shouldPersistNameservers, nameservers ] );
 
 	// static propTypes = {
-	// 	domains: PropTypes.array.isRequired,
 	// 	isRequestingSiteDomains: PropTypes.bool.isRequired,
 	// 	nameservers: PropTypes.array,
 	// 	selectedDomainName: PropTypes.string.isRequired,
@@ -147,10 +146,6 @@ const NameServers = ( props ) => {
 		}
 	};
 
-	const saveNameservers = () => {
-		props.updateNameservers( nameservers );
-	};
-
 	const renderCustomNameserversForm = () => {
 		if ( hasWpcomNameservers() || isPendingTransfer() ) {
 			return null;
@@ -226,7 +221,7 @@ const NameServers = ( props ) => {
 	};
 
 	const handleSubmit = () => {
-		saveNameservers();
+		props.updateNameservers( nameservers );
 		setIsEditingNameservers( false );
 	};
 
@@ -271,4 +266,4 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 
 export default connect( null, {
 	customNameServersLearnMoreClick,
-} )( NameServers );
+} )( NameServersCard );
