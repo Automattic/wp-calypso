@@ -2,7 +2,7 @@ import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { sslStatuses } from 'calypso/lib/domains/constants';
 import { CONTACT, HTTPS_SSL } from 'calypso/lib/url/support';
-import { getSslReadableStatus } from '../../helpers';
+import { getSslReadableStatus, isSecuredWithUs } from '../../helpers';
 import type { DetailsCardProps } from '../types';
 
 import './style.scss';
@@ -10,11 +10,11 @@ import './style.scss';
 const DomainSecurityDetails = ( { domain }: DetailsCardProps ): JSX.Element | null => {
 	const translate = useTranslate();
 
-	const { pointsToWpcom, sslStatus } = domain;
-
-	if ( ! pointsToWpcom || ! sslStatus ) {
+	if ( ! isSecuredWithUs( domain ) ) {
 		return null;
 	}
+
+	const { sslStatus } = domain;
 
 	const getSslStatusMessage = () => {
 		switch ( sslStatus ) {

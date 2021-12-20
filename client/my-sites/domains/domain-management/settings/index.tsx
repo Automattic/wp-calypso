@@ -23,7 +23,7 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import DomainSecurityDetails from './cards/domain-security-details';
 import RegisteredDomainDetails from './cards/registered-domain-details';
-import { getSslReadableStatus } from './helpers';
+import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
@@ -63,16 +63,7 @@ const Settings = ( {
 	};
 
 	const renderSecurityAccordion = () => {
-		const domainSecurityCard = (
-			<DomainSecurityDetails
-				domain={ domain }
-				selectedSite={ selectedSite }
-				purchase={ purchase }
-				isLoadingPurchase={ isLoadingPurchase }
-			/>
-		);
-
-		if ( ! domainSecurityCard ) return null;
+		if ( ! isSecuredWithUs( domain ) ) return null;
 
 		return (
 			<Accordion
@@ -80,7 +71,12 @@ const Settings = ( {
 				subtitle={ getSslReadableStatus( domain ) }
 				key="security"
 			>
-				{ domainSecurityCard }
+				<DomainSecurityDetails
+					domain={ domain }
+					selectedSite={ selectedSite }
+					purchase={ purchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</Accordion>
 		);
 	};

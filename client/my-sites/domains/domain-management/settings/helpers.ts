@@ -14,6 +14,9 @@ const sslReadableStatus = {
 	},
 } as const;
 
+export const isSecuredWithUs = ( { pointsToWpcom, sslStatus }: ResponseDomain ) =>
+	pointsToWpcom && sslStatus;
+
 export const getSslReadableStatus = ( { sslStatus }: ResponseDomain ): string => {
 	switch ( sslStatus ) {
 		case sslStatuses.SSL_ACTIVE:
