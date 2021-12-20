@@ -29,7 +29,8 @@ export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
 export const getDomainSearch = ( state: State ) =>
 	state.domainSearch ||
-	( isGoodDefaultDomainQuery( getSelectedSiteTitle( state ) ) && getSelectedSiteTitle( state ) );
+	( isGoodDefaultDomainQuery( getSelectedSiteTitle( state ) ) && getSelectedSiteTitle( state ) ) ||
+	undefined;
 
 export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 
