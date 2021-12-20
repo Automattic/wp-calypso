@@ -199,16 +199,6 @@ const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state
 	return state;
 };
 
-const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SKIP_SITE_VERTICAL' ) {
-		return true;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -252,7 +242,6 @@ const reducer = combineReducers( {
 	siteVertical,
 	showSignupDialog,
 	planProductId,
-	wasVerticalSkipped,
 	randomizedDesigns,
 	hasOnboardingStarted,
 	lastLocation,

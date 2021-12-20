@@ -206,10 +206,6 @@ export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
 	siteVertical,
 } );
 
-export const skipSiteVertical = () => ( {
-	type: 'SKIP_SITE_VERTICAL' as const,
-} );
-
 export const togglePageLayout = ( pageLayout: Template ) => ( {
 	type: 'TOGGLE_PAGE_LAYOUT' as const,
 	pageLayout,
@@ -250,7 +246,6 @@ export type OnboardAction = ReturnType<
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof setSiteVertical
-	| typeof skipSiteVertical
 	| typeof togglePageLayout
 	| typeof startOnboarding
 	| typeof enrollInFseBeta
