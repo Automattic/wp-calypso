@@ -1,5 +1,6 @@
 import { AutoSizer, List } from '@automattic/react-virtualized';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { cloneElement, createRef, Component } from 'react';
@@ -14,7 +15,7 @@ function range( start, end ) {
 	return Array.from( { length }, ( _, i ) => i + start );
 }
 
-export default class VirtualList extends Component {
+class VirtualList extends Component {
 	static propTypes = {
 		items: PropTypes.array,
 		lastPage: PropTypes.number,
@@ -28,6 +29,7 @@ export default class VirtualList extends Component {
 		defaultRowHeight: PropTypes.number,
 		height: PropTypes.number,
 		scrollTop: PropTypes.number,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -117,7 +119,7 @@ export default class VirtualList extends Component {
 		if ( this.hasNoRows() ) {
 			return (
 				<div key="no-results" className="virtual-list__list-row is-empty">
-					No Results Found
+					{ this.props.translate( 'No results found.' ) }
 				</div>
 			);
 		}
@@ -188,3 +190,5 @@ export default class VirtualList extends Component {
 		);
 	}
 }
+
+export default localize( VirtualList );
