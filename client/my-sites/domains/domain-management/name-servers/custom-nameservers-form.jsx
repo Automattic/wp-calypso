@@ -137,13 +137,13 @@ class CustomNameserversForm extends PureComponent {
 		return (
 			<>
 				<strong>{ title }</strong>
-				{ redesign && <p>{ subtitle }</p> }
+				{ redesign && <p className="name-servers__custom-nameservers-subtitle">{ subtitle }</p> }
 
 				<form>
 					{ this.rows() }
 					{ ! redesign && this.popularHostsMessage() }
 					{ redesign && notice }
-					<div className='name-servers__custom-nameservers-form-buttons'>
+					<div className="name-servers__custom-nameservers-form-buttons">
 						<FormButton
 							isPrimary
 							onClick={ this.handleSubmit }

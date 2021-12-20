@@ -211,7 +211,7 @@ const NameServers = ( props ) => {
 	}
 
 	return (
-		<>
+		<div className="name-servers-card">
 			<DomainWarnings
 				domain={ props.domain }
 				position="domain-name-servers"
@@ -221,7 +221,7 @@ const NameServers = ( props ) => {
 			{ planUpsellForNonPrimaryDomain( props.domain ) }
 			{ wpcomNameserversToggle() }
 			{ customNameservers() }
-		</>
+		</div>
 	);
 	// /render
 };
