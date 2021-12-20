@@ -31,7 +31,6 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
 
-
 type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
 	comparisonContext: string;
