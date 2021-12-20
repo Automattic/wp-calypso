@@ -20,38 +20,41 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import NameServersToggle from './name-servers-toggle';
+import type { NameServersCardProps } from './types';
 
 import './style.scss';
 
-const NameServersCard = ( props ) => {
+const NameServersCard = ( {
+	domain,
+	isLoadingNameservers,
+	isRequestingSiteDomains,
+	loadingNameserversError,
+	nameservers: nameserversProps,
+	selectedDomainName,
+	selectedSite,
+	updateNameservers,
+}: NameServersCardProps ): JSX.Element => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const [ nameservers, setNameservers ] = useState( props.nameservers || null );
-	const [ shouldPersistNameservers, setShouldUpdateNameservers ] = useState( false );
+	const [ nameservers, setNameservers ] = useState( nameserversProps || null );
+	const [ shouldPersistNameservers, setShouldPersistNameservers ] = useState( false );
 	const [ isEditingNameservers, setIsEditingNameservers ] = useState( false );
 
 	useEffect( () => {
-		if ( props.isLoadingNameservers === false ) {
-			setNameservers( props.nameservers );
+		if ( isLoadingNameservers === false ) {
+			setNameservers( nameserversProps );
 		}
-	}, [ props.isLoadingNameservers ] );
+	}, [ isLoadingNameservers ] );
 
 	useEffect( () => {
 		if ( shouldPersistNameservers ) {
-			props.updateNameservers( nameservers );
-			setShouldUpdateNameservers( false );
+			updateNameservers( nameservers );
+			setShouldPersistNameservers( false );
 		}
 	}, [ shouldPersistNameservers, nameservers ] );
 
-	// static propTypes = {
-	// 	isRequestingSiteDomains: PropTypes.bool.isRequired,
-	// 	nameservers: PropTypes.array,
-	// 	selectedDomainName: PropTypes.string.isRequired,
-	// 	selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-	// };
-
 	const hasWpcomNameservers = () => {
-		if ( ! props.nameservers ) {
+		if ( ! nameserversProps ) {
 			return true;
 		}
 
@@ -75,11 +78,11 @@ const NameServersCard = ( props ) => {
 	};
 
 	const isLoading = () => {
-		return props.isRequestingSiteDomains || props.isLoadingNameservers;
+		return isRequestingSiteDomains || isLoadingNameservers;
 	};
 
 	const isPendingTransfer = () => {
-		return props.domain.pendingTransfer || false;
+		return domain.pendingTransfer || false;
 	};
 
 	const warning = () => {
@@ -112,7 +115,7 @@ const NameServersCard = ( props ) => {
 	};
 
 	const handleLearnMoreClick = () => {
-		dispatch( customNameServersLearnMoreClick( props.selectedDomainName ) );
+		dispatch( customNameServersLearnMoreClick( selectedDomainName ) );
 	};
 
 	const renderWpcomNameserversToggle = () => {
@@ -122,7 +125,7 @@ const NameServersCard = ( props ) => {
 
 		return (
 			<NameServersToggle
-				selectedDomainName={ props.selectedDomainName }
+				selectedDomainName={ selectedDomainName }
 				onToggle={ handleToggle }
 				enabled={ hasWpcomNameservers() }
 			/>
@@ -143,7 +146,7 @@ const NameServersCard = ( props ) => {
 			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
 		} else {
 			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
-			setShouldUpdateNameservers( true );
+			setShouldPersistNameservers( true );
 		}
 	};
 
@@ -156,8 +159,8 @@ const NameServersCard = ( props ) => {
 		if ( needsVerification() ) {
 			return (
 				<IcannVerificationCard
-					selectedDomainName={ props.selectedDomainName }
-					selectedSiteSlug={ props.selectedSite.slug }
+					selectedDomainName={ selectedDomainName }
+					selectedSiteSlug={ selectedSite.slug }
 					explanationContext="name-servers"
 				/>
 			);
@@ -167,8 +170,8 @@ const NameServersCard = ( props ) => {
 			return (
 				<CustomNameserversForm
 					nameservers={ nameservers }
-					selectedSite={ props.selectedSite }
-					selectedDomainName={ props.selectedDomainName }
+					selectedSite={ selectedSite }
+					selectedDomainName={ selectedDomainName }
 					onChange={ handleChange }
 					onReset={ handleReset }
 					onSubmit={ handleSubmit }
@@ -181,7 +184,7 @@ const NameServersCard = ( props ) => {
 
 		return (
 			<div className="name-servers-card__name-server-list">
-				{ nameservers.map( ( nameserver ) => (
+				{ nameservers!.map( ( nameserver ) => (
 					<p key={ nameserver }>{ nameserver }</p>
 				) ) }
 				<Button
@@ -206,11 +209,11 @@ const NameServersCard = ( props ) => {
 	};
 
 	const needsVerification = () => {
-		if ( props.isRequestingSiteDomains ) {
+		if ( isRequestingSiteDomains ) {
 			return false;
 		}
 
-		return props.domain.isPendingIcannVerification;
+		return domain.isPendingIcannVerification;
 	};
 
 	const handleChange = ( nameservers ) => {
@@ -222,13 +225,12 @@ const NameServersCard = ( props ) => {
 	};
 
 	const handleSubmit = () => {
-		props.updateNameservers( nameservers );
+		updateNameservers( nameservers );
 		setIsEditingNameservers( false );
 	};
 
-	// render()
-	if ( props.loadingNameserversError ) {
-		return <FetchError selectedDomainName={ props.selectedDomainName } />;
+	if ( loadingNameserversError ) {
+		return <FetchError selectedDomainName={ selectedDomainName } />;
 	}
 
 	if ( isLoading() ) {
@@ -238,20 +240,19 @@ const NameServersCard = ( props ) => {
 	return (
 		<div className="name-servers-card">
 			<DomainWarnings
-				domain={ props.domain }
+				domain={ domain }
 				position="domain-name-servers"
-				selectedSite={ props.selectedSite }
+				selectedSite={ selectedSite }
 				allowedRules={ [ 'pendingTransfer' ] }
 			/>
-			{ renderPlanUpsellForNonPrimaryDomain( props.domain ) }
+			{ renderPlanUpsellForNonPrimaryDomain( domain ) }
 			{ renderWpcomNameserversToggle() }
 			{ renderCustomNameserversForm() }
 		</div>
 	);
-	// /render
 };
 
-const customNameServersLearnMoreClick = ( domainName ) =>
+const customNameServersLearnMoreClick = ( domainName: string ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
