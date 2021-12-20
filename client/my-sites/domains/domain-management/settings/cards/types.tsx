@@ -19,3 +19,9 @@ export type NameServersCardProps = {
 	selectedSite: SiteData;
 	updateNameservers: any; // TODO;
 };
+
+export type NameServersToggleProps = {
+	enabled: boolean;
+	onToggle: any; // TODO;
+	selectedDomainName: string;
+};
