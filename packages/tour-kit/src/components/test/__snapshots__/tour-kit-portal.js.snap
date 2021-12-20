@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TourKitPortal should render 1`] = `
+<div>
+  <Portal
+    containerInfo={<div />}
+  >
+    <TourKitFrame />
+  </Portal>
+</div>
+`;
