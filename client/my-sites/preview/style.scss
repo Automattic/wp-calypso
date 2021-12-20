@@ -10,7 +10,7 @@
 }
 
 .layout.is-section-preview .layout__content {
-	// overflow cannot be set on an ancestor to .web-prefix_toolbar otherwise that becomes the scrolling container
+	// overflow cannot be set on an ancestor to .web-preview_toolbar otherwise that becomes the scrolling container
 	// rather than the viewport, and this will inhibit sticky behaviour. See https://github.com/w3c/csswg-drafts/issues/865
 	overflow:initial;
 }
