@@ -20,7 +20,6 @@ import {
 	isTheme,
 	isTitanMail,
 	isJetpackBusinessPlan,
-	isWpComBusinessPlan,
 	shouldFetchSitePlans,
 	isDIFMProduct,
 } from '@automattic/calypso-products';
@@ -41,7 +40,6 @@ import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
-import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import { isExternal } from 'calypso/lib/url';
 import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
 import {
@@ -86,7 +84,6 @@ import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
-import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import TransferPending from './transfer-pending';
 
@@ -431,20 +428,6 @@ export class CheckoutThankYou extends Component {
 				<Main className="checkout-thank-you">
 					<DIFMLiteThankYou />
 				</Main>
-			);
-		}
-
-		// Rebrand Cities thanks page
-		if (
-			this.props.selectedSite &&
-			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
-			isWpComBusinessPlan( this.props.selectedSite.plan.product_slug )
-		) {
-			return (
-				<RebrandCitiesThankYou
-					receipt={ this.props.receipt }
-					analyticsProperties={ this.getAnalyticsProperties() }
-				/>
 			);
 		}
 
