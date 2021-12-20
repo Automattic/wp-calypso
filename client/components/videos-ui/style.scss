@@ -16,8 +16,18 @@
 
 	.notice {
 		background-color: #2d3338;
+		border-radius: 4px;
 		.notice__icon-wrapper {
 			background: none;
+		}
+		.notice__dismiss {
+			display: flex;
+			align-items: center;
+
+			svg {
+				width: 15px;
+				height: 15px;
+			}
 		}
 	}
 
