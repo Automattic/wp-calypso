@@ -20,10 +20,24 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import NameServersToggle from './name-servers-toggle';
-import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { NameServersCardProps } from './types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
+
+const customNameServersLearnMoreClick = ( domainName: string ) =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Learn More" link in "Custom Name Servers" Form in Name Servers and DNS',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent(
+			'calypso_domain_management_name_servers_custom_name_servers_learn_more_click',
+			{ domain_name: domainName }
+		)
+	);
 
 const NameServersCard = ( {
 	domain,
@@ -47,7 +61,7 @@ const NameServersCard = ( {
 
 	useEffect( () => {
 		if ( shouldPersistNameservers ) {
-			updateNameservers( nameservers );
+			updateNameservers( nameservers || [] );
 			setShouldPersistNameservers( false );
 		}
 	}, [ shouldPersistNameservers, nameservers ] );
@@ -76,12 +90,20 @@ const NameServersCard = ( {
 		} );
 	};
 
-	const isLoading = () => {
-		return isRequestingSiteDomains || isLoadingNameservers;
-	};
-
 	const isPendingTransfer = () => {
 		return domain.pendingTransfer || false;
+	};
+
+	const needsVerification = () => {
+		if ( isRequestingSiteDomains ) {
+			return false;
+		}
+
+		return domain.isPendingIcannVerification;
+	};
+
+	const handleLearnMoreClick = () => {
+		dispatch( customNameServersLearnMoreClick( selectedDomainName ) );
 	};
 
 	const warning = () => {
@@ -113,8 +135,22 @@ const NameServersCard = ( {
 		);
 	};
 
-	const handleLearnMoreClick = () => {
-		dispatch( customNameServersLearnMoreClick( selectedDomainName ) );
+	const resetToWpcomNameservers = () => {
+		if ( ! nameservers || nameservers.length === 0 ) {
+			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
+		} else {
+			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
+			setShouldPersistNameservers( true );
+		}
+	};
+
+	const handleToggle = () => {
+		if ( hasWpcomNameservers() ) {
+			setNameservers( [] );
+			setIsEditingNameservers( true );
+		} else {
+			resetToWpcomNameservers();
+		}
 	};
 
 	const renderWpcomNameserversToggle = () => {
@@ -131,22 +167,21 @@ const NameServersCard = ( {
 		);
 	};
 
-	const handleToggle = () => {
-		if ( hasWpcomNameservers() ) {
-			setNameservers( [] );
-			setIsEditingNameservers( true );
-		} else {
-			resetToWpcomNameservers();
-		}
+	const isLoading = () => {
+		return isRequestingSiteDomains || isLoadingNameservers;
 	};
 
-	const resetToWpcomNameservers = () => {
-		if ( ! nameservers || nameservers.length === 0 ) {
-			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
-		} else {
-			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
-			setShouldPersistNameservers( true );
-		}
+	const handleChange = ( nameservers: string[] ) => {
+		setNameservers( nameservers );
+	};
+
+	const handleReset = () => {
+		resetToWpcomNameservers();
+	};
+
+	const handleSubmit = () => {
+		updateNameservers( nameservers || [] );
+		setIsEditingNameservers( false );
 	};
 
 	const renderCustomNameserversForm = () => {
@@ -206,27 +241,6 @@ const NameServersCard = ( {
 		);
 	};
 
-	const needsVerification = () => {
-		if ( isRequestingSiteDomains ) {
-			return false;
-		}
-
-		return domain.isPendingIcannVerification;
-	};
-
-	const handleChange = ( nameservers: string[] ) => {
-		setNameservers( nameservers );
-	};
-
-	const handleReset = () => {
-		resetToWpcomNameservers();
-	};
-
-	const handleSubmit = () => {
-		updateNameservers( nameservers );
-		setIsEditingNameservers( false );
-	};
-
 	if ( isLoading() ) {
 		return <p className="name-servers-card__loading" />;
 	}
@@ -234,7 +248,6 @@ const NameServersCard = ( {
 	if ( loadingNameserversError ) {
 		return <FetchError selectedDomainName={ selectedDomainName } />;
 	}
-
 
 	return (
 		<div className="name-servers-card">
@@ -250,19 +263,5 @@ const NameServersCard = ( {
 		</div>
 	);
 };
-
-const customNameServersLearnMoreClick = ( domainName: string ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "Learn More" link in "Custom Name Servers" Form in Name Servers and DNS',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent(
-			'calypso_domain_management_name_servers_custom_name_servers_learn_more_click',
-			{ domain_name: domainName }
-		)
-	);
 
 export default NameServersCard;

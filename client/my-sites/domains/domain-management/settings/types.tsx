@@ -32,10 +32,10 @@ export type SettingsPageConnectedProps = {
 	domain: ResponseDomain;
 	isLoadingPurchase: boolean;
 	isLoadingNameservers: boolean;
-	loadingNameserversError: any; // TODO
+	loadingNameserversError: boolean;
 	nameservers: string[] | null;
 	purchase: Purchase | null;
-	updateNameservers: any; // TODO
+	updateNameservers: ( nameServers: string[] ) => void;
 	whoisData: WhoisData[];
 };
 

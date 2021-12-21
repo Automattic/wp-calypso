@@ -10,7 +10,6 @@
 
 .settings-header {
 	&__container {
-
 		&-title {
 			display: flex;
 			flex-wrap: wrap;
@@ -21,11 +20,11 @@
 			// Higher specificity needed to override .formatted-header.is-left-align media-query styles
 			header.settings-header__title {
 				margin: 8px 0;
-	
+
 				&::first-letter {
 					text-transform: uppercase;
 				}
-	
+
 				.formatted-header__title {
 					font-weight: 400;
 					margin: 0;
@@ -77,11 +76,11 @@
 				&--success {
 					background: rgba( 184, 230, 191, 0.6 );
 					color: var( --studio-green-80 );
-					
+
 					svg {
 						fill: var( --studio-green-80 );
 					}
-					
+
 					.settings-header__badge-indicator svg {
 						fill: var( --studio-green-50 );
 					}
@@ -90,7 +89,7 @@
 				&--warning {
 					background: var( --studio-orange-0 );
 					color: var( --studio-yellow-80 );
-					
+
 					svg {
 						fill: var( --studio-orange-40 );
 					}
@@ -99,7 +98,7 @@
 				&--premium {
 					background: var( --studio-yellow-10 );
 					color: var( --studio-yellow-80 );
-					
+
 					svg {
 						fill: var( --studio-yellow-80 );
 						margin-right: 0;
@@ -110,7 +109,7 @@
 				&--neutral {
 					background: rgba( 220, 220, 222, 0.6 );
 					color: var( --studio-gray-80 );
-					
+
 					svg {
 						fill: var( --studio-gray-80 );
 					}
@@ -123,6 +122,7 @@
 .domain-settings-page {
 	.name-servers-card__loading {
 		@include placeholder();
-		width: 100%;
+		margin-top: 4px;
+		margin-bottom: 0;
 	}
 }

@@ -13,15 +13,15 @@ export type NameServersCardProps = {
 	domain: ResponseDomain;
 	isLoadingNameservers: boolean;
 	isRequestingSiteDomains: boolean;
-	loadingNameserversError: any; // TODO;
+	loadingNameserversError: boolean;
 	nameservers: string[] | null;
 	selectedDomainName: string;
 	selectedSite: SiteData;
-	updateNameservers: any; // TODO;
+	updateNameservers: ( nameServers: string[] ) => void;
 };
 
 export type NameServersToggleProps = {
 	enabled: boolean;
-	onToggle: any; // TODO;
+	onToggle: () => void;
 	selectedDomainName: string;
 };

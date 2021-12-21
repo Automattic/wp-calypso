@@ -136,13 +136,14 @@ const Settings = ( {
 			return false;
 		}
 
-		return nameservers.every( ( nameserver ) => {
+		return nameservers.every( ( nameserver: string ) => {
 			return ! nameserver || WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
 		} );
 	};
 
 	const getNameServerSectionSubtitle = () => {
 		if ( isLoadingNameservers ) {
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			return <p className="name-servers-card__loading" />;
 		}
 
@@ -165,11 +166,11 @@ const Settings = ( {
 			>
 				<NameServersCard
 					domain={ domain }
-					selectedSite={ selectedSite }
-					selectedDomainName={ selectedDomainName }
 					isLoadingNameservers={ isLoadingNameservers }
 					loadingNameserversError={ loadingNameserversError }
 					nameservers={ nameservers }
+					selectedSite={ selectedSite }
+					selectedDomainName={ selectedDomainName }
 					updateNameservers={ updateNameservers }
 				/>
 			</Accordion>
@@ -269,6 +270,7 @@ const Settings = ( {
 	}
 
 	return (
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
 			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
