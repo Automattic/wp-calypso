@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/notifications",
 	"version": "1.0.0",
-	"description": "WordPress.com Notifications Panel",
+	"description": "WordPress.com Notifications Panel.",
 	"main": "dist/build.min.js",
 	"sideEffects": true,
 	"repository": {
@@ -12,9 +12,7 @@
 	"private": true,
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"analyze-bundles": "EMIT_STATS=true yarn run build && webpack-bundle-analyzer stats.json dist -h 127.0.0.1 -s gzip",

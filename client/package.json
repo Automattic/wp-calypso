@@ -2,7 +2,7 @@
 	"name": "calypso",
 	"author": "Automattic Inc.",
 	"version": "0.17.0",
-	"description": "A pure REST-API and JS based version of the WordPress.com admin",
+	"description": "A pure REST-API and JS based version of the WordPress.com admin.",
 	"private": true,
 	"license": "GPL-2.0-or-later",
 	"repository": {

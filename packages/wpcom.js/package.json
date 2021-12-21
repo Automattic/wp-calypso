@@ -1,11 +1,13 @@
 {
 	"name": "wpcom",
-	"description": "Official JavaScript library for the WordPress.com REST API",
+	"description": "Official JavaScript library for the WordPress.com REST API.",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
 	"version": "6.0.0",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"private": true,
 	"scripts": {
 		"clean": "rm -rf dist",

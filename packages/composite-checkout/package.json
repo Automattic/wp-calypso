@@ -33,9 +33,7 @@
 	},
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/composite-checkout#readme",
 	"dependencies": {
 		"@emotion/react": "^11.4.1",

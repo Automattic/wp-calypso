@@ -1,9 +1,11 @@
 {
 	"name": "@automattic/effective-module-tree",
 	"version": "0.1.0",
-	"description": "A tool to generate the effective list of dependencies of any project",
+	"description": "A tool to generate the effective list of dependencies of any project.",
 	"main": "index.js",
 	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",

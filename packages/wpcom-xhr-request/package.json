@@ -1,7 +1,7 @@
 {
 	"name": "wpcom-xhr-request",
 	"version": "1.2.0",
-	"description": "REST API requests to WordPress.com via XMLHttpRequest (and CORS)",
+	"description": "REST API requests to WordPress.com via XMLHttpRequest (and CORS).",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
@@ -14,7 +14,7 @@
 		"api",
 		"oauth"
 	],
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "MIT",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"repository": {
@@ -25,9 +25,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
 		"History.md",

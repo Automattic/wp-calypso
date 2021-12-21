@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/data-stores",
 	"version": "2.0.1",
-	"description": "Calypso Data Stores",
+	"description": "Calypso Data Stores.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -17,9 +17,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"autocomplete.gif",
 		"dist",

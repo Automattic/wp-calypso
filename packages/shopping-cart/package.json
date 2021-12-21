@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/shopping-cart",
 	"version": "2.0.0",
-	"description": "A library to use the WordPress.com shopping cart",
+	"description": "A library to use the WordPress.com shopping cart.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
@@ -32,9 +32,7 @@
 	},
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/shopping-cart#readme",
 	"dependencies": {
 		"debug": "^4.3.3"

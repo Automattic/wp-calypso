@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-build",
 	"version": "10.0.0",
-	"description": "Shared Calypso build configuration files",
+	"description": "Shared Calypso build configuration files.",
 	"keywords": [
 		"babel",
 		"build",
@@ -22,9 +22,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"bin": {
 		"calypso-build": "./bin/calypso-build.js",
 		"copy-assets": "./bin/copy-assets.js",

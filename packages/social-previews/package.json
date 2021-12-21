@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/social-previews",
 	"version": "1.1.1",
-	"description": "A suite of components to generate previews for a post for both social and search engines",
+	"description": "A suite of components to generate previews for a post for both social and search engines.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
@@ -26,9 +26,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
 		"src"

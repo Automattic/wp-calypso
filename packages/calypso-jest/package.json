@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-jest",
 	"version": "1.0.0",
-	"description": "Shared Calypso config for Jest",
+	"description": "Shared Calypso config for Jest.",
 	"keywords": [
 		"jest",
 		"calypso"
@@ -18,9 +18,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
 		"@babel/core": "^7.16.5",
 		"@wojtekmaj/enzyme-adapter-react-17": "^0.6.6",
