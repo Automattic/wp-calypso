@@ -37,7 +37,7 @@ export interface StripeConfiguration {
 	processor_id: string;
 }
 
-export type ReloadStripeConfiguration = () => void;
+export type ReloadSetupIntentId = () => void;
 
 export type StripeLoadingError = undefined | null | Error;
 
@@ -51,7 +51,7 @@ export interface StripeData {
 export interface StripeSetupIntentIdData {
 	setupIntentId: StripeSetupIntentId | undefined;
 	error: StripeLoadingError;
-	reload: ReloadStripeConfiguration;
+	reload: ReloadSetupIntentId;
 }
 
 export type StripeSetupIntentId = string;
@@ -431,7 +431,7 @@ function useFetchSetupIntentId(
 ): {
 	setupIntentId: StripeSetupIntentId | undefined;
 	error: undefined | Error;
-	reload: ReloadStripeConfiguration;
+	reload: ReloadSetupIntentId;
 } {
 	const [ stripeReloadCount, setReloadCount ] = useState< number >( 0 );
 	const [ error, setError ] = useState< undefined | Error >();
