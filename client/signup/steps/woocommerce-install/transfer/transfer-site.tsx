@@ -28,22 +28,23 @@ export default function TransferSite( {
 
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+
+	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+
+	const { transfer, error: transferError } = useSelector( ( state ) =>
+		getLatestAtomicTransfer( state, siteId )
+	);
 	const transferStatus = transfer?.status;
 
-	// Check transfer status code (5xx).
-	const isErrorTransferStatus =
-		Number.isInteger( Number( transferStatus ) ) &&
-		transferStatus &&
-		5 === Math.floor( Number( transferStatus ) / 100 );
-
-	const transferFailed = !! transfer?.error || isErrorTransferStatus;
-
-	const software = useSelector( ( state ) =>
+	const { status: softwareStatus, error: softwareError } = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
-	const softwareApplied = software?.applied;
-	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+	const softwareApplied = softwareStatus?.applied;
+
+	// Check for error codes (5xx). 404's are not a failure mode.
+	const transferFailed =
+		( transferError && transferError?.status >= 500 ) ||
+		( softwareError && softwareError?.status >= 500 );
 
 	// Initiate Atomic transfer or software install
 	useEffect( () => {
@@ -67,7 +68,7 @@ export default function TransferSite( {
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		// Only poll if the transfer is completed and not failed
-		transferFailed || transferStates.COMPLETED !== transferStatus || softwareApplied ? null : 3000
+		transferFailed || transferStatus !== transferStates.COMPLETED || softwareApplied ? null : 3000
 	);
 
 	// Watch transfer status

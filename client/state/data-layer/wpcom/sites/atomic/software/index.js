@@ -1,4 +1,3 @@
-import { translate } from 'i18n-calypso';
 import {
 	ATOMIC_SOFTWARE_INITIATE_INSTALL,
 	ATOMIC_SOFTWARE_REQUEST_STATUS,
@@ -7,14 +6,16 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	setAtomicSoftwareStatus,
 	setAtomicSoftwareError,
+	cleanAtomicSoftwareStatus,
 } from 'calypso/state/atomic/software/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'calypso/state/notices/actions';
 
-const installSoftware = ( action ) =>
+const installSoftware = ( action ) => [
+	// Clean up the status in case it's an installing reattempt.
+	cleanAtomicSoftwareStatus( action.siteId, action.softwareSet ),
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -23,7 +24,8 @@ const installSoftware = ( action ) =>
 			body: {}, // have to have an empty body to make wpcom-http happy
 		},
 		action
-	);
+	),
+];
 
 const receiveInstallResponse = () => [
 	recordTracksEvent( 'calypso_atomic_software_install_inititate_success', {
@@ -36,9 +38,6 @@ const receiveInstallError = ( action, error ) => [
 		context: 'atomic_software_install',
 		error: error.error,
 	} ),
-	errorNotice(
-		translate( "Sorry, we've hit a snag. Please contact support so we can help you out." )
-	),
 	setAtomicSoftwareError( action.siteId, action.softwareSet, error ),
 ];
 

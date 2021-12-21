@@ -11,6 +11,7 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
 import Progress from './progress';
+
 import './style.scss';
 
 // Timeout limit for the install to complete.
@@ -24,18 +25,18 @@ export default function InstallPlugins( {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const softwareStatus = useSelector( ( state ) =>
+	const { status: softwareStatus, error: softwareError } = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
 
 	// Used to implement a timeout threshold for the install to complete.
-	const [ isTimeout, setIsTimeout ] = useState( false );
+	const [ isTimeoutError, setIsTimeoutError ] = useState( false );
 
-	const softwareApplied = softwareStatus?.applied;
-	const softwareError = softwareStatus?.error;
+	const softwareApplied = !! softwareStatus?.applied;
+
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
-	const installFailed = isTimeout || softwareError;
+	const installFailed = isTimeoutError || softwareError;
 
 	const [ progress, setProgress ] = useState( 0.6 );
 	// Install Woo on plans software set
@@ -44,13 +45,8 @@ export default function InstallPlugins( {
 			return;
 		}
 
-		// Do not dispatch when something went wrong.
-		if ( installFailed ) {
-			return;
-		}
-
 		dispatch( requestAtomicSoftwareInstall( siteId, 'woo-on-plans' ) );
-	}, [ dispatch, siteId, installFailed ] );
+	}, [ dispatch, siteId ] );
 
 	// Call onFailure callback when install fails.
 	useEffect( () => {
@@ -68,7 +64,7 @@ export default function InstallPlugins( {
 		}
 
 		const timeId = setTimeout( () => {
-			setIsTimeout( true );
+			setIsTimeoutError( true );
 			onFailure();
 		}, TIMEOUT_LIMIT );
 
@@ -88,7 +84,7 @@ export default function InstallPlugins( {
 			setProgress( progress + 0.2 );
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
-		softwareApplied ? null : 3000
+		!! installFailed || softwareApplied ? null : 3000
 	);
 
 	// Redirect to wc-admin once software installation is confirmed.
@@ -106,7 +102,6 @@ export default function InstallPlugins( {
 		}
 	}, [ siteId, softwareApplied, wcAdmin, installFailed ] );
 
-	// todo: Need error handling on these requests
 	return (
 		<>
 			{ installFailed && <Error /> }
