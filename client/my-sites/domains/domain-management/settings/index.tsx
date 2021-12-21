@@ -5,8 +5,9 @@ import Accordion from 'calypso/components/domains/accordion';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
@@ -14,6 +15,8 @@ import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/c
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { requestWhois } from 'calypso/state/domains/management/actions';
+import { getWhoisData } from 'calypso/state/domains/management/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
@@ -21,6 +24,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
+import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
@@ -31,10 +35,13 @@ import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
 const Settings = ( {
 	currentRoute,
 	domain,
+	domains,
 	isLoadingPurchase,
 	purchase,
 	selectedDomainName,
 	selectedSite,
+	whoisData,
+	requestWhois,
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
 
@@ -125,12 +132,71 @@ const Settings = ( {
 		return renderSecurityAccordion();
 	};
 
+	const renderContactInformationSecion = () => {
+		if (
+			domain.type !== domainTypes.REGISTERED ||
+			( ! isDomainUpdateable( domain ) && ! isDomainInGracePeriod( domain ) )
+		) {
+			return null;
+		}
+
+		const getPlaceholderAccordion = () => (
+			<Accordion
+				title="Contact information"
+				subtitle="Contact information"
+				isPlaceholder
+			></Accordion>
+		);
+
+		if ( ! domain || ! domains ) return getPlaceholderAccordion();
+
+		const getContactsPrivacyInfo = () => (
+			<ContactsPrivacyInfo
+				domains={ domains }
+				selectedSite={ selectedSite }
+				selectedDomainName={ selectedDomainName }
+			></ContactsPrivacyInfo>
+		);
+
+		const contactInformation = findRegistrantWhois( whoisData );
+
+		const { privateDomain } = domain;
+		const privacyProtectionLabel = privateDomain
+			? translate( 'Privacy protection on', { textOnly: true } )
+			: translate( 'Privacy protection off', { textOnly: true } );
+
+		if ( ! domain.currentUserCanManage ) {
+			return (
+				<Accordion title="Contact information" subtitle={ `${ privacyProtectionLabel }` }>
+					{ getContactsPrivacyInfo() }
+				</Accordion>
+			);
+		}
+
+		if ( ! contactInformation ) {
+			requestWhois( selectedDomainName );
+			return getPlaceholderAccordion();
+		}
+
+		const contactInfoFullName = `${ contactInformation.fname } ${ contactInformation.lname }`;
+
+		return (
+			<Accordion
+				title="Contact information"
+				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }` }
+			>
+				{ getContactsPrivacyInfo() }
+			</Accordion>
+		);
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		return (
 			<>
 				{ renderDetailsSection() }
 				{ renderSetAsPrimaryDomainSection() }
+				{ renderContactInformationSecion() }
 				{ renderDomainSecuritySection() }
 			</>
 		);
@@ -170,11 +236,15 @@ export default connect(
 			: null;
 
 		return {
+			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			currentRoute: getCurrentRoute( state ),
 			domain: getSelectedDomain( ownProps )!,
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 		};
+	},
+	{
+		requestWhois,
 	}
 )( Settings );
