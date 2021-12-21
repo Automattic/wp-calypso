@@ -63,15 +63,15 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 				</p>
 			);
 		}
-
+		const additionalProps = { disabled: isUpdatingPrivacy || ! privacyAvailable };
 		return (
 			<>
 				<div className="contact-information__toggle-item">
 					<ToggleControl
 						checked={ privateDomain }
-						disabled={ isUpdatingPrivacy || ! privacyAvailable }
 						onChange={ togglePrivacy }
 						label={ label }
+						{ ...additionalProps }
 					/>
 				</div>
 				{ privacyProtectionNote }
@@ -114,15 +114,17 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 			</p>
 		) : null;
 
+		const additionalProps = { disabled: isUpdatingPrivacy || isPendingIcannVerification };
+
 		return (
 			<>
 				<div className="contact-information__toggle-item">
 					<ToggleControl
 						className="contact-information__toggle-button"
 						checked={ contactInfoDisclosed }
-						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
 						onChange={ toggleContactInfo }
 						label={ translate( 'Display my contact information in public WHOIS' ) }
+						{ ...additionalProps }
 					/>
 				</div>
 				{ contactVerificationNotice }
