@@ -217,13 +217,16 @@ function PluginDetails( props ) {
 				navigationItems={ getNavigationItems() }
 				compactBreadcrumb={ ! isWide }
 			>
-				{ isEnabled( 'marketplace-v1' ) && isMarketplaceProduct && (
-					<BillingIntervalSwitcher
-						billingPeriod={ billingPeriod }
-						onChange={ setBillingPeriod }
-						compact={ ! isWide }
-					/>
-				) }
+				{ isEnabled( 'marketplace-v1' ) &&
+					isMarketplaceProduct &&
+					! requestingPluginsForSites &&
+					! isPluginInstalledOnsite && (
+						<BillingIntervalSwitcher
+							billingPeriod={ billingPeriod }
+							onChange={ setBillingPeriod }
+							compact={ ! isWide }
+						/>
+					) }
 			</FixedNavigationHeader>
 			<PluginNotices
 				pluginId={ fullPlugin.id }
