@@ -140,8 +140,9 @@ function PluginDetails( props ) {
 			...plugin,
 			...wpcomPlugin,
 			...wporgPlugin,
+			isMarketplaceProduct,
 		};
-	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched ] );
+	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isMarketplaceProduct ] );
 
 	const existingPlugin = useMemo( () => {
 		if (
