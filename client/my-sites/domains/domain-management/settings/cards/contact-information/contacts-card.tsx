@@ -144,7 +144,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 							href={ domainManagementEditContactInfo(
 								props.selectedSite.slug,
 								props.selectedDomainName,
-								props.currentRoute
+								props.currentRoute as undefined
 							) }
 						>
 							{ translate( 'Edit' ) }
@@ -154,7 +154,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 								href={ domainManagementManageConsent(
 									props.selectedSite.slug,
 									props.selectedDomainName,
-									props.currentRoute
+									props.currentRoute as undefined
 								) }
 							>
 								{ translate( 'Manage consent' ) }

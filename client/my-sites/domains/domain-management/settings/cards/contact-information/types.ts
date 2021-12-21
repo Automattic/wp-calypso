@@ -34,7 +34,7 @@ export type ContactsCardPassedProps = {
 };
 
 export type ContactsCardConnectedProps = {
-	currentRoute: string;
+	currentRoute?: string;
 	isUpdatingPrivacy: boolean;
 };
 
