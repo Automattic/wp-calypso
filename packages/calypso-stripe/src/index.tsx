@@ -70,6 +70,9 @@ export interface UseStripeJs {
 }
 
 export type GetStripeConfigurationArgs = { country?: string };
+export type GetStripeSetupIntentId = ( requestArgs: {
+	needs_intent?: boolean;
+} ) => Promise< { setup_intent_id: StripeSetupIntentId | undefined } >;
 export type GetStripeConfiguration = (
 	requestArgs: GetStripeConfigurationArgs & { needs_intent?: boolean }
 ) => Promise< StripeConfiguration & { setup_intent_id: StripeSetupIntentId | undefined } >;
@@ -424,7 +427,7 @@ const setupIntentRequestArgs = { needs_intent: true };
  * configuration to reload by calling `reload()`.
  */
 function useFetchSetupIntentId(
-	fetchStripeConfiguration: GetStripeConfiguration
+	fetchStripeConfiguration: GetStripeSetupIntentId
 ): {
 	setupIntentId: StripeSetupIntentId | undefined;
 	error: undefined | Error;
@@ -472,21 +475,19 @@ function areRequestArgsEqual(
 	return true;
 }
 
-function StripeHookProviderInnerWrapper( {
-	stripeData,
-	stripeSetupIntentData,
+export function StripeSetupIntentIdProvider( {
 	children,
+	fetchStipeSetupIntentId,
 }: {
-	stripeData: StripeData;
-	stripeSetupIntentData: StripeSetupIntentIdData;
 	children: JSX.Element;
-} ): JSX.Element {
+	fetchStipeSetupIntentId: GetStripeSetupIntentId;
+} ) {
+	const setupIntentData = useFetchSetupIntentId( fetchStipeSetupIntentId );
+
 	return (
-		<StripeContext.Provider value={ stripeData }>
-			<StripeSetupIntentContext.Provider value={ stripeSetupIntentData }>
-				{ children }
-			</StripeSetupIntentContext.Provider>
-		</StripeContext.Provider>
+		<StripeSetupIntentContext.Provider value={ setupIntentData }>
+			{ children }
+		</StripeSetupIntentContext.Provider>
 	);
 }
 
@@ -505,7 +506,6 @@ export function StripeHookProvider( {
 		fetchStripeConfiguration,
 		configurationArgs
 	);
-	const setupIntentData = useFetchSetupIntentId( fetchStripeConfiguration );
 	const { stripe, isStripeLoading, stripeLoadingError } = useStripeJs(
 		stripeConfiguration,
 		stripeConfigurationError,
@@ -521,12 +521,7 @@ export function StripeHookProvider( {
 
 	return (
 		<Elements stripe={ stripe }>
-			<StripeHookProviderInnerWrapper
-				stripeData={ stripeData }
-				stripeSetupIntentData={ setupIntentData }
-			>
-				{ children }
-			</StripeHookProviderInnerWrapper>
+			<StripeContext.Provider value={ stripeData }>{ children }</StripeContext.Provider>
 		</Elements>
 	);
 }
@@ -558,14 +553,16 @@ export function useStripe(): StripeData {
 /**
  * Custom hook to access a Stripe setup intent ID
  *
- * First you must wrap a parent component in `StripeHookProvider`. Then you can
- * call this hook in any sub-component to get access to the setup intent ID
- * which can be passed to `createStripeSetupIntent`.
+ * First you must wrap a parent component in `StripeSetupIntentIdProvider`.
+ * Then you can call this hook in any sub-component to get access to the setup
+ * intent ID which can be passed to `createStripeSetupIntent`.
  */
 export function useStripeSetupIntentId(): StripeSetupIntentIdData {
 	const stripeData = useContext( StripeSetupIntentContext );
 	if ( ! stripeData ) {
-		throw new Error( 'useStripeSetupIntentId can only be used inside a StripeHookProvider' );
+		throw new Error(
+			'useStripeSetupIntentId can only be used inside a StripeSetupIntentIdProvider'
+		);
 	}
 	return stripeData;
 }

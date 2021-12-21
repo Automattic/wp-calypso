@@ -13,6 +13,13 @@ You'll need to wrap this context provider around any component that wishes to us
 - `configurationArgs?: null | GetStripeConfigurationArgs` Options to pass to the fetchStripeConfiguration function, specifically `country`.
 - `locale?: string` An optional locale string used to localize error messages for the Stripe elements fields.
 
+## StripeSetupIntentIdProvider
+
+You'll need to wrap this context provider around any component that wishes to use `useStripeSetupIntentId`. It accepts the following props:
+
+- `children: JSX.Element`
+- `fetchStripeConfiguration: GetStripeSetupIntentId` A function to fetch the stripe configuration from the WP.com HTTP API. It will be passed `{needs_intent: true}`.
+
 ## useStripe
 
 A React hook that allows access to Stripe.js. This returns an object with the following properties:
@@ -26,9 +33,9 @@ A React hook that allows access to Stripe.js. This returns an object with the fo
 
 A React hook that allows access to creating a setup intent ID that can be passed to createStripeSetupIntent. This returns an object with the following properties:
 
-- `setupIntentId: StripeSetupIntentId | undefined`. The setup intent ID.
+- `setupIntentId: string | undefined`. The setup intent ID.
 - `error: undefined | null | Error`. An error, if one exists.
-- `reload: ReloadStripeConfiguration`. A function that can be used to reload the setupIntentId, which should be done if it is used at all (even if it fails).
+- `reload: () => void`. A function that can be used to reload the setupIntentId, which should be done if it is used at all (even if it fails).
 
 ## createStripeSetupIntent
 
