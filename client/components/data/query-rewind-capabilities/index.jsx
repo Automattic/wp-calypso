@@ -1,6 +1,18 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { Component, useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
+
+export const useQueryRewindCapabilities = ( siteId ) => {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		dispatch( requestRewindCapabilities( siteId ) );
+	}, [ siteId, dispatch ] );
+};
 
 export class QueryRewindCapabilities extends Component {
 	componentDidMount() {
