@@ -1,4 +1,5 @@
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useMemo, useEffect } from 'react';
@@ -22,7 +23,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 
 function AddNewPaymentMethod() {
 	const goToPaymentMethods = () => page( paymentMethods );
-	const addPaymentMethodTitle = titles.addPaymentMethod;
+	const addPaymentMethodTitle = String( titles.addPaymentMethod );
 
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
@@ -33,11 +34,13 @@ function AddNewPaymentMethod() {
 		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		activePayButtonText: translate( 'Save card' ),
+		activePayButtonText: String( translate( 'Save card' ) ),
 		allowUseForAllSubscriptions: true,
 		initialUseForAllSubscriptions: true,
 	} );
-	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( Boolean ), [ stripeMethod ] );
+	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [
+		stripeMethod,
+	] );
 	const reduxDispatch = useDispatch();
 	useEffect( () => {
 		if ( stripeLoadingError ) {
@@ -75,7 +78,7 @@ function AddNewPaymentMethod() {
 	);
 }
 
-export default function AccountLevelAddNewPaymentMethodWrapper( props ) {
+export default function AccountLevelAddNewPaymentMethodWrapper() {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider
@@ -83,7 +86,7 @@ export default function AccountLevelAddNewPaymentMethodWrapper( props ) {
 			configurationArgs={ { needs_intent: true } }
 			fetchStripeConfiguration={ getStripeConfiguration }
 		>
-			<AddNewPaymentMethod { ...props } />
+			<AddNewPaymentMethod />
 		</StripeHookProvider>
 	);
 }
