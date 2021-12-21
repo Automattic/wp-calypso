@@ -29,7 +29,7 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 			icon: play,
 			value: 'courses',
 			actionText: translate( 'Start learning' ),
-			disabled: ! isEnabled( 'signup/starting-point-courses' ),
+			hidden: ! isEnabled( 'signup/starting-point-courses' ),
 		},
 		{
 			key: 'design',
@@ -47,7 +47,7 @@ const StartingPoint: React.FC< Props > = ( { onSelect, translate } ) => {
 
 	return (
 		<SelectItems
-			items={ startingPoints.filter( ( { disabled } ) => ! disabled ) }
+			items={ startingPoints.filter( ( { hidden } ) => ! hidden ) }
 			onSelect={ onSelect }
 		/>
 	);
