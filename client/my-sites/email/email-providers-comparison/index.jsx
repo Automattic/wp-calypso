@@ -365,7 +365,11 @@ class EmailProvidersComparison extends Component {
 		const formattedPrice = productIsDiscounted
 			? translate( '{{fullPrice/}} {{discountedPrice/}} /mailbox /month (billed annually)', {
 					components: {
-						fullPrice: <span>{ monthlyPrice }</span>,
+						fullPrice: (
+							<span className="email-providers-comparison__full-price">
+								{ monthlyPrice }
+							</span>
+						),
 						discountedPrice: (
 							<span className="email-providers-comparison__discounted-price">
 								{ getMonthlyPrice( gSuiteProduct.sale_cost, currencyCode ) }

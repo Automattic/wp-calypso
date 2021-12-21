@@ -20,11 +20,12 @@
 	.promo-card__price {
 		.price__cost {
 			.provider-cards__price-with-interval-price-discounted {
+				color: var( --color-text-subtle );
 				text-decoration: line-through;
 			}
 
 			.provider-cards__price-with-interval-sale-price {
-				color: var( --studio-green-50 );
+				font-weight: 600;
 			}
 		}
 	}

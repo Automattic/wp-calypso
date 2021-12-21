@@ -175,15 +175,17 @@
 				text-decoration: line-through;
 			}
 
-			&.price__discounted span {
-				color: var( --color-text-subtle );
+			&.price__discounted {
+				.email-providers-comparison__full-price {
+					color: var( --color-text-subtle );
+				}
 
-				&.email-providers-comparison__discounted-price {
-					color: var( --studio-green-50 );
+				.email-providers-comparison__discounted-price {
+					font-weight: 600;
 					text-decoration: none;
 				}
 
-				&.email-providers-comparison__keep-main-price {
+				.email-providers-comparison__keep-main-price {
 					text-decoration: none;
 				}
 			}
