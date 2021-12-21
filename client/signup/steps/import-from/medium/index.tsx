@@ -4,32 +4,33 @@ import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import ImporterMedium from 'calypso/my-sites/importer/importer-medium';
-import { resetImport, startImport } from 'calypso/state/imports/actions';
+import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import DoneButton from '../components/done-button';
 import { Importer, ImportJob, ImportJobParams } from '../types';
-import './style.scss';
 import { getImporterTypeForEngine } from '../util';
+
+import './style.scss';
 
 interface Props {
 	job?: ImportJob;
 	run: boolean;
 	siteId: number;
+	site: unknown;
 	siteSlug: string;
 	fromSite: string;
-	importSite?: ( params: ImportJobParams ) => void;
-	startImport?: ( siteId: number, type: string ) => void;
-	resetImport?: ( siteId: number, importerId: string ) => void;
+	importSite: ( params: ImportJobParams ) => void;
+	startImport: ( siteId: number, type: string ) => void;
+	resetImport: ( siteId: number, importerId: string ) => void;
 }
 export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'medium';
 	const { __ } = useI18n();
-	const { job, run, siteId, siteSlug, fromSite } = props;
-	// const importerConfig = getImporterByKey( 'importer-type-medium', { siteTitle: 'Medium' } );
+	const { job, siteId, site, siteSlug, fromSite, importSite, startImport, resetImport } = props;
 
 	/**
-	 ↓ Effects
+	 * Effects
 	 */
 	useEffect( runImport, [ job ] );
 
@@ -37,7 +38,7 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Methods
 	 */
 	function runImport() {
-		if ( ! run ) return;
+		// if ( ! run ) return;
 
 		// If there is no existing import job, start a new
 		if ( job === undefined ) {
@@ -62,7 +63,7 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function checkIsSuccess() {
-		return job && job.importerState === appStates.IMPORT_SUCCESS;
+		return job?.importerState === appStates.IMPORT_SUCCESS;
 	}
 
 	function afterStartImport() {
@@ -73,7 +74,9 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 		<>
 			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
 				{ ( () => {
-					if ( checkIsSuccess() ) {
+					if ( ! job ) {
+						return;
+					} else if ( checkIsSuccess() ) {
 						/**
 						 * Complete screen
 						 */
@@ -98,9 +101,10 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 					 */
 					return (
 						<ImporterMedium
-							site={ props }
+							site={ site }
 							engine={ importer }
 							fromSite={ fromSite }
+							importerStatus={ job }
 							afterStartImport={ afterStartImport }
 						/>
 					);

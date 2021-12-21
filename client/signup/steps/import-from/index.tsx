@@ -12,14 +12,13 @@ import {
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSiteId } from 'calypso/state/sites/selectors';
-import NotAuthorized from './components/not-authorized';
-import NotFound from './components/not-found';
-import { MediumImporter } from './medium';
 import { Importer, QueryObject, ImportJob } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
-
+import NotFound from './components/not-found';
+import { getSiteId, getSite } from 'calypso/state/sites/selectors';
+import NotAuthorized from './components/not-authorized';
+import MediumImporter from './medium';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -30,6 +29,7 @@ interface Props {
 	stepSectionName: string;
 	queryObject: QueryObject;
 	siteId: number;
+	site: unknown;
 	siteSlug: string;
 	fromSite: string;
 	canImport: boolean;
@@ -41,6 +41,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const {
 		stepSectionName,
 		siteId,
+		site,
 		canImport,
 		siteSlug,
 		siteImports,
@@ -131,6 +132,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 											job={ getImportJob( engine ) }
 											run={ runImportInitially }
 											siteId={ siteId }
+											site={ site }
 											siteSlug={ siteSlug }
 											fromSite={ fromSite }
 										/>
@@ -168,6 +170,7 @@ export default connect(
 
 		return {
 			siteId,
+			site: getSite( state, siteId ),
 			siteSlug,
 			fromSite,
 			siteImports: getImporterStatusForSiteId( state, siteId ),
