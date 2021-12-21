@@ -14,6 +14,8 @@ const selectors = {
 		`${ sidebarParentSelector } .components-panel__body-toggle:has-text("${ sectionName }")`,
 	expandedSection: ( sectionName: EditorSidebarSection ) =>
 		`${ sidebarParentSelector } .is-opened .components-panel__body-toggle:has-text("${ sectionName }")`,
+	revisionsToggle: `${ sidebarParentSelector } .components-panel__body:has-text("Revisions")`,
+	revisionsModal: 'div.editor-revisions',
 	lastSection: `${ sidebarParentSelector } .components-panel__body >> nth=-1`,
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ sidebarParentSelector } [aria-label=Categories] :text("${ categoryName }")`,
@@ -64,6 +66,14 @@ export class EditorSettingsSidebarComponent {
 		if ( ! ( await this.frame.isVisible( selectors.expandedSection( sectionName ) ) ) ) {
 			await this.frame.click( selectors.sectionToggle( sectionName ) );
 		}
+	}
+
+	/**
+	 * Clikcks on the Revisions section in the sidebar to show a revisions modal.
+	 */
+	async showRevisions(): Promise< void > {
+		await this.frame.click( selectors.revisionsToggle );
+		await this.frame.waitForSelector( selectors.revisionsModal );
 	}
 
 	/**
