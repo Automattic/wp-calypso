@@ -64,7 +64,7 @@ const VideosUi = ( { HeaderBar, FooterBar, areVideosTranslated = true } ) => {
 				return;
 			}
 		}
-		const initialVideoId = 'find-theme';
+		const initialVideoId = videoSlugs[ 0 ];
 		setCurrentVideoKey( initialVideoId );
 		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoId ) );
 	}, [ course, initialUserCourseProgression ] );
