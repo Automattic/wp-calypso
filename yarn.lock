@@ -461,6 +461,7 @@ __metadata:
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-query: ^3.32.1
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
@@ -935,7 +936,7 @@ __metadata:
   resolution: "@automattic/page-pattern-modal@workspace:packages/page-pattern-modal"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/design-picker": "workspace:^"
+    "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.2
     "@wordpress/blocks": ^11.1.4
