@@ -92,24 +92,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 		setIntervalLengthPure( interval );
 	};
 
-	const getDisabledReason = (
-		interval: IntervalLength,
-		isGSuiteSupported: boolean
-	): TranslateResult => {
-		if ( interval === IntervalLength.MONTHLY ) {
-			return translate( 'Monthly billing not supported.' );
-		} else if ( ! isGSuiteSupported ) {
-			return translate(
-				"{{strong}}%(domainName)s's{{/strong}} DNS records need to be configured.",
-				{
-					components: { strong: <strong /> },
-					args: { domainName: selectedDomainName },
-					context: 'Notice for mapped subdomain that has DNS records need to set up',
-				}
-			);
-		}
-		return null;
-	};
+	const showGoogleWorkspaceCard = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
 
 	return (
 		<Main className="email-providers-stacked-comparison__main" wideLayout>
@@ -135,16 +118,16 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				onExpandedChange={ onExpandedChange }
 			/>
 
-			<GoogleWorkspaceCard
-				comparisonContext={ comparisonContext }
-				detailsExpanded={ detailsExpanded.google }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
-				intervalLength={ intervalLength }
-				disabled={ intervalLength === IntervalLength.MONTHLY || ! isGSuiteSupported }
-				disabledReason={ getDisabledReason( intervalLength, isGSuiteSupported ) }
-				onExpandedChange={ onExpandedChange }
-			/>
+			{ showGoogleWorkspaceCard && (
+				<GoogleWorkspaceCard
+					comparisonContext={ comparisonContext }
+					detailsExpanded={ detailsExpanded.google }
+					selectedDomainName={ selectedDomainName }
+					source={ source }
+					intervalLength={ intervalLength }
+					onExpandedChange={ onExpandedChange }
+				/>
+			) }
 		</Main>
 	);
 };
