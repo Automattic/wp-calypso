@@ -77,12 +77,6 @@
 
 	.filterbar__selection.is-active,
 	.filterbar__selection.is-active:focus,
-	.filterbar__selection.is-active:hover {
-		margin: 8px;
-	}
-
-	.filterbar__selection.is-active,
-	.filterbar__selection.is-active:focus,
 	.filterbar__selection.is-active:hover,
 	.date-range.toggle-visible .filterbar__selection.button:not( .is-selected ) {
 		border-radius: 2px;
