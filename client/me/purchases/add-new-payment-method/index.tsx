@@ -1,4 +1,8 @@
-import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import {
+	StripeHookProvider,
+	StripeSetupIntentIdProvider,
+	useStripe,
+} from '@automattic/calypso-stripe';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -82,7 +86,9 @@ export default function AccountLevelAddNewPaymentMethodWrapper() {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<AddNewPaymentMethod />
+			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
+				<AddNewPaymentMethod />
+			</StripeSetupIntentIdProvider>
 		</StripeHookProvider>
 	);
 }

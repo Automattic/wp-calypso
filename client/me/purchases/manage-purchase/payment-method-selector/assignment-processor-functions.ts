@@ -93,8 +93,9 @@ export async function assignNewCardProcessor(
 		}
 
 		// If we've reached this point in the code and anything after this fails,
-		// we must regenerate the payment intent, which is done by calling
-		// reloadStripeConfiguration from `@automattic/calypso-stripe`.
+		// we must regenerate the payment intent, which is done by calling `reload`
+		// as returned by `useStripeSetupIntentId` from
+		// `@automattic/calypso-stripe`.
 
 		if ( purchase ) {
 			const result = await updateCreditCard( {
