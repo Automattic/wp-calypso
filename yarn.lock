@@ -177,6 +177,11 @@ __metadata:
   peerDependencies:
     postcss: ^8.4.5
     webpack: ^5.65.0
+  peerDependenciesMeta:
+    postcss:
+      optional: true
+    webpack:
+      optional: true
   bin:
     calypso-build: ./bin/calypso-build.js
     copy-assets: ./bin/copy-assets.js
