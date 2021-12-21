@@ -24,7 +24,9 @@ function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Eleme
 
 export default function CartMessages(): null {
 	const cartKey = useCartKey();
-	const { responseCart: cart, isLoading: isLoadingCart } = useShoppingCart( cartKey );
+	const { responseCart: cart, isLoading: isLoadingCart, reloadFromServer } = useShoppingCart(
+		cartKey
+	);
 	const reduxDispatch = useDispatch();
 
 	const showErrorMessages = useCallback(
@@ -43,6 +45,7 @@ export default function CartMessages(): null {
 
 	useDisplayCartMessages( {
 		cart,
+		reloadFromServer,
 		isLoadingCart,
 		showErrorMessages,
 		showSuccessMessages,
