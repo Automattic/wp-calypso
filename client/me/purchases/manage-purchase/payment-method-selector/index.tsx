@@ -32,7 +32,7 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
-import type { ReloadStripeConfiguration } from '@automattic/calypso-stripe';
+import type { ReloadSetupIntentId } from '@automattic/calypso-stripe';
 import type { CheckoutPageErrorCallback, PaymentMethod } from '@automattic/composite-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -237,7 +237,7 @@ function onPaymentSelectComplete( {
 	translate: ReturnType< typeof useTranslate >;
 	showSuccessMessage: ( message: string | TranslateResult ) => void;
 	purchase?: Purchase | undefined;
-	reloadSetupIntentId: ReloadStripeConfiguration;
+	reloadSetupIntentId: ReloadSetupIntentId;
 } ) {
 	if ( purchase ) {
 		showSuccessMessage( translate( 'Your payment method has been set.' ) );
