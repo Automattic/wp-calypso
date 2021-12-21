@@ -26,7 +26,6 @@ import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
-import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
