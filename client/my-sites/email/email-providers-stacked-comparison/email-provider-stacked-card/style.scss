@@ -265,12 +265,3 @@ h2.action-panel__title {
 	display:flex;
 	flex-direction: column;
 }
-
-.disabled {
-	background-color: var( --color-neutral-20 );
-}
-
-.email-provider-stacked-card__disabled-reason {
-	margin-left: 8px;
-	align-self: center;
-}

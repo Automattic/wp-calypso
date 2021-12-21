@@ -17,8 +17,6 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		children,
 		description,
 		detailsExpanded,
-		disabled,
-		disabledReason,
 		expandButtonLabel,
 		features,
 		footerBadge,
@@ -43,46 +41,36 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 		onExpandedChange( providerKey, ! detailsExpanded );
 	};
 
-	const reasonClass = classnames( 'email-provider-stacked-card__title-price-badge', {
-		'email-provider-stacked-card__disabled-reason': disabled,
-	} );
 	const header = (
 		<div className="email-provider-stacked-card__header">
 			<div className="email-provider-stacked-card__title-container">
 				<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
 				<p>{ description }</p>
 			</div>
-			<div className={ reasonClass }>
-				{ ! disabled && priceBadge }
-				{ disabled && (
-					<span className={ 'email-provider-stacked-card__disabled-reason' }>
-						{ disabledReason }
-					</span>
+			<div className="email-provider-stacked-card__title-price-badge">{ priceBadge }</div>
+			<div className="email-provider-stacked-card__provider-card-main-details">
+				{ showExpandButton && (
+					<Button
+						primary={ false }
+						onClick={ toggleVisibility }
+						className="email-provider-stacked-card__provider-expand-cta"
+					>
+						{ expandButtonLabel }
+					</Button>
 				) }
 			</div>
-			{ ! disabled && (
-				<div className="email-provider-stacked-card__provider-card-main-details">
-					{ showExpandButton && ! disabled && (
-						<Button
-							primary={ false }
-							onClick={ toggleVisibility }
-							className="email-provider-stacked-card__provider-expand-cta"
-						>
-							{ expandButtonLabel }
-						</Button>
-					) }
-				</div>
-			) }
 		</div>
 	);
 
-	const containerClasses = classnames( 'email-providers-stacked-comparison__provider-card', {
-		disabled: disabled,
-		'is-expanded': detailsExpanded && ! disabled,
-	} );
-
 	return (
-		<PromoCard className={ containerClasses } image={ logo } titleComponent={ header } icon={ '' }>
+		<PromoCard
+			className={ classnames( 'email-providers-stacked-comparison__provider-card', {
+				'is-expanded': detailsExpanded,
+			} ) }
+			image={ logo }
+			titleComponent={ header }
+			icon={ '' }
+		>
 			<div className="email-provider-stacked-card__provider-price-and-button">
 				{ showFeaturesToggleButton && (
 					<EmailProviderFeaturesToggleButton
@@ -103,7 +91,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 				</div>
 			</div>
 
-			{ ! disabled && children }
+			{ children }
 		</PromoCard>
 	);
 };

@@ -59,7 +59,6 @@ const getTitanFeatures = () => {
 
 const professionalEmailCardInformation: ProviderCard = {
 	detailsExpanded: true,
-	disabled: false,
 	expandButtonLabel: translate( 'Select' ),
 	onExpandedChange: noop,
 	providerKey: 'titan',

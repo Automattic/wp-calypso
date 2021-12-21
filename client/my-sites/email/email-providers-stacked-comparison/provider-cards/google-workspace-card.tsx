@@ -57,7 +57,6 @@ const getGoogleFeatures = () => {
 const googleWorkspaceCardInformation: ProviderCard = {
 	detailsExpanded: false,
 	expandButtonLabel: translate( 'Select' ),
-	disabled: false,
 	onExpandedChange: noop,
 	providerKey: 'google',
 	showExpandButton: true,
