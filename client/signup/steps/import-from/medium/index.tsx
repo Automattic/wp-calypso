@@ -1,23 +1,26 @@
 import { Hooray, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { translate, TranslateOptions } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import ImporterMedium from 'calypso/my-sites/importer/importer-medium';
-import { startImport, resetImport } from 'calypso/state/imports/actions';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import importerConfig from 'calypso/lib/importer/importer-config';
+import FileImporter from 'calypso/my-sites/importer/file-importer';
+import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import DoneButton from '../components/done-button';
+import { Site } from '../components/importer-drag';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
-
 import './style.scss';
 
 interface Props {
 	job?: ImportJob;
 	run: boolean;
 	siteId: number;
-	site: unknown;
+	site: Site;
 	siteSlug: string;
 	fromSite: string;
 	importSite: ( params: ImportJobParams ) => void;
@@ -28,6 +31,9 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'medium';
 	const { __ } = useI18n();
 	const { job, siteId, site, siteSlug, fromSite, importSite, startImport, resetImport } = props;
+	const importerData = importerConfig().medium;
+
+	populateMessages();
 
 	/**
 	 * Effects
@@ -66,8 +72,32 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 		return job?.importerState === appStates.IMPORT_SUCCESS;
 	}
 
-	function afterStartImport() {
-		return;
+	// Change the default messages
+	function populateMessages() {
+		const options: TranslateOptions = {
+			args: {
+				importerName: 'Medium',
+			},
+			components: {
+				supportLink: (
+					<InlineSupportLink supportContext="importers-medium" showIcon={ false }>
+						{ translate( 'Need help exporting your content?' ) }
+					</InlineSupportLink>
+				),
+			},
+		};
+
+		importerData.title = __( 'Import content from Medium' );
+
+		importerData.description = translate(
+			'Import your posts, tags, images, and videos from your %(importerName)s export file',
+			options
+		);
+
+		importerData.uploadDescription = translate(
+			'A %(importerName)s export file is a ZIP file containing several HTML files with your stories.',
+			options
+		);
 	}
 
 	return (
@@ -100,13 +130,7 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 					 * Upload section
 					 */
 					return (
-						<ImporterMedium
-							site={ site }
-							engine={ importer }
-							fromSite={ fromSite }
-							importerStatus={ job }
-							afterStartImport={ afterStartImport }
-						/>
+						<FileImporter site={ site } importerData={ importerData } importerStatus={ job } />
 					);
 				} )() }
 			</div>
