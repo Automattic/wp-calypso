@@ -17,6 +17,10 @@
 }
 
 .email-provider-stacked-card__title-price-badge {
+	.badge {
+		margin-bottom: 12px;
+	}
+
 	.promo-card__price {
 		.price__cost {
 			.provider-cards__price-with-interval-price-discounted {
