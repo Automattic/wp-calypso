@@ -46,8 +46,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const reduxState = reduxStore.getState();
 	const domainItem = dependencies.domainItem
 		? prepareItemForAddingToCart(
-				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState ),
-				reduxState
+				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState )
 		  )
 		: null;
 
@@ -77,7 +76,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
 			.filter( Boolean )
-			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
+			.map( ( item ) => prepareItemForAddingToCart( item ) );
 
 		cartManagerClient
 			.forCartKey( siteId )
@@ -448,7 +447,7 @@ function processItemCart(
 		const reduxState = reduxStore.getState();
 		const newCartItemsToAdd = newCartItems
 			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
-			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
+			.map( ( item ) => prepareItemForAddingToCart( item ) );
 
 		if ( newCartItemsToAdd.length ) {
 			debug( 'adding products to cart', newCartItemsToAdd );
