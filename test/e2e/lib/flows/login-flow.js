@@ -6,7 +6,6 @@ import * as driverManager from '../driver-manager';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 import * as loginCookieHelper from '../login-cookie-helper';
 import CustomerHome from '../pages/customer-home-page';
-import EditorPage from '../pages/editor-page';
 import LoginPage from '../pages/login-page.js';
 import PagesPage from '../pages/pages-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
@@ -89,11 +88,7 @@ export default class LoginFlow {
 		return await loginCookieHelper.saveLogin( this.driver, this.account.username );
 	}
 
-	async loginAndStartNewPost(
-		siteURL = null,
-		usingGutenberg = false,
-		{ useFreshLogin = false } = {}
-	) {
+	async loginAndStartNewPost( siteURL = null, { useFreshLogin = false } = {} ) {
 		if (
 			siteURL ||
 			( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' )
@@ -116,21 +111,12 @@ export default class LoginFlow {
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
 		await navbarComponent.clickCreateNewPost( { siteURL: siteURL } );
 
-		if ( usingGutenberg ) {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.initEditor();
-		}
-
-		if ( ! usingGutenberg ) {
-			this.editorPage = await EditorPage.Expect( this.driver );
-
-			return await this.editorPage.waitForPage();
-		}
+		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+		await gEditorComponent.initEditor();
 	}
 
 	async loginAndStartNewPage(
 		site = null,
-		usingGutenberg = false,
 		{ useFreshLogin = false, dismissPageTemplateLocator = true, editorType = 'iframe' } = {}
 	) {
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
@@ -145,16 +131,8 @@ export default class LoginFlow {
 		const pagesPage = await PagesPage.Expect( this.driver );
 		await pagesPage.selectAddNewPage();
 
-		if ( usingGutenberg ) {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, editorType );
-			await gEditorComponent.initEditor( { dismissPageTemplateLocator } );
-		}
-
-		if ( ! usingGutenberg ) {
-			this.editorPage = await EditorPage.Expect( this.driver );
-
-			return await this.editorPage.waitForPage();
-		}
+		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, editorType );
+		await gEditorComponent.initEditor( { dismissPageTemplateLocator } );
 	}
 
 	async loginAndSelectDomains() {
