@@ -105,20 +105,15 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	const discount = productIsDiscounted ? (
 		<div className="google-workspace-card__discount-with-renewal">
 			{ translate(
-				'%(discount)d% off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
+				'%(discountedPrice)s billed today, renews at %(standardPrice)s',
 				{
 					args: {
-						discount: gSuiteProduct.sale_coupon.discount,
 						discountedPrice: salePriceForIntervalLength,
 						standardPrice: standardPriceForIntervalLength,
 					},
 					comment:
-						'%(discount)d is a numeric discount percentage, e.g. 40; ' +
 						'%(discountedPrice)s is a formatted, discounted price that the user will pay today, e.g. $3; ' +
 						'%(standardPrice)s is a formatted price, e.g. $5',
-					components: {
-						span: <span />,
-					},
 				}
 			) }
 
@@ -137,11 +132,24 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	) : null;
 
 	googleWorkspace.priceBadge = (
-		<PriceBadge
-			additionalPriceInformationComponent={ discount }
-			priceComponent={ priceWithInterval }
-			className={ 'google-workspace-card' }
-		/>
+		<>
+			{ productIsDiscounted && (
+				<div className="badge badge--info-green">
+					{ translate( '%(discount)d%% off', {
+						args: {
+							discount: gSuiteProduct.sale_coupon.discount,
+						},
+						comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
+					} ) }
+				</div>
+			) }
+
+			<PriceBadge
+				additionalPriceInformationComponent={ discount }
+				priceComponent={ priceWithInterval }
+				className={ 'google-workspace-card' }
+			/>
+		</>
 	);
 
 	const [ googleUsers, setGoogleUsers ] = useState( newUsers( selectedDomainName ) );
