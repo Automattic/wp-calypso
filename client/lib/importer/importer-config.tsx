@@ -3,8 +3,31 @@ import { translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
-function getConfig( { siteTitle = '' } = {} ) {
-	const importerConfig = {};
+export interface ImporterOptionalURL {
+	title: React.ReactChild;
+	description: React.ReactChild;
+	invalidDescription: React.ReactChild;
+}
+
+export interface ImporterConfig {
+	engine: string;
+	key: string;
+	type: 'file' | 'url';
+	title: string;
+	icon: string;
+	description: React.ReactChild;
+	uploadDescription: React.ReactChild;
+	weight: number;
+	overrideDestination?: string;
+	optionalUrl?: ImporterOptionalURL;
+}
+
+interface ImporterConfigMap {
+	[ key: string ]: ImporterConfig;
+}
+
+function getConfig( siteTitle = '' ): { [ key: string ]: ImporterConfig } {
+	const importerConfig: ImporterConfigMap = {};
 
 	importerConfig.wordpress = {
 		engine: 'wordpress',
@@ -235,8 +258,8 @@ function getConfig( { siteTitle = '' } = {} ) {
 	return importerConfig;
 }
 
-export function getImporters( params = {} ) {
-	const importerConfig = getConfig( params );
+export function getImporters( siteTitle = '' ) {
+	const importerConfig = getConfig( siteTitle );
 
 	if ( ! config.isEnabled( 'importers/substack' ) ) {
 		delete importerConfig.substack;
@@ -247,8 +270,8 @@ export function getImporters( params = {} ) {
 	return importers;
 }
 
-export function getImporterByKey( key, params = {} ) {
-	return filter( getImporters( params ), ( importer ) => importer.key === key )[ 0 ];
+export function getImporterByKey( key: string, siteTitle = '' ) {
+	return filter( getImporters( siteTitle ), ( importer ) => importer.key === key )[ 0 ];
 }
 
 export default getConfig;
