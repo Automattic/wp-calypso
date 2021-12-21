@@ -31,10 +31,13 @@ export type SettingsPageConnectedProps = {
 	currentRoute: string;
 	domain: ResponseDomain;
 	isLoadingPurchase: boolean;
+	purchase: Purchase | null;
+};
+
+export type SettingsPageNameServerHocProps = {
 	isLoadingNameservers: boolean;
 	loadingNameserversError: boolean;
 	nameservers: string[] | null;
-	purchase: Purchase | null;
 	updateNameservers: ( nameServers: string[] ) => void;
 	whoisData: WhoisData[];
 };
@@ -49,4 +52,5 @@ export type SettingsHeaderProps = {
 
 export type SettingsPageProps = SettingsPagePassedProps &
 	SettingsPageConnectedProps &
-	SettingsPageConnectedDispatchProps;
+	SettingsPageConnectedDispatchProps &
+	SettingsPageNameServerHocProps;
