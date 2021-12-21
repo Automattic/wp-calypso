@@ -9,8 +9,6 @@ export interface ProviderCard {
 	billingPeriod?: TranslateResult;
 	description: TranslateResult;
 	detailsExpanded?: boolean;
-	disabled?: boolean;
-	disabledReason?: TranslateResult;
 	discount?: ReactElement | null;
 	footerBadge?: ReactElement | null;
 	expandButtonLabel: TranslateResult;
@@ -32,8 +30,6 @@ export type EmailProvidersStackedCardProps = {
 	currencyCode?: string | null;
 	currentRoute?: string;
 	detailsExpanded: boolean;
-	disabled?: boolean;
-	disabledReason?: TranslateResult;
 	domain?: any;
 	domainName?: string;
 	domainsWithForwards?: any[];
