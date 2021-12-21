@@ -106,3 +106,14 @@
 .name-servers__custom-nameservers-row + .name-servers__custom-nameservers-form-buttons {
 	margin-top: 24px;
 }
+
+.name-servers__custom-nameservers-form-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 16px;
+	row-gap: 8px;
+
+	.button {
+		margin: 0;
+	}
+}
