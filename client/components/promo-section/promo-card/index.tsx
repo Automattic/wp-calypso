@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
-import { Children, cloneElement, FunctionComponent } from 'react';
+import { Children, cloneElement, FunctionComponent, isValidElement } from 'react';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
@@ -20,7 +20,7 @@ export interface Image {
 }
 
 export interface Props {
-	icon: string;
+	icon?: string;
 	image?: Image | ReactElement;
 	title?: string | TranslateResult;
 	titleComponent?: ReactElement;
@@ -53,10 +53,12 @@ const PromoCard: FunctionComponent< Props > = ( {
 		<Badge className="promo-card__title-badge">{ badge }</Badge>
 	) : null;
 
+	const imageActionPanelAlignment = image && 'align' in image && image.align ? image.align : 'left';
+	/* eslint-disable wpcalypso/jsx-gridicon-size */
 	return (
 		<ActionPanel className={ classes }>
 			{ image && (
-				<ActionPanelFigure inlineBodyText={ false } align={ image?.align || 'left' }>
+				<ActionPanelFigure inlineBodyText={ false } align={ imageActionPanelAlignment }>
 					{ isImage( image ) ? (
 						<img src={ image.path } alt={ image.alt } className={ image.className } />
 					) : (
@@ -66,7 +68,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 			) }
 			{ icon && (
 				<ActionPanelFigure inlineBodyText={ false } align="left">
-					<Gridicon icon={ icon } size="32" />
+					<Gridicon icon={ icon } size={ 32 } />
 				</ActionPanelFigure>
 			) }
 			<ActionPanelBody>
@@ -84,14 +86,16 @@ const PromoCard: FunctionComponent< Props > = ( {
 				) }
 				{ isPrimary
 					? Children.map( children, ( child ) => {
-							return child && PromoCardCta === child.type
-								? cloneElement( child, { isPrimary } )
-								: child;
+							if ( ! child || ! isValidElement( child ) ) {
+								return child;
+							}
+							return PromoCardCta === child.type ? cloneElement( child, { isPrimary } ) : child;
 					  } )
 					: children }
 			</ActionPanelBody>
 		</ActionPanel>
 	);
+	/* eslint-enable */
 };
 
 export default PromoCard;
