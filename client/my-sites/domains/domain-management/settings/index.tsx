@@ -302,4 +302,4 @@ export default connect(
 	{
 		requestWhois,
 	}
-)( withDomainNameservers( Settings ) ); // TODO: Check if the NS call will fail for transfers or domain connections
+)( withDomainNameservers( Settings ) );
