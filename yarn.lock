@@ -530,6 +530,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/eslint-plugin-json@workspace:^, @automattic/eslint-plugin-json@workspace:packages/eslint-plugin-package-json":
+  version: 0.0.0-use.local
+  resolution: "@automattic/eslint-plugin-json@workspace:packages/eslint-plugin-package-json"
+  dependencies:
+    "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    eslint-plugin-json-es: ^1.5.4
+    esquery: ^1.4.0
+    npm-package-json-lint: ^5.4.2
+  peerDependencies:
+    eslint: ">=8.4.1"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/explat-client-react-helpers@workspace:^, @automattic/explat-client-react-helpers@workspace:packages/explat-client-react-helpers":
   version: 0.0.0-use.local
   resolution: "@automattic/explat-client-react-helpers@workspace:packages/explat-client-react-helpers"
@@ -9992,7 +10006,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^6.1.0, ajv@npm:^6.10.0, ajv@npm:^6.10.2, ajv@npm:^6.12.0, ajv@npm:^6.12.2, ajv@npm:^6.12.4, ajv@npm:^6.12.5, ajv@npm:^6.5.5":
+"ajv@npm:^6.1.0, ajv@npm:^6.10.0, ajv@npm:^6.10.2, ajv@npm:^6.12.0, ajv@npm:^6.12.2, ajv@npm:^6.12.4, ajv@npm:^6.12.5, ajv@npm:^6.12.6, ajv@npm:^6.5.5":
   version: 6.12.6
   resolution: "ajv@npm:6.12.6"
   dependencies:
@@ -14001,6 +14015,19 @@ __metadata:
     path-type: ^4.0.0
     yaml: ^1.10.0
   checksum: 532cb7fc3690afb00fa989d8127a824439e2e926a3d40b4e07c3e563fe1910b91ed19d611143267fa607538f324f07eeb79e917aea85859786e6e1c0c00b1cda
+  languageName: node
+  linkType: hard
+
+"cosmiconfig@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "cosmiconfig@npm:7.0.1"
+  dependencies:
+    "@types/parse-json": ^4.0.0
+    import-fresh: ^3.2.1
+    parse-json: ^5.0.0
+    path-type: ^4.0.0
+    yaml: ^1.10.0
+  checksum: 3cd38525ba22e13da0ef9f4be131df226c94f5b96fb50f6297eb17baeedefe15cf5819f8c73cde69f71cc5034e712c86bd20c7756883dd8094087680ecc25932
   languageName: node
   linkType: hard
 
@@ -20544,6 +20571,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"ignore@npm:^5.1.9":
+  version: 5.2.0
+  resolution: "ignore@npm:5.2.0"
+  checksum: 7fb7b4c4c52c2555113ff968f8a83b8ac21b076282bfcb3f468c3fb429be69bd56222306c31de95dd452c647fc6ae24339b8047ebe3ef34c02591abfec58da01
+  languageName: node
+  linkType: hard
+
 "image-size@npm:^0.6.0":
   version: 0.6.3
   resolution: "image-size@npm:0.6.3"
@@ -23500,7 +23534,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jsonc-parser@npm:~3.0.0":
+"jsonc-parser@npm:^3.0.0, jsonc-parser@npm:~3.0.0":
   version: 3.0.0
   resolution: "jsonc-parser@npm:3.0.0"
   checksum: 373632ab71f773ce6081dd70297c40fbb05aacde07ab8a5852c78c0a13d1fadb7ad886202e87bfc0168dd78568cda2d4eb36e785dac330f93e5e772d7a67f33f
@@ -25171,6 +25205,25 @@ fsevents@~2.1.2:
     type-fest: ^0.8.1
     yargs-parser: ^18.1.1
   checksum: d88cb8a34229b30981a720c4b1caaf391888d8df1ee0a02782ff24bee8486c54bc95ce84a815c8d152a96201d2cf9c544da55c3880b7b1efe90df0a5dc1cfc8f
+  languageName: node
+  linkType: hard
+
+"meow@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "meow@npm:6.1.1"
+  dependencies:
+    "@types/minimist": ^1.2.0
+    camelcase-keys: ^6.2.2
+    decamelize-keys: ^1.1.0
+    hard-rejection: ^2.1.0
+    minimist-options: ^4.0.2
+    normalize-package-data: ^2.5.0
+    read-pkg-up: ^7.0.1
+    redent: ^3.0.0
+    trim-newlines: ^3.0.0
+    type-fest: ^0.13.1
+    yargs-parser: ^18.1.3
+  checksum: ceece1e5e09a53d7bf298ef137477e395a0dd30c8ed1a9980a52caad02eccffd6bce1a5cad4596cd694e7e924e949253f0cc1e7c22073c07ce7b06cfefbcf8be
   languageName: node
   linkType: hard
 
@@ -26849,6 +26902,31 @@ fsevents@~2.1.2:
   bin:
     npmPkgJsonLint: src/cli.js
   checksum: 7d0a9373905106713cb55c866294445b8e0bad0497b7ebe1f048b8b00ad5c346cc7933ca30536cf3538126787070e45a743153bba28cd9515483bc9216dd4d57
+  languageName: node
+  linkType: hard
+
+"npm-package-json-lint@npm:^5.4.2":
+  version: 5.4.2
+  resolution: "npm-package-json-lint@npm:5.4.2"
+  dependencies:
+    ajv: ^6.12.6
+    ajv-errors: ^1.0.1
+    chalk: ^4.1.2
+    cosmiconfig: ^7.0.1
+    debug: ^4.3.2
+    globby: ^11.0.4
+    ignore: ^5.1.9
+    is-plain-obj: ^3.0.0
+    jsonc-parser: ^3.0.0
+    log-symbols: ^4.1.0
+    meow: ^6.1.1
+    plur: ^4.0.0
+    semver: ^7.3.5
+    slash: ^3.0.0
+    strip-json-comments: ^3.1.1
+  bin:
+    npmPkgJsonLint: src/cli.js
+  checksum: 757c73b5b62c951892f23c760f4cc0a006140ec545ed3b080d77fb9c1107bfb0b137451abcf12d6084f418f364d86f407fdf5ee7da7a22fe07dbf9bbe97410a1
   languageName: node
   linkType: hard
 
@@ -37871,6 +37949,7 @@ testarmada-magellan@11.0.10:
     "@automattic/color-studio": 2.5.0
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
+    "@automattic/eslint-plugin-json": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/typography": "workspace:^"
@@ -37947,7 +38026,6 @@ testarmada-magellan@11.0.10:
     eslint-plugin-inclusive-language: ^2.2.0
     eslint-plugin-jest: ^25.3.0
     eslint-plugin-jsdoc: ^37.2.2
-    eslint-plugin-json-es: ^1.5.4
     eslint-plugin-jsx-a11y: ^6.5.1
     eslint-plugin-md: ^1.0.19
     eslint-plugin-mocha: ^10.0.3
@@ -38586,7 +38664,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^18.1.1, yargs-parser@npm:^18.1.2":
+"yargs-parser@npm:^18.1.1, yargs-parser@npm:^18.1.2, yargs-parser@npm:^18.1.3":
   version: 18.1.3
   resolution: "yargs-parser@npm:18.1.3"
   dependencies:

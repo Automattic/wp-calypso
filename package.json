@@ -2,7 +2,7 @@
 	"name": "wp-calypso",
 	"author": "Automattic Inc.",
 	"version": "0.17.0",
-	"description": "A pure REST-API and JS based version of the WordPress.com admin",
+	"description": "A pure REST-API and JS based version of the WordPress.com admin.",
 	"private": true,
 	"workspaces": {
 		"packages": [
@@ -14,10 +14,13 @@
 			"test/e2e/lib/reporter"
 		]
 	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Automattic/wp-calypso.git"
+		"url": "https://github.com/Automattic/wp-calypso.git",
+		"directory": "/"
 	},
 	"browserslist": {
 		"wpcom": [
@@ -98,7 +101,6 @@
 		"lint:css": "stylelint \"**/*.scss\" --syntax scss",
 		"lint:js": "eslint --cache .",
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"**/*.tsx\" \"**/*.tsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
-		"lint:package-json": "npmPkgJsonLint './package.json' './client/package.json' './packages/*/package.json' './apps/*/package.json'",
 		"start": "npx check-node-version --package && node bin/welcome.js && yarn run build && yarn run start-build",
 		"start-jetpack-cloud": "CALYPSO_ENV=jetpack-cloud-development yarn run start",
 		"start-jetpack-cloud-p": "PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run build-server && PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run start-build",
@@ -179,7 +181,6 @@
 		"@wordpress/components": "^19.1.5",
 		"@wordpress/data": "^6.1.4",
 		"@wordpress/element": "^4.0.4",
-		"@wordpress/eslint-plugin": "^9.3.0",
 		"@wordpress/i18n": "^4.2.4",
 		"@wordpress/icons": "^6.1.1",
 		"@wordpress/is-shallow-equal": "^4.2.1",
@@ -285,10 +286,11 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-jest": "workspace:^",
+		"@automattic/eslint-plugin-json": "workspace:^",
 		"@bartekbp/typescript-checkstyle": "^5.0.0",
+		"@wordpress/eslint-plugin": "^9.3.0",
 		"bunyan": "^1.8.15",
 		"eslint-nibble": "^8.0.0",
-		"eslint-plugin-json-es": "^1.5.4",
 		"husky": "^7.0.4"
 	},
 	"resolutions": {
