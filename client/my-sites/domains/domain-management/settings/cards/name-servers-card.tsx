@@ -52,19 +52,19 @@ const NameServersCard = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ nameservers, setNameservers ] = useState( nameserversProps || null );
-	const [ shouldPersistNameservers, setShouldPersistNameservers ] = useState( false );
-	const [ isEditingNameservers, setIsEditingNameservers ] = useState( false );
+	const [ shouldPersistNameServers, setShouldPersistNameServers ] = useState( false );
+	const [ isEditingNameServers, setIsEditingNameServers ] = useState( false );
 
 	useEffect( () => {
 		setNameservers( nameserversProps );
 	}, [ nameserversProps ] );
 
 	useEffect( () => {
-		if ( shouldPersistNameservers ) {
+		if ( shouldPersistNameServers ) {
 			updateNameservers( nameservers || [] );
-			setShouldPersistNameservers( false );
+			setShouldPersistNameServers( false );
 		}
-	}, [ shouldPersistNameservers, nameservers ] );
+	}, [ shouldPersistNameServers, nameservers ] );
 
 	const hasWpcomNameservers = () => {
 		if ( ! nameservers || nameservers.length === 0 ) {
@@ -133,14 +133,14 @@ const NameServersCard = ( {
 
 	const resetToWpcomNameservers = () => {
 		setNameservers( WPCOM_DEFAULT_NAMESERVERS );
-		setShouldPersistNameservers( true );
-		setIsEditingNameservers( false );
+		setShouldPersistNameServers( true );
+		setIsEditingNameServers( false );
 	};
 
 	const handleToggle = () => {
 		if ( hasWpcomNameservers() ) {
 			setNameservers( [] );
-			setIsEditingNameservers( true );
+			setIsEditingNameServers( true );
 		} else {
 			resetToWpcomNameservers();
 		}
@@ -155,7 +155,7 @@ const NameServersCard = ( {
 			<NameServersToggle
 				selectedDomainName={ selectedDomainName }
 				onToggle={ handleToggle }
-				enabled={ hasWpcomNameservers() && ! isEditingNameservers }
+				enabled={ hasWpcomNameservers() && ! isEditingNameServers }
 			/>
 		);
 	};
@@ -174,7 +174,7 @@ const NameServersCard = ( {
 
 	const handleSubmit = () => {
 		updateNameservers( nameservers || [] );
-		setIsEditingNameservers( false );
+		setIsEditingNameServers( false );
 	};
 
 	const renderCustomNameserversForm = () => {
@@ -192,7 +192,7 @@ const NameServersCard = ( {
 			);
 		}
 
-		if ( isEditingNameservers ) {
+		if ( isEditingNameServers ) {
 			return (
 				<CustomNameserversForm
 					nameservers={ nameservers }
@@ -215,7 +215,7 @@ const NameServersCard = ( {
 				) ) }
 				<Button
 					onClick={ () => {
-						setIsEditingNameservers( true );
+						setIsEditingNameServers( true );
 					} }
 				>
 					Edit custom name servers
