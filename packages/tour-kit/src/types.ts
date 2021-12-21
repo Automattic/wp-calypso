@@ -1,6 +1,7 @@
 import type { Modifier } from 'react-popper';
 
 export type Step = {
+	id?: string;
 	referenceElements?: {
 		desktop?: string;
 		mobile?: string;
