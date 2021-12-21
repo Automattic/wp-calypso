@@ -41,6 +41,7 @@
 		"@automattic/lasagna": "^0.6.1",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
+		"@automattic/mini-cart": "workspace:^",
 		"@automattic/notifications": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/plans-grid": "workspace:^",
