@@ -104,18 +104,15 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 
 	const discount = productIsDiscounted ? (
 		<div className="google-workspace-card__discount-with-renewal">
-			{ translate(
-				'%(discountedPrice)s billed today, renews at %(standardPrice)s',
-				{
-					args: {
-						discountedPrice: salePriceForIntervalLength,
-						standardPrice: standardPriceForIntervalLength,
-					},
-					comment:
-						'%(discountedPrice)s is a formatted, discounted price that the user will pay today, e.g. $3; ' +
-						'%(standardPrice)s is a formatted price, e.g. $5',
-				}
-			) }
+			{ translate( '%(discountedPrice)s billed today, renews at %(standardPrice)s', {
+				args: {
+					discountedPrice: salePriceForIntervalLength,
+					standardPrice: standardPriceForIntervalLength,
+				},
+				comment:
+					'%(discountedPrice)s is a formatted, discounted price that the user will pay today, e.g. $3; ' +
+					'%(standardPrice)s is a formatted price, e.g. $5',
+			} ) }
 
 			<InfoPopover position="right" showOnHover>
 				{ translate(

@@ -366,9 +366,7 @@ class EmailProvidersComparison extends Component {
 			? translate( '{{fullPrice/}} {{discountedPrice/}} /mailbox /month (billed annually)', {
 					components: {
 						fullPrice: (
-							<span className="email-providers-comparison__full-price">
-								{ monthlyPrice }
-							</span>
+							<span className="email-providers-comparison__full-price">{ monthlyPrice }</span>
 						),
 						discountedPrice: (
 							<span className="email-providers-comparison__discounted-price">
@@ -391,18 +389,15 @@ class EmailProvidersComparison extends Component {
 		// Note that when we have a discount, we include all renewal information in the discount content
 		const discount = productIsDiscounted ? (
 			<span className="email-providers-comparison__discount-with-renewal">
-				{ translate(
-					'%(discountedPrice)s billed today, renews at %(standardPrice)s',
-					{
-						args: {
-							discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
-							standardPrice,
-						},
-						comment:
-							'%(discountedPrice)s is a formatted, discounted price that the user will pay today, e.g. $3; ' +
-							'%(standardPrice)s is a formatted price, e.g. $5',
-					}
-				) }
+				{ translate( '%(discountedPrice)s billed today, renews at %(standardPrice)s', {
+					args: {
+						discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
+						standardPrice,
+					},
+					comment:
+						'%(discountedPrice)s is a formatted, discounted price that the user will pay today, e.g. $3; ' +
+						'%(standardPrice)s is a formatted price, e.g. $5',
+				} ) }
 
 				<InfoPopover position="right" showOnHover>
 					{ translate(
