@@ -20,6 +20,7 @@ class CustomNameserversForm extends PureComponent {
 	static propTypes = {
 		nameservers: PropTypes.array,
 		onChange: PropTypes.func.isRequired,
+		onCancel: PropTypes.func,
 		onSubmit: PropTypes.func.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		submitDisabled: PropTypes.bool.isRequired,
@@ -152,9 +153,15 @@ class CustomNameserversForm extends PureComponent {
 							{ translate( 'Save custom name servers' ) }
 						</FormButton>
 
-						<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
-							{ translate( 'Reset to defaults' ) }
-						</FormButton>
+						{ ! redesign ? (
+							<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
+								{ translate( 'Reset to defaults' ) }
+							</FormButton>
+						) : (
+							<FormButton type="button" isPrimary={ false } onClick={ this.handleCancel }>
+								{ translate( 'Cancel' ) }
+							</FormButton>
+						) }
 					</div>
 				</form>
 			</>
@@ -175,6 +182,11 @@ class CustomNameserversForm extends PureComponent {
 		this.props.resetToDefaultsClick( this.props.selectedDomainName );
 
 		this.props.onReset();
+	};
+
+	handleCancel = ( event ) => {
+		event.preventDefault();
+		this.props.onCancel();
 	};
 }
 

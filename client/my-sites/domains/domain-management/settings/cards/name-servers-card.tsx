@@ -54,6 +54,9 @@ const NameServersCard = ( {
 	const [ nameservers, setNameservers ] = useState( nameserversProps || null );
 	const [ shouldPersistNameServers, setShouldPersistNameServers ] = useState( false );
 	const [ isEditingNameServers, setIsEditingNameServers ] = useState( false );
+	const [ nameServersBeforeEditing, setNameServersBeforeEditing ] = useState< string[] | null >(
+		null
+	);
 
 	useEffect( () => {
 		setNameservers( nameserversProps );
@@ -139,6 +142,7 @@ const NameServersCard = ( {
 
 	const handleToggle = () => {
 		if ( hasWpcomNameservers() ) {
+			setNameServersBeforeEditing( nameservers );
 			setNameservers( [] );
 			setIsEditingNameServers( true );
 		} else {
@@ -177,6 +181,16 @@ const NameServersCard = ( {
 		setIsEditingNameServers( false );
 	};
 
+	const editCustomNameServers = () => {
+		setIsEditingNameServers( true );
+		setNameServersBeforeEditing( nameservers );
+	};
+
+	const handleCancel = () => {
+		setIsEditingNameServers( false );
+		setNameservers( nameServersBeforeEditing || [] );
+	};
+
 	const renderCustomNameserversForm = () => {
 		if ( ! nameservers || hasWpcomNameservers() || isPendingTransfer() ) {
 			return null;
@@ -199,6 +213,7 @@ const NameServersCard = ( {
 					selectedSite={ selectedSite }
 					selectedDomainName={ selectedDomainName }
 					onChange={ handleChange }
+					onCancel={ handleCancel }
 					onReset={ handleReset }
 					onSubmit={ handleSubmit }
 					submitDisabled={ isLoading() }
@@ -213,13 +228,7 @@ const NameServersCard = ( {
 				{ nameservers.map( ( nameserver ) => (
 					<p key={ nameserver }>{ nameserver }</p>
 				) ) }
-				<Button
-					onClick={ () => {
-						setIsEditingNameServers( true );
-					} }
-				>
-					Edit custom name servers
-				</Button>
+				<Button onClick={ editCustomNameServers }>Edit custom name servers</Button>
 			</div>
 		);
 	};
