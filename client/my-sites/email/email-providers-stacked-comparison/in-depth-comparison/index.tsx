@@ -1,5 +1,5 @@
-import { FunctionComponent, ReactElement } from "react";
-import type { TranslateResult } from "i18n-calypso";
+import { FunctionComponent, ReactElement } from 'react';
+import type { TranslateResult } from 'i18n-calypso';
 
 export type ProviderComparison = {
 	header: ReactElement;
@@ -9,7 +9,7 @@ export type ProviderComparison = {
 	support: TranslateResult;
 	footerBadge?: ReactElement;
 	selectCallback: () => void;
-}
+};
 
 type InDepthComparison = {
 	comparisonObject: ProviderComparison[];
@@ -17,4 +17,4 @@ type InDepthComparison = {
 
 export const InDepthComparison: FunctionComponent< InDepthComparison > = () => {
 	return <p> New component </p>;
-}
+};
