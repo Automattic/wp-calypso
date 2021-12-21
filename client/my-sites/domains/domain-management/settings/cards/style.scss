@@ -53,6 +53,12 @@
 }
 
 .name-servers-card {
+	margin-top: 16px;
+
+	@include break-mobile {
+		margin-top: 0;
+	}
+
 	&__loading {
 		@include placeholder();
 	}
