@@ -81,11 +81,7 @@ function AddNewPaymentMethod() {
 export default function AccountLevelAddNewPaymentMethodWrapper() {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
-		<StripeHookProvider
-			locale={ locale }
-			configurationArgs={ { needs_intent: true } }
-			fetchStripeConfiguration={ getStripeConfiguration }
-		>
+		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
 			<AddNewPaymentMethod />
 		</StripeHookProvider>
 	);
