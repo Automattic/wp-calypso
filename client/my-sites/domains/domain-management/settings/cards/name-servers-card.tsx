@@ -67,16 +67,12 @@ const NameServersCard = ( {
 	}, [ shouldPersistNameservers, nameservers ] );
 
 	const hasWpcomNameservers = () => {
-		if ( ! nameserversProps ) {
-			return true;
-		}
-
 		if ( ! nameservers || nameservers.length === 0 ) {
 			return false;
 		}
 
 		return nameservers.every( ( nameserver ) => {
-			return ! nameserver || WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
+			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
 		} );
 	};
 
@@ -136,12 +132,9 @@ const NameServersCard = ( {
 	};
 
 	const resetToWpcomNameservers = () => {
-		if ( ! nameservers || nameservers.length === 0 ) {
-			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
-		} else {
-			setNameservers( WPCOM_DEFAULT_NAMESERVERS );
-			setShouldPersistNameservers( true );
-		}
+		setNameservers( WPCOM_DEFAULT_NAMESERVERS );
+		setShouldPersistNameservers( true );
+		setIsEditingNameservers( false );
 	};
 
 	const handleToggle = () => {
@@ -162,7 +155,7 @@ const NameServersCard = ( {
 			<NameServersToggle
 				selectedDomainName={ selectedDomainName }
 				onToggle={ handleToggle }
-				enabled={ hasWpcomNameservers() }
+				enabled={ hasWpcomNameservers() && ! isEditingNameservers }
 			/>
 		);
 	};
