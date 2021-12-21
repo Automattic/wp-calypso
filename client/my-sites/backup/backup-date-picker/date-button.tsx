@@ -64,7 +64,7 @@ const DateButton: React.FC< Props > = ( {
 											firstBackupDate.date()
 									  )
 									: null, // The first known backup date - should be nothing before this.
-								after: today // If the offset value of today that factors in the blog's GMT offset, use that.
+								after: today // If the offset value of today that factors in the blog's GMT offset is available, use that.
 									? new Date( today.year(), today.month(), today.date() )
 									: moment().toDate(), // There are no backups of the future.
 							},
