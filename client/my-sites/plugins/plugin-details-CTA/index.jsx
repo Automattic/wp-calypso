@@ -249,7 +249,8 @@ function onClickInstallPlugin( {
 			// We also need to add a business plan to the cart.
 			return page(
 				`/checkout/${ selectedSite.slug }/${ product_slug },${ businessPlanToAdd(
-					selectedSite?.plan
+					selectedSite?.plan,
+					billingPeriod
 				) }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
 			);
 		}
