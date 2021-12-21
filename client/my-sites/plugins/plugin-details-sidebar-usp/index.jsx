@@ -12,33 +12,30 @@ const Icon = styled.div`
 	margin-bottom: 10px;
 `;
 const Title = styled.div`
-	color: var( --studio-gray-100 )
+	color: var( --studio-gray-100 );
 	font-weight: 600;
 	font-size: 16px;
 	margin-bottom: 10px;
 `;
 const Description = styled.div`
-	display: flex;
-	flex-direction: column;
+	color: var( --studio-gray-60 );
+	margin-bottom: 10px;
 `;
-// const Link = styled.a`
-// 	display: flex;
-// 	flex-direction: column;
-// `;
 
 const PluginDetailsSidebarUSP = ( { icon, title, description, links, first, last } ) => {
 	return (
-		<Container first={ first } last={ last }>
+		<Container key={ title } first={ first } last={ last }>
 			<Icon>{ icon }</Icon>
 			<Title>{ title }</Title>
 			<Description>{ description }</Description>
-			{ links.map( ( link ) => {
-				return (
-					<ExternalLink icon href={ link.href }>
-						{ link.label }
-					</ExternalLink>
-				);
-			} ) }
+			{ links &&
+				links.map( ( link ) => {
+					return (
+						<ExternalLink icon href={ link.href }>
+							{ link.label }
+						</ExternalLink>
+					);
+				} ) }
 		</Container>
 	);
 };
