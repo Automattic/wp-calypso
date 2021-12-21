@@ -19,7 +19,7 @@ import './style.scss';
 
 const PREV_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_previous' );
 const NEXT_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_next' );
-const CALENDAR_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_calendar' );
+const CALENDAR_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_calendar_select_day' );
 
 const onSpace = ( fn: () => void ) => ( { key }: { key?: string } ) => {
 	if ( key === ' ' ) {
@@ -49,14 +49,14 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
 	// If the number of visible days is falsy, then use the oldest date as the first visible backup date.
 	const firstVisibleBackupDate = visibleDays
-		? today.subtract( visibleDays, 'days' )
+		? today.clone().subtract( visibleDays, 'days' )
 		: oldestDateAvailable;
 
 	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable );
 	const datesWithNoBackups = useDatesWithNoSuccessfulBackups(
 		siteId,
 		firstVisibleBackupDate,
-		today
+		today.clone()
 	);
 
 	const { previousDisplayDate, nextDisplayDate, selectedDisplayDate } = useMemo( () => {

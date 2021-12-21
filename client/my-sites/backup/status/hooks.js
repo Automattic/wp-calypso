@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	DELTA_ACTIVITIES,
@@ -7,6 +8,9 @@ import {
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import {
 	useActivityLogs,
 	useFirstMatchingBackupAttempt,
@@ -73,35 +77,47 @@ const useRawBackupDeltas = (
 // Get the dates where there are no successful backups in a range
 export const useDatesWithNoSuccessfulBackups = ( siteId, startDate, endDate ) => {
 	const moment = useLocalizedMoment();
+	const timezone = useSelector( ( state ) =>
+		siteId ? getSiteTimezoneValue( state, siteId ) : null
+	);
+	const gmtOffset = useSelector( ( state ) =>
+		siteId ? getSiteGmtOffset( state, siteId ) : null
+	);
 
-	// Get the activity log for the range, filtering for only days with successful backups.
-	const startMoment = moment( startDate ).startOf( 'day' );
-	const endMoment = moment( endDate ).endOf( 'day' );
-	const movingDate = moment( startDate ).startOf( 'day' );
-	const datesWithoutBackups = [];
-
-	// Collect an array of all the dates in the range
-	while ( movingDate < endMoment ) {
-		datesWithoutBackups.push( movingDate.format( 'MM-DD-YYYY' ) );
-		movingDate.add( 1, 'day' );
-	}
+	// Adapted from useDateWithOffsetHook to move dates based on the selected blog's GMT offset.
+	const adjustDate = ( date ) =>
+		date ? applySiteOffset( date, { timezone, gmtOffset, keepLocalTime: false } ) : undefined;
 
 	// This will get a set of activity logs
 	const { isLoading, backups } = useMatchingBackupAttemptsInRange( siteId, {
-		after: startMoment,
-		before: endMoment,
+		after: moment( startDate ).startOf( 'day' ),
+		before: moment( endDate ).endOf( 'day' ),
 	} );
 
-	if ( ! isLoading && backups ) {
-		backups.forEach( ( item ) => {
-			// Remove dates from the datesWithoutBackups array that have backups
-			// This should leave only dates that have no backups in the array
-			const backupDate = moment( item.activityDate ).format( 'MM-DD-YYYY' );
-			if ( datesWithoutBackups.indexOf( backupDate ) > -1 ) {
-				datesWithoutBackups.splice( datesWithoutBackups.indexOf( backupDate ), 1 );
-			}
-		} );
-	}
+	const datesWithoutBackups = useMemo( () => {
+		const endMoment = moment( endDate ).endOf( 'day' );
+		const movingDate = moment( startDate ).startOf( 'day' );
+		const dates = [];
+
+		// Collect an array of all the dates in the range
+		while ( movingDate < endMoment ) {
+			dates.push( movingDate.format( 'MM-DD-YYYY' ) );
+			movingDate.add( 1, 'day' );
+		}
+
+		if ( ! isLoading && backups ) {
+			backups.forEach( ( item ) => {
+				// Remove dates from the dates array that have backups
+				// This should leave only dates that have no backups in the array
+				const backupDate = adjustDate( item.activityDate ).format( 'MM-DD-YYYY' );
+				if ( dates.indexOf( backupDate ) > -1 ) {
+					dates.splice( dates.indexOf( backupDate ), 1 );
+				}
+			} );
+		}
+
+		return dates;
+	}, [ startDate, endDate, backups, isLoading ] );
 
 	return {
 		isLoading: isLoading,

@@ -5,6 +5,7 @@ import React, { useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import DatePicker from 'calypso/components/date-picker';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 const DATE_PICKER_OPEN = recordTracksEvent( 'calypso_jetpack_backup_date_picker_open' );
@@ -19,6 +20,7 @@ const DateButton: React.FC< Props > = ( {
 
 	const [ pickerVisible, setPickerVisible ] = useState( false );
 	const moment = useLocalizedMoment();
+	const today = useDateWithOffset( moment() );
 	const translate = useTranslate();
 
 	/**
@@ -62,7 +64,9 @@ const DateButton: React.FC< Props > = ( {
 											firstBackupDate.date()
 									  )
 									: null, // The first known backup date - should be nothing before this.
-								after: moment().toDate(), // There are no backups of the future.
+								after: today // If the offset value of today that factors in the blog's GMT offset, use that.
+									? new Date( today.year(), today.month(), today.date() )
+									: moment().toDate(), // There are no backups of the future.
 							},
 							// Dates that do not have a backup
 							...disabledDatesObjects,
