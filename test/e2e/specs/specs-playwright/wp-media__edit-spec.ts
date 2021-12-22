@@ -5,11 +5,11 @@
 import {
 	DataHelper,
 	MediaHelper,
-	LoginPage,
 	MediaPage,
 	SidebarComponent,
 	setupHooks,
 	TestFile,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
@@ -17,7 +17,6 @@ import { TEST_IMAGE_PATH } from '../constants';
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	let testImage: TestFile;
 	let page: Page;
-	let loginPage: LoginPage;
 
 	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
@@ -28,21 +27,15 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	} );
 
 	describe.each`
-		siteType      | testAccount
+		siteType      | accountName
 		${ 'Simple' } | ${ 'simpleSitePersonalPlanUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
-	`( 'Edit Image ($siteType)', function ( { testAccount } ) {
+	`( 'Edit Image ($siteType)', function ( { accountName } ) {
 		let mediaPage: MediaPage;
 
-		it( `Log in with ${ testAccount }`, async function () {
-			if ( ! loginPage ) {
-				loginPage = new LoginPage( page );
-				await loginPage.visit();
-			} else {
-				await loginPage.visit();
-				await loginPage.clickChangeAccount();
-			}
-			await loginPage.logInWithTestAccount( testAccount );
+		beforeAll( async () => {
+			const testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
 		} );
 
 		it( 'Navigate to Media', async function () {

@@ -14,23 +14,23 @@ import {
 	HeroBlock,
 	LogosBlock,
 	PricingTableBlock,
-	LoginPage,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-let testAccount: string;
+let accountName: string;
 if ( BrowserHelper.targetCoBlocksEdge() ) {
-	testAccount = 'coBlocksSimpleSiteEdgeUser';
+	accountName = 'coBlocksSimpleSiteEdgeUser';
 } else if ( BrowserHelper.targetGutenbergEdge() ) {
-	testAccount = 'gutenbergSimpleSiteEdgeUser';
+	accountName = 'gutenbergSimpleSiteEdgeUser';
 } else {
-	testAccount = 'gutenbergSimpleSiteUser';
+	accountName = 'gutenbergSimpleSiteUser';
 }
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	let page: Page;
-	let loginPage: LoginPage;
+	let testAccount: TestAccount;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let logoImage: TestFile;
@@ -43,12 +43,10 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	setupHooks( async ( args ) => {
 		page = args.page;
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		loginPage = new LoginPage( page );
+		testAccount = new TestAccount( accountName );
 		gutenbergEditorPage = new GutenbergEditorPage( page );
-	} );
 
-	it( `Log in as ${ testAccount }`, async () => {
-		await loginPage.logInWithTestAccount( testAccount );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async () => {

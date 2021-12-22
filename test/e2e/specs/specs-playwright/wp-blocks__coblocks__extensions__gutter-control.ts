@@ -6,35 +6,33 @@ import {
 	setupHooks,
 	BrowserHelper,
 	DataHelper,
-	LoginPage,
 	GutenbergEditorPage,
 	PricingTableBlock,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-let testAccount: string;
+let accountName: string;
 if ( BrowserHelper.targetCoBlocksEdge() ) {
-	testAccount = 'coBlocksSimpleSiteEdgeUser';
+	accountName = 'coBlocksSimpleSiteEdgeUser';
 } else if ( BrowserHelper.targetGutenbergEdge() ) {
-	testAccount = 'gutenbergSimpleSiteEdgeUser';
+	accountName = 'gutenbergSimpleSiteEdgeUser';
 } else {
-	testAccount = 'gutenbergSimpleSiteUser';
+	accountName = 'gutenbergSimpleSiteUser';
 }
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	let page: Page;
-	let loginPage: LoginPage;
+	let testAccount: TestAccount;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 
 	setupHooks( async ( args ) => {
 		page = args.page;
-		loginPage = new LoginPage( page );
+		testAccount = new TestAccount( accountName );
 		gutenbergEditorPage = new GutenbergEditorPage( page );
-	} );
 
-	it( `Log in as ${ testAccount }`, async () => {
-		await loginPage.logInWithTestAccount( testAccount );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async () => {
