@@ -1,5 +1,6 @@
-import { FunctionComponent, ReactElement } from 'react';
+import { FunctionComponent } from 'react';
 import type { TranslateResult } from 'i18n-calypso';
+import type { ReactElement } from 'react';
 
 export type ProviderComparison = {
 	header: ReactElement;

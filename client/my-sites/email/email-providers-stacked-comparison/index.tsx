@@ -4,7 +4,8 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { translate, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -18,6 +19,7 @@ import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-st
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -26,7 +28,6 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { InDepthComparison, ProviderComparison } from './in-depth-comparison';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
@@ -47,42 +48,27 @@ type EmailProvidersStackedComparisonProps = {
 	shoppingCartManager?: any;
 	selectedSite?: SiteData | null;
 	selectedDomainName: string;
+	siteName: string;
 	source: string;
 	titanMailMonthlyProduct?: any;
 	gSuiteAnnualProduct?: any;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
-const ProfessionalEmailComparisonObject: ProviderComparison = {
-	header: <h1> Professional Email </h1>,
-	tools: translate( 'Integrated email management, Inbox, calendar and contacts' ),
-	storage: translate( '30 GB of Storage' ),
-	importing: translate( 'One-click import of existing emails and contacts' ),
-	support: translate( '24/7 support via email' ),
-	selectCallback: noop,
-};
-
-const GoogleWorkspaceComparisonObject: ProviderComparison = {
-	header: <h1> Google </h1>,
-	tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Sliders and more' ),
-	storage: translate( '30 GB of Storage' ),
-	importing: translate( 'Easy to import' ),
-	support: translate( '24/7 support via email' ),
-	selectCallback: noop,
-};
-
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
 	props
 ) => {
-	const { comparisonContext, isGSuiteSupported, selectedDomainName, selectedSite, source } = props;
+	const {
+		comparisonContext,
+		isGSuiteSupported,
+		selectedDomainName,
+		selectedSite,
+		siteName,
+		source,
+	} = props;
 
 	const translate = useTranslate();
 
 	const [ intervalLength, setIntervalLength ] = useState( IntervalLength.MONTHLY );
-
-	const [ inDepthComparison, setInDepthComparison ] = useState( false );
 
 	const [ detailsExpanded, setDetailsExpanded ] = useState( {
 		titan: true,
@@ -124,7 +110,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				<Button
 					borderless
 					className="email-providers-stacked-comparison__how-they-compare-link"
-					onClick={ () => setInDepthComparison( ! inDepthComparison ) }
+					onClick={ () => page( emailManagementInDepthComparison( siteName, selectedDomainName ) ) }
 				>
 					{ translate( 'See how they compare.' ) }
 				</Button>
@@ -135,27 +121,16 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				intervalLength={ intervalLength }
 			/>
 
-			{ inDepthComparison && (
-				<InDepthComparison
-					comparisonObjects={ [
-						ProfessionalEmailComparisonObject,
-						GoogleWorkspaceComparisonObject,
-					] }
-				/>
-			) }
+			<ProfessionalEmailCard
+				comparisonContext={ comparisonContext }
+				detailsExpanded={ detailsExpanded.titan }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
+				intervalLength={ intervalLength }
+				onExpandedChange={ onExpandedChange }
+			/>
 
-			{ ! inDepthComparison && (
-				<ProfessionalEmailCard
-					comparisonContext={ comparisonContext }
-					detailsExpanded={ detailsExpanded.titan }
-					selectedDomainName={ selectedDomainName }
-					source={ source }
-					intervalLength={ intervalLength }
-					onExpandedChange={ onExpandedChange }
-				/>
-			) }
-
-			{ ! inDepthComparison && isGSuiteSupported && (
+			{ isGSuiteSupported && (
 				<GoogleWorkspaceCard
 					comparisonContext={ comparisonContext }
 					detailsExpanded={ detailsExpanded.google }

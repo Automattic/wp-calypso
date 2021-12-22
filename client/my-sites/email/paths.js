@@ -168,6 +168,26 @@ export function emailManagementPurchaseNewEmailAccount(
 	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo, { source } );
 }
 
+/**
+ * Retrieves the url of the Email Comparison page:
+ *
+ *   https://wordpress.com/email/:domainName/in-depth-comparison/:siteName
+ *
+ * @param {string} siteName - slug of the current site
+ * @param {string} domainName - domain name of the account to add users to
+ * @param {string} relativeTo - optional path prefix
+ * @param {string} source - optional source
+ * @returns {string} the corresponding url
+ */
+export function emailManagementInDepthComparison(
+	siteName,
+	domainName,
+	relativeTo = null,
+	source = null
+) {
+	return emailManagementEdit( siteName, domainName, 'in-depth-comparison', relativeTo, { source } );
+}
+
 export function emailManagementEdit(
 	siteName,
 	domainName,
