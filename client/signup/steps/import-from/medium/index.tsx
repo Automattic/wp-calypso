@@ -1,17 +1,18 @@
-import { Hooray, SubTitle, Title } from '@automattic/onboarding';
+import { Hooray, Progress, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { translate, TranslateOptions } from 'i18n-calypso';
+import { translate, TranslateOptions, TranslateOptionsText } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { ProgressBar } from 'calypso/devdocs/design/playground-scope';
 import importerConfig from 'calypso/lib/importer/importer-config';
-import FileImporter from 'calypso/my-sites/importer/file-importer';
+import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import DoneButton from '../components/done-button';
-import { Site } from '../components/importer-drag';
+import ImporterDrag, { Site } from '../components/importer-drag';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
 import './style.scss';
@@ -68,6 +69,10 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
+	function checkProgress() {
+		return job?.importerState === appStates.IMPORTING;
+	}
+
 	function checkIsSuccess() {
 		return job?.importerState === appStates.IMPORT_SUCCESS;
 	}
@@ -87,7 +92,10 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 			},
 		};
 
-		importerData.title = __( 'Import content from Medium' );
+		importerData.title = translate( 'Import content from %(importerName)s', {
+			...options,
+			textOnly: true,
+		} as TranslateOptionsText ) as string;
 
 		importerData.description = translate(
 			'Import your posts, tags, images, and videos from your %(importerName)s export file',
@@ -124,13 +132,31 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 								/>
 							</Hooray>
 						);
+					} else if ( checkProgress() ) {
+						/**
+						 * Progress screen
+						 */
+						const progress = calculateProgress( job?.progress );
+						return (
+							<Progress>
+								<Title>{ __( 'Importing' ) }...</Title>
+								<ProgressBar
+									color={ 'black' }
+									compact={ true }
+									value={ Number.isNaN( progress ) ? 0 : progress }
+								/>
+								<SubTitle>
+									{ __( "This may take a few minutes. We'll notify you by email when it's done." ) }
+								</SubTitle>
+							</Progress>
+						);
 					}
 
 					/**
 					 * Upload section
 					 */
 					return (
-						<FileImporter site={ site } importerData={ importerData } importerStatus={ job } />
+						<ImporterDrag site={ site } importerData={ importerData } importerStatus={ job } />
 					);
 				} )() }
 			</div>
