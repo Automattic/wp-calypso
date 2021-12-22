@@ -10,6 +10,10 @@
 	color: var( --studio-gray-100 );
 	margin: 16px 0;
 	min-height: 48px;
+
+	&.align-right {
+		text-align: right;
+	}
 }
 
 .plugin-details-CTA__period {
