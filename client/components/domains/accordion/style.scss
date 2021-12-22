@@ -2,6 +2,9 @@
 @import '@wordpress/base-styles/mixins';
 
 .accordion {
+	.is-placeholder {
+		@include placeholder();
+	}
 	.foldable-card {
 		margin: 0;
 		&.is-expanded {

@@ -461,6 +461,7 @@ __metadata:
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-query: ^3.32.1
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
@@ -786,6 +787,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/mini-cart@workspace:^, @automattic/mini-cart@workspace:packages/mini-cart":
+  version: 0.0.0-use.local
+  resolution: "@automattic/mini-cart@workspace:packages/mini-cart"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/composite-checkout": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
+    "@automattic/wpcom-checkout": "workspace:^"
+    "@emotion/styled": ^11.3.0
+    "@testing-library/jest-dom": ^5.16.1
+    "@testing-library/react": ^12.1.2
+    "@wordpress/i18n": ^4.2.4
+    "@wordpress/react-i18n": ^3.0.4
+    debug: ^4.1.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    typescript: ^4.5.4
+  peerDependencies:
+    "@emotion/react": ^11.4.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/mocha-debug-reporter@workspace:^, @automattic/mocha-debug-reporter@workspace:packages/mocha-debug-reporter":
   version: 0.0.0-use.local
   resolution: "@automattic/mocha-debug-reporter@workspace:packages/mocha-debug-reporter"
@@ -935,7 +959,7 @@ __metadata:
   resolution: "@automattic/page-pattern-modal@workspace:packages/page-pattern-modal"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/design-picker": "workspace:^"
+    "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.2
     "@wordpress/blocks": ^11.1.4
@@ -12101,6 +12125,7 @@ __metadata:
     "@automattic/lasagna": ^0.6.1
     "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
+    "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/plans-grid": "workspace:^"

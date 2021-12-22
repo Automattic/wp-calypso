@@ -66,18 +66,13 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * Inspect transfer to detect blockers.
 	 * It's considered blocked when:
 	 * - status code value has the 5xx shape.
-	 * - status code value is one of: [ `active`,...] @todo: add more codes.
 	 * - is_stuck value is True.
 	 */
-	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
-	const isTransferStuck = transfer?.is_stuck;
-
-	const transferStatus = transfer?.status;
-	const isBlockByTransferStatus =
-		( Number.isInteger( Number( transferStatus ) ) &&
-			transferStatus &&
-			5 === Math.floor( Number( transferStatus ) / 100 ) ) ||
-		[ 'active' ].includes( transferStatus );
+	const { transfer, error: transferError } = useSelector( ( state ) =>
+		getLatestAtomicTransfer( state, siteId )
+	);
+	const isTransferStuck = transfer?.is_stuck || false;
+	const isBlockByTransferStatus = transferError && transferError?.status >= 500;
 
 	/*
 	 * Filter warnings:
@@ -110,7 +105,8 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	}
 
 	const transferringDataIsAvailable =
-		typeof transferringBlockers !== 'undefined' && typeof transferStatus !== 'undefined';
+		typeof transferringBlockers !== 'undefined' &&
+		( typeof transfer !== 'undefined' || typeof transferError !== 'undefined' );
 
 	/*
 	 * Check whether the site transferring is blocked.

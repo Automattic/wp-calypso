@@ -4,6 +4,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
@@ -22,6 +23,7 @@ function WooCommerce() {
 		<div className="woocommerce">
 			<Main class="main" wideLayout>
 				<DocumentHead title={ translate( 'WooCommerce' ) } />
+				<PageViewTracker path="/woocommerce-installation/:site" title="WooCommerce Installation" />
 				<QuerySiteFeatures siteId={ siteId } />
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				{ areInstalledPluginsLoadedIntoState && <RequiredPluginsInstallView siteId={ siteId } /> }

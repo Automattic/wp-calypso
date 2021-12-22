@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { MShotsImage } from '@automattic/onboarding';
 import { Button, Tooltip } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
@@ -15,7 +16,6 @@ import {
 	sortDesigns,
 } from '../utils';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
-import MShotsImage from './mshots-image';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
 import './style.scss';

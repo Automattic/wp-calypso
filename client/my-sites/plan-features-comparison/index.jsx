@@ -436,6 +436,11 @@ export default connect(
 					);
 				}
 
+				const rawPriceAnnual =
+					null !== discountPrice
+						? discountPrice * 12
+						: getPlanRawPrice( state, planProductId, false );
+
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
@@ -452,7 +457,7 @@ export default connect(
 					hideMonthly: false,
 					primaryUpgrade: popular || plans.length === 1,
 					rawPrice,
-					rawPriceAnnual: getPlanRawPrice( state, planProductId, false ),
+					rawPriceAnnual,
 					rawPriceForMonthlyPlan,
 					relatedMonthlyPlan,
 					annualPricePerMonth,

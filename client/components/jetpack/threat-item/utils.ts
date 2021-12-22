@@ -56,7 +56,10 @@ export const getThreatVulnerability = ( threat: Threat ): string | i18nCalypso.T
 	}
 };
 
-export const getThreatFix = ( fixable: ThreatFix ): i18nCalypso.TranslateResult => {
+export const getThreatFix = ( fixable: ThreatFix | false ): i18nCalypso.TranslateResult => {
+	if ( ! fixable ) {
+		return translate( 'Jetpack Scan will resolve the threat.' );
+	}
 	switch ( fixable.fixer ) {
 		case 'replace':
 			return translate( 'Jetpack Scan will replace the affected file or directory.' );

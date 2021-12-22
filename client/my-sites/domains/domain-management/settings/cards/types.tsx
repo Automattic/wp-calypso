@@ -8,3 +8,20 @@ export type DetailsCardProps = {
 	purchase: Purchase | null;
 	selectedSite: SiteData;
 };
+
+export type NameServersCardProps = {
+	domain: ResponseDomain;
+	isLoadingNameservers: boolean;
+	isRequestingSiteDomains: boolean;
+	loadingNameserversError: boolean;
+	nameservers: string[] | null;
+	selectedDomainName: string;
+	selectedSite: SiteData;
+	updateNameservers: ( nameServers: string[] ) => void;
+};
+
+export type NameServersToggleProps = {
+	enabled: boolean;
+	onToggle: () => void;
+	selectedDomainName: string;
+};

@@ -6,7 +6,7 @@ import { getThreatType } from 'calypso/components/jetpack/threat-item/utils';
 interface Props {
 	threat: Threat;
 	// Set isStyled to false if you care about strings only
-	isStyled: boolean;
+	isStyled?: boolean;
 }
 
 // This should be temporary since this data should be coming from the api

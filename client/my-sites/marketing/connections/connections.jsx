@@ -29,7 +29,7 @@ const SharingConnections = ( { translate, isP2Hub, siteId } ) => (
 		<SharingServicesGroup
 			type="other"
 			title={ translate( 'Manage connections' ) }
-			numberOfPlaceholders={ isP2Hub ? 1 : undefined }
+			numberOfPlaceholders={ isP2Hub ? 2 : undefined }
 		/>
 	</div>
 );

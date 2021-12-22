@@ -69,6 +69,10 @@ export function domainManagementRoot() {
 	return '/domains/manage';
 }
 
+/**
+ * @param {string?} siteName
+ * @param {string?} relativeTo
+ */
 export function domainManagementList( siteName, relativeTo = null ) {
 	if ( isUnderDomainManagementAll( relativeTo ) || isUnderEmailManagementAll( relativeTo ) ) {
 		return domainManagementRoot();
@@ -150,6 +154,11 @@ export function domainManagementSiteRedirect( siteName, domainName, relativeTo =
 	return domainManagementEditBase( siteName, domainName, 'redirect', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransfer( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, '', relativeTo );
 }

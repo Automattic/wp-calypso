@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import type { ReactNode } from 'react';
 
 const Container = styled.div`
 	color: var( --studio-gray-90 );
@@ -25,9 +26,7 @@ const StyledIcon = styled( Gridicon )`
 	margin-right: 0.5rem;
 `;
 
-const WarningCard: React.FunctionComponent< Props > = ( props ) => {
-	const { message } = props;
-
+function WarningCard( { message }: { message: ReactNode } ): JSX.Element {
 	return (
 		<Container>
 			<IconSection>
@@ -36,6 +35,6 @@ const WarningCard: React.FunctionComponent< Props > = ( props ) => {
 			<ContentSection>{ message }</ContentSection>
 		</Container>
 	);
-};
+}
 
 export default WarningCard;

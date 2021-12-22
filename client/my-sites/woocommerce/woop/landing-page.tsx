@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
@@ -38,6 +39,11 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 
 	function onCTAClickHandler() {
 		if ( isEnabled( 'woop' ) ) {
+			recordTracksEvent( 'calypso_woocommerce_dashboard_action_click', {
+				action: 'initial-setup',
+				feature: 'woop', // WooCommerce on Plans
+			} );
+
 			return page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
 		}
 
