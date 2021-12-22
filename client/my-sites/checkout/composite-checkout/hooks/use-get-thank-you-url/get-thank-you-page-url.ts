@@ -65,16 +65,16 @@ export default function getThankYouPageUrl( {
 	adminPageRedirect,
 	domains,
 }: {
-	siteSlug: string | undefined;
-	adminUrl: string | undefined;
-	redirectTo?: string | undefined;
-	receiptId: number | undefined;
-	orderId: number | undefined;
-	purchaseId: number | undefined;
-	feature: string | undefined;
-	cart: ResponseCart | undefined;
+	siteSlug?: string;
+	adminUrl?: string;
+	redirectTo?: string;
+	receiptId?: number;
+	orderId?: number;
+	purchaseId?: number;
+	feature?: string;
+	cart?: ResponseCart;
 	isJetpackNotAtomic?: boolean;
-	productAliasFromUrl: string | undefined;
+	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
@@ -83,7 +83,7 @@ export default function getThankYouPageUrl( {
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
-	domains: SiteDomain[] | undefined;
+	domains?: SiteDomain[];
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
