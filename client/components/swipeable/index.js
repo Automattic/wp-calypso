@@ -6,7 +6,7 @@ import './style.scss';
 
 const OFFSET_THRESHOLD_PERCENTAGE = 0.45; // Percentage of width to travel before we trigger the slider to move to the desired slide.
 const VELOCITY_THRESHOLD = 0.5; // Speed of drag above, before we trigger the slider to move to the desired slide.
-const TRANSITION_DURATION = `300ms`;
+const TRANSITION_DURATION = '300ms';
 
 function useResizeObserver() {
 	const [ observerEntry, setObserverEntry ] = useState( {} );
@@ -101,7 +101,6 @@ export const Swipeable = ( {
 			const position = getDragPositionAndTime( event );
 			setSwipeableArea( pagesRef.current?.getBoundingClientRect() );
 			setDragStartData( position );
-			// setPageWidth( resizeObserverRef.current?.getBoundingClientRect().width );
 			setPagesStyle( { ...pagesStyle, transitionDuration: `0ms` } ); // Set transition Duration to 0 for smooth dragging.
 		},
 		[ pagesStyle ]
