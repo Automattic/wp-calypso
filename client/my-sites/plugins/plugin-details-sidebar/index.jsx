@@ -1,5 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
+import eye from 'calypso/assets/images/marketplace/eye.svg';
+import support from 'calypso/assets/images/marketplace/support.svg';
+import wooLogo from 'calypso/assets/images/marketplace/woo-logo.svg';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 
@@ -17,9 +20,15 @@ const PluginDetailsSidebar = ( {
 				{ /* Needs to check for woocommerce dependencies */ }
 				{ isMarketplaceProduct && (
 					<PluginDetailsSidebarUSP
+						icon={ { src: wooLogo, width: '32px' } }
 						title={ translate( 'Your store foundations' ) }
 						description={ translate(
-							'This plugin requires the WooCommerce plugin to work. If you do not have it installed, it will be installed automatically for free.'
+							'This plugin requires the WooCommerce plugin to work.{{br/}}If you do not have it installed, it will be installed automatically for free.',
+							{
+								components: {
+									br: <br />,
+								},
+							}
 						) }
 						first
 					/>
@@ -27,6 +36,7 @@ const PluginDetailsSidebar = ( {
 				{ /* Needs to check for demo_url */ }
 				{ isMarketplaceProduct && (
 					<PluginDetailsSidebarUSP
+						icon={ { src: eye, width: '24px' } }
 						title={ translate( 'Try it before you buy it' ) }
 						description={ translate(
 							'Take a look at the posibilities of this plugin before your commit.'
@@ -34,9 +44,10 @@ const PluginDetailsSidebar = ( {
 						links={ [ { href: 'demo', label: translate( 'View live demo' ) } ] }
 					/>
 				) }
-				{ /* Needs to check for documentation_url */ },
+				{ /* Needs to check for documentation_url */ }
 				{ isMarketplaceProduct && (
 					<PluginDetailsSidebarUSP
+						icon={ { src: support, width: '24px' } }
 						title={ translate( 'Support' ) }
 						description={ translate( 'Handled by WooCommerce.' ) }
 						last
