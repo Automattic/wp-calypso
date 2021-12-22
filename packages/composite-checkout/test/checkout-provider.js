@@ -271,7 +271,7 @@ describe( 'CheckoutProvider', () => {
 			expect( onPaymentRedirect ).not.toBeCalled();
 		} );
 
-		it( 'does not call onPaymentRedirect twice when transaction status is complete even if callback changes', () => {
+		it( 'does not call onPaymentRedirect twice when transaction status is redirecting even if callback changes', () => {
 			const onPaymentRedirect = jest.fn();
 			const { getByText, rerender } = render(
 				<MyCheckout onPaymentRedirect={ () => onPaymentRedirect() } />
