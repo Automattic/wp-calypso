@@ -42,10 +42,6 @@ export function paymentMethodName( method: string ): string {
 	return ( paymentMethodsNames as Record< string, string > )[ method ] || method;
 }
 
-export function hasPendingPayment( cart: ResponseCart ): boolean {
-	return cart?.has_pending_payment ?? false;
-}
-
 export function shouldShowTax( cart: ResponseCart ): boolean {
 	return cart?.tax?.display_taxes ?? false;
 }
