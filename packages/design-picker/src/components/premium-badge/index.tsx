@@ -16,6 +16,7 @@ const PremiumBadge: FunctionComponent< Props > = ( { className } ) => {
 	return (
 		<Tooltip
 			position="top center"
+			// @ts-expect-error: @types/wordpress__components doesn't align with latest @wordpress/components
 			delay={ 300 }
 			text={ __(
 				'Let your site stand out from the crowd with a modern and stylish Premium theme.',
