@@ -639,12 +639,7 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				label={ translate( 'Store' ) }
 				link={ storeLink }
-				onNavigate={ this.trackWooCommerceNavItemClick.bind(
-					this,
-					'store',
-					'wpadmin-woocommerce-core',
-					site.plan.product_slug
-				) }
+				onNavigate={ this.onNavigate }
 				materialIcon="shopping_cart"
 				forceInternalLink
 				className="sidebar__store"
