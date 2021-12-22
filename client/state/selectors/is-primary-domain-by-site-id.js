@@ -8,7 +8,7 @@ import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain
  * @param {object} state - current state object
  * @param {?number} siteId - site ID
  * @param {string} domain - domian name
- * @returns {object} primary domain
+ * @returns {boolean} primary domain
  */
 export default function isPrimaryDomainBySiteId( state, siteId, domain ) {
 	return domain === get( getPrimaryDomainBySiteId( state, siteId ), 'domain' );
