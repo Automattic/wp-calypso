@@ -21,6 +21,9 @@ function getTourAssets( key ) {
 			desktop: { src: `${ CDN_PREFIX }/slide-move-block.gif`, type: 'image/gif' },
 			mobile: { src: `${ CDN_PREFIX }/slide-move-block_mobile.gif`, type: 'image/gif' },
 		},
+		findYourWay: {
+			desktop: { src: `${ CDN_PREFIX }/slide-find-your-way.gif`, type: 'image/gif' },
+		},
 		undo: { desktop: { src: `${ CDN_PREFIX }/slide-undo.gif`, type: 'image/gif' } },
 		welcome: {
 			desktop: { src: `${ CDN_PREFIX }/slide-welcome.png`, type: 'image/png' },
@@ -58,6 +61,10 @@ const referenceElements = [
 	},
 	{
 		desktop: '.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
+	},
+	{
+		mobile: null,
+		desktop: null,
 	},
 	{
 		mobile: null,
@@ -169,6 +176,19 @@ function getTourSteps( localeSlug, referencePositioning ) {
 		{
 			referenceElements: referencePositioning && referenceElements[ 5 ],
 			meta: {
+				heading: __( 'Find your way', 'full-site-editing' ),
+				description: __(
+					"Use List View to see all the blocks you've added. Click and drag any block to move it around.",
+					'full-site-editing'
+				),
+				imgSrc: getTourAssets( 'findYourWay' ),
+				animation: null,
+				isDesktopOnly: true,
+			},
+		},
+		{
+			referenceElements: referencePositioning && referenceElements[ 6 ],
+			meta: {
 				heading: __( 'Undo any mistake', 'full-site-editing' ),
 				descriptions: {
 					desktop: __( "Click the Undo button if you've made a mistake.", 'full-site-editing' ),
@@ -180,7 +200,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 6 ],
+			referenceElements: referencePositioning && referenceElements[ 7 ],
 			meta: {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
 				descriptions: {
@@ -199,7 +219,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 7 ],
+			referenceElements: referencePositioning && referenceElements[ 8 ],
 			meta: {
 				heading: __( 'Congratulations!', 'full-site-editing' ),
 				descriptions: {
