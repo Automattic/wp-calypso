@@ -3,7 +3,7 @@ import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchImporterState } from 'calypso/state/imports/actions';
@@ -12,14 +12,15 @@ import {
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { Importer, QueryObject, ImportJob } from './types';
-import { getImporterTypeForEngine } from './util';
-import WixImporter from './wix';
-import NotFound from './components/not-found';
-import { getSiteId, getSite } from 'calypso/state/sites/selectors';
+import { getSite, getSiteId } from 'calypso/state/sites/selectors';
+import { Site } from './components/importer-drag';
 import NotAuthorized from './components/not-authorized';
+import NotFound from './components/not-found';
 import MediumImporter from './medium';
 import './style.scss';
+import { Importer, ImportJob, QueryObject } from './types';
+import { getImporterTypeForEngine } from './util';
+import WixImporter from './wix';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -29,7 +30,7 @@ interface Props {
 	stepSectionName: string;
 	queryObject: QueryObject;
 	siteId: number;
-	site: unknown;
+	site: Site;
 	siteSlug: string;
 	fromSite: string;
 	canImport: boolean;
@@ -170,7 +171,7 @@ export default connect(
 
 		return {
 			siteId,
-			site: getSite( state, siteId ),
+			site: getSite( state, siteId ) as Site,
 			siteSlug,
 			fromSite,
 			siteImports: getImporterStatusForSiteId( state, siteId ),
