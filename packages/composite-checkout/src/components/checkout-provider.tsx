@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatusManager } from '../lib/form-status';
 import { LineItemsProvider } from '../lib/line-items';
@@ -195,30 +195,34 @@ function useCallEventCallbacks( {
 	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 } ): void {
+	// Store the callbacks as refs so we do not call them more than once if they
+	// are anonymous functions. This way they are only called when the
+	// transactionStatus/formStatus changes, which is what we really want.
+	const paymentCompleteRef = useRef( onPaymentComplete );
+	paymentCompleteRef.current = onPaymentComplete;
+	const paymentRedirectRef = useRef( onPaymentRedirect );
+	paymentRedirectRef.current = onPaymentRedirect;
+	const paymentErrorRef = useRef( onPaymentError );
+	paymentErrorRef.current = onPaymentError;
+
 	useEffect( () => {
-		if ( onPaymentComplete && formStatus === FormStatus.COMPLETE ) {
+		if ( paymentCompleteRef.current && formStatus === FormStatus.COMPLETE ) {
 			debug( "form status is complete so I'm calling onPaymentComplete" );
-			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
+			paymentCompleteRef.current( { paymentMethodId, transactionLastResponse } );
 		}
-	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
+	}, [ formStatus, transactionLastResponse, paymentMethodId ] );
 
 	useEffect( () => {
-		if ( onPaymentRedirect && transactionStatus === TransactionStatus.REDIRECTING ) {
+		if ( paymentRedirectRef.current && transactionStatus === TransactionStatus.REDIRECTING ) {
 			debug( "transaction status is redirecting so I'm calling onPaymentRedirect" );
-			onPaymentRedirect( { paymentMethodId, transactionLastResponse } );
+			paymentRedirectRef.current( { paymentMethodId, transactionLastResponse } );
 		}
-	}, [
-		transactionStatus,
-		onPaymentRedirect,
-		onPaymentError,
-		paymentMethodId,
-		transactionLastResponse,
-	] );
+	}, [ transactionStatus, paymentMethodId, transactionLastResponse ] );
 
 	useEffect( () => {
-		if ( onPaymentError && transactionStatus === TransactionStatus.ERROR ) {
+		if ( paymentErrorRef.current && transactionStatus === TransactionStatus.ERROR ) {
 			debug( "transaction status is error so I'm calling onPaymentError" );
-			onPaymentError( { paymentMethodId, transactionError } );
+			paymentErrorRef.current( { paymentMethodId, transactionError } );
 		}
-	}, [ transactionStatus, onPaymentRedirect, onPaymentError, paymentMethodId, transactionError ] );
+	}, [ transactionStatus, paymentMethodId, transactionError ] );
 }
