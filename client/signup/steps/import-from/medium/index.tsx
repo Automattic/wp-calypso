@@ -12,6 +12,7 @@ import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import DoneButton from '../components/done-button';
+import GettingStartedVideo from '../components/getting-started-video';
 import ImporterDrag, { Site } from '../components/importer-drag';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
@@ -75,6 +76,10 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 
 	function checkIsSuccess() {
 		return job?.importerState === appStates.IMPORT_SUCCESS;
+	}
+
+	function showVideoComponent() {
+		return checkProgress() || checkIsSuccess();
 	}
 
 	// Change the default messages
@@ -159,6 +164,8 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 						<ImporterDrag site={ site } importerData={ importerData } importerStatus={ job } />
 					);
 				} )() }
+
+				{ showVideoComponent() && <GettingStartedVideo /> }
 			</div>
 		</>
 	);
