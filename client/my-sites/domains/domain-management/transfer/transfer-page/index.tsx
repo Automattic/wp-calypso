@@ -45,7 +45,7 @@ import './style.scss';
 // The types for ToggleControl are missing `disabled`, but it is listed in the
 // component's docs, so we add it here. Please remove all this when the types
 // have been fixed.
-type ToggleControlProps = React.ComponentProps< typeof ToggleControl > & { disabled: boolean };
+type ToggleControlProps = React.ComponentProps< typeof ToggleControl > & { disabled?: boolean };
 const FixedToggleControl = ( props: ToggleControlProps ) => <ToggleControl { ...props } />;
 
 const TransferPage = ( props: TransferPageProps ): JSX.Element => {
