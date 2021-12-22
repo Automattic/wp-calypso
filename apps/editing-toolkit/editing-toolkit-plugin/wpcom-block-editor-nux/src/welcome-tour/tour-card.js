@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
+import { getMediaQueryList, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -36,7 +36,7 @@ function WelcomeTourCard( {
 	isGutenboarding,
 	setInitialFocusedElement,
 } ) {
-	const { descriptions, heading, imgSrc, imgNeedsPadding } = cardContent;
+	const { description, heading, imgSrc } = cardContent;
 	const isLastStep = currentStepIndex === lastStepIndex;
 
 	// Ensure tracking is recorded once per slide view
@@ -54,10 +54,8 @@ function WelcomeTourCard( {
 			is_gutenboarding: isGutenboarding,
 		} );
 	} );
-	// TODO CLK: welcome tour only mod for mobile fixes
-	const cardMediaClass = classNames( 'welcome-tour-card__media', {
-		'is-with-extra-padding': isMobile() && imgNeedsPadding,
-	} );
+
+	const cardMediaClass = classNames( 'welcome-tour-card__media' );
 
 	const description = descriptions[ isMobile() ? 'mobile' : 'desktop' ] ?? descriptions.desktop;
 
