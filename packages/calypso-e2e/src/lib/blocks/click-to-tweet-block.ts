@@ -47,7 +47,7 @@ export class ClicktoTweetBlock {
 	): Promise< void > {
 		// Ensure the actual URL, not the placeholder for post permalink is present.
 		// See D71837-code.
-		await page.waitForSelector( `${ selectors.block } a:not[href*="post_permalink"]` );
+		await page.waitForSelector( `${ selectors.block } a:not([href*="post_permalink"])` );
 
 		for await ( const content of contents ) {
 			await page.waitForSelector( `${ selectors.block } :text("${ content.toString() }")` );
