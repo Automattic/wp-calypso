@@ -117,6 +117,19 @@ const NameServersCard = ( {
 			return null;
 		}
 
+		const link = (
+			<a
+				href={ CHANGE_NAME_SERVERS }
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ handleLearnMoreClick }
+			/>
+		);
+		const notice = translate(
+			'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com. {{link}}Learn more{{/link}}',
+			{ components: { link } }
+		);
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="custom-name-servers-notice">
@@ -126,19 +139,7 @@ const NameServersCard = ( {
 					className="custom-name-servers-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="custom-name-servers-notice__message">
-					{ translate(
-						'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com.'
-					) }{ ' ' }
-					<a
-						href={ CHANGE_NAME_SERVERS }
-						target="_blank"
-						rel="noopener noreferrer"
-						onClick={ handleLearnMoreClick }
-					>
-						{ translate( 'Learn more.' ) }
-					</a>
-				</div>
+				<div className="custom-name-servers-notice__message">{ notice }</div>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
