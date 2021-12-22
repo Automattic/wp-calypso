@@ -45,8 +45,8 @@ const PluginDetailsSidebar = ( {
 		<div className="plugin-details-sidebar__plugin-details-content">
 			{ /* Needs to check for woocommerce dependencies */ }
 			<PluginDetailsSidebarUSP
-				key="woo"
-				icon={ { src: wooLogo, width: '32px' } }
+				id="woo"
+				icon={ { src: wooLogo } }
 				title={ translate( 'Your store foundations' ) }
 				description={ translate(
 					'This plugin requires the WooCommerce plugin to work.{{br/}}If you do not have it installed, it will be installed automatically for free.',
@@ -60,8 +60,8 @@ const PluginDetailsSidebar = ( {
 			/>
 			{ /* Needs to check for demo_url */ }
 			<PluginDetailsSidebarUSP
-				key="demo"
-				icon={ { src: eye, width: '24px' } }
+				id="demo"
+				icon={ { src: eye } }
 				title={ translate( 'Try it before you buy it' ) }
 				description={ translate(
 					'Take a look at the posibilities of this plugin before your commit.'
@@ -70,8 +70,8 @@ const PluginDetailsSidebar = ( {
 			/>
 			{ /* Needs to check for documentation_url */ }
 			<PluginDetailsSidebarUSP
-				key="documentation"
-				icon={ { src: support, width: '24px' } }
+				id="documentation"
+				icon={ { src: support } }
 				title={ translate( 'Support' ) }
 				description={ translate( 'Handled by WooCommerce.' ) }
 				links={ [
