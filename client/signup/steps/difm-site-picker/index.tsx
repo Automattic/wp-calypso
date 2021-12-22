@@ -157,8 +157,7 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 				</p>
 				<FormLabel htmlFor="confirmDomainChangeInput">
 					{ translate(
-						'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
-							"Your site's content will then be gone forever.",
+						"Please type {{warn}}%(siteAddress)s{{/warn}} to acknowledge that after purchase all of your site's content will be permanently deleted.",
 						{
 							components: {
 								warn: <span />,
