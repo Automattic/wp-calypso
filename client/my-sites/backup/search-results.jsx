@@ -19,7 +19,7 @@ const SearchResults = () => {
 			<div className="backup__search-header">{ translate( 'Find a backup or restore point' ) }</div>
 			<div className="backup__search-description">
 				{ translate(
-					'This is the complete event history for your site. Filter by date range and/ or activity type.'
+					'This is the complete event history for your site. Filter by date range and/or activity type.'
 				) }
 			</div>
 			<ActivityCardList logs={ rewindableEvents } />
