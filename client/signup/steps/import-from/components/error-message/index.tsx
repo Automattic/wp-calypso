@@ -1,4 +1,5 @@
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import React from 'react';
@@ -12,7 +13,7 @@ interface Props {
 	siteSlug: string;
 }
 
-const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
+const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const { siteSlug } = props;
 
@@ -22,6 +23,7 @@ const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 	const backToStart = (): void => {
 		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
 	};
+
 	const backToIntent = (): void => {
 		page( getStepUrl( 'setup-site', 'intent', '', '', { siteSlug } ) );
 	};
@@ -29,9 +31,13 @@ const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading  import__heading-center">
-					<Title>{ __( 'You are not authorized to import content' ) }</Title>
-					<SubTitle>{ __( 'Please check with your site admin.' ) }</SubTitle>
+				<div className="import__heading import__heading-center">
+					<Title>
+						{ createInterpolateElement( __( 'Oops, <br />something went wrong.' ), {
+							br: createElement( 'br' ),
+						} ) }
+					</Title>
+					<SubTitle>{ __( 'Please try again soon or contact support for help.' ) }</SubTitle>
 
 					<div className="import__buttons-group">
 						<NextButton onClick={ backToIntent }>{ __( 'Start building' ) }</NextButton>
@@ -45,4 +51,4 @@ const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default NotAuthorized;
+export default ErrorMessage;

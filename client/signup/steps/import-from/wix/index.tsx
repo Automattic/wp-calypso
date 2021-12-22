@@ -2,14 +2,17 @@ import { ProgressBar } from '@automattic/components';
 import { Progress, Title, SubTitle, Hooray } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import page from 'page';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
+import { getStepUrl } from 'calypso/signup/utils';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import DoneButton from '../components/done-button';
+import ErrorMessage from '../components/error-message';
 import GettingStartedVideo from '../components/getting-started-video';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
@@ -34,19 +37,39 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Effects
 	 */
-	useEffect( runImport, [ job ] );
+	useEffect( handleImporterReadiness, [] );
+	useEffect( handleRunFlagChange, [ run ] );
+	useEffect( handleJobStateTransition, [ job ] );
 
 	/**
 	 ↓ Methods
 	 */
-	function runImport() {
-		if ( ! run ) return;
+	function handleImporterReadiness() {
+		if ( ! checkIsImporterReady() ) {
+			redirectToImportCapturePage();
+		}
+	}
 
-		// If there is no existing import job, start a new
+	function handleJobStateTransition() {
+		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
 			startImport( siteId, getImporterTypeForEngine( importer ) );
-		} else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
+		}
+		// If the job is in a ready state, start the import process
+		else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
 			importSite( prepareImportParams() );
+		}
+	}
+
+	function handleRunFlagChange() {
+		if ( ! run ) return;
+
+		switch ( job?.importerState ) {
+			case appStates.IMPORT_SUCCESS:
+			case appStates.EXPIRED:
+				// the run flag means to start a new job,
+				// but previously reset existing finished jobs
+				return resetImport( siteId, job?.importerId );
 		}
 	}
 
@@ -64,19 +87,28 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
-	function checkLoading() {
+	function redirectToImportCapturePage() {
+		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
+	}
+
+	function checkIsImporterReady() {
+		return job || run;
+	}
+
+	function checkProgress() {
 		return (
+			job?.importerState === appStates.IMPORTING ||
 			job?.importerState === appStates.READY_FOR_UPLOAD ||
 			job?.importerState === appStates.UPLOAD_SUCCESS
 		);
 	}
 
-	function checkProgress() {
-		return job && job.importerState === appStates.IMPORTING;
-	}
-
 	function checkIsSuccess() {
 		return job && job.importerState === appStates.IMPORT_SUCCESS;
+	}
+
+	function checkIsFailed() {
+		return job && job.importerState === appStates.IMPORT_FAILURE;
 	}
 
 	function showVideoComponent() {
@@ -87,16 +119,11 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		<>
 			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
 				{ ( () => {
-					if ( checkLoading() ) {
-						/**
-						 * Loading screen
-						 */
-						return <LoadingEllipsis />;
-					} else if ( checkProgress() ) {
+					if ( checkProgress() ) {
 						/**
 						 * Progress screen
 						 */
-						const progress = calculateProgress( job?.progress );
+						const progress = job?.progress ? calculateProgress( job?.progress ) : 0;
 						return (
 							<Progress>
 								<Title>{ __( 'Importing' ) }...</Title>
@@ -128,7 +155,14 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 								/>
 							</Hooray>
 						);
+					} else if ( checkIsFailed() ) {
+						return <ErrorMessage siteSlug={ siteSlug } />;
 					}
+
+					/**
+					 * Loading screen
+					 */
+					return <LoadingEllipsis />;
 				} )() }
 
 				{ showVideoComponent() && <GettingStartedVideo /> }
