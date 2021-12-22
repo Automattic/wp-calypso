@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import useDomainNameserversQuery from 'calypso/data/domains/nameservers/use-domain-nameservers-query';
 import useUpdateNameserversMutation from 'calypso/data/domains/nameservers/use-update-nameservers-mutation';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const noticeOptions = {
@@ -13,10 +14,13 @@ const noticeOptions = {
 
 const withDomainNameservers = createHigherOrderComponent( ( Wrapped ) => {
 	const WithDomainNameservers = ( props ) => {
-		const { selectedDomainName } = props;
+		const { domain, selectedDomainName } = props;
 		const dispatch = useDispatch();
 		const translate = useTranslate();
-		const { data, isLoading, isError, error } = useDomainNameserversQuery( selectedDomainName );
+		const { data, isLoading, isError, error } = useDomainNameserversQuery(
+			selectedDomainName,
+			domain?.type === domainTypes.REGISTERED // Only registered domains can have their name servers updated
+		);
 		const { updateNameservers } = useUpdateNameserversMutation( selectedDomainName, {
 			onSuccess() {
 				dispatch(
