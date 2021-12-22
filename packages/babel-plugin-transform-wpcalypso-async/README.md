@@ -12,9 +12,7 @@ Example Babel config file:
 
 ```json
 {
-	"plugins": [
-		[ "@automattic/transform-wpcalypso-async", { "async": true } ]
-	]
+	"plugins": [ [ "@automattic/transform-wpcalypso-async", { "async": true } ] ]
 }
 ```
 
