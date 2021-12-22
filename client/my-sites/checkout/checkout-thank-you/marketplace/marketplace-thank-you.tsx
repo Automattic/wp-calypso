@@ -92,7 +92,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const [ pluginIcon, setPluginIcon ] = useState( null );
+	const [ pluginIcon, setPluginIcon ] = useState( '' );
 
 	const [ retries, setRetries ] = useState( 0 );
 
@@ -104,7 +104,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 				'deauthorize plugin installation URL'
 			)
 		);
-	}, [] );
+	}, [ dispatch ] );
 
 	useEffect( () => {
 		if ( ! isWporgPluginFetched ) {
@@ -114,7 +114,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 			// wporgPlugin exists in the wporg directory.
 			setPluginIcon( wporgPlugin?.icon || successImage );
 		}
-	}, [ isWporgPluginFetched, productSlug, setPluginIcon, dispatch ] );
+	}, [ isWporgPluginFetched, productSlug, setPluginIcon, dispatch, wporgPlugin?.icon ] );
 
 	useEffect( () => {
 		if ( wporgPlugin?.wporg === false ) {
@@ -137,7 +137,14 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		src: pluginIcon,
 	};
 
-	const setupURL = pluginOnSite?.action_links?.Settings || `${ siteAdminUrl }plugins.php`;
+	// Cast pluginOnSite's type because the return type of getPluginOnSite is
+	// wrong and I don't know how to fix it. Remove this cast if the return type
+	// can be made correct.
+	const pluginOnSiteData = pluginOnSite as
+		| undefined
+		| { action_links?: { Settings?: string }; name?: string };
+
+	const setupURL = pluginOnSiteData?.action_links?.Settings || `${ siteAdminUrl }plugins.php`;
 
 	const setupSection = {
 		sectionKey: 'setup_whats_next',
@@ -176,7 +183,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	};
 
 	const thankYouSubtitle = translate( '%(pluginName)s has been installed.', {
-		args: { pluginName: pluginOnSite?.name },
+		args: { pluginName: pluginOnSiteData?.name },
 	} );
 
 	return (
