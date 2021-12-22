@@ -45,12 +45,14 @@ function isCtaButton( cta: Cta ): cta is CtaButton {
 	return undefined !== ( cta as CtaButton ).text;
 }
 
-function isCtaAction( action: any ): action is CtaAction {
+function isCtaAction( action: unknown ): action is CtaAction {
 	return undefined !== ( action as CtaAction ).onClick;
 }
 
 function buttonProps( button: CtaButton, isPrimary: boolean ) {
-	const actionProps = isCtaAction( button.action )
+	const actionProps: Record< string, string | boolean | ClickCallback | undefined > = isCtaAction(
+		button.action
+	)
 		? {
 				href: button.action.url,
 				onClick: button.action.onClick,
