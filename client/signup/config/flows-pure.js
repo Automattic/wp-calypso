@@ -417,6 +417,7 @@ export function generateFlows( {
 			],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
+			excludeFromManageSiteFlows: true,
 			lastModified: '2021-09-30',
 		},
 		{
