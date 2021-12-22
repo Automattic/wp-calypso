@@ -1,7 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -40,7 +39,7 @@ import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsu
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 
 import './style.scss';
@@ -285,14 +284,14 @@ GSuiteAddUsers.propTypes = {
 export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
-		const siteId = get( selectedSite, 'ID', null );
-		const domains = getDomainsBySiteId( state, siteId );
+		const selectedSiteId = getSelectedSiteId( state );
+		const domains = getDomainsBySiteId( state, selectedSiteId );
 
 		return {
 			currentRoute: getCurrentRoute( state ),
 			domains,
-			gsuiteUsers: getGSuiteUsers( state, siteId ),
-			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
+			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
+			isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
 			selectedSite,
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 		};
