@@ -4,7 +4,7 @@ import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-import { recordRegistration } from 'calypso/lib/analytics/signup';
+import { recordRegistration, recordNewUserSiteCreated } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	updatePrivacyForDomain,
@@ -290,6 +290,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	}
 
 	const locale = getLocaleSlug();
+	const isNewUser = !! ( reduxStore.getState().currentUser.user.site_count <= 1 || 0 );
 
 	wpcom.req.post(
 		'/sites/new',
@@ -325,6 +326,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				isFreeThemePreselected,
 				themeSlugWithRepo
 			);
+
+			// Record calypso_new_user_site_creation
+			recordNewUserSiteCreated( flowToCheck, isNewUser );
 		}
 	);
 }
