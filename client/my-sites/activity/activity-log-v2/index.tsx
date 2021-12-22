@@ -109,7 +109,7 @@ const ActivityLogV2: FunctionComponent = () => {
 				/>
 			) }
 			<div className="activity-log-v2__content">
-				<ActivityCardList logs={ logs } pageSize={ 10 } showFilter={ showFilter } />
+				<ActivityCardList showFilter={ showFilter } logs={ logs } />
 			</div>
 		</Main>
 	);
