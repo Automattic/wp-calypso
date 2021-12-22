@@ -2,10 +2,8 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	TITAN_MAIL_MONTHLY_SLUG,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
