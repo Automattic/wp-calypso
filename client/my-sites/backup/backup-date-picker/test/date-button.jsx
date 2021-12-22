@@ -1,11 +1,22 @@
+const mockUseDispatch = () => () => null;
+const mockUseSelector = ( func ) => func();
+
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn(),
+	useSelector: jest.fn(),
+} ) );
+jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
+jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
+jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
+jest.mock( '../hooks', () => ( {
+	...jest.requireActual( '../hooks' ),
+	useCanGoToDate: jest.fn(),
 } ) );
 
 import { shallow } from 'enzyme';
 import moment from 'moment';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DateButton from '../date-button';
 
 const getTracksEventName = ( event ) => event.meta.analytics[ 0 ].payload.name;
@@ -13,6 +24,9 @@ const getTracksEventName = ( event ) => event.meta.analytics[ 0 ].payload.name;
 describe( 'Test Backup Date Picker', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+
+		useDispatch.mockImplementation( mockUseDispatch );
+		useSelector.mockImplementation( mockUseSelector );
 	} );
 
 	test( 'Records a tracks event when the date picker is opened', () =>

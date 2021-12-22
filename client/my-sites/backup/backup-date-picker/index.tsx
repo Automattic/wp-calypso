@@ -59,6 +59,12 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 		today.clone()
 	);
 
+	// Don't filter out today's date from the calendar options.
+	let todayIndex;
+	if ( ( todayIndex = datesWithNoBackups.dates.indexOf( today.format( 'MM-DD-YYYY' ) ) ) > -1 ) {
+		datesWithNoBackups.dates.splice( todayIndex, 1 );
+	}
+
 	const { previousDisplayDate, nextDisplayDate, selectedDisplayDate } = useMemo( () => {
 		const yesterday = moment( today ).subtract( 1, 'day' );
 

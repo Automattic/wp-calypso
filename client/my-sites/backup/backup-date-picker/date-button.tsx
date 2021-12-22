@@ -20,7 +20,7 @@ const DateButton: React.FC< Props > = ( {
 
 	const [ pickerVisible, setPickerVisible ] = useState( false );
 	const moment = useLocalizedMoment();
-	const today = useDateWithOffset( moment() );
+	const today = useDateWithOffset( moment() ) as Moment;
 	const translate = useTranslate();
 
 	/**
