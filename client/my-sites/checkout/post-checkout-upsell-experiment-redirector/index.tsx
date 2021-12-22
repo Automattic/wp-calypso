@@ -30,7 +30,7 @@ export default function PostCheckoutUpsellExperimentRedirector( {
 	const getThankYouUrl = useCallback( () => {
 		const getThankYouPageUrlArguments = {
 			siteSlug,
-			receiptId,
+			receiptId: receiptId ? parseInt( receiptId ) : undefined,
 			hideNudge: true,
 			isEligibleForSignupDestinationResult,
 		};
