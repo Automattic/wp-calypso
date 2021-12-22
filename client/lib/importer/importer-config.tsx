@@ -26,7 +26,13 @@ interface ImporterConfigMap {
 	[ key: string ]: ImporterConfig;
 }
 
-function getConfig( siteTitle = '' ): { [ key: string ]: ImporterConfig } {
+interface ImporterConfigArgs {
+	siteTitle?: string;
+}
+
+function getConfig(
+	args: ImporterConfigArgs = { siteTitle: '' }
+): { [ key: string ]: ImporterConfig } {
 	const importerConfig: ImporterConfigMap = {};
 
 	importerConfig.wordpress = {
@@ -38,9 +44,7 @@ function getConfig( siteTitle = '' ): { [ key: string ]: ImporterConfig } {
 		description: translate(
 			'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args: {
-					siteTitle,
-				},
+				args,
 				components: {
 					b: <strong />,
 				},
@@ -76,7 +80,7 @@ function getConfig( siteTitle = '' ): { [ key: string ]: ImporterConfig } {
 			{
 				args: {
 					importerName: 'Blogger',
-					siteTitle,
+					siteTitle: args.siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -113,9 +117,7 @@ function getConfig( siteTitle = '' ): { [ key: string ]: ImporterConfig } {
 			'Import posts, tags, images, and videos ' +
 				'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args: {
-					siteTitle,
-				},
+				args,
 				components: {
 					b: <strong />,
 				},
@@ -152,7 +154,7 @@ function getConfig( siteTitle = '' ): { [ key: string ]: ImporterConfig } {
 			{
 				args: {
 					importerName: 'Substack',
-					siteTitle,
+					siteTitle: args.siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -199,7 +201,7 @@ function getConfig( siteTitle = '' ): { [ key: string ]: ImporterConfig } {
 			{
 				args: {
 					importerName: 'Squarespace',
-					siteTitle,
+					siteTitle: args.siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -235,9 +237,7 @@ function getConfig( siteTitle = '' ): { [ key: string ]: ImporterConfig } {
 		description: translate(
 			'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args: {
-					siteTitle,
-				},
+				args,
 				components: {
 					b: <strong />,
 				},
@@ -258,8 +258,8 @@ function getConfig( siteTitle = '' ): { [ key: string ]: ImporterConfig } {
 	return importerConfig;
 }
 
-export function getImporters( siteTitle = '' ) {
-	const importerConfig = getConfig( siteTitle );
+export function getImporters( args: ImporterConfigArgs = { siteTitle: '' } ) {
+	const importerConfig = getConfig( args );
 
 	if ( ! config.isEnabled( 'importers/substack' ) ) {
 		delete importerConfig.substack;
@@ -270,8 +270,8 @@ export function getImporters( siteTitle = '' ) {
 	return importers;
 }
 
-export function getImporterByKey( key: string, siteTitle = '' ) {
-	return filter( getImporters( siteTitle ), ( importer ) => importer.key === key )[ 0 ];
+export function getImporterByKey( key: string, args: ImporterConfigArgs = { siteTitle: '' } ) {
+	return filter( getImporters( args ), ( importer ) => importer.key === key )[ 0 ];
 }
 
 export default getConfig;
