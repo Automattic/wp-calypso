@@ -99,12 +99,8 @@
 	}
 }
 
-.name-servers__custom-nameservers-row + .notice {
-	margin-top: 16px;
-}
-
-.name-servers__custom-nameservers-row + .name-servers__custom-nameservers-form-buttons {
-	margin-top: 24px;
+.name-servers__custom-nameservers-row + .custom-name-servers-notice {
+	margin-top: 8px;
 }
 
 .name-servers__custom-nameservers-form-buttons {
@@ -112,6 +108,7 @@
 	flex-wrap: wrap;
 	column-gap: 16px;
 	row-gap: 8px;
+	margin-top: 24px;
 
 	.button {
 		margin: 0;

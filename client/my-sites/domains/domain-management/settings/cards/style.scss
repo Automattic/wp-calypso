@@ -90,3 +90,25 @@
 		color: var( --studio-gray-50 );
 	}
 }
+
+// TODO: This should be extracted into a new component
+.custom-name-servers-notice {
+	flex-basis: 100%;
+	background-color: var( --studio-gray-0 );
+	display: flex;
+	align-items: center;
+	padding: 8px;
+	gap: 8px;
+	border-radius: 2px;
+
+	&__icon.gridicon {
+		min-width: 18px;
+		fill: var( --studio-orange-40 );
+	}
+
+	&__message {
+		font-weight: 400;
+		font-size: $font-body-small;
+		color: var( --studio-gray-80 );
+	}
+}

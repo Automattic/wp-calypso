@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Notice from 'calypso/components/notice';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
@@ -117,21 +117,31 @@ const NameServersCard = ( {
 			return null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Notice status="is-warning" showDismiss={ false }>
-				{ translate(
-					'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com.'
-				) }{ ' ' }
-				<a
-					href={ CHANGE_NAME_SERVERS }
-					target="_blank"
-					rel="noopener noreferrer"
-					onClick={ handleLearnMoreClick }
-				>
-					{ translate( 'Learn more.' ) }
-				</a>
-			</Notice>
+			<div className="custom-name-servers-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="custom-name-servers-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="custom-name-servers-notice__message">
+					{ translate(
+						'By using custom name servers, you will manage your DNS records with your new provider, not WordPress.com.'
+					) }{ ' ' }
+					<a
+						href={ CHANGE_NAME_SERVERS }
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ handleLearnMoreClick }
+					>
+						{ translate( 'Learn more.' ) }
+					</a>
+				</div>
+			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
 	const resetToWpcomNameservers = () => {
