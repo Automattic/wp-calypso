@@ -1,5 +1,3 @@
-import fs from 'fs/promises';
-import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
 import { getHeadless, getLaunchConfiguration } from './browser-helper';
@@ -183,41 +181,4 @@ export async function setStoreCookie(
 			},
 		] );
 	}
-}
-
-/**
- *
- * @param browserContext
- * @param testAccount
- */
-export async function loadAuthCookiesForTestAccount(
-	browserContext: BrowserContext,
-	testAccount: string
-): Promise< boolean > {
-	const { COOKIES_PATH } = process.env;
-	if ( ! COOKIES_PATH ) {
-		return false;
-	}
-
-	const storageStateFilePath = path.join( COOKIES_PATH, `${ testAccount }.json` );
-	let hasFreshCookies;
-
-	try {
-		const { birthtimeMs } = await fs.stat( storageStateFilePath );
-		hasFreshCookies = birthtimeMs > Date.now() - 3 * 24 * 60 * 60 * 1000; // less than 3 days
-	} catch {
-		hasFreshCookies = false;
-	}
-
-	if ( ! hasFreshCookies ) {
-		return false;
-	}
-
-	const storageStateFile = await fs.readFile( storageStateFilePath, { encoding: 'utf8' } );
-	const { cookies } = JSON.parse( storageStateFile );
-
-	console.info( `Using stored authentication cookies for the "${ testAccount }" account.` );
-	await browserContext.addCookies( cookies );
-
-	return true;
 }
