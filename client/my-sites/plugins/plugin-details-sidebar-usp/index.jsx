@@ -1,12 +1,23 @@
 import styled from '@emotion/styled';
 import ExternalLink from 'calypso/components/external-link';
+import FoldableCard from 'calypso/components/foldable-card';
 
-const Container = styled.div`
+const Container = styled( FoldableCard )`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	padding: ${ ( props ) => ( props.first ? '0 0 40px' : '40px 0' ) };
-	border-bottom: ${ ( props ) => ( props.last ? 'none' : '1px solid var( --studio-gray-5 )' ) };
+
+	box-shadow: none;
+
+	.foldable-card__header {
+		display: none;
+	}
+
+	&.is-expanded .foldable-card__content {
+		width: 100%;
+		${ ( props ) => props.first && 'border-top: 0' };
+		padding: ${ ( props ) => ( props.first ? '0 0 32px' : '32px 0' ) };
+	}
 `;
 
 const Icon = styled.img`
@@ -23,18 +34,28 @@ const Description = styled.div`
 	margin-bottom: 12px;
 `;
 
-const PluginDetailsSidebarUSP = ( { icon, title, description, links, first, last } ) => {
+const PluginDetailsSidebarUSP = ( { key, icon, title, description, links, first } ) => {
+	const Header = () => {
+		return (
+			<>
+				<Icon src={ icon.src } width={ icon.width } />
+				<Title>{ title }</Title>
+			</>
+		);
+	};
 	return (
-		<Container key={ title } first={ first } last={ last }>
-			<Icon src={ icon.src } width={ icon.width } />
-			<Title>{ title }</Title>
+		<Container key={ key } header={ <Header /> } expanded first={ first }>
+			<Header />
 			<Description>{ description }</Description>
 			{ links &&
 				links.map( ( link ) => {
 					return (
-						<ExternalLink icon href={ link.href }>
-							{ link.label }
-						</ExternalLink>
+						<>
+							<ExternalLink icon href={ link.href }>
+								{ link.label }
+							</ExternalLink>
+							<br />
+						</>
 					);
 				} ) }
 		</Container>
