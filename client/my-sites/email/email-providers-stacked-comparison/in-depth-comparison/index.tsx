@@ -15,7 +15,6 @@ type InDepthComparisonProps = {
 	comparisonObjects: ProviderComparison[];
 };
 
-export const InDepthComparison: FunctionComponent< InDepthComparison > = () => {
-	return <p> New component </p>;
 export const InDepthComparison: FunctionComponent< InDepthComparisonProps > = () => {
+	return <p> New component </p>;
 };
