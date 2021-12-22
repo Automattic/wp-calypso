@@ -15,10 +15,11 @@ import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib/domains';
 import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import SelectIpsTag from 'calypso/my-sites/domains/domain-management/transfer/transfer-out/select-ips-tag';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -261,19 +262,33 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return __( 'This domain cannot be locked.' );
 	};
 
-	const renderAdvancedTransferOptions = () => {
-		if ( isMapping ) {
-			return null;
-		}
+	const renderUkTransferOptions = () => {
+		return <SelectIpsTag selectedDomainName={ selectedDomainName } redesign />;
+	};
 
+	const renderCommonTldTransferOptions = () => {
 		return (
-			<Card className="transfer-page__advanced-transfer-options">
-				<CardHeading size={ 16 }>Advanced Options</CardHeading>
+			<>
 				<p>{ renderTransferMessage() }</p>
 				{ renderTransferLock() }
 				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
 					{ __( 'Get authorization code' ) }
 				</Button>
+			</>
+		);
+	};
+
+	const renderAdvancedTransferOptions = () => {
+		if ( isMapping ) {
+			return null;
+		}
+
+		const topLevelOfTld = getTopLevelOfTld( selectedDomainName );
+
+		return (
+			<Card className="transfer-page__advanced-transfer-options">
+				<CardHeading size={ 16 }>{ __( 'Advanced Options' ) }</CardHeading>
+				{ topLevelOfTld !== 'uk' ? renderCommonTldTransferOptions() : renderUkTransferOptions() }
 			</Card>
 		);
 	};
