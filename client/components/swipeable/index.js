@@ -172,7 +172,12 @@ export const Swipeable = ( {
 
 			const dragPosition = getDragPositionAndTime( event );
 			const delta = dragPosition.x - dragStartData.x;
+			const absoluteDelta = Math.abs( delta );
 			const offset = getOffset( currentPage ) + delta;
+
+			if ( absoluteDelta > 3 ) {
+				return;
+			}
 
 			// Allow for swipe left or right
 			if (
