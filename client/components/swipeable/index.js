@@ -124,6 +124,11 @@ export const Swipeable = ( {
 			const absoluteDelta = Math.abs( delta );
 			const velocity = absoluteDelta / ( dragPosition.timeStamp - dragStartData.timeStamp );
 
+			const verticalDelta = dragPosition.y - dragStartData.y;
+			if ( Math.abs( verticalDelta ) > Math.abs( delta ) ) {
+				return;
+			}
+
 			const hasMetThreshold =
 				absoluteDelta > OFFSET_THRESHOLD_PERCENTAGE * containerWidth ||
 				velocity > VELOCITY_THRESHOLD;
