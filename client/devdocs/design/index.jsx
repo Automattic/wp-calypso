@@ -202,7 +202,7 @@ export default class DesignAssets extends Component {
 						readmeFilePath="fixed-navigation-header"
 					/>
 					<FocusableExample readmeFilePath="focusable" />
-					<FoldableCard readmeFilePath="foldable-card" />
+					<FoldableCard readmeFilePath="foldable-card" searchKeywords="accordion" />
 					<FoldableFAQ readmeFilePath="foldable-faq" />
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
