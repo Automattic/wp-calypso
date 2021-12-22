@@ -62,7 +62,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Screenshot blue signup page in desktop viewport, en and Mag-16 locales', async function () {
 			const userSignupPage = new UserSignupPage( page );
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-				await userSignupPage.visit( `premium/${ locale }` );
+				await userSignupPage.visit( { path: `premium/${ locale }` } );
 				page.waitForSelector( selectors.isBlueSignup );
 				await page.screenshot( {
 					path: `tos_blue_signup_desktop_${ locale }.png`,
@@ -91,7 +91,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Screenshot white signup page in desktop viewport, en and Mag-16 locales', async function () {
 			const userSignupPage = new UserSignupPage( page );
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-				await userSignupPage.visit( locale );
+				await userSignupPage.visit( { path: locale } );
 				page.waitForSelector( selectors.isWhiteSignup );
 				await page.screenshot( {
 					path: `tos_white_signup_desktop_${ locale }.png`,
@@ -120,7 +120,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Screenshot blue login page in desktop viewport, en and Mag-16 locales', async function () {
 			const loginPage = new LoginPage( page );
 			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
-				await loginPage.visit( locale );
+				await loginPage.visit( { path: locale } );
 				page.waitForSelector( selectors.isBlueLogin );
 				await page.screenshot( {
 					path: `tos_blue_login_desktop_${ locale }.png`,
@@ -149,7 +149,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Screenshot white login page in desktop viewport, en and Mag-16 locales', async function () {
 			const loginPage = new LoginPage( page );
 			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
-				await loginPage.visit( `new/${ locale }` );
+				await loginPage.visit( { path: `new/${ locale }` } );
 				page.waitForSelector( selectors.isWhiteLogin );
 				await page.screenshot( {
 					path: `tos_white_login_desktop_${ locale }.png`,
