@@ -806,6 +806,17 @@ export function generateSteps( {
 		},
 
 		// Woocommerce Install steps
+		'store-address': {
+			stepName: 'store-address',
+			props: {
+				headerTitle: i18n.translate( 'Add an adress so you can get paid' ),
+				headerDescription: i18n.translate(
+					'This will used as your default business address. You can change it later if you need to.'
+				),
+			},
+			dependencies: [ 'site' ],
+			providesDependencies: [ 'siteConfirmed' ],
+		},
 		confirm: {
 			stepName: 'confirm',
 			props: {
