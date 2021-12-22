@@ -3,7 +3,7 @@ import { Page } from 'playwright';
 const selectors = {
 	revisionNumber: ( index: number ) =>
 		`li.editor-revisions-list__revision:nth-last-child(${ index })`,
-	button: ( text: string ) => `.editor-revisions :has-text("${ text }")`,
+	button: ( text: string ) => `div[aria-modal="true"] button:has-text("${ text }")`,
 };
 
 /**

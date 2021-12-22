@@ -4,43 +4,51 @@
 
 import {
 	DataHelper,
-	LoginPage,
-	NewPostFlow,
+	BrowserHelper,
+	TestAccount,
 	GutenbergEditorPage,
 	EditorSettingsSidebarComponent,
 	RevisionsComponent,
 	setupHooks,
+	ParagraphBlock,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
+	const accountName = BrowserHelper.targetGutenbergEdge()
+		? 'gutenbergSimpleSiteEdgeUser'
+		: 'simpleSitePersonalPlanUser';
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	let page: Page;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+
+		const testAccount = new TestAccount( accountName );
+		await testAccount.authenticate( page );
 	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'simpleSitePersonalPlanUser' } );
-	} );
-
-	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( page );
-		await newPostFlow.newPostFromNavbar();
+	it( 'Go to the new post page', async function () {
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( 'Enter post title', async function () {
 		gutenbergEditorPage = new GutenbergEditorPage( page );
 		await gutenbergEditorPage.enterTitle( DataHelper.getRandomPhrase() );
+		await gutenbergEditorPage.saveDraft();
 	} );
 
 	it.each( [ { revision: 1 }, { revision: 2 } ] )(
-		'Create revision %i',
+		'Create revision $revision',
 		async function ( { revision } ) {
-			await gutenbergEditorPage.enterText( `Revision ${ revision }` );
+			const blockHandle = await gutenbergEditorPage.addBlock(
+				ParagraphBlock.blockName,
+				ParagraphBlock.blockEditorSelector
+			);
+			const paragraphBlock = new ParagraphBlock( blockHandle );
+			await paragraphBlock.enterParagraph( `Revision ${ revision }` );
 			await gutenbergEditorPage.saveDraft();
 		}
 	);
@@ -53,7 +61,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 		await editorSettingsSidebarComponent.showRevisions();
 	} );
 
-	it( 'Restore first revision', async function () {
+	it( 'Restore revision 1', async function () {
 		const revisionsComponent = new RevisionsComponent( page );
 		await revisionsComponent.selectRevision( 1 );
 		await revisionsComponent.clickButton( 'Load' );
