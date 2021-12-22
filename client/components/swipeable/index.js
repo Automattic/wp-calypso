@@ -125,7 +125,7 @@ export const Swipeable = ( {
 			const velocity = absoluteDelta / ( dragPosition.timeStamp - dragStartData.timeStamp );
 
 			const verticalDelta = dragPosition.y - dragStartData.y;
-			if ( Math.abs( verticalDelta ) > Math.abs( delta ) ) {
+			if ( Math.abs( verticalDelta ) > absoluteDelta ) {
 				return;
 			}
 
