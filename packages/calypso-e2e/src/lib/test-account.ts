@@ -9,20 +9,12 @@ import { LoginPage } from './pages/login-page';
 
 export class TestAccount {
 	readonly accountName: string;
-	readonly credentials: {
-		username: string;
-		password: string;
-	};
+	readonly credentials: [ string, string ];
 	readonly siteURL: string;
 
 	constructor( accountName: string ) {
-		const credentials = getAccountCredential( accountName );
-
 		this.accountName = accountName;
-		this.credentials = {
-			username: credentials[ 0 ],
-			password: credentials[ 1 ],
-		};
+		this.credentials = getAccountCredential( accountName );
 		this.siteURL = getAccountSiteURL( accountName );
 	}
 
@@ -49,10 +41,9 @@ export class TestAccount {
 			const browserContext = await browser.newContext( { userAgent } );
 			const page = await browserContext.newPage();
 			const loginPage = new LoginPage( page );
-			const { username, password } = this.credentials;
 
 			await loginPage.visit();
-			await loginPage.logInWithCredentials( username, password );
+			await loginPage.logInWithCredentials( ...this.credentials );
 
 			this.log( 'Saving auth cookies' );
 
@@ -100,11 +91,10 @@ export class TestAccount {
 			await page.goto( getCalypsoURL( '/' ) );
 		} else {
 			const loginPage = new LoginPage( page );
-			const { username, password } = this.credentials;
 
 			this.log( 'Logging in' );
 			await loginPage.visit();
-			await loginPage.logInWithCredentials( username, password );
+			await loginPage.logInWithCredentials( ...this.credentials );
 		}
 	}
 
