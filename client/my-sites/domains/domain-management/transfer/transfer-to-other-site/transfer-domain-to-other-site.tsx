@@ -91,7 +91,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 					if ( this.props.isDomainOnly ) {
 						this.props.requestSites();
 						const transferedTo = this.props.sites.find( ( site ) => site.ID === targetSite.ID );
-						page( domainManagementList( transferedTo?.slug ?? '/' ) );
+						page( domainManagementList( transferedTo?.slug ?? '' ) );
 					} else {
 						page( domainManagementList( this.props.selectedSite.slug ) );
 					}
