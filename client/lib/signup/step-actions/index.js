@@ -20,7 +20,11 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
-import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserName,
+	isUserLoggedIn,
+	getCurrentUserSiteCount,
+} from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -288,9 +292,8 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
 		return;
 	}
-
 	const locale = getLocaleSlug();
-	const isNewUser = !! ( reduxStore.getState().currentUser.user.site_count <= 1 || 0 );
+	const isNewUser = getCurrentUserSiteCount( state ) <= 1;
 
 	wpcom.req.post(
 		'/sites/new',
