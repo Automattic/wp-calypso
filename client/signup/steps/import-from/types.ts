@@ -7,6 +7,7 @@ export type QueryObject = {
 export interface ImportJob {
 	importerId: string;
 	importerState: string;
+	statusMessage?: string;
 	type: string;
 	site: { ID: number };
 	customData: { [ key: string ]: any };
