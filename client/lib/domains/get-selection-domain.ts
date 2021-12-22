@@ -2,8 +2,8 @@ import { type as domainTypes } from './constants';
 
 export function getSelectedDomain<
 	T extends {
-		type: string;
-		name: string;
+		type?: string;
+		name?: string;
 	}
 >( {
 	domains,
