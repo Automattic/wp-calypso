@@ -106,14 +106,11 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			</h1>
 
 			<div className="email-providers-stacked-comparison__how-they-compare">
-				{ translate( 'Not sure how to start?' ) }
-				<Button
-					borderless
-					className="email-providers-stacked-comparison__how-they-compare-link"
-					onClick={ () => page( emailManagementInDepthComparison( siteName, selectedDomainName ) ) }
-				>
-					{ translate( 'See how they compare.' ) }
-				</Button>
+				{ translate( 'Not sure how to start? {{a}}See how they compare{{/a}}.', {
+					components: {
+						a: <a href={ emailManagementInDepthComparison( siteName, selectedDomainName ) } />,
+					},
+				} ) }
 			</div>
 
 			<BillingIntervalToggle

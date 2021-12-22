@@ -169,7 +169,7 @@ export function emailManagementPurchaseNewEmailAccount(
 }
 
 /**
- * Retrieves the url of the Email Comparison page:
+ * Retrieves the url of the Email In-Depth Comparison page:
  *
  *   https://wordpress.com/email/:domainName/in-depth-comparison/:siteName
  *
@@ -185,7 +185,7 @@ export function emailManagementInDepthComparison(
 	relativeTo = null,
 	source = null
 ) {
-	return emailManagementEdit( siteName, domainName, 'in-depth-comparison', relativeTo, { source } );
+	return emailManagementEdit( siteName, domainName, 'compare', relativeTo, { source } );
 }
 
 export function emailManagementEdit(
