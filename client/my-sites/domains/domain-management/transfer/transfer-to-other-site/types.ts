@@ -2,7 +2,7 @@ import { DefaultRootState } from 'react-redux';
 import { LocalizeProps } from 'calypso/../packages/i18n-calypso/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { requestSites } from 'calypso/state/sites/actions';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 type Maybe< T > = T | null;
@@ -18,7 +18,7 @@ type SiteDataExtraInfo = SiteData & {
 
 // props passed to the component
 export type TransferDomainToOtherSitePassedProps = {
-	domains: SiteDomain[];
+	domains: ResponseDomain[];
 	isRequestingSiteDomains: boolean;
 	selectedDomainName: string;
 	selectedSite: SiteDataExtraInfo;
@@ -31,8 +31,7 @@ export type TransferDomainToOtherSiteStateProps = {
 	hasSiteDomainsLoaded: boolean;
 	isDomainOnly: Maybe< boolean >;
 	isMapping: boolean;
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	sites: Maybe< Maybe< SiteData >[] >;
+	sites: SiteData[];
 };
 // state props added by redux connect
 export type TransferDomainToOtherSiteStateToProps = (
