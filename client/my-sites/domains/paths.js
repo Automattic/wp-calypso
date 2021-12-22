@@ -163,22 +163,47 @@ export function domainManagementTransfer( siteName, domainName, relativeTo = nul
 	return domainManagementTransferBase( siteName, domainName, '', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferIn( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'in', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferInPrecheck( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'precheck', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferOut( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'out', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferToAnotherUser( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'other-user', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferToOtherSite( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'other-site', relativeTo );
 }
