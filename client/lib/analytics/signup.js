@@ -93,6 +93,21 @@ export function recordSignupComplete(
 	} );
 }
 
+export function recordNewUserSiteCreated( flow, isNew7DUserSite ) {
+	if ( !isNew7DUserSite ) {
+		return;
+	}	
+
+	const device = resolveDeviceTypeByViewPort();
+
+	// Tracks
+	recordTracksEvent( 'calypso_new_user_site_creation', { flow, device } );
+	// Google Analytics
+	gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
+	// FullStory
+	recordFullStoryEvent( 'calypso_new_user_site_creation', { flow, device } );
+}
+
 export function recordSignupStep( flow, step, optionalProps ) {
 	const device = resolveDeviceTypeByViewPort();
 	const props = {
