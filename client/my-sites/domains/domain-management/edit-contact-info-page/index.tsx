@@ -42,8 +42,12 @@ const EditContactInfoPage = ( {
 	};
 
 	const renderBreadcrumbs = () => {
+		if ( ! selectedSite ) {
+			return null;
+		}
+
 		const previousPath = domainManagementEdit(
-			selectedSite?.slug,
+			selectedSite.slug,
 			selectedDomainName,
 			currentRoute
 		);
@@ -51,7 +55,7 @@ const EditContactInfoPage = ( {
 		const items = [
 			{
 				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite?.slug, currentRoute ),
+				href: domainManagementList( selectedSite.slug, currentRoute ),
 			},
 			{
 				label: selectedDomainName,
