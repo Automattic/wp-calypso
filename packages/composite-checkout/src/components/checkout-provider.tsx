@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useRef, useMemo, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatusManager } from '../lib/form-status';
 import { LineItemsProvider } from '../lib/line-items';
@@ -195,8 +195,17 @@ function useCallEventCallbacks( {
 	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 } ): void {
+	// Ensure that onPaymentComplete is only called once per checkout so that the URL
+	// retrieved from the signup destination cookie will be used correctly.
+	const didOnPaymentComplete = useRef( false );
+
 	useEffect( () => {
-		if ( onPaymentComplete && formStatus === FormStatus.COMPLETE ) {
+		if (
+			onPaymentComplete &&
+			formStatus === FormStatus.COMPLETE &&
+			! didOnPaymentComplete.current
+		) {
+			didOnPaymentComplete.current = true;
 			debug( "form status is complete so I'm calling onPaymentComplete" );
 			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
 		}

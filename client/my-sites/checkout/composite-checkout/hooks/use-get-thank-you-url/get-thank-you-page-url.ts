@@ -240,6 +240,11 @@ export default function getThankYouPageUrl( {
 		return redirectUrlForPostCheckoutUpsell;
 	}
 
+	if ( urlFromCookie?.startsWith( '/start/setup-site' ) ) {
+		debug( 'skipping thank you page for setup site flow' );
+		return urlFromCookie;
+	}
+
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session or when purchasing the Ultimate Traffic Guide
 	const displayModeParam = getDisplayModeParamFromCart( cart );
