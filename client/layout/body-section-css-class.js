@@ -38,6 +38,9 @@ function useBodyClass( prefix, value ) {
 	}, [ prefix, value ] );
 }
 
+/**
+ * @param {{group?: string, section?: string, bodyClass?: string[]}} props
+ */
 export default function BodySectionCssClass( { group, section, bodyClass } ) {
 	useBodyClass( 'is-group-', group );
 	useBodyClass( 'is-section-', section );
