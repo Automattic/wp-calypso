@@ -29,7 +29,7 @@ export type SettingsPagePassedProps = {
 
 export type SettingsPageConnectedProps = {
 	currentRoute: string;
-	domain: ResponseDomain;
+	domain: ResponseDomain | undefined;
 	isLoadingPurchase: boolean;
 	purchase: Purchase | null;
 	whoisData: WhoisData[];

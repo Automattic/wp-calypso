@@ -77,6 +77,9 @@ const Settings = ( {
 	};
 
 	const renderSecurityAccordion = () => {
+		if ( ! domain ) {
+			return null;
+		}
 		if ( ! isSecuredWithUs( domain ) ) return null;
 
 		return (
@@ -96,6 +99,9 @@ const Settings = ( {
 	};
 
 	const renderDetailsSection = () => {
+		if ( ! domain ) {
+			return null;
+		}
 		if ( domain.type === domainTypes.REGISTERED ) {
 			return (
 				<Accordion
@@ -159,6 +165,9 @@ const Settings = ( {
 	};
 
 	const renderNameServersSection = () => {
+		if ( ! domain ) {
+			return null;
+		}
 		if ( domain.type !== domainTypes.REGISTERED ) {
 			return null;
 		}
@@ -182,6 +191,9 @@ const Settings = ( {
 	};
 
 	const renderSetAsPrimaryDomainSection = () => {
+		if ( ! domain ) {
+			return null;
+		}
 		return <SetAsPrimary domain={ domain } selectedSite={ selectedSite } key="set-as-primary" />;
 	};
 
@@ -190,6 +202,9 @@ const Settings = ( {
 	};
 
 	const renderContactInformationSecion = () => {
+		if ( ! domain ) {
+			return null;
+		}
 		if (
 			domain.type !== domainTypes.REGISTERED ||
 			( ! isDomainUpdateable( domain ) && ! isDomainInGracePeriod( domain ) )
@@ -260,13 +275,18 @@ const Settings = ( {
 		);
 	};
 
-	const renderSettingsCards = () => (
-		<>
-			<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
-			<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
-			<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
-		</>
-	);
+	const renderSettingsCards = () => {
+		if ( ! domain ) {
+			return undefined;
+		}
+		return (
+			<>
+				<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
+				<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
+				<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+			</>
+		);
+	};
 
 	if ( ! domain ) {
 		// TODO: Update this placeholder
@@ -297,7 +317,7 @@ export default connect(
 		return {
 			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			currentRoute: getCurrentRoute( state ),
-			domain: getSelectedDomain( ownProps )!,
+			domain: getSelectedDomain( ownProps ),
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
