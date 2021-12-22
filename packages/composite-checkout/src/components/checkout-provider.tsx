@@ -205,24 +205,38 @@ function useCallEventCallbacks( {
 	const paymentErrorRef = useRef( onPaymentError );
 	paymentErrorRef.current = onPaymentError;
 
+	const prevFormStatus = useRef< FormStatus >();
+	const prevTransactionStatus = useRef< TransactionStatus >();
+
 	useEffect( () => {
-		if ( paymentCompleteRef.current && formStatus === FormStatus.COMPLETE ) {
-			debug( "form status is complete so I'm calling onPaymentComplete" );
+		if (
+			paymentCompleteRef.current &&
+			formStatus === FormStatus.COMPLETE &&
+			formStatus !== prevFormStatus.current
+		) {
+			debug( "form status changed to complete so I'm calling onPaymentComplete" );
 			paymentCompleteRef.current( { paymentMethodId, transactionLastResponse } );
 		}
+		prevFormStatus.current = formStatus;
 	}, [ formStatus, transactionLastResponse, paymentMethodId ] );
 
 	useEffect( () => {
-		if ( paymentRedirectRef.current && transactionStatus === TransactionStatus.REDIRECTING ) {
-			debug( "transaction status is redirecting so I'm calling onPaymentRedirect" );
+		if (
+			paymentRedirectRef.current &&
+			transactionStatus === TransactionStatus.REDIRECTING &&
+			transactionStatus !== prevTransactionStatus.current
+		) {
+			debug( "transaction status changed to redirecting so I'm calling onPaymentRedirect" );
 			paymentRedirectRef.current( { paymentMethodId, transactionLastResponse } );
 		}
-	}, [ transactionStatus, paymentMethodId, transactionLastResponse ] );
-
-	useEffect( () => {
-		if ( paymentErrorRef.current && transactionStatus === TransactionStatus.ERROR ) {
-			debug( "transaction status is error so I'm calling onPaymentError" );
+		if (
+			paymentErrorRef.current &&
+			transactionStatus === TransactionStatus.ERROR &&
+			transactionStatus !== prevTransactionStatus.current
+		) {
+			debug( "transaction status changed to error so I'm calling onPaymentError" );
 			paymentErrorRef.current( { paymentMethodId, transactionError } );
 		}
-	}, [ transactionStatus, paymentMethodId, transactionError ] );
+		prevTransactionStatus.current = transactionStatus;
+	}, [ transactionStatus, paymentMethodId, transactionLastResponse, transactionError ] );
 }
