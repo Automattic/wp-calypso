@@ -589,6 +589,7 @@ class ThemeSheet extends Component {
 					<div className="theme__retired-theme-message-details">
 						<div className="theme__retired-theme-message-details-title">
 							{ this.props.translate( 'This theme is retired' ) }
+							<InlineSupportLink supportContext="themes-retired" showText={ false } />
 						</div>
 						<div>
 							{ this.props.translate(
