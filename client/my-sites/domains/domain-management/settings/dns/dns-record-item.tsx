@@ -3,7 +3,6 @@ import { DnsRecordItemProps } from './types';
 
 const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ): JSX.Element => {
 	const translate = useTranslate();
-
 	const trimDot = ( str?: string ) => {
 		return str ? str.replace( /\.$/, '' ) : '';
 	};

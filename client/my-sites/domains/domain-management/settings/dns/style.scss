@@ -2,6 +2,12 @@
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 
+.dns-card {
+  &__button {
+    margin-top: 16px;
+  }
+}
+
 .dns-record-item {
 	font-size: $font-body-small;
 	line-height: 1.7;
@@ -13,7 +19,6 @@
 			content: '';
 			display: block;
 			height: $font-body-small;
-
 		}
 	}
 	@include break-mobile {
@@ -22,24 +27,33 @@
 	&__type {
 		overflow-wrap: break-word;
 		display: inline-block;
-		margin-right: 32px;
+		vertical-align: middle;
+		margin-right: 16px;
 		@include break-mobile {
-			flex-basis: 70px;
+			margin-right: 32px;
+			flex-basis: 60px;
 			flex-grow: 1;
 		}
 	}
 	&__name {
-		margin-right: 32px;
+		margin-right: 16px;
 		display: inline-block;
+		vertical-align: middle;
 		@include break-mobile {
-			flex-basis: 240px;
+			margin-right: 32px;
+			flex-basis: 140px;
 			flex-grow: 1;
 		}
 	}
 	&__value {
 		display: inline-block;
+		max-width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		vertical-align: middle;
 		@include break-mobile {
-			flex-basis: 440px;
+			flex-basis: 100%;
 			flex-grow: 1;
 		}
 	}

@@ -72,7 +72,10 @@ const DnsDetails = ( {
 			<>
 				{ domains }
 				{ domainConnectRecordIsEnabled && getDomainConnectDnsRecord() }
-				<Button href={ domainManagementDns( selectedSite.slug, selectedDomainName, currentRoute ) }>
+				<Button
+					className="dns-card__button"
+					href={ domainManagementDns( selectedSite.slug, selectedDomainName, currentRoute ) }
+				>
 					{ translate( 'Manage' ) }
 				</Button>
 			</>
