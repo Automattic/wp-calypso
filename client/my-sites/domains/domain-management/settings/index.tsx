@@ -159,6 +159,10 @@ const Settings = ( {
 	};
 
 	const renderNameServersSection = () => {
+		if ( domain.type !== domainTypes.REGISTERED ) {
+			return null;
+		}
+
 		return (
 			<Accordion
 				title={ translate( 'Name servers', { textOnly: true } ) }
