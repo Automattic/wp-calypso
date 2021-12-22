@@ -16,7 +16,7 @@ const VideosUi = ( { HeaderBar, FooterBar, areVideosTranslated = true } ) => {
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
 
 	const courseSlug = 'blogging-quick-start';
-	const { data: course } = useCourseQuery( courseSlug, { retry: false } );
+	const { data: course } = useCourseQuery( courseSlug );
 	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
 
 	const initialUserCourseProgression = useMemo( () => course?.completions ?? [], [ course ] );
