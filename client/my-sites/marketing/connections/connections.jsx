@@ -4,8 +4,8 @@ import QueryKeyringServices from 'calypso/components/data/query-keyring-services
 import QueryP2Connections from 'calypso/components/data/query-p2-connections';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useRequestSiteChecklistTaskUpdate } from 'calypso/state/checklist/hooks';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import SharingServicesGroup from './services-group';
 

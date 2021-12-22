@@ -10,9 +10,9 @@ import {
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Main from 'calypso/components/main';
+import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
-import { useRequestSiteChecklistTaskUpdate } from 'calypso/state/checklist/hooks';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
