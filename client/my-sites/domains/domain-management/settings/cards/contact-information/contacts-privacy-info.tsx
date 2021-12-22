@@ -9,9 +9,12 @@ import ContactsPrivacyCard from './contacts-card';
 import type { ContactsInfoPassedProps, ContactsInfoProps } from './types';
 import './style.scss';
 
-const ContactsPrivacy = ( props: ContactsInfoProps ): JSX.Element => {
+const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 	const renderForOwner = () => {
 		const domain = getSelectedDomain( props );
+		if ( ! domain ) {
+			return null;
+		}
 		const {
 			privateDomain,
 			privacyAvailable,
@@ -45,7 +48,7 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): JSX.Element => {
 	};
 
 	const domain = getSelectedDomain( props );
-	return domain.currentUserCanManage ? renderForOwner() : renderForOthers();
+	return domain?.currentUserCanManage ? renderForOwner() : renderForOthers();
 };
 
 export default connect( ( state, ownProps: ContactsInfoPassedProps ) => {
