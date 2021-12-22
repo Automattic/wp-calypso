@@ -603,27 +603,6 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	trackWooCommerceNavItemClick = ( menuItemName, experience, plan ) => {
-		// Log a single Tracks event for Store/WooCommerce nav item clicks,
-		// so that easy comparisons can be made between them.
-		this.props.recordTracksEvent( 'calypso_woocommerce_nav_item_click', {
-			nav_item: menuItemName,
-			experience,
-			plan,
-			nav_item_experience_plan_combo: `${ menuItemName }__${ experience }__${ plan }`,
-		} );
-
-		// Continue to log the old individual Tracks events so that existing analysis
-		// using them still function.
-		if ( menuItemName === 'store' ) {
-			this.props.recordTracksEvent( 'calypso_woocommerce_store_nav_item_click' );
-		} else if ( menuItemName === 'woocommerce' ) {
-			this.props.recordTracksEvent( 'calypso_woocommerce_store_woo_core_item_click' );
-		}
-
-		this.onNavigate();
-	};
-
 	store() {
 		const { translate, site, canUserUseWooCommerceCoreStore, isSiteWpcomStore } = this.props;
 
@@ -713,12 +692,7 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				label="WooCommerce"
 				link={ storeLink }
-				onNavigate={ this.trackWooCommerceNavItemClick.bind(
-					this,
-					'woocommerce',
-					'wpadmin-woocommerce-core',
-					site.plan.product_slug
-				) }
+				onNavigate={ this.onNavigate }
 				materialIcon="shopping_cart"
 			/>
 		);
