@@ -58,8 +58,8 @@ const noop = () => {};
 const ProfessionalEmailComparisonObject: ProviderComparison = {
 	header: <h1> Professional Email </h1>,
 	tools: translate( 'Integrated email management, Inbox, calendar and contacts' ),
-	storage: translate( '30 GB storage' ),
-	importing: translate( 'One-click import of existing email and contacts' ),
+	storage: translate( '30GB storage' ),
+	importing: translate( 'One-click import of existing emails and contacts' ),
 	support: translate( '24/7 support via email' ),
 	selectCallback: noop,
 };
@@ -137,7 +137,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 
 			{ inDepthComparison && (
 				<InDepthComparison
-					comparisonObject={ [
+					comparisonObjects={ [
 						ProfessionalEmailComparisonObject,
 						GoogleWorkspaceComparisonObject,
 					] }

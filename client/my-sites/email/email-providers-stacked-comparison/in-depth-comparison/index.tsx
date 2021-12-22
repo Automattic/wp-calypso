@@ -11,10 +11,11 @@ export type ProviderComparison = {
 	selectCallback: () => void;
 };
 
-type InDepthComparison = {
-	comparisonObject: ProviderComparison[];
+type InDepthComparisonProps = {
+	comparisonObjects: ProviderComparison[];
 };
 
 export const InDepthComparison: FunctionComponent< InDepthComparison > = () => {
 	return <p> New component </p>;
+export const InDepthComparison: FunctionComponent< InDepthComparisonProps > = () => {
 };
