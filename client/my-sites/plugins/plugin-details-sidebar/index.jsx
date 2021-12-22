@@ -7,7 +7,13 @@ import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 
 const PluginDetailsSidebar = ( {
-	plugin: { active_installs, tested, isMarketplaceProduct = false },
+	plugin: {
+		active_installs,
+		tested,
+		isMarketplaceProduct = false,
+		demo_url = null,
+		documentation_url = null,
+	},
 } ) => {
 	const translate = useTranslate();
 
@@ -40,10 +46,17 @@ const PluginDetailsSidebar = ( {
 			</>
 		);
 	}
+	const supportLinks = [
+		{ href: 'https://automattic.com/privacy/', label: translate( 'See privacy policy' ) },
+	];
+	documentation_url &&
+		supportLinks.unshift( {
+			href: { documentation_url },
+			label: translate( 'View documentation' ),
+		} );
 
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
-			{ /* Needs to check for woocommerce dependencies */ }
 			<PluginDetailsSidebarUSP
 				id="woo"
 				icon={ { src: wooLogo } }
@@ -58,26 +71,24 @@ const PluginDetailsSidebar = ( {
 				) }
 				first
 			/>
-			{ /* Needs to check for demo_url */ }
+			{ demo_url && (
+				<PluginDetailsSidebarUSP
+					id="demo"
+					icon={ { src: eye } }
+					title={ translate( 'Try it before you buy it' ) }
+					description={ translate(
+						'Take a look at the posibilities of this plugin before your commit.'
+					) }
+					links={ [ { href: { demo_url }, label: translate( 'View live demo' ) } ] }
+				/>
+			) }
+
 			<PluginDetailsSidebarUSP
-				id="demo"
-				icon={ { src: eye } }
-				title={ translate( 'Try it before you buy it' ) }
-				description={ translate(
-					'Take a look at the posibilities of this plugin before your commit.'
-				) }
-				links={ [ { href: 'demo', label: translate( 'View live demo' ) } ] }
-			/>
-			{ /* Needs to check for documentation_url */ }
-			<PluginDetailsSidebarUSP
-				id="documentation"
+				id="support"
 				icon={ { src: support } }
 				title={ translate( 'Support' ) }
 				description={ translate( 'Handled by WooCommerce.' ) }
-				links={ [
-					{ href: 'docs', label: translate( 'View documentation' ) },
-					{ href: 'https://automattic.com/privacy/', label: translate( 'See privacy policy' ) },
-				] }
+				links={ supportLinks }
 			/>
 		</div>
 	);
