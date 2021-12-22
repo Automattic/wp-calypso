@@ -58,7 +58,7 @@ const noop = () => {};
 const ProfessionalEmailComparisonObject: ProviderComparison = {
 	header: <h1> Professional Email </h1>,
 	tools: translate( 'Integrated email management, Inbox, calendar and contacts' ),
-	storage: translate( '30GB storage' ),
+	storage: translate( '30 GB of Storage' ),
 	importing: translate( 'One-click import of existing emails and contacts' ),
 	support: translate( '24/7 support via email' ),
 	selectCallback: noop,
@@ -67,7 +67,7 @@ const ProfessionalEmailComparisonObject: ProviderComparison = {
 const GoogleWorkspaceComparisonObject: ProviderComparison = {
 	header: <h1> Google </h1>,
 	tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Sliders and more' ),
-	storage: translate( '30 GB storage' ),
+	storage: translate( '30 GB of Storage' ),
 	importing: translate( 'Easy to import' ),
 	support: translate( '24/7 support via email' ),
 	selectCallback: noop,
