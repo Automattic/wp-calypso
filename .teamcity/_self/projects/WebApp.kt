@@ -118,19 +118,6 @@ object BuildDockerImage : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 
-		script {
-			name = "Webhook Fail"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				#!/usr/bin/env bash
-				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
-					exit 0
-				fi
-
-				# Hit webhook for fail
-			"""
-		}
-
 		dockerCommand {
 			commandType = push {
 				namesAndTags = """
@@ -142,16 +129,20 @@ object BuildDockerImage : BuildType({
 		}
 
 		script {
-			name = "Tag trunk for deploy and webhook done"
+			name = "Webhook fail/done and tag trunk for deploy"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/usr/bin/env bash
 				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
 					exit 0
 				fi
 
-				docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
-
+				#if [ build failed ]; then
+				#	Hit webhook for fail
+				#else
 				# Hit webhook for done
+					docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
+				#fi
 			"""
 		}
 
