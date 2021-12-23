@@ -16,7 +16,7 @@ import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 const TRANSFERRING_NOT_BLOCKERS = [
@@ -39,7 +39,7 @@ type EligibilityHook = {
 		productName: string;
 		description: string;
 	};
-	isReadyForTransfer: boolean;
+	isReadyToStart: boolean;
 	isAtomicSite: boolean;
 };
 
@@ -91,12 +91,12 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		( { id } ) => id === 'wordpress_subdomain'
 	);
 
-	// Filter the Woop transferring blockers
+	// Filter the Woop transferring blockers.
 	const transferringBlockers = eligibilityHolds?.filter(
 		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
-	// Add blocked transfer hold when something is wrong in the transfer status.
+	// Add blocked-transfer-hold when something is wrong in the transfer status.
 	if (
 		! transferringBlockers?.includes( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER ) &&
 		( isBlockByTransferStatus || isTransferStuck )
@@ -124,13 +124,24 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const eligibilityNoProperPlan = eligibilityHolds?.includes(
 		eligibilityHoldsConstants.NO_BUSINESS_PLAN
 	);
+
+	/*
+	 * Check whether the `woop` feature is actve.`
+	 * It's defined by wpcom in the store product list.
+	 */
 	const isWoopFeatureActive = useSelector( ( state ) =>
 		hasActiveSiteFeature( state, siteId, FEATURE_WOOP )
 	);
+
+	/*
+	 * Feature available means although the site doesn't have the feature active,
+	 * it's available to be activated via buying a plan.
+	 */
 	const hasWoopFeatureAvailable = useSelector( ( state ) =>
 		hasAvailableSiteFeature( state, siteId, FEATURE_WOOP )
 	);
 
+	// The site requires upgrading when the feature is not active and available.
 	const requiresUpgrade = Boolean(
 		eligibilityNoProperPlan && ! isWoopFeatureActive && hasWoopFeatureAvailable
 	);
@@ -143,6 +154,24 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		useSelector( ( state ) => getProductBySlug( state, hasWoopFeatureAvailable?.[ 0 ] ) ) || {};
 
 	const productName = upgradingPlan.product_name;
+
+	const isAtomicSite = !! useSelector( ( state ) => isAtomicSiteSelector( state, siteId ) );
+
+	/*
+	 * the site is Ready to Start when:
+	 * - siteId is defined
+	 * - data is ready
+	 * - does not require an upgrade, based on store `woop` feature
+	 */
+	let isReadyToStart = !! ( siteId && transferringDataIsAvailable && ! requiresUpgrade );
+
+	// when the site is not Atomic, ...
+	if ( isReadyToStart && ! isAtomicSite ) {
+		isReadyToStart =
+			isReadyToStart &&
+			! isTransferringBlocked && // there is no blockers from eligibility (holds).
+			! ( eligibilityWarnings && eligibilityWarnings.length ); // there is no warnings from eligibility (warnings).
+	}
 
 	const siteUpgrading = {
 		required: requiresUpgrade,
@@ -179,9 +208,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		isTransferringBlocked,
 		siteUpgrading,
 		isDataReady: transferringDataIsAvailable,
-		isReadyForTransfer: transferringDataIsAvailable
-			? ! isTransferringBlocked && ! ( eligibilityWarnings && eligibilityWarnings.length )
-			: false,
-		isAtomicSite: !! useSelector( ( state ) => isAtomicSite( state, siteId ) ),
+		isReadyToStart,
+		isAtomicSite,
 	};
 }

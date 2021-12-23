@@ -41,6 +41,6 @@ The hook returns an object with the following properties:
 
 ### siteUpgrading
 
-### isReadyForTransfer
+### isReadyToStart
 
 ### isDataReady
