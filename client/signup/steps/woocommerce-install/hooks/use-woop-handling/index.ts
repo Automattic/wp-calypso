@@ -165,11 +165,8 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 */
 	let isReadyToStart = siteId && transferringDataIsAvailable;
 
-	if ( isAtomicSite ) {
-		// ... and also when the site is Atomic, ...
-		isReadyToStart = isReadyToStart && isAtomicSite;
-	} else {
-		// ...but when the site is not Atomic, ...
+	if ( ! isAtomicSite ) {
+		// when the site is not Atomic, ...
 		isReadyToStart =
 			isReadyToStart &&
 			! isTransferringBlocked && // there is no blockers from eligibility (holds).
