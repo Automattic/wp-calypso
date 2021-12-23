@@ -108,7 +108,8 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 		);
 
 		importerData.uploadDescription = translate(
-			'A %(importerName)s export file is a ZIP file containing several HTML files with your stories.',
+			'A %(importerName)s export file is a ZIP file containing several HTML files with your stories. ' +
+				'{{supportLink/}}',
 			options
 		);
 	}

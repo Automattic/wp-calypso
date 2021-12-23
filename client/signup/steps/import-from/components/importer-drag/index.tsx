@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import { includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -10,6 +11,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { ImportJob } from '../../types';
+import './style.scss';
 
 export interface Site {
 	ID: number;
@@ -47,7 +49,7 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 	const isEnabled = appStates.DISABLED !== importerState;
 
 	return (
-		<div>
+		<div className={ classnames( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>
 			<ImporterHeader
 				importerStatus={ importerStatus }
 				icon={ importerData?.icon }
