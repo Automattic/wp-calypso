@@ -224,7 +224,9 @@ const SiteSetupList = ( {
 		}
 	};
 
-	let isMobileAppTaskCompleted = false;
+	const isMobileAppTaskCompleted = tasks.some(
+		( task ) => task.id === CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED && task.isCompleted
+	);
 
 	return (
 		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
@@ -260,15 +262,15 @@ const SiteSetupList = ( {
 				<CardHeading>
 					{ isBlogger ? translate( 'Blog setup' ) : translate( 'Site setup' ) }
 				</CardHeading>
-				<ul className="site-setup-list__list">
+				<ul
+					className={ classnames( 'site-setup-list__list', {
+						'is-mobile-app-completed': isMobileAppTaskCompleted,
+					} ) }
+				>
 					{ tasks.map( ( task ) => {
 						const enhancedTask = getTask( task, { isBlogger, userEmail } );
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
-
-						if ( task.id === CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED ) {
-							isMobileAppTaskCompleted = isCompleted;
-						}
 
 						return (
 							<li key={ task.id } className={ `site-setup-list__task-${ task.id }` }>
