@@ -96,12 +96,20 @@ fun BuildSteps.runTests(
 	return bashNodeScript {
 		name = stepName
 
-		scriptContent = """
+		val scriptContentBuilder = StringBuilder()
+
+		scriptContentBuilder.appendLine(
+			"""
 			# Configure bash shell.
 			shopt -s globstar
 			set -x
+			""".trimIndent()
+		)
 
-			if [[ ! -z "${%env.LIVEBRANCHES%}" ]]; then
+		// Used whenever a test runs against commits/PRs.
+		if (!dockerBuildNumber.isBlank()) {
+			scriptContentBuilder.appendLine(
+				"""
 				chmod +x ./bin/get-calypso-live-url.sh
 				URL=${'$'}(./bin/get-calypso-live-url.sh $dockerBuildNumber)
 				if [[ ${'$'}? -ne 0 ]]; then
@@ -109,8 +117,12 @@ fun BuildSteps.runTests(
 					echo ${'$'}URL
 					exit 1
 				fi
-			fi
+				""".trimIndent()
+			)
+		}
 
+		scriptContentBuilder.appendLine(
+			"""
 			export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 
 			cd test/e2e
@@ -119,8 +131,13 @@ fun BuildSteps.runTests(
 			# Decrypt config
 			openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
+			env
+
 			# Run suite
 			xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
-		""".trimIndent()
+			""".trimIndent()
+		)
+
+		scriptContent = scriptContentBuilder.toString().trimIndent()
 	}
 }

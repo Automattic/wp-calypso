@@ -600,12 +600,17 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): calypsoE2E
 			param("env.LIVEBRANCHES", "true")
 			param("env.TARGET_DEVICE", "$targetDevice")
 		},
+		getCalypsoLiveURL = """
+			chmod +x ./bin/get-calypso-live-url.sh
+			URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+			if [[ ${'$'}? -ne 0 ]]; then
+				// Command failed. URL contains stderr
+				echo ${'$'}URL
+				exit 1
+			fi
+		""".trimIndent(),
+		testGroup = "calypso-pr",
 		buildSteps = {
-			// runTests(
-			// 	stepName = "Run e2e tests ($targetDevice)",
-			// 	testGroup = "calypso-pr",
-			// 	dockerBuildNumber = "${BuildDockerImage.depParamRefs.buildNumber}",
-			// )
 			bashNodeScript {
 				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """

@@ -3,6 +3,7 @@ package _self.lib.customBuildType
 import Settings
 import _self.lib.e2e.prepareEnvironment
 import _self.lib.e2e.collectResults
+import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParametrizedWithType
@@ -28,14 +29,18 @@ open class calypsoE2EBuildType(
 	var buildUuid: String,
 	var buildName: String,
 	var buildDescription: String,
+	var getCalypsoLiveURL: String = "",
+	var testGroup: String,
 	var buildParams: ParametrizedWithType.() -> Unit = {},
-	var buildSteps: BuildSteps.() -> Unit,
+	var buildSteps: BuildSteps.() -> Unit = {},
 	var buildFeatures: BuildFeatures.() -> Unit,
 	var buildTriggers: Triggers.() -> Unit,
 	var buildDependencies: Dependencies.() -> Unit = {},
 
 ): BuildType() {
 	init {
+		val getCalypsoLiveURL = getCalypsoLiveURL
+		val testGroup = testGroup
 		val buildParams = buildParams
 		val buildSteps = buildSteps
 		val buildFeatures = buildFeatures
@@ -73,6 +78,29 @@ open class calypsoE2EBuildType(
 			prepareEnvironment()
 
 			buildSteps()
+
+			bashNodeScript {
+				name = "Run e2e tests"
+				scriptContent = """
+					# Configure bash shell.
+					shopt -s globstar
+					set -x
+
+					$getCalypsoLiveURL
+
+					cd test/e2e
+					mkdir temp
+
+					# Decrypt config
+					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+					# Run the test
+					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+
+					# Run suite
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
+				"""
+			}
 
 			collectResults()
 		}
