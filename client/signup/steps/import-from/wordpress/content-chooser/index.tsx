@@ -1,6 +1,7 @@
 import { NextButton } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
@@ -20,7 +21,11 @@ interface Props {
 
 export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { isSiteJetpack } = props;
+	const { siteSlug, isSiteJetpack } = props;
+
+	function installJetpack( siteSlug: string ) {
+		page( `/jetpack/connect/?url=${ siteSlug }` );
+	}
 
 	return (
 		<div className={ classnames( 'import-layout', 'content-chooser' ) }>
@@ -45,9 +50,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 					</ActionCard>
 					{ ! isSiteJetpack && (
 						<SelectItems
-							onSelect={ () => {
-								// install jetpack
-							} }
+							onSelect={ () => installJetpack( siteSlug ) }
 							items={ [
 								{
 									key: 'jetpack',
