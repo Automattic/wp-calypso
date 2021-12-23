@@ -49,6 +49,19 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
+
+		script {
+			name = "Webhook Start"
+			scriptContent = """
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
+
+				# Hit webhook for start
+			"""
+		}
+
 		script {
 			name = "Post PR comment"
 			scriptContent = """
@@ -105,6 +118,19 @@ object BuildDockerImage : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 
+		script {
+			name = "Webhook Fail"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
+
+				# Hit webhook for fail
+			"""
+		}
+
 		dockerCommand {
 			commandType = push {
 				namesAndTags = """
@@ -119,13 +145,23 @@ object BuildDockerImage : BuildType({
 			name = "Tag trunk for deploy"
 			scriptContent = """
 				#!/usr/bin/env bash
-				if [[ "%teamcity.build.branch%" == "docker-image-new-tag-tc"  ]]; then
-					docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
-				fi
-
 				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
 					exit 0
 				fi
+
+				docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
+			"""
+		}
+
+		script {
+			name = "Webhook Done"
+			scriptContent = """
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
+
+				# Hit webhook for done
 			"""
 		}
 
