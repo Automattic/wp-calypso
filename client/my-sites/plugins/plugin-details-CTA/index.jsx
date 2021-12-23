@@ -80,8 +80,26 @@ const PluginDetailsCTA = ( {
 		return null;
 	}
 
+	// Check if user can manage plugins or no site is selected (all sites view).
 	if ( ! selectedSite || ! userCan( 'manage_options', selectedSite ) ) {
-		// Check if user can manage plugins.
+		if ( isMarketplaceProduct ) {
+			return (
+				<div className="plugin-details-CTA__container">
+					<div className="plugin-details-CTA__price align-right">
+						<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+							{ ( { isFetching, price, period } ) =>
+								! isFetching && (
+									<>
+										{ price + ' ' }
+										<span className="plugin-details-CTA__period">{ period }</span>
+									</>
+								)
+							}
+						</PluginPrice>
+					</div>
+				</div>
+			);
+		}
 		return null;
 	}
 

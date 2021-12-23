@@ -20,7 +20,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
 import './style.scss';
 
-const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedActions } ) => {
+const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedActions, ...props } ) => {
 	const translate = useTranslate();
 	const {
 		activation: canToggleActivation = true,
@@ -73,6 +73,7 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 							selectedSite={ site }
 							plugin={ plugin }
 							isInstalling={ installInProgress }
+							{ ...props }
 						/>
 					}
 				</div>
