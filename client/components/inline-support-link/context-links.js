@@ -157,6 +157,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/themes/',
 		post_id: 2278,
 	},
+	'themes-retired': {
+		link: 'https://wordpress.com/support/themes/retired-themes/',
+		post_id: 189792,
+	},
 	'themes-switch': {
 		link: 'https://wordpress.com/support/changing-themes/',
 		post_id: 184023,
