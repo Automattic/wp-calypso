@@ -118,7 +118,7 @@ object BuildDockerImage : BuildType({
 			name = "Tag trunk for deploy"
 			scriptContent = """
 				#!/usr/bin/env bash
-				if [[ "%teamcity.build.branch%" == "docker-image-new-tag-tc"  ]]]; then
+				if [[ "%teamcity.build.branch%" == "docker-image-new-tag-tc"  ]]; then
 					docker push registry.a8c.com/calypso:${Settings.WpCalypso.paramRefs.buildVcsNumber}-%teamcity.build.branch%
 				fi
 				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
