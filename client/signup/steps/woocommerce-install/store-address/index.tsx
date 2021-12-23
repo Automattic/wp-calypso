@@ -45,7 +45,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 	function getContent() {
 		return (
 			<>
-				<div className="store-address__info-section">
+				<div className="store-address__info-section" />
+				<div className="store-address__instructions-container">
 					<TextControl
 						label={ __( 'Address line 1', 'woocommerce-admin' ) }
 						value={ get( 'address_1' ) }
@@ -65,8 +66,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 					/>
 
 					<Button onClick={ clean }>Clean</Button>
-				</div>
-				<div className="store-address__instructions-container">
+
 					<ActionSection>
 						<SupportCard />
 						<StyledNextButton
