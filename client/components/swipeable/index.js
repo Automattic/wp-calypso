@@ -233,7 +233,6 @@ export const Swipeable = ( {
 				onPointerDown: handleDragStart,
 				onPointerMove: handleDrag,
 				onPointerUp: handleDragEnd,
-				onPointerCancel: handleDragEnd,
 				onPointerLeave: handleDragEnd,
 			};
 		}
