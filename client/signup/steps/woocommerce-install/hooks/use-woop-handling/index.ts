@@ -161,20 +161,17 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * the site is Ready to Start when:
 	 * - siteId is defined
 	 * - data is ready
-	 * ...
+	 * - does not require an upgrade, based on store `woop` feature
 	 */
-	// ...also check the site does not require an upgrade, based on store `woop` feature.
 	let isReadyToStart = siteId && transferringDataIsAvailable && ! requiresUpgrade;
 
+	// when the site is not Atomic, ...
 	if ( isReadyToStart && ! isAtomicSite ) {
-		// when the site is not Atomic, ...
 		isReadyToStart =
 			isReadyToStart &&
 			! isTransferringBlocked && // there is no blockers from eligibility (holds).
 			! ( eligibilityWarnings && eligibilityWarnings.length ); // there is no warnings from eligibility (warnings).
 	}
-
-
 
 	const siteUpgrading = {
 		required: requiresUpgrade,
