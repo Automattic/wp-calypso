@@ -72,6 +72,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 
 	// Verify that we have a percentage discount
 	if (
+		! googleWorkspaceProduct ||
 		! hasDiscount( googleWorkspaceProduct ) ||
 		( ! googleWorkspaceProduct?.sale_coupon?.discount ?? null )
 	) {
@@ -98,7 +99,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 			event="claim-now"
 			iconPath={ googleWorkspaceIcon }
 			href={ emailManagementPurchaseNewEmailAccount(
-				siteForSale?.slug,
+				siteForSale?.slug ?? '',
 				domainForSale.name,
 				currentRoute,
 				'google-sale'
