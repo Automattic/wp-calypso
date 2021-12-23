@@ -71,6 +71,11 @@
 }
 
 .email-providers-comparison__provider-card.promo-card {
+
+	.action-panel__body {
+		margin-left: 24px;
+	}
+
 	.action-panel__figure {
 		float: right;
 		max-width: 208px;
@@ -103,7 +108,7 @@
 
 	&.has-star {
 		.action-panel__title,
-		.email-providers-comparison__provider-card-main-details{
+		.email-providers-comparison__provider-card-main-details {
 			margin-right: 70px;
 		}
 	}

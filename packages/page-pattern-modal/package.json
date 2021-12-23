@@ -29,7 +29,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@automattic/design-picker": "workspace:^",
+		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/blocks": "^11.1.4",
 		"@wordpress/components": "^19.1.5",

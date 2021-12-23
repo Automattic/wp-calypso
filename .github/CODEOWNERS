@@ -43,7 +43,6 @@
 /client/lib/siftscience/ @Automattic/payments
 /client/lib/store-transactions/ @Automattic/payments
 /client/me/memberships/ @Automattic/payments
-/client/me/pending-payments/ @Automattic/payments
 /client/me/purchases/ @Automattic/shilling
 /client/my-sites/checkout/ @Automattic/shilling
 /client/my-sites/purchases/ @Automattic/shilling

@@ -2,9 +2,9 @@ import { isEnabled } from '@automattic/calypso-config';
 import { shuffle } from '@automattic/js-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { availableDesignsConfig } from './available-designs-config';
-import type { MShotsOptions } from '../components/mshots-image';
 import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
+import type { MShotsOptions } from '@automattic/onboarding';
 
 export const getDesignUrl = (
 	design: Design,

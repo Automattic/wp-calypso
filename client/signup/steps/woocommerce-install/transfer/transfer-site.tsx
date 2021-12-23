@@ -26,24 +26,28 @@ export default function TransferSite( {
 
 	const [ progress, setProgress ] = useState( 0.1 );
 
+	// Store the transfer failure state.
+	const [ transferFailed, setTransferFailed ] = useState( false );
+
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+
+	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+
+	const { transfer, error: transferError } = useSelector( ( state ) =>
+		getLatestAtomicTransfer( state, siteId )
+	);
 	const transferStatus = transfer?.status;
 
-	// Check transfer status code (5xx).
-	const isErrorTransferStatus =
-		Number.isInteger( Number( transferStatus ) ) &&
-		transferStatus &&
-		5 === Math.floor( Number( transferStatus ) / 100 );
-
-	const transferFailed = !! transfer?.error || isErrorTransferStatus;
-
-	const software = useSelector( ( state ) =>
+	const { status: softwareStatus, error: softwareError } = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
-	const softwareApplied = software?.applied;
-	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+	const softwareApplied = softwareStatus?.applied;
+
+	// Check for error codes (5xx). 404's are not a failure mode.
+	const isTransferringStatusFailed =
+		( transferError && transferError?.status >= 500 ) ||
+		( softwareError && softwareError?.status >= 500 );
 
 	// Initiate Atomic transfer or software install
 	useEffect( () => {
@@ -58,7 +62,7 @@ export default function TransferSite( {
 		() => {
 			dispatch( requestLatestAtomicTransfer( siteId ) );
 		},
-		transferFailed || transferStatus === transferStates.COMPLETED ? null : 3000
+		isTransferringStatusFailed || transferStatus === transferStates.COMPLETED ? null : 3000
 	);
 
 	// Poll for software status
@@ -67,7 +71,9 @@ export default function TransferSite( {
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		// Only poll if the transfer is completed and not failed
-		transferFailed || transferStates.COMPLETED !== transferStatus || softwareApplied ? null : 3000
+		isTransferringStatusFailed || transferStatus !== transferStates.COMPLETED || softwareApplied
+			? null
+			: 3000
 	);
 
 	// Watch transfer status
@@ -91,11 +97,12 @@ export default function TransferSite( {
 				break;
 		}
 
-		if ( transferFailed || transferStatus === transferStates.ERROR ) {
+		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
+			setTransferFailed( true );
 			onFailure();
 		}
-	}, [ siteId, transferStatus, transferFailed, onFailure ] );
+	}, [ siteId, transferStatus, isTransferringStatusFailed, onFailure ] );
 
 	// Redirect to wc-admin once software installation is confirmed.
 	useEffect( () => {
@@ -112,7 +119,6 @@ export default function TransferSite( {
 		}
 	}, [ siteId, softwareApplied, wcAdmin ] );
 
-	// todo: transferFailed states need testing and if required, pass the message through correctly
 	return (
 		<>
 			{ transferFailed && <Error /> }

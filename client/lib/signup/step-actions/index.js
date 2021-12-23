@@ -6,7 +6,6 @@ import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -47,8 +46,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const reduxState = reduxStore.getState();
 	const domainItem = dependencies.domainItem
 		? prepareItemForAddingToCart(
-				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState ),
-				reduxState
+				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState )
 		  )
 		: null;
 
@@ -78,7 +76,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
 			.filter( Boolean )
-			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
+			.map( ( item ) => prepareItemForAddingToCart( item ) );
 
 		cartManagerClient
 			.forCartKey( siteId )
@@ -449,7 +447,7 @@ function processItemCart(
 		const reduxState = reduxStore.getState();
 		const newCartItemsToAdd = newCartItems
 			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
-			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
+			.map( ( item ) => prepareItemForAddingToCart( item ) );
 
 		if ( newCartItemsToAdd.length ) {
 			debug( 'adding products to cart', newCartItemsToAdd );
@@ -488,10 +486,9 @@ function processItemCart(
 	}
 }
 
-function prepareItemForAddingToCart( item, state ) {
-	const productsList = getProductsList( state );
+function prepareItemForAddingToCart( item ) {
 	return {
-		...fillInSingleCartItemAttributes( item, productsList ),
+		...item,
 		extra: {
 			...item.extra,
 			context: 'signup',

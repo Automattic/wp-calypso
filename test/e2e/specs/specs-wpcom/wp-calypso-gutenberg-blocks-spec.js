@@ -17,7 +17,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Blocks (${ screenSize })`, func
 	describe( 'Can see monetization blocks in block inserter @canary @parallel', function () {
 		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-			return await this.loginFlow.loginAndStartNewPost( null, true );
+			return await this.loginFlow.loginAndStartNewPost( null );
 		} );
 
 		it( 'Can see the Earn blocks', async function () {

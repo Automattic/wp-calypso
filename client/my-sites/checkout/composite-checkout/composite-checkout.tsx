@@ -14,7 +14,6 @@ import { ThemeProvider } from '@emotion/react';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
@@ -25,20 +24,18 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
+import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -396,8 +393,6 @@ export default function CompositeCheckout( {
 		checkoutFlow
 	);
 
-	const products = useSelector( ( state ) => getProductsList( state ) );
-
 	const changePlanLength = useCallback(
 		( uuidToReplace, newProductSlug, newProductId ) => {
 			reduxDispatch(
@@ -413,15 +408,12 @@ export default function CompositeCheckout( {
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
-	// Often products are added using just the product_slug but missing the
-	// product_id; this adds it.
-	const addItemWithEssentialProperties = useCallback(
+	const addItemAndLog = useCallback(
 		( cartItem ) => {
-			const adjustedItem = fillInSingleCartItemAttributes( cartItem, products );
-			recordAddEvent( adjustedItem );
-			addProductsToCart( [ adjustedItem ] );
+			recordAddEvent( cartItem );
+			addProductsToCart( [ cartItem ] );
 		},
-		[ addProductsToCart, products ]
+		[ addProductsToCart ]
 	);
 
 	const includeDomainDetails = contactDetailsType === 'domain';
@@ -672,65 +664,15 @@ export default function CompositeCheckout( {
 
 	// The goToPreviousPage function and subsequent conditional statement controls the 'back' button functionality on the empty cart page
 
-	const checkoutBackUrl = useValidCheckoutBackUrl( updatedSiteSlug );
+	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( updatedSiteSlug );
 
-	const goToPreviousPage = useCallback( () => {
-		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
-
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_empty_cart_clicked' ) );
-
-		if ( checkoutBackUrl ) {
-			window.location.href = checkoutBackUrl;
-			return;
-		}
-
-		if (
-			previousPath &&
-			'' !== previousPath &&
-			previousPath !== window.location.href &&
-			! previousPath.includes( '/checkout/' )
-		) {
-			closeUrl = previousPath;
-		}
-
-		try {
-			const searchParams = new URLSearchParams( window.location.search );
-
-			if ( searchParams.has( 'signup' ) ) {
-				clearSignupDestinationCookie();
-			}
-
-			if ( searchParams.has( 'cancel_to' ) ) {
-				const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
-				// Only allow redirecting to relative paths.
-				if ( cancelPath.match( /^\/(?!\/)/ ) ) {
-					page( cancelPath );
-					return;
-				}
-			}
-
-			// Some places that open checkout (eg: purchase page renewals) return the
-			// user there after checkout by putting the previous page's path in the
-			// `redirect_to` query param. When leaving checkout via the close button,
-			// we probably want to return to that location also.
-			if ( searchParams.has( 'redirect_to' ) ) {
-				const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
-				// Only allow redirecting to relative paths.
-				if ( redirectPath.match( /^\/(?!\/)/ ) ) {
-					page( redirectPath );
-					return;
-				}
-			}
-		} catch ( error ) {
-			// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
-			console.error( 'Error getting query string in close button' ); // eslint-disable-line no-console
-		}
-		if ( closeUrl.startsWith( '/' ) ) {
-			page( closeUrl );
-			return;
-		}
-		window.location.href = closeUrl;
-	}, [ siteSlug, checkoutBackUrl, previousPath, reduxDispatch ] );
+	const goToPreviousPage = () =>
+		leaveCheckout( {
+			siteSlug,
+			jetpackCheckoutBackUrl,
+			previousPath,
+			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
+		} );
 
 	if (
 		shouldShowEmptyCartPage( {
@@ -798,7 +740,7 @@ export default function CompositeCheckout( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
-					addItemToCart={ addItemWithEssentialProperties }
+					addItemToCart={ addItemAndLog }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }

@@ -1,8 +1,7 @@
 import debugFactory from 'debug';
-import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const debug = debugFactory( 'calypso:leave-checkout' );
 
@@ -10,16 +9,16 @@ export const leaveCheckout = ( {
 	siteSlug,
 	jetpackCheckoutBackUrl,
 	previousPath,
-	dispatch,
+	tracksEvent,
 	createUserAndSiteBeforeTransaction,
 }: {
 	siteSlug?: string;
 	jetpackCheckoutBackUrl?: string;
 	previousPath?: string;
-	dispatch: ReturnType< typeof useDispatch >;
+	tracksEvent: string;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): void => {
-	dispatch( recordTracksEvent( 'calypso_masterbar_close_clicked' ) );
+	recordTracksEvent( tracksEvent );
 	debug( 'leaving checkout with args', {
 		siteSlug,
 		jetpackCheckoutBackUrl,

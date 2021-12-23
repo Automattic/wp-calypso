@@ -15,7 +15,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	getEligibleGSuiteDomain,
 	getGoogleMailServiceFamily,
@@ -37,7 +36,6 @@ import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
@@ -80,11 +78,7 @@ class GSuiteAddUsers extends Component {
 
 		if ( canContinue ) {
 			this.props.shoppingCartManager
-				.addProductsToCart(
-					getItemsForCart( domains, getProductSlug( productType ), users ).map( ( item ) =>
-						fillInSingleCartItemAttributes( item, this.props.productsList )
-					)
-				)
+				.addProductsToCart( getItemsForCart( domains, getProductSlug( productType ), users ) )
 				.then( () => {
 					this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
@@ -299,7 +293,6 @@ export default connect(
 			domains,
 			gsuiteUsers: getGSuiteUsers( state, siteId ),
 			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
-			productsList: getProductsList( state ),
 			selectedSite,
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 		};

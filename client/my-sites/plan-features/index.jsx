@@ -35,7 +35,6 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
@@ -52,7 +51,6 @@ import {
 	getPlanSlug,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -591,7 +589,6 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 			shoppingCartManager,
 			redirectToAddDomainFlow,
-			productsList,
 		} = this.props;
 
 		const {
@@ -621,15 +618,12 @@ export class PlanFeatures extends Component {
 			// redirect to the "add a domain" page.
 			shoppingCartManager
 				.addProductsToCart( [
-					fillInSingleCartItemAttributes(
-						{
-							product_slug: productSlug,
-							extra: {
-								afterPurchaseUrl: redirectTo ?? undefined,
-							},
+					{
+						product_slug: productSlug,
+						extra: {
+							afterPurchaseUrl: redirectTo ?? undefined,
 						},
-						productsList
-					),
+					},
 				] )
 				.then( () => {
 					if ( withDiscount && this.isMounted ) {
@@ -1075,7 +1069,6 @@ const ConnectedPlanFeatures = connect(
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 
 		return {
-			productsList: getProductsList( state ),
 			canPurchase,
 			isJetpack,
 			planProperties,

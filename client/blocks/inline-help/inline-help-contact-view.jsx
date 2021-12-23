@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import InlineHelpForumView from 'calypso/blocks/inline-help/inline-help-forum-view';
+import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import PlaceholderLines from 'calypso/blocks/inline-help/placeholder-lines';
 import HelpContact from 'calypso/me/help/help-contact';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -27,9 +28,10 @@ function InlineHelpContactViewLoaded() {
 export default function InlineHelpContactView() {
 	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
 
-	if ( ! supportVariationDetermined ) {
-		return <PlaceholderLines />;
-	}
-
-	return <InlineHelpContactViewLoaded />;
+	return (
+		<>
+			<QuerySupportTypes />
+			{ supportVariationDetermined ? <InlineHelpContactViewLoaded /> : <PlaceholderLines /> }
+		</>
+	);
 }

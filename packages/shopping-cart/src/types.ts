@@ -202,7 +202,7 @@ export type RequestCartTaxData = null | {
 
 export interface RequestCartProduct {
 	product_slug: string;
-	product_id: number;
+	product_id?: number;
 	meta: string;
 	volume: number;
 	quantity: number | null;
@@ -210,7 +210,7 @@ export interface RequestCartProduct {
 }
 
 export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
-	Pick< RequestCartProduct, 'product_slug' | 'product_id' >;
+	Pick< RequestCartProduct, 'product_slug' >;
 
 export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number | string;
@@ -371,6 +371,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
+	privacy_available?: boolean;
 }
 
 export interface GSuiteProductUser {

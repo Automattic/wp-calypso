@@ -1,6 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
@@ -15,7 +15,6 @@ export default function useRemoveFromCartAndRedirect(
 	removeProductFromCartAndMaybeRedirect: RemoveProductFromCart;
 } {
 	const previousPath = useSelector( getPreviousPath );
-	const dispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { removeProductFromCart } = useShoppingCart( cartKey );
 
@@ -28,15 +27,9 @@ export default function useRemoveFromCartAndRedirect(
 			jetpackCheckoutBackUrl,
 			createUserAndSiteBeforeTransaction,
 			previousPath,
-			dispatch,
+			tracksEvent: 'calypso_empty_cart_redirect',
 		} );
-	}, [
-		createUserAndSiteBeforeTransaction,
-		siteSlug,
-		jetpackCheckoutBackUrl,
-		previousPath,
-		dispatch,
-	] );
+	}, [ createUserAndSiteBeforeTransaction, siteSlug, jetpackCheckoutBackUrl, previousPath ] );
 
 	const isMounted = useRef( true );
 	useEffect( () => {
@@ -50,15 +43,21 @@ export default function useRemoveFromCartAndRedirect(
 	const removeProductFromCartAndMaybeRedirect = useCallback(
 		( uuid: string ) => {
 			setIsRemovingFromCart( true );
-			return removeProductFromCart( uuid ).then( ( cart: ResponseCart ) => {
-				if ( cart.products.length === 0 ) {
-					redirectDueToEmptyCart();
-					// Don't turn off isRemovingProductFromCart if we are redirecting so that the loading page remains active.
+			return removeProductFromCart( uuid )
+				.then( ( cart: ResponseCart ) => {
+					if ( cart.products.length === 0 ) {
+						redirectDueToEmptyCart();
+						// Don't turn off isRemovingProductFromCart if we are redirecting so that the loading page remains active.
+						return cart;
+					}
+					isMounted.current && setIsRemovingFromCart( false );
 					return cart;
-				}
-				isMounted.current && setIsRemovingFromCart( false );
-				return cart;
-			} );
+				} )
+				.catch( ( error ) => {
+					isMounted.current && setIsRemovingFromCart( false );
+					// Re-throw error so that the consumer of this action can treat it the same as removeProductFromCart
+					throw error;
+				} );
 		},
 		[ redirectDueToEmptyCart, removeProductFromCart ]
 	);

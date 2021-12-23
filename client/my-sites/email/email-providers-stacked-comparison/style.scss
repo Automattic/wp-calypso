@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .email-providers-stacked-comparison__header {
 	font-size: 2rem;
 	text-align: center;
@@ -30,6 +33,18 @@
 	}
 }
 
+.email-providers-stacked-comparison__main {
+	padding: 0 20px 20px;
+
+	@include break-mobile {
+		padding: 0 24px 24px;
+	}
+}
+
 .email-providers-stacked-comparison__how-they-compare {
 	text-align: center;
+}
+
+.email-providers-stacked-comparison__how-they-compare-link {
+	margin-left: 8px;
 }

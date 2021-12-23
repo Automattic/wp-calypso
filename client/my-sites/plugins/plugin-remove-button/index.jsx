@@ -179,7 +179,11 @@ class PluginRemoveButton extends Component {
 
 		if ( this.props.menuItem ) {
 			return (
-				<PopoverMenuItem onClick={ handleClick } className="plugin-remove-button__remove-button">
+				<PopoverMenuItem
+					onClick={ handleClick }
+					icon="trash"
+					className="plugin-remove-button__remove-button"
+				>
 					{ label }
 				</PopoverMenuItem>
 			);

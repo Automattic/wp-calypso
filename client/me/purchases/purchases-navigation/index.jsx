@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -6,12 +5,7 @@ import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import {
-	billingHistory,
-	paymentMethods,
-	pendingPayments,
-	purchasesRoot,
-} from 'calypso/me/purchases/paths.js';
+import { billingHistory, paymentMethods, purchasesRoot } from 'calypso/me/purchases/paths.js';
 import titles from 'calypso/me/purchases/titles';
 import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 
@@ -33,12 +27,6 @@ export default function PurchasesNavigation( { section } ) {
 				<NavItem path={ paymentMethods } selected={ section === 'paymentMethods' }>
 					{ titles.paymentMethods }
 				</NavItem>
-
-				{ isEnabled( 'async-payments' ) && (
-					<NavItem path={ pendingPayments } selected={ section === 'pendingPayments' }>
-						{ titles.pendingPayments }
-					</NavItem>
-				) }
 			</NavTabs>
 
 			{ section === 'billingHistory' && (

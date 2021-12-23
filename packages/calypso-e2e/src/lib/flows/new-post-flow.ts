@@ -37,7 +37,10 @@ export class NewPostFlow {
 			this.isLoggedIn = true;
 		}
 
-		return new GutenbergEditorPage( this.page );
+		const gutenbergEditorPage = new GutenbergEditorPage( this.page );
+		await gutenbergEditorPage.waitUntilLoaded();
+
+		return gutenbergEditorPage;
 	}
 
 	/**

@@ -50,7 +50,7 @@ const DomainRegistrationThankYouProps = ( {
 							</FullWidthButton>
 						),
 					},
-					professionalEmail,
+					...( professionalEmail ? [ professionalEmail ] : [] ),
 				],
 			},
 		],

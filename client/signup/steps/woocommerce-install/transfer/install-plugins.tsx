@@ -9,18 +9,34 @@ import {
 import { getAtomicSoftwareStatus } from 'calypso/state/atomic/software/selectors';
 import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Error from './error';
 import Progress from './progress';
+
 import './style.scss';
 
-export default function InstallPlugins(): ReactElement | null {
+// Timeout limit for the install to complete.
+const TIMEOUT_LIMIT = 1000 * 15; // 15 seconds.
+
+export default function InstallPlugins( {
+	onFailure,
+}: {
+	onFailure: () => void;
+} ): ReactElement | null {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const softwareStatus = useSelector( ( state ) =>
+	const { status: softwareStatus, error: softwareError } = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
-	const softwareApplied = softwareStatus?.applied;
+
+	// Used to implement a timeout threshold for the install to complete.
+	const [ isTimeoutError, setIsTimeoutError ] = useState( false );
+
+	const softwareApplied = !! softwareStatus?.applied;
+
 	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+
+	const installFailed = isTimeoutError || softwareError;
 
 	const [ progress, setProgress ] = useState( 0.6 );
 	// Install Woo on plans software set
@@ -32,21 +48,48 @@ export default function InstallPlugins(): ReactElement | null {
 		dispatch( requestAtomicSoftwareInstall( siteId, 'woo-on-plans' ) );
 	}, [ dispatch, siteId ] );
 
+	// Call onFailure callback when install fails.
+	useEffect( () => {
+		if ( ! softwareError ) {
+			return;
+		}
+
+		onFailure();
+	}, [ softwareError, onFailure ] );
+
+	// Timeout threshold for the install to complete.
+	useEffect( () => {
+		if ( installFailed ) {
+			return;
+		}
+
+		const timeId = setTimeout( () => {
+			setIsTimeoutError( true );
+			onFailure();
+		}, TIMEOUT_LIMIT );
+
+		return () => {
+			window?.clearTimeout( timeId );
+		};
+	}, [ onFailure, installFailed ] );
+
 	// Poll for status of installation
 	useInterval(
 		() => {
-			if ( ! siteId ) {
+			// Do not poll when no site or installing failed.
+			if ( ! siteId || installFailed ) {
 				return;
 			}
+
 			setProgress( progress + 0.2 );
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
-		softwareApplied ? null : 3000
+		!! installFailed || softwareApplied ? null : 3000
 	);
 
 	// Redirect to wc-admin once software installation is confirmed.
 	useEffect( () => {
-		if ( ! siteId ) {
+		if ( ! siteId || installFailed ) {
 			return;
 		}
 
@@ -57,8 +100,12 @@ export default function InstallPlugins(): ReactElement | null {
 				page( wcAdmin );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin ] );
+	}, [ siteId, softwareApplied, wcAdmin, installFailed ] );
 
-	// todo: Need error handling on these requests
-	return <Progress progress={ progress } />;
+	return (
+		<>
+			{ installFailed && <Error /> }
+			{ ! installFailed && <Progress progress={ progress } /> }
+		</>
+	);
 }
