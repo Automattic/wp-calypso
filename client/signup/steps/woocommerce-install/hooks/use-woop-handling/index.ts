@@ -163,7 +163,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * - data is ready
 	 * - does not require an upgrade, based on store `woop` feature
 	 */
-	let isReadyToStart = siteId && transferringDataIsAvailable && ! requiresUpgrade;
+	let isReadyToStart = !! ( siteId && transferringDataIsAvailable && ! requiresUpgrade );
 
 	// when the site is not Atomic, ...
 	if ( isReadyToStart && ! isAtomicSite ) {
