@@ -119,7 +119,7 @@ object BuildDockerImage : BuildType({
 			scriptContent = """
 				#!/usr/bin/env bash
 				if [[ "%teamcity.build.branch%" == "docker-image-new-tag-tc"  ]]; then
-					docker push registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%
+					docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
 				fi
 				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
 					echo "Not trunk"
