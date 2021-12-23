@@ -310,7 +310,7 @@ class NameServers extends Component {
 			return false;
 		}
 
-		return getSelectedDomain( this.props ).isPendingIcannVerification;
+		return getSelectedDomain( this.props )?.isPendingIcannVerification;
 	}
 
 	handleChange = ( nameservers ) => {
