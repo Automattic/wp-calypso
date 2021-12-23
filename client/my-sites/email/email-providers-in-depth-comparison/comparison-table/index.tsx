@@ -192,21 +192,34 @@ const ComparisonTable: FunctionComponent< ComparisonTableProps > = ( {
 				);
 			} ) }
 			{ showCallbackRow && (
-				<tr className="comparison-table__select">
-					<td className="comparison-table__select" headers="empty-row" />
-					{ emailProviders.map( ( provider ) => {
+				<>
+					<div
+						className={ classNames(
+							'comparison-table__select',
+							'column-one',
+							'cell',
+							rowClassNames[ featuresColumn.length + 1],
+							'cell'
+						) }
+					/>
+					{ emailProviders.map( ( provider, column ) => {
 						return (
-							<td
-								className="comparison-table__feature-description comparison-table__select"
-								headers={ provider.id }
+							<div
+								className={ classNames(
+									'comparison-table__feature-description',
+									'comparison-table__select',
+									columnClassNames[ column + 1 ],
+									rowClassNames[ featuresColumn.length + 1],
+									'cell'
+								) }
 							>
 								<FullWidthButton primary onClick={ provider.selectCallback }>
 									{ translate( 'Select' ) }
 								</FullWidthButton>
-							</td>
+							</div>
 						);
 					} ) }
-				</tr>
+				</>
 			) }
 		</>
 	);

@@ -32,9 +32,8 @@
 
 .comparison-table__table {
 	display: grid;
-	grid-template-columns: repeat( 4, 1fr );
-	grid-template-columns: min-content auto;
-	gap: 10px;
+	grid-template-columns: repeat( auto-fit, 1fr );
+	gap: 2px;
 	grid-auto-rows: minmax( 100px, auto );
 
 	.cell {
@@ -94,10 +93,12 @@
 
 	.column-three {
 		grid-column: 3;
+		padding-left: 60px;
 	}
 
 	.column-four {
 		grid-column: 4;
+		padding-left: 60px;
 	}
 
 	.comparison-table__header-column {
