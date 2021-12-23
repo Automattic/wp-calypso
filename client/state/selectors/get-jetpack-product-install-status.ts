@@ -2,11 +2,14 @@ import type { AppState } from 'calypso/types';
 
 import 'calypso/state/jetpack-product-install/init';
 
-export interface JetpackProductInstallStatus {
+export type PluginStatusSlug = `${ string }_status`;
+export type JetpackProductInstallStatus = {
 	akismet_status: string;
 	progress: number;
 	vaultpress_status: string;
-}
+} & {
+	[ pluginSlug: PluginStatusSlug ]: string;
+};
 
 /**
  * @param {object} state  Global app state.
