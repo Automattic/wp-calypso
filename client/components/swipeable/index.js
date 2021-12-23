@@ -124,6 +124,19 @@ export const Swipeable = ( {
 			const absoluteDelta = Math.abs( delta );
 			const velocity = absoluteDelta / ( dragPosition.timeStamp - dragStartData.timeStamp );
 
+			const verticalDelta = dragPosition.y - dragStartData.y;
+			const isVerticalScrollDetected =
+				Math.abs( verticalDelta ) > absoluteDelta || dragPosition.x === 0;
+			if ( isVerticalScrollDetected ) {
+				delete pagesStyle.transform;
+				setPagesStyle( {
+					...pagesStyle,
+					transitionDuration: TRANSITION_DURATION,
+				} );
+				setDragStartData( null );
+				return;
+			}
+
 			const hasMetThreshold =
 				absoluteDelta > OFFSET_THRESHOLD_PERCENTAGE * containerWidth ||
 				velocity > VELOCITY_THRESHOLD;
@@ -167,7 +180,14 @@ export const Swipeable = ( {
 
 			const dragPosition = getDragPositionAndTime( event );
 			const delta = dragPosition.x - dragStartData.x;
+			const absoluteDelta = Math.abs( delta );
 			const offset = getOffset( currentPage ) + delta;
+
+			// The user needs to swipe horizontally more then 2 px in order for the canvase to be dragging.
+			// We do this so that the user can scroll vertically smother.
+			if ( absoluteDelta < 3 ) {
+				return;
+			}
 
 			// Allow for swipe left or right
 			if (
