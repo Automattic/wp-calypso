@@ -67,34 +67,40 @@ const getThreatCountMessage = (
 ) => {
 	let lowThreatsSummary = '';
 	if ( countLowSeverity ) {
-		lowThreatsSummary = translate( '%(lowCount)s low risk item', '%(lowCount)s low risk items', {
-			args: {
-				lowCount: numberFormat( countLowSeverity, 0 ),
-			},
-			comment: '$(lowCount)s is the number of low severity items found.',
-			count: countLowSeverity,
-		} );
+		lowThreatsSummary = String(
+			translate( '%(lowCount)s low risk item', '%(lowCount)s low risk items', {
+				args: {
+					lowCount: numberFormat( countLowSeverity, 0 ),
+				},
+				comment: '$(lowCount)s is the number of low severity items found.',
+				count: countLowSeverity,
+			} )
+		);
 	}
 
 	let highThreatsSummary = '';
 	if ( countHighSeverity ) {
-		highThreatsSummary = translate( '%(threatCount)s threat', '%(threatCount)s threats', {
-			args: {
-				threatCount: numberFormat( countHighSeverity, 0 ),
-			},
-			comment: '%(threatCount)s represents the number of higher severity threats found.',
-			count: countHighSeverity,
-		} );
+		highThreatsSummary = String(
+			translate( '%(threatCount)s threat', '%(threatCount)s threats', {
+				args: {
+					threatCount: numberFormat( countHighSeverity, 0 ),
+				},
+				comment: '%(threatCount)s represents the number of higher severity threats found.',
+				count: countHighSeverity,
+			} )
+		);
 	}
 
 	let headerSummary = '';
 	if ( highThreatsSummary && lowThreatsSummary ) {
-		headerSummary = translate( '%(highThreatsSummary)s and %(lowThreatsSummary)s', {
-			args: {
-				highThreatsSummary: highThreatsSummary,
-				lowThreatsSummary: lowThreatsSummary,
-			},
-		} );
+		headerSummary = String(
+			translate( '%(highThreatsSummary)s and %(lowThreatsSummary)s', {
+				args: {
+					highThreatsSummary: highThreatsSummary,
+					lowThreatsSummary: lowThreatsSummary,
+				},
+			} )
+		);
 	} else if ( highThreatsSummary ) {
 		headerSummary = highThreatsSummary;
 	} else if ( lowThreatsSummary ) {
@@ -202,12 +208,12 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		countMap.high,
 		countMap.low,
 		null,
-		translate( 'found' )
+		String( translate( 'found' ) )
 	);
 	const fixSummary = getThreatCountMessage(
 		countMapFixable.high,
 		countMapFixable.low,
-		translate( 'Jetpack can auto fix' ),
+		String( translate( 'Jetpack can auto fix' ) ),
 		null
 	);
 

@@ -4,8 +4,8 @@ import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import { getThreatType } from 'calypso/components/jetpack/threat-item-new/utils';
 import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader-new';
-import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import ThreatSeverityBadge from 'calypso/components/jetpack/threat-severity-badge';
+import type { Threat } from 'calypso/components/jetpack/threat-item/types';
 
 import './style.scss';
 
@@ -25,7 +25,7 @@ const severityClassNames = ( severity: number ) => {
 
 // This should be temporary since this data should be coming from the api
 // and not something that we should change to accommodate the results.
-const getThreatMessage = ( threat ) => {
+const getThreatMessage = ( threat: Threat ) => {
 	const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
 	const basename = filename ? filename.replace( /.*\//, '' ) : '';
 

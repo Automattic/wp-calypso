@@ -26,7 +26,7 @@ const formatDate = ( date: Date ) => {
 	return moment( date ).format( 'LL' );
 };
 
-const getThreatStatusMessage = ( translate, threat: Threat ) => {
+const getThreatStatusMessage = ( translate: ReturnType< typeof useTranslate >, threat: Threat ) => {
 	const { status, fixedOn } = threat;
 
 	const date = fixedOn && formatDate( fixedOn );
