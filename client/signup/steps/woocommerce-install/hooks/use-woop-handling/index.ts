@@ -39,7 +39,7 @@ type EligibilityHook = {
 		productName: string;
 		description: string;
 	};
-	isReadyForTransfer: boolean;
+	isReadyToStart: boolean;
 	isAtomicSite: boolean;
 };
 
@@ -155,14 +155,29 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 
 	const productName = upgradingPlan.product_name;
 
-	// Define whether the site is ready to be transferred.
 	const isAtomicSite = !! useSelector( ( state ) => isAtomicSiteSelector( state, siteId ) );
-	const isReadyForTransfer = transferringDataIsAvailable
-		? ! isTransferringBlocked && // there is no blockers from eligibility (holds).
-		  ! ( eligibilityWarnings && eligibilityWarnings.length ) && // there is no warnings from eligibility (warnings).
-		  ! requiresUpgrade && // the site does not require an upgrade, based on store `woop` feature.
-		  ! isAtomicSite // if the site is Atomic, then it's not ready for transfer.
-		: false;
+
+	/*
+	 * the site is Ready to Start when:
+	 * - siteId is defined
+	 * - data is ready
+	 * ...
+	 */
+	let isReadyToStart = siteId && transferringDataIsAvailable;
+
+	if ( isAtomicSite ) {
+		// ... and also when the site is Atomic, ...
+		isReadyToStart = isReadyToStart && isAtomicSite;
+	} else {
+		// ...but when the site is not Atomic, ...
+		isReadyToStart =
+			isReadyToStart &&
+			! isTransferringBlocked && // there is no blockers from eligibility (holds).
+			! ( eligibilityWarnings && eligibilityWarnings.length ); // there is no warnings from eligibility (warnings).
+	}
+
+	// ...finally, the site does not require an upgrade, based on store `woop` feature.
+	isReadyToStart = isReadyToStart && ! requiresUpgrade;
 
 	const siteUpgrading = {
 		required: requiresUpgrade,
@@ -199,7 +214,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		isTransferringBlocked,
 		siteUpgrading,
 		isDataReady: transferringDataIsAvailable,
-		isReadyForTransfer,
+		isReadyToStart,
 		isAtomicSite,
 	};
 }
