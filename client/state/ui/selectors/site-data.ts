@@ -27,5 +27,7 @@ export interface SiteDataOptions {
 	admin_url: string | undefined;
 	is_mapped_domain: boolean;
 	jetpack_version: string | undefined;
+	is_wpcom_atomic: boolean;
+	is_automated_transfer: boolean;
 	// TODO: fill out the rest of this
 }
