@@ -108,6 +108,16 @@ export default function () {
 	} );
 
 	registerMultiPage( {
+		paths: [ paths.emailManagementInDepthComparison( ':site', ':domain' ) ],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementInDepthComparison,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
 		paths: [
 			paths.emailManagementPurchaseNewEmailAccount(
 				':site',

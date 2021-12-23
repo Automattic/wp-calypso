@@ -17,6 +17,7 @@ import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-st
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -45,6 +46,7 @@ type EmailProvidersStackedComparisonProps = {
 	shoppingCartManager?: any;
 	selectedSite?: SiteData | null;
 	selectedDomainName: string;
+	siteName: string;
 	source: string;
 	titanMailMonthlyProduct?: any;
 	gSuiteAnnualProduct?: any;
@@ -53,7 +55,14 @@ type EmailProvidersStackedComparisonProps = {
 const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
 	props
 ) => {
-	const { comparisonContext, isGSuiteSupported, selectedDomainName, selectedSite, source } = props;
+	const {
+		comparisonContext,
+		isGSuiteSupported,
+		selectedDomainName,
+		selectedSite,
+		siteName,
+		source,
+	} = props;
 
 	const translate = useTranslate();
 
@@ -100,6 +109,14 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			<h1 className="email-providers-stacked-comparison__header wp-brand-font">
 				{ translate( 'Pick an email solution' ) }
 			</h1>
+
+			<div className="email-providers-stacked-comparison__how-they-compare">
+				{ translate( 'Not sure how to start? {{a}}See how they compare{{/a}}.', {
+					components: {
+						a: <a href={ emailManagementInDepthComparison( siteName, selectedDomainName ) } />,
+					},
+				} ) }
+			</div>
 
 			<BillingIntervalToggle
 				onIntervalChange={ setIntervalLength }
