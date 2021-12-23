@@ -26,7 +26,9 @@ export function requestPluginKeys( siteId: SiteId ) {
 	);
 }
 
-export function getPluginKeys( siteId: SiteId ) {
+export function getPluginKeys(
+	siteId: SiteId | undefined | null
+): typeof empty | ReturnType< typeof getHttpData > {
 	if ( ! siteId ) {
 		return empty;
 	}
