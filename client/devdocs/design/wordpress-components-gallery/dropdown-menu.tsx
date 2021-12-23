@@ -1,12 +1,12 @@
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
-import { arrowUp, arrowDown, trash } from '@wordpress/icons';
+import { more, arrowUp, arrowDown, trash } from '@wordpress/icons';
 import { useState } from 'react';
 
 const DropdownMenuExample = () => {
 	const [ mode, setMode ] = useState( 'visual' );
 	return (
-		<DropdownMenu icon="menu" label="Select a direction">
+		<DropdownMenu icon={ more } label="Select a direction">
 			{ ( { onClose } ) => (
 				<Fragment>
 					<MenuGroup label="Directions">
