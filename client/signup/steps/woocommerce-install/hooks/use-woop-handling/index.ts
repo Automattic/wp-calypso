@@ -91,12 +91,12 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		( { id } ) => id === 'wordpress_subdomain'
 	);
 
-	// Filter the Woop transferring blockers
+	// Filter the Woop transferring blockers.
 	const transferringBlockers = eligibilityHolds?.filter(
 		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
-	// Add blocked transfer hold when something is wrong in the transfer status.
+	// Add blocked-transfer-hold when something is wrong in the transfer status.
 	if (
 		! transferringBlockers?.includes( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER ) &&
 		( isBlockByTransferStatus || isTransferStuck )
@@ -124,13 +124,24 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const eligibilityNoProperPlan = eligibilityHolds?.includes(
 		eligibilityHoldsConstants.NO_BUSINESS_PLAN
 	);
+
+	/*
+	 * Check whether the `woop` feature is actve.`
+	 * It's defined by wpcom in the store product list.
+	 */
 	const isWoopFeatureActive = useSelector( ( state ) =>
 		hasActiveSiteFeature( state, siteId, FEATURE_WOOP )
 	);
+
+	/*
+	 * Feature available means although the site doesn't have the feature active,
+	 * it's available to be activated via buying a plan.
+	 */
 	const hasWoopFeatureAvailable = useSelector( ( state ) =>
 		hasAvailableSiteFeature( state, siteId, FEATURE_WOOP )
 	);
 
+	// The site requires upgrading when the feature is not active and available.
 	const requiresUpgrade = Boolean(
 		eligibilityNoProperPlan && ! isWoopFeatureActive && hasWoopFeatureAvailable
 	);
