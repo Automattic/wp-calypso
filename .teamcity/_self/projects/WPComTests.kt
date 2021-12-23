@@ -59,7 +59,10 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 			screenshots => screenshots
 		""".trimIndent()
 
-		wpCalypsoVCS()
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
 
 		params {
 			text(
@@ -274,54 +277,32 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): cal
 	)
 }
 
-fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
-    return BuildType {
-		id("WPComTests_coblocks_Playwright_$targetDevice")
-		uuid=buildUuid
-		name = "Playwright CoBlocks E2E Tests ($targetDevice)"
-		description = "Runs CoBlocks E2E tests as $targetDevice using Playwright"
-
-		artifactRules = artifactRules()
-
-		wpCalypsoVCS()
-
-		params {
+fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): calypsoE2EBuildType {
+    return calypsoE2EBuildType (
+		buildId = "WPComTests_coblocks_Playwright_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "Playwright CoBlocks E2E Tests ($targetDevice)",
+		buildDescription = "Runs CoBlocks E2E tests as $targetDevice",
+		testGroup = "coblocks",
+		buildParams = {
 			text(
-				name = "URL",
+				name = "env.URL",
 				value = "https://wordpress.com",
 				label = "Test URL",
 				description = "URL to test against",
 				allowEmpty = false
 			)
 			checkbox(
-				name = "COBLOCKS_EDGE",
+				name = "env.COBLOCKS_EDGE",
 				value = "false",
 				label = "Use coblocks-edge",
 				description = "Use a blog with coblocks-edge sticker",
 				checked = "true",
 				unchecked = "false"
 			)
-		}
-
-		steps {
-			prepareEnvironment()
-
-			runTests(
-				stepName = "Run coblocks e2e tests ($targetDevice)",
-				testGroup = "coblocks",
-				// envVars = mapOf(
-				// 	"URL" to "%URL%",
-				// 	"COBLOCKS_EDGE" to "%COBLOCKS_EDGE%",
-				// 	"TARGET_DEVICE" to "$targetDevice",
-				// )
-			)
-
-			collectResults()
-		}
-
-		features {
-			perfmon {
-			}
+			param("env.TARGET_DEVICE", "$targetDevice")
+		},
+		buildFeatures = {
 			notifications {
 				notifierSettings = slackNotifier {
 					connection = "PROJECT_EXT_11"
@@ -336,44 +317,8 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): Buil
 				buildFailed = true
 				buildFinishedSuccessfully = true
 			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
-			}
-		}
-
-		failureConditions {
-			executionTimeoutMin = 20
-			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
-			// been muted previously.
-			nonZeroExitCode = false
-
-			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-			// crashes and no tests are run.
-			failOnMetricChange {
-				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-				threshold = 50
-				units = BuildFailureOnMetric.MetricUnit.PERCENTS
-				comparison = BuildFailureOnMetric.MetricComparison.LESS
-				compareTo = build {
-					buildRule = lastSuccessful()
-				}
-			}
-		}
-
-		dependencies {
-			snapshot(BuildDockerImage) {
-				onDependencyFailure = FailureAction.FAIL_TO_START
-			}
-		}
-
-		triggers {}
-	}
+		},
+	)
 }
 
 fun jetpackBuildType(screenSize: String): BuildType {
@@ -575,68 +520,30 @@ private object VisualRegressionTests : BuildType({
 	}
 })
 
-private object I18NTests : BuildType({
-	name = "I18N Tests"
-	description = "Runs tests related to i18n"
-
-	artifactRules = artifactRules()
-
-	wpCalypsoVCS()
-
-	params {
+private object I18NTests : calypsoE2EBuildType(
+	buildId = "WPComTests_i18n",
+	buildUuid = "2698576f-6ae4-4f05-ae9a-55ce07c9b42f",
+	buildName = "I18N Tests",
+	buildDescription = "Runs tests related to i18n",
+	testGroup = "i18n",
+	buildParams = {
 		text(
-			name = "URL",
+			name = "env.URL",
 			value = "https://wordpress.com",
 			label = "Test URL",
 			description = "URL to test against",
 			allowEmpty = false
 		)
 		text(
-			name = "LOCALES",
+			name = "env.LOCALES",
 			value = "en,es,pt-br,de,fr,he,ja,it,nl,ru,tr,id,zh-cn,zh-tw,ko,ar,sv",
 			label = "Locales to use",
 			description = "Locales to use, separated by comma",
 			allowEmpty = false
 		)
-	}
-
-	steps {
-		prepareEnvironment()
-
-		runTests(
-			stepName = "Run i18n tests",
-			testGroup = "i18n",
-			// envVars = mapOf(
-			// 	"URL" to "%URL%",
-			// 	"TARGET_DEVICE" to "desktop",
-			// 	"LOCALES" to "%LOCALES%"
-			// )
-		)
-
-		collectResults()
-	}
-
-	failureConditions {
-		executionTimeoutMin = 30
-
-		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
-		// been muted previously.
-		nonZeroExitCode = false
-
-		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-		// crashes and no tests are run.
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
-	}
-
-	features {
+		param("env.TARGET_DEVICE", "desktop")
+	},
+	buildFeatures = {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -650,9 +557,8 @@ private object I18NTests : BuildType({
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
 		}
-	}
-
-	triggers {
+	},
+	buildTriggers = {
 		schedule {
 			schedulingPolicy = daily {
 				hour = 3
@@ -664,6 +570,7 @@ private object I18NTests : BuildType({
 			withPendingChangesOnly = false
 		}
 	}
+<<<<<<< HEAD
 })
 
 object P2E2ETests : BuildType({
@@ -712,6 +619,21 @@ object P2E2ETests : BuildType({
 				}
 			}
 		}
+=======
+)
+
+object P2E2ETests : calypsoE2EBuildType(
+	buildId = "WPComTests_p2",
+	buildUuid = "086ed775-eee4-4cc0-abc4-bb497979ef48",
+	buildName = "P2 E2E Tests",
+	buildDescription = "Runs end-to-end tests against P2.",
+	testGroup = "p2",
+	buildParams = {
+		param("env.TARGET_DEVICE", "desktop")
+		param("env.URL", "https://wpcalypso.wordpress.com")
+	},
+	buildFeatures = {
+>>>>>>> c3d2b6b0b5 (Migrate all build configurations)
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -733,9 +655,8 @@ object P2E2ETests : BuildType({
 			branchFilter = "trunk"
 			buildFailed = true
 		}
-	}
-
-	triggers {
+	},
+	buildTriggers = {
 		schedule {
 			schedulingPolicy = cron {
 				hours = "*/3"
@@ -746,10 +667,5 @@ object P2E2ETests : BuildType({
 			withPendingChangesOnly = false
 		}
 	}
+)
 
-	failureConditions {
-		executionTimeoutMin = 10
-		// Do not fail on non-zero exit code to permit passing builds with muted tests.
-		nonZeroExitCode = false
-	}
-})
