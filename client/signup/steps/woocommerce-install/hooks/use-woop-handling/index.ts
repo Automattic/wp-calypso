@@ -155,6 +155,13 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 
 	const productName = upgradingPlan.product_name;
 
+	// Define whether the site is ready to be transferred.
+	const isReadyForTransfer = transferringDataIsAvailable
+		? ! isTransferringBlocked && // there is not blocker from eligibility (holds).
+		  ! ( eligibilityWarnings && eligibilityWarnings.length ) && // there is not warnings from eligibility (warnings).
+		  ! requiresUpgrade // the site does not require an upgrade, based on store `woop` feature.
+		: false;
+
 	const siteUpgrading = {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
@@ -190,9 +197,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		isTransferringBlocked,
 		siteUpgrading,
 		isDataReady: transferringDataIsAvailable,
-		isReadyForTransfer: transferringDataIsAvailable
-			? ! isTransferringBlocked && ! ( eligibilityWarnings && eligibilityWarnings.length )
-			: false,
+		isReadyForTransfer,
 		isAtomicSite: !! useSelector( ( state ) => isAtomicSite( state, siteId ) ),
 	};
 }
