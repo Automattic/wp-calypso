@@ -26,7 +26,7 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 	describe( 'Commenting and replying to newly created post in Gutenberg Editor: @parallel', function () {
 		it( 'Can login and create a new post', async function () {
 			this.loginFlow = new LoginFlow( this.driver, 'gutenbergSimpleSiteUser' );
-			await this.loginFlow.loginAndStartNewPost( null, true );
+			await this.loginFlow.loginAndStartNewPost( null );
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 			await gEditorComponent.enterTitle( blogPostTitle );
 			await gEditorComponent.enterText( blogPostQuote );

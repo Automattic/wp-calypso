@@ -21,7 +21,7 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 			{ actions.map( ( action ) => {
 				return (
 					<PopoverMenuItem
-						disabled={ record.protected_field }
+						disabled={ action.disabled }
 						key={ key++ }
 						onClick={ () => action.callback( record ) }
 					>

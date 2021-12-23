@@ -3,8 +3,8 @@ import type { RequestCartProduct, MinimalRequestCartProduct } from './types';
 export default function createRequestCartProduct(
 	properties: MinimalRequestCartProduct
 ): RequestCartProduct {
-	if ( ! properties.product_slug || ! properties.product_id ) {
-		throw new Error( 'Both product_slug and product_id are required for request cart products' );
+	if ( ! properties.product_slug ) {
+		throw new Error( 'product_slug is required for request cart products' );
 	}
 	return {
 		meta: '',

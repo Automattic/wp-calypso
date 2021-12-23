@@ -37,18 +37,18 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		page = args.page;
 	} );
 
-	describe( 'Block editor', function () {
+	it( 'Log in', async function () {
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: user } );
+	} );
+
+	it( 'Start new post', async function () {
+		const newPostFlow = new NewPostFlow( page );
+		await newPostFlow.newPostFromNavbar();
+	} );
+
+	describe( 'Blocks', function () {
 		let blockHandle: ElementHandle;
-
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
-		} );
-
-		it( 'Start new post', async function () {
-			const newPostFlow = new NewPostFlow( page );
-			await newPostFlow.newPostFromNavbar();
-		} );
 
 		it( 'Enter post title', async function () {
 			gutenbergEditorPage = new GutenbergEditorPage( page );
@@ -69,7 +69,17 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Remove image block', async function () {
 			await gutenbergEditorPage.removeBlock( blockHandle );
 		} );
+	} );
 
+	describe( 'Patterns', function () {
+		const patternName = 'Event details';
+
+		it( `Add ${ patternName }`, async function () {
+			await gutenbergEditorPage.addPattern( patternName );
+		} );
+	} );
+
+	describe( 'Categories and Tags', function () {
 		it( 'Open editor settings sidebar for post', async function () {
 			await gutenbergEditorPage.openSettings();
 			const frame = await gutenbergEditorPage.getEditorFrame();
@@ -88,7 +98,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 	} );
 
-	describe( 'Preview post', function () {
+	describe( 'Preview', function () {
 		const targetDevice = BrowserHelper.getTargetDeviceName();
 		let previewPage: Page;
 
@@ -125,7 +135,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 	} );
 
-	describe( 'Publish post', function () {
+	describe( 'Publish', function () {
 		it( 'Publish and visit post', async function () {
 			const publishedURL = await gutenbergEditorPage.publish( { visit: true } );
 			expect( publishedURL ).toBe( page.url() );

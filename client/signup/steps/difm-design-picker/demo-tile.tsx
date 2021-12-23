@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { MShotsImage } from '@automattic/design-picker';
+import { MShotsImage } from '@automattic/onboarding';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 

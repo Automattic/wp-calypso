@@ -1,33 +1,13 @@
 @import '@wordpress/base-styles/mixins';
 
-.dot-pager__pages {
-	overflow: hidden;
-	display: flex;
-	align-items: flex-start;
-	position: relative;
-	transition: height 0.5s ease-in-out;
-	@include reduce-motion( 'transition' );
-}
-
 .dot-pager__page {
-	width: 100%;
-	flex-shrink: 0;
-	margin-left: 0;
-	transition: all 0.5s ease-in-out;
+	transition: opacity 0.5s ease-in-out;
 	@include reduce-motion( 'transition' );
 	opacity: 1;
 
 	&.is-prev,
 	&.is-next {
 		opacity: 0;
-	}
-
-	&.is-prev {
-		margin-left: -100%;
-	}
-
-	&.is-next {
-		margin-left: 100%;
 	}
 }
 

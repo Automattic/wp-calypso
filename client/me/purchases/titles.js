@@ -12,7 +12,6 @@ const titles = {
 	activeUpgrades: i18n.translate( 'Active Upgrades' ),
 	billingHistory: i18n.translate( 'Billing History' ),
 	paymentMethods: i18n.translate( 'Payment Methods' ),
-	pendingPayments: i18n.translate( 'Pending Payments' ),
 };
 
 /**
@@ -54,9 +53,6 @@ Object.defineProperties( titles, {
 	},
 	vatDetails: {
 		get: () => i18n.translate( 'VAT Details' ),
-	},
-	pendingPayments: {
-		get: () => i18n.translate( 'Pending Payments' ),
 	},
 } );
 

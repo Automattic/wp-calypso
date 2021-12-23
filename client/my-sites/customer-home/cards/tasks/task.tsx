@@ -12,6 +12,9 @@ import Spinner from 'calypso/components/spinner';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ReminderDuration } from 'calypso/data/home/use-skip-current-view-mutation';
+import type { AppState } from 'calypso/types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -35,13 +38,43 @@ const Task = ( {
 	taskId,
 	timing,
 	title,
-} ) => {
+}: {
+	actionOnClick?: () => void;
+	badgeText?: ReactNode;
+	completeOnStart?: boolean;
+	description: ReactNode;
+	illustration?: string;
+	isLoading?: boolean;
+	isUrgent?: boolean;
+	showSkip?: boolean;
+	enableSkipOptions?: boolean;
+	scary?: boolean;
+	siteId?: number | null;
+	taskId: string;
+	timing?: number;
+	title: ReactNode;
+} & (
+	| {
+			hasAction?: false;
+			actionTarget?: string;
+			actionText?: ReactNode;
+			actionUrl?: string;
+			actionButton?: ReactNode;
+	  }
+	| {
+			hasAction: true;
+			actionTarget: string;
+			actionText: ReactNode;
+			actionUrl: string;
+			actionButton?: ReactNode;
+	  }
+ ) ): JSX.Element => {
 	const [ isLoading, setIsLoading ] = useState( forceIsLoading );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const skipButtonRef = useRef( null );
-	const { skipCard } = useSkipCurrentViewMutation( siteId );
+	const { skipCard } = useSkipCurrentViewMutation( siteId ?? 0 );
 	const instanceId = useInstanceId( Task );
 
 	useEffect( () => setIsLoading( forceIsLoading ), [ forceIsLoading ] );
@@ -66,7 +99,7 @@ const Task = ( {
 		);
 	};
 
-	const skipTask = ( reminder = null ) => {
+	const skipTask = ( reminder: ReminderDuration = null ) => {
 		setIsLoading( true );
 		setSkipOptionsVisible( false );
 
@@ -83,7 +116,7 @@ const Task = ( {
 		);
 	};
 
-	const ActionButtonWithStats = ( { children } ) => {
+	const ActionButtonWithStats = ( { children }: { children: ReactNode } ) => {
 		return (
 			<div onClick={ startTask } role="presentation" className="task__action">
 				{ children }
@@ -170,7 +203,7 @@ const Task = ( {
 					) }
 				</div>
 			</div>
-			{ isDesktop() && (
+			{ isDesktop() && illustration && (
 				<div className="task__illustration">
 					<img src={ illustration } alt="" />
 				</div>
@@ -179,7 +212,7 @@ const Task = ( {
 	);
 };
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state: AppState ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,

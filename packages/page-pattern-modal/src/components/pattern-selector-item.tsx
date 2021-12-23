@@ -1,4 +1,4 @@
-import { MShotsImage } from '@automattic/design-picker';
+import { MShotsImage } from '@automattic/onboarding';
 
 interface PatternSelectorItemProps {
 	description?: string;

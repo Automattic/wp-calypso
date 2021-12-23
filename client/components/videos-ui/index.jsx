@@ -64,7 +64,7 @@ const VideosUi = ( { HeaderBar, FooterBar, areVideosTranslated = true } ) => {
 				return;
 			}
 		}
-		const initialVideoId = 'find-theme';
+		const initialVideoId = videoSlugs[ 0 ];
 		setCurrentVideoKey( initialVideoId );
 		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoId ) );
 	}, [ course, initialUserCourseProgression ] );
@@ -125,7 +125,11 @@ const VideosUi = ( { HeaderBar, FooterBar, areVideosTranslated = true } ) => {
 					</div>
 				</div>
 			</div>
-			<div className="videos-ui__body">
+			<div
+				className={ classNames( 'videos-ui__body', {
+					'is-loading': ! course,
+				} ) }
+			>
 				<div className="videos-ui__body-title">
 					<h3>{ course && course.title }</h3>
 					{ currentVideo && shouldShowVideoTranslationNotice && (
@@ -142,6 +146,7 @@ const VideosUi = ( { HeaderBar, FooterBar, areVideosTranslated = true } ) => {
 					) }
 				</div>
 				<div className="videos-ui__video-content">
+					{ ! currentVideo && <div className="videos-ui__video-placeholder" /> }
 					{ currentVideo && (
 						<VideoPlayer
 							videoData={ { ...currentVideo, ...{ slug: currentVideoKey } } }

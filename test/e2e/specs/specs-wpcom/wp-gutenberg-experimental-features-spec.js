@@ -39,7 +39,7 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 
 	it( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-		return await this.loginFlow.loginAndStartNewPost( null, true );
+		return await this.loginFlow.loginAndStartNewPost( null );
 	} );
 
 	describe( 'Can find experimental package features', function () {

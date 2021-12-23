@@ -80,50 +80,39 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		// `page.on` construct is used here instead of the more common `page.waitForResponse`.
-		// Using the latter causes this method to hang until the timeout is reached, since
-		// the `waitForResponse` method begins observing the network requests after the
-		// `nux?_envelope=1` request has been completed.
-		// On the other hand, `page.on` is able to monitor every request, including the
-		// one to the `nux` endpoint.
-		this.page.on( 'requestfinished', async ( request ) => {
-			const response = await request.response();
-			if ( ! response ) {
-				return;
-			}
-
-			if ( ! response.url().includes( 'nux?_envelope=1' ) ) {
-				return;
-			}
-
-			interface NuxPayload {
-				body: {
-					show_welcome_guide: boolean;
-				};
-			}
-
-			const body = ( await response.json() ) as NuxPayload;
-			if ( body?.body?.show_welcome_guide === true ) {
-				await this.dismissWelcomeTour();
-			}
-		} );
-
 		const frame = await this.getEditorFrame();
-		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
-		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
+		// Traditionally we try to avoid waits not related to the current flow.
+		// However, we need a stable way to identify loading being done. NetworkIdle
+		// takes too long here, so the most reliable alternative is the title being
+		// visible.
 		await frame.waitForSelector( selectors.editorTitle );
+		await this.forceDismissWelcomeTour();
 
 		return frame;
 	}
 
 	/**
-	 * Dismisses the Welcome Tour (card) if it is present.
+	 * Forcefully dismisses the Welcome Tour via action dispatch.
+	 *
+	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
-	async dismissWelcomeTour(): Promise< void > {
+	async forceDismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		const locator = frame.locator( selectors.welcomeTourCloseButton );
 
-		await locator.click( { timeout: 10 * 1000 } );
+		await frame.waitForFunction(
+			async () =>
+				await ( window as any ).wp.data
+					.select( 'automattic/wpcom-welcome-guide' )
+					.isWelcomeGuideStatusLoaded()
+		);
+
+		await frame.waitForFunction( async () => {
+			const actionPayload = await ( window as any ).wp.data
+				.dispatch( 'automattic/wpcom-welcome-guide' )
+				.setShowWelcomeGuide( false );
+
+			return actionPayload.show === false;
+		} );
 	}
 
 	/**
@@ -273,13 +262,8 @@ export class GutenbergEditorPage {
 	 */
 	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
-
-		// Click on the editor title. This has the effect of dismissing the block inserter
-		// if open, and restores focus back to the editor root container, allowing insertion
-		// of blocks.
-		await frame.click( selectors.editorTitle );
 		await this.openBlockInserter();
-		await frame.fill( selectors.blockSearch, blockName );
+		await this.searchBlockInserter( blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
 		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
@@ -298,15 +282,47 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Adds a pattern from the block inserter panel.
+	 *
+	 * The name is expected to be formatted in the same manner as it
+	 * appears on the label when visible in the block inserter panel.
+	 *
+	 * Example:
+	 * 		- Two images side by side
+	 *
+	 * @param {string} patternName Name of the pattern to insert.
+	 */
+	async addPattern( patternName: string ): Promise< ElementHandle > {
+		const frame = await this.getEditorFrame();
+		await this.openBlockInserter();
+		await this.searchBlockInserter( patternName );
+		await frame.click( `div[aria-label="${ patternName }"]` );
+		return await frame.waitForSelector( `:text('Block pattern "${ patternName }" inserted.')` );
+	}
+
+	/**
 	 * Open the block inserter panel.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openBlockInserter(): Promise< void > {
 		const frame = await this.getEditorFrame();
-
+		// Click on the editor title. This has the effect of dismissing the block inserter
+		// if open, and restores focus back to the editor root container, allowing insertion
+		// of blocks.
+		await frame.click( selectors.editorTitle );
 		await frame.click( selectors.blockInserterToggle );
 		await frame.waitForSelector( selectors.blockInserterPanel );
+	}
+
+	/**
+	 * Given a string, enters the said string to the block inserter search bar.
+	 *
+	 * @param {string} text Text to search.
+	 */
+	async searchBlockInserter( text: string ): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.fill( selectors.blockSearch, text );
 	}
 
 	/**

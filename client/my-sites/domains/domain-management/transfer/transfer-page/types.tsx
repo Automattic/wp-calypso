@@ -1,9 +1,12 @@
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { NoticeActionCreator } from 'calypso/state/notices/types';
+import type { ReactNode } from 'react';
 
 export type TransferPageProps = {
+	domains: ResponseDomain[];
 	currentRoute: string;
-	errorNotice: ( notice: string, options: Record< string, unknown > ) => NoticeActionCreator;
+	errorNotice: ( notice: ReactNode, options: Record< string, unknown > ) => NoticeActionCreator;
 	isAtomic: boolean;
 	isDomainInfoLoading: boolean;
 	isDomainLocked: boolean;

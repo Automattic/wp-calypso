@@ -9,7 +9,7 @@ import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
 } from 'calypso/lib/gsuite';
-import type { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -350,7 +350,7 @@ const getItemsForCart = (
 	domains: { name: string; googleAppsSubscription?: { status?: string } }[],
 	productSlug: string,
 	users: GSuiteNewUser[]
-): IncompleteRequestCartProduct[] => {
+): MinimalRequestCartProduct[] => {
 	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
 		groupBy( users, 'domain.value' ),
 		( groupedUsers ) => groupedUsers.map( transformUserForCart )

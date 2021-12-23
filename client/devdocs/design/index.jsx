@@ -99,6 +99,7 @@ import SplitButton from 'calypso/components/split-button/docs/example';
 import StepProgress from 'calypso/components/step-progress/docs/example';
 import SuggestionSearchExample from 'calypso/components/suggestion-search/docs/example';
 import SupportInfoExample from 'calypso/components/support-info/docs/example';
+import Swipeable from 'calypso/components/swipeable/docs/example';
 import TextDiff from 'calypso/components/text-diff/docs/example';
 import TextareaAutosize from 'calypso/components/textarea-autosize/docs/example';
 import TileGrid from 'calypso/components/tile-grid/docs/example';
@@ -190,6 +191,7 @@ export default class DesignAssets extends Component {
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
 					<DotPager readmeFilePath="dot-pager" />
+					<Swipeable readmeFilePath="swipeable" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmptyContent readmeFilePath="empty-content" />

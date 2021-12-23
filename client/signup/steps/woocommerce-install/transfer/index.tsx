@@ -39,7 +39,7 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 			backUrl={ `/woocommerce-installation/${ domain }` }
 			stepContent={
 				<>
-					{ isAtomic && <InstallPlugins /> }
+					{ isAtomic && <InstallPlugins onFailure={ () => setHasFailed( true ) } /> }
 					{ ! isAtomic && <TransferSite onFailure={ () => setHasFailed( true ) } /> }
 				</>
 			}

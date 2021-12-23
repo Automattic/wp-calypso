@@ -140,8 +140,9 @@ function PluginDetails( props ) {
 			...plugin,
 			...wpcomPlugin,
 			...wporgPlugin,
+			isMarketplaceProduct,
 		};
-	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched ] );
+	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isMarketplaceProduct ] );
 
 	const existingPlugin = useMemo( () => {
 		if (
@@ -217,13 +218,16 @@ function PluginDetails( props ) {
 				navigationItems={ getNavigationItems() }
 				compactBreadcrumb={ ! isWide }
 			>
-				{ isEnabled( 'marketplace-v1' ) && isMarketplaceProduct && (
-					<BillingIntervalSwitcher
-						billingPeriod={ billingPeriod }
-						onChange={ setBillingPeriod }
-						compact={ ! isWide }
-					/>
-				) }
+				{ isEnabled( 'marketplace-v1' ) &&
+					isMarketplaceProduct &&
+					! requestingPluginsForSites &&
+					! isPluginInstalledOnsite && (
+						<BillingIntervalSwitcher
+							billingPeriod={ billingPeriod }
+							onChange={ setBillingPeriod }
+							compact={ ! isWide }
+						/>
+					) }
 			</FixedNavigationHeader>
 			<PluginNotices
 				pluginId={ fullPlugin.id }

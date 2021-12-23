@@ -211,10 +211,19 @@ const webpackConfig = {
 					config: false,
 					plugins: [ autoprefixerPlugin() ],
 				},
-				prelude: `@use '${ path.join(
-					__dirname,
-					'assets/stylesheets/shared/_utils.scss'
-				) }' as *;`,
+				// Since `prelude` string will be appended to each Sass file
+				// We need to ensure that the import path (inside a sass file) is a posix path, regardless of the OS/platform
+				// Final result should be something like `@use 'client/assets/stylesheets/shared/_utils.scss' as *;`
+				prelude: `@use '${
+					path
+						// Path, relative to Node CWD
+						.relative(
+							process.cwd(),
+							path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' )
+						)
+						.split( path.sep ) // Break any path (posix/win32) by path separator
+						.join( path.posix.sep ) // Convert the path explicitly to posix to ensure imports work fine
+				}' as *;`,
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),

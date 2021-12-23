@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
-import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpRichResult from './inline-help-rich-result';
@@ -122,7 +121,6 @@ class InlineHelpPopover extends Component {
 	renderPopoverContent = () => {
 		return (
 			<Fragment>
-				<QuerySupportTypes />
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
 						searchQuery={ this.state.searchQuery }

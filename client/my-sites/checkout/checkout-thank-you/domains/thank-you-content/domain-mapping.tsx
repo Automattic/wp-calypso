@@ -50,7 +50,7 @@ const domainMappingThankYouProps = ( {
 							</FullWidthButton>
 						),
 					},
-					professionalEmail,
+					...( professionalEmail ? [ professionalEmail ] : [] ),
 				],
 			},
 		],

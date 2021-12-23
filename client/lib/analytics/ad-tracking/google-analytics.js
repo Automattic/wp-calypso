@@ -99,20 +99,3 @@ export function fireGoogleAnalyticsEvent( category, action, label, value ) {
 		value: value,
 	} );
 }
-
-/**
- * Fires a generic Google Analytics timing
- *
- * @param {string} name A string to identify the variable being recorded (e.g. 'load').
- * @param {number} value The number of milliseconds in elapsed time to report to Google Analytics (e.g. 20).
- * @param {string} event_category A string for categorizing all user timing variables into logical groups (e.g. 'JS Dependencies').
- * @param {string} event_label A string that can be used to add flexibility in visualizing user timings in the reports (e.g. 'Google CDN').
- */
-export function fireGoogleAnalyticsTiming( name, value, event_category, event_label ) {
-	window.gtag( 'event', 'timing_complete', {
-		name: name,
-		value: value,
-		event_category: event_category,
-		event_label: event_label,
-	} );
-}

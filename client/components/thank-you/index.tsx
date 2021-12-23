@@ -206,8 +206,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	return (
 		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
 			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
-				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
-				<img { ...thankYouImage } />
+				<img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } />
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>
 						<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>

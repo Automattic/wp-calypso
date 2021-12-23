@@ -6,10 +6,10 @@ function software( state = {}, action ) {
 	switch ( action.type ) {
 		case ATOMIC_SOFTWARE_SET_STATUS:
 			return {
-				...state,
 				siteId: action.siteId,
 				softwareSet: action.softwareSet,
-				...action?.status,
+				status: action?.status || null,
+				error: action?.error || null,
 			};
 	}
 	return state;

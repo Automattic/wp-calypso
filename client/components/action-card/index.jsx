@@ -60,6 +60,7 @@ ActionCard.propTypes = {
 	children: PropTypes.any,
 	compact: PropTypes.bool,
 	illustration: PropTypes.string,
+	classNames: PropTypes.string,
 };
 
 ActionCard.defaultProps = {

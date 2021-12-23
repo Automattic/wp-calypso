@@ -34,7 +34,7 @@ import {
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { addToCartAndCheckout, IntervalLength, recordTracksEventAddToCartClick } from './utils';
@@ -82,7 +82,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		titanMailMonthlyProduct,
 		titanMailYearlyProduct,
 		comparisonContext,
-		productsList,
 		shoppingCartManager,
 		selectedSite,
 		source,
@@ -146,7 +145,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 		addToCartAndCheckout(
 			shoppingCartManager,
 			cartItem,
-			productsList,
 			setAddingToCart,
 			selectedSite?.slug ?? ''
 		);
@@ -217,7 +215,6 @@ export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
 		domain,
 		selectedDomainName: resolvedDomainName,
 		hasCartDomain,
-		productsList: getProductsList( state ),
 		selectedSite,
 		titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		titanMailYearlyProduct: getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG ),
