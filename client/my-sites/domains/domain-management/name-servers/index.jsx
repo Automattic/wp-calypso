@@ -359,6 +359,12 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 		)
 	);
 
-export default connect( ( state ) => ( { currentRoute: getCurrentRoute( state ) } ), {
-	customNameServersLearnMoreClick,
-} )( localize( withDomainNameservers( NameServers ) ) );
+export default connect(
+	( state, props ) => ( {
+		currentRoute: getCurrentRoute( state ),
+		domain: getSelectedDomain( props ),
+	} ),
+	{
+		customNameServersLearnMoreClick,
+	}
+)( localize( withDomainNameservers( NameServers ) ) );

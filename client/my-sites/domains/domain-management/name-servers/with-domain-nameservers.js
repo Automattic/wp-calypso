@@ -19,7 +19,7 @@ const withDomainNameservers = createHigherOrderComponent( ( Wrapped ) => {
 		const translate = useTranslate();
 		const { data, isLoading, isError, error } = useDomainNameserversQuery(
 			selectedDomainName,
-			domain?.type === domainTypes.REGISTERED // Only registered domains can have their name servers updated
+			domain.type === domainTypes.REGISTERED // Only registered domains can have their name servers updated
 		);
 		const { updateNameservers } = useUpdateNameserversMutation( selectedDomainName, {
 			onSuccess() {
