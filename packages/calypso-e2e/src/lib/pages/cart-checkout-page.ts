@@ -13,8 +13,8 @@ const selectors = {
 	// Cart item
 	cartItem: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
-	removeCartItemButton: ( itemName: string ) =>
-		`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ itemName.trim() } from cart"]`,
+	removeCartItemButton: () =>
+		`[data-testid="review-order-step--visible"] button.checkout-button.checkout-line-item__remove-product`,
 
 	// Order Summary
 	editOrderButton: 'button[aria-label="Edit your order"]',
@@ -62,7 +62,7 @@ const selectors = {
 			? '.wp-checkout__total-price'
 			: '.wp-checkout-order-summary__total-price',
 	purchaseButton: `button.checkout-button:has-text("Pay")`,
-	closeCheckout: 'a[data-tip-target="close"]',
+	closeCheckout: 'button[data-tip-target="close"]',
 };
 
 /**
@@ -83,22 +83,18 @@ export class CartCheckoutPage {
 	/**
 	 * Navigates to checkout page of the specified blog.
 	 *
-	 * @param {string} blogName Blog name for which the checkout page is to be loaded.
+	 * @param {{path: string}: string } param1 Key/value pair of the blogname for which checkout is to be loaded.
 	 */
-	async visit( blogName?: string ): Promise< void > {
+	async visit( { blogName }: { blogName: string } = { blogName: '' } ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `checkout/${ blogName }` ), { waitUntil: 'networkidle' } );
 	}
 
 	/**
-	 * Click on `Close checkout` on top left of the checkout page.
+	 * Validates that the card payment input fields are visible.
 	 */
-	async clickCloseCheckout(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.closeCheckout ),
-		] );
+	async validatePaymentForm(): Promise< void > {
+		await this.page.waitForSelector( selectors.cardholderName );
 	}
-
 	/**
 	 * Validates that an item is in the cart with the expected text. Throws if it isn't.
 	 *

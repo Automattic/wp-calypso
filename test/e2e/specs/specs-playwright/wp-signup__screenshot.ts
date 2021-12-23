@@ -13,6 +13,7 @@ import {
 	SidebarComponent,
 	UserSignupPage,
 	BrowserManager,
+	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import archiver from 'archiver';
 import FormData from 'form-data';
@@ -23,8 +24,8 @@ import type { LanguageSlug } from '@automattic/languages';
 const selectors = {
 	isWhiteLogin: '.is-section-login.is-white-login',
 	isBlueLogin: '.is-section-login:not( .is-white-login )',
-	isWhiteSignup: '.is-white-signup .is-section-signup',
-	isBlueSignup: '.is-section-signup:not( .is-white-signup )',
+	isWhiteSignup: 'body.is-white-signup.is-section-signup',
+	isBlueSignup: '.is-section-signup:not( .is-white-signup ) .signup__step.is-user .signup-form',
 };
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
@@ -38,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 	} );
 
 	describe( 'Signup', function () {
-		jest.setTimeout( 1000000 );
+		jest.setTimeout( 1800000 );
 		let cartCheckoutPage: CartCheckoutPage;
 		const magnificientNonEnLocales = [
 			'pt-br',
@@ -61,9 +62,21 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 
 		it( 'Screenshot blue signup page in desktop viewport, en and Mag-16 locales', async function () {
 			const userSignupPage = new UserSignupPage( page );
+			let domainSearchComponent: DomainSearchComponent;
+			const username = `e2eflowtestingdomainonly${ DataHelper.getTimestamp() }`;
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-				await userSignupPage.visit( { path: `premium/${ locale }` } );
-				page.waitForSelector( selectors.isBlueSignup );
+				await userSignupPage.visit( { path: `domain/${ locale }` } );
+				await BrowserManager.setStoreCookie( page, { currency: 'JPY' } );
+
+				domainSearchComponent = new DomainSearchComponent( page );
+				await domainSearchComponent.search( username + '.live' );
+				await domainSearchComponent.selectDomain( '.live' );
+
+				await page.click(
+					'[data-e2e-type="domain"].site-or-domain__choice .site-or-domain__choice-button button'
+				);
+				await page.waitForSelector( selectors.isBlueSignup );
+
 				await page.screenshot( {
 					path: `tos_blue_signup_desktop_${ locale }.png`,
 					fullPage: true,
@@ -206,45 +219,17 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			await cartCheckoutPage.validateCartItem( cartItemForBusinessPlan );
 		} );
 
-		it( 'Enter billing and payment details', async function () {
-			const paymentDetails = DataHelper.getTestPaymentDetails();
-			await cartCheckoutPage.enterBillingDetails( paymentDetails );
-			await cartCheckoutPage.enterPaymentDetails( paymentDetails );
-		} );
-
-		it( 'Screenshot checkout page in desktop, en locale', async function () {
-			await page.screenshot( {
-				path: 'tos_checkout_desktop_en.png',
-				fullPage: true,
-				type: 'jpeg',
-				quality: 20,
-			} );
-			page.setViewportSize( { width: 410, height: 820 } );
-			await page.screenshot( {
-				path: 'tos_checkout_mobile_en.png',
-				fullPage: true,
-				type: 'jpeg',
-				quality: 20,
-			} );
-			page.setViewportSize( { width: 1024, height: 1366 } );
-			await page.screenshot( {
-				path: 'tos_checkout_tablet_en.png',
-				fullPage: true,
-				type: 'jpeg',
-				quality: 20,
-			} );
-			page.setViewportSize( { width: 1280, height: 720 } );
-		} );
-
 		it( 'Close checkout and change UI language', async function () {
 			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
-			for ( const locale of magnificientNonEnLocales ) {
-				await cartCheckoutPage.clickCloseCheckout();
+			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
+				page.setViewportSize( { width: 1280, height: 720 } );
+				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
-				await cartCheckoutPage.visit( blogName );
+				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
+				await cartCheckoutPage.visit( { blogName } );
 				const paymentDetails = DataHelper.getTestPaymentDetails();
 				await cartCheckoutPage.enterBillingDetails( paymentDetails );
-				await cartCheckoutPage.enterPaymentDetails( paymentDetails );
+				await cartCheckoutPage.validatePaymentForm();
 				await page.screenshot( {
 					path: `tos_checkout_desktop_${ locale }.png`,
 					fullPage: true,
@@ -265,12 +250,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 					type: 'jpeg',
 					quality: 20,
 				} );
-				page.setViewportSize( { width: 1280, height: 720 } );
 			}
-		} );
-
-		it( 'Remove WordPress.com Business from cart', async function () {
-			await cartCheckoutPage.removeCartItem( cartItemForBusinessPlan );
 		} );
 
 		it( 'Zip screenshots and upload', async function () {
