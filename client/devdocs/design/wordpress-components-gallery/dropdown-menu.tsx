@@ -6,7 +6,7 @@ import { useState } from 'react';
 const DropdownMenuExample = () => {
 	const [ mode, setMode ] = useState( 'visual' );
 	return (
-		<DropdownMenu icon="arrow-down" label="Select a direction">
+		<DropdownMenu icon="menu" label="Select a direction">
 			{ ( { onClose } ) => (
 				<Fragment>
 					<MenuGroup label="Directions">
