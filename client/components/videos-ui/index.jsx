@@ -5,17 +5,21 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useState, useMemo } from 'react';
 import Notice from 'calypso/components/notice';
-import useCourseQuery from 'calypso/data/courses/use-course-query';
+import { COURSE_SLUGS, useCourseQuery } from 'calypso/data/courses';
 import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import VideoPlayer from './video-player';
 import './style.scss';
 
-const VideosUi = ( { HeaderBar, FooterBar, areVideosTranslated = true } ) => {
+const VideosUi = ( {
+	courseSlug = COURSE_SLUGS.BLOGGING_QUICK_START,
+	HeaderBar,
+	FooterBar,
+	areVideosTranslated = true,
+} ) => {
 	const translate = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
 
-	const courseSlug = 'blogging-quick-start';
 	const { data: course } = useCourseQuery( courseSlug );
 	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
 

@@ -2,6 +2,7 @@ import { BlankCanvas } from 'calypso/components/blank-canvas';
 import VideosUi from 'calypso/components/videos-ui';
 import ModalFooterBar from 'calypso/components/videos-ui/modal-footer-bar';
 import ModalHeaderBar from 'calypso/components/videos-ui/modal-header-bar';
+import { COURSE_SLUGS } from 'calypso/data/courses';
 
 import './style.scss';
 
@@ -13,6 +14,7 @@ const BloggingQuickStartModal = ( props ) => {
 			<BlankCanvas className={ 'blogging-quick-start-modal' }>
 				<BlankCanvas.Content>
 					<VideosUi
+						courseSlug={ COURSE_SLUGS.BLOGGING_QUICK_START }
 						HeaderBar={ ( headerProps ) => (
 							<ModalHeaderBar onClose={ onClose } { ...headerProps } />
 						) }
