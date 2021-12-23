@@ -1,8 +1,8 @@
 import { FunctionComponent } from 'react';
-import ComparisonTable from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table/';
+import ComparisonTable from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table';
 import {
-	professionalEmailComparisonObject,
-	googleWorkspaceComparisonObject,
+	professionalEmailFeatures,
+	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/data';
 
 type EmailProvidersInDepthComparisonProps = {
@@ -14,9 +14,7 @@ type EmailProvidersInDepthComparisonProps = {
 
 const EmailProvidersInDepthComparison: FunctionComponent< EmailProvidersInDepthComparisonProps > = () => {
 	return (
-		<ComparisonTable
-			comparisonObjects={ [ professionalEmailComparisonObject, googleWorkspaceComparisonObject ] }
-		/>
+		<ComparisonTable emailProviders={ [ professionalEmailFeatures, googleWorkspaceFeatures ] } />
 	);
 };
 

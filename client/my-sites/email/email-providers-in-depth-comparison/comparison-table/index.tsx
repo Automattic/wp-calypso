@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import type { TranslateResult } from 'i18n-calypso';
 
-export type ProviderComparison = {
+export type EmailProviderFeatures = {
 	header: string;
 	tools: TranslateResult;
 	storage: TranslateResult;
@@ -10,11 +10,11 @@ export type ProviderComparison = {
 	selectCallback: () => void;
 };
 
-type InDepthComparisonProps = {
-	comparisonObjects: ProviderComparison[];
+type ComparisonTableProps = {
+	emailProviders: EmailProviderFeatures[];
 };
 
-const ComparisonTable: FunctionComponent< InDepthComparisonProps > = () => {
+const ComparisonTable: FunctionComponent< ComparisonTableProps > = () => {
 	return <p> New component </p>;
 };
 

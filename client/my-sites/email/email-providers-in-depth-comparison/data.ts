@@ -1,10 +1,10 @@
 import { translate } from 'i18n-calypso';
-import { ProviderComparison } from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table/';
+import { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-export const professionalEmailComparisonObject: ProviderComparison = {
+export const professionalEmailFeatures: EmailProviderFeatures = {
 	header: 'Professional Email',
 	tools: translate( 'Integrated email management, Inbox, calendar and contacts' ),
 	storage: translate( '30GB storage' ),
@@ -13,7 +13,7 @@ export const professionalEmailComparisonObject: ProviderComparison = {
 	selectCallback: noop,
 };
 
-export const googleWorkspaceComparisonObject: ProviderComparison = {
+export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	header: 'Google Workspace',
 	tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Slides and more' ),
 	storage: translate( '30GB storage' ),
