@@ -1,3 +1,4 @@
+import type { SitePlan } from '../sites/selectors/get-site-plan';
 import type { AppState } from 'calypso/types';
 
 const EMPTY_SITES: SitesItem = Object.freeze( {} );
@@ -18,6 +19,7 @@ export interface SitesItem {
 	single_user_site?: boolean;
 	is_vip?: boolean;
 	options?: Record< string, unknown >;
+	plan?: Record< string, SitePlan >;
 }
 
 /**
