@@ -16,7 +16,7 @@ import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 const TRANSFERRING_NOT_BLOCKERS = [
@@ -156,10 +156,12 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const productName = upgradingPlan.product_name;
 
 	// Define whether the site is ready to be transferred.
+	const isAtomicSite = !! useSelector( ( state ) => isAtomicSiteSelector( state, siteId ) );
 	const isReadyForTransfer = transferringDataIsAvailable
 		? ! isTransferringBlocked && // there is not blocker from eligibility (holds).
 		  ! ( eligibilityWarnings && eligibilityWarnings.length ) && // there is not warnings from eligibility (warnings).
-		  ! requiresUpgrade // the site does not require an upgrade, based on store `woop` feature.
+		  ! requiresUpgrade && // the site does not require an upgrade, based on store `woop` feature.
+		  ! isAtomicSite // if the site is Anitomy, it's not ready for transfer.
 		: false;
 
 	const siteUpgrading = {
@@ -198,6 +200,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		siteUpgrading,
 		isDataReady: transferringDataIsAvailable,
 		isReadyForTransfer,
-		isAtomicSite: !! useSelector( ( state ) => isAtomicSite( state, siteId ) ),
+		isAtomicSite,
 	};
 }
