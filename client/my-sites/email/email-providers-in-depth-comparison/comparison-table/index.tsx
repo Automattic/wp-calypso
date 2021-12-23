@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
@@ -47,35 +47,49 @@ const ComparisonTable: FunctionComponent< ComparisonTableProps > = ( {
 			/>
 		);
 
+	const featureNamesColumn = showFeatureNames && (
+		<div id="empty-row" className="comparison-table__header-column-empty column-one row-one" />
+	);
+
+	const rowClassNames = [
+		'row-one',
+		'row-two',
+		'row-three',
+		'row-four',
+		'row-five',
+		'row-six',
+		'row-seven',
+		'row-eight',
+		'row-nine',
+		'row-ten',
+	];
+	const columnClassNames = [ 'column-one', 'column-two', 'column-three', 'column-four' ];
+
 	const tableHeaderComponent = (
-		<thead>
-			<tr className="comparison-table__header-row">
-				{ showFeatureNames && (
-					<th id="empty-row" className="comparison-table__header-column-empty" />
-				) }
-				{ emailProviders.map( ( emailProviderFeature, index ) => {
-					return (
-						<th
-							id={ emailProviderFeature.id }
-							className="comparison-table__header-column"
-							key={ `comparison-table__header-column-${ index }` }
-						>
-							<div className="comparison-table__header">
-								{ logoComponentProvider( emailProviderFeature ) }
-								<div className="comparison-table__header-container">
-									<h1 className="comparison-table__header-title wp-brand-font">
-										{ emailProviderFeature.header }
-									</h1>
-									<p className="comparison-table__header-subtitle">
-										{ emailProviderFeature.subtitle }
-									</p>
-								</div>
-							</div>
-						</th>
-					);
-				} ) }
-			</tr>
-		</thead>
+		<>
+			{ featureNamesColumn }
+			{ emailProviders.map( ( emailProviderFeature, index ) => {
+				return (
+					<div
+						className={ classNames(
+							columnClassNames[ index + 1 ],
+							'row-one',
+							'comparison-table__header-column',
+							'cell'
+						) }
+						key={ `comparison-table__header-column-${ index }` }
+					>
+						{ logoComponentProvider( emailProviderFeature ) }
+						<div className="comparison-table__header-container">
+							<h1 className="comparison-table__header-title wp-brand-font">
+								{ emailProviderFeature.header }
+							</h1>
+							<p className="comparison-table__header-subtitle">{ emailProviderFeature.subtitle }</p>
+						</div>
+					</div>
+				);
+			} ) }
+		</>
 	);
 
 	const featuresColumn = [
@@ -131,19 +145,14 @@ const ComparisonTable: FunctionComponent< ComparisonTableProps > = ( {
 	];
 
 	const tableBodyComponent = (
-		<tbody>
-			{ featuresColumn.map( ( feature, index ) => {
+		<>
+			{ featuresColumn.map( ( feature, row ) => {
 				return (
-					<tr
-						className="comparison-table__body-row"
-						key={ `comparison-table__body-row-${ index }` }
-					>
-						{ showFeatureNames && (
-							<td className="comparison-table__feature-name" headers="empty-row">
-								{ feature.name } { feature.popover }
-							</td>
-						) }
-						{ emailProviders.map( ( emailProviderFeature, index ) => {
+					<>
+						<div className={ classNames( 'column-one', rowClassNames[ row + 1 ], 'cell' ) }>
+							{ feature.name } { feature.popover }
+						</div>
+						{ emailProviders.map( ( emailProviderFeature, column ) => {
 							const providerFeature =
 								emailProviderFeature[ feature.key as keyof EmailProviderFeatures ];
 
@@ -157,21 +166,29 @@ const ComparisonTable: FunctionComponent< ComparisonTableProps > = ( {
 									providerFeature
 								);
 							return (
-								<td
-									className="comparison-table__feature-description"
-									headers={ emailProviderFeature.id }
-									key={ `comparison-table__feature-description-${ index }` }
-								>
-									{ providerFeature && feature.wrapper
-										? feature.wrapper(
-												feature.description,
-												emailProviderFeature.learnMore ?? undefined
-										  )
-										: featureProp }
-								</td>
+								<>
+									<div
+										className={ classNames(
+											rowClassNames[ row + 1 ],
+											columnClassNames[ column + 1 ],
+											'cell'
+										) }
+										key={ `comparison-table__feature-description-${ column }-${ row }` }
+									>
+										{ providerFeature && feature.wrapper
+											? feature.wrapper(
+													feature.description,
+													emailProviderFeature.learnMore ?? undefined
+											  )
+											: featureProp }
+									</div>
+									<div
+										className={ classNames( 'comparison-table__line', rowClassNames[ row + 1 ] ) }
+									/>
+								</>
 							);
 						} ) }
-					</tr>
+					</>
 				);
 			} ) }
 			{ showCallbackRow && (
@@ -191,18 +208,18 @@ const ComparisonTable: FunctionComponent< ComparisonTableProps > = ( {
 					} ) }
 				</tr>
 			) }
-		</tbody>
+		</>
 	);
 
 	const tableComponent = (
-		<table className="comparison-table__table">
+		<div className="comparison-table__table">
 			{ tableHeaderComponent }
 			{ tableBodyComponent }
-		</table>
+		</div>
 	);
 
 	return (
-		<Main wideLayout className={ classnames( className, 'comparison-table__main' ) }>
+		<Main wideLayout className={ classNames( className, 'comparison-table__main' ) }>
 			{ tableComponent }
 		</Main>
 	);

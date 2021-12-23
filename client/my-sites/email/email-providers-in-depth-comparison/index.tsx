@@ -22,7 +22,7 @@ const EmailProvidersInDepthComparison: FunctionComponent< EmailProvidersInDepthC
 	return (
 		<>
 			<h1 className="email-providers-in-depth-comparison__header wp-brand-font">
-				{ translate( 'See how they compare' ) }{ ' ' }
+				{ translate( 'See how they compare' ) }
 			</h1>
 			<ComparisonTable
 				className="email-providers-in-depth-comparison__main"
@@ -31,7 +31,7 @@ const EmailProvidersInDepthComparison: FunctionComponent< EmailProvidersInDepthC
 					googleWorkspaceFeatures,
 					emailForwardingFeatures,
 				] }
-				showFeatureNames={ false }
+				showFeatureNames={ true }
 			/>
 			<div className="email-providers-in-depth-comparison__button-container">
 				<Button className="email-providers-in-depth-comparison__button" primary>
