@@ -1,5 +1,6 @@
+// File used only for development and testing.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: File used only for development and testing.
+// @ts-nocheck
 import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
 import { Button, Card, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
