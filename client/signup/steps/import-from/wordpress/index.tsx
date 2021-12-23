@@ -35,10 +35,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = () => {
 				<div>
 					<ActionCard
 						classNames={ classnames( 'list__importer-option', { 'is-disabled': true } ) }
-						headerText={ 'Everything' }
-						mainText={ "Your site's content, themes, plugins, users and settings" }
+						headerText={ __( 'Everything' ) }
+						mainText={ __( "Your site's content, themes, plugins, users and settings" ) }
 					>
-						<NextButton disabled>Continue</NextButton>
+						<NextButton disabled>{ __( 'Continue' ) }</NextButton>
 					</ActionCard>
 					<SelectItems
 						onSelect={ () => {
@@ -47,21 +47,22 @@ export const WordpressImporter: React.FunctionComponent< Props > = () => {
 						items={ [
 							{
 								key: 'jetpack',
-								title: 'Jetpack required',
-								description:
-									'You need to have Jetpack installed on your site to be able to import everything.',
+								title: __( 'Jetpack required' ),
+								description: __(
+									'You need to have Jetpack installed on your site to be able to import everything.'
+								),
 								icon: jetpack,
-								actionText: 'Install Jetpack',
+								actionText: __( 'Install Jetpack' ),
 								value: '',
 							},
 						] }
 					/>
 					<ActionCard
 						classNames={ classnames( 'list__importer-option', { 'is-disabled': false } ) }
-						headerText={ 'Content only' }
-						mainText={ 'Import posts, pages, comments, and media.' }
+						headerText={ __( 'Content only' ) }
+						mainText={ __( 'Import posts, pages, comments, and media.' ) }
 					>
-						<NextButton>Continue</NextButton>
+						<NextButton>{ __( 'Continue' ) }</NextButton>
 					</ActionCard>
 				</div>
 			</div>
