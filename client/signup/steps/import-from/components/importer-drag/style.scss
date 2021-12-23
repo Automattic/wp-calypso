@@ -7,7 +7,7 @@
 		color: var( --studio-gray-40 );
 
 		.importer-header__service-title {
-			color: #101517;
+			color: var( --studio-gray-100 );
 		}
 	}
 
@@ -21,12 +21,12 @@
 
 			white-space: pre;
 			text-decoration: underline;
-			color: #101517;
+			color: var( --studio-gray-100 );
 		}
 	}
 
 	.importer__uploading-pane {
-		border-color: #c3c4c7;
+		border-color: var( --studio-gray-10 );
 		background-color: transparent;
 		border-radius: 4px;
 		color: var( --studio-gray-80 );
