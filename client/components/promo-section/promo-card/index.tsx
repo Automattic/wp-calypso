@@ -69,7 +69,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 
 	const imageActionPanelAlignment = image && 'align' in image && image.align ? image.align : 'left';
 	/* eslint-disable wpcalypso/jsx-gridicon-size */
-	
+
 	return (
 		<ActionPanel className={ classes }>
 			{ image && (
