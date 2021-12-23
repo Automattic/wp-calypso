@@ -360,9 +360,8 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 	);
 
 export default connect(
-	( state, props ) => ( {
+	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
-		domain: getSelectedDomain( props ),
 	} ),
 	{
 		customNameServersLearnMoreClick,
