@@ -19,11 +19,17 @@ export interface Image {
 	align?: 'left' | 'right';
 }
 
+export enum TitleLocation {
+	BODY,
+	FIGURE,
+}
+
 export interface Props {
 	icon?: string;
 	image?: Image | ReactElement;
 	title?: string | TranslateResult;
 	titleComponent?: ReactElement;
+	titleComponentLocation?: TitleLocation;
 	isPrimary?: boolean;
 	badge?: string | ReactElement;
 	className?: string;
@@ -34,6 +40,7 @@ const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnP
 const PromoCard: FunctionComponent< Props > = ( {
 	title,
 	titleComponent,
+	titleComponentLocation = TitleLocation.BODY,
 	icon,
 	image,
 	isPrimary,
@@ -53,8 +60,16 @@ const PromoCard: FunctionComponent< Props > = ( {
 		<Badge className="promo-card__title-badge">{ badge }</Badge>
 	) : null;
 
+	const titleComponentHeader = titleComponent && (
+		<>
+			{ titleComponent }
+			{ badgeComponent }
+		</>
+	);
+
 	const imageActionPanelAlignment = image && 'align' in image && image.align ? image.align : 'left';
 	/* eslint-disable wpcalypso/jsx-gridicon-size */
+
 	return (
 		<ActionPanel className={ classes }>
 			{ image && (
@@ -64,11 +79,13 @@ const PromoCard: FunctionComponent< Props > = ( {
 					) : (
 						image
 					) }
+					{ titleComponentLocation === TitleLocation.FIGURE && titleComponentHeader }
 				</ActionPanelFigure>
 			) }
 			{ icon && (
 				<ActionPanelFigure inlineBodyText={ false } align="left">
 					<Gridicon icon={ icon } size={ 32 } />
+					{ titleComponentLocation === TitleLocation.FIGURE && titleComponentHeader }
 				</ActionPanelFigure>
 			) }
 			<ActionPanelBody>
@@ -78,12 +95,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 						{ badgeComponent }
 					</ActionPanelTitle>
 				) }
-				{ titleComponent && (
-					<>
-						{ titleComponent }
-						{ badgeComponent }
-					</>
-				) }
+				{ titleComponentLocation === TitleLocation.BODY && titleComponentHeader }
 				{ isPrimary
 					? Children.map( children, ( child ) => {
 							if ( ! child || ! isValidElement( child ) ) {

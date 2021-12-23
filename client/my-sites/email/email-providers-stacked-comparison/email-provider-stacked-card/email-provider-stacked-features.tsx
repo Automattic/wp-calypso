@@ -1,8 +1,8 @@
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { TranslateResult } from 'i18n-calypso';
+import type { FunctionComponent, MouseEventHandler } from 'react';
 
 import './style.scss';
 
@@ -28,7 +28,7 @@ export interface EmailProviderStackedFeaturesProps {
 	features: TranslateResult[];
 }
 
-const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeaturesProps > = (
+export const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeaturesProps > = (
 	props
 ) => {
 	const { features } = props;
@@ -50,4 +50,28 @@ const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeatu
 	);
 };
 
-export default EmailProviderStackedFeatures;
+interface EmailProviderStackedFeaturesToggleButtonProps {
+	handleClick: MouseEventHandler< HTMLButtonElement >;
+	isRelatedContentExpanded: boolean;
+}
+
+export const EmailProviderStackedFeaturesToggleButton: FunctionComponent< EmailProviderStackedFeaturesToggleButtonProps > = ( {
+	handleClick,
+	isRelatedContentExpanded,
+} ) => {
+	const translate = useTranslate();
+
+	return (
+		<Button
+			borderless
+			className="email-provider-stacked-features__toggle-button"
+			onClick={ handleClick }
+		>
+			<span className="email-provider-stacked-features__toggle-text">
+				{ translate( 'Show all features' ) }
+			</span>
+
+			<Gridicon icon={ isRelatedContentExpanded ? 'chevron-up' : 'chevron-down' } />
+		</Button>
+	);
+};

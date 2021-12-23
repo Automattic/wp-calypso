@@ -64,24 +64,22 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 		google: false,
 	} );
 
-	const onExpandedChange = ( providerKey: string, expand: boolean ) => {
-		const detailsExpandedAsArray = Object.entries( detailsExpanded ).map( ( details ) => {
-			const [ key, isExpanded ] = details;
-
-			if ( expand ) {
+	const onExpandedStateChange = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
+		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
+			const [ key, currentExpanded ] = entry;
+			if ( isCurrentlyExpanded ) {
 				return [ key, key === providerKey ];
 			}
-
-			return [ key, key === providerKey ? expand : isExpanded ];
+			return [ key, key === providerKey ? isCurrentlyExpanded : currentExpanded ];
 		} );
 
-		if ( expand ) {
+		if ( isCurrentlyExpanded ) {
 			recordTracksEvent( 'calypso_email_providers_expand_section_click', {
 				provider: providerKey,
 			} );
 		}
 
-		setDetailsExpanded( Object.fromEntries( detailsExpandedAsArray ) );
+		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
 	};
 
 	const setIntervalLength = ( interval: IntervalLength ) => {
@@ -114,7 +112,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				selectedDomainName={ selectedDomainName }
 				source={ source }
 				intervalLength={ intervalLength }
-				onExpandedChange={ onExpandedChange }
+				onExpandedChange={ onExpandedStateChange }
 			/>
 
 			{ showGoogleWorkspaceCard && (
@@ -124,7 +122,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 					selectedDomainName={ selectedDomainName }
 					source={ source }
 					intervalLength={ intervalLength }
-					onExpandedChange={ onExpandedChange }
+					onExpandedChange={ onExpandedStateChange }
 				/>
 			) }
 		</Main>
