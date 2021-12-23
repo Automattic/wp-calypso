@@ -61,16 +61,16 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		isTransferringBlocked,
 		isDataReady,
 		warnings,
-		isReadyForTransfer,
+		isReadyToStart,
 	} = useWooCommerceOnPlansEligibility( siteId );
 
 	useEffect( () => {
 		// Automatically start the transfer process when it's ready.
-		if ( siteId && isDataReady && isReadyForTransfer ) {
+		if ( isReadyToStart ) {
 			dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
 			goToStep( 'transfer' );
 		}
-	}, [ dispatch, goToStep, siteId, isDataReady, isReadyForTransfer ] );
+	}, [ dispatch, goToStep, siteId, isDataReady, isReadyToStart ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
@@ -144,7 +144,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		);
 	}
 
-	if ( ! siteId || ! isDataReady || isReadyForTransfer ) {
+	if ( ! siteId || ! isDataReady || isReadyToStart ) {
 		return (
 			<div className="confirm__info-section">
 				<LoadingEllipsis />
