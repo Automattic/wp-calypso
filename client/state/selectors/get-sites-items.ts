@@ -17,6 +17,7 @@ export interface SitesItem {
 	is_coming_soon?: boolean;
 	single_user_site?: boolean;
 	is_vip?: boolean;
+	options?: Record< string, unknown >;
 }
 
 /**
