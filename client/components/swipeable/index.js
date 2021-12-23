@@ -175,7 +175,7 @@ export const Swipeable = ( {
 			const absoluteDelta = Math.abs( delta );
 			const offset = getOffset( currentPage ) + delta;
 
-			if ( absoluteDelta > 3 ) {
+			if ( absoluteDelta < 3 ) {
 				return;
 			}
 
