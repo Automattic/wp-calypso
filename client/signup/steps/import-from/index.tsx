@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import classnames from 'classnames';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -104,7 +105,11 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				hideNext={ true }
 				hideFormattedHeader={ true }
 				stepContent={
-					<div className="import__onboarding-page import-layout__center">
+					<div
+						className={ classnames( 'import__onboarding-page import-layout__center', {
+							[ `importer-wrapper__${ engine }` ]: !! engine,
+						} ) }
+					>
 						<div className="import-layout__center">
 							{ ( () => {
 								/**
@@ -153,7 +158,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									/**
 									 * WordPress importer
 									 */
-									return <WordpressImporter />;
+									return <WordpressImporter job={ getImportJob( engine ) } />;
 								}
 							} )() }
 						</div>
