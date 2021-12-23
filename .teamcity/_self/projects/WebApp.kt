@@ -89,7 +89,6 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
-					registry.a8c.com/calypso:${Settings.WpCalypso.paramRefs.buildVcsNumber}-%teamcity.build.branch%
 				""".trimIndent()
 				commandArgs = """
 					--pull
@@ -111,9 +110,22 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
-					registry.a8c.com/calypso:${Settings.WpCalypso.paramRefs.buildVcsNumber}-%teamcity.build.branch%
 				""".trimIndent()
 			}
+		}
+
+		script {
+			name = "Tag trunk for deploy"
+			scriptContent = """
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch%" == "docker-image-new-tag-tc"  ]]]; then
+					docker push registry.a8c.com/calypso:${Settings.WpCalypso.paramRefs.buildVcsNumber}-%teamcity.build.branch%
+				fi
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					echo "Not trunk"
+					exit 0
+				fi
+			"""
 		}
 
 		script {
