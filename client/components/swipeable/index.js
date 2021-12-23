@@ -126,6 +126,12 @@ export const Swipeable = ( {
 
 			const verticalDelta = dragPosition.y - dragStartData.y;
 			if ( Math.abs( verticalDelta ) > absoluteDelta ) {
+				delete pagesStyle.transform;
+				setPagesStyle( {
+					...pagesStyle,
+					transitionDuration: TRANSITION_DURATION,
+				} );
+				setDragStartData( null );
 				return;
 			}
 
