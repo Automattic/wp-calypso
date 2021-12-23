@@ -57,7 +57,8 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 
 	const translate = useTranslate();
 
-	const [ intervalLength, setIntervalLength ] = useState( IntervalLength.MONTHLY );
+	const [ intervalLength, setIntervalLengthPure ] = useState( IntervalLength.ANNUALLY );
+
 	const [ detailsExpanded, setDetailsExpanded ] = useState( {
 		titan: true,
 		google: false,
@@ -80,6 +81,15 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 
 		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
 	};
+
+	const setIntervalLength = ( interval: IntervalLength ) => {
+		if ( intervalLength === IntervalLength.ANNUALLY ) {
+			setDetailsExpanded( { google: false, titan: true } );
+		}
+		setIntervalLengthPure( interval );
+	};
+
+	const showGoogleWorkspaceCard = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
 
 	return (
 		<Main className="email-providers-stacked-comparison__main" wideLayout>
@@ -105,7 +115,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				onExpandedChange={ onExpandedStateChange }
 			/>
 
-			{ isGSuiteSupported && (
+			{ showGoogleWorkspaceCard && (
 				<GoogleWorkspaceCard
 					comparisonContext={ comparisonContext }
 					detailsExpanded={ detailsExpanded.google }
