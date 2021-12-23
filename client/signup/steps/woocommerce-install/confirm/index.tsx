@@ -67,7 +67,12 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 
 	useEffect( () => {
 		// Automatically start the transfer process when it's ready.
-		if ( siteId && isDataReady && ( isAtomicSite || isReadyForTransfer ) ) {
+		if (
+			siteId &&
+			isDataReady &&
+			! siteUpgrading?.required &&
+			( isAtomicSite || isReadyForTransfer )
+		) {
 			dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
 			goToStep( 'transfer' );
 		}
@@ -145,7 +150,11 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		);
 	}
 
-	if ( ! siteId || ! isDataReady || isAtomicSite || isReadyForTransfer ) {
+	if (
+		! siteId ||
+		! isDataReady ||
+		( ( isAtomicSite || isReadyForTransfer ) && ! siteUpgrading?.required )
+	) {
 		return (
 			<div className="confirm__info-section">
 				<LoadingEllipsis />
