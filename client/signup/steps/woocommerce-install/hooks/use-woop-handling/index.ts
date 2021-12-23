@@ -163,9 +163,10 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * - data is ready
 	 * ...
 	 */
-	let isReadyToStart = siteId && transferringDataIsAvailable;
+	// ...also check the site does not require an upgrade, based on store `woop` feature.
+	let isReadyToStart = siteId && transferringDataIsAvailable && ! requiresUpgrade;
 
-	if ( ! isAtomicSite ) {
+	if ( isReadyToStart && ! isAtomicSite ) {
 		// when the site is not Atomic, ...
 		isReadyToStart =
 			isReadyToStart &&
@@ -173,8 +174,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 			! ( eligibilityWarnings && eligibilityWarnings.length ); // there is no warnings from eligibility (warnings).
 	}
 
-	// ...finally, the site does not require an upgrade, based on store `woop` feature.
-	isReadyToStart = isReadyToStart && ! requiresUpgrade;
+
 
 	const siteUpgrading = {
 		required: requiresUpgrade,
