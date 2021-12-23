@@ -19,7 +19,7 @@ export interface SitesItem {
 	single_user_site?: boolean;
 	is_vip?: boolean;
 	options?: Record< string, unknown >;
-	plan?: Record< string, SitePlan >;
+	plan?: SitePlan;
 }
 
 /**
