@@ -2,11 +2,7 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.e2e.prepareEnvironment
-import _self.lib.e2e.collectResults
-import _self.lib.e2e.runTests
-import _self.lib.e2e.artifactRules
-import _self.lib.e2e.wpCalypsoVCS
+import _self.lib.customBuildType.calypsoE2EBuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
@@ -214,27 +210,23 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 	}
 }
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
-    return BuildType {
-		id("WPComTests_gutenberg_Playwright_$targetDevice")
-		uuid=buildUuid
-		name = "Playwright E2E Tests ($targetDevice)"
-		description = "Runs Gutenberg E2E tests as $targetDevice using Playwright"
-
-		artifactRules = artifactRules()
-
-		wpCalypsoVCS()
-
-		params {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): calypsoE2EBuildType {
+    return calypsoE2EBuildType (
+		buildId = "WPComTests_gutenberg_Playwright_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "Playwright E2E Tests ($targetDevice)",
+		buildDescription = "Runs Gutenberg e2e tests on $targetDevice size",
+		testGroup = "gutenberg",
+		buildParams = {
 			text(
-				name = "URL",
+				name = "env.URL",
 				value = "https://wordpress.com",
 				label = "Test URL",
 				description = "URL to test against",
 				allowEmpty = false
 			)
 			checkbox(
-				name = "GUTENBERG_EDGE",
+				name = "env.GUTENBERG_EDGE",
 				value = "false",
 				label = "Use gutenberg-edge",
 				description = "Use a blog with gutenberg-edge sticker",
@@ -242,35 +234,16 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 				unchecked = "false"
 			)
 			checkbox(
-				name = "COBLOCKS_EDGE",
+				name = "env.COBLOCKS_EDGE",
 				value = "false",
 				label = "Use coblocks-edge",
 				description = "Use a blog with coblocks-edge sticker",
 				checked = "true",
 				unchecked = "false"
 			)
-		}
-
-		steps {
-			prepareEnvironment()
-
-			runTests(
-				stepName = "Run e2e tests ($targetDevice)",
-				testGroup = "gutenberg",
-				// envVars = mapOf(
-				// 	"URL" to "%URL%",
-				// 	"GUTENBERG_EDGE" to "%GUTENBERG_EDGE%",
-				// 	"COBLOCKS_EDGE" to "%COBLOCKS_EDGE%",
-				// 	"TARGET_DEVICE" to "$targetDevice",
-				// )
-			)
-
-			collectResults()
-		}
-
-		features {
-			perfmon {
-			}
+			param("env.TARGET_DEVICE", "$targetDevice")
+		},
+		buildFeatures = {
 			notifications {
 				notifierSettings = slackNotifier {
 					connection = "PROJECT_EXT_11"
@@ -285,37 +258,8 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 				buildFailed = true
 				buildFinishedSuccessfully = true
 			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
-			}
-		}
-
-		failureConditions {
-			executionTimeoutMin = 20
-			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
-			// been muted previously.
-			nonZeroExitCode = false
-
-			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-			// crashes and no tests are run.
-			failOnMetricChange {
-				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-				threshold = 50
-				units = BuildFailureOnMetric.MetricUnit.PERCENTS
-				comparison = BuildFailureOnMetric.MetricComparison.LESS
-				compareTo = build {
-					buildRule = lastSuccessful()
-				}
-			}
-		}
-
-		triggers {
+		},
+		buildTriggers = {
 			schedule {
 				schedulingPolicy = daily {
 					hour = 4
@@ -327,7 +271,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 				withPendingChangesOnly = false
 			}
 		}
-	}
+	)
 }
 
 fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): BuildType {

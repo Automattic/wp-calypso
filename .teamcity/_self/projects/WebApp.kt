@@ -2,11 +2,6 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.e2e.prepareEnvironment
-import _self.lib.e2e.collectResults
-import _self.lib.e2e.runTests
-import _self.lib.e2e.artifactRules
-import _self.lib.e2e.wpCalypsoVCS
 import _self.lib.customBuildType.calypsoE2EBuildType
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
@@ -595,11 +590,6 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): calypsoE2E
 		buildUuid = buildUuid,
 		buildName = "E2E Tests ($targetDevice)",
 		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
-		buildParams = {
-			param("env.SAVE_AUTH_COOKIES", "true")
-			param("env.LIVEBRANCHES", "true")
-			param("env.TARGET_DEVICE", "$targetDevice")
-		},
 		getCalypsoLiveURL = """
 			chmod +x ./bin/get-calypso-live-url.sh
 			URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
@@ -610,34 +600,10 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): calypsoE2E
 			fi
 		""".trimIndent(),
 		testGroup = "calypso-pr",
-		buildSteps = {
-			bashNodeScript {
-				name = "Run e2e tests ($targetDevice)"
-				scriptContent = """
-					shopt -s globstar
-					set -x
-
-					chmod +x ./bin/get-calypso-live-url.sh
-					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-					if [[ ${'$'}? -ne 0 ]]; then
-						// Command failed. URL contains stderr
-						echo ${'$'}URL
-						exit 1
-					fi
-
-					cd test/e2e
-					mkdir temp
-
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
-
-					# Run the test
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-			}
+		buildParams = {
+			param("env.SAVE_AUTH_COOKIES", "true")
+			param("env.LIVEBRANCHES", "true")
+			param("env.TARGET_DEVICE", "$targetDevice")
 		},
 		buildFeatures = {
 			pullRequests {
@@ -675,36 +641,18 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): calypsoE2E
 	)
 }
 
-object PreReleaseE2ETests : BuildType({
-	id("Calypso_E2E_Pre_Release")
-	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
-	name = "Pre-Release E2E Tests"
-	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
-	maxRunningBuilds = 1
-
-	artifactRules = artifactRules()
-
-	wpCalypsoVCS()
-
-	steps {
-		prepareEnvironment()
-
-		runTests(
-			stepName = "Run pre-release e2e tests",
-			testGroup = "calypso-release",
-			// envVars = mapOf(
-			// 	"TARGET_DEVICE" to "desktop",
-			// 	"URL" to "https://wpcalypso.wordpress.com"
-			// )
-		)
-
-		collectResults()
-	}
-
-	features {
-		perfmon {
-		}
-
+object PreReleaseE2ETests : calypsoE2EBuildType(
+	buildId = "Calypso_E2E_Pre_Release",
+	buildUuid = "9c2f634f-6582-4245-bb77-fb97d9f16533",
+	buildName = "Pre-Release E2E Tests",
+	buildDescription = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production.",
+	concurrentBuilds = 1,
+	testGroup = "calypso-release",
+	buildParams = {
+		param("env.TARGET_DEVICE", "desktop")
+		param("env.URL", "https://wpcalypso.wordpress.com")
+	},
+	buildFeatures = {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -717,53 +665,19 @@ object PreReleaseE2ETests : BuildType({
 			buildProbablyHanging = true
 		}
 	}
+)
 
-	triggers {}
-
-	failureConditions {
-		executionTimeoutMin = 20
-		nonZeroExitCode = false
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
-	}
-})
-
-object QuarantinedE2ETests: BuildType( {
-	id("Quarantined_E2E_Tests")
-	uuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c"
-	name = "Quarantined E2E Tests"
-	description = "E2E tests quarantined due to intermittent failures."
-	maxRunningBuilds = 1
-
-	artifactRules = artifactRules()
-
-	wpCalypsoVCS()
-
-	steps {
-		prepareEnvironment()
-
-		runTests(
-			stepName = "Run quarantined E2E tests",
-			testGroup = "quarantined",
-			// envVars = mapOf(
-			// 	"TARGET_DEVICE" to "desktop"
-			// )
-		)
-
-		collectResults()
-	}
-
-	features {
-		perfmon {
-		}
-
+object QuarantinedE2ETests: calypsoE2EBuildType(
+	buildId = "Quarantined_E2E_Tests",
+	buildUuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c",
+	buildName = "Quarantined E2E Tests",
+	buildDescription = "E2E tests quarantined due to intermittent failures.",
+	concurrentBuilds = 1,
+	testGroup = "quarantined",
+	buildParams = {
+		param("env.TARGET_DEVICE", "desktop")
+	},
+	buildFeatures = {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -775,9 +689,8 @@ object QuarantinedE2ETests: BuildType( {
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
-	}
-
-	triggers {
+	},
+	buildTriggers = {
 		schedule {
 			schedulingPolicy = cron {
 				hours = "01"
@@ -787,10 +700,5 @@ object QuarantinedE2ETests: BuildType( {
 			withPendingChangesOnly = false
 		}
 	}
-
-	failureConditions {
-		executionTimeoutMin = 20
-		nonZeroExitCode = false
-	}
-})
+)
 

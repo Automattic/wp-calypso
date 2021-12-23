@@ -29,20 +29,20 @@ open class calypsoE2EBuildType(
 	var buildUuid: String,
 	var buildName: String,
 	var buildDescription: String,
+	var concurrentBuilds: Int = 0,
 	var getCalypsoLiveURL: String = "",
 	var testGroup: String,
 	var buildParams: ParametrizedWithType.() -> Unit = {},
-	var buildSteps: BuildSteps.() -> Unit = {},
 	var buildFeatures: BuildFeatures.() -> Unit,
-	var buildTriggers: Triggers.() -> Unit,
+	var buildTriggers: Triggers.() -> Unit = {},
 	var buildDependencies: Dependencies.() -> Unit = {},
 
 ): BuildType() {
 	init {
+		val concurrentBuilds = concurrentBuilds
 		val getCalypsoLiveURL = getCalypsoLiveURL
 		val testGroup = testGroup
 		val buildParams = buildParams
-		val buildSteps = buildSteps
 		val buildFeatures = buildFeatures
 		val buildTriggers = buildTriggers
 		val buildDependencies = buildDependencies
@@ -52,6 +52,7 @@ open class calypsoE2EBuildType(
 		uuid = buildUuid
 		name = buildName
 		description = buildDescription
+		maxRunningBuilds = concurrentBuilds
 
 		artifactRules = """
 			logs.tgz => logs.tgz
@@ -77,10 +78,8 @@ open class calypsoE2EBuildType(
 		steps {
 			prepareEnvironment()
 
-			buildSteps()
-
 			bashNodeScript {
-				name = "Run e2e tests"
+				name = "Run tests"
 				scriptContent = """
 					# Configure bash shell.
 					shopt -s globstar
@@ -100,6 +99,7 @@ open class calypsoE2EBuildType(
 					# Run suite
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
 				"""
+				dockerImage = "%docker_image_e2e%"
 			}
 
 			collectResults()
@@ -126,8 +126,10 @@ open class calypsoE2EBuildType(
 
 		failureConditions {
 			executionTimeoutMin = 20
-			// Do not fail on non-zero exit code to permit passing builds with muted tests.
+			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 			nonZeroExitCode = false
+
+			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
 			failOnMetricChange {
 				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
 				threshold = 50
