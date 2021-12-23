@@ -81,7 +81,7 @@
 			margin-bottom: 4px;
 			color: var( --studio-gray-80 );
 		}
-		
+
 		&-section-text {
 			color: var( --studio-gray-50 );
 			font-size: $font-body-small;
@@ -94,7 +94,7 @@
 			}
 		}
 	}
-	
+
 	.transfer-page__transfer-lock {
 		margin: 8px 0 16px;
 	}
@@ -132,9 +132,18 @@
 		.layout__column--main {
 			padding-right: 24px;
 		}
-	
+
 		.layout__column--sidebar {
 			padding-left: 24px;
+		}
+	}
+
+	&__loader {
+		display: flex;
+		margin-bottom: 16px;
+		> p {
+			margin-bottom: 0;
+			margin-left: 16px;
 		}
 	}
 }

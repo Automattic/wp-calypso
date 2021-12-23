@@ -14,6 +14,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import Spinner from 'calypso/components/spinner';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
@@ -232,13 +233,25 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		);
 
 		return (
-			<FixedToggleControl
-				className="transfer-page__transfer-lock"
-				checked={ isDomainLocked }
-				disabled={ disabled }
-				onChange={ toggleDomainLock }
-				label={ label }
-			/>
+			<>
+				<FixedToggleControl
+					className="transfer-page__transfer-lock"
+					checked={ isDomainLocked }
+					disabled={ disabled }
+					onChange={ toggleDomainLock }
+					label={ label }
+				/>
+				{ isLockingOrUnlockingDomain && (
+					<div className="transfer-page__loader">
+						<Spinner size={ 16 } />
+						<p>
+							{ isDomainLocked
+								? __( 'We are unlocking your domain' )
+								: __( 'We are locking your domain' ) }
+						</p>
+					</div>
+				) }
+			</>
 		);
 	};
 
