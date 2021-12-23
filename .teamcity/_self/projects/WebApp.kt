@@ -142,7 +142,7 @@ object BuildDockerImage : BuildType({
 		}
 
 		script {
-			name = "Tag trunk for deploy"
+			name = "Tag trunk for deploy and webhook done"
 			scriptContent = """
 				#!/usr/bin/env bash
 				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
@@ -150,16 +150,6 @@ object BuildDockerImage : BuildType({
 				fi
 
 				docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
-			"""
-		}
-
-		script {
-			name = "Webhook Done"
-			scriptContent = """
-				#!/usr/bin/env bash
-				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
-					exit 0
-				fi
 
 				# Hit webhook for done
 			"""
