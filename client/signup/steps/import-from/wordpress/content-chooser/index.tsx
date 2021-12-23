@@ -2,16 +2,25 @@ import { NextButton } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
+import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { jetpack } from 'calypso/signup/icons';
 import SelectItems from 'calypso/signup/select-items';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-export const ContentChooser: React.FunctionComponent = () => {
+interface Props {
+	siteId: number;
+	siteSlug: string;
+	isSiteJetpack: boolean;
+}
+
+export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
+	const { isSiteJetpack } = props;
 
 	return (
 		<div className={ classnames( 'import-layout', 'content-chooser' ) }>
@@ -28,29 +37,31 @@ export const ContentChooser: React.FunctionComponent = () => {
 			<div className={ 'import-layout__column' }>
 				<div>
 					<ActionCard
-						classNames={ classnames( 'list__importer-option', { 'is-disabled': true } ) }
+						classNames={ classnames( 'list__importer-option', { 'is-disabled': ! isSiteJetpack } ) }
 						headerText={ __( 'Everything' ) }
 						mainText={ __( "All your site's content, themes, plugins, users and settings" ) }
 					>
-						<NextButton disabled>{ __( 'Continue' ) }</NextButton>
+						<NextButton disabled={ ! isSiteJetpack }>{ __( 'Continue' ) }</NextButton>
 					</ActionCard>
-					<SelectItems
-						onSelect={ () => {
-							// install jetpack
-						} }
-						items={ [
-							{
-								key: 'jetpack',
-								title: __( 'Jetpack required' ),
-								description: __(
-									'You need to have Jetpack installed on your site to be able to import everything.'
-								),
-								icon: jetpack,
-								actionText: __( 'Install Jetpack' ),
-								value: '',
-							},
-						] }
-					/>
+					{ ! isSiteJetpack && (
+						<SelectItems
+							onSelect={ () => {
+								// install jetpack
+							} }
+							items={ [
+								{
+									key: 'jetpack',
+									title: __( 'Jetpack required' ),
+									description: __(
+										'You need to have Jetpack installed on your site to be able to import everything.'
+									),
+									icon: jetpack,
+									actionText: __( 'Install Jetpack' ),
+									value: '',
+								},
+							] }
+						/>
+					) }
 					<ActionCard
 						classNames={ classnames( 'list__importer-option', { 'is-disabled': false } ) }
 						headerText={ __( 'Content only' ) }
@@ -63,3 +74,9 @@ export const ContentChooser: React.FunctionComponent = () => {
 		</div>
 	);
 };
+
+export default connect( ( state, ownProps: Props ) => {
+	return {
+		isSiteJetpack: !! isJetpackSite( state, ownProps.siteId ),
+	};
+} )( ContentChooser );

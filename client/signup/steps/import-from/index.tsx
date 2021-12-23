@@ -164,7 +164,13 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									/**
 									 * WordPress importer
 									 */
-									return <WordpressImporter job={ getImportJob( engine ) } />;
+									return (
+										<WordpressImporter
+											job={ getImportJob( engine ) }
+											siteId={ siteId }
+											siteSlug={ siteSlug }
+										/>
+									);
 								}
 							} )() }
 						</div>

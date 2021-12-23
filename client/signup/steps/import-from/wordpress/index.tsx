@@ -1,6 +1,6 @@
 import React from 'react';
 import { ImportJob } from '../types';
-import { ContentChooser } from './content-chooser';
+import ContentChooser from './content-chooser';
 
 import './style.scss';
 
@@ -8,10 +8,12 @@ import './style.scss';
 
 interface Props {
 	job?: ImportJob;
+	siteId: number;
+	siteSlug: string;
 }
 
-export const WordpressImporter: React.FunctionComponent< Props > = () => {
-	return <ContentChooser />;
+export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
+	return <ContentChooser { ...props } />;
 };
 
 export default WordpressImporter;
