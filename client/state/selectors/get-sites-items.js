@@ -29,7 +29,7 @@ const EMPTY_SITES = Object.freeze( {} );
  *
  *
  * @param {object} state  Global state tree
- * @returns {SitesItem}        Site items object or empty object
+ * @returns {Object.<number, SitesItem>}        Site items object or empty object
  */
 export default function getSitesItems( state ) {
 	return state.sites.items || EMPTY_SITES;
