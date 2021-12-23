@@ -158,10 +158,10 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	// Define whether the site is ready to be transferred.
 	const isAtomicSite = !! useSelector( ( state ) => isAtomicSiteSelector( state, siteId ) );
 	const isReadyForTransfer = transferringDataIsAvailable
-		? ! isTransferringBlocked && // there is not blocker from eligibility (holds).
-		  ! ( eligibilityWarnings && eligibilityWarnings.length ) && // there is not warnings from eligibility (warnings).
+		? ! isTransferringBlocked && // there is no blockers from eligibility (holds).
+		  ! ( eligibilityWarnings && eligibilityWarnings.length ) && // there is no warnings from eligibility (warnings).
 		  ! requiresUpgrade && // the site does not require an upgrade, based on store `woop` feature.
-		  ! isAtomicSite // if the site is Anitomy, it's not ready for transfer.
+		  ! isAtomicSite // if the site is Atomic, then it's not ready for transfer.
 		: false;
 
 	const siteUpgrading = {
