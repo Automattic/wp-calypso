@@ -125,7 +125,9 @@ export const Swipeable = ( {
 			const velocity = absoluteDelta / ( dragPosition.timeStamp - dragStartData.timeStamp );
 
 			const verticalDelta = dragPosition.y - dragStartData.y;
-			if ( Math.abs( verticalDelta ) > absoluteDelta ) {
+			const isVerticalScrollDetected =
+				Math.abs( verticalDelta ) > absoluteDelta || dragPosition.x === 0;
+			if ( isVerticalScrollDetected ) {
 				delete pagesStyle.transform;
 				setPagesStyle( {
 					...pagesStyle,
