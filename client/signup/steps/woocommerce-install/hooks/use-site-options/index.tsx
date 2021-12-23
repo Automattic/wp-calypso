@@ -40,10 +40,10 @@ export default function useSiteOptions( siteId: number, optionId: string ) {
 		[ optionId, siteId, dispatch, siteSettingsData ]
 	);
 
-	const clean = () => dispatch( saveSiteSettings( siteId, { [ optionId ]: {} } ) );
+	const clean = () => dispatch( updateSiteSettings( siteId, { [ optionId ]: {} } ) );
 
 	function get( key: string ) {
-		return siteSettingsData?.[ key ];
+		return siteSettingsData?.[ key ] || '';
 	}
 
 	return { data: { ...siteSettingsData }, save, clean, update, get };
