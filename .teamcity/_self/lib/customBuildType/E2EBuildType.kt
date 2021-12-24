@@ -24,7 +24,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetr
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
-open class calypsoE2EBuildType(
+open class E2EBuildType(
 	var buildId: String,
 	var buildUuid: String,
 	var buildName: String,

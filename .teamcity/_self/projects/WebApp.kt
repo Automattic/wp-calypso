@@ -2,7 +2,7 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.customBuildType.calypsoE2EBuildType
+import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
@@ -584,8 +584,8 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): calypsoE2EBuildType {
-	return calypsoE2EBuildType(
+fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
+	return E2EBuildType(
 		buildId = "Calypso_E2E_Playwright_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "E2E Tests ($targetDevice)",
@@ -641,7 +641,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): calypsoE2E
 	)
 }
 
-object PreReleaseE2ETests : calypsoE2EBuildType(
+object PreReleaseE2ETests : E2EBuildType(
 	buildId = "Calypso_E2E_Pre_Release",
 	buildUuid = "9c2f634f-6582-4245-bb77-fb97d9f16533",
 	buildName = "Pre-Release E2E Tests",
@@ -667,7 +667,7 @@ object PreReleaseE2ETests : calypsoE2EBuildType(
 	}
 )
 
-object QuarantinedE2ETests: calypsoE2EBuildType(
+object QuarantinedE2ETests: E2EBuildType(
 	buildId = "Quarantined_E2E_Tests",
 	buildUuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c",
 	buildName = "Quarantined E2E Tests",

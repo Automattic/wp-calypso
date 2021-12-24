@@ -2,7 +2,7 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.customBuildType.calypsoE2EBuildType
+import _self.lib.customBuildType.E2EBuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
@@ -213,8 +213,8 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 	}
 }
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): calypsoE2EBuildType {
-    return calypsoE2EBuildType (
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
+    return E2EBuildType (
 		buildId = "WPComTests_gutenberg_Playwright_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "Playwright E2E Tests ($targetDevice)",
@@ -277,8 +277,8 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): cal
 	)
 }
 
-fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): calypsoE2EBuildType {
-    return calypsoE2EBuildType (
+fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
+    return E2EBuildType (
 		buildId = "WPComTests_coblocks_Playwright_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "Playwright CoBlocks E2E Tests ($targetDevice)",
@@ -520,7 +520,7 @@ private object VisualRegressionTests : BuildType({
 	}
 })
 
-private object I18NTests : calypsoE2EBuildType(
+private object I18NTests : E2EBuildType(
 	buildId = "WPComTests_i18n",
 	buildUuid = "2698576f-6ae4-4f05-ae9a-55ce07c9b42f",
 	buildName = "I18N Tests",
@@ -622,7 +622,7 @@ object P2E2ETests : BuildType({
 =======
 )
 
-object P2E2ETests : calypsoE2EBuildType(
+object P2E2ETests : E2EBuildType(
 	buildId = "WPComTests_p2",
 	buildUuid = "086ed775-eee4-4cc0-abc4-bb497979ef48",
 	buildName = "P2 E2E Tests",
