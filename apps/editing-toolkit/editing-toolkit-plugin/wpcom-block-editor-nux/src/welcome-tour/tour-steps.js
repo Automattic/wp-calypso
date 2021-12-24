@@ -173,19 +173,21 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
 			},
 		},
-		{
-			referenceElements: referencePositioning && referenceElements[ 5 ],
-			meta: {
-				heading: __( 'Find your way', 'full-site-editing' ),
-				description: __(
-					"Use List View to see all the blocks you've added. Click and drag any block to move it around.",
-					'full-site-editing'
-				),
-				imgSrc: getTourAssets( 'findYourWay' ),
-				animation: null,
-				isDesktopOnly: true,
+		localeSlug === 'en' &&
+			hasTranslation?.( 'Find your way' ) && {
+				...{
+					meta: {
+						heading: __( 'Find your way', 'full-site-editing' ),
+						description: __(
+							"Use List View to see all the blocks you've added. Click and drag any block to move it around.",
+							'full-site-editing'
+						),
+						imgSrc: getTourAssets( 'findYourWay' ),
+						animation: null,
+						isDesktopOnly: true,
+					},
+				},
 			},
-		},
 		{
 			referenceElements: referencePositioning && referenceElements[ 6 ],
 			meta: {
