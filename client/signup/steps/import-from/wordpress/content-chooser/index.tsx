@@ -1,7 +1,6 @@
 import { NextButton } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
@@ -17,11 +16,19 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
+	onJetpackSelection: () => void;
+	onContentOnlySelection: () => void;
+	onContentEverythingSelection: () => void;
 }
 
 export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { fromSite } = props;
+	const {
+		fromSite,
+		onJetpackSelection,
+		onContentOnlySelection,
+		onContentEverythingSelection,
+	} = props;
 
 	/**
 	 ↓ Fields
@@ -42,10 +49,6 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 			.get( { apiVersion: '1.2' } )
 			.then( ( site: any ) => setHasOriginSiteJetpackConnected( site && site.capabilities ) )
 			.catch( () => setHasOriginSiteJetpackConnected( false ) );
-	}
-
-	function installJetpack( site: string ) {
-		page( `https://wordpress.com/jetpack/connect/?url=${ site }` );
 	}
 
 	return (
@@ -69,13 +72,16 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 						headerText={ __( 'Everything' ) }
 						mainText={ __( "All your site's content, themes, plugins, users and settings" ) }
 					>
-						<NextButton disabled={ ! hasOriginSiteJetpackConnected }>
+						<NextButton
+							disabled={ ! hasOriginSiteJetpackConnected }
+							onClick={ onContentEverythingSelection }
+						>
 							{ __( 'Continue' ) }
 						</NextButton>
 					</ActionCard>
 					{ ! hasOriginSiteJetpackConnected && (
 						<SelectItems
-							onSelect={ () => installJetpack( fromSite ) }
+							onSelect={ onJetpackSelection }
 							items={ [
 								{
 									key: 'jetpack',
@@ -95,7 +101,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 						headerText={ __( 'Content only' ) }
 						mainText={ __( 'Import posts, pages, comments, and media.' ) }
 					>
-						<NextButton>{ __( 'Continue' ) }</NextButton>
+						<NextButton onClick={ onContentOnlySelection }>{ __( 'Continue' ) }</NextButton>
 					</ActionCard>
 				</div>
 			</div>
