@@ -55,14 +55,15 @@ object BuildDockerImage : BuildType({
 			scriptContent = """
 				#!/usr/bin/env bash
 
-				#if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
-				#	exit 0
-				#fi
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
 
 				payload=${'$'}(jq -n \
 					--arg action "start" \
 					--arg commit "${Settings.WpCalypso.paramRefs.buildVcsNumber}" \
-					'{action: ${'$'}action, commit: ${'$'}commit}' \
+					--arg branch "%teamcity.build.branch%" \
+					'{action: ${'$'}action, commit: ${'$'}commit, branch: ${'$'}branch}' \
 				)
 				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
 
@@ -141,9 +142,10 @@ object BuildDockerImage : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/usr/bin/env bash
-				#if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
-				#	exit 0
-				#fi
+
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
 
 				ACTION="success";
 				FAILURES=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c "FAILURE")
@@ -156,7 +158,8 @@ object BuildDockerImage : BuildType({
 				payload=${'$'}(jq -n \
 					--arg action "${'$'}ACTION" \
 					--arg commit "${Settings.WpCalypso.paramRefs.buildVcsNumber}" \
-					'{action: ${'$'}action, commit: ${'$'}commit}' \
+					--arg branch "%teamcity.build.branch%" \
+					'{action: ${'$'}action, commit: ${'$'}commit, branch: ${'$'}branch}' \
 				)
 				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
 
