@@ -1,4 +1,4 @@
-export type Importer = 'wix' | 'medium';
+export type Importer = 'wix' | 'medium' | 'wordpress';
 export type QueryObject = {
 	from: string;
 	to: string;

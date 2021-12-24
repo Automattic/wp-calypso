@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import classnames from 'classnames';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -21,6 +22,7 @@ import './style.scss';
 import { Importer, ImportJob, QueryObject } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
+import WordpressImporter from './wordpress';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -103,7 +105,11 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				hideNext={ true }
 				hideFormattedHeader={ true }
 				stepContent={
-					<div className="import__onboarding-page import-layout__center">
+					<div
+						className={ classnames( 'import__onboarding-page import-layout__center', {
+							[ `importer-wrapper__${ engine }` ]: !! engine,
+						} ) }
+					>
 						<div className="import-layout__center">
 							{ ( () => {
 								if ( ! siteSlug ) {
@@ -151,6 +157,14 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 											fromSite={ fromSite }
 										/>
 									);
+								} else if (
+									engine === 'wordpress' &&
+									isEnabled( 'gutenboarding/import-from-wordpress' )
+								) {
+									/**
+									 * WordPress importer
+									 */
+									return <WordpressImporter job={ getImportJob( engine ) } />;
 								}
 							} )() }
 						</div>
