@@ -4,8 +4,9 @@ import { Children, useState, useLayoutEffect, useRef, useCallback } from 'react'
 
 import './style.scss';
 
-const OFFSET_THRESHOLD_PERCENTAGE = 0.45; // Percentage of width to travel before we trigger the slider to move to the desired slide.
-const VELOCITY_THRESHOLD = 0.5; // Speed of drag above, before we trigger the slider to move to the desired slide.
+const OFFSET_THRESHOLD_PERCENTAGE = 0.35; // Percentage of width to travel before we trigger the slider to move to the desired slide.
+const VELOCITY_THRESHOLD = 0.2; // Speed of drag above, before we trigger the slider to move to the desired slide.
+const VERTICAL_THRESHOLD_ANGLE = 55;
 const TRANSITION_DURATION = '300ms';
 
 function useResizeObserver() {
@@ -70,7 +71,8 @@ export const Swipeable = ( {
 	const [ pagesStyle, setPagesStyle ] = useState( {
 		transitionDuration: TRANSITION_DURATION,
 	} );
-	const [ dragStartData, setDragStartData ] = useState( null );
+
+	const [ dragData, setDragData ] = useState( null );
 
 	const pagesRef = useRef();
 	const numPages = Children.count( children );
@@ -100,7 +102,7 @@ export const Swipeable = ( {
 		( event ) => {
 			const position = getDragPositionAndTime( event );
 			setSwipeableArea( pagesRef.current?.getBoundingClientRect() );
-			setDragStartData( position );
+			setDragData( { start: position } );
 			setPagesStyle( { ...pagesStyle, transitionDuration: `0ms` } ); // Set transition Duration to 0 for smooth dragging.
 		},
 		[ pagesStyle ]
@@ -115,25 +117,31 @@ export const Swipeable = ( {
 
 	const handleDragEnd = useCallback(
 		( event ) => {
-			if ( ! dragStartData ) {
+			if ( ! dragData ) {
 				return; // End early if we are not dragging any more.
 			}
 
-			const dragPosition = getDragPositionAndTime( event );
-			const delta = dragPosition.x - dragStartData.x;
-			const absoluteDelta = Math.abs( delta );
-			const velocity = absoluteDelta / ( dragPosition.timeStamp - dragStartData.timeStamp );
+			let dragPosition = getDragPositionAndTime( event );
 
-			const verticalDelta = dragPosition.y - dragStartData.y;
-			const isVerticalScrollDetected =
-				Math.abs( verticalDelta ) > absoluteDelta || dragPosition.x === 0;
-			if ( isVerticalScrollDetected ) {
+			if ( dragPosition.x === 0 ) {
+				dragPosition = dragData.last;
+			}
+
+			const delta = dragPosition.x - dragData.start.x;
+			const absoluteDelta = Math.abs( delta );
+			const velocity = absoluteDelta / ( dragPosition.timeStamp - dragData.start.timeStamp );
+
+			const verticalAbsoluteDelta = Math.abs( dragPosition.y - dragData.start.y );
+			const angle = ( Math.atan2( verticalAbsoluteDelta, absoluteDelta ) * 180 ) / Math.PI;
+
+			// Is vertical scroll detected?
+			if ( angle > VERTICAL_THRESHOLD_ANGLE ) {
 				delete pagesStyle.transform;
 				setPagesStyle( {
 					...pagesStyle,
 					transitionDuration: TRANSITION_DURATION,
 				} );
-				setDragStartData( null );
+				setDragData( null );
 				return;
 			}
 
@@ -157,12 +165,11 @@ export const Swipeable = ( {
 				transitionDuration: TRANSITION_DURATION,
 			} );
 			onPageSelect( newIndex );
-			setDragStartData( null );
+			setDragData( null );
 		},
 		[
 			currentPage,
-			dragStartData,
-			getOffset,
+			dragData,
 			hasSwipedToNextPage,
 			hasSwipedToPreviousPage,
 			numPages,
@@ -174,15 +181,15 @@ export const Swipeable = ( {
 
 	const handleDrag = useCallback(
 		( event ) => {
-			if ( ! dragStartData ) {
+			if ( ! dragData ) {
 				return;
 			}
 
 			const dragPosition = getDragPositionAndTime( event );
-			const delta = dragPosition.x - dragStartData.x;
+			const delta = dragPosition.x - dragData.start.x;
 			const absoluteDelta = Math.abs( delta );
 			const offset = getOffset( currentPage ) + delta;
-
+			setDragData( { ...dragData, last: dragPosition } );
 			// The user needs to swipe horizontally more then 2 px in order for the canvase to be dragging.
 			// We do this so that the user can scroll vertically smother.
 			if ( absoluteDelta < 3 ) {
@@ -215,7 +222,7 @@ export const Swipeable = ( {
 			}
 		},
 		[
-			dragStartData,
+			dragData,
 			getOffset,
 			currentPage,
 			numPages,
