@@ -148,27 +148,26 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						{ preventWidows( disabledMessage ) }
 					</p>
 				) }
-				{ ! isDisabled &&
-					( buttonURL ? (
-						<Button
-							primary={ buttonPrimary }
-							className="jetpack-product-card__button"
-							onClick={ onButtonClick }
-							href={ buttonURL }
-							disabled={ isDeprecated }
-						>
-							{ buttonLabel }
-						</Button>
-					) : (
-						<Button
-							primary={ buttonPrimary }
-							className="jetpack-product-card__button"
-							onClick={ onButtonClick }
-							disabled={ isDeprecated }
-						>
-							{ buttonLabel }
-						</Button>
-					) ) }
+				{ buttonURL ? (
+					<Button
+						primary={ buttonPrimary }
+						className="jetpack-product-card__button"
+						onClick={ onButtonClick }
+						href={ isDisabled ? '#' : buttonURL }
+						disabled={ isDisabled }
+					>
+						{ buttonLabel }
+					</Button>
+				) : (
+					<Button
+						primary={ buttonPrimary }
+						className="jetpack-product-card__button"
+						onClick={ onButtonClick }
+						disabled={ isDisabled }
+					>
+						{ buttonLabel }
+					</Button>
+				) }
 
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 				{ item.features && item.features.items.length > 0 && (
