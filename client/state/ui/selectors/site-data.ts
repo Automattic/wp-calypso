@@ -11,6 +11,7 @@ export interface SiteData {
 	wpcom_url?: string;
 	jetpack?: boolean;
 	plan: SiteDataPlan;
+	capabilities?: Record< string, boolean >;
 	// TODO: fill out the rest of this
 }
 
@@ -29,5 +30,7 @@ export interface SiteDataOptions {
 	jetpack_version: string | undefined;
 	is_wpcom_atomic: boolean;
 	is_automated_transfer: boolean;
+	is_wpforteams_site: boolean;
+	is_difm_lite_in_progress: boolean;
 	// TODO: fill out the rest of this
 }

@@ -37,7 +37,7 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	const { goToNextStep } = props;
 	const [ siteId, setSiteId ] = useState< number | null >( null );
 	const [ confirmDomain, setConfirmDomain ] = useState( '' );
-	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ?? 0 ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 	const headerText = translate( 'Choose where you want us to build your site.' );
@@ -52,7 +52,7 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	};
 
 	const filterSites = ( site: SiteData ) => {
-		return (
+		return !! (
 			site.capabilities?.manage_options &&
 			! site.jetpack &&
 			! site.options?.is_wpforteams_site &&
