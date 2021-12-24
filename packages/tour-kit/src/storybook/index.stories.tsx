@@ -1,3 +1,5 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { useState } from '@wordpress/element';
 import TourKit from '..';
 import type { Config } from '..';
@@ -29,39 +31,30 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 	const config: Config = {
 		steps: [
 			{
-				referenceElements: {
-					desktop: '.storybook__tourkit-references-a',
-					mobile: '.storybook__tourkit-references-a',
-				},
 				meta: {
 					description: 'Lorem ipsum dolor sit amet.',
+					referenceElements: {
+						desktop: '.storybook-tour__references-a',
+						mobile: '.storybook-tour__references-a',
+					},
 				},
 			},
 			{
-				referenceElements: {
-					desktop: '.storybook__tourkit-references-b',
-					mobile: '.storybook__tourkit-references-b',
-				},
 				meta: {
-					description: 'Lorem ipsum dolor sit amet.',
+					description: 'Donec dui sapien, tincidunt eget.',
+					referenceElements: {
+						desktop: '.storybook-tour__references-b',
+						mobile: '.storybook-tour__references-b',
+					},
 				},
 			},
 			{
-				referenceElements: {
-					desktop: '.storybook__tourkit-references-c',
-					mobile: '.storybook__tourkit-references-c',
-				},
 				meta: {
-					description: 'Lorem ipsum dolor sit amet.',
-				},
-			},
-			{
-				referenceElements: {
-					desktop: '.storybook__tourkit-references-d',
-					mobile: '.storybook__tourkit-references-d',
-				},
-				meta: {
-					description: 'Lorem ipsum dolor sit amet.',
+					description: 'Suspendisse auctor varius vulputate. Nulla.',
+					referenceElements: {
+						desktop: '.storybook-tour__references-c',
+						mobile: '.storybook-tour__references-c',
+					},
 				},
 			},
 		],
