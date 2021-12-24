@@ -51,6 +51,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import * as T from 'calypso/types';
 import { sendSiteEditorBetaFeedback } from '../../lib/fse-beta/send-site-editor-beta-feedback';
 import Iframe from './iframe';
+import Main from './main';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { Placeholder } from './placeholder';
 import type { RequestCart } from '@automattic/shopping-cart';
@@ -717,8 +718,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					properties={ this.getStatsProps() }
 				/>
 				<EditorDocumentHead />
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<div className="main main-column calypsoify is-iframe" role="main">
+				<Main>
 					{ ! isFullyLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						<Iframe
@@ -741,7 +741,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 							style={ isFullyLoaded && isEditorLoaded ? undefined : { opacity: 0 } }
 						/>
 					) }
-				</div>
+				</Main>
 				<AsyncLoad
 					require="calypso/post-editor/editor-media-modal"
 					placeholder={ null }
