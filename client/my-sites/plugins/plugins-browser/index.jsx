@@ -357,7 +357,11 @@ const SearchListView = ( {
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={ [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ] }
+					plugins={
+						isEnabled( 'marketplace-v1' )
+							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
+							: pluginsBySearchTerm
+					}
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
 					subtitle={ subtitle }
