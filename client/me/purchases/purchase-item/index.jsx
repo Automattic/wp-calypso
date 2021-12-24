@@ -30,6 +30,7 @@ import {
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import OwnerInfo from './owner-Info';
 
 import 'calypso/me/purchases/style.scss';
 
@@ -398,7 +399,12 @@ class PurchaseItem extends Component {
 				) }
 
 				<div className="purchase-item__information purchases-layout__information">
-					<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
+					<div className="purchase-item__title">
+						{ getDisplayName( purchase ) }
+						&nbsp;
+						<OwnerInfo purchase={ purchase } />
+					</div>
+
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
 				</div>
 
