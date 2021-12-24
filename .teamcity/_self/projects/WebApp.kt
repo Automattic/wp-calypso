@@ -62,7 +62,7 @@ object BuildDockerImage : BuildType({
 				payload=${'$'}(jq -n \
 					--arg action "start" \
 					--arg commit "${Settings.WpCalypso.paramRefs.buildVcsNumber}" \
-					'{action: ${'$'}action, commit: $commit}' \
+					'{action: ${'$'}action, commit: ${'$'}commit}' \
 				)
 				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
 
@@ -156,7 +156,7 @@ object BuildDockerImage : BuildType({
 				payload=${'$'}(jq -n \
 					--arg action "${'$'}ACTION" \
 					--arg commit "${Settings.WpCalypso.paramRefs.buildVcsNumber}" \
-					'{action: ${'$'}action, commit: $commit}' \
+					'{action: ${'$'}action, commit: ${'$'}commit}' \
 				)
 				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
 
