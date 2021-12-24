@@ -24,7 +24,7 @@ type RenderSwitchProps = {
  * @param {ReactNode} [props.trueComponent] - The component to render when the renderCondition evaluates to true.
  * @param {ReactNode} [props.falseComponent] - The component to render when the renderCondition evaluates to false.
  */
-const RenderSwitch: FC< RenderSwitchProps > = ( {
+const RenderSwitch = ( {
 	loadingCondition = () => false,
 	renderCondition,
 	queryComponent,
