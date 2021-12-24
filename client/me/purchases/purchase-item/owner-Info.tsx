@@ -5,8 +5,6 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 
-import './style.scss';
-
 type InjectedProps = {
 	isProductOwner: boolean;
 };
