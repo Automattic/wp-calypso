@@ -53,7 +53,7 @@ interface TransferFailureNoticeProps {
 
 const content = {
 	documentHeadTitle: 'Activate Jetpack Backup now',
-	header: translate( 'Jetpack Backup' ),
+	header: String( translate( 'Jetpack Backup' ) ),
 	primaryPromo: {
 		title: translate( 'Get time travel for your site with Jetpack Backup' ),
 		image: { path: JetpackBackupSVG },
@@ -75,9 +75,11 @@ function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ): ReactElement
 
 	// Get messages and override for the Jetpack product name.
 	const blockingMessages = getBlockingMessages( translate );
-	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = translate(
-		'This site is currently not eligible for %s. Please contact our support team for help.',
-		{ args: [ content.header ] }
+	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = String(
+		translate(
+			'This site is currently not eligible for %s. Please contact our support team for help.',
+			{ args: [ content.header ] }
+		)
 	);
 
 	return (
