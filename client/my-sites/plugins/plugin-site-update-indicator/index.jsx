@@ -103,6 +103,10 @@ class PluginSiteUpdateIndicator extends Component {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return;
 		}
+		if ( this.props.isMarketplaceProduct ) {
+			// Marketplace products are auto-managed.
+			return null;
+		}
 		if (
 			this.props.site.canUpdateFiles &&
 			( ( this.props.pluginOnSite.update && ! this.props.pluginOnSite.update.recentlyUpdated ) ||

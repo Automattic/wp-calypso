@@ -18,6 +18,8 @@
 	}
 
 	.plugin-action__label {
+		display: flex;
+		align-items: center;
 		@include breakpoint-deprecated( '<480px' ) {
 			color: var( --color-neutral-70 );
 		}
@@ -83,7 +85,8 @@
 	margin-left: 16px;
 }
 
-.plugin-activate-toggle, .plugin-autoupdate-toggle {
+.plugin-activate-toggle,
+.plugin-autoupdate-toggle {
 	.components-toggle-control {
 		display: flex;
 		.components-base-control__field {
