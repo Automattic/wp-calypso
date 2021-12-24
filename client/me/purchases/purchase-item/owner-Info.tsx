@@ -25,7 +25,7 @@ export const OwnerInfo: React.FC< OwnerInfoProps > = ( { isProductOwner } ) => {
 	}
 
 	return (
-		<InfoPopover className="owner-Info__pop-over">
+		<InfoPopover className="owner-Info__pop-over" showOnHover>
 			<span>
 				{ translate(
 					'To manage this subscription, log in to the WordPress.com account that purchased it or contact the owner.'
