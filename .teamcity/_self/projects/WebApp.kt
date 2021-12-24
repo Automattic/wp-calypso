@@ -56,7 +56,7 @@ object BuildDockerImage : BuildType({
 				#!/usr/bin/env bash
 
 				curl -s "%mc_teamcity_webhook%"
-				echo 'test'
+
 				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
 					exit 0
 				fi
