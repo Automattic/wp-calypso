@@ -116,10 +116,6 @@ const PluginsBrowser = ( {
 		pluginsByCategoryFeatured,
 		jetpackNonAtomic
 	);
-	const pluginsBySearchTerm = useSelector( ( state ) =>
-		getPluginsListBySearchTerm( state, search )
-	);
-	const pluginsPagination = useSelector( ( state ) => getPluginsListPagination( state, search ) );
 	const isFetchingPluginsByCategory = useSelector( ( state ) =>
 		isFetchingPluginsList( state, category )
 	);
@@ -131,9 +127,6 @@ const PluginsBrowser = ( {
 	);
 	const isFetchingPluginsByCategoryFeatured = useSelector( ( state ) =>
 		isFetchingPluginsList( state, 'featured' )
-	);
-	const isFetchingPluginsBySearchTerm = useSelector( ( state ) =>
-		isFetchingPluginsList( state, null, search )
 	);
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite?.ID ) );
 
@@ -287,9 +280,6 @@ const PluginsBrowser = ( {
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 				search={ search }
-				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
-				pluginsBySearchTerm={ pluginsBySearchTerm }
-				pluginsPagination={ pluginsPagination }
 				category={ category }
 				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				pluginsByCategory={ pluginsByCategory }
@@ -310,17 +300,38 @@ const WrappedSearch = ( props ) => <Search { ...props } />;
 
 const SearchListView = ( {
 	search: searchTerm,
-	isFetchingPluginsBySearchTerm,
-	pluginsBySearchTerm,
-	pluginsPagination,
 	searchTitle: searchTitleTerm,
 	siteSlug,
 	sites,
+	billingPeriod,
 } ) => {
+	const pluginsBySearchTerm = useSelector( ( state ) =>
+		getPluginsListBySearchTerm( state, searchTerm )
+	);
+	const isFetchingPluginsBySearchTerm = useSelector( ( state ) =>
+		isFetchingPluginsList( state, null, searchTerm )
+	);
+	const pluginsPagination = useSelector( ( state ) =>
+		getPluginsListPagination( state, searchTerm )
+	);
+	const {
+		data: paidPluginsBySearchTermRaw = [],
+		isFetchingPaidPluginsBySearchTerm,
+	} = useWPCOMPlugins( 'all', searchTerm, {
+		enabled: !! searchTerm,
+	} );
+	const paidPluginsBySearchTerm = useMemo(
+		() => paidPluginsBySearchTermRaw.map( updateWpComRating ),
+		[ paidPluginsBySearchTermRaw ]
+	);
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
+	if (
+		pluginsBySearchTerm.length > 0 ||
+		isFetchingPluginsBySearchTerm ||
+		isFetchingPaidPluginsBySearchTerm
+	) {
 		const searchTitle =
 			searchTitleTerm ||
 			translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
@@ -346,16 +357,17 @@ const SearchListView = ( {
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={ pluginsBySearchTerm }
+					plugins={ [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ] }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
 					subtitle={ subtitle }
 					site={ siteSlug }
-					showPlaceholders={ isFetchingPluginsBySearchTerm }
+					showPlaceholders={ isFetchingPluginsBySearchTerm || isFetchingPaidPluginsBySearchTerm }
 					size={ SEARCH_RESULTS_LIST_LENGTH }
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
+					billingPeriod={ billingPeriod }
 				/>
 				{ pluginsPagination && (
 					<Pagination
