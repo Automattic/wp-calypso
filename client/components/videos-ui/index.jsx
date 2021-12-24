@@ -3,10 +3,13 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import Notice from 'calypso/components/notice';
-import { COURSE_SLUGS, useCourseQuery } from 'calypso/data/courses';
-import useUpdateUserCourseProgressionMutation from 'calypso/data/courses/use-update-user-course-progression-mutation';
+import {
+	COURSE_SLUGS,
+	useCourseData,
+	useUpdateUserCourseProgressionMutation,
+} from 'calypso/data/courses';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import VideoPlayer from './video-player';
 import './style.scss';
@@ -19,30 +22,18 @@ const VideosUi = ( {
 } ) => {
 	const translate = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
-
-	const { data: course } = useCourseQuery( courseSlug );
+	const { course, videoSlugs, completedVideoSlugs, isCourseComplete } = useCourseData( courseSlug );
 	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
-
-	const initialUserCourseProgression = useMemo( () => course?.completions ?? [], [ course ] );
-
-	const [ userCourseProgression, setUserCourseProgression ] = useState( [] );
-	useEffect( () => {
-		setUserCourseProgression( initialUserCourseProgression );
-	}, [ initialUserCourseProgression ] );
 
 	const [ shouldShowVideoTranslationNotice, setShouldShowVideoTranslationNotice ] = useState(
 		// @TODO remove the '&& false' as soon as notification text is translated
 		! isEnglish && ! areVideosTranslated && false
 	);
 
-	const completedVideoCount = Object.keys( userCourseProgression ).length;
-	const courseChapterCount = course ? Object.keys( course.videos ).length : 0;
-	const isCourseComplete = completedVideoCount > 0 && courseChapterCount === completedVideoCount;
-
 	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
-	const currentVideo = currentVideoKey ? course?.videos[ currentVideoKey ] : course?.videos[ 0 ];
+	const currentVideo = course?.videos?.[ currentVideoKey || 0 ];
 
 	const onVideoPlayClick = ( videoSlug ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
@@ -54,24 +45,22 @@ const VideosUi = ( {
 		setIsPlaying( true );
 	};
 
+	// Find the initial video slug which is not completed if the currentVideoKey is never set.
+	// If all of the video slug are completed, the default is first one.
 	useEffect( () => {
-		if ( ! course || ! initialUserCourseProgression ) {
+		if ( ! course || ! videoSlugs || ! completedVideoSlugs || currentVideoKey ) {
 			return;
 		}
-		const videoSlugs = Object.keys( course?.videos ?? [] );
-		const viewedSlugs = Object.keys( initialUserCourseProgression );
-		if ( viewedSlugs.length > 0 ) {
-			const nextSlug = videoSlugs.find( ( slug ) => ! viewedSlugs.includes( slug ) );
-			if ( nextSlug ) {
-				setCurrentVideoKey( nextSlug );
-				setSelectedChapterIndex( videoSlugs.indexOf( nextSlug ) );
-				return;
-			}
-		}
-		const initialVideoId = videoSlugs[ 0 ];
-		setCurrentVideoKey( initialVideoId );
-		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoId ) );
-	}, [ course, initialUserCourseProgression ] );
+
+		const nextSlug = completedVideoSlugs.length
+			? videoSlugs.find( ( slug ) => ! completedVideoSlugs.includes( slug ) )
+			: null;
+
+		const initialVideoSlug = nextSlug || videoSlugs[ 0 ];
+
+		setCurrentVideoKey( initialVideoSlug );
+		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoSlug ) );
+	}, [ course, videoSlugs, completedVideoSlugs, currentVideoKey ] );
 
 	const isChapterSelected = ( idx ) => {
 		return selectedChapterIndex === idx;
@@ -85,10 +74,9 @@ const VideosUi = ( {
 	};
 
 	const markVideoCompleted = ( videoData ) => {
-		const updatedUserCourseProgression = { ...userCourseProgression };
-		updatedUserCourseProgression[ videoData.slug ] = true;
-		setUserCourseProgression( updatedUserCourseProgression );
-		updateUserCourseProgression( courseSlug, videoData.slug );
+		if ( ! completedVideoSlugs.includes( videoData.slug ) ) {
+			updateUserCourseProgression( courseSlug, videoData.slug );
+		}
 	};
 
 	useEffect( () => {
@@ -164,7 +152,7 @@ const VideosUi = ( {
 						{ course &&
 							Object.entries( course?.videos ).map( ( data, i ) => {
 								const isVideoCompleted =
-									data[ 0 ] in userCourseProgression && userCourseProgression[ data[ 0 ] ];
+									data[ 0 ] in course.completions && course.completions[ data[ 0 ] ];
 								const videoInfo = data[ 1 ];
 
 								return (
