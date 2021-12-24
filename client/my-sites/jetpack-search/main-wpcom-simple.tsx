@@ -35,7 +35,7 @@ export default function JetpackSearchMainWpcomSimple( { siteId }: Props ): React
 
 	// On WPCOM Simple sites, we need to look for the jetpack_search_enabled flag.
 	const isJetpackSearchSettingEnabled = useSelector( ( state ) =>
-		getSiteSetting( state, siteId, 'jetpack_search_enabled' )
+		Boolean( getSiteSetting( state, siteId, 'jetpack_search_enabled' ) )
 	);
 
 	// Have we loaded the necessary purchases and site settings? If not, show the placeholder.

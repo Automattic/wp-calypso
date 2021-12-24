@@ -38,7 +38,7 @@ export default function JetpackSearchMainJetpack( { siteId }: Props ): ReactElem
 
 	// On Jetpack sites, we need to check if the search module is active, rather than checking settings.
 	const isJetpackSearchModuleActive = useSelector( ( state ) =>
-		isJetpackModuleActive( state, siteId, 'search' )
+		Boolean( isJetpackModuleActive( state, siteId, 'search' ) )
 	);
 
 	// isRequestingModules is null if a request hasn't been triggered yet
