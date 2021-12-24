@@ -2,13 +2,13 @@ import { NextButton } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import page from 'page';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import FormattedHeader from 'calypso/components/formatted-header';
+import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
 import SelectItems from 'calypso/signup/select-items';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -16,15 +16,36 @@ import './style.scss';
 interface Props {
 	siteId: number;
 	siteSlug: string;
-	isSiteJetpack: boolean;
+	fromSite: string;
 }
 
 export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { siteSlug, isSiteJetpack } = props;
+	const { fromSite } = props;
 
-	function installJetpack( siteSlug: string ) {
-		page( `/jetpack/connect/?url=${ siteSlug }` );
+	/**
+	 ↓ Fields
+	 */
+	const [ hasOriginSiteJetpackConnected, setHasOriginSiteJetpackConnected ] = useState( false );
+
+	/**
+	 ↓ Effects
+	 */
+	useEffect( checkOriginSiteJetpackConnection, [ fromSite ] );
+
+	/**
+	 ↓ Methods
+	 */
+	function checkOriginSiteJetpackConnection() {
+		wpcom
+			.site( fromSite )
+			.get( { apiVersion: '1.2' } )
+			.then( ( site: any ) => setHasOriginSiteJetpackConnected( site && site.capabilities ) )
+			.catch( () => setHasOriginSiteJetpackConnected( false ) );
+	}
+
+	function installJetpack( site: string ) {
+		page( `https://wordpress.com/jetpack/connect/?url=${ site }` );
 	}
 
 	return (
@@ -42,15 +63,19 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 			<div className={ 'import-layout__column' }>
 				<div>
 					<ActionCard
-						classNames={ classnames( 'list__importer-option', { 'is-disabled': ! isSiteJetpack } ) }
+						classNames={ classnames( 'list__importer-option', {
+							'is-disabled': ! hasOriginSiteJetpackConnected,
+						} ) }
 						headerText={ __( 'Everything' ) }
 						mainText={ __( "All your site's content, themes, plugins, users and settings" ) }
 					>
-						<NextButton disabled={ ! isSiteJetpack }>{ __( 'Continue' ) }</NextButton>
+						<NextButton disabled={ ! hasOriginSiteJetpackConnected }>
+							{ __( 'Continue' ) }
+						</NextButton>
 					</ActionCard>
-					{ ! isSiteJetpack && (
+					{ ! hasOriginSiteJetpackConnected && (
 						<SelectItems
-							onSelect={ () => installJetpack( siteSlug ) }
+							onSelect={ () => installJetpack( fromSite ) }
 							items={ [
 								{
 									key: 'jetpack',
@@ -78,8 +103,6 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default connect( ( state, ownProps: Props ) => {
-	return {
-		isSiteJetpack: !! isJetpackSite( state, ownProps.siteId ),
-	};
+export default connect( () => {
+	return {};
 } )( ContentChooser );

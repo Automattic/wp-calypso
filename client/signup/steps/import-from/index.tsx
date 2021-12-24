@@ -169,6 +169,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 											job={ getImportJob( engine ) }
 											siteId={ siteId }
 											siteSlug={ siteSlug }
+											fromSite={ fromSite }
 										/>
 									);
 								}
