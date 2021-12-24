@@ -60,8 +60,8 @@ object BuildDockerImage : BuildType({
 				#fi
 
 				payload=${'$'}(jq -n \
-					--arg action "start"
-					'{action: ${'$'}action}'
+					--arg action "start" \
+					'{action: ${'$'}action}' \
 				)
 				signature=`echo -n "${'$'}payload" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
 				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY_SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%/calypso"
@@ -152,8 +152,8 @@ object BuildDockerImage : BuildType({
 				fi
 
 				payload=${'$'}(jq -n \
-					--arg action "${'$'}ACTION"
-					'{action: ${'$'}action}'
+					--arg action "${'$'}ACTION" \
+					'{action: ${'$'}action}' \
 				)
 				signature=`echo -n "${'$'}payload" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
 				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY_SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%/calypso"
