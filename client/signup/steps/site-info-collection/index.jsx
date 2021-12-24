@@ -30,9 +30,12 @@ function SiteInformationCollection( {
 	submitSignupStep,
 	goToNextStep,
 } ) {
-	const { username: signupUsername, selectedSiteCategory } = useSelector(
-		getSignupDependencyStore
-	);
+	const {
+		username: signupUsername,
+		selectedSiteCategory,
+		selectedDesign,
+		newOrExistingSiteChoice,
+	} = useSelector( getSignupDependencyStore );
 	const dispatch = useDispatch();
 	const loggedInUsername = useSelector( getCurrentUserName );
 	useEffect( () => {
@@ -40,7 +43,13 @@ function SiteInformationCollection( {
 	}, [ dispatch, stepName ] );
 
 	const onTypeformSubmission = ( typeformSubmissionId ) => {
-		const cartItem = { product_slug: WPCOM_DIFM_LITE };
+		const extra = {
+			difm_lite_selected_design: selectedDesign?.theme,
+			difm_lite_site_category: selectedSiteCategory,
+			difm_lite_typeform_response_id: typeformSubmissionId,
+			difm_lite_new_or_existing_site_choice: newOrExistingSiteChoice,
+		};
+		const cartItem = { product_slug: WPCOM_DIFM_LITE, extra };
 		const step = {
 			stepName,
 			cartItem,
@@ -80,9 +89,7 @@ export default function WrapperSiteInformationCollection( props ) {
 	const translate = useTranslate();
 
 	const headerText = translate( 'Tell us more about your site' );
-	const subHeaderText = translate(
-		'We need some basic details to build your site, you will also be able to get a glimpse of what your site will look like'
-	);
+	const subHeaderText = translate( 'We need some basic details to build your site.' );
 
 	return (
 		<StepWrapper
