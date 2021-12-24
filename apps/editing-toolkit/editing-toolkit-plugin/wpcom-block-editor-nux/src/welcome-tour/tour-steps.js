@@ -34,52 +34,9 @@ function getTourAssets( key ) {
 	return tourAssets[ key ];
 }
 
-const referenceElements = [
-	{
-		desktop: null,
-		mobile: null,
-	},
-	{
-		desktop: null,
-		mobile: null,
-	},
-	{
-		mobile:
-			'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
-		desktop:
-			'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
-	},
-	{
-		desktop: null,
-		mobile: null,
-	},
-	{
-		mobile:
-			'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
-		desktop:
-			'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
-	},
-	{
-		desktop: '.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
-	},
-	{
-		mobile: null,
-		desktop: null,
-	},
-	{
-		mobile: null,
-		desktop: null,
-	},
-	{
-		desktop: null,
-		mobile: null,
-	},
-];
-
 function getTourSteps( localeSlug, referencePositioning ) {
 	return [
 		{
-			referenceElements: referencePositioning && referenceElements[ 0 ],
 			meta: {
 				heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
 				descriptions: {
@@ -97,7 +54,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 1 ],
 			meta: {
 				heading: __( 'Everything is a block', 'full-site-editing' ),
 				descriptions: {
@@ -112,7 +68,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 2 ],
 			meta: {
 				heading: __( 'Adding a new block', 'full-site-editing' ),
 				descriptions: {
@@ -134,13 +89,18 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'addBlock' ),
 				animation: 'block-inserter',
+				referenceElements: referencePositioning && {
+					mobile:
+						'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
+					desktop:
+						'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
+				},
 			},
 			options: {
 				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 3 ],
 			meta: {
 				heading: __( 'Click a block to change it', 'full-site-editing' ),
 				descriptions: {
@@ -155,7 +115,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 4 ],
 			meta: {
 				heading: __( 'More Options', 'full-site-editing' ),
 				descriptions: {
@@ -168,6 +127,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'moreOptions' ),
 				animation: null,
+				referenceElements: referencePositioning && {
+					mobile:
+						'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
+					desktop:
+						'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
+				},
 			},
 			options: {
 				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
@@ -189,7 +154,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 			},
 		{
-			referenceElements: referencePositioning && referenceElements[ 6 ],
 			meta: {
 				heading: __( 'Undo any mistake', 'full-site-editing' ),
 				descriptions: {
@@ -199,10 +163,13 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				imgSrc: getTourAssets( 'undo' ),
 				animation: 'undo-button',
 				isDesktopOnly: true,
+				referenceElements: referencePositioning && {
+					desktop:
+						'.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
+				},
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 7 ],
 			meta: {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
 				descriptions: {
@@ -221,7 +188,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 8 ],
 			meta: {
 				heading: __( 'Congratulations!', 'full-site-editing' ),
 				descriptions: {
