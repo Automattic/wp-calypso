@@ -6,6 +6,7 @@ import type { TranslateResult } from 'i18n-calypso';
 import type { FunctionComponent } from 'react';
 
 type PriceWithIntervalProps = {
+	className?: string;
 	cost: number;
 	currencyCode: string;
 	hasDiscount: boolean;

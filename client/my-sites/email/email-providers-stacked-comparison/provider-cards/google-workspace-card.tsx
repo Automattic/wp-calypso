@@ -2,10 +2,10 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 } from '@automattic/calypso-products';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
@@ -21,7 +21,7 @@ import {
 	newUsers,
 } from 'calypso/lib/gsuite/new-users';
 import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
-import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import PriceBadge from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-with-interval';
@@ -32,6 +32,7 @@ import {
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { addToCartAndCheckout, recordTracksEventAddToCartClick, IntervalLength } from './utils';
@@ -71,21 +72,32 @@ const googleWorkspaceCardInformation: ProviderCard = {
 };
 
 const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
-	const {
-		currencyCode = '',
-		detailsExpanded,
-		domain,
-		gSuiteProductMonthly,
-		gSuiteProductYearly,
-		onExpandedChange,
-		selectedDomainName,
-		intervalLength,
-	} = props;
+	const { detailsExpanded, onExpandedChange, selectedDomainName, intervalLength } = props;
 	const googleWorkspace: ProviderCard = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = detailsExpanded;
 
-	const gSuiteProduct =
-		intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
+	const hasCartDomain = Boolean( props.cartDomainName );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const selectedSite = useSelector( getSelectedSite );
+	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
+	const domain = getSelectedDomain( {
+		domains,
+		selectedDomainName: selectedDomainName,
+	} ) as unknown;
+
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
+
+	const gSuiteProductYearly = useSelector( ( state ) =>
+		getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY )
+	);
+	const gSuiteProductMonthly = useSelector( ( state ) =>
+		getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY )
+	);
+
+	const gSuiteProduct: ProductListItem = ( intervalLength === IntervalLength.MONTHLY
+		? gSuiteProductMonthly
+		: gSuiteProductYearly ) as ProductListItem;
 
 	const productIsDiscounted = hasDiscount( gSuiteProduct );
 
@@ -148,22 +160,14 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
 	const onGoogleConfirmNewMailboxes = () => {
-		const {
-			comparisonContext,
-			domain,
-			gSuiteProductMonthly,
-			gSuiteProductYearly,
-			hasCartDomain,
-			selectedSite,
-			shoppingCartManager,
-			source,
-		} = props;
+		const { comparisonContext, source } = props;
 
 		const gSuiteProduct =
 			intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
-		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+		const userCanAddEmail =
+			hasCartDomain || canCurrentUserAddEmail( domain as Record< string, unknown > );
 
 		recordTracksEventAddToCartClick(
 			comparisonContext,
@@ -179,12 +183,13 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 			return;
 		}
 
-		const domains: { name: string }[] = domain ? [ domain ] : [];
-
 		setAddingToCart( true );
 
 		const cartItems: MinimalRequestCartProduct[] = getItemsForCart(
-			domains,
+			domains as {
+				name: string;
+				googleAppsSubscription?: { status?: string | undefined } | undefined;
+			}[],
 			gSuiteProduct.productSlug,
 			googleUsers
 		);
@@ -199,14 +204,11 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 
 	const onGoogleFormReturnKeyPress = noop;
 
-	const domainList = domain ? [ domain ] : [];
-
 	googleWorkspace.onExpandedChange = onExpandedChange;
 	googleWorkspace.formFields = (
 		<FormFieldset className="google-workspace-card__form-fieldset">
 			<GSuiteNewUserList
 				extraValidation={ identityMap }
-				domains={ domainList }
 				onUsersChange={ setGoogleUsers }
 				selectedDomainName={ selectedDomainName }
 				users={ googleUsers }
@@ -228,24 +230,4 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 	return <EmailProvidersStackedCard { ...googleWorkspace } />;
 };
 
-export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySiteId( state, selectedSite?.ID );
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: ownProps.selectedDomainName,
-	} );
-	const resolvedDomainName = domain ? domain.name : ownProps.selectedDomainName;
-
-	const hasCartDomain = Boolean( ownProps.cartDomainName );
-
-	return {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		domain,
-		domainName: resolvedDomainName,
-		hasCartDomain,
-		selectedSite,
-		gSuiteProductYearly: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
-		gSuiteProductMonthly: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY ),
-	};
-} )( withCartKey( withShoppingCart( GoogleWorkspaceCard ) ) );
+export default GoogleWorkspaceCard;

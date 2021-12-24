@@ -24,38 +24,20 @@ export interface ProviderCard {
 
 export type EmailProvidersStackedCardProps = {
 	comparisonContext: string;
-	cart?: any;
 	cartDomainName?: string;
 	selectedSite?: Site | null;
 	currencyCode?: string | null;
 	currentRoute?: string;
 	detailsExpanded: boolean;
-	domain?: any;
+	domain?: { name: string; currentUserCanAddEmail: boolean };
 	domainName?: string;
-	domainsWithForwards?: any[];
-	gSuiteProductMonthly?: any;
-	gSuiteProductYearly?: any;
 	hasCartDomain?: boolean;
 	isGSuiteSupported?: boolean;
-	productsList?: string[];
+	productsList?: Record< string, { product_id: number } >;
 	requestingSiteDomains?: boolean;
 	selectedDomainName: string;
 	shoppingCartManager?: any;
 	source: string;
 	intervalLength: IntervalLength;
-	titanMailMonthlyProduct?: any;
-	titanMailYearlyProduct?: any;
 	onExpandedChange?: ( providerKey: string, expand: boolean ) => void;
-};
-
-type ValueError = {
-	value: string;
-	error: string;
-};
-
-export type Mailbox = {
-	uuid: string;
-	domain: ValueError;
-	mailbox: ValueError;
-	password: ValueError;
 };
