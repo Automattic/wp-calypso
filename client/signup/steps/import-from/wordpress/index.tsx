@@ -1,7 +1,7 @@
 import page from 'page';
-import React from 'react';
+import React, { useState } from 'react';
 import { ImportJob } from '../types';
-import ContentChooser from './content-chooser';
+import ContentChooser, { WPImportType } from './content-chooser';
 
 import './style.scss';
 
@@ -18,28 +18,38 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	const { fromSite } = props;
 
 	/**
+	 ↓ Fields
+	 */
+	const [ chosenType, setChosenType ] = useState< WPImportType >();
+
+	/**
 	 ↓ Methods
 	 */
-
 	function installJetpack() {
 		page( `https://wordpress.com/jetpack/connect/?url=${ fromSite }` );
 	}
 
 	function runMigrationProcess() {
-		// run migration process
+		setChosenType( 'everything' );
 	}
 
 	function runContentUploadProcess() {
-		// run content upload process
+		setChosenType( 'content_only' );
 	}
 
 	return (
-		<ContentChooser
-			onJetpackSelection={ installJetpack }
-			onContentOnlySelection={ runContentUploadProcess }
-			onContentEverythingSelection={ runMigrationProcess }
-			{ ...props }
-		/>
+		<>
+			{ chosenType === undefined && (
+				<ContentChooser
+					onJetpackSelection={ installJetpack }
+					onContentOnlySelection={ runContentUploadProcess }
+					onContentEverythingSelection={ runMigrationProcess }
+					{ ...props }
+				/>
+			) }
+			{ chosenType === 'everything' && <div>Import everything</div> }
+			{ chosenType === 'content_only' && <div>Import Content only</div> }
+		</>
 	);
 };
 
