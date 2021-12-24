@@ -30,7 +30,7 @@ export const ContentChooser: React.FunctionComponent = () => {
 					<ActionCard
 						classNames={ classnames( 'list__importer-option', { 'is-disabled': true } ) }
 						headerText={ __( 'Everything' ) }
-						mainText={ __( "Your site's content, themes, plugins, users and settings" ) }
+						mainText={ __( "All your site's content, themes, plugins, users and settings" ) }
 					>
 						<NextButton disabled>{ __( 'Continue' ) }</NextButton>
 					</ActionCard>
