@@ -138,7 +138,7 @@ object BuildDockerImage : BuildType({
 
 		script {
 			name = "Webhook fail/done and push trunk tag for deploy"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			executionMode = BuildStep.ExecutionMode.ALWAYS
 			scriptContent = """
 				#!/usr/bin/env bash
 
