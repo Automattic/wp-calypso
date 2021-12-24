@@ -54,6 +54,7 @@ object BuildDockerImage : BuildType({
 			name = "Webhook Start"
 			scriptContent = """
 				#!/usr/bin/env bash
+
 				#if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
 				#	exit 0
 				#fi
