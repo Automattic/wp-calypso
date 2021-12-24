@@ -20,16 +20,17 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Methods
 	 */
+
+	function installJetpack() {
+		page( `https://wordpress.com/jetpack/connect/?url=${ fromSite }` );
+	}
+
 	function runMigrationProcess() {
 		// run migration process
 	}
 
 	function runContentUploadProcess() {
 		// run content upload process
-	}
-
-	function installJetpack() {
-		page( `https://wordpress.com/jetpack/connect/?url=${ fromSite }` );
 	}
 
 	return (
