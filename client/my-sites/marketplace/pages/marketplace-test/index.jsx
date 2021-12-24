@@ -40,16 +40,13 @@ export const Container = styled.div`
 	padding: 25px;
 `;
 
-export function level1ObjectMap(
-	obj: ArrayLike< unknown >,
-	entryFilter = ( [ i ]: unknown[] ) => i
-): unknown[] {
+export function level1ObjectMap( obj, entryFilter = ( [ i ] ) => i ) {
 	return Object.entries( obj )
 		.filter( entryFilter )
 		.map( ( entry ) => ( { key: entry[ 0 ], value: JSON.stringify( entry[ 1 ] ) } ) );
 }
 
-export default function MarketplaceTest(): JSX.Element {
+export default function MarketplaceTest() {
 	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -120,10 +117,10 @@ export default function MarketplaceTest(): JSX.Element {
 	const allBlockingMessages = getBlockingMessages( translate );
 	const holds = eligibilityDetails.eligibilityHolds || [];
 	const raisedBlockingMessages = holds
-		.filter( ( message: string ) => allBlockingMessages[ message ] )
-		.map( ( message: string ) => allBlockingMessages[ message ] );
+		.filter( ( message ) => allBlockingMessages[ message ] )
+		.map( ( message ) => allBlockingMessages[ message ] );
 	const hardBlockSingleMessages = holds.filter(
-		( message: string ) => message !== 'TRANSFER_ALREADY_EXISTS' || ! allBlockingMessages[ message ]
+		( message ) => message !== 'TRANSFER_ALREADY_EXISTS' || ! allBlockingMessages[ message ]
 	);
 	const hasHardBlock =
 		isAtomicSiteWithoutBusinessPlan( holds ) || hardBlockSingleMessages.length > 0;
