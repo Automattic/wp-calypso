@@ -91,6 +91,19 @@ const VideosUi = ( {
 		<div className="videos-ui">
 			<div className="videos-ui__header">
 				<HeaderBar course={ course } />
+
+				{ currentVideo && shouldShowVideoTranslationNotice && (
+					<Notice onDismissClick={ () => setShouldShowVideoTranslationNotice( false ) }>
+						{ translate(
+							'These videos are currently only available in English. Please {{supportLink}}let us know{{/supportLink}} if you would like them translated.',
+							{
+								components: {
+									supportLink: <a href="mailto:support@wordpress.com" />,
+								},
+							}
+						) }
+					</Notice>
+				) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
 						<h2>{ translate( 'Watch five videos.' ) }</h2>
@@ -124,18 +137,6 @@ const VideosUi = ( {
 			>
 				<div className="videos-ui__body-title">
 					<h3>{ course && course.title }</h3>
-					{ currentVideo && shouldShowVideoTranslationNotice && (
-						<Notice onDismissClick={ () => setShouldShowVideoTranslationNotice( false ) }>
-							{ translate(
-								'These videos are currently only available in English. Please {{supportLink}}let us know{{/supportLink}} if you would like them translated.',
-								{
-									components: {
-										supportLink: <a href="mailto:support@wordpress.com" />,
-									},
-								}
-							) }
-						</Notice>
-					) }
 				</div>
 				<div className="videos-ui__video-content">
 					{ ! currentVideo && <div className="videos-ui__video-placeholder" /> }
