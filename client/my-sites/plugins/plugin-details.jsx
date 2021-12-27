@@ -137,9 +137,9 @@ function PluginDetails( props ) {
 		};
 
 		return {
-			...plugin,
 			...wpcomPlugin,
 			...wporgPlugin,
+			...plugin,
 			isMarketplaceProduct,
 		};
 	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isMarketplaceProduct ] );
