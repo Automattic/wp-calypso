@@ -260,7 +260,7 @@ export function generateFlows( {
 			steps: [ 'user', 'p2-confirm-email', 'p2-site' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'New P2 signup flow',
-			lastModified: '2021-12-15',
+			lastModified: '2021-12-27',
 			showRecaptcha: true,
 		},
 		{
