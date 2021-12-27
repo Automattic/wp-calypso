@@ -42,10 +42,7 @@ export default generateSteps( {
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
-<<<<<<< HEAD
 	isNewOrExistingSiteFulfilled,
 	setDesignIfNewSite,
-=======
 	excludeStepIfEmailVerified,
->>>>>>> 3550da1e39 (Use isFulfilledStepCallback for skipping p2-confirm-email logic)
 } );
