@@ -20,6 +20,7 @@ import {
 	isNewOrExistingSiteFulfilled,
 	setDesignIfNewSite,
 	excludeStepIfEmailVerified,
+	excludeStepIfEmailVerificationSkipped,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -45,4 +46,5 @@ export default generateSteps( {
 	isNewOrExistingSiteFulfilled,
 	setDesignIfNewSite,
 	excludeStepIfEmailVerified,
+	excludeStepIfEmailVerificationSkipped,
 } );

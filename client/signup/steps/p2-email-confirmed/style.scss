@@ -1,0 +1,41 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.is-p-2-email-confirmed {
+	.p2-step-wrapper {
+
+		@include break-small {
+			padding-left: 20px;
+			padding-right: 20px;
+			max-width: 500px;
+		}
+	}
+
+	.p2-step-wrapper__header {
+		margin-bottom: 0;
+	}
+
+	.p2-step-wrapper__header-icon svg {
+		stroke: var( --p2-color-link );
+		width: 36px;
+		height: 36px;
+		border: 1px solid var( --p2-color-link );
+		border-radius: 50%; /* stylelint-disable-line */
+		padding: 8px;
+	}
+}
+
+.p2-email-confirmed {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.p2-email-confirmed__message {
+	text-align: center;
+	margin-bottom: 2em;
+}
+
+.p2-email-confirmed__continue {
+	max-width: 22em;
+}

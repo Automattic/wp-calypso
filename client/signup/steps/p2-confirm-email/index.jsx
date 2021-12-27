@@ -1,11 +1,12 @@
 import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
 function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
@@ -26,6 +27,10 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 			<path d="M8.33301 11.666L19.9997 21.666L31.6663 11.666" stroke="" strokeWidth="1.5" />
 		</svg>
 	);
+
+	useEffect( () => {
+		dispatch( saveSignupStep( { stepName } ) );
+	}, [ dispatch, stepName ] );
 
 	const handleResendEmailClick = () => {
 		if ( emailResendCount >= EMAIL_RESEND_MAX ) {

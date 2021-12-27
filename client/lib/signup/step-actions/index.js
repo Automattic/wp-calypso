@@ -930,6 +930,30 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 		return;
 	}
 
+	let wasSkipped = true;
+	if (
+		nextProps.flowName === 'p2-new' &&
+		nextProps?.progress[ stepName ]?.status === 'in-progress'
+	) {
+		wasSkipped = false;
+	}
+	nextProps.submitSignupStep( { stepName, wasSkipped } );
+	flows.excludeStep( stepName );
+}
+
+export function excludeStepIfEmailVerificationSkipped( stepName, defaultDependencies, nextProps ) {
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	if (
+		nextProps.flowName === 'p2-new' &&
+		nextProps?.progress[ 'p2-confirm-email' ] &&
+		! nextProps?.progress[ 'p2-confirm-email' ].wasSkipped
+	) {
+		return;
+	}
+
 	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 	flows.excludeStep( stepName );
 }
