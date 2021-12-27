@@ -114,17 +114,7 @@ function itemToSelectorProduct(
 			categories: item.categories,
 			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
 			features: {
-				items:
-					getForCurrentCROIteration( ( variation: Iterations ) =>
-						buildCardFeaturesFromItem(
-							item,
-							{
-								withoutDescription: true,
-								withoutIcon: true,
-							},
-							variation
-						)
-					) || [],
+				items: buildCardFeaturesFromItem( item ),
 			},
 		};
 	} else if ( objectIsPlan( item ) ) {
@@ -150,10 +140,7 @@ function itemToSelectorProduct(
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
-				items:
-					getForCurrentCROIteration( ( variation: Iterations ) =>
-						buildCardFeaturesFromItem( item, undefined, variation )
-					) || [],
+				items: buildCardFeaturesFromItem( item ),
 			},
 			legacy: ! isResetPlan,
 		};
