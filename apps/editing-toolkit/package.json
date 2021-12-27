@@ -66,6 +66,8 @@
 		"@babel/core": "^7.16.5",
 		"@emotion/react": "^11.4.1",
 		"@popperjs/core": "^2.10.2",
+		"@sentry/browser": "^6.16.1",
+		"@sentry/tracing": "^6.16.1",
 		"@wordpress/a11y": "^3.2.4",
 		"@wordpress/api-fetch": "^5.2.6",
 		"@wordpress/base-styles": "^4.0.4",
