@@ -1,7 +1,7 @@
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop, isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { intersection } from 'lodash';
@@ -144,6 +144,45 @@ export class PlansStep extends Component {
 					</Notice>
 				</div>
 			);
+		}
+
+		if ( isMobile() && 'onboarding' === this.props.flowName ) {
+			<ProvideExperimentData name="calypso_mobile_plans_page_with_billing">
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return <PulsingDot active />;
+					}
+
+					return (
+						<div>
+							{ errorDisplay }
+							<QueryPlans />
+							<PlansFeaturesMain
+								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+								hideFreePlan={ hideFreePlan }
+								isInSignup={ true }
+								isLaunchPage={ isLaunchPage }
+								intervalType={ this.getIntervalType( false ) }
+								isBillingWordingExperiment={ experimentAssignment?.variationName !== null }
+								onUpgradeClick={ this.onSelectPlan }
+								showFAQ={ false }
+								domainName={ this.getDomainName() }
+								customerType={ this.getCustomerType() }
+								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+								plansWithScroll={ this.state.isDesktop }
+								planTypes={ planTypes }
+								flowName={ flowName }
+								showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+								isAllPaidPlansShown={ true }
+								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+								isReskinned={ isReskinned }
+								disableMonthlyExperiment={ false }
+							/>
+						</div>
+					);
+				} }
+			</ProvideExperimentData>;
 		}
 
 		return (
