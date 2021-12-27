@@ -48,6 +48,7 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,
 		"jetpack/userless-checkout": true,
+		"jetpack/user-licensing": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
@@ -72,7 +73,8 @@
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud": true,
 		"jetpack-search": true,
-		"scan": true
+		"scan": true,
+		"site-purchases": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",

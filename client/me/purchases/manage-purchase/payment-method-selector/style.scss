@@ -41,6 +41,8 @@
 	.checkout-submit-button .checkout-button {
 		width: auto;
 
+		background-color: var( --color-accent );
+
 		&:focus {
 			outline: var( --color-primary-light ) solid 2px;
 		}
@@ -50,4 +52,16 @@
 .payment-method-selector__all-subscriptions-effect-warning {
 	font-size: $font-body-small;
 	font-style: italic;
+}
+
+/* Jetpack cloud overwrites */
+
+.payment-method-selector__content.is-jetpack-cloud {
+	.components-checkbox-control__input[type='checkbox']:checked {
+		background-color: var( --studio-jetpack-green-50 );
+	}
+
+	.checkout-submit-button .checkout-button {
+		background-color: var( --studio-jetpack-green-50 );
+	}
 }
