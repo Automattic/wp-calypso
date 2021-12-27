@@ -2,6 +2,7 @@ import page from 'page';
 import React, { useState } from 'react';
 import { ImportJob } from '../types';
 import ContentChooser, { WPImportType } from './content-chooser';
+import { ImportEverything } from './import-everything';
 
 import './style.scss';
 
@@ -47,7 +48,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 					{ ...props }
 				/>
 			) }
-			{ chosenType === 'everything' && <div>Import everything</div> }
+			{ chosenType === 'everything' && <ImportEverything /> }
 			{ chosenType === 'content_only' && <div>Import Content only</div> }
 		</>
 	);
