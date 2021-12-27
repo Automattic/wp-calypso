@@ -6,12 +6,10 @@ const useCourseQuery = ( courseSlug, queryOptions = {} ) => {
 		[ 'courses', courseSlug ],
 		() => wpcom.req.get( '/courses', { course_slug: courseSlug, apiNamespace: 'wpcom/v2' } ),
 		{
-			// Our course offering doesn't change that often, we don't need to
-			// re-fetch until the next page refresh.
-			staleTime: Infinity,
+			refetchOnReconnect: true,
+			refetchOnWindowFocus: false,
 			...queryOptions,
 			meta: {
-				persist: false,
 				...queryOptions.meta,
 			},
 		}
