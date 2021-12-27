@@ -57,6 +57,14 @@ const PluginDetailsCTA = ( {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 
+	const shouldUpgrade = ! (
+		isBusiness( selectedSite.plan ) ||
+		isEnterprise( selectedSite.plan ) ||
+		isEcommerce( selectedSite.plan ) ||
+		isJetpack ||
+		isVip
+	);
+
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
 		getEligibility( state, selectedSite?.ID )
@@ -96,6 +104,11 @@ const PluginDetailsCTA = ( {
 								)
 							}
 						</PluginPrice>
+						{ shouldUpgrade && (
+							<span className="plugin-details-CTA__uprade-required">
+								{ translate( 'Plan upgrade required' ) }
+							</span>
+						) }
 					</div>
 				</div>
 			);
@@ -123,6 +136,11 @@ const PluginDetailsCTA = ( {
 								) : (
 									translate( 'Free' )
 								) }
+								{ shouldUpgrade && (
+									<span className="plugin-details-CTA__uprade-required">
+										{ translate( 'Plan upgrade required' ) }
+									</span>
+								) }
 							</>
 						)
 					}
@@ -134,11 +152,10 @@ const PluginDetailsCTA = ( {
 					isPluginInstalledOnsite={ isPluginInstalledOnsite }
 					isJetpackSelfHosted={ isJetpackSelfHosted }
 					selectedSite={ selectedSite }
-					isJetpack={ isJetpack }
-					isVip={ isVip }
 					hasEligibilityMessages={ hasEligibilityMessages }
 					isMarketplaceProduct={ isMarketplaceProduct }
 					billingPeriod={ billingPeriod }
+					shouldUpgrade={ shouldUpgrade }
 				/>
 			</div>
 			<div className="plugin-details-CTA__t-and-c">
@@ -168,8 +185,7 @@ const PluginDetailsCTAPlaceholder = () => {
 const CTAButton = ( {
 	plugin,
 	selectedSite,
-	isJetpack,
-	isVip,
+	shouldUpgrade,
 	hasEligibilityMessages,
 	isMarketplaceProduct,
 	billingPeriod,
@@ -177,14 +193,6 @@ const CTAButton = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
-
-	const shouldUpgrade = ! (
-		isBusiness( selectedSite.plan ) ||
-		isEnterprise( selectedSite.plan ) ||
-		isEcommerce( selectedSite.plan ) ||
-		isJetpack ||
-		isVip
-	);
 
 	return (
 		<>
