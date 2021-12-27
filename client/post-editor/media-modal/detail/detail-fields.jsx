@@ -89,6 +89,8 @@ class EditorMediaModalDetailFields extends Component {
 		// Update changes to local state immediately
 		this.props.onUpdate( itemId, modifiedChanges );
 
+		modifiedChanges.update_only = true;
+
 		// Save changes immediately or after a delay
 		if ( saveImmediately ) {
 			this.saveChange( siteId, itemId, modifiedChanges );
@@ -122,6 +124,12 @@ class EditorMediaModalDetailFields extends Component {
 		const inputValue = '1' === this.getItemValue( 'display_embed' ) ? '0' : '1';
 
 		this.setFieldByName( 'display_embed', inputValue );
+	};
+
+	handleAllowDownloadOption = () => {
+		const inputValue = '1' === this.getItemValue( 'allow_download' ) ? '0' : '1';
+
+		this.setFieldByName( 'allow_download', inputValue );
 	};
 
 	getItemValue( attribute ) {
@@ -235,6 +243,38 @@ class EditorMediaModalDetailFields extends Component {
 		);
 	};
 
+	renderAllowDownloadOption = () => {
+		// Make sure this is actually a VideoPress video
+		const videopressGuid = this.getItemValue( 'videopress_guid' );
+		if ( ! videopressGuid ) {
+			return;
+		}
+
+		const allowDownloadKey = 'allow_download';
+		let allowDownload = this.getItemValue( allowDownloadKey );
+		if ( undefined === allowDownload ) {
+			allowDownload = 0;
+		}
+
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Download' ) }>
+				<FormLabel>
+					<FormCheckbox
+						id={ allowDownloadKey }
+						name={ allowDownloadKey }
+						checked={ allowDownload === '1' }
+						onChange={ this.handleAllowDownloadOption }
+					/>
+					<span>
+						{ this.props.translate(
+							'Display download option and allow viewers to download this video'
+						) }
+					</span>
+				</FormLabel>
+			</EditorMediaModalFieldset>
+		);
+	};
+
 	render() {
 		const { translate } = this.props;
 		return (
@@ -276,6 +316,7 @@ class EditorMediaModalDetailFields extends Component {
 				</EditorMediaModalFieldset>
 
 				{ this.renderShareEmbed() }
+				{ this.renderAllowDownloadOption() }
 				{ this.renderRating() }
 				{ this.renderVideoPressShortcode() }
 			</div>
