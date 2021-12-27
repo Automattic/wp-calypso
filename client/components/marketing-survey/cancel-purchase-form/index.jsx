@@ -23,6 +23,7 @@ import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
+import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import pluginsThemesImage from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
 import downgradeImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
@@ -39,7 +40,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import HappychatButton from 'calypso/components/happychat/button';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getName, isRefundable } from 'calypso/lib/purchases';
+import { getName, isRefundable, isMonthlyPurchase } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
@@ -72,6 +73,7 @@ import previousStep from './previous-step';
 import { radioTextOption, radioSelectOption } from './radio-option';
 import BusinessATStep from './step-components/business-at-step';
 import DowngradeStep from './step-components/downgrade-step';
+import FreeMonthOfferStep from './step-components/free-month-offer-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, FINAL_STEP, INITIAL_STEP } from './steps';
 
@@ -195,7 +197,7 @@ class CancelPurchaseForm extends Component {
 		};
 
 		if ( this.shouldUseBlankCanvasLayout() ) {
-			const { purchase } = this.props;
+			const { purchase, isMonthly } = this.props;
 			if ( value === 'couldNotInstall' && isWpComBusinessPlan( purchase.productSlug ) ) {
 				newState.upsell = 'business-atomic';
 			}
@@ -214,6 +216,14 @@ class CancelPurchaseForm extends Component {
 				!! this.props.downgradeClick
 			) {
 				newState.upsell = 'downgrade-personal';
+			}
+
+			if (
+				[ 'noTime', 'siteIsNotReady' ].includes( value ) &&
+				isMonthly &&
+				this.props.downgradeClick
+			) {
+				newState.upsell = 'free-month-offer';
 			}
 		}
 
@@ -363,6 +373,16 @@ class CancelPurchaseForm extends Component {
 		}
 	};
 
+	freeMonthOfferClick = () => {
+		if ( ! this.state.isSubmitting ) {
+			this.props.freeMonthOfferClick();
+			this.recordEvent( 'calypso_purchases_free_month_offer_form_submit' );
+			this.setState( {
+				isSubmitting: true,
+			} );
+		}
+	};
+
 	showUpsell = () => {
 		const { isSubmitting, upsell } = this.state;
 
@@ -433,6 +453,16 @@ class CancelPurchaseForm extends Component {
 							planCost={ planCost }
 							refundAmount={ this.getRefundAmount() }
 						/>
+					</Upsell>
+				);
+			case 'free-month-offer':
+				return (
+					<Upsell
+						actionOnClick={ this.freeMonthOfferClick }
+						actionText={ translate( 'Get a free month' ) }
+						image={ rocketImage }
+					>
+						<FreeMonthOfferStep productSlug={ purchase.productSlug } />
 					</Upsell>
 				);
 			default:
@@ -508,6 +538,14 @@ class CancelPurchaseForm extends Component {
 				value: 'couldNotActivate',
 				label: translate( 'I was unable to activate or use the product.' ),
 				textPlaceholder: translate( 'Where did you run into problems?' ),
+			},
+			{
+				value: 'noTime',
+				label: translate( "I don't have time." ),
+			},
+			{
+				value: 'siteIsNotReady',
+				label: translate( 'My site is not ready.' ),
 			},
 			{
 				value: 'noLongerWantToTransfer',
@@ -1272,6 +1310,7 @@ export default connect(
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		isJetpack: isJetpackPlan( purchase ) || isJetpackProduct( purchase ),
+		isMonthly: isMonthlyPurchase( purchase ),
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 		supportVariation: getSupportVariation( state ),
 		site: getSite( state, purchase.siteId ),
