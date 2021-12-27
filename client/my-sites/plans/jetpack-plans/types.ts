@@ -85,13 +85,8 @@ export type SelectorProductFeaturesItem = {
 	isDifferentiator?: boolean;
 };
 
-export type SelectorProductFeaturesSection = {
-	heading: TranslateResult;
-	list: SelectorProductFeaturesItem[];
-};
-
 export type SelectorProductFeatures = {
-	items: SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[];
+	items: SelectorProductFeaturesItem[];
 };
 
 export interface SelectorProduct extends SelectorProductCost {
