@@ -89,8 +89,6 @@ class EditorMediaModalDetailFields extends Component {
 		// Update changes to local state immediately
 		this.props.onUpdate( itemId, modifiedChanges );
 
-		modifiedChanges.update_only = true;
-
 		// Save changes immediately or after a delay
 		if ( saveImmediately ) {
 			this.saveChange( siteId, itemId, modifiedChanges );
