@@ -1,0 +1,56 @@
+.import__import-everything {
+	max-width: 700px;
+	margin: auto;
+
+	.import__details-list li {
+		flex: 100%;
+	}
+
+	.onboarding-title {
+		font-family: var( --font-base, var( --font-base-default ) );
+		color: var( --studio-gray-100 );
+		font-size: 1.25rem; /* stylelint-disable-line */
+		line-height: 1.5rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.onboarding-subtitle {
+		color: var( --studio-gray-50 );
+		font-size: 1rem;
+		line-height: 1.5rem;
+		margin-bottom: 3rem;
+	}
+
+	.action_buttons__button {
+		padding: initial !important;
+		min-width: 120px !important;
+	}
+
+	.import__site-mapper {
+		margin-bottom: 2.5rem;
+
+		& > div {
+			margin: 0;
+			padding: 1rem 0;
+		}
+	}
+
+	.import__site-mapper-border {
+		border-bottom: solid var( --studio-gray-5 ) 1px;
+	}
+
+	.import__site-mapper-header {
+		color: var( --studio-gray-40 );
+		font-size: 0.875rem;
+		padding: 1rem 0;
+		margin-bottom: 1rem;
+	}
+
+	.import_site-mapper-name {
+		span {
+			display: block;
+			font-size: 0.75em; /* stylelint-disable-line */
+			color: var( --studio-gray-40 );
+		}
+	}
+}
