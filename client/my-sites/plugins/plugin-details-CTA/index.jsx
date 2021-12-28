@@ -11,6 +11,7 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
+	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -33,6 +34,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { PluginPrice, getPeriodVariationValue } from '../plugin-price';
+import USPS from './usps';
 import './style.scss';
 
 const PluginDetailsCTA = ( {
@@ -56,6 +58,7 @@ const PluginDetailsCTA = ( {
 	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const isFreePlan = isFreePlanProduct( selectedSite.plan );
 
 	const shouldUpgrade = ! (
 		isBusiness( selectedSite.plan ) ||
@@ -168,6 +171,14 @@ const PluginDetailsCTA = ( {
 					}
 				) }
 			</div>
+
+			{ ! isJetpackSelfHosted && (
+				<USPS
+					shouldUpgrade={ shouldUpgrade }
+					isFreePlan={ isFreePlan }
+					isMarketplaceProduct={ isMarketplaceProduct }
+				/>
+			) }
 		</div>
 	);
 };

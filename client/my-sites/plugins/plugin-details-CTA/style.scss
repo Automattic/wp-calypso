@@ -2,6 +2,7 @@
 
 .plugin-details-CTA__container {
 	@extend %plugin-header;
+	padding-bottom: 0;
 }
 
 .plugin-details-CTA__price {
@@ -49,10 +50,6 @@
 .plugin-details-CTA__t-and-c {
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-50 );
-
-	@media screen and ( max-width: 1040px ) {
-		padding-bottom: 40px;
-	}
 }
 
 .is-placeholder {
