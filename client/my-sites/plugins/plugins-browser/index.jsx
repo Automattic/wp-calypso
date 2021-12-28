@@ -356,6 +356,10 @@ const SearchListView = ( {
 				},
 			} );
 
+		const paginationItemsFetch = isEnabled( 'marketplace-v1' )
+			? SEARCH_RESULTS_LIST_LENGTH - paidPluginsBySearchTerm?.length
+			: SEARCH_RESULTS_LIST_LENGTH;
+
 		return (
 			<>
 				<PluginsBrowserList
@@ -378,10 +382,10 @@ const SearchListView = ( {
 				{ pluginsPagination && (
 					<Pagination
 						page={ pluginsPagination.page }
-						perPage={ SEARCH_RESULTS_LIST_LENGTH }
+						perPage={ paginationItemsFetch }
 						total={ pluginsPagination.results }
 						pageClick={ ( page ) => {
-							dispatch( fetchPluginsList( null, page, searchTerm, SEARCH_RESULTS_LIST_LENGTH ) );
+							dispatch( fetchPluginsList( null, page, searchTerm, paginationItemsFetch ) );
 						} }
 						variant={ PaginationVariant.minimal }
 					/>
