@@ -66,7 +66,12 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 			...defaultArgs,
 			...omit( additionalArgs, 'intervalType' ),
 		},
-		plansLink( props.basePlansPath || '/plans', props.siteSlug, intervalType, true )
+		plansLink(
+			props.basePlansPath || '/plans',
+			props.siteSlug,
+			intervalType ? String( intervalType ) : '',
+			true
+		)
 	);
 };
 
