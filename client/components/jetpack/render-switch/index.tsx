@@ -31,7 +31,7 @@ const RenderSwitch = ( {
 	loadingComponent,
 	trueComponent,
 	falseComponent,
-}: RenderSwitchProps ) => {
+}: RenderSwitchProps ): JSX.Element | null => {
 	if ( loadingCondition() ) {
 		return (
 			<>
@@ -41,7 +41,7 @@ const RenderSwitch = ( {
 		);
 	}
 
-	return ( renderCondition() ? trueComponent : falseComponent ) || null;
+	return ( renderCondition() ? <>{ trueComponent }</> : <>{ falseComponent }</> ) || null;
 };
 
 export default RenderSwitch;
