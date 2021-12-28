@@ -107,6 +107,7 @@ $width-left-panel-card: 55%;
 }
 
 .email-provider-stacked-card__title-price-badge {
+	font-size: $font-body-small;
 	margin-top: 0.5em;
 	width: 100%;
 
@@ -142,6 +143,14 @@ $width-left-panel-card: 55%;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			flex-direction: row;
+		}
+
+		.action-panel__body {
+			color: var( --color-text );
+
+			p {
+				margin-bottom: 0.5em;
+			}
 		}
 
 		.action-panel__figure {
@@ -263,6 +272,7 @@ $width-left-panel-card: 55%;
 .email-provider-stacked-card__title-container {
 	display: flex;
 	flex-direction: column;
+	font-size: $font-body-small;
 	max-width: 100%;
 
 	@include break-xlarge {
