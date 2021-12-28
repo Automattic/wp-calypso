@@ -180,4 +180,31 @@ describe( 'shouldDehydrateQuery', () => {
 			);
 		} );
 	} );
+
+	describe( 'when passing `false` to `shouldPersistQuery`', () => {
+		it( 'does not persist the query', async () => {
+			const data = 'Hello, World!';
+
+			const queryFn = () => Promise.resolve( data );
+
+			const { getByText } = render(
+				<TestComponent queryFn={ queryFn } persistencePredicate={ false } />
+			);
+
+			await waitFor( () => getByText( 'success' ) );
+
+			const cache = await waitFor( () => getOfflinePersistence() );
+
+			expect( cache ).toEqual(
+				expect.objectContaining( {
+					buster: '',
+					timestamp: expect.any( Number ),
+					clientState: {
+						mutations: [],
+						queries: [],
+					},
+				} )
+			);
+		} );
+	} );
 } );
