@@ -34,7 +34,7 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 
 						<div className={ classnames( 'import_site-mapper-name' ) }>
 							OpenWeb
-							<span>{ fromSite }</span>
+							<span>{ convertToFriendlyWebsiteName( fromSite ) }</span>
 						</div>
 					</div>
 					<div className={ classnames( 'import-layout__column' ) }>
@@ -48,13 +48,13 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 
 						<div className={ classnames( 'import_site-mapper-name' ) }>
 							OpenWeb
-							<span>{ siteSlug }</span>
+							<span>{ convertToFriendlyWebsiteName( siteSlug ) }</span>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<Title tagName={ 'h3' }>
+			<Title>
 				{ sprintf(
 					/* translators: the `from` and `to` fields could be any site URL (eg: "yourname.com") */
 					__( 'Import everything from %(from)s and overwrite everything on %(to)s?' ),
