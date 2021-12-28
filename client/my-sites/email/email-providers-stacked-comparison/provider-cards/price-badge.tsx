@@ -1,25 +1,20 @@
-import React, { FunctionComponent, ReactElement } from 'react';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
+import type { FunctionComponent, ReactElement } from 'react';
 
 type PriceBadgeProps = {
 	additionalPriceInformationComponent?: ReactElement | null;
-	className: string;
 	priceComponent: ReactElement;
 };
 
 const PriceBadge: FunctionComponent< PriceBadgeProps > = ( props ) => {
-	const { additionalPriceInformationComponent, className, priceComponent } = props;
-
-	const priceBadgeClass = `${ className }__price-badge`;
-
-	const additionalPriceInformationClass = `${ className }__provider-additional-price-information`;
+	const { additionalPriceInformationComponent, priceComponent } = props;
 
 	return (
-		<div className={ priceBadgeClass }>
+		<div className="provider-cards__price-badge">
 			<PromoCardPrice
 				formattedPrice={ priceComponent }
 				additionalPriceInformation={
-					<span className={ additionalPriceInformationClass }>
+					<span className="provider-cards__provider-additional-price-information">
 						{ additionalPriceInformationComponent }
 					</span>
 				}

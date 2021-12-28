@@ -170,7 +170,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 					{ translate( '3 months free' ) }
 				</div>
 			) }
-			<PriceBadge priceComponent={ priceWithInterval } className={ 'professional-email-card' } />
+			<PriceBadge priceComponent={ priceWithInterval } />
 		</>
 	);
 

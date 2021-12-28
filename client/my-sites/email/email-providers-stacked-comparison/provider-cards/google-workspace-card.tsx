@@ -141,7 +141,6 @@ const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > =
 		<PriceBadge
 			additionalPriceInformationComponent={ discount }
 			priceComponent={ priceWithInterval }
-			className={ 'google-workspace-card' }
 		/>
 	);
 
