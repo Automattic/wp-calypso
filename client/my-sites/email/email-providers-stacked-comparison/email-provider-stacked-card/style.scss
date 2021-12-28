@@ -119,9 +119,12 @@ $width-left-panel-card: 55%;
 }
 
 .email-provider-stacked-card__title-price-badge {
+	margin-top: 0.5em;
 	width: 100%;
-	margin-left: 10px;
+
 	@include break-large {
+		margin-left: 10px;
+		margin-top: 0;
 		width: $width-right-panel-card;
 	}
 }
