@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TourKitFrame should render 1`] = `
+<Fragment>
+  <KeyboardNavigation
+    isMinimized={false}
+    onDismiss={[Function]}
+    onMinimize={[Function]}
+    onNextStepProgression={[Function]}
+    onPreviousStepProgression={[Function]}
+    tourContainerRef={
+      Object {
+        "current": null,
+      }
+    }
+  />
+  <div
+    className="tour-kit-frame optional-classname"
+  >
+    <div
+      className="tour-kit-frame__container"
+    >
+      <div
+        className="test__tour"
+      />
+    </div>
+  </div>
+</Fragment>
+`;

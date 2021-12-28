@@ -12,8 +12,13 @@ describe( 'TourKitPortal', () => {
 		expect( wrapper.type() ).toEqual( 'div' );
 	} );
 
-	test( 'should have TourKitFrame', () => {
-		const wrapper = shallow( <TourKitPortal /> );
-		expect( wrapper.childAt( 0 ).childAt( 0 ).type() ).toEqual( TourKitFrame );
+	test( 'should have TourKitFrame with config', () => {
+		const testConfig = {
+			foo: 'bar',
+		};
+
+		const wrapper = shallow( <TourKitPortal config={ testConfig } /> );
+		expect( wrapper.find( TourKitFrame ) ).toHaveLength( 1 );
+		expect( wrapper.find( TourKitFrame ).prop( 'config' ) ).toEqual( testConfig );
 	} );
 } );
