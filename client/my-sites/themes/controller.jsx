@@ -114,8 +114,14 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 	res.redirect( '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' ) );
 }
 
-export function redirectTiers( { res, originalUrl }, next ) {
-	const redirectUrl = originalUrl.replace( /\/(free|premium|type)\/?$/g, '' );
+export function redirectTiers( { res, originalUrl, params: { tier } }, next ) {
+	if ( tier === undefined ) {
+		return next();
+	}
+	const typeTierRegex = new RegExp( `/type/${ tier }$`, 'g' );
+	const tierRegex = new RegExp( `/${ tier }(/|$)`, 'g' );
+
+	const redirectUrl = originalUrl.replace( typeTierRegex, '' ).replace( tierRegex, '' );
 	if ( redirectUrl === originalUrl ) {
 		return next();
 	}
