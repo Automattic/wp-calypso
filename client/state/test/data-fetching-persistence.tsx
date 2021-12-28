@@ -4,7 +4,7 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import { render, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { QueryClient, QueryClientProvider, useQuery, setLogger } from 'react-query';
 import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental';
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 import { shouldDehydrateQuery } from '../should-dehydrate-query';
@@ -14,6 +14,16 @@ const queryClient = new QueryClient();
 const PERSISTENCE_KEY = 'REACT_QUERY_OFFLINE_CACHE';
 
 const queryKey = '123';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
+// https://github.com/tannerlinsley/react-query/blob/2771a15403cb2e7c70022b850e8c54c6d2b3d8a0/docs/src/pages/guides/testing.md#turn-off-network-error-logging
+setLogger( {
+	error: noop,
+	log: noop,
+	warn: noop,
+} );
 
 class Storage {
 	cache: Map< string, string >;
@@ -67,6 +77,7 @@ const DataFetchingComponent = < T, >( {
 	persistencePredicate,
 }: DataFetchingComponentProps< T > ) => {
 	const { status } = useQuery( queryKey, queryFn, {
+		retry: false,
 		meta: {
 			persist: persistencePredicate != null ? persistencePredicate : undefined,
 		},
@@ -94,8 +105,34 @@ describe( 'shouldDehydrateQuery', () => {
 		} );
 	} );
 
-	afterEach( () => {
+	beforeEach( () => {
 		storage.clear();
+		queryClient.clear();
+	} );
+
+	it( 'does not persist failed queries', async () => {
+		const data = 'Hello, World!';
+
+		const queryFn = () => Promise.reject( data );
+
+		const { getByText } = render(
+			<TestComponent queryFn={ queryFn } persistencePredicate={ true } />
+		);
+
+		await waitFor( () => getByText( 'error' ) );
+
+		const cache = await waitFor( () => getOfflinePersistence() );
+
+		expect( cache ).toEqual(
+			expect.objectContaining( {
+				buster: '',
+				timestamp: expect.any( Number ),
+				clientState: {
+					mutations: [],
+					queries: [],
+				},
+			} )
+		);
 	} );
 
 	describe( 'when passing `true` to `shouldPersistQuery`', () => {
