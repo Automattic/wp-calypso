@@ -154,7 +154,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 
 	const priceWithInterval = (
 		<PriceWithInterval
-			className={ 'professional-email-card' }
 			intervalLength={ intervalLength }
 			cost={ titanMailProduct?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
@@ -180,7 +179,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			mailboxes={ titanMailbox }
 			selectedDomainName={ selectedDomainName }
 			onReturnKeyPress={ onTitanFormReturnKeyPress }
-			showLabels={ true }
 			validatedMailboxUuids={ validatedTitanMailboxUuids }
 			showAddAnotherMailboxButton={ false }
 			hiddenFieldNames={ [ TITAN_FULL_NAME_FIELD, TITAN_PASSWORD_RESET_FIELD ] }
@@ -213,7 +211,7 @@ export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		domain,
-		selectedDomainName: resolvedDomainName,
+		selectedDomainName: resolvedDomainName ?? '',
 		hasCartDomain,
 		selectedSite,
 		titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
