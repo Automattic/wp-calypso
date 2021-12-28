@@ -115,6 +115,12 @@ export function emailManagementTitanSetUpThankYou(
 	);
 }
 
+/**
+ * @param {string|undefined|null} siteName
+ * @param {string|undefined|null} domainName
+ * @param {string|null} [relativeTo]
+ * @param {Object.<string, string>} [urlParameters]
+ */
 export function emailManagementTitanControlPanelRedirect(
 	siteName,
 	domainName,
@@ -130,6 +136,12 @@ export function emailManagementTitanControlPanelRedirect(
 	);
 }
 
+/**
+ * @param {string|undefined|null} siteName
+ * @param {string|undefined|null} domainName
+ * @param {string|null} [relativeTo]
+ * @param {Object.<string, string>} [urlParameters]
+ */
 export function emailManagement( siteName, domainName, relativeTo = null, urlParameters = {} ) {
 	let path;
 
