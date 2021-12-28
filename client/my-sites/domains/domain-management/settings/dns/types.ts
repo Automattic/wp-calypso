@@ -1,8 +1,8 @@
-import { Dns, DnsRecord } from 'calypso/lib/domains/types';
+import { DnsRequest, DnsRecord } from 'calypso/lib/domains/types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 export type DnsDetailsProps = {
-	dns: Dns;
+	dns: DnsRequest;
 	isRequestingDomains: boolean;
 	selectedDomainName: string;
 	selectedSite: SiteData;

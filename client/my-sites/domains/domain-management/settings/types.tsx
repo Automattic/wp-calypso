@@ -33,6 +33,8 @@ export type SettingsPageConnectedProps = {
 	isLoadingPurchase: boolean;
 	purchase: Purchase | null;
 	whoisData: WhoisData[];
+	dns: DnsRequest;
+	isRequestingDomains: boolean;
 };
 
 export type SettingsPageNameServerHocProps = {
@@ -44,8 +46,6 @@ export type SettingsPageNameServerHocProps = {
 
 export type SettingsPageConnectedDispatchProps = {
 	requestWhois: ( domain: string ) => void;
-	dns: DnsRequest;
-	isRequestingDomains: boolean;
 };
 
 export type SettingsHeaderProps = {
