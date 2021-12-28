@@ -1,7 +1,6 @@
 name: Calypso Live
 
 on:
-  push:
   pull_request:
     types: ['opened']
 
