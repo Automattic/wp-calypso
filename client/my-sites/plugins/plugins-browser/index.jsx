@@ -15,7 +15,7 @@ import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import announcementImage from 'calypso/assets/images/marketplace/plugins-revamp.png';
+import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -156,10 +156,10 @@ const PluginsBrowser = ( {
 
 	const annoncementPages = [
 		{
-			headline: translate( 'ITS NEW!' ),
-			heading: translate( 'All the plugins and more' ),
+			headline: translate( 'NEW' ),
+			heading: translate( 'Buy the best plugins' ),
 			content: translate(
-				'This page may look different as we’ve made some changes to improve the experience for you. Stay tuned for even more exciting updates to come!'
+				"Now you can purchase plugins right on WordPress.com to extend your website's capabilities."
 			),
 			featureImage: announcementImage,
 		},
@@ -228,7 +228,7 @@ const PluginsBrowser = ( {
 			<SidebarNavigation />
 
 			<AnnouncementModal
-				announcementId="plugins-page-revamp"
+				announcementId="plugins-page-woo-extensions"
 				pages={ annoncementPages }
 				finishButtonText={ translate( "Let's explore!" ) }
 			/>
