@@ -22,12 +22,9 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const encodedLink = encodeURIComponent( steps.build_link.outputs.LINK );
-            console.log( encodedLink )
-            
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '<!--calypso-live-watermark:apr@v1-->\n<table><tr><td>Calypso Live: ${{ steps.build_link.outputs.LINK }} \n <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${{encodedLink}}&choe=UTF-8" /><td><td>Jetpack Cloud live: ${{ steps.build_link.outputs.LINK }}&env=jetpack  \n <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${{encodedLink}}%26env=jetpack&choe=UTF-8" /><td></tr></table>\n_(These links may take a few minutes to be available)_'
+              body: '<!--calypso-live-watermark:apr@v1-->\nLink to Calypso live: ${{ steps.build_link.outputs.LINK }}\nLink to Jetpack Cloud live: ${{ steps.build_link.outputs.LINK }}&env=jetpack\n_(These links may take a few minutes to be available)_'
             })
