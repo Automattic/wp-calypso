@@ -207,4 +207,75 @@ describe( 'shouldDehydrateQuery', () => {
 			);
 		} );
 	} );
+
+	describe( 'when passing a predicate to `shouldPersistQuery`', () => {
+		it( 'persists the query if the condition is met', async () => {
+			const data = 'Hello, World!';
+
+			const queryFn = () => Promise.resolve( data );
+
+			const { getByText } = render(
+				<TestComponent queryFn={ queryFn } persistencePredicate={ () => true } />
+			);
+
+			await waitFor( () => getByText( 'success' ) );
+
+			const cache = await waitFor( () => getOfflinePersistence() );
+
+			expect( cache ).toEqual(
+				expect.objectContaining( {
+					buster: '',
+					timestamp: expect.any( Number ),
+					clientState: {
+						mutations: [],
+						queries: [
+							{
+								state: {
+									data: 'Hello, World!',
+									dataUpdateCount: expect.any( Number ),
+									dataUpdatedAt: expect.any( Number ),
+									error: null,
+									errorUpdateCount: 0,
+									errorUpdatedAt: 0,
+									fetchFailureCount: 0,
+									fetchMeta: null,
+									isFetching: false,
+									isInvalidated: false,
+									isPaused: false,
+									status: 'success',
+								},
+								queryKey: '123',
+								queryHash: '["123"]',
+							},
+						],
+					},
+				} )
+			);
+		} );
+
+		it( 'does not persist the query if the condition is not met', async () => {
+			const data = 'Hello, World!';
+
+			const queryFn = () => Promise.resolve( data );
+
+			const { getByText } = render(
+				<TestComponent queryFn={ queryFn } persistencePredicate={ () => false } />
+			);
+
+			await waitFor( () => getByText( 'success' ) );
+
+			const cache = await waitFor( () => getOfflinePersistence() );
+
+			expect( cache ).toEqual(
+				expect.objectContaining( {
+					buster: '',
+					timestamp: expect.any( Number ),
+					clientState: {
+						mutations: [],
+						queries: [],
+					},
+				} )
+			);
+		} );
+	} );
 } );
