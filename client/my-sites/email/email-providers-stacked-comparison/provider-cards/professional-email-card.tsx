@@ -58,6 +58,7 @@ const getTitanFeatures = () => {
 };
 
 const professionalEmailCardInformation: ProviderCard = {
+	className: 'professional-email-card',
 	detailsExpanded: true,
 	expandButtonLabel: translate( 'Select' ),
 	onExpandedChange: noop,

@@ -57,6 +57,7 @@ const getGoogleFeatures = () => {
 };
 
 const googleWorkspaceCardInformation: ProviderCard = {
+	className: 'google-workspace-card',
 	detailsExpanded: false,
 	expandButtonLabel: translate( 'Select' ),
 	onExpandedChange: noop,
