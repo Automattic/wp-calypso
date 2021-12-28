@@ -1,5 +1,7 @@
 import path from 'path';
+import { getLaunchConfiguration } from '@automattic/calypso-e2e/dist/esm/src/browser-helper';
 import { TestAccount } from '@automattic/calypso-e2e/dist/esm/src/lib/test-account';
+import { chromium } from 'playwright';
 
 export default async function globalSetup(): Promise< void > {
 	const saveAuthCookies = process.env.SAVE_AUTH_COOKIES as string;
@@ -11,11 +13,24 @@ export default async function globalSetup(): Promise< void > {
 			? saveAuthCookies.split( ',' )
 			: commonTestAccounts;
 
+		const browser = await chromium.launch();
+		const { userAgent } = getLaunchConfiguration( browser.version() );
+
 		await Promise.all(
-			accounts.map( ( accountName ) => {
-				const account = new TestAccount( accountName );
-				return account.logInAndSaveAuthCookies();
+			accounts.map( async ( accountName ) => {
+				const testAccount = new TestAccount( accountName );
+				const browserContext = await browser.newContext( { userAgent } );
+				const page = await browserContext.newPage();
+
+				if ( await testAccount.hasFreshCookies() ) {
+					return;
+				}
+
+				await testAccount.logInViaLoginPage( page );
+				await testAccount.saveCookies( browserContext );
 			} )
 		);
+
+		await browser.close();
 	}
 }
