@@ -137,23 +137,24 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * Feature available means although the site doesn't have the feature active,
 	 * it's available to be activated via buying a plan.
 	 */
-	const hasWoopFeatureAvailable = useSelector( ( state ) =>
-		hasAvailableSiteFeature( state, siteId, FEATURE_WOOP )
+	const hasWoopFeatureAvailable = useSelector(
+		( state ) => hasAvailableSiteFeature( state, siteId, FEATURE_WOOP ) || []
 	);
 
 	// The site requires upgrading when the feature is not active and available.
 	const requiresUpgrade = Boolean(
-		eligibilityNoProperPlan && ! isWoopFeatureActive && hasWoopFeatureAvailable
+		eligibilityNoProperPlan && ! isWoopFeatureActive && hasWoopFeatureAvailable.length
 	);
 
 	/*
 	 * We pick the first plan from the available plans list.
 	 * The priority is defined by the store products list.
 	 */
-	const upgradingPlan =
-		useSelector( ( state ) => getProductBySlug( state, hasWoopFeatureAvailable?.[ 0 ] ) ) || {};
+	const upgradingPlan = useSelector( ( state ) =>
+		getProductBySlug( state, hasWoopFeatureAvailable[ 0 ] )
+	);
 
-	const productName = upgradingPlan.product_name;
+	const productName = upgradingPlan?.product_name ?? '';
 
 	const isAtomicSite = !! useSelector( ( state ) => isAtomicSiteSelector( state, siteId ) );
 
@@ -180,7 +181,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 				redirect_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/transfer' ),
 				cancel_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/confirm' ),
 			},
-			`/checkout/${ wpcomDomain }/${ upgradingPlan.product_slug }`
+			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
 		productName,
 		description: productName
