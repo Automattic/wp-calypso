@@ -47,7 +47,12 @@ function P2ConfirmEmail( {
 		}
 
 		wpcom.req
-			.post( '/me/send-verification-email' )
+			.post( {
+				path: '/me/send-verification-email',
+				body: {
+					from: 'p2-signup',
+				},
+			} )
 			.then( () => {
 				setEmailResendCount( emailResendCount + 1 );
 				dispatch(
