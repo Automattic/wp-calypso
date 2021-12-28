@@ -35,13 +35,14 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import { SiteSlug } from 'calypso/types';
+import type { Image } from 'calypso/components/promo-section/promo-card/index';
+import type { AppState, SiteSlug } from 'calypso/types';
 
 import './style.scss';
 
 interface ConnectedProps {
 	siteId: number;
-	selectedSiteSlug: SiteSlug;
+	selectedSiteSlug: SiteSlug | null;
 	isFreePlan: boolean;
 	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
@@ -52,9 +53,16 @@ interface ConnectedProps {
 	trackUpgrade: ( plan: string, feature: string ) => void;
 	trackLearnLink: ( feature: string ) => void;
 	trackCtaButton: ( feature: string ) => void;
+	isPremiumOrBetterPlan?: boolean;
+	isUserAdmin?: boolean;
 }
 
-const overSome = ( ...checks ) => ( item ) => checks.some( ( check ) => check( item ) );
+type BoolFunction = ( arg: string ) => boolean;
+function overSome< F extends BoolFunction, T extends string >( ...checks: F[] ) {
+	return function ( item: T ) {
+		return checks.some( ( check ) => check( item ) );
+	};
+}
 
 const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
@@ -481,7 +489,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		title: translate( 'Start earning money now' ),
 		image: {
 			path: earnSectionImage,
-			align: 'right',
+			align: 'right' as Image[ 'align' ],
 		},
 		body: translate(
 			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
@@ -542,8 +550,8 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect< ConnectedProps, unknown, unknown >(
-	( state ) => {
+export default connect(
+	( state: AppState ) => {
 		// Default value of 0 to appease TypeScript for selectors that don't allow a null site ID value.
 		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
@@ -554,31 +562,35 @@ export default connect< ConnectedProps, unknown, unknown >(
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
-		const isPremiumOrBetterPlan =
+		const isPremiumOrBetterPlan = Boolean(
 			sitePlanSlug &&
-			overSome(
-				isPremiumPlan,
-				isBusinessPlan,
-				isEcommercePlan,
-				isJetpackPremiumPlan,
-				isJetpackBusinessPlan,
-				isSecurityDailyPlan,
-				isSecurityRealTimePlan,
-				isCompletePlan
-			)( sitePlanSlug );
+				overSome(
+					isPremiumPlan,
+					isBusinessPlan,
+					isEcommercePlan,
+					isJetpackPremiumPlan,
+					isJetpackBusinessPlan,
+					isSecurityDailyPlan,
+					isSecurityRealTimePlan,
+					isCompletePlan
+				)( sitePlanSlug )
+		);
 		return {
 			siteId,
 			selectedSiteSlug,
 			isFreePlan,
 			isPremiumOrBetterPlan,
-			isNonAtomicJetpack:
-				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ),
+			isNonAtomicJetpack: Boolean(
+				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
+			),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			isLoading,
-			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
+			hasSetupAds: Boolean(
+				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+			),
 		};
 	},
 	( dispatch ) => ( {
