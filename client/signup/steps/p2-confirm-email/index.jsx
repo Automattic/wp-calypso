@@ -14,8 +14,8 @@ function P2ConfirmEmail( {
 	flowName,
 	goToNextStep,
 	isEmailVerified,
-	stepName,
 	positionInFlow,
+	stepName,
 	submitSignupStep,
 } ) {
 	const translate = useTranslate();
@@ -36,7 +36,7 @@ function P2ConfirmEmail( {
 		</svg>
 	);
 
-	// Remember that we loaded, and not skipped, this step for the user.
+	// Remember that we loaded, not skipped, this step for the user.
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [ dispatch, stepName ] );
