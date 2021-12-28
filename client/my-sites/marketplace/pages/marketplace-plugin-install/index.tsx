@@ -36,6 +36,12 @@ import {
 } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
+import type { IAppState } from 'calypso/state/types';
+
+interface InstalledPlugin {
+	slug?: string;
+	id?: number;
+}
 
 const MarketplacePluginInstall = ( {
 	productSlug,
@@ -60,9 +66,14 @@ const MarketplacePluginInstall = ( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
-	const installedPlugin = useSelector( ( state ) =>
+	const installedPluginRaw: unknown = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
 	);
+	const installedPlugin =
+		'id' in ( installedPluginRaw as InstalledPlugin ) ||
+		'slug' in ( installedPluginRaw as InstalledPlugin )
+			? ( installedPluginRaw as InstalledPlugin )
+			: {};
 	const pluginActive = useSelector( ( state ) =>
 		isPluginActive( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
 	);
@@ -76,7 +87,7 @@ const MarketplacePluginInstall = ( {
 
 	const marketplacePluginInstallationInProgress = useSelector( ( state ) => {
 		const { pluginInstallationStatus, productSlugInstalled, primaryDomain } = getPurchaseFlowState(
-			state
+			state as IAppState
 		);
 		if ( isUploadFlow ) {
 			return (
