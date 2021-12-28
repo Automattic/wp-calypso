@@ -6,20 +6,6 @@
 	text-align: center;
 }
 
-.email-provider-stacked-card__title-price-badge {
-	.promo-card__price {
-		.price__cost {
-			.provider-cards__price-with-interval-price-discounted {
-				text-decoration: line-through;
-			}
-
-			.provider-cards__price-with-interval-sale-price {
-				color: var( --studio-green-50 );
-			}
-		}
-	}
-}
-
 .email-providers-stacked-comparison__main {
 	padding: 0 20px 20px;
 
