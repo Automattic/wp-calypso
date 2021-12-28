@@ -4,11 +4,11 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import { domainConnect } from 'calypso/lib/domains/constants';
-import { DnsRecord, DNSRecordType } from 'calypso/lib/domains/types';
+import { DnsRecord, DnsRecordType } from 'calypso/lib/domains/types';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import DnsRecordItem from './dns-record-item';
 import DnsRecordItemPlaceholder from './dns-record-item-placeholder';
-import { DnsDetailsProps } from './types';
+import type { DnsDetailsProps } from './types';
 
 import './style.scss';
 
@@ -35,7 +35,7 @@ const DnsDetails = ( {
 		const record = {
 			name: domainConnect.DISCOVERY_TXT_RECORD_NAME,
 			data: domainConnect.API_URL,
-			type: 'TXT' as DNSRecordType,
+			type: 'TXT' as DnsRecordType,
 			id: '',
 			domain: '',
 			protected_field: false,

@@ -3,9 +3,9 @@
 @import '@wordpress/base-styles/breakpoints';
 
 .dns-card {
-  &__button {
-    margin-top: 16px;
-  }
+	&__button {
+		margin-top: 16px;
+	}
 }
 
 .dns-record-item {
@@ -13,13 +13,7 @@
 	line-height: 1.7;
 	&.is-placeholder > div {
 		margin-bottom: 0.75em;
-		&::after {
-			animation: pulse-light 1.8s ease-in-out infinite;
-			background-color: var( --color-neutral-10 );
-			content: '';
-			display: block;
-			height: $font-body-small;
-		}
+		@include placeholder();
 	}
 	@include break-mobile {
 		display: flex;
@@ -31,7 +25,7 @@
 		margin-right: 16px;
 		@include break-mobile {
 			margin-right: 32px;
-			flex-basis: 60px;
+			flex-basis: 90px;
 			flex-grow: 1;
 		}
 	}
@@ -41,8 +35,11 @@
 		vertical-align: middle;
 		@include break-mobile {
 			margin-right: 32px;
-			flex-basis: 140px;
+			flex-basis: 180px;
 			flex-grow: 1;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 	&__value {

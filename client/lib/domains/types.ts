@@ -117,14 +117,14 @@ export type ResponseDomain = {
 	whoisUpdateUnmodifiableFields?: Array< string >;
 };
 
-export type DNSRecordType = 'MX' | 'A' | 'SRV' | 'TXT' | 'AAAA' | 'CNAME' | 'NS';
+export type DnsRecordType = 'MX' | 'A' | 'SRV' | 'TXT' | 'AAAA' | 'CNAME' | 'NS';
 
 export type DnsRecord = {
 	domain: string;
 	id: string;
 	name: string;
 	protected_field: boolean;
-	type: DNSRecordType;
+	type: DnsRecordType;
 	target?: string;
 	data?: string;
 	weight?: number;
@@ -134,7 +134,7 @@ export type DnsRecord = {
 	protocol?: string;
 };
 
-export type Dns = {
+export type DnsRequest = {
 	hasLoadedFromServer: boolean;
 	isFetching: boolean;
 	isSubmittingForm: boolean;
