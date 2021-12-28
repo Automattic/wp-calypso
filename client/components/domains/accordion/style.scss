@@ -5,7 +5,7 @@
 	.is-placeholder {
 		@include placeholder();
 	}
-	.foldable-card {
+	.card.foldable-card {
 		margin: 0;
 		&.is-expanded {
 			margin: 0;
