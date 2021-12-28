@@ -536,7 +536,7 @@ export function getRenewalItemFromProduct(
 	}
 
 	if ( isTitanMail( product ) ) {
-		cartItem = titanMailMonthly( product );
+		cartItem = titanMailProduct( product, slug );
 	}
 
 	if ( isSiteRedirect( product ) ) {
