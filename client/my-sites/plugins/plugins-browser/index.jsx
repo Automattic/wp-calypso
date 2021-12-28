@@ -227,11 +227,13 @@ const PluginsBrowser = ( {
 			<DocumentHead title={ translate( 'Plugins' ) } />
 			<SidebarNavigation />
 
-			<AnnouncementModal
-				announcementId="plugins-page-woo-extensions"
-				pages={ annoncementPages }
-				finishButtonText={ translate( "Let's explore!" ) }
-			/>
+			{ isEnabled( 'marketplace-v1' ) && (
+				<AnnouncementModal
+					announcementId="plugins-page-woo-extensions"
+					pages={ annoncementPages }
+					finishButtonText={ translate( "Let's explore!" ) }
+				/>
+			) }
 			{ ! hideHeader && (
 				<FixedNavigationHeader
 					className="plugins-browser__header"
