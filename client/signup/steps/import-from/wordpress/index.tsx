@@ -16,11 +16,10 @@ interface Props {
 }
 
 export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
-	const { fromSite } = props;
-
 	/**
 	 ↓ Fields
 	 */
+	const { fromSite, siteSlug } = props;
 	const [ chosenType, setChosenType ] = useState< WPImportType >();
 
 	/**
@@ -48,7 +47,9 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 					{ ...props }
 				/>
 			) }
-			{ chosenType === 'everything' && <ImportEverything /> }
+			{ chosenType === 'everything' && (
+				<ImportEverything fromSite={ fromSite } siteSlug={ siteSlug } />
+			) }
 			{ chosenType === 'content_only' && <div>Import Content only</div> }
 		</>
 	);
