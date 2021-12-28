@@ -4,6 +4,7 @@
 .professional-email-card__logo {
 	color: var( --color-wordpress-com );
 	height: 48px;
+	min-width: 48px;
 	width: 48px;
 
 	@include breakpoint-deprecated( '<660px' ) {
