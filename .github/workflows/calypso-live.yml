@@ -28,5 +28,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '<table><tr><td>Link to <a href="${{ steps.build_link.outputs.LINK }}">Calypso live</a> <br /><img src="${{ steps.build_link.outputs.QR_CALYPSO }}" /></td><td>Link to <a href="${{ steps.build_link.outputs.LINK }}&env=jetpack">Jetpack Cloud live</a> <br /><img src="${{ steps.build_link.outputs.QR_JETPACK }}" /></td></tr><table>\n <em>(These links may take a few minutes to be available)</em>'
+              body: '<!--calypso-live-watermark:apr@v1--><table><tr><td>Link to <a href="${{ steps.build_link.outputs.LINK }}">Calypso live</a> <br /><img src="${{ steps.build_link.outputs.QR_CALYPSO }}" /></td><td>Link to <a href="${{ steps.build_link.outputs.LINK }}&env=jetpack">Jetpack Cloud live</a> <br /><img src="${{ steps.build_link.outputs.QR_JETPACK }}" /></td></tr><table>\n <em>(These links may take a few minutes to be available)</em>'
             })
