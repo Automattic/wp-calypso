@@ -45,6 +45,11 @@
 			box-shadow: none;
 		}
 	}
+
+	button.p2-confirm-email__continue {
+		margin-top: 2.5em;
+		max-width: 228px;
+	}
 }
 
 .p2-confirm-email__message {
@@ -66,6 +71,7 @@
 .p2-confirm-email__buttons {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 }
 
 .p2-confirm-email__buttons-separator {

@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
+import { check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
@@ -9,7 +10,14 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
-function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
+function P2ConfirmEmail( {
+	flowName,
+	goToNextStep,
+	isEmailVerified,
+	stepName,
+	positionInFlow,
+	submitSignupStep,
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const userEmail = useSelector( getCurrentUserEmail );
@@ -28,6 +36,7 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 		</svg>
 	);
 
+	// Remember that we loaded, and not skipped, this step for the user.
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [ dispatch, stepName ] );
@@ -50,15 +59,18 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 			} );
 	};
 
-	return (
-		<P2StepWrapper
-			flowName={ flowName }
-			stepName={ stepName }
-			positionInFlow={ positionInFlow }
-			headerIcon={ mailIcon }
-			headerText={ translate( 'Check your email' ) }
-		>
-			<div className="p2-confirm-email">
+	const handleNextStepClick = ( option ) => {
+		submitSignupStep( {
+			stepName,
+			option,
+		} );
+
+		goToNextStep();
+	};
+
+	const renderCheckEmailNotice = () => {
+		return (
+			<>
 				<div className="p2-confirm-email__message">
 					{ translate(
 						"We've sent an email with a verification link to {{strong}}%(email)s{{/strong}}. Please follow that link to confirm your email address and continue.",
@@ -80,6 +92,43 @@ function P2ConfirmEmail( { flowName, stepName, positionInFlow } ) {
 						</div>
 					</div>
 				) }
+			</>
+		);
+	};
+
+	const renderPostConfirmationNotice = () => {
+		return (
+			<>
+				<div className="p2-confirm-email__message">
+					{ translate(
+						"Thanks for confirming your email address. Your account is now active. We're almost finished!"
+					) }
+				</div>
+				<div className="p2-confirm-email__buttons">
+					<Button
+						className="p2-confirm-email__continue"
+						isPrimary={ true }
+						onClick={ handleNextStepClick }
+					>
+						{ translate( 'Continue' ) }
+					</Button>
+				</div>
+			</>
+		);
+	};
+
+	return (
+		<P2StepWrapper
+			flowName={ flowName }
+			stepName={ stepName }
+			positionInFlow={ positionInFlow }
+			headerIcon={ isEmailVerified ? check : mailIcon }
+			headerText={
+				isEmailVerified ? translate( 'Email confirmed' ) : translate( 'Check your email' )
+			}
+		>
+			<div className="p2-confirm-email">
+				{ isEmailVerified ? renderPostConfirmationNotice() : renderCheckEmailNotice() }
 			</div>
 		</P2StepWrapper>
 	);

@@ -40,7 +40,6 @@ export function generateSteps( {
 	isNewOrExistingSiteFulfilled = noop,
 	setDesignIfNewSite = noop,
 	excludeStepIfEmailVerified = noop,
-	excludeStepIfEmailVerificationSkipped = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -682,11 +681,6 @@ export function generateSteps( {
 		'p2-confirm-email': {
 			stepName: 'p2-confirm-email',
 			fulfilledStepCallback: excludeStepIfEmailVerified,
-		},
-
-		'p2-email-confirmed': {
-			stepName: 'p2-email-confirmed',
-			fulfilledStepCallback: excludeStepIfEmailVerificationSkipped,
 		},
 
 		'plans-personal-monthly': {
