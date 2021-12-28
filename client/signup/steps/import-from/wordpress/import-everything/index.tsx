@@ -1,8 +1,10 @@
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
+import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
+import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 
 import './style.scss';
 
@@ -53,7 +55,14 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 			</div>
 
 			<Title tagName={ 'h3' }>
-				Import everything from openweb.com and overwrite everything on openweb.io?
+				{ sprintf(
+					/* translators: the `from` and `to` fields could be any site URL (eg: "yourname.com") */
+					__( 'Import everything from %(from)s and overwrite everything on %(to)s?' ),
+					{
+						from: convertToFriendlyWebsiteName( fromSite ),
+						to: convertToFriendlyWebsiteName( siteSlug ),
+					}
+				) }
 			</Title>
 
 			<ul className={ classnames( 'import__details-list' ) }>
