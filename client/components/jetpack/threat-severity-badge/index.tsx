@@ -23,7 +23,7 @@ const severityText = ( severity: number ) => {
 	return translate( 'Low' );
 };
 
-const ThreatSeverityBadge = ( { severity } ) => {
+const ThreatSeverityBadge = ( { severity }: { severity: number } ) => {
 	return (
 		<div className="threat-severity-badge__wrapper">
 			<div

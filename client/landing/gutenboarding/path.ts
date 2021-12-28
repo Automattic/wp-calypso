@@ -238,10 +238,13 @@ function useAnchorParameter( {
 	locationStateParamName,
 	sanitize,
 }: UseAnchorParameterType ): string | null {
-	const { state: locationState = {}, search } = useLocation< GutenLocationStateType >();
+	const locationResult = useLocation();
+	const locationState =
+		'state' in locationResult ? ( locationResult.state as Record< string, string > ) : undefined;
+	const search = 'search' in locationResult ? ( locationResult.search as string ) : undefined;
 
 	// Use location state if available
-	const locationStateParamValue = locationState[ locationStateParamName ];
+	const locationStateParamValue = locationState?.[ locationStateParamName ];
 	if ( locationState && locationStateParamValue ) {
 		return sanitize( locationStateParamValue );
 	}

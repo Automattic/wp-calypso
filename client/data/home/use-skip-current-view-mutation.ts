@@ -11,16 +11,16 @@ interface Variables {
 	card?: string;
 }
 
-interface Result extends UseMutationResult< void, unknown, Variables > {
+type Result< TData, TError > = UseMutationResult< TData, TError, Variables > & {
 	skipCurrentView: ( reminder: ReminderDuration ) => void;
 	skipCard: ( card: string, reminder?: ReminderDuration ) => void;
-}
+};
 
-function useSkipCurrentViewMutation( siteId: number ): Result {
+function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< TData, TError > {
 	const queryClient = useQueryClient();
 	const query = useHomeLayoutQueryParams();
 
-	const mutation = useMutation< void, unknown, Variables >(
+	const mutation = useMutation< TData, TError, Variables >(
 		async ( { reminder, card } ) => {
 			const data = await queryClient.fetchQuery(
 				getCacheKey( siteId ),

@@ -58,7 +58,7 @@ export default connect( ( state, { src }: Pick< MediaFileProps, 'src' > ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state ) as string;
 	const isAtomic = !! isSiteAutomatedTransfer( state, siteId as number );
-	const isPrivate = !! isPrivateSite( state, siteId );
+	const isPrivate = !! isPrivateSite( state, siteId ?? 0 );
 	const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
 	const useProxy = ( isAtomic && isPrivate && filePath && isRelativeToSiteRoot ) as boolean;
 

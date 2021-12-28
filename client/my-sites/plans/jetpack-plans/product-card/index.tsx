@@ -49,7 +49,7 @@ interface ProductCardProps {
 	isFeatured?: boolean;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
-	scrollCardIntoView: ScrollCardIntoViewCallback;
+	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
 }
 
