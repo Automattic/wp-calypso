@@ -280,5 +280,19 @@
 			line-height: 1.25em;
 			margin-bottom: 0.75em;
 		}
+
+	}
+
+	.components-modal__button-actions {
+		text-align: right;
+		margin-top: 2.5rem;
+
+		& > button:not( :last-child ) {
+			margin-right: 1rem;
+		}
+
+		.action-buttons__next.is-primary {
+			background: #117ac9;
+		}
 	}
 }
