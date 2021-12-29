@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	BrowserManager,
-	LoginPage,
 	DomainsPage,
 	SidebarComponent,
 	DomainSearchComponent,
@@ -13,28 +12,24 @@ import {
 	CartCheckoutPage,
 	IndividualPurchasePage,
 	NavbarComponent,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
 	let page: Page;
-
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
-
-	const blogName = DataHelper.getBlogName();
-
 	let sidebarComponent: SidebarComponent;
 	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
 	let selectedDomain: string;
 	let domainsPage: DomainsPage;
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.logInWithTestAccount( 'calypsoPreReleaseUser' );
+	const blogName = DataHelper.getBlogName();
+
+	setupHooks( ( args ) => {
+		page = args.page;
+		const testAccount = new TestAccount( 'calypsoPreReleaseUser' );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Set store cookie', async function () {
