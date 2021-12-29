@@ -12,6 +12,7 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 import EmailHeader from 'calypso/my-sites/email/email-header';
+import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import {
 	emailManagement,
 	emailManagementAddEmailForwards,
