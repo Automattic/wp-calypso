@@ -5,13 +5,13 @@
 import {
 	BrowserHelper,
 	DataHelper,
-	LoginPage,
 	SidebarComponent,
 	setupHooks,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-const testAccount = BrowserHelper.targetGutenbergEdge()
+const accountName = BrowserHelper.targetGutenbergEdge()
 	? 'gutenbergSimpleSiteEdgeUser'
 	: 'gutenbergSimpleSiteUser';
 
@@ -19,14 +19,11 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	let sidebarComponent: SidebarComponent;
 	let page: Page;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
-	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.logInWithTestAccount( testAccount );
+		const testAccount = new TestAccount( accountName );
+		await testAccount.authenticate( page );
 	} );
 
 	// @todo: Refactor/Abstract these steps into a WidgetsEditor component

@@ -4,40 +4,35 @@
 
 import {
 	DataHelper,
-	LoginPage,
 	SupportComponent,
 	setupHooks,
 	GutenboardingFlow,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 	let page: Page;
-	let loginPage: LoginPage;
+	let testAccount: TestAccount;
 
 	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
-	beforeAll( async () => {
-		loginPage = new LoginPage( page );
-		await loginPage.visit();
-	} );
-
 	describe.each( [
-		{ siteType: 'Simple', testAccount: 'defaultUser' },
-		{ siteType: 'Atomic', testAccount: 'eCommerceUser' },
-	] )( 'Search and view a support article ($siteType)', function ( { testAccount } ) {
+		{ siteType: 'Simple', accountName: 'defaultUser' },
+		{ siteType: 'Atomic', accountName: 'eCommerceUser' },
+	] )( 'Search and view a support article ($siteType)', function ( { accountName } ) {
 		let supportComponent: SupportComponent;
 		let gutenboardingFlow: GutenboardingFlow;
 
-		afterAll( async () => {
-			await loginPage.visit();
-			await loginPage.clickChangeAccount();
+		beforeAll( async () => {
+			testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
 		} );
 
-		it( `Log in with ${ testAccount }`, async function () {
-			await loginPage.logInWithTestAccount( testAccount );
+		afterAll( async () => {
+			await testAccount.clearAuthenticationState( page );
 		} );
 
 		it( 'Search for help: Create a site', async function () {

@@ -6,11 +6,11 @@ import assert from 'assert';
 import {
 	setupHooks,
 	DataHelper,
-	LoginPage,
 	MediaPage,
 	SidebarComponent,
 	MediaHelper,
 	TestFile,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_UNSUPPORTED_FILE_PATH } from '../constants';
@@ -18,7 +18,6 @@ import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_UNSUPPORTED_FILE_PATH } from '..
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
 	let page: Page;
-	let loginPage: LoginPage;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -34,21 +33,20 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 
 	// Parametrized test.
 	describe.each`
-		siteType      | testAccount
+		siteType      | accountName
 		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
-	`( 'Upload media files ($siteType)', ( { testAccount } ) => {
+	`( 'Upload media files ($siteType)', ( { accountName } ) => {
 		let mediaPage: MediaPage;
+		let testAccount: TestAccount;
 
-		it( `Log in with ${ testAccount }`, async function () {
-			if ( ! loginPage ) {
-				loginPage = new LoginPage( page );
-				await loginPage.visit();
-			} else {
-				await loginPage.visit();
-				await loginPage.clickChangeAccount();
-			}
-			await loginPage.logInWithTestAccount( testAccount );
+		beforeAll( async () => {
+			testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await testAccount.clearAuthenticationState( page );
 		} );
 
 		it( 'Navigate to Media', async function () {

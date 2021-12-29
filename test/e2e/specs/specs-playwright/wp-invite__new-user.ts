@@ -14,6 +14,7 @@ import {
 	Roles,
 	BrowserManager,
 	CloseAccountFlow,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -30,7 +31,6 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 
 	let adjustedInviteLink: string;
 	let page: Page;
-	let loginPage: LoginPage;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -40,10 +40,13 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		let peoplePage: PeoplePage;
 		let sidebarComponent: SidebarComponent;
 
-		it( 'Log in', async function () {
-			loginPage = new LoginPage( page );
-			await loginPage.visit();
-			await loginPage.logInWithTestAccount( invitingUser );
+		beforeAll( async () => {
+			const testAccount = new TestAccount( invitingUser );
+			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await BrowserManager.clearAuthenticationState( page );
 		} );
 
 		it( 'Navigate to Users > All Users', async function () {
@@ -72,10 +75,6 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	} );
 
 	describe( 'Accept invite', function () {
-		it( 'Clear authenticated state', async function () {
-			await BrowserManager.clearAuthenticationState( page );
-		} );
-
 		it( `Invite email was received for test user`, async function () {
 			const emailClient = new EmailClient();
 			const message = await emailClient.getLastEmail( {
@@ -110,10 +109,13 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		let peoplePage: PeoplePage;
 		let sidebarComponent: SidebarComponent;
 
-		it( 'Log in as inviting user', async function () {
-			await loginPage.visit();
-			await loginPage.clickChangeAccount();
-			await loginPage.logInWithTestAccount( invitingUser );
+		beforeAll( async () => {
+			const testAccount = new TestAccount( invitingUser );
+			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await BrowserManager.clearAuthenticationState( page );
 		} );
 
 		it( 'Navigate to Users > All Users', async function () {
@@ -134,10 +136,11 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	describe( 'Close account', function () {
 		it( 'Log in as invited user', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login(
-				{ username: email, password: signupPassword },
-				{ landingUrl: '**/read' }
-			);
+			await loginPage.visit();
+			await Promise.all( [
+				page.waitForNavigation( { url: '**/read' } ),
+				loginPage.logInWithCredentials( email, signupPassword ),
+			] );
 		} );
 
 		it( 'Close account', async function () {

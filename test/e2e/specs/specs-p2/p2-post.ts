@@ -21,17 +21,14 @@ describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 
 	const postContent = DataHelper.getTimestamp();
 
-	setupHooks( ( args: { page: Page } ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
 		testAccount = new TestAccount( 'p2User' );
-	} );
-
-	it( 'Log In', async function () {
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'View P2', async function () {
-		await page.goto( testAccount.siteURL, { waitUntil: 'networkidle' } );
+		await page.goto( testAccount.getSiteURL(), { waitUntil: 'networkidle' } );
 	} );
 
 	it( 'Add a Paragraph block', async function () {

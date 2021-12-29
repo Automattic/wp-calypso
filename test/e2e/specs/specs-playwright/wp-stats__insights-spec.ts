@@ -5,34 +5,32 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginPage,
 	StatsPage,
 	SidebarComponent,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	let page: Page;
-	let loginPage: LoginPage;
+	let testAccount: TestAccount;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
 	describe.each`
-		siteType      | testAccount
+		siteType      | accountName
 		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
-	`( 'View Insights ($siteType)', function ( { testAccount } ) {
-		it( `Log in with ${ testAccount }`, async function () {
-			if ( ! loginPage ) {
-				loginPage = new LoginPage( page );
-				await loginPage.visit();
-			} else {
-				await loginPage.visit();
-				await loginPage.clickChangeAccount();
-			}
-			await loginPage.logInWithTestAccount( testAccount );
+	`( 'View Insights ($siteType)', function ( { accountName } ) {
+		beforeAll( async () => {
+			testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await testAccount.clearAuthenticationState( page );
 		} );
 
 		it( 'Navigate to Stats', async function () {

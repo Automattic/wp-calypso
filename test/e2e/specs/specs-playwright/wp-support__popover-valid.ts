@@ -4,36 +4,34 @@
 
 import {
 	DataHelper,
-	LoginPage,
 	SidebarComponent,
 	SupportComponent,
 	setupHooks,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 	let page: Page;
-	let loginPage: LoginPage;
+	let testAccount: TestAccount;
 
 	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
 	describe.each( [
-		{ siteType: 'Simple', testAccount: 'defaultUser' },
-		{ siteType: 'Atomic', testAccount: 'eCommerceUser' },
-	] )( 'Search and view a support article ($siteType)', function ( { testAccount } ) {
+		{ siteType: 'Simple', accountName: 'defaultUser' },
+		{ siteType: 'Atomic', accountName: 'eCommerceUser' },
+	] )( 'Search and view a support article ($siteType)', function ( { accountName } ) {
 		let supportComponent: SupportComponent;
 
-		it( `Log in with ${ testAccount }`, async function () {
-			if ( ! loginPage ) {
-				loginPage = new LoginPage( page );
-				await loginPage.visit();
-			} else {
-				await loginPage.visit();
-				await loginPage.clickChangeAccount();
-			}
-			await loginPage.logInWithTestAccount( testAccount );
+		beforeAll( async () => {
+			testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await testAccount.clearAuthenticationState( page );
 		} );
 
 		it( 'Navigate to Tools > Marketing', async function () {

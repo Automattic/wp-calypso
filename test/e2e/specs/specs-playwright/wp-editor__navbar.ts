@@ -3,31 +3,22 @@
  * @group calypso-pr
  */
 
-import {
-	DataHelper,
-	LoginPage,
-	NewPostFlow,
-	GutenbergEditorPage,
-	setupHooks,
-} from '@automattic/calypso-e2e';
+import { DataHelper, GutenbergEditorPage, setupHooks, TestAccount } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 	let page: Page;
+	let gutenbergEditorPage: GutenbergEditorPage;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
+		await testAccount.authenticate( page );
 	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.logInWithTestAccount( 'simpleSitePersonalPlanUser' );
-	} );
-
-	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( page );
-		await newPostFlow.newPostFromNavbar();
+	it( 'Go to the new post page', async function () {
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( 'Return to Calypso dashboard', async function () {

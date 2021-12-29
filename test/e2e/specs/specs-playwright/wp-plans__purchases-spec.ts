@@ -4,12 +4,12 @@
 
 import {
 	DataHelper,
-	LoginPage,
 	setupHooks,
 	SidebarComponent,
 	PlansPage,
 	IndividualPurchasePage,
 	CartCheckoutPage,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -19,17 +19,14 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	let purchasesPage: IndividualPurchasePage;
 	let cartCheckoutPage: CartCheckoutPage;
 
-	setupHooks( ( args: { page: Page } ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
+
+		const testAccount = new TestAccount( 'defaultUser' );
+		await testAccount.authenticate( page );
 	} );
 
 	describe( 'Initial navigation', function () {
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.visit();
-			await loginPage.logInWithTestAccount( 'defaultUser' );
-		} );
-
 		it( 'Navigate to Upgrades > Plans', async function () {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Upgrades', 'Plans' );

@@ -5,33 +5,37 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginPage,
 	PublishedPostsListPage,
 	CommentsComponent,
 	NavbarComponent,
 	NotificationsComponent,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
-	let page: Page;
-	let loginPage: LoginPage;
-	let publishedPostsListPage: PublishedPostsListPage;
-	let notificationsComponent: NotificationsComponent;
-
 	const commentingUser = 'commentingUser';
 	const notificationsUser = 'notificationsUser';
 	const comment = DataHelper.getRandomPhrase() + ' notifications-trash-spec';
 
+	let page: Page;
+	let publishedPostsListPage: PublishedPostsListPage;
+	let notificationsComponent: NotificationsComponent;
+
 	setupHooks( ( args ) => {
 		page = args.page;
-		loginPage = new LoginPage( page );
 	} );
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {
-		it( `Log in as ${ commentingUser }`, async function () {
-			await loginPage.visit();
-			await loginPage.logInWithTestAccount( commentingUser );
+		let testAccount: TestAccount;
+
+		beforeAll( async () => {
+			testAccount = new TestAccount( commentingUser );
+			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await testAccount.clearAuthenticationState( page );
 		} );
 
 		it( 'Visit published site', async function () {
@@ -52,10 +56,9 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	} );
 
 	describe( `Trash comment as ${ notificationsUser }`, function () {
-		it( `Log in as ${ notificationsUser }`, async function () {
-			await loginPage.visit();
-			await loginPage.clickChangeAccount();
-			await loginPage.logInWithTestAccount( notificationsUser );
+		beforeAll( async () => {
+			const testAccount = new TestAccount( notificationsUser );
+			await testAccount.authenticate( page );
 		} );
 
 		it( 'Open notification using keyboard shortcut', async function () {

@@ -9,12 +9,11 @@ import {
 	DataHelper,
 	GutenbergEditorPage,
 	EditorSettingsSidebarComponent,
-	LoginPage,
-	NewPostFlow,
 	setupHooks,
 	PublishedPostPage,
 	ImageBlock,
 	skipItIf,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page, ElementHandle } from 'playwright';
 
@@ -29,30 +28,26 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	let publishedPostPage: PublishedPostPage;
-	const testAccount = BrowserHelper.targetGutenbergEdge()
+	const accountName = BrowserHelper.targetGutenbergEdge()
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'simpleSitePersonalPlanUser';
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+
+		const testAccount = new TestAccount( accountName );
+		await testAccount.authenticate( page );
 	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.logInWithTestAccount( testAccount );
-	} );
-
-	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( page );
-		await newPostFlow.newPostFromNavbar();
+	it( 'Go to the new post page', async function () {
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	describe( 'Blocks', function () {
 		let blockHandle: ElementHandle;
 
 		it( 'Enter post title', async function () {
-			gutenbergEditorPage = new GutenbergEditorPage( page );
 			await gutenbergEditorPage.enterTitle( title );
 		} );
 
