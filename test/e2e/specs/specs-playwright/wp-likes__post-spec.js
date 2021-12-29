@@ -37,10 +37,6 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 			await testAccount.authenticate( page );
 		} );
 
-		afterAll( async () => {
-			await testAccount.clearAuthenticationState( page );
-		} );
-
 		it( 'Go to the new post page', async function () {
 			await gutenbergEditorPage.visit( 'post' );
 		} );

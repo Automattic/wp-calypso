@@ -123,23 +123,6 @@ export async function closeBrowser(): Promise< void > {
 }
 
 /**
- * Given a page, this will clear all cookies, local storage and reset permissions for the
- * Browser Context to which the page belongs.
- *
- * @param {Page} page Object representing a page launched by Playwright.
- * @returns {Promise<void>} No return value.
- */
-export async function clearAuthenticationState( page: Page ): Promise< void > {
-	// Navigate to the WordPress.com base URL.
-	// await page.goto( 'https://r-login.wordpress.com/' );
-	// await page.pause();
-	// // Clear local storage.
-	// await page.evaluate( 'localStorage.clear();' );
-	// Lastly, clear the cookies using built-in method.
-	await page.context();
-}
-
-/**
  * Sets the store cookie, used for simulating payment processing.
  *
  * Optinally, set the `currency` parameter to specify the currency to be used in the checkout.

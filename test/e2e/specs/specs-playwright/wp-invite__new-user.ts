@@ -12,7 +12,6 @@ import {
 	setupHooks,
 	UserSignupPage,
 	Roles,
-	BrowserManager,
 	CloseAccountFlow,
 	TestAccount,
 } from '@automattic/calypso-e2e';
@@ -43,10 +42,6 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		beforeAll( async () => {
 			const testAccount = new TestAccount( invitingUser );
 			await testAccount.authenticate( page );
-		} );
-
-		afterAll( async () => {
-			await BrowserManager.clearAuthenticationState( page );
 		} );
 
 		it( 'Navigate to Users > All Users', async function () {
@@ -112,10 +107,6 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		beforeAll( async () => {
 			const testAccount = new TestAccount( invitingUser );
 			await testAccount.authenticate( page );
-		} );
-
-		afterAll( async () => {
-			await BrowserManager.clearAuthenticationState( page );
 		} );
 
 		it( 'Navigate to Users > All Users', async function () {

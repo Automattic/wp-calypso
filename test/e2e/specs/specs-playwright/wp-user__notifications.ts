@@ -34,10 +34,6 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 			await testAccount.authenticate( page );
 		} );
 
-		afterAll( async () => {
-			await testAccount.clearAuthenticationState( page );
-		} );
-
 		it( 'Visit published site', async function () {
 			// TODO make a utility to obtain a blog URL without string substitution.
 			const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;

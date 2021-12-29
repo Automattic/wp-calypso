@@ -30,10 +30,6 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), fu
 			await testAccount.authenticate( page );
 		} );
 
-		afterAll( async () => {
-			await testAccount.clearAuthenticationState( page );
-		} );
-
 		it( 'Open Settings page', async function () {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Settings', 'General' );

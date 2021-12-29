@@ -3,7 +3,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
 import { BrowserContext, Page } from 'playwright';
-import { clearAuthenticationState } from '../browser-manager';
 import { getAccountCredential, getAccountSiteURL, getCalypsoURL, config } from '../data-helper';
 import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
@@ -30,8 +29,6 @@ export class TestAccount {
 			await this.logInViaLoginPage( page );
 		}
 	}
-
-	clearAuthenticationState = clearAuthenticationState;
 
 	async logInViaLoginPage( page: Page ): Promise< void > {
 		const loginPage = new LoginPage( page );

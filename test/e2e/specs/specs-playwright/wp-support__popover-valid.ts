@@ -30,10 +30,6 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 			await testAccount.authenticate( page );
 		} );
 
-		afterAll( async () => {
-			await testAccount.clearAuthenticationState( page );
-		} );
-
 		it( 'Navigate to Tools > Marketing', async function () {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Tools', 'Marketing' );

@@ -30,10 +30,6 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 			await testAccount.authenticate( page );
 		} );
 
-		afterAll( async () => {
-			await testAccount.clearAuthenticationState( page );
-		} );
-
 		it( 'Go to Reader page', async function () {
 			await readerPage.visit();
 		} );
