@@ -17,9 +17,9 @@ import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { requestWhois } from 'calypso/state/domains/management/actions';
 import { getWhoisData } from 'calypso/state/domains/management/selectors';
-import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
@@ -32,8 +32,8 @@ import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-in
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
-import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import DnsRecords from './dns';
+import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
@@ -289,11 +289,11 @@ const Settings = ( {
 		return (
 			<>
 				{ renderDetailsSection() }
-				{ renderNameServersSection() }
 				{ renderSetAsPrimaryDomainSection() }
+				{ renderNameServersSection() }
+				{ renderDnsRecords() }
 				{ renderContactInformationSecion() }
 				{ renderDomainSecuritySection() }
-				{ renderDnsRecords() }
 			</>
 		);
 	};
