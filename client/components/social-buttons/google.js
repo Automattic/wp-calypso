@@ -41,9 +41,10 @@ class GoogleLoginButton extends Component {
 		error: '',
 		showError: false,
 		errorRef: null,
-		isDisabled: true,
-		isLoading: true,
-		isTemporarilyNotLoading: true,
+		isDisabled: false,
+		isLoading: false,
+		isInitilized: false,
+		isClicked: false,
 	};
 
 	constructor( props ) {
@@ -54,13 +55,10 @@ class GoogleLoginButton extends Component {
 		this.handleClick = this.handleClick.bind( this );
 		this.showError = this.showError.bind( this );
 		this.hideError = this.hideError.bind( this );
-		this.updateTemporarilyNotLoading = this.updateTemporarilyNotLoading.bind( this );
 	}
 
 	componentDidMount() {
 		this.initialize();
-		// Removes the loaded state after 2 seconds.
-		window.setTimeout( this.updateTemporarilyNotLoading, 2000 );
 	}
 
 	async loadDependency() {
@@ -86,12 +84,6 @@ class GoogleLoginButton extends Component {
 		auth2InitDone = true;
 	}
 
-	updateTemporarilyNotLoading() {
-		this.setState( {
-			isTemporarilyNotLoading: false,
-		} );
-	}
-
 	initialize() {
 		if ( this.initialized ) {
 			return this.initialized;
@@ -110,6 +102,7 @@ class GoogleLoginButton extends Component {
 					this.setState( {
 						isLoading: false,
 						isDisabled: false,
+						isInitilized: true,
 					} );
 
 					const googleAuth = gapi.auth2.getAuthInstance();
@@ -118,6 +111,13 @@ class GoogleLoginButton extends Component {
 					// handle social authentication response from a redirect-based oauth2 flow
 					if ( currentUser && this.props.uxMode === 'redirect' ) {
 						this.props.responseHandler( currentUser, false );
+					}
+
+					if ( this.state.isClicked ) {
+						// Make sure that handleClick Call happens on the next tick so that the popup always launches.
+						setTimeout( () => {
+							this.handleClick( this.state.isClicked );
+						}, 1 );
 					}
 
 					return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
@@ -152,14 +152,14 @@ class GoogleLoginButton extends Component {
 
 				return Promise.reject( error );
 			} );
-
 		return this.initialized;
 	}
 
 	handleClick( event ) {
 		event.preventDefault();
 
-		if ( this.state.isDisabled ) {
+		if ( ! this.state.isInitilized && ! this.state.isClicked ) {
+			this.setState( { isClicked: event, isLoading: true } );
 			return;
 		}
 
@@ -175,6 +175,8 @@ class GoogleLoginButton extends Component {
 		}
 
 		const { responseHandler } = this.props;
+
+		this.setState( { isClicked: null } );
 
 		// Options are documented here:
 		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
@@ -208,7 +210,7 @@ class GoogleLoginButton extends Component {
 		const isDisabled = Boolean(
 			this.state.isDisabled || this.props.isFormDisabled || this.state.error
 		);
-		const { isLoading, isTemporarilyNotLoading } = this.state;
+		const { isLoading } = this.state;
 
 		const { children } = this.props;
 		let customButton = null;
@@ -225,8 +227,7 @@ class GoogleLoginButton extends Component {
 
 			customButton = cloneElement( children, childProps );
 		}
-		const isDisabledComponent = isTemporarilyNotLoading ? false : isDisabled;
-		const isLoadingComponent = isTemporarilyNotLoading ? false : isLoading;
+
 		return (
 			<>
 				{ customButton ? (
@@ -234,8 +235,8 @@ class GoogleLoginButton extends Component {
 				) : (
 					<button
 						className={ classNames( 'social-buttons__button button', {
-							disabled: isDisabledComponent && ! isLoadingComponent,
-							loading: isLoadingComponent,
+							disabled: isDisabled && ! isLoading,
+							loading: isLoading,
 						} ) }
 						onMouseOver={ this.showError }
 						onFocus={ this.showError }
@@ -243,8 +244,8 @@ class GoogleLoginButton extends Component {
 						onClick={ this.handleClick }
 					>
 						<GoogleIcon
-							isDisabled={ isDisabledComponent }
-							isLoading={ isLoadingComponent }
+							isDisabled={ isDisabled && ! isLoading }
+							isLoading={ isLoading }
 							width={ this.props.isReskinned ? 19 : 20 }
 							height={ this.props.isReskinned ? 19 : 20 }
 						/>
