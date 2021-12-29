@@ -6,9 +6,9 @@ import {
 	ChangeUILanguageFlow,
 	DataHelper,
 	GutenbergEditorPage,
-	LoginPage,
 	NewPostFlow,
 	setupHooks,
+	TestAccount,
 	TestEnvironment,
 } from '@automattic/calypso-e2e';
 import { Page, Frame } from 'playwright';
@@ -227,9 +227,8 @@ describe( 'I18N: Editor', function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.visit();
-		await loginPage.logInWithTestAccount( 'i18nUser' );
+		const testAccount = new TestAccount( 'i18nUser' );
+		await testAccount.authenticate( page );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
