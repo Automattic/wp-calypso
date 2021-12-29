@@ -27,7 +27,7 @@ export function isUserLoggedIn( state ) {
  * @returns {import('calypso/lib/user/user').UserData|null}        Current user
  */
 export function getCurrentUser( state ) {
-	return state.currentUser?.user ?? null;
+	return state?.currentUser?.user ?? null;
 }
 
 /**
