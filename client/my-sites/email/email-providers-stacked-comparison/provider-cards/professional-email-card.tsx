@@ -58,6 +58,7 @@ const getTitanFeatures = () => {
 };
 
 const professionalEmailCardInformation: ProviderCard = {
+	className: 'professional-email-card',
 	detailsExpanded: true,
 	expandButtonLabel: translate( 'Select' ),
 	onExpandedChange: noop,
@@ -169,7 +170,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 					{ translate( '3 months free' ) }
 				</div>
 			) }
-			<PriceBadge priceComponent={ priceWithInterval } className={ 'professional-email-card' } />
+			<PriceBadge priceComponent={ priceWithInterval } />
 		</>
 	);
 

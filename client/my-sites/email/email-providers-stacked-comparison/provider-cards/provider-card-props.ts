@@ -7,6 +7,7 @@ export interface ProviderCard {
 	additionalPriceInformation?: TranslateResult;
 	badge?: ReactElement;
 	billingPeriod?: TranslateResult;
+	className?: string;
 	description: TranslateResult;
 	detailsExpanded?: boolean;
 	discount?: ReactElement | null;

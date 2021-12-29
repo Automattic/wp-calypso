@@ -18,6 +18,7 @@ const noop = () => {};
 const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) => {
 	const {
 		children,
+		className,
 		description,
 		detailsExpanded,
 		expandButtonLabel,
@@ -67,7 +68,7 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 
 	return (
 		<PromoCard
-			className={ classnames( 'email-providers-stacked-comparison__provider-card', {
+			className={ classnames( 'email-providers-stacked-comparison__provider-card', className, {
 				'is-expanded': detailsExpanded,
 			} ) }
 			image={ logo }
