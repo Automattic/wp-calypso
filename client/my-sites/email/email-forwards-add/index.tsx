@@ -99,7 +99,7 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 
 				{ ! areDomainsLoading && (
 					<>
-						<SectionHeader label={ translate( 'Add New Email Forward' ) } />
+						<SectionHeader label={ translate( 'Add New Email Forwards' ) } />
 
 						<Card>
 							<EmailForwardingAddNewCompactList
