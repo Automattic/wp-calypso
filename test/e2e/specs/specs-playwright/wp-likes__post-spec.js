@@ -4,7 +4,6 @@
 
 import {
 	DataHelper,
-	BrowserManager,
 	GutenbergEditorPage,
 	PublishedPostPage,
 	setupHooks,
@@ -29,16 +28,17 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	} );
 
 	describe( 'As the posting user', function () {
+		let testAccount;
 		let gutenbergEditorPage;
 
 		beforeAll( async () => {
 			gutenbergEditorPage = new GutenbergEditorPage( page );
-			const testAccount = new TestAccount( postingUser );
+			testAccount = new TestAccount( postingUser );
 			await testAccount.authenticate( page );
 		} );
 
 		afterAll( async () => {
-			await BrowserManager.clearAuthenticationState( page );
+			await testAccount.clearAuthenticationState( page );
 		} );
 
 		it( 'Go to the new post page', async function () {
