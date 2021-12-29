@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
 import { BrowserContext, Page } from 'playwright';
+import { clearAuthenticationState } from '../browser-manager';
 import { getAccountCredential, getAccountSiteURL, getCalypsoURL, config } from '../data-helper';
 import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
@@ -10,16 +11,10 @@ import { LoginPage } from './pages/login-page';
 export class TestAccount {
 	readonly accountName: string;
 	readonly credentials: [ string, string ];
-	readonly siteURL: string;
 
 	constructor( accountName: string ) {
 		this.accountName = accountName;
 		this.credentials = getAccountCredential( accountName );
-		try {
-			this.siteURL = getAccountSiteURL( accountName );
-		} catch {
-			this.siteURL = '';
-		}
 	}
 
 	async authenticate( page: Page ): Promise< void > {
@@ -35,6 +30,8 @@ export class TestAccount {
 			await this.logInViaLoginPage( page );
 		}
 	}
+
+	clearAuthenticationState = clearAuthenticationState;
 
 	async logInViaLoginPage( page: Page ): Promise< void > {
 		const loginPage = new LoginPage( page );
@@ -56,6 +53,10 @@ export class TestAccount {
 
 		const totpClient = new TOTPClient( config.get( configKey ) );
 		return totpClient.getToken();
+	}
+
+	getSiteURL( { protocol = true }: { protocol?: boolean } = {} ): string {
+		return getAccountSiteURL( this.accountName, { protocol } );
 	}
 
 	async hasFreshCookies(): Promise< boolean > {
