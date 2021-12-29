@@ -29,11 +29,11 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 		page( `https://wordpress.com/jetpack/connect/?url=${ fromSite }` );
 	}
 
-	function runMigrationProcess() {
+	function switchToMigrationScreen() {
 		setChosenType( 'everything' );
 	}
 
-	function runContentUploadProcess() {
+	function switchToContentUploadScreen() {
 		setChosenType( 'content_only' );
 	}
 
@@ -42,8 +42,8 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 			{ chosenType === undefined && (
 				<ContentChooser
 					onJetpackSelection={ installJetpack }
-					onContentOnlySelection={ runContentUploadProcess }
-					onContentEverythingSelection={ runMigrationProcess }
+					onContentOnlySelection={ switchToContentUploadScreen }
+					onContentEverythingSelection={ switchToMigrationScreen }
 					{ ...props }
 				/>
 			) }
