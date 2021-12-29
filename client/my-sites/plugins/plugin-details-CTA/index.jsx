@@ -226,9 +226,9 @@ const CTAButton = ( {
 				{
 					// eslint-disable-next-line no-nested-ternary
 					isMarketplaceProduct
-						? translate( 'Pay and install' )
+						? translate( 'Purchase and activate' )
 						: shouldUpgrade
-						? translate( 'Upgrade and install' )
+						? translate( 'Upgrade and activate' )
 						: translate( 'Install and activate' )
 				}
 			</Button>
