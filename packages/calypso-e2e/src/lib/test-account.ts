@@ -3,7 +3,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
 import { BrowserContext, Page } from 'playwright';
-import { getAccountCredential, getAccountSiteURL, getCalypsoURL } from '../data-helper';
+import { getAccountCredential, getAccountSiteURL, getCalypsoURL, config } from '../data-helper';
+import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
 
 export class TestAccount {
@@ -40,6 +41,21 @@ export class TestAccount {
 
 		await loginPage.visit();
 		await loginPage.logInWithCredentials( ...this.credentials );
+
+		const verificationCode = this.getTOTP();
+		if ( verificationCode ) {
+			await loginPage.submitVerificationCode( verificationCode );
+		}
+	}
+
+	getTOTP(): string | undefined {
+		const configKey = `${ this.accountName }TOTP`;
+		if ( ! config.has( configKey ) ) {
+			return undefined;
+		}
+
+		const totpClient = new TOTPClient( config.get( configKey ) );
+		return totpClient.getToken();
 	}
 
 	async hasFreshCookies(): Promise< boolean > {

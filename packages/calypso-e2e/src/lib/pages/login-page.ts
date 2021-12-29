@@ -32,6 +32,11 @@ export class LoginPage {
 		await Promise.all( [ this.page.waitForNavigation(), this.clickSubmit() ] );
 	}
 
+	async submitVerificationCode( code: string ): Promise< void > {
+		await this.fillVerificationCode( code );
+		await Promise.all( [ this.page.waitForNavigation(), this.clickSubmit() ] );
+	}
+
 	async fillUsername( value: string ): Promise< Locator > {
 		const locator = await this.page.locator( 'input#usernameOrEmail' );
 		await locator.fill( value );
