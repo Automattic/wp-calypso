@@ -118,13 +118,13 @@ export function redirectTiers( { res, originalUrl, params: { tier } }, next ) {
 	if ( tier === undefined ) {
 		return next();
 	}
-	const typeTierRegex = new RegExp( `/type/${ tier }$`, 'g' );
-	const tierRegex = new RegExp( `/${ tier }(/|$)`, 'g' );
 
-	const redirectUrl = originalUrl.replace( typeTierRegex, '' ).replace( tierRegex, '' );
-	if ( redirectUrl === originalUrl ) {
-		return next();
-	}
+	const typeTierRegex = new RegExp( `/type/${ tier }$`, 'g' );
+	const inlineOrPostfixTierRegex = new RegExp( `(?<=/)${ tier }/|/${ tier }$`, 'g' );
+
+	const redirectUrl = originalUrl
+		.replace( typeTierRegex, '' )
+		.replace( inlineOrPostfixTierRegex, '' );
 
 	res.redirect( 301, redirectUrl );
 }
