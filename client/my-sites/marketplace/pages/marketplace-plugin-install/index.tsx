@@ -66,14 +66,9 @@ const MarketplacePluginInstall = ( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
-	const installedPluginRaw: unknown = useSelector( ( state ) =>
+	const installedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
 	);
-	const installedPlugin =
-		'id' in ( installedPluginRaw as InstalledPlugin ) ||
-		'slug' in ( installedPluginRaw as InstalledPlugin )
-			? ( installedPluginRaw as InstalledPlugin )
-			: {};
 	const pluginActive = useSelector( ( state ) =>
 		isPluginActive( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
 	);
@@ -209,8 +204,8 @@ const MarketplacePluginInstall = ( {
 		) {
 			dispatch(
 				activatePlugin( siteId, {
-					slug: installedPlugin?.slug,
-					id: installedPlugin?.id,
+					slug: ( installedPlugin as InstalledPlugin )?.slug,
+					id: ( installedPlugin as InstalledPlugin )?.id,
 				} )
 			);
 			setCurrentStep( 2 );
@@ -226,7 +221,9 @@ const MarketplacePluginInstall = ( {
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
-					`/marketplace/thank-you/${ installedPlugin?.slug || productSlug }/${ selectedSiteSlug }`
+					`/marketplace/thank-you/${
+						( installedPlugin as InstalledPlugin )?.slug || productSlug
+					}/${ selectedSiteSlug }`
 				)
 			);
 		}
