@@ -117,7 +117,7 @@ class GoogleLoginButton extends Component {
 						// Make sure that handleClick Call happens on the next tick so that the popup always launches.
 						setTimeout( () => {
 							this.handleClick( this.state.isClicked );
-						}, 1 );
+						}, 10 );
 					}
 
 					return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
@@ -180,7 +180,7 @@ class GoogleLoginButton extends Component {
 
 		// Options are documented here:
 		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		window.gapi.auth2
+		window?.gapi.auth2
 			.getAuthInstance()
 			.signIn( { prompt: 'select_account' } )
 			.then( responseHandler, ( error ) => {
