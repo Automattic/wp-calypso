@@ -124,6 +124,11 @@ const PluginDetailsCTA = ( {
 		return null;
 	}
 
+	// disable paid plugin cta for jetpack sites
+	if ( isJetpackSelfHosted && isMarketplaceProduct ) {
+		return null;
+	}
+
 	return (
 		<div className="plugin-details-CTA__container">
 			<div className="plugin-details-CTA__price">
