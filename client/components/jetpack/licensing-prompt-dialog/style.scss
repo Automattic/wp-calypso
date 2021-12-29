@@ -1,0 +1,25 @@
+@import 'jetpack-connect/colors.scss';
+
+.is-section-jetpack-connect .licensing-prompt-dialog {
+	@include jetpack-connect-colors();
+}
+
+// Adding some extra specificity to override defaults coming from the dialog class
+.licensing-prompt-dialog.dialog.card {
+	max-width: 650px;
+	padding: 24px;
+	border-radius: 4px;
+}
+
+.licensing-prompt-dialog .licensing-prompt-dialog__title {
+	font-size: $font-title-large;
+	line-height: 40px;
+}
+
+.licensing-prompt-dialog__btn.is-primary {
+	margin-right: 16px;
+}
+
+.licensing-prompt-dialog__btn {
+	border-radius: 4px;
+}
