@@ -24,11 +24,14 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	} );
 
 	describe( 'As the commenting user', () => {
+		let testAccount: TestAccount;
 		beforeAll( async () => {
-			const tst = new TestAccount( 'coBlocksSimpleSiteEdgeUser' );
-			await tst.getCookies();
-			const account = new TestAccount( 'commentingUser' );
-			await account.authenticate( page );
+			testAccount = new TestAccount( 'commentingUser' );
+			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await testAccount.clearAuthenticationState( page );
 		} );
 
 		it( 'Go to Reader page', async function () {
@@ -52,8 +55,8 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 
 	describe( 'As the site owner', () => {
 		beforeAll( async () => {
-			const account = new TestAccount( 'notificationsUser' );
-			await account.authenticate( page );
+			const testAccount = new TestAccount( 'notificationsUser' );
+			await testAccount.authenticate( page );
 		} );
 
 		it( 'Open Notifications panel', async function () {
