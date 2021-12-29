@@ -1,6 +1,7 @@
 import { isEnabled as isConfigEnabled } from '@automattic/calypso-config';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
+import EmailForwardsAdd from 'calypso/my-sites/email/email-forwards-add';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
@@ -15,6 +16,19 @@ import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
 export default {
+	emailManagementAddEmailForwards( pageContext, next ) {
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<EmailForwardsAdd
+					selectedDomainName={ pageContext.params.domain }
+					source={ pageContext.query.source }
+				/>
+			</CalypsoShoppingCartProvider>
+		);
+
+		next();
+	},
+
 	emailManagementAddGSuiteUsers( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>

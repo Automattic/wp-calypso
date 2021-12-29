@@ -36,7 +36,7 @@ function EmailHeader( { currentRoute, selectedSite } ) {
 
 EmailHeader.propTypes = {
 	currentRoute: PropTypes.string,
-	selectedSite: PropTypes.object.isRequired,
+	selectedSite: PropTypes.object,
 };
 
 export default EmailHeader;
