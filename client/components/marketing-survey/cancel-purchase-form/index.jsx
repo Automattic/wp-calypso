@@ -1,6 +1,7 @@
 import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
+	isWpComMonthlyPlan,
 	isWpComBusinessPlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
@@ -40,8 +41,9 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import HappychatButton from 'calypso/components/happychat/button';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getName, isRefundable, isMonthlyPurchase } from 'calypso/lib/purchases';
+import { getName, isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
+import wpcom from 'calypso/lib/wp';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -164,6 +166,7 @@ class CancelPurchaseForm extends Component {
 			upsell: '',
 			atomicRevertCheckOne: false,
 			atomicRevertCheckTwo: false,
+			purchaseIsAlreadyExtended: false,
 		};
 	}
 
@@ -197,7 +200,7 @@ class CancelPurchaseForm extends Component {
 		};
 
 		if ( this.shouldUseBlankCanvasLayout() ) {
-			const { purchase, isMonthly } = this.props;
+			const { purchase } = this.props;
 			if ( value === 'couldNotInstall' && isWpComBusinessPlan( purchase.productSlug ) ) {
 				newState.upsell = 'business-atomic';
 			}
@@ -220,8 +223,9 @@ class CancelPurchaseForm extends Component {
 
 			if (
 				[ 'noTime', 'siteIsNotReady' ].includes( value ) &&
-				isMonthly &&
-				this.props.downgradeClick
+				isWpComMonthlyPlan( purchase.productSlug ) &&
+				!! this.props.freeMonthOfferClick &&
+				! this.state.purchaseIsAlreadyExtended
 			) {
 				newState.upsell = 'free-month-offer';
 			}
@@ -1203,6 +1207,24 @@ class CancelPurchaseForm extends Component {
 		return firstButtons.concat( isFirstStep ? [ next ] : [ prev, next ] );
 	};
 
+	fetchPurchaseExtendedStatus = async ( purchaseId ) => {
+		const res = await wpcom.req.get( {
+			path: `/purchases/${ purchaseId }/has-extended`,
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		const newState = {
+			...this.state,
+			purchaseIsAlreadyExtended: res.has_extended,
+		};
+
+		if ( newState.purchaseIsAlreadyExtended && newState.upsell === 'free-month-offer' ) {
+			newState.upsell = '';
+		}
+
+		this.setState( newState );
+	};
+
 	componentDidUpdate( prevProps ) {
 		if (
 			! prevProps.isVisible &&
@@ -1214,9 +1236,15 @@ class CancelPurchaseForm extends Component {
 	}
 
 	componentDidMount() {
+		const { purchase } = this.props;
+
 		this.initSurveyState();
-		if ( this.props.isAtomicSite && this.props.purchase?.siteId ) {
-			this.props.fetchAtomicTransfer( this.props.purchase.siteId );
+		if ( this.props.isAtomicSite && purchase?.siteId ) {
+			this.props.fetchAtomicTransfer( purchase.siteId );
+		}
+
+		if ( purchase?.id && isWpComMonthlyPlan( purchase?.productSlug ) ) {
+			this.fetchPurchaseExtendedStatus( purchase.id );
 		}
 	}
 
@@ -1310,7 +1338,6 @@ export default connect(
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		isJetpack: isJetpackPlan( purchase ) || isJetpackProduct( purchase ),
-		isMonthly: isMonthlyPurchase( purchase ),
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 		supportVariation: getSupportVariation( state ),
 		site: getSite( state, purchase.siteId ),
