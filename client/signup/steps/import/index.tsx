@@ -70,6 +70,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	const goToImporterPage = ( platform: ImporterPlatform ): void => {
 		let importerUrl;
 		if (
+			( platform === 'wordpress' && isEnabled( 'gutenboarding/import-from-wordpress' ) ) ||
 			( platform === 'medium' && isEnabled( 'gutenboarding/import-from-medium' ) ) ||
 			( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) )
 		) {

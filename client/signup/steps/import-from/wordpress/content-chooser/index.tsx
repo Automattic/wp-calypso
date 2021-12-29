@@ -1,17 +1,56 @@
 import { NextButton } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import FormattedHeader from 'calypso/components/formatted-header';
+import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
 import SelectItems from 'calypso/signup/select-items';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-export const ContentChooser: React.FunctionComponent = () => {
+interface Props {
+	siteId: number;
+	siteSlug: string;
+	fromSite: string;
+	onJetpackSelection: () => void;
+	onContentOnlySelection: () => void;
+	onContentEverythingSelection: () => void;
+}
+export type WPImportType = 'everything' | 'content_only';
+
+export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
+	const {
+		fromSite,
+		onJetpackSelection,
+		onContentOnlySelection,
+		onContentEverythingSelection,
+	} = props;
+
+	/**
+	 ↓ Fields
+	 */
+	const [ hasOriginSiteJetpackConnected, setHasOriginSiteJetpackConnected ] = useState( false );
+
+	/**
+	 ↓ Effects
+	 */
+	useEffect( checkOriginSiteJetpackConnection, [ fromSite ] );
+
+	/**
+	 ↓ Methods
+	 */
+	function checkOriginSiteJetpackConnection() {
+		wpcom
+			.site( fromSite )
+			.get( { apiVersion: '1.2' } )
+			.then( ( site: any ) => setHasOriginSiteJetpackConnected( site && site.capabilities ) )
+			.catch( () => setHasOriginSiteJetpackConnected( false ) );
+	}
 
 	return (
 		<div className={ classnames( 'import-layout', 'content-chooser' ) }>
@@ -28,38 +67,49 @@ export const ContentChooser: React.FunctionComponent = () => {
 			<div className={ 'import-layout__column' }>
 				<div>
 					<ActionCard
-						classNames={ classnames( 'list__importer-option', { 'is-disabled': true } ) }
+						classNames={ classnames( 'list__importer-option', {
+							'is-disabled': ! hasOriginSiteJetpackConnected,
+						} ) }
 						headerText={ __( 'Everything' ) }
 						mainText={ __( "All your site's content, themes, plugins, users and settings" ) }
 					>
-						<NextButton disabled>{ __( 'Continue' ) }</NextButton>
+						<NextButton
+							disabled={ ! hasOriginSiteJetpackConnected }
+							onClick={ onContentEverythingSelection }
+						>
+							{ __( 'Continue' ) }
+						</NextButton>
 					</ActionCard>
-					<SelectItems
-						onSelect={ () => {
-							// install jetpack
-						} }
-						items={ [
-							{
-								key: 'jetpack',
-								title: __( 'Jetpack required' ),
-								description: __(
-									'You need to have Jetpack installed on your site to be able to import everything.'
-								),
-								icon: jetpack,
-								actionText: __( 'Install Jetpack' ),
-								value: '',
-							},
-						] }
-					/>
+					{ ! hasOriginSiteJetpackConnected && (
+						<SelectItems
+							onSelect={ onJetpackSelection }
+							items={ [
+								{
+									key: 'jetpack',
+									title: __( 'Jetpack required' ),
+									description: __(
+										'You need to have Jetpack installed on your site to be able to import everything.'
+									),
+									icon: jetpack,
+									actionText: __( 'Install Jetpack' ),
+									value: '',
+								},
+							] }
+						/>
+					) }
 					<ActionCard
 						classNames={ classnames( 'list__importer-option', { 'is-disabled': false } ) }
 						headerText={ __( 'Content only' ) }
 						mainText={ __( 'Import posts, pages, comments, and media.' ) }
 					>
-						<NextButton>{ __( 'Continue' ) }</NextButton>
+						<NextButton onClick={ onContentOnlySelection }>{ __( 'Continue' ) }</NextButton>
 					</ActionCard>
 				</div>
 			</div>
 		</div>
 	);
 };
+
+export default connect( () => {
+	return {};
+} )( ContentChooser );
