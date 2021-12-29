@@ -159,7 +159,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				/>
 			) }
 
-			{ showEmailForwardLink && (
+			{ showEmailForwardLink && selectedSite && (
 				<div className="email-providers-stacked-comparison__email-forward-section">
 					{ translate( 'Looking for a free email solution?' ) }{ ' ' }
 					{ translate( 'Start with {{link}}Email Forwarding{{/link}}.', {
@@ -167,7 +167,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 							link: (
 								<a
 									href={ emailManagementAddEmailForwards(
-										selectedSite?.slug,
+										selectedSite.slug,
 										selectedDomainName,
 										currentRoute,
 										'purchase'
