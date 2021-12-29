@@ -77,11 +77,9 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 		onDurationChange?.( selectedDuration );
 	}, [ onDurationChange, durationChecked ] );
 
-	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement > } : {};
-
 	return (
 		<>
-			<div className="plans-filter-bar__viewport-sentinel" { ...outerDivProps }></div>
+			<div className="plans-filter-bar__viewport-sentinel" ref={ barRef }></div>
 			<div
 				className={ classNames( 'plans-filter-bar', {
 					sticky: hasCrossed,

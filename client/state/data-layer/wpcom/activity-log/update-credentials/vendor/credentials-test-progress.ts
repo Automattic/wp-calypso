@@ -4,7 +4,7 @@ import { StreamResult as Progress } from './stream-result';
 import { TransportError } from './transport-error';
 
 // TS2322 + throw if we are missing a case
-function exhaustive( x: unknown ): never {
+function exhaustive( x: never ): never {
 	throw new Error( `Unknown enum variant: ${ x }` );
 }
 
@@ -28,7 +28,7 @@ export class Parser {
 	public update( ...updates: Parser[ 'updates' ] ) {
 		for ( const maybeUpdate of updates ) {
 			if ( maybeUpdate.isError ) {
-				this.lastError = maybeUpdate.error ?? null;
+				this.lastError = maybeUpdate.error!;
 				for ( const step of this.steps ) {
 					if ( step.state === StepState.Active ) {
 						step.state = StepState.Bad;
@@ -39,9 +39,8 @@ export class Parser {
 					step.state = StepState.Good;
 				}
 			} else {
-				const update = maybeUpdate.value;
-				const kind = update?.kind;
-				switch ( update?.kind ) {
+				const update = maybeUpdate.value!;
+				switch ( update.kind ) {
 					case UpdateKind.Attempt:
 						for ( const step of this.steps ) {
 							step.state = StepState.Waiting;
@@ -70,7 +69,7 @@ export class Parser {
 						/* do nothing */
 						break;
 					default:
-						exhaustive( kind );
+						exhaustive( update!.kind );
 				}
 			}
 			this.updates.push( maybeUpdate );

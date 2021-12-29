@@ -124,12 +124,12 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 
 		if ( oneUntranslatedPlan?.description ) {
 			// eslint-disable-next-line wpcalypso/i18n-no-variables
-			translate( String( oneUntranslatedPlan.description ) );
+			translate( oneUntranslatedPlan.description );
 		}
 
 		if ( oneUntranslatedPlan?.features?.items?.[ 0 ]?.text ) {
 			// eslint-disable-next-line wpcalypso/i18n-no-variables
-			translate( String( oneUntranslatedPlan.features.items[ 0 ]?.text ) );
+			translate( oneUntranslatedPlan.features.items[ 0 ]?.text );
 		}
 	}, [ duration, currentPlanSlug, translate ] );
 

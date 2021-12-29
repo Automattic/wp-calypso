@@ -1,6 +1,5 @@
 import { flowRight as compose, get } from 'lodash';
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
-import type { AppState } from 'calypso/types';
 
 import 'calypso/state/automated-transfer/init';
 
@@ -32,7 +31,7 @@ export interface EligibilityData {
  * @param state automated transfer state sub-tree for a site
  * @returns eligibility information for site
  */
-export const getEligibilityData = ( state: AppState ): EligibilityData =>
+export const getEligibilityData = ( state ): EligibilityData =>
 	get( state, 'eligibility', { lastUpdate: 0 } );
 
 /**
@@ -50,7 +49,7 @@ export const getEligibility = compose( getEligibilityData, getAutomatedTransfer 
  * @param {object} state global app state
  * @returns {boolean} eligibility status for site
  */
-export const getEligibilityStatus = ( state: AppState ): boolean =>
+export const getEligibilityStatus = ( state ) =>
 	!! get( state, 'lastUpdate', 0 ) && ! get( state, 'eligibilityHolds', [] ).length;
 
 /**

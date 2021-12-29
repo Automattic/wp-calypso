@@ -4,7 +4,6 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { ReactNode } from 'react';
 
 interface Props {
 	section: string;
@@ -18,7 +17,7 @@ export default function ScanNavigation( { section }: Props ) {
 		return <SectionNav />;
 	}
 
-	const strings: Record< string, ReactNode > = {
+	const strings = {
 		scanner: translate( 'Scanner' ),
 		history: translate( 'History' ),
 	};

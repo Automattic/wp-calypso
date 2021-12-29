@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -11,17 +12,16 @@ import { getItemSlugByDuration } from './utils';
 import type { Duration, PurchaseCallback, PurchaseURLCallback, SelectorProduct } from '../types';
 import type { PlanRecommendation } from './types';
 import './style.scss';
-import type { ReactNode, FC } from 'react';
 
 type Props = {
 	planRecommendation: PlanRecommendation;
 	duration: Duration;
-	filterBar: ReactNode;
+	filterBar: React.ReactNode;
 	onSelectProduct: PurchaseCallback;
-	createButtonURL?: PurchaseURLCallback;
+	createButtonURL: PurchaseURLCallback;
 };
 
-const PlanUpgradeSection: FC< Props > = ( {
+const PlanUpgradeSection: React.FC< Props > = ( {
 	planRecommendation,
 	duration,
 	filterBar,
@@ -47,20 +47,17 @@ const PlanUpgradeSection: FC< Props > = ( {
 				components: {
 					product: (
 						<span className="plan-upgrade__product">
-							{ newItems.reduce(
-								( result: ReactNode[], { displayName }: SelectorProduct, index: number ) => {
-									if ( result.length === 0 ) {
-										return [ displayName ];
-									}
+							{ newItems.reduce( ( result, { displayName }, index ) => {
+								if ( result.length === 0 ) {
+									return [ displayName ];
+								}
 
-									if ( index === newItemCount - 1 ) {
-										return [ ...result, ' & ', displayName ];
-									}
+								if ( index === newItemCount - 1 ) {
+									return [ ...result, ' & ', displayName ];
+								}
 
-									return [ ...result, ', ', displayName ];
-								},
-								[]
-							) }
+								return [ ...result, ', ', displayName ];
+							}, [] ) }
 						</span>
 					),
 				},

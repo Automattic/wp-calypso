@@ -42,8 +42,7 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_business_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
-	const { product_slug: planSlug = '' } =
-		useSelector( ( state ) => getSitePlan( state, siteId ) ) ?? {};
+	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
 
 	// Don't show the Activity Log promo for Personal or Premium plan owners.
 	const filteredPromos: PromoSectionProps = useMemo( () => {

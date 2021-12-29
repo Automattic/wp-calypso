@@ -1,10 +1,5 @@
 import find from 'lodash/find';
-import type {
-	APIError,
-	Partner,
-	PartnerKey,
-	PartnerPortalStore,
-} from 'calypso/state/partner-portal/types';
+import { Partner, PartnerKey, PartnerPortalStore } from 'calypso/state/partner-portal/types';
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 
@@ -41,6 +36,6 @@ export function getCurrentPartner( state: PartnerPortalStore ): Partner | null {
 	return state.partnerPortal.partner.current;
 }
 
-export function getPartnerRequestError( state: PartnerPortalStore ): APIError | null {
+export function getPartnerRequestError( state: PartnerPortalStore ): string {
 	return state.partnerPortal.partner.error;
 }

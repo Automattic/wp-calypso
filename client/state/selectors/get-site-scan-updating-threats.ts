@@ -1,5 +1,4 @@
 import 'calypso/state/data-layer/wpcom/sites/scan';
-import type { AppState } from 'calypso/types';
 
 /**
  * Returns an array of threat IDs from threats that are being updated (fixing/ignoring).
@@ -9,6 +8,6 @@ import type { AppState } from 'calypso/types';
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {number[]}         Array of threat IDs
  */
-export default function getSiteScanUpdatingThreats( state: AppState, siteId: number ): number[] {
+export default function getSiteScanUpdatingThreats( state, siteId: number ): number[] {
 	return state.jetpackScan.threats?.updating?.[ siteId ] ?? [];
 }

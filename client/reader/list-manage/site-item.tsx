@@ -69,7 +69,7 @@ export default function SiteItem( props: {
 	owner: string;
 } ): React.ReactElement | null {
 	const { item, list, owner } = props;
-	const site = props.item.meta?.data?.site as Site | SiteError | undefined;
+	const site = props.item.meta?.data?.site as Site | SiteError;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -115,14 +115,12 @@ export default function SiteItem( props: {
 				</Button>
 			) }
 
-			{ ! isSiteError( site ) && (
-				<ItemRemoveDialog
-					onClose={ deleteItem }
-					title={ <SiteTitle site={ site } /> }
-					type="site"
-					visibility={ showDeleteConfirmation }
-				/>
-			) }
+			<ItemRemoveDialog
+				onClose={ deleteItem }
+				title={ <SiteTitle site={ site } /> }
+				type="site"
+				visibility={ showDeleteConfirmation }
+			/>
 		</Card>
 	);
 }

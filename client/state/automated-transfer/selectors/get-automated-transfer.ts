@@ -1,8 +1,6 @@
-import type { AppState } from 'calypso/types';
+import { get } from 'lodash';
 
 import 'calypso/state/automated-transfer/init';
 
-const emptyData = {};
-
-export const getAutomatedTransfer = ( state: AppState, siteId: number | null ) =>
-	siteId ? state.automatedTransfer?.[ siteId ] ?? emptyData : emptyData;
+export const getAutomatedTransfer = ( state, siteId: number | null ) =>
+	get( state, [ 'automatedTransfer', siteId ], {} );

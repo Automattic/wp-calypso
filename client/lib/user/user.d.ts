@@ -2,7 +2,6 @@ import { URL } from '../../types';
 
 export type UserMetaData = {
 	links: Record< 'self' | 'help' | 'site' | 'flags', URL >;
-	plans_reorder_abtest_variation?: string;
 	data?: {
 		flags: {
 			active_flags: string[];

@@ -25,7 +25,7 @@ function QueryBillingTransaction( { transactionId } ) {
 }
 
 QueryBillingTransaction.propTypes = {
-	transactionId: PropTypes.oneOfType( PropTypes.string, PropTypes.number ).isRequired,
+	transactionId: PropTypes.string.isRequired,
 };
 
 export default QueryBillingTransaction;
