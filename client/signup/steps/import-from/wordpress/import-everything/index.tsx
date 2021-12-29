@@ -11,11 +11,12 @@ import './style.scss';
 interface Props {
 	fromSite: string;
 	siteSlug: string;
+	startImport: () => void;
 }
 
 export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { fromSite, siteSlug } = props;
+	const { fromSite, siteSlug, startImport } = props;
 
 	return (
 		<div className={ classnames( 'import__import-everything' ) }>
@@ -83,7 +84,7 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 				) }
 			</SubTitle>
 
-			<NextButton>{ __( 'Start import' ) }</NextButton>
+			<NextButton onClick={ startImport }>{ __( 'Start import' ) }</NextButton>
 		</div>
 	);
 };
