@@ -291,7 +291,17 @@
 			margin-right: 1rem;
 		}
 
+		button {
+			border-radius: 4px;
+			font-weight: 500;
+		}
+
+		.action-buttons__cancel {
+			color: var( --studio-gray-100 );
+		}
+
 		.action-buttons__next.is-primary {
+			border: none;
 			background: #117ac9;
 		}
 	}

@@ -54,3 +54,11 @@
 		}
 	}
 }
+
+.components-modal__frame.components-modal-new__frame {
+	&.import__confirm-modal {
+		p {
+			font-size: 1rem;
+		}
+	}
+}
