@@ -16,14 +16,6 @@ namespace A8C\FSE\ErrorReporting;
  * @return bool True if current site is eligible for error reporting, false otherwise.
  */
 function is_site_eligible_for_error_reporting() {
-	// For now, Error Reporting is never activated in WoA. We would need to
-	// activate this feature using the filter below, but we still return `false`
-	// early if we detect we're in WoA, just in case. This will be removed
-	// once we decide to activate Error Reporting for AT sites.
-	if ( is_atomic() ) {
-		return false;
-	}
-
 	/**
 	 * Can be used to toggle the Error Reporting functionality.
 	 *
@@ -83,15 +75,6 @@ function user_in_sentry_test_segment( $user_id ) {
 	// segment the user is. i.e if current_segment is 10, then only ids that end in < 10
 	// will be considered part of the segment.
 	return $user_segment < $current_segment;
-}
-
-/**
- * Returns whether or not the site loading ETK is in the WoA env.
- *
- * @return bool
- */
-function is_atomic() {
-	return defined( 'IS_ATOMIC' ) && IS_ATOMIC;
 }
 
 /**
