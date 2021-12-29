@@ -20,7 +20,7 @@ export default class GoogleIcon extends PureComponent {
 	};
 
 	render() {
-		const props = omit( this.props, [ 'isDisabled' ] );
+		const props = omit( this.props, [ 'isDisabled', 'isLoading' ] );
 
 		return (
 			<svg
