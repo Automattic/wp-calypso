@@ -1,6 +1,5 @@
 import emailValidator from 'email-validator';
 import { translate, TranslateResult } from 'i18n-calypso';
-import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -139,12 +138,14 @@ const validateOverallEmail = (
 const validateOverallEmailAgainstExistingEmails = (
 	{ value: mailBox, error: mailBoxError }: GSuiteNewUserField,
 	{ value: domain }: GSuiteNewUserField,
-	existingGSuiteUsers: [  ]
+	existingGSuiteUsers: GSuiteProductUser[]
 ): GSuiteNewUserField => ( {
 	value: mailBox,
 	error:
 		! mailBoxError &&
-		includes( mapValues( existingGSuiteUsers, 'email' ), `${ mailBox }@${ domain }` )
+		existingGSuiteUsers.some(
+			( existingGSuiteUser ) => existingGSuiteUser?.email === `${ mailBox }@${ domain }`
+		)
 			? translate( 'You already have this email address.' )
 			: mailBoxError,
 } );
@@ -176,9 +177,11 @@ const validateNewUserMailboxIsUnique = (
  * Adds a duplicate error to each mailBox with a duplicate mailbox
  */
 const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ): GSuiteNewUser[] => {
-	const mailboxesByCount: { [ mailbox: string ]: number } = countBy(
-		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
-	);
+	const mailboxesByCount = users.reduce( ( workingCount: Record< string, number >, user ) => {
+		const mailboxName = user.mailBox.value;
+		workingCount[ mailboxName ] = 1 + ( workingCount[ mailboxName ] ?? 0 );
+		return workingCount;
+	}, {} );
 
 	return users.map( ( { uuid, domain, mailBox, firstName, lastName, password } ) => ( {
 		uuid,
@@ -283,7 +286,7 @@ const validateUsers = (
 
 const validateAgainstExistingUsers = (
 	{ uuid, domain, mailBox, firstName, lastName, password }: GSuiteNewUser,
-	existingGSuiteUsers: [  ]
+	existingGSuiteUsers: GSuiteProductUser[]
 ): GSuiteNewUser => ( {
 	uuid,
 	firstName,
@@ -351,15 +354,22 @@ const getItemsForCart = (
 	productSlug: string,
 	users: GSuiteNewUser[]
 ): MinimalRequestCartProduct[] => {
-	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
-		groupBy( users, 'domain.value' ),
-		( groupedUsers ) => groupedUsers.map( transformUserForCart )
+	const usersGroupedByDomain = users.reduce(
+		( usersByDomain: Record< string, GSuiteProductUser[] >, user: GSuiteNewUser ) => {
+			if ( ! usersByDomain[ user.domain.value ] ) {
+				usersByDomain[ user.domain.value ] = [];
+			}
+			usersByDomain[ user.domain.value ].push( transformUserForCart( user ) );
+
+			return usersByDomain;
+		},
+		{}
 	);
 
-	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domainName: string ) => {
+	return Object.entries( usersGroupedByDomain ).map( ( [ domainName, groupedUsers ] ) => {
 		const properties: Record< string, unknown > = { domain: domainName, users: groupedUsers };
 
-		const domain = find( domains, [ 'name', domainName ] );
+		const domain = domains.find( ( domain ) => domain.name === domainName );
 
 		const isExtraLicense = domain && hasGSuiteWithUs( domain );
 
