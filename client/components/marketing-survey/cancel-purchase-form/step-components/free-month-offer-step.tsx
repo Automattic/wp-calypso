@@ -23,7 +23,7 @@ const FreeMonthOfferStep: FunctionComponent< Props > = ( { productSlug } ) => {
 			<FormFieldset>
 				<p>
 					{ translate(
-						'Need more time? Enjoy a month of your Premium subscription for free and continue building on your site.',
+						'Need more time? Enjoy a month of your %(planName)s subscription for free and continue building on your site.',
 						{ args: { planName: getPlan( productSlug )?.getTitle() } }
 					) }
 				</p>
