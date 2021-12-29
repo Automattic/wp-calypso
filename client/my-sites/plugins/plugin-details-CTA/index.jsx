@@ -228,7 +228,7 @@ const CTAButton = ( {
 					isMarketplaceProduct
 						? translate( 'Purchase and activate' )
 						: shouldUpgrade
-						? translate( 'Upgrade and install' )
+						? translate( 'Upgrade and activate' )
 						: translate( 'Install and activate' )
 				}
 			</Button>
