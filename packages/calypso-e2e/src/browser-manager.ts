@@ -130,18 +130,13 @@ export async function closeBrowser(): Promise< void > {
  * @returns {Promise<void>} No return value.
  */
 export async function clearAuthenticationState( page: Page ): Promise< void > {
-	// Save references to the BrowserContext and the current URL the page is on.
-	const browserContext = page.context();
-	const currentURL = page.url();
-
 	// Navigate to the WordPress.com base URL.
-	await page.goto( 'https://r-login.wordpress.com/' );
-	// Clear local storage.
-	await page.evaluate( 'localStorage.clear();' );
+	// await page.goto( 'https://r-login.wordpress.com/' );
+	// await page.pause();
+	// // Clear local storage.
+	// await page.evaluate( 'localStorage.clear();' );
 	// Lastly, clear the cookies using built-in method.
-	await browserContext.clearCookies();
-	// Previous steps navigated page away from target page. Return page to the original URL.
-	await page.goto( currentURL );
+	await page.context();
 }
 
 /**
