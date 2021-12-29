@@ -182,7 +182,7 @@ function PluginDetails( props ) {
 		// - change the first breadcrumb if prev page wasn't plugins page (eg activity log)
 		const navigationItems = [
 			{ label: translate( 'Plugins' ), href: `/plugins/${ selectedSite?.slug || '' }` },
-			{ label: fullPlugin.name },
+			{ label: fullPlugin.name, href: `/plugins/${ selectedSite?.slug }/${ fullPlugin.slug }` },
 		];
 
 		return navigationItems;
