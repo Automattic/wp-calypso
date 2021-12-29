@@ -17,6 +17,7 @@ import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { requestWhois } from 'calypso/state/domains/management/actions';
 import { getWhoisData } from 'calypso/state/domains/management/selectors';
 import {
@@ -25,11 +26,13 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
+import DnsRecords from './dns';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
@@ -43,6 +46,8 @@ const Settings = ( {
 	isLoadingNameservers,
 	loadingNameserversError,
 	nameservers,
+	dns,
+	isRequestingDomains,
 	purchase,
 	requestWhois,
 	selectedDomainName,
@@ -190,6 +195,23 @@ const Settings = ( {
 		);
 	};
 
+	const renderDnsRecords = () => {
+		return (
+			<Accordion
+				title={ translate( 'DNS records', { textOnly: true } ) }
+				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
+			>
+				<DnsRecords
+					dns={ dns }
+					isRequestingDomains={ isRequestingDomains }
+					selectedDomainName={ selectedDomainName }
+					selectedSite={ selectedSite }
+					currentRoute={ currentRoute }
+				/>
+			</Accordion>
+		);
+	};
+
 	const renderSetAsPrimaryDomainSection = () => {
 		if ( ! domain ) {
 			return null;
@@ -267,8 +289,9 @@ const Settings = ( {
 		return (
 			<>
 				{ renderDetailsSection() }
-				{ renderNameServersSection() }
 				{ renderSetAsPrimaryDomainSection() }
+				{ renderNameServersSection() }
+				{ renderDnsRecords() }
 				{ renderContactInformationSecion() }
 				{ renderDomainSecuritySection() }
 			</>
@@ -313,7 +336,6 @@ export default connect(
 		const purchase = subscriptionId
 			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
 			: null;
-
 		return {
 			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			currentRoute: getCurrentRoute( state ),
@@ -321,6 +343,8 @@ export default connect(
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
+			dns: getDomainDns( state, ownProps.selectedDomainName ),
+			isRequestingDomains: isRequestingSiteDomains( state, ownProps.selectedSite.ID ),
 		};
 	},
 	{
