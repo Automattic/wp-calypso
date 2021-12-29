@@ -30,7 +30,9 @@ const ConfirmModal: React.FunctionComponent< Props > = ( data ) => {
 				) }
 			</p>
 			<div className={ classnames( 'components-modal__button-actions' ) }>
-				<Button onClick={ onClose }>{ __( 'Cancel' ) }</Button>
+				<Button className={ classnames( 'action-buttons__cancel' ) } onClick={ onClose }>
+					{ __( 'Cancel' ) }
+				</Button>
 				<NextButton onClick={ onConfirm }>{ __( 'Import and overwrite' ) }</NextButton>
 			</div>
 		</Modal>

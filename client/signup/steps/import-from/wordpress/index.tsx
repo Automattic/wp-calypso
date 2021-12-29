@@ -37,6 +37,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 		setChosenType( 'content_only' );
 	}
 
+	function runImportMigrationProcess() {
+		// console.log( 'runImportMigrationProcess' );
+	}
+
 	return (
 		<>
 			{ chosenType === undefined && (
@@ -48,7 +52,11 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 				/>
 			) }
 			{ chosenType === 'everything' && (
-				<ImportEverything fromSite={ fromSite } siteSlug={ siteSlug } />
+				<ImportEverything
+					fromSite={ fromSite }
+					siteSlug={ siteSlug }
+					startImport={ runImportMigrationProcess }
+				/>
 			) }
 			{ chosenType === 'content_only' && <div>Import Content only</div> }
 		</>
