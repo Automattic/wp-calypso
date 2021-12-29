@@ -8,6 +8,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
+import LicensingPromptDialog from 'calypso/components/jetpack/licensing-prompt-dialog';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -179,6 +180,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		<>
 			<QueryJetpackSaleCoupon />
 			{ nav }
+
+			<LicensingPromptDialog urlQueryArgs={ urlQueryArgs } />
 
 			<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
 				<PageViewTracker
