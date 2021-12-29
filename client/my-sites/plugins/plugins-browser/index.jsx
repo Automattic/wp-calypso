@@ -349,22 +349,39 @@ const SearchListView = ( {
 		const subtitle =
 			pluginsPagination &&
 			translate( '%(total)s plugin', '%(total)s plugins', {
-				count: pluginsPagination.results,
+				count: pluginsPagination.results + paidPluginsBySearchTerm?.length,
 				textOnly: true,
 				args: {
-					total: pluginsPagination.results,
+					total: pluginsPagination.results + paidPluginsBySearchTerm?.length,
 				},
 			} );
 
-		const paginationItemsFetch = isEnabled( 'marketplace-v1' )
-			? SEARCH_RESULTS_LIST_LENGTH - paidPluginsBySearchTerm?.length
-			: SEARCH_RESULTS_LIST_LENGTH;
+		let pageSize;
+		if ( ! isEnabled( 'marketplace-v1' ) ) {
+			pageSize = SEARCH_RESULTS_LIST_LENGTH;
+		} else if ( pluginsPagination?.page === 1 ) {
+			// Paid results appear only in the first page.
+			// Since the wporg results will always be an even number and paid results might be odd
+			// append one more wporg result if needed to fill the grid.
+			pageSize =
+				SEARCH_RESULTS_LIST_LENGTH +
+				paidPluginsBySearchTerm?.length +
+				( paidPluginsBySearchTerm?.length % 2 );
+		} else {
+			pageSize = SEARCH_RESULTS_LIST_LENGTH;
+		}
+
+		const pluginItemsFeatch = ( page ) => {
+			return isEnabled( 'marketplace-v1' ) && page === 1
+				? SEARCH_RESULTS_LIST_LENGTH + ( paidPluginsBySearchTerm?.length % 2 )
+				: SEARCH_RESULTS_LIST_LENGTH;
+		};
 
 		return (
 			<>
 				<PluginsBrowserList
 					plugins={
-						isEnabled( 'marketplace-v1' )
+						isEnabled( 'marketplace-v1' ) && pluginsPagination?.page === 1
 							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
 							: pluginsBySearchTerm
 					}
@@ -373,7 +390,7 @@ const SearchListView = ( {
 					subtitle={ subtitle }
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm || isFetchingPaidPluginsBySearchTerm }
-					size={ SEARCH_RESULTS_LIST_LENGTH }
+					size={ pageSize }
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
@@ -382,10 +399,10 @@ const SearchListView = ( {
 				{ pluginsPagination && (
 					<Pagination
 						page={ pluginsPagination.page }
-						perPage={ paginationItemsFetch }
+						perPage={ pluginItemsFeatch( pluginsPagination?.page ) }
 						total={ pluginsPagination.results }
 						pageClick={ ( page ) => {
-							dispatch( fetchPluginsList( null, page, searchTerm, paginationItemsFetch ) );
+							dispatch( fetchPluginsList( null, page, searchTerm, pluginItemsFeatch( page ) ) );
 						} }
 						variant={ PaginationVariant.minimal }
 					/>
