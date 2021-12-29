@@ -17,13 +17,13 @@ const FreeMonthOfferStep: FunctionComponent< Props > = ( { productSlug } ) => {
 			<FormSectionHeading className="free-month-offer-step__heading">
 				{ translate( 'How about a free month?', {
 					comment:
-						'Title of a nudge that offers a free month to a user who is canceling their current subscription.',
+						'Title of a nudge that offers a free month to those who are canceling their current subscription.',
 				} ) }
 			</FormSectionHeading>
 			<FormFieldset>
 				<p>
 					{ translate(
-						'We will give you a free month of %(planName)s plan to help you continue using the benefits.',
+						'Need more time? Enjoy a month of your Premium subscription for free and continue building on your site.',
 						{ args: { planName: getPlan( productSlug )?.getTitle() } }
 					) }
 				</p>
