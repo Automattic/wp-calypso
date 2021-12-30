@@ -71,11 +71,10 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Opens the new post/page page.
+	 * Opens the "new post/page" page. By default it will open the "new post" page.
 	 *
-	 * @see {link https://wordpress.com/post}
-	 * @param type Type of the target page - can be "post" or "page".
-	 * @returns The main resource response.
+	 * Example "new post": {@link https://wordpress.com/post}
+	 * Example "new page": {@link https://wordpress.com/page}
 	 */
 	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
 		const request = await this.page.goto( getCalypsoURL( type ) );

@@ -34,8 +34,7 @@ export class ReaderPage {
 	/**
 	 * Opens the Reader page.
 	 *
-	 * @see {link https://wordpress.com/read}
-	 * @returns The main resource response.
+	 * Example {@link https://wordpress.com/read}
 	 */
 	async visit(): Promise< Response | null > {
 		return await this.page.goto( getCalypsoURL( 'read' ) );
