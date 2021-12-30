@@ -91,7 +91,7 @@ registerBlockType( 'a8c/spoiler', {
 		__( 'spoiler' ),
 		__( 'accordion' ),
 		__( 'Dropdown' ),
-		__( 'details' ),
+		__( 'Details' ),
 		__( 'collapsible' ),
 		__( 'expandable' ),
 		__( 'show' ),
