@@ -49,6 +49,28 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
+
+		script {
+			name = "Webhook Start"
+			scriptContent = """
+				#!/usr/bin/env bash
+
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
+
+				payload=${'$'}(jq -n \
+					--arg action "start" \
+					--arg commit "${Settings.WpCalypso.paramRefs.buildVcsNumber}" \
+					--arg branch "%teamcity.build.branch%" \
+					'{action: ${'$'}action, commit: ${'$'}commit, branch: ${'$'}branch}' \
+				)
+				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
+
+				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY_SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
+			"""
+		}
+
 		script {
 			name = "Post PR comment"
 			scriptContent = """
@@ -89,6 +111,7 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
+					registry.a8c.com/calypso:${Settings.WpCalypso.paramRefs.buildVcsNumber}-%teamcity.build.branch%
 				""".trimIndent()
 				commandArgs = """
 					--pull
@@ -112,6 +135,36 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
 			}
+		}
+
+		script {
+			name = "Webhook fail OR webhook done and push trunk tag for deploy"
+			executionMode = BuildStep.ExecutionMode.ALWAYS
+			scriptContent = """
+				#!/usr/bin/env bash
+
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
+
+				ACTION="done";
+				FAILURES=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c "FAILURE")
+				if [ ${'$'}FAILURES -ne 0 ]; then
+					ACTION="fail"
+				else
+					docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
+				fi
+
+				payload=${'$'}(jq -n \
+					--arg action "${'$'}ACTION" \
+					--arg commit "${Settings.WpCalypso.paramRefs.buildVcsNumber}" \
+					--arg branch "%teamcity.build.branch%" \
+					'{action: ${'$'}action, commit: ${'$'}commit, branch: ${'$'}branch}' \
+				)
+				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
+
+				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY_SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
+			"""
 		}
 
 		script {
