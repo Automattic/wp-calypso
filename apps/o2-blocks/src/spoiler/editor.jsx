@@ -87,15 +87,15 @@ registerBlockType( 'a8c/spoiler', {
 	icon: 'warning',
 	category: 'a8c',
 	description: __( 'Hide content until the reader wants to see it.' ),
-	keywords: [ 
-		__( 'spoiler' ), 
-		__( 'accordion' ), 
-		__( 'Dropdown' ), 
-		__( 'details' ), 
-		__( 'collapsible' ), 
+	keywords: [
+		__( 'spoiler' ),
+		__( 'accordion' ),
+		__( 'Dropdown' ),
+		__( 'details' ),
+		__( 'collapsible' ),
 		__( 'expandable' ),
-		__( 'show' ), 
-		__( 'hide' ) 
+		__( 'show' ),
+		__( 'hide' ),
 	],
 	attributes: blockAttributes,
 	edit,
