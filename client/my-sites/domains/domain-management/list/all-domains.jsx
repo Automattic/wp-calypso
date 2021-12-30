@@ -548,26 +548,26 @@ class AllDomains extends Component {
 	}
 
 	renderDomainTableFilterButton() {
-		const { context } = this.props;
+		const { context, translate } = this.props;
 
 		const selectedFilter = context?.query?.filter;
 		const nonWpcomDomains = this.mergeFilteredDomainsWithDomainsDetails();
 
 		const filterOptions = [
 			{
-				label: 'All domains',
+				label: translate( 'All domains' ),
 				value: '',
 				path: domainManagementRoot(),
 				count: nonWpcomDomains?.length,
 			},
 			{
-				label: 'Owned by me',
+				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
-				label: 'Owned by others',
+				label: translate( 'Owned by others' ),
 				value: 'owned-by-others',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-others' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
