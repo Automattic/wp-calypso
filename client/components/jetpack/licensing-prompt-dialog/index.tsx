@@ -1,4 +1,4 @@
-import { Button, Dialog } from '@automattic/components';
+import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -64,6 +64,12 @@ function LicensingPromptDialog( { siteId }: Props ) {
 			shouldCloseOnEsc
 		>
 			<h1 className="licensing-prompt-dialog__title">{ title }</h1>
+			<Gridicon
+				className="licensing-prompt-dialog__close"
+				icon="cross-small"
+				size={ 24 }
+				onClick={ closeDialog }
+			/>
 			<p className="licensing-prompt-dialog__instructions">
 				{ preventWidows(
 					translate(

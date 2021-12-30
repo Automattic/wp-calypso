@@ -9,6 +9,10 @@
 
 // Adding some extra specificity to override defaults coming from the dialog class
 .licensing-prompt-dialog.dialog.card {
+	position: relative;
+
+	padding: 12px 0;
+
 	max-width: 650px;
 	border-radius: 4px;
 
@@ -18,8 +22,24 @@
 }
 
 .licensing-prompt-dialog .licensing-prompt-dialog__title {
-	font-size: $font-title-large;
-	line-height: 40px;
+	font-size: $font-title-medium;
+	line-height: 30px;
+
+	@include break-mobile {
+		font-size: $font-title-large;
+		line-height: 40px;
+	}
+}
+
+.licensing-prompt-dialog__close {
+	position: absolute;
+	right: 8px;
+	top: 8px;
+
+	@include break-mobile {
+		right: 24px;
+		top: 24px;
+	}
 }
 
 .licensing-prompt-dialog .licensing-prompt-dialog__instructions {
