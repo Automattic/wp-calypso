@@ -101,6 +101,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 							] }
 						/>
 					) }
+					<hr />
 					<ActionCard
 						classNames={ classnames( 'list__importer-option', { 'is-disabled': false } ) }
 						headerText={ __( 'Content only' ) }

@@ -20,18 +20,12 @@
 	}
 
 	.card.list__importer-option {
-		box-shadow: 0 -1px 0 var( --studio-gray-5 );
+		box-shadow: none;
+		padding: 0;
+		margin: 1.25rem 0;
 
 		@include break-large {
 			min-width: 525px;
-		}
-
-		&:first-child {
-			box-shadow: none;
-		}
-
-		&:last-child {
-			box-shadow: 0 -1px 0 var( --studio-gray-5 );
 		}
 
 		&.is-disabled {
@@ -59,5 +53,10 @@
 			top: 20px;
 			left: -38px;
 		}
+	}
+
+	hr {
+		margin: 2.5rem 0;
+		background: var( --studio-gray-5 );
 	}
 }
