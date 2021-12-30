@@ -279,7 +279,7 @@ function PluginDetails( props ) {
 
 						<div className="plugin-details__layout plugin-details__body">
 							<div className="plugin-details__layout-col-left">
-								{ fullPlugin.wporg ? (
+								{ fullPlugin.wporg || isMarketplaceProduct ? (
 									<PluginSections
 										className="plugin-details__plugins-sections"
 										plugin={ fullPlugin }

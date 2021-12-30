@@ -227,7 +227,7 @@ class PluginSections extends Component {
 		const contentClasses = classNames( 'plugin-sections__content', {
 			trimmed: ! this.props.removeReadMore && ! this.props.isWpcom && ! this.state.readMore,
 		} );
-		const banner = this.props.plugin.banners.high || this.props.plugin.banners.low;
+		const banner = this.props.plugin?.banners?.high || this.props.plugin?.banners?.low;
 
 		/*eslint-disable react/no-danger*/
 		if ( ! this.props.addBanner || ! banner || this.getSelected() !== 'description' ) {
