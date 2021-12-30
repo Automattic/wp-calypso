@@ -356,10 +356,8 @@ const SearchListView = ( {
 				},
 			} );
 
-		let pageSize;
-		if ( ! isEnabled( 'marketplace-v1' ) ) {
-			pageSize = SEARCH_RESULTS_LIST_LENGTH;
-		} else if ( pluginsPagination?.page === 1 ) {
+		let pageSize = SEARCH_RESULTS_LIST_LENGTH;
+		if ( isEnabled( 'marketplace-v1' ) && pluginsPagination?.page === 1 ) {
 			// Paid results appear only in the first page.
 			// Since the wporg results will always be an even number and paid results might be odd
 			// append one more wporg result if needed to fill the grid.
@@ -367,8 +365,6 @@ const SearchListView = ( {
 				SEARCH_RESULTS_LIST_LENGTH +
 				paidPluginsBySearchTerm?.length +
 				( paidPluginsBySearchTerm?.length % 2 );
-		} else {
-			pageSize = SEARCH_RESULTS_LIST_LENGTH;
 		}
 
 		const pluginItemsFeatch = ( page ) => {
