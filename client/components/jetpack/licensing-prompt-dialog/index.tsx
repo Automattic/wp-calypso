@@ -2,8 +2,6 @@ import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import QueryJetpackUserLicenses from 'calypso/components/data/query-jetpack-user-licenses';
-import QueryJetpackUserLicensesCounts from 'calypso/components/data/query-jetpack-user-licenses-counts';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getUserLicenses, getUserLicensesCounts } from 'calypso/state/user-licensing/selectors';
 import type { License } from 'calypso/state/user-licensing/types';
@@ -60,8 +58,6 @@ function LicensingPromptDialog( { urlQueryArgs }: Props ) {
 
 	return (
 		<>
-			<QueryJetpackUserLicenses />
-			<QueryJetpackUserLicensesCounts />
 			<Dialog
 				additionalClassNames="licensing-prompt-dialog"
 				isVisible={ showLicensesDialog }

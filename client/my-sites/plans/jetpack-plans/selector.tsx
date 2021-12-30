@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
+import QueryJetpackUserLicenses from 'calypso/components/data/query-jetpack-user-licenses';
+import QueryJetpackUserLicensesCounts from 'calypso/components/data/query-jetpack-user-licenses-counts';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -179,6 +181,9 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	return (
 		<>
 			<QueryJetpackSaleCoupon />
+			{ siteId && <QueryJetpackUserLicenses /> }
+			{ siteId && <QueryJetpackUserLicensesCounts /> }
+
 			{ nav }
 
 			<LicensingPromptDialog urlQueryArgs={ urlQueryArgs } />
