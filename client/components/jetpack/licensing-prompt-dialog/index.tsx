@@ -5,11 +5,8 @@ import { useSelector } from 'react-redux';
 import QueryJetpackUserLicenses from 'calypso/components/data/query-jetpack-user-licenses';
 import QueryJetpackUserLicensesCounts from 'calypso/components/data/query-jetpack-user-licenses-counts';
 import { preventWidows } from 'calypso/lib/formatting';
-import {
-	getUserLicenses,
-	getUserLicensesCounts,
-	userHasDetachedLicenses,
-} from 'calypso/state/user-licensing/selectors';
+import { getUserLicenses, getUserLicensesCounts } from 'calypso/state/user-licensing/selectors';
+import type { License } from 'calypso/state/user-licensing/types';
 
 import './style.scss';
 
@@ -20,19 +17,23 @@ interface Props {
 }
 
 function LicensingPromptDialog( { urlQueryArgs }: Props ) {
+	const { redirect } = urlQueryArgs;
 	const translate = useTranslate();
-	const hasDetachedLicenses = useSelector( userHasDetachedLicenses );
+	const [ showLicensesDialog, setShowLicensesDialog ] = useState< boolean >( false );
+	const [ detachedUserLicense, setDetachedUserLicense ] = useState< License | null >( null );
 	const userLicenses = useSelector( getUserLicenses );
 	const userLicensesCounts = useSelector( getUserLicensesCounts );
-	const [ showLicensesDialog, setShowLicensesDialog ] = useState< boolean >( false );
 
-	const { redirect } = urlQueryArgs;
 	const hasOneDetachedLicense = userLicensesCounts && userLicensesCounts[ 'detached' ] === 1;
+	const hasDetachedLicenses = userLicensesCounts && userLicensesCounts[ 'detached' ] !== 0;
 
-	const detachedUserLicense =
-		userLicenses &&
-		hasOneDetachedLicense &&
-		Object.values( userLicenses.items ).filter( ( { attachedAt } ) => attachedAt === null )[ 0 ];
+	useEffect( () => {
+		if ( userLicenses && hasOneDetachedLicense ) {
+			setDetachedUserLicense(
+				Object.values( userLicenses.items ).filter( ( { attachedAt } ) => attachedAt === null )[ 0 ]
+			);
+		}
+	}, [ hasOneDetachedLicense, userLicenses ] );
 
 	useEffect( () => {
 		if ( hasDetachedLicenses ) {
