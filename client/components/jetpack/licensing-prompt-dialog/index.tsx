@@ -65,7 +65,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 				shouldCloseOnEsc
 			>
 				<h1 className="licensing-prompt-dialog__title">{ title }</h1>
-				<p>
+				<p className="licensing-prompt-dialog__instructions">
 					{ preventWidows(
 						translate(
 							'{{strong}}Check your email{{/strong}} for your license key. You should have received it after making your purchase.',

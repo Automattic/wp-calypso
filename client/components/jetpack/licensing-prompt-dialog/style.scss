@@ -16,6 +16,10 @@
 	line-height: 40px;
 }
 
+.licensing-prompt-dialog .licensing-prompt-dialog__instructions {
+	font-size: $font-body;
+}
+
 .licensing-prompt-dialog__btn.is-primary {
 	margin-right: 16px;
 }
