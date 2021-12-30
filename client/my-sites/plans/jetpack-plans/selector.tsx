@@ -42,6 +42,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	footer,
 	planRecommendation,
 	highlightedProducts = [],
+	enableUserLicensesDialog = false,
 }: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
@@ -181,10 +182,10 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	return (
 		<>
 			<QueryJetpackSaleCoupon />
-			{ siteId && <QueryJetpackUserLicenses /> }
-			{ siteId && <QueryJetpackUserLicensesCounts /> }
+			{ siteId && enableUserLicensesDialog && <QueryJetpackUserLicenses /> }
+			{ siteId && enableUserLicensesDialog && <QueryJetpackUserLicensesCounts /> }
 
-			{ siteId && <LicensingPromptDialog siteId={ siteId } /> }
+			{ siteId && enableUserLicensesDialog && <LicensingPromptDialog siteId={ siteId } /> }
 
 			{ nav }
 
