@@ -1,9 +1,11 @@
 import { Card } from '@automattic/components';
+import { withBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import { PluginsBrowserListVariant } from './types';
@@ -18,6 +20,7 @@ class PluginsBrowserList extends Component {
 		plugins: PropTypes.array.isRequired,
 		variant: PropTypes.oneOf( Object.values( PluginsBrowserListVariant ) ).isRequired,
 		extended: PropTypes.bool,
+		setBillingPeriod: PropTypes.oneOf( false, PropTypes.func ),
 	};
 
 	static defaultProps = {
@@ -86,6 +89,13 @@ class PluginsBrowserList extends Component {
 				<div className="plugins-browser-list__header">
 					<div className={ classnames( 'plugins-browser-list__title', this.props.listName ) }>
 						{ this.props.title }
+						{ this.props.setBillingPeriod && (
+							<BillingIntervalSwitcher
+								billingPeriod={ this.props.billingPeriod }
+								onChange={ this.props.setBillingPeriod }
+								compact={ ! this.props.isBreakpointActive }
+							/>
+						) }
 					</div>
 					<div className="plugins-browser-list__subtitle">{ this.props.subtitle }</div>
 				</div>
@@ -95,4 +105,4 @@ class PluginsBrowserList extends Component {
 	}
 }
 
-export default localize( PluginsBrowserList );
+export default withBreakpoint( '>1280px' )( localize( PluginsBrowserList ) );
