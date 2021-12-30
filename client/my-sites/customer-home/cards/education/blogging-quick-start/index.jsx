@@ -31,6 +31,8 @@ const BloggingQuickStart = () => {
 			] }
 			illustration={ startLearningPrompt }
 			cardName={ EDUCATION_BLOGGING_QUICK_START }
+			width="371"
+			height="243"
 		/>
 	);
 };

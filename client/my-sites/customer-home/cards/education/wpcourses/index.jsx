@@ -25,6 +25,8 @@ const WpCourses = () => {
 			] }
 			illustration={ freePhotoLibraryVideoPrompt }
 			cardName={ EDUCATION_WPCOURSES }
+			width="418"
+			height="299"
 		/>
 	);
 };

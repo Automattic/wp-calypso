@@ -22,6 +22,8 @@ export default function EducationalContent( {
 	modalLinks,
 	illustration,
 	cardName,
+	width,
+	height,
 } ) {
 	const dispatch = useDispatch();
 
@@ -81,7 +83,7 @@ export default function EducationalContent( {
 			</div>
 			{ isDesktop() && (
 				<div className="educational-content__illustration">
-					<img src={ illustration } alt="" />
+					<img src={ illustration } alt="" width={ width } height={ height } />
 				</div>
 			) }
 		</div>
