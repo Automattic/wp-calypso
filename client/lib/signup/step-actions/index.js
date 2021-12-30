@@ -926,6 +926,16 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 		return;
 	}
 
+	/* For the P2 signup flow, if we displayed the email verification step before,
+	   we need to display it again when the user comes back to the flow
+	   after verification. */
+	if (
+		nextProps.flowName === 'p2-new' &&
+		nextProps?.progress[ stepName ]?.status === 'in-progress'
+	) {
+		return;
+	}
+
 	if ( ! nextProps.isEmailVerified ) {
 		return;
 	}
