@@ -13,6 +13,7 @@
 	min-height: 48px;
 	display: flex;
 	align-items: baseline;
+	flex-wrap: wrap;
 
 	&.align-right {
 		text-align: right;
@@ -26,7 +27,7 @@
 }
 
 .plugin-details-CTA__uprade-required {
-	margin-left: auto;
+	width: 100%;
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-50 );
 }
