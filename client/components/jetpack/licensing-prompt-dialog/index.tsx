@@ -1,8 +1,9 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getUserLicenses, getUserLicensesCounts } from 'calypso/state/user-licensing/selectors';
 import type { License } from 'calypso/state/user-licensing/types';
@@ -15,6 +16,7 @@ interface Props {
 
 function LicensingPromptDialog( { siteId }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ showLicensesDialog, setShowLicensesDialog ] = useState< boolean >( false );
 	const [ detachedUserLicense, setDetachedUserLicense ] = useState< License | null >( null );
 	const userLicenses = useSelector( getUserLicenses );
@@ -39,6 +41,10 @@ function LicensingPromptDialog( { siteId }: Props ) {
 		}
 	}, [ hasDetachedLicenses, siteAdminUrl ] );
 
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_user_license_modal_view' ) );
+	}, [ dispatch ] );
+
 	const title = useMemo( () => {
 		if ( hasOneDetachedLicense ) {
 			return preventWidows(
@@ -52,9 +58,14 @@ function LicensingPromptDialog( { siteId }: Props ) {
 		return preventWidows( translate( 'You have an available product license key' ) );
 	}, [ detachedUserLicense, hasOneDetachedLicense, translate ] );
 
-	const closeDialog = () => {
+	const activateProductClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_user_license_modal_activate_click' ) );
+	}, [ dispatch ] );
+
+	const selectAnotherProductClick = useCallback( () => {
 		setShowLicensesDialog( false );
-	};
+		dispatch( recordTracksEvent( 'calypso_user_license_modal_close_click' ) );
+	}, [ dispatch ] );
 
 	return (
 		<Dialog
@@ -68,7 +79,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 				className="licensing-prompt-dialog__close"
 				icon="cross-small"
 				size={ 24 }
-				onClick={ closeDialog }
+				onClick={ selectAnotherProductClick }
 			/>
 			<p className="licensing-prompt-dialog__instructions">
 				{ preventWidows(
@@ -83,10 +94,15 @@ function LicensingPromptDialog( { siteId }: Props ) {
 				) }
 			</p>
 			<div className="licensing-prompt-dialog__actions">
-				<Button className="licensing-prompt-dialog__btn" primary href={ jetpackDashboardUrl }>
+				<Button
+					className="licensing-prompt-dialog__btn"
+					primary
+					href={ jetpackDashboardUrl }
+					onClick={ activateProductClick }
+				>
 					{ translate( 'Activate it now' ) }
 				</Button>
-				<Button className="licensing-prompt-dialog__btn" onClick={ closeDialog }>
+				<Button className="licensing-prompt-dialog__btn" onClick={ selectAnotherProductClick }>
 					{ translate( 'Select another product' ) }
 				</Button>
 			</div>
