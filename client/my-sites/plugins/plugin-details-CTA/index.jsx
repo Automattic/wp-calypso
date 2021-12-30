@@ -200,10 +200,20 @@ const CTAButton = ( {
 	hasEligibilityMessages,
 	isMarketplaceProduct,
 	billingPeriod,
+	isJetpackSelfHosted,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
+
+	// disable paid plugin cta for jetpack sites
+	if ( isJetpackSelfHosted && isMarketplaceProduct ) {
+		return (
+			<p className="plugin-details-CTA__not-available">
+				{ translate( 'This plugin is supported only in WordPress.com sites for the moment.' ) }
+			</p>
+		);
+	}
 
 	return (
 		<>
