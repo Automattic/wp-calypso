@@ -5,10 +5,6 @@
 		margin: 0;
 	}
 
-	.plugins-browser-list__header {
-		overflow: hidden; // lazy clearfix
-	}
-
 	.section-header {
 		background: none;
 		box-shadow: none;
@@ -36,6 +32,12 @@
 	.plugins-browser-list__title {
 		font-size: $font-title-small;
 		font-weight: 500;
+
+		&.paid {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
 
 		&[class*='plugins-browser-list__search-for'] {
 			font-weight: 400;
