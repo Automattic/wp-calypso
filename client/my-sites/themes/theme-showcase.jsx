@@ -19,6 +19,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -193,6 +194,12 @@ class ThemeShowcase extends Component {
 		this.setState( { tabFilter: this.tabFilters.ALL } );
 		page( url );
 		this.scrollToSearchInput();
+
+		if ( searchBoxContent ) {
+			this.props.recordTracksEvent( 'calypso_theme_search_performed', {
+				search_query: searchBoxContent,
+			} );
+		}
 	};
 
 	/**
@@ -456,7 +463,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	null
-)( localize( withBlockEditorSettings( ThemeShowcase ) ) );
+export default connect( mapStateToProps, { recordTracksEvent } )(
+	localize( withBlockEditorSettings( ThemeShowcase ) )
+);
