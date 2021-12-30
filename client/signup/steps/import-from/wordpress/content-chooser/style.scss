@@ -22,6 +22,10 @@
 	.card.list__importer-option {
 		box-shadow: 0 -1px 0 var( --studio-gray-5 );
 
+		@include break-large {
+			min-width: 525px;
+		}
+
 		&:first-child {
 			box-shadow: none;
 		}
