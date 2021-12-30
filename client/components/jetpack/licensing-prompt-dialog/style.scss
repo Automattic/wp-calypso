@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 @import 'jetpack-connect/colors.scss';
 
 .is-section-jetpack-connect .licensing-prompt-dialog {
@@ -7,8 +10,11 @@
 // Adding some extra specificity to override defaults coming from the dialog class
 .licensing-prompt-dialog.dialog.card {
 	max-width: 650px;
-	padding: 24px;
 	border-radius: 4px;
+
+	@include break-mobile {
+		padding: 24px;
+	}
 }
 
 .licensing-prompt-dialog .licensing-prompt-dialog__title {
@@ -20,8 +26,19 @@
 	font-size: $font-body;
 }
 
+.licensing-prompt-dialog__actions {
+	display: flex;
+	flex-direction: column;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+}
+
 .licensing-prompt-dialog__btn.is-primary {
-	margin-right: 16px;
+	@include break-mobile {
+		margin-right: 16px;
+	}
 }
 
 .licensing-prompt-dialog__btn {

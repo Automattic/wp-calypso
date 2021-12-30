@@ -57,36 +57,34 @@ function LicensingPromptDialog( { siteId }: Props ) {
 	};
 
 	return (
-		<>
-			<Dialog
-				additionalClassNames="licensing-prompt-dialog"
-				isVisible={ showLicensesDialog }
-				onClose={ () => setShowLicensesDialog( false ) }
-				shouldCloseOnEsc
-			>
-				<h1 className="licensing-prompt-dialog__title">{ title }</h1>
-				<p className="licensing-prompt-dialog__instructions">
-					{ preventWidows(
-						translate(
-							'{{strong}}Check your email{{/strong}} for your license key. You should have received it after making your purchase.',
-							{
-								components: {
-									strong: <strong />,
-								},
-							}
-						)
-					) }
-				</p>
-				<div className="licensing-prompt-dialog__actions">
-					<Button className="licensing-prompt-dialog__btn" primary href={ jetpackDashboardUrl }>
-						{ translate( 'Activate it now' ) }
-					</Button>
-					<Button className="licensing-prompt-dialog__btn" onClick={ closeDialog }>
-						{ translate( 'Select another product' ) }
-					</Button>
-				</div>
-			</Dialog>
-		</>
+		<Dialog
+			additionalClassNames="licensing-prompt-dialog"
+			isVisible={ showLicensesDialog }
+			onClose={ () => setShowLicensesDialog( false ) }
+			shouldCloseOnEsc
+		>
+			<h1 className="licensing-prompt-dialog__title">{ title }</h1>
+			<p className="licensing-prompt-dialog__instructions">
+				{ preventWidows(
+					translate(
+						'{{strong}}Check your email{{/strong}} for your license key. You should have received it after making your purchase.',
+						{
+							components: {
+								strong: <strong />,
+							},
+						}
+					)
+				) }
+			</p>
+			<div className="licensing-prompt-dialog__actions">
+				<Button className="licensing-prompt-dialog__btn" primary href={ jetpackDashboardUrl }>
+					{ translate( 'Activate it now' ) }
+				</Button>
+				<Button className="licensing-prompt-dialog__btn" onClick={ closeDialog }>
+					{ translate( 'Select another product' ) }
+				</Button>
+			</div>
+		</Dialog>
 	);
 }
 
