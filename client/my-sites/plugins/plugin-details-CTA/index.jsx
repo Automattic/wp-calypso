@@ -58,15 +58,17 @@ const PluginDetailsCTA = ( {
 	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
-	const isFreePlan = isFreePlanProduct( selectedSite.plan );
+	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
 
-	const shouldUpgrade = ! (
-		isBusiness( selectedSite.plan ) ||
-		isEnterprise( selectedSite.plan ) ||
-		isEcommerce( selectedSite.plan ) ||
-		isJetpack ||
-		isVip
-	);
+	const shouldUpgrade =
+		selectedSite &&
+		! (
+			isBusiness( selectedSite.plan ) ||
+			isEnterprise( selectedSite.plan ) ||
+			isEcommerce( selectedSite.plan ) ||
+			isJetpack ||
+			isVip
+		);
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
