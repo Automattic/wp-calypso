@@ -3,24 +3,24 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getUserLicenses, getUserLicensesCounts } from 'calypso/state/user-licensing/selectors';
 import type { License } from 'calypso/state/user-licensing/types';
 
 import './style.scss';
 
 interface Props {
-	urlQueryArgs: {
-		[ key: string ]: string;
-	};
+	siteId: number;
 }
 
-function LicensingPromptDialog( { urlQueryArgs }: Props ) {
-	const { redirect } = urlQueryArgs;
+function LicensingPromptDialog( { siteId }: Props ) {
 	const translate = useTranslate();
 	const [ showLicensesDialog, setShowLicensesDialog ] = useState< boolean >( false );
 	const [ detachedUserLicense, setDetachedUserLicense ] = useState< License | null >( null );
 	const userLicenses = useSelector( getUserLicenses );
 	const userLicensesCounts = useSelector( getUserLicensesCounts );
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const jetpackDashboardUrl = siteAdminUrl + 'admin.php?page=jetpack#/my-plan';
 
 	const hasOneDetachedLicense = userLicensesCounts && userLicensesCounts[ 'detached' ] === 1;
 	const hasDetachedLicenses = userLicensesCounts && userLicensesCounts[ 'detached' ] !== 0;
@@ -34,10 +34,10 @@ function LicensingPromptDialog( { urlQueryArgs }: Props ) {
 	}, [ hasOneDetachedLicense, userLicenses ] );
 
 	useEffect( () => {
-		if ( hasDetachedLicenses ) {
+		if ( hasDetachedLicenses && siteAdminUrl ) {
 			setShowLicensesDialog( true );
 		}
-	}, [ hasDetachedLicenses ] );
+	}, [ hasDetachedLicenses, siteAdminUrl ] );
 
 	const title = useMemo( () => {
 		if ( hasOneDetachedLicense ) {
@@ -78,7 +78,7 @@ function LicensingPromptDialog( { urlQueryArgs }: Props ) {
 					) }
 				</p>
 				<div className="licensing-prompt-dialog__actions">
-					<Button className="licensing-prompt-dialog__btn" primary href={ redirect }>
+					<Button className="licensing-prompt-dialog__btn" primary href={ jetpackDashboardUrl }>
 						{ translate( 'Activate it now' ) }
 					</Button>
 					<Button className="licensing-prompt-dialog__btn" onClick={ closeDialog }>

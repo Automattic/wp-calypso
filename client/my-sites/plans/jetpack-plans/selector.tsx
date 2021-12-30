@@ -184,9 +184,9 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			{ siteId && <QueryJetpackUserLicenses /> }
 			{ siteId && <QueryJetpackUserLicensesCounts /> }
 
-			{ nav }
+			{ siteId && <LicensingPromptDialog siteId={ siteId } /> }
 
-			<LicensingPromptDialog urlQueryArgs={ urlQueryArgs } />
+			{ nav }
 
 			<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
 				<PageViewTracker
