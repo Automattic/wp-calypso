@@ -9,3 +9,26 @@
 		padding-top: 0;
 	}
 }
+
+.email-forwards-add__placeholder {
+	overflow: hidden;
+
+	> * {
+		@include placeholder();
+	}
+
+	button {
+		float: right;
+		margin-top: 1em;
+		min-width: 80px;
+	}
+
+	p {
+		line-height: 2.5em;
+		margin-top: 1.5em;
+	}
+
+	p + p {
+		margin-top: 3em;
+	}
+}

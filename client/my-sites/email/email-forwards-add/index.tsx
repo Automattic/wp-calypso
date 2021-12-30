@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback } from 'react';
@@ -12,7 +12,6 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import {
 	emailManagement,
 	emailManagementAddEmailForwards,
@@ -95,21 +94,25 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 					{ translate( 'Email Forwarding' ) + ': ' + selectedDomainName }
 				</HeaderCake>
 
-				{ areDomainsLoading && <AddEmailAddressesCardPlaceholder /> }
+				<SectionHeader label={ translate( 'Add New Email Forwards' ) } />
 
-				{ ! areDomainsLoading && (
-					<>
-						<SectionHeader label={ translate( 'Add New Email Forwards' ) } />
+				<Card>
+					{ areDomainsLoading && (
+						<div className="email-forwards-add__placeholder">
+							<p>&nbsp;</p>
+							<p>&nbsp;</p>
+							<Button disabled>&nbsp;</Button>
+						</div>
+					) }
 
-						<Card>
-							<EmailForwardingAddNewCompactList
-								onAddEmailForwardSuccess={ onAddEmailForwardSuccess }
-								onConfirmEmailForwarding={ noop }
-								selectedDomainName={ selectedDomainName }
-							/>
-						</Card>
-					</>
-				) }
+					{ ! areDomainsLoading && (
+						<EmailForwardingAddNewCompactList
+							onAddEmailForwardSuccess={ onAddEmailForwardSuccess }
+							onConfirmEmailForwarding={ noop }
+							selectedDomainName={ selectedDomainName }
+						/>
+					) }
+				</Card>
 			</Main>
 		</div>
 	);
