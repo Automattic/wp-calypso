@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ImportJob } from '../types';
 import ContentChooser, { WPImportType } from './content-chooser';
 import { ImportEverything } from './import-everything';
@@ -24,9 +25,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Fields
 	 */
-	const urlData = useSelector( getUrlData );
 	const { fromSite, siteSlug } = props;
 	const [ chosenType, setChosenType ] = useState< WPImportType >();
+	const urlData = useSelector( getUrlData );
+	const site = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
 
 	/**
 	 ↓ Effects
@@ -68,6 +70,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 				<ImportEverything
 					fromSite={ fromSite }
 					fromSiteData={ urlData }
+					site={ site }
 					siteSlug={ siteSlug }
 					startImport={ runImportMigrationProcess }
 				/>

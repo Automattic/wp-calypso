@@ -13,6 +13,8 @@ import './style.scss';
 interface Props {
 	fromSite: string;
 	fromSiteData: UrlData;
+	// TODO: define site type
+	site: { [ key: string ]: any };
 	siteSlug: string;
 	startImport: () => void;
 }
@@ -23,7 +25,7 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
-	const { fromSite, fromSiteData, siteSlug, startImport } = props;
+	const { fromSite, fromSiteData, site, siteSlug, startImport } = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 
 	// Temporarily hardcoded fields (testing purposes)
@@ -61,7 +63,7 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 							</div>
 
 							<div className={ classnames( 'import_site-mapper-name' ) }>
-								<span>OpenWeb</span>
+								<span>{ site?.name }</span>
 								<small>{ convertToFriendlyWebsiteName( siteSlug ) }</small>
 							</div>
 						</div>
