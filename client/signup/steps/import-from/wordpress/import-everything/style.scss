@@ -50,9 +50,27 @@
 	}
 
 	.import_site-mapper-name {
-		span {
+		position: relative;
+
+		&.with-favicon {
+			padding-left: 56px;
+		}
+
+		img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			border-radius: 4px;
+			border: solid 1px var( --studio-gray-5 );
+			height: 40px;
+			width: 40px;
+		}
+
+		span, small {
 			display: block;
-			font-size: 0.75em; /* stylelint-disable-line */
+		}
+
+		small {
 			color: var( --studio-gray-40 );
 		}
 	}
