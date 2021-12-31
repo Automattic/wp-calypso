@@ -99,9 +99,9 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 				<Card>
 					{ areDomainsLoading && (
 						<div className="email-forwards-add__placeholder">
-							<p>&nbsp;</p>
-							<p>&nbsp;</p>
-							<Button disabled>&nbsp;</Button>
+							<p />
+							<p />
+							<Button disabled />
 						</div>
 					) }
 
