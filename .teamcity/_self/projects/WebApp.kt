@@ -111,7 +111,6 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
-					'registry.a8c.com/calypso:${Settings.WpCalypso.paramRefs.buildVcsNumber}-%teamcity.build.branch%'
 				""".trimIndent()
 				commandArgs = """
 					--pull
@@ -151,8 +150,8 @@ object BuildDockerImage : BuildType({
 				FAILURES=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c "FAILURE")
 				if [ ${'$'}FAILURES -ne 0 ]; then
 					ACTION="fail"
-				else
-					docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
+				#else
+				#	docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
 				fi
 
 				payload=${'$'}(jq -n \
