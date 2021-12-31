@@ -111,7 +111,7 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
-					registry.a8c.com/calypso:${Settings.WpCalypso.paramRefs.buildVcsNumber}-%teamcity.build.branch%
+					'registry.a8c.com/calypso:${Settings.WpCalypso.paramRefs.buildVcsNumber}-%teamcity.build.branch%'
 				""".trimIndent()
 				commandArgs = """
 					--pull
