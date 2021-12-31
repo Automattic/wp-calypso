@@ -17,11 +17,15 @@ import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-st
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
-import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import {
+	emailManagementAddEmailForwards,
+	emailManagementInDepthComparison,
+} from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -47,6 +51,7 @@ type EmailProvidersStackedComparisonProps = {
 	shoppingCartManager?: any;
 	selectedSite?: SiteData | null;
 	selectedDomainName: string;
+	showEmailForwardLink?: boolean;
 	siteName: string;
 	source: string;
 	titanMailMonthlyProduct?: any;
@@ -58,9 +63,11 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 ) => {
 	const {
 		comparisonContext,
+		currentRoute,
 		isGSuiteSupported,
 		selectedDomainName,
 		selectedSite,
+		showEmailForwardLink = true,
 		siteName,
 		source,
 	} = props;
@@ -114,7 +121,15 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 			<div className="email-providers-stacked-comparison__how-they-compare">
 				{ translate( 'Not sure how to start? {{a}}See how they compare{{/a}}.', {
 					components: {
-						a: <a href={ emailManagementInDepthComparison( siteName, selectedDomainName ) } />,
+						a: (
+							<a
+								href={ emailManagementInDepthComparison(
+									siteName,
+									selectedDomainName,
+									currentRoute
+								) }
+							/>
+						),
 					},
 				} ) }
 			</div>
@@ -143,6 +158,26 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 					onExpandedChange={ onExpandedStateChange }
 				/>
 			) }
+
+			{ showEmailForwardLink && selectedSite && (
+				<div className="email-providers-stacked-comparison__email-forward-section">
+					{ translate( 'Looking for a free email solution?' ) }{ ' ' }
+					{ translate( 'Start with {{link}}Email Forwarding{{/link}}.', {
+						components: {
+							link: (
+								<a
+									href={ emailManagementAddEmailForwards(
+										selectedSite.slug,
+										selectedDomainName,
+										currentRoute,
+										'purchase'
+									) }
+								/>
+							),
+						},
+					} ) }
+				</div>
+			) }
 		</Main>
 	);
 };
@@ -166,12 +201,15 @@ export default connect(
 
 		return {
 			comparisonContext: ownProps.comparisonContext,
+			currentRoute: getCurrentRoute( state ),
 			domain,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gSuiteAnnualProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasCartDomain,
 			isGSuiteSupported,
-			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
+			requestingSiteDomains: Boolean(
+				selectedSite && isRequestingSiteDomains( state, selectedSite.ID )
+			),
 			selectedDomainName: domainName,
 			selectedSite,
 			source: ownProps.source,

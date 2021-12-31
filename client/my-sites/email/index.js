@@ -57,6 +57,23 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementAddEmailForwards(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementAddEmailForwards( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementAddEmailForwards,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
 			paths.emailManagementAddGSuiteUsers(
 				':site',
 				':domain',
