@@ -28,7 +28,10 @@ import {
 	createSiteFromDomainOnly,
 	domainTransferIn,
 } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import {
+	emailManagement,
+	emailManagementPurchaseNewEmailAccount,
+} from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './domain-row.scss';
@@ -297,21 +300,31 @@ class DomainRow extends PureComponent {
 	/* eslint-enable jsx-a11y/anchor-is-valid */
 
 	addEmailClick = ( event ) => {
-		const { trackAddEmailClick, domain } = this.props;
+		const { currentRoute, domain, site, trackAddEmailClick } = this.props;
 		event.stopPropagation();
 
 		trackAddEmailClick( domain ); // analytics/tracks
-		this.goToEmailPage( event );
+
+		this.goToEmailPage(
+			event,
+			emailManagementPurchaseNewEmailAccount( site.slug, domain.domain, currentRoute )
+		);
 	};
 
-	goToEmailPage = ( event ) => {
+	goToEmailPage = ( event, targetPath ) => {
 		const { currentRoute, disabled, domain, site } = this.props;
 		event.stopPropagation();
+		event.preventDefault();
 
 		if ( disabled ) {
 			return;
 		}
-		page( emailManagement( site.slug, domain.domain, currentRoute ) );
+
+		const emailPath = targetPath
+			? targetPath
+			: emailManagement( site.slug, domain.domain, currentRoute );
+
+		page( emailPath );
 	};
 
 	renderEllipsisMenu() {
