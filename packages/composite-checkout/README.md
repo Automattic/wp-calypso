@@ -122,7 +122,7 @@ A generic button component that is used internally for almost all buttons (like 
 - `fullWidth?: bool`. The button width defaults to 'auto', but if this is set it will be '100%'.
 - `isBusy?: bool`. If true, the button will be displayed as a loading spinner.
 
-### Checkout
+### CheckoutStepsProvider
 
 The main wrapper component for Checkout. It has the following props.
 

@@ -209,7 +209,7 @@ interface CheckoutStepsProps {
 	areStepsActive?: boolean;
 }
 
-export function Checkout( {
+export function CheckoutStepsProvider( {
 	children,
 	className,
 	onStepChanged,
