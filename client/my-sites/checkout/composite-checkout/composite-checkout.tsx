@@ -567,33 +567,6 @@ export default function CompositeCheckout( {
 		checkoutFlow,
 	} );
 
-	const handleStepChanged = useCallback(
-		( {
-			stepNumber,
-			previousStepNumber,
-			paymentMethodId,
-		}: {
-			stepNumber: number | null;
-			previousStepNumber: number;
-			paymentMethodId: string;
-		} ) => {
-			if ( stepNumber === 2 && previousStepNumber === 1 ) {
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
-						payment_method:
-							translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
-					} )
-				);
-			}
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_step_changed', {
-					step: stepNumber,
-				} )
-			);
-		},
-		[ reduxDispatch ]
-	);
-
 	const handlePaymentMethodChanged = useCallback(
 		( method: string ) => {
 			logStashEvent( 'payment_method_select', {
@@ -725,7 +698,6 @@ export default function CompositeCheckout( {
 				onPaymentError={ handlePaymentError }
 				onPaymentRedirect={ handlePaymentRedirect }
 				onPageLoadError={ onPageLoadError }
-				onStepChanged={ handleStepChanged }
 				onPaymentMethodChanged={ handlePaymentMethodChanged }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }

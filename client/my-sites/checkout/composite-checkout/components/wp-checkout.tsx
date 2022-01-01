@@ -29,6 +29,7 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
@@ -258,8 +259,35 @@ export default function WPCheckout( {
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
 
+	const handleStepChanged = useCallback(
+		( {
+			stepNumber,
+			previousStepNumber,
+			paymentMethodId,
+		}: {
+			stepNumber: number | null;
+			previousStepNumber: number;
+			paymentMethodId: string;
+		} ) => {
+			if ( stepNumber === 2 && previousStepNumber === 1 ) {
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+					} )
+				);
+			}
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_step_changed', {
+					step: stepNumber,
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
+
 	return (
-		<Checkout>
+		<Checkout onStepChanged={ handleStepChanged }>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutErrorBoundary
 					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
@@ -343,7 +371,7 @@ export default function WPCheckout( {
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
-							isCompleteCallback={ () => {
+							isCompleteCallback={ async () => {
 								setShouldShowContactDetailsValidationErrors( true );
 								// Touch the fields so they display validation errors
 								touchContactFields();
