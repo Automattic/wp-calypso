@@ -1,7 +1,7 @@
 import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
-	Checkout,
+	CheckoutStepsProvider,
 	CheckoutStep,
 	CheckoutStepArea,
 	CheckoutSteps,
@@ -287,7 +287,7 @@ export default function WPCheckout( {
 	);
 
 	return (
-		<Checkout onStepChanged={ handleStepChanged }>
+		<CheckoutStepsProvider onStepChanged={ handleStepChanged }>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutErrorBoundary
 					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
@@ -458,7 +458,7 @@ export default function WPCheckout( {
 					/>
 				</CheckoutSteps>
 			</CheckoutStepArea>
-		</Checkout>
+		</CheckoutStepsProvider>
 	);
 }
 
