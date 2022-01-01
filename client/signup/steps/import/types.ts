@@ -49,4 +49,8 @@ export type ImporterPlatformOther =
 	| 'tumblr'
 	| 'xanga';
 export type ImporterPlatformExtra = 'godaddy-central';
-export type ImporterPlatform = ImporterMainPlatform | ImporterPlatformOther | ImporterPlatformExtra;
+export type ImporterPlatform =
+	| ImporterMainPlatform
+	| ImporterPlatformOther
+	| ImporterPlatformExtra
+	| 'unknown';
