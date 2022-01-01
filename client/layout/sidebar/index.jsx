@@ -3,7 +3,7 @@ import { Children } from 'react';
 import SidebarRegion from './region';
 import './style.scss';
 
-const Sidebar = ( { children, onClick, className, ...props } ) => {
+const Sidebar = ( { children, onClick = undefined, className = '', ...props } ) => {
 	const hasRegions = Children.toArray( children ).some( ( el ) => el.type === SidebarRegion );
 	const finalClassName = classNames( 'sidebar', className, { 'has-regions': hasRegions } );
 
