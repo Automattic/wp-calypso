@@ -108,7 +108,6 @@ export interface CheckoutProviderProps {
 	onPaymentRedirect?: PaymentEventCallback;
 	onPaymentError?: PaymentErrorCallback;
 	onPageLoadError?: CheckoutPageErrorCallback;
-	onStepChanged?: StepChangedCallback;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
 	isLoading?: boolean;
 	redirectToUrl?: ( url: string ) => void;

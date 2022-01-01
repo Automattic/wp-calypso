@@ -28,7 +28,7 @@ import {
 	getDefaultPaymentMethodStep,
 	usePaymentMethod,
 } from '../public-api';
-import { FormStatus, CheckoutStepProps } from '../types';
+import { FormStatus } from '../types';
 import Button from './button';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import CheckoutNextStepButton from './checkout-next-step-button';
@@ -36,6 +36,7 @@ import CheckoutSubmitButton from './checkout-submit-button';
 import LoadingContent from './loading-content';
 import { CheckIcon } from './shared-icons';
 import type { Theme } from '../lib/theme';
+import type { CheckoutStepProps, StepChangedCallback } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -50,6 +51,7 @@ interface CheckoutStepDataContext {
 	setActiveStepNumber: ( stepNumber: number ) => void;
 	setStepCompleteStatus: Dispatch< SetStateAction< StepCompleteStatus > >;
 	setTotalSteps: ( totalSteps: number ) => void;
+	onStepChanged?: StepChangedCallback;
 }
 
 interface CheckoutSingleStepDataContext {
@@ -210,9 +212,11 @@ interface CheckoutStepsProps {
 export function Checkout( {
 	children,
 	className,
+	onStepChanged,
 }: {
 	children: ReactNode;
 	className?: string;
+	onStepChanged?: StepChangedCallback;
 } ): JSX.Element {
 	const { isRTL } = useI18n();
 	const { formStatus } = useFormStatus();
@@ -257,6 +261,7 @@ export function Checkout( {
 						setActiveStepNumber,
 						setStepCompleteStatus,
 						setTotalSteps,
+						onStepChanged,
 					} }
 				>
 					{ children || getDefaultCheckoutSteps() }
@@ -281,13 +286,16 @@ export const CheckoutStep = ( {
 	validatingButtonAriaLabel,
 }: CheckoutStepProps ): JSX.Element => {
 	const { __ } = useI18n();
-	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
-		CheckoutStepDataContext
-	);
+	const {
+		setActiveStepNumber,
+		setStepCompleteStatus,
+		stepCompleteStatus,
+		onStepChanged,
+	} = useContext( CheckoutStepDataContext );
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
-	const { onPageLoadError, onStepChanged } = useContext( CheckoutContext );
+	const { onPageLoadError } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );

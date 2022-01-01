@@ -1,6 +1,5 @@
 import { createContext } from 'react';
 import {
-	StepChangedCallback,
 	CheckoutPageErrorCallback,
 	FormStatus,
 	PaymentMethod,
@@ -16,7 +15,6 @@ interface CheckoutContext {
 	setFormStatus: ( newStatus: FormStatus ) => void;
 	transactionStatusManager: TransactionStatusManager | null;
 	onPageLoadError?: CheckoutPageErrorCallback;
-	onStepChanged?: StepChangedCallback;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
 }
 
