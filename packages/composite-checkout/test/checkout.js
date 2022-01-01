@@ -9,7 +9,7 @@ import {
 import { createContext, Fragment, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import {
-	Checkout,
+	CheckoutStepsProvider,
 	CheckoutProvider,
 	CheckoutStep,
 	CheckoutStepArea,
@@ -23,7 +23,7 @@ import {
 const myContext = createContext();
 const usePaymentData = () => useContext( myContext );
 
-describe( 'Checkout', () => {
+describe( 'CheckoutStepsProvider', () => {
 	describe( 'using the default steps', function () {
 		describe( 'using other defaults', function () {
 			let MyCheckout;
@@ -39,7 +39,7 @@ describe( 'Checkout', () => {
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
-						<Checkout />
+						<CheckoutStepsProvider />
 					</CheckoutProvider>
 				);
 			} );
@@ -100,7 +100,7 @@ describe( 'Checkout', () => {
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
-						<Checkout />
+						<CheckoutStepsProvider />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
@@ -141,7 +141,7 @@ describe( 'Checkout', () => {
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
-						<Checkout />
+						<CheckoutStepsProvider />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
@@ -184,9 +184,9 @@ describe( 'Checkout', () => {
 							paymentProcessors={ getMockPaymentProcessors() }
 							initiallySelectedPaymentMethodId={ mockMethod.id }
 						>
-							<Checkout>
+							<CheckoutStepsProvider>
 								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }
-							</Checkout>
+							</CheckoutStepsProvider>
 						</CheckoutProvider>
 					</myContext.Provider>
 				);

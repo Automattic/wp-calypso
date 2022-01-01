@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import {
-	Checkout,
+	CheckoutStepsProvider,
 	CheckoutStepArea,
 	CheckoutStep,
 	CheckoutStepBody,
@@ -182,7 +182,7 @@ function MyCheckoutBody() {
 	const country = getCountry();
 
 	return (
-		<Checkout>
+		<CheckoutStepsProvider>
 			<CheckoutSummaryArea className={ orderSummary.className }>
 				{ orderSummary.summaryContent }
 			</CheckoutSummaryArea>
@@ -229,7 +229,7 @@ function MyCheckoutBody() {
 					/>
 				</CheckoutSteps>
 			</CheckoutStepArea>
-		</Checkout>
+		</CheckoutStepsProvider>
 	);
 }
 

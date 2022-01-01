@@ -7,21 +7,7 @@ import CheckoutOrderSummaryStep, {
 } from './components/checkout-order-summary';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import { CheckoutProvider } from './components/checkout-provider';
-import {
-	Checkout,
-	CheckoutStep,
-	CheckoutStepArea,
-	CheckoutStepBody,
-	CheckoutSteps,
-	CheckoutSummaryArea,
-	CheckoutSummaryCard,
-	useIsStepActive,
-	useIsStepComplete,
-	useSetStepComplete,
-	MainContentWrapper,
-	CheckoutStepAreaWrapper,
-	SubmitButtonWrapper,
-} from './components/checkout-steps';
+export * from './components/checkout-steps';
 import CheckoutSubmitButton from './components/checkout-submit-button';
 import {
 	getDefaultOrderSummary,
@@ -59,7 +45,6 @@ export type { Theme } from './lib/theme';
 // Re-export the public API
 export {
 	Button,
-	Checkout,
 	CheckoutCheckIcon,
 	CheckoutErrorBoundary,
 	CheckoutModal,
@@ -68,22 +53,13 @@ export {
 	CheckoutOrderSummaryStepTitle,
 	CheckoutPaymentMethods,
 	CheckoutProvider,
-	CheckoutStep,
-	CheckoutStepArea,
-	CheckoutStepAreaWrapper,
-	CheckoutStepBody,
-	CheckoutSteps,
 	CheckoutSubmitButton,
-	CheckoutSummaryArea,
-	CheckoutSummaryCard,
 	InvalidPaymentProcessorResponseError,
-	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
 	PaymentLogo,
 	RadioButton,
-	SubmitButtonWrapper,
 	checkoutTheme,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
@@ -95,8 +71,6 @@ export {
 	makeSuccessResponse,
 	useAllPaymentMethods,
 	useFormStatus,
-	useIsStepActive,
-	useIsStepComplete,
 	useLineItems,
 	useLineItemsOfType,
 	usePaymentMethod,
@@ -104,7 +78,6 @@ export {
 	usePaymentProcessor,
 	usePaymentProcessors,
 	useProcessPayment,
-	useSetStepComplete,
 	useTotal,
 	useTransactionStatus,
 };

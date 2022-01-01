@@ -40,7 +40,7 @@ Any component which is a child of `CheckoutProvider` gets access to the followin
 - [usePaymentMethodId](#usePaymentMethodId)
 - [useTotal](#useTotal)
 
-The [Checkout](#checkout) component creates a wrapper for Checkout. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
+The [CheckoutStepsProvider](#CheckoutStepsProvider) component creates a wrapper for Checkout. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
 
 - [CheckoutSummaryArea](#CheckoutSummaryArea) (optional) can be used to render an invisible area that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
 - [CheckoutSummaryCard](#CheckoutSummaryCard) (optional) can be used inside CheckoutSummaryArea to render a bordered area.
@@ -198,7 +198,7 @@ This component's props are:
 
 ## CheckoutStepArea
 
-Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects. Should be a direct child of [Checkout](#Checkout).
+Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects. Should be a direct child of [CheckoutStepsProvider](#CheckoutStepsProvider).
 
 This component's props are:
 
@@ -240,7 +240,7 @@ This component's props are:
 
 ## CheckoutSteps
 
-A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout). It has the following props.
+A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [CheckoutStepsProvider](#CheckoutStepsProvider). It has the following props.
 
 - `areStepsActive?: boolean`. Whether or not the set of steps is active and able to be edited. Defaults to `true`.
 
@@ -276,7 +276,7 @@ An enum that holds the values of the [form status](#useFormStatus).
 
 ## MainContentWrapper
 
-A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the [Checkout](#Checkout) component. You shouldn't need to use this manually.
+A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the [CheckoutStepsProvider](#CheckoutStepsProvider) component. You shouldn't need to use this manually.
 
 ### OrderReviewLineItems
 
