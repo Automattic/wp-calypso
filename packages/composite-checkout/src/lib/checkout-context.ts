@@ -4,7 +4,6 @@ import {
 	CheckoutPageErrorCallback,
 	FormStatus,
 	PaymentMethod,
-	PaymentProcessorProp,
 	TransactionStatusManager,
 	PaymentMethodChangedCallback,
 } from '../types';
@@ -16,7 +15,6 @@ interface CheckoutContext {
 	formStatus: FormStatus;
 	setFormStatus: ( newStatus: FormStatus ) => void;
 	transactionStatusManager: TransactionStatusManager | null;
-	paymentProcessors: PaymentProcessorProp;
 	onPageLoadError?: CheckoutPageErrorCallback;
 	onStepChanged?: StepChangedCallback;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
@@ -29,7 +27,6 @@ const defaultCheckoutContext: CheckoutContext = {
 	formStatus: FormStatus.LOADING,
 	setFormStatus: noop,
 	transactionStatusManager: null,
-	paymentProcessors: {},
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

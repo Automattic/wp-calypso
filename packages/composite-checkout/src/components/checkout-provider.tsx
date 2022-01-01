@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatusManager } from '../lib/form-status';
 import { LineItemsProvider } from '../lib/line-items';
+import { PaymentProcessorProvider } from '../lib/payment-processors';
 import defaultTheme from '../lib/theme';
 import { useTransactionStatusManager } from '../lib/transaction-status';
 import {
@@ -115,7 +116,6 @@ export function CheckoutProvider( {
 			formStatus,
 			setFormStatus,
 			transactionStatusManager,
-			paymentProcessors,
 			onPageLoadError,
 			onStepChanged,
 			onPaymentMethodChanged,
@@ -126,7 +126,6 @@ export function CheckoutProvider( {
 			paymentMethods,
 			setFormStatus,
 			transactionStatusManager,
-			paymentProcessors,
 			onPageLoadError,
 			onStepChanged,
 			onPaymentMethodChanged,
@@ -146,10 +145,12 @@ export function CheckoutProvider( {
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<LineItemsProvider items={ items } total={ total }>
-					<CheckoutContext.Provider value={ value }>
-						<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
-						{ children }
-					</CheckoutContext.Provider>
+					<PaymentProcessorProvider paymentProcessors={ paymentProcessors }>
+						<CheckoutContext.Provider value={ value }>
+							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+							{ children }
+						</CheckoutContext.Provider>
+					</PaymentProcessorProvider>
 				</LineItemsProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
