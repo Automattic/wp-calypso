@@ -39,15 +39,17 @@ export default async function globalSetup(): Promise< void > {
 		await Promise.all(
 			testAccounts.map( async ( accountName ) => {
 				const testAccount = new TestAccount( accountName );
-				const browserContext = await browser.newContext( { userAgent } );
-				const page = await browserContext.newPage();
-
 				if ( await testAccount.hasFreshAuthCookies() ) {
 					return;
 				}
 
+				const context = await browser.newContext( { userAgent } );
+				const page = await context.newPage();
+
 				await testAccount.logInViaLoginPage( page );
-				await testAccount.saveAuthCookies( browserContext );
+				await testAccount.saveAuthCookies( context );
+
+				await context.close();
 			} )
 		);
 

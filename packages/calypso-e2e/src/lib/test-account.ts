@@ -105,6 +105,12 @@ export class TestAccount {
 	async saveAuthCookies( browserContext: BrowserContext ): Promise< void > {
 		const cookiesPath = this.getAuthCookiesPath();
 
+		// Force remove existing cookies to prevent complaints if they don't exist.
+		// We need the remove step because otherwise, existing files will only be
+		// modified and the "created" date will stay the same, failing the freshness
+		// check.
+		await fs.rm( cookiesPath, { force: true } );
+
 		this.log( `Saving auth cookies to ${ cookiesPath }` );
 		await browserContext.storageState( { path: cookiesPath } );
 	}
@@ -144,7 +150,7 @@ export class TestAccount {
 	 * is defined. Prefixes each message with the account name for easier
 	 * reference. Formatted similarly to the pw:api logs.
 	 */
-	private log( message: string ) {
+	private log( message: any ) {
 		if ( process.env.DEBUG === undefined ) return;
 		console.log(
 			`${ chalk.bold( chalk.magenta( `TestAccount:${ this.accountName }` ) ) } => ${ message }`
