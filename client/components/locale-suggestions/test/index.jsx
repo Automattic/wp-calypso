@@ -4,7 +4,8 @@
 
 import { shallow } from 'enzyme';
 import { getLocaleSlug } from 'i18n-calypso';
-import { LocaleSuggestions } from '../';
+import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
+import { LocaleSuggestions } from '..';
 
 jest.mock( 'calypso/lib/i18n-utils', () => ( { addLocaleToPath: ( locale ) => locale } ) );
 jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: jest.fn( () => '' ) } ) );
@@ -14,18 +15,16 @@ jest.mock( 'calypso/components/notice', () => ( props ) => [ ...props.children ]
 describe( 'LocaleSuggestions', () => {
 	const defaultProps = {
 		path: '',
-		locale: 'x',
 		localeSuggestions: [
 			{ locale: 'es', name: 'Español', availability_text: 'También disponible en' },
 			{ locale: 'fr', name: 'Français', availability_text: 'Également disponible en' },
 			{ locale: 'en', name: 'English', availability_text: 'Also available in' },
 		],
-		setLocale: jest.fn(),
 	};
 
 	test( 'should not render without suggestions', () => {
-		const wrapper = shallow( <LocaleSuggestions path="" locale="x" setLocale={ () => {} } /> );
-		expect( wrapper.type() ).toBe( null );
+		const wrapper = shallow( <LocaleSuggestions path="" /> );
+		expect( wrapper.type() ).toBe( QueryLocaleSuggestions );
 	} );
 
 	test( 'should have `locale-suggestions` class', () => {
