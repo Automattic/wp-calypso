@@ -128,16 +128,6 @@ export class Login extends Component {
 		);
 	}
 
-	renderI18nSuggestions() {
-		const { locale, path, isLoginView } = this.props;
-
-		if ( ! isLoginView ) {
-			return null;
-		}
-
-		return <LocaleSuggestions locale={ locale } path={ path } />;
-	}
-
 	renderFooter() {
 		const { isJetpack, isGutenboarding, isP2Login, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
@@ -283,20 +273,18 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate } = this.props;
+		const { locale, translate, isLoginView, path } = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		return (
 			<div>
 				{ this.props.isP2Login && this.renderP2Logo() }
 				<Main className="wp-login__main">
-					{ this.renderI18nSuggestions() }
-
 					<DocumentHead
 						title={ translate( 'Log In' ) }
 						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
 						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
 					/>
-
+					{ isLoginView && <LocaleSuggestions path={ path } /> }
 					<div className="wp-login__container">{ this.renderContent() }</div>
 				</Main>
 
