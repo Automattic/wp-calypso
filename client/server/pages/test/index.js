@@ -427,11 +427,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.sanitize ).toEqual( app.getMocks().sanitize );
 	} );
 
-	it( 'sets the RTL', async () => {
-		const { request } = await app.run();
-		expect( request.context.isRTL ).toEqual( false );
-	} );
-
 	it( 'sets requestFrom', async () => {
 		const { request } = await app.run( { request: { query: { from: 'from' } } } );
 		expect( request.context.requestFrom ).toEqual( 'from' );

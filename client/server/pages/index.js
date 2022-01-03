@@ -123,7 +123,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
-		isRTL: false,
 		requestFrom: request.query.from,
 		isWCComConnect,
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
