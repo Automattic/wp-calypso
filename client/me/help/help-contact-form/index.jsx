@@ -177,7 +177,7 @@ export class HelpContactForm extends PureComponent {
 			// The API would reject something like "https://wp.com/slug".
 			// It'd need to either be "http(s)://wp.com" or "wp.com".
 			const url = this.state.userDeclaredUrl;
-			const query = url.includes( '://' )
+			const queryUrl = url.includes( '://' )
 				? new URL( this.state.userDeclaredUrl ).hostname
 				: new URL( 'http://' + this.state.userDeclaredUrl ).hostname;
 
@@ -195,7 +195,7 @@ export class HelpContactForm extends PureComponent {
 						this.setState( { errorData: error.error, siteData: null, hasRetriedRequest: false } );
 					} );
 
-			return request( query );
+			return request( queryUrl );
 		}
 	};
 
