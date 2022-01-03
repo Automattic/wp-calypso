@@ -27,6 +27,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
@@ -293,7 +294,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		return;
 	}
 	const locale = getLocaleSlug();
-	const isNewUser = getCurrentUserSiteCount( state ) <= 1;
+	const isNew7dUser = !! (
+		getCurrentUserSiteCount( state ) <= 1 && isUserRegistrationDaysWithinRange( state, null, 0, 7 )
+	);
 
 	wpcom.req.post(
 		'/sites/new',
@@ -331,7 +334,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			);
 
 			// Record calypso_new_user_site_creation
-			recordNewUserSiteCreated( flowToCheck, isNewUser );
+			recordNewUserSiteCreated( flowToCheck, isNew7dUser );
 		}
 	);
 }
