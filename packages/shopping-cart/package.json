@@ -37,7 +37,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/shopping-cart#readme",
 	"dependencies": {
-		"debug": "^4.1.1"
+		"debug": "^4.3.3"
 	},
 	"peerDependencies": {
 		"react": "^17.0.2",

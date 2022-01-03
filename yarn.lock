@@ -90,7 +90,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
     cookie: ^0.4.0
-    debug: ^4.1.1
+    debug: ^4.3.3
     hash.js: ^1.1.7
     lodash: ^4.17.21
     tslib: ^2.3.0
@@ -325,7 +325,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": ^1.17.1
-    debug: ^4.1.1
+    debug: ^4.3.3
     react: ^17.0.2
     react-dom: ^17.0.2
     typescript: ^4.5.4
@@ -390,7 +390,7 @@ __metadata:
     "@testing-library/react": ^12.1.2
     "@wordpress/i18n": ^4.2.4
     "@wordpress/react-i18n": ^3.0.4
-    debug: ^4.1.1
+    debug: ^4.3.3
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -472,7 +472,7 @@ __metadata:
     "@wordpress/data": ^6.1.4
     "@wordpress/element": ^4.0.4
     "@wordpress/i18n": ^4.2.4
-    debug: ^4.1.1
+    debug: ^4.3.3
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
@@ -522,7 +522,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    debug: ^4.1.1
+    debug: ^4.3.3
     object-treeify: ^1.1.23
     yargs: ^17.0.1
   bin:
@@ -774,7 +774,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": ^7.16.5
-    debug: ^4.0.0
+    debug: ^4.3.3
   languageName: unknown
   linkType: soft
 
@@ -800,7 +800,7 @@ __metadata:
     "@testing-library/react": ^12.1.2
     "@wordpress/i18n": ^4.2.4
     "@wordpress/react-i18n": ^3.0.4
-    debug: ^4.1.1
+    debug: ^4.3.3
     react: ^17.0.2
     react-dom: ^17.0.2
     typescript: ^4.5.4
@@ -868,7 +868,7 @@ __metadata:
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
     classnames: ^2.3.1
-    debug: ^4.1.1
+    debug: ^4.3.3
     enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     i18n-calypso: "workspace:^"
@@ -968,7 +968,7 @@ __metadata:
     "@wordpress/element": ^4.0.4
     "@wordpress/i18n": ^4.2.4
     classnames: ^2.3.1
-    debug: ^4.1.1
+    debug: ^4.3.3
     jest: ^27.3.1
     lodash: ^4.17.21
     react: ^17.0.2
@@ -998,7 +998,7 @@ __metadata:
     "@wordpress/primitives": ^3.0.4
     "@wordpress/react-i18n": ^3.0.4
     classnames: ^2.3.1
-    debug: ^4.1.1
+    debug: ^4.3.3
     lodash: ^4.17.21
     prop-types: ^15.7.2
     tslib: ^2.3.0
@@ -1090,7 +1090,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
-    debug: ^4.1.1
+    debug: ^4.3.3
     typescript: ^4.5.4
   peerDependencies:
     react: ^17.0.2
@@ -1336,7 +1336,7 @@ __metadata:
     "@wordpress/plugins": ^4.0.6
     "@wordpress/rich-text": ^5.0.6
     "@wordpress/url": ^3.3.1
-    debug: ^4.1.1
+    debug: ^4.3.3
     enzyme: ^3.11.0
     jest: ^27.3.1
     jquery: ^1.12.3
@@ -1368,7 +1368,7 @@ __metadata:
     "@wordpress/data": ^6.1.4
     "@wordpress/i18n": ^4.2.4
     "@wordpress/react-i18n": ^3.0.4
-    debug: ^4.1.1
+    debug: ^4.3.3
     i18n-calypso: "workspace:^"
     prop-types: ^15.7.2
     react: ^17.0.2
@@ -12280,7 +12280,7 @@ __metadata:
     d3-scale: ^3.2.1
     d3-selection: ^1.4.1
     d3-shape: ^1.3.7
-    debug: ^4.1.1
+    debug: ^4.3.3
     deep-freeze: ^0.0.1
     diff: ^4.0.2
     dom-helpers: ^5.1.3
@@ -20422,7 +20422,7 @@ fsevents@~2.1.2:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     commander: ^5.1.0
-    debug: ^4.0.0
+    debug: ^4.3.3
     globby: ^10.0.0
     xgettext-js: ^3.0.0
   bin:
@@ -20439,7 +20439,7 @@ fsevents@~2.1.2:
     "@babel/runtime": ^7.16.5
     "@tannin/sprintf": ^1.1.0
     "@wordpress/compose": ^5.0.6
-    debug: ^4.0.0
+    debug: ^4.3.3
     events: ^3.0.0
     hash.js: ^1.1.5
     lodash: ^4.17.21
@@ -28160,7 +28160,7 @@ fsevents@~2.1.2:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/seed-random": ^2.2.1
     crc32: ^0.2.2
-    debug: ^4.0.0
+    debug: ^4.3.3
     seed-random: ^2.2.0
     typescript: ^4.5.4
   languageName: unknown
@@ -37938,7 +37938,7 @@ testarmada-magellan@11.0.10:
     config: ^3.3.6
     core-js-bundle: ^3.6.4
     css-loader: ^6.5.1
-    debug: ^4.1.1
+    debug: ^4.3.3
     doctrine: ^3.0.0
     eslint: ^8.4.1
     eslint-config-prettier: ^8.3.0
@@ -38112,7 +38112,7 @@ testarmada-magellan@11.0.10:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     chai: ^4.3.4
-    debug: ^4.1.1
+    debug: ^4.3.3
     progress-event: ^1.0.0
     uuid: ^8.3.2
     wp-error: ^1.3.0
@@ -38125,7 +38125,7 @@ testarmada-magellan@11.0.10:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": ^7.16.5
-    debug: ^4.1.1
+    debug: ^4.3.3
     superagent: ^3.8.3
     wp-error: ^1.3.0
   languageName: unknown
@@ -38139,7 +38139,7 @@ testarmada-magellan@11.0.10:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": ^7.16.5
     babel-loader: ^8.2.3
-    debug: ^4.1.1
+    debug: ^4.3.3
     npm-run-all: ^4.1.5
     qs: ^6.5.2
     webpack: ^5.65.0

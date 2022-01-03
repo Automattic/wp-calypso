@@ -32,7 +32,7 @@
 		"autoprefixer": "^10.2.5",
 		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
-		"debug": "^4.1.1",
+		"debug": "^4.3.3",
 		"i18n-calypso": "workspace:^",
 		"page": "^1.11.5",
 		"prop-types": "^15.7.2",
