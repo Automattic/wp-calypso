@@ -17,7 +17,7 @@ import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 import './style.scss';
 
-const ActionSection = styled.div`
+export const ActionSection = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
@@ -38,7 +38,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-bottom: 40px;
 `;
 
-const StyledNextButton = styled( NextButton )`
+export const StyledNextButton = styled( NextButton )`
 	@media ( max-width: 320px ) {
 		width: 100%;
 		margin-bottom: 20px;

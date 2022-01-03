@@ -1,6 +1,4 @@
 import { Button } from '@automattic/components';
-import { NextButton } from '@automattic/onboarding';
-import styled from '@emotion/styled';
 import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
@@ -9,28 +7,11 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
+import { ActionSection, StyledNextButton } from '../confirm';
 import { useStoreAddressOptions } from '../hooks/use-site-options';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
 import './style.scss';
-
-const ActionSection = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: baseline;
-	flex-wrap: wrap;
-
-	@media ( max-width: 320px ) {
-		align-items: center;
-	}
-`;
-
-const StyledNextButton = styled( NextButton )`
-	@media ( max-width: 320px ) {
-		width: 100%;
-		margin-bottom: 20px;
-	}
-`;
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
 	const { goToStep, isReskinned, headerTitle, headerDescription } = props;
