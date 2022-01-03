@@ -1,30 +1,28 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { CompactCard, Gridicon } from '@automattic/components';
-import { PureComponent } from 'react';
+import { Component } from 'react';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-export default class extends PureComponent {
-	static displayName = 'HelpResult';
-
+export default class HelpResult extends Component {
 	onClick = ( event ) => {
 		if ( this.props.helpLink.disabled ) {
 			return event.preventDefault();
 		}
 
-		this.props.onClick && this.props.onClick( event, this.props.helpLink );
+		this.props.onClick?.( event, this.props.helpLink );
 	};
 
-	getResultImage = () => {
+	getResultImage() {
 		if ( ! this.props.helpLink.image ) {
 			return;
 		}
 
 		return <img src={ this.props.helpLink.image } alt="" />;
-	};
+	}
 
-	getResultIcon = () => {
+	getResultIcon() {
 		//If we've assigned an image, don't show the icon
 		if ( this.props.helpLink.image ) {
 			return;
@@ -48,7 +46,7 @@ export default class extends PureComponent {
 			);
 		}
 		return <Gridicon className={ iconClass } icon={ iconTypeDescription } size={ iconSize } />;
-	};
+	}
 
 	render() {
 		const { compact, helpLink } = this.props;
