@@ -119,8 +119,8 @@ export function redirectTiers( { res, originalUrl, params: { tier } }, next ) {
 		return next();
 	}
 
-	const typeTierRegex = new RegExp( `/type/${ tier }$`, 'g' );
-	const inlineOrPostfixTierRegex = new RegExp( `(?<=/)${ tier }/|/${ tier }$`, 'g' );
+	const typeTierRegex = new RegExp( `/type/${ tier }$` );
+	const inlineOrPostfixTierRegex = new RegExp( `(?<=/)${ tier }/|/${ tier }$` );
 
 	const redirectUrl = originalUrl
 		.replace( typeTierRegex, '' )
