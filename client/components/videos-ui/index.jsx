@@ -26,8 +26,7 @@ const VideosUi = ( {
 	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
 
 	const [ shouldShowVideoTranslationNotice, setShouldShowVideoTranslationNotice ] = useState(
-		// @TODO remove the '&& false' as soon as notification text is translated
-		! isEnglish && ! areVideosTranslated && false
+		! isEnglish && ! areVideosTranslated
 	);
 
 	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
