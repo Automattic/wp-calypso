@@ -1,4 +1,5 @@
 export { getConfiguredTitanMailboxCount } from './get-configured-titan-mailbox-count';
+export { getCurrentProductSlug } from './get-current-product-slug';
 export { getEligibleTitanDomain } from './get-eligible-titan-domain';
 export { getMaxTitanMailboxCount } from './get-max-titan-mailbox-count';
 export { getTitanExpiryDate } from './get-titan-expiry-date';
