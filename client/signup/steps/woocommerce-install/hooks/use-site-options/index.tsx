@@ -70,7 +70,7 @@ export default function useSiteOptions( siteId: number, optionId: string ) {
 	// Clean the site option value from the store.
 	const clean = () => dispatch( updateSiteSettings( siteId, { [ optionId ]: {} } ) );
 
-	return { data: siteSettingsData, save, clean, update, get };
+	return { save, clean, update, get };
 }
 
 export function useStoreAddressOptions( siteId: number ) {
