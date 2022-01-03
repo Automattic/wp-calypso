@@ -11,8 +11,7 @@ import useSiteOptions from './use-site-options';
 
 ```es6
 function StoreAddressFrom() {
-	const { data, get, save, update, clean } = useSiteOptions( 'store-address' );
-	const storeData = { firstName: '', lastName: '' };
+	const { get, save, update, clean } = useSiteOptions( 'personal-data' );
 
 	return (
 		<div>
