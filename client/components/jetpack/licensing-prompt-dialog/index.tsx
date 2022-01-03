@@ -64,6 +64,11 @@ function LicensingPromptDialog( { siteId }: Props ) {
 
 	const selectAnotherProductClick = useCallback( () => {
 		setShowLicensesDialog( false );
+		dispatch( recordTracksEvent( 'calypso_user_license_modal_continue_click' ) );
+	}, [ dispatch ] );
+
+	const closeDialog = useCallback( () => {
+		setShowLicensesDialog( false );
 		dispatch( recordTracksEvent( 'calypso_user_license_modal_close_click' ) );
 	}, [ dispatch ] );
 
@@ -71,7 +76,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 		<Dialog
 			additionalClassNames="licensing-prompt-dialog"
 			isVisible={ showLicensesDialog }
-			onClose={ () => setShowLicensesDialog( false ) }
+			onClose={ closeDialog }
 			shouldCloseOnEsc
 		>
 			<h1 className="licensing-prompt-dialog__title">{ title }</h1>
