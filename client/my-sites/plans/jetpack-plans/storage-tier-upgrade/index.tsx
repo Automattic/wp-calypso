@@ -43,7 +43,6 @@ export const StorageTierUpgrade: React.FC< Props > = ( {
 					currencyCode={ currencyCode }
 					selectedTerm={ duration }
 					isAligned={ false }
-					featuredPlans={ [] }
 					scrollCardIntoView={ noop }
 					createButtonURL={ createButtonURL }
 				/>

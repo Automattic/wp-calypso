@@ -1405,6 +1405,8 @@ __metadata:
     "@babel/core": ^7.16.5
     "@emotion/react": ^11.4.1
     "@popperjs/core": ^2.10.2
+    "@sentry/browser": ^6.16.1
+    "@sentry/tracing": ^6.16.1
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@types/node": ^15.0.2
@@ -4899,6 +4901,83 @@ __metadata:
     lodash.merge: ^4.4.0
     postcss: ^5.0.21
   checksum: 6d7891d5c46060e0735f0d09ebddd7c3228834f0c8150795d7c4c6a64c0c205009cfa06b1db04e234fe143054078157ba459abd5f26206b37ea470565fd60fec
+  languageName: node
+  linkType: hard
+
+"@sentry/browser@npm:^6.16.1":
+  version: 6.16.1
+  resolution: "@sentry/browser@npm:6.16.1"
+  dependencies:
+    "@sentry/core": 6.16.1
+    "@sentry/types": 6.16.1
+    "@sentry/utils": 6.16.1
+    tslib: ^1.9.3
+  checksum: 108166ffbd89a5457622fbde8e805626f57c9b697926e180eb9ef3924a3a79781f90161276c8ca9c4e6b184a86f52ce335ef5cd600b11098748ab1ef6529434a
+  languageName: node
+  linkType: hard
+
+"@sentry/core@npm:6.16.1":
+  version: 6.16.1
+  resolution: "@sentry/core@npm:6.16.1"
+  dependencies:
+    "@sentry/hub": 6.16.1
+    "@sentry/minimal": 6.16.1
+    "@sentry/types": 6.16.1
+    "@sentry/utils": 6.16.1
+    tslib: ^1.9.3
+  checksum: 7ef965c3258c1140a4571160e37b28c66c31be57fa13fe7fe14cfa92c43259c156cd98d2a69fdf587a9a9ac52b72fa370fc57c81ff0de11fc3c96737ca8d9990
+  languageName: node
+  linkType: hard
+
+"@sentry/hub@npm:6.16.1":
+  version: 6.16.1
+  resolution: "@sentry/hub@npm:6.16.1"
+  dependencies:
+    "@sentry/types": 6.16.1
+    "@sentry/utils": 6.16.1
+    tslib: ^1.9.3
+  checksum: afc6bc4c0b94813d1af49727fcf64273cacd6f4b663930ef695bcff164d211ab8cd7e20eb077f2a6b9837a5430d2c9ac6e78d9094aa88b86e352facf7883a159
+  languageName: node
+  linkType: hard
+
+"@sentry/minimal@npm:6.16.1":
+  version: 6.16.1
+  resolution: "@sentry/minimal@npm:6.16.1"
+  dependencies:
+    "@sentry/hub": 6.16.1
+    "@sentry/types": 6.16.1
+    tslib: ^1.9.3
+  checksum: e5a3a561fc77cfe23ca6b61e4bbe70afe6efc8bd5679ccc152c7928ca21d2a36ec50bee5c5b1dae123a9c239a6aae8ade8273a6410a2e4d280d795ee76430b9c
+  languageName: node
+  linkType: hard
+
+"@sentry/tracing@npm:^6.16.1":
+  version: 6.16.1
+  resolution: "@sentry/tracing@npm:6.16.1"
+  dependencies:
+    "@sentry/hub": 6.16.1
+    "@sentry/minimal": 6.16.1
+    "@sentry/types": 6.16.1
+    "@sentry/utils": 6.16.1
+    tslib: ^1.9.3
+  checksum: 840cde58fd31fad1853edcb98c394aa1bedc87ff35e5130d58fa5aa049be898d907d1aacf1fc4ff165b5c7ec56b57b5cc96d7992b2815b2ea199fd278cebad35
+  languageName: node
+  linkType: hard
+
+"@sentry/types@npm:6.16.1":
+  version: 6.16.1
+  resolution: "@sentry/types@npm:6.16.1"
+  checksum: 0df3b6ee70ee504b74dfa8e8dc19007c9504a570966690b5db924f551b8437d1c034a25d4ecccfcebd811bf59e19ed255b694ac565868d3d35db86778213685f
+  languageName: node
+  linkType: hard
+
+"@sentry/utils@npm:6.16.1":
+  version: 6.16.1
+  resolution: "@sentry/utils@npm:6.16.1"
+  dependencies:
+    "@sentry/types": 6.16.1
+    tslib: ^1.9.3
+  checksum: 252572187c8386ef4119ac58ecf9109a899e208c7a95766a7546c11d4abc17bd83d7d65a806f0f7f7e21e613903beb55d8972f21918f65083fee40ecb3996049
   languageName: node
   linkType: hard
 
@@ -35831,10 +35910,17 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"tslib@npm:1.11.2, tslib@npm:^1.10.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0":
+"tslib@npm:1.11.2":
   version: 1.11.2
   resolution: "tslib@npm:1.11.2"
   checksum: 19c6407249e67107eef12c0ab0a9786a08d1c5db50919ac3496e975990a4e2f4d5338242fc6130f236639942efc16d5b98d8264629c1b387432cc938d092e171
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^1.10.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
+  version: 1.14.1
+  resolution: "tslib@npm:1.14.1"
+  checksum: 69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
   languageName: node
   linkType: hard
 

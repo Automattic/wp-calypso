@@ -1,4 +1,4 @@
-import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { DnsRequest, ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
@@ -29,10 +29,12 @@ export type SettingsPagePassedProps = {
 
 export type SettingsPageConnectedProps = {
 	currentRoute: string;
-	domain: ResponseDomain;
+	domain: ResponseDomain | undefined;
 	isLoadingPurchase: boolean;
 	purchase: Purchase | null;
 	whoisData: WhoisData[];
+	dns: DnsRequest;
+	isRequestingDomains: boolean;
 };
 
 export type SettingsPageNameServerHocProps = {

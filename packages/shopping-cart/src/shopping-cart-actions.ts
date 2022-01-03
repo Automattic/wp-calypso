@@ -4,6 +4,7 @@ import type { DispatchAndWaitForValid, ShoppingCartManagerActions } from './type
 export function createActions( dispatch: DispatchAndWaitForValid ): ShoppingCartManagerActions {
 	return {
 		reloadFromServer: () => dispatch( { type: 'CART_RELOAD' } ),
+		clearMessages: () => dispatch( { type: 'CLEAR_MESSAGES' } ),
 		removeCoupon: () => dispatch( { type: 'REMOVE_COUPON' } ),
 		addProductsToCart: async ( products ) =>
 			dispatch( {

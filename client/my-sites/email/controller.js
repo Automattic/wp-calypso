@@ -1,11 +1,13 @@
 import { isEnabled as isConfigEnabled } from '@automattic/calypso-config';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
+import EmailForwardsAdd from 'calypso/my-sites/email/email-forwards-add';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-providers-in-depth-comparison';
 import EmailProvidersComparisonStacked from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
@@ -14,6 +16,19 @@ import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
 export default {
+	emailManagementAddEmailForwards( pageContext, next ) {
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<EmailForwardsAdd
+					selectedDomainName={ pageContext.params.domain }
+					source={ pageContext.query.source }
+				/>
+			</CalypsoShoppingCartProvider>
+		);
+
+		next();
+	},
+
 	emailManagementAddGSuiteUsers( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
@@ -89,12 +104,28 @@ export default {
 			<EmailProvidersComparisonStacked
 				comparisonContext="email-purchase"
 				selectedDomainName={ pageContext.params.domain }
+				siteName={ pageContext.params.site }
 				source={ pageContext.query.source }
 			/>
 		);
 
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>{ comparisonComponent }</CalypsoShoppingCartProvider>
+		);
+
+		next();
+	},
+
+	emailManagementInDepthComparison( pageContext, next ) {
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<EmailProvidersInDepthComparison
+					comparisonContext="email-in-depth-comparison"
+					selectedDomainName={ pageContext.params.domain }
+					siteName={ pageContext.params.site }
+					source={ pageContext.query.source }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
 
 		next();

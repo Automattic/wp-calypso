@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query';
 import wp from 'calypso/lib/wp';
 
-const useDomainNameserversQuery = ( domainName, enabled ) =>
+const useDomainNameserversQuery = ( domainName ) =>
 	useQuery(
 		[ 'domain-nameservers', domainName ],
 		() => wp.req.get( `/domains/${ domainName }/nameservers/` ),
-		{ enabled, refetchOnWindowFocus: false }
+		{ refetchOnWindowFocus: false }
 	);
 
 export default useDomainNameserversQuery;

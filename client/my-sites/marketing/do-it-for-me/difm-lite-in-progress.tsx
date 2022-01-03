@@ -20,13 +20,9 @@ type DIFMLiteInProgressProps = {
 	siteId: number;
 };
 
-type DomainName = {
-	name?: string;
-};
-
 function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactElement {
 	const slug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-	const primaryDomain: DomainName = useSelector( ( state: AppState ) =>
+	const primaryDomain = useSelector( ( state: AppState ) =>
 		getPrimaryDomainBySiteId( state, siteId )
 	);
 	const translate = useTranslate();

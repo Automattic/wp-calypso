@@ -36,6 +36,12 @@ import {
 } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
+import type { IAppState } from 'calypso/state/types';
+
+interface InstalledPlugin {
+	slug?: string;
+	id?: number;
+}
 
 const MarketplacePluginInstall = ( {
 	productSlug,
@@ -76,7 +82,7 @@ const MarketplacePluginInstall = ( {
 
 	const marketplacePluginInstallationInProgress = useSelector( ( state ) => {
 		const { pluginInstallationStatus, productSlugInstalled, primaryDomain } = getPurchaseFlowState(
-			state
+			state as IAppState
 		);
 		if ( isUploadFlow ) {
 			return (
@@ -198,8 +204,8 @@ const MarketplacePluginInstall = ( {
 		) {
 			dispatch(
 				activatePlugin( siteId, {
-					slug: installedPlugin?.slug,
-					id: installedPlugin?.id,
+					slug: ( installedPlugin as InstalledPlugin )?.slug,
+					id: ( installedPlugin as InstalledPlugin )?.id,
 				} )
 			);
 			setCurrentStep( 2 );
@@ -215,7 +221,9 @@ const MarketplacePluginInstall = ( {
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
-					`/marketplace/thank-you/${ installedPlugin?.slug || productSlug }/${ selectedSiteSlug }`
+					`/marketplace/thank-you/${
+						( installedPlugin as InstalledPlugin )?.slug || productSlug
+					}/${ selectedSiteSlug }`
 				)
 			);
 		}

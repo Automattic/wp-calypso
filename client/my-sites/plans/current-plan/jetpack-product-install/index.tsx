@@ -19,7 +19,8 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
 import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SiteId, TimeoutMS } from 'calypso/types';
+import type { PluginStatusSlug } from 'calypso/state/selectors/get-jetpack-product-install-status';
+import type { AppState, SiteId, TimeoutMS } from 'calypso/types';
 
 type PluginStateDescriptor = string;
 type PluginSlug = 'akismet' | 'vaultpress';
@@ -178,7 +179,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 		}
 
 		return PLUGINS.some( ( pluginSlug ) =>
-			pluginStates.includes( status[ pluginSlug + '_status' ] )
+			pluginStates.includes( status[ ( pluginSlug + '_status' ) as PluginStatusSlug ] )
 		);
 	}
 
@@ -343,13 +344,13 @@ interface ConnectedProps {
 	status: ReturnType< typeof getJetpackProductInstallStatus >;
 }
 
-function mapStateToProps( state ): ConnectedProps {
+function mapStateToProps( state: AppState ): ConnectedProps {
 	const siteId = getSelectedSiteId( state );
 	const queryArgs = getCurrentQueryArguments( state );
 
 	const installQuery: string[] =
 		// eslint-disable-next-line no-nested-ternary
-		typeof queryArgs === 'object' && 'install' in queryArgs
+		typeof queryArgs === 'object' && queryArgs && 'install' in queryArgs
 			? Array.isArray( queryArgs.install )
 				? queryArgs.install
 				: [ queryArgs.install ]
@@ -364,9 +365,9 @@ function mapStateToProps( state ): ConnectedProps {
 	return {
 		siteId,
 		pluginKeys: keyRequest.state === 'success' ? keyRequest.data : null,
-		progressComplete: getJetpackProductInstallProgress( state, siteId ),
+		progressComplete: getJetpackProductInstallProgress( state, siteId ?? 0 ),
 		requestedInstalls,
-		status: getJetpackProductInstallStatus( state, siteId ),
+		status: getJetpackProductInstallStatus( state, siteId ?? 0 ),
 	};
 }
 

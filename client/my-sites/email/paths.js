@@ -26,6 +26,26 @@ function resolveRootPath( relativeTo ) {
 }
 
 /**
+ * Retrieves the url of the Add New Mailboxes page for email forwarding:
+ *
+ *   https://wordpress.com/email/:domainName/forwarding/add/:siteName
+ *
+ * @param {string} siteSlug - slug of the current site
+ * @param {string} domainName - domain name to add forwarding for
+ * @param {string} relativeTo - optional path prefix
+ * @param {string} source - optional source
+ * @returns {string} the corresponding url
+ */
+export function emailManagementAddEmailForwards(
+	siteSlug,
+	domainName,
+	relativeTo = null,
+	source = null
+) {
+	return emailManagementEdit( siteSlug, domainName, 'forwarding/add', relativeTo, { source } );
+}
+
+/**
  * Retrieves the url of the Add New Mailboxes page either for G Suite or Google Workspace:
  *
  *   https://wordpress.com/email/:domainName/google-workspace/add-users/:siteName
@@ -115,6 +135,12 @@ export function emailManagementTitanSetUpThankYou(
 	);
 }
 
+/**
+ * @param {string|undefined|null} siteName
+ * @param {string|undefined|null} domainName
+ * @param {string|null} [relativeTo]
+ * @param {Object.<string, string>} [urlParameters]
+ */
 export function emailManagementTitanControlPanelRedirect(
 	siteName,
 	domainName,
@@ -130,6 +156,12 @@ export function emailManagementTitanControlPanelRedirect(
 	);
 }
 
+/**
+ * @param {string|undefined|null} siteName
+ * @param {string|undefined|null} domainName
+ * @param {string|null} [relativeTo]
+ * @param {Object.<string, string>} [urlParameters]
+ */
 export function emailManagement( siteName, domainName, relativeTo = null, urlParameters = {} ) {
 	let path;
 
@@ -166,6 +198,26 @@ export function emailManagementPurchaseNewEmailAccount(
 	source = null
 ) {
 	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo, { source } );
+}
+
+/**
+ * Retrieves the url of the Email In-Depth Comparison page:
+ *
+ *   https://wordpress.com/email/:domainName/in-depth-comparison/:siteName
+ *
+ * @param {string} siteName - slug of the current site
+ * @param {string} domainName - domain name of the account to add users to
+ * @param {string} relativeTo - optional path prefix
+ * @param {string} source - optional source
+ * @returns {string} the corresponding url
+ */
+export function emailManagementInDepthComparison(
+	siteName,
+	domainName,
+	relativeTo = null,
+	source = null
+) {
+	return emailManagementEdit( siteName, domainName, 'compare', relativeTo, { source } );
 }
 
 export function emailManagementEdit(

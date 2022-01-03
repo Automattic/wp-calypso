@@ -70,19 +70,6 @@ export const leaveCheckout = ( {
 				return;
 			}
 		}
-
-		// Some places that open checkout (eg: purchase page renewals) return the
-		// user there after checkout by putting the previous page's path in the
-		// `redirect_to` query param. When leaving checkout via the close button,
-		// we probably want to return to that location also.
-		if ( searchParams.has( 'redirect_to' ) ) {
-			const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
-			// Only allow redirecting to relative paths.
-			if ( redirectPath.match( /^\/(?!\/)/ ) ) {
-				navigate( redirectPath );
-				return;
-			}
-		}
 	} catch ( error ) {
 		// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
 		// eslint-disable-next-line no-console

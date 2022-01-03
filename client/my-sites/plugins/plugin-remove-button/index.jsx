@@ -210,6 +210,11 @@ class PluginRemoveButton extends Component {
 			return null;
 		}
 
+		if ( this.props.isMarketplaceProduct ) {
+			// Marketplace products are auto-managed.
+			return null;
+		}
+
 		if ( this.props.plugin.slug === 'jetpack' ) {
 			return null;
 		}

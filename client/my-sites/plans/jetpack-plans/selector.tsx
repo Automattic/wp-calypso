@@ -13,6 +13,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { showMasterbar } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getPurchaseURLCallback } from './get-purchase-url-callback';
 import getViewTrackerPath from './get-view-tracker-path';
@@ -101,6 +102,17 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			}
 		},
 		[ highlightedProducts ]
+	);
+
+	useEffect(
+		() => () => {
+			// Show masterbar back when pricing page unmounts, to prevent it from disappearing
+			// from the previous page when hitting the browser back button.
+			if ( isJetpackCloud() ) {
+				dispatch( showMasterbar() );
+			}
+		},
+		[]
 	);
 
 	const createProductURL = getPurchaseURLCallback( siteSlug, urlQueryArgs );

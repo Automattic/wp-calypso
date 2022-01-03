@@ -58,6 +58,7 @@ const getTitanFeatures = () => {
 };
 
 const professionalEmailCardInformation: ProviderCard = {
+	className: 'professional-email-card',
 	detailsExpanded: true,
 	expandButtonLabel: translate( 'Select' ),
 	onExpandedChange: noop,
@@ -66,7 +67,7 @@ const professionalEmailCardInformation: ProviderCard = {
 	description: translate( 'Integrated email solution for your WordPress.com site.' ),
 	logo,
 	productName: getTitanProductName(),
-	badge,
+	footerBadge: badge,
 	features: getTitanFeatures(),
 };
 
@@ -154,7 +155,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 
 	const priceWithInterval = (
 		<PriceWithInterval
-			className={ 'professional-email-card' }
 			intervalLength={ intervalLength }
 			cost={ titanMailProduct?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
@@ -170,7 +170,7 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 					{ translate( '3 months free' ) }
 				</div>
 			) }
-			<PriceBadge priceComponent={ priceWithInterval } className={ 'professional-email-card' } />
+			<PriceBadge priceComponent={ priceWithInterval } />
 		</>
 	);
 
@@ -180,7 +180,6 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 			mailboxes={ titanMailbox }
 			selectedDomainName={ selectedDomainName }
 			onReturnKeyPress={ onTitanFormReturnKeyPress }
-			showLabels={ true }
 			validatedMailboxUuids={ validatedTitanMailboxUuids }
 			showAddAnotherMailboxButton={ false }
 			hiddenFieldNames={ [ TITAN_FULL_NAME_FIELD, TITAN_PASSWORD_RESET_FIELD ] }
@@ -213,7 +212,7 @@ export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		domain,
-		selectedDomainName: resolvedDomainName,
+		selectedDomainName: resolvedDomainName ?? '',
 		hasCartDomain,
 		selectedSite,
 		titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),

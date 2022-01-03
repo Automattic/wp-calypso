@@ -9,7 +9,7 @@ import type {
 import type { NonUndefined } from 'utility-types';
 
 import './style.scss';
-interface OwnProps {
+export interface OwnProps {
 	className?: string;
 	compact?: boolean;
 	primary?: boolean;

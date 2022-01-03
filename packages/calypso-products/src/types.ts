@@ -97,6 +97,7 @@ export type Plan = BillingTerm & {
 	getDescription: () => TranslateResult;
 	getShortDescription?: () => TranslateResult;
 	getTagline?: () => TranslateResult;
+	getPlanCardFeatures?: () => Feature[];
 
 	/**
 	 * Features that are included as part of this plan.

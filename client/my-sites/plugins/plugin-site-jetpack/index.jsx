@@ -20,7 +20,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
 import './style.scss';
 
-const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedActions } ) => {
+const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedActions, ...props } ) => {
 	const translate = useTranslate();
 	const {
 		activation: canToggleActivation = true,
@@ -73,6 +73,7 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 							selectedSite={ site }
 							plugin={ plugin }
 							isInstalling={ installInProgress }
+							{ ...props }
 						/>
 					}
 				</div>
@@ -84,7 +85,14 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 		<>
 			{ plugin.isMarketplaceProduct && <QuerySitePurchases siteId={ site.ID } /> }
 			<div className="plugin-site-jetpack__container">
-				<div className="plugin-site-jetpack__domain">{ site.domain }</div>
+				<div className="plugin-site-jetpack__domain">
+					{ site.domain }
+					{ ( isAutoManaged || plugin.isMarketplaceProduct ) && (
+						<div className="plugin-site-jetpack__automanage-notice">
+							{ translate( 'Auto-managed on this site' ) }
+						</div>
+					) }
+				</div>
 				{ canToggleActivation && (
 					<PluginActivateToggle
 						site={ site }
@@ -101,42 +109,53 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 						toggleExtraContent={
 							! isMobileLayout && <PluginUpdateIndicator site={ site } plugin={ plugin } expanded />
 						}
+						isMarketplaceProduct={ plugin.isMarketplaceProduct }
 					/>
 				) }
-				{ isAutoManaged ? (
-					<div className="plugin-site-jetpack__automanage-notice">
-						{ translate( 'Auto-managed on this site' ) }
-					</div>
-				) : (
-					<div className="plugin-site-jetpack__action plugin-action last-actions">
-						{ ! isMobileLayout && canToggleRemove && (
-							<PluginRemoveButton plugin={ pluginOnSite } site={ site } />
-						) }
-						{ ( isMobileLayout || settingsLink || currentPurchase ) && (
-							<EllipsisMenu position={ 'bottom' }>
-								{ currentPurchase?.id && (
-									<PopoverMenuItem
-										icon="credit-card"
-										href={ `/me/purchases/${ site.domain }/${ currentPurchase.id }` }
-									>
-										{ translate( 'Manage Subscription' ) }
-									</PopoverMenuItem>
-								) }
-								{ settingsLink && (
-									<PopoverMenuItem icon="cog" href={ settingsLink }>
-										{ translate( 'Settings' ) }
-									</PopoverMenuItem>
-								) }
-								{ isMobileLayout && (
-									<>
-										<PluginUpdateIndicator site={ site } plugin={ plugin } expanded menuItem />
-										<PluginRemoveButton plugin={ pluginOnSite } site={ site } menuItem />
-									</>
-								) }
-							</EllipsisMenu>
-						) }
-					</div>
-				) }
+
+				<div className="plugin-site-jetpack__action plugin-action last-actions">
+					{ ! isMobileLayout && canToggleRemove && (
+						<PluginRemoveButton
+							plugin={ pluginOnSite }
+							site={ site }
+							isMarketplaceProduct={ plugin.isMarketplaceProduct }
+						/>
+					) }
+					{ ( isMobileLayout || settingsLink || currentPurchase ) && (
+						<EllipsisMenu position={ 'bottom' }>
+							{ currentPurchase?.id && (
+								<PopoverMenuItem
+									icon="credit-card"
+									href={ `/me/purchases/${ site.domain }/${ currentPurchase.id }` }
+								>
+									{ translate( 'Manage Subscription' ) }
+								</PopoverMenuItem>
+							) }
+							{ settingsLink && (
+								<PopoverMenuItem icon="cog" href={ settingsLink }>
+									{ translate( 'Settings' ) }
+								</PopoverMenuItem>
+							) }
+							{ isMobileLayout && (
+								<>
+									<PluginUpdateIndicator
+										site={ site }
+										plugin={ plugin }
+										expanded
+										menuItem
+										isMarketplaceProduct={ plugin.isMarketplaceProduct }
+									/>
+									<PluginRemoveButton
+										plugin={ pluginOnSite }
+										site={ site }
+										menuItem
+										isMarketplaceProduct={ plugin.isMarketplaceProduct }
+									/>
+								</>
+							) }
+						</EllipsisMenu>
+					) }
+				</div>
 			</div>
 		</>
 	);

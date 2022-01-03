@@ -62,6 +62,8 @@ export type ReplaceProductInCart = (
 
 export type ReloadCartFromServer = () => Promise< ResponseCart >;
 
+export type ClearCartMessages = () => Promise< ResponseCart >;
+
 export type ReplaceProductsInCart = (
 	products: MinimalRequestCartProduct[]
 ) => Promise< ResponseCart >;
@@ -103,6 +105,7 @@ export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected';
 
 export type ShoppingCartAction =
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
+	| { type: 'CLEAR_MESSAGES' }
 	| { type: 'UPDATE_LAST_VALID_CART' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
@@ -131,6 +134,7 @@ export interface ShoppingCartManagerActions {
 	replaceProductInCart: ReplaceProductInCart;
 	replaceProductsInCart: ReplaceProductsInCart;
 	reloadFromServer: ReloadCartFromServer;
+	clearMessages: ClearCartMessages;
 }
 
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';

@@ -37,6 +37,9 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
+	isNewOrExistingSiteFulfilled = noop,
+	setDesignIfNewSite = noop,
+	excludeStepIfEmailVerified = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -83,7 +86,9 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 			apiRequestFunction: setThemeOnSite,
 			props: {
-				headerText: i18n.translate( 'Choose a theme for your new site.' ),
+				get headerText() {
+					return i18n.translate( 'Choose a theme for your new site.' );
+				},
 			},
 		},
 
@@ -98,8 +103,12 @@ export function generateSteps( {
 				showExampleSuggestions: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
-				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
-				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
+				get headerText() {
+					return i18n.translate( 'Getting ready to launch, pick a domain' );
+				},
+				get subHeaderText() {
+					return i18n.translate( 'Select a domain name for your website' );
+				},
 			},
 			dependencies: [ 'siteSlug' ],
 		},
@@ -276,8 +285,12 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			props: {
-				headerText: i18n.translate( 'Getting ready to launch your website' ),
-				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
+				get headerText() {
+					return i18n.translate( 'Getting ready to launch your website' );
+				},
+				get subHeaderText() {
+					return i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." );
+				},
 				isLaunchPage: true,
 			},
 		},
@@ -366,8 +379,12 @@ export function generateSteps( {
 			apiRequestFunction: createAccount,
 			providesToken: true,
 			props: {
-				headerText: i18n.translate( 'Create an account for Jetpack' ),
-				subHeaderText: i18n.translate( "You're moments away from connecting Jetpack." ),
+				get headerText() {
+					return i18n.translate( 'Create an account for Jetpack' );
+				},
+				get subHeaderText() {
+					return i18n.translate( "You're moments away from connecting Jetpack." );
+				},
 			},
 			providesDependencies: [ 'bearer_token', 'username' ],
 		},
@@ -428,10 +445,14 @@ export function generateSteps( {
 		'site-or-domain': {
 			stepName: 'site-or-domain',
 			props: {
-				headerText: i18n.translate( 'Choose how you want to use your domain.' ),
-				subHeaderText: i18n.translate(
-					"Don't worry you can easily add a site later if you're not ready."
-				),
+				get headerText() {
+					return i18n.translate( 'Choose how you want to use your domain.' );
+				},
+				get subHeaderText() {
+					return i18n.translate(
+						"Don't worry you can easily add a site later if you're not ready."
+					);
+				},
 			},
 			providesDependencies: [
 				'designType',
@@ -446,7 +467,9 @@ export function generateSteps( {
 			stepName: 'site-picker',
 			apiRequestFunction: createSiteOrDomain,
 			props: {
-				headerText: i18n.translate( 'Choose your site?' ),
+				get headerText() {
+					return i18n.translate( 'Choose your site?' );
+				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
 			dependencies: [ 'cartItem', 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
@@ -655,6 +678,11 @@ export function generateSteps( {
 			stepName: 'p2-get-started',
 		},
 
+		'p2-confirm-email': {
+			stepName: 'p2-confirm-email',
+			fulfilledStepCallback: excludeStepIfEmailVerified,
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
@@ -720,11 +748,28 @@ export function generateSteps( {
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
 			},
 		},
+
+		'new-or-existing-site': {
+			stepName: 'new-or-existing-site',
+			fulfilledStepCallback: isNewOrExistingSiteFulfilled,
+			providesDependencies: [ 'newOrExistingSiteChoice' ],
+		},
+
+		'difm-site-picker': {
+			stepName: 'difm-site-picker',
+			props: {
+				headerText: i18n.translate( 'Choose your site?' ),
+			},
+			providesDependencies: [ 'siteId', 'siteSlug' ],
+			optionalDependencies: [ 'siteId', 'siteSlug' ],
+			fulfilledStepCallback: isNewOrExistingSiteFulfilled,
+		},
+
 		'difm-design-setup-site': {
 			stepName: 'difm-design-setup-site',
-			apiRequestFunction: setDesignOnSite,
+			apiRequestFunction: setDesignIfNewSite,
 			delayApiRequestUntilComplete: true,
-			dependencies: [ 'siteSlug' ],
+			dependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
 			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
@@ -742,9 +787,10 @@ export function generateSteps( {
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug', 'selectedDesign' ],
+			dependencies: [ 'siteSlug', 'selectedDesign', 'newOrExistingSiteChoice' ],
 			providesDependencies: [ 'cartItem', 'typeformResponseId' ],
 			apiRequestFunction: addPlanToCart,
+			delayApiRequestUntilComplete: true,
 		},
 
 		// ↓ importer steps
@@ -765,10 +811,14 @@ export function generateSteps( {
 		confirm: {
 			stepName: 'confirm',
 			props: {
-				headerTitle: i18n.translate( 'One final step' ),
-				headerDescription: i18n.translate(
-					'We’ve highlighted a few important details you should review before we create your store. '
-				),
+				get headerTitle() {
+					return i18n.translate( 'One final step' );
+				},
+				get headerDescription() {
+					return i18n.translate(
+						'We’ve highlighted a few important details you should review before we create your store. '
+					);
+				},
 			},
 			dependencies: [ 'site' ],
 			providesDependencies: [ 'siteConfirmed' ],

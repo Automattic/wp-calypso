@@ -437,7 +437,7 @@ export function getBillingMonthsForTerm( term: string ): number {
 
 export function plansLink(
 	urlString: string,
-	siteSlug: string,
+	siteSlug: string | undefined | null,
 	intervalType: string,
 	forceIntervalType = false
 ): string {

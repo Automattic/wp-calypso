@@ -12,7 +12,7 @@ import './style.scss';
 interface Props {
 	threat: FixableThreat;
 	fixAllDialog?: boolean;
-	onCheckFix?: callable;
+	onCheckFix?: ( checked: boolean, threat: FixableThreat ) => void;
 	action: 'fix' | 'ignore';
 }
 
@@ -21,12 +21,12 @@ export default function ThreatFixHeader( {
 	fixAllDialog,
 	onCheckFix,
 	action,
-} ): React.FC< Props > {
+}: Props ): JSX.Element {
 	const [ checkedFix, setCheckedFix ] = useState( true );
 
-	const checkFix = ( event ) => {
+	const checkFix = ( event: { target: { checked: boolean } } ) => {
 		setCheckedFix( event.target.checked );
-		onCheckFix( event.target.checked, threat );
+		onCheckFix?.( event.target.checked, threat );
 	};
 
 	const severityClassNames = ( severity: number ) => {

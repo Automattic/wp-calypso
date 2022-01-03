@@ -257,10 +257,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'p2-new',
-			steps: [ 'p2-get-started', 'user', 'p2-site' ],
+			steps: [ 'user', 'p2-confirm-email', 'p2-site' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'New P2 signup flow',
-			lastModified: '2021-11-15',
+			lastModified: '2021-12-27',
 			showRecaptcha: true,
 		},
 		{
@@ -407,9 +407,17 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [ 'user', 'difm-design-setup-site', 'site-info-collection', 'domains' ],
+			steps: [
+				'user',
+				'new-or-existing-site',
+				'difm-site-picker',
+				'difm-design-setup-site',
+				'site-info-collection',
+				'domains',
+			],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
+			excludeFromManageSiteFlows: true,
 			lastModified: '2021-09-30',
 		},
 		{

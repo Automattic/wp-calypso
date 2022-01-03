@@ -3,8 +3,37 @@ import { translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
-function getConfig( { siteTitle = '' } = {} ) {
-	const importerConfig = {};
+export interface ImporterOptionalURL {
+	title: React.ReactChild;
+	description: React.ReactChild;
+	invalidDescription: React.ReactChild;
+}
+
+export interface ImporterConfig {
+	engine: string;
+	key: string;
+	type: 'file' | 'url';
+	title: string;
+	icon: string;
+	description: React.ReactChild;
+	uploadDescription: React.ReactChild;
+	weight: number;
+	overrideDestination?: string;
+	optionalUrl?: ImporterOptionalURL;
+}
+
+interface ImporterConfigMap {
+	[ key: string ]: ImporterConfig;
+}
+
+interface ImporterConfigArgs {
+	siteTitle?: string;
+}
+
+function getConfig(
+	args: ImporterConfigArgs = { siteTitle: '' }
+): { [ key: string ]: ImporterConfig } {
+	const importerConfig: ImporterConfigMap = {};
 
 	importerConfig.wordpress = {
 		engine: 'wordpress',
@@ -15,9 +44,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 		description: translate(
 			'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args: {
-					siteTitle,
-				},
+				args,
 				components: {
 					b: <strong />,
 				},
@@ -53,7 +80,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 			{
 				args: {
 					importerName: 'Blogger',
-					siteTitle,
+					siteTitle: args.siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -90,9 +117,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 			'Import posts, tags, images, and videos ' +
 				'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args: {
-					siteTitle,
-				},
+				args,
 				components: {
 					b: <strong />,
 				},
@@ -129,7 +154,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 			{
 				args: {
 					importerName: 'Substack',
-					siteTitle,
+					siteTitle: args.siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -176,7 +201,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 			{
 				args: {
 					importerName: 'Squarespace',
-					siteTitle,
+					siteTitle: args.siteTitle,
 				},
 				components: {
 					b: <strong />,
@@ -212,9 +237,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 		description: translate(
 			'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args: {
-					siteTitle,
-				},
+				args,
 				components: {
 					b: <strong />,
 				},
@@ -235,8 +258,8 @@ function getConfig( { siteTitle = '' } = {} ) {
 	return importerConfig;
 }
 
-export function getImporters( params = {} ) {
-	const importerConfig = getConfig( params );
+export function getImporters( args: ImporterConfigArgs = { siteTitle: '' } ) {
+	const importerConfig = getConfig( args );
 
 	if ( ! config.isEnabled( 'importers/substack' ) ) {
 		delete importerConfig.substack;
@@ -247,8 +270,8 @@ export function getImporters( params = {} ) {
 	return importers;
 }
 
-export function getImporterByKey( key, params = {} ) {
-	return filter( getImporters( params ), ( importer ) => importer.key === key )[ 0 ];
+export function getImporterByKey( key: string, args: ImporterConfigArgs = { siteTitle: '' } ) {
+	return filter( getImporters( args ), ( importer ) => importer.key === key )[ 0 ];
 }
 
 export default getConfig;

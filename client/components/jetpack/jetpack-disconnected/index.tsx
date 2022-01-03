@@ -19,7 +19,7 @@ const JetpackDisconnectedIcon = () => (
 const JetpackDisconnected: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite );
+	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite ) ?? {};
 	const reconnectUrl = `https://wordpress.com/settings/disconnect-site/${ siteSlug }?type=down`;
 	const body = [
 		<span className="jetpack-disconnected__paragraph" key="paragraph-1">

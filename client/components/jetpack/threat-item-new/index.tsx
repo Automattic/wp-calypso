@@ -36,7 +36,6 @@ const ThreatItem: React.FC< Props > = ( {
 	onFixThreat,
 	onIgnoreThreat,
 	isFixing,
-	contactSupportUrl,
 } ) => {
 	const dispatch = useDispatch();
 
@@ -118,7 +117,7 @@ const ThreatItem: React.FC< Props > = ( {
 				{ getThreatFix( threat.fixable ) }
 			</p>
 		);
-	}, [ contactSupportUrl, threat ] );
+	}, [ threat ] );
 
 	const isFixable = React.useMemo(
 		() => threat.fixable && ( threat.status === 'current' || threat.status === 'ignored' ),

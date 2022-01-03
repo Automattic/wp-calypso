@@ -11,8 +11,8 @@ export type DetailsCardProps = {
 
 export type NameServersCardProps = {
 	domain: ResponseDomain;
-	isLoadingNameservers: boolean;
-	isRequestingSiteDomains: boolean;
+	isLoadingNameservers?: boolean;
+	isRequestingSiteDomains?: boolean;
 	loadingNameserversError: boolean;
 	nameservers: string[] | null;
 	selectedDomainName: string;

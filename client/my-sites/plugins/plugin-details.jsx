@@ -137,9 +137,9 @@ function PluginDetails( props ) {
 		};
 
 		return {
-			...plugin,
 			...wpcomPlugin,
 			...wporgPlugin,
+			...plugin,
 			isMarketplaceProduct,
 		};
 	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isMarketplaceProduct ] );
@@ -182,7 +182,7 @@ function PluginDetails( props ) {
 		// - change the first breadcrumb if prev page wasn't plugins page (eg activity log)
 		const navigationItems = [
 			{ label: translate( 'Plugins' ), href: `/plugins/${ selectedSite?.slug || '' }` },
-			{ label: fullPlugin.name },
+			{ label: fullPlugin.name, href: `/plugins/${ selectedSite?.slug }/${ fullPlugin.slug }` },
 		];
 
 		return navigationItems;
@@ -273,12 +273,13 @@ function PluginDetails( props ) {
 						<SitesListArea
 							fullPlugin={ fullPlugin }
 							isPluginInstalledOnsite={ isPluginInstalledOnsite }
+							billingPeriod={ billingPeriod }
 							{ ...props }
 						/>
 
 						<div className="plugin-details__layout plugin-details__body">
 							<div className="plugin-details__layout-col-left">
-								{ fullPlugin.wporg ? (
+								{ fullPlugin.wporg || isMarketplaceProduct ? (
 									<PluginSections
 										className="plugin-details__plugins-sections"
 										plugin={ fullPlugin }
@@ -301,7 +302,7 @@ function PluginDetails( props ) {
 	);
 }
 
-function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) {
+function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPeriod, ...props } ) {
 	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -342,18 +343,17 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, ...props 
 					titlePrimary
 					showAdditionalHeaders
 				/>
-				{ plugin.wporg && (
-					<PluginSiteList
-						className="plugin-details__not-installed-on"
-						title={ getAvailabeOnTitle( {
-							translate,
-							selectedSite,
-							count: notInstalledSites.length,
-						} ) }
-						sites={ notInstalledSites }
-						plugin={ plugin }
-					/>
-				) }
+
+				<PluginSiteList
+					className="plugin-details__not-installed-on"
+					title={ getAvailabeOnTitle( {
+						translate,
+						selectedSite,
+					} ) }
+					sites={ notInstalledSites }
+					plugin={ plugin }
+					billingPeriod={ billingPeriod }
+				/>
 			</div>
 		</div>
 	);
@@ -373,15 +373,13 @@ function getInstalledOnTitle( { translate, selectedSite, count } ) {
 	return selectedSite ? installedOnSingleSiteTitle : installedOnMultiSiteTitle;
 }
 
-function getAvailabeOnTitle( { translate, selectedSite, count } ) {
+function getAvailabeOnTitle( { translate, selectedSite } ) {
 	const availableOnSingleSiteTitle = translate( 'Available sites', {
 		comment: 'header for list of sites a plugin can be installed on',
 	} );
 
-	const availabeOnMultiSiteTitle = translate( 'Available on %d site', 'Available on %d sites', {
+	const availabeOnMultiSiteTitle = translate( 'Available on', {
 		comment: 'header for list of sites a plugin can be installed on',
-		args: [ count ],
-		count,
 	} );
 
 	return selectedSite ? availableOnSingleSiteTitle : availabeOnMultiSiteTitle;

@@ -40,11 +40,19 @@ import {
 	isJetpackMinimumVersion,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { URL } from 'calypso/types';
 import JetpackChecklistHeader from './header';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { JetpackProductInstallStatus } from 'calypso/state/selectors/get-jetpack-product-install-status';
+import type { AppState, URL } from 'calypso/types';
 
 import './style.scss';
+
+declare global {
+	interface Window {
+		hj?: ( a: string, b: string ) => void;
+	}
+}
+
 interface Props {
 	hasVideoHosting: boolean;
 	isPaidPlan: boolean;
@@ -56,6 +64,16 @@ interface Props {
 		| undefined;
 	widgetCustomizerPaneUrl: URL | null;
 	sitePurchases: Purchase[];
+	wpAdminUrl: undefined | string;
+	akismetFinished: boolean;
+	hasAntiSpam: boolean;
+	productInstallStatus: JetpackProductInstallStatus;
+	rewindState: string;
+	siteId: undefined | number;
+	siteSlug: undefined | string;
+	vaultpressFinished: boolean;
+	recordTracksEvent: typeof recordTracksEvent;
+	requestGuidedTour: typeof requestGuidedTour;
 }
 
 class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
@@ -176,7 +194,9 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				{ hasJetpackProductInstallation && <QueryJetpackProductInstallStatus siteId={ siteId } /> }
+				{ hasJetpackProductInstallation && siteId && (
+					<QueryJetpackProductInstallStatus siteId={ siteId } />
+				) }
 				{ isPaidPlan && <QueryRewindState siteId={ siteId } /> }
 				<JetpackProductInstall />
 
@@ -238,7 +258,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 							/>
 						) }
 
-					{ hasJetpackProductInstallation && productInstallStatus && (
+					{ siteSlug && hasJetpackProductInstallation && productInstallStatus && (
 						<Task
 							id="jetpack_akismet"
 							title={ translate( "We're automatically turning on Anti-spam." ) }
@@ -376,11 +396,11 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 	}
 }
 
-function mapStateToProps( state ) {
+function mapStateToProps( state: AppState ) {
 	const OFFER_RESET_VIDEO_MINIMUM_JETPACK_VERSION = '8.9.2';
 
 	const siteId = getSelectedSiteId( state );
-	const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
+	const productInstallStatus = getJetpackProductInstallStatus( state, siteId ?? 0 );
 	const rewindState = getRewindState( state, siteId ).state;
 	const isMinimumVersion =
 		siteId && isJetpackMinimumVersion( state, siteId, OFFER_RESET_VIDEO_MINIMUM_JETPACK_VERSION );
@@ -388,10 +408,10 @@ function mapStateToProps( state ) {
 	// Link to "My Plan" page in Jetpack
 	const wpAdminUrl = getJetpackWpAdminUrl( state );
 
-	const planSlug = getSitePlanSlug( state, siteId );
+	const planSlug = getSitePlanSlug( state, siteId ?? 0 );
 	const isPremium = !! planSlug && isPremiumPlan( planSlug );
 	const isProfessional = ! isPremium && !! planSlug && isBusinessPlan( planSlug );
-	const isPaidPlan = isPremium || isProfessional || isSiteOnPaidPlan( state, siteId );
+	const isPaidPlan = isPremium || isProfessional || isSiteOnPaidPlan( state, siteId ?? 0 );
 
 	const siteProducts = getSiteProducts( state, siteId );
 	const hasAntiSpam =
@@ -409,12 +429,12 @@ function mapStateToProps( state ) {
 		productInstallStatus,
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		taskStatuses: getSiteChecklist( state, siteId )?.tasks,
+		taskStatuses: getSiteChecklist( state, siteId ?? 0 )?.tasks,
 		wpAdminUrl,
 		hasVideoHosting:
 			siteId &&
 			hasFeature( state, siteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ) &&
-			( ! isJetpackOfferResetPlan( planSlug ) || isMinimumVersion ),
+			( ! isJetpackOfferResetPlan( planSlug ?? '' ) || isMinimumVersion ),
 		sitePurchases: getSitePurchases( state, siteId ),
 	};
 }

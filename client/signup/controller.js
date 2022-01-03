@@ -281,7 +281,10 @@ export default {
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
-		const { providesDependenciesInQuery } = flows.getFlow( flowName, userLoggedIn );
+		const { providesDependenciesInQuery, excludeFromManageSiteFlows } = flows.getFlow(
+			flowName,
+			userLoggedIn
+		);
 
 		const { query } = initialContext;
 
@@ -309,7 +312,8 @@ export default {
 		const isReEnteringFlow = getSignupCompleteFlowName() === flowName;
 		const isReEnteringSignupViaBrowserBack =
 			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
-		const isManageSiteFlow = ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+		const isManageSiteFlow =
+			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (

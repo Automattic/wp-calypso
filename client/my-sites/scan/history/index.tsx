@@ -8,11 +8,12 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import ScanNavigation from '../navigation';
+import type { FilterValue } from 'calypso/components/jetpack/threat-history-list/threat-status-filter';
 
 import './style.scss';
 
 interface Props {
-	filter: string;
+	filter: FilterValue;
 }
 
 export default function ScanHistoryPage( { filter }: Props ) {

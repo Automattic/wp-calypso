@@ -11,6 +11,7 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
+	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -33,6 +34,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { PluginPrice, getPeriodVariationValue } from '../plugin-price';
+import USPS from './usps';
 import './style.scss';
 
 const PluginDetailsCTA = ( {
@@ -56,6 +58,17 @@ const PluginDetailsCTA = ( {
 	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
+
+	const shouldUpgrade =
+		selectedSite &&
+		! (
+			isBusiness( selectedSite.plan ) ||
+			isEnterprise( selectedSite.plan ) ||
+			isEcommerce( selectedSite.plan ) ||
+			isJetpack ||
+			isVip
+		);
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
@@ -80,8 +93,31 @@ const PluginDetailsCTA = ( {
 		return null;
 	}
 
+	// Check if user can manage plugins or no site is selected (all sites view).
 	if ( ! selectedSite || ! userCan( 'manage_options', selectedSite ) ) {
-		// Check if user can manage plugins.
+		if ( isMarketplaceProduct ) {
+			return (
+				<div className="plugin-details-CTA__container">
+					<div className="plugin-details-CTA__price align-right">
+						<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+							{ ( { isFetching, price, period } ) =>
+								! isFetching && (
+									<>
+										{ price + ' ' }
+										<span className="plugin-details-CTA__period">{ period }</span>
+									</>
+								)
+							}
+						</PluginPrice>
+						{ shouldUpgrade && (
+							<span className="plugin-details-CTA__uprade-required">
+								{ translate( 'Plan upgrade required' ) }
+							</span>
+						) }
+					</div>
+				</div>
+			);
+		}
 		return null;
 	}
 
@@ -105,6 +141,11 @@ const PluginDetailsCTA = ( {
 								) : (
 									translate( 'Free' )
 								) }
+								{ shouldUpgrade && (
+									<span className="plugin-details-CTA__uprade-required">
+										{ translate( 'Plan upgrade required' ) }
+									</span>
+								) }
 							</>
 						)
 					}
@@ -116,11 +157,10 @@ const PluginDetailsCTA = ( {
 					isPluginInstalledOnsite={ isPluginInstalledOnsite }
 					isJetpackSelfHosted={ isJetpackSelfHosted }
 					selectedSite={ selectedSite }
-					isJetpack={ isJetpack }
-					isVip={ isVip }
 					hasEligibilityMessages={ hasEligibilityMessages }
 					isMarketplaceProduct={ isMarketplaceProduct }
 					billingPeriod={ billingPeriod }
+					shouldUpgrade={ shouldUpgrade }
 				/>
 			</div>
 			<div className="plugin-details-CTA__t-and-c">
@@ -133,6 +173,14 @@ const PluginDetailsCTA = ( {
 					}
 				) }
 			</div>
+
+			{ ! isJetpackSelfHosted && (
+				<USPS
+					shouldUpgrade={ shouldUpgrade }
+					isFreePlan={ isFreePlan }
+					isMarketplaceProduct={ isMarketplaceProduct }
+				/>
+			) }
 		</div>
 	);
 };
@@ -150,23 +198,24 @@ const PluginDetailsCTAPlaceholder = () => {
 const CTAButton = ( {
 	plugin,
 	selectedSite,
-	isJetpack,
-	isVip,
+	shouldUpgrade,
 	hasEligibilityMessages,
 	isMarketplaceProduct,
 	billingPeriod,
+	isJetpackSelfHosted,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
 
-	const shouldUpgrade = ! (
-		isBusiness( selectedSite.plan ) ||
-		isEnterprise( selectedSite.plan ) ||
-		isEcommerce( selectedSite.plan ) ||
-		isJetpack ||
-		isVip
-	);
+	// disable paid plugin cta for jetpack sites
+	if ( isJetpackSelfHosted && isMarketplaceProduct ) {
+		return (
+			<p className="plugin-details-CTA__not-available">
+				{ translate( 'This plugin is supported only in WordPress.com sites for the moment.' ) }
+			</p>
+		);
+	}
 
 	return (
 		<>
@@ -208,9 +257,9 @@ const CTAButton = ( {
 				{
 					// eslint-disable-next-line no-nested-ternary
 					isMarketplaceProduct
-						? translate( 'Pay and install' )
+						? translate( 'Purchase and activate' )
 						: shouldUpgrade
-						? translate( 'Upgrade and install' )
+						? translate( 'Upgrade and activate' )
 						: translate( 'Install and activate' )
 				}
 			</Button>

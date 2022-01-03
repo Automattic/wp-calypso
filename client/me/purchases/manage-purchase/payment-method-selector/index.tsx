@@ -1,18 +1,22 @@
 import config from '@automattic/calypso-config';
 import { useStripe } from '@automattic/calypso-stripe';
+import colorStudio from '@automattic/color-studio';
 import { Card, Gridicon } from '@automattic/components';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
 	CheckoutSubmitButton,
+	checkoutTheme,
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
@@ -33,6 +37,10 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
+
+const { colors } = colorStudio;
+const jetpackColors = isJetpackCloud() ? { highlight: colors[ 'Jetpack Green 50' ] } : {};
+const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
 function useLogError( message: string ): CheckoutPageErrorCallback {
 	return useCallback(
@@ -148,8 +156,13 @@ export default function PaymentMethodSelector( {
 				currentlyAssignedPaymentMethodId,
 				paymentMethods
 			) }
+			theme={ theme }
 		>
-			<Card className="payment-method-selector__content">
+			<Card
+				className={ classNames( 'payment-method-selector__content', {
+					'is-jetpack-cloud': isJetpackCloud(),
+				} ) }
+			>
 				<QueryPaymentCountries />
 				{ currentPaymentMethodNotAvailable && purchase && (
 					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />

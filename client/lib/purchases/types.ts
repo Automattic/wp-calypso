@@ -1,5 +1,6 @@
 // TODO: complete this type
 export interface Purchase {
+	active?: boolean;
 	id: number;
 	userId: number;
 	saleAmount?: number;

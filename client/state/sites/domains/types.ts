@@ -8,7 +8,7 @@ export interface SiteDomain {
 	expired?: boolean;
 	expiry?: string | null;
 	expirySoon?: boolean;
-	googleAppsSubscription?: unknown;
+	googleAppsSubscription?: { status?: string };
 	titanMailSubscription?: unknown;
 	hasRegistration?: boolean;
 	hasWpcomNameservers?: boolean;

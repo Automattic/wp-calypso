@@ -37,7 +37,7 @@ interface ConnectedProps {
 
 export interface Props {
 	cta: Cta;
-	learnMoreLink?: CtaAction;
+	learnMoreLink?: CtaAction | null;
 	isPrimary?: boolean;
 }
 
