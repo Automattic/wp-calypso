@@ -216,9 +216,11 @@ export class HelpContactForm extends PureComponent {
 			newIDs.sort();
 			return existingIDs.toString() === newIDs.toString();
 		};
-		const site = this.props.helpSite.jetpack
-			? config( 'jetpack_support_blog' )
-			: config( 'wpcom_support_blog' );
+
+		const site =
+			! this.props.helpSite.jetpack || this.props.helpSite.is_wpcom_atomic
+				? config( 'wpcom_support_blog' )
+				: config( 'jetpack_support_blog' );
 
 		wpcom.req
 			.get( '/help/qanda', { query, site } )
