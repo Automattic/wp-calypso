@@ -55,15 +55,11 @@ function WelcomeTourCard( {
 		} );
 	} );
 
-	const cardMediaClass = classNames( 'welcome-tour-card__media' );
-
-	const description = descriptions[ isMobile() ? 'mobile' : 'desktop' ] ?? descriptions.desktop;
-
 	return (
 		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			{ /* TODO: Update selector for images in @wordpress/components/src/card/styles/card-styles.js */ }
-			<CardMedia className={ cardMediaClass }>
+			<CardMedia className={ 'welcome-tour-card__media' }>
 				<picture>
 					{ imgSrc.mobile && (
 						<source
