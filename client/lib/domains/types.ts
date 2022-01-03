@@ -12,7 +12,7 @@ interface EmailSubscription {
 	status: string;
 }
 
-type EmailCost = {
+export type EmailCost = {
 	amount: number;
 	currency: string;
 	text: string;

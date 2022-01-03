@@ -1,5 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { translate as originalTranslate, useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import {
@@ -7,9 +6,14 @@ import {
 	getTitanMailboxPurchaseCost,
 	getTitanMailboxRenewalCost,
 	hasTitanMailWithUs,
+	isTitanMonthlyProduct,
 } from 'calypso/lib/titan';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ReactElement } from 'react';
+import type { EmailCost, ResponseDomain } from 'calypso/lib/domains/types';
+import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
-const doesAdditionalPriceMatchStandardPrice = ( domain, titanMonthlyProduct ) => {
+const doesAdditionalPriceMatchStandardPrice = ( domain: ResponseDomain, titanMailProduct: ProductListItem ): boolean => {
 	if ( ! domain || ! hasTitanMailWithUs( domain ) ) {
 		return true;
 	}
@@ -17,14 +21,14 @@ const doesAdditionalPriceMatchStandardPrice = ( domain, titanMonthlyProduct ) =>
 	if ( ! costPerAdditionalMailbox ) {
 		return true;
 	}
+
 	return (
-		costPerAdditionalMailbox.amount === titanMonthlyProduct.cost &&
-		costPerAdditionalMailbox.currency === titanMonthlyProduct.currency_code
+		costPerAdditionalMailbox.amount === titanMailProduct.cost &&
+		costPerAdditionalMailbox.currency === titanMailProduct.currency_code
 	);
 };
 
-function getPriceMessage( props ) {
-	const { purchaseCost, translate } = props;
+function getPriceMessage( { purchaseCost, translate }: { purchaseCost: EmailCost, translate: typeof originalTranslate } ): TranslateResult {
 
 	return purchaseCost.amount === 0
 		? translate( 'You can add new mailboxes for free until the end of your trial period.' )
@@ -43,25 +47,32 @@ function getPriceMessage( props ) {
 		  );
 }
 
-function getPriceMessageExplanation( props ) {
-	const { purchaseCost, renewalCost, translate } = props;
-
+function getPriceMessageExplanation( { purchaseCost, renewalCost, titanMailProduct, translate }: { purchaseCost: EmailCost, renewalCost: EmailCost, titanMailProduct: ProductListItem, translate: typeof originalTranslate } ): TranslateResult {
 	// We don't need any explanation of the price at this point, because we have already handled it previously.
 	if ( purchaseCost.amount === 0 ) {
 		return '';
 	}
-	return purchaseCost.amount < renewalCost.amount
-		? translate(
+
+	if ( purchaseCost.amount < renewalCost.amount ) {
+		return isTitanMonthlyProduct( titanMailProduct )
+			? translate(
 				'This is less than the regular price because you are only charged for the remainder of the current month.'
-		  )
+			)
+			: translate(
+				'This is less than the regular price because you are only charged for the remainder of the current year.'
+			);
+	}
+
+	return isTitanMonthlyProduct( titanMailProduct )
+		? translate(
+			'This is more than the regular price because you are charged for the remainder of the current month plus any additional month until renewal.'
+		)
 		: translate(
-				'This is more than the regular price because you are charged for the remainder of the current month plus any additional month until renewal.'
-		  );
+			'This is more than the regular price because you are charged for the remainder of the current year plus any additional year until renewal.'
+		);
 }
 
-function getPriceMessageRenewal( props ) {
-	const { renewalCost, expiryDate, translate } = props;
-
+function getPriceMessageRenewal( { expiryDate, renewalCost, translate }: { expiryDate: string, renewalCost: EmailCost, translate: typeof originalTranslate } ): TranslateResult {
 	return translate(
 		'All of your mailboxes are due to renew at the regular price of {{strong}}%(fullPrice)s{{/strong}} per mailbox when your subscription renews on {{strong}}%(expiryDate)s{{/strong}}.',
 		{
@@ -79,7 +90,7 @@ function getPriceMessageRenewal( props ) {
 	);
 }
 
-const TitanMailboxPricingNotice = ( { domain, titanMonthlyProduct } ) => {
+const TitanMailboxPricingNotice = ( { domain, titanMailProduct }: { domain: ResponseDomain, titanMailProduct: ProductListItem } ): ReactElement | null => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
@@ -89,36 +100,44 @@ const TitanMailboxPricingNotice = ( { domain, titanMonthlyProduct } ) => {
 
 	const purchaseCost = getTitanMailboxPurchaseCost( domain );
 
-	if ( doesAdditionalPriceMatchStandardPrice( domain, titanMonthlyProduct ) ) {
+	if ( doesAdditionalPriceMatchStandardPrice( domain, titanMailProduct ) ) {
+		const translateArgs = {
+			args: {
+				price: purchaseCost.text,
+			},
+			components: {
+				strong: <strong />,
+			},
+			comment:
+				'%(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
+		};
+
 		return (
 			<Notice icon="info-outline" showDismiss={ false } status="is-success">
-				{ translate(
-					'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per month.',
-					{
-						args: {
-							price: purchaseCost.text,
-						},
-						components: {
-							strong: <strong />,
-						},
-						comment:
-							'%(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
-					}
-				) }
+				{ isTitanMonthlyProduct( titanMailProduct )
+					? translate(
+						'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per month.',
+						translateArgs
+					) : translate(
+						'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per year.',
+						translateArgs
+					) }
 			</Notice>
 		);
 	}
+
 	const renewalCost = getTitanMailboxRenewalCost( domain );
 	const expiryDate = getTitanExpiryDate( domain );
 	const priceMessage = getPriceMessage( { purchaseCost, translate } );
 	const priceMessageExplanation = getPriceMessageExplanation( {
 		purchaseCost,
 		renewalCost,
+		titanMailProduct,
 		translate,
 	} );
 	const priceMessageRenewal = getPriceMessageRenewal( {
-		renewalCost,
 		expiryDate: moment( expiryDate ).format( 'LL' ),
+		renewalCost,
 		translate,
 	} );
 
@@ -129,11 +148,6 @@ const TitanMailboxPricingNotice = ( { domain, titanMonthlyProduct } ) => {
 			</>
 		</Notice>
 	);
-};
-
-TitanMailboxPricingNotice.propTypes = {
-	domain: PropTypes.object.isRequired,
-	titanMonthlyProduct: PropTypes.object.isRequired,
 };
 
 export default TitanMailboxPricingNotice;
