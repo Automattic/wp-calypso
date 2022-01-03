@@ -1,4 +1,3 @@
-import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
@@ -20,6 +19,7 @@ import {
 	getTitanProductName,
 	getTitanProductSlug,
 	hasTitanMailWithUs,
+	isTitanMonthlyProduct,
 } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
@@ -111,10 +111,9 @@ class TitanAddMailboxes extends Component {
 		const new_quantity = mailboxes.length;
 		const email_users = mailboxes.map( transformMailboxForCart );
 
-		const cartItemFunction =
-			titanMailProduct && titanMailProduct.product_slug === TITAN_MAIL_MONTHLY_SLUG
-				? titanMailMonthly
-				: titanMailYearly;
+		const cartItemFunction = isTitanMonthlyProduct( titanMailProduct )
+			? titanMailMonthly
+			: titanMailYearly;
 
 		return cartItemFunction( {
 			domain: selectedDomainName,
