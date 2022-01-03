@@ -12,14 +12,16 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
+import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getMaxTitanMailboxCount,
 	getTitanProductName,
+	getTitanProductSlug,
 	hasTitanMailWithUs,
+	isTitanMonthlyProduct,
 } from 'calypso/lib/titan';
-import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
+import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	areAllMailboxesAvailable,
@@ -103,13 +105,17 @@ class TitanAddMailboxes extends Component {
 	};
 
 	getCartItem = () => {
-		const { maxTitanMailboxCount, selectedDomainName } = this.props;
+		const { maxTitanMailboxCount, selectedDomainName, titanMailProduct } = this.props;
 		const mailboxes = this.state.mailboxes;
 		const quantity = mailboxes.length + maxTitanMailboxCount;
 		const new_quantity = mailboxes.length;
 		const email_users = mailboxes.map( transformMailboxForCart );
 
-		return titanMailMonthly( {
+		const cartItemFunction = isTitanMonthlyProduct( titanMailProduct )
+			? titanMailMonthly
+			: titanMailYearly;
+
+		return cartItemFunction( {
 			domain: selectedDomainName,
 			quantity,
 			extra: {
@@ -196,9 +202,9 @@ class TitanAddMailboxes extends Component {
 	};
 
 	renderForm() {
-		const { isLoadingDomains, selectedDomainName, titanMonthlyProduct, translate } = this.props;
+		const { isLoadingDomains, selectedDomainName, titanMailProduct, translate } = this.props;
 
-		if ( isLoadingDomains || ! titanMonthlyProduct ) {
+		if ( isLoadingDomains || ! titanMailProduct ) {
 			return <AddEmailAddressesCardPlaceholder />;
 		}
 
@@ -239,7 +245,7 @@ class TitanAddMailboxes extends Component {
 			selectedDomain,
 			selectedDomainName,
 			selectedSite,
-			titanMonthlyProduct,
+			titanMailProduct,
 			translate,
 		} = this.props;
 
@@ -275,10 +281,10 @@ class TitanAddMailboxes extends Component {
 						/>
 					) }
 
-					{ selectedDomain && titanMonthlyProduct && (
+					{ selectedDomain && titanMailProduct && (
 						<TitanMailboxPricingNotice
 							domain={ selectedDomain }
-							titanMonthlyProduct={ titanMonthlyProduct }
+							titanMailProduct={ titanMailProduct }
 						/>
 					) }
 					{ this.renderForm() }
@@ -299,6 +305,9 @@ export default connect(
 			domains,
 			selectedDomainName: ownProps.selectedDomainName,
 		} );
+
+		const productSlug = getTitanProductSlug( selectedDomain );
+
 		return {
 			selectedDomain,
 			selectedSite,
@@ -307,7 +316,7 @@ export default connect(
 			maxTitanMailboxCount: hasTitanMailWithUs( selectedDomain )
 				? getMaxTitanMailboxCount( selectedDomain )
 				: 0,
-			titanMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
+			titanMailProduct: productSlug ? getProductBySlug( state, productSlug ) : null,
 			isSelectedDomainNameValid: !! selectedDomain,
 		};
 	},
