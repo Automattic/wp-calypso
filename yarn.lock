@@ -89,7 +89,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
-    cookie: ^0.4.0
+    cookie: ^0.4.1
     debug: ^4.3.3
     hash.js: ^1.1.7
     lodash: ^4.17.21
@@ -200,7 +200,7 @@ __metadata:
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
     "@types/node": ^16.11.18
-    cookie: ^0.4.0
+    cookie: ^0.4.1
     tslib: ^2.3.0
     typescript: ^4.5.4
   languageName: unknown
@@ -406,7 +406,7 @@ __metadata:
   resolution: "@automattic/create-calypso-config@workspace:packages/create-calypso-config"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    cookie: ^0.4.0
+    cookie: ^0.4.1
     tslib: ^2.3.0
     typescript: ^4.5.4
   languageName: unknown
@@ -12270,7 +12270,7 @@ __metadata:
     component-event: ^0.2.0
     component-file-picker: ^0.2.1
     component-query: ^0.0.3
-    cookie: ^0.4.0
+    cookie: ^0.4.1
     cookie-parser: ^1.4.6
     core-js-bundle: ^3.6.4
     cpf_cnpj: ^0.2.0
@@ -13830,7 +13830,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:0.4.1, cookie@npm:^0.4.0":
+"cookie@npm:0.4.1, cookie@npm:^0.4.1":
   version: 0.4.1
   resolution: "cookie@npm:0.4.1"
   checksum: 4d7bc798df3d0f34035977949cd6b7d05bbab47d7dcb868667f460b578a550cd20dec923832b8a3a107ef35aba091a3975e14f79efacf6e39282dc0fed6db4a1

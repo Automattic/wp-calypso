@@ -33,7 +33,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"cookie": "^0.4.0",
+		"cookie": "^0.4.1",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
