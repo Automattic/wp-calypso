@@ -363,7 +363,7 @@ export function instructions( context, next ) {
 	next();
 }
 
-export function signupForm( context, next ) {
+function signupForm( context, next ) {
 	recordPageView(
 		'jetpack/connect/authorize',
 		'Jetpack Authorize',
@@ -400,7 +400,7 @@ export function credsForm( context, next ) {
 	next();
 }
 
-export function authorizeForm( context, next ) {
+function authorizeForm( context, next ) {
 	recordPageView(
 		'jetpack/connect/authorize',
 		'Jetpack Authorize',
