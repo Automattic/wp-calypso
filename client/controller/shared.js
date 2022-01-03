@@ -1,6 +1,4 @@
-import config from '@automattic/calypso-config';
-import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
-import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';
 import { setLocale } from 'calypso/state/ui/language/actions';
 
@@ -40,23 +38,15 @@ export function setSectionMiddleware( section ) {
 	};
 }
 
-export function setLocaleMiddleware( context, next ) {
-	const currentUser = getCurrentUser( context.store.getState() );
-
-	if ( context.params.lang ) {
-		context.lang = context.params.lang;
-	} else if ( currentUser ) {
-		const shouldFallbackToDefaultLocale =
-			currentUser.use_fallback_for_incomplete_languages &&
-			isTranslatedIncompletely( currentUser.localeSlug );
-
-		context.lang = shouldFallbackToDefaultLocale
-			? config( 'i18n_default_locale_slug' )
-			: currentUser.localeSlug;
-	}
-
-	context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );
-	next();
+export function setLocaleMiddleware( param = 'lang' ) {
+	return ( context, next ) => {
+		const paramsLocale = context.params[ param ];
+		if ( paramsLocale ) {
+			context.lang = paramsLocale;
+			context.store.dispatch( setLocale( paramsLocale ) );
+		}
+		next();
+	};
 }
 
 /**
