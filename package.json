@@ -202,7 +202,7 @@
 		"config": "^3.3.6",
 		"core-js-bundle": "^3.6.4",
 		"css-loader": "^6.5.1",
-		"debug": "^4.1.1",
+		"debug": "^4.3.3",
 		"doctrine": "^3.0.0",
 		"eslint": "^8.4.1",
 		"eslint-config-prettier": "^8.3.0",
