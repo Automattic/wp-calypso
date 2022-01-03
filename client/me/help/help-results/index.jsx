@@ -30,11 +30,13 @@ export default function HelpResults( {
 						compact={ compact }
 					/>
 				) ) }
-				<a href={ searchLink } target="__blank">
-					<CompactCard className="help-results__footer">
-						<span className="help-results__footer-text">{ footer }</span>
-					</CompactCard>
-				</a>
+				{ footer && (
+					<a href={ searchLink } target="__blank">
+						<CompactCard className="help-results__footer">
+							<span className="help-results__footer-text">{ footer }</span>
+						</CompactCard>
+					</a>
+				) }
 			</div>
 		</>
 	);
