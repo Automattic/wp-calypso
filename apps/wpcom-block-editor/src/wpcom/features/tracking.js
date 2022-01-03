@@ -461,7 +461,7 @@ const trackDisableComplementaryArea = ( scope ) => {
 const trackSaveEntityRecord = ( kind, name, record ) => {
 	if ( kind === 'postType' && name === 'wp_template_part' ) {
 		const variationSlug = record.area !== 'uncategorized' ? record.area : undefined;
-		if ( document.querySelector( '.edit-site-template-part-converter__modal' ) ) {
+		if ( document.querySelector( '.edit-site-create-template-part-modal' ) ) {
 			ignoreNextReplaceBlocksAction = true;
 			const convertedParentBlocks = select( 'core/block-editor' ).getBlocksByClientId(
 				select( 'core/block-editor' ).getSelectedBlockClientIds()
