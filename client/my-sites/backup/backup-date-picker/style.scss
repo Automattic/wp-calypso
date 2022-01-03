@@ -41,6 +41,25 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		justify-content: flex-start;
 	}
+
+	// Variant when the date range picker is used
+	&--with-date-range-picker {
+		.backup-date-picker__search-link {
+			@include breakpoint-deprecated( '>660px' ) {
+				margin-left: auto;
+			}
+		}
+	}
+
+	// Variant when the calendar date picker is used
+	&--with-date-calendar-picker {
+		.backup-date-picker__select-date--previous,
+		.backup-date-picker__select-date--next {
+			@include breakpoint-deprecated( '>660px' ) {
+				max-width: none;
+			}
+		}
+	}
 }
 
 .backup-date-picker__select-date--previous,
@@ -49,6 +68,10 @@
 	flex: 1;
 	align-items: center;
 	cursor: pointer;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		max-width: 153px;
+	}
 }
 
 .backup-date-picker__current-date {
@@ -76,6 +99,7 @@
 
 .backup-date-picker__search-link {
 	display: flex;
+	align-items: center;
 }
 
 .backup-date-picker__button--next.button.is-borderless.is-compact,

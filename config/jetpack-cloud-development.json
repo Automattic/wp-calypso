@@ -36,6 +36,7 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"jetpack-cloud": true,
+		"jetpack/backups-date-calendar": true,
 		"jetpack/activity-log-sharing": true,
 		"jetpack/more-informative-scan": true,
 		"jetpack/partner-portal-payment": true,

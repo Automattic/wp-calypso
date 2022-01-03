@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -8,15 +9,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import DateRangeSelector from 'calypso/my-sites/activity/filterbar/date-range-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDatesWithNoSuccessfulBackups } from '../status/hooks';
 import DateButton from './date-button';
 import { useCanGoToDate, useFirstKnownBackupAttempt } from './hooks';
 
 import './style.scss';
 
+const SEARCH_LINK_CLICK = recordTracksEvent( 'calypso_jetpack_backup_search' );
 const PREV_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_previous' );
 const NEXT_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_next' );
 const CALENDAR_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_calendar_select_day' );
@@ -29,11 +32,16 @@ const onSpace = ( fn: () => void ) => ( { key }: { key?: string } ) => {
 
 const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) => {
 	const dispatch = useDispatch();
+	const trackSearchLinkClick = () => dispatch( SEARCH_LINK_CLICK );
 
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
+	// Note: only one of these features should be enabled for a given environment.
+	const isUsingDateRangePicker = isEnabled( 'jetpack/backups-date-picker' );
+	const isUsingDateCalendarPicker = isEnabled( 'jetpack/backups-date-calendar' );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const today = useDateWithOffset( moment() ) as Moment;
 	const previousDate = moment( selectedDate ).subtract( 1, 'day' );
@@ -148,7 +156,17 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 	return (
 		<div className="backup-date-picker">
 			<div className="backup-date-picker__select-date-container">
-				<div className="backup-date-picker__select-date">
+				<div
+					className={
+						'backup-date-picker__select-date' +
+						( isUsingDateRangePicker
+							? ' backup-date-picker__select-date--with-date-range-picker'
+							: '' ) +
+						( isUsingDateCalendarPicker
+							? ' backup-date-picker__select-date--with-date-calendar-picker'
+							: '' )
+					}
+				>
 					<div
 						className="backup-date-picker__select-date--previous"
 						role="button"
@@ -172,9 +190,18 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 						</span>
 					</div>
 
-					<div className="backup-date-picker__current-date">
-						<b>{ selectedDisplayDate }</b>
-					</div>
+					{ isUsingDateRangePicker && ! isUsingDateCalendarPicker && (
+						<DateRangeSelector
+							siteId={ siteId }
+							enabled={ true }
+							customLabel={ <Gridicon icon="calendar" /> }
+						/>
+					) }
+					{ ! isUsingDateRangePicker && isUsingDateCalendarPicker && (
+						<div className="backup-date-picker__current-date">
+							<b>{ selectedDisplayDate }</b>
+						</div>
+					) }
 
 					<div
 						className="backup-date-picker__select-date--next"
@@ -200,15 +227,26 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 							</Button>
 						</div>
 					</div>
+					{ isUsingDateRangePicker && ! isUsingDateCalendarPicker && (
+						<a
+							className="backup-date-picker__search-link"
+							href={ `/activity-log/${ siteSlug }` }
+							onClick={ trackSearchLinkClick }
+						>
+							<Gridicon icon="search" className="backup-date-picker__search-icon" />
+						</a>
+					) }
 				</div>
 			</div>
 
-			<DateButton
-				onDateSelected={ goToCalendarDate }
-				selectedDate={ selectedDate }
-				firstBackupDate={ firstVisibleBackupDate }
-				disabledDates={ datesWithNoBackups.dates }
-			/>
+			{ ! isUsingDateRangePicker && isUsingDateCalendarPicker && (
+				<DateButton
+					onDateSelected={ goToCalendarDate }
+					selectedDate={ selectedDate }
+					firstBackupDate={ firstVisibleBackupDate }
+					disabledDates={ datesWithNoBackups.dates }
+				/>
+			) }
 		</div>
 	);
 };
