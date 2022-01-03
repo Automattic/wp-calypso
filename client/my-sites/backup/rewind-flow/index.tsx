@@ -19,6 +19,7 @@ import Error from './error';
 import Loading from './loading';
 import BackupRestoreFlow from './restore';
 import { RewindFlowPurpose } from './types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -44,14 +45,14 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 		activityRequestState
 	);
 
-	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
-	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ?? 0 ) );
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ?? 0 ) );
 
 	useEffect( () => {
 		requestActivity( siteId, rewindId );
 	}, [ siteId, rewindId ] );
 
-	const wrapWithCard = ( content ) => <Card>{ content }</Card>;
+	const wrapWithCard = ( content: ReactNode ) => <Card>{ content }</Card>;
 
 	const render = () => {
 		if ( null === applySiteOffset || loadingActivity ) {
