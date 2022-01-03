@@ -5,7 +5,6 @@ import { isE2ETest } from 'calypso/lib/e2e';
 import useFseBetaOptInStep from '../hooks/use-fse-beta-opt-in-step';
 import { usePrevious } from '../hooks/use-previous';
 import {
-	GutenLocationStateType,
 	Step,
 	StepType,
 	useIsAnchorFm,
@@ -74,7 +73,9 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const currentStep = useCurrentStep();
 	const previousStep = usePrevious( currentStep );
 
-	const { state: locationState = {} } = useLocation< GutenLocationStateType >();
+	const locationResult = useLocation();
+	const locationState =
+		'state' in locationResult ? ( locationResult.state as Record< string, string > ) : undefined;
 
 	React.useLayoutEffect( () => {
 		// Runs some navigation related side-effects when the step changes
@@ -97,7 +98,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		( path: StepType ) => {
 			return {
 				pathname: makePath( path ),
-				state: locationState,
+				state: locationState ?? {},
 			};
 		},
 		[ makePath, locationState ]

@@ -29,8 +29,8 @@ export const JetpackPluginUpdatesTour = makeTour(
 		{ ...meta }
 		when={ ( state ) => {
 			const site = getSelectedSite( state );
-			const isRequestingPlugins = isRequesting( state, site.ID );
-			const sitePlugin = getPluginOnSite( state, site.ID, 'jetpack' );
+			const isRequestingPlugins = isRequesting( state, site?.ID );
+			const sitePlugin = getPluginOnSite( state, site?.ID, 'jetpack' );
 			const res = ! isRequestingPlugins && !! sitePlugin;
 			return res;
 		} }

@@ -73,6 +73,7 @@ export const ssrSetupLocale = ssrSetupLocaleMiddleware();
  */
 export const redirectLoggedOut = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};
-export const render = () => {};
+// eslint-disable-next-line no-unused-vars
+export const render = ( context ) => {};
 export const ProviderWrappedLayout = () => null;
 export const notFound = () => null;
