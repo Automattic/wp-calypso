@@ -97,7 +97,7 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 		];
 
 		dateOutputs.forEach( ( formatObject ) => {
-			// Don't modify the "next: date control
+			// Don't modify the "next" date control
 			if ( 'next' === formatObject.label ) {
 				return;
 			}
