@@ -18,9 +18,9 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import {
-	domainManagementEdit,
 	domainManagementList,
 	domainUseMyDomain,
+  isUnderDomainManagementAll
 } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -65,16 +65,14 @@ const Settings = ( {
 	const translate = useTranslate();
 
 	const renderBreadcrumbs = () => {
-		const previousPath = domainManagementEdit(
-			selectedSite?.slug,
-			selectedDomainName,
-			currentRoute
-		);
+		const previousPath = domainManagementList( selectedSite?.slug, currentRoute );
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite?.slug, selectedDomainName ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
+				href: previousPath,
 			},
 			{ label: selectedDomainName },
 		];
