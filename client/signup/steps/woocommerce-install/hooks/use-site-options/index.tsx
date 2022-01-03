@@ -23,16 +23,20 @@ export default function useSiteOptions( siteId: number, optionId: string ) {
 		dispatch( requestSiteSettings( siteId ) );
 	}, [ dispatch, siteId ] );
 
-	// Site settings data (from remote).
+	// Get site settings data (from remote).
 	const siteSettingsData = useMemo( () => {
 		return settings?.[ optionId ] || {};
 	}, [ optionId, settings ] );
 
-	const save = useCallback(
-		() => dispatch( saveSiteSettings( siteId, { [ optionId ]: siteSettingsData } ) ),
-		[ dispatch, optionId, siteId, siteSettingsData ]
-	);
+	// Simple getter helper.
+	function get( key: string ) {
+		return siteSettingsData?.[ key ] || '';
+	}
 
+	/*
+	 * Helper to 'update' site settings data.
+	 * The data is updated in the Redux store.
+	 */
 	const update = useCallback(
 		( data: object ) => {
 			dispatch( updateSiteSettings( siteId, { [ optionId ]: { ...siteSettingsData, ...data } } ) );
@@ -40,26 +44,21 @@ export default function useSiteOptions( siteId: number, optionId: string ) {
 		[ optionId, siteId, dispatch, siteSettingsData ]
 	);
 
+	/*
+	 * Helper to 'save' site settings data.
+	 * The data will be saved to the remote server.
+	 */
+	const save = useCallback(
+		() => dispatch( saveSiteSettings( siteId, { [ optionId ]: siteSettingsData } ) ),
+		[ dispatch, optionId, siteId, siteSettingsData ]
+	);
+
+	// Clean the site option value from the store.
 	const clean = () => dispatch( updateSiteSettings( siteId, { [ optionId ]: {} } ) );
 
-	function get( key: string ) {
-		return siteSettingsData?.[ key ] || '';
-	}
-
-	return { data: { ...siteSettingsData }, save, clean, update, get };
+	return { data: siteSettingsData, save, clean, update, get };
 }
 
 export function useStoreAddressOptions( siteId: number ) {
-	const { data, save, clean, update, get } = useSiteOptions( siteId, STORE_ADDRESS_OPTION_NAME );
-
-	const storeData = {
-		address_1: '',
-		address_2: '',
-		countryRegion: '',
-		city: '',
-		postcode: '',
-		...data,
-	};
-
-	return { data: storeData, save, clean, update, get };
+	return useSiteOptions( siteId, STORE_ADDRESS_OPTION_NAME );
 }
