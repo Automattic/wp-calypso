@@ -284,11 +284,26 @@ const Settings = ( {
 		);
 	};
 
+	const renderTranferInMappedDomainSection = () => {
+		if ( ! ( domain?.isEligibleForInboundTransfer && domain?.type === domainTypes.MAPPED ) )
+			return null;
+
+		return (
+			<Accordion
+				title={ translate( 'Transfer your domain to WordPress.com', { textOnly: true } ) }
+				subtitle={ translate( 'Manage your site and domain all in one place', { textOnly: true } ) }
+			>
+				Placeholder
+			</Accordion>
+		);
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		return (
 			<>
 				{ renderDetailsSection() }
+				{ renderTranferInMappedDomainSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
