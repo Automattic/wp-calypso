@@ -16,9 +16,9 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
-	getCurrentProductSlug,
 	getMaxTitanMailboxCount,
 	getTitanProductName,
+	getTitanProductSlug,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
@@ -307,7 +307,7 @@ export default connect(
 			selectedDomainName: ownProps.selectedDomainName,
 		} );
 
-		const productSlug = getCurrentProductSlug( selectedDomain );
+		const productSlug = getTitanProductSlug( selectedDomain );
 
 		return {
 			selectedDomain,
