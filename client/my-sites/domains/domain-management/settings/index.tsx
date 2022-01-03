@@ -33,7 +33,6 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
@@ -54,7 +53,6 @@ const Settings = ( {
 	loadingNameserversError,
 	nameservers,
 	dns,
-	isRequestingDomains,
 	purchase,
 	requestWhois,
 	selectedDomainName,
@@ -208,7 +206,6 @@ const Settings = ( {
 			>
 				<DnsRecords
 					dns={ dns }
-					isRequestingDomains={ isRequestingDomains }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 					currentRoute={ currentRoute }
@@ -382,7 +379,6 @@ export default connect(
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			dns: getDomainDns( state, ownProps.selectedDomainName ),
-			isRequestingDomains: isRequestingSiteDomains( state, ownProps.selectedSite.ID ),
 		};
 	},
 	{
