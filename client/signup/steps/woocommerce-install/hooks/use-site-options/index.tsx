@@ -40,20 +40,20 @@ export default function useSiteOptions( siteId: number, optionId: string ) {
 	const update = useCallback(
 		( data: object ) => {
 			const key = Object.keys( data )[ 0 ];
-
 			if ( ! key ) {
 				return;
 			}
+
+			const newSiteSettingsData = { ...siteSettingsData, ...data };
 
 			const value = data[ key ];
 
 			// Remove the key when its value is an empty string.
 			if ( typeof value === 'string' && value.length === 0 ) {
-				delete siteSettingsData[ key ];
-				return dispatch( updateSiteSettings( siteId, { [ optionId ]: siteSettingsData } ) );
+				delete newSiteSettingsData[ key ];
 			}
 
-			dispatch( updateSiteSettings( siteId, { [ optionId ]: { ...siteSettingsData, ...data } } ) );
+			dispatch( updateSiteSettings( siteId, { [ optionId ]: newSiteSettingsData } ) );
 		},
 		[ optionId, siteId, dispatch, siteSettingsData ]
 	);
