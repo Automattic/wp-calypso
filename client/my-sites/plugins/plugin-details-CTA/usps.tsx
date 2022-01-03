@@ -1,6 +1,10 @@
+import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 
 const StyledUl = styled.ul`
 	margin-top: 20px;
@@ -31,10 +35,23 @@ interface Props {
 	shouldUpgrade: boolean;
 	isFreePlan: boolean;
 	isMarketplaceProduct: boolean;
+	billingPeriod: IntervalLength;
 }
 
-const USPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, isMarketplaceProduct } ) => {
+const USPS: React.FC< Props > = ( {
+	shouldUpgrade,
+	isFreePlan,
+	isMarketplaceProduct,
+	billingPeriod,
+} ) => {
 	const translate = useTranslate();
+
+	const planDisplayCost = useSelector( ( state ) =>
+		getProductDisplayCost(
+			state,
+			billingPeriod === IntervalLength.ANNUALLY ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY
+		)
+	);
 
 	const filteredUSPS = [
 		...( isMarketplaceProduct
@@ -62,7 +79,9 @@ const USPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, isMarketplaceProd
 					{
 						id: 'plan',
 						className: 'title',
-						text: translate( 'Included in the Business plan' ),
+						text: translate( 'Included in the Business plan (%s)', {
+							args: [ planDisplayCost ],
+						} ),
 						eligibilities: [ 'needs-upgrade' ],
 					},
 			  ]
