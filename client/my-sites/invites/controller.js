@@ -1,7 +1,6 @@
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 import page from 'page';
-import { createElement } from 'react';
 import store from 'store';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { navigate } from 'calypso/lib/navigate';
@@ -17,7 +16,7 @@ import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/action
  */
 const debug = debugModule( 'calypso:invite-accept:controller' );
 
-export function redirectWithoutLocaleifLoggedIn( context, next ) {
+export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 	if ( isUserLoggedIn( context.store.getState() ) && getLocaleFromPath( context.path ) ) {
 		return page.redirect( removeLocaleFromPath( context.path ) );
 	}
@@ -52,13 +51,15 @@ export function acceptInvite( context, next ) {
 		return;
 	}
 
-	context.primary = createElement( InviteAccept, {
-		siteId: context.params.site_id,
-		inviteKey: context.params.invitation_key,
-		activationKey: context.params.activation_key,
-		authKey: context.params.auth_key,
-		locale: context.params.locale,
-		path: context.path,
-	} );
+	context.primary = (
+		<InviteAccept
+			siteId={ context.params.site_id }
+			inviteKey={ context.params.invitation_key }
+			activationKey={ context.params.activation_key }
+			authKey={ context.params.auth_key }
+			path={ context.path }
+		/>
+	);
+
 	next();
 }

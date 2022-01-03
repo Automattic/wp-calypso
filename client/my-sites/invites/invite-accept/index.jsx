@@ -121,14 +121,6 @@ class InviteAccept extends Component {
 		await this.props.redirectToLogout( window.location.href );
 	};
 
-	localeSuggestions = () => {
-		if ( this.props.user || ! this.props.locale ) {
-			return;
-		}
-
-		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
-	};
-
 	renderForm = () => {
 		const { invite } = this.state;
 
@@ -224,7 +216,7 @@ class InviteAccept extends Component {
 
 	render() {
 		const { invite } = this.state;
-		const { user } = this.props;
+		const { user, path } = this.props;
 
 		const containerClasses = classNames( 'invite-accept', {
 			'is-p2-invite': !! invite?.site?.is_wpforteams_site,
@@ -236,7 +228,7 @@ class InviteAccept extends Component {
 
 		return (
 			<div className={ containerClasses }>
-				{ this.localeSuggestions() }
+				{ ! user && <LocaleSuggestions path={ path } /> }
 				<div className={ formClasses }>
 					{ this.isMatchEmailError() && user && (
 						<Notice
