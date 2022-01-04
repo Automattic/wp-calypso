@@ -179,6 +179,7 @@ const PluginDetailsCTA = ( {
 					shouldUpgrade={ shouldUpgrade }
 					isFreePlan={ isFreePlan }
 					isMarketplaceProduct={ isMarketplaceProduct }
+					billingPeriod={ billingPeriod }
 				/>
 			) }
 		</div>
