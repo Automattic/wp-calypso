@@ -345,6 +345,15 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		return await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
 	}
 
+	async scrollListViewToEnd() {
+		const listViewContainerSelector = '.edit-site-editor__list-view-panel-content';
+		// const listViewContainer = await this.driver.findElement( listViewContainerSelector );
+		// return await listViewContainer.scrollTo( 0, 100000 );
+		return await this.driver.executeScript(
+			`document.querySelector( '${ listViewContainerSelector }' ).scrollTo(0,1000000);`
+		);
+	}
+
 	/**
 	 * Alias for `toggleNavigationSidebar`. We need to have the same function
 	 * name in both this and gutenberg editor component to make sure general
