@@ -108,6 +108,7 @@ The main API for configuring a tour is the config object. See example usage and 
 
 - `referenceElements` (optional): A set of `deskop` & `mobile` selectors to render the step near.
 - `meta`: Arbitrary object that encloses the content we want to render for each step.
+- `className` (optional): Optional CSS class applied to a step.
 
 `config.closeHandler`: The callback responsible for closing the tour.
 
@@ -132,7 +133,7 @@ The main API for configuring a tour is the config object. See example usage and 
 
 `config.options` (optional):
 
-- `className`: Optional CSS class to enclose the main tour frame with.
+- `className`: Optional CSS class to enclose the main tour frame with. If provided, implementations will also receive a CSS class `.[className]__step` in the step renderers.
 
 - `effects`: An object to enable/disable/combine various tour effects:
 
