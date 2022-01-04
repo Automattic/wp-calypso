@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -26,7 +27,7 @@ import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-tog
 import {
 	domainManagementList,
 	createSiteFromDomainOnly,
-	domainTransferIn,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
@@ -373,7 +374,13 @@ class DomainRow extends PureComponent {
 						</PopoverMenuItem>
 					) }
 					{ domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer && (
-						<PopoverMenuItem href={ domainTransferIn( site.slug, domain.name, true ) }>
+						<PopoverMenuItem
+							href={ domainUseMyDomain(
+								site.slug,
+								domain.name,
+								useMyDomainInputMode.transferDomain
+							) }
+						>
 							<Icon icon={ redo } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ translate( 'Transfer to WordPress.com' ) }
 						</PopoverMenuItem>
