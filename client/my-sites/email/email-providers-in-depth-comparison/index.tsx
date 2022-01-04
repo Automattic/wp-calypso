@@ -14,7 +14,7 @@ const EmailProvidersInDepthComparison: FunctionComponent< EmailProvidersInDepthC
 
 	return (
 		<>
-			<h1 className="email-providers-in-depth-comparison__header wp-brand-font">
+			<h1 className="email-providers-in-depth-comparison__header">
 				{ translate( 'See how they compare' ) }
 			</h1>
 

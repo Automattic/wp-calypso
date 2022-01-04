@@ -1,5 +1,35 @@
+@import '@automattic/typography/styles/variables';
+
 .email-providers-in-depth-comparison__header {
 	font-size: xxx-large;
 	margin-bottom: 64px;
 	text-align: center;
+
+	@extend .wp-brand-font;
+}
+
+.email-providers-in-depth-comparison-table {
+	display: flex;
+	gap: 20px;
+}
+
+.email-providers-in-depth-comparison-table__provider-name {
+	display: flex;
+
+	h2 {
+		font-size: $font-title-medium;
+		margin-left: 5px;
+
+		@extend .wp-brand-font;
+	}
+
+	.google-workspace {
+		width: 48px;
+	}
+
+	.professional-email {
+		color: var( --color-wordpress-com );
+		height: 48px;
+		width: 48px;
+	}
 }

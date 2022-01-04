@@ -5,15 +5,21 @@ import type {
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
 
 const ComparisonTable: FunctionComponent< ComparisonTableProps > = ( { emailProviders } ) => {
-	return emailProviders.map( ( emailProviderFeatures: EmailProviderFeatures, index: number ) => {
-		return (
-			<div key={ index }>
-				{ emailProviderFeatures.logo }
+	return (
+		<div className="email-providers-in-depth-comparison-table">
+			{ emailProviders.map( ( emailProviderFeatures: EmailProviderFeatures, index: number ) => {
+				return (
+					<div key={ index }>
+						<div className="email-providers-in-depth-comparison-table__provider-name">
+							{ emailProviderFeatures.logo }
 
-				<h2>{ emailProviderFeatures.header }</h2>
-			</div>
-		);
-	} );
+							<h2>{ emailProviderFeatures.header }</h2>
+						</div>
+					</div>
+				);
+			} ) }
+		</div>
+	);
 };
 
 export default ComparisonTable;
