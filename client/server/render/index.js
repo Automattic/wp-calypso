@@ -7,7 +7,7 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import { isDefaultLocale, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
+import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -22,8 +22,6 @@ import {
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
 import initialReducer from 'calypso/state/reducer';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { serialize } from 'calypso/state/utils';
 
 const debug = debugFactory( 'calypso:server-render' );
@@ -148,19 +146,15 @@ const getLanguageManifest = ( langSlug ) => {
 };
 
 export function attachI18n( context ) {
-	let localeSlug = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
-	const shouldUseFallbackLocale =
-		context.user?.use_fallback_for_incomplete_languages && isTranslatedIncompletely( localeSlug );
+	const localeSlug = context.lang || config( 'i18n_default_locale_slug' );
 
-	if ( shouldUseFallbackLocale ) {
-		localeSlug = config( 'i18n_default_locale_slug' );
+	if ( isDefaultLocale( localeSlug ) ) {
+		return;
 	}
 
-	if ( ! isDefaultLocale( localeSlug ) ) {
-		context.i18nLocaleScript = getLanguageFileUrl( localeSlug, 'js', context.languageRevisions );
-	}
+	context.i18nLocaleScript = getLanguageFileUrl( localeSlug, 'js', context.languageRevisions );
 
-	if ( ! isDefaultLocale( localeSlug ) && context.useTranslationChunks ) {
+	if ( context.useTranslationChunks ) {
 		context.entrypoint.language = {};
 
 		const languageManifest = getLanguageManifest( localeSlug );
@@ -181,14 +175,10 @@ export function attachI18n( context ) {
 						chunkId,
 						localeSlug: localeSlug,
 						fileType: 'js',
-						hash: context?.languageRevisions?.[ localeSlug ],
+						hash: context.languageRevisions?.[ localeSlug ],
 					} )
 				);
 		}
-	}
-
-	if ( context.store ) {
-		context.lang = getCurrentLocaleSlug( context.store.getState() ) || localeSlug;
 	}
 }
 
