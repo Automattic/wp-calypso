@@ -1,0 +1,56 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.p2-join-sites__site {
+	display: grid;
+	grid-template-columns: min-content auto;
+	grid-template-rows: 1fr 1fr;
+	column-gap: 18px;
+	padding: 14px;
+	border-top: 1px solid var( --p2-color-separator-light );
+
+	&:last-of-type {
+		border-bottom: 1px solid var( --p2-color-separator-light );
+	}
+}
+
+.p2-join-sites__site-icon {
+	height: 60px;
+	width: 60px;
+	grid-row: span 2;
+}
+
+.p2-join-sites__site-icon-placeholder {
+	height: 100%;
+	width: 100%;
+	background-color: var( --p2-color-link );
+	color: var( --p2-color-white );
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 2px;
+	font-weight: 500;
+	font-size: 1.25rem;
+}
+
+.p2-join-sites__site-name {
+	font-weight: 700;
+	padding-top: 0.5em;
+}
+
+.p2-join-sites__site-details {
+	grid-column: 2;
+	display: flex;
+	font-size: 0.875rem;
+	color: var( --p2-color-text-light );
+	line-height: 0.9;
+
+	> div:not( :first-child ) {
+		padding-left: 1em;
+	}
+
+	> div:not( :last-child )::after {
+		content: '\00B7';
+		padding-left: 1em;
+	}
+}

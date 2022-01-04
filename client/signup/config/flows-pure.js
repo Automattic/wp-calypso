@@ -242,7 +242,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'p2-new',
-			steps: [ 'user', 'p2-confirm-email', 'p2-site' ],
+			steps: [ 'user', 'p2-confirm-email', 'p2-join-sites', 'p2-site' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'New P2 signup flow',
 			lastModified: '2021-12-27',

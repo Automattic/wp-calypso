@@ -62,6 +62,7 @@ const stepNameToModuleName = {
 	'p2-site': 'p2-site',
 	'p2-get-started': 'p2-get-started',
 	'p2-confirm-email': 'p2-confirm-email',
+	'p2-join-sites': 'p2-join-sites',
 	'plans-business-monthly': 'plans',
 	'plans-ecommerce-monthly': 'plans',
 	'plans-personal-monthly': 'plans',

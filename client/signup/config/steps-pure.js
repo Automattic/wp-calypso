@@ -594,6 +594,10 @@ export function generateSteps( {
 			fulfilledStepCallback: excludeStepIfEmailVerified,
 		},
 
+		'p2-join-sites': {
+			stepName: 'p2-join-sites',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,

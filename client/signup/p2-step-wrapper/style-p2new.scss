@@ -21,6 +21,12 @@
 		}
 	}
 
+	.p2-step-wrapper__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
 	.p2-step-wrapper__header-icon {
 		display: flex;
 		justify-content: center;
@@ -98,12 +104,22 @@
 		}
 	}
 
-	.signup__step.is-p-2-get-started {
+	.signup__step.is-p-2-join-sites {
 		.p2-step-wrapper {
 			@include break-mobile {
 				padding-left: 20px;
 				padding-right: 20px;
 				max-width: 600px;
+			}
+		}
+	}
+
+	.signup__step.is-p-2-join-sites {
+		.p2-step-wrapper {
+			@include break-mobile {
+				padding-left: 20px;
+				padding-right: 20px;
+				max-width: 500px;
 			}
 		}
 	}
