@@ -10,7 +10,7 @@ jest.mock( '@wordpress/i18n', () => {
 	return {
 		__esModule: true,
 		...originalModule,
-		hasTranslation: jest.fn(),
+		hasTranslation: jest.fn( () => true ),
 	};
 } );
 
@@ -24,8 +24,6 @@ describe( 'Welcome Tour', () => {
 
 	describe( 'Tour Steps', () => {
 		it( 'should retrieve the "Find your way" slide when on English Locale and translations are available', () => {
-			hasTranslation.mockImplementation( () => true );
-
 			expect( getTourSteps( MOCK_DEFAULT_LOCALE_SLUG, MOCK_REFERENCE_POSITIONING ) ).toEqual(
 				expect.arrayContaining( [
 					expect.objectContaining( {
@@ -36,8 +34,6 @@ describe( 'Welcome Tour', () => {
 		} );
 
 		it( 'should not retrieve the "Find your way" slide when on non-English Locale but translations are available', () => {
-			hasTranslation.mockImplementation( () => true );
-
 			expect( getTourSteps( 'nl', MOCK_REFERENCE_POSITIONING ) ).not.toEqual(
 				expect.arrayContaining( [
 					expect.objectContaining( {
@@ -48,7 +44,7 @@ describe( 'Welcome Tour', () => {
 		} );
 
 		it( 'should not retrieve the "Find your way" slide when on English Locale but translations ar not available', () => {
-			hasTranslation.mockImplementation( () => false );
+			( ( hasTranslation as unknown ) as jest.Mock ).mockImplementation( () => false );
 
 			expect( getTourSteps( MOCK_DEFAULT_LOCALE_SLUG, MOCK_REFERENCE_POSITIONING ) ).not.toEqual(
 				expect.arrayContaining( [
