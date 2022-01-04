@@ -48,15 +48,3 @@ export type EmailProvidersStackedCardProps = {
 	titanMailYearlyProduct?: any;
 	onExpandedChange?: ( providerKey: string, expand: boolean ) => void;
 };
-
-type ValueError = {
-	value: string;
-	error: string;
-};
-
-export type Mailbox = {
-	uuid: string;
-	domain: ValueError;
-	mailbox: ValueError;
-	password: ValueError;
-};
