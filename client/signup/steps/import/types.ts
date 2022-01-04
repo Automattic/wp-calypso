@@ -3,10 +3,13 @@ export type GoToNextStep = () => void;
 export type RecordTracksEvent = ( name: string, properties: { [ key: string ]: string } ) => void;
 export type UrlData = {
 	url: string;
-	favicon: string;
 	platform: ImporterPlatform;
 	platform_data?: {
 		is_wpcom: boolean;
+	};
+	meta: {
+		favicon: string;
+		title: string;
 	};
 };
 export type MShotParams = {
@@ -50,4 +53,8 @@ export type ImporterPlatformOther =
 	| 'tumblr'
 	| 'xanga';
 export type ImporterPlatformExtra = 'godaddy-central';
-export type ImporterPlatform = ImporterMainPlatform | ImporterPlatformOther | ImporterPlatformExtra;
+export type ImporterPlatform =
+	| ImporterMainPlatform
+	| ImporterPlatformOther
+	| ImporterPlatformExtra
+	| 'unknown';

@@ -21,11 +21,6 @@ export const analyzeUrl = ( url: string ) => (
 	return wp.req
 		.get( { path: '/imports/analyze-url', apiNamespace: 'wpcom/v2' }, { site_url: url } )
 		.then( ( response: UrlData ) => {
-			// Force a favicon URL if there is not one
-			if ( typeof response.favicon === 'undefined' ) {
-				response.favicon = response.url + '/favicon.ico';
-			}
-
 			// Update the state
 			dispatch( {
 				type: URL_ANALYZER_ANALYZE_SUCCESS,
