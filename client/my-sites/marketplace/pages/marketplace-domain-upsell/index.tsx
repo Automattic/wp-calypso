@@ -155,7 +155,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 									}`
 							  )
 					}
-					tooltip={ String( translate( 'Close Domain Selection' ) ) }
+					tooltip={ translate( 'Close Domain Selection' ) }
 					tipTarget="close"
 				/>
 			</Masterbar>
