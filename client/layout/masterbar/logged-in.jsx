@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
@@ -146,6 +147,10 @@ class MasterbarLoggedIn extends Component {
 		preload( 'me' );
 	};
 
+	goToCheckout = ( siteId ) => {
+		page( `/checkout/${ siteId }` );
+	};
+
 	isActive = ( section ) => {
 		return section === this.props.section && ! this.props.isNotificationsShowing;
 	};
@@ -204,6 +209,7 @@ class MasterbarLoggedIn extends Component {
 			siteSlug,
 			isJetpackNotAtomic,
 			title,
+			currentSelectedSiteSlug,
 		} = this.props;
 
 		const { isActionSearchVisible } = this.state;
@@ -272,6 +278,14 @@ class MasterbarLoggedIn extends Component {
 							{ translate( 'Write' ) }
 						</AsyncLoad>
 					) }
+					<AsyncLoad
+						require="./masterbar-cart/masterbar-cart-wrapper"
+						placeholder={ null }
+						className="masterbar__item-cart"
+						tooltip={ translate( 'My shopping cart' ) }
+						goToCheckout={ this.goToCheckout }
+						selectedSiteSlug={ currentSelectedSiteSlug }
+					/>
 					<Item
 						tipTarget="me"
 						url="/me"
@@ -327,6 +341,9 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
+			currentSelectedSiteSlug: currentSelectedSiteId
+				? getSiteSlug( state, currentSelectedSiteId )
+				: undefined,
 			previousPath: getPreviousPath( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),

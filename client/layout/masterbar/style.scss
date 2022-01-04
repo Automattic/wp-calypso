@@ -228,6 +228,9 @@ $autobar-height: 20px;
 		.masterbar__item-content {
 			display: none;
 		}
+		&.masterbar__item--always-show-content .masterbar__item-content {
+			display: block;
+		}
 	}
 }
 
