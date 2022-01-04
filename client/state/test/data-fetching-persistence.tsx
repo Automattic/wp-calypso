@@ -125,12 +125,9 @@ describe( 'shouldDehydrateQuery', () => {
 
 		expect( cache ).toEqual(
 			expect.objectContaining( {
-				buster: '',
-				timestamp: expect.any( Number ),
-				clientState: {
-					mutations: [],
+				clientState: expect.objectContaining( {
 					queries: [],
-				},
+				} ),
 			} )
 		);
 	} );
@@ -151,31 +148,18 @@ describe( 'shouldDehydrateQuery', () => {
 
 			expect( cache ).toEqual(
 				expect.objectContaining( {
-					buster: '',
-					timestamp: expect.any( Number ),
-					clientState: {
-						mutations: [],
+					clientState: expect.objectContaining( {
 						queries: [
 							{
-								state: {
+								state: expect.objectContaining( {
 									data: 'Hello, World!',
-									dataUpdateCount: expect.any( Number ),
-									dataUpdatedAt: expect.any( Number ),
-									error: null,
-									errorUpdateCount: 0,
-									errorUpdatedAt: 0,
-									fetchFailureCount: 0,
-									fetchMeta: null,
-									isFetching: false,
-									isInvalidated: false,
-									isPaused: false,
 									status: 'success',
-								},
+								} ),
 								queryKey: '123',
 								queryHash: '["123"]',
 							},
 						],
-					},
+					} ),
 				} )
 			);
 		} );
@@ -197,12 +181,10 @@ describe( 'shouldDehydrateQuery', () => {
 
 			expect( cache ).toEqual(
 				expect.objectContaining( {
-					buster: '',
-					timestamp: expect.any( Number ),
-					clientState: {
+					clientState: expect.objectContaining( {
 						mutations: [],
 						queries: [],
-					},
+					} ),
 				} )
 			);
 		} );
@@ -224,31 +206,18 @@ describe( 'shouldDehydrateQuery', () => {
 
 			expect( cache ).toEqual(
 				expect.objectContaining( {
-					buster: '',
-					timestamp: expect.any( Number ),
-					clientState: {
-						mutations: [],
+					clientState: expect.objectContaining( {
 						queries: [
 							{
-								state: {
+								state: expect.objectContaining( {
 									data: 'Hello, World!',
-									dataUpdateCount: expect.any( Number ),
-									dataUpdatedAt: expect.any( Number ),
-									error: null,
-									errorUpdateCount: 0,
-									errorUpdatedAt: 0,
-									fetchFailureCount: 0,
-									fetchMeta: null,
-									isFetching: false,
-									isInvalidated: false,
-									isPaused: false,
 									status: 'success',
-								},
+								} ),
 								queryKey: '123',
 								queryHash: '["123"]',
 							},
 						],
-					},
+					} ),
 				} )
 			);
 		} );
@@ -268,12 +237,9 @@ describe( 'shouldDehydrateQuery', () => {
 
 			expect( cache ).toEqual(
 				expect.objectContaining( {
-					buster: '',
-					timestamp: expect.any( Number ),
-					clientState: {
-						mutations: [],
+					clientState: expect.objectContaining( {
 						queries: [],
-					},
+					} ),
 				} )
 			);
 		} );
