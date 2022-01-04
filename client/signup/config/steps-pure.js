@@ -780,11 +780,6 @@ export function generateSteps( {
 				showDesignPickerCategoriesAllFilter: false,
 			},
 		},
-		'difm-design': {
-			// TODO: Temporary step to be deleted
-			stepName: 'difm-design',
-			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
-		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'siteSlug', 'selectedDesign', 'newOrExistingSiteChoice' ],
