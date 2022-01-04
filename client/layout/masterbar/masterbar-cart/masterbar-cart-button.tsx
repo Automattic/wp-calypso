@@ -10,19 +10,23 @@ import './masterbar-cart-button-style.scss';
 
 export type MasterbarCartButtonProps = {
 	selectedSiteSlug: string | undefined;
+	selectedSiteId: string | number | undefined;
 	goToCheckout: ( siteSlug: string ) => void;
 };
 
 export function MasterbarCartButton( {
 	selectedSiteSlug,
+	selectedSiteId,
 	goToCheckout,
 }: MasterbarCartButtonProps ): JSX.Element | null {
-	const { responseCart, reloadFromServer } = useShoppingCart( selectedSiteSlug );
+	const { responseCart, reloadFromServer } = useShoppingCart(
+		selectedSiteId ? String( selectedSiteId ) : undefined
+	);
 	const cartButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
 	const translate = useTranslate();
 
-	if ( ! selectedSiteSlug || responseCart.products.length < 1 ) {
+	if ( ! selectedSiteSlug || ! selectedSiteId || responseCart.products.length < 1 ) {
 		return null;
 	}
 
@@ -59,6 +63,7 @@ export function MasterbarCartButton( {
 				<CheckoutErrorBoundary errorMessage="Error">
 					<MiniCart
 						selectedSiteSlug={ selectedSiteSlug }
+						cartKey={ selectedSiteId }
 						goToCheckout={ goToCheckout }
 						closeCart={ onClose }
 					/>
