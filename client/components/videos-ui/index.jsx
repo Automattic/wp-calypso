@@ -20,6 +20,7 @@ const VideosUi = ( {
 	FooterBar,
 	areVideosTranslated = true,
 } ) => {
+	// test comment to trigger a calypso.live
 	const translate = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
 	const { course, videoSlugs, completedVideoSlugs, isCourseComplete } = useCourseData( courseSlug );
