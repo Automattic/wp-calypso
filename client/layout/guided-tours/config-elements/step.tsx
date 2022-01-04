@@ -24,24 +24,27 @@ const anyFrom = ( obj: Record< string, string > ): string => {
 	return key && obj[ key ];
 };
 
-// @TODO: actually define this; the current defintion just is here to fix existing TS errors
 interface SectionContext {
 	sectionName?: string;
 	dispatch: < T >( x: Promise< T > ) => Promise< T >;
-	step: any;
-	shouldPause: boolean;
-	branching: Record< string, { continue: any } >;
+	step: string;
+	shouldPause?: boolean;
+	branching: Record< string, { continue: string } >;
 	lastAction: { type: string; path: string };
-	next: any;
-	tour: any;
+	next: ( newCtx: Partial< SectionContext > ) => void;
+	nextStepName?: string;
+	skipping?: boolean;
+	tour: string;
 	tourVersion: string;
-	isValid: ( when: any ) => boolean;
+	isValid: ( when: ContextWhen ) => boolean;
 }
 
 interface RequiredProps {
 	name: string;
 	children: FunctionComponent< { translate: typeof translate } >;
 }
+
+type ContextWhen = ( ...args: unknown[] ) => boolean;
 
 interface AcceptedProps {
 	arrow?: ArrowPosition;
@@ -58,7 +61,7 @@ interface AcceptedProps {
 	target?: string;
 	wait?: ( props?: Props, context?: typeof contextTypes ) => Promise< void >;
 	waitForTarget?: boolean;
-	when?: ( ...args: unknown[] ) => boolean;
+	when?: ContextWhen;
 }
 
 interface DefaultProps {
@@ -344,14 +347,16 @@ export default class Step extends Component< Props, State > {
 		}
 	}
 
-	setAnalyticsTimestamp( { step, shouldPause }: { step: any; shouldPause: boolean } ) {
+	setAnalyticsTimestamp( { step, shouldPause }: { step: string; shouldPause?: boolean } ) {
 		if ( this.context.step !== step || ( this.context.shouldPause && ! shouldPause ) ) {
 			this.lastTransitionTimestamp = Date.now();
 		}
 	}
 
 	shouldSkipAnalytics() {
-		return this.lastTransitionTimestamp && Date.now() - this.lastTransitionTimestamp < 500;
+		return Boolean(
+			this.lastTransitionTimestamp && Date.now() - this.lastTransitionTimestamp < 500
+		);
 	}
 
 	onScrollOrResize = () => {
