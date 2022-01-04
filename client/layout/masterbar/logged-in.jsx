@@ -210,6 +210,7 @@ class MasterbarLoggedIn extends Component {
 			isJetpackNotAtomic,
 			title,
 			currentSelectedSiteSlug,
+			currentSelectedSiteId,
 		} = this.props;
 
 		const { isActionSearchVisible } = this.state;
@@ -285,6 +286,7 @@ class MasterbarLoggedIn extends Component {
 						tooltip={ translate( 'My shopping cart' ) }
 						goToCheckout={ this.goToCheckout }
 						selectedSiteSlug={ currentSelectedSiteSlug }
+						selectedSiteId={ currentSelectedSiteId }
 					/>
 					<Item
 						tipTarget="me"
