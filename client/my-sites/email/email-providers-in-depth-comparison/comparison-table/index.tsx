@@ -1,3 +1,5 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { FunctionComponent } from 'react';
 import type {
 	ComparisonTableProps,
