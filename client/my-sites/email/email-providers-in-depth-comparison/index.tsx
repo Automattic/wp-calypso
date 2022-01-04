@@ -5,15 +5,9 @@ import {
 	professionalEmailFeatures,
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/data';
+import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
 
 import './style.scss';
-
-type EmailProvidersInDepthComparisonProps = {
-	comparisonContext: string;
-	selectedDomainName: string;
-	siteName: string;
-	source: string;
-};
 
 const EmailProvidersInDepthComparison: FunctionComponent< EmailProvidersInDepthComparisonProps > = () => {
 	const translate = useTranslate();

@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table';
+import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
