@@ -347,8 +347,6 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 
 	async scrollListViewToEnd() {
 		const listViewContainerSelector = '.edit-site-editor__list-view-panel-content';
-		// const listViewContainer = await this.driver.findElement( listViewContainerSelector );
-		// return await listViewContainer.scrollTo( 0, 100000 );
 		return await this.driver.executeScript(
 			`document.querySelector( '${ listViewContainerSelector }' ).scrollTo(0,1000000);`
 		);
