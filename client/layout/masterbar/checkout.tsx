@@ -65,7 +65,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 					icon="cross"
 					className="masterbar__close-button"
 					onClick={ clickClose }
-					tooltip={ String( translate( 'Close Checkout' ) ) }
+					tooltip={ translate( 'Close Checkout' ) }
 					tipTarget="close"
 				/>
 				{ ! isJetpack && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
