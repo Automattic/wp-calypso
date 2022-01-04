@@ -51,18 +51,6 @@ const ThreatDialog: React.FC< Props > = ( {
 		[ action ]
 	);
 
-	const getThreatSeverityText = ( threat: Threat ) => {
-		if ( threat.severity >= 5 ) {
-			return translate( 'critical' );
-		}
-
-		if ( threat.severity >= 3 ) {
-			return translate( 'high' );
-		}
-
-		return translate( 'low' );
-	};
-
 	return (
 		<ServerCredentialsWizardDialog
 			showDialog={ showDialog }
@@ -74,15 +62,12 @@ const ThreatDialog: React.FC< Props > = ( {
 		>
 			<>
 				<p>
-					{ action === 'fix' &&
-						translate( 'Jetpack will fix the %(severity)s threat:', {
-							args: { severity: getThreatSeverityText( threat ) },
-						} ) }
+					{ action === 'fix' && translate( 'Jetpack will fix the threat:' ) }
 
 					{ action === 'ignore' && translate( 'Jetpack will ignore the threat:' ) }
 				</p>
 				<h3 className="threat-dialog-new__threat-title">
-					{ threat.fixable && <ThreatFixHeader threat={ threat } action={ action } /> }
+					{ <ThreatFixHeader threat={ threat } action={ action } /> }
 				</h3>
 				{ action === 'ignore' &&
 					translate(
