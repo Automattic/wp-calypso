@@ -82,7 +82,7 @@ const ThreatDialog: React.FC< Props > = ( {
 					{ action === 'ignore' && translate( 'Jetpack will ignore the threat:' ) }
 				</p>
 				<h3 className="threat-dialog-new__threat-title">
-					{ threat.fixable && <ThreatFixHeader threat={ threat } action={ action } /> }
+					{ <ThreatFixHeader threat={ threat } action={ action } /> }
 				</h3>
 				{ action === 'ignore' &&
 					translate(
