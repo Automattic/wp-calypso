@@ -15,6 +15,8 @@ const PERSISTENCE_KEY = 'REACT_QUERY_OFFLINE_CACHE';
 
 const queryKey = '123';
 
+const data = 'Hello, World!';
+
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
@@ -111,8 +113,6 @@ describe( 'shouldDehydrateQuery', () => {
 	} );
 
 	it( 'does not persist failed queries', async () => {
-		const data = 'Hello, World!';
-
 		const queryFn = () => Promise.reject( data );
 
 		const { getByText } = render(
@@ -134,8 +134,6 @@ describe( 'shouldDehydrateQuery', () => {
 
 	describe( 'when passing `true` to `shouldPersistQuery`', () => {
 		it( 'persists the query', async () => {
-			const data = 'Hello, World!';
-
 			const queryFn = () => Promise.resolve( data );
 
 			const { getByText } = render(
@@ -152,7 +150,7 @@ describe( 'shouldDehydrateQuery', () => {
 						queries: [
 							{
 								state: expect.objectContaining( {
-									data: 'Hello, World!',
+									data,
 									status: 'success',
 								} ),
 								queryKey: '123',
@@ -167,8 +165,6 @@ describe( 'shouldDehydrateQuery', () => {
 
 	describe( 'when passing `false` to `shouldPersistQuery`', () => {
 		it( 'does not persist the query', async () => {
-			const data = 'Hello, World!';
-
 			const queryFn = () => Promise.resolve( data );
 
 			const { getByText } = render(
@@ -192,8 +188,6 @@ describe( 'shouldDehydrateQuery', () => {
 
 	describe( 'when passing a predicate to `shouldPersistQuery`', () => {
 		it( 'persists the query if the condition is met', async () => {
-			const data = 'Hello, World!';
-
 			const queryFn = () => Promise.resolve( data );
 
 			const { getByText } = render(
@@ -210,7 +204,7 @@ describe( 'shouldDehydrateQuery', () => {
 						queries: [
 							{
 								state: expect.objectContaining( {
-									data: 'Hello, World!',
+									data,
 									status: 'success',
 								} ),
 								queryKey: '123',
@@ -223,8 +217,6 @@ describe( 'shouldDehydrateQuery', () => {
 		} );
 
 		it( 'does not persist the query if the condition is not met', async () => {
-			const data = 'Hello, World!';
-
 			const queryFn = () => Promise.resolve( data );
 
 			const { getByText } = render(
