@@ -1,4 +1,5 @@
 import type { TranslateResult } from 'i18n-calypso';
+import type { ReactNode } from 'react';
 
 export type ComparisonTableProps = {
 	emailProviders: EmailProviderFeatures[];
@@ -6,6 +7,7 @@ export type ComparisonTableProps = {
 
 export type EmailProviderFeatures = {
 	header: string;
+	logo: ReactNode;
 	tools: TranslateResult;
 	storage: TranslateResult;
 	importing: TranslateResult;
