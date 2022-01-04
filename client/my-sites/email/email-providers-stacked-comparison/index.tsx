@@ -44,9 +44,9 @@ type EmailProvidersStackedComparisonProps = {
 	isGSuiteSupported?: boolean;
 	productsList?: string[];
 	requestingSiteDomains?: boolean;
-	shoppingCartManager?: any;
-	selectedSite?: SiteData | null;
 	selectedDomainName: string;
+	selectedSite?: SiteData | null;
+	shoppingCartManager?: any;
 	showEmailForwardLink?: boolean;
 	siteName: string;
 	source: string;
