@@ -1,39 +1,21 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { Component, Fragment, forwardRef } from 'react';
-import type { ReactNode, LegacyRef } from 'react';
+import { Component, Fragment } from 'react';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-interface MasterbarItemProps {
-	url?: string;
-	innerRef?: LegacyRef< HTMLButtonElement >;
-	tipTarget?: string;
-	onClick?: () => void;
-	tooltip?: string;
-	icon?: ReactNode;
-	className?: string;
-	isActive?: boolean;
-	preloadSection?: () => void;
-	hasUnseen?: boolean;
-	children?: ReactNode;
-	alwaysShowContent?: boolean;
-}
-
-class MasterbarItem extends Component< MasterbarItemProps > {
+class MasterbarItem extends Component {
 	static propTypes = {
 		url: PropTypes.string,
-		tipTarget: PropTypes.string,
 		onClick: PropTypes.func,
-		tooltip: PropTypes.string,
+		tooltip: TranslatableString,
 		icon: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
 		className: PropTypes.string,
 		isActive: PropTypes.bool,
 		preloadSection: PropTypes.func,
 		hasUnseen: PropTypes.bool,
-		alwaysShowContent: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -70,7 +52,6 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		const itemClasses = classNames( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
 			'has-unseen': this.props.hasUnseen,
-			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 		} );
 
 		const attributes = {
@@ -90,14 +71,8 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			);
 		}
 
-		return (
-			<button { ...attributes } ref={ this.props.innerRef }>
-				{ this.renderChildren() }
-			</button>
-		);
+		return <button { ...attributes }>{ this.renderChildren() }</button>;
 	}
 }
 
-export default forwardRef< HTMLButtonElement, MasterbarItemProps >( ( props, ref ) => (
-	<MasterbarItem innerRef={ ref } { ...props } />
-) );
+export default MasterbarItem;
