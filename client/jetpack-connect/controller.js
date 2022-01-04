@@ -240,12 +240,8 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
-	debug( 'controller: redirectWithoutLocaleIfLoggedIn', context.params );
-	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
-		const urlWithoutLocale = removeLocaleFromPath( context.path );
-		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
-		return page.redirect( urlWithoutLocale );
+	if ( isUserLoggedIn( context.store.getState() ) && getLocaleFromPath( context.path ) ) {
+		return page.redirect( removeLocaleFromPath( context.path ) );
 	}
 
 	next();
