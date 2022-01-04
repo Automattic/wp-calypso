@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-babel-config",
 	"version": "1.0.0",
-	"description": "Shared babel configuration used in Calypso projects",
+	"description": "Shared babel configuration used in Calypso projects.",
 	"keywords": [
 		"babel",
 		"build",
@@ -19,9 +19,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
 		"@automattic/babel-plugin-preserve-i18n": "workspace:^",

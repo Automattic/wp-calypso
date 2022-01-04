@@ -16,9 +16,7 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/load-script"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"types": "src/types",
 	"publishConfig": {
 		"access": "public"

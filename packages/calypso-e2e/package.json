@@ -1,10 +1,12 @@
 {
 	"name": "@automattic/calypso-e2e",
 	"version": "0.1.0",
-	"description": "Tools for e2e tests",
+	"description": "Tools for e2e tests.",
 	"main": "dist/esm/src/index.js",
 	"types": "dist/types/src/index.d.ts",
 	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",

@@ -2,6 +2,8 @@
 	"name": "@automattic/wp-babel-makepot",
 	"version": "1.0.2",
 	"description": "A utility for extracting translatable strings from JavaScript source.",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
 	"main": "index.js",
 	"author": "Automattic Inc.",
 	"repository": {

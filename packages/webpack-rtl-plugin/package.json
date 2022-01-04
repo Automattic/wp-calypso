@@ -12,9 +12,8 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/webpack-rtl-plugin"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
 	"keywords": [
 		"webpack",
 		"css",

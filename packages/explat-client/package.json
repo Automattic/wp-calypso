@@ -1,7 +1,9 @@
 {
 	"name": "@automattic/explat-client",
 	"version": "0.0.2",
-	"description": "Standalone ExPlat Client",
+	"description": "Standalone ExPlat Client.",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"main": "dist/cjs/index.js",

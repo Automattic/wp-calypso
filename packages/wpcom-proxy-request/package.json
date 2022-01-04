@@ -1,7 +1,7 @@
 {
 	"name": "wpcom-proxy-request",
 	"version": "6.0.0",
-	"description": "Proxied cookie-authenticated REST API requests to WordPress.com",
+	"description": "Proxied cookie-authenticated REST API requests to WordPress.com.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
@@ -14,7 +14,7 @@
 		"api",
 		"cookie"
 	],
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "MIT",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"repository": {
@@ -25,9 +25,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
 		"types",
