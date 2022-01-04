@@ -19,7 +19,6 @@ import { cleanUrl } from './utils';
 
 export class JetpackConnectMain extends Component {
 	static propTypes = {
-		locale: PropTypes.string,
 		path: PropTypes.string,
 		type: PropTypes.oneOf( [ ...FLOW_TYPES, false ] ),
 		url: PropTypes.string,
@@ -112,19 +111,11 @@ export class JetpackConnectMain extends Component {
 		);
 	}
 
-	renderLocaleSuggestions() {
-		if ( this.props.isLoggedIn || ! this.props.locale ) {
-			return;
-		}
-
-		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
-	}
-
 	render() {
-		const { renderFooter, status, type } = this.props;
+		const { renderFooter, status, type, isLoggedIn, path } = this.props;
 		return (
 			<MainWrapper>
-				{ this.renderLocaleSuggestions() }
+				{ ! isLoggedIn && <LocaleSuggestions path={ path } /> }
 				<div className="jetpack-connect__site-url-entry-container">
 					<MainHeader type={ type } />
 					{ this.renderSiteInput( status ) }
