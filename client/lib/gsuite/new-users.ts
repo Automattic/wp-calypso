@@ -177,10 +177,12 @@ const validateNewUserMailboxIsUnique = (
  * Adds a duplicate error to each mailBox with a duplicate mailbox
  */
 const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ): GSuiteNewUser[] => {
-	const mailboxesByCount = users.reduce( ( workingCount: Record< string, number >, user ) => {
-		const mailboxName = user.mailBox.value;
-		workingCount[ mailboxName ] = 1 + ( workingCount[ mailboxName ] ?? 0 );
-		return workingCount;
+	const mailBoxesByCount = users.reduce( ( result: Record< string, number >, user ) => {
+		const mailBoxName = user.mailBox.value;
+
+		result[ mailBoxName ] = 1 + ( result[ mailBoxName ] ?? 0 );
+
+		return result;
 	}, {} );
 
 	return users.map( ( { uuid, domain, mailBox, firstName, lastName, password } ) => ( {
@@ -188,7 +190,7 @@ const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ): GSuiteNewUser[] =>
 		firstName,
 		lastName,
 		domain,
-		mailBox: validateNewUserMailboxIsUnique( mailBox, mailboxesByCount ),
+		mailBox: validateNewUserMailboxIsUnique( mailBox, mailBoxesByCount ),
 		password,
 	} ) );
 };
@@ -355,13 +357,14 @@ const getItemsForCart = (
 	users: GSuiteNewUser[]
 ): MinimalRequestCartProduct[] => {
 	const usersGroupedByDomain = users.reduce(
-		( usersByDomain: Record< string, GSuiteProductUser[] >, user: GSuiteNewUser ) => {
-			if ( ! usersByDomain[ user.domain.value ] ) {
-				usersByDomain[ user.domain.value ] = [];
+		( result: Record< string, GSuiteProductUser[] >, user: GSuiteNewUser ) => {
+			if ( ! result[ user.domain.value ] ) {
+				result[ user.domain.value ] = [];
 			}
-			usersByDomain[ user.domain.value ].push( transformUserForCart( user ) );
 
-			return usersByDomain;
+			result[ user.domain.value ].push( transformUserForCart( user ) );
+
+			return result;
 		},
 		{}
 	);
