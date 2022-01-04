@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -19,7 +20,7 @@ import withDomainNameservers from 'calypso/my-sites/domains/domain-management/na
 import {
 	domainManagementEdit,
 	domainManagementList,
-	domainTransferIn,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -309,7 +310,11 @@ const Settings = ( {
 			>
 				<Button
 					onClick={ handleTransferDomainClick }
-					href={ domainTransferIn( selectedSite.slug, domain.name, true ) }
+					href={ domainUseMyDomain(
+						selectedSite.slug,
+						domain.name,
+						useMyDomainInputMode.transferDomain
+					) }
 					primary={ true }
 				>
 					{ translate( 'Transfer' ) }
