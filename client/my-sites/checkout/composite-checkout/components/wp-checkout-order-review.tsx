@@ -115,8 +115,14 @@ export default function WPCheckoutOrderReview( {
 	}, [] );
 
 	function retrieveExperimentName() {
-		const cookies = cookie.parse( document.cookie );
-		return cookies.wpcom_signup_experiment_name;
+		let experiment = null;
+		try {
+			const cookies = cookie.parse( document.cookie );
+			experiment = cookies.wpcom_signup_experiment_name;
+		} catch ( error ) {
+			reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cookie_read_failed' ) );
+		}
+		return experiment;
 	}
 
 	const onRemoveProductCancel = useCallback( () => {
