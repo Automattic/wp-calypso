@@ -9,7 +9,11 @@ import { useTranslate } from 'i18n-calypso';
 import wp from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
-import type { StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
+import type {
+	StripeSetupIntentId,
+	StripeConfiguration,
+	StripeSetupIntent,
+} from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -41,6 +45,7 @@ export async function assignNewCardProcessor(
 		translate,
 		stripe,
 		stripeConfiguration,
+		stripeSetupIntentId,
 		cardNumberElement,
 		reduxDispatch,
 		eventSource,
@@ -49,6 +54,7 @@ export async function assignNewCardProcessor(
 		translate: ReturnType< typeof useTranslate >;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
+		stripeSetupIntentId: StripeSetupIntentId | undefined;
 		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: CalypsoDispatch;
 		eventSource?: string;
@@ -59,7 +65,7 @@ export async function assignNewCardProcessor(
 		if ( ! isNewCardDataValid( submitData ) ) {
 			throw new Error( 'Credit Card data is missing country' );
 		}
-		if ( ! stripe || ! stripeConfiguration ) {
+		if ( ! stripe || ! stripeConfiguration || ! stripeSetupIntentId ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
 		}
 		if ( ! cardNumberElement ) {
@@ -79,12 +85,17 @@ export async function assignNewCardProcessor(
 			formFieldValues,
 			stripe,
 			cardNumberElement,
-			stripeConfiguration
+			stripeSetupIntentId
 		);
 		const token = tokenResponse.payment_method;
 		if ( ! token ) {
 			throw new Error( String( translate( 'Failed to add card.' ) ) );
 		}
+
+		// If we've reached this point in the code and anything after this fails,
+		// we must regenerate the payment intent, which is done by calling `reload`
+		// as returned by `useStripeSetupIntentId` from
+		// `@automattic/calypso-stripe`.
 
 		if ( purchase ) {
 			const result = await updateCreditCard( {
@@ -123,7 +134,7 @@ async function createStripeSetupIntentAsync(
 	},
 	stripe: Stripe,
 	cardNumberElement: StripeCardNumberElement,
-	stripeConfiguration: StripeConfiguration
+	setupIntentId: StripeSetupIntentId
 ): Promise< StripeSetupIntent > {
 	const paymentDetailsForStripe = {
 		name,
@@ -135,7 +146,7 @@ async function createStripeSetupIntentAsync(
 	return createStripeSetupIntent(
 		stripe,
 		cardNumberElement,
-		stripeConfiguration,
+		setupIntentId,
 		paymentDetailsForStripe
 	);
 }
