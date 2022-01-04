@@ -64,7 +64,7 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
 		);
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
-		return JETPACK_SITE_PRODUCTS_WITH_FEATURES[ slug ];
+		return ( JETPACK_SITE_PRODUCTS_WITH_FEATURES as Record< string, Product > )[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {
 		return getPlan( slug ) as Plan;
 	}
@@ -103,16 +103,18 @@ function itemToSelectorProduct(
 			productSlug: item.product_slug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug,
-			displayName: getJetpackProductDisplayName( item ),
+			displayName: getJetpackProductDisplayName( item ) ?? '',
 			type: ITEM_TYPE_PRODUCT,
 			shortName: getJetpackProductShortName( item ) || '',
-			tagline: getJetpackProductTagline( item ),
+			tagline: getJetpackProductTagline( item ) ?? '',
 			description: getJetpackProductDescription( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
 			categories: item.categories,
-			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
+			hidePrice: ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes(
+				item.product_slug
+			),
 			features: {
 				items: buildCardFeaturesFromItem( item ),
 			},
@@ -126,15 +128,15 @@ function itemToSelectorProduct(
 		} else if ( item.term === TERM_MONTHLY ) {
 			yearlyProductSlug = getYearlyPlanByMonthly( productSlug );
 		}
-		const isResetPlan = JETPACK_RESET_PLANS.includes( productSlug );
+		const isResetPlan = ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
 		return {
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
-			displayName: getForCurrentCROIteration( item.getTitle ),
+			displayName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			type: ITEM_TYPE_PLAN,
-			shortName: getForCurrentCROIteration( item.getTitle ),
+			shortName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
 			monthlyProductSlug,
