@@ -163,7 +163,7 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 								warn: <span />,
 							},
 							args: {
-								siteAddress: siteId && siteDomain,
+								siteAddress: siteDomain,
 							},
 						}
 					) }

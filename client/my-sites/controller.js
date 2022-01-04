@@ -30,6 +30,7 @@ import {
 	domainManagementRoot,
 	domainManagementDnsAddRecord,
 	domainManagementDnsEditRecord,
+	domainAddNew,
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
@@ -244,11 +245,13 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
  * @returns {boolean} true if the path is allowed, false otherwise
  */
 function isPathAllowedForDIFMInProgressSite( path, slug, primaryDomain, contextParams ) {
-	const domainAdditionPath = '/domains/add';
+	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), emailManagement( slug ) ];
 
 	return (
 		isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) ||
-		path.startsWith( domainAdditionPath )
+		DIFMLiteInProgressAllowedPaths.some( ( DIFMLiteInProgressAllowedPath ) =>
+			path.startsWith( DIFMLiteInProgressAllowedPath )
+		)
 	);
 }
 
