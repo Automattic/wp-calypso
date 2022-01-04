@@ -1,8 +1,6 @@
-import { Button } from '@automattic/components';
+import { Button, ButtonProps } from '@automattic/components';
 import classNames from 'classnames';
-import { forwardRef } from 'react';
-import type { ButtonProps } from '@automattic/components';
-import type { ForwardRefRenderFunction } from 'react';
+import { forwardRef, ForwardRefRenderFunction } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -19,8 +17,8 @@ const ClipboardButton: ForwardRefRenderFunction< HTMLButtonElement, ClipboardPro
 ) => {
 	const copyText = () => {
 		// Allow function to get text to avoid calling it on every render.
-		const copyText = typeof text === 'string' ? text : text();
-		navigator.clipboard.writeText( copyText ).then( onCopy );
+		const copyText = typeof text === 'function' ? text() : text;
+		window.navigator.clipboard.writeText( copyText ).then( onCopy );
 	};
 
 	return (

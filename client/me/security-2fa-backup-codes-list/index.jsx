@@ -76,9 +76,9 @@ class Security2faBackupCodesList extends Component {
 		saveAs( toSave, `${ this.props.username }-backup-codes.txt` );
 	};
 
-	getBackupCodePlainText = ( backupCodes = this.props.backupCodes ) => {
-		if ( backupCodes.length > 0 ) {
-			return backupCodes.join( '\n' );
+	getBackupCodePlainText = () => {
+		if ( this.props.backupCodes.length > 0 ) {
+			return this.props.backupCodes.join( '\n' );
 		}
 	};
 
