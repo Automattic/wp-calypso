@@ -25,7 +25,6 @@
 		"checkout/google-pay": true,
 		"desktop-promo": true,
 		"dev/preferences-helper": true,
-		"difm-lite-pilot": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
