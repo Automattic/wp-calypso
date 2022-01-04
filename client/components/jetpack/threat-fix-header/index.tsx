@@ -3,16 +3,16 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import { FixableThreat } from 'calypso/components/jetpack/threat-item-new/types';
+import { Threat } from 'calypso/components/jetpack/threat-item-new/types';
 import { getThreatFix, getThreatMessage } from 'calypso/components/jetpack/threat-item-new/utils';
 import ThreatSeverityBadge from 'calypso/components/jetpack/threat-severity-badge';
 
 import './style.scss';
 
 interface Props {
-	threat: FixableThreat;
+	threat: Threat;
 	fixAllDialog?: boolean;
-	onCheckFix?: ( checked: boolean, threat: FixableThreat ) => void;
+	onCheckFix?: ( checked: boolean, threat: Threat ) => void;
 	action: 'fix' | 'ignore';
 }
 
@@ -49,7 +49,7 @@ export default function ThreatFixHeader( {
 					) }
 				>
 					<Gridicon className="threat-fix-header__warning-icon" icon="info-outline" size={ 18 } />
-					{ action === 'fix' && getThreatFix( threat.fixable ) }
+					{ action === 'fix' && threat.fixable && getThreatFix( threat.fixable ) }
 					{ action === 'ignore' && translate( 'Jetpack will ignore the threat.' ) }
 				</span>
 			</div>
