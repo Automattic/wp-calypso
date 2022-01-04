@@ -106,7 +106,9 @@ export default function RevokeLicenseDialog( {
 			<p className="revoke-license-dialog__warning">
 				<Gridicon icon="info-outline" size={ 18 } />
 
-				{ translate( 'Please note this action cannot be undone.' ) }
+				{ translate(
+					'Please note once this license is revoked from this site it cannot be reappiled to this site. You can however add a new or different licenses to this site.'
+				) }
 			</p>
 		</Dialog>
 	);
