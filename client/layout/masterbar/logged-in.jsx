@@ -282,8 +282,6 @@ class MasterbarLoggedIn extends Component {
 					<AsyncLoad
 						require="./masterbar-cart/masterbar-cart-wrapper"
 						placeholder={ null }
-						className="masterbar__item-cart"
-						tooltip={ translate( 'My shopping cart' ) }
 						goToCheckout={ this.goToCheckout }
 						selectedSiteSlug={ currentSelectedSiteSlug }
 						selectedSiteId={ currentSelectedSiteId }
