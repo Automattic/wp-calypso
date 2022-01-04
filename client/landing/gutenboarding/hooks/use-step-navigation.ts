@@ -72,8 +72,16 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 
 	// Transfer anchor podcast ID, episode ID from the query string to the location state, if needed
 	const locationResult = useLocation();
-	const locationState =
-		'state' in locationResult ? ( locationResult.state as Record< string, string > ) : {};
+	const getLocationState = (): Record< string, string > => {
+		if ( ! locationResult ) {
+			return {};
+		}
+		if ( ! locationResult.state ) {
+			return {};
+		}
+		return locationResult.state as Record< string, string >;
+	};
+	const locationState = getLocationState();
 	if ( anchorFmPodcastId ) {
 		locationState.anchorFmPodcastId = anchorFmPodcastId;
 	}
