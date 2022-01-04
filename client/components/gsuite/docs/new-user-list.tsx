@@ -1,7 +1,6 @@
 import { CompactCard as Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useState } from 'react';
-import * as React from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import {
@@ -14,7 +13,7 @@ import {
 const domainOne = { name: 'example.blog' };
 const domainTwo = { name: 'test.blog' };
 
-const GSuiteNewUserListExample = (): React.FunctionComponent => {
+function GSuiteNewUserListExample(): JSX.Element {
 	const [ users, setUsers ] = useState( newUsers( domainOne.name ) );
 	const [ domains, setDomains ] = useState( [ domainOne ] );
 	const [ useMultipleDomains, setUseMultipleDomains ] = useState( false );
@@ -49,6 +48,7 @@ const GSuiteNewUserListExample = (): React.FunctionComponent => {
 		lastName: noAs( lastName ),
 		domain,
 		mailBox,
+		password: { value: '', error: null },
 	} );
 
 	return (
@@ -94,6 +94,6 @@ const GSuiteNewUserListExample = (): React.FunctionComponent => {
 			</FormLabel>
 		</Card>
 	);
-};
+}
 
 export default GSuiteNewUserListExample;

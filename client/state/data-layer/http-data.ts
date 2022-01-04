@@ -253,7 +253,6 @@ interface QueryResults {
  *         ? res.send( renderToStaticMarkup( <LocalSplines geo={ geo.data } splines={ splines.data } /> ) )
  *         : res.send( renderToStaticMarkup( <UnvailableData /> ) );
  * }
- *
  * @param query - function that returns key/value pairs of data name and request state
  * @param options - options object
  * @param options.timeout - how many ms to wait until giving up on requests
@@ -300,6 +299,18 @@ export const waitForHttpData = (
 		unsubscribe = subscribe( listener );
 		listener();
 	} );
+
+declare global {
+	interface Window {
+		app?: {
+			isDebug?: boolean;
+		};
+		getHttpData?: typeof getHttpData;
+		httpData?: typeof httpData;
+		requestHttpData?: typeof requestHttpData;
+		waitForHttpData?: typeof waitForHttpData;
+	}
+}
 
 if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
