@@ -17,6 +17,7 @@ import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/sites/selectors';
@@ -107,6 +108,7 @@ const SiteSetupList = ( {
 	firstIncompleteTask,
 	isEmailUnverified,
 	isPodcastingSite,
+	isUsingSiteEditor,
 	menusUrl,
 	siteId,
 	siteSlug,
@@ -186,6 +188,7 @@ const SiteSetupList = ( {
 				taskUrls,
 				userEmail,
 				isBlogger,
+				isUsingSiteEditor,
 			} );
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
@@ -339,7 +342,7 @@ export default connect( ( state ) => {
 		siteSegment,
 		siteVerticals,
 	} );
-
+	const isUsingSiteEditor = isSiteUsingCoreSiteEditor( state, siteId );
 	// Existing usage didn't have a global selector, we can tidy this in a follow up.
 	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;
 
@@ -348,6 +351,7 @@ export default connect( ( state ) => {
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
+		isUsingSiteEditor,
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
