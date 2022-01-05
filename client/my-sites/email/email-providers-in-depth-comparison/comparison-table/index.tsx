@@ -15,7 +15,7 @@ const ComparisonTable: FunctionComponent< ComparisonTableProps > = ( { emailProv
 						<div className="email-providers-in-depth-comparison-table__provider-name">
 							{ emailProviderFeatures.logo }
 
-							<h2>{ emailProviderFeatures.header }</h2>
+							<h2>{ emailProviderFeatures.name }</h2>
 						</div>
 					</div>
 				);

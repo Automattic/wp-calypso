@@ -11,7 +11,7 @@ import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-provide
 const noop = () => {};
 
 export const professionalEmailFeatures: EmailProviderFeatures = {
-	header: getTitanProductName(),
+	name: getTitanProductName(),
 	logo: <Gridicon className="professional-email" icon="my-sites" />,
 	tools: translate( 'Integrated email management, Inbox, calendar and contacts' ),
 	storage: translate( '30GB storage' ),
@@ -21,7 +21,7 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 };
 
 export const googleWorkspaceFeatures: EmailProviderFeatures = {
-	header: getGoogleMailServiceFamily(),
+	name: getGoogleMailServiceFamily(),
 	logo: (
 		<img
 			alt={ translate( 'Google Workspace icon' ) }
