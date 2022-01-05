@@ -1,3 +1,4 @@
+import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -13,6 +14,7 @@ import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
@@ -92,6 +94,17 @@ const PluginsBrowserListElement = ( props ) => {
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	} );
 
+	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
+	const shouldUpgrade =
+		selectedSite &&
+		! (
+			isBusiness( selectedSite.plan ) ||
+			isEnterprise( selectedSite.plan ) ||
+			isEcommerce( selectedSite.plan ) ||
+			isJetpack ||
+			isVip
+		);
+
 	if ( isPlaceholder ) {
 		return <Placeholder iconSize={ iconSize } />;
 	}
@@ -143,6 +156,7 @@ const PluginsBrowserListElement = ( props ) => {
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
 							billingPeriod={ billingPeriod }
+							shouldUpgrade={ shouldUpgrade }
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
@@ -176,6 +190,7 @@ const InstalledInOrPricing = ( {
 	isWpcomPreinstalled,
 	plugin,
 	billingPeriod,
+	shouldUpgrade,
 } ) => {
 	const translate = useTranslate();
 
@@ -202,7 +217,14 @@ const InstalledInOrPricing = ( {
 									<span className="plugins-browser-item__period">{ period }</span>
 								</>
 							) : (
-								translate( 'Free' )
+								<>
+									{ translate( 'Free' ) }
+									{ shouldUpgrade && (
+										<span className="plugins-browser-item__requires-plan-upgrade">
+											{ translate( 'Requires a plan upgrade' ) }
+										</span>
+									) }
+								</>
 							) }
 						</>
 					)
