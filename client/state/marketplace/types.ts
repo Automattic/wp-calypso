@@ -18,6 +18,12 @@ export interface IPurchaseFlowState {
 	reasonForPluginInstallationStatus: string | null;
 	isPluginInstalledAlongWithTransfer: boolean | null;
 }
+
+export interface IBillingIntervalState {
+	interval: string;
+}
+
 export interface IMarketplaceState {
 	purchaseFlow: IPurchaseFlowState;
+	billingInterval: IBillingIntervalState;
 }
