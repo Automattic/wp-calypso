@@ -1,3 +1,5 @@
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+
 export enum MARKETPLACE_ASYNC_PROCESS_STATUS {
 	/**
 	 * An async process's state will remain unknown until we fetch the state from the backend
@@ -20,7 +22,7 @@ export interface IPurchaseFlowState {
 }
 
 export interface IBillingIntervalState {
-	interval: string;
+	interval: IntervalLength.MONTHLY | IntervalLength.ANNUALLY;
 }
 
 export interface IMarketplaceState {
