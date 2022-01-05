@@ -29,7 +29,7 @@
 
 	// Make happychat button appear above the FAB icon
 	// when the latter is already shown.
-	&.is-offset {
+	&.with-offset {
 		bottom: calc( 24px + 60px );
 		right: calc( 24px + 5px );
 	}

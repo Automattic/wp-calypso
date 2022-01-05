@@ -317,7 +317,7 @@ class Layout extends Component {
 						allowMobileRedirect
 						borderless={ false }
 						floating
-						offset={ loadInlineHelp }
+						withOffset={ loadInlineHelp }
 					/>
 				) }
 

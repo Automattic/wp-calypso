@@ -23,7 +23,7 @@ export class HappychatButton extends Component {
 		borderless: PropTypes.bool,
 		primary: PropTypes.bool,
 		floating: PropTypes.bool,
-		offset: PropTypes.bool,
+		withOffset: PropTypes.bool,
 		getAuth: PropTypes.func,
 		initConnection: PropTypes.func,
 		isChatActive: PropTypes.bool,
@@ -39,7 +39,7 @@ export class HappychatButton extends Component {
 		borderless: true,
 		primary: false,
 		floating: false,
-		offset: false,
+		withOffset: false,
 		getAuth: noop,
 		initConnection: noop,
 		isChatActive: false,
@@ -75,7 +75,7 @@ export class HappychatButton extends Component {
 			primary,
 			borderless,
 			floating,
-			offset,
+			withOffset,
 			hasUnread,
 			isChatAvailable,
 			isChatActive,
@@ -83,7 +83,7 @@ export class HappychatButton extends Component {
 		const showButton = isChatAvailable || isChatActive;
 		const classes = classnames( 'happychat__button', className, {
 			'is-floating': floating,
-			'is-offset': offset,
+			'with-offset': withOffset,
 			'has-unread': hasUnread,
 		} );
 
