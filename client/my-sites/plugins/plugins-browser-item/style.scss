@@ -159,7 +159,12 @@
 	justify-content: space-between;
 }
 
-.plugins-browser-item__period {
+.plugins-browser-item__period,
+.plugins-browser-item__requires-plan-upgrade {
 	color: var( --studio-gray-60 );
 	font-size: $font-body-extra-small;
+}
+
+.plugins-browser-item__requires-plan-upgrade {
+	margin-left: 5px;
 }
