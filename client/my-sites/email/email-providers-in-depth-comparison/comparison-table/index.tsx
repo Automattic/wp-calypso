@@ -15,7 +15,7 @@ type ComparisonTableProps = {
 };
 
 const ComparisonTable: FunctionComponent< ComparisonTableProps > = () => {
-	return <p> New component </p>;
+	return null;
 };
 
 export default ComparisonTable;
