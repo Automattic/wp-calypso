@@ -4,4 +4,32 @@
 	font-size: $font-title-large;
 	margin-bottom: 64px;
 	text-align: center;
+
+	@extend .wp-brand-font;
+}
+
+.email-providers-in-depth-comparison-table {
+	display: flex;
+	gap: 20px;
+}
+
+.email-providers-in-depth-comparison-table__provider-name {
+	display: flex;
+
+	h2 {
+		font-size: $font-title-medium;
+		margin-left: 5px;
+
+		@extend .wp-brand-font;
+	}
+
+	.google-workspace-logo {
+		width: 48px;
+	}
+
+	.professional-email-logo {
+		color: var( --color-wordpress-com );
+		height: 48px;
+		width: 48px;
+	}
 }

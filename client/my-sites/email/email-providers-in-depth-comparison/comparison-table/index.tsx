@@ -1,21 +1,27 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { FunctionComponent } from 'react';
-import type { TranslateResult } from 'i18n-calypso';
+import type {
+	ComparisonTableProps,
+	EmailProviderFeatures,
+} from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
 
-export type EmailProviderFeatures = {
-	header: string;
-	tools: TranslateResult;
-	storage: TranslateResult;
-	importing: TranslateResult;
-	support: TranslateResult;
-	selectCallback: () => void;
-};
+const ComparisonTable: FunctionComponent< ComparisonTableProps > = ( { emailProviders } ) => {
+	return (
+		<div className="email-providers-in-depth-comparison-table">
+			{ emailProviders.map( ( emailProviderFeatures: EmailProviderFeatures, index: number ) => {
+				return (
+					<div key={ index }>
+						<div className="email-providers-in-depth-comparison-table__provider-name">
+							{ emailProviderFeatures.logo }
 
-type ComparisonTableProps = {
-	emailProviders: EmailProviderFeatures[];
-};
-
-const ComparisonTable: FunctionComponent< ComparisonTableProps > = () => {
-	return null;
+							<h2>{ emailProviderFeatures.name }</h2>
+						</div>
+					</div>
+				);
+			} ) }
+		</div>
+	);
 };
 
 export default ComparisonTable;
