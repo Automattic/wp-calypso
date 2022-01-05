@@ -791,6 +791,9 @@ export function generateSteps( {
 			stepName: 'courses',
 		},
 
+		'sell-step': {
+			stepName: 'sell-step',
+		},
 		// ↓ importer steps
 		list: {
 			stepName: 'list',
