@@ -1,19 +1,4 @@
-import { isCredits, isDomainRedemption } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
-import { hasRenewalItem } from './cart-items';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-
-export function canRemoveFromCart( cart: ResponseCart, cartItem: ResponseCartProduct ): boolean {
-	if ( isCredits( cartItem ) ) {
-		return false;
-	}
-
-	if ( hasRenewalItem( cart ) && isDomainRedemption( cartItem ) ) {
-		return false;
-	}
-
-	return true;
-}
 
 /**
  * Return a string that represents the User facing name for payment method
@@ -40,8 +25,4 @@ export function paymentMethodName( method: string ): string {
 	};
 
 	return ( paymentMethodsNames as Record< string, string > )[ method ] || method;
-}
-
-export function shouldShowTax( cart: ResponseCart ): boolean {
-	return cart?.tax?.display_taxes ?? false;
 }
