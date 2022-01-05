@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
@@ -102,8 +103,10 @@ const AdminContent = ( { selectedDate } ) => {
 
 	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
 
-	const onDateChange = ( date ) =>
-		page( backupMainPath( siteSlug, { date: date.format( INDEX_FORMAT ) } ) );
+	const onDateChange = useCallback(
+		( date ) => page( backupMainPath( siteSlug, { date: date.format( INDEX_FORMAT ) } ) ),
+		[ siteSlug ]
+	);
 
 	return (
 		<>
