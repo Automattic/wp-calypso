@@ -6,7 +6,7 @@ export type ComparisonTableProps = {
 };
 
 export type EmailProviderFeatures = {
-	name: string;
+	name: TranslateResult;
 	logo: ReactNode;
 	tools: TranslateResult;
 	storage: TranslateResult;
