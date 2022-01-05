@@ -11,9 +11,9 @@ export interface ProviderCard {
 	description: TranslateResult;
 	detailsExpanded?: boolean;
 	discount?: ReactElement | null;
-	footerBadge?: ReactElement | null;
 	expandButtonLabel: TranslateResult;
 	features: TranslateResult[];
+	footerBadge?: ReactElement | null;
 	formFields?: ReactElement;
 	logo?: ReactElement | { path: string; className?: string };
 	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
@@ -24,10 +24,9 @@ export interface ProviderCard {
 }
 
 export type EmailProvidersStackedCardProps = {
-	comparisonContext: string;
 	cart?: any;
 	cartDomainName?: string;
-	selectedSite?: Site | null;
+	comparisonContext: string;
 	currencyCode?: string | null;
 	currentRoute?: string;
 	detailsExpanded: boolean;
@@ -37,26 +36,15 @@ export type EmailProvidersStackedCardProps = {
 	gSuiteProductMonthly?: any;
 	gSuiteProductYearly?: any;
 	hasCartDomain?: boolean;
+	intervalLength: IntervalLength;
 	isGSuiteSupported?: boolean;
+	onExpandedChange?: ( providerKey: string, expand: boolean ) => void;
 	productsList?: string[];
 	requestingSiteDomains?: boolean;
 	selectedDomainName: string;
+	selectedSite?: Site | null;
 	shoppingCartManager?: any;
 	source: string;
-	intervalLength: IntervalLength;
 	titanMailMonthlyProduct?: any;
 	titanMailYearlyProduct?: any;
-	onExpandedChange?: ( providerKey: string, expand: boolean ) => void;
-};
-
-type ValueError = {
-	value: string;
-	error: string;
-};
-
-export type Mailbox = {
-	uuid: string;
-	domain: ValueError;
-	mailbox: ValueError;
-	password: ValueError;
 };

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -43,9 +44,9 @@ type EmailProvidersStackedComparisonProps = {
 	isGSuiteSupported?: boolean;
 	productsList?: string[];
 	requestingSiteDomains?: boolean;
-	shoppingCartManager?: any;
-	selectedSite?: SiteData | null;
 	selectedDomainName: string;
+	selectedSite?: SiteData | null;
+	shoppingCartManager?: any;
 	showEmailForwardLink?: boolean;
 	siteName: string;
 	source: string;
@@ -115,21 +116,23 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 				{ translate( 'Pick an email solution' ) }
 			</h1>
 
-			<div className="email-providers-stacked-comparison__how-they-compare">
-				{ translate( 'Not sure how to start? {{a}}See how they compare{{/a}}.', {
-					components: {
-						a: (
-							<a
-								href={ emailManagementInDepthComparison(
-									siteName,
-									selectedDomainName,
-									currentRoute
-								) }
-							/>
-						),
-					},
-				} ) }
-			</div>
+			{ isEnabled( 'emails/in-depth-comparison' ) && (
+				<div className="email-providers-stacked-comparison__sub-header">
+					{ translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
+						components: {
+							a: (
+								<a
+									href={ emailManagementInDepthComparison(
+										siteName,
+										selectedDomainName,
+										currentRoute
+									) }
+								/>
+							),
+						},
+					} ) }
+				</div>
+			) }
 
 			<BillingIntervalToggle
 				onIntervalChange={ setIntervalLength }
