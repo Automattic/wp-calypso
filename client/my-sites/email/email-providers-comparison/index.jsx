@@ -68,7 +68,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
 	getDomainsWithForwards,
 	isAddingEmailForward,
@@ -99,7 +98,6 @@ class EmailProvidersComparison extends Component {
 
 		// Props injected via connect()
 		currencyCode: PropTypes.string,
-		currentRoute: PropTypes.string,
 		domain: PropTypes.object,
 		domainName: PropTypes.string,
 		gSuiteProduct: PropTypes.object,
@@ -624,12 +622,10 @@ class EmailProvidersComparison extends Component {
 
 	renderHeader() {
 		const {
-			currentRoute,
 			headerTitle,
 			hideEmailHeader,
 			promoHeaderTitle,
 			selectedDomainName,
-			selectedSite,
 			skipHeaderElement,
 			translate,
 		} = this.props;
@@ -664,9 +660,7 @@ class EmailProvidersComparison extends Component {
 			<>
 				<DocumentHead title={ titleCase( title ) } />
 
-				{ ! hideEmailHeader && (
-					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
-				) }
+				{ ! hideEmailHeader && <EmailHeader /> }
 
 				{ headerContent }
 
@@ -832,7 +826,6 @@ export default connect(
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			currentRoute: getCurrentRoute( state ),
 			domain,
 			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
