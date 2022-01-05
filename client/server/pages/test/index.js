@@ -902,17 +902,17 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		it( 'sets the locale in the store', async () => {
 			const theUser = {
 				localeSlug: 'es',
-				localeVariant: 'ES',
+				localeVariant: 'es_ES',
 			};
 			app.withBootstrapUser( theUser );
 
 			const { request } = await app.run();
 
-			expect( request.context.lang ).toEqual( 'es' );
+			expect( request.context.lang ).toEqual( 'es_ES' );
 			expect( theStore.dispatch ).toHaveBeenCalledWith( {
 				type: 'LOCALE_SET',
 				localeSlug: 'es',
-				localeVariant: 'ES',
+				localeVariant: 'es_ES',
 			} );
 		} );
 
