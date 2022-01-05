@@ -49,7 +49,6 @@
 	}
 
 	a {
-		//color: var( --color-primary );
 		text-decoration: underline;
 		font-weight: normal;
 		line-height: 1.4;
@@ -71,7 +70,6 @@
 
 		&:hover {
 			cursor: pointer;
-			//color: var( --color-primary );
 			background: var( --color-neutral-0 );
 
 			.gridicon {
