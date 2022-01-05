@@ -33,6 +33,7 @@ export const EMAIL_FORWARDING = `${ root }/email-forwarding`;
 export const EMAIL_VALIDATION_AND_VERIFICATION = `${ root }/domains/register-domain/#email-validation-and-verification`;
 export const EMPTY_SITE = `${ root }/empty-site/`;
 export const FORMS = `${ root }/forms`;
+export const GDPR_POLICIES = `${ root }/your-site-and-the-gdpr`;
 export const GSUITE_LEARNING_CENTER = 'https://workspace.google.com/learning-center/';
 export const GUIDED_TRANSFER = `${ root }/guided-transfer`;
 export const HTTPS_SSL = `${ root }/https-ssl`;

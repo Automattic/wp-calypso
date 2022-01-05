@@ -121,6 +121,15 @@
 		font-weight: 400;
 		font-size: $font-body-small;
 		color: var( --studio-gray-80 );
+
+		button.button-plain {
+			cursor: pointer;
+			color: var( --color-link );
+
+			&:hover, &:focus, &:active {
+				color: var( --color-link-dark );
+			}
+		}
 	}
 
 	.domain-row__domain-notice-dismiss {

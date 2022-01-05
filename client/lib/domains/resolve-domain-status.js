@@ -1,15 +1,18 @@
+import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
-import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
+import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
 import {
+	SETTING_PRIMARY_DOMAIN,
 	INCOMING_DOMAIN_TRANSFER_STATUSES,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
+	GDPR_POLICIES,
 } from 'calypso/lib/url/support';
 import { domainManagementNameServers, domainMappingSetup } from 'calypso/my-sites/domains/paths';
-import { transferStatus, type as domainTypes } from './constants';
+import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 
 export function resolveDomainStatus(
 	domain,
@@ -20,6 +23,7 @@ export function resolveDomainStatus(
 		isDomainOnlySite = false,
 		siteSlug = null,
 		getMappingErrors = false,
+		email = null,
 	} = {}
 ) {
 	const transferOptions = {
@@ -115,6 +119,10 @@ export function resolveDomainStatus(
 						status: translate( 'Error' ),
 						icon: 'info',
 						listStatusText: status,
+						noticeText: translate(
+							"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
+							options
+						),
 						listStatusClass: 'alert',
 						listStatusWeight: 1000,
 					};
@@ -131,11 +139,19 @@ export function resolveDomainStatus(
 					}
 				);
 				return {
-					statusText: translate( 'Verifying connection' ),
-					statusClass: 'status-verifying',
-					status: translate( 'Complete setup' ),
+					statusText: translate( 'Verifying' ),
+					statusClass: 'status-success',
+					status: translate( 'Verifying' ),
 					icon: 'verifying',
 					listStatusText: status,
+					noticeText: translate(
+						'It can take between a few minutes to 72 hours to verify the connection. You can continue to work on your site, but %(domainName)s won’t be reachable just yet.',
+						{
+							args: {
+								domainName: domain.name,
+							},
+						}
+					),
 					listStatusClass: 'verifying',
 					listStatusWeight: 600,
 				};
@@ -163,10 +179,11 @@ export function resolveDomainStatus(
 				const pendingRenewalMessage = translate( 'Renewal in progress' );
 				return {
 					statusText: pendingRenewalMessage,
-					statusClass: 'status-warning',
+					statusClass: 'status-success',
 					status: translate( 'Renewing' ),
 					icon: 'info',
 					listStatusText: pendingRenewalMessage,
+					noticeText: translate( 'Attempting to get it renewed for you.' ),
 					listStatusClass: 'warning',
 					listStatusWeight: 400,
 				};
@@ -175,7 +192,7 @@ export function resolveDomainStatus(
 			if ( domain.pendingTransfer ) {
 				return {
 					statusText: translate( 'Outbound transfer initiated' ),
-					statusClass: 'status-error',
+					statusClass: 'status-success',
 					status: translate( 'In progress' ),
 					icon: 'cached',
 				};
@@ -206,12 +223,76 @@ export function resolveDomainStatus(
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
 					status: translate( 'Verify email' ),
+					noticeText: translate(
+						'We sent you an email at %(email)s to verify your contact information. Please complete the verification or your domain will stop working.',
+						{
+							args: {
+								domainName: domain.name,
+								email,
+							},
+						}
+					),
 					icon: 'info',
 					listStatusWeight: 600,
 				};
 			}
 
 			if ( domain.expired ) {
+				const daysSinceExpiration = moment().diff( domain.expiry, 'days' );
+
+				let renewCta;
+
+				if ( daysSinceExpiration >= 1 && daysSinceExpiration <= 43 ) {
+					const renewableUntil = moment( domain.renewableUntil ).format( 'LL' );
+
+					renewCta = domain.currentUserIsOwner
+						? translate(
+								'You can renew the domain at the regular rate until %(renewableUntil)s. {{a}}Renew now{{/a}}',
+								{
+									components: {
+										a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
+									},
+									args: { renewableUntil },
+								}
+						  )
+						: translate(
+								'The domain owner can renew the domain at the regular rate until %(renewableUntil)s.',
+								{
+									args: { renewableUntil },
+								}
+						  );
+				}
+
+				if ( daysSinceExpiration > 43 ) {
+					const redeemableUntil = moment( domain.redeemableUntil ).format( 'LL' );
+
+					renewCta = domain.currentUserIsOwner
+						? translate(
+								'You can still renew the domain until %(redeemableUntil)s by paying an additional redemption fee. {{a}}Renew now{{/a}}',
+								{
+									components: {
+										a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
+									},
+									args: { redeemableUntil },
+								}
+						  )
+						: translate(
+								'The domain owner can still renew the domain until %(redeemableUntil)s by paying an additional redemption fee.',
+								{
+									args: { redeemableUntil },
+								}
+						  );
+				}
+
+				const noticeText = [
+					translate( 'This domain expired on %(expiryDate)s. ', {
+						args: {
+							expiryDate: moment.utc( domain.expiry ).format( 'LL' ),
+							renewCta,
+						},
+					} ),
+					renewCta,
+				];
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
@@ -224,15 +305,27 @@ export function resolveDomainStatus(
 						comment:
 							'timeSinceExpiry is of the form "[number] [time-period] ago" e.g. "3 days ago"',
 					} ),
+					noticeText,
 					listStatusClass: 'alert',
 					listStatusWeight: 1000,
 				};
 			}
 
 			if ( isExpiringSoon( domain, 30 ) ) {
-				const expiresMessage = translate( 'Expires in %(days)s', {
-					args: { days: moment( domain.expiry ).fromNow( true ) },
-				} );
+				const renewCta = domain.currentUserIsOwner
+					? translate( '{{a}}Renew now{{/a}}', {
+							components: {
+								a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
+							},
+					  } )
+					: translate( 'It can be renewed by the owner.' );
+
+				const expiresMessage = [
+					translate( 'This domain will expire on %(expiryDate)s. ', {
+						args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
+					} ),
+					renewCta,
+				];
 
 				if ( isExpiringSoon( domain, 5 ) ) {
 					return {
@@ -241,6 +334,7 @@ export function resolveDomainStatus(
 						status: translate( 'Expiring soon' ),
 						icon: 'info',
 						listStatusText: expiresMessage,
+						noticeText: expiresMessage,
 						listStatusClass: 'alert',
 						listStatusWeight: 1000,
 					};
@@ -252,18 +346,51 @@ export function resolveDomainStatus(
 					status: translate( 'Expiring soon' ),
 					icon: 'info',
 					listStatusText: expiresMessage,
+					noticeText: expiresMessage,
 					listStatusClass: 'warning',
 					listStatusWeight: 800,
 				};
 			}
 
 			if ( isRecentlyRegistered( domain.registrationDate ) ) {
+				let noticeText;
+				if ( domain.isPrimary ) {
+					noticeText = translate(
+						'We are setting up your domain. It should start working immediately, but may be unreliable during the first 30 minutes. If you are unable to access your site at %(domainName)s, try setting the primary domain to a domain you know is working. {{learnMore}}Learn more{{/learnMore}} about setting the primary domain, or try {{try}}%(domainName)s{{/try}} now.',
+						{
+							args: {
+								domainName: domain.name,
+							},
+							components: {
+								learnMore: (
+									<a href={ SETTING_PRIMARY_DOMAIN } rel="noopener noreferrer" target="_blank" />
+								),
+								try: (
+									<a href={ `http://${ domain.name }` } rel="noopener noreferrer" target="_blank" />
+								),
+							},
+						}
+					);
+				} else {
+					noticeText = translate(
+						'We are setting up your domain. It should start working immediately, but may be unreliable during the first 30 minutes. {{learnMore}}Learn more{{/learnMore}}',
+						{
+							components: {
+								learnMore: (
+									<a href={ SETTING_PRIMARY_DOMAIN } rel="noopener noreferrer" target="_blank" />
+								),
+							},
+						}
+					);
+				}
+
 				return {
 					statusText: translate( 'Activating' ),
 					statusClass: 'status-success',
 					status: translate( 'Activating' ),
 					icon: 'cloud_upload',
 					listStatusText: translate( 'Activating' ),
+					noticeText,
 					listStatusClass: 'info',
 					listStatusWeight: 400,
 				};
@@ -301,8 +428,8 @@ export function resolveDomainStatus(
 			if ( domain.transfer_status === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
 				return {
 					statusText: translate( 'Action required' ),
-					statusClass: 'status-warning',
-					status: translate( 'Complete setup' ),
+					statusClass: 'status-success',
+					status: translate( 'Active' ),
 					icon: 'info',
 					listStatusText: translate(
 						'{{strong}}Point to WordPress.com:{{/strong}} To point this domain to your WordPress.com site, you need to update the name servers. {{a}}Update now{{/a}} or do this later.',
@@ -318,8 +445,47 @@ export function resolveDomainStatus(
 							},
 						}
 					),
+					noticeText: translate(
+						'Transfer successful! To make this domain work with your WordPress.com site you need {{a}}point it to WordPress.com name servers.{{/a}}',
+						{
+							components: {
+								a: <a href={ domainManagementNameServers( siteSlug, domain.domain ) } />,
+							},
+						}
+					),
 					listStatusClass: 'transfer-warning',
 					listStatusWeight: 600,
+				};
+			}
+
+			if (
+				gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus ||
+				domain.pendingRegistration
+			) {
+				const detailCta = domain.currentUserIsOwner
+					? translate( 'Please check the email sent to %(email)s for further details', {
+							args: { email },
+					  } )
+					: translate( 'Please check the email sent to the domain owner for further details' );
+
+				const noticeText = translate(
+					'This domain requires explicit user consent to complete the registration. %(detailCta)s. {{a}}Learn more{{/a}}',
+					{
+						components: {
+							a: <a href={ GDPR_POLICIES } />,
+						},
+						args: { detailCta },
+					}
+				);
+				return {
+					statusText: noticeText,
+					statusClass: 'status-warning',
+					status: translate( 'Pending' ),
+					icon: 'info',
+					listStatusText: noticeText,
+					noticeText: noticeText,
+					listStatusClass: 'warning',
+					listStatusWeight: 400,
 				};
 			}
 
@@ -359,9 +525,9 @@ export function resolveDomainStatus(
 		case domainTypes.TRANSFER:
 			if ( domain.transferStatus === transferStatus.PENDING_START ) {
 				return {
-					statusText: translate( 'Action required' ),
+					statusText: translate( 'Complete setup' ),
 					statusClass: 'status-warning',
-					status: translate( 'Action required' ),
+					status: translate( 'Complete setup' ),
 					icon: 'info',
 					listStatusText: translate(
 						'{{strong}}Transfer waiting:{{/strong}} Follow {{a}}these steps{{/a}} by %(beginTransferUntilDate)s to start the transfer.',
@@ -382,6 +548,20 @@ export function resolveDomainStatus(
 							},
 						}
 					),
+					noticeText: translate(
+						'Please follow {{a}}these instructions{{/a}} to start the transfer.',
+						{
+							components: {
+								a: (
+									<a
+										href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+						}
+					),
 					listStatusClass: 'transfer-warning',
 					listStatusWeight: 600,
 				};
@@ -393,6 +573,10 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: translate(
 						'{{strong}}Transfer failed:{{/strong}} this transfer has failed. {{a}}Learn more{{/a}}',
+						transferOptions
+					),
+					noticeText: translate(
+						'Transfer failed. Learn the possible {{a}}reasons why{{/a}}.',
 						transferOptions
 					),
 					listStatusClass: 'alert',
@@ -409,6 +593,10 @@ export function resolveDomainStatus(
 							'{{strong}}Transfer in progress:{{/strong}} the transfer should be completed by %(transferFinishDate)s. We are waiting for approval from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 							transferOptions
 						),
+						noticeText: translate(
+							'The transfer should complete by %(transferFinishDate)s. We are waiting for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
+							transferOptions
+						),
 						listStatusClass: 'verifying',
 						listStatusWeight: 200,
 					};
@@ -420,6 +608,10 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: translate(
 						'{{strong}}Transfer in progress:{{/strong}} We are waiting for approval from your current domain provider to proceed. {{a}}Learn more{{/a}}',
+						transferOptions
+					),
+					noticeText: translate(
+						'We are waiting for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 						transferOptions
 					),
 					listStatusClass: 'verifying',
@@ -436,6 +628,12 @@ export function resolveDomainStatus(
 					'{{strong}}Transfer in progress.{{/strong}} {{a}}Learn more{{/a}}',
 					transferOptions
 				),
+				noticeText: domain.transferEndDate
+					? translate(
+							'The transfer should complete by %(transferFinishDate)s. {{a}}Learn more{{/a}}',
+							transferOptions
+					  )
+					: null,
 				listStatusClass: 'verifying',
 				listStatusWeight: 200,
 			};
