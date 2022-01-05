@@ -10,6 +10,7 @@ import Upsell from 'calypso/components/jetpack/upsell';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import Main from 'calypso/components/main';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
+import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -61,7 +62,7 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 const BackupsUpsellBody: FunctionComponent = () => {
 	const translate = useTranslate();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const item = slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_T1_YEARLY );
+	const item = slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_T1_YEARLY ) as SelectorProduct;
 	return (
 		<JetpackProductCard
 			buttonLabel={ translate( 'Upgrade now' ) }

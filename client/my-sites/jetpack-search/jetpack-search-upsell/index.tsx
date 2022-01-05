@@ -7,6 +7,7 @@ import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
+import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackSearchFooter from '../footer';
@@ -18,7 +19,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 	const upgradeUrl =
 		'https://jetpack.com/upgrade/search/?utm_campaign=my-sites-jetpack-search&utm_source=calypso&site=' +
 		siteSlug;
-	const item = slugToSelectorProduct( PRODUCT_JETPACK_SEARCH );
+	const item = slugToSelectorProduct( PRODUCT_JETPACK_SEARCH ) as SelectorProduct;
 
 	return (
 		<Main className="jetpack-search-upsell">

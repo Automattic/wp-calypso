@@ -25,7 +25,7 @@ type OwnProps = {
 	hidePrice?: boolean;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
-	onButtonClick: React.MouseEventHandler;
+	onButtonClick?: React.MouseEventHandler;
 	buttonURL?: string;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
