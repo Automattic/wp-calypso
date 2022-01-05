@@ -1,34 +1,46 @@
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 
-export default function CheckoutPending( {
-	orderId,
-	siteSlug,
-	redirectTo,
-}: {
+interface CheckoutPendingProps {
 	orderId: number;
 	siteSlug: string;
 	redirectTo?: string;
-} ): JSX.Element {
+}
+
+function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProps ): JSX.Element {
 	const translate = useTranslate();
 	const transaction = useSelector( ( state ) => getOrderTransaction( state, orderId ) );
 	const error = useSelector( ( state ) => getOrderTransactionError( state, orderId ) );
 	const reduxDispatch = useDispatch();
+	const cartKey = useCartKey();
+	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
+	const didRedirect = useRef( false );
 
 	useEffect( () => {
+		if ( didRedirect.current ) {
+			return;
+		}
+
+		// Make sure the cart is always fresh if anything changes.
+		reloadCart();
+
 		const redirectUrl = redirectTo || `/checkout/thank-you/${ siteSlug }/pending`;
 
 		const retryOnError = () => {
+			didRedirect.current = true;
 			page( `/checkout/${ siteSlug }` );
 
 			reduxDispatch(
@@ -46,6 +58,7 @@ export default function CheckoutPending( {
 			if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
 				const { receiptId } = transaction;
 
+				didRedirect.current = true;
 				if ( redirectUrl.startsWith( '/' ) ) {
 					const redirectPath = redirectUrl.replace( 'pending', receiptId );
 					page( redirectPath );
@@ -57,6 +70,7 @@ export default function CheckoutPending( {
 			}
 
 			if ( ORDER_TRANSACTION_STATUS.ASYNC_PENDING === transaction.processingStatus ) {
+				didRedirect.current = true;
 				page( '/me/purchases/pending' );
 				return;
 			}
@@ -75,6 +89,7 @@ export default function CheckoutPending( {
 
 			// The API has responded a status string that we don't expect somehow.
 			if ( ORDER_TRANSACTION_STATUS.UNKNOWN === processingStatus ) {
+				didRedirect.current = true;
 				// Redirect users back to the plan page so that they won't be stuck here.
 				page( planRoute );
 
@@ -90,7 +105,7 @@ export default function CheckoutPending( {
 		if ( error ) {
 			retryOnError();
 		}
-	}, [ error, redirectTo, reduxDispatch, siteSlug, transaction, translate ] );
+	}, [ error, redirectTo, reduxDispatch, siteSlug, transaction, translate, reloadCart ] );
 
 	return (
 		<Main className="checkout-thank-you__pending">
@@ -111,5 +126,13 @@ export default function CheckoutPending( {
 				line={ translate( "Almost there – we're currently finalizing your order." ) }
 			/>
 		</Main>
+	);
+}
+
+export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {
+	return (
+		<CalypsoShoppingCartProvider>
+			<CheckoutPending { ...props } />
+		</CalypsoShoppingCartProvider>
 	);
 }
