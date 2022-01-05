@@ -1,3 +1,4 @@
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { DnsRequest, ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
@@ -34,7 +35,6 @@ export type SettingsPageConnectedProps = {
 	purchase: Purchase | null;
 	whoisData: WhoisData[];
 	dns: DnsRequest;
-	isRequestingDomains: boolean;
 };
 
 export type SettingsPageNameServerHocProps = {
@@ -46,6 +46,7 @@ export type SettingsPageNameServerHocProps = {
 
 export type SettingsPageConnectedDispatchProps = {
 	requestWhois: ( domain: string ) => void;
+	recordTracksEvent: typeof recordTracksEvent;
 };
 
 export type SettingsHeaderProps = {

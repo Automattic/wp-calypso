@@ -28,6 +28,8 @@ class StepWrapper extends Component {
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
 		headerButton: PropTypes.node,
+		isWideLayout: PropTypes.bool,
+		isFullLayout: PropTypes.bool,
 		isHorizontalLayout: PropTypes.bool,
 		queryParams: PropTypes.object,
 	};
@@ -166,6 +168,7 @@ class StepWrapper extends Component {
 			hideNext,
 			isLargeSkipLayout,
 			isWideLayout,
+			isFullLayout,
 			skipButtonAlign,
 			align,
 			headerImageUrl,
@@ -182,6 +185,7 @@ class StepWrapper extends Component {
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
+			'is-full-layout': isFullLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
 			'has-navigation': hasNavigation,
 		} );

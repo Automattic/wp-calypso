@@ -1,7 +1,9 @@
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -15,7 +17,12 @@ import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/c
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
-import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementList,
+	domainUseMyDomain,
+	isUnderDomainManagementAll,
+} from 'calypso/my-sites/domains/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { requestWhois } from 'calypso/state/domains/management/actions';
@@ -26,7 +33,6 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
@@ -47,7 +53,6 @@ const Settings = ( {
 	loadingNameserversError,
 	nameservers,
 	dns,
-	isRequestingDomains,
 	purchase,
 	requestWhois,
 	selectedDomainName,
@@ -58,16 +63,14 @@ const Settings = ( {
 	const translate = useTranslate();
 
 	const renderBreadcrumbs = () => {
-		const previousPath = domainManagementEdit(
-			selectedSite?.slug,
-			selectedDomainName,
-			currentRoute
-		);
+		const previousPath = domainManagementList( selectedSite?.slug, currentRoute );
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite?.slug, selectedDomainName ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
+				href: previousPath,
 			},
 			{ label: selectedDomainName },
 		];
@@ -203,7 +206,6 @@ const Settings = ( {
 			>
 				<DnsRecords
 					dns={ dns }
-					isRequestingDomains={ isRequestingDomains }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 					currentRoute={ currentRoute }
@@ -284,11 +286,44 @@ const Settings = ( {
 		);
 	};
 
+	const handleTransferDomainClick = () => {
+		if ( ! domain ) return;
+		recordTracksEvent( 'calypso_domain_management_mapped_transfer_click', {
+			section: domain.type,
+			domain: domain.name,
+		} );
+	};
+
+	const renderTranferInMappedDomainSection = () => {
+		if ( ! ( domain?.isEligibleForInboundTransfer && domain?.type === domainTypes.MAPPED ) )
+			return null;
+
+		return (
+			<Accordion
+				title={ translate( 'Transfer your domain to WordPress.com', { textOnly: true } ) }
+				subtitle={ translate( 'Manage your site and domain all in one place', { textOnly: true } ) }
+			>
+				<Button
+					onClick={ handleTransferDomainClick }
+					href={ domainUseMyDomain(
+						selectedSite.slug,
+						domain.name,
+						useMyDomainInputMode.transferDomain
+					) }
+					primary={ true }
+				>
+					{ translate( 'Transfer' ) }
+				</Button>
+			</Accordion>
+		);
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		return (
 			<>
 				{ renderDetailsSection() }
+				{ renderTranferInMappedDomainSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
@@ -344,10 +379,10 @@ export default connect(
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			dns: getDomainDns( state, ownProps.selectedDomainName ),
-			isRequestingDomains: isRequestingSiteDomains( state, ownProps.selectedSite.ID ),
 		};
 	},
 	{
 		requestWhois,
+		recordTracksEvent,
 	}
 )( withDomainNameservers( Settings ) );

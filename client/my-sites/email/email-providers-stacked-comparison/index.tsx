@@ -118,7 +118,7 @@ const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedC
 
 			{ isEnabled( 'emails/in-depth-comparison' ) && (
 				<div className="email-providers-stacked-comparison__sub-header">
-					{ translate( 'Not sure how to start? {{a}}See how they compare{{/a}}.', {
+					{ translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
 						components: {
 							a: (
 								<a

@@ -792,6 +792,9 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			delayApiRequestUntilComplete: true,
 		},
+		courses: {
+			stepName: 'courses',
+		},
 
 		// ↓ importer steps
 		list: {

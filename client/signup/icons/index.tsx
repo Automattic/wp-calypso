@@ -54,6 +54,12 @@ export const write: ReactElement = (
 	</SVG>
 );
 
+export const play: ReactElement = (
+	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<Path d="M5 3L19 12L5 21V3Z" stroke="#8C8F94" strokeWidth="1.6" strokeLinecap="round" />
+	</SVG>
+);
+
 export const design: ReactElement = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Path

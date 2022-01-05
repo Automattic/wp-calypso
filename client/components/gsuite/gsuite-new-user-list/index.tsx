@@ -14,10 +14,10 @@ import './style.scss';
 interface Props {
 	autoFocus?: boolean;
 	children?: ReactNode;
-	domains?: string[];
+	domains?: { name: string }[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
-	showAddAnotherMailboxButton: boolean;
+	showAddAnotherMailboxButton?: boolean;
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
