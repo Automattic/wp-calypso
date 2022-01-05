@@ -93,6 +93,7 @@
 		"signup/social": true,
 		"signup/design-picker-categories": true,
 		"signup/design-picker-use-featured-picks-buttons": true,
+		"signup/starting-point-courses": false,
 		"site-indicator": true,
 		"support-user": true,
 		"themes/premium": false,
