@@ -41,6 +41,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import PluginsBrowser from '../';
+import { IntervalLength } from '../../../marketplace/components/billing-interval-switcher/constants';
 
 window.__i18n_text_domain__ = JSON.stringify( 'default' );
 const initialReduxState = {
@@ -64,6 +65,11 @@ const initialReduxState = {
 	documentHead: {},
 	preferences: { remoteValues: {} },
 	productsList: {},
+	marketplace: {
+		billingInterval: {
+			interval: IntervalLength.MONTHLY,
+		},
+	},
 };
 
 function mountWithRedux( ui, overrideState ) {
