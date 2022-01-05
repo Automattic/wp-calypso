@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import { createElement } from 'react';
 import { makeLayout } from 'calypso/controller';

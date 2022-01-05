@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
