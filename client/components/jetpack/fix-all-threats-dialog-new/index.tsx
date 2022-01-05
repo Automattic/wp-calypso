@@ -70,6 +70,7 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 								threat={ threat }
 								fixAllDialog={ true }
 								onCheckFix={ onSelectCheckbox }
+								action="fix"
 							/>
 						</div>
 					) ) }
