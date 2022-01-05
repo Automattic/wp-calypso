@@ -8,19 +8,19 @@ import {
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 
 // WooCommerce single options.
-export const WOOP_STORE_ADDRESS_1 = 'woocommerce_store_address';
-export const WOOP_STORE_ADDRESS_2 = 'woocommerce_store_address_2';
-export const WOOP_STORE_CITY = 'woocommerce_store_city';
-export const WOOP_DEFAULT_COUNTRY = 'woocommerce_default_country';
-export const WOOP_STORE_POSTCODE = 'woocommerce_store_postcode';
+export const WOOCOMMERCE_STORE_ADDRESS_1 = 'woocommerce_store_address';
+export const WOOCOMMERCE_STORE_ADDRESS_2 = 'woocommerce_store_address_2';
+export const WOOCOMMERCE_STORE_CITY = 'woocommerce_store_city';
+export const WOOCOMMERCE_DEFAULT_COUNTRY = 'woocommerce_default_country';
+export const WOOCOMMERCE_STORE_POSTCODE = 'woocommerce_store_postcode';
 
 // Map Woop to WooCoommerce single options.
 const siteOptionsMap = {
-	address_1: WOOP_STORE_ADDRESS_1,
-	address_2: WOOP_STORE_ADDRESS_2,
-	city: WOOP_STORE_CITY,
-	postcode: WOOP_STORE_POSTCODE,
-	country: WOOP_DEFAULT_COUNTRY,
+	address_1: WOOCOMMERCE_STORE_ADDRESS_1,
+	address_2: WOOCOMMERCE_STORE_ADDRESS_2,
+	city: WOOCOMMERCE_STORE_CITY,
+	postcode: WOOCOMMERCE_STORE_POSTCODE,
+	country: WOOCOMMERCE_DEFAULT_COUNTRY,
 };
 
 /**
