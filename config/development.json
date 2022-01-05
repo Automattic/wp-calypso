@@ -43,7 +43,6 @@
 		"dev/auth-helper": true,
 		"dev/features-helper": true,
 		"dev/preferences-helper": true,
-		"difm-lite-pilot": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/dashes-filter": false,
 		"domains/kracken-ui/exact-match-filter": true,
