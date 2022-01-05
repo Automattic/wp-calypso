@@ -20,7 +20,7 @@ import withDomainNameservers from 'calypso/my-sites/domains/domain-management/na
 import {
 	domainManagementList,
 	domainUseMyDomain,
-  isUnderDomainManagementAll
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
