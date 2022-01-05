@@ -1,15 +1,15 @@
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
 import ComparisonTable from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table';
 import {
 	professionalEmailFeatures,
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/data';
 import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
-const EmailProvidersInDepthComparison: FunctionComponent< EmailProvidersInDepthComparisonProps > = () => {
+const EmailProvidersInDepthComparison: ReactElement< EmailProvidersInDepthComparisonProps > | null = () => {
 	const translate = useTranslate();
 
 	return (

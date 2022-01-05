@@ -8,14 +8,14 @@ import {
 	EmailProviderStackedFeaturesToggleButton,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
 import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
-import type { FunctionComponent } from 'react';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) => {
+const EmailProvidersStackedCard: ReactElement< ProviderCard > | null = ( props ) => {
 	const {
 		children,
 		className,

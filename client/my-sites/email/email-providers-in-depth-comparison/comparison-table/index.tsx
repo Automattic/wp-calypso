@@ -1,12 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { FunctionComponent } from 'react';
 import type {
 	ComparisonTableProps,
 	EmailProviderFeatures,
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
+import type { ReactElement } from 'react';
 
-const ComparisonTable: FunctionComponent< ComparisonTableProps > = ( { emailProviders } ) => {
+const ComparisonTable: ReactElement< ComparisonTableProps > | null = ( { emailProviders } ) => {
 	return (
 		<div className="email-providers-in-depth-comparison-table">
 			{ emailProviders.map( ( emailProviderFeatures: EmailProviderFeatures, index: number ) => {

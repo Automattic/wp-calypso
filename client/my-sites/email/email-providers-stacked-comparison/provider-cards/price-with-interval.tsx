@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import type { TranslateResult } from 'i18n-calypso';
-import type { FunctionComponent } from 'react';
+import type { ReactElement } from 'react';
 
 type PriceWithIntervalProps = {
 	cost: number;
@@ -13,7 +13,7 @@ type PriceWithIntervalProps = {
 	sale?: number | null;
 };
 
-const PriceWithInterval: FunctionComponent< PriceWithIntervalProps > = ( props ) => {
+const PriceWithInterval: ReactElement< PriceWithIntervalProps > | null = ( props ) => {
 	const { cost, currencyCode, hasDiscount, sale, intervalLength } = props;
 
 	const showSale = sale && sale !== 0;

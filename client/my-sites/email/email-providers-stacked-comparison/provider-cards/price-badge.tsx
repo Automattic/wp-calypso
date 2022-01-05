@@ -1,12 +1,12 @@
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
-import type { FunctionComponent, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 type PriceBadgeProps = {
 	additionalPriceInformationComponent?: ReactElement | null;
 	priceComponent: ReactElement;
 };
 
-const PriceBadge: FunctionComponent< PriceBadgeProps > = ( props ) => {
+const PriceBadge: ReactElement< PriceBadgeProps > | null = ( props ) => {
 	const { additionalPriceInformationComponent, priceComponent } = props;
 
 	return (

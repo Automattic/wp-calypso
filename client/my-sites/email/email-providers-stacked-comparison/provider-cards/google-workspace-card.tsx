@@ -4,7 +4,7 @@ import {
 } from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
-import { FunctionComponent, useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -36,6 +36,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { addToCartAndCheckout, recordTracksEventAddToCartClick, IntervalLength } from './utils';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { ReactElement } from 'react';
 
 import './google-workspace-card.scss';
 
@@ -71,7 +72,7 @@ const googleWorkspaceCardInformation: ProviderCard = {
 	features: getGoogleFeatures(),
 };
 
-const GoogleWorkspaceCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
+const GoogleWorkspaceCard: ReactElement< EmailProvidersStackedCardProps > | null = ( props ) => {
 	const {
 		currencyCode = '',
 		detailsExpanded,
