@@ -3,7 +3,6 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 export type DnsDetailsProps = {
 	dns: DnsRequest;
-	isRequestingDomains: boolean;
 	selectedDomainName: string;
 	selectedSite: SiteData;
 	currentRoute: string;
