@@ -1,9 +1,9 @@
-# useSiteOption
+# useSiteSettings
 
 Simple React custom hook to handle site options.
 
 ```es6
-const { get, save, update } = useSiteOptions( <site-id> );
+const { get, save, update } = useSiteSettings( <site-id> );
 ```
 ### get(<key>)
 
@@ -19,11 +19,11 @@ Helper to 'save' site options permanently on the server-side.
 ## Example
 
 ```es6
-import useSiteOptions from './use-site-options';
+import useSiteSettings from './use-site-settings';
 
 ```es6
 function StoreAddressFrom() {
-	const { get, save, update } = useSiteOptions( 'site-id' );
+	const { get, save, update } = useSiteSettings( 'site-id' );
 
 	return (
 		<div>
