@@ -425,7 +425,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( domain.transfer_status === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
+			if ( domain.transferStatus === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-success',
