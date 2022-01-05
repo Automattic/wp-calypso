@@ -28,6 +28,7 @@
 		"devdocs/color-scheme-picker": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
+		"difm-lite-pilot": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
