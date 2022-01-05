@@ -151,9 +151,11 @@ export class TestAccount {
 	 * reference. Formatted similarly to the pw:api logs.
 	 */
 	private log( message: any ) {
-		if ( process.env.DEBUG === undefined ) return;
-		console.log(
-			`${ chalk.bold( chalk.magenta( `TestAccount:${ this.accountName }` ) ) } => ${ message }`
-		);
+		const { DEBUG } = process.env;
+		if ( DEBUG && DEBUG !== 'false' ) {
+			console.log(
+				`${ chalk.bold( chalk.magenta( `TestAccount:${ this.accountName }` ) ) } => ${ message }`
+			);
+		}
 	}
 }

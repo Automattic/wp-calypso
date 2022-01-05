@@ -12,7 +12,7 @@ const DEFAULT_COOKIES_PATH = path.join( __dirname, '../../', 'cookies' );
 export default async function globalSetup(): Promise< void > {
 	const { SAVE_AUTH_COOKIES, COOKIES_PATH } = process.env;
 
-	if ( SAVE_AUTH_COOKIES !== 'false' ) {
+	if ( SAVE_AUTH_COOKIES && SAVE_AUTH_COOKIES !== 'false' ) {
 		if ( ! COOKIES_PATH ) {
 			process.env.COOKIES_PATH = DEFAULT_COOKIES_PATH;
 		}
