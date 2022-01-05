@@ -103,8 +103,8 @@ export default function WPCheckoutOrderReview( {
 
 	useEffect( () => {
 		const experimentCheck = retrieveExperimentName();
-		let shouldCheck = experimentCheck?.length > 0;
-		loadExperimentAssignment( experimentCheck ).then( ( experimentObject ) => {
+		let shouldCheck = experimentCheck ? experimentCheck.length > 0 : false;
+		loadExperimentAssignment( experimentCheck ?? '' ).then( ( experimentObject ) => {
 			if ( shouldCheck ) {
 				setExperiment( experimentObject );
 			}
@@ -115,7 +115,7 @@ export default function WPCheckoutOrderReview( {
 	}, [] );
 
 	function retrieveExperimentName() {
-		let experiment = null;
+		let experiment = '';
 		try {
 			const cookies = cookie.parse( document.cookie );
 			experiment = cookies.wpcom_signup_experiment_name;
