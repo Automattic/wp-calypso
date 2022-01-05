@@ -176,17 +176,19 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 					{ ! isMinimized ? (
 						<TourKitStep
 							config={ config }
+							steps={ config.steps }
 							currentStepIndex={ currentStepIndex }
 							onMinimize={ handleMinimize }
 							onDismiss={ handleDismiss }
-							onNextStepProgression={ handleNextStepProgression }
-							onPreviousStepProgression={ handlePreviousStepProgression }
+							onNext={ handleNextStepProgression }
+							onPrevious={ handlePreviousStepProgression }
 							onGoToStep={ handleGoToStep }
 							setInitialFocusedElement={ setInitialFocusedElement }
 						/>
 					) : (
 						<TourKitMinimized
 							config={ config }
+							steps={ config.steps }
 							currentStepIndex={ currentStepIndex }
 							onMaximize={ handleMaximize }
 							onDismiss={ handleDismiss }

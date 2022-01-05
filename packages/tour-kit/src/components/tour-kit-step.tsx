@@ -5,26 +5,20 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import type { Config } from '../types';
+import type { Config, TourStepRendererProps } from '../types';
 
-interface Props {
+interface Props extends TourStepRendererProps {
 	config: Config;
-	currentStepIndex: number;
-	onMinimize: () => void;
-	onDismiss: ( target: string ) => () => void;
-	onNextStepProgression: () => void;
-	onPreviousStepProgression: () => void;
-	onGoToStep: ( stepIndex: number ) => void;
-	setInitialFocusedElement: React.Dispatch< React.SetStateAction< HTMLElement | null > >;
 }
 
 const TourKitStep: React.FunctionComponent< Props > = ( {
 	config,
+	steps,
 	currentStepIndex,
 	onMinimize,
 	onDismiss,
-	onNextStepProgression,
-	onPreviousStepProgression,
+	onNext,
+	onPrevious,
 	setInitialFocusedElement,
 	onGoToStep,
 } ) => {
@@ -38,11 +32,11 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 	return (
 		<div className={ classNames }>
 			{ config.renderers.tourStep( {
-				steps: config.steps,
+				steps,
 				currentStepIndex,
 				onDismiss,
-				onNext: onNextStepProgression,
-				onPrevious: onPreviousStepProgression,
+				onNext,
+				onPrevious,
 				onMinimize,
 				setInitialFocusedElement,
 				onGoToStep,
