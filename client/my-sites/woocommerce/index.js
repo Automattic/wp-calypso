@@ -28,12 +28,6 @@ function setup( context, next ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
 
-	// Redirect unless the woop feature flag is enabled.
-	// todo: remove redirect and rely on plan eligibility checks in the landing page component
-	if ( ! isEnabled( 'woop' ) ) {
-		return page.redirect( `/home/${ site.slug }` );
-	}
-
 	// WooCommerce plugin is already installed, redirect to Woo.
 	// todo: replace with a plugin check that replaces the cta with a link to wc-admin
 	// instead of passive redirect.

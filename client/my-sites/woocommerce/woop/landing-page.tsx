@@ -28,7 +28,7 @@ interface Props {
 
 const images = [ { src: Image01 }, { src: Image02 }, { src: Image03 }, { src: Image04 } ];
 
-const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId } ) => {
+const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce' } ];
 	const ctaRef = useRef( null );
@@ -38,16 +38,12 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { startSetup, siteId
 	);
 
 	function onCTAClickHandler() {
-		if ( isEnabled( 'woop' ) ) {
-			recordTracksEvent( 'calypso_woocommerce_dashboard_action_click', {
-				action: 'initial-setup',
-				feature: 'woop', // WooCommerce on Plans
-			} );
+		recordTracksEvent( 'calypso_woocommerce_dashboard_action_click', {
+			action: 'initial-setup',
+			feature: 'woop', // WooCommerce on Plans
+		} );
 
-			return page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
-		}
-
-		return startSetup();
+		return page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
 	}
 
 	function renderWarningNotice() {
