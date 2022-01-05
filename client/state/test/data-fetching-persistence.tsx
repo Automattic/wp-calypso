@@ -115,9 +115,7 @@ describe( 'shouldDehydrateQuery', () => {
 	it( 'does not persist failed queries', async () => {
 		const queryFn = () => Promise.reject( data );
 
-		const { getByText } = render(
-			<TestComponent queryFn={ queryFn } persistencePredicate={ true } />
-		);
+		const { getByText } = render( <TestComponent queryFn={ queryFn } persistencePredicate /> );
 
 		await waitFor( () => getByText( 'error' ) );
 
@@ -136,9 +134,7 @@ describe( 'shouldDehydrateQuery', () => {
 		it( 'persists the query', async () => {
 			const queryFn = () => Promise.resolve( data );
 
-			const { getByText } = render(
-				<TestComponent queryFn={ queryFn } persistencePredicate={ true } />
-			);
+			const { getByText } = render( <TestComponent queryFn={ queryFn } persistencePredicate /> );
 
 			await waitFor( () => getByText( 'success' ) );
 
