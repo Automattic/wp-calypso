@@ -7,7 +7,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import { ActionSection, StyledNextButton } from '../confirm';
-import { useSiteOption } from '../hooks/use-site-options';
+import { useSiteSettings } from '../hooks/use-site-settings';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
 import './style.scss';
@@ -20,7 +20,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 
-	const { get, save, update } = useSiteOption( siteId );
+	const { get, save, update } = useSiteSettings( siteId );
 	function getContent() {
 		return (
 			<>
