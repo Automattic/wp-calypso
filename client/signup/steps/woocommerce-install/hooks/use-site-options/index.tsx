@@ -98,7 +98,8 @@ export function useSiteOption( siteId: number ) {
 		 * Save the edited options to the server.
 		 * After the save is complete, clean the private store.
 		 */
-		dispatch( saveSiteSettings( siteId, editedOptions ) ).then( () => setEditedOptions( {} ) );
+		dispatch( saveSiteSettings( siteId, editedOptions ) );
+		setEditedOptions( {} );
 	}, [ dispatch, editedOptions, siteId ] );
 
 	return { save, update, get };
