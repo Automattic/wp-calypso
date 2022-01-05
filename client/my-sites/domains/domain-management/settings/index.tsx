@@ -18,9 +18,9 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import {
-	domainManagementEdit,
 	domainManagementList,
 	domainUseMyDomain,
+	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -33,7 +33,6 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
@@ -54,7 +53,6 @@ const Settings = ( {
 	loadingNameserversError,
 	nameservers,
 	dns,
-	isRequestingDomains,
 	purchase,
 	requestWhois,
 	selectedDomainName,
@@ -65,16 +63,14 @@ const Settings = ( {
 	const translate = useTranslate();
 
 	const renderBreadcrumbs = () => {
-		const previousPath = domainManagementEdit(
-			selectedSite?.slug,
-			selectedDomainName,
-			currentRoute
-		);
+		const previousPath = domainManagementList( selectedSite?.slug, currentRoute );
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite?.slug, selectedDomainName ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
+				href: previousPath,
 			},
 			{ label: selectedDomainName },
 		];
@@ -210,7 +206,6 @@ const Settings = ( {
 			>
 				<DnsRecords
 					dns={ dns }
-					isRequestingDomains={ isRequestingDomains }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 					currentRoute={ currentRoute }
@@ -384,7 +379,6 @@ export default connect(
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			dns: getDomainDns( state, ownProps.selectedDomainName ),
-			isRequestingDomains: isRequestingSiteDomains( state, ownProps.selectedSite.ID ),
 		};
 	},
 	{

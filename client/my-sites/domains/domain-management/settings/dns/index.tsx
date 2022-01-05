@@ -14,12 +14,11 @@ import './style.scss';
 
 const DnsDetails = ( {
 	dns,
-	isRequestingDomains,
 	selectedDomainName,
 	currentRoute,
 	selectedSite,
 }: DnsDetailsProps ): JSX.Element => {
-	const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
+	const showPlaceholder = ! dns.hasLoadedFromServer;
 	const translate = useTranslate();
 
 	// This could be moved to an utils file?
