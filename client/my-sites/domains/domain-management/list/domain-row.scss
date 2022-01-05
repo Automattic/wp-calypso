@@ -135,6 +135,7 @@
 	.domain-row__domain-notice-dismiss {
 		margin-left: auto;
 		.gridicon {
+			cursor: pointer;
 			fill: var( --studio-gray-20 );
 			vertical-align: middle;
 		}

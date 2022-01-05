@@ -65,6 +65,10 @@ class DomainRow extends PureComponent {
 		showDomainDetails: true,
 	};
 
+	state = {
+		showNotice: true,
+	};
+
 	stopPropagation = ( event ) => {
 		event.stopPropagation();
 	};
@@ -421,6 +425,10 @@ class DomainRow extends PureComponent {
 		);
 	}
 
+	dismissNotice = () => {
+		this.setState( { showNotice: false } );
+	};
+
 	handleDomainSelection = ( event ) => {
 		const { domain } = this.props;
 		return this.props.handleDomainItemToggle( domain.name, event.target.checked );
@@ -447,9 +455,23 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, isManagingAllSites, showCheckbox, translate } = this.props;
+		const {
+			domain,
+			contactDetails,
+			isManagingAllSites,
+			site,
+			showCheckbox,
+			purchase,
+			translate,
+		} = this.props;
+		const { showNotice } = this.state;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
+		const { noticeText } = resolveDomainStatus( domain, purchase, {
+			siteSlug: site?.slug,
+			getMappingErrors: true,
+			email: contactDetails?.email,
+		} );
 
 		return (
 			<div className="domain-row">
@@ -470,28 +492,24 @@ class DomainRow extends PureComponent {
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 				</div>
-				<div className="domain-row__domain-notice">
-					<Icon
-						icon={ info }
-						size={ 18 }
-						className="domain-row__domain-notice-icon gridicon"
-						viewBox="2 2 20 20"
-					/>
-					<div className="domain-row__domain-notice-message">
-						{ translate(
-							'Maecenas sed diam eget risus varius {{strong}}blandit sit amet{{/strong}} non magna. Donec sed odio dui. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. {{a}}Euismod Malesuada{{/a}}',
-							{
-								components: {
-									strong: <strong />,
-									a: <a href="#" target="_blank" rel="noopener noreferrer" />,
-								},
-							}
-						) }
+				{ showNotice && noticeText && (
+					<div className="domain-row__domain-notice">
+						<Icon
+							icon={ info }
+							size={ 18 }
+							className="domain-row__domain-notice-icon gridicon"
+							viewBox="2 2 20 20"
+						/>
+						<div className="domain-row__domain-notice-message">{ noticeText }</div>
+						<Button
+							className="domain-row__domain-notice-dismiss"
+							onClick={ this.dismissNotice }
+							plain
+						>
+							<Gridicon icon="cross" size={ 16 } />
+						</Button>
 					</div>
-					<Button className="domain-row__domain-notice-dismiss" href="#" plain>
-						<Gridicon icon="cross" size={ 16 } />
-					</Button>
-				</div>
+				) }
 				{ this.renderOverlay() }
 			</div>
 		);
