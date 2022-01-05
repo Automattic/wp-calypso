@@ -38,8 +38,6 @@
 		"jetpack/pricing-page-annual-only": false,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
-		"jetpack/siteless-checkout": true,
-		"jetpack/userless-checkout": true,
 		"jetpack/user-licensing": true,
 		"jetpack/redirect-legacy-plans": true,
 		"layout/app-banner": false,

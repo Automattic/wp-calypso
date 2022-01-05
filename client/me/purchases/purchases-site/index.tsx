@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isJetpackPlan,
 	isJetpackProduct,
@@ -76,9 +75,7 @@ export default function PurchasesSite(
 						isDisconnectedSite={ ! site }
 						purchase={ purchase }
 						isJetpack={ isJetpackPlan( purchase ) || isJetpackProduct( purchase ) }
-						isJetpackTemporarySite={
-							purchase.domain === 'siteless.jetpack.com' && isEnabled( 'jetpack/siteless-checkout' )
-						}
+						isJetpackTemporarySite={ purchase.domain === 'siteless.jetpack.com' }
 						site={ site }
 						showSite={ showSite }
 						name={ name }
