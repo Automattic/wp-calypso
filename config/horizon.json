@@ -24,7 +24,6 @@
 		"current-site/stale-cart-notice": true,
 		"checkout/google-pay": true,
 		"devdocs": false,
-		"difm-lite-pilot": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
