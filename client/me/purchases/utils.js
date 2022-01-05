@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isDomainTransfer } from '@automattic/calypso-products';
 import {
 	isExpired,
@@ -38,7 +37,7 @@ function getAddNewPaymentMethodPath() {
 }
 
 function isJetpackTemporarySitePurchase( domain ) {
-	return 'siteless.jetpack.com' === domain && isEnabled( 'jetpack/siteless-checkout' );
+	return 'siteless.jetpack.com' === domain;
 }
 
 export {
