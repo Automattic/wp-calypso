@@ -39,7 +39,7 @@ export function resolveDomainStatus(
 			),
 		},
 		args: {
-			transferFinishDate: moment( domain.transferEndDate ).format( 'LL' ),
+			transferFinishDate: moment.utc( domain.transferEndDate ).format( 'LL' ),
 		},
 	};
 
@@ -49,10 +49,10 @@ export function resolveDomainStatus(
 				const expiresMessage =
 					null !== domain.bundledPlanSubscriptionId
 						? translate( 'Domain connection expires with your plan on %(expiryDate)s', {
-								args: { expiryDate: moment( domain.expiry ).format( 'LL' ) },
+								args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
 						  } )
 						: translate( 'Domain connection expires in %(days)s', {
-								args: { days: moment( domain.expiry ).fromNow( true ) },
+								args: { days: moment.utc( domain.expiry ).fromNow( true ) },
 						  } );
 
 				if ( isExpiringSoon( domain, 5 ) ) {
@@ -238,12 +238,12 @@ export function resolveDomainStatus(
 			}
 
 			if ( domain.expired ) {
-				const daysSinceExpiration = moment().diff( domain.expiry, 'days' );
+				const daysSinceExpiration = moment.utc().diff( moment.utc( domain.expiry ), 'days' );
 
 				let renewCta;
 
 				if ( daysSinceExpiration >= 1 && daysSinceExpiration <= 43 ) {
-					const renewableUntil = moment( domain.renewableUntil ).format( 'LL' );
+					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
 
 					renewCta = domain.currentUserIsOwner
 						? translate(
@@ -264,7 +264,7 @@ export function resolveDomainStatus(
 				}
 
 				if ( daysSinceExpiration > 43 ) {
-					const redeemableUntil = moment( domain.redeemableUntil ).format( 'LL' );
+					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
 
 					renewCta = domain.currentUserIsOwner
 						? translate(
@@ -300,7 +300,7 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
-							timeSinceExpiry: moment( domain.expiry ).fromNow(),
+							timeSinceExpiry: moment.utc( domain.expiry ).fromNow(),
 						},
 						comment:
 							'timeSinceExpiry is of the form "[number] [time-period] ago" e.g. "3 days ago"',
@@ -544,7 +544,7 @@ export function resolveDomainStatus(
 								),
 							},
 							args: {
-								beginTransferUntilDate: moment( domain.beginTransferUntilDate ).format( 'LL' ),
+								beginTransferUntilDate: moment.utc( domain.beginTransferUntilDate ).format( 'LL' ),
 							},
 						}
 					),
