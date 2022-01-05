@@ -40,8 +40,8 @@ import { merge } from 'lodash';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginsBrowser from '../';
-import { IntervalLength } from '../../../marketplace/components/billing-interval-switcher/constants';
 
 window.__i18n_text_domain__ = JSON.stringify( 'default' );
 const initialReduxState = {
