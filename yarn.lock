@@ -199,7 +199,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
-    "@types/node": ^16.11.18
+    "@types/node": ^16.11.19
     cookie: ^0.4.1
     tslib: ^2.3.0
     typescript: ^4.5.4
@@ -229,7 +229,7 @@ __metadata:
     "@jest/globals": ^27.3.1
     "@types/config": ^0.0.41
     "@types/jest": ^27.4.0
-    "@types/node": ^16.11.18
+    "@types/node": ^16.11.19
     "@types/node-fetch": ^2.5.12
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.2.4
@@ -6857,10 +6857,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.18":
-  version: 16.11.18
-  resolution: "@types/node@npm:16.11.18"
-  checksum: 99c9f05a5e908e29aa1efc0166894a0cac6b6fe48adaf91746aeaf80083e47639ac8e0679f02c9a603db017bf1f46e84a8e9cb26560fa80b49c5d96040e32e06
+"@types/node@npm:*, @types/node@npm:^16.11.19":
+  version: 16.11.19
+  resolution: "@types/node@npm:16.11.19"
+  checksum: fe2fd2f15b4683345a7a7546c89ea75283acfd70d17c91dd6a0c4b8d42ef587c5b6506b6022b1b0778a1d7758cb7d3532d1d2cd6d052a880e78a9a5d0d52db44
   languageName: node
   linkType: hard
 
@@ -7333,9 +7333,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__components@npm:*, @types/wordpress__components@npm:^14.0.4":
-  version: 14.0.4
-  resolution: "@types/wordpress__components@npm:14.0.4"
+"@types/wordpress__components@npm:*, @types/wordpress__components@npm:^14.0.5":
+  version: 14.0.5
+  resolution: "@types/wordpress__components@npm:14.0.5"
   dependencies:
     "@types/react": "*"
     "@types/tinycolor2": "*"
@@ -7345,7 +7345,7 @@ __metadata:
     "@wordpress/element": ^3.0.0
     downshift: ^6.0.15
     re-resizable: ^6.4.0
-  checksum: a743dcdac860d9a117a0c6dc5b3f22f63fc9fd14e23b4fd8b29f5cd854969d4d168e77caa4762aad723e84b5f904eea3cfaccbe02793ef6b31a0e0d96419c9a5
+  checksum: e3f9e81acb372af796a45fd28454e5813d6e38dbd31c5c71520692f8a37a4b2ca8a4fa99e39619250f19bbd8bd8927065a016ad123c315bab9aff0d808eb5520
   languageName: node
   linkType: hard
 
@@ -38011,7 +38011,7 @@ testarmada-magellan@11.0.10:
     "@types/enzyme": ^3.10.11
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/lodash": ^4.14.178
-    "@types/node": ^16.11.18
+    "@types/node": ^16.11.19
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^17.0.38
@@ -38026,7 +38026,7 @@ testarmada-magellan@11.0.10:
     "@types/wordpress__api-fetch": ^3.2.4
     "@types/wordpress__block-editor": ^6.0.4
     "@types/wordpress__block-library": ^2.6.1
-    "@types/wordpress__components": ^14.0.4
+    "@types/wordpress__components": ^14.0.5
     "@types/wordpress__compose": ^4.0.1
     "@types/wordpress__data": ^4.6.10
     "@types/wordpress__data-controls": ^2.2.0
