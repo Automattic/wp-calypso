@@ -12,7 +12,7 @@ const noop = () => {};
 
 export const professionalEmailFeatures: EmailProviderFeatures = {
 	name: getTitanProductName(),
-	logo: <Gridicon className="professional-email" icon="my-sites" />,
+	logo: <Gridicon className="professional-email-logo" icon="my-sites" />,
 	tools: translate( 'Integrated email management, Inbox, calendar and contacts' ),
 	storage: translate( '30GB storage' ),
 	importing: translate( 'One-click import of existing emails and contacts' ),
@@ -25,7 +25,7 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	logo: (
 		<img
 			alt={ translate( 'Google Workspace icon' ) }
-			className="google-workspace"
+			className="google-workspace-logo"
 			src={ googleWorkspaceIcon }
 		/>
 	),
