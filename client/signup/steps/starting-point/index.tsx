@@ -17,11 +17,11 @@ interface Props {
 	initialContext: any;
 }
 
-// TODO: Adding take the masterclass
 const EXCLUDE_STEPS: { [ key in StartingPointFlag ]: string[] } = {
-	write: [ 'design-setup-site' ],
-	design: [],
-	'skip-to-my-home': [ 'design-setup-site' ],
+	write: [ 'courses', 'design-setup-site' ],
+	courses: [ 'design-setup-site' ],
+	design: [ 'courses' ],
+	'skip-to-my-home': [ 'courses', 'design-setup-site' ],
 };
 
 export default function StartingPointStep( props: Props ): React.ReactNode {
