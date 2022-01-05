@@ -35,10 +35,7 @@
 		margin: 0 -12px 30px;
 	}
 
-	.design-button-container,
-	.design-picker__design-option {
-		cursor: pointer;
-		font-family: inherit;
+	.design-button-container {
 		width: calc( 100% - 24px );
 		margin: 0 12px 24px; // only applies in IE
 
@@ -46,6 +43,11 @@
 			width: calc( 50% - 24px );
 			margin-bottom: 40px;
 		}
+	}
+
+	.design-picker__design-option {
+		cursor: pointer;
+		font-family: inherit;
 	}
 
 	.design-picker__design-option-header {
@@ -101,8 +103,7 @@
 			}
 		}
 
-		.design-button-container,
-		.design-picker__design-option {
+		.design-button-container {
 			width: auto;
 			margin: 0;
 
@@ -295,8 +296,6 @@
 
 	.design-picker__design-option {
 		flex: 1;
-		width: auto;
-		margin: 0;
 	}
 
 	.design-button-cover {
@@ -372,8 +371,7 @@
 	}
 
 	@supports not ( display: grid ) {
-		.design-button-container,
-		.design-picker__design-option {
+		.design-button-container {
 			@include break-medium {
 				width: calc( 100% - 24px );
 			}

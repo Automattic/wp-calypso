@@ -169,12 +169,20 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
 	if ( ! onPreview ) {
-		return <DesignButton { ...props } />;
+		return (
+			<div className="design-button-container">
+				<DesignButton { ...props } />
+			</div>
+		);
 	}
 
 	// Show the preview directly when selecting the design if the device is not desktop
 	if ( ! isDesktop ) {
-		return <DesignButton { ...props } onSelect={ onPreview } />;
+		return (
+			<div className="design-button-container">
+				<DesignButton { ...props } onSelect={ onPreview } />
+			</div>
+		);
 	}
 
 	// We don't need preview for blank canvas
