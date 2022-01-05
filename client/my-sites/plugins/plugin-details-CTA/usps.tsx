@@ -69,7 +69,9 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'refund',
 						image: <Gridicon icon="refund" size={ 16 } />,
-						text: translate( '30 day money-back guarantee' ),
+						text: translate( '%(days)d-day money-back guarantee', {
+							args: { days: billingPeriod === IntervalLength.ANNUALLY ? 14 : 7 },
+						} ),
 						eligibilities: [ 'marketplace' ],
 					},
 			  ]
