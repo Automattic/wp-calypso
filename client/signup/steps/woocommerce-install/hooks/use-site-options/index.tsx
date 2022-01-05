@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	requestSiteSettings,
@@ -7,12 +7,49 @@ import {
 } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 
-const STORE_ADDRESS_OPTION_NAME = 'store_address';
+// WooCommerce single options.
+export const WOOP_STORE_ADDRESS_1 = 'woocommerce_store_address';
+export const WOOP_STORE_ADDRESS_2 = 'woocommerce_store_address_2';
+export const WOOP_STORE_CITY = 'woocommerce_store_city';
+export const WOOP_DEFAULT_COUNTRY = 'woocommerce_default_country';
+export const WOOP_STORE_POSTCODE = 'woocommerce_store_postcode';
 
-export default function useSiteOptions( siteId: number, optionId: string ) {
+// Map Woop to WooCoommerce single options.
+const siteOptionsMap = {
+	address_1: WOOP_STORE_ADDRESS_1,
+	address_2: WOOP_STORE_ADDRESS_2,
+	city: WOOP_STORE_CITY,
+	postcode: WOOP_STORE_POSTCODE,
+	country: WOOP_DEFAULT_COUNTRY,
+};
+
+/**
+ * Returns the option name for the given Woop option.
+ *
+ * @param {string} option option name
+ * @returns {string} option
+ */
+function getSiteOptionName( option: string ) {
+	if ( ! ( option in siteOptionsMap ) ) {
+		return option;
+	}
+
+	return siteOptionsMap[ option ];
+}
+
+/**
+ * React custom hook to deal with single site options.
+ *
+ * @param {number} siteId - site id
+ * @returns {Array} - site option handlers
+ */
+export function useSiteOption( siteId: number ) {
 	const dispatch = useDispatch();
 
 	const settings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
+
+	// Private options store.
+	const [ editedOptions, setEditedOptions ] = useState( {} );
 
 	// Dispatch the site settings request action.
 	useEffect( () => {
@@ -23,14 +60,14 @@ export default function useSiteOptions( siteId: number, optionId: string ) {
 		dispatch( requestSiteSettings( siteId ) );
 	}, [ dispatch, siteId ] );
 
-	// Get site settings data (from remote).
-	const siteSettingsData = useMemo( () => {
-		return settings?.[ optionId ] || {};
-	}, [ optionId, settings ] );
-
 	// Simple getter helper.
-	function get( key: string ) {
-		return siteSettingsData?.[ key ] || '';
+	function get( option: string ) {
+		if ( ! settings || Object.keys( settings ).length === 0 ) {
+			return '';
+		}
+
+		const value = settings?.[ getSiteOptionName( option ) ] || '';
+		return value;
 	}
 
 	/*
@@ -38,41 +75,31 @@ export default function useSiteOptions( siteId: number, optionId: string ) {
 	 * The data is updated in the Redux store.
 	 */
 	const update = useCallback(
-		( data: object ) => {
-			const key = Object.keys( data )[ 0 ];
-			if ( ! key ) {
-				return;
-			}
+		( option: string, value: string ) => {
+			const siteOption = getSiteOptionName( option );
+			setEditedOptions( ( state ) => ( { ...state, [ siteOption ]: value } ) );
 
-			const newSiteSettingsData = { ...siteSettingsData, ...data };
-
-			const value = data[ key ];
-
-			// Remove the key when its value is an empty string.
-			if ( typeof value === 'string' && value.length === 0 ) {
-				delete newSiteSettingsData[ key ];
-			}
-
-			dispatch( updateSiteSettings( siteId, { [ optionId ]: newSiteSettingsData } ) );
+			// Store the edited option in the private store.
+			dispatch( updateSiteSettings( siteId, { [ siteOption ]: value } ) );
 		},
-		[ optionId, siteId, dispatch, siteSettingsData ]
+		[ siteId, dispatch ]
 	);
 
 	/*
 	 * Helper to 'save' site settings data.
 	 * The data will be saved to the remote server.
 	 */
-	const save = useCallback(
-		() => dispatch( saveSiteSettings( siteId, { [ optionId ]: siteSettingsData } ) ),
-		[ dispatch, optionId, siteId, siteSettingsData ]
-	);
+	const save = useCallback( () => {
+		if ( ! editedOptions || ! Object.keys( editedOptions ).length ) {
+			return;
+		}
 
-	// Clean the site option value from the store.
-	const clean = () => dispatch( updateSiteSettings( siteId, { [ optionId ]: {} } ) );
+		/*
+		 * Save the edited options to the server.
+		 * After the save is complete, clean the private store.
+		 */
+		dispatch( saveSiteSettings( siteId, editedOptions ) ).then( () => setEditedOptions( {} ) );
+	}, [ dispatch, editedOptions, siteId ] );
 
-	return { save, clean, update, get };
-}
-
-export function useStoreAddressOptions( siteId: number ) {
-	return useSiteOptions( siteId, STORE_ADDRESS_OPTION_NAME );
+	return { save, update, get };
 }
