@@ -28,22 +28,23 @@
 	}
 
 	.design-picker__grid {
-		margin: 0 -24px 30px;
+		margin: 0 -12px 30px;
 	}
 
 	.design-picker__grid-minimal {
-		margin: 0 -24px 30px;
+		margin: 0 -12px 30px;
 	}
 
+	.design-button-container,
 	.design-picker__design-option {
 		cursor: pointer;
 		font-family: inherit;
-		float: left;
-		width: 100%;
-		margin: 24px; // only applies in IE
+		width: calc( 100% - 24px );
+		margin: 0 12px 24px; // only applies in IE
 
 		@include break-medium {
 			width: calc( 50% - 24px );
+			margin-bottom: 40px;
 		}
 	}
 
@@ -100,6 +101,7 @@
 			}
 		}
 
+		.design-button-container,
 		.design-picker__design-option {
 			width: auto;
 			margin: 0;
@@ -293,6 +295,8 @@
 
 	.design-picker__design-option {
 		flex: 1;
+		width: auto;
+		margin: 0;
 	}
 
 	.design-button-cover {
@@ -358,7 +362,7 @@
 			@include break-medium {
 				grid-template-columns: 1fr;
 				column-gap: 24px;
-				row-gap: 36px;
+				row-gap: 40px;
 			}
 
 			@include break-large {
@@ -368,9 +372,10 @@
 	}
 
 	@supports not ( display: grid ) {
+		.design-button-container,
 		.design-picker__design-option {
 			@include break-medium {
-				width: auto;
+				width: calc( 100% - 24px );
 			}
 
 			@include break-large {
