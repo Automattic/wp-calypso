@@ -24,7 +24,7 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	name: getGoogleMailServiceFamily(),
 	logo: (
 		<img
-			alt={ translate( 'Google Workspace icon' ) }
+			alt={ translate( 'Google Workspace icon', { textOnly: true } ) }
 			className="google-workspace-logo"
 			src={ googleWorkspaceIcon }
 		/>
