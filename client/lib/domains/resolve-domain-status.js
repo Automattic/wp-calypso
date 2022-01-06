@@ -219,19 +219,25 @@ export function resolveDomainStatus(
 			}
 
 			if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
+				const noticeText = domain.currentUserIsOwner
+					? translate(
+							'We sent an email at %(email)s to verify your contact information. Please complete the verification or your domain will stop working.',
+							{
+								args: {
+									domainName: domain.name,
+									email,
+								},
+							}
+					  )
+					: translate(
+							'We sent an email to the domain owner. Please complete the verification or your domain will stop working.'
+					  );
+
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
 					status: translate( 'Verify email' ),
-					noticeText: translate(
-						'We sent you an email at %(email)s to verify your contact information. Please complete the verification or your domain will stop working.',
-						{
-							args: {
-								domainName: domain.name,
-								email,
-							},
-						}
-					),
+					noticeText,
 					icon: 'info',
 					listStatusWeight: 600,
 				};
