@@ -1036,7 +1036,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_SCAN_V2 ]: {
 		getSlug: () => FEATURE_SCAN_V2,
-		getTitle: () => i18n.translate( 'Automated daily scanning' ),
+		getTitle: () => i18n.translate( 'Real-time threat scanning' ),
 	},
 
 	// * Scan Daily *
