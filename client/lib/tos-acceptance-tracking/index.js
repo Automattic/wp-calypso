@@ -1,11 +1,19 @@
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 
 export default function () {
-	const width = window.document.documentElement.clientWidth;
-	const height = window.document.documentElement.clientHeight;
+	let viewportWidth = 0;
+	let viewportHeight = 0;
+	let path = '/';
+
+	if ( 'undefined' !== typeof window ) {
+		viewportWidth = window.document.documentElement.clientWidth;
+		viewportHeight = window.document.documentElement.clientHeight;
+		path = window.location.pathname;
+	}
+
 	return {
-		path: window.location.pathname,
+		path,
 		locale: getLocaleSlug(),
-		viewport: `${ width }x${ height }`,
+		viewport: `${ viewportWidth }x${ viewportHeight }`,
 	};
 }
