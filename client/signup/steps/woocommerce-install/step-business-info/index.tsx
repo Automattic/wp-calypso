@@ -90,7 +90,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 						<SupportCard />
 						<StyledNextButton
 							onClick={ () => {
-								updateOnboardingProfile( 'complete', true );
+								updateOnboardingProfile( 'completed', true );
 								save();
 								goToStep( 'store-address' );
 							} }
