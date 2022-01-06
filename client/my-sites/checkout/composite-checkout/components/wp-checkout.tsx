@@ -300,18 +300,19 @@ export default function WPCheckout( {
 					onError={ onReviewError }
 					className="wp-checkout__review-order-step"
 					stepId="review-order-step"
-					isStepActive={ isOrderReviewActive }
+					// isStepActive={ isOrderReviewActive }
+					isStepActive={ false }
 					isStepComplete={ true }
-					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
-					goToNextStep={ () => {
-						setIsOrderReviewActive( ! isOrderReviewActive );
-						reduxDispatch(
-							recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-								step: 0,
-								step_name: 'review-order-step',
-							} )
-						);
-					} }
+					// goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					// goToNextStep={ () => {
+					// 	setIsOrderReviewActive( ! isOrderReviewActive );
+					// 	reduxDispatch(
+					// 		recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+					// 			step: 0,
+					// 			step_name: 'review-order-step',
+					// 		} )
+					// 	);
+					// } }
 					activeStepContent={
 						<WPCheckoutOrderReview
 							removeProductFromCart={ removeProductFromCart }
@@ -325,16 +326,19 @@ export default function WPCheckout( {
 					titleContent={ <OrderReviewTitle /> }
 					completeStepContent={
 						<WPCheckoutOrderReview
-							isSummary
+							// isSummary
 							removeProductFromCart={ removeProductFromCart }
 							couponFieldStateProps={ couponFieldStateProps }
+							onChangePlanLength={ changePlanLength }
 							siteUrl={ siteUrl }
+							siteId={ siteId }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
-					editButtonText={ String( translate( 'Edit' ) ) }
-					editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
-					nextStepButtonText={ String( translate( 'Save order' ) ) }
-					nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
+					// editButtonText={ String( translate( 'Edit' ) ) }
+					// editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
+					// nextStepButtonText={ String( translate( 'Save order' ) ) }
+					// nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
 					validatingButtonText={ validatingButtonText }
 					validatingButtonAriaLabel={ validatingButtonText }
 					formStatus={ formStatus }
