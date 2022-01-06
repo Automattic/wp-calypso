@@ -265,6 +265,7 @@ export class PlansStep extends Component {
 		if ( ! this.state.experimentLoaded ) {
 			return null;
 		}
+
 		return (
 			<>
 				<StepWrapper
