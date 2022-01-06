@@ -200,8 +200,6 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 		<StepWrapper
 			flowName="woocommerce-install"
 			hideSkip={ true }
-			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ domain }` }
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }

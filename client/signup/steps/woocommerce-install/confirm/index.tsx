@@ -160,6 +160,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ ! isEnabled( 'woop' ) }
 			backUrl={ isEnabled( 'woop' ) ? null : `/woocommerce-installation/${ wpcomDomain }` }
+
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
