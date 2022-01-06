@@ -27,15 +27,9 @@ function StoreAddressFrom() {
 	return (
 		<div>
 			<TextControl
-				label={ __( 'First name' ) }
-				value={ get( 'first_name' ) }
-				onChange={ ( value ) => update( { first_name: value } ) }
-			/>
-
-			<TextControl
-				label={ __( 'Last name' ) }
-				value={ get( 'last_name' ) }
-				onChange={ ( value ) => update( { last_name: value } ) }
+				label={ __( 'Store address' ) }
+				value={ get( 'woocommerce_store_address' ) }
+				onChange={ ( newAddress ) => update( { woocommerce_store_address: newAddress } ) }
 			/>
 
 			<Button onClick={ save }>Save</Button>
