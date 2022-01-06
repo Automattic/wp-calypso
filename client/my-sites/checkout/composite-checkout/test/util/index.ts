@@ -889,6 +889,11 @@ export const expectedCreateAccountRequest = {
 	locale: 'en',
 	client_id: config( 'wpcom_signup_id' ),
 	client_secret: config( 'wpcom_signup_key' ),
+	tos: {
+		locale: 'en',
+		path: '/',
+		viewport: '0x0',
+	},
 };
 
 export function mockCachedContactDetailsEndpoint( data ): void {
