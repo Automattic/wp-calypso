@@ -30,7 +30,7 @@ import {
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
-import OwnerInfo from './owner-Info';
+import OwnerInfo from './owner-info';
 
 import 'calypso/me/purchases/style.scss';
 

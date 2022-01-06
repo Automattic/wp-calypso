@@ -16,7 +16,7 @@ import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
-import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-Info';
+import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';

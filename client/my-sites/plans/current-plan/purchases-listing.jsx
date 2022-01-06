@@ -33,7 +33,7 @@ import {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-Info';
+import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
