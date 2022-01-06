@@ -7,7 +7,14 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import { ActionSection, StyledNextButton } from '../confirm';
-import { useSiteSettings } from '../hooks/use-site-settings';
+import {
+	useSiteSettings,
+	WOOCOMMERCE_STORE_ADDRESS_1,
+	WOOCOMMERCE_STORE_ADDRESS_2,
+	WOOCOMMERCE_STORE_CITY,
+	WOOCOMMERCE_DEFAULT_COUNTRY,
+	WOOCOMMERCE_STORE_POSTCODE,
+} from '../hooks/use-site-settings';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
 import './style.scss';
@@ -28,32 +35,32 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 				<div className="step-store-address__instructions-container">
 					<TextControl
 						label={ __( 'Address line 1', 'woocommerce-admin' ) }
-						value={ get( 'address_1' ) }
-						onChange={ ( value ) => update( 'address_1', value ) }
+						value={ get( WOOCOMMERCE_STORE_ADDRESS_1 ) }
+						onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_1, value ) }
 					/>
 
 					<TextControl
 						label={ __( 'Address line 2', 'woocommerce-admin' ) }
-						value={ get( 'address_2' ) }
-						onChange={ ( value ) => update( 'address_2', value ) }
+						value={ get( WOOCOMMERCE_STORE_ADDRESS_2 ) }
+						onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_2, value ) }
 					/>
 
 					<TextControl
 						label={ __( 'Country/Region', 'woocommerce-admin' ) }
-						value={ get( 'country' ) }
-						onChange={ ( value ) => update( 'country', value ) }
+						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
+						onChange={ ( value ) => update( WOOCOMMERCE_DEFAULT_COUNTRY, value ) }
 					/>
 
 					<TextControl
 						label={ __( 'City', 'woocommerce-admin' ) }
-						value={ get( 'city' ) }
-						onChange={ ( value ) => update( 'city', value ) }
+						value={ get( WOOCOMMERCE_STORE_CITY ) }
+						onChange={ ( value ) => update( WOOCOMMERCE_STORE_CITY, value ) }
 					/>
 
 					<TextControl
 						label={ __( 'Postcode', 'woocommerce-admin' ) }
-						value={ get( 'postcode' ) }
-						onChange={ ( value ) => update( 'postcode', value ) }
+						value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
+						onChange={ ( value ) => update( WOOCOMMERCE_STORE_POSTCODE, value ) }
 					/>
 
 					<ActionSection>
