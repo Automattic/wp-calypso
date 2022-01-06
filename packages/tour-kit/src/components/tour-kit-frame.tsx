@@ -29,6 +29,8 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		null
 	);
 	const [ isMinimized, setIsMinimized ] = useState( false );
+
+	const [ stepsViewed, setStepsViewed ] = useState< number[] >( [] );
 	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
 	const [ tourReady, setTourReady ] = useState( false );
 	const tourContainerRef = useRef( null );
@@ -227,6 +229,8 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 							onPrevious={ handlePreviousStepProgression }
 							onGoToStep={ handleGoToStep }
 							setInitialFocusedElement={ setInitialFocusedElement }
+							stepsViewed={ stepsViewed }
+							setStepsViewed={ setStepsViewed }
 						/>
 					) : (
 						<TourKitMinimized
