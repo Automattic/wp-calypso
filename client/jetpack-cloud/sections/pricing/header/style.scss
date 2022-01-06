@@ -1,6 +1,10 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+#header {
+	display: none;
+}
+
 .header {
 	text-align: center;
 }
