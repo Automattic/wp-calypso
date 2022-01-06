@@ -2,7 +2,6 @@
 import { readFile } from 'fs/promises';
 import i18n from 'i18n-calypso';
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
-import { getLanguage } from 'calypso/lib/i18n-utils';
 import config from 'calypso/server/config';
 import { LOCALE_SET } from 'calypso/state/action-types';
 
@@ -16,7 +15,6 @@ export function ssrSetupLocaleMiddleware() {
 			const localeVariant = i18n.getLocaleVariant();
 			context.store.dispatch( { type: LOCALE_SET, localeSlug, localeVariant } );
 			context.lang = localeVariant || localeSlug;
-			context.isRTL = getLanguage( context.lang )?.rtl ?? false;
 			next();
 		}
 
