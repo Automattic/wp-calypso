@@ -12,7 +12,7 @@ const difmThemes: Design[] = [
 				slug: 'blog',
 			},
 		],
-		features: [],
+		features: [ 'difm-lite-default' ],
 		is_premium: false,
 		slug: 'russell',
 		template: 'russell',

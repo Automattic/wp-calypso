@@ -13,7 +13,7 @@ export interface Category {
 	name: string;
 }
 
-export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
+export type DesignFeatures = 'anchorfm' | 'difm-lite-default'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 export interface Design {
 	categories: Array< Category >;
