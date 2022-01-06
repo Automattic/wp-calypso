@@ -21,7 +21,6 @@ Helper to 'save' site options permanently on the server-side.
 ```es6
 import useSiteSettings from './use-site-settings';
 
-```es6
 function StoreAddressFrom() {
 	const { get, save, update } = useSiteSettings( 'site-id' );
 
