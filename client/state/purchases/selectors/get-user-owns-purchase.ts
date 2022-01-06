@@ -18,7 +18,7 @@ type PlanPurchase = Purchase & {
  * @returns {boolean} true if we can definitely identify the user as the purchase owner, false in all other cases
  */
 export const getUserOwnsPurchase = createSelector(
-	( state: AppState, purchaseId?: number ) => {
+	( state: AppState, purchaseId: number ) => {
 		const userId = getCurrentUserId( state );
 		const purchase = getByPurchaseId( state, purchaseId ) as PlanPurchase;
 
