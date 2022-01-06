@@ -2,9 +2,15 @@
 
 Simple React custom hook to handle site options.
 
+## API
+
 ```es6
 const { get, save, update } = useSiteSettings( <site-id> );
 ```
+
+### countriesList
+
+A countries list with payment context.
 ### get(<key>)
 
 Simple getter helper.
