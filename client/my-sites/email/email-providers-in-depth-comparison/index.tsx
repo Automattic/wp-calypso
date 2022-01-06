@@ -1,25 +1,50 @@
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import { BillingIntervalToggle } from 'calypso/my-sites/email/billing-interval-toggle';
 import ComparisonTable from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table';
 import {
 	professionalEmailFeatures,
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/data';
+import {
+	castIntervalLength,
+	IntervalLength,
+} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
 import type { ReactElement } from 'react';
 
 import './style.scss';
 
-// This component should accept props with type EmailProvidersInDepthComparisonProps,
-// but that's not possible until we actually use the props in the component.
-const EmailProvidersInDepthComparison = (): ReactElement => {
+const EmailProvidersInDepthComparison = ( {
+	selectedDomainName,
+	selectedIntervalLength,
+}: EmailProvidersInDepthComparisonProps ): ReactElement => {
 	const translate = useTranslate();
+
+	const [ intervalLength, setIntervalLength ] = useState(
+		castIntervalLength( selectedIntervalLength )
+	);
 
 	return (
 		<>
 			<h1 className="email-providers-in-depth-comparison__header">
-				{ translate( 'See how they compare' ) }
+				{ translate( 'Choose the right plan for you' ) }
 			</h1>
 
-			<ComparisonTable emailProviders={ [ professionalEmailFeatures, googleWorkspaceFeatures ] } />
+			<div className="email-providers-in-depth-comparison__sub-header">
+				{ translate( 'Try risk-free with a 14-day money back guarantee on all plans.' ) }
+			</div>
+
+			<BillingIntervalToggle
+				intervalLength={ intervalLength }
+				onIntervalChange={ ( interval: IntervalLength ) => setIntervalLength( interval ) }
+			/>
+
+			<ComparisonTable
+				emailProviders={ [ professionalEmailFeatures, googleWorkspaceFeatures ] }
+				intervalLength={ intervalLength }
+				selectedDomainName={ selectedDomainName }
+			/>
 		</>
 	);
 };

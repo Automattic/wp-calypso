@@ -8,7 +8,7 @@ import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-providers-in-depth-comparison';
-import EmailProvidersComparisonStacked from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
@@ -101,9 +101,11 @@ export default {
 				source={ pageContext.query.source }
 			/>
 		) : (
-			<EmailProvidersComparisonStacked
+			<EmailProvidersStackedComparison
 				comparisonContext="email-purchase"
 				selectedDomainName={ pageContext.params.domain }
+				selectedEmailProviderSlug={ pageContext.query.provider }
+				selectedIntervalLength={ pageContext.query.interval }
 				siteName={ pageContext.params.site }
 				source={ pageContext.query.source }
 			/>
@@ -122,6 +124,7 @@ export default {
 				<EmailProvidersInDepthComparison
 					comparisonContext="email-in-depth-comparison"
 					selectedDomainName={ pageContext.params.domain }
+					selectedIntervalLength={ pageContext.query.interval }
 					siteName={ pageContext.params.site }
 					source={ pageContext.query.source }
 				/>

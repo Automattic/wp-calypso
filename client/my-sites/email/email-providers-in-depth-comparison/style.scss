@@ -2,10 +2,14 @@
 
 .email-providers-in-depth-comparison__header {
 	font-size: $font-title-large;
-	margin-bottom: 64px;
 	text-align: center;
 
 	@extend .wp-brand-font;
+}
+
+.email-providers-in-depth-comparison__sub-header {
+	font-size: $font-body-small;
+	text-align: center;
 }
 
 .email-providers-in-depth-comparison-table {
