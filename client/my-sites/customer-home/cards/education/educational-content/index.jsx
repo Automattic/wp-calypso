@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -15,7 +16,7 @@ function trackNavigation( url, cardName ) {
 	);
 }
 
-export default function EducationalContent( {
+function EducationalContent( {
 	title,
 	description,
 	links,
@@ -89,3 +90,15 @@ export default function EducationalContent( {
 		</div>
 	);
 }
+
+EducationalContent.propTypes = {
+	title: PropTypes.string,
+	description: PropTypes.node.isRequired,
+	links: PropTypes.array,
+	modalLinks: PropTypes.array,
+	illustration: PropTypes.string,
+	cardName: PropTypes.string,
+	width: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+	height: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+};
+export default EducationalContent;
