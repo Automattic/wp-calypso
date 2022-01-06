@@ -59,6 +59,7 @@ export interface Config {
 			onGoToStep?: Callback;
 			onNextStep?: Callback;
 			onPreviousStep?: Callback;
+			onStepViewOnce?: Callback;
 		};
 		effects?: {
 			spotlight?: { styles?: React.CSSProperties };

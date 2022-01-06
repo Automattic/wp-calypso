@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { useEffect, useState } from '@wordpress/element';
 import classnames from 'classnames';
 /**
  * Internal Dependencies
@@ -22,12 +23,27 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 	setInitialFocusedElement,
 	onGoToStep,
 } ) => {
+	const [ stepsViewed, setStepsViewed ] = useState< number[] >( [] );
+
 	const classNames = classnames(
 		'tour-kit-step',
 		`is-step-${ currentStepIndex }`,
 		config.options?.className ? `${ config.options?.className }__step` : '',
 		config.steps[ currentStepIndex ].options?.className
 	);
+
+	useEffect( () => {
+		if ( typeof config.options?.callbacks?.onStepViewOnce !== 'function' ) {
+			return;
+		}
+
+		if ( stepsViewed.includes( currentStepIndex ) ) {
+			return;
+		}
+
+		config.options?.callbacks?.onStepViewOnce( currentStepIndex );
+		setStepsViewed( ( prev ) => [ ...prev, currentStepIndex ] );
+	}, [ config.options?.callbacks, currentStepIndex, stepsViewed ] );
 
 	return (
 		<div className={ classNames }>
