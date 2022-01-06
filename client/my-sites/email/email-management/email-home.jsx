@@ -190,7 +190,7 @@ class EmailManagementHome extends Component {
 	}
 
 	renderContentWithHeader( content ) {
-		const { translate, currentRoute, selectedSiteId, selectedSite } = this.props;
+		const { translate, selectedSiteId } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -200,7 +200,7 @@ class EmailManagementHome extends Component {
 
 				<SidebarNavigation />
 
-				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+				<EmailHeader />
 
 				{ content }
 			</Main>

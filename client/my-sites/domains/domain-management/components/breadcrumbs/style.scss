@@ -138,20 +138,6 @@
 		margin-left: 16px;
 	}
 
-	.popover-cart {
-		.header-button__text {
-			display: none;
-
-			@include break-mobile {
-				display: block;
-			}
-		}
-
-		button.button .gridicon.gridicons-cart {
-			fill: var( --color-neutral-80 );
-		}
-	}
-
 	& button,
 	& .select-dropdown {
 		height: 40px;
