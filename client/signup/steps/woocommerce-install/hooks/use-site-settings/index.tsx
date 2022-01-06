@@ -59,7 +59,7 @@ export function useSiteSettings( siteId: number ) {
 
 	/*
 	 * Helper to 'update' site settings data.
-	 * Chnages are applied to the Redux store.
+	 * Changes are applied to the Redux store.
 	 */
 	const update = useCallback(
 		( option: optionNameType, value: string ) => {
