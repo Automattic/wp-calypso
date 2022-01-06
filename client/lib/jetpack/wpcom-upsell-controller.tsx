@@ -1,12 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
-import * as React from 'react';
 import BusinessATSwitch from 'calypso/components/jetpack/business-at-switch';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Context } from './types';
+import type { ComponentType } from 'react';
 
 export default function upsellSwitch(
-	UpsellComponent: React.Component
+	UpsellComponent: ComponentType
 ): ( context: Context, next: () => void ) => void {
 	return ( context, next ) => {
 		const getState = context.store.getState;
