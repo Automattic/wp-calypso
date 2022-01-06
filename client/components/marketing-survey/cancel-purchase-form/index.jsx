@@ -7,7 +7,10 @@ import {
 	isWpComPremiumPlan,
 	isJetpackPlan,
 	isJetpackProduct,
+	planMatches,
 	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	GROUP_WPCOM,
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
 import { Dialog, Button } from '@automattic/components';
@@ -221,6 +224,17 @@ class CancelPurchaseForm extends Component {
 				newState.upsell = 'downgrade-personal';
 			}
 
+			if ( value === 'onlyNeedFree' && !! this.props.downgradeClick ) {
+				if ( isWpComPremiumPlan( purchase.productSlug ) ) {
+					newState.upsell = 'downgrade-personal';
+				} else if (
+					planMatches( purchase.productSlug, { term: TERM_ANNUALLY, group: GROUP_WPCOM } ) ||
+					planMatches( purchase.productSlug, { term: TERM_BIENNIALLY, group: GROUP_WPCOM } )
+				) {
+					newState.upsell = 'downgrade-monthly';
+				}
+			}
+
 			if (
 				[ 'noTime', 'siteIsNotReady' ].includes( value ) &&
 				isWpComMonthlyPlan( purchase.productSlug ) &&
@@ -367,9 +381,9 @@ class CancelPurchaseForm extends Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
-	downgradeClick = () => {
+	downgradeClick = ( upsell ) => {
 		if ( ! this.state.isSubmitting ) {
-			this.props.downgradeClick();
+			this.props.downgradeClick( upsell );
 			this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
 			this.setState( {
 				isSubmitting: true,
@@ -441,6 +455,8 @@ class CancelPurchaseForm extends Component {
 					</Upsell>
 				);
 			case 'downgrade-personal':
+			case 'downgrade-monthly':
+				//test
 				// eslint-disable-next-line no-case-declarations
 				const { precision } = getCurrencyDefaults( purchase.currencyCode );
 				// eslint-disable-next-line no-case-declarations
@@ -448,8 +464,12 @@ class CancelPurchaseForm extends Component {
 
 				return (
 					<Upsell
-						actionOnClick={ this.downgradeClick }
-						actionText={ translate( 'Switch to Personal' ) }
+						actionOnClick={ () => this.downgradeClick( upsell ) }
+						actionText={
+							upsell === 'downgrade-monthly'
+								? translate( 'Switch to a monthly subscription' )
+								: translate( 'Switch to Personal' )
+						}
 						image={ downgradeImage }
 					>
 						<DowngradeStep
