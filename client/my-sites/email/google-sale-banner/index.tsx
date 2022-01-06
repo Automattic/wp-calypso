@@ -23,7 +23,7 @@ type GoogleSaleBannerProps = {
 	domains: Array< ResponseDomain >;
 };
 
-const GoogleSaleBanner = ( { domains }: GoogleSaleBannerProps ): ReactElement => {
+const GoogleSaleBanner = ( { domains }: GoogleSaleBannerProps ): ReactElement | null => {
 	const translate = useTranslate();
 
 	const canCurrentUserPurchaseGSuite = useSelector( canUserPurchaseGSuite );
