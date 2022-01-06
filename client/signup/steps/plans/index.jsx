@@ -34,11 +34,15 @@ export class PlansStep extends Component {
 	};
 
 	componentWillMount() {
-		loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v1' ).then(
-			( experiment ) => {
-				this.setState( { experiment, experimentLoaded: true } );
-			}
-		);
+		if ( this.props.flowName === 'onboarding' ) {
+			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v1' ).then(
+				( experiment ) => {
+					this.setState( { experiment, experimentLoaded: true } );
+				}
+			);
+		} else {
+			this.setState( { experimentLoaded: true } );
+		}
 	}
 
 	componentDidMount() {
