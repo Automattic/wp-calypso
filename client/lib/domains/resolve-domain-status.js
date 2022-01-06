@@ -284,15 +284,15 @@ export function resolveDomainStatus(
 						  );
 				}
 
-				const noticeText = [
-					translate( 'This domain expired on %(expiryDate)s. ', {
-						args: {
-							expiryDate: moment.utc( domain.expiry ).format( 'LL' ),
-							renewCta,
-						},
-					} ),
-					renewCta,
-				];
+				const domainExpirationMessage = translate( 'This domain expired on %(expiryDate)s. ', {
+					args: {
+						expiryDate: moment.utc( domain.expiry ).format( 'LL' ),
+						renewCta,
+					},
+				} );
+
+				const noticeText = [ domainExpirationMessage, renewCta ];
+
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
@@ -320,20 +320,19 @@ export function resolveDomainStatus(
 					  } )
 					: translate( 'It can be renewed by the owner.' );
 
-				const expiresMessage = [
-					translate( 'This domain will expire on %(expiryDate)s. ', {
-						args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
-					} ),
-					renewCta,
-				];
+				const domainExpirationMessage = translate( 'This domain will expire on %(expiryDate)s. ', {
+					args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
+				} );
+
+				const expiresMessage = [ domainExpirationMessage, renewCta ];
 
 				if ( isExpiringSoon( domain, 5 ) ) {
 					return {
-						statusText: expiresMessage,
+						statusText: domainExpirationMessage,
 						statusClass: 'status-error',
 						status: translate( 'Expiring soon' ),
 						icon: 'info',
-						listStatusText: expiresMessage,
+						listStatusText: domainExpirationMessage,
 						noticeText: expiresMessage,
 						listStatusClass: 'alert',
 						listStatusWeight: 1000,
