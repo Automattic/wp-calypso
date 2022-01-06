@@ -1,10 +1,10 @@
 import { clearStore, getStoredUserId } from 'calypso/lib/user/store';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRedirectToSanitized, isTwoFactorEnabled } from 'calypso/state/login/selectors';
-import type { Dispatch } from 'redux';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 export const rebootAfterLogin = ( tracksEventArgs: Record< string, unknown > ) => async (
-	dispatch: Dispatch,
+	dispatch: CalypsoDispatch,
 	getState: () => Record< string, unknown >
 ) => {
 	dispatch(
