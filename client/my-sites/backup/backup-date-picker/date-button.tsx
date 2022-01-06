@@ -51,6 +51,7 @@ const DateButton: React.FC< Props > = ( {
 					<DatePicker
 						calendarViewDate={ new Date( selectedDate.year(), selectedDate.month() ) } // sets the month when the calendar opens
 						moment={ moment }
+						timeReference={ selectedDate.clone() } // Use the current localized time of the selectedDate to adjust against when selecting a date
 						onSelectDay={ handleDatePicked }
 						selectedDay={
 							new Date( selectedDate.year(), selectedDate.month(), selectedDate.date() )
