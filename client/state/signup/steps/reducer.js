@@ -1,7 +1,6 @@
 import { combineReducers } from 'calypso/state/utils';
 import designType from './design-type/reducer';
 import siteGoals from './site-goals/reducer';
-import siteStyle from './site-style/reducer';
 import siteTitle from './site-title/reducer';
 import siteType from './site-type/reducer';
 import siteVertical from './site-vertical/reducer';
@@ -13,7 +12,6 @@ export default combineReducers( {
 	siteTitle,
 	siteGoals,
 	userExperience,
-	siteStyle,
 	siteType,
 	siteVertical,
 	survey,

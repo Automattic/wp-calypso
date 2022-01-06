@@ -39,7 +39,6 @@ const stepNameToModuleName = {
 	'rewind-form-creds': 'rewind-form-creds',
 	'site-or-domain': 'site-or-domain',
 	'site-picker': 'site-picker',
-	'site-style': 'site-style',
 	'site-title': 'site-title',
 	'site-options': 'site-options',
 	'site-topic': 'site-topic',
@@ -60,7 +59,6 @@ const stepNameToModuleName = {
 	displayname: 'user',
 	'reader-landing': 'reader-landing',
 	// Steps with preview
-	'site-style-with-preview': 'site-style',
 	'site-topic-with-preview': 'site-topic',
 	'domains-with-preview': 'domains',
 	'site-title-with-preview': 'site-title',
