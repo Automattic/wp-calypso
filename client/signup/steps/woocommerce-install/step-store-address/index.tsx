@@ -2,6 +2,7 @@ import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
+import { FormCountrySelect } from 'calypso/components/forms/form-country-select';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -17,6 +18,7 @@ import {
 } from '../hooks/use-site-settings';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
+import type { ChangeEventHandler } from 'react';
 import './style.scss';
 
 export default function StepStoreAddress( props: WooCommerceInstallProps ): ReactElement | null {
@@ -27,7 +29,12 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 
-	const { get, save, update } = useSiteSettings( siteId );
+	const { get, save, update, countriesList } = useSiteSettings( siteId );
+
+	const handleCountryChange: ChangeEventHandler< HTMLInputElement > = ( event ) => {
+		update( WOOCOMMERCE_DEFAULT_COUNTRY, event.target.value );
+	};
+
 	function getContent() {
 		return (
 			<>
@@ -45,10 +52,12 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 						onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_2, value ) }
 					/>
 
-					<TextControl
-						label={ __( 'Country/Region', 'woocommerce-admin' ) }
+					<FormCountrySelect
+						name="country_code"
 						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
-						onChange={ ( value ) => update( WOOCOMMERCE_DEFAULT_COUNTRY, value ) }
+						onChange={ handleCountryChange }
+						countriesList={ countriesList }
+						translate={ __ }
 					/>
 
 					<TextControl
