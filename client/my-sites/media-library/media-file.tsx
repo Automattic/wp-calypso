@@ -6,9 +6,11 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import ProxiedImage, { ProxiedImageProps, RenderedComponent } from './proxied-image';
+import type { ReactNode } from 'react';
 
-export interface MediaFileProps extends ProxiedImageProps {
+export interface MediaFileProps extends Omit< ProxiedImageProps, 'placeholder' > {
 	src: string;
+	placeholder?: ReactNode;
 
 	component: RenderedComponent;
 	proxiedComponent?: RenderedComponent;
