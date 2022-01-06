@@ -806,6 +806,15 @@ export function generateSteps( {
 		},
 
 		// Woocommerce Install steps
+		industry: {
+			stepName: 'industry',
+			props: {
+				headerTitle: i18n.translate( 'In which industry does the store operate?' ),
+				headerDescription: '',
+			},
+			dependencies: [ 'site' ],
+			providesDependencies: [ 'siteConfirmed' ],
+		},
 		confirm: {
 			stepName: 'confirm',
 			props: {

@@ -85,6 +85,7 @@ const stepNameToModuleName = {
 	ready: 'import',
 	importing: 'import-from',
 	'select-site': 'woocommerce-install/select-site',
+	industry: 'woocommerce-install/industry-step',
 	confirm: 'woocommerce-install/confirm',
 	transfer: 'woocommerce-install/transfer',
 };
