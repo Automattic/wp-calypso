@@ -1,5 +1,6 @@
 import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -57,8 +58,14 @@ function ScanVPActiveBody() {
 
 function ScanUpsellBody() {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const item = slugToSelectorProduct( PRODUCT_JETPACK_SCAN );
+	const onClick = useCallback(
+		() => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ),
+		[ dispatch ]
+	);
+
 	return (
 		<JetpackProductCard
 			buttonLabel={ translate( 'Upgrade now' ) }
@@ -68,6 +75,7 @@ function ScanUpsellBody() {
 			headerLevel={ 3 }
 			hidePrice
 			item={ item }
+			onButtonClick={ onClick }
 		/>
 	);
 }

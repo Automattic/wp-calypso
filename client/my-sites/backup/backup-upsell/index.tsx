@@ -1,6 +1,6 @@
 import { PRODUCT_JETPACK_BACKUP_T1_YEARLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -62,7 +62,14 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 const BackupsUpsellBody: FunctionComponent = () => {
 	const translate = useTranslate();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const dispatch = useDispatch();
+
+	const onClick = useCallback(
+		() => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ),
+		[ dispatch ]
+	);
 	const item = slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_T1_YEARLY ) as SelectorProduct;
+
 	return (
 		<JetpackProductCard
 			buttonLabel={ translate( 'Upgrade now' ) }
@@ -72,6 +79,7 @@ const BackupsUpsellBody: FunctionComponent = () => {
 			headerLevel={ 3 }
 			hidePrice
 			item={ item }
+			onButtonClick={ onClick }
 		/>
 	);
 };
