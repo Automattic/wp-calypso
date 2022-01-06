@@ -65,7 +65,8 @@
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud": true,
 		"jetpack-search": true,
-		"scan": true
+		"scan": true,
+		"site-purchases": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
