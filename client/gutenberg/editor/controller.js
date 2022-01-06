@@ -21,6 +21,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
+import Main from './main';
 import { Placeholder } from './placeholder';
 
 const noop = () => {};
@@ -97,6 +98,17 @@ function waitForPreferredEditorView( context ) {
 	} );
 }
 
+function renderPlaceholder( context ) {
+	context.primary = (
+		<Main>
+			<Placeholder />
+		</Main>
+	);
+
+	makeLayout( context, noop );
+	render( context );
+}
+
 /**
  * Ensures the user is authenticated in WP Admin so the iframe can be loaded successfully.
  *
@@ -146,9 +158,7 @@ export const authenticate = ( context, next ) => {
 	}
 
 	// Shows the editor placeholder while doing the redirection.
-	context.primary = <Placeholder />;
-	makeLayout( context, noop );
-	render( context );
+	renderPlaceholder( context );
 
 	// We could use `window.location.href` to generate the return URL but there are some potential race conditions that
 	// can cause the browser to not update it before redirecting to WP Admin. To avoid that, we manually generate the
@@ -178,7 +188,12 @@ export const redirect = async ( context, next ) => {
 	if ( ! isPreferredEditorViewAvailable( tmpState ) ) {
 		checkPromises.push( waitForPreferredEditorView( context ) );
 	}
-	await Promise.all( checkPromises );
+
+	// Shows the editor placeholder while waiting for promises.
+	if ( checkPromises.length > 0 ) {
+		renderPlaceholder( context );
+		await Promise.all( checkPromises );
+	}
 
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
