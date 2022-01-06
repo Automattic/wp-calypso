@@ -103,18 +103,19 @@ export default function WPCheckoutOrderReview( {
 
 	useEffect( () => {
 		const experimentCheck = retrieveExperimentName();
-		let shouldCheck = experimentCheck ? experimentCheck.length > 0 : false;
-		loadExperimentAssignment( experimentCheck ?? '' ).then( ( experimentObject ) => {
-			if ( shouldCheck ) {
-				setExperiment( experimentObject );
-			}
-		} );
+		let shouldCheck = true;
+		experimentCheck &&
+			loadExperimentAssignment( experimentCheck ).then( ( experimentObject ) => {
+				if ( shouldCheck ) {
+					setExperiment( experimentObject );
+				}
+			} );
 		return () => {
 			shouldCheck = false;
 		};
 	}, [] );
 
-	function retrieveExperimentName() {
+	function retrieveExperimentName(): string {
 		let experiment = '';
 		try {
 			const cookies = cookie.parse( document.cookie );
