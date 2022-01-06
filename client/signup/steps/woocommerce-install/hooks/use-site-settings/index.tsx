@@ -1,3 +1,4 @@
+import { uniqueBy } from '@automattic/js-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -37,7 +38,7 @@ export function useSiteSettings( siteId: number ) {
 	 * Private settings store.
 	 * It collects the options that will be updated/saved
 	 */
-	const [ editedSettings, setEditedSettings ] = useState( {} );
+	const [ editedSettings, setEditedSettings ] = useState( [] as optionNameType[] );
 
 	// Dispatch action to request the site settings.
 	useEffect( () => {
@@ -63,7 +64,7 @@ export function useSiteSettings( siteId: number ) {
 	 */
 	const update = useCallback(
 		( option: optionNameType, value: string ) => {
-			setEditedSettings( ( state ) => ( { ...state, [ option ]: value } ) );
+			setEditedSettings( ( state ) => uniqueBy( [ ...state, option ] ) );
 
 			// Store the edited option in the private store.
 			dispatch( updateSiteSettings( siteId, { [ option ]: value } ) );
@@ -76,7 +77,7 @@ export function useSiteSettings( siteId: number ) {
 	 * The data will be saved to the remote server.
 	 */
 	const save = useCallback( () => {
-		if ( ! editedSettings || ! Object.keys( editedSettings ).length ) {
+		if ( ! editedSettings || ! editedSettings.length ) {
 			return;
 		}
 
@@ -84,9 +85,14 @@ export function useSiteSettings( siteId: number ) {
 		 * Save the edited options to the server.
 		 * After the save is complete, clean the private store.
 		 */
-		dispatch( saveSiteSettings( siteId, editedSettings ) );
-		setEditedSettings( {} );
-	}, [ dispatch, editedSettings, siteId ] );
+		const newSettings = editedSettings.reduce(
+			( acc, settingKey ) => ( { ...acc, [ settingKey ]: settings[ settingKey ] } ),
+			{}
+		);
+
+		dispatch( saveSiteSettings( siteId, newSettings ) );
+		setEditedSettings( [] );
+	}, [ dispatch, editedSettings, settings, siteId ] );
 
 	return { save, update, get };
 }
