@@ -102,28 +102,29 @@ export default function WPCheckoutOrderReview( {
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
-		const experimentCheck = retrieveExperimentName();
-		let shouldCheck = experimentCheck ? experimentCheck.length > 0 : false;
-		loadExperimentAssignment( experimentCheck ?? '' ).then( ( experimentObject ) => {
-			if ( shouldCheck ) {
-				setExperiment( experimentObject );
+		function retrieveExperimentName(): string {
+			let experiment = '';
+			try {
+				const cookies = cookie.parse( document.cookie );
+				experiment = cookies.wpcom_signup_experiment_name;
+			} catch ( error ) {
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cookie_read_failed' ) );
 			}
-		} );
+			return experiment;
+		}
+
+		const experimentCheck = retrieveExperimentName();
+		let shouldCheck = true;
+		experimentCheck &&
+			loadExperimentAssignment( experimentCheck ).then( ( experimentObject ) => {
+				if ( shouldCheck ) {
+					setExperiment( experimentObject );
+				}
+			} );
 		return () => {
 			shouldCheck = false;
 		};
-	}, [] );
-
-	function retrieveExperimentName() {
-		let experiment = '';
-		try {
-			const cookies = cookie.parse( document.cookie );
-			experiment = cookies.wpcom_signup_experiment_name;
-		} catch ( error ) {
-			reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cookie_read_failed' ) );
-		}
-		return experiment;
-	}
+	}, [ reduxDispatch ] );
 
 	const onRemoveProductCancel = useCallback( () => {
 		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
