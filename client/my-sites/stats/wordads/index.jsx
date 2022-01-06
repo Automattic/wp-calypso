@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize, translate, numberFormat } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
@@ -136,7 +137,7 @@ class WordAds extends Component {
 					path={ `/stats/ads/${ period }/:site` }
 					title={ `WordAds > ${ titlecase( period ) }` }
 				/>
-				<PrivacyPolicyBanner />
+				{ config.isEnabled( 'privacy-policy' ) && <PrivacyPolicyBanner /> }
 				<SidebarNavigation />
 				<FormattedHeader
 					brandFont

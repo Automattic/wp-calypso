@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -172,7 +173,7 @@ class StatsSite extends Component {
 
 		return (
 			<>
-				<PrivacyPolicyBanner />
+				{ config.isEnabled( 'privacy-policy' ) && <PrivacyPolicyBanner /> }
 				<SidebarNavigation />
 				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<FormattedHeader
