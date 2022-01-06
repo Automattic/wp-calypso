@@ -28,7 +28,7 @@ interface Props {
 	autoFocus: boolean;
 	domains: string[];
 	onUserRemove: () => void;
-	onUserValueChange: ( field: string, value: string ) => void;
+	onUserValueChange: ( field: string, value: string, mailBoxFieldTouched?: boolean ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	selectedDomainName: string;
 	showTrashButton: boolean;

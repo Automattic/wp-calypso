@@ -12,6 +12,7 @@ export interface SiteData {
 	jetpack?: boolean;
 	plan: SiteDataPlan;
 	capabilities?: Record< string, boolean >;
+	is_wpcom_atomic?: boolean;
 	// TODO: fill out the rest of this
 }
 
