@@ -106,7 +106,7 @@
 		"upsell/concierge-session": true,
 		"use-translation-chunks": true,
 		"woocommerce/extension-referrers": false,
-		"woop": true,
+		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true
 	},
