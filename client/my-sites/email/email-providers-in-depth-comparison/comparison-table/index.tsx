@@ -6,7 +6,7 @@ import type {
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
 import type { ReactElement } from 'react';
 
-const ComparisonTable: ReactElement< ComparisonTableProps > | null = ( { emailProviders } ) => {
+const ComparisonTable = ( { emailProviders }: ComparisonTableProps ): ReactElement => {
 	return (
 		<div className="email-providers-in-depth-comparison-table">
 			{ emailProviders.map( ( emailProviderFeatures: EmailProviderFeatures, index: number ) => {

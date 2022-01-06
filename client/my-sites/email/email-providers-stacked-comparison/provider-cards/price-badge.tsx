@@ -6,9 +6,10 @@ type PriceBadgeProps = {
 	priceComponent: ReactElement;
 };
 
-const PriceBadge: ReactElement< PriceBadgeProps > | null = ( props ) => {
-	const { additionalPriceInformationComponent, priceComponent } = props;
-
+const PriceBadge = ( {
+	additionalPriceInformationComponent,
+	priceComponent,
+}: PriceBadgeProps ): ReactElement => {
 	return (
 		<div className="provider-cards__price-badge">
 			<PromoCardPrice

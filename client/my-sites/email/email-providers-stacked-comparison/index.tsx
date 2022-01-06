@@ -52,22 +52,18 @@ type EmailProvidersStackedComparisonProps = {
 	source: string;
 };
 
-const EmailProvidersStackedComparison: ReactElement< EmailProvidersStackedComparisonProps > | null = (
-	props
-) => {
-	const {
-		comparisonContext,
-		currentRoute,
-		domain,
-		domainsWithForwards,
-		isGSuiteSupported,
-		selectedDomainName,
-		selectedSite,
-		showEmailForwardLink = true,
-		siteName,
-		source,
-	} = props;
-
+const EmailProvidersStackedComparison = ( {
+	comparisonContext,
+	currentRoute,
+	domain,
+	domainsWithForwards,
+	isGSuiteSupported,
+	selectedDomainName,
+	selectedSite,
+	showEmailForwardLink = true,
+	siteName,
+	source,
+}: EmailProvidersStackedComparisonProps ): ReactElement => {
 	const translate = useTranslate();
 
 	const [ intervalLength, setIntervalLengthPure ] = useState( IntervalLength.ANNUALLY );

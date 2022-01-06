@@ -13,9 +13,13 @@ type PriceWithIntervalProps = {
 	sale?: number | null;
 };
 
-const PriceWithInterval: ReactElement< PriceWithIntervalProps > | null = ( props ) => {
-	const { cost, currencyCode, hasDiscount, sale, intervalLength } = props;
-
+const PriceWithInterval = ( {
+	cost,
+	currencyCode,
+	hasDiscount,
+	intervalLength,
+	sale,
+}: PriceWithIntervalProps ): ReactElement => {
 	const showSale = sale && sale !== 0;
 
 	const priceClassName = classNames( 'provider-cards__price-with-interval-price', {

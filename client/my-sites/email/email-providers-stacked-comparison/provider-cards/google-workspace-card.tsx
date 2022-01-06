@@ -36,6 +36,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { addToCartAndCheckout, recordTracksEventAddToCartClick, IntervalLength } from './utils';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
 
 import './google-workspace-card.scss';
@@ -47,7 +48,7 @@ function identityMap< T >( item: T ): T {
 	return item;
 }
 
-const getGoogleFeatures = () => {
+const getGoogleFeatures = (): TranslateResult[] => {
 	return [
 		translate( 'Send and receive from your custom domain' ),
 		translate( '30GB storage' ),
@@ -72,17 +73,21 @@ const googleWorkspaceCardInformation: ProviderCard = {
 	features: getGoogleFeatures(),
 };
 
-const GoogleWorkspaceCard: ReactElement< EmailProvidersStackedCardProps > | null = ( props ) => {
-	const {
-		currencyCode = '',
-		detailsExpanded,
-		domain,
-		gSuiteProductMonthly,
-		gSuiteProductYearly,
-		onExpandedChange,
-		selectedDomainName,
-		intervalLength,
-	} = props;
+const GoogleWorkspaceCard = ( {
+	comparisonContext,
+	currencyCode = '',
+	detailsExpanded,
+	domain,
+	gSuiteProductMonthly,
+	gSuiteProductYearly,
+	hasCartDomain,
+	intervalLength,
+	onExpandedChange,
+	selectedDomainName,
+	selectedSite,
+	shoppingCartManager,
+	source,
+}: EmailProvidersStackedCardProps ): ReactElement => {
 	const googleWorkspace: ProviderCard = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = detailsExpanded;
 
@@ -93,10 +98,10 @@ const GoogleWorkspaceCard: ReactElement< EmailProvidersStackedCardProps > | null
 
 	const priceWithInterval = (
 		<PriceWithInterval
-			intervalLength={ intervalLength }
 			cost={ gSuiteProduct?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
 			hasDiscount={ productIsDiscounted }
+			intervalLength={ intervalLength }
 			sale={ gSuiteProduct?.sale_cost ?? null }
 		/>
 	);
@@ -149,17 +154,6 @@ const GoogleWorkspaceCard: ReactElement< EmailProvidersStackedCardProps > | null
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
 	const onGoogleConfirmNewMailboxes = () => {
-		const {
-			comparisonContext,
-			domain,
-			gSuiteProductMonthly,
-			gSuiteProductYearly,
-			hasCartDomain,
-			selectedSite,
-			shoppingCartManager,
-			source,
-		} = props;
-
 		const gSuiteProduct =
 			intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 

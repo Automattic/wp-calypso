@@ -72,22 +72,21 @@ const professionalEmailCardInformation: ProviderCard = {
 	features: getTitanFeatures(),
 };
 
-const ProfessionalEmailCard: ReactElement< EmailProvidersStackedCardProps > | null = ( props ) => {
-	const {
-		currencyCode = '',
-		hasCartDomain,
-		detailsExpanded,
-		domain,
-		onExpandedChange,
-		selectedDomainName,
-		intervalLength,
-		titanMailMonthlyProduct,
-		titanMailYearlyProduct,
-		comparisonContext,
-		shoppingCartManager,
-		selectedSite,
-		source,
-	} = props;
+const ProfessionalEmailCard = ( {
+	currencyCode = '',
+	hasCartDomain,
+	detailsExpanded,
+	domain,
+	onExpandedChange,
+	selectedDomainName,
+	intervalLength,
+	titanMailMonthlyProduct,
+	titanMailYearlyProduct,
+	comparisonContext,
+	shoppingCartManager,
+	selectedSite,
+	source,
+}: EmailProvidersStackedCardProps ): ReactElement => {
 	const professionalEmail: ProviderCard = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
 

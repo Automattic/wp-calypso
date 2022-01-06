@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement, MouseEventHandler } from 'react';
+import type { MouseEventHandler, ReactElement } from 'react';
 
 import './style.scss';
 
@@ -10,10 +10,9 @@ export interface EmailProviderStackedFeatureProps {
 	title: TranslateResult;
 }
 
-const EmailProviderStackedFeature: ReactElement< EmailProviderStackedFeatureProps > | null = (
-	props
-) => {
-	const { title } = props;
+const EmailProviderStackedFeature = ( {
+	title,
+}: EmailProviderStackedFeatureProps ): ReactElement => {
 	const size = 18;
 	return (
 		<div className="email-provider-stacked-features__feature">
@@ -28,10 +27,9 @@ export interface EmailProviderStackedFeaturesProps {
 	features: TranslateResult[];
 }
 
-export const EmailProviderStackedFeatures: ReactElement< EmailProviderStackedFeaturesProps > | null = (
-	props
-) => {
-	const { features } = props;
+export const EmailProviderStackedFeatures = ( {
+	features,
+}: EmailProviderStackedFeaturesProps ): ReactElement | null => {
 	const translate = useTranslate();
 
 	if ( ! features ) {
@@ -55,10 +53,10 @@ interface EmailProviderStackedFeaturesToggleButtonProps {
 	isRelatedContentExpanded: boolean;
 }
 
-export const EmailProviderStackedFeaturesToggleButton: ReactElement< EmailProviderStackedFeaturesToggleButtonProps > | null = ( {
+export const EmailProviderStackedFeaturesToggleButton = ( {
 	handleClick,
 	isRelatedContentExpanded,
-} ) => {
+}: EmailProviderStackedFeaturesToggleButtonProps ): ReactElement => {
 	const translate = useTranslate();
 
 	return (
