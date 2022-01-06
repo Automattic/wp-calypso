@@ -7,35 +7,20 @@ import {
 } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 
-// WooCommerce single options.
+// WooCommerce enable options.
 export const WOOCOMMERCE_STORE_ADDRESS_1 = 'woocommerce_store_address';
 export const WOOCOMMERCE_STORE_ADDRESS_2 = 'woocommerce_store_address_2';
 export const WOOCOMMERCE_STORE_CITY = 'woocommerce_store_city';
 export const WOOCOMMERCE_DEFAULT_COUNTRY = 'woocommerce_default_country';
 export const WOOCOMMERCE_STORE_POSTCODE = 'woocommerce_store_postcode';
 
-// Map Woop to WooCoommerce single options.
-const siteOptionsMap = {
-	address_1: WOOCOMMERCE_STORE_ADDRESS_1,
-	address_2: WOOCOMMERCE_STORE_ADDRESS_2,
-	city: WOOCOMMERCE_STORE_CITY,
-	postcode: WOOCOMMERCE_STORE_POSTCODE,
-	country: WOOCOMMERCE_DEFAULT_COUNTRY,
-};
-
-/**
- * Returns the option name for the given WooCommerce option.
- *
- * @param {string} option option name
- * @returns {string} option
- */
-function getSiteOptionName( option: string ) {
-	if ( ! ( option in siteOptionsMap ) ) {
-		return option;
-	}
-
-	return siteOptionsMap[ option ];
-}
+type optionNameType =
+	| 'blog_public'
+	| typeof WOOCOMMERCE_STORE_ADDRESS_1
+	| typeof WOOCOMMERCE_STORE_ADDRESS_2
+	| typeof WOOCOMMERCE_STORE_CITY
+	| typeof WOOCOMMERCE_DEFAULT_COUNTRY
+	| typeof WOOCOMMERCE_STORE_POSTCODE;
 
 /**
  * Simple react custom hook to deal with site settings.
@@ -64,13 +49,12 @@ export function useSiteSettings( siteId: number ) {
 	}, [ dispatch, siteId ] );
 
 	// Simple getter helper.
-	function get( option: string ) {
+	function get( option: optionNameType ) {
 		if ( ! settings || Object.keys( settings ).length === 0 ) {
 			return '';
 		}
 
-		const value = settings?.[ getSiteOptionName( option ) ] || '';
-		return value;
+		return settings[ option ] || '';
 	}
 
 	/*
@@ -78,12 +62,11 @@ export function useSiteSettings( siteId: number ) {
 	 * Chnages are applied to the Redux store.
 	 */
 	const update = useCallback(
-		( option: string, value: string ) => {
-			const siteOption = getSiteOptionName( option );
-			setEditedSettings( ( state ) => ( { ...state, [ siteOption ]: value } ) );
+		( option: optionNameType, value: string ) => {
+			setEditedSettings( ( state ) => ( { ...state, [ option ]: value } ) );
 
 			// Store the edited option in the private store.
-			dispatch( updateSiteSettings( siteId, { [ siteOption ]: value } ) );
+			dispatch( updateSiteSettings( siteId, { [ option ]: value } ) );
 		},
 		[ siteId, dispatch ]
 	);
