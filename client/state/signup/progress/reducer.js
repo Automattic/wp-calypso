@@ -131,7 +131,6 @@ export default withSchemaValidation( schema, ( state = {}, action ) => {
 		case SIGNUP_PROGRESS_SUBMIT_STEP:
 			return submitStep( state, action );
 		case SIGNUP_STEPS_SITE_TYPE_SET:
-			delete state[ 'domains-with-preview' ];
 			return state;
 		case SIGNUP_PROGRESS_REMOVE_STEP:
 			return removeStep( state, action );

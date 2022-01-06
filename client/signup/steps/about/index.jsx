@@ -543,14 +543,10 @@ export default connect(
 		isLoggedIn: isUserLoggedIn( state ),
 		verticalId: getSiteVerticalId( state ),
 		verticalParentId: getSiteVerticalParentId( state ),
-		shouldHideSiteGoals:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
 		shouldHideSiteTitle:
 			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-title' ),
 		shouldSkipAboutStep:
-			includes( ownProps.steps, 'site-type' ) &&
-			includes( ownProps.steps, 'site-topic' ) &&
-			includes( ownProps.steps, 'site-title' ),
+			includes( ownProps.steps, 'site-topic' ) && includes( ownProps.steps, 'site-title' ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{
