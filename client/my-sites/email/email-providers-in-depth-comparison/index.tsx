@@ -4,12 +4,11 @@ import {
 	professionalEmailFeatures,
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/data';
-import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
 import type { ReactElement } from 'react';
 
 import './style.scss';
 
-const EmailProvidersInDepthComparison: ReactElement< EmailProvidersInDepthComparisonProps > | null = () => {
+const EmailProvidersInDepthComparison = (): ReactElement => {
 	const translate = useTranslate();
 
 	return (
