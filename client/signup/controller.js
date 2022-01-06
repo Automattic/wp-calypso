@@ -327,7 +327,7 @@ export default {
 		}
 
 		// Pre-fetching the experiment
-		if ( flowName === 'onboarding' ) {
+		if ( flowName === 'onboarding' || flowName === 'launch-site' ) {
 			await loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v1' );
 		}
 

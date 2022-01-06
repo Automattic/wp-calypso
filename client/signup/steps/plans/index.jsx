@@ -34,7 +34,7 @@ export class PlansStep extends Component {
 	};
 
 	componentWillMount() {
-		if ( this.props.flowName === 'onboarding' ) {
+		if ( this.props.flowName === 'onboarding' || this.props.flowName === 'launch-site' ) {
 			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v1' ).then(
 				( experiment ) => {
 					this.setState( { experiment, experimentLoaded: true } );
