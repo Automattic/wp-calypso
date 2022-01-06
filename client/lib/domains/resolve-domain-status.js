@@ -372,14 +372,7 @@ export function resolveDomainStatus(
 					);
 				} else {
 					noticeText = translate(
-						'We are setting up your domain. It should start working immediately, but may be unreliable during the first 30 minutes. {{learnMore}}Learn more{{/learnMore}}',
-						{
-							components: {
-								learnMore: (
-									<a href={ SETTING_PRIMARY_DOMAIN } rel="noopener noreferrer" target="_blank" />
-								),
-							},
-						}
+						'We are setting up your domain. It should start working immediately, but may be unreliable during the first 30 minutes.'
 					);
 				}
 
