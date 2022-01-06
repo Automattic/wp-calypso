@@ -2,7 +2,7 @@ import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
-import { FormCountrySelect } from 'calypso/components/forms/form-country-select';
+import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -57,7 +57,6 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
 						onChange={ handleCountryChange }
 						countriesList={ countriesList }
-						translate={ __ }
 					/>
 
 					<TextControl
