@@ -55,7 +55,7 @@ function allowPath( path ) {
 		? path.replace( new RegExp( `^/${ prefixedLocale }` ), '' )
 		: path;
 
-	const allowedPaths = [ '/browsehappy', '/themes', '/theme' ];
+	const allowedPaths = [ '/browsehappy', '/themes', '/theme', '/calypso/evergreen' ];
 	// For example, match either exactly "/themes" or "/themes/*"
 	return allowedPaths.some( ( p ) => parsedPath === p || parsedPath.startsWith( p + '/' ) );
 }
