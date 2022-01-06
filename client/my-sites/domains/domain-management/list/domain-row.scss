@@ -112,9 +112,17 @@
 	.domain-row__domain-notice-icon.gridicon {
 		align-self: flex-start;
 		min-width: 18px;
-		fill: var( --studio-orange-40 );
+		fill: var( --studio-gray-20 );
 		position: relative;
 		top: 2px;
+
+		&--error {
+			fill: var( --studio-orange-40 );
+		}
+
+		&--success {
+			fill: var( --studio-green-50 );
+		}
 	}
 
 	.domain-row__domain-notice-message {

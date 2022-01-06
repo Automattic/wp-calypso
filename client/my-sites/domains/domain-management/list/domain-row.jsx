@@ -467,7 +467,7 @@ class DomainRow extends PureComponent {
 		const { showNotice } = this.state;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
-		const { noticeText } = resolveDomainStatus( domain, purchase, {
+		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
 			email: contactDetails?.email,
@@ -497,7 +497,10 @@ class DomainRow extends PureComponent {
 						<Icon
 							icon={ info }
 							size={ 18 }
-							className="domain-row__domain-notice-icon gridicon"
+							className={ classnames( 'domain-row__domain-notice-icon gridicon', {
+								'gridicon--error': 'status-success' !== statusClass,
+								'gridicon--success': 'status-success' === statusClass,
+							} ) }
 							viewBox="2 2 20 20"
 						/>
 						<div className="domain-row__domain-notice-message">{ noticeText }</div>
