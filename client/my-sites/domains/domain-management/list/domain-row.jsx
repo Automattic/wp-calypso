@@ -455,22 +455,13 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const {
-			domain,
-			contactDetails,
-			isManagingAllSites,
-			site,
-			showCheckbox,
-			purchase,
-			translate,
-		} = this.props;
+		const { domain, isManagingAllSites, site, showCheckbox, purchase, translate } = this.props;
 		const { showNotice } = this.state;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
 		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
-			email: contactDetails?.email,
 		} );
 
 		return (

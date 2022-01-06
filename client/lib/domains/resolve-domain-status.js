@@ -11,7 +11,11 @@ import {
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	GDPR_POLICIES,
 } from 'calypso/lib/url/support';
-import { domainManagementNameServers, domainMappingSetup } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEditContactInfo,
+	domainManagementNameServers,
+	domainMappingSetup,
+} from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 
 export function resolveDomainStatus(
@@ -23,7 +27,6 @@ export function resolveDomainStatus(
 		isDomainOnlySite = false,
 		siteSlug = null,
 		getMappingErrors = false,
-		email = null,
 	} = {}
 ) {
 	const transferOptions = {
@@ -221,11 +224,13 @@ export function resolveDomainStatus(
 			if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
 				const noticeText = domain.currentUserIsOwner
 					? translate(
-							'We sent an email at %(email)s to verify your contact information. Please complete the verification or your domain will stop working.',
+							'We sent you an email to verify your contact information. Please complete the verification or your domain will stop working. You can also {{a}}change you email address{{/a}} if you like.',
 							{
+								components: {
+									a: <a href={ domainManagementEditContactInfo( siteSlug, domain.name ) }></a>,
+								},
 								args: {
 									domainName: domain.name,
-									email,
 								},
 							}
 					  )
@@ -461,9 +466,7 @@ export function resolveDomainStatus(
 				domain.pendingRegistration
 			) {
 				const detailCta = domain.currentUserIsOwner
-					? translate( 'Please check the email sent to %(email)s for further details', {
-							args: { email },
-					  } )
+					? translate( 'Please check the email sent to you for further details' )
 					: translate( 'Please check the email sent to the domain owner for further details' );
 
 				const noticeText = translate(
