@@ -64,7 +64,7 @@ function WelcomeTour() {
 	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() ).filter(
 		( step ) => ! ( step.meta.isDesktopOnly && isMobile() )
 	);
-	const { setJustMaximized } = useWelcomeTourContext();
+	const { justMaximized, setJustMaximized } = useWelcomeTourContext();
 
 	// Preload card images
 	usePrefetchTourAssets( tourSteps );
@@ -96,6 +96,22 @@ function WelcomeTour() {
 					recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
+					} );
+				},
+				onStepViewOnce: ( currentStepIndex ) => {
+					if ( justMaximized ) {
+						setJustMaximized( false );
+						return;
+					}
+
+					const lastStepIndex = tourSteps.length - 1;
+					const { heading } = tourSteps[ currentStepIndex ].meta;
+
+					recordTracksEvent( 'calypso_editor_wpcom_tour_slide_view', {
+						slide_number: currentStepIndex + 1,
+						is_last_slide: currentStepIndex === lastStepIndex,
+						slide_heading: heading,
+						is_gutenboarding: isGutenboarding,
 					} );
 				},
 			},
