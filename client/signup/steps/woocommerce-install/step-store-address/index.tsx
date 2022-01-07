@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
-import { TextControl } from '@wordpress/components';
+import { TextControl, ComboboxControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchPaymentCountries } from 'calypso/state/countries/actions';
@@ -21,7 +20,6 @@ import {
 } from '../hooks/use-site-settings';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
-import type { ChangeEventHandler } from 'react';
 import './style.scss';
 
 const CityZipRow = styled.div`
@@ -48,10 +46,18 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 
+<<<<<<< HEAD
 	const { get, save, update } = useSiteSettings( siteId );
+=======
+	const { get, save, update, countriesList } = useSiteSettings( siteId );
+	const countriesAsOptions = countriesList.map( ( country ) => ( {
+		label: country.name,
+		value: country.code,
+	} ) );
+>>>>>>> 939c0fa0a5 (woop: uses combobox to navigate countries)
 
-	const handleCountryChange: ChangeEventHandler< HTMLInputElement > = ( event ) => {
-		update( WOOCOMMERCE_DEFAULT_COUNTRY, event.target.value );
+	const handleCountryChange = ( value: string ) => {
+		update( WOOCOMMERCE_DEFAULT_COUNTRY, value );
 	};
 
 	function getContent() {
@@ -71,11 +77,12 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 						onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_2, value ) }
 					/>
 
-					<FormCountrySelect
+					<ComboboxControl
 						name="country_code"
+						label={ __( 'Country/Region', 'woocommerce-admin' ) }
 						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
 						onChange={ handleCountryChange }
-						countriesList={ countriesList }
+						options={ countriesAsOptions }
 					/>
 
 					<CityZipRow>
