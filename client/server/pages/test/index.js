@@ -1272,14 +1272,15 @@ describe( 'main app', () => {
 		} );
 
 		afterEach( () => {
-			jest.clearAllMocks();
+			customApp.reset();
 		} );
 
 		afterAll( () => {
 			// Without this, recordEvent() calls will throw errors for the rest
-			// of the test suite.
+			// of the test suite. Unsure why it's not being cleared otherwise.
 			app.getMocks().analytics.tracks.recordEvent.mockReset();
 		} );
+
 		it( 'records the event when there is a report', async () => {
 			const { response, request } = await app.run( {
 				request: {
