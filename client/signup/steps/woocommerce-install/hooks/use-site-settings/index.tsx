@@ -16,6 +16,7 @@ export const WOOCOMMERCE_STORE_ADDRESS_2 = 'woocommerce_store_address_2';
 export const WOOCOMMERCE_STORE_CITY = 'woocommerce_store_city';
 export const WOOCOMMERCE_DEFAULT_COUNTRY = 'woocommerce_default_country';
 export const WOOCOMMERCE_STORE_POSTCODE = 'woocommerce_store_postcode';
+export const WOOCOMMERCE_ONBOARDING_PROFILE = 'woocommerce_onboarding_profile';
 
 type optionNameType =
 	| 'blog_public'
@@ -23,7 +24,8 @@ type optionNameType =
 	| typeof WOOCOMMERCE_STORE_ADDRESS_2
 	| typeof WOOCOMMERCE_STORE_CITY
 	| typeof WOOCOMMERCE_DEFAULT_COUNTRY
-	| typeof WOOCOMMERCE_STORE_POSTCODE;
+	| typeof WOOCOMMERCE_STORE_POSTCODE
+	| typeof WOOCOMMERCE_ONBOARDING_PROFILE;
 
 /**
  * Simple react custom hook to deal with site settings.
