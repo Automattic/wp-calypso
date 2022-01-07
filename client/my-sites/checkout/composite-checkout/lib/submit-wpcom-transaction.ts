@@ -1,5 +1,4 @@
 import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
-import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
 import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
@@ -33,14 +32,5 @@ export default async function submitWpcomTransaction(
 		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
-	return wp.req.post(
-		'/me/transactions',
-		mapRecordKeysRecursively(
-			{
-				...payload,
-				tos: getToSAcceptancePayload(),
-			},
-			camelToSnakeCase
-		)
-	);
+	return wp.req.post( '/me/transactions', mapRecordKeysRecursively( payload, camelToSnakeCase ) );
 }

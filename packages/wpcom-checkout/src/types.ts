@@ -92,6 +92,13 @@ export type WPCOMTransactionEndpointRequestPayload = {
 	cart: WPCOMTransactionEndpointCart;
 	payment: WPCOMTransactionEndpointPaymentDetails;
 	domainDetails?: DomainContactDetails;
+	tos?: ToSAcceptanceTrackingDetails;
+};
+
+export type ToSAcceptanceTrackingDetails = {
+	path: string;
+	locale: string;
+	viewport: string;
 };
 
 export type WPCOMTransactionEndpointPaymentDetails = {

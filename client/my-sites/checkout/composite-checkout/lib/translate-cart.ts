@@ -9,6 +9,7 @@ import {
 	isValueTruthy,
 	getLabel,
 } from '@automattic/wpcom-checkout';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
@@ -219,5 +220,6 @@ export function createTransactionEndpointRequestPayload( {
 			useForAllSubscriptions,
 			eventSource,
 		},
+		tos: getToSAcceptancePayload(),
 	};
 }
