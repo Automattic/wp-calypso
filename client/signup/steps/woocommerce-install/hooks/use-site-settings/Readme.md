@@ -51,7 +51,7 @@ Use this helper when the option contains multiple values. It returns get and upd
 ```es6
 import useSiteSettings from './use-site-settings';
 
-function StoreAddressFrom() {
+function StoreOnboardingData() {
 	const { multipleOptionHandler, save } = useSiteSettings( 'site-id' );
 	const { get, update } = multipleOptionHandler( 'woocommerce_onboarding_profile' );
 
