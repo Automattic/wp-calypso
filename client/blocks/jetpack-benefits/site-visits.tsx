@@ -50,13 +50,12 @@ const JetpackBenefitsSiteVisits: React.FC< Props > = ( { siteId, statType, query
 		);
 	}
 
-	const viewCounts = data as { views: number }[] | undefined;
-	const countVisits = ( viewCounts ?? [] ).reduce(
-		( count: number, monthPeriod: { views: number } ) => {
-			return count + monthPeriod.views;
-		},
-		0
-	);
+	const viewCounts = data as { views: number }[] | string | undefined | null;
+	const countVisits = Array.isArray( viewCounts )
+		? viewCounts.reduce( ( count: number, monthPeriod: { views: number } ) => {
+				return count + monthPeriod.views;
+		  }, 0 )
+		: 0;
 
 	return (
 		<React.Fragment>
