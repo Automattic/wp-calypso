@@ -27,6 +27,7 @@ import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -96,6 +97,7 @@ function PluginDetails( props ) {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 
 	// Header Navigation and billing period switcher.
 	const isWide = useBreakpoint( '>1280px' );
@@ -221,7 +223,7 @@ function PluginDetails( props ) {
 				compactBreadcrumb={ ! isWide }
 			>
 				{ isEnabled( 'marketplace-v1' ) &&
-					isMarketplaceProduct &&
+					( isMarketplaceProduct || shouldUpgrade ) &&
 					! requestingPluginsForSites &&
 					! isPluginInstalledOnsite && (
 						<BillingIntervalSwitcher
