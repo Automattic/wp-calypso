@@ -18,12 +18,16 @@ interface FieldsStateValue {
 	isTouched: boolean;
 	errors: string[];
 }
-type FieldsState = Record< string, FieldsStateValue >;
+type FieldsState = Record< string, FieldsStateValue | undefined >;
+type FieldsAction =
+	| { type: 'FIELD_VALUE_SET'; payload: { key: string; value: string } }
+	| { type: 'FIELD_ERROR_SET'; payload: { key: string; message: string } }
+	| { type: 'TOUCH_ALL_FIELDS' };
 
-export const fields: Reducer< FieldsState, AnyAction > = (
-	state = initialState.fields,
-	action
-) => {
+export function fields(
+	state: FieldsState = initialState.fields,
+	action: FieldsAction
+): FieldsState {
 	switch ( action?.type ) {
 		case 'FIELD_VALUE_SET':
 			return {
@@ -42,7 +46,7 @@ export const fields: Reducer< FieldsState, AnyAction > = (
 			return {
 				...state,
 				[ action.payload.key ]: {
-					...state[ action.payload.key ],
+					...( state[ action.payload.key ] ?? { value: '', isTouched: true } ),
 					errors: [ action.payload.message ],
 				},
 			};
@@ -50,7 +54,7 @@ export const fields: Reducer< FieldsState, AnyAction > = (
 		case 'TOUCH_ALL_FIELDS': {
 			return Object.entries( state ).reduce( ( obj: FieldsState, [ key, value ] ) => {
 				obj[ key ] = {
-					...value,
+					...( value ?? { value: '', errors: [] } ),
 					isTouched: true, // mark whether the HTML input has been touched, so we only show errors if the input is touched and its value is not valid
 				};
 				return obj;
@@ -59,7 +63,7 @@ export const fields: Reducer< FieldsState, AnyAction > = (
 		default:
 			return state;
 	}
-};
+}
 
 export const cardDataComplete: Reducer< Record< string, boolean >, AnyAction > = (
 	state = initialState.cardDataComplete,
