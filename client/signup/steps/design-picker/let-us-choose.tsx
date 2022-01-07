@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Design } from '@automattic/design-picker';
 
 interface Props {
+	flowName: string;
 	designs: Design[];
 	onSelect: ( design: Design ) => void;
 }
@@ -26,7 +28,7 @@ const LetUsChooseButton = styled( Button )`
 	text-align: center;
 `;
 
-const LetUsChoose = ( { designs, onSelect }: Props ) => {
+const LetUsChoose = ( { flowName, designs, onSelect }: Props ) => {
 	const translate = useTranslate();
 
 	const defaultDesign = designs.find( ( design ) =>
@@ -38,6 +40,9 @@ const LetUsChoose = ( { designs, onSelect }: Props ) => {
 	}
 
 	function onClick() {
+		recordTracksEvent( 'calypso_signup_let_us_choose_click', {
+			flow: flowName,
+		} );
 		// @ts-expect-error: TS complains that defaultDesign could
 		// be undefined. But we already return early if it is so.
 		onSelect( defaultDesign, {

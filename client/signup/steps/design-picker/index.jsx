@@ -176,7 +176,9 @@ export default function DesignPickerStep( props ) {
 				{ useFeaturedPicksButtons && (
 					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
 				) }
-				{ showLetUsChoose && <LetUsChoose designs={ designs } onSelect={ pickDesign } /> }
+				{ showLetUsChoose && (
+					<LetUsChoose flowName={ props.flowName } designs={ designs } onSelect={ pickDesign } />
+				) }
 			</div>
 		);
 	}
