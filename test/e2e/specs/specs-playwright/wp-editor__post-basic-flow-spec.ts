@@ -119,7 +119,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		} );
 
-		it( 'Close preview', async function () {
+		it.skip( 'Close preview', async function () {
 			// Mobile path.
 			if ( previewPage ) {
 				await previewPage.close();
