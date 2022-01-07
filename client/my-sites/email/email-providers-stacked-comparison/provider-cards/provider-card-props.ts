@@ -7,6 +7,7 @@ export interface ProviderCard {
 	additionalPriceInformation?: TranslateResult;
 	badge?: ReactElement;
 	billingPeriod?: TranslateResult;
+	children?: any;
 	className?: string;
 	description: TranslateResult;
 	detailsExpanded?: boolean;
@@ -17,7 +18,7 @@ export interface ProviderCard {
 	formFields?: ReactElement;
 	logo?: ReactElement | { path: string; className?: string };
 	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
-	priceBadge?: ReactElement | TranslateResult;
+	priceBadge?: ReactElement | TranslateResult | null;
 	productName: TranslateResult;
 	providerKey: string;
 	showExpandButton?: boolean;

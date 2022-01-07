@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -13,9 +13,10 @@ interface BillingIntervalToggleProps {
 	onIntervalChange: ( intervalLength: IntervalLength ) => void;
 }
 
-export const BillingIntervalToggle: FunctionComponent< BillingIntervalToggleProps > = ( props ) => {
-	const { onIntervalChange = noop, intervalLength } = props;
-
+export const BillingIntervalToggle = ( {
+	intervalLength,
+	onIntervalChange = noop,
+}: BillingIntervalToggleProps ): ReactElement => {
 	const translate = useTranslate();
 
 	const onIntervalClick = ( intervalLength: IntervalLength ) => {

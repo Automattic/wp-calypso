@@ -2,7 +2,7 @@ import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/cal
 import { Gridicon } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
-import { FunctionComponent, useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import {
@@ -39,6 +39,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { addToCartAndCheckout, IntervalLength, recordTracksEventAddToCartClick } from './utils';
 import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
+import type { ReactElement } from 'react';
 
 import './professional-email-card.scss';
 
@@ -71,22 +72,21 @@ const professionalEmailCardInformation: ProviderCard = {
 	features: getTitanFeatures(),
 };
 
-const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
-	const {
-		currencyCode = '',
-		hasCartDomain,
-		detailsExpanded,
-		domain,
-		onExpandedChange,
-		selectedDomainName,
-		intervalLength,
-		titanMailMonthlyProduct,
-		titanMailYearlyProduct,
-		comparisonContext,
-		shoppingCartManager,
-		selectedSite,
-		source,
-	} = props;
+const ProfessionalEmailCard = ( {
+	currencyCode = '',
+	hasCartDomain,
+	detailsExpanded,
+	domain,
+	onExpandedChange,
+	selectedDomainName,
+	intervalLength,
+	titanMailMonthlyProduct,
+	titanMailYearlyProduct,
+	comparisonContext,
+	shoppingCartManager,
+	selectedSite,
+	source,
+}: EmailProvidersStackedCardProps ): ReactElement => {
 	const professionalEmail: ProviderCard = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
 

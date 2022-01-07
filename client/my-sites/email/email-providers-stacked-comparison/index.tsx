@@ -27,7 +27,7 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
-import type { FunctionComponent } from 'react';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -52,22 +52,18 @@ type EmailProvidersStackedComparisonProps = {
 	source: string;
 };
 
-const EmailProvidersStackedComparison: FunctionComponent< EmailProvidersStackedComparisonProps > = (
-	props
-) => {
-	const {
-		comparisonContext,
-		currentRoute,
-		domain,
-		domainsWithForwards,
-		isGSuiteSupported,
-		selectedDomainName,
-		selectedSite,
-		showEmailForwardLink = true,
-		siteName,
-		source,
-	} = props;
-
+const EmailProvidersStackedComparison = ( {
+	comparisonContext,
+	currentRoute,
+	domain,
+	domainsWithForwards,
+	isGSuiteSupported,
+	selectedDomainName,
+	selectedSite,
+	showEmailForwardLink = true,
+	siteName,
+	source,
+}: EmailProvidersStackedComparisonProps ): ReactElement => {
 	const translate = useTranslate();
 
 	const [ intervalLength, setIntervalLengthPure ] = useState( IntervalLength.ANNUALLY );

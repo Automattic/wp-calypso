@@ -1,15 +1,16 @@
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
 import ComparisonTable from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table';
 import {
 	professionalEmailFeatures,
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/data';
-import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
-const EmailProvidersInDepthComparison: FunctionComponent< EmailProvidersInDepthComparisonProps > = () => {
+// This component should accept props with type EmailProvidersInDepthComparisonProps,
+// but that's not possible until we actually use the props in the component.
+const EmailProvidersInDepthComparison = (): ReactElement => {
 	const translate = useTranslate();
 
 	return (
