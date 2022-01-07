@@ -1,6 +1,6 @@
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 
-export default function () {
+export default function getToSAcceptancePayload() {
 	let viewportWidth = 0;
 	let viewportHeight = 0;
 	let path = '/';
