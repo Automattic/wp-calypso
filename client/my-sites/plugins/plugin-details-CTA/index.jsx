@@ -1,7 +1,4 @@
 import {
-	isBusiness,
-	isEcommerce,
-	isEnterprise,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
@@ -28,10 +25,10 @@ import {
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { PluginPrice, getPeriodVariationValue } from '../plugin-price';
 import USPS from './usps';
@@ -55,20 +52,11 @@ const PluginDetailsCTA = ( {
 
 	// Site type
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
-	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
 
-	const shouldUpgrade =
-		selectedSite &&
-		! (
-			isBusiness( selectedSite.plan ) ||
-			isEnterprise( selectedSite.plan ) ||
-			isEcommerce( selectedSite.plan ) ||
-			isJetpack ||
-			isVip
-		);
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
