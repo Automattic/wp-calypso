@@ -26,9 +26,9 @@ import styled from '@emotion/styled';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getPlanFeatures from '../lib/get-plan-features';
 import getRefundText from '../lib/get-refund-text';
@@ -201,7 +201,7 @@ function CheckoutSummaryFeaturesList( props: {
 						/>
 					);
 				} ) }
-			{ hasPlanInCart && <CheckoutSummaryPlanFeatures { ...props } /> }
+			{ hasPlanInCart && <CheckoutSummaryPlanFeatures /> }
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon id="features-list-support-text" />
 				<SupportText
@@ -289,7 +289,7 @@ function CheckoutSummaryFeaturesListDomainItem( {
 	);
 }
 
-function CheckoutSummaryPlanFeatures( { siteId }: { siteId: number | undefined } ) {
+function CheckoutSummaryPlanFeatures() {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -300,15 +300,13 @@ function CheckoutSummaryPlanFeatures( { siteId }: { siteId: number | undefined }
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
-	const planHasDomainCredit = useSelector(
-		( state ) => siteId && hasDomainCredit( state, siteId )
-	);
+	const nextDomainIsFree = isNextDomainFree( responseCart );
 	const planFeatures = getPlanFeatures(
 		planInCart,
 		translate,
 		hasDomainsInCart,
 		hasRenewalInCart,
-		planHasDomainCredit
+		nextDomainIsFree
 	);
 
 	return (
