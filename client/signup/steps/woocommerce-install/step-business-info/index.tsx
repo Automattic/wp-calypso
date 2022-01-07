@@ -5,11 +5,18 @@ import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ActionSection, StyledNextButton } from '..';
 import SupportCard from '../components/support-card';
-import { useSiteSettings, WOOCOMMERCE_ONBOARDING_PROFILE } from '../hooks/use-site-settings';
+import {
+	useSiteSettings,
+	WOOCOMMERCE_DEFAULT_COUNTRY,
+	WOOCOMMERCE_ONBOARDING_PROFILE,
+} from '../hooks/use-site-settings';
+import { getRevenueOptions } from './revenue-options';
 import type { WooCommerceInstallProps } from '..';
 import './style.scss';
 
@@ -19,6 +26,8 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) as string;
 
 	const { get, save, update } = useSiteSettings( siteId );
 
