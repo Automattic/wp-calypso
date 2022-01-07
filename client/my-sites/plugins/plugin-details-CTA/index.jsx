@@ -304,7 +304,8 @@ function onClickInstallPlugin( {
 		// We also need to add a business plan to the cart.
 		return page(
 			`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
-				selectedSite?.plan
+				selectedSite?.plan,
+				billingPeriod
 			) }?redirect_to=${ installPluginURL }#step2`
 		);
 	}
@@ -314,7 +315,7 @@ function onClickInstallPlugin( {
 }
 
 // Return the correct business plan slug depending on current plan and pluginBillingPeriod
-function businessPlanToAdd( currentPlan, pluginBillingPeriod = null ) {
+function businessPlanToAdd( currentPlan, pluginBillingPeriod ) {
 	switch ( currentPlan.product_slug ) {
 		case PLAN_PERSONAL_2_YEARS:
 		case PLAN_PREMIUM_2_YEARS:
