@@ -48,9 +48,9 @@ export const fields: Reducer< FieldsState, AnyAction > = (
 			};
 		}
 		case 'TOUCH_ALL_FIELDS': {
-			return Object.entries( state ).reduce( ( obj, [ key, value ] ) => {
+			return Object.entries( state ).reduce( ( obj: FieldsState, [ key, value ] ) => {
 				obj[ key ] = {
-					value: value.value,
+					...value,
 					isTouched: true, // mark whether the HTML input has been touched, so we only show errors if the input is touched and its value is not valid
 				};
 				return obj;
