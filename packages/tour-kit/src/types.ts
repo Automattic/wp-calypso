@@ -1,7 +1,6 @@
 import type { Modifier } from 'react-popper';
 
 export type Step = {
-	className?: string;
 	referenceElements?: {
 		desktop?: string;
 		mobile?: string;
@@ -12,6 +11,9 @@ export type Step = {
 		// | HTMLElement
 		// | string
 		// | ...
+	};
+	options?: {
+		className?: string;
 	};
 };
 

@@ -26,7 +26,7 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 		'tour-kit-step',
 		`is-step-${ currentStepIndex }`,
 		config.options?.className ? `${ config.options?.className }__step` : '',
-		config.steps[ currentStepIndex ].className
+		config.steps[ currentStepIndex ].options?.className
 	);
 
 	return (

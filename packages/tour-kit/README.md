@@ -13,6 +13,8 @@ A tour is made up of the following components:
 - A number of `steps`, made up of:
   - some arbitrary metadata
   - a set of optional reference elements selectors for rendering a step near
+  - a set of options:
+	- className: optional custom CSS class that will be applied to the step
 - Two renderers (used as render props internally):
   - a step renderer (React component/function passed a set of properties)
   - a minimized view renderer (for rendering a minimized view instead of closing)
