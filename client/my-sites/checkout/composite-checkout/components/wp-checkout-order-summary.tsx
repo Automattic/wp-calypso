@@ -26,7 +26,6 @@ import styled from '@emotion/styled';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -146,6 +145,8 @@ function CheckoutSummaryFeaturesList( props: {
 	hasMonthlyPlan: boolean;
 	nextDomainIsFree: boolean;
 } ) {
+	const { hasMonthlyPlan = false, siteId, nextDomainIsFree } = props;
+
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const hasDomainsInCart = responseCart.products.some(
@@ -157,11 +158,9 @@ function CheckoutSummaryFeaturesList( props: {
 	const hasPlanInCart = responseCart.products.some( ( product ) => isPlan( product ) );
 	const hasDIFMLiteInCart = responseCart.products.some( ( product ) => isDIFMProduct( product ) );
 	const translate = useTranslate();
-	const siteId = props.siteId;
 	const isJetpackNotAtomic = useSelector( ( state ) =>
 		siteId ? isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) : undefined
 	);
-	const { hasMonthlyPlan = false } = props;
 
 	const showRefundText = responseCart.total_cost > 0;
 
@@ -197,18 +196,20 @@ function CheckoutSummaryFeaturesList( props: {
 						<CheckoutSummaryFeaturesListDomainItem
 							domain={ domain }
 							key={ domain.uuid }
-							{ ...props }
+							hasMonthlyPlan={ hasMonthlyPlan }
+							nextDomainIsFree={ nextDomainIsFree }
 						/>
 					);
 				} ) }
-			{ hasPlanInCart && <CheckoutSummaryPlanFeatures /> }
+			{ hasPlanInCart && (
+				<CheckoutSummaryPlanFeatures
+					hasDomainsInCart={ hasDomainsInCart }
+					nextDomainIsFree={ nextDomainIsFree }
+				/>
+			) }
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon id="features-list-support-text" />
-				<SupportText
-					hasPlanInCart={ hasPlanInCart }
-					isJetpackNotAtomic={ isJetpackNotAtomic }
-					{ ...props }
-				/>
+				<SupportText hasPlanInCart={ hasPlanInCart } isJetpackNotAtomic={ isJetpackNotAtomic } />
 			</CheckoutSummaryFeaturesListItem>
 			{ showRefundText &&
 				Array.from( refundTexts.values() ).map( ( refundText, index ) => (
@@ -289,18 +290,19 @@ function CheckoutSummaryFeaturesListDomainItem( {
 	);
 }
 
-function CheckoutSummaryPlanFeatures() {
+function CheckoutSummaryPlanFeatures( props: {
+	hasDomainsInCart: boolean;
+	nextDomainIsFree: boolean;
+} ) {
+	const { hasDomainsInCart, nextDomainIsFree } = props;
+
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const hasDomainsInCart = responseCart.products.some(
-		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
-	);
 	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
-	const nextDomainIsFree = isNextDomainFree( responseCart );
 	const planFeatures = getPlanFeatures(
 		planInCart,
 		translate,
