@@ -35,6 +35,7 @@ const ReduxWrappedLayout = ( {
 	primary,
 	secondary,
 	redirectUri,
+	requestCookies,
 } ) => {
 	return (
 		<RouteProvider
@@ -43,7 +44,12 @@ const ReduxWrappedLayout = ( {
 			currentQuery={ currentQuery }
 		>
 			<ReduxProvider store={ store }>
-				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+				<LayoutLoggedOut
+					primary={ primary }
+					secondary={ secondary }
+					redirectUri={ redirectUri }
+					requestCookies={ requestCookies }
+				/>
 			</ReduxProvider>
 		</RouteProvider>
 	);

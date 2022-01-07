@@ -142,6 +142,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
+		requestCookies: request.cookies,
 	} );
 
 	context.app = {

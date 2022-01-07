@@ -16,36 +16,33 @@ import './style.scss';
 const noop = () => {};
 const SIX_MONTHS = 6 * 30 * 24 * 60 * 60;
 const STATUS = {
-	NOT_RENDERED: 'not-rendered',
-	RENDERED: 'rendered',
-	RENDERED_BUT_HIDDEN: 'rendered-but-hidden',
+	VISIBLE: 'visible',
+	HIDDEN: 'hidden',
+	HIDING: 'hiding', // Only used when the user clicks to accept.
 };
 
 const hasDocument = typeof document !== 'undefined';
 
-function shouldShowBanner() {
-	// Don't render banner in SSR.
-	if ( ! hasDocument ) {
-		return false;
-	}
-	const cookies = cookie.parse( document.cookie );
+function shouldShowBanner( requestCookies ) {
+	const cookies = hasDocument ? cookie.parse( document.cookie ) : requestCookies;
 	if ( cookies.sensitive_pixel_option === 'yes' || cookies.sensitive_pixel_option === 'no' ) {
 		return false;
 	}
 	if ( isWpMobileApp() ) {
 		return false;
 	}
-	if ( isCurrentUserMaybeInGdprZone() ) {
+	if ( isCurrentUserMaybeInGdprZone( cookies ) ) {
 		return true;
 	}
 	return false;
 }
 
 function GdprBanner( props ) {
-	const [ bannerStatus, setBannerStatus ] = useState( STATUS.NOT_RENDERED );
-	const translate = useTranslate();
+	const { recordCookieBannerOk, recordCookieBannerView, requestCookies } = props;
 
-	const { recordCookieBannerOk, recordCookieBannerView } = props;
+	const shouldShow = shouldShowBanner( requestCookies );
+	const [ bannerStatus, setBannerStatus ] = useState( shouldShow ? STATUS.VISIBLE : STATUS.HIDDEN );
+	const translate = useTranslate();
 
 	const acknowledgeClicked = () => {
 		document.cookie = cookie.serialize( 'sensitive_pixel_option', 'yes', {
@@ -53,22 +50,12 @@ function GdprBanner( props ) {
 			maxAge: SIX_MONTHS,
 		} );
 		recordCookieBannerOk();
-		setBannerStatus( STATUS.RENDERED_BUT_HIDDEN );
+		setBannerStatus( STATUS.HIDING );
 	};
 
-	// We want to ensure that the first render is always empty, to match the server.
-	// This avoids potential hydration issues.
 	useEffect( () => {
-		shouldShowBanner() && setBannerStatus( STATUS.RENDERED );
-	}, [] );
-
-	useEffect( () => {
-		bannerStatus === STATUS.RENDERED && recordCookieBannerView();
+		bannerStatus === STATUS.VISIBLE && recordCookieBannerView();
 	}, [ bannerStatus, recordCookieBannerView ] );
-
-	if ( bannerStatus === STATUS.NOT_RENDERED ) {
-		return null;
-	}
 
 	const copy = translate(
 		'Our websites and dashboards use cookies. By continuing, you agree to their use. ' +
@@ -83,7 +70,8 @@ function GdprBanner( props ) {
 		<Card
 			compact
 			className={ classNames( 'gdpr-banner', {
-				'gdpr-banner__hiding': bannerStatus === STATUS.RENDERED_BUT_HIDDEN,
+				'gdpr-banner__hidden': bannerStatus === STATUS.HIDDEN,
+				'gdpr-banner__hiding': bannerStatus === STATUS.HIDING,
 			} ) }
 		>
 			<div className="gdpr-banner__text-content">{ preventWidows( decodeEntities( copy ) ) }</div>
