@@ -1,9 +1,9 @@
-import wpcom from 'calypso/lib/wp';
+// import wpcom from 'calypso/lib/wp';
 import {
 	WOOP_COUNTRY_REGIONS_RECEIVE,
 	WOOP_COUNTRY_REGIONS_REQUEST,
-	WOOP_COUNTRY_REGIONS_REQUEST_FAILURE,
-	WOOP_COUNTRY_REGIONS_REQUEST_SUCCESS,
+	// WOOP_COUNTRY_REGIONS_REQUEST_FAILURE,
+	// WOOP_COUNTRY_REGIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/country-states/init';
@@ -27,6 +27,13 @@ export function requestCountryRegions( countryCode ) {
 			countryCode,
 		} );
 
+		return [
+			{ name: 'California', code: 'CA' },
+			{ name: 'Florida', code: 'FL' },
+			{ name: 'New York', code: 'NY' },
+			{ name: 'Texas', code: 'TX' },
+		];
+		/*
 		return wpcom.req
 			.get( `/domains/supported-states/${ countryCode }` )
 			.then( ( countryRegions ) => {
@@ -43,5 +50,6 @@ export function requestCountryRegions( countryCode ) {
 					error,
 				} )
 			);
+*/
 	};
 }
