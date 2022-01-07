@@ -51,7 +51,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 				<div className="step-business-info__instructions-container">
 					<SelectControl
 						label={ __( 'What type of products will be listed?', 'woocommerce-admin' ) }
-						value={ profile_data.product_types[0] }
+						value={ profile_data?.product_types[0] }
 						options={ [
 							{ label: 'physical', value: __( 'Physical Products', 'woocommerce-admin' ) },
 							{ label: 'downloads', value: __( 'Downloads', 'woocommerce-admin' ) },
@@ -62,7 +62,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 					<SelectControl
 						label={ __( 'How many products do you plan to display?', 'woocommerce-admin' ) }
-						value={ profile_data.product_count[0] }
+						value={ profile_data?.product_count[0] }
 						options={ [
 							{ label: '0', value: __( "I don't have any products yet.", 'woocommerce-admin' ) },
 							{ label: '1-10', value: __( '1-10', 'woocommerce-admin' ) },
@@ -75,7 +75,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 					<SelectControl
 						label={ __( 'Currently selling elsewhere?', 'woocommerce-admin' ) }
-						value={ profile_data.selling_venues[0] }
+						value={ profile_data?.selling_venues[0] }
 						options={ [
 							{ label: 'no', value: __( 'No', 'woocommerce-admin' ) },
 							{ label: 'other', value: __( 'Yes, on another platform', 'woocommerce-admin' ) },
