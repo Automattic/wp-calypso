@@ -11,7 +11,7 @@ export const getDesignUrl = (
 	locale: string,
 	options: DesignUrlOptions = {}
 ): string => {
-	const repo = encodeURIComponent( design.is_premium ? 'premium' : 'pub' );
+	const repo = design.stylesheet ? design.stylesheet.split( '/' )[ 0 ] : 'pub';
 	const theme = encodeURIComponent( design.theme );
 	const template = encodeURIComponent( design.template );
 

@@ -133,7 +133,7 @@ export default function DesignPickerStep( props ) {
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
 
 		recordTracksEvent( 'calypso_signup_design_preview_select', {
-			theme: `pub/${ _selectedDesign.theme }`,
+			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign.theme }`,
 			template: _selectedDesign.template,
 			flow: props.flowName,
 			intent: props.signupDependencies.intent,
@@ -145,7 +145,7 @@ export default function DesignPickerStep( props ) {
 
 	function submitDesign( _selectedDesign = selectedDesign ) {
 		recordTracksEvent( 'calypso_signup_select_design', {
-			theme: `pub/${ _selectedDesign?.theme }`,
+			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign?.theme }`,
 			template: _selectedDesign?.template,
 			flow: props.flowName,
 			intent: props.signupDependencies.intent,

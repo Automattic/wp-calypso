@@ -21,6 +21,7 @@ export interface Design {
 	is_alpha?: boolean;
 	is_fse?: boolean;
 	is_premium: boolean;
+	stylesheet?: string;
 	slug: string;
 	template: string;
 	theme: string;

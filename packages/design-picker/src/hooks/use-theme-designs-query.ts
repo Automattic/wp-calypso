@@ -52,7 +52,7 @@ export function useThemeDesignsQuery(
 	);
 }
 
-function apiThemeToDesign( { id, name, taxonomies, stylesheet, template }: any ): Design {
+function apiThemeToDesign( { id, name, taxonomies, stylesheet }: any ): Design {
 	// Designs use a "featured" term in the theme_picks taxonomy. For example: Blank Canvas
 	const isFeaturedPicks = !! taxonomies?.theme_picks?.find(
 		( { slug }: any ) => slug === 'featured'
@@ -65,8 +65,9 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet, template }: any )
 		features: [],
 		is_premium: stylesheet && stylesheet.startsWith( 'premium/' ),
 		is_featured_picks: isFeaturedPicks,
+		stylesheet,
 		slug: id,
-		template,
+		template: id,
 		theme: id,
 		title: name,
 		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
