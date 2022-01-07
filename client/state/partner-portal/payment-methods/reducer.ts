@@ -31,7 +31,7 @@ export const fields: Reducer< FieldsState, AnyAction > = (
 				[ action.payload.key ]: {
 					value: maskField(
 						action.payload.key,
-						state[ action.payload.key ].value,
+						state[ action.payload.key ]?.value ?? '',
 						action.payload.value
 					),
 					isTouched: true, // mark whether the HTML input has been touched, so we only show errors if the input is touched and its value is not valid
