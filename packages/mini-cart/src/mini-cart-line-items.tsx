@@ -3,13 +3,13 @@ import {
 	getCreditsLineItemFromCart,
 	NonProductLineItem,
 	LineItem,
+	canItemBeRemovedFromCart,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
-	ResponseCartProduct,
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
 
@@ -48,7 +48,7 @@ export function MiniCartLineItems( {
 					<MiniCartLineItemWrapper key={ product.uuid }>
 						<LineItem
 							product={ product }
-							hasDeleteButton={ canItemBeDeleted( product ) }
+							hasDeleteButton={ canItemBeRemovedFromCart( product, responseCart ) }
 							removeProductFromCart={ removeProductFromCart }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							responseCart={ responseCart }
@@ -70,9 +70,4 @@ export function MiniCartLineItems( {
 			) }
 		</MiniCartLineItemsWrapper>
 	);
-}
-
-function canItemBeDeleted( item: ResponseCartProduct ): boolean {
-	const itemTypesThatCannotBeDeleted = [ 'domain_redemption' ];
-	return ! itemTypesThatCannotBeDeleted.includes( item.product_slug );
 }
