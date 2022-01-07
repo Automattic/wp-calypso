@@ -252,6 +252,137 @@ function getMessageForTermsOfServiceRecord(
 					},
 				}
 			);
+		case 'terms_for_bundled_trial_unknown_payment_method': {
+			if (
+				args.subscription_start_date &&
+				args.subscription_expiry_date &&
+				args.subscription_auto_renew_date
+			) {
+				if ( args.is_renewal_price_prorated ) {
+					const proratedRenewalArgs = {
+						args: {
+							endDate: moment( args.subscription_expiry_date ).format( 'll' ),
+							numberOfDays: args.subscription_pre_renew_reminder_days || 7,
+							productName: args.product_name,
+							regularPrice: args.regular_renewal_price,
+							renewalDate: moment( args.subscription_auto_renew_date ).format( 'll' ),
+							renewalPrice: args.renewal_price,
+							startDate: moment( args.subscription_start_date ).format( 'll' ),
+						},
+						components: {
+							manageSubscriptionlink: (
+								<a
+									href={ `/purchases/subscriptions/${ siteSlug }` }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							updatePaymentMethodLink: (
+								<a href={ EDIT_PAYMENT_DETAILS } target="_blank" rel="noopener noreferrer" />
+							),
+						},
+					};
+
+					if ( args.product_meta && args.product_meta !== '' ) {
+						return translate(
+							'The promotional period for your %(productName)s subscription for %(domainName)s lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will attempt to renew your subscription at the reduced price of %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription{{/manageSubscriptionlink}} at any time.',
+							{
+								args: {
+									...proratedRenewalArgs.args,
+									domainName: args.product_meta,
+								},
+								components: {
+									...proratedRenewalArgs.components,
+								},
+							}
+						);
+					}
+
+					return translate(
+						'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will attempt to renew your subscription at the reduced price of %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription{{/manageSubscriptionlink}} at any time.',
+						proratedRenewalArgs
+					);
+				}
+
+				const standardRenewalArgs = {
+					args: {
+						endDate: moment( args.subscription_expiry_date ).format( 'll' ),
+						numberOfDays: args.subscription_pre_renew_reminder_days || 7,
+						productName: args.product_name,
+						renewalDate: moment( args.subscription_auto_renew_date ).format( 'll' ),
+						renewalPrice: args.renewal_price,
+						startDate: moment( args.subscription_start_date ).format( 'll' ),
+					},
+					components: {
+						manageSubscriptionlink: (
+							<a
+								href={ `/purchases/subscriptions/${ siteSlug }` }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+						updatePaymentMethodLink: (
+							<a href={ EDIT_PAYMENT_DETAILS } target="_blank" rel="noopener noreferrer" />
+						),
+					},
+				};
+
+				if ( args.product_meta && args.product_meta !== '' ) {
+					return translate(
+						'The promotional period for your %(productName)s subscription for %(domainName)s lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will attempt to renew your subscription at the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time.',
+						{
+							args: {
+								...standardRenewalArgs.args,
+								domainName: args.product_meta,
+							},
+							components: {
+								...standardRenewalArgs.components,
+							},
+						}
+					);
+				}
+
+				return translate(
+					'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will attempt to renew your subscription at the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionlink}}manage your subscription {{/manageSubscriptionlink}} at any time.',
+					standardRenewalArgs
+				);
+			}
+
+			const defaultRenewalArgs = {
+				args: {
+					productName: args.product_name,
+					renewalPrice: args.renewal_price,
+				},
+				components: {
+					link: (
+						<a
+							href={ `/purchases/subscriptions/${ siteSlug }` }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			};
+
+			if ( args.product_meta && args.product_meta !== '' ) {
+				return translate(
+					'At the end of the promotional period your %(productName)s subscription for %(domainName)s will renew at the normal price of %(renewalPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}',
+					{
+						args: {
+							...defaultRenewalArgs.args,
+						},
+						components: {
+							...defaultRenewalArgs.components,
+						},
+					}
+				);
+			}
+
+			return translate(
+				'At the end of the promotional period your %(productName)s subscription will renew at the normal price of %(renewalPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}',
+				defaultRenewalArgs
+			);
+		}
 		default:
 			debug(
 				`Unknown terms of service code: ${ termsOfServiceRecord.code }`,
