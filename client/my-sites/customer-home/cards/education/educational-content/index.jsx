@@ -82,7 +82,7 @@ function EducationalContent( {
 						) ) }
 				</div>
 			</div>
-			{ isDesktop() && (
+			{ isDesktop() && illustration && (
 				<div className="educational-content__illustration">
 					<img src={ illustration } alt="" width={ width } height={ height } />
 				</div>
@@ -91,14 +91,29 @@ function EducationalContent( {
 	);
 }
 
+// Custom propType function that checks for illustration prop is set and returns an error in case it s not.
+function propTypeHasIllustration( props, propName, componentName ) {
+	let error;
+	if ( ! props.illustration ) {
+		return;
+	}
+
+	const prop = props[ propName ];
+	if ( typeof prop !== 'string' && typeof prop !== 'number' ) {
+		error = new Error(
+			`${ componentName } requires ${ propName } if an illustration is provided.`
+		);
+	}
+	return error;
+}
 EducationalContent.propTypes = {
-	title: PropTypes.string,
+	title: PropTypes.string.isRequired,
 	description: PropTypes.node.isRequired,
 	links: PropTypes.array,
 	modalLinks: PropTypes.array,
 	illustration: PropTypes.string,
 	cardName: PropTypes.string,
-	width: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
-	height: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+	width: propTypeHasIllustration,
+	height: propTypeHasIllustration,
 };
 export default EducationalContent;
