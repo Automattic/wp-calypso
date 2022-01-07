@@ -93,7 +93,12 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 		<>
 			{ [ 'right', 'bottom' ].map( ( pos ) => (
 				<CSSTransition key={ pos } in={ inProp } timeout={ timeout } classNames="popover">
-					<StyledPopover position={ pos } context={ context } isVisible={ true }>
+					<StyledPopover
+						position={ pos }
+						context={ context }
+						isVisible={ true }
+						autoposition={ false }
+					>
 						{ children }
 					</StyledPopover>
 				</CSSTransition>
@@ -149,15 +154,17 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					path={ generatePath( props, { intervalType: 'yearly' } ) }
 				>
 					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>
-					<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
-						{ translate(
-							'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
-							{
-								args: { maxDiscount },
-								comment: 'Will be like "Save up to 30% by paying annually..."',
-							}
-						) }
-					</PopupMessages>
+					{ popupIsVisible && (
+						<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
+							{ translate(
+								'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
+								{
+									args: { maxDiscount },
+									comment: 'Will be like "Save up to 30% by paying annually..."',
+								}
+							) }
+						</PopupMessages>
+					) }
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		</IntervalTypeToggleWrapper>
@@ -302,20 +309,8 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSig
 const StyledPopover = styled( Popover )`
 	&.popover {
 		display: none;
-		opacity: 0;
-		transition-property: opacity, transform;
+		transition-property: transform;
 		transition-timing-function: ease-in;
-
-		&.popover-enter-active {
-			opacity: 1;
-			transition-duration: 0.3s;
-		}
-
-		&.popover-exit,
-		&.popover-enter-done {
-			opacity: 1;
-			transition-duration: 0.01s;
-		}
 
 		&.is-right,
 		.rtl &.is-left {
@@ -323,20 +318,16 @@ const StyledPopover = styled( Popover )`
 				display: block;
 			}
 
-			&.popover-enter {
-				transform: translate( 30px, 0 );
-			}
-
-			&.popover-enter-active,
-			&.popover-enter-done {
-				transform: translate( 20px, 0 );
-			}
-
 			.popover__arrow {
 				border-right-color: var( --color-neutral-100 );
 				&::before {
 					border-right-color: var( --color-neutral-100 );
 				}
+				left: 20px;
+			}
+
+			.popover__inner {
+				left: 30px;
 			}
 		}
 
@@ -379,6 +370,20 @@ const StyledPopover = styled( Popover )`
 		.rtl &.is-bottom {
 			.popover__arrow {
 				border-right-color: transparent;
+			}
+		}
+
+		&.is-bottom-right,
+		.rtl &.is-bottom-left {
+			@media ( min-width: 960px ) {
+				display: block;
+			}
+
+			.popover__arrow {
+				border-bottom-color: var( --color-neutral-100 );
+				&::before {
+					border-bottom-color: var( --color-neutral-100 );
+				}
 			}
 		}
 
