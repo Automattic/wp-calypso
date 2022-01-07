@@ -86,18 +86,14 @@ export const getTask = (
 						<span className="site-setup-list__nav-item-email">{ userEmail }</span>
 					</>
 				),
-				description: translate(
-					'We have sent an email to this address to verify your account. Not in inbox or spam folder? Tap the Resend email button! ' +
-						'{{emailWrapper}}%(email)s{{/emailWrapper}} {{changeButton}}Change{{/changeButton}}',
-					{
-						args: {
-							email: userEmail,
-						},
-						components: {
-							changeButton: <a href="/me/account" />,
-							emailWrapper: <span className="site-setup-list__task-description-email" />,
-						},
-					}
+				description: (
+					<>
+						{ translate(
+							'We have sent an email to this address to verify your account. Not in inbox or spam folder? Tap the Resend email button! '
+						) }
+						<span className="site-setup-list__task-description-email"> { userEmail } </span>
+						<a href="/me/account">{ translate( 'Change' ) }</a>
+					</>
 				),
 				actionText: translate( 'Resend email' ),
 				actionDispatch: verifyEmail,

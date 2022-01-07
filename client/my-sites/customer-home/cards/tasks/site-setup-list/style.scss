@@ -20,6 +20,10 @@
 		display: block;
 	}
 
+	.site-setup-list__nav-item-email {
+		display: none;
+	}
+
 	.site-setup-list__nav {
 		border-left: 1px solid var( --color-border-subtle );
 
@@ -70,6 +74,7 @@
 			color: var( --studio-gray-40 );
 			display: block;
 			@include break-mobile {
+				display: none;
 				font-weight: 400;
 				color: var( --studio-gray-40 );
 			}
