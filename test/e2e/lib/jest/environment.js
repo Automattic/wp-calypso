@@ -21,38 +21,50 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 	async setup() {
 		await super.setup();
 
-		// Start the browser
+		// Start the browser.
 		const browser = await chromium.launch( {
 			args: [ '--window-position=0,0' ],
 			headless: process.env.HEADLESS === 'true',
 			slowMo: process.env.SLOWMO && Number( process.env.SLOWMO ),
 		} );
 
-		// Create a helper for creating new contexts with our custom options
-		const newContext = async ( options = {} ) => {
-			const context = await browser.newContext( {
-				...options,
-				userAgent: `Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ browser.version() } Safari/537.36`,
-				recordVideo: { dir: os.tmpdir() },
-			} );
+		// Proxy our E2E browser to bind customized default context options.
+		// We need to it this way because we're not using the first-party Playwright
+		// Test runner and there's no way to customize the default context options
+		// with Jest runner: https://playwright.dev/docs/api/class-testoptions.
+		const wpBrowser = new Proxy( browser, {
+			get: function ( target, prop ) {
+				const orig = target[ prop ];
+				if ( 'function' !== typeof orig ) {
+					return orig;
+				}
 
-			await context.tracing.start( {
-				screenshots: true,
-				snapshots: true,
-			} );
+				if ( [ 'newContext', 'newPage' ].includes( prop ) ) {
+					return async function ( options = {} ) {
+						const entity = await orig.apply( target, [
+							{
+								...options,
+								userAgent: `Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ browser.version() } Safari/537.36`,
+								recordVideo: { dir: os.tmpdir() },
+							},
+						] );
 
-			return context;
-		};
+						const context = prop === 'newPage' ? entity.context() : entity;
+						await context.tracing.start( {
+							screenshots: true,
+							snapshots: true,
+						} );
 
-		// Initiate new context and page
-		const context = await newContext();
-		const page = await context.newPage();
+						return entity;
+					};
+				}
 
-		// Expose globally
-		this.global.browser = browser;
-		this.global.context = context;
-		this.global.page = page;
-		this.global.newContext = newContext;
+				return orig.bind( target );
+			},
+		} );
+
+		// Expose browser globally.
+		this.global.browser = wpBrowser;
 	}
 
 	/**
@@ -62,14 +74,14 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 		switch ( event.name ) {
 			case 'test_start': {
 				// If a test has failed, skip rest of the steps.
-				if ( this.failure?.type === 'hook' ) {
-					event.test.mode = 'fail';
+				if ( this.failure?.type === 'test' ) {
+					event.test.mode = 'skip';
 				}
 				// If a hook has failed, mark all subsequent test steps as failed.
 				// Handling is different compared to test steps because Jest treats
 				// failed hooks differently from tests.
-				if ( this.failure?.type === 'test' ) {
-					event.test.mode = 'skip';
+				if ( this.failure?.type === 'hook' ) {
+					event.test.mode = 'fail';
 				}
 				break;
 			}
@@ -85,7 +97,7 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 				const contexts = this.global.browser.contexts();
 
 				if ( this.failure ) {
-					// Create artefacts folder
+					// Create folders for failed test artefacts.
 					const resultsPath = path.join( process.cwd(), 'results' );
 					await fs.mkdir( resultsPath, { recursive: true } );
 					const artefactsPath = await fs.mkdtemp(
@@ -101,7 +113,7 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 					let contextIndex = 0;
 					let pageIndex = 0;
 
-					// Save trace, screenshot and video artefacts for every open page
+					// Save trace, screenshot and video for every open context/page.
 					for await ( const context of contexts ) {
 						const traceFilepath = path.join(
 							artefactsPath,
@@ -117,7 +129,7 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 							);
 
 							await page.screenshot( { path: `${ mediaFilepath }.png` } );
-							await page.close();
+							await page.close(); // Needed before saving video.
 							await page.video()?.saveAs( `${ mediaFilepath }.webm` );
 
 							pageIndex++;
@@ -126,7 +138,7 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 					}
 				}
 
-				// Delete videos from tmp folder
+				// Delete recorded videos from tmp folder and close all contexts.
 				for await ( const context of contexts ) {
 					for await ( const page of context.pages() ) {
 						await page.close();
@@ -135,6 +147,7 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 					await context.close();
 				}
 
+				// Close the browser.
 				await this.global.browser.close();
 				break;
 			}
