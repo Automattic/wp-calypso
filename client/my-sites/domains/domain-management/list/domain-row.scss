@@ -118,6 +118,7 @@
 
 		&--error {
 			fill: var( --studio-orange-40 );
+			transform: rotate( 180deg );
 		}
 
 		&--success {
