@@ -102,6 +102,11 @@ function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
+		// We do not support TERM_BIENNIALLY for Jetpack plans
+		if ( item.term === TERM_BIENNIALLY ) {
+			return null;
+		}
+
 		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
 
 		return {
