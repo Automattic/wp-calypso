@@ -286,10 +286,12 @@ function onClickInstallPlugin( {
 		if ( upgradeAndInstall ) {
 			// We also need to add a business plan to the cart.
 			return page(
-				`/checkout/${ selectedSite.slug }/${ product_slug },${ businessPlanToAdd(
+				`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 					selectedSite?.plan,
 					billingPeriod
-				) }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
+				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
+					selectedSite.slug
+				}#step2`
 			);
 		}
 
