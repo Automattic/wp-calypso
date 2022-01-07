@@ -51,11 +51,16 @@ export function resolveDomainStatus(
 			if ( isExpiringSoon( domain, 30 ) ) {
 				const expiresMessage =
 					null !== domain.bundledPlanSubscriptionId
-						? translate( 'Domain connection expires with your plan on %(expiryDate)s', {
-								args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
-						  } )
-						: translate( 'Domain connection expires in %(days)s', {
+						? translate(
+								'Domain connection expires with your plan on {{strong}}%(expiryDate)s{{/strong}}',
+								{
+									args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
+									components: { strong: <strong /> },
+								}
+						  )
+						: translate( 'Domain connection expires in {{strong}}%(days)s{{/strong}}', {
 								args: { days: moment.utc( domain.expiry ).fromNow( true ) },
+								components: { strong: <strong /> },
 						  } );
 
 				if ( isExpiringSoon( domain, 5 ) ) {
@@ -148,8 +153,11 @@ export function resolveDomainStatus(
 					icon: 'verifying',
 					listStatusText: status,
 					noticeText: translate(
-						'It can take between a few minutes to 72 hours to verify the connection. You can continue to work on your site, but %(domainName)s won’t be reachable just yet.',
+						'It can take between a few minutes to 72 hours to verify the connection. You can continue to work on your site, but {{strong}}%(domainName)s{{/strong}} won’t be reachable just yet.',
 						{
+							components: {
+								strong: <strong />,
+							},
 							args: {
 								domainName: domain.name,
 							},
@@ -258,17 +266,21 @@ export function resolveDomainStatus(
 
 					renewCta = domain.currentUserIsOwner
 						? translate(
-								'You can renew the domain at the regular rate until %(renewableUntil)s. {{a}}Renew now{{/a}}',
+								'You can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Renew now{{/a}}',
 								{
 									components: {
+										strong: <strong />,
 										a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
 									},
 									args: { renewableUntil },
 								}
 						  )
 						: translate(
-								'The domain owner can renew the domain at the regular rate until %(renewableUntil)s.',
+								'The domain owner can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
 								{
+									components: {
+										strong: <strong />,
+									},
 									args: { renewableUntil },
 								}
 						  );
@@ -279,28 +291,38 @@ export function resolveDomainStatus(
 
 					renewCta = domain.currentUserIsOwner
 						? translate(
-								'You can still renew the domain until %(redeemableUntil)s by paying an additional redemption fee. {{a}}Renew now{{/a}}',
+								'You can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee. {{a}}Renew now{{/a}}',
 								{
 									components: {
+										strong: <strong />,
 										a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
 									},
 									args: { redeemableUntil },
 								}
 						  )
 						: translate(
-								'The domain owner can still renew the domain until %(redeemableUntil)s by paying an additional redemption fee.',
+								'The domain owner can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
 								{
+									components: {
+										strong: <strong />,
+									},
 									args: { redeemableUntil },
 								}
 						  );
 				}
 
-				const domainExpirationMessage = translate( 'This domain expired on %(expiryDate)s. ', {
-					args: {
-						expiryDate: moment.utc( domain.expiry ).format( 'LL' ),
-						renewCta,
-					},
-				} );
+				const domainExpirationMessage = translate(
+					'This domain expired on {{strong}}%(expiryDate)s{{/strong}}. ',
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							expiryDate: moment.utc( domain.expiry ).format( 'LL' ),
+							renewCta,
+						},
+					}
+				);
 
 				const noticeText = [ domainExpirationMessage, renewCta ];
 
@@ -331,9 +353,13 @@ export function resolveDomainStatus(
 					  } )
 					: translate( 'It can be renewed by the owner.' );
 
-				const domainExpirationMessage = translate( 'This domain will expire on %(expiryDate)s. ', {
-					args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
-				} );
+				const domainExpirationMessage = translate(
+					'This domain will expire on {{strong}}%(expiryDate)s{{/strong}}. ',
+					{
+						args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
+						components: { strong: <strong /> },
+					}
+				);
 
 				const expiresMessage = [ domainExpirationMessage, renewCta ];
 
@@ -366,12 +392,13 @@ export function resolveDomainStatus(
 				let noticeText;
 				if ( domain.isPrimary ) {
 					noticeText = translate(
-						'We are setting up your domain. It should start working immediately, but may be unreliable during the first 30 minutes. If you are unable to access your site at %(domainName)s, try setting the primary domain to a domain you know is working. {{learnMore}}Learn more{{/learnMore}} about setting the primary domain, or try {{try}}%(domainName)s{{/try}} now.',
+						'We are setting up your domain. It should start working immediately, but may be unreliable during the first 30 minutes. If you are unable to access your site at {{strong}}%(domainName)s{{/strong}}, try setting the primary domain to a domain you know is working. {{learnMore}}Learn more{{/learnMore}} about setting the primary domain, or try {{try}}{{strong}}%(domainName)s{{/strong}}{{/try}} now.',
 						{
 							args: {
 								domainName: domain.name,
 							},
 							components: {
+								strong: <strong />,
 								learnMore: (
 									<a href={ SETTING_PRIMARY_DOMAIN } rel="noopener noreferrer" target="_blank" />
 								),
@@ -449,9 +476,10 @@ export function resolveDomainStatus(
 						}
 					),
 					noticeText: translate(
-						'Transfer successful! To make this domain work with your WordPress.com site you need {{a}}point it to WordPress.com name servers.{{/a}}',
+						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need {{a}}point it to WordPress.com name servers.{{/a}}',
 						{
 							components: {
+								strong: <strong />,
 								a: <a href={ domainManagementNameServers( siteSlug, domain.domain ) } />,
 							},
 						}
@@ -595,7 +623,7 @@ export function resolveDomainStatus(
 							transferOptions
 						),
 						noticeText: translate(
-							'The transfer should complete by %(transferFinishDate)s. We are waiting for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
+							'The transfer should complete by {{strong}}%(transferFinishDate)s{{/strong}}. We are waiting for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 							transferOptions
 						),
 						listStatusClass: 'verifying',
@@ -631,7 +659,7 @@ export function resolveDomainStatus(
 				),
 				noticeText: domain.transferEndDate
 					? translate(
-							'The transfer should complete by %(transferFinishDate)s. {{a}}Learn more{{/a}}',
+							'The transfer should complete by {{strong}}%(transferFinishDate)s{{/strong}}. {{a}}Learn more{{/a}}',
 							transferOptions
 					  )
 					: null,
