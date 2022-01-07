@@ -221,7 +221,7 @@
 		"exports-loader": "^0.7.0",
 		"gettext-parser": "^4.0.3",
 		"glob": "^7.1.6",
-		"globby": "^10.0.1",
+		"globby": "^10.0.2",
 		"gzip-size": "^6.0.0",
 		"html-loader": "^0.5.5",
 		"husky": "^7.0.4",
