@@ -200,7 +200,7 @@ function scrollIntoView( target: Element, scrollContainer: Element | null ) {
 
 	if ( isMobile() ) {
 		clientHeight = document.documentElement.clientHeight;
-	} else if ( ( ( window as unknown ) as Element ) === scrollContainer ) {
+	} else if ( ( window as unknown ) === ( scrollContainer as unknown ) ) {
 		// An improvement here could be to limit DOM access, via some sort of memoization
 		const body = document.querySelector( 'body' );
 
