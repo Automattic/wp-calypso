@@ -9,8 +9,10 @@ import classnames from 'classnames';
  */
 import usePopperHandler from '../hooks/use-popper-handler';
 import KeyboardNavigation from './keyboard-navigation';
+import TourKitMinimized from './tour-kit-minimized';
 import Overlay from './tour-kit-overlay';
 import Spotlight from './tour-kit-spotlight';
+import TourKitStep from './tour-kit-step';
 import type { Config, Callback } from '../types';
 
 interface Props {
@@ -172,27 +174,25 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 						<div className="tour-kit-frame__arrow" data-popper-arrow { ...arrowPositionProps } />
 					) }
 					{ ! isMinimized ? (
-						<>
-							{ config.renderers.tourStep( {
-								steps: config.steps,
-								currentStepIndex,
-								onDismiss: handleDismiss,
-								onNext: handleNextStepProgression,
-								onPrevious: handlePreviousStepProgression,
-								onMinimize: handleMinimize,
-								setInitialFocusedElement,
-								onGoToStep: handleGoToStep,
-							} ) }
-						</>
+						<TourKitStep
+							config={ config }
+							steps={ config.steps }
+							currentStepIndex={ currentStepIndex }
+							onMinimize={ handleMinimize }
+							onDismiss={ handleDismiss }
+							onNext={ handleNextStepProgression }
+							onPrevious={ handlePreviousStepProgression }
+							onGoToStep={ handleGoToStep }
+							setInitialFocusedElement={ setInitialFocusedElement }
+						/>
 					) : (
-						<>
-							{ config.renderers.tourMinimized( {
-								steps: config.steps,
-								currentStepIndex,
-								onMaximize: handleMaximize,
-								onDismiss: handleDismiss,
-							} ) }
-						</>
+						<TourKitMinimized
+							config={ config }
+							steps={ config.steps }
+							currentStepIndex={ currentStepIndex }
+							onMaximize={ handleMaximize }
+							onDismiss={ handleDismiss }
+						/>
 					) }
 				</div>
 			</div>

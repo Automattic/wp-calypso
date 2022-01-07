@@ -12,6 +12,9 @@ export type Step = {
 		// | string
 		// | ...
 	};
+	options?: {
+		className?: string;
+	};
 };
 
 export type TourStepRendererProps = {
