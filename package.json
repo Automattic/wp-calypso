@@ -164,7 +164,7 @@
 		"@types/react-router-dom": "^5.3.2",
 		"@types/react-transition-group": "^4.4.4",
 		"@types/store": "^2.0.2",
-		"@types/uuid": "^8.3.3",
+		"@types/uuid": "^8.3.4",
 		"@types/validator": "^13.7.1",
 		"@types/webpack-env": "^1.16.3",
 		"@types/wordpress__api-fetch": "^3.2.4",
