@@ -30,7 +30,7 @@
 		font-size: 1.125rem; /* stylelint-disable */
 		font-weight: 600;
 		line-height: 20px;
-		color: var( --studio-gray-60 );
+		color: var( --studio-red-60 );
 		border-bottom: 1px solid var( --studio-gray-5 );
 
 		@include break-mobile() {
@@ -49,6 +49,10 @@
 			top: 2px;
 			margin-right: 7px;
 		}
+	}
+
+	&__learn-more {
+		text-decoration: underline;
 	}
 
 	ul {
