@@ -18,44 +18,6 @@ jobs:
           echo '::set-output name=QR_CALYPSO::https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-${{ github.event.pull_request.head.sha }}%26flags%3Doauth&choe=UTF-8'
           echo '::set-output name=QR_JETPACK::https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-${{ github.event.pull_request.head.sha }}%26env%3Djetpack%26flags%3Doauth&choe=UTF-8'
         id: build_link
-      - name: Build calyspo.link body
-        run: |
-          COMMENT_BODY=$(cat << EOF
-            <!--calypso-live-watermark:apr@v1-->
-            <details>
-              <summary>Calypso Live <a href="${{ steps.build_link.outputs.LINK }}">(direct link)</a></summary>
-              <table>
-                <tr>
-                  <td>
-                    <img src="${{ steps.build_link.outputs.QR_CALYPSO }}" />
-                  </td>
-                  <td>
-                    <a href="${{ steps.build_link.outputs.LINK }}">${{ steps.build_link.outputs.LINK }}</a>
-                  </td>
-                </tr>
-              </table>
-            </details>
-            <details>
-              <summary>Jetpack Cloud live <a href="${{ steps.build_link.outputs.LINK }}&env=jetpack">(direct link)</a></summary>
-              <table>
-                <tr>
-                  <td>
-                    <img src="${{ steps.build_link.outputs.QR_JETPACK }}" />
-                  </td>
-                  <td>
-                    <a href="${{ steps.build_link.outputs.LINK }}&env=jetpack">${{ steps.build_link.outputs.LINK }}&env=jetpack</a>
-                  </td>
-                </tr>
-              </table>
-            </details>
-          EOF
-          )
-          COMMENT_BODY="${COMMENT_BODY//'%'/'%25'}"
-          COMMENT_BODY="${COMMENT_BODY//$'\n'/'%0A'}"
-          COMMENT_BODY="${COMMENT_BODY//$'\r'/'%0D'}"
-          echo "::set-output name=CONTENT::$COMMENT_BODY"
-        id: build_comment
-
       - name: Post comment on PR
         uses: actions/github-script@v3
         with:
@@ -65,5 +27,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '${{ steps.build_comment.outputs.CONTENT }}'
+              body: '<!--calypso-live-watermark:apr@v1--><details> <summary>Calypso Live <a href="${{steps.build_link.outputs.LINK}}">(direct link)</a></summary> <table> <tr> <td> <img src="${{steps.build_link.outputs.QR_CALYPSO}}"/> </td><td> <a href="${{steps.build_link.outputs.LINK}}">${{steps.build_link.outputs.LINK}}</a> </td></tr></table> </details> <details> <summary>Jetpack Cloud live <a href="${{steps.build_link.outputs.LINK}}&env=jetpack">(direct link)</a></summary> <table> <tr> <td> <img src="${{steps.build_link.outputs.QR_JETPACK}}"/> </td><td> <a href="${{steps.build_link.outputs.LINK}}&env=jetpack">${{steps.build_link.outputs.LINK}}&env=jetpack</a> </td></tr></table> </details>'
             })
