@@ -571,8 +571,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
@@ -607,8 +605,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'redirects to the plans page if the cart is empty after removing the last product', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
@@ -624,8 +620,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove foo.cash from cart'
