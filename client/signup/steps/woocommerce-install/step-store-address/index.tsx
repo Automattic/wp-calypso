@@ -15,6 +15,7 @@ import {
 	WOOCOMMERCE_STORE_CITY,
 	WOOCOMMERCE_DEFAULT_COUNTRY,
 	WOOCOMMERCE_STORE_POSTCODE,
+	WOOCOMMERCE_ONBOARDING_PROFILE,
 } from '../hooks/use-site-settings';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
@@ -29,7 +30,11 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 
-	const { get, save, update, countriesList } = useSiteSettings( siteId );
+	const { get, save, update, countriesList, multipleOptionHandler } = useSiteSettings( siteId );
+	const {
+		get: getOnboardingProfileOption,
+		update: updateOnboardingProfileOption,
+	} = multipleOptionHandler( WOOCOMMERCE_ONBOARDING_PROFILE );
 
 	const handleCountryChange: ChangeEventHandler< HTMLInputElement > = ( event ) => {
 		update( WOOCOMMERCE_DEFAULT_COUNTRY, event.target.value );
@@ -69,6 +74,12 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 						label={ __( 'Postcode', 'woocommerce-admin' ) }
 						value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
 						onChange={ ( value ) => update( WOOCOMMERCE_STORE_POSTCODE, value ) }
+					/>
+
+					<TextControl
+						label={ __( 'Email address', 'woocommerce-admin' ) }
+						value={ getOnboardingProfileOption( 'store_email' ) }
+						onChange={ ( value ) => updateOnboardingProfileOption( 'store_email', value ) }
 					/>
 
 					<ActionSection>
