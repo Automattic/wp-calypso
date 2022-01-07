@@ -51,7 +51,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import * as T from 'calypso/types';
 import { sendSiteEditorBetaFeedback } from '../../lib/fse-beta/send-site-editor-beta-feedback';
 import Iframe from './iframe';
-import Main from './main';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { Placeholder } from './placeholder';
 import type { RequestCart } from '@automattic/shopping-cart';
@@ -87,7 +86,6 @@ interface State {
 	classicBlockEditorId?: any;
 	gallery?: any;
 	isIframeLoaded: boolean;
-	isEditorLoaded: boolean;
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isCheckoutModalVisible: boolean;
@@ -123,7 +121,6 @@ enum EditorActions {
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
 	SendSiteEditorBetaFeedback = 'sendSiteEditorBetaFeedback',
-	EditorLoaded = 'editorLoaded',
 }
 
 type ComponentProps = Props &
@@ -137,7 +134,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		isMediaModalVisible: false,
 		isCheckoutModalVisible: false,
 		isIframeLoaded: false,
-		isEditorLoaded: false,
 		currentIFrameUrl: '',
 		checkoutModalOptions: undefined,
 	};
@@ -241,7 +237,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			return;
 		}
 
-		const { action, payload } = data;
+		const { action } = data;
 
 		if (
 			WindowActions.Loaded === action &&
@@ -270,11 +266,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 			window.performance?.mark?.( 'iframe_loaded' );
 			this.setState( { isIframeLoaded: true, currentIFrameUrl: this.props.iframeUrl } );
-
-			// Set the isEditorLoaded to true directly if current version doesn't support `EditorLoaded` action.
-			if ( ! payload?.isSupportEditorLoaded ) {
-				this.setState( { isEditorLoaded: true } );
-			}
 
 			return;
 		}
@@ -503,10 +494,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				() => ports[ 0 ].postMessage( 'error' )
 			);
 		}
-
-		if ( EditorActions.EditorLoaded === action ) {
-			this.setState( { isEditorLoaded: true } );
-		}
 	};
 
 	handlePostStatusChange = ( status: string ) => {
@@ -703,7 +690,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			allowedTypes,
 			multiple,
 			isIframeLoaded,
-			isEditorLoaded,
 			currentIFrameUrl,
 			checkoutModalOptions,
 		} = this.state;
@@ -711,7 +697,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
 		const { redirectTo, isFocusedLaunch, ...cartData } = checkoutModalOptions || {};
-		const isFullyLoaded = isIframeLoaded && isEditorLoaded;
 
 		return (
 			<Fragment>
@@ -721,8 +706,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					properties={ this.getStatsProps() }
 				/>
 				<EditorDocumentHead />
-				<Main>
-					{ ! isFullyLoaded && <Placeholder /> }
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				<div className="main main-column calypsoify is-iframe" role="main">
+					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						<Iframe
 							className={ isIframeLoaded ? 'is-loaded' : '' }
@@ -741,10 +727,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 							// before the user is the redirected to wp-admin.
 							// This styling hides the iframe until it loads or
 							// the redirect is executed.
-							style={ isFullyLoaded && isEditorLoaded ? undefined : { opacity: 0 } }
+							style={ isIframeLoaded ? undefined : { opacity: 0 } }
 						/>
 					) }
-				</Main>
+				</div>
 				<AsyncLoad
 					require="calypso/post-editor/editor-media-modal"
 					placeholder={ null }

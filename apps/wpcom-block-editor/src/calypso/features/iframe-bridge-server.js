@@ -982,8 +982,6 @@ async function handleEditorLoaded( calypsoPort ) {
 				blockCount: blocks.length,
 			},
 		} );
-
-		calypsoPort.postMessage( { action: 'editorLoaded' } );
 	} );
 
 	preselectParentPage();
@@ -1202,11 +1200,5 @@ $( () => {
 	window.addEventListener( 'message', initPort, false );
 
 	//signal module loaded
-	sendMessage( {
-		action: 'loaded',
-		payload: {
-			// Notify `EditorLoaded` action is supported
-			isSupportEditorLoaded: true,
-		},
-	} );
+	sendMessage( { action: 'loaded' } );
 } );
