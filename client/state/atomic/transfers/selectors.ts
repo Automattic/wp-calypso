@@ -3,8 +3,10 @@ import type { AppState } from 'calypso/types';
 
 import 'calypso/state/atomic/init';
 
+const emptyData = {};
+
 export const getLatestAtomicTransfer = (
 	state: AppState,
-	siteId: number
+	siteId: number | null
 ): { transfer?: AtomicTransfer; error?: AtomicTransferError } =>
-	state?.atomicTransfers?.[ siteId ] || {};
+	siteId ? state?.atomicTransfers?.[ siteId ] ?? emptyData : emptyData;

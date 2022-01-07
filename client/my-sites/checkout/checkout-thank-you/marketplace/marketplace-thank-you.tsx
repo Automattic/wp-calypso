@@ -11,6 +11,8 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -78,6 +80,8 @@ const ItemStyled = styled( Item )`
 	}
 `;
 
+const AtomicTransferComplete = 'completed';
+
 interface IProps {
 	productSlug: string;
 }
@@ -92,11 +96,18 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
 
-	const [ retries, setRetries ] = useState( 0 );
+	// Site is transferring to Atomic.
+	// Poll the transfer status.
+	useEffect( () => {
+		if ( ! siteId || transfer?.status === AtomicTransferComplete ) {
+			return;
+		}
+		waitFor( 2 ).then( () => dispatch( dispatch( requestLatestAtomicTransfer( siteId ) ) ) );
+	}, [ siteId, dispatch, transfer ] );
 
-	// retrieve wporg plugin data if not available
 	useEffect( () => {
 		dispatch(
 			pluginInstallationStateChange(
@@ -106,6 +117,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		);
 	}, [ dispatch ] );
 
+	// retrieve wporg plugin data if not available
 	useEffect( () => {
 		if ( ! isWporgPluginFetched ) {
 			dispatch( wporgFetchPluginData( productSlug ) );
@@ -123,14 +135,15 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		}
 	}, [ wporgPlugin ] );
 
+	// Site is already Atomic (or just transferred).
+	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( ! isRequestingPlugins && ! pluginOnSite && retries < 10 ) {
-			setRetries( retries + 1 );
+		if ( transfer?.status === AtomicTransferComplete && ! pluginOnSite && ! isRequestingPlugins ) {
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
 		// Do not add retries in dependencies to avoid infinite loop.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId ] );
+	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId, transfer ] );
 
 	const thankYouImage = {
 		alt: '',
@@ -157,7 +170,11 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					'Get to know your plugin and customize it, so you can hit the ground running.'
 				),
 				stepCta: (
-					<FullWidthButton href={ setupURL } primary busy={ ! pluginOnSite && retries < 10 }>
+					<FullWidthButton
+						href={ setupURL }
+						primary
+						busy={ ! pluginOnSite || transfer?.status !== AtomicTransferComplete }
+					>
 						{ translate( 'Manage plugin' ) }
 					</FullWidthButton>
 				),
