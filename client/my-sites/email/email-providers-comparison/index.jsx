@@ -557,7 +557,33 @@ class EmailProvidersComparison extends Component {
 			? translate( '{{price/}} /mailbox /month (billed monthly)', priceComponents )
 			: translate( '{{price/}} /mailbox /month (billed annually)', priceComponents );
 
-		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
+		const discount = ! isEligibleForFreeTrial ? null : (
+			<>
+				{ translate( '3 months free' ) }
+				{ ! titanIsMonthly && (
+					<span className="email-providers-comparison__discount-with-renewal">
+						<span>
+							{ ' ' }
+							{ translate(
+								'%(firstRenewalPrice)s/mailbox billed in 3 months, renews at %(standardPrice)s/mailbox',
+								{
+									args: {
+										firstRenewalPrice: formatCurrency(
+											( titanMailProduct?.cost ?? 0 ) * 0.75,
+											currencyCode
+										),
+										standardPrice: formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ),
+									},
+									comment:
+										"%(firstRenewalPrice)s is a formatted, reduced price that the user will pay in three months (e.g. '$3'), " +
+										"%(standardPrice)s is a formatted price (e.g. '$5')",
+								}
+							) }
+						</span>
+					</span>
+				) }
+			</>
+		);
 
 		const logo = (
 			<Gridicon
