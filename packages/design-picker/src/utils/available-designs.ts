@@ -11,12 +11,13 @@ export const getDesignUrl = (
 	locale: string,
 	options: DesignUrlOptions = {}
 ): string => {
+	const repo = encodeURIComponent( design.is_premium ? 'premium' : 'pub' );
 	const theme = encodeURIComponent( design.theme );
 	const template = encodeURIComponent( design.template );
 
-	// e.g. https://public-api.wordpress.com/rest/v1/template/demo/rockfield/rockfield?font_headings=Playfair%20Display&font_base=Fira%20Sans&site_title=Rockfield&viewport_height=700&language=en
+	// e.g. https://public-api.wordpress.com/rest/v1.1/template/demo/pub/rockfield/rockfield?font_headings=Playfair%20Display&font_base=Fira%20Sans&site_title=Rockfield&viewport_height=700&language=en
 	return addQueryArgs(
-		`https://public-api.wordpress.com/rest/v1/template/demo/${ theme }/${ template }`,
+		`https://public-api.wordpress.com/rest/v1.1/template/demo/${ repo }/${ theme }/${ template }`,
 		{
 			font_headings: design.fonts?.headings,
 			font_base: design.fonts?.base,
