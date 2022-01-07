@@ -8,6 +8,8 @@ import type { ReactElement } from 'react';
 
 import './style.scss';
 
+// This component should accept props with type EmailProvidersInDepthComparisonProps,
+// but that's not possible until we actually use the props in the component.
 const EmailProvidersInDepthComparison = (): ReactElement => {
 	const translate = useTranslate();
 
