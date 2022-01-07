@@ -3,9 +3,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import mockFs from 'mock-fs';
 import sections from 'calypso/sections';
 
-jest.mock( 'browserslist-useragent', () => ( {
-	matchesUA: jest.fn(),
-} ) );
+jest.mock( 'calypso/server/lib/is-unsupported-browser', () => jest.fn() );
 
 jest.mock( 'child_process', () => ( {
 	execSync: jest.fn(),
@@ -147,7 +145,7 @@ const buildApp = ( environment ) => {
 		// Requiring them here will give us the same instance used by the app, this will allow
 		// us to change the mock implementation later or make assertions about it.
 		mocks.config = require( '@automattic/calypso-config' );
-		mocks.matchesUA = require( 'browserslist-useragent' ).matchesUA;
+		mocks.isUnsupportedBrowser = require( 'calypso/server/lib/is-unsupported-browser' );
 		const {
 			attachBuildTimestamp,
 			attachI18n,
@@ -252,13 +250,13 @@ const buildApp = ( environment ) => {
 			tearDown.push( () => mockFs.restore() );
 		},
 		withEvergreenBrowser() {
-			mocks.matchesUA.mockImplementation( () => true );
-			tearDown.push( () => mocks.matchesUA.mockReset() );
+			mocks.isUnsupportedBrowser.mockImplementation( () => false );
+			tearDown.push( () => mocks.isUnsupportedBrowser.mockReset() );
 			return this;
 		},
-		withNonEvergreenBrowser() {
-			mocks.matchesUA.mockImplementation( () => false );
-			tearDown.push( () => mocks.matchesUA.mockReset() );
+		withUnsupportedBrowser() {
+			mocks.isUnsupportedBrowser.mockImplementation( () => true );
+			tearDown.push( () => mocks.isUnsupportedBrowser.mockReset() );
 			return this;
 		},
 		withConfigEnabled( enabledOptions ) {
@@ -1274,9 +1272,14 @@ describe( 'main app', () => {
 		} );
 
 		afterEach( () => {
-			customApp.reset();
+			jest.clearAllMocks();
 		} );
 
+		afterAll( () => {
+			// Without this, recordEvent() calls will throw errors for the rest
+			// of the test suite.
+			app.getMocks().analytics.tracks.recordEvent.mockReset();
+		} );
 		it( 'records the event when there is a report', async () => {
 			const { response, request } = await app.run( {
 				request: {
@@ -1506,6 +1509,91 @@ describe( 'main app', () => {
 			const { request } = await forceError();
 
 			expect( request.logger.error ).toHaveBeenCalledWith( { error: 'fake error' } );
+		} );
+	} );
+
+	describe( 'unsupported browsers', () => {
+		beforeEach( () => {
+			app.withConfigEnabled( { 'redirect-fallback-browsers': true } );
+		} );
+
+		// Note: these are real user-agents, but the UA parser is mocked, so they shouldn't have an impact.
+		const supportedUA =
+			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.64';
+		const unsupportedUA = 'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko';
+
+		it( 'is redirected to browsehappy', async () => {
+			app.withUnsupportedBrowser();
+
+			const { response } = await app.run( {
+				request: {
+					url: '/',
+					useragent: {
+						source: unsupportedUA,
+					},
+				},
+			} );
+
+			expect( response.redirect ).toHaveBeenCalledWith( '/browsehappy?from=%2F' );
+		} );
+
+		it( 'redirects are logged to tracks', async () => {
+			app.withUnsupportedBrowser();
+
+			const { request } = await app.run( {
+				request: {
+					url: '/test',
+					useragent: {
+						source: unsupportedUA,
+					},
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_redirect_unsupported_browser',
+				{ original_url: '/test' },
+				request
+			);
+		} );
+
+		it( 'can access static assets', async () => {
+			app.withUnsupportedBrowser();
+
+			// An example request to a JS bundle.
+			const { response } = await app.run( {
+				request: {
+					url: '/calypso/evergreen/entry-main.1.min.js',
+					useragent: {
+						source: unsupportedUA,
+					},
+				},
+			} );
+			expect( response.redirect ).not.toHaveBeenCalled();
+
+			// An example request to an image.
+			const { response: response2 } = await app.run( {
+				request: {
+					url: '/calypso/foo/bar.webp',
+					useragent: {
+						source: unsupportedUA,
+					},
+				},
+			} );
+			expect( response2.redirect ).not.toHaveBeenCalled();
+		} );
+
+		it( 'is not redirected if the browser is supported', async () => {
+			app.withEvergreenBrowser();
+
+			const { response } = await app.run( {
+				request: {
+					url: '/',
+					useragent: {
+						source: supportedUA,
+					},
+				},
+			} );
+			expect( response.redirect ).not.toHaveBeenCalled();
+			expect( app.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
