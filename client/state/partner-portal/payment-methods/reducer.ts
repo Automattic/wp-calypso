@@ -13,7 +13,14 @@ const initialState = {
 	brand: {},
 };
 
-export const fields: Reducer< Record< string, unknown >, AnyAction > = (
+interface FieldsStateValue {
+	value: string;
+	isTouched: boolean;
+	errors: string[];
+}
+type FieldsState = Record< string, FieldsStateValue >;
+
+export const fields: Reducer< FieldsState, AnyAction > = (
 	state = initialState.fields,
 	action
 ) => {
