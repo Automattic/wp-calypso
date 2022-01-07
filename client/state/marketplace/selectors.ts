@@ -8,13 +8,15 @@ const shouldUpgradeCheck = (
 	state: IAppState,
 	selectedSite: { ID: number; plan: WithSnakeCaseSlug | WithCamelCaseSlug }
 ) => {
-	return ! (
-		isBusiness( selectedSite?.plan ) ||
-		isEnterprise( selectedSite?.plan ) ||
-		isEcommerce( selectedSite?.plan ) ||
-		isJetpackSite( state, selectedSite?.ID ) ||
-		isVipSite( state, selectedSite?.ID )
-	);
+	return selectedSite
+		? ! (
+				isBusiness( selectedSite?.plan ) ||
+				isEnterprise( selectedSite?.plan ) ||
+				isEcommerce( selectedSite?.plan ) ||
+				isJetpackSite( state, selectedSite?.ID ) ||
+				isVipSite( state, selectedSite?.ID )
+		  )
+		: null;
 };
 
 export default shouldUpgradeCheck;
