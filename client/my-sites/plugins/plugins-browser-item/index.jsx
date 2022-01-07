@@ -1,4 +1,3 @@
-import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -13,8 +12,8 @@ import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
-import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
@@ -94,16 +93,7 @@ const PluginsBrowserListElement = ( props ) => {
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	} );
 
-	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
-	const shouldUpgrade =
-		selectedSite &&
-		! (
-			isBusiness( selectedSite.plan ) ||
-			isEnterprise( selectedSite.plan ) ||
-			isEcommerce( selectedSite.plan ) ||
-			isJetpack ||
-			isVip
-		);
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 
 	if ( isPlaceholder ) {
 		return <Placeholder iconSize={ iconSize } />;

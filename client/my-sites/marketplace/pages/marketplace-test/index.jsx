@@ -1,5 +1,4 @@
 // File used only for development and testing.
-import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
 import { Button, Card, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -21,14 +20,13 @@ import {
 	requestEligibility,
 } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransfer, getEligibility } from 'calypso/state/automated-transfer/selectors';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
 	getPlugins,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -56,9 +54,7 @@ export default function MarketplaceTest() {
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
 	const { data = [], isFetching } = useWPCOMPlugins( 'all' );
 
-	// Site type
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
-	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
@@ -76,14 +72,6 @@ export default function MarketplaceTest() {
 	const dispatch = useDispatch();
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
 	const eligibilityDetails = useSelector( ( state ) => getEligibility( state, selectedSiteId ) );
-
-	const shouldUpgrade = ! (
-		isBusiness( selectedSite?.plan ) ||
-		isEnterprise( selectedSite?.plan ) ||
-		isEcommerce( selectedSite?.plan ) ||
-		isJetpack ||
-		isVip
-	);
 
 	const marketplacePages = [
 		{

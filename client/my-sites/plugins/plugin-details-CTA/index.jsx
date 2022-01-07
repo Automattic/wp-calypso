@@ -1,7 +1,4 @@
 import {
-	isBusiness,
-	isEcommerce,
-	isEnterprise,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
@@ -28,10 +25,10 @@ import {
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { default as checkVipSite } from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { PluginPrice, getPeriodVariationValue } from '../plugin-price';
 import USPS from './usps';
@@ -55,20 +52,11 @@ const PluginDetailsCTA = ( {
 
 	// Site type
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
-	const isVip = useSelector( ( state ) => checkVipSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
 
-	const shouldUpgrade =
-		selectedSite &&
-		! (
-			isBusiness( selectedSite.plan ) ||
-			isEnterprise( selectedSite.plan ) ||
-			isEcommerce( selectedSite.plan ) ||
-			isJetpack ||
-			isVip
-		);
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
@@ -298,10 +286,12 @@ function onClickInstallPlugin( {
 		if ( upgradeAndInstall ) {
 			// We also need to add a business plan to the cart.
 			return page(
-				`/checkout/${ selectedSite.slug }/${ product_slug },${ businessPlanToAdd(
+				`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 					selectedSite?.plan,
 					billingPeriod
-				) }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
+				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
+					selectedSite.slug
+				}#step2`
 			);
 		}
 
@@ -316,7 +306,8 @@ function onClickInstallPlugin( {
 		// We also need to add a business plan to the cart.
 		return page(
 			`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
-				selectedSite?.plan
+				selectedSite?.plan,
+				billingPeriod
 			) }?redirect_to=${ installPluginURL }#step2`
 		);
 	}
@@ -326,7 +317,7 @@ function onClickInstallPlugin( {
 }
 
 // Return the correct business plan slug depending on current plan and pluginBillingPeriod
-function businessPlanToAdd( currentPlan, pluginBillingPeriod = null ) {
+function businessPlanToAdd( currentPlan, pluginBillingPeriod ) {
 	switch ( currentPlan.product_slug ) {
 		case PLAN_PERSONAL_2_YEARS:
 		case PLAN_PREMIUM_2_YEARS:
