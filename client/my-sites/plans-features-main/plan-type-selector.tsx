@@ -328,7 +328,7 @@ const StyledPopover = styled( Popover )`
 
 		.rtl &.is-left {
 			.popover__arrow {
-				right: 40px;
+				right: 20px;
 				border-left-color: var( --color-neutral-100 );
 				&::before {
 					border-left-color: var( --color-neutral-100 );
@@ -336,7 +336,7 @@ const StyledPopover = styled( Popover )`
 			}
 
 			.popover__inner {
-				left: -50px;
+				right: 30px;
 			}
 		}
 
