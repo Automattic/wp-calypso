@@ -35,11 +35,14 @@ type JetpackSite = {
 	ID: number;
 	URL: string;
 	is_wpcom_atomic: boolean;
+	products: Product[];
+	plan: Product;
 };
 
 type Product = {
 	product_id: number;
 	product_name: string;
+	product_slug: string;
 };
 
 interface ProductsList {
@@ -199,8 +202,16 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	] );
 
 	const siteSelectOptions = useMemo( () => {
+		const isProductActivatedOnSite = ( product: Product ) =>
+			product && product.product_slug === productSlug;
+
 		return jetpackSites
 			.filter( ( site: JetpackSite ) => ! site.is_wpcom_atomic )
+			.filter(
+				( site: JetpackSite ) =>
+					! site.products.some( isProductActivatedOnSite ) &&
+					! isProductActivatedOnSite( site.plan )
+			)
 			.map( ( site: JetpackSite ) => ( {
 				value: site?.URL,
 				label: site.URL,
@@ -213,7 +224,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					},
 				},
 			} ) );
-	}, [ jetpackSites, selectedSite ] );
+	}, [ jetpackSites, selectedSite, productSlug ] );
 
 	const lastSelectOption = {
 		value: 'activate-license-manually',
