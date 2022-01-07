@@ -72,7 +72,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Patterns', function () {
-		const patternName = 'Event details';
+		const patternName = 'About Me';
 
 		it( `Add ${ patternName }`, async function () {
 			await gutenbergEditorPage.addPattern( patternName );
@@ -119,7 +119,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		} );
 
-		it( 'Close preview', async function () {
+		it.skip( 'Close preview', async function () {
 			// Mobile path.
 			if ( previewPage ) {
 				await previewPage.close();
