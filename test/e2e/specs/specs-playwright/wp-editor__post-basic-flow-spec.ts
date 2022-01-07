@@ -72,7 +72,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Patterns', function () {
-		const patternName = 'Event details';
+		const patternName = 'About Me';
 
 		it( `Add ${ patternName }`, async function () {
 			await gutenbergEditorPage.addPattern( patternName );
