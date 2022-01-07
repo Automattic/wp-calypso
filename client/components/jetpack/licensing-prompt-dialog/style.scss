@@ -36,6 +36,8 @@
 	right: 8px;
 	top: 8px;
 
+	cursor: pointer;
+
 	@include break-mobile {
 		right: 24px;
 		top: 24px;
