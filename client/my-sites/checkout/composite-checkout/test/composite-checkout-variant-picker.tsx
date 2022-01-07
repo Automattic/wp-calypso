@@ -3,7 +3,7 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
@@ -146,9 +146,11 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			expect(
-				screen.getByText( getVariantItemTextForInterval( expectedVariant ) )
-			).toBeInTheDocument();
+			const getVariantItemText = await screen.findByText(
+				getVariantItemTextForInterval( expectedVariant )
+			);
+
+			expect( getVariantItemText ).toBeInTheDocument();
 		}
 	);
 
@@ -167,9 +169,10 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			expect(
+			const renderedVariant = await waitFor( () =>
 				screen.queryByText( getVariantItemTextForInterval( expectedVariant ) )
-			).not.toBeInTheDocument();
+			);
+			expect( renderedVariant ).not.toBeInTheDocument();
 		}
 	);
 
@@ -185,9 +188,9 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const variantItem = screen
-				.getByText( getVariantItemTextForInterval( expectedVariant ) )
-				.closest( 'label' );
+			const variantItem = (
+				await screen.findByText( getVariantItemTextForInterval( expectedVariant ) )
+			 ).closest( 'label' );
 			const lowestVariantItem = variantItem.closest( 'ul' ).querySelector( 'label:first-of-type' );
 			const lowestVariantSlug = lowestVariantItem.closest( 'div' ).querySelector( 'input' ).value;
 			const variantSlug = variantItem.closest( 'div' ).querySelector( 'input' ).value;
@@ -221,14 +224,14 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const variantItem = screen
-				.getByText( getVariantItemTextForInterval( expectedVariant ) )
-				.closest( 'label' );
+			const variantItem = (
+				await screen.findByText( getVariantItemTextForInterval( expectedVariant ) )
+			 ).closest( 'label' );
 			expect( within( variantItem ).queryByText( /Save \d+%/ ) ).not.toBeInTheDocument();
 		}
 	);
 
-	it( 'does not render the variant picker if there are no variants after clicking into edit mode', async () => {
+	it( 'does not render the variant picker if there are no variants', async () => {
 		const cartChanges = { products: [ domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
