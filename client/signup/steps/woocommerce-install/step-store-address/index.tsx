@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import getCountries from 'calypso/state/selectors/get-countries';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import { ActionSection, StyledNextButton } from '../confirm';
@@ -26,10 +27,11 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const { __ } = useI18n();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const countriesList = useSelector( ( state ) => getCountries( state, 'payments' ) ) || [];
 
 	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 
-	const { get, save, update, countriesList } = useSiteSettings( siteId );
+	const { get, save, update } = useSiteSettings( siteId );
 
 	const handleCountryChange: ChangeEventHandler< HTMLInputElement > = ( event ) => {
 		update( WOOCOMMERCE_DEFAULT_COUNTRY, event.target.value );
