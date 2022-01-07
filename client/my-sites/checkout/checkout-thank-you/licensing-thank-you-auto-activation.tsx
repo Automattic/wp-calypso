@@ -206,13 +206,13 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			product && product.product_slug === productSlug;
 
 		return jetpackSites
-			.filter( ( site: JetpackSite ) => ! site.is_wpcom_atomic )
+			.filter( ( site ) => ! site.is_wpcom_atomic )
 			.filter(
-				( site: JetpackSite ) =>
+				( site ) =>
 					! site.products.some( isProductActivatedOnSite ) &&
 					! isProductActivatedOnSite( site.plan )
 			)
-			.map( ( site: JetpackSite ) => ( {
+			.map( ( site ) => ( {
 				value: site?.URL,
 				label: site.URL,
 				props: {
