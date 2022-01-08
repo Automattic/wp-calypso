@@ -50,11 +50,24 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const { get, save, update } = useSiteSettings( siteId );
 =======
 	const { get, save, update, countriesList } = useSiteSettings( siteId );
+<<<<<<< HEAD
 	const countriesAsOptions = countriesList.map( ( country ) => ( {
 		label: country.name,
 		value: country.code,
 	} ) );
 >>>>>>> 939c0fa0a5 (woop: uses combobox to navigate countries)
+=======
+	const countriesAsOptions = uniqueBy(
+		countriesList
+			.map( ( country ) => ( {
+				label: country.name,
+				value: country.code,
+				// removing empty and duplicated values fixes issues with the search
+			} ) )
+			.filter( ( country ) => country.value !== '' ),
+		( a, b ) => a.value === b.value
+	);
+>>>>>>> 625ea6ab80 (woop: fixes search issues caused by repeated options)
 
 	const handleCountryChange = ( value: string ) => {
 		update( WOOCOMMERCE_DEFAULT_COUNTRY, value );
