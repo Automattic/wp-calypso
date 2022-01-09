@@ -34,8 +34,8 @@ export async function createWpcomAccountBeforeTransaction(
 		const siteId = siteIdFromResponse || transactionOptions.siteId;
 		return {
 			...transactionCart,
-			blog_id: String( siteId ) || '0',
-			cart_key: String( siteId ) || 'no-site',
+			blog_id: siteId ? String( siteId ) : '0',
+			cart_key: siteId ? String( siteId ) : 'no-site',
 			create_new_blog: siteId ? false : true,
 		};
 	} );
