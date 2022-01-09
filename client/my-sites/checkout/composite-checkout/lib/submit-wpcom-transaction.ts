@@ -10,6 +10,9 @@ import type {
 /**
  * Submit a transaction to the WPCOM transactions endpoint.
  *
+ * This is one of two transactions endpoint functions; also see
+ * `wpcomPayPalExpress`.
+ *
  * Note that the payload property is (mostly) in camelCase but the actual
  * submitted data will be converted (mostly) to snake_case.
  *

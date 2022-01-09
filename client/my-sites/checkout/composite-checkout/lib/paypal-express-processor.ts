@@ -65,6 +65,21 @@ export default async function payPalProcessor(
 		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
+/**
+ * Submit a transaction to the WPCOM PayPal transactions endpoint.
+ *
+ * This is one of two transactions endpoint functions; also see
+ * `submitWpcomTransaction`.
+ *
+ * Note that the payload property is (mostly) in camelCase but the actual
+ * submitted data will be converted (mostly) to snake_case.
+ *
+ * Please do not alter payload inside this function if possible to retain type
+ * safety. Instead, alter
+ * `createPayPalExpressEndpointRequestPayloadFromLineItems` or add a new type
+ * safe function that works similarly (see
+ * `createWpcomAccountBeforeTransaction`).
+ */
 async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
