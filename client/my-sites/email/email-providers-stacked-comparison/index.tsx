@@ -107,7 +107,7 @@ const EmailProvidersStackedComparison = ( {
 	};
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
-		if ( selectedSite === null ) {
+		if ( ! selectedSite?.slug ) {
 			return;
 		}
 
