@@ -190,7 +190,7 @@ export function emailManagementForwarding( siteName, domainName, relativeTo = nu
  * @param {string|undefined|null} relativeTo - optional path prefix
  * @param {string|undefined|null} source - optional source
  * @param {string|undefined|null} emailProviderSlug - optional email provider slug whose form should be expanded on page load
- * @param {string|undefined} intervalLength - optional billing interval length (monthly or annually) to show on page load
+ * @param {string|undefined|null} intervalLength - optional billing interval length (monthly or annually) to show on page load
  * @returns {string} the corresponding url
  */
 export function emailManagementPurchaseNewEmailAccount(
@@ -217,7 +217,7 @@ export function emailManagementPurchaseNewEmailAccount(
  * @param {string} domainName - domain name of the account to add users to
  * @param {string|undefined|null} relativeTo - optional path prefix
  * @param {string|undefined|null} source - optional source
- * @param {string|undefined} intervalLength - optional billing interval length (monthly or annually)
+ * @param {string|undefined|null} intervalLength - optional billing interval length (monthly or annually)
  * @returns {string} the corresponding url
  */
 export function emailManagementInDepthComparison(

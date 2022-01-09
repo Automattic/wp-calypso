@@ -10,7 +10,7 @@ const noop = () => {};
 
 interface BillingIntervalToggleProps {
 	intervalLength: IntervalLength;
-	onIntervalChange: ( intervalLength: IntervalLength ) => void;
+	onIntervalChange: ( newIntervalLength: IntervalLength ) => void;
 }
 
 export const BillingIntervalToggle = ( {
@@ -19,8 +19,8 @@ export const BillingIntervalToggle = ( {
 }: BillingIntervalToggleProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const onIntervalClick = ( intervalLength: IntervalLength ) => {
-		return () => onIntervalChange( intervalLength );
+	const onIntervalClick = ( newIntervalLength: IntervalLength ) => {
+		return () => onIntervalChange( newIntervalLength );
 	};
 
 	return (

@@ -12,7 +12,7 @@ export enum IntervalLength {
 	MONTHLY = 'monthly',
 }
 
-export const castIntervalLength = ( stringValue: string ): IntervalLength => {
+export const castIntervalLength = ( stringValue: string ): IntervalLength | null => {
 	const isStringValueInEnum = Object.values( IntervalLength ).some(
 		( enumValue: string ) => enumValue === stringValue
 	);
@@ -21,7 +21,7 @@ export const castIntervalLength = ( stringValue: string ): IntervalLength => {
 		return stringValue as IntervalLength;
 	}
 
-	return IntervalLength.ANNUALLY;
+	return null;
 };
 
 export const addToCartAndCheckout = (

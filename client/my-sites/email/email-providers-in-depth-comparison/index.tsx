@@ -6,10 +6,7 @@ import {
 	professionalEmailFeatures,
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/data';
-import {
-	castIntervalLength,
-	IntervalLength,
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
 import type { ReactElement } from 'react';
 
@@ -21,9 +18,13 @@ const EmailProvidersInDepthComparison = ( {
 }: EmailProvidersInDepthComparisonProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const [ intervalLength, setIntervalLength ] = useState(
-		castIntervalLength( selectedIntervalLength )
-	);
+	const [ intervalLength, setIntervalLength ] = useState( () => {
+		if ( selectedIntervalLength === null ) {
+			return IntervalLength.ANNUALLY;
+		}
+
+		return selectedIntervalLength;
+	} );
 
 	return (
 		<>
@@ -37,7 +38,9 @@ const EmailProvidersInDepthComparison = ( {
 
 			<BillingIntervalToggle
 				intervalLength={ intervalLength }
-				onIntervalChange={ ( interval: IntervalLength ) => setIntervalLength( interval ) }
+				onIntervalChange={ ( newIntervalLength: IntervalLength ) =>
+					setIntervalLength( newIntervalLength )
+				}
 			/>
 
 			<ComparisonTable

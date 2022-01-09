@@ -16,10 +16,7 @@ import { BillingIntervalToggle } from 'calypso/my-sites/email/billing-interval-t
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
-import {
-	castIntervalLength,
-	IntervalLength,
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import {
 	emailManagementAddEmailForwards,
 	emailManagementInDepthComparison,
@@ -49,7 +46,7 @@ type EmailProvidersStackedComparisonProps = {
 	requestingSiteDomains?: boolean;
 	selectedDomainName: string;
 	selectedEmailProviderSlug: string;
-	selectedIntervalLength: string;
+	selectedIntervalLength: IntervalLength | null;
 	selectedSite?: SiteData | null;
 	shoppingCartManager?: any;
 	showEmailForwardLink?: boolean;
@@ -73,9 +70,13 @@ const EmailProvidersStackedComparison = ( {
 }: EmailProvidersStackedComparisonProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const [ intervalLength, setIntervalLength ] = useState(
-		castIntervalLength( selectedIntervalLength )
-	);
+	const [ intervalLength, setIntervalLength ] = useState( () => {
+		if ( selectedIntervalLength === null ) {
+			return IntervalLength.ANNUALLY;
+		}
+
+		return selectedIntervalLength;
+	} );
 
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
 		if ( selectedEmailProviderSlug === 'google-workspace' ) {
@@ -109,14 +110,6 @@ const EmailProvidersStackedComparison = ( {
 		}
 
 		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
-	};
-
-	const changeIntervalLength = ( interval: IntervalLength ) => {
-		if ( intervalLength === IntervalLength.ANNUALLY ) {
-			setDetailsExpanded( { google: false, titan: true } );
-		}
-
-		setIntervalLength( interval );
 	};
 
 	const showGoogleWorkspaceCard = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
@@ -155,7 +148,9 @@ const EmailProvidersStackedComparison = ( {
 
 			<BillingIntervalToggle
 				intervalLength={ intervalLength }
-				onIntervalChange={ changeIntervalLength }
+				onIntervalChange={ ( newIntervalLength: IntervalLength ) =>
+					setIntervalLength( newIntervalLength )
+				}
 			/>
 
 			{ hasExistingEmailForwards && domainsWithForwards !== undefined && (
