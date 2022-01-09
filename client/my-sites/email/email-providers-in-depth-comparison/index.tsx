@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import page from 'page';
+import { useSelector } from 'react-redux';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/billing-interval-toggle';
 import ComparisonTable from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table';
 import {
@@ -7,6 +8,9 @@ import {
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-in-depth-comparison/data';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
 import type { ReactElement } from 'react';
 
@@ -14,17 +18,28 @@ import './style.scss';
 
 const EmailProvidersInDepthComparison = ( {
 	selectedDomainName,
-	selectedIntervalLength,
+	selectedIntervalLength = IntervalLength.ANNUALLY,
 }: EmailProvidersInDepthComparisonProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const [ intervalLength, setIntervalLength ] = useState( () => {
-		if ( selectedIntervalLength === null ) {
-			return IntervalLength.ANNUALLY;
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
+		if ( selectedSiteSlug === null ) {
+			return;
 		}
 
-		return selectedIntervalLength;
-	} );
+		page(
+			emailManagementInDepthComparison(
+				selectedSiteSlug,
+				selectedDomainName,
+				currentRoute,
+				null,
+				newIntervalLength
+			)
+		);
+	};
 
 	return (
 		<>
@@ -37,15 +52,13 @@ const EmailProvidersInDepthComparison = ( {
 			</div>
 
 			<BillingIntervalToggle
-				intervalLength={ intervalLength }
-				onIntervalChange={ ( newIntervalLength: IntervalLength ) =>
-					setIntervalLength( newIntervalLength )
-				}
+				intervalLength={ selectedIntervalLength }
+				onIntervalChange={ changeIntervalLength }
 			/>
 
 			<ComparisonTable
 				emailProviders={ [ professionalEmailFeatures, googleWorkspaceFeatures ] }
-				intervalLength={ intervalLength }
+				intervalLength={ selectedIntervalLength }
 				selectedDomainName={ selectedDomainName }
 			/>
 		</>

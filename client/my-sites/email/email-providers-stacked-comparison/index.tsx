@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
@@ -20,6 +21,7 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-c
 import {
 	emailManagementAddEmailForwards,
 	emailManagementInDepthComparison,
+	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -46,7 +48,7 @@ type EmailProvidersStackedComparisonProps = {
 	requestingSiteDomains?: boolean;
 	selectedDomainName: string;
 	selectedEmailProviderSlug: string;
-	selectedIntervalLength: IntervalLength | null;
+	selectedIntervalLength: IntervalLength | undefined;
 	selectedSite?: SiteData | null;
 	shoppingCartManager?: any;
 	showEmailForwardLink?: boolean;
@@ -62,21 +64,13 @@ const EmailProvidersStackedComparison = ( {
 	isGSuiteSupported,
 	selectedDomainName,
 	selectedEmailProviderSlug,
-	selectedIntervalLength,
+	selectedIntervalLength = IntervalLength.ANNUALLY,
 	selectedSite,
 	showEmailForwardLink = true,
 	siteName,
 	source,
 }: EmailProvidersStackedComparisonProps ): ReactElement => {
 	const translate = useTranslate();
-
-	const [ intervalLength, setIntervalLength ] = useState( () => {
-		if ( selectedIntervalLength === null ) {
-			return IntervalLength.ANNUALLY;
-		}
-
-		return selectedIntervalLength;
-	} );
 
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
 		if ( selectedEmailProviderSlug === 'google-workspace' ) {
@@ -92,7 +86,7 @@ const EmailProvidersStackedComparison = ( {
 		};
 	} );
 
-	const onExpandedStateChange = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
+	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
 			const [ key, currentExpanded ] = entry;
 
@@ -112,7 +106,25 @@ const EmailProvidersStackedComparison = ( {
 		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
 	};
 
-	const showGoogleWorkspaceCard = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
+	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
+		if ( selectedSite === null ) {
+			return;
+		}
+
+		page(
+			emailManagementPurchaseNewEmailAccount(
+				selectedSite.slug,
+				selectedDomainName,
+				currentRoute,
+				null,
+				selectedEmailProviderSlug,
+				newIntervalLength
+			)
+		);
+	};
+
+	const showGoogleWorkspaceCard =
+		selectedIntervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
 	const hasExistingEmailForwards = hasEmailForwards( domain );
 
 	return (
@@ -137,7 +149,7 @@ const EmailProvidersStackedComparison = ( {
 										selectedDomainName,
 										currentRoute,
 										null,
-										intervalLength
+										selectedIntervalLength
 									) }
 								/>
 							),
@@ -147,10 +159,8 @@ const EmailProvidersStackedComparison = ( {
 			) }
 
 			<BillingIntervalToggle
-				intervalLength={ intervalLength }
-				onIntervalChange={ ( newIntervalLength: IntervalLength ) =>
-					setIntervalLength( newIntervalLength )
-				}
+				intervalLength={ selectedIntervalLength }
+				onIntervalChange={ changeIntervalLength }
 			/>
 
 			{ hasExistingEmailForwards && domainsWithForwards !== undefined && (
@@ -165,8 +175,8 @@ const EmailProvidersStackedComparison = ( {
 				detailsExpanded={ detailsExpanded.titan }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
-				intervalLength={ intervalLength }
-				onExpandedChange={ onExpandedStateChange }
+				intervalLength={ selectedIntervalLength }
+				onExpandedChange={ changeExpandedState }
 			/>
 
 			{ showGoogleWorkspaceCard && (
@@ -175,8 +185,8 @@ const EmailProvidersStackedComparison = ( {
 					detailsExpanded={ detailsExpanded.google }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
-					intervalLength={ intervalLength }
-					onExpandedChange={ onExpandedStateChange }
+					intervalLength={ selectedIntervalLength }
+					onExpandedChange={ changeExpandedState }
 				/>
 			) }
 

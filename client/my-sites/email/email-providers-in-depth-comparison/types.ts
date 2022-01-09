@@ -22,7 +22,7 @@ export type EmailProviderFeatures = {
 export type EmailProvidersInDepthComparisonProps = {
 	comparisonContext: string;
 	selectedDomainName: string;
-	selectedIntervalLength: IntervalLength | null;
+	selectedIntervalLength: IntervalLength | undefined;
 	siteName: string;
 	source: string;
 };
