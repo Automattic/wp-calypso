@@ -92,7 +92,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 					<ComboboxControl
 						name="country_code"
-						label={ __( 'Country/Region', 'woocommerce-admin' ) }
+						label={ __( 'Country / Region', 'woocommerce-admin' ) }
 						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
 						onChange={ handleCountryChange }
 						options={ countriesAsOptions }
