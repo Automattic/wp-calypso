@@ -7,14 +7,14 @@ import React, { useState } from 'react';
 import { UrlData } from 'calypso/signup/steps/import/types';
 import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import ConfirmModal from './confirm-modal';
+import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 import './style.scss';
 
 interface Props {
 	fromSite: string;
 	fromSiteData: UrlData;
-	// TODO: define site type
-	site: { [ key: string ]: any };
+	site: SitesItem | null;
 	siteSlug: string;
 	startImport: () => void;
 }
