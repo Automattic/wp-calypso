@@ -81,7 +81,7 @@ export default function RevokeLicenseDialog( {
 					target="_blank"
 					rel="noreferrer noopener"
 				>
-					{ translate( 'More about revoking licenses' ) }
+					{ translate( 'Learn more about revoking licenses' ) }
 					&nbsp;
 					<Gridicon icon="external" size={ 18 } />
 				</a>
