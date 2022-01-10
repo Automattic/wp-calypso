@@ -51,6 +51,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 =======
 	const { get, save, update, countriesList } = useSiteSettings( siteId );
 <<<<<<< HEAD
+<<<<<<< HEAD
 	const countriesAsOptions = countriesList.map( ( country ) => ( {
 		label: country.name,
 		value: country.code,
@@ -68,6 +69,11 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 		( a, b ) => a.value === b.value
 	);
 >>>>>>> 625ea6ab80 (woop: fixes search issues caused by repeated options)
+=======
+	const countriesAsOptions = Object.entries( countriesList ).map( ( [ key, value ] ) => {
+		return { value: key, label: value };
+	} );
+>>>>>>> c1b8fb3475 (Use new woocommerce/countries/regions endpoint)
 
 	const handleCountryChange = ( value: string ) => {
 		update( WOOCOMMERCE_DEFAULT_COUNTRY, value );
