@@ -1,7 +1,6 @@
 import { uniqueBy } from '@automattic/js-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPaymentCountries } from 'calypso/state/countries/actions';
 import {
 	requestSiteSettings,
 	saveSiteSettings,
@@ -48,7 +47,6 @@ export function useSiteSettings( siteId: number ) {
 		}
 
 		dispatch( requestSiteSettings( siteId ) );
-		dispatch( fetchPaymentCountries() );
 	}, [ dispatch, siteId ] );
 
 	// Simple getter helper.
