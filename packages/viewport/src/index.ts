@@ -66,7 +66,7 @@ function addListenerFunctions(
 	};
 }
 
-function createMediaQueryList( args: undefined | { min?: number; max?: number } ): QueryItem {
+function createMediaQueryList( args?: { min?: number; max?: number } ): QueryItem {
 	const { min, max } = args ?? {};
 	if ( min !== undefined && max !== undefined ) {
 		return isServer
