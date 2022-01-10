@@ -585,17 +585,6 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
-		'site-title-without-domains': {
-			stepName: 'site-title-without-domains',
-			apiRequestFunction: createSiteWithCart,
-			delayApiRequestUntilComplete: true,
-			dependencies: [ 'themeSlugWithRepo' ],
-			providesDependencies: [ 'siteTitle', 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
 		'site-style': {
 			stepName: 'site-style',
 			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
