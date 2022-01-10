@@ -65,7 +65,7 @@
 		"mailchimp": false,
 		"manage/export/guided-transfer": true,
 		"marketplace-test": false,
-		"marketplace-v1": false,
+		"marketplace-v1": true,
 		"marketplace": false,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
