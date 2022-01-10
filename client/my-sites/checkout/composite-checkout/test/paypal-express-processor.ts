@@ -53,6 +53,11 @@ describe( 'payPalExpressProcessor', () => {
 		domain_details: null,
 		postal_code: '',
 		success_url: 'https://example.com/thank-you',
+		tos: {
+			locale: 'en',
+			path: '/',
+			viewport: '0x0',
+		},
 	};
 
 	beforeEach( () => {
