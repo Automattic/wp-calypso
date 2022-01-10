@@ -1,8 +1,6 @@
 .licensing-activation-banner {
-	justify-content: space-between;
-	align-items: center;
-	padding-top: 5px;
-    padding-bottom: 12px;
+	padding-top: 16px;
+    padding-bottom: 16px;
     color: var( --studio-white );
     text-align: center;
 
@@ -12,6 +10,9 @@
 	background-color: var( --studio-black );
 
 	@include breakpoint-deprecated( '>660px' ) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
 		border-width: 1px;
 		border-radius: calc( 2px * 4 );
 	}
@@ -20,12 +21,25 @@
     a:visited,
     a:hover,
     a:active {
+        margin-left: 12px;
         text-decoration: underline;
         color: var( --studio-white );
     }
 }
 
 .licensing-activation-banner__key-icon {
-    padding-right: 12px;
+    margin-right: 12px;
+    display: none;
+    @include breakpoint-deprecated( '>660px' ) {
+        display: block;
+		border-width: 1px;
+		border-radius: calc( 2px * 4 );
+	}
+}
+
+.is-section-jetpack-connect .licensing-activation-banner {
+    @include breakpoint-deprecated( '>660px' ) {
+        margin-bottom: 24px;
+	}
 }
 
