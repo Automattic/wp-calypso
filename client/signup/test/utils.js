@@ -205,7 +205,6 @@ describe( 'utils', () => {
 			{ stepName: 'site-type', lastKnownFlow: 'onboarding', status: 'completed' },
 			{ stepName: 'site-topic-with-preview', lastKnownFlow: 'onboarding', status: 'completed' },
 			{ stepName: 'site-title-with-preview', lastKnownFlow: 'onboarding', status: 'completed' },
-			{ stepName: 'site-style-with-preview', lastKnownFlow: 'onboarding', status: 'completed' },
 			{ stepName: 'domains-with-preview', lastKnownFlow: 'onboarding', status: 'pending' },
 			{ stepName: 'plans', lastKnownFlow: 'onboarding', status: 'pending' },
 		];

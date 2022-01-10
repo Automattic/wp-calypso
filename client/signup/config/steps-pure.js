@@ -585,11 +585,6 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
-		'site-style': {
-			stepName: 'site-style',
-			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
-		},
-
 		// Steps with preview
 		// These can be removed once we make the preview the default
 		'site-topic-with-preview': {
@@ -597,14 +592,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'site-style-with-preview': {
-			stepName: 'site-style-with-preview',
-			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
 			props: {
 				showSiteMockups: true,
 			},
