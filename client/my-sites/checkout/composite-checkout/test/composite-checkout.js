@@ -593,7 +593,8 @@ describe( 'CompositeCheckout', () => {
 			'Remove WordPress.com Personal from cart'
 		);
 		fireEvent.click( removeProductButton );
-		const confirmButton = await screen.findByText( 'Continue' );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( () => {
 			expect( navigate ).toHaveBeenCalledWith( '/plans/foo.com' );
@@ -608,7 +609,8 @@ describe( 'CompositeCheckout', () => {
 			'Remove foo.cash from cart'
 		);
 		fireEvent.click( removeProductButton );
-		const confirmButton = await screen.findByText( 'Continue' );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
@@ -767,7 +769,7 @@ describe( 'CompositeCheckout', () => {
 			screen
 				.getAllByLabelText( 'WordPress.com Personal' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
-			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			screen
 				.getAllByLabelText( 'bar.com' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$0' ) );
@@ -796,8 +798,8 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( async () => {
-			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -809,8 +811,8 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( async () => {
-			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -825,9 +827,9 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( () => {
-			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
 		} );
 	} );
 
