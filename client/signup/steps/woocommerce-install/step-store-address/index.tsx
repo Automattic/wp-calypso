@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect } from 'react';
@@ -22,6 +23,16 @@ import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
 import type { ChangeEventHandler } from 'react';
 import './style.scss';
+
+const CityZipRow = styled.div`
+	display: -ms-grid;
+	display: grid;
+	width: 100%;
+	-ms-grid-columns: 48% 4% 48%;
+	grid-template-columns: 48% 48%;
+	grid-column-gap: 4%;
+	justify-items: stretch;
+`;
 
 export default function StepStoreAddress( props: WooCommerceInstallProps ): ReactElement | null {
 	const { goToStep, isReskinned, headerTitle, headerDescription } = props;
@@ -67,17 +78,19 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 						countriesList={ countriesList }
 					/>
 
-					<TextControl
-						label={ __( 'City', 'woocommerce-admin' ) }
-						value={ get( WOOCOMMERCE_STORE_CITY ) }
-						onChange={ ( value ) => update( WOOCOMMERCE_STORE_CITY, value ) }
-					/>
+					<CityZipRow>
+						<TextControl
+							label={ __( 'City', 'woocommerce-admin' ) }
+							value={ get( WOOCOMMERCE_STORE_CITY ) }
+							onChange={ ( value ) => update( WOOCOMMERCE_STORE_CITY, value ) }
+						/>
 
-					<TextControl
-						label={ __( 'Postcode', 'woocommerce-admin' ) }
-						value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
-						onChange={ ( value ) => update( WOOCOMMERCE_STORE_POSTCODE, value ) }
-					/>
+						<TextControl
+							label={ __( 'Postcode', 'woocommerce-admin' ) }
+							value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
+							onChange={ ( value ) => update( WOOCOMMERCE_STORE_POSTCODE, value ) }
+						/>
+					</CityZipRow>
 
 					<ActionSection>
 						<SupportCard />
