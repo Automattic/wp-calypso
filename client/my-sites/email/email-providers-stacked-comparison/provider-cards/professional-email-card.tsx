@@ -1,9 +1,9 @@
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import {
 	titanMailMonthly,
@@ -23,7 +23,7 @@ import {
 	transformMailboxForCart,
 	validateMailboxes as validateTitanMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
-import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
@@ -77,24 +77,38 @@ const professionalEmailCardInformation: ProviderCard = {
 };
 
 const ProfessionalEmailCard = ( {
-	currencyCode = '',
-	hasCartDomain,
+	cartDomainName,
 	detailsExpanded,
-	domain,
 	onExpandedChange,
 	selectedDomainName,
 	intervalLength,
-	titanMailMonthlyProduct,
-	titanMailYearlyProduct,
 	comparisonContext,
-	shoppingCartManager,
-	selectedSite,
 	source,
 }: EmailProvidersStackedCardProps ): ReactElement => {
+	const hasCartDomain = Boolean( cartDomainName );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const selectedSite = useSelector( getSelectedSite );
+	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
+	const domain = getSelectedDomain( {
+		domains,
+		selectedDomainName: selectedDomainName,
+	} ) as unknown;
+
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
+
 	const professionalEmail: ProviderCard = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
 
-	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
+	const titanMailMonthlyProduct = useSelector( ( state ) =>
+		getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG )
+	);
+	const titanMailYearlyProduct = useSelector( ( state ) =>
+		getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG )
+	);
+
+	const isEligibleForFreeTrial =
+		hasCartDomain || isDomainEligibleForTitanFreeTrial( domain as Record< string, unknown > );
 
 	const titanMailProduct =
 		intervalLength === IntervalLength.MONTHLY ? titanMailMonthlyProduct : titanMailYearlyProduct;
@@ -110,7 +124,8 @@ const ProfessionalEmailCard = ( {
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
 
 		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes, optionalFields );
-		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+		const userCanAddEmail =
+			hasCartDomain || canCurrentUserAddEmail( domain as Record< string, unknown > );
 		const userCannotAddEmailReason = userCanAddEmail
 			? null
 			: getCurrentUserCannotAddEmailReason( domain );
@@ -169,7 +184,7 @@ const ProfessionalEmailCard = ( {
 	professionalEmail.onExpandedChange = onExpandedChange;
 	professionalEmail.priceBadge = (
 		<>
-			{ isDomainEligibleForTitanFreeTrial( domain ) && (
+			{ isDomainEligibleForTitanFreeTrial( domain as Record< string, unknown > ) && (
 				<div className="professional-email-card__discount badge badge--info-green">
 					{ translate( '3 months free' ) }
 				</div>
@@ -202,24 +217,4 @@ const ProfessionalEmailCard = ( {
 	return <EmailProvidersStackedCard { ...professionalEmail } />;
 };
 
-export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySiteId( state, selectedSite?.ID );
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: ownProps.selectedDomainName,
-	} );
-	const resolvedDomainName = domain ? domain.name : ownProps.selectedDomainName;
-
-	const hasCartDomain = Boolean( ownProps.cartDomainName );
-
-	return {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		domain,
-		selectedDomainName: resolvedDomainName ?? '',
-		hasCartDomain,
-		selectedSite,
-		titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
-		titanMailYearlyProduct: getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG ),
-	};
-} )( withCartKey( withShoppingCart( ProfessionalEmailCard ) ) );
+export default ProfessionalEmailCard;
