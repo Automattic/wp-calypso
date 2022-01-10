@@ -43,6 +43,7 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ReactElement } from 'react';
 
 import './professional-email-card.scss';
@@ -92,7 +93,7 @@ const ProfessionalEmailCard = ( {
 	const domain = getSelectedDomain( {
 		domains,
 		selectedDomainName: selectedDomainName,
-	} ) as unknown;
+	} ) as ResponseDomain;
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -107,8 +108,7 @@ const ProfessionalEmailCard = ( {
 		getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG )
 	);
 
-	const isEligibleForFreeTrial =
-		hasCartDomain || isDomainEligibleForTitanFreeTrial( domain as Record< string, unknown > );
+	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 
 	const titanMailProduct =
 		intervalLength === IntervalLength.MONTHLY ? titanMailMonthlyProduct : titanMailYearlyProduct;
@@ -124,8 +124,7 @@ const ProfessionalEmailCard = ( {
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
 
 		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes, optionalFields );
-		const userCanAddEmail =
-			hasCartDomain || canCurrentUserAddEmail( domain as Record< string, unknown > );
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 		const userCannotAddEmailReason = userCanAddEmail
 			? null
 			: getCurrentUserCannotAddEmailReason( domain );
@@ -184,7 +183,7 @@ const ProfessionalEmailCard = ( {
 	professionalEmail.onExpandedChange = onExpandedChange;
 	professionalEmail.priceBadge = (
 		<>
-			{ isDomainEligibleForTitanFreeTrial( domain as Record< string, unknown > ) && (
+			{ isDomainEligibleForTitanFreeTrial( domain ) && (
 				<div className="professional-email-card__discount badge badge--info-green">
 					{ translate( '3 months free' ) }
 				</div>
