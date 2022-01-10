@@ -2,6 +2,7 @@ import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-c
 import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
@@ -130,5 +131,6 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		country,
 		postalCode: postalCode ? tryToGuessPostalCodeFormat( postalCode.toUpperCase(), country ) : '',
 		domainDetails,
+		tos: getToSAcceptancePayload(),
 	};
 }

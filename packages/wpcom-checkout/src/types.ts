@@ -202,6 +202,7 @@ export type PayPalExpressEndpointRequestPayload = {
 	domainDetails: DomainContactDetails | null;
 	country: string;
 	postalCode: string;
+	tos?: ToSAcceptanceTrackingDetails;
 };
 
 export type PayPalExpressEndpointResponse = unknown;
