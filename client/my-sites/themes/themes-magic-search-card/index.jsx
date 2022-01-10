@@ -12,7 +12,10 @@ import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search from 'calypso/components/search';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import StickyPanel from 'calypso/components/sticky-panel';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MagicSearchWelcome from './welcome';
 
 import './style.scss';
@@ -278,9 +281,9 @@ class ThemesMagicSearchCard extends Component {
 	};
 
 	render() {
-		const { translate, filters, showTierThemesControl } = this.props;
+		const { translate, filters, showTierThemesControl, isStandaloneJetpack } = this.props;
 		const { isPopoverVisible } = this.state;
-		const isPremiumThemesEnabled = config.isEnabled( 'themes/premium' );
+		const isPremiumThemesEnabled = ! isStandaloneJetpack && config.isEnabled( 'themes/premium' );
 
 		const tiers = [
 			{ value: 'all', label: translate( 'All' ) },
@@ -402,10 +405,19 @@ const allowSomeAllValidFilters = ( filtersKeys ) =>
 	intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
 
 export default compose(
-	connect( ( state ) => ( {
-		filters: allowSomeThemeFilters( getThemeFilters( state ) ),
-		allValidFilters: allowSomeAllValidFilters( Object.keys( getThemeFilterToTermTable( state ) ) ),
-	} ) ),
+	connect( ( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		return {
+			isStandaloneJetpack: isJetpack && ! isAtomic,
+			isJetpack: isJetpackSite( state, siteId ),
+			filters: allowSomeThemeFilters( getThemeFilters( state ) ),
+			allValidFilters: allowSomeAllValidFilters(
+				Object.keys( getThemeFilterToTermTable( state ) )
+			),
+		};
+	} ),
 	localize,
 	wrapWithClickOutside,
 	withMobileBreakpoint

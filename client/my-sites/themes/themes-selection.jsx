@@ -8,6 +8,7 @@ import QueryThemes from 'calypso/components/data/query-themes';
 import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
@@ -203,6 +204,11 @@ export const ConnectedThemesSelection = connect(
 		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isStandaloneJetpack = isJetpack && ! isAtomic;
+		// Jetpack doesn't support premium themes
+		const isSupportPremiumThemes = ! isStandaloneJetpack && config.isEnabled( 'themes/premium' );
+
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
 			sourceSiteId = source;
@@ -218,7 +224,7 @@ export const ConnectedThemesSelection = connect(
 		const query = {
 			search,
 			page,
-			tier: config.isEnabled( 'themes/premium' ) ? tier : 'free',
+			tier: isSupportPremiumThemes ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};
