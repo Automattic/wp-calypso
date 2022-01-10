@@ -310,7 +310,9 @@ function displayRenewalSuccessNotice(
 					{
 						args: {
 							productName: renewalItem.product_name,
-							duration: moment.duration( { days: parseInt( renewalItem.bill_period ) } ).humanize(),
+							duration: moment
+								.duration( { days: parseInt( renewalItem.bill_period, 10 ) } )
+								.humanize(),
 							email: product.user_email,
 						},
 						components: {
@@ -332,7 +334,9 @@ function displayRenewalSuccessNotice(
 				{
 					args: {
 						productName: renewalItem.product_name,
-						duration: moment.duration( { days: parseInt( renewalItem.bill_period ) } ).humanize(),
+						duration: moment
+							.duration( { days: parseInt( renewalItem.bill_period, 10 ) } )
+							.humanize(),
 						date: moment( product.expiry ).format( 'LL' ),
 						email: product.user_email,
 					},

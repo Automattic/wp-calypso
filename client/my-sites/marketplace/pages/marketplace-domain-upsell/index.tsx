@@ -123,7 +123,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	};
 
 	const freeWpcomStagingDomain: DomainSuggestions.DomainSuggestion = {
-		domain_name: `${ getSiteNameFromURL( selectedSite?.slug ?? '' ) }.wpcomstaging.com`,
+		domain_name: selectedSite?.slug
+			? `${ getSiteNameFromURL( selectedSite.slug ) }.wpcomstaging.com`
+			: '.wpcomstaging.com',
 		cost: 'Free',
 		match_reasons: [ 'Domain name after transfer' ],
 		unavailable: false,
