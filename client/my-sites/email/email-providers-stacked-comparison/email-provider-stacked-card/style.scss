@@ -116,18 +116,6 @@ $width-left-panel-card: 55%;
 		margin-top: 0;
 		width: $width-right-panel-card;
 	}
-
-	.promo-card__price {
-		.price__cost {
-			.provider-cards__price-with-interval-price-discounted {
-				text-decoration: line-through;
-			}
-
-			.provider-cards__price-with-interval-sale-price {
-				color: var( --studio-green-50 );
-			}
-		}
-	}
 }
 
 .email-provider-stacked-card__provider-form-and-right-panel {

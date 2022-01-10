@@ -23,8 +23,8 @@ import {
 import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
+import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import PriceWithInterval from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-with-interval';
 import {
 	EmailProvidersStackedCardProps,
 	ProviderCard,
