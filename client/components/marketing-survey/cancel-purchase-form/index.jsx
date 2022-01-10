@@ -96,6 +96,8 @@ class CancelPurchaseForm extends Component {
 		flowType: PropTypes.string.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
 		translate: PropTypes.func,
+		cancelBundledDomain: PropTypes.bool,
+		includedDomainPurchase: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -408,7 +410,14 @@ class CancelPurchaseForm extends Component {
 			return null;
 		}
 
-		const { downgradePlanPrice, purchase, site, translate } = this.props;
+		const {
+			downgradePlanPrice,
+			purchase,
+			site,
+			translate,
+			includedDomainPurchase,
+			cancelBundledDomain,
+		} = this.props;
 
 		const dismissUpsell = () => this.setState( { upsell: '' } );
 
@@ -476,6 +485,9 @@ class CancelPurchaseForm extends Component {
 							currencySymbol={ purchase.currencySymbol }
 							planCost={ planCost }
 							refundAmount={ this.getRefundAmount() }
+							upsell={ upsell }
+							cancelBundledDomain={ cancelBundledDomain }
+							includedDomainPurchase={ includedDomainPurchase }
 						/>
 					</Upsell>
 				);

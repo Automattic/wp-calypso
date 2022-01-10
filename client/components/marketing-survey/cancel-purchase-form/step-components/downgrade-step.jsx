@@ -16,6 +16,8 @@ export class DowngradeStep extends Component {
 		refundAmount: PropTypes.string,
 		planCost: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		cancelBundledDomain: PropTypes.bool,
+		includedDomainPurchase: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -27,7 +29,16 @@ export class DowngradeStep extends Component {
 	};
 
 	render() {
-		const { locale, translate, refundAmount, planCost, currencySymbol } = this.props;
+		const {
+			locale,
+			translate,
+			refundAmount,
+			planCost,
+			currencySymbol,
+			upsell,
+			cancelBundledDomain,
+			includedDomainPurchase,
+		} = this.props;
 		const canRefund = !! parseFloat( refundAmount );
 		const amount = currencySymbol + ( canRefund ? refundAmount : planCost );
 		const isEnglishLocale = [ 'en', 'en-gb' ].indexOf( locale ) >= 0;
@@ -68,6 +79,42 @@ export class DowngradeStep extends Component {
 						{ args: { amount } }
 				  );
 		}
+
+		if ( 'downgrade-monthly' === upsell ) {
+			refundTitle = translate(
+				'Would you rather switch to the more affordable monthly subscription?'
+			);
+
+			if ( cancelBundledDomain && includedDomainPurchase ) {
+				refundReason = (
+					<p>
+						{ translate(
+							'You will keep all features of your current plan including the domain %(domain)s but the plan period will be reduced.',
+							{ args: { domain: includedDomainPurchase.meta } }
+						) }
+					</p>
+				);
+			} else {
+				refundReason = (
+					<p>
+						{ translate(
+							'You will keep most of the features of your current plan but will not have a free domain.'
+						) }
+					</p>
+				);
+			}
+
+			refundDetails = canRefund
+				? translate(
+						'You can downgrade and get a partial refund of %(amount)s or ' +
+							'continue to the next step and cancel the plan.',
+						{ args: { amount } }
+				  )
+				: translate( 'You can downgrade and the new plan will renew at only %(amount)s.', {
+						args: { amount },
+				  } );
+		}
+
 		return (
 			<div>
 				<FormSectionHeading>{ refundTitle }</FormSectionHeading>

@@ -265,7 +265,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	render() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 		let text;
 		let onClick;
 
@@ -318,6 +318,8 @@ class CancelPurchaseButton extends Component {
 					downgradeClick={ this.downgradeClick }
 					freeMonthOfferClick={ this.freeMonthOfferClick }
 					flowType={ this.getCancellationFlowType() }
+					cancelBundledDomain={ cancelBundledDomain }
+					includedDomainPurchase={ includedDomainPurchase }
 				/>
 			</div>
 		);
