@@ -60,7 +60,7 @@ export default function WPCheckoutOrderSummary( {
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
-	const hasMonthlyPlan = Boolean( plan && isMonthly( plan?.product_slug ) );
+	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
 
 	return (
 		<CheckoutSummaryCard
@@ -76,14 +76,30 @@ export default function WPCheckoutOrderSummary( {
 				) : (
 					<CheckoutSummaryFeaturesList
 						siteId={ siteId }
-						hasMonthlyPlan={ hasMonthlyPlan }
+						hasMonthlyPlanInCart={ hasMonthlyPlanInCart }
 						nextDomainIsFree={ nextDomainIsFree }
 					/>
 				) }
-				{ ! isCartUpdating && plan && hasMonthlyPlan && ! hasRenewalInCart && (
-					<SwitchToAnnualPlan plan={ plan } onChangePlanLength={ onChangePlanLength } />
-				) }
 			</CheckoutSummaryFeatures>
+			{ ! isCartUpdating && ! hasRenewalInCart && plan && hasMonthlyPlanInCart && (
+				<CheckoutSummaryFeatures>
+					<CheckoutSummaryFeaturesTitle>
+						{ translate( 'Included with an annual plan' ) }
+					</CheckoutSummaryFeaturesTitle>
+					<CheckoutSummaryFeaturesListWrapper>
+						<CheckoutSummaryFeaturesListItem isSupported={ false }>
+							<WPCheckoutCheckIcon id={ 'annual-domain-credit' } />
+							{ translate( 'Free domain for one year' ) }
+						</CheckoutSummaryFeaturesListItem>
+						{ /* Only on Premium and up */ }
+						<CheckoutSummaryFeaturesListItem isSupported={ false }>
+							<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
+							{ translate( 'Live chat support' ) }
+						</CheckoutSummaryFeaturesListItem>
+						<SwitchToAnnualPlan plan={ plan } onChangePlanLength={ onChangePlanLength } />
+					</CheckoutSummaryFeaturesListWrapper>
+				</CheckoutSummaryFeatures>
+			) }
 			<CheckoutSummaryAmountWrapper>
 				{ couponLineItem && (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
@@ -135,17 +151,17 @@ function SwitchToAnnualPlan( {
 
 	return (
 		<SwitchToAnnualPlanButton onClick={ handleClick }>
-			{ translate( 'Switch to annual plan' ) }
+			{ translate( 'Switch to annual plan and save!' ) }
 		</SwitchToAnnualPlanButton>
 	);
 }
 
 function CheckoutSummaryFeaturesList( props: {
 	siteId: number | undefined;
-	hasMonthlyPlan: boolean;
+	hasMonthlyPlanInCart: boolean;
 	nextDomainIsFree: boolean;
 } ) {
-	const { hasMonthlyPlan = false, siteId, nextDomainIsFree } = props;
+	const { hasMonthlyPlanInCart = false, siteId, nextDomainIsFree } = props;
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -183,7 +199,7 @@ function CheckoutSummaryFeaturesList( props: {
 		if ( hasDomainsInCart && ! hasPlanInCart ) {
 			refundDays = 4;
 		} else if ( hasPlanInCart && ! hasDomainsInCart ) {
-			refundDays = hasMonthlyPlan ? 7 : 14;
+			refundDays = hasMonthlyPlanInCart ? 7 : 14;
 		}
 		refundTexts.add( getRefundText( refundDays, null, translate ) );
 	}
@@ -196,7 +212,7 @@ function CheckoutSummaryFeaturesList( props: {
 						<CheckoutSummaryFeaturesListDomainItem
 							domain={ domain }
 							key={ domain.uuid }
-							hasMonthlyPlan={ hasMonthlyPlan }
+							hasMonthlyPlanInCart={ hasMonthlyPlanInCart }
 							nextDomainIsFree={ nextDomainIsFree }
 						/>
 					);
@@ -240,11 +256,11 @@ function SupportText( {
 
 function CheckoutSummaryFeaturesListDomainItem( {
 	domain,
-	hasMonthlyPlan,
+	hasMonthlyPlanInCart,
 	nextDomainIsFree,
 }: {
 	domain: ResponseCartProduct;
-	hasMonthlyPlan: boolean;
+	hasMonthlyPlanInCart: boolean;
 	nextDomainIsFree: boolean;
 } ) {
 	const translate = useTranslate();
@@ -259,33 +275,23 @@ function CheckoutSummaryFeaturesListDomainItem( {
 		},
 		comment: 'domain name and bundling message, separated by a dash',
 	} );
-	const annualPlanOnly = translate( '(annual plans only)', {
-		comment: 'Label attached to a feature',
-	} );
 
-	const isSupported = ! ( hasMonthlyPlan && nextDomainIsFree );
-	let label: React.ReactNode = <strong>{ domain.meta }</strong>;
+	const isDomainBundledWithCart = ! nextDomainIsFree && ! hasMonthlyPlanInCart;
 
-	if ( domain.is_bundled ) {
-		label = bundledDomain;
-	} else if ( hasMonthlyPlan && nextDomainIsFree ) {
-		label = (
-			<>
-				{ bundledDomain }
-				{ ` ` }
-				{ annualPlanOnly }
-			</>
+	// Return early if the domain is using a credit.
+	if ( domain.is_bundled || ! isDomainBundledWithCart ) {
+		return (
+			<CheckoutSummaryFeaturesListItem>
+				<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
+				<strong>{ domain.meta }</strong>
+			</CheckoutSummaryFeaturesListItem>
 		);
 	}
 
 	return (
-		<CheckoutSummaryFeaturesListItem isSupported={ isSupported }>
-			{ isSupported ? (
-				<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
-			) : (
-				<WPCheckoutCrossIcon />
-			) }
-			{ label }
+		<CheckoutSummaryFeaturesListItem>
+			<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
+			{ bundledDomain }
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
