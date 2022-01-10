@@ -85,7 +85,6 @@ class SiteMockups extends Component {
 			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
 				site_type: this.props.siteType,
 				vertical_slug: this.props.verticalSlug,
-				site_style: 'default',
 			} );
 		}
 	}, 777 );
@@ -126,7 +125,6 @@ class SiteMockups extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
 			size,
 			vertical_slug: this.props.verticalSlug,
-			site_style: 'default',
 		} );
 
 	render() {
