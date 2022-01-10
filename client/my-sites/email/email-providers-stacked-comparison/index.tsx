@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
@@ -12,14 +13,15 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { BillingIntervalToggle } from 'calypso/my-sites/email/billing-interval-toggle';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
-import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-stacked-comparison/billing-interval-toggle';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import {
 	emailManagementAddEmailForwards,
 	emailManagementInDepthComparison,
+	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -45,6 +47,8 @@ type EmailProvidersStackedComparisonProps = {
 	productsList?: string[];
 	requestingSiteDomains?: boolean;
 	selectedDomainName: string;
+	selectedEmailProviderSlug: string;
+	selectedIntervalLength: IntervalLength | undefined;
 	selectedSite?: SiteData | null;
 	shoppingCartManager?: any;
 	showEmailForwardLink?: boolean;
@@ -59,6 +63,8 @@ const EmailProvidersStackedComparison = ( {
 	domainsWithForwards,
 	isGSuiteSupported,
 	selectedDomainName,
+	selectedEmailProviderSlug,
+	selectedIntervalLength = IntervalLength.ANNUALLY,
 	selectedSite,
 	showEmailForwardLink = true,
 	siteName,
@@ -66,19 +72,28 @@ const EmailProvidersStackedComparison = ( {
 }: EmailProvidersStackedComparisonProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const [ intervalLength, setIntervalLengthPure ] = useState( IntervalLength.ANNUALLY );
+	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
+		if ( selectedEmailProviderSlug === 'google-workspace' ) {
+			return {
+				titan: false,
+				google: true,
+			};
+		}
 
-	const [ detailsExpanded, setDetailsExpanded ] = useState( {
-		titan: true,
-		google: false,
+		return {
+			titan: true,
+			google: false,
+		};
 	} );
 
-	const onExpandedStateChange = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
+	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
 			const [ key, currentExpanded ] = entry;
+
 			if ( isCurrentlyExpanded ) {
 				return [ key, key === providerKey ];
 			}
+
 			return [ key, key === providerKey ? isCurrentlyExpanded : currentExpanded ];
 		} );
 
@@ -91,14 +106,25 @@ const EmailProvidersStackedComparison = ( {
 		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
 	};
 
-	const setIntervalLength = ( interval: IntervalLength ) => {
-		if ( intervalLength === IntervalLength.ANNUALLY ) {
-			setDetailsExpanded( { google: false, titan: true } );
+	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
+		if ( ! selectedSite?.slug ) {
+			return;
 		}
-		setIntervalLengthPure( interval );
+
+		page(
+			emailManagementPurchaseNewEmailAccount(
+				selectedSite.slug,
+				selectedDomainName,
+				currentRoute,
+				null,
+				selectedEmailProviderSlug,
+				newIntervalLength
+			)
+		);
 	};
 
-	const showGoogleWorkspaceCard = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
+	const showGoogleWorkspaceCard =
+		selectedIntervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
 	const hasExistingEmailForwards = hasEmailForwards( domain );
 
 	return (
@@ -108,7 +134,7 @@ const EmailProvidersStackedComparison = ( {
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			<h1 className="email-providers-stacked-comparison__header wp-brand-font">
+			<h1 className="email-providers-stacked-comparison__header">
 				{ translate( 'Pick an email solution' ) }
 			</h1>
 
@@ -121,7 +147,9 @@ const EmailProvidersStackedComparison = ( {
 									href={ emailManagementInDepthComparison(
 										siteName,
 										selectedDomainName,
-										currentRoute
+										currentRoute,
+										null,
+										selectedIntervalLength
 									) }
 								/>
 							),
@@ -131,8 +159,8 @@ const EmailProvidersStackedComparison = ( {
 			) }
 
 			<BillingIntervalToggle
-				onIntervalChange={ setIntervalLength }
-				intervalLength={ intervalLength }
+				intervalLength={ selectedIntervalLength }
+				onIntervalChange={ changeIntervalLength }
 			/>
 
 			{ hasExistingEmailForwards && domainsWithForwards !== undefined && (
@@ -147,8 +175,8 @@ const EmailProvidersStackedComparison = ( {
 				detailsExpanded={ detailsExpanded.titan }
 				selectedDomainName={ selectedDomainName }
 				source={ source }
-				intervalLength={ intervalLength }
-				onExpandedChange={ onExpandedStateChange }
+				intervalLength={ selectedIntervalLength }
+				onExpandedChange={ changeExpandedState }
 			/>
 
 			{ showGoogleWorkspaceCard && (
@@ -157,8 +185,8 @@ const EmailProvidersStackedComparison = ( {
 					detailsExpanded={ detailsExpanded.google }
 					selectedDomainName={ selectedDomainName }
 					source={ source }
-					intervalLength={ intervalLength }
-					onExpandedChange={ onExpandedStateChange }
+					intervalLength={ selectedIntervalLength }
+					onExpandedChange={ changeExpandedState }
 				/>
 			) }
 

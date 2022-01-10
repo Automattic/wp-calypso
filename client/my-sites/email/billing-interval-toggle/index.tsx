@@ -5,37 +5,30 @@ import type { ReactElement } from 'react';
 
 import './style.scss';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
 interface BillingIntervalToggleProps {
 	intervalLength: IntervalLength;
-	onIntervalChange: ( intervalLength: IntervalLength ) => void;
+	onIntervalChange: ( newIntervalLength: IntervalLength ) => void;
 }
 
 export const BillingIntervalToggle = ( {
 	intervalLength,
-	onIntervalChange = noop,
+	onIntervalChange,
 }: BillingIntervalToggleProps ): ReactElement => {
 	const translate = useTranslate();
-
-	const onIntervalClick = ( intervalLength: IntervalLength ) => {
-		return () => onIntervalChange( intervalLength );
-	};
 
 	return (
 		<div className="billing-interval-toggle">
 			<SegmentedControl compact primary>
 				<SegmentedControl.Item
 					selected={ intervalLength === IntervalLength.MONTHLY }
-					onClick={ onIntervalClick( IntervalLength.MONTHLY ) }
+					onClick={ () => onIntervalChange( IntervalLength.MONTHLY ) }
 				>
 					<span>{ translate( 'Pay monthly' ) }</span>
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
 					selected={ intervalLength === IntervalLength.ANNUALLY }
-					onClick={ onIntervalClick( IntervalLength.ANNUALLY ) }
+					onClick={ () => onIntervalChange( IntervalLength.ANNUALLY ) }
 				>
 					<span>{ translate( 'Pay annually' ) }</span>
 				</SegmentedControl.Item>
