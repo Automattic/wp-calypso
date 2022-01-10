@@ -1,20 +1,25 @@
 import { useState } from '@wordpress/element';
-import TourKit from '.';
-import type { Config } from '.';
+import TourKit from '..';
+import type { Config } from '..';
 
 export default { title: 'tour-kit' };
 
 const References = () => {
 	return (
-		<div className={ 'storybook-tour__references' }>
-			<div className={ 'storybook-tour__references-a' }>
-				<p>Reference A</p>
-			</div>
-			<div className={ 'storybook-tour__references-b' }>
-				<p>Reference B</p>
-			</div>
-			<div className={ 'storybook-tour__references-c' }>
-				<p>Reference C</p>
+		<div className={ 'storybook__tourkit-references' }>
+			<div className={ 'storybook__tourkit-references-container' }>
+				<div className={ 'storybook__tourkit-references-a' }>
+					<p>Reference A</p>
+				</div>
+				<div className={ 'storybook__tourkit-references-b' }>
+					<p>Reference B</p>
+				</div>
+				<div className={ 'storybook__tourkit-references-c' }>
+					<p>Reference C</p>
+				</div>
+				<div className={ 'storybook__tourkit-references-d' }>
+					<p>Reference D</p>
+				</div>
 			</div>
 		</div>
 	);
@@ -25,8 +30,8 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 		steps: [
 			{
 				referenceElements: {
-					desktop: '.storybook-tour__references-a',
-					mobile: '.storybook-tour__references-a',
+					desktop: '.storybook__tourkit-references-a',
+					mobile: '.storybook__tourkit-references-a',
 				},
 				meta: {
 					description: 'Lorem ipsum dolor sit amet.',
@@ -34,20 +39,29 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 			},
 			{
 				referenceElements: {
-					desktop: '.storybook-tour__references-b',
-					mobile: '.storybook-tour__references-b',
+					desktop: '.storybook__tourkit-references-b',
+					mobile: '.storybook__tourkit-references-b',
 				},
 				meta: {
-					description: 'Donec dui sapien, tincidunt eget.',
+					description: 'Lorem ipsum dolor sit amet.',
 				},
 			},
 			{
 				referenceElements: {
-					desktop: '.storybook-tour__references-c',
-					mobile: '.storybook-tour__references-c',
+					desktop: '.storybook__tourkit-references-c',
+					mobile: '.storybook__tourkit-references-c',
 				},
 				meta: {
-					description: 'Suspendisse auctor varius vulputate. Nulla.',
+					description: 'Lorem ipsum dolor sit amet.',
+				},
+			},
+			{
+				referenceElements: {
+					desktop: '.storybook__tourkit-references-d',
+					mobile: '.storybook__tourkit-references-d',
+				},
+				meta: {
+					description: 'Lorem ipsum dolor sit amet.',
 				},
 			},
 		],
@@ -62,13 +76,15 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 				setInitialFocusedElement,
 			} ) => {
 				return (
-					<div className="storybook-tour__step">
-						<div className="storybook-tour__step-controls">
+					<div className="storybook__tourkit-step">
+						<div className="storybook__tourkit-step-controls">
 							<button onClick={ onDismiss( 'main-btn' ) }>Close</button>
 							<button onClick={ onMinimize }>Minimize</button>
 						</div>
-						<p>{ steps[ currentStepIndex ].meta.description as string }</p>
-						<div className="storybook-tour__step-controls">
+						<p>{ `${
+							steps[ currentStepIndex ].meta.description as string
+						} (${ currentStepIndex })` }</p>
+						<div className="storybook__tourkit-step-controls">
 							<button onClick={ onNext } ref={ setInitialFocusedElement }>
 								Next
 							</button>
@@ -79,8 +95,8 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 			},
 			tourMinimized: ( { onMaximize, onDismiss } ) => {
 				return (
-					<div className="storybook-tour__step">
-						<div className="storybook-tour__step-controls">
+					<div className="storybook__tourkit-minimized">
+						<div className="storybook__tourkit-minimized-controls">
 							<button onClick={ onDismiss( 'main-btn' ) }>Close</button>
 							<button onClick={ onMaximize }>Miximize</button>
 						</div>
@@ -90,27 +106,28 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 		},
 		closeHandler: onClose,
 		options: {
-			className: 'storybook-tour',
+			className: 'mytour',
 			...options,
 		},
 	};
 
 	return <TourKit config={ config } />;
 };
+
 const StoryTour = ( { options = {} }: { options?: Config[ 'options' ] } ) => {
 	const [ showTour, setShowTour ] = useState( false );
 
 	return (
-		<>
+		<div className="storybook__tourkit">
 			<References />
 			{ ! showTour && <button onClick={ () => setShowTour( true ) }>Start Tour</button> }
 			{ showTour && <Tour onClose={ () => setShowTour( false ) } options={ options } /> }
-		</>
+		</div>
 	);
 };
 
 export const Default = (): JSX.Element => <StoryTour />;
 export const Overlay = (): JSX.Element => <StoryTour options={ { effects: { overlay: true } } } />;
-export const Spotlight__Experimental = (): JSX.Element => (
-	<StoryTour options={ { effects: { __experimental__spotlight: true } } } />
+export const Spotlight = (): JSX.Element => (
+	<StoryTour options={ { effects: { spotlight: {} } } } />
 );

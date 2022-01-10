@@ -139,7 +139,7 @@ The main API for configuring a tour is the config object. See example usage and 
 
 - `effects`: An object to enable/disable/combine various tour effects:
 
-  - `__experimental__spotlight`: Adds a semi-transparent overlay and highlights the reference element when provided with a transparent box over it.
+  - `spotlight`: Adds a semi-transparent overlay and highlights the reference element when provided with a transparent box over it. Expects an object with optional styles to override the default highlight/spotlight behavior when provided (default: spotlight wraps the entire reference element).
   - `arrowIndicator`: Adds an arrow tip pointing at the rederence element when provided.
   - `overlay`: Includes the semi-transparent overlay for all the steps (also blocks interactions with the rest of the page)
 
