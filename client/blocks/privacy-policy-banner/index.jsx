@@ -7,7 +7,7 @@ import Banner from 'calypso/components/banner';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import wpcom from 'calypso/lib/wp';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getCurrentUserRegisterDate from 'calypso/state/selectors/get-current-user-register-date';
 import PrivacyPolicyDialog from './privacy-policy-dialog';
 
@@ -18,7 +18,7 @@ export default function PrivacyPolicyBanner() {
 
 	const [ showDialog, setShowDialog ] = useState( false );
 
-	const fetchingPreferences = useSelector( isFetchingPreferences );
+	const hasReceivedPreferences = useSelector( hasReceivedRemotePreferences );
 	const preference = useSelector( ( state ) => getPreference( state, 'privacy-policy' ) );
 	const userRegisterDate = useSelector( getCurrentUserRegisterDate );
 
@@ -30,7 +30,7 @@ export default function PrivacyPolicyBanner() {
 	);
 
 	function shouldRender() {
-		if ( fetchingPreferences || ! privacyPolicy ) {
+		if ( ! hasReceivedPreferences || ! privacyPolicy ) {
 			return false;
 		}
 
