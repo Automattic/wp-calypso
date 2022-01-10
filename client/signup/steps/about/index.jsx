@@ -154,7 +154,7 @@ class AboutStep extends Component {
 
 	handleSubmit = ( event ) => {
 		event.preventDefault();
-		const { goToNextStep, stepName, flowName, shouldHideSiteTitle, previousFlowName } = this.props;
+		const { goToNextStep, stepName, flowName, previousFlowName } = this.props;
 
 		//Defaults
 		let themeRepo = 'pub/radcliffe-2';
@@ -167,15 +167,13 @@ class AboutStep extends Component {
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 		const eventAttributes = {};
 
-		if ( ! shouldHideSiteTitle ) {
-			//Site Title
-			const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
-			if ( siteTitleInput !== '' ) {
-				siteTitleValue = siteTitleInput;
-				this.props.setSiteTitle( siteTitleValue );
-			}
-			eventAttributes.site_title = siteTitleInput || 'N/A';
+		//Site Title
+		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
+		if ( siteTitleInput !== '' ) {
+			siteTitleValue = siteTitleInput;
+			this.props.setSiteTitle( siteTitleValue );
 		}
+		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		// Set Site Topic value for tracking/marketing
 		eventAttributes.site_topic = this.state.hasPrepopulatedVertical
@@ -409,7 +407,7 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const { translate, siteTitle, shouldHideSiteTitle } = this.props;
+		const { translate, siteTitle } = this.props;
 
 		const { siteTopicValue } = this.state;
 
@@ -418,28 +416,24 @@ class AboutStep extends Component {
 				<div className="about__form-wrapper">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							{ ! shouldHideSiteTitle && (
-								<FormFieldset>
-									<FormLabel htmlFor="siteTitle">
-										{ translate( 'What would you like to name your site?' ) }
-										<InfoPopover className="about__info-popover" position="top">
-											{ translate(
-												"We'll use this as your site title. " +
-													"Don't worry, you can change this later."
-											) }
-										</InfoPopover>
-									</FormLabel>
-									<FormTextInput
-										id="siteTitle"
-										name="siteTitle"
-										placeholder={ translate(
-											"E.g., Mel's Diner, Stevie’s Blog, Vail Renovations"
+							<FormFieldset>
+								<FormLabel htmlFor="siteTitle">
+									{ translate( 'What would you like to name your site?' ) }
+									<InfoPopover className="about__info-popover" position="top">
+										{ translate(
+											"We'll use this as your site title. " +
+												"Don't worry, you can change this later."
 										) }
-										defaultValue={ siteTitle }
-										onChange={ this.handleChangeEvent }
-									/>
-								</FormFieldset>
-							) }
+									</InfoPopover>
+								</FormLabel>
+								<FormTextInput
+									id="siteTitle"
+									name="siteTitle"
+									placeholder={ translate( "E.g., Mel's Diner, Stevie’s Blog, Vail Renovations" ) }
+									defaultValue={ siteTitle }
+									onChange={ this.handleChangeEvent }
+								/>
+							</FormFieldset>
 
 							{ this.shouldShowSiteTopicField() && (
 								<FormFieldset>
@@ -509,7 +503,7 @@ class AboutStep extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
+	( state ) => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
@@ -517,10 +511,6 @@ export default connect(
 		isLoggedIn: isUserLoggedIn( state ),
 		verticalId: getSiteVerticalId( state ),
 		verticalParentId: getSiteVerticalParentId( state ),
-		shouldHideSiteTitle:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-title' ),
-		shouldSkipAboutStep:
-			includes( ownProps.steps, 'site-topic' ) && includes( ownProps.steps, 'site-title' ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{
