@@ -6,8 +6,9 @@ import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { getName } from 'calypso/lib/purchases';
+import { getName, isPartnerPurchase } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -32,10 +33,19 @@ interface Props {
 	recordTracksEvent: ( name: string, data: Record< string, unknown > ) => void;
 }
 
-const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ...props } ) => {
+const CancelJetpackForm: React.FC< Props > = ( {
+	isVisible = false,
+	purchase,
+	flowType,
+	...props
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ cancellationStep, setCancellationStep ] = useState( steps.FEATURES_LOST_STEP ); // set initial state
+	const initialCancellationStep =
+		flowType === CANCEL_FLOW_TYPE.REMOVE && ! isPartnerPurchase( purchase )
+			? steps.CANCELLATION_REASON_STEP
+			: steps.FEATURES_LOST_STEP;
+	const [ cancellationStep, setCancellationStep ] = useState( initialCancellationStep ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
 
@@ -48,15 +58,13 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 	 * Clear out stored state for the flow
 	 */
 	const resetSurveyState = () => {
-		setCancellationStep( steps.FEATURES_LOST_STEP );
+		setCancellationStep( initialCancellationStep );
 		setSurveyAnswerId( null );
 		setSurveyAnswerText( '' );
 	};
 
 	// Record an event for Tracks
 	const recordEvent = ( name: string, properties = {} ) => {
-		const { flowType } = props;
-
 		dispatch(
 			recordTracksEvent( name, {
 				cancellation_flow: flowType,
@@ -186,8 +194,12 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 		// 	onClick: clickPrevious,
 		// };
 
-		const cancelText = translate( 'Cancel my plan' );
-		const cancellingText = translate( 'Cancelling' );
+		const cancelText =
+			flowType === CANCEL_FLOW_TYPE.REMOVE
+				? translate( 'Remove my plan' )
+				: translate( 'Cancel my plan' );
+		const cancellingText =
+			flowType === CANCEL_FLOW_TYPE.REMOVE ? translate( 'Removing' ) : translate( 'Cancelling' );
 		const cancel = (
 			<Button
 				disabled={ props.disableButtons }
