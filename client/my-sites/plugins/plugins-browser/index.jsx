@@ -47,6 +47,7 @@ import {
 	isFetchingPluginsList,
 	getPluginsListPagination,
 } from 'calypso/state/plugins/wporg/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
@@ -77,6 +78,8 @@ const PluginsBrowser = ( {
 } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
+	const hasProductsList =
+		Object.keys( useSelector( ( state ) => getProductsList( state ) ) ).length > 0;
 
 	// Billing period switcher.
 	const billingPeriod = useSelector( getBillingInterval );
@@ -216,7 +219,10 @@ const PluginsBrowser = ( {
 					<QueryWporgPlugins category="featured" />
 				</>
 			) }
-			{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && <QueryProductsList /> }
+			{ /* We need the product list for paid plugin prices */ }
+			{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && ! hasProductsList && (
+				<QueryProductsList />
+			) }
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }

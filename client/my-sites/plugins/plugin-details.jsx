@@ -217,7 +217,7 @@ function PluginDetails( props ) {
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<SidebarNavigation />
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QueryProductsList />
+			{ ! isJetpackSelfHosted && ! isProductListFetched && <QueryProductsList /> }
 			<FixedNavigationHeader
 				navigationItems={ getNavigationItems() }
 				compactBreadcrumb={ ! isWide }
