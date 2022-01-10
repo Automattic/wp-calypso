@@ -1,30 +1,21 @@
 .licensing-activation-banner {
-	display: flex;
-	flex-direction: column;
+	// display: flex;
+	// flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
-	padding: 12px;
+	padding-top: 7px;
+    padding-bottom: 7px;
+    color: var( --studio-white );
+    text-align: center;
 
 	border-width: 1px 0;
 	border-style: solid;
 	border-color: var( --studio-black );
 	background-color: var( --studio-black );
 
-    color: var (--studio-white-rgb );
-
 	@include breakpoint-deprecated( '>660px' ) {
 		border-width: 1px;
 		border-radius: calc( 2px * 4 );
-	}
-}
-
-.licensing-activation-banner__copy {
-	color: var( --studio-white );
-    text-align: center;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		order: initial;
-		margin-right: 16px;
 	}
 
     a:link,

@@ -198,7 +198,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
 				/>
 
-				<LicensingActivationBanner siteId={ siteId } />
+				{ siteId && enableUserLicensesDialog && <LicensingActivationBanner siteId={ siteId } /> }
 
 				{ header }
 

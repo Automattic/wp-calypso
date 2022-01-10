@@ -17,13 +17,11 @@ function LicensingActivationBanner( { siteId }: Props ) {
 	return (
 		<>
 			<div className="licensing-activation-banner">
-				<div className="licensing-activation-banner__copy">
-					<img className="licensing-activation-banner__key-icon" src={ keyIcon } alt="" />
-					{ translate( 'You have an available product license key ' ) }
-					<span className="licensing-activation-banner__activate">
-						<a href={ jetpackDashboardUrl }>{ translate( 'Activate it now' ) }</a>
-					</span>
-				</div>
+				<img className="licensing-activation-banner__key-icon" src={ keyIcon } alt="" />
+				{ translate( 'You have an available product license key ' ) }
+				<span className="licensing-activation-banner__activate">
+					<a href={ jetpackDashboardUrl }>{ translate( 'Activate it now.' ) }</a>
+				</span>
 			</div>
 		</>
 	);
