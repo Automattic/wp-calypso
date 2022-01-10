@@ -785,7 +785,7 @@ export function generateSteps( {
 		'store-address': {
 			stepName: 'store-address',
 			props: {
-				headerTitle: i18n.translate( 'Add an address so you can get paid' ),
+				headerTitle: i18n.translate( 'Add an address to accept payments' ),
 				headerDescription: i18n.translate(
 					'This will be used as your default business address. You can change it later if you need to.'
 				),
