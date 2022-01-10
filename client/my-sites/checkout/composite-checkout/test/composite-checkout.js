@@ -568,36 +568,19 @@ describe( 'CompositeCheckout', () => {
 		} );
 	} );
 
-	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
+	it( 'removes a product from the cart after clicking to remove', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
-		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
+		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
 		fireEvent.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( () => {
-			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
-		} );
-	} );
-
-	it( 'removes a product from the cart after clicking to remove it outside of edit mode', async () => {
-		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
-		const removeProductButton = await within( activeSection ).findByLabelText(
-			'Remove WordPress.com Personal from cart'
-		);
-		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
-		fireEvent.click( removeProductButton );
-		const confirmModal = await screen.findByRole( 'dialog' );
-		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
-		await waitFor( async () => {
 			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
 		} );
 	} );
