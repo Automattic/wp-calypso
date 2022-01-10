@@ -1,10 +1,12 @@
 import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement } from 'react';
-import { useSelector } from 'react-redux';
+import { ReactElement, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { fetchPaymentCountries } from 'calypso/state/countries/actions';
+import getCountries from 'calypso/state/selectors/get-countries';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import { ActionSection, StyledNextButton } from '../confirm';
@@ -24,12 +26,18 @@ import './style.scss';
 export default function StepStoreAddress( props: WooCommerceInstallProps ): ReactElement | null {
 	const { goToStep, isReskinned, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( fetchPaymentCountries() );
+	}, [ dispatch ] );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const countriesList = useSelector( ( state ) => getCountries( state, 'payments' ) ) || [];
 
 	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 
-	const { get, save, update, countriesList } = useSiteSettings( siteId );
+	const { get, save, update } = useSiteSettings( siteId );
 
 	const handleCountryChange: ChangeEventHandler< HTMLInputElement > = ( event ) => {
 		update( WOOCOMMERCE_DEFAULT_COUNTRY, event.target.value );

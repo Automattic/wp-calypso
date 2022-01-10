@@ -1,8 +1,6 @@
 import { uniqueBy } from '@automattic/js-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPaymentCountries } from 'calypso/state/countries/actions';
-import getCountries from 'calypso/state/selectors/get-countries';
 import {
 	requestSiteSettings,
 	saveSiteSettings,
@@ -36,8 +34,6 @@ export function useSiteSettings( siteId: number ) {
 
 	const settings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
 
-	const countriesList = useSelector( ( state ) => getCountries( state, 'payments' ) ) || [];
-
 	/*
 	 * Private settings store.
 	 * It collects the options that will be updated/saved
@@ -51,7 +47,6 @@ export function useSiteSettings( siteId: number ) {
 		}
 
 		dispatch( requestSiteSettings( siteId ) );
-		dispatch( fetchPaymentCountries() );
 	}, [ dispatch, siteId ] );
 
 	// Simple getter helper.
@@ -99,5 +94,5 @@ export function useSiteSettings( siteId: number ) {
 		setEditedSettings( [] );
 	}, [ dispatch, editedSettings, settings, siteId ] );
 
-	return { save, update, get, countriesList };
+	return { save, update, get };
 }
