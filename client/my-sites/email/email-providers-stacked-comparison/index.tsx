@@ -15,9 +15,9 @@ import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
-import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import {
 	emailManagementAddEmailForwards,
 	emailManagementInDepthComparison,

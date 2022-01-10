@@ -9,7 +9,7 @@ import {
 	professionalEmailFeatures,
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
-import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';

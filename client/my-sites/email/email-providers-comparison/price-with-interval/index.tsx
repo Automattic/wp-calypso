@@ -1,7 +1,7 @@
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
 

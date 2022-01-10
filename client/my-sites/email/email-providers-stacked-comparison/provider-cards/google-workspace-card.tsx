@@ -22,6 +22,7 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
@@ -29,12 +30,15 @@ import {
 	EmailProvidersStackedCardProps,
 	ProviderCard,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
+import {
+	addToCartAndCheckout,
+	recordTracksEventAddToCartClick,
+} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { addToCartAndCheckout, recordTracksEventAddToCartClick, IntervalLength } from './utils';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
