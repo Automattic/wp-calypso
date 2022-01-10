@@ -36,6 +36,7 @@ import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
+import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
 import { isDataLoading } from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
@@ -57,6 +58,7 @@ class RemovePurchase extends Component {
 		useVerticalNavItem: PropTypes.bool,
 		onClickTracks: PropTypes.func,
 		purchaseListUrl: PropTypes.string,
+		activeSubscriptions: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -109,14 +111,14 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: false } );
 	};
 
-	removePurchase = async () => {
+	removePurchase = async ( _purchase = this.props.purchase, userId = this.props.userId ) => {
 		this.setState( { isRemoving: true } );
 
-		const { isDomainOnlySite, purchase, translate } = this.props;
+		const { isDomainOnlySite, translate } = this.props;
 
-		await this.props.removePurchase( purchase.id, this.props.userId );
+		await this.props.removePurchase( _purchase.id, userId );
 
-		const productName = getName( purchase );
+		const productName = getName( _purchase );
 		const { purchasesError, purchaseListUrl } = this.props;
 		let successMessage;
 
@@ -127,9 +129,9 @@ class RemovePurchase extends Component {
 			return;
 		}
 
-		if ( isDomainRegistration( purchase ) ) {
+		if ( isDomainRegistration( _purchase ) ) {
 			if ( isDomainOnlySite ) {
-				this.props.receiveDeletedSite( purchase.siteId );
+				this.props.receiveDeletedSite( _purchase.siteId );
 				this.props.setAllSitesSelected();
 			}
 
@@ -139,7 +141,7 @@ class RemovePurchase extends Component {
 		} else {
 			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
 				args: { productName },
-				components: { siteName: <em>{ purchase.domain }</em> },
+				components: { siteName: <em>{ _purchase.domain }</em> },
 			} );
 		}
 
@@ -312,8 +314,24 @@ class RemovePurchase extends Component {
 		);
 	}
 
+	renderMarketplaceSubscriptionsDialog() {
+		const { purchase, activeSubscriptions } = this.props;
+		return (
+			<MarketPlaceSubscriptionsDialog
+				isDialogVisible={ this.state.isDialogVisible }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.removePurchase }
+				planName={ getName( purchase ) }
+				activeSubscriptions={ activeSubscriptions }
+				removeAllSubscriptions={ () =>
+					activeSubscriptions.forEach( ( s ) => this.removePurchase( s, this.props.userId ) )
+				}
+			/>
+		);
+	}
+
 	renderDialog() {
-		const { purchase } = this.props;
+		const { purchase, activeSubscriptions } = this.props;
 
 		if ( isDomainRegistration( purchase ) ) {
 			return this.renderDomainDialog();
@@ -341,6 +359,11 @@ class RemovePurchase extends Component {
 		// Jetpack Plan or Product Cancellation
 		if ( this.props.isJetpack ) {
 			return this.renderJetpackDialog();
+		}
+
+		// The user should remove active Marketplace subscriptions before removing their plan
+		if ( activeSubscriptions.length > 0 ) {
+			return this.renderMarketplaceSubscriptionsDialog();
 		}
 
 		return this.renderPlanDialog();
