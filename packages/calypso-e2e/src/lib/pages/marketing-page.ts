@@ -52,7 +52,8 @@ export class MarketingPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openSEOPreview(): Promise< void > {
-		await this.page.click( selectors.seoPreviewButton );
+		const locator = this.page.locator( selectors.seoPreviewButton );
+		await locator.click();
 		await this.page.waitForSelector( selectors.seoPreviewPane );
 	}
 
