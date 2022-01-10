@@ -40,7 +40,7 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
 
@@ -97,7 +97,7 @@ const GoogleWorkspaceCard = ( {
 	const domain = getSelectedDomain( {
 		domains,
 		selectedDomainName: selectedDomainName,
-	} ) as unknown;
+	} ) as ResponseDomain;
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -109,9 +109,8 @@ const GoogleWorkspaceCard = ( {
 		getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY )
 	);
 
-	const gSuiteProduct: ProductListItem = ( intervalLength === IntervalLength.MONTHLY
-		? gSuiteProductMonthly
-		: gSuiteProductYearly ) as ProductListItem;
+	const gSuiteProduct =
+		intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
 	const productIsDiscounted = hasDiscount( gSuiteProduct );
 
@@ -125,7 +124,10 @@ const GoogleWorkspaceCard = ( {
 		/>
 	);
 
-	const standardPriceForIntervalLength = formatPrice( gSuiteProduct?.cost, currencyCode ?? '' );
+	const standardPriceForIntervalLength = formatPrice(
+		gSuiteProduct?.cost ?? 0,
+		currencyCode ?? ''
+	);
 	const salePriceForIntervalLength = formatPrice(
 		gSuiteProduct?.sale_cost ?? 0,
 		currencyCode ?? ''
@@ -180,8 +182,7 @@ const GoogleWorkspaceCard = ( {
 			intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
-		const userCanAddEmail =
-			hasCartDomain || canCurrentUserAddEmail( domain as Record< string, unknown > );
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain as ResponseDomain );
 
 		recordTracksEventAddToCartClick(
 			comparisonContext,
@@ -198,12 +199,13 @@ const GoogleWorkspaceCard = ( {
 		}
 
 		setAddingToCart( true );
+		const domainsForCart = domains as {
+			name: string;
+			googleAppsSubscription?: { status?: string | undefined } | undefined;
+		}[];
 
 		const cartItems: MinimalRequestCartProduct[] = getItemsForCart(
-			domains as {
-				name: string;
-				googleAppsSubscription?: { status?: string | undefined } | undefined;
-			}[],
+			domainsForCart,
 			gSuiteProduct?.product_slug ?? '',
 			googleUsers
 		);
@@ -225,7 +227,7 @@ const GoogleWorkspaceCard = ( {
 		<FormFieldset className="google-workspace-card__form-fieldset">
 			<GSuiteNewUserList
 				extraValidation={ identityMap }
-				domains={ domainList as { name: string }[] }
+				domains={ domainList as ResponseDomain[] }
 				onUsersChange={ setGoogleUsers }
 				selectedDomainName={ selectedDomainName }
 				users={ googleUsers }
