@@ -40,7 +40,6 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
 
@@ -97,7 +96,7 @@ const GoogleWorkspaceCard = ( {
 	const domain = getSelectedDomain( {
 		domains,
 		selectedDomainName: selectedDomainName,
-	} ) as ResponseDomain;
+	} );
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -182,7 +181,7 @@ const GoogleWorkspaceCard = ( {
 			intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
-		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain as ResponseDomain );
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
 		recordTracksEventAddToCartClick(
 			comparisonContext,
@@ -199,10 +198,7 @@ const GoogleWorkspaceCard = ( {
 		}
 
 		setAddingToCart( true );
-		const domainsForCart = domains as {
-			name: string;
-			googleAppsSubscription?: { status?: string | undefined } | undefined;
-		}[];
+		const domainsForCart = domain ? [ domain ] : [];
 
 		const cartItems: MinimalRequestCartProduct[] = getItemsForCart(
 			domainsForCart,
@@ -227,7 +223,7 @@ const GoogleWorkspaceCard = ( {
 		<FormFieldset className="google-workspace-card__form-fieldset">
 			<GSuiteNewUserList
 				extraValidation={ identityMap }
-				domains={ domainList as ResponseDomain[] }
+				domains={ domainList }
 				onUsersChange={ setGoogleUsers }
 				selectedDomainName={ selectedDomainName }
 				users={ googleUsers }
