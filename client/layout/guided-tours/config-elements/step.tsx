@@ -15,7 +15,10 @@ import {
 	targetForSlug,
 } from '../positioning';
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
+import type { CalypsoDispatch } from 'calypso/state/types';
 import type { TimestampMS } from 'calypso/types';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -26,7 +29,7 @@ const anyFrom = ( obj: Record< string, string > ): string => {
 
 interface SectionContext {
 	sectionName?: string;
-	dispatch: < T >( x: Promise< T > ) => Promise< T >;
+	dispatch: CalypsoDispatch;
 	step: string;
 	shouldPause?: boolean;
 	branching: Record< string, { continue: string } >;
@@ -59,7 +62,7 @@ interface AcceptedProps {
 	shouldScrollTo?: boolean;
 	style?: CSSProperties;
 	target?: string;
-	wait?: ( props?: Props, context?: typeof contextTypes ) => Promise< void >;
+	wait?: () => ThunkAction< Promise< void >, unknown, void, AnyAction >;
 	waitForTarget?: boolean;
 	when?: ContextWhen;
 }
