@@ -3,7 +3,7 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
-import { BillingIntervalToggle } from 'calypso/my-sites/email/billing-interval-toggle';
+import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import ComparisonTable from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-table';
 import {
 	professionalEmailFeatures,
