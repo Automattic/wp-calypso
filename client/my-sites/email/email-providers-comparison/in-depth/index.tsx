@@ -1,17 +1,19 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/billing-interval-toggle';
-import ComparisonTable from 'calypso/my-sites/email/email-providers-in-depth-comparison/comparison-table';
+import ComparisonTable from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-table';
 import {
 	professionalEmailFeatures,
 	googleWorkspaceFeatures,
-} from 'calypso/my-sites/email/email-providers-in-depth-comparison/data';
+} from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
+import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
 
 import './style.scss';
