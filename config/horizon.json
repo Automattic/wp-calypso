@@ -50,7 +50,7 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/magic-link-signup": true,
-		"jetpack/pricing-page-annual-only": false,
+		"jetpack/pricing-page-annual-only": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/user-licensing": true,
 		"jetpack/redirect-legacy-plans": true,
