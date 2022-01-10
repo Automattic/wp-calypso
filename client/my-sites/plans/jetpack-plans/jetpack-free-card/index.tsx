@@ -1,15 +1,17 @@
+import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo } from 'react';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
+import { ITEM_TYPE_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import useJetpackFreeButtonProps from './use-jetpack-free-button-props';
-import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type { QueryArgs, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 type OwnProps = {
 	siteId: number | null;
 	urlQueryArgs: QueryArgs;
 };
 
-const useFreeItem = () => {
+const useFreeItem = (): SelectorProduct => {
 	const translate = useTranslate();
 
 	return useMemo(
@@ -19,11 +21,17 @@ const useFreeItem = () => {
 			displayName: translate( 'Jetpack Free' ),
 			features: {
 				items: [
-					{ text: translate( 'Brute force attack protection' ) },
-					{ text: translate( 'Site stats' ) },
-					{ text: translate( 'Content Delivery Network' ) },
+					{ slug: 'not used', text: translate( 'Brute force attack protection' ) },
+					{ slug: 'not used', text: translate( 'Site stats' ) },
+					{ slug: 'not used', text: translate( 'Content Delivery Network' ) },
 				],
 			},
+			type: ITEM_TYPE_PLAN, // not used
+			term: TERM_ANNUALLY, // not used
+			iconSlug: 'not used',
+			shortName: 'not used',
+			tagline: 'not used',
+			description: 'not used',
 		} ),
 		[ translate ]
 	);

@@ -29,7 +29,7 @@ import {
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
 } from './constants';
-import { getForCurrentCROIteration, Iterations } from './iterations';
+import { getForCurrentCROIteration } from './iterations';
 import objectIsPlan from './object-is-plan';
 import { SelectorProduct } from './types';
 
@@ -45,7 +45,7 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
 }
 
 function objectIsSelectorProduct(
-	item: Record< string, unknown > | SelectorProduct
+	item: Plan | Product | SelectorProduct | Record< string, unknown >
 ): item is SelectorProduct {
 	const requiredKeys = [
 		'productSlug',
@@ -60,14 +60,17 @@ function objectIsSelectorProduct(
 
 function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | undefined {
 	if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
-		return getForCurrentCROIteration( ( variation: Iterations ) =>
-			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
-		);
-	} else if ( slugIsJetpackProductSlug( slug ) ) {
+		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]();
+	}
+
+	if ( slugIsJetpackProductSlug( slug ) ) {
 		return ( JETPACK_SITE_PRODUCTS_WITH_FEATURES as Record< string, Product > )[ slug ];
-	} else if ( slugIsJetpackPlanSlug( slug ) ) {
+	}
+
+	if ( slugIsJetpackPlanSlug( slug ) ) {
 		return getPlan( slug ) as Plan;
 	}
+
 	return null;
 }
 
@@ -82,7 +85,9 @@ function itemToSelectorProduct(
 ): SelectorProduct | null {
 	if ( objectIsSelectorProduct( item ) ) {
 		return item;
-	} else if ( objectIsProduct( item ) ) {
+	}
+
+	if ( objectIsProduct( item ) ) {
 		let monthlyProductSlug;
 		let yearlyProductSlug;
 		if (
@@ -95,6 +100,11 @@ function itemToSelectorProduct(
 				].relatedProduct;
 		} else if ( item.term === TERM_MONTHLY ) {
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
+		}
+
+		// We do not support TERM_BIENNIALLY for Jetpack plans
+		if ( item.term === TERM_BIENNIALLY ) {
+			return null;
 		}
 
 		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
@@ -119,7 +129,9 @@ function itemToSelectorProduct(
 				items: buildCardFeaturesFromItem( item ),
 			},
 		};
-	} else if ( objectIsPlan( item ) ) {
+	}
+
+	if ( objectIsPlan( item ) ) {
 		const productSlug = item.getStoreSlug();
 		let monthlyProductSlug;
 		let yearlyProductSlug;
@@ -147,6 +159,7 @@ function itemToSelectorProduct(
 			legacy: ! isResetPlan,
 		};
 	}
+
 	return null;
 }
 
@@ -161,5 +174,6 @@ export default function slugToSelectorProduct( slug: string ): SelectorProduct |
 	if ( ! item ) {
 		return null;
 	}
+
 	return itemToSelectorProduct( item );
 }
