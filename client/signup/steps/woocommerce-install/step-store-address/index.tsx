@@ -28,7 +28,9 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
-	useEffect( () => dispatch( fetchPaymentCountries() ), [ dispatch ] );
+	useEffect( () => {
+		dispatch( fetchPaymentCountries() );
+	}, [ dispatch ] );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const countriesList = useSelector( ( state ) => getCountries( state, 'payments' ) ) || [];
