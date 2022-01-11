@@ -659,7 +659,7 @@ class EmailProvidersComparison extends Component {
 				formFields={ formFields }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ expandButtonLabel }
-				features={ getTitanFeatures() }
+				features={ getTitanFeatures( titanIsMonthly ) }
 			/>
 		);
 	}
