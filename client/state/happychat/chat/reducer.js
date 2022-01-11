@@ -1,6 +1,5 @@
 /* eslint-disable no-case-declarations */
-
-import { concat, filter, find, findIndex, map, get, sortBy } from 'lodash';
+import { filter, find, findIndex, map, get, sortBy } from 'lodash';
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
@@ -123,7 +122,7 @@ const timelineReducer = ( state = [], action ) => {
 			}
 
 			// This is a new message — append it!
-			return concat( state, [ event ] );
+			return state.concat( [ event ] );
 
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
 			const index = findIndex( state, ( { id } ) => action.message.id === id );
