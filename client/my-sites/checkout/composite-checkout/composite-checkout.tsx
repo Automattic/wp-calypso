@@ -80,6 +80,7 @@ import type {
 	CountryListItem,
 	CheckoutPaymentMethodSlug,
 } from '@automattic/wpcom-checkout';
+import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -706,6 +707,7 @@ export default function CompositeCheckout( {
 
 	return (
 		<Fragment>
+			<QueryIntroOffers siteId={ updatedSiteId } />
 			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />

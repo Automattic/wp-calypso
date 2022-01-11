@@ -36,7 +36,7 @@ export interface AvailableProductVariant {
 	};
 	priceFull: number;
 	priceFinal: number;
-	isIntroductoryOfferApplied: boolean;
+	introductoryOfferPrice: number | null;
 }
 
 export interface AvailableProductVariantAndCompared extends AvailableProductVariant {
@@ -220,11 +220,12 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 
 function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAndCompared } ) {
 	const translate = useTranslate();
+	const maybeFinalPrice = variant.introductoryOfferPrice ?? variant.priceFinal;
 	const discountPercentage = Math.round(
-		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
+		100 - ( maybeFinalPrice / variant.priceFullBeforeDiscount ) * 100
 	);
 	let message = '';
-	if ( variant.isIntroductoryOfferApplied ) {
+	if ( variant.introductoryOfferPrice ) {
 		message = String(
 			translate( 'Eligible orders save %(percent)s%%', {
 				args: {
