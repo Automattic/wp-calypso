@@ -1,4 +1,4 @@
-const baseConfig = require( '@automattic/calypso-e2e/src/jest-playwright.config.js' );
+const baseConfig = require( '@automattic/calypso-e2e/src/jest-playwright-config' );
 
 module.exports = {
 	...baseConfig,

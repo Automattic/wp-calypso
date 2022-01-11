@@ -6,7 +6,6 @@ import {
 	DataHelper,
 	GutenbergEditorPage,
 	PublishedPostPage,
-	setupHooks,
 	TestAccount,
 } from '@automattic/calypso-e2e';
 
@@ -23,8 +22,8 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let publishedURL;
 	let publishedPostPage;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await global.browser.newPage();
 	} );
 
 	describe( 'As the posting user', function () {

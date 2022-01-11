@@ -6,17 +6,18 @@ import {
 	DataHelper,
 	SidebarComponent,
 	SupportComponent,
-	setupHooks,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), function () {
 	let page: Page;
 	let testAccount: TestAccount;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	describe.each( [

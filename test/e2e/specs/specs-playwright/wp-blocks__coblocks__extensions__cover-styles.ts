@@ -3,7 +3,6 @@
  * @group coblocks
  */
 import {
-	setupHooks,
 	BrowserHelper,
 	DataHelper,
 	MediaHelper,
@@ -12,7 +11,7 @@ import {
 	CoverBlock,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
 let accountName: string;
@@ -24,6 +23,8 @@ if ( BrowserHelper.targetCoBlocksEdge() ) {
 	accountName = 'gutenbergSimpleSiteUser';
 }
 
+declare const browser: Browser;
+
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
 	let page: Page;
 	let testAccount: TestAccount;
@@ -31,8 +32,8 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 	let imageFile: TestFile;
 	let coverBlock: CoverBlock;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		testAccount = new TestAccount( accountName );
 		gutenbergEditorPage = new GutenbergEditorPage( page );

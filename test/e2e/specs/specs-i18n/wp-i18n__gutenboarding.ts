@@ -3,23 +3,24 @@
  */
 
 import {
-	setupHooks,
 	validatePageTranslations,
 	DataHelper,
 	GutenboardingFlow,
-	TestEnvironment,
+	envVariables,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( 'I18N: Gutenboarding', function () {
 	let page: Page;
 	let gutenboardingFlow: GutenboardingFlow;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
-	describe.each( TestEnvironment.LOCALES() )( 'Locale: %s', function ( locale ) {
+	describe.each( envVariables.LOCALE as Array< string > )( 'Locale: %s', function ( locale ) {
 		it( 'Navigate to /new', async function () {
 			await page.goto( DataHelper.getCalypsoURL( 'new' ) );
 			gutenboardingFlow = new GutenboardingFlow( page );

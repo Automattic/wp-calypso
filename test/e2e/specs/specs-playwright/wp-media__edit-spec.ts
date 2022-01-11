@@ -7,19 +7,20 @@ import {
 	MediaHelper,
 	MediaPage,
 	SidebarComponent,
-	setupHooks,
 	TestFile,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	let testImage: TestFile;
 	let page: Page;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	beforeAll( async () => {
