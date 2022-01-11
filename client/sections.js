@@ -210,7 +210,7 @@ const sections = [
 		module: 'calypso/my-sites/themes',
 		enableLoggedOut: true,
 		group: 'sites',
-		// isomorphic: true,
+		isomorphic: true,
 		title: 'Themes',
 	},
 	{
@@ -219,7 +219,7 @@ const sections = [
 		module: 'calypso/my-sites/theme',
 		enableLoggedOut: true,
 		group: 'sites',
-		// isomorphic: true,
+		isomorphic: true,
 		title: 'Themes',
 		trackLoadPerformance: true,
 	},
