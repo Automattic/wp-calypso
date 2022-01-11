@@ -1,4 +1,3 @@
-import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
@@ -15,7 +14,7 @@ import {
 	canCurrentUserAddEmail,
 	getCurrentUserCannotAddEmailReason,
 } from 'calypso/lib/domains';
-import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
+import { getTitanProductName } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
@@ -25,8 +24,7 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
-import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
+import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
 	addToCartAndCheckout,
@@ -38,12 +36,9 @@ import {
 } from 'calypso/my-sites/email/titan-new-mailbox';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
-import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ReactElement } from 'react';
 
 import './professional-email-card.scss';
@@ -55,6 +50,7 @@ const logo = <Gridicon className="professional-email-card__logo" icon="my-sites"
 const badge = (
 	<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan', { textOnly: true } ) } />
 );
+
 const getTitanFeatures = () => {
 	return [
 		translate( 'Inbox, calendars, and contacts' ),
@@ -87,26 +83,18 @@ const ProfessionalEmailCard = ( {
 	source,
 }: EmailProvidersStackedCardProps ): ReactElement => {
 	const hasCartDomain = Boolean( cartDomainName );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const selectedSite = useSelector( getSelectedSite );
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const domain = getSelectedDomain( {
 		domains,
 		selectedDomainName: selectedDomainName,
-	} ) as ResponseDomain;
+	} );
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
 
 	const professionalEmail: ProviderCard = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
-
-	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
-
-	const titanMailSlug =
-		intervalLength === IntervalLength.MONTHLY ? TITAN_MAIL_MONTHLY_SLUG : TITAN_MAIL_YEARLY_SLUG;
-
-	const titanMailProduct = useSelector( ( state ) => getProductBySlug( state, titanMailSlug ) );
 
 	const [ titanMailbox, setTitanMailbox ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
@@ -166,25 +154,9 @@ const ProfessionalEmailCard = ( {
 
 	const onTitanFormReturnKeyPress = noop;
 
-	const priceWithInterval = (
-		<PriceWithInterval
-			intervalLength={ intervalLength }
-			cost={ titanMailProduct?.cost ?? 0 }
-			currencyCode={ currencyCode ?? '' }
-			hasDiscount={ isEligibleForFreeTrial }
-		/>
-	);
-
 	professionalEmail.onExpandedChange = onExpandedChange;
 	professionalEmail.priceBadge = (
-		<>
-			{ isDomainEligibleForTitanFreeTrial( domain ) && (
-				<div className="professional-email-card__discount badge badge--info-green">
-					{ translate( '3 months free' ) }
-				</div>
-			) }
-			<PriceBadge priceComponent={ priceWithInterval } />
-		</>
+		<ProfessionalEmailPrice domain={ domain } intervalLength={ intervalLength } />
 	);
 
 	professionalEmail.formFields = (
