@@ -1,4 +1,8 @@
 .licensing-activation-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 	padding-top: 16px;
     padding-bottom: 16px;
     color: var( --studio-white );
@@ -10,9 +14,6 @@
 	background-color: var( --studio-black );
 
 	@include breakpoint-deprecated( '>660px' ) {
-        display: flex;
-        justify-content: center;
-        align-items: center;
 		border-width: 1px;
 		border-radius: calc( 2px * 4 );
 	}
