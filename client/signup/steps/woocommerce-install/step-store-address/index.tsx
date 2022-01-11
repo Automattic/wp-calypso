@@ -67,9 +67,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	function getProfileEmail() {
 		const profile_data = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
 
-		const storeEmail = profile_data[ 'store_email' ];
-
-		return storeEmail || '';
+		return profile_data['store_email'] || '';
 	}
 
 	function getContent() {
