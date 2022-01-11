@@ -9,8 +9,6 @@ import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
-import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
-import InfoPopover from 'calypso/components/info-popover';
 import { canCurrentUserAddEmail, getSelectedDomain } from 'calypso/lib/domains';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
@@ -20,11 +18,9 @@ import {
 	GSuiteNewUser,
 	newUsers,
 } from 'calypso/lib/gsuite/new-users';
-import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
-import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
+import GoogleWorkspacePrice from 'calypso/my-sites/email/email-providers-comparison/price/google-workspace';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
 	EmailProvidersStackedCardProps,
@@ -35,7 +31,6 @@ import {
 	recordTracksEventAddToCartClick,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -90,7 +85,6 @@ const GoogleWorkspaceCard = ( {
 	googleWorkspace.detailsExpanded = detailsExpanded;
 
 	const hasCartDomain = Boolean( cartDomainName );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const selectedSite = useSelector( getSelectedSite );
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const domain = getSelectedDomain( {
@@ -110,67 +104,7 @@ const GoogleWorkspaceCard = ( {
 		)
 	);
 
-	const productIsDiscounted = hasDiscount( gSuiteProduct );
-
-	const priceWithInterval = (
-		<PriceWithInterval
-			cost={ gSuiteProduct?.cost ?? 0 }
-			currencyCode={ currencyCode ?? '' }
-			hasDiscount={ productIsDiscounted }
-			intervalLength={ intervalLength }
-			sale={ gSuiteProduct?.sale_cost ?? null }
-		/>
-	);
-
-	const standardPriceForIntervalLength = formatPrice(
-		gSuiteProduct?.cost ?? 0,
-		currencyCode ?? ''
-	);
-	const salePriceForIntervalLength = formatPrice(
-		gSuiteProduct?.sale_cost ?? 0,
-		currencyCode ?? ''
-	);
-
-	const discount = productIsDiscounted ? (
-		<div className="google-workspace-card__discount-with-renewal">
-			{ translate(
-				'%(discount)d%% off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
-				{
-					args: {
-						discount: gSuiteProduct?.sale_coupon?.discount,
-						discountedPrice: salePriceForIntervalLength,
-						standardPrice: standardPriceForIntervalLength,
-					},
-					comment:
-						"%(discount)d is a numeric percentage discount (e.g. '50'), " +
-						"%(discountedPrice)s is a formatted, discounted price that the user will pay today (e.g. '$3'), " +
-						"%(standardPrice)s is a formatted price (e.g. '$5')",
-					components: {
-						span: <span />,
-					},
-				}
-			) }
-
-			<InfoPopover position="right" showOnHover>
-				{ translate(
-					'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
-					{
-						args: {
-							googleMailService: googleWorkspace.productName,
-						},
-						comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-					}
-				) }
-			</InfoPopover>
-		</div>
-	) : null;
-
-	googleWorkspace.priceBadge = (
-		<PriceBadge
-			additionalPriceInformationComponent={ discount }
-			priceComponent={ priceWithInterval }
-		/>
-	);
+	googleWorkspace.priceBadge = <GoogleWorkspacePrice intervalLength={ intervalLength } />;
 
 	const [ googleUsers, setGoogleUsers ] = useState( newUsers( selectedDomainName ) );
 	const [ addingToCart, setAddingToCart ] = useState( false );
