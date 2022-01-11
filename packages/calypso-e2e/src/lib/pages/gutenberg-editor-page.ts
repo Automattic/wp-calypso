@@ -451,7 +451,7 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 
 		await Promise.all( [
-			this.page.waitForNavigation( { url } ),
+			this.page.waitForNavigation( { url: url, waitUntil: 'domcontentloaded' } ),
 			frame.click( selectors.viewButton ),
 		] );
 
