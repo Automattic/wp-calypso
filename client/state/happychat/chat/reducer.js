@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import { filter, find, findIndex, map, get, sortBy } from 'lodash';
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
@@ -72,7 +71,7 @@ const timelineEvent = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC:
-		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE: {
 			const { message } = action;
 			return {
 				id: message.id,
@@ -88,6 +87,7 @@ const timelineEvent = ( state = {}, action ) => {
 				type: get( message, 'type', 'message' ),
 				links: get( message, 'meta.links' ),
 			};
+		}
 	}
 	return state;
 };
@@ -105,7 +105,7 @@ const sortTimeline = ( timeline ) =>
 const timelineReducer = ( state = [], action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
-		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC:
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC: {
 			// if meta.forOperator is set, skip so won't show to user
 			if ( get( action, 'message.meta.forOperator', false ) ) {
 				return state;
@@ -120,15 +120,17 @@ const timelineReducer = ( state = [], action ) => {
 
 			// This is a new message — append it!
 			return state.concat( [ event ] );
-
-		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
+		}
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE: {
 			const index = findIndex( state, ( { id } ) => action.message.id === id );
 			return index === -1
 				? state
 				: [ ...state.slice( 0, index ), timelineEvent( {}, action ), ...state.slice( index + 1 ) ];
-		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT:
+		}
+		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT: {
 			return state;
-		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE:
+		}
+		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE: {
 			const messages = filter( action.messages, ( message ) => {
 				if ( ! message.id ) {
 					return false;
@@ -158,6 +160,7 @@ const timelineReducer = ( state = [], action ) => {
 					} ) )
 				)
 			);
+		}
 	}
 	return state;
 };
