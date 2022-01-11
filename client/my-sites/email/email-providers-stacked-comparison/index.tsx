@@ -65,7 +65,7 @@ const EmailProvidersStackedComparison = ( {
 		};
 	} );
 
-	const canPurchaseGoogleWorkspace = useSelector( canUserPurchaseGSuite );
+	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
 	const currentRoute = useSelector( getCurrentRoute );
 
@@ -80,12 +80,12 @@ const EmailProvidersStackedComparison = ( {
 
 	const resolvedDomainName = domain ? domain.name : selectedDomainName;
 
-	if ( ! resolvedDomainName ) {
+	if ( ! domain ) {
 		return <></>;
 	}
 
 	const isGSuiteSupported =
-		canPurchaseGoogleWorkspace && resolvedDomainName && hasGSuiteSupportedDomain( [ domain ] );
+		canPurchaseGSuite && resolvedDomainName && hasGSuiteSupportedDomain( [ domain ] );
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
