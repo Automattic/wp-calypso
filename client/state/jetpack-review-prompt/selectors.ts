@@ -16,11 +16,8 @@ const getExistingPreference = (
 ): SinglePreferenceType => {
 	const pref = ( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || {};
 	if ( type === 'scan' && pref?.scan ) {
-		return (
-			( pref?.scan[
-				state.ui.selectedSiteId as keyof ScanPreferenceType
-			] as SinglePreferenceType ) ?? emptyPreference
-		);
+		const scanKey = state.ui.selectedSiteId as keyof ScanPreferenceType;
+		return pref.scan[ scanKey ] ?? emptyPreference;
 	}
 	return pref.restore ?? emptyPreference;
 };
