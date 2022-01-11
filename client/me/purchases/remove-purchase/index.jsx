@@ -319,6 +319,7 @@ class RemovePurchase extends Component {
 		return (
 			<MarketPlaceSubscriptionsDialog
 				isDialogVisible={ this.state.isDialogVisible }
+				isRemoving={ this.state.isRemoving }
 				closeDialog={ this.closeDialog }
 				removePlan={ this.removePurchase }
 				planName={ getName( purchase ) }
