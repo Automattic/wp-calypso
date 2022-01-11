@@ -1,11 +1,6 @@
 import { uniqueBy } from '@automattic/js-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-<<<<<<< HEAD
-=======
-import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
-import getCountries from 'calypso/state/selectors/get-countries';
->>>>>>> c1b8fb3475 (Use new woocommerce/countries/regions endpoint)
 import {
 	requestSiteSettings,
 	saveSiteSettings,
@@ -39,11 +34,6 @@ export function useSiteSettings( siteId: number ) {
 
 	const settings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
 
-<<<<<<< HEAD
-=======
-	const countriesList = useSelector( ( state ) => getCountries( state, 'woocommerce' ) ) || [];
-
->>>>>>> c1b8fb3475 (Use new woocommerce/countries/regions endpoint)
 	/*
 	 * Private settings store.
 	 * It collects the options that will be updated/saved
@@ -57,10 +47,6 @@ export function useSiteSettings( siteId: number ) {
 		}
 
 		dispatch( requestSiteSettings( siteId ) );
-<<<<<<< HEAD
-=======
-		dispatch( fetchWooCommerceCountries() );
->>>>>>> c1b8fb3475 (Use new woocommerce/countries/regions endpoint)
 	}, [ dispatch, siteId ] );
 
 	// Simple getter helper.

@@ -5,7 +5,7 @@ import { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { fetchPaymentCountries } from 'calypso/state/countries/actions';
+import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
@@ -38,11 +38,11 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( fetchPaymentCountries() );
+		dispatch( fetchWooCommerceCountries() );
 	}, [ dispatch ] );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const countriesList = useSelector( ( state ) => getCountries( state, 'payments' ) ) || [];
+	const countriesList = useSelector( ( state ) => getCountries( state, 'woocommerce' ) ) || [];
 
 	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 
