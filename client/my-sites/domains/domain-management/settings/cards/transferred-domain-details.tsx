@@ -18,7 +18,7 @@ const TransferredDomainDetails = ( {
 	const translate = useTranslate();
 
 	const renderStartTransferButton = () => {
-		if ( ! domain.currentUserIsOwner ) {
+		if ( ! domain.currentUserIsOwner || transferStatus.PENDING_START !== domain.transferStatus ) {
 			return null;
 		}
 
