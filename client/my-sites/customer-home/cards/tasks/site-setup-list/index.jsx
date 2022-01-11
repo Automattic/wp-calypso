@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { getTaskList } from 'calypso/lib/checklist';
 import { navigate } from 'calypso/lib/navigate';
@@ -17,7 +18,6 @@ import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/sites/selectors';
@@ -108,7 +108,7 @@ const SiteSetupList = ( {
 	firstIncompleteTask,
 	isEmailUnverified,
 	isPodcastingSite,
-	isUsingSiteEditor,
+	isFSEActive,
 	menusUrl,
 	siteId,
 	siteSlug,
@@ -188,7 +188,7 @@ const SiteSetupList = ( {
 				taskUrls,
 				userEmail,
 				isBlogger,
-				isUsingSiteEditor,
+				isFSEActive,
 			} );
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
@@ -326,7 +326,10 @@ const SiteSetupList = ( {
 	);
 };
 
-export default connect( ( state ) => {
+const ConnectedSiteSetupList = connect( ( state, props ) => {
+	const { blockEditorSettings } = props;
+
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 	const siteId = getSelectedSiteId( state );
 	const user = getCurrentUser( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
@@ -342,7 +345,6 @@ export default connect( ( state ) => {
 		siteSegment,
 		siteVerticals,
 	} );
-	const isUsingSiteEditor = isSiteUsingCoreSiteEditor( state, siteId );
 	// Existing usage didn't have a global selector, we can tidy this in a follow up.
 	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;
 
@@ -350,8 +352,8 @@ export default connect( ( state ) => {
 		emailVerificationStatus,
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		isFSEActive,
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
-		isUsingSiteEditor,
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
@@ -360,3 +362,5 @@ export default connect( ( state ) => {
 		userEmail: user?.email,
 	};
 } )( SiteSetupList );
+
+export default withBlockEditorSettings( ConnectedSiteSetupList );
