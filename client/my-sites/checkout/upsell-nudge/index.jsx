@@ -457,6 +457,7 @@ export class UpsellNudge extends Component {
 			BUSINESS_PLAN_UPGRADE_UPSELL,
 			CONCIERGE_QUICKSTART_SESSION,
 			PROFESSIONAL_EMAIL_UPSELL,
+			ANNUAL_PLAN_UPGRADE,
 		];
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
 			debug(
@@ -486,12 +487,23 @@ export class UpsellNudge extends Component {
 	};
 
 	renderPurchaseModal = () => {
+		const { pricePerMonthForMonthlyPlan, pricePerMonthForAnnualPlan, upsellType } = this.props;
 		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
 
 		const onCloseModal = () => {
 			this.props.shoppingCartManager.replaceProductsInCart( [] );
 			this.setState( { showPurchaseModal: false } );
 		};
+
+		let discountRateCopy;
+		if ( ANNUAL_PLAN_UPGRADE === upsellType ) {
+			const discountRate = Math.ceil(
+				100 *
+					( ( pricePerMonthForMonthlyPlan - pricePerMonthForAnnualPlan ) /
+						pricePerMonthForMonthlyPlan )
+			);
+			discountRateCopy = `You're saving ${ discountRate }% by paying annually`;
+		}
 
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
@@ -501,6 +513,7 @@ export class UpsellNudge extends Component {
 					onClose={ onCloseModal }
 					siteSlug={ this.props.siteSlug }
 					isCartUpdating={ isCartUpdating }
+					discountRateCopy={ discountRateCopy }
 				/>
 			</StripeHookProvider>
 		);
@@ -524,6 +537,8 @@ const resolveProductSlug = ( upsellType, productAlias ) => {
 	switch ( upsellType ) {
 		case BUSINESS_PLAN_UPGRADE_UPSELL:
 			return getPlanByPathSlug( productAlias )?.getStoreSlug();
+		case ANNUAL_PLAN_UPGRADE:
+			return productAlias;
 		case PROFESSIONAL_EMAIL_UPSELL:
 			return TITAN_MAIL_MONTHLY_SLUG;
 		case CONCIERGE_QUICKSTART_SESSION:
