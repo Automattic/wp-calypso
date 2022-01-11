@@ -312,7 +312,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		const { selectedSite } = this.props;
 
-		//TODO add tracks event for this error
+		this.props.recordTracksEvent( 'calypso_thank_you_no_site_receipt_error' );
 
 		page( `/home/${ selectedSite.slug }` );
 	};
@@ -516,7 +516,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<Button className={ headerButtonClassName } primary onClick={ this.visitMyHome }>
-						{ translate( 'Go to Site Home' ) }
+						{ translate( 'Go to My Home' ) }
 					</Button>
 				</div>
 			);
