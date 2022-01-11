@@ -1,6 +1,7 @@
 import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+// import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
@@ -26,17 +27,18 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Fields
 	 */
-	const { fromSite, siteSlug } = props;
 	const [ chosenType, setChosenType ] = useState< WPImportType >();
-	const urlData = useSelector( getUrlData );
-	const site = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
+	const { fromSite, siteSlug } = props;
+	const siteItem = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
+	// const fromSiteItem = useSelector( ( state ) => getSiteBySlug( state, convertToFriendlyWebsiteName( fromSite ) ) );
+	const fromSiteAnalyzedData = useSelector( getUrlData );
 
 	/**
 	 ↓ Effects
 	 */
 	useEffect( () => {
 		dispatch( analyzeUrl( fromSite ) );
-	}, [ urlData && urlData.url ] );
+	}, [ fromSiteAnalyzedData && fromSiteAnalyzedData.url ] );
 
 	/**
 	 ↓ Methods
@@ -54,7 +56,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	}
 
 	function runImportMigrationProcess() {
-		// console.log( 'runImportMigrationProcess' );
+		// console.log( 'runImportMigrationProcess', fromSiteItem?.ID, siteItem?.ID );
 	}
 
 	/**
@@ -73,8 +75,8 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 			{ chosenType === 'everything' && (
 				<ImportEverything
 					fromSite={ fromSite }
-					fromSiteData={ urlData }
-					site={ site }
+					fromSiteAnalyzedData={ fromSiteAnalyzedData }
+					siteItem={ siteItem }
 					siteSlug={ siteSlug }
 					startImport={ runImportMigrationProcess }
 				/>

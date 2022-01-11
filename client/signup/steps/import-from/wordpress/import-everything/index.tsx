@@ -13,8 +13,8 @@ import './style.scss';
 
 interface Props {
 	fromSite: string;
-	fromSiteData: UrlData;
-	site: SitesItem | null;
+	fromSiteAnalyzedData: UrlData;
+	siteItem: SitesItem | null;
 	siteSlug: string;
 	startImport: () => void;
 }
@@ -25,12 +25,12 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
-	const { fromSite, fromSiteData, site, siteSlug, startImport } = props;
+	const { fromSite, fromSiteAnalyzedData, siteItem, siteSlug, startImport } = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 
 	// Temporarily hardcoded fields (testing purposes)
-	fromSiteData.name = 'Jurassic Ninja – Launch all the freedom';
-	fromSiteData.favicon =
+	fromSiteAnalyzedData.name = 'Jurassic Ninja – Launch all the freedom';
+	fromSiteAnalyzedData.favicon =
 		'https://i0.wp.com/jurassic.ninja/wp-content/uploads/2018/05/jurassicninja-transparent.png?fit=192%2C160&ssl=1';
 
 	return (
@@ -47,11 +47,13 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 
 							<div
 								className={ classnames( 'import_site-mapper-name', {
-									'with-favicon': fromSiteData?.favicon,
+									'with-favicon': fromSiteAnalyzedData?.favicon,
 								} ) }
 							>
-								{ fromSiteData?.favicon && <img alt={ 'Icon' } src={ fromSiteData?.favicon } /> }
-								<span>{ fromSiteData?.name }</span>
+								{ fromSiteAnalyzedData?.favicon && (
+									<img alt={ 'Icon' } src={ fromSiteAnalyzedData?.favicon } />
+								) }
+								<span>{ fromSiteAnalyzedData?.name }</span>
 								<small>{ convertToFriendlyWebsiteName( fromSite ) }</small>
 							</div>
 						</div>
@@ -63,7 +65,7 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 							</div>
 
 							<div className={ classnames( 'import_site-mapper-name' ) }>
-								<span>{ site?.name }</span>
+								<span>{ siteItem?.name }</span>
 								<small>{ convertToFriendlyWebsiteName( siteSlug ) }</small>
 							</div>
 						</div>
