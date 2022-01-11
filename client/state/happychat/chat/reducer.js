@@ -1,4 +1,4 @@
-import { findIndex, map, get, sortBy } from 'lodash';
+import { map, get, sortBy } from 'lodash';
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
@@ -113,7 +113,7 @@ const timelineReducer = ( state = [], action ) => {
 			const event = timelineEvent( {}, action );
 
 			// If the message already exists in the timeline, replace it
-			const idx = findIndex( state, ( { id } ) => event.id === id );
+			const idx = state.findIndex( ( { id } ) => event.id === id );
 			if ( idx >= 0 ) {
 				return [ ...state.slice( 0, idx ), event, ...state.slice( idx + 1 ) ];
 			}
@@ -122,7 +122,7 @@ const timelineReducer = ( state = [], action ) => {
 			return state.concat( [ event ] );
 		}
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE: {
-			const index = findIndex( state, ( { id } ) => action.message.id === id );
+			const index = state.findIndex( ( { id } ) => action.message.id === id );
 			return index === -1
 				? state
 				: [ ...state.slice( 0, index ), timelineEvent( {}, action ), ...state.slice( index + 1 ) ];
