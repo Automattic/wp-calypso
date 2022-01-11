@@ -1,11 +1,8 @@
+/* eslint-disable require-jsdoc */
 import path from 'path';
-// We need to import directly because otherwise Jest throws the "Do not import
-// `@jest/globals` outside of the Jest test environment" error. This happens
-// because the index file of the calypso-e2e package imports/exports some
-// modules that use the globals package, e.g. the lib/jest-conditionals.
-import { getLaunchConfiguration } from '@automattic/calypso-e2e/dist/esm/src/browser-helper';
-import { TestAccount } from '@automattic/calypso-e2e/dist/esm/src/lib/test-account';
 import { chromium } from 'playwright';
+import { TestAccount } from '../lib/test-account';
+import pwConfig from './playwright-config';
 
 const DEFAULT_COOKIES_PATH = path.join( __dirname, '../../', 'cookies' );
 
@@ -33,8 +30,7 @@ export default async function globalSetup(): Promise< void > {
 			throw new Error( 'Invalid SAVE_AUTH_COOKIES value' );
 		}
 
-		const browser = await chromium.launch();
-		const { userAgent } = getLaunchConfiguration( browser.version() );
+		const browser = await chromium.launch( pwConfig.launchOptions );
 
 		await Promise.all(
 			testAccounts.map( async ( accountName ) => {
@@ -43,13 +39,12 @@ export default async function globalSetup(): Promise< void > {
 					return;
 				}
 
-				const context = await browser.newContext( { userAgent } );
-				const page = await context.newPage();
+				const page = await browser.newPage( pwConfig.contextOptions );
 
 				await testAccount.logInViaLoginPage( page );
-				await testAccount.saveAuthCookies( context );
+				await testAccount.saveAuthCookies( page.context() );
 
-				await context.close();
+				await page.close();
 			} )
 		);
 

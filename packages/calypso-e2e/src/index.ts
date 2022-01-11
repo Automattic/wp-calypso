@@ -5,6 +5,8 @@ export * as ElementHelper from './element-helper';
 export * as TestEnvironment from './environment';
 export * as MediaHelper from './media-helper';
 
+export { default as env } from './jest-environment-playwright/env-variables';
+
 export * from './jest-conditionals';
 export * from './lib';
 export * from './hooks';
