@@ -24,6 +24,7 @@ const TransferredDomainDetails = ( {
 
 		return (
 			<Button
+				primary
 				href={ domainUseMyDomain(
 					selectedSite.slug,
 					domain.name,
