@@ -208,14 +208,7 @@ function CheckoutSummaryFeaturesList( props: {
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
-					return (
-						<CheckoutSummaryFeaturesListDomainItem
-							domain={ domain }
-							key={ domain.uuid }
-							hasMonthlyPlanInCart={ hasMonthlyPlanInCart }
-							nextDomainIsFree={ nextDomainIsFree }
-						/>
-					);
+					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
 				} ) }
 			{ hasPlanInCart && (
 				<CheckoutSummaryPlanFeatures
@@ -254,15 +247,7 @@ function SupportText( {
 	return <span>{ translate( 'Customer support via email' ) }</span>;
 }
 
-function CheckoutSummaryFeaturesListDomainItem( {
-	domain,
-	hasMonthlyPlanInCart,
-	nextDomainIsFree,
-}: {
-	domain: ResponseCartProduct;
-	hasMonthlyPlanInCart: boolean;
-	nextDomainIsFree: boolean;
-} ) {
+function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const bundledText = translate( 'free for one year' );
 	const bundledDomain = translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
@@ -276,14 +261,12 @@ function CheckoutSummaryFeaturesListDomainItem( {
 		comment: 'domain name and bundling message, separated by a dash',
 	} );
 
-	const isDomainBundledWithCart = ! nextDomainIsFree && ! hasMonthlyPlanInCart;
-
-	// Return early if the domain is using a credit.
-	if ( domain.is_bundled || ! isDomainBundledWithCart ) {
+	// If domain is using existing credit or bundled with cart, show bundled text.
+	if ( domain.is_bundled ) {
 		return (
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
-				<strong>{ domain.meta }</strong>
+				{ bundledDomain }
 			</CheckoutSummaryFeaturesListItem>
 		);
 	}
@@ -291,7 +274,7 @@ function CheckoutSummaryFeaturesListDomainItem( {
 	return (
 		<CheckoutSummaryFeaturesListItem>
 			<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
-			{ bundledDomain }
+			<strong>{ domain.meta }</strong>
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
