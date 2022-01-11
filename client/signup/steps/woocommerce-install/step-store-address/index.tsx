@@ -46,37 +46,14 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 
-<<<<<<< HEAD
 	const { get, save, update } = useSiteSettings( siteId );
-=======
-	const { get, save, update, countriesList } = useSiteSettings( siteId );
-<<<<<<< HEAD
-<<<<<<< HEAD
-	const countriesAsOptions = countriesList.map( ( country ) => ( {
-		label: country.name,
-		value: country.code,
-	} ) );
->>>>>>> 939c0fa0a5 (woop: uses combobox to navigate countries)
-=======
-	const countriesAsOptions = uniqueBy(
-		countriesList
-			.map( ( country ) => ( {
-				label: country.name,
-				value: country.code,
-				// removing empty and duplicated values fixes issues with the search
-			} ) )
-			.filter( ( country ) => country.value !== '' ),
-		( a, b ) => a.value === b.value
-	);
->>>>>>> 625ea6ab80 (woop: fixes search issues caused by repeated options)
-=======
+
 	const countriesAsOptions = Object.entries( countriesList ).map( ( [ key, value ] ) => {
 		return { value: key, label: value };
 	} );
->>>>>>> c1b8fb3475 (Use new woocommerce/countries/regions endpoint)
 
-	const handleCountryChange = ( value: string ) => {
-		update( WOOCOMMERCE_DEFAULT_COUNTRY, value );
+	const handleCountryChange = ( value: string | null ) => {
+		update( WOOCOMMERCE_DEFAULT_COUNTRY, value || '' );
 	};
 
 	function getContent() {
