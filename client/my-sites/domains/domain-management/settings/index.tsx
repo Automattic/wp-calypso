@@ -146,8 +146,8 @@ const Settings = ( {
 		} else if ( domain.type === domainTypes.TRANSFER ) {
 			return (
 				<Accordion
-					title={ translate( 'Action required', { textOnly: true } ) }
-					subtitle={ translate( 'Start transfer', { textOnly: true } ) }
+					title={ translate( 'Details', { textOnly: true } ) }
+					subtitle={ translate( 'Transfer details', { textOnly: true } ) }
 					key="main"
 					expanded
 				>
