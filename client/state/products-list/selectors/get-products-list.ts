@@ -22,6 +22,7 @@ export interface ProductListItem {
 		start_date?: string;
 		expires?: string;
 	};
+	sale_cost?: number;
 }
 
 export function getProductsList( state: AppState ): Record< string, ProductListItem > {

@@ -8,13 +8,14 @@ import {
 	validateUsers,
 } from 'calypso/lib/gsuite/new-users';
 import GSuiteNewUser from './new-user';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 import './style.scss';
 
 interface Props {
 	autoFocus?: boolean;
 	children?: ReactNode;
-	domains?: { name: string }[];
+	domains?: SiteDomain[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
 	showAddAnotherMailboxButton?: boolean;
@@ -74,7 +75,9 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 				<Fragment key={ user.uuid }>
 					<GSuiteNewUser
 						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						domains={ domains ? domains.map( ( domain ) => domain.name ) : [ selectedDomainName ] }
+						domains={
+							domains ? domains.map( ( domain ) => domain.name ?? '' ) : [ selectedDomainName ]
+						}
 						user={ user }
 						onUserValueChange={ onUserValueChange( user.uuid ) }
 						onUserRemove={ onUserRemove( user.uuid ) }

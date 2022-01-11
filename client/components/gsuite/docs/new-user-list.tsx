@@ -9,12 +9,21 @@ import {
 	GSuiteNewUserField,
 	newUsers,
 } from 'calypso/lib/gsuite/new-users';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
-const domainOne = { name: 'example.blog' };
-const domainTwo = { name: 'test.blog' };
+const domainOne: SiteDomain = {
+	name: 'example.blog',
+	domain: 'example.blog',
+	supportsGdprConsentManagement: true,
+};
+const domainTwo: SiteDomain = {
+	name: 'test.blog',
+	domain: 'test.blog',
+	supportsGdprConsentManagement: true,
+};
 
 function GSuiteNewUserListExample(): JSX.Element {
-	const [ users, setUsers ] = useState( newUsers( domainOne.name ) );
+	const [ users, setUsers ] = useState( newUsers( domainOne.name ?? '' ) );
 	const [ domains, setDomains ] = useState( [ domainOne ] );
 	const [ useMultipleDomains, setUseMultipleDomains ] = useState( false );
 	const [ useExtraValidation, setUseExtraValidation ] = useState( false );
@@ -22,11 +31,11 @@ function GSuiteNewUserListExample(): JSX.Element {
 	const toggleUseMultipleDomains = () => {
 		if ( useMultipleDomains ) {
 			setDomains( [ domainOne ] );
-			setUsers( newUsers( domainOne.name ) );
+			setUsers( newUsers( domainOne.name ?? '' ) );
 			setUseMultipleDomains( false );
 		} else {
 			setDomains( [ domainOne, domainTwo ] );
-			setUsers( newUsers( domainOne.name ) );
+			setUsers( newUsers( domainOne.name ?? '' ) );
 			setUseMultipleDomains( true );
 		}
 	};
@@ -56,7 +65,7 @@ function GSuiteNewUserListExample(): JSX.Element {
 			<GSuiteNewUserList
 				domains={ domains }
 				extraValidation={ useExtraValidation ? extraValidation : ( user ) => user }
-				selectedDomainName={ domainOne.name }
+				selectedDomainName={ domainOne.name ?? '' }
 				onUsersChange={ ( changedUsers ) => setUsers( changedUsers ) }
 				users={ users }
 				onReturnKeyPress={ () => void 0 }
