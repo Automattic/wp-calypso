@@ -8,7 +8,6 @@ class DnsRecordData extends Component {
 		actions: PropTypes.array.isRequired,
 		dnsRecord: PropTypes.object.isRequired,
 		enabled: PropTypes.bool,
-		onDeleteDns: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
