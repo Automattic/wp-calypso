@@ -101,15 +101,14 @@ const GoogleWorkspaceCard = ( {
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
 
-	const gSuiteProductYearly = useSelector( ( state ) =>
-		getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY )
+	const gSuiteProduct = useSelector( ( state ) =>
+		getProductBySlug(
+			state,
+			intervalLength === IntervalLength.MONTHLY
+				? GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY
+				: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+		)
 	);
-	const gSuiteProductMonthly = useSelector( ( state ) =>
-		getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY )
-	);
-
-	const gSuiteProduct =
-		intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
 
 	const productIsDiscounted = hasDiscount( gSuiteProduct );
 
@@ -177,9 +176,6 @@ const GoogleWorkspaceCard = ( {
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
 	const onGoogleConfirmNewMailboxes = () => {
-		const gSuiteProduct =
-			intervalLength === IntervalLength.MONTHLY ? gSuiteProductMonthly : gSuiteProductYearly;
-
 		const usersAreValid = areAllUsersValid( googleUsers );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
