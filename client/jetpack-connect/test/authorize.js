@@ -337,7 +337,7 @@ describe( 'JetpackAuthorize', () => {
 			expect( target ).toBe( DEFAULT_PROPS.authQuery.redirectAfterAuth );
 		} );
 
-		test( 'should redirect to wp-admin when site has an unattached "user"(not partner) product license key', () => {
+		test( 'should redirect to /jetpack/connect/plans when user has an unattached "user"(not partner) license key', () => {
 			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
 			const component = shallow( renderableComponent );
 			component.setProps( {
@@ -345,7 +345,11 @@ describe( 'JetpackAuthorize', () => {
 			} );
 			const target = component.instance().getRedirectionTarget();
 
-			expect( target ).toBe( DEFAULT_PROPS.authQuery.redirectAfterAuth );
+			expect( target ).toBe(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+					DEFAULT_PROPS.authQuery.redirectAfterAuth
+				) }`
+			);
 		} );
 
 		test( 'should redirect to redirect to the /jetpack/connect/plans page by default', () => {
