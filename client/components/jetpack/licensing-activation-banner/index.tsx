@@ -22,7 +22,7 @@ function LicensingActivationBanner( { siteId }: Props ) {
 			<>
 				<div className="licensing-activation-banner">
 					<img className="licensing-activation-banner__key-icon" src={ keyIcon } alt="" />
-					{ translate( 'You have an available product license key. ' ) }
+					{ translate( 'You have an available product license key.' ) }
 					<span className="licensing-activation-banner__activate">
 						<a href={ jetpackDashboardUrl }>{ translate( 'Activate it now' ) }</a>
 					</span>
