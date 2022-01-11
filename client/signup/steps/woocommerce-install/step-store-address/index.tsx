@@ -111,7 +111,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 					<TextControl
 						label={ __( 'Email address', 'woocommerce-admin' ) }
 						value={ getProfileEmail() }
-						onChange={ ( value ) => updateProfileEmail( value ) }
+						onChange={ updateProfileEmail }
 					/>
 
 					<ActionSection>
