@@ -28,9 +28,12 @@ type EnvVariables = {
 	[ key: EnvVariableKey ]: EnvVariableValue;
 };
 
+export type ViewportName = typeof VIEWPORT_NAMES[ number ];
+export type Locale = typeof LOCALES[ number ] | typeof LOCALES[ number ][];
+
 interface SupportedEnvVariables extends EnvVariables {
-	VIEWPORT_NAME: typeof VIEWPORT_NAMES[ number ];
-	LOCALE: typeof LOCALES[ number ] | typeof LOCALES[ number ][];
+	VIEWPORT_NAME: ViewportName;
+	LOCALE: Locale;
 	HEADLESS: boolean;
 	SLOW_MO: number;
 	GUTENBERG_EDGE: boolean;
@@ -74,7 +77,7 @@ const currentEnvVariables = { ...defaultEnvVariables };
 Object.keys( currentEnvVariables ).forEach( ( name ) => {
 	const currentValue = process.env[ name ];
 	if ( currentValue ) {
-		// We can dynamically validate the env var value here if needed.
+		// We can validate the env vars at runtime here if needed.
 		currentEnvVariables[ name ] = castEnvVariable( currentValue );
 	}
 } );

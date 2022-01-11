@@ -2,10 +2,10 @@ import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import { LaunchOptions, BrowserContextOptions, devices } from 'playwright';
-import env from './env-variables';
+import envVariables from '../env-variables';
 
 const createLogger = () => {
-	const logFilePath = path.join( env.ARTIFACTS_PATH, `playwright-${ Date.now() }.log` );
+	const logFilePath = path.join( envVariables.ARTIFACTS_PATH, `playwright-${ Date.now() }.log` );
 
 	return async ( name: string, severity: string, message: string ) => {
 		await fs.appendFile(
@@ -16,7 +16,7 @@ const createLogger = () => {
 };
 
 const getTargetDeviceOptions = () => {
-	const viewportName = env.VIEWPORT_NAME;
+	const viewportName = envVariables.VIEWPORT_NAME;
 	let deviceName: string;
 
 	switch ( viewportName ) {
@@ -45,8 +45,8 @@ const targetDeviceOptions = getTargetDeviceOptions();
 
 const launchOptions: LaunchOptions = {
 	args: [ '--window-position=0,0' ],
-	headless: env.HEADLESS,
-	slowMo: env.SLOW_MO,
+	headless: envVariables.HEADLESS,
+	slowMo: envVariables.SLOW_MO,
 };
 
 const contextOptions: BrowserContextOptions = {

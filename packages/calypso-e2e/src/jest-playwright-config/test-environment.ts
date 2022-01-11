@@ -4,7 +4,7 @@ import path from 'path';
 import { Context } from 'vm';
 import JestEnvironmentNode from 'jest-environment-node';
 import { Browser, BrowserContext, BrowserContextOptions, chromium, Page } from 'playwright';
-import env from './env-variables';
+import env from '../env-variables';
 import config from './playwright-config';
 import type { Config, Circus } from 'jest-environment-node/node_modules/@jest/types';
 
@@ -12,7 +12,7 @@ const sanitizeString = ( text: string ) => {
 	return text.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 };
 
-class PlaywrightEnvironment extends JestEnvironmentNode {
+class JestEnvironmentPlaywright extends JestEnvironmentNode {
 	private testFilename: string;
 	private failure?: {
 		type: 'hook' | 'test';
@@ -171,4 +171,4 @@ class PlaywrightEnvironment extends JestEnvironmentNode {
 	}
 }
 
-export default PlaywrightEnvironment;
+export default JestEnvironmentPlaywright;
