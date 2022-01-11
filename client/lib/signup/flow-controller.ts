@@ -423,19 +423,13 @@ export default class SignupFlowController {
 		);
 	}
 
-	_findDependencies(
-		stepName: string,
-		dependencyKey: keyof StepDependendencies = 'dependencies'
-	): Record< string, unknown > {
+	_findDependencies( stepName: string, dependencyKey: keyof StepDependendencies = 'dependencies' ) {
 		const dependencyStore: Record< string, unknown > = getSignupDependencyStore(
 			this._reduxStore.getState()
 		);
 		const stepConfig = steps[ stepName ];
-		if ( ! stepConfig || ! stepConfig[ dependencyKey ] ) {
-			return {};
-		}
-		const keysToSelect = stepConfig[ dependencyKey ] ?? [];
-		return pick( dependencyStore, keysToSelect );
+		const keysToSelect = stepConfig ? stepConfig[ dependencyKey ] : undefined;
+		return pick( dependencyStore, keysToSelect ?? [] );
 	}
 
 	_destination( dependencies: Dependencies ): string {
