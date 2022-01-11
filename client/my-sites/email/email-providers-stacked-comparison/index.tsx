@@ -78,14 +78,11 @@ const EmailProvidersStackedComparison = ( {
 	} );
 	const domainsWithForwards = useSelector( ( state ) => getDomainsWithForwards( state, domains ) );
 
-	const resolvedDomainName = domain ? domain.name : selectedDomainName;
-
 	if ( ! domain ) {
 		return <></>;
 	}
 
-	const isGSuiteSupported =
-		canPurchaseGSuite && resolvedDomainName && hasGSuiteSupportedDomain( [ domain ] );
+	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
