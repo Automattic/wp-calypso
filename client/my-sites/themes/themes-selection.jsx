@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { compact, isEqual, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -8,10 +7,10 @@ import QueryThemes from 'calypso/components/data/query-themes';
 import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
+	arePremiumThemesEnabled,
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
@@ -204,10 +203,7 @@ export const ConnectedThemesSelection = connect(
 		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
-		const isAtomic = isSiteAutomatedTransfer( state, siteId );
-		const isStandaloneJetpack = isJetpack && ! isAtomic;
-		// Jetpack doesn't support premium themes
-		const isSupportPremiumThemes = ! isStandaloneJetpack && config.isEnabled( 'themes/premium' );
+		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
 
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
@@ -224,7 +220,7 @@ export const ConnectedThemesSelection = connect(
 		const query = {
 			search,
 			page,
-			tier: isSupportPremiumThemes ? tier : 'free',
+			tier: premiumThemesEnabled ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};

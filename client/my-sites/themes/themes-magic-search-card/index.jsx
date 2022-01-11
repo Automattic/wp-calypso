@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Popover, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
@@ -12,9 +11,11 @@ import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search from 'calypso/components/search';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import StickyPanel from 'calypso/components/sticky-panel';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
+import {
+	arePremiumThemesEnabled,
+	getThemeFilters,
+	getThemeFilterToTermTable,
+} from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MagicSearchWelcome from './welcome';
 
@@ -281,9 +282,8 @@ class ThemesMagicSearchCard extends Component {
 	};
 
 	render() {
-		const { translate, filters, showTierThemesControl, isStandaloneJetpack } = this.props;
+		const { translate, filters, showTierThemesControl, premiumThemesEnabled } = this.props;
 		const { isPopoverVisible } = this.state;
-		const isPremiumThemesEnabled = ! isStandaloneJetpack && config.isEnabled( 'themes/premium' );
 
 		const tiers = [
 			{ value: 'all', label: translate( 'All' ) },
@@ -383,7 +383,7 @@ class ThemesMagicSearchCard extends Component {
 						onClick={ this.handleClickInside }
 					>
 						{ searchField }
-						{ isPremiumThemesEnabled && showTierThemesControl && (
+						{ premiumThemesEnabled && showTierThemesControl && (
 							<SimplifiedSegmentedControl
 								key={ this.props.tier }
 								initialSelected={ this.props.tier || 'all' }
@@ -407,11 +407,8 @@ const allowSomeAllValidFilters = ( filtersKeys ) =>
 export default compose(
 	connect( ( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		return {
-			isStandaloneJetpack: isJetpack && ! isAtomic,
-			isJetpack: isJetpackSite( state, siteId ),
+			premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 			filters: allowSomeThemeFilters( getThemeFilters( state ) ),
 			allValidFilters: allowSomeAllValidFilters(
 				Object.keys( getThemeFilterToTermTable( state ) )
