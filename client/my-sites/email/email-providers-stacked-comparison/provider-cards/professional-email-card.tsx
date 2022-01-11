@@ -101,17 +101,12 @@ const ProfessionalEmailCard = ( {
 	const professionalEmail: ProviderCard = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
 
-	const titanMailMonthlyProduct = useSelector( ( state ) =>
-		getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG )
-	);
-	const titanMailYearlyProduct = useSelector( ( state ) =>
-		getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG )
-	);
-
 	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 
-	const titanMailProduct =
-		intervalLength === IntervalLength.MONTHLY ? titanMailMonthlyProduct : titanMailYearlyProduct;
+	const titanMailSlug =
+		intervalLength === IntervalLength.MONTHLY ? TITAN_MAIL_MONTHLY_SLUG : TITAN_MAIL_YEARLY_SLUG;
+
+	const titanMailProduct = useSelector( ( state ) => getProductBySlug( state, titanMailSlug ) );
 
 	const [ titanMailbox, setTitanMailbox ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
