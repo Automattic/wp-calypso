@@ -119,7 +119,7 @@ describe( 'Design Picker design utils', () => {
 			const mockDesign = availableDesignsConfig.featured[ 0 ];
 
 			expect( getDesignUrl( mockDesign, mockLocale ) ).toEqual(
-				`https://public-api.wordpress.com/rest/v1/template/demo/${ mockDesign.theme }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&site_title=${ mockDesign.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesign.theme }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&site_title=${ mockDesign.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
 			);
 		} );
 
@@ -127,7 +127,7 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignWithoutFonts = availableDesignsConfig.featured[ 1 ];
 
 			expect( getDesignUrl( mockDesignWithoutFonts, mockLocale ) ).toEqual(
-				`https://public-api.wordpress.com/rest/v1/template/demo/${ mockDesignWithoutFonts.theme }/${ mockDesignWithoutFonts.template }?site_title=${ mockDesignWithoutFonts.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesignWithoutFonts.theme }/${ mockDesignWithoutFonts.template }?site_title=${ mockDesignWithoutFonts.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
 			);
 		} );
 	} );
