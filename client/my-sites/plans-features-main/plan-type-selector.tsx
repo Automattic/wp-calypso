@@ -93,7 +93,12 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 		<>
 			{ [ 'right', 'bottom' ].map( ( pos ) => (
 				<CSSTransition key={ pos } in={ inProp } timeout={ timeout } classNames="popover">
-					<StyledPopover position={ pos } context={ context } isVisible={ true }>
+					<StyledPopover
+						position={ pos }
+						context={ context }
+						isVisible={ true }
+						autoPosition={ false }
+					>
 						{ children }
 					</StyledPopover>
 				</CSSTransition>
