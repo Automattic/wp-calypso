@@ -10,6 +10,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
+import LicensingActivationBanner from 'calypso/components/jetpack/licensing-activation-banner';
 import LicensingPromptDialog from 'calypso/components/jetpack/licensing-prompt-dialog';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -196,6 +197,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					title="Plans"
 					options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
 				/>
+
+				{ siteId && enableUserLicensesDialog && <LicensingActivationBanner siteId={ siteId } /> }
 
 				{ header }
 

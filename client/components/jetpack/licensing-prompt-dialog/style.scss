@@ -59,7 +59,7 @@
 
 .licensing-prompt-dialog__btn.is-primary {
 	--color-accent: var( --studio-jetpack-green-40 );
-    --color-primary: var( --studio-jetpack-green-40 );
+	--color-primary: var( --studio-jetpack-green-40 );
 
 	@include break-mobile {
 		margin-right: 16px;
