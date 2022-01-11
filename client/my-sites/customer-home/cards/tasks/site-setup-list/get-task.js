@@ -177,7 +177,7 @@ export const getTask = (
 				description: translate(
 					"We've created the basics, now it's time for you to update the images and text. Make a great first impression. Everything you do can be changed anytime."
 				),
-				actionText: isUsingSiteEditor ? translate( 'Edit Site' ) : translate( 'Edit homepage' ),
+				actionText: isUsingSiteEditor ? translate( 'Edit site' ) : translate( 'Edit homepage' ),
 				actionUrl: taskUrls?.front_page_updated,
 			};
 			break;
