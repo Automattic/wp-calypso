@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { IntervalLength } from './utils';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { Site } from 'calypso/my-sites/scan/types';
 import type { TranslateResult } from 'i18n-calypso';
 

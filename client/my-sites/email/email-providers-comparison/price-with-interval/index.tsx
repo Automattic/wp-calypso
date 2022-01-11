@@ -1,9 +1,11 @@
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
+
+import './style.scss';
 
 type PriceWithIntervalProps = {
 	cost: number;
@@ -22,8 +24,8 @@ const PriceWithInterval = ( {
 }: PriceWithIntervalProps ): ReactElement => {
 	const showSale = sale && sale !== 0;
 
-	const priceClassName = classNames( 'provider-cards__price-with-interval-price', {
-		'provider-cards__price-with-interval-price-discounted': hasDiscount || showSale,
+	const priceClassName = classNames( {
+		'price-with-interval__price-discounted': hasDiscount || showSale,
 	} );
 
 	const priceSpan = <span className={ priceClassName } />;
@@ -36,7 +38,7 @@ const PriceWithInterval = ( {
 		};
 		const saleTranslateComponents = {
 			priceSpan,
-			saleSpan: <span className="provider-cards__price-with-interval-sale-price" />,
+			saleSpan: <span className="price-with-interval__sale-price" />,
 		};
 
 		if ( intervalLength === IntervalLength.ANNUALLY ) {
@@ -81,9 +83,7 @@ const PriceWithInterval = ( {
 		} );
 	};
 
-	const priceContent = showSale ? getSalePriceContents() : getStandardPriceContents();
-
-	return <div className="provider-cards__price-with-interval">{ priceContent }</div>;
+	return <>{ showSale ? getSalePriceContents() : getStandardPriceContents() }</>;
 };
 
 export default PriceWithInterval;

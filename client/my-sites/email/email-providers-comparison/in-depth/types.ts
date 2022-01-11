@@ -1,4 +1,4 @@
-import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 

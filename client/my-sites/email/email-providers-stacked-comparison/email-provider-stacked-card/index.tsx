@@ -49,7 +49,9 @@ const EmailProvidersStackedCard = ( {
 				<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
 				<p>{ description }</p>
 			</div>
+
 			<div className="email-provider-stacked-card__title-price-badge">{ priceBadge }</div>
+
 			{ showExpandButton && ! detailsExpanded && (
 				<div className="email-provider-stacked-card__provider-card-main-details">
 					<Button

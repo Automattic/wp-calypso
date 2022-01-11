@@ -24,9 +24,14 @@ import {
 	validateMailboxes as validateTitanMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
+import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import PriceBadge from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-badge';
-import PriceWithInterval from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-with-interval';
+import {
+	addToCartAndCheckout,
+	recordTracksEventAddToCartClick,
+} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import {
 	TITAN_PASSWORD_RESET_FIELD,
 	TITAN_FULL_NAME_FIELD,
@@ -37,7 +42,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { addToCartAndCheckout, IntervalLength, recordTracksEventAddToCartClick } from './utils';
 import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
 import type { ReactElement } from 'react';
 

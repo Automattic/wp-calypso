@@ -10,7 +10,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type {
 	ComparisonTableProps,
 	EmailProviderFeatures,
-} from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
+} from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
 
 const ComparisonTable = ( {

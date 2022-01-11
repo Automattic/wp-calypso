@@ -5,7 +5,7 @@ import { translate } from 'i18n-calypso';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getTitanProductName } from 'calypso/lib/titan';
-import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-in-depth-comparison/types';
+import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
