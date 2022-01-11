@@ -78,6 +78,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) as string }
 						onChange={ handleCountryChange }
 						options={ countriesAsOptions }
+						allowReset={ false }
 					/>
 
 					<CityZipRow>
