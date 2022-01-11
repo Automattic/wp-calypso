@@ -4,14 +4,31 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import GoogleWorkspacePrice from 'calypso/my-sites/email/email-providers-comparison/price/google-workspace';
+import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type {
 	ComparisonTableProps,
+	ComparisonTablePriceProps,
 	EmailProviderFeatures,
 } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
+
+const ComparisonTablePrice = ( {
+	domain,
+	emailProviderSlug,
+	intervalLength,
+}: ComparisonTablePriceProps ): ReactElement => {
+	if ( emailProviderSlug === 'google-workspace' ) {
+		return <GoogleWorkspacePrice intervalLength={ intervalLength } />;
+	}
+
+	return <ProfessionalEmailPrice domain={ domain } intervalLength={ intervalLength } />;
+};
 
 const ComparisonTable = ( {
 	emailProviders,
@@ -20,17 +37,23 @@ const ComparisonTable = ( {
 }: ComparisonTableProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSite = useSelector( getSelectedSite );
 	const currentRoute = useSelector( getCurrentRoute );
 
+	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
+	const domain = getSelectedDomain( {
+		domains,
+		selectedDomainName: selectedDomainName,
+	} );
+
 	const selectEmailProvider = ( emailProviderSlug: string ) => {
-		if ( selectedSiteSlug === null ) {
+		if ( selectedSite === null ) {
 			return;
 		}
 
 		page(
 			emailManagementPurchaseNewEmailAccount(
-				selectedSiteSlug,
+				selectedSite.slug,
 				selectedDomainName,
 				currentRoute,
 				null,
@@ -50,6 +73,12 @@ const ComparisonTable = ( {
 
 							<h2>{ emailProviderFeatures.name }</h2>
 						</div>
+
+						<ComparisonTablePrice
+							domain={ domain }
+							emailProviderSlug={ emailProviderFeatures.slug }
+							intervalLength={ intervalLength }
+						/>
 
 						<Button onClick={ () => selectEmailProvider( emailProviderFeatures.slug ) } primary>
 							{ translate( 'Select' ) }
