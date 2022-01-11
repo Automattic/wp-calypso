@@ -1,7 +1,7 @@
 {
 	"name": "i18n-calypso",
 	"version": "5.0.0",
-	"description": "i18n JavaScript library on top of Tannin originally used in Calypso",
+	"description": "I18n JavaScript library on top of Tannin originally used in Calypso.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
@@ -14,16 +14,14 @@
 	},
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso#readme",
 	"dependencies": {
 		"@automattic/interpolate-components": "workspace:^",
-		"@babel/runtime": "^7.16.5",
+		"@babel/runtime": "^7.16.7",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "^5.0.6",
-		"debug": "^4.0.0",
+		"@wordpress/compose": "^5.0.7",
+		"debug": "^4.3.3",
 		"events": "^3.0.0",
 		"hash.js": "^1.1.5",
 		"lodash": "^4.17.21",

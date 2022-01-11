@@ -12,7 +12,7 @@ interface EmailSubscription {
 	status: string;
 }
 
-type EmailCost = {
+export type EmailCost = {
 	amount: number;
 	currency: string;
 	text: string;
@@ -35,6 +35,7 @@ export type TitanEmailSubscription = EmailSubscription & {
 	maximumMailboxCount?: number;
 	numberOfMailboxes?: number;
 	orderId?: number;
+	productSlug?: string;
 	purchaseCostPerMailbox?: EmailCost | null;
 	renewalCostPerMailbox?: EmailCost | null;
 	subscriptionId?: number | null;

@@ -29,10 +29,6 @@ const getSiteTypePropertyDefaults = ( propertyKey ) =>
 			signUpFlowDomainsStepSubheader: i18n.translate(
 				"Tell us your site's name or a few keywords, and we'll come up with some suggestions."
 			),
-			// Site styles step
-			siteStyleSubheader: i18n.translate(
-				'This will help you get started with a theme you might like. You can change it later.'
-			),
 		},
 		propertyKey,
 		null

@@ -1,16 +1,10 @@
-.backup-upsell__content {
-	padding-top: 40px;
-}
-
-.backup-upsell__icon-header {
-	text-align: center;
-
-	img {
-		height: 72px;
-		width: auto;
+.backup-upsell {
+	&__content {
+		padding-top: 40px;
+		display: flex;
+		justify-content: center;
 	}
-
-	@include breakpoint-deprecated( '>660px' ) {
-		text-align: start;
+	.jetpack-product-card {
+		max-width: 420px;
 	}
 }

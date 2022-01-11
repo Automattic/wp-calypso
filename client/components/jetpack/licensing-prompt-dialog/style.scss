@@ -36,6 +36,8 @@
 	right: 8px;
 	top: 8px;
 
+	cursor: pointer;
+
 	@include break-mobile {
 		right: 24px;
 		top: 24px;
@@ -56,6 +58,10 @@
 }
 
 .licensing-prompt-dialog__btn.is-primary {
+
+	--color-accent: var( --studio-jetpack-green-40 );
+  --color-primary: var( --studio-jetpack-green-40 );
+
 	@include break-mobile {
 		margin-right: 16px;
 	}

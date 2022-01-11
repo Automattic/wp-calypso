@@ -22,9 +22,10 @@ type OwnProps = {
 	description?: ReactNode;
 	originalPrice?: number;
 	discountedPrice?: number;
+	hidePrice?: boolean;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
-	onButtonClick: React.MouseEventHandler;
+	onButtonClick?: React.MouseEventHandler;
 	buttonURL?: string;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
@@ -59,6 +60,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	description,
 	originalPrice,
 	discountedPrice,
+	hidePrice,
 	buttonLabel,
 	buttonPrimary,
 	onButtonClick,
@@ -122,23 +124,25 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					</Header>
 				) }
 
-				<DisplayPrice
-					isDeprecated={ isDeprecated }
-					isOwned={ isOwned }
-					isIncludedInPlan={ isIncludedInPlan }
-					isFree={ item.isFree }
-					discountedPrice={ discountedPrice }
-					currencyCode={ item.displayCurrency }
-					originalPrice={ originalPrice ?? 0 }
-					displayFrom={ displayFrom }
-					showAbovePriceText={ showAbovePriceText }
-					belowPriceText={ item.belowPriceText }
-					expiryDate={ expiryDate }
-					billingTerm={ item.displayTerm || item.term }
-					tooltipText={ tooltipText }
-					productName={ item.displayName }
-					hideSavingLabel={ hideSavingLabel }
-				/>
+				{ ! hidePrice && (
+					<DisplayPrice
+						isDeprecated={ isDeprecated }
+						isOwned={ isOwned }
+						isIncludedInPlan={ isIncludedInPlan }
+						isFree={ item.isFree }
+						discountedPrice={ discountedPrice }
+						currencyCode={ item.displayCurrency }
+						originalPrice={ originalPrice ?? 0 }
+						displayFrom={ displayFrom }
+						showAbovePriceText={ showAbovePriceText }
+						belowPriceText={ item.belowPriceText }
+						expiryDate={ expiryDate }
+						billingTerm={ item.displayTerm || item.term }
+						tooltipText={ tooltipText }
+						productName={ item.displayName }
+						hideSavingLabel={ hideSavingLabel }
+					/>
+				) }
 
 				{ aboveButtonText && (
 					<p className="jetpack-product-card__above-button">{ aboveButtonText }</p>

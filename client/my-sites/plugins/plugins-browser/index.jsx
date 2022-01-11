@@ -10,12 +10,11 @@ import {
 import { Button } from '@automattic/components';
 import Search from '@automattic/search';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
-import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import announcementImage from 'calypso/assets/images/marketplace/plugins-revamp.png';
+import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -29,8 +28,6 @@ import { PaginationVariant } from 'calypso/components/pagination/constants';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
-import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import NoResults from 'calypso/my-sites/no-results';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -38,6 +35,8 @@ import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
 	fetchPluginsCategoryNextPage,
 	fetchPluginsList,
@@ -80,8 +79,7 @@ const PluginsBrowser = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
 	// Billing period switcher.
-	const isWide = useBreakpoint( '>1280px' );
-	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
+	const billingPeriod = useSelector( getBillingInterval );
 
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
@@ -156,10 +154,10 @@ const PluginsBrowser = ( {
 
 	const annoncementPages = [
 		{
-			headline: translate( 'ITS NEW!' ),
-			heading: translate( 'All the plugins and more' ),
+			headline: translate( 'NEW' ),
+			heading: translate( 'Buy the best plugins' ),
 			content: translate(
-				'This page may look different as we’ve made some changes to improve the experience for you. Stay tuned for even more exciting updates to come!'
+				"Now you can purchase plugins right on WordPress.com to extend your website's capabilities."
 			),
 			featureImage: announcementImage,
 		},
@@ -227,25 +225,18 @@ const PluginsBrowser = ( {
 			<DocumentHead title={ translate( 'Plugins' ) } />
 			<SidebarNavigation />
 
-			<AnnouncementModal
-				announcementId="plugins-page-revamp"
-				pages={ annoncementPages }
-				finishButtonText={ translate( "Let's explore!" ) }
-			/>
+			{ isEnabled( 'marketplace-v1' ) && (
+				<AnnouncementModal
+					announcementId="plugins-page-woo-extensions"
+					pages={ annoncementPages }
+					finishButtonText={ translate( "Let's explore!" ) }
+				/>
+			) }
 			{ ! hideHeader && (
 				<FixedNavigationHeader
 					className="plugins-browser__header"
 					navigationItems={ navigationItems }
 				>
-					{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && (
-						<div className="plugins-browser__billling-interval-switcher">
-							<BillingIntervalSwitcher
-								billingPeriod={ billingPeriod }
-								onChange={ setBillingPeriod }
-								compact={ ! isWide }
-							/>
-						</div>
-					) }
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
 							shouldShowManageButton={ shouldShowManageButton }
@@ -290,6 +281,7 @@ const PluginsBrowser = ( {
 				siteSlug={ siteSlug }
 				jetpackNonAtomic={ jetpackNonAtomic }
 				billingPeriod={ billingPeriod }
+				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 		</MainComponent>
@@ -347,18 +339,35 @@ const SearchListView = ( {
 		const subtitle =
 			pluginsPagination &&
 			translate( '%(total)s plugin', '%(total)s plugins', {
-				count: pluginsPagination.results,
+				count: pluginsPagination.results + paidPluginsBySearchTerm?.length,
 				textOnly: true,
 				args: {
-					total: pluginsPagination.results,
+					total: pluginsPagination.results + paidPluginsBySearchTerm?.length,
 				},
 			} );
+
+		let pageSize = SEARCH_RESULTS_LIST_LENGTH;
+		if ( isEnabled( 'marketplace-v1' ) && pluginsPagination?.page === 1 ) {
+			// Paid results appear only in the first page.
+			// Since the wporg results will always be an even number and paid results might be odd
+			// append one more wporg result if needed to fill the grid.
+			pageSize =
+				SEARCH_RESULTS_LIST_LENGTH +
+				paidPluginsBySearchTerm?.length +
+				( paidPluginsBySearchTerm?.length % 2 );
+		}
+
+		const pluginItemsFeatch = ( page ) => {
+			return isEnabled( 'marketplace-v1' ) && page === 1
+				? SEARCH_RESULTS_LIST_LENGTH + ( paidPluginsBySearchTerm?.length % 2 )
+				: SEARCH_RESULTS_LIST_LENGTH;
+		};
 
 		return (
 			<>
 				<PluginsBrowserList
 					plugins={
-						isEnabled( 'marketplace-v1' )
+						isEnabled( 'marketplace-v1' ) && pluginsPagination?.page === 1
 							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
 							: pluginsBySearchTerm
 					}
@@ -367,7 +376,7 @@ const SearchListView = ( {
 					subtitle={ subtitle }
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm || isFetchingPaidPluginsBySearchTerm }
-					size={ SEARCH_RESULTS_LIST_LENGTH }
+					size={ pageSize }
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
@@ -376,10 +385,10 @@ const SearchListView = ( {
 				{ pluginsPagination && (
 					<Pagination
 						page={ pluginsPagination.page }
-						perPage={ SEARCH_RESULTS_LIST_LENGTH }
+						perPage={ pluginItemsFeatch( pluginsPagination?.page ) }
 						total={ pluginsPagination.results }
 						pageClick={ ( page ) => {
-							dispatch( fetchPluginsList( null, page, searchTerm, SEARCH_RESULTS_LIST_LENGTH ) );
+							dispatch( fetchPluginsList( null, page, searchTerm, pluginItemsFeatch( page ) ) );
 						} }
 						variant={ PaginationVariant.minimal }
 					/>
@@ -457,6 +466,7 @@ const PluginSingleListView = ( {
 	siteSlug,
 	sites,
 	billingPeriod,
+	setBillingPeriod,
 } ) => {
 	const translate = useTranslate();
 
@@ -491,6 +501,7 @@ const PluginSingleListView = ( {
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
 			billingPeriod={ billingPeriod }
+			setBillingPeriod={ category === 'paid' && setBillingPeriod }
 			extended
 		/>
 	);

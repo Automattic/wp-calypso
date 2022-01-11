@@ -2,7 +2,6 @@ import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
-	READER_FEED_UPDATE,
 } from 'calypso/state/reader/action-types';
 
 import 'calypso/state/data-layer/wpcom/read/feed';
@@ -30,16 +29,5 @@ export function receiveReaderFeedRequestFailure( feedId, error ) {
 		type: READER_FEED_REQUEST_FAILURE,
 		payload: { feed_ID: feedId },
 		error,
-	};
-}
-
-export function updateFeeds( feeds ) {
-	if ( ! Array.isArray( feeds ) ) {
-		feeds = [ feeds ];
-	}
-
-	return {
-		type: READER_FEED_UPDATE,
-		payload: feeds,
 	};
 }

@@ -47,6 +47,10 @@ const PluginDetailsSidebar = ( {
 		);
 	}
 	const supportLinks = [
+		{
+			href: 'https://wordpress.com/support/help-support-options/#live-chat-support',
+			label: translate( 'How to get help!' ),
+		},
 		{ href: 'https://automattic.com/privacy/', label: translate( 'See privacy policy' ) },
 	];
 	documentation_url &&
@@ -87,7 +91,7 @@ const PluginDetailsSidebar = ( {
 				id="support"
 				icon={ { src: support } }
 				title={ translate( 'Support' ) }
-				description={ translate( 'Handled by WooCommerce.' ) }
+				description={ translate( 'Live chat support 24x7.' ) }
 				links={ supportLinks }
 			/>
 		</div>

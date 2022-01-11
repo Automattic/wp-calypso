@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -15,7 +15,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -26,6 +25,9 @@ import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custo
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -95,10 +97,12 @@ function PluginDetails( props ) {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 
 	// Header Navigation and billing period switcher.
 	const isWide = useBreakpoint( '>1280px' );
-	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
+
+	const billingPeriod = useSelector( getBillingInterval );
 
 	// Determine if the plugin is WPcom or WPorg hosted
 	const productsList = useSelector( ( state ) => getProductsList( state ) );
@@ -182,7 +186,7 @@ function PluginDetails( props ) {
 		// - change the first breadcrumb if prev page wasn't plugins page (eg activity log)
 		const navigationItems = [
 			{ label: translate( 'Plugins' ), href: `/plugins/${ selectedSite?.slug || '' }` },
-			{ label: fullPlugin.name },
+			{ label: fullPlugin.name, href: `/plugins/${ selectedSite?.slug }/${ fullPlugin.slug }` },
 		];
 
 		return navigationItems;
@@ -219,12 +223,12 @@ function PluginDetails( props ) {
 				compactBreadcrumb={ ! isWide }
 			>
 				{ isEnabled( 'marketplace-v1' ) &&
-					isMarketplaceProduct &&
+					( isMarketplaceProduct || shouldUpgrade ) &&
 					! requestingPluginsForSites &&
 					! isPluginInstalledOnsite && (
 						<BillingIntervalSwitcher
 							billingPeriod={ billingPeriod }
-							onChange={ setBillingPeriod }
+							onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 							compact={ ! isWide }
 						/>
 					) }
@@ -279,7 +283,7 @@ function PluginDetails( props ) {
 
 						<div className="plugin-details__layout plugin-details__body">
 							<div className="plugin-details__layout-col-left">
-								{ fullPlugin.wporg ? (
+								{ fullPlugin.wporg || isMarketplaceProduct ? (
 									<PluginSections
 										className="plugin-details__plugins-sections"
 										plugin={ fullPlugin }

@@ -24,8 +24,10 @@
 		padding: 8px;
 	}
 
-	button.p2-confirm-email__resend-email ,
-	button.p2-confirm-email__change-email {
+	/* TODO Revisit specificity when p2-new signup flow becomes main flow
+	and p2-new styles for p2-step-wrapper can have their specificity reduced */
+	.p2-step-wrapper button.p2-confirm-email__resend-email ,
+	.p2-step-wrapper button.p2-confirm-email__change-email {
 		background: none;
 		color: var( --p2-color-link );
 		text-decoration: underline;
@@ -45,10 +47,15 @@
 			box-shadow: none;
 		}
 	}
+
+	button.p2-confirm-email__continue {
+		max-width: 228px;
+	}
 }
 
 .p2-confirm-email__message {
 	text-align: center;
+	margin-bottom: 3em;
 }
 
 .p2-confirm-email__actions {
@@ -66,6 +73,7 @@
 .p2-confirm-email__buttons {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 }
 
 .p2-confirm-email__buttons-separator {

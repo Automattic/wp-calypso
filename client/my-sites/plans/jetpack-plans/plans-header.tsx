@@ -67,12 +67,18 @@ const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) =
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 	// Site products from direct purchases
-	const purchasedProducts =
-		useSelector( ( state ) => getSiteProducts( state, siteId ) )
-			?.map( ( { productSlug } ) => productSlug )
+	const purchasedProducts = useSelector( ( state ) => {
+		const products = getSiteProducts( state, siteId );
+		if ( ! products ) {
+			return [];
+		}
+
+		return products
+			.map( ( { productSlug } ) => productSlug )
 			.filter( ( productSlug ) =>
 				( JETPACK_PRODUCTS_LIST as ReadonlyArray< string > ).includes( productSlug )
-			) ?? [];
+			);
+	} );
 
 	// When coming from in-connect flow, the url contains 'source=jetpack-connect-plans' query param.
 	const isInConnectFlow = context.query?.source === 'jetpack-connect-plans';

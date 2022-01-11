@@ -10,6 +10,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
+import { PluginFeaturedVideo } from '../plugin-featured-video';
 
 import './style.scss';
 
@@ -227,10 +228,15 @@ class PluginSections extends Component {
 		const contentClasses = classNames( 'plugin-sections__content', {
 			trimmed: ! this.props.removeReadMore && ! this.props.isWpcom && ! this.state.readMore,
 		} );
-		const banner = this.props.plugin.banners.high || this.props.plugin.banners.low;
+		const banner = this.props.plugin?.banners?.high || this.props.plugin?.banners?.low;
+		const videoUrl = this.props.plugin?.banner_video_src;
 
 		/*eslint-disable react/no-danger*/
-		if ( ! this.props.addBanner || ! banner || this.getSelected() !== 'description' ) {
+		if (
+			! this.props.addBanner ||
+			( ! banner && ! videoUrl ) ||
+			this.getSelected() !== 'description'
+		) {
 			return (
 				<div
 					ref={ this.descriptionContent }
@@ -240,6 +246,26 @@ class PluginSections extends Component {
 						__html: this.props.plugin.sections[ this.getSelected() ],
 					} }
 				/>
+			);
+		}
+
+		if ( videoUrl ) {
+			return (
+				<div ref={ this.descriptionContent } className={ contentClasses }>
+					<div className="plugin-sections__banner">
+						<PluginFeaturedVideo
+							id="product-video-iframe"
+							src={ videoUrl }
+							productName={ this.props.plugin.name }
+						/>
+					</div>
+					<div
+						// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+						dangerouslySetInnerHTML={ {
+							__html: this.props.plugin.sections[ this.getSelected() ],
+						} }
+					/>
+				</div>
 			);
 		}
 

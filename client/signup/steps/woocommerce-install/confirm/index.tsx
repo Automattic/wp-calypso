@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -17,7 +18,7 @@ import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 import './style.scss';
 
-const ActionSection = styled.div`
+export const ActionSection = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
@@ -38,7 +39,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-bottom: 40px;
 `;
 
-const StyledNextButton = styled( NextButton )`
+export const StyledNextButton = styled( NextButton )`
 	@media ( max-width: 320px ) {
 		width: 100%;
 		margin-bottom: 20px;
@@ -158,7 +159,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ wpcomDomain }` }
+			backUrl={ isEnabled( 'woop' ) ? null : `/woocommerce-installation/${ wpcomDomain }` }
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }

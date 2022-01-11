@@ -104,7 +104,7 @@ export default class SignupFlowController {
 		try {
 			this._assertFlowHasValidDependencies();
 		} catch ( ex ) {
-			debug( 'Invalid dependencies in flow : ' + ex.message );
+			debug( 'Invalid dependencies in flow : ' + ( ex as Error ).message );
 			if ( this._flowName !== flows.defaultFlowName ) {
 				// redirect to the default signup flow, hopefully it will be valid
 				page( getStepUrl() );

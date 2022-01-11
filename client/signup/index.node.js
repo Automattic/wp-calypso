@@ -19,9 +19,6 @@ function setUpLocale( context, next ) {
 	const language = getLanguage( context.params.lang );
 	if ( language ) {
 		context.lang = context.params.lang;
-		if ( language.rtl ) {
-			context.isRTL = true;
-		}
 	}
 
 	next();

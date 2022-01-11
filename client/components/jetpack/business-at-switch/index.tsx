@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { ReactElement, Component } from 'react';
+import { ReactElement, ComponentType } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,7 +12,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 type Props = {
-	UpsellComponent: typeof Component;
+	UpsellComponent: ComponentType;
 };
 
 const Placeholder = () => (

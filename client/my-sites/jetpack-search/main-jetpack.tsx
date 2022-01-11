@@ -11,9 +11,9 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { getSite } from 'calypso/state/sites/selectors';
 import JetpackSearchDetails from './details';
 import JetpackSearchDisconnected from './disconnected';
+import JetpackSearchUpsell from './jetpack-search-upsell';
 import JetpackSearchPlaceholder from './placeholder';
 import { hasJetpackSearchPurchaseOrPlan } from './purchases';
-import JetpackSearchUpsell from './upsell';
 
 interface Props {
 	siteId: number;

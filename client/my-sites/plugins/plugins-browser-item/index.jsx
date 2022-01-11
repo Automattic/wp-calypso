@@ -12,6 +12,7 @@ import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -92,6 +93,8 @@ const PluginsBrowserListElement = ( props ) => {
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	} );
 
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+
 	if ( isPlaceholder ) {
 		return <Placeholder iconSize={ iconSize } />;
 	}
@@ -143,6 +146,7 @@ const PluginsBrowserListElement = ( props ) => {
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
 							billingPeriod={ billingPeriod }
+							shouldUpgrade={ shouldUpgrade }
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
@@ -176,6 +180,7 @@ const InstalledInOrPricing = ( {
 	isWpcomPreinstalled,
 	plugin,
 	billingPeriod,
+	shouldUpgrade,
 } ) => {
 	const translate = useTranslate();
 
@@ -202,7 +207,14 @@ const InstalledInOrPricing = ( {
 									<span className="plugins-browser-item__period">{ period }</span>
 								</>
 							) : (
-								translate( 'Free' )
+								<>
+									{ translate( 'Free' ) }
+									{ shouldUpgrade && (
+										<span className="plugins-browser-item__requires-plan-upgrade">
+											{ translate( 'Requires a plan upgrade' ) }
+										</span>
+									) }
+								</>
 							) }
 						</>
 					)

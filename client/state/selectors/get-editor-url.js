@@ -5,7 +5,7 @@ import { shouldCalypsoifyJetpack } from 'calypso/state/selectors/should-calypsoi
 import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 
-export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
+export const getEditorUrl = ( state, siteId, postId = '', postType = 'post' ) => {
 	if ( ! shouldLoadGutenframe( state, siteId, postType ) ) {
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;

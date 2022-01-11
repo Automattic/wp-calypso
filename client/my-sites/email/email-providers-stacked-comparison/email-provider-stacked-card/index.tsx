@@ -8,38 +8,36 @@ import {
 	EmailProviderStackedFeaturesToggleButton,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
 import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
-import type { FunctionComponent } from 'react';
+import type { MouseEvent, ReactElement } from 'react';
 
 import './style.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) => {
-	const {
-		children,
-		className,
-		description,
-		detailsExpanded,
-		expandButtonLabel,
-		features,
-		footerBadge,
-		formFields,
-		logo,
-		onExpandedChange = noop,
-		priceBadge = null,
-		productName,
-		providerKey,
-		showExpandButton = true,
-	} = props;
-
+const EmailProvidersStackedCard = ( {
+	children,
+	className,
+	description,
+	detailsExpanded,
+	expandButtonLabel,
+	features,
+	footerBadge,
+	formFields,
+	logo,
+	onExpandedChange = noop,
+	priceBadge = null,
+	productName,
+	providerKey,
+	showExpandButton = true,
+}: ProviderCard ): ReactElement => {
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
 	const isViewportSizeLowerThan660px = useBreakpoint( '<660px' );
 
 	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan660px;
 
-	const toggleVisibility = ( event: React.MouseEvent ): void => {
+	const toggleVisibility = ( event: MouseEvent ): void => {
 		event.preventDefault();
 
 		onExpandedChange( providerKey, ! detailsExpanded );
@@ -51,7 +49,9 @@ const EmailProvidersStackedCard: FunctionComponent< ProviderCard > = ( props ) =
 				<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
 				<p>{ description }</p>
 			</div>
+
 			<div className="email-provider-stacked-card__title-price-badge">{ priceBadge }</div>
+
 			{ showExpandButton && ! detailsExpanded && (
 				<div className="email-provider-stacked-card__provider-card-main-details">
 					<Button

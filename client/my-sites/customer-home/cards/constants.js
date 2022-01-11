@@ -21,6 +21,7 @@ export const TASK_EARN_FEATURES = 'home-task-earn-features';
 export const TASK_FIND_DOMAIN = 'home-task-find-domain';
 export const TASK_GO_MOBILE_ANDROID = 'home-task-go-mobile-android';
 export const TASK_GO_MOBILE_IOS = 'home-task-go-mobile-ios';
+export const TASK_MARKETPLACE = 'home-task-marketplace';
 export const TASK_PODCASTING = 'home-task-podcasting';
 export const TASK_RENEW_EXPIRED_PLAN = 'home-task-renew-expired-plan';
 export const TASK_RENEW_EXPIRING_PLAN = 'home-task-renew-expiring-plan';

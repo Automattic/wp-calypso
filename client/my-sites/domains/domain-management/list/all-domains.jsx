@@ -183,17 +183,8 @@ class AllDomains extends Component {
 	};
 
 	isLoading() {
-		const {
-			domainsList,
-			requestingFlatDomains,
-			allSitesDomainsQueried,
-			hasAllSitesLoaded,
-		} = this.props;
-		return (
-			! allSitesDomainsQueried ||
-			! hasAllSitesLoaded ||
-			( requestingFlatDomains && domainsList.length === 0 )
-		);
+		const { domainsList, requestingFlatDomains, hasAllSitesLoaded } = this.props;
+		return ! hasAllSitesLoaded || ( requestingFlatDomains && domainsList.length === 0 );
 	}
 
 	isRequestingSiteDomains() {
@@ -677,10 +668,6 @@ class AllDomains extends Component {
 		);
 	}
 
-	queryAllSitesDomains() {
-		return Object.keys( this.props.sites ).map( this.renderQuerySiteDomainsOnce );
-	}
-
 	renderDomainTableFilterButton() {
 		const { context } = this.props;
 
@@ -779,7 +766,6 @@ class AllDomains extends Component {
 				<div className="all-domains__form">{ this.renderActionForm() }</div>
 				<div className="all-domains__container">
 					<QueryAllDomains />
-					{ this.queryAllSitesDomains() }
 					<QueryUserPurchases />
 					<Main wideLayout>
 						<SidebarNavigation />
@@ -860,10 +846,6 @@ const getFilteredDomainsList = ( state, context ) => {
 	}
 };
 
-const hasQueriedAllSitesDomains = ( state, sites ) => {
-	return Object.keys( sites ).length === Object.keys( state.sites.domains.items ).length;
-};
-
 export default connect(
 	( state, { context } ) => {
 		const sites = getSitesById( state );
@@ -881,7 +863,6 @@ export default connect(
 			purchases: getUserPurchases( state ) || [],
 			hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
 			requestingFlatDomains: isRequestingAllDomains( state ),
-			allSitesDomainsQueried: hasQueriedAllSitesDomains( state, sites ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
 		};

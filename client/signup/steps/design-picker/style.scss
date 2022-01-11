@@ -49,29 +49,7 @@
 		}
 	}
 
-	.design-picker__grid {
-		grid-template-columns: 1fr;
-
-		@include break-medium {
-			grid-template-columns: 1fr 1fr;
-			column-gap: 49px;
-			row-gap: 39px;
-		}
-	}
-
 	.design-picker__has-categories {
-		.design-picker__grid {
-			@include break-medium {
-				grid-template-columns: 1fr;
-				column-gap: 24px;
-				row-gap: 36px;
-			}
-
-			@include break-large {
-				grid-template-columns: 1fr 1fr;
-			}
-		}
-
 		.formatted-header__subtitle {
 			// Overrides some very specific selectors in /client/signup/style.scss
 			margin: 12px 0 48px !important;

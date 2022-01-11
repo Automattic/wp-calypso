@@ -192,6 +192,7 @@ const Designs: React.FunctionComponent = () => {
 						/>
 					)
 				}
+				highResThumbnails
 			/>
 		</div>
 	);

@@ -15,9 +15,9 @@ export default function getPlanFeatures(
 	translate: ReturnType< typeof useTranslate >,
 	hasDomainsInCart: boolean,
 	hasRenewalInCart: boolean,
-	planHasDomainCredit: boolean
+	nextDomainIsFree: boolean
 ): string[] {
-	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && planHasDomainCredit;
+	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
 	const productSlug = plan?.product_slug;
 
 	if ( ! productSlug ) {

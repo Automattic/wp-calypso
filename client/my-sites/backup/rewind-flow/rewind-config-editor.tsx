@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, ChangeEvent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import { RewindConfig } from './types';
+import type { RewindConfig } from './types';
 
 import './style.scss';
 
@@ -96,7 +96,7 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 					required={ false }
 				>
 					<FormCheckbox
-						checked={ currentConfig[ name ] }
+						checked={ currentConfig[ name as keyof RewindConfig ] }
 						className="rewind-flow__rewind-config-editor-checkbox"
 						name={ name }
 						onChange={ onChange }

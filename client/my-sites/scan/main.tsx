@@ -50,7 +50,7 @@ interface Props {
 	moment: {
 		utc: typeof utc;
 	};
-	applySiteOffset: applySiteOffsetType;
+	applySiteOffset: applySiteOffsetType | null;
 	dispatchRecordTracksEvent: ( arg0: string, arg1: Record< string, unknown > ) => null;
 	dispatchScanRun: ( arg0: number ) => null;
 	isAdmin: boolean;

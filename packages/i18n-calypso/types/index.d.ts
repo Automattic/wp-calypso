@@ -132,6 +132,8 @@ declare namespace i18nCalypso {
 	export function on( eventName: string, listener: EventListener ): void;
 	export function off( eventName: string, listener: EventListener ): void;
 	export function emit( eventName: string, ...payload: any ): void;
+
+	export function useRtl(): boolean;
 }
 
 export = i18nCalypso;

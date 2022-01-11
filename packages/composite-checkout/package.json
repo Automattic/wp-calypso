@@ -33,16 +33,14 @@
 	},
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/composite-checkout#readme",
 	"dependencies": {
 		"@emotion/react": "^11.4.1",
 		"@emotion/styled": "^11.3.0",
 		"@wordpress/i18n": "^4.2.4",
 		"@wordpress/react-i18n": "^3.0.4",
-		"debug": "^4.1.1",
+		"debug": "^4.3.3",
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {

@@ -36,7 +36,7 @@ function WelcomeTourCard( {
 	isGutenboarding,
 	setInitialFocusedElement,
 } ) {
-	const { description, heading, imgSrc, imgNeedsPadding } = cardContent;
+	const { descriptions, heading, imgSrc, imgNeedsPadding } = cardContent;
 	const isLastStep = currentStepIndex === lastStepIndex;
 
 	// Ensure tracking is recorded once per slide view
@@ -58,6 +58,8 @@ function WelcomeTourCard( {
 	const cardMediaClass = classNames( 'welcome-tour-card__media', {
 		'is-with-extra-padding': isMobile() && imgNeedsPadding,
 	} );
+
+	const description = descriptions[ isMobile() ? 'mobile' : 'desktop' ] ?? descriptions.desktop;
 
 	return (
 		<Card className="welcome-tour-card" isElevated>
