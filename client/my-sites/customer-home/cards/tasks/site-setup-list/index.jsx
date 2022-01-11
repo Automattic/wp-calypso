@@ -259,7 +259,7 @@ const SiteSetupList = ( {
 				</CardHeading>
 				<ul className="site-setup-list__list">
 					{ tasks.map( ( task ) => {
-						const enhancedTask = getTask( task, { isBlogger } );
+						const enhancedTask = getTask( task, { isBlogger, userEmail } );
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
 
