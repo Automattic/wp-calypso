@@ -85,8 +85,6 @@ import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError,
 } from 'calypso/state/domains/suggestions/selectors';
-import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
 
@@ -353,11 +351,6 @@ class RegisterDomainStep extends Component {
 			this.props.selectedSite.domain !== prevProps.selectedSite.domain
 		) {
 			this.focusSearchCard();
-		}
-
-		// Hide the signup site preview when we're loading results
-		if ( this.props.isSignupStep && this.state.loadingResults && this.props.isSitePreviewVisible ) {
-			this.props.hideSitePreview();
 		}
 	}
 
@@ -791,11 +784,6 @@ class RegisterDomainStep extends Component {
 	onSearchChange = ( searchQuery, callback = noop ) => {
 		if ( ! this._isMounted ) {
 			return;
-		}
-
-		// Reshow the signup site preview if there is no search query
-		if ( ! searchQuery && this.props.isSignupStep && ! this.props.isSitePreviewVisible ) {
-			this.props.showSitePreview();
 		}
 
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
@@ -1604,7 +1592,6 @@ export default connect(
 	( state, props ) => {
 		const queryObject = getQueryObject( props );
 		return {
-			isSitePreviewVisible: isSitePreviewVisible( state ),
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
@@ -1622,7 +1609,5 @@ export default connect(
 		recordShowMoreResults,
 		recordTransferDomainButtonClick,
 		recordUseYourDomainButtonClick,
-		hideSitePreview,
-		showSitePreview,
 	}
 )( withCartKey( withShoppingCart( localize( RegisterDomainStep ) ) ) );
