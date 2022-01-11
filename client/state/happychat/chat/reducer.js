@@ -1,4 +1,3 @@
-import { sortBy } from 'lodash';
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
@@ -92,8 +91,9 @@ const timelineEvent = ( state = {}, action ) => {
 	return state;
 };
 
-const sortTimeline = ( timeline ) =>
-	sortBy( timeline, ( event ) => parseInt( event.timestamp, 10 ) );
+const getEventTimestamp = ( event ) => parseInt( event.timestamp, 10 );
+const timelineSortCmp = ( a, b ) => getEventTimestamp( a ) - getEventTimestamp( b );
+const sortTimeline = ( timeline ) => timeline.concat().sort( timelineSortCmp );
 
 /**
  * Adds timeline events for happychat
