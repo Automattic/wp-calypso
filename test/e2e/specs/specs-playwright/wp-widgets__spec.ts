@@ -8,6 +8,7 @@ import {
 	SidebarComponent,
 	setupHooks,
 	TestAccount,
+	BlockWidgetEditorComponent,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -26,25 +27,17 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 		await testAccount.authenticate( page );
 	} );
 
-	// @todo: Refactor/Abstract these steps into a WidgetsEditor component
-	it( 'Navigate to the Block Widgets Editor', async function () {
+	it( 'Navigate to Appearance > Widgets', async function () {
 		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.navigate( 'Appearance', 'Widgets' );
-		// GB 10.4.0-rc-1 changed the english label to "Customize" from "Customise"
-		// (notice the `z`) we accept both since both are considered correct and
-		// shouldn't affect the UX.
-		const widgetsMenu = await page.waitForSelector( 'text=/Customi[s|z]ing ▸ Widgets/' );
-		await widgetsMenu.waitForElementState( 'stable' );
 	} );
 
 	it( 'Dismiss the Welcome Guide Notice if displayed', async function () {
-		const button = await page.$( 'button:text("Got it")' );
-		if ( button ) {
-			await button.click();
-			await button.waitForElementState( 'hidden' );
-		}
+		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
+		await blockWidgetEditorComponent.dismissWelcomeModal();
 	} );
 
+	// @todo: Refactor/Abstract these steps into a WidgetsEditor component
 	describe( 'Regression: Verify that the visibility option is present', function () {
 		it( 'Insert a Legacy Widget', async function () {
 			await page.click( 'button[aria-label="Add block"]' );
