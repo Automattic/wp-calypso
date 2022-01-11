@@ -142,7 +142,7 @@ const timelineReducer = ( state = [], action ) => {
 						return false;
 					}
 
-					return ! state.some( { id: message.id } );
+					return ! state.some( ( event ) => event.id === message.id );
 				} ) ?? [];
 			return sortTimeline(
 				state.concat(
