@@ -197,7 +197,7 @@
 					padding: 13px 20px;
 				}
 
-				.videos-ui__active-video-content {
+				&:not( .preload ) .videos-ui__active-video-content {
 					overflow: hidden;
 					max-height: 0;
 					transition: max-height 0.2s ease-out;
@@ -212,7 +212,7 @@
 					}
 				}
 
-				&.selected .videos-ui__active-video-content {
+				&.selected:not( .preload ) .videos-ui__active-video-content {
 					max-height: 250px;
 				}
 
