@@ -5,8 +5,9 @@ import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ImportJob } from '../types';
-import ContentChooser, { WPImportType } from './content-chooser';
+import ContentChooser from './content-chooser';
 import { ImportEverything } from './import-everything';
+import { WPImportType } from './types';
 
 import './style.scss';
 
@@ -56,6 +57,9 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 		// console.log( 'runImportMigrationProcess' );
 	}
 
+	/**
+	 ↓ HTML
+	 */
 	return (
 		<>
 			{ chosenType === undefined && (

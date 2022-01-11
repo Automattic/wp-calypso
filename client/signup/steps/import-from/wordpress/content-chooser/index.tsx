@@ -20,7 +20,6 @@ interface Props {
 	onContentOnlySelection: () => void;
 	onContentEverythingSelection: () => void;
 }
-export type WPImportType = 'everything' | 'content_only';
 
 export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
