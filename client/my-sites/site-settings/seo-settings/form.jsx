@@ -65,9 +65,7 @@ function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
 }
 
-export class SeoForm extends Component {
-	static displayName = 'SiteSettingsFormSEO';
-
+export class SiteSettingsFormSEO extends Component {
 	_mounted = false;
 
 	state = {
@@ -496,5 +494,5 @@ const withCurrentSiteKey = createHigherOrderComponent(
 );
 
 export default withCurrentSiteKey(
-	connect( mapStateToProps, mapDispatchToProps )( protectForm( localize( SeoForm ) ) )
+	connect( mapStateToProps, mapDispatchToProps )( protectForm( localize( SiteSettingsFormSEO ) ) )
 );
