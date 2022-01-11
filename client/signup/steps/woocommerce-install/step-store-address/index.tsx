@@ -18,6 +18,7 @@ import {
 	WOOCOMMERCE_STORE_CITY,
 	WOOCOMMERCE_DEFAULT_COUNTRY,
 	WOOCOMMERCE_STORE_POSTCODE,
+	WOOCOMMERCE_ONBOARDING_PROFILE,
 } from '../hooks/use-site-settings';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
@@ -53,6 +54,23 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const handleCountryChange: ChangeEventHandler< HTMLInputElement > = ( event ) => {
 		update( WOOCOMMERCE_DEFAULT_COUNTRY, event.target.value );
 	};
+
+	// @todo: Add a general hook to get and update multi-option data like the profile.
+	function updateProfileEmail( email: string ) {
+		const profile_data = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
+
+		profile_data[ 'store_email' ] = email;
+
+		update( WOOCOMMERCE_ONBOARDING_PROFILE, profile_data );
+	}
+
+	function getProfileEmail() {
+		const profile_data = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
+
+		const storeEmail = profile_data[ 'store_email' ];
+
+		return storeEmail || '';
+	}
 
 	function getContent() {
 		return (
@@ -91,6 +109,12 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 							onChange={ ( value ) => update( WOOCOMMERCE_STORE_POSTCODE, value ) }
 						/>
 					</CityZipRow>
+
+					<TextControl
+						label={ __( 'Email address', 'woocommerce-admin' ) }
+						value={ getProfileEmail() }
+						onChange={ ( value ) => updateProfileEmail( value ) }
+					/>
 
 					<ActionSection>
 						<SupportCard />
