@@ -1,4 +1,4 @@
-import { find, findIndex, map, get, sortBy } from 'lodash';
+import { findIndex, map, get, sortBy } from 'lodash';
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
@@ -142,7 +142,7 @@ const timelineReducer = ( state = [], action ) => {
 						return false;
 					}
 
-					return ! find( state, { id: message.id } );
+					return ! state.some( { id: message.id } );
 				} ) ?? [];
 			return sortTimeline(
 				state.concat(
