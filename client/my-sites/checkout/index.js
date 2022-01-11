@@ -271,5 +271,14 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		'/checkout/:site/offer-annual-upgrade/:upgradeItem/:receiptId?',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
 	page( '/checkout*', redirectLoggedOut );
 }

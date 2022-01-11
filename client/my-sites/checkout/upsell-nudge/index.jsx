@@ -1,4 +1,11 @@
-import { isMonthly, getPlanByPathSlug } from '@automattic/calypso-products';
+import {
+	isMonthly,
+	findFirstSimilarPlanKey,
+	getPlan as getPlanFromKey,
+	getPlanByPathSlug,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+} from '@automattic/calypso-products';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
@@ -53,6 +60,7 @@ import {
 	hasLoadedStoredCardsFromServer,
 } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { AnnualPlanUpgradeUpsell } from './annual-plan-upgrade-upsell';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import PurchaseModal from './purchase-modal';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
@@ -70,6 +78,7 @@ export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
+export const ANNUAL_PLAN_UPGRADE = 'annual-plan-upgrade-upsell';
 
 export class UpsellNudge extends Component {
 	static propTypes = {
@@ -297,6 +306,9 @@ export class UpsellNudge extends Component {
 			translate,
 			siteSlug,
 			hasSevenDayRefundPeriod,
+			pricePerMonthForMonthlyPlan,
+			pricePerMonthForAnnualPlan,
+			annualPlanSlug,
 		} = this.props;
 
 		switch ( upsellType ) {
@@ -339,6 +351,20 @@ export class UpsellNudge extends Component {
 						setCartItem={ ( newCartItem, callback = noop ) =>
 							this.setState( { cartItem: newCartItem }, callback )
 						}
+					/>
+				);
+
+			case ANNUAL_PLAN_UPGRADE:
+				return (
+					<AnnualPlanUpgradeUpsell
+						currencyCode={ currencyCode }
+						pricePerMonthForMonthlyPlan={ pricePerMonthForMonthlyPlan }
+						pricePerMonthForAnnualPlan={ pricePerMonthForAnnualPlan }
+						annualPlanSlug={ annualPlanSlug }
+						receiptId={ receiptId }
+						handleClickAccept={ this.handleClickAccept }
+						handleClickDecline={ this.handleClickDecline }
+						upgradeItem={ upgradeItem }
 					/>
 				);
 		}
@@ -538,6 +564,21 @@ export default connect(
 				? createRequestCartProduct( productProperties )
 				: null;
 
+		let pricePerMonthForMonthlyPlan;
+		let pricePerMonthForAnnualPlan;
+		let annualPlanSlug;
+		if ( ANNUAL_PLAN_UPGRADE === upsellType ) {
+			const monthlyPlanKey = findFirstSimilarPlanKey( upgradeItem, { term: TERM_MONTHLY } );
+			const annualPlanKey = findFirstSimilarPlanKey( upgradeItem, { term: TERM_ANNUALLY } );
+			pricePerMonthForMonthlyPlan = getSitePlanRawPrice( state, selectedSiteId, monthlyPlanKey, {
+				isMonthly: true,
+			} );
+			pricePerMonthForAnnualPlan = getSitePlanRawPrice( state, selectedSiteId, annualPlanKey, {
+				isMonthly: true,
+			} );
+			annualPlanSlug = getPlanFromKey( annualPlanKey ).getPathSlug();
+		}
+
 		return {
 			isFetchingStoredCards: areStoredCardsLoading,
 			cards,
@@ -558,6 +599,9 @@ export default connect(
 			selectedSiteId,
 			hasSevenDayRefundPeriod: isMonthly( planSlug ),
 			isEligibleForSignupDestinationResult: isEligibleForSignupDestination( props.cart ),
+			pricePerMonthForMonthlyPlan,
+			pricePerMonthForAnnualPlan,
+			annualPlanSlug,
 		};
 	},
 	{
