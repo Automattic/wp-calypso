@@ -5,10 +5,11 @@ import {
 	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
-import { get, isEqual, mapValues, omit, pickBy } from 'lodash';
+import { get, isEqual, mapValues, pickBy } from 'lodash';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -42,6 +43,8 @@ import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settin
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
+	isRequestingSiteSettings,
+	isSavingSiteSettings,
 } from 'calypso/state/site-settings/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
@@ -62,91 +65,61 @@ function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
 }
 
-function stateForSite( site ) {
-	return {
-		frontPageMetaDescription: get( site, 'options.advanced_seo_front_page_description', '' ),
-		isFetchingSettings: get( site, 'fetchingSettings', false ),
-	};
-}
-
 export class SeoForm extends Component {
 	static displayName = 'SiteSettingsFormSEO';
 
+	_mounted = false;
+
 	state = {
-		...stateForSite( this.props.selectedSite ),
-		seoTitleFormats: this.props.storedTitleFormats,
-		// dirtyFields is used to prevent prop updates
-		// from overwriting local stateful edits that
-		// are in progress and haven't yet been saved
-		// to the server
 		dirtyFields: new Set(),
 	};
 
-	componentDidMount() {
-		this.refreshCustomTitles();
+	static getDerivedStateFromProps( props, state ) {
+		const { dirtyFields } = state;
+		const nextState = {};
+
+		if (
+			! dirtyFields.has( 'seoTitleFormats' ) &&
+			! isEqual( props.storedTitleFormats, state.seoTitleFormats )
+		) {
+			nextState.seoTitleFormats = props.storedTitleFormats;
+		}
+
+		if (
+			! dirtyFields.has( 'frontPageMetaDescription' ) &&
+			! isEqual(
+				props.selectedSite.options?.advanced_seo_front_page_description,
+				state.frontPageMetaDescription
+			)
+		) {
+			nextState.frontPageMetaDescription =
+				props.selectedSite.options?.advanced_seo_front_page_description;
+		}
+
+		if ( Object.keys( nextState ).length > 0 ) {
+			return nextState;
+		}
+
+		return null;
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { selectedSite: prevSite, isFetchingSite, translate } = this.props;
-		const { selectedSite: nextSite } = nextProps;
-		const { dirtyFields } = this.state;
+	componentDidMount() {
+		this.refreshCustomTitles();
+		this._mounted = true;
+	}
 
-		// save success
-		if ( this.state.isSubmittingForm && nextProps.isSaveSuccess ) {
-			this.props.markSaved();
-			this.props.requestSiteSettings( nextProps.siteId );
-			this.refreshCustomTitles();
-			this.setState( { isSubmittingForm: false } );
+	componentWillUnmount() {
+		this._mounted = false;
+	}
+
+	handleSubmitSuccess() {
+		this.props.markSaved();
+		this.props.requestSiteSettings( this.props.siteId );
+		this.refreshCustomTitles();
+
+		if ( this._mounted ) {
+			this.setState( { dirtyFields: new Set() } );
 		}
-
-		// save error
-		if ( this.state.isSubmittingForm && nextProps.saveError ) {
-			this.setState( { isSubmittingForm: false } );
-			this.props.errorNotice(
-				translate( 'There was a problem saving your changes. Please, try again.' ),
-				{
-					id: 'seo-settings-form-error',
-				}
-			);
-		}
-
-		// if we are changing sites, everything goes
-		if ( prevSite.ID !== nextSite.ID ) {
-			return this.setState(
-				{
-					...stateForSite( nextSite ),
-					seoTitleFormats: nextProps.storedTitleFormats,
-					dirtyFields: new Set(),
-				},
-				this.refreshCustomTitles
-			);
-		}
-
-		let nextState = {
-			...stateForSite( nextProps.selectedSite ),
-			seoTitleFormats: nextProps.storedTitleFormats,
-		};
-
-		if ( ! isFetchingSite ) {
-			const nextDirtyFields = new Set( dirtyFields );
-			nextDirtyFields.delete( 'seoTitleFormats' );
-
-			nextState = {
-				...nextState,
-				seoTitleFormats: nextProps.storedTitleFormats,
-				dirtyFields: nextDirtyFields,
-			};
-		}
-
-		if ( dirtyFields.has( 'seoTitleFormats' ) ) {
-			nextState = omit( nextState, [ 'seoTitleFormats' ] );
-		}
-
-		// Don't update state for fields the user has edited
-		nextState = omit( nextState, Array.from( dirtyFields ) );
-
-		this.setState( nextState );
 	}
 
 	handleMetaChange = ( { target: { value: frontPageMetaDescription } } ) => {
@@ -183,10 +156,6 @@ export class SeoForm extends Component {
 
 		this.props.removeNotice( 'seo-settings-form-error' );
 
-		this.setState( {
-			isSubmittingForm: true,
-		} );
-
 		// We need to be careful here and only
 		// send _changes_ to the API instead of
 		// sending all of the title formats.
@@ -214,7 +183,11 @@ export class SeoForm extends Component {
 			( format ) => ( Array.isArray( format ) && 0 === format.length ? '' : format )
 		);
 
-		this.props.saveSiteSettings( siteId, updatedOptions );
+		this.props.saveSiteSettings( siteId, updatedOptions ).then( ( res ) => {
+			if ( res.updated ) {
+				this.handleSubmitSuccess();
+			}
+		} );
 
 		this.trackSubmission();
 	};
@@ -268,12 +241,12 @@ export class SeoForm extends Component {
 			isSitePrivate,
 			isSiteHidden,
 			translate,
+			isFetchingSettings,
+			isSavingSettings,
 		} = this.props;
 		const { slug = '', URL: siteUrl = '' } = selectedSite;
 
 		const {
-			isSubmittingForm,
-			isFetchingSettings,
 			frontPageMetaDescription,
 			showPasteError = false,
 			hasHtmlTagError = false,
@@ -281,10 +254,10 @@ export class SeoForm extends Component {
 			showPreview = false,
 		} = this.state;
 
-		const isDisabled = isSubmittingForm || isFetchingSettings;
+		const isDisabled = isSavingSettings || isFetchingSettings;
 		const isSeoDisabled = isDisabled || isSeoToolsActive === false;
 		const isSaveDisabled =
-			isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
+			isDisabled || isSavingSettings || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
@@ -367,7 +340,7 @@ export class SeoForm extends Component {
 						<div>
 							<SettingsSectionHeader
 								disabled={ isSaveDisabled || isSeoDisabled }
-								isSaving={ isSubmittingForm }
+								isSaving={ isSavingSettings }
 								onButtonClick={ this.submitSeoForm }
 								showButton
 								title={ translate( 'Page Title Structure' ) }
@@ -401,7 +374,7 @@ export class SeoForm extends Component {
 							<div>
 								<SettingsSectionHeader
 									disabled={ isSaveDisabled || isSeoDisabled }
-									isSaving={ isSubmittingForm }
+									isSaving={ isSavingSettings }
 									onButtonClick={ this.submitSeoForm }
 									showButton
 									title={ translate( 'Website Meta' ) }
@@ -495,6 +468,8 @@ const mapStateToProps = ( state ) => {
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
 		path: getCurrentRouteParameterized( state, siteId ),
+		isFetchingSettings: isRequestingSiteSettings( state, siteId ),
+		isSavingSettings: isSavingSiteSettings( state, siteId ),
 	};
 };
 
@@ -512,4 +487,14 @@ const mapDispatchToProps = {
 		recordTracksEvent( 'calypso_seo_tools_front_page_meta_updated', properties ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( protectForm( localize( SeoForm ) ) );
+const withCurrentSiteKey = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const siteId = useSelector( getSelectedSiteId );
+		return <Wrapped { ...props } key={ siteId } />;
+	},
+	'WithCurrentSiteKey'
+);
+
+export default withCurrentSiteKey(
+	connect( mapStateToProps, mapDispatchToProps )( protectForm( localize( SeoForm ) ) )
+);
