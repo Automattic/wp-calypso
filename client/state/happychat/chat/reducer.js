@@ -1,4 +1,4 @@
-import { get, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
@@ -84,8 +84,8 @@ const timelineEvent = ( state = {}, action ) => {
 				files: message.files,
 				timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 				user_id: message.user.id,
-				type: get( message, 'type', 'message' ),
-				links: get( message, 'meta.links' ),
+				type: message.type ?? 'message',
+				links: message.meta?.links,
 			};
 		}
 	}
@@ -107,7 +107,7 @@ const timelineReducer = ( state = [], action ) => {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC: {
 			// if meta.forOperator is set, skip so won't show to user
-			if ( get( action, 'message.meta.forOperator', false ) ) {
+			if ( action.message.meta?.forOperator ?? false ) {
 				return state;
 			}
 			const event = timelineEvent( {}, action );
@@ -138,7 +138,7 @@ const timelineReducer = ( state = [], action ) => {
 					}
 
 					// if meta.forOperator is set, skip so won't show to user
-					if ( get( message, 'meta.forOperator', false ) ) {
+					if ( message.meta?.forOperator ?? false ) {
 						return false;
 					}
 
@@ -156,8 +156,8 @@ const timelineReducer = ( state = [], action ) => {
 						files: message.files,
 						timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 						user_id: message.user.id,
-						type: get( message, 'type', 'message' ),
-						links: get( message, 'meta.links' ),
+						type: message.type ?? 'message',
+						links: message.meta?.links,
 					} ) )
 				)
 			);
