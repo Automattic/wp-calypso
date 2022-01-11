@@ -127,7 +127,10 @@ export class PlansStep extends Component {
 			return intervalType;
 		}
 
-		if ( this.state.experiment?.variationName !== null ) {
+		if (
+			'calypso_signup_monthly_plans_default_202201_v1' === this.state.experiment?.experimentName &&
+			this.state.experiment?.variationName !== null
+		) {
 			return 'monthly';
 		}
 
