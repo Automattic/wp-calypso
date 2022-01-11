@@ -11,20 +11,6 @@
 		}
 	}
 
-	.importer__uploading-pane-description {
-		color: var( --studio-gray-40 );
-
-		.inline-support-link {
-			&::before {
-				content: '\A';
-			}
-
-			white-space: pre;
-			text-decoration: underline;
-			color: var( --studio-gray-100 );
-		}
-	}
-
 	.importer__uploading-pane {
 		border-color: var( --studio-gray-10 );
 		background-color: transparent;
