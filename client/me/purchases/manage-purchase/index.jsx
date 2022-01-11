@@ -731,15 +731,13 @@ class ManagePurchase extends Component {
 	}
 
 	getActiveMarketplaceSubscriptions() {
-		const { purchase, purchases, productsList, siteId } = this.props;
+		const { purchase, purchases, productsList } = this.props;
 
 		if ( ! isPlan( purchase ) ) return [];
 
 		return purchases.filter(
 			( _purchase ) =>
-				_purchase.siteId === siteId &&
-				_purchase.active &&
-				hasMarketplaceProduct( productsList, _purchase.productSlug )
+				_purchase.active && hasMarketplaceProduct( productsList, _purchase.productSlug )
 		);
 	}
 
