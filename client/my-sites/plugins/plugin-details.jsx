@@ -137,7 +137,6 @@ function PluginDetails( props ) {
 		const wpcomPlugin = {
 			...wpComPluginData,
 			fetched: isWpComPluginFetched,
-			rating: ( wpComPluginData?.rating / 5 ) * 100,
 		};
 
 		return {
