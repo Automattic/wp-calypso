@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { Icon, home, info, moreVertical, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -63,10 +63,6 @@ class DomainRow extends PureComponent {
 		isLoadingDomainDetails: false,
 		isBusy: false,
 		showDomainDetails: true,
-	};
-
-	state = {
-		showNotice: true,
 	};
 
 	stopPropagation = ( event ) => {
@@ -425,10 +421,6 @@ class DomainRow extends PureComponent {
 		);
 	}
 
-	dismissNotice = () => {
-		this.setState( { showNotice: false } );
-	};
-
 	handleDomainSelection = ( event ) => {
 		const { domain } = this.props;
 		return this.props.handleDomainItemToggle( domain.name, event.target.checked );
@@ -456,7 +448,6 @@ class DomainRow extends PureComponent {
 
 	render() {
 		const { domain, isManagingAllSites, site, showCheckbox, purchase, translate } = this.props;
-		const { showNotice } = this.state;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
 		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
@@ -483,7 +474,7 @@ class DomainRow extends PureComponent {
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 				</div>
-				{ showNotice && noticeText && (
+				{ noticeText && (
 					<div className="domain-row__domain-notice">
 						<Icon
 							icon={ info }
@@ -495,13 +486,6 @@ class DomainRow extends PureComponent {
 							viewBox="2 2 20 20"
 						/>
 						<div className="domain-row__domain-notice-message">{ noticeText }</div>
-						<Button
-							className="domain-row__domain-notice-dismiss"
-							onClick={ this.dismissNotice }
-							plain
-						>
-							<Gridicon icon="cross" size={ 16 } />
-						</Button>
 					</div>
 				) }
 				{ this.renderOverlay() }
