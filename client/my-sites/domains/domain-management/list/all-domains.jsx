@@ -363,7 +363,6 @@ class AllDomains extends Component {
 				name: 'select-domain',
 				label: (
 					<FormCheckbox
-						className="list__checkbox"
 						onChange={ this.handleSelectAllDomains }
 						checked={ areAllCheckboxesChecked }
 						disabled={ this.state.isSavingContactInfo }
