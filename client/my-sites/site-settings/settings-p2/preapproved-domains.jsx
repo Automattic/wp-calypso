@@ -62,26 +62,22 @@ const P2PreapprovedDomainsForm = ( {
 		return null;
 	}
 
-	const getFormFieldValue = () => {
-		return fields?.p2_preapproved_domains;
-	};
-
 	const setFormFieldValue = ( role, domains ) => {
 		const value = {
 			role,
 			domains,
 		};
+
+		if ( ! domains?.[ 0 ] ) {
+			updateFields( { [ SETTING_KEY_PREAPPROVED_DOMAINS ]: '' } );
+			return;
+		}
+
 		updateFields( { [ SETTING_KEY_PREAPPROVED_DOMAINS ]: value } );
 	};
 
 	const handleSubmitButtonClick = ( event ) => {
 		if ( isValidating ) {
-			return;
-		}
-
-		// Bail if there are no domains provided.
-		const formFieldValue = getFormFieldValue();
-		if ( ! formFieldValue?.domains?.[ 0 ] ) {
 			return;
 		}
 
