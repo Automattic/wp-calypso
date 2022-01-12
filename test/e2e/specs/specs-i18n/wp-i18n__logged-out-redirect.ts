@@ -8,7 +8,7 @@ import { Browser } from 'playwright';
 declare const browser: Browser;
 
 describe( 'I18N: Homepage Redirect', function () {
-	it.each( envVariables.LOCALE as Array< string > )(
+	it.each( envVariables.TEST_LOCALE as ReadonlyArray< string > )(
 		'Homepage Redirect (%s)',
 		async function ( locale ) {
 			// Launch a new BrowserContext with the custom locale specified.

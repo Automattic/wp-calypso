@@ -212,7 +212,7 @@ declare const browser: Browser;
 describe( 'I18N: Editor', function () {
 	// Filter out the locales that do not have valid translation content defined above.
 	const locales = Object.keys( translations ).filter( ( locale ) =>
-		( envVariables.LOCALE as Array< string > ).includes( locale )
+		( envVariables.TEST_LOCALES as ReadonlyArray< string > ).includes( locale )
 	);
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;

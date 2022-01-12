@@ -726,7 +726,7 @@ private object I18NTests : BuildType({
 			allowEmpty = false
 		)
 		text(
-			name = "LOCALE",
+			name = "LOCALES",
 			value = "en,es,pt-br,de,fr,he,ja,it,nl,ru,tr,id,zh-cn,zh-tw,ko,ar,sv",
 			label = "Locales to use",
 			description = "Locales to use, separated by comma",
@@ -753,7 +753,7 @@ private object I18NTests : BuildType({
 				export DEBUG=pw:api
 				export HEADLESS=false
 				export TARGET_DEVICE=desktop
-				export LOCALE=%LOCALE%
+				export LOCALES=%LOCALES%
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"

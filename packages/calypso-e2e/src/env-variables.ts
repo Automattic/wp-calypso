@@ -1,7 +1,7 @@
 import path from 'path';
 
 const VIEWPORT_NAMES = [ 'mobile', 'desktop' ] as const;
-const LOCALES = [
+const TEST_LOCALES = [
 	'en',
 	'es',
 	'pt-br',
@@ -29,40 +29,23 @@ type EnvVariables = {
 };
 
 export type ViewportName = typeof VIEWPORT_NAMES[ number ];
-export type Locale = typeof LOCALES[ number ] | typeof LOCALES[ number ][];
+export type TestLocales = string[] & typeof TEST_LOCALES;
 
 interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;
-	LOCALE: Locale;
-	HEADLESS: boolean;
-	SLOW_MO: number;
 	GUTENBERG_EDGE: boolean;
 	COBLOCKS_EDGE: boolean;
+	TEST_LOCALES: TestLocales;
 	COOKIES_PATH: string;
 	SAVE_AUTH_COOKIES: boolean | string;
 	ARTIFACTS_PATH: string;
+	HEADLESS: boolean;
+	SLOW_MO: number;
 }
-
-const castEnvVariable = ( value: EnvVariableKey ): EnvVariableValue => {
-	if ( value === 'false' ) {
-		return false;
-	}
-	if ( value === 'true' ) {
-		return true;
-	}
-	if ( ! Number.isNaN( value ) ) {
-		return Number( value );
-	}
-	if ( value.split( ',' ).length > 0 ) {
-		return value.split( ',' );
-	}
-
-	return value;
-};
 
 const defaultEnvVariables: SupportedEnvVariables = {
 	VIEWPORT_NAME: 'desktop',
-	LOCALE: 'en',
+	TEST_LOCALES: [ ...TEST_LOCALES ],
 	HEADLESS: false,
 	SLOW_MO: 0,
 	GUTENBERG_EDGE: false,
@@ -72,13 +55,70 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 };
 
+const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
+	let output: EnvVariableValue;
+
+	switch ( defaultEnvVariables[ name ].constructor.name ) {
+		case 'Number': {
+			output = Number( value );
+			if ( Number.isNaN( output ) ) {
+				throw new Error( `Incorrect type of the ${ name } variable - expecting number` );
+			}
+			break;
+		}
+		case 'Boolean': {
+			output = { true: true, false: false }[ value ] || '';
+			if ( typeof output !== 'boolean' ) {
+				throw new Error( `Incorrect type of the ${ name } variable - expecting boolean` );
+			}
+			break;
+		}
+		case 'Array': {
+			output = value.split( ',' );
+			break;
+		}
+		default: {
+			output = value;
+		}
+	}
+
+	switch ( name ) {
+		case 'VIEWPORT_NAME': {
+			const supportedValues = VIEWPORT_NAMES as ReadonlyArray< string >;
+			if ( ! supportedValues.includes( output as string ) ) {
+				throw new Error(
+					`Unknown VIEWPORT_NAME value: ${ output }.\nSupported values: ${ VIEWPORT_NAMES }`
+				);
+			}
+			break;
+		}
+		case 'TEST_LOCALES': {
+			const supportedValues = TEST_LOCALES as ReadonlyArray< string >;
+			if ( ! ( output as string[] ).every( ( v ) => supportedValues.includes( v ) ) ) {
+				throw new Error(
+					`Unknown TEST_LOCALES value: ${ output }.\nSupported values: ${ TEST_LOCALES }`
+				);
+			}
+			break;
+		}
+	}
+
+	return output;
+};
+
+const supportedEnvVariableNames = Object.keys( defaultEnvVariables );
 const currentEnvVariables = { ...defaultEnvVariables };
 
-Object.keys( currentEnvVariables ).forEach( ( name ) => {
-	const currentValue = process.env[ name ];
-	if ( currentValue ) {
-		// We can validate the env vars at runtime here if needed.
-		currentEnvVariables[ name ] = castEnvVariable( currentValue );
+supportedEnvVariableNames.forEach( ( name ) => {
+	if ( ! supportedEnvVariableNames.includes( name ) ) {
+		throw new Error(
+			`Unknown env variable ${ name }.\nSupported variables: ${ supportedEnvVariableNames }`
+		);
+	}
+
+	const originalValue = process.env[ name ];
+	if ( originalValue ) {
+		currentEnvVariables[ name ] = castKnownEnvVariable( name, originalValue );
 	}
 } );
 
