@@ -116,11 +116,6 @@ export class AnnualPlanUpgradeUpsell extends PureComponent {
 								</li>
 							) }
 						</ul>
-						<p>
-							The good news is that you can upgrade your plan today and try the annual{ ' ' }
-							<span style={ { textTransform: 'capitalize' } }>{ annualPlanSlug } plan</span>{ ' ' }
-							risk-free thanks to our <b>14-day money-back guarantee</b>.
-						</p>
 						<p>Click below to upgrade your plan to an annual one and enjoy your benefits.</p>
 					</div>
 					<div className="annual-plan-upgrade-upsell__column-doodle">
