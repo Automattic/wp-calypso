@@ -203,7 +203,7 @@ function isVariantAllowed(
 }
 
 function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompared } ) {
-	const currentPrice = variant.priceFinal || variant.priceFull;
+	const currentPrice = variant.introductoryOfferPrice ?? variant.priceFinal ?? variant.priceFull;
 	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
 	return (
 		<Fragment>
