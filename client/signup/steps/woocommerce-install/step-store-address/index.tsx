@@ -80,57 +80,62 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 			<>
 				<div className="step-store-address__info-section" />
 				<div className="step-store-address__instructions-container">
-					<TextControl
-						label={ __( 'Address line 1' ) }
-						value={ get( WOOCOMMERCE_STORE_ADDRESS_1 ) }
-						onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_1, value ) }
-					/>
-
-					<TextControl
-						label={ __( 'Address line 2' ) }
-						value={ get( WOOCOMMERCE_STORE_ADDRESS_2 ) }
-						onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_2, value ) }
-					/>
-
-					<ComboboxControl
-						label={ __( 'Country / Region' ) }
-						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) as string }
-						onChange={ handleCountryChange }
-						options={ countriesAsOptions }
-						allowReset={ false }
-					/>
-
-					<CityZipRow>
+					<form
+						onSubmit={ () => {
+							save();
+							goToStep( 'confirm' );
+						} }
+					>
 						<TextControl
-							label={ __( 'City' ) }
-							value={ get( WOOCOMMERCE_STORE_CITY ) }
-							onChange={ ( value ) => update( WOOCOMMERCE_STORE_CITY, value ) }
+							label={ __( 'Address line 1' ) }
+							value={ get( WOOCOMMERCE_STORE_ADDRESS_1 ) }
+							onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_1, value ) }
+							required={ true }
 						/>
 
 						<TextControl
-							label={ __( 'Postcode' ) }
-							value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
-							onChange={ ( value ) => update( WOOCOMMERCE_STORE_POSTCODE, value ) }
+							label={ __( 'Address line 2' ) }
+							value={ get( WOOCOMMERCE_STORE_ADDRESS_2 ) }
+							onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_2, value ) }
 						/>
-					</CityZipRow>
 
-					<TextControl
-						label={ __( 'Email address' ) }
-						value={ getProfileEmail() }
-						onChange={ updateProfileEmail }
-					/>
+						<ComboboxControl
+							label={ __( 'Country / Region' ) }
+							value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) as string }
+							onChange={ handleCountryChange }
+							options={ countriesAsOptions }
+							allowReset={ false }
+							required={ true }
+						/>
 
-					<ActionSection>
-						<SupportCard />
-						<StyledNextButton
-							onClick={ () => {
-								save();
-								goToStep( 'confirm' );
-							} }
-						>
-							{ __( 'Continue' ) }
-						</StyledNextButton>
-					</ActionSection>
+						<CityZipRow>
+							<TextControl
+								label={ __( 'City' ) }
+								value={ get( WOOCOMMERCE_STORE_CITY ) }
+								onChange={ ( value ) => update( WOOCOMMERCE_STORE_CITY, value ) }
+								required={ true }
+							/>
+
+							<TextControl
+								label={ __( 'Postcode' ) }
+								value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
+								onChange={ ( value ) => update( WOOCOMMERCE_STORE_POSTCODE, value ) }
+								required={ true }
+							/>
+						</CityZipRow>
+
+						<TextControl
+							label={ __( 'Email address' ) }
+							value={ getProfileEmail() }
+							onChange={ updateProfileEmail }
+							required={ true }
+						/>
+
+						<ActionSection>
+							<SupportCard />
+							<StyledNextButton type="submit">{ __( 'Continue' ) }</StyledNextButton>
+						</ActionSection>
+					</form>
 				</div>
 			</>
 		);
