@@ -1,4 +1,4 @@
-import { keyBy } from 'lodash';
+import { Dictionary, keyBy } from 'lodash';
 import {
 	SITE_INTRO_OFFER_RECEIVE,
 	SITE_INTRO_OFFER_REQUEST,
@@ -6,15 +6,22 @@ import {
 	SITE_INTRO_OFFER_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
-import { IntroOffer } from './types';
+import { IntroOffer, ResponseIntroOffer, RequestStatus } from './types';
 import type { Action } from 'redux';
 
-export enum RequestStatus {
-	Pending = 'pending',
-	Success = 'success',
-	Failed = 'failed',
-}
-
+const mapResponse = ( {
+	product_id,
+	product_slug,
+	currency_code,
+	formatted_price,
+	raw_price,
+}: ResponseIntroOffer ): IntroOffer => ( {
+	productId: product_id,
+	productSlug: product_slug,
+	currencyCode: currency_code,
+	formattedPrice: formatted_price,
+	rawPrice: raw_price,
+} );
 export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	switch ( type ) {
 		case SITE_INTRO_OFFER_REQUEST:
@@ -31,15 +38,15 @@ export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 } );
 
 interface IntroOfferReceiveAction extends Action {
-	introOffers: IntroOffer[];
+	payload?: ResponseIntroOffer[];
 }
 
-export const items = keyedReducer< string | undefined, IntroOfferReceiveAction >(
+export const items = keyedReducer< Dictionary< IntroOffer > | undefined, IntroOfferReceiveAction >(
 	'siteId',
-	( state, { type, introOffers }: IntroOfferReceiveAction ) => {
+	( state, { type, payload }: IntroOfferReceiveAction ) => {
 		switch ( type ) {
 			case SITE_INTRO_OFFER_RECEIVE:
-				return keyBy( introOffers, 'productId' );
+				return payload ? keyBy( payload.map( mapResponse ), 'productId' ) : undefined;
 		}
 
 		return state;

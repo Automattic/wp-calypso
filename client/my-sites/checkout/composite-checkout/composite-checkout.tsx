@@ -17,6 +17,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
@@ -36,6 +37,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
+import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -80,7 +82,6 @@ import type {
 	CountryListItem,
 	CheckoutPaymentMethodSlug,
 } from '@automattic/wpcom-checkout';
-import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -139,6 +140,9 @@ export default function CompositeCheckout( {
 		isJetpackCheckout ||
 		false;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+	const isLoadingIntroOffers = useSelector( ( state ) =>
+		getIsIntroOfferRequesting( state, siteId )
+	);
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
@@ -504,13 +508,15 @@ export default function CompositeCheckout( {
 		isInitialCartLoading ||
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
-		responseCart.products.length < 1;
+		responseCart.products.length < 1 ||
+		isLoadingIntroOffers;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
+			isLoadingIntroOffers,
 		} );
 	} else {
 		debug( 'no longer loading' );
