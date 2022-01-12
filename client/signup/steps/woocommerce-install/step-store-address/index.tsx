@@ -81,9 +81,10 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const countryError = getError( WOOCOMMERCE_DEFAULT_COUNTRY );
 	const cityError = getError( WOOCOMMERCE_STORE_CITY );
 	const postcodeError = getError( WOOCOMMERCE_STORE_POSTCODE );
+	const emailError = getError( WOOCOMMERCE_ONBOARDING_PROFILE );
 	useEffect( () => {
 		return;
-	}, [ address1Error, address2Error, countryError, cityError, postcodeError ] );
+	}, [ address1Error, address2Error, countryError, cityError, postcodeError, emailError ] );
 
 	function getContent() {
 		return (
@@ -151,12 +152,12 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 					<TextControl
 						label={ __( 'Email address' ) }
 						value={ getProfileEmail() }
-						onChange={ () => {
-							updateProfileEmail;
+						onChange={ ( value ) => {
+							updateProfileEmail( value );
 							clearError( WOOCOMMERCE_ONBOARDING_PROFILE );
 						} }
-						required={ true }
 					/>
+					<ControlError error={ emailError } />
 
 					<ActionSection>
 						<SupportCard />
@@ -230,6 +231,11 @@ function useAddressFormValidation( siteId: number ) {
 			: '';
 		errors[ WOOCOMMERCE_STORE_POSTCODE ] = ! get( WOOCOMMERCE_STORE_POSTCODE )
 			? __( 'Postcode is required.' )
+			: '';
+		errors[ WOOCOMMERCE_ONBOARDING_PROFILE ] = ! get( WOOCOMMERCE_ONBOARDING_PROFILE )[
+			'store_email'
+		]
+			? __( 'Email address is required.' )
 			: '';
 
 		setErrors( errors );
