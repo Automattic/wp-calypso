@@ -30,7 +30,6 @@ describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 
 	it( 'View P2', async function () {
 		await page.goto( testAccount.getSiteURL(), { waitUntil: 'networkidle' } );
-		throw new Error( 'sd' );
 	} );
 
 	it( 'Add a Paragraph block', async function () {
