@@ -8,6 +8,7 @@ import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
 } from 'calypso/lib/gsuite';
+import { EmailProviderFormField } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-form/email-provider-single-user';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
@@ -38,13 +39,26 @@ export interface GSuiteProductUser {
  *
  * @param {object} user - user with a list of fields
  */
-const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] => [
-	user.domain,
-	user.mailBox,
-	user.firstName,
-	user.lastName,
-	user.password,
-];
+const getFields = (
+	user: GSuiteNewUser,
+	optionalFields: EmailProviderFormField[] = []
+): GSuiteNewUserField[] => {
+	const fields = [];
+	if ( ! optionalFields.some( ( field ) => field === EmailProviderFormField.LAST_NAME ) ) {
+		fields.push( user.lastName );
+	}
+	if ( ! optionalFields.some( ( field ) => field === EmailProviderFormField.FIRST_NAME ) ) {
+		fields.push( user.firstName );
+	}
+	if ( ! optionalFields.some( ( field ) => field === EmailProviderFormField.PASSWORD ) ) {
+		fields.push( user.password );
+	}
+	if ( ! optionalFields.some( ( field ) => field === EmailProviderFormField.EMAIL ) ) {
+		fields.push( user.mailBox );
+	}
+	fields.push( user.domain );
+	return fields;
+};
 
 /**
  * Retrieves the specified user after applying a callback to all of its fields.
@@ -319,12 +333,18 @@ const newUsers = ( domain: string ): GSuiteNewUser[] => {
 	return [ newUser( domain ) ];
 };
 
-const isUserComplete = ( user: GSuiteNewUser ): boolean => {
-	return getFields( user ).every( ( { value } ) => '' !== value );
+const isUserComplete = (
+	user: GSuiteNewUser,
+	optionalFields: EmailProviderFormField[] = []
+): boolean => {
+	return getFields( user, optionalFields ).every( ( { value } ) => '' !== value );
 };
 
-const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
-	return getFields( user ).some( ( { error } ) => null !== error );
+const doesUserHaveError = (
+	user: GSuiteNewUser,
+	optionalFields: EmailProviderFormField[] = []
+): boolean => {
+	return getFields( user, optionalFields ).some( ( { error } ) => null !== error );
 };
 
 /**
@@ -333,11 +353,15 @@ const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
  * @param user user to check
  * @returns boolean if the user is valid or not
  */
-const isUserValid = ( user: GSuiteNewUser ): boolean =>
-	isUserComplete( user ) && ! doesUserHaveError( user );
+const isUserValid = (
+	user: GSuiteNewUser,
+	optionalFields: EmailProviderFormField[] = []
+): boolean => isUserComplete( user, optionalFields ) && ! doesUserHaveError( user, optionalFields );
 
-const areAllUsersValid = ( users: GSuiteNewUser[] ): boolean =>
-	0 < users.length && users.every( isUserValid );
+const areAllUsersValid = (
+	users: GSuiteNewUser[],
+	optionalFields: EmailProviderFormField[] = []
+): boolean => 0 < users.length && users.every( ( user ) => isUserValid( user, optionalFields ) );
 
 const transformUserForCart = ( {
 	firstName: { value: firstname },

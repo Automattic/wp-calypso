@@ -5,38 +5,28 @@ import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import {
 	titanMailMonthly,
 	titanMailYearly,
 	TitanProductProps,
 } from 'calypso/lib/cart-values/cart-items';
-import {
-	getSelectedDomain,
-	canCurrentUserAddEmail,
-	getCurrentUserCannotAddEmailReason,
-} from 'calypso/lib/domains';
+import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
+import { areAllUsersValid, GSuiteNewUser, newUsers } from 'calypso/lib/gsuite/new-users';
 import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
-import {
-	areAllMailboxesValid,
-	buildNewTitanMailbox,
-	transformMailboxForCart,
-	validateMailboxes as validateTitanMailboxes,
-} from 'calypso/lib/titan/new-mailbox';
+import { transformProviderMailboxForCart } from 'calypso/lib/titan/new-mailbox';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
+import EmailProviderForm from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-form';
+import { EmailProviderFormField } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-form/email-provider-single-user';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
 	addToCartAndCheckout,
 	recordTracksEventAddToCartClick,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
-import {
-	TITAN_PASSWORD_RESET_FIELD,
-	TITAN_FULL_NAME_FIELD,
-} from 'calypso/my-sites/email/titan-new-mailbox';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -93,7 +83,7 @@ const ProfessionalEmailCard = ( {
 	const domain = getSelectedDomain( {
 		domains,
 		selectedDomainName: selectedDomainName,
-	} ) as ResponseDomain;
+	} );
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -108,46 +98,37 @@ const ProfessionalEmailCard = ( {
 
 	const titanMailProduct = useSelector( ( state ) => getProductBySlug( state, titanMailSlug ) );
 
-	const [ titanMailbox, setTitanMailbox ] = useState( [
-		buildNewTitanMailbox( selectedDomainName, false ),
-	] );
+	const [ titanMailbox, setTitanMailbox ] = useState( newUsers( selectedDomainName ) );
 	const [ addingToCart, setAddingToCart ] = useState( false );
-	const [ validatedTitanMailboxUuids, setValidatedTitanMailboxUuids ] = useState( [ '' ] );
-	const optionalFields = [ TITAN_PASSWORD_RESET_FIELD, TITAN_FULL_NAME_FIELD ];
 
 	const onTitanConfirmNewMailboxes = () => {
-		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
-
-		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes, optionalFields );
+		const usersAreValid = areAllUsersValid( titanMailbox, [
+			EmailProviderFormField.FIRST_NAME,
+			EmailProviderFormField.LAST_NAME,
+		] );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
-		const userCannotAddEmailReason = userCanAddEmail
-			? null
-			: getCurrentUserCannotAddEmailReason( domain );
-
-		const validatedMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
 		recordTracksEventAddToCartClick(
 			comparisonContext,
-			validatedMailboxUuids,
-			mailboxesAreValid,
+			titanMailbox?.map( ( user: GSuiteNewUser ) => user.uuid ),
+			usersAreValid,
 			TITAN_PROVIDER_NAME,
-			source ?? '',
+			source,
 			userCanAddEmail,
-			userCannotAddEmailReason
+			null
 		);
 
-		setTitanMailbox( titanMailbox );
-		setValidatedTitanMailboxUuids( validatedMailboxUuids );
-
-		if ( ! mailboxesAreValid || ! userCanAddEmail ) {
+		if ( ! usersAreValid || ! userCanAddEmail ) {
 			return;
 		}
 
+		setAddingToCart( true );
+
 		const props: TitanProductProps = {
 			domain: selectedDomainName,
-			quantity: validatedTitanMailboxes.length,
+			quantity: titanMailbox.length,
 			extra: {
-				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
-				new_quantity: validatedTitanMailboxes.length,
+				email_users: titanMailbox.map( transformProviderMailboxForCart ),
+				new_quantity: titanMailbox.length,
 			},
 		};
 
@@ -178,7 +159,7 @@ const ProfessionalEmailCard = ( {
 	professionalEmail.onExpandedChange = onExpandedChange;
 	professionalEmail.priceBadge = (
 		<>
-			{ isDomainEligibleForTitanFreeTrial( domain ) && (
+			{ isDomainEligibleForTitanFreeTrial( domain as ResponseDomain ) && (
 				<div className="professional-email-card__discount badge badge--info-green">
 					{ translate( '3 months free' ) }
 				</div>
@@ -187,26 +168,35 @@ const ProfessionalEmailCard = ( {
 		</>
 	);
 
-	professionalEmail.formFields = (
-		<TitanNewMailboxList
-			onMailboxesChange={ setTitanMailbox }
-			mailboxes={ titanMailbox }
-			selectedDomainName={ selectedDomainName }
-			onReturnKeyPress={ onTitanFormReturnKeyPress }
-			validatedMailboxUuids={ validatedTitanMailboxUuids }
-			showAddAnotherMailboxButton={ false }
-			hiddenFieldNames={ [ TITAN_FULL_NAME_FIELD, TITAN_PASSWORD_RESET_FIELD ] }
-		>
-			<FullWidthButton
-				className="professional-email-card__continue"
-				primary
-				busy={ addingToCart }
-				onClick={ onTitanConfirmNewMailboxes }
+	function identityMap< T >( item: T ): T {
+		return item;
+	}
+	const domainsForm = [ domain ];
+	const form = (
+		<FormFieldset className="professional-email-card__form-fieldset">
+			<EmailProviderForm
+				extraValidation={ identityMap }
+				domains={ domainsForm }
+				hiddenFields={ [ EmailProviderFormField.FIRST_NAME, EmailProviderFormField.LAST_NAME ] }
+				onUsersChange={ setTitanMailbox }
+				selectedDomainName={ selectedDomainName }
+				users={ titanMailbox }
+				onReturnKeyPress={ onTitanFormReturnKeyPress }
+				showAddAnotherMailboxButton={ false }
 			>
-				{ translate( 'Create your mailbox' ) }
-			</FullWidthButton>
-		</TitanNewMailboxList>
+				<FullWidthButton
+					className="professional-email-card__continue"
+					primary
+					busy={ addingToCart }
+					onClick={ onTitanConfirmNewMailboxes }
+				>
+					{ translate( 'Create your mailbox' ) }
+				</FullWidthButton>
+			</EmailProviderForm>
+		</FormFieldset>
 	);
+
+	professionalEmail.formFields = form;
 
 	return <EmailProvidersStackedCard { ...professionalEmail } />;
 };

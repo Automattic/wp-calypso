@@ -1,0 +1,92 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.email-provider-form__new-user {
+	fieldset {
+		margin-bottom: 0;
+	}
+}
+
+.email-provider-form__actions {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+}
+
+.email-provider-form__add-another-user-button {
+	width: 100%;
+
+	@include break-mobile {
+		width: auto;
+	}
+}
+
+.email-provider-form__domain-select {
+	width: 100%;
+
+	@include breakpoint-deprecated( '>800px' ) {
+		width: auto;
+	}
+}
+
+.email-provider-form__user-divider {
+	margin-top: 1.5em;
+}
+
+.email-provider-form__new-user {
+	.form-fieldset .form-label {
+		color: var( --color-text );
+
+		.form-text-input-with-affixes__suffix,
+		.form-text-input-with-affixes__prefix {
+			font-weight: normal;
+		}
+
+		> div, > input {
+			margin-top: 5px;
+		}
+	}
+}
+
+.email-provider-form__new-user-remove-user-button {
+	width: 100%;
+
+	@include break-mobile {
+		width: inherit;
+	}
+}
+
+.email-provider-form__new-user-email {
+	display: flex;
+	flex-direction: column;
+
+	select.form-select {
+		width: 100%;
+	}
+
+	@include breakpoint-deprecated( '>800px' ) {
+
+		input[type='text'].form-text-input {
+			margin: 0;
+		}
+
+		select.form-select {
+			border-bottom-left-radius: 0;
+			border-bottom-width: 1px;
+			border-top-left-radius: 0;
+			margin-left: -2px;
+		}
+	}
+}
+
+.email-provider-form__new-user-email-container,
+.email-provider-form__new-user-password-container,
+.email-provider-form__new-user-name-container {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 15px;
+}

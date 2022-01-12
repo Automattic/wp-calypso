@@ -418,6 +418,32 @@ const transformMailboxForCart = ( {
 	password,
 } );
 
+/**
+ * @typedef { import("calypso/lib/gsuite/new-users").GSuiteNewUser } GSuiteNewUser
+ */
+
+/**
+ * Transform user into Porfessional Mail user
+ *
+ * @param user GSuiteNewUser user to map
+ * @returns {{password, name: string, alternative_email, email: string}}
+ */
+const transformProviderMailboxForCart = ( user ) => {
+	const alternativeEmail = user.alternativeEmail?.value;
+	const firstName = user.firstName.value;
+	const lastName = user.lastName.value;
+	const mailbox = user.mailBox.value;
+	const domain = user.domain.value;
+	const password = user.password.value;
+
+	return {
+		alternative_email: alternativeEmail,
+		email: `${ mailbox }@${ domain }`,
+		name: `${ firstName } ${ lastName }`.trim(),
+		password,
+	};
+};
+
 const checkMailboxAvailability = async ( domain, mailbox ) => {
 	try {
 		const encDomain = encodeURIComponent( domain );
@@ -480,5 +506,6 @@ export {
 	getMailboxPropTypeShape,
 	sanitizeEmailSuggestion,
 	transformMailboxForCart,
+	transformProviderMailboxForCart,
 	validateMailboxes,
 };

@@ -8,7 +8,6 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
 import { canCurrentUserAddEmail, getSelectedDomain } from 'calypso/lib/domains';
@@ -25,6 +24,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
+import EmailProviderForm from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-form';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
 	EmailProvidersStackedCardProps,
@@ -217,14 +217,14 @@ const GoogleWorkspaceCard = ( {
 	googleWorkspace.onExpandedChange = onExpandedChange;
 	googleWorkspace.formFields = (
 		<FormFieldset className="google-workspace-card__form-fieldset">
-			<GSuiteNewUserList
+			<EmailProviderForm
 				extraValidation={ identityMap }
 				domains={ domainList }
 				onUsersChange={ setGoogleUsers }
 				selectedDomainName={ selectedDomainName }
 				users={ googleUsers }
 				onReturnKeyPress={ onGoogleFormReturnKeyPress }
-				showAddAnotherMailboxButton={ false }
+				showAddAnotherMailboxButton={ true }
 			>
 				<FullWidthButton
 					className="google-workspace-card__continue"
@@ -234,7 +234,7 @@ const GoogleWorkspaceCard = ( {
 				>
 					{ translate( 'Create your mailbox' ) }
 				</FullWidthButton>
-			</GSuiteNewUserList>
+			</EmailProviderForm>
 		</FormFieldset>
 	);
 
