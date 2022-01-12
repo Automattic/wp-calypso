@@ -40,28 +40,51 @@ const Paid: React.FC< OwnProps > = ( {
 
 	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
 
+	const renderDiscountedPrice = () => {
+		return (
+			<>
+				{ /*
+				 * Price should be displayed from left-to-right, even in right-to-left
+				 * languages. `PlanPrice` seems to keep the ltr direction no matter
+				 * what when seen in the dev docs page, but somehow it doesn't in
+				 * the pricing page.
+				 */ }
+				<span dir="ltr">
+					<PlanPrice
+						original
+						className="display-price__original-price"
+						rawPrice={
+							( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
+						}
+						currencyCode={ currencyCode }
+					/>
+				</span>
+				<span dir="ltr">
+					<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+				</span>
+			</>
+		);
+	};
+
+	const renderNonDiscountedPrice = () => (
+		<span dir="ltr">
+			<PlanPrice
+				discounted
+				rawPrice={
+					( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
+				}
+				currencyCode={ currencyCode }
+			/>
+		</span>
+	);
+
+	const renderPrice = () =>
+		billingTerm === TERM_ANNUALLY ? renderDiscountedPrice() : renderNonDiscountedPrice();
+
 	return (
 		<>
 			{ displayFrom && <span className="display-price__from">from</span> }
-			{ /*
-			 * Price should be displayed from left-to-right, even in right-to-left
-			 * languages. `PlanPrice` seems to keep the ltr direction no matter
-			 * what when seen in the dev docs page, but somehow it doesn't in
-			 * the pricing page.
-			 */ }
-			<span dir="ltr">
-				<PlanPrice
-					original
-					className="display-price__original-price"
-					rawPrice={
-						( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
-					}
-					currencyCode={ currencyCode }
-				/>
-			</span>
-			<span dir="ltr">
-				<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
-			</span>
+			{ renderPrice() }
 			{ tooltipText && (
 				<InfoPopover position="top" className="display-price__price-tooltip">
 					{ tooltipText }
