@@ -112,12 +112,6 @@ const supportedEnvVariableNames = Object.keys( defaultEnvVariables );
 const currentEnvVariables = { ...defaultEnvVariables };
 
 supportedEnvVariableNames.forEach( ( name ) => {
-	if ( ! supportedEnvVariableNames.includes( name ) ) {
-		throw new Error(
-			`Unknown env variable ${ name }.\nSupported variables: ${ supportedEnvVariableNames }`
-		);
-	}
-
 	const originalValue = process.env[ name ];
 	if ( originalValue ) {
 		currentEnvVariables[ name ] = castKnownEnvVariable( name, originalValue );
