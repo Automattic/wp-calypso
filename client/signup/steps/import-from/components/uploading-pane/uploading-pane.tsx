@@ -1,10 +1,12 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { truncate } from 'lodash';
 import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
 import { UploadingPane as UploadingPaneBase } from 'calypso/my-sites/importer/uploading-pane';
 import { startMappingAuthors, startUpload } from 'calypso/state/imports/actions';
+import { appStates } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
 	getUploadPercentComplete,
@@ -12,6 +14,43 @@ import {
 import './uploading-pane.scss';
 
 export class UploadingPane extends UploadingPaneBase {
+	getUploadMessage = () => {
+		const { importerState } = this.props.importerStatus;
+		const { filename, percentComplete = 0 } = this.props;
+
+		// Override base component only where we are uploading something
+		if ( importerState === appStates.UPLOAD_PROCESSING || importerState === appStates.UPLOADING ) {
+			const uploadPercent = percentComplete;
+			const progressClasses = classNames( 'uploading-plane__upload-progress', {
+				'is-complete': uploadPercent > 95,
+			} );
+			const uploaderPrompt =
+				importerState === appStates.UPLOADING && uploadPercent < 99
+					? this.props.translate( 'Uploading %(filename)s\u2026', {
+							args: { filename: truncate( filename, { length: 40 } ) },
+					  } )
+					: this.props.translate( 'Processing uploaded file\u2026' );
+
+			// Override ProgressBar color and force 'compact'
+			return (
+				<div>
+					<p>{ uploaderPrompt }</p>
+					<ProgressBar
+						color={ 'black' }
+						compact={ true }
+						className={ progressClasses }
+						value={ uploadPercent }
+						total={ 100 }
+						isPulsing={ false }
+					/>
+				</div>
+			);
+		}
+
+		// Return base message
+		return this.getMessage();
+	};
+
 	render() {
 		const isReadyForImport = this.isReadyForImport();
 		const importerStatusClasses = classNames(
@@ -32,7 +71,7 @@ export class UploadingPane extends UploadingPaneBase {
 				>
 					<div className={ importerStatusClasses }>
 						<Gridicon size={ 48 } className="uploading-pane__upload-icon" icon={ 'cloud-upload' } />
-						{ this.getMessage() }
+						{ this.getUploadMessage() }
 					</div>
 					{ isReadyForImport && (
 						<input

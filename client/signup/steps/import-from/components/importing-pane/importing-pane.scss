@@ -1,21 +1,3 @@
-.importing-pane__progress {
-	&.progress-bar {
-		display: block;
-		margin-bottom: 0.25em;
-		margin-left: auto;
-		margin-right: auto;
-		width: 80%;
-	}
-
-	.progress-bar__progress {
-		background-color: var( --color-accent );
-	}
-
-	&.is-complete .progress-bar__progress {
-		background-color: var( --color-success );
-	}
-}
-
 .importing-pane__progress-message {
 	text-align: center;
 	color: var( --color-text-subtle );
