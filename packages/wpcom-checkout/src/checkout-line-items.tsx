@@ -317,28 +317,24 @@ function returnModalCopyForProduct(
 	const productType = getProductTypeForModalCopy(
 		product,
 		hasBundledDomainInCart,
-		hasMarketplaceProductsInCart
+		hasMarketplaceProductsInCart,
+		isPwpoUser
 	);
 	const isRenewal = isWpComProductRenewal( product );
-	return returnModalCopy(
-		productType,
-		translate,
-		createUserAndSiteBeforeTransaction,
-		isPwpoUser,
-		isRenewal
-	);
+	return returnModalCopy( productType, translate, createUserAndSiteBeforeTransaction, isRenewal );
 }
 
 function getProductTypeForModalCopy(
 	product: ResponseCartProduct,
 	hasBundledDomainInCart: boolean,
-	hasMarketplaceProductsInCart: boolean
+	hasMarketplaceProductsInCart: boolean,
+	isPwpoUser: boolean
 ): string {
 	if ( isWpComPlan( product.product_slug ) ) {
 		if ( hasMarketplaceProductsInCart ) {
 			return 'plan with marketplace dependencies';
 		}
-		if ( hasBundledDomainInCart ) {
+		if ( hasBundledDomainInCart && ! isPwpoUser ) {
 			return 'plan with domain dependencies';
 		}
 		return 'plan';
@@ -355,7 +351,6 @@ function returnModalCopy(
 	productType: string,
 	translate: ReturnType< typeof useTranslate >,
 	createUserAndSiteBeforeTransaction: boolean,
-	isPwpoUser: boolean,
 	isRenewal = false
 ): ModalCopy {
 	switch ( productType ) {
@@ -401,13 +396,9 @@ function returnModalCopy(
 				);
 			} else {
 				description = String(
-					isPwpoUser
-						? translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
-						  )
-						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
-						  )
+					translate(
+						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
+					)
 				);
 			}
 			return { title, description };
@@ -418,7 +409,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. We will then take you back to your site.'
+							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date.'
 						)
 					),
 				};
@@ -430,7 +421,7 @@ function returnModalCopy(
 					createUserAndSiteBeforeTransaction
 						? translate( 'When you press Continue, we will remove your plan from the cart.' )
 						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. We will then take you back to your site.'
+								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
 						  )
 				),
 			};
