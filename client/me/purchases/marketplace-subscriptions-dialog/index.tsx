@@ -1,15 +1,7 @@
-import { Button, Dialog } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, ReactChild, useState } from 'react';
+import { Fragment } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-
-interface ButtonProps {
-	action: string;
-	label: ReactChild;
-	onClick: () => void;
-	isPrimary?: boolean;
-	busy?: boolean;
-}
 
 interface MarketPlaceSubscriptionsDialogProps {
 	planName: string;
@@ -18,7 +10,6 @@ interface MarketPlaceSubscriptionsDialogProps {
 	isDialogVisible: boolean;
 	isRemoving: boolean;
 	activeSubscriptions: Array< { id: number; productName: string } >;
-	removeAllSubscriptions: () => void;
 }
 
 export const MarketPlaceSubscriptionsDialog = ( {
@@ -26,53 +17,30 @@ export const MarketPlaceSubscriptionsDialog = ( {
 	closeDialog,
 	removePlan,
 	isDialogVisible,
-	isRemoving,
 	activeSubscriptions,
-	removeAllSubscriptions,
 }: MarketPlaceSubscriptionsDialogProps ): JSX.Element => {
 	const translate = useTranslate();
 
-	const [ removeAction, setRemoveAction ] = useState( '' );
-
-	const buttons: ButtonProps[] = [
+	const buttons = [
 		{
 			action: 'cancel',
 			label: translate( 'Cancel' ),
 			onClick: closeDialog,
 		},
 		{
-			action: 'removePlan',
-			label: translate( 'Remove Plan' ),
-			onClick: removePlan,
-		},
-		{
 			isPrimary: true,
-			action: 'removeAllSubscriptions',
-			label: translate( 'Remove All Subscriptions' ),
-			onClick: removeAllSubscriptions,
-			busy: true,
+			action: 'removePlanAndAllSubscriptions',
+			label: translate( 'Remove Plan & All Subscriptions', {
+				comment:
+					'This button removes the active plan and all active Marketplace subscriptions on the site',
+			} ),
+			onClick: removePlan,
 		},
 	];
 
-	const renderButton = ( { action, label, onClick, isPrimary }: ButtonProps ) => (
-		<Button
-			disabled={ isRemoving && removeAction !== action }
-			busy={ isRemoving && removeAction === action }
-			onClick={ () => {
-				onClick();
-				setRemoveAction( action );
-			} }
-			primary={ isPrimary }
-			data-e2e-button={ action }
-			data-tip-target={ `dialog-base-action-${ action }` }
-		>
-			{ label }
-		</Button>
-	);
-
 	return (
 		<Dialog
-			buttons={ buttons.map( ( b ) => renderButton( b ) ) }
+			buttons={ buttons }
 			className="marketplace-subscriptions-dialog"
 			isVisible={ isDialogVisible }
 			onClose={ closeDialog }
@@ -85,8 +53,8 @@ export const MarketPlaceSubscriptionsDialog = ( {
 				</FormSectionHeading>
 				<p>
 					{ translate(
-						'When you downgrade your plan, the following active subscription will remain active:',
-						'When you downgrade your plan, the following active subscriptions will remain active:',
+						'When you downgrade your plan, the following subscription will remain active:',
+						'When you downgrade your plan, the following subscriptions will remain active:',
 						{ count: activeSubscriptions.length }
 					) }
 				</p>
@@ -97,8 +65,8 @@ export const MarketPlaceSubscriptionsDialog = ( {
 				</ul>
 				<p>
 					{ translate(
-						'You should remove this subscription before downgrading your plan. Would you still like to downgrade your plan?',
-						'You should remove these subscriptions before downgrading your plan. Would you still like to downgrade your plan?',
+						'You should remove this subscription before downgrading your plan. Would you like to remove this subscription and downgrade your plan?',
+						'You should remove these subscriptions before downgrading your plan. Would you like to remove all subscriptions and downgrade your plan?',
 						{ count: activeSubscriptions.length }
 					) }
 				</p>
