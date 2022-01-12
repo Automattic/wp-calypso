@@ -7333,23 +7333,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__components@npm:*":
-  version: 14.0.5
-  resolution: "@types/wordpress__components@npm:14.0.5"
-  dependencies:
-    "@types/react": "*"
-    "@types/tinycolor2": "*"
-    "@types/wordpress__components": "*"
-    "@types/wordpress__notices": "*"
-    "@types/wordpress__rich-text": "*"
-    "@wordpress/element": ^3.0.0
-    downshift: ^6.0.15
-    re-resizable: ^6.4.0
-  checksum: e3f9e81acb372af796a45fd28454e5813d6e38dbd31c5c71520692f8a37a4b2ca8a4fa99e39619250f19bbd8bd8927065a016ad123c315bab9aff0d808eb5520
-  languageName: node
-  linkType: hard
-
-"@types/wordpress__components@npm:^14.0.9":
+"@types/wordpress__components@npm:*, @types/wordpress__components@npm:^14.0.9":
   version: 14.0.9
   resolution: "@types/wordpress__components@npm:14.0.9"
   dependencies:
