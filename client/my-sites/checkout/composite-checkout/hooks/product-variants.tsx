@@ -221,7 +221,7 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAndCompared } ) {
 	const translate = useTranslate();
 	const maybeFinalPrice = variant.introductoryOfferPrice ?? variant.priceFinal;
-	const discountPercentage = Math.round(
+	const discountPercentage = Math.floor(
 		100 - ( maybeFinalPrice / variant.priceFullBeforeDiscount ) * 100
 	);
 	let message = '';

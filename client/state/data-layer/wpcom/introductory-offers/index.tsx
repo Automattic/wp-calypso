@@ -8,18 +8,24 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
-const fetchIntroOffers = ( action: { siteId: number } ) => {
+const fetchIntroOffers = ( action: { siteId: number | 'none' } ) => {
 	return http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/intro-offers`,
+			path: `/introductory-offers`,
 			apiNamespace: 'wpcom/v2',
+			query:
+				action.siteId !== 'none'
+					? {
+							site: action.siteId,
+					  }
+					: undefined,
 		},
 		action
 	);
 };
 
-const onUpdateSuccess = ( action: { siteId: number }, response: unknown ) => {
+const onUpdateSuccess = ( action: { siteId: number | 'none' }, response: unknown ) => {
 	return [
 		{
 			type: SITE_INTRO_OFFER_REQUEST_SUCCESS,
@@ -41,7 +47,7 @@ const onUpdateError = () => {
 	];
 };
 
-registerHandlers( 'state/data-layer/wpcom/sites/intro-offers/index.js', {
+registerHandlers( 'state/data-layer/wpcom/intro-offers/index.js', {
 	[ SITE_INTRO_OFFER_REQUEST ]: [
 		dispatchRequest( {
 			fetch: fetchIntroOffers,

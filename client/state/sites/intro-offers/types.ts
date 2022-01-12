@@ -4,6 +4,7 @@ export interface IntroOffer {
 	currencyCode: string;
 	formattedPrice: string;
 	rawPrice: number;
+	ineligibleReason: string[] | null;
 }
 
 export interface ResponseIntroOffer {
@@ -12,6 +13,7 @@ export interface ResponseIntroOffer {
 	currency_code: string;
 	formatted_price: string;
 	raw_price: number;
+	ineligible_reason: string[] | null;
 }
 
 export enum RequestStatus {

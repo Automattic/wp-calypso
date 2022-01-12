@@ -31,7 +31,7 @@ export const computeFullAndMonthlyPricesForPlan = (
 		? getProductCost( state, planObject.getStoreSlug() )
 		: getPlanPrice( state, siteId, planObject, false );
 
-	const introductoryOfferPrice = getIntroOfferPrice( state, siteId, planObject.getProductId() );
+	const introductoryOfferPrice = getIntroOfferPrice( state, planObject.getProductId(), siteId );
 
 	return {
 		priceFull: planOrProductPrice,

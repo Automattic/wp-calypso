@@ -15,12 +15,14 @@ const mapResponse = ( {
 	currency_code,
 	formatted_price,
 	raw_price,
+	ineligible_reason,
 }: ResponseIntroOffer ): IntroOffer => ( {
 	productId: product_id,
 	productSlug: product_slug,
 	currencyCode: currency_code,
 	formattedPrice: formatted_price,
 	rawPrice: raw_price,
+	ineligibleReason: ineligible_reason,
 } );
 export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	switch ( type ) {

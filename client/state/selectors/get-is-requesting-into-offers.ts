@@ -6,9 +6,9 @@ import type { AppState } from 'calypso/types';
  * False otherwise.
  *
  * @param  {object}  state       Global state tree
- * @param  {number}  siteId      The ID of the site we're querying
+ * @param  {number?}  siteId      The ID of the site we're querying
  * @returns {string}             The request status or null if there has been no request
  */
-export default function getIsIntroOfferRequesting( state: AppState, siteId: number ): boolean {
+export default function getIsIntroOfferRequesting( state: AppState, siteId?: number ): boolean {
 	return getIntroOfferRequestStatus( state, siteId ) === RequestStatus.Pending;
 }
