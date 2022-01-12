@@ -309,14 +309,14 @@ interface ModalCopy {
 function returnModalCopyForProduct(
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
-	hasDomainsInCart: boolean,
+	hasBundledDomainInCart: boolean,
 	hasMarketplaceProductsInCart: boolean,
 	createUserAndSiteBeforeTransaction: boolean,
 	isPwpoUser: boolean
 ): ModalCopy {
 	const productType = getProductTypeForModalCopy(
 		product,
-		hasDomainsInCart,
+		hasBundledDomainInCart,
 		hasMarketplaceProductsInCart
 	);
 	const isRenewal = isWpComProductRenewal( product );
@@ -331,15 +331,15 @@ function returnModalCopyForProduct(
 
 function getProductTypeForModalCopy(
 	product: ResponseCartProduct,
-	hasDomainsInCart: boolean,
+	hasBundledDomainInCart: boolean,
 	hasMarketplaceProductsInCart: boolean
 ): string {
 	if ( isWpComPlan( product.product_slug ) ) {
 		if ( hasMarketplaceProductsInCart ) {
 			return 'plan with marketplace dependencies';
 		}
-		if ( hasDomainsInCart ) {
-			return 'plan with dependencies';
+		if ( hasBundledDomainInCart ) {
+			return 'plan with domain dependencies';
 		}
 		return 'plan';
 	}
@@ -365,7 +365,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. If any of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
+							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
 						)
 					),
 				};
@@ -375,11 +375,11 @@ function returnModalCopy(
 				title: String( translate( 'You are about to remove your plan from the cart' ) ),
 				description: String(
 					translate(
-						'When you press Continue, we will remove your plan from the cart. If any of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
+						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
 					)
 				),
 			};
-		case 'plan with dependencies': {
+		case 'plan with domain dependencies': {
 			if ( isRenewal ) {
 				return {
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
@@ -797,8 +797,10 @@ function WPLineItem( {
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const hasDomainsInCart = responseCart.products.some(
-		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+	const hasBundledDomainsInCart = responseCart.products.some(
+		( product ) =>
+			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
+			product.is_bundled
 	);
 	const hasMarketplaceProductsInCart = responseCart.products.some(
 		( product ) => product.extra.is_marketplace_product === true
@@ -809,7 +811,7 @@ function WPLineItem( {
 	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
-		hasDomainsInCart,
+		hasBundledDomainsInCart,
 		hasMarketplaceProductsInCart,
 		createUserAndSiteBeforeTransaction || false,
 		isPwpoUser || false
