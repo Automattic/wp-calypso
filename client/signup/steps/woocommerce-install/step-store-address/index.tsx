@@ -67,7 +67,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	function getProfileEmail() {
 		const profile_data = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
 
-		return profile_data['store_email'] || '';
+		return profile_data[ 'store_email' ] || '';
 	}
 
 	function getContent() {
@@ -109,7 +109,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 					</CityZipRow>
 
 					<TextControl
-						label={ __( 'Email address', 'woocommerce-admin' ) }
+						label={ __( 'Email address' ) }
 						value={ getProfileEmail() }
 						onChange={ updateProfileEmail }
 					/>

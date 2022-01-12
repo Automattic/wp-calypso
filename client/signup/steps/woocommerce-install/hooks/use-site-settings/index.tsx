@@ -25,6 +25,10 @@ type optionNameType =
 	| typeof WOOCOMMERCE_STORE_POSTCODE
 	| typeof WOOCOMMERCE_ONBOARDING_PROFILE;
 
+type OptionObjectType = Record< string, unknown >;
+
+type OptionValueType = string | number | Array< string | number > | OptionObjectType | undefined;
+
 /**
  * Simple react custom hook to deal with site settings.
  *
@@ -52,12 +56,12 @@ export function useSiteSettings( siteId: number ) {
 	}, [ dispatch, siteId ] );
 
 	// Simple getter helper.
-	function get( option: optionNameType ) {
+	function get( option: optionNameType ): OptionValueType {
 		if ( ! settings || Object.keys( settings ).length === 0 ) {
 			return '';
 		}
 
-		return settings[ option ] || '';
+		return settings[ option ];
 	}
 
 	/*
@@ -65,7 +69,7 @@ export function useSiteSettings( siteId: number ) {
 	 * Changes are applied to the Redux store.
 	 */
 	const update = useCallback(
-		( option: optionNameType, value: string ) => {
+		( option: optionNameType, value: OptionValueType ) => {
 			setEditedSettings( ( state ) => uniqueBy( [ ...state, option ] ) );
 
 			// Store the edited option in the private store.
