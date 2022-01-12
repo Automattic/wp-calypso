@@ -17,5 +17,5 @@ export default function useTranslate() {
 		return () => i18n.off( 'change', onChange );
 	}, [ i18n ] );
 
-	return useMemo( () => bindTranslate( i18n, counter ) );
+	return useMemo( () => bindTranslate( i18n, counter ), [ i18n, counter ] );
 }
