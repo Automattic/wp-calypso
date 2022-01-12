@@ -22,9 +22,8 @@ export default function useCouponDiscount(
 		billingTerm === TERM_ANNUALLY && jetpackSaleDiscountRatio
 			? 1 - jetpackSaleDiscountRatio
 			: 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100;
-	const finalPrice = parseFloat(
-		( ( discountedPrice ?? originalPrice ) * couponDiscountRatio ).toFixed( 2 )
-	);
+	const finalPrice =
+		Math.floor( ( discountedPrice ?? originalPrice ) * couponDiscountRatio * 100 ) / 100;
 	const finalDiscount = ( ( originalPrice - finalPrice ) / originalPrice ) * 100;
 
 	return {
