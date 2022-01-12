@@ -224,7 +224,7 @@ const GoogleWorkspaceCard = ( {
 				selectedDomainName={ selectedDomainName }
 				users={ googleUsers }
 				onReturnKeyPress={ onGoogleFormReturnKeyPress }
-				showAddAnotherMailboxButton={ true }
+				showAddAnotherMailboxButton={ false }
 			>
 				<FullWidthButton
 					className="google-workspace-card__continue"
