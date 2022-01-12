@@ -100,7 +100,6 @@
 		"logmein": true,
 		"happychat": true,
 		"mailchimp": true,
-		"manage/export/guided-transfer": true,
 		"manage/import/site-importer-endpoints": true,
 		"marketplace-test": true,
 		"marketplace-v1": true,
