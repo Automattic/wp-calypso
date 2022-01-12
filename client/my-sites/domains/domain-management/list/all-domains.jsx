@@ -58,8 +58,6 @@ import {
 	ListAllActions,
 } from './utils';
 
-import './list-all.scss';
-
 class AllDomains extends Component {
 	static propTypes = {
 		action: PropTypes.string,
@@ -647,14 +645,14 @@ class AllDomains extends Component {
 
 		return (
 			<>
-				<div className="all-domains__form">{ this.renderActionForm() }</div>
-				<div className="all-domains__container">
+				<div>{ this.renderActionForm() }</div>
+				<div>
 					<QueryAllDomains />
 					<QueryUserPurchases />
 					<Main wideLayout>
 						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
-						<div className="all-domains__items">{ this.renderDomainsList() }</div>
+						<div>{ this.renderDomainsList() }</div>
 					</Main>
 				</div>
 			</>
