@@ -13,7 +13,7 @@ interface Props {
 function LicensingActivationBanner( { siteId }: Props ) {
 	const translate = useTranslate();
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const jetpackDashboardUrl = siteAdminUrl + 'admin.php?page=jetpack#/my-plan';
+	const jetpackDashboardUrl = siteAdminUrl + 'admin.php?page=jetpack#/license/activation';
 	const userLicensesCounts = useSelector( getUserLicensesCounts );
 	const hasDetachedLicenses = userLicensesCounts && userLicensesCounts[ 'detached' ] !== 0;
 
