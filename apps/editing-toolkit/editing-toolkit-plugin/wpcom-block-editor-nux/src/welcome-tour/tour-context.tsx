@@ -1,20 +1,12 @@
-import { createContext, useState, useContext } from '@wordpress/element';
+import { createContext, useContext } from '@wordpress/element';
 
-interface WelcomeTourContext {
-	justMaximized: boolean;
-	setJustMaximized: React.Dispatch< React.SetStateAction< boolean > >;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface WelcomeTourContext {}
 
 const WelcomeTourContext = createContext< Partial< WelcomeTourContext > >( {} );
 
 export const WelcomeTourContextProvider: React.FunctionComponent = ( { children } ) => {
-	const [ justMaximized, setJustMaximized ] = useState( false );
-
-	return (
-		<WelcomeTourContext.Provider value={ { justMaximized, setJustMaximized } }>
-			{ children }
-		</WelcomeTourContext.Provider>
-	);
+	return <WelcomeTourContext.Provider value={ {} }>{ children }</WelcomeTourContext.Provider>;
 };
 
 export const useWelcomeTourContext = () => useContext( WelcomeTourContext );

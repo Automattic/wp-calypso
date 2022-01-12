@@ -10,6 +10,8 @@ import type { Config, TourStepRendererProps } from '../types';
 
 interface Props extends TourStepRendererProps {
 	config: Config;
+	stepsViewed: number[];
+	setStepsViewed: React.Dispatch< React.SetStateAction< number[] > >;
 }
 
 const TourKitStep: React.FunctionComponent< Props > = ( {

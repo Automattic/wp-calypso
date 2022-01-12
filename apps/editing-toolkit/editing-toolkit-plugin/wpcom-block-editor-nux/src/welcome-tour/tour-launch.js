@@ -11,7 +11,7 @@ import { useEffect, useMemo } from '@wordpress/element';
  * Internal Dependencies
  */
 import { usePrefetchTourAssets } from './hooks';
-import { WelcomeTourContextProvider, useWelcomeTourContext } from './tour-context';
+import { WelcomeTourContextProvider } from './tour-context';
 import WelcomeTourMinimized from './tour-minimized-renderer';
 import WelcomeTourStep from './tour-step-renderer';
 import getTourSteps from './tour-steps';
@@ -64,7 +64,6 @@ function WelcomeTour() {
 	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() ).filter(
 		( step ) => ! ( step.meta.isDesktopOnly && isMobile() )
 	);
-	const { justMaximized, setJustMaximized } = useWelcomeTourContext();
 
 	// Preload card images
 	usePrefetchTourAssets( tourSteps );
@@ -92,18 +91,12 @@ function WelcomeTour() {
 					} );
 				},
 				onMaximize: ( currentStepIndex ) => {
-					setJustMaximized( true );
 					recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
 					} );
 				},
 				onStepViewOnce: ( currentStepIndex ) => {
-					if ( justMaximized ) {
-						setJustMaximized( false );
-						return;
-					}
-
 					const lastStepIndex = tourSteps.length - 1;
 					const { heading } = tourSteps[ currentStepIndex ].meta;
 
