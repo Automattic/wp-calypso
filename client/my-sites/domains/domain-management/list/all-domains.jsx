@@ -3,13 +3,11 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
-import { Fragment, Component } from 'react';
-import { InView } from 'react-intersection-observer';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -48,12 +46,10 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
-import DomainItem from './domain-item';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import { filterDomainsByOwner } from './helpers';
 import ListItemPlaceholder from './item-placeholder';
-import ListHeader from './list-header';
 import {
 	countDomainsInOrangeStatus,
 	getDomainManagementPath,
@@ -150,11 +146,6 @@ class AllDomains extends Component {
 		this.setState( { whoisData: { ...this.state.whoisData, [ domain ]: whoisData } } );
 	};
 
-	clickAddDomain = () => {
-		this.props.addDomainClick();
-		page( '/start/add-domain' );
-	};
-
 	handleDomainItemClick = ( domain ) => {
 		const { sites, currentRoute } = this.props;
 		const site = sites[ domain.blogId ];
@@ -226,21 +217,6 @@ class AllDomains extends Component {
 		return false;
 	}
 
-	shouldRenderDomainItem( domain, domainDetails ) {
-		if ( this.props.isContactEmailEditContext ) {
-			return (
-				Object.keys( domainDetails ?? {} ).length !== 0 &&
-				domainTypes.REGISTERED === domain.type &&
-				domainDetails?.currentUserCanManage &&
-				isDomainUpdateable( domainDetails ) &&
-				isDomainInGracePeriod( domainDetails ) &&
-				! domainDetails?.isPendingWhoisUpdate
-			);
-		}
-
-		return true;
-	}
-
 	findDomainDetails( domainsDetails = [], domain = {} ) {
 		return domainsDetails[ domain?.blogId ]?.find(
 			( element ) => element.type === domain.type && element.domain === domain.domain
@@ -260,75 +236,6 @@ class AllDomains extends Component {
 		} ) );
 	}
 
-	renderQuerySiteDomainsOnce = ( blogId ) => {
-		if ( this.renderedQuerySiteDomains[ blogId ] ) {
-			return null;
-		}
-		this.renderedQuerySiteDomains[ blogId ] = true;
-		return <QuerySiteDomains siteId={ blogId } />;
-	};
-
-	getActionResult( domain ) {
-		if ( this.props.isContactEmailEditContext ) {
-			return this.state.contactInfoSaveResults[ domain ] ?? null;
-		}
-
-		return null;
-	}
-
-	renderDomainItem( domain, index ) {
-		const {
-			currentRoute,
-			domainsDetails,
-			sites,
-			requestingSiteDomains,
-			isContactEmailEditContext,
-		} = this.props;
-		const { selectedDomains, isSavingContactInfo } = this.state;
-		const domainDetails = this.findDomainDetails( domainsDetails, domain );
-		const isLoadingDomainDetails = this.isLoadingDomainDetails();
-		const isChecked = ( selectedDomains[ domain.domain ] ?? false ) || isLoadingDomainDetails;
-		const actionResult = this.getActionResult( domain.name );
-
-		return (
-			<Fragment key={ `domain-item-${ index }-${ domain.name }` }>
-				{ domain?.blogId && ! isContactEmailEditContext ? (
-					<InView triggerOnce>
-						{ ( { inView, ref } ) => (
-							<div ref={ ref }>{ inView && this.renderQuerySiteDomainsOnce( domain.blogId ) }</div>
-						) }
-					</InView>
-				) : (
-					this.renderQuerySiteDomainsOnce( domain.blogId )
-				) }
-				{ this.shouldRenderDomainItem( domain, domainDetails ) && (
-					<DomainItem
-						currentRoute={ currentRoute }
-						domain={ domain }
-						showDomainDetails={ ! isContactEmailEditContext }
-						domainDetails={ domainDetails }
-						showCheckbox={ isContactEmailEditContext }
-						site={ sites[ domain?.blogId ] }
-						isManagingAllSites={ true }
-						isLoadingDomainDetails={
-							! domainDetails && ( requestingSiteDomains[ domain?.blogId ] ?? false )
-						}
-						onClick={ this.handleDomainItemClick }
-						onToggle={ this.handleDomainItemToggle }
-						isChecked={ isChecked }
-						disabled={ isLoadingDomainDetails || isSavingContactInfo }
-						actionResult={ actionResult }
-						isBusy={
-							isContactEmailEditContext &&
-							( ( isChecked && isSavingContactInfo && null === actionResult ) ||
-								isLoadingDomainDetails )
-						}
-					/>
-				) }
-			</Fragment>
-		);
-	}
-
 	handleDomainListHeaderToggle = ( selected ) => {
 		const selectedDomains = Object.keys( this.state.selectedDomains ?? {} ).reduce(
 			( list, domain ) => {
@@ -345,28 +252,6 @@ class AllDomains extends Component {
 			};
 		} );
 	};
-
-	renderDomainListHeader() {
-		const { isContactEmailEditContext } = this.props;
-		const { isSavingContactInfo, selectedDomainListHeader } = this.state;
-		const isLoadingDomainDetails = this.isLoadingDomainDetails();
-		const isChecked = selectedDomainListHeader || isLoadingDomainDetails;
-
-		return (
-			<ListHeader
-				key="list-header"
-				action={ this.props.action }
-				disabled={ isLoadingDomainDetails || isSavingContactInfo }
-				onToggle={ this.handleDomainListHeaderToggle }
-				isChecked={ isChecked }
-				isBusy={
-					isContactEmailEditContext &&
-					( ( isChecked && isSavingContactInfo ) || isLoadingDomainDetails )
-				}
-				isManagingAllSites={ true }
-			/>
-		);
-	}
 
 	renderDomainsList() {
 		if ( this.isLoading() ) {
