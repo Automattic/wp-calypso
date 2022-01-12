@@ -7333,9 +7333,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__components@npm:*, @types/wordpress__components@npm:^14.0.5":
-  version: 14.0.5
-  resolution: "@types/wordpress__components@npm:14.0.5"
+"@types/wordpress__components@npm:*, @types/wordpress__components@npm:^14.0.9":
+  version: 14.0.9
+  resolution: "@types/wordpress__components@npm:14.0.9"
   dependencies:
     "@types/react": "*"
     "@types/tinycolor2": "*"
@@ -7345,7 +7345,7 @@ __metadata:
     "@wordpress/element": ^3.0.0
     downshift: ^6.0.15
     re-resizable: ^6.4.0
-  checksum: e3f9e81acb372af796a45fd28454e5813d6e38dbd31c5c71520692f8a37a4b2ca8a4fa99e39619250f19bbd8bd8927065a016ad123c315bab9aff0d808eb5520
+  checksum: 47035d37811ee3d3e2c4d7b3029c39040670a176802320c154fd18967a6e755738785816fb6cbe6804d83a6e332be705e5faecf86dd681e94f0730c574b296bf
   languageName: node
   linkType: hard
 
@@ -38047,7 +38047,7 @@ testarmada-magellan@11.0.10:
     "@types/wordpress__api-fetch": ^3.2.4
     "@types/wordpress__block-editor": ^6.0.4
     "@types/wordpress__block-library": ^2.6.1
-    "@types/wordpress__components": ^14.0.5
+    "@types/wordpress__components": ^14.0.9
     "@types/wordpress__compose": ^4.0.1
     "@types/wordpress__data": ^4.6.10
     "@types/wordpress__data-controls": ^2.2.0
