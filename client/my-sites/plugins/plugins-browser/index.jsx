@@ -28,7 +28,6 @@ import { PaginationVariant } from 'calypso/components/pagination/constants';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import NoResults from 'calypso/my-sites/no-results';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -36,6 +35,8 @@ import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
 	fetchPluginsCategoryNextPage,
 	fetchPluginsList,
@@ -78,7 +79,7 @@ const PluginsBrowser = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
 	// Billing period switcher.
-	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
+	const billingPeriod = useSelector( getBillingInterval );
 
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
@@ -280,7 +281,7 @@ const PluginsBrowser = ( {
 				siteSlug={ siteSlug }
 				jetpackNonAtomic={ jetpackNonAtomic }
 				billingPeriod={ billingPeriod }
-				setBillingPeriod={ setBillingPeriod }
+				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 		</MainComponent>

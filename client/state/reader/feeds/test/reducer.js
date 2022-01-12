@@ -4,7 +4,6 @@ import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
-	READER_FEED_UPDATE,
 } from 'calypso/state/reader/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { captureConsole } from 'calypso/test-helpers/console';
@@ -204,63 +203,6 @@ describe( 'reducer', () => {
 				} )
 			).to.deep.equal( startingState );
 		} );
-
-		test( 'should accept feed updates', () => {
-			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
-			expect(
-				items( startingState, {
-					type: READER_FEED_UPDATE,
-					payload: [
-						{ feed_ID: 666, blog_ID: 888, name: 'valid but new', is_following: true },
-						{ feed_ID: 1, blog_ID: 777, name: 'first &amp; one', is_following: true },
-						{ feed_ID: 2, blog_ID: 999, name: 'second', is_following: true },
-					],
-				} )
-			).to.deep.equal( {
-				666: {
-					feed_ID: 666,
-					blog_ID: 888,
-					name: 'valid but new',
-					URL: undefined,
-					feed_URL: undefined,
-					is_following: true,
-					subscribers_count: undefined,
-					description: undefined,
-					last_update: undefined,
-					image: undefined,
-					organization_id: undefined,
-					unseen_count: undefined,
-				},
-				1: {
-					feed_ID: 1,
-					blog_ID: 777,
-					name: 'first & one',
-					URL: undefined,
-					feed_URL: undefined,
-					is_following: true,
-					subscribers_count: undefined,
-					description: undefined,
-					last_update: undefined,
-					image: undefined,
-					organization_id: undefined,
-					unseen_count: undefined,
-				},
-				2: {
-					feed_ID: 2,
-					blog_ID: 999,
-					name: 'second',
-					URL: undefined,
-					feed_URL: undefined,
-					is_following: true,
-					subscribers_count: undefined,
-					description: undefined,
-					last_update: undefined,
-					image: undefined,
-					organization_id: undefined,
-					unseen_count: undefined,
-				},
-			} );
-		} );
 	} );
 
 	describe( 'isRequestingFeed', () => {
@@ -292,15 +234,6 @@ describe( 'reducer', () => {
 			const action = {
 				type: READER_FEED_REQUEST_SUCCESS,
 				payload: { feed_ID: 1 },
-			};
-			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
-		} );
-
-		test( 'should update the last fetched time on feed update', () => {
-			const original = deepFreeze( {} );
-			const action = {
-				type: READER_FEED_UPDATE,
-				payload: [ { feed_ID: 1 } ],
 			};
 			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );

@@ -317,7 +317,7 @@ object WpCalypso : GitVcsRoot({
 	branchSpec = "+:refs/heads/*"
 	useTagsAsBranches = true
 	authMethod = uploadedKey {
-		uploadedKey = "Sergio TeamCity"
+		uploadedKey = "matticbot"
 	}
 })
 

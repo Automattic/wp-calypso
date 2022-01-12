@@ -13,6 +13,8 @@
 .email-providers-stacked-comparison__header {
 	font-size: $font-title-large;
 	text-align: center;
+
+	@extend .wp-brand-font;
 }
 
 .email-providers-stacked-comparison__sub-header {

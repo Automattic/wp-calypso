@@ -71,7 +71,7 @@ export const setPreference = ( key, value ) => ( {
  *
  * @param   {string|number}               key User preference key
  * @param   {string|number|object|null|boolean}      value User preference value
- * @returns { Function }                      Action thunk
+ * @returns {(dispatch: import('calypso/state/types').CalypsoDispatch) => Promise} Action thunk
  */
 export const savePreference = ( key, value ) => ( dispatch ) => {
 	dispatch( setPreference( key, value ) );

@@ -585,22 +585,6 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
-		'site-title-without-domains': {
-			stepName: 'site-title-without-domains',
-			apiRequestFunction: createSiteWithCart,
-			delayApiRequestUntilComplete: true,
-			dependencies: [ 'themeSlugWithRepo' ],
-			providesDependencies: [ 'siteTitle', 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'site-style': {
-			stepName: 'site-style',
-			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
-		},
-
 		// Steps with preview
 		// These can be removed once we make the preview the default
 		'site-topic-with-preview': {
@@ -608,14 +592,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'site-style-with-preview': {
-			stepName: 'site-style-with-preview',
-			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
 			props: {
 				showSiteMockups: true,
 			},
@@ -806,6 +782,17 @@ export function generateSteps( {
 		},
 
 		// Woocommerce Install steps
+		'store-address': {
+			stepName: 'store-address',
+			props: {
+				headerTitle: i18n.translate( 'Add an address to accept payments' ),
+				headerDescription: i18n.translate(
+					'This will be used as your default business address. You can change it later if you need to.'
+				),
+			},
+			dependencies: [ 'site' ],
+			providesDependencies: [ 'siteConfirmed' ],
+		},
 		confirm: {
 			stepName: 'confirm',
 			props: {

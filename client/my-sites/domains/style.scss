@@ -19,22 +19,6 @@
 		margin-bottom: auto;
 	}
 
-	.popover-cart {
-		margin-right: 8px;
-	}
-
-	.popover-cart .header-button,
-	.popover-cart .header-button:hover {
-		min-height: initial;
-		background: none;
-		color: var( --color-text );
-	}
-
-	.cart__count-badge .count {
-		top: -7px;
-		right: -3px;
-	}
-
 	@include breakpoint-deprecated('<660px') {
 		margin: 16px;
 	}

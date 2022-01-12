@@ -5,7 +5,7 @@ const mockUseDispatch = () => () => null;
 const mockUseSelector = ( func ) => func();
 const mockUseTranslate = () => ( text ) => text;
 const mockUseCanGoToDate = () => () => true;
-const mockIsEnabled = () => true;
+const mockIsEnabled = () => false; // disable feature flags
 
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
@@ -267,6 +267,8 @@ describe( 'BackupDatePicker', () => {
 				done();
 			};
 
+			// Enable the backup date picker feature for this test, since that is needed to show the search icon.
+			isEnabled.mockImplementation( ( flag ) => flag === 'jetpack/backups-date-picker' );
 			useDispatch.mockImplementation( () => checkSearchClickTracksEvent );
 
 			const picker = shallow(

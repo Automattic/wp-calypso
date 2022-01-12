@@ -39,9 +39,7 @@ const stepNameToModuleName = {
 	'rewind-form-creds': 'rewind-form-creds',
 	'site-or-domain': 'site-or-domain',
 	'site-picker': 'site-picker',
-	'site-style': 'site-style',
 	'site-title': 'site-title',
-	'site-title-without-domains': 'site-title',
 	'site-options': 'site-options',
 	'site-topic': 'site-topic',
 	'site-topic-with-theme': 'site-topic',
@@ -61,7 +59,6 @@ const stepNameToModuleName = {
 	displayname: 'user',
 	'reader-landing': 'reader-landing',
 	// Steps with preview
-	'site-style-with-preview': 'site-style',
 	'site-topic-with-preview': 'site-topic',
 	'domains-with-preview': 'domains',
 	'site-title-with-preview': 'site-title',
@@ -85,6 +82,7 @@ const stepNameToModuleName = {
 	ready: 'import',
 	importing: 'import-from',
 	'select-site': 'woocommerce-install/select-site',
+	'store-address': 'woocommerce-install/step-store-address',
 	confirm: 'woocommerce-install/confirm',
 	transfer: 'woocommerce-install/transfer',
 };

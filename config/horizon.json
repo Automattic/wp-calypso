@@ -65,7 +65,7 @@
 		"mailchimp": false,
 		"manage/export/guided-transfer": true,
 		"marketplace-test": false,
-		"marketplace-v1": false,
+		"marketplace-v1": true,
 		"marketplace": false,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
@@ -101,7 +101,7 @@
 		"wpcom-user-bootstrap": true,
 		"wordpress-action-search": false,
 		"redirect-fallback-browsers": true,
-		"woop": true
+		"woop": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

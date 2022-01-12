@@ -11,13 +11,16 @@ export interface SiteData {
 	wpcom_url?: string;
 	jetpack?: boolean;
 	plan: SiteDataPlan;
+	products?: SiteDataPlan[];
 	capabilities?: Record< string, boolean >;
+	is_wpcom_atomic?: boolean;
 	// TODO: fill out the rest of this
 }
 
 export interface SiteDataPlan {
 	product_id: number;
 	product_slug: string;
+	product_name?: string;
 	product_name_short: string;
 	expired: boolean;
 	user_is_owner: boolean;

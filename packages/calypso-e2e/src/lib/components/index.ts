@@ -1,4 +1,5 @@
 export * from './navbar-component';
+export * from './navbar-cart-component';
 export * from './comments-component';
 export * from './sidebar-component';
 export * from './support-component';

@@ -3,10 +3,11 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import ExternalLink from 'calypso/components/external-link';
+import type { EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
 interface ExternalProps {
 	context: string | null;
-	warnings: import('calypso/state/automated-transfer/selectors').EligibilityWarning[];
+	warnings: EligibilityWarning[];
 }
 
 type Props = ExternalProps & LocalizeProps;

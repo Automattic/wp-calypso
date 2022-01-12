@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
+import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -144,14 +145,24 @@ export class UserStep extends Component {
 		];
 		if ( signupFlows.includes( this.props.flowName ) ) {
 			const experimentCheck = this.state.isDesktop
-				? 'registration_email_only_desktop_random_usernames'
-				: 'registration_email_only_mobile_random_usernames';
+				? 'registration_email_only_desktop_v3'
+				: 'registration_email_only_mobile_v3';
 
 			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
 				this.setState( { experiment: experimentName } );
+				experimentName.variationName === 'treatment'
+					? this.persistExperimentName( experimentName.experimentName )
+					: null;
 			} );
 		}
 	}
+
+	persistExperimentName = ( experimentName ) => {
+		const DAY_IN_SECONDS = 3600 * 24;
+		const expirationDate = new Date( new Date().getTime() + DAY_IN_SECONDS * 1000 );
+		const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
+		document.cookie = cookie.serialize( 'wpcom_signup_experiment_name', experimentName, options );
+	};
 
 	getSubHeaderText() {
 		const {

@@ -11,5 +11,6 @@ export const createLightSiteDomainObject = ( domain ) => {
 		name: String( domain.domain ),
 		registrationDate: String( domain.registration_date ),
 		type: getDomainType( domain ),
+		currentUserIsOwner: Boolean( domain.current_user_is_owner ),
 	};
 };

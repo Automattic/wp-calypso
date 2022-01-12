@@ -81,7 +81,7 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'plan',
 						className: 'title',
-						text: translate( 'Included in the Business plan (%s)', {
+						text: translate( 'Included in the Business plan (%s):', {
 							args: [ planDisplayCost ],
 						} ),
 						eligibilities: [ 'needs-upgrade' ],

@@ -1,5 +1,6 @@
 import { Reducer, AnyAction, Dispatch, Action, StoreEnhancerStoreCreator } from 'redux';
 import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { Lazy, TimestampMS, TimerHandle } from 'calypso/types';
 
@@ -131,7 +132,7 @@ const onSuccess = ( action: HttpDataAction, apiData: unknown ) => {
 	}
 };
 
-export default {
+registerHandlers( 'declarative resource loader', {
 	[ HTTP_DATA_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
@@ -139,7 +140,7 @@ export default {
 			onError,
 		} ),
 	],
-};
+} );
 
 export const reducer: Reducer< number, Action< typeof HTTP_DATA_TICK > > = (
 	state = 0,

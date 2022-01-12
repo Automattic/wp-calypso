@@ -30,7 +30,7 @@ import {
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
-import OwnerInfo from './owner-Info';
+import OwnerInfo from './owner-info';
 
 import 'calypso/me/purchases/style.scss';
 
@@ -389,7 +389,7 @@ class PurchaseItem extends Component {
 		return <SiteIcon site={ site } size={ 36 } />;
 	};
 
-	renderPurhaseItemContent = () => {
+	renderPurchaseItemContent = () => {
 		const { purchase, showSite, isBackupMethodAvailable } = this.props;
 
 		return (
@@ -402,7 +402,7 @@ class PurchaseItem extends Component {
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
 						&nbsp;
-						<OwnerInfo purchase={ purchase } />
+						<OwnerInfo purchaseId={ purchase?.id } />
 					</div>
 
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
@@ -464,7 +464,7 @@ class PurchaseItem extends Component {
 				href={ href }
 				onClick={ onClick }
 			>
-				{ this.renderPurhaseItemContent() }
+				{ this.renderPurchaseItemContent() }
 			</CompactCard>
 		);
 	}

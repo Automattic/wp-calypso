@@ -22,6 +22,8 @@ const FreePhotoLibrary = () => {
 			] }
 			illustration={ freePhotoLibraryVideoPrompt }
 			cardName={ EDUCATION_FREE_PHOTO_LIBRARY }
+			height="115"
+			width="200"
 		/>
 	);
 };

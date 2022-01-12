@@ -1,0 +1,71 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import 'jetpack-connect/colors.scss';
+
+.is-section-jetpack-connect .licensing-prompt-dialog {
+	@include jetpack-connect-colors();
+}
+
+// Adding some extra specificity to override defaults coming from the dialog class
+.licensing-prompt-dialog.dialog.card {
+	position: relative;
+
+	padding: 12px 0;
+
+	max-width: 650px;
+	border-radius: 4px;
+
+	@include break-mobile {
+		padding: 24px;
+	}
+}
+
+.licensing-prompt-dialog .licensing-prompt-dialog__title {
+	font-size: $font-title-medium;
+	line-height: 30px;
+
+	@include break-mobile {
+		font-size: $font-title-large;
+		line-height: 40px;
+	}
+}
+
+.licensing-prompt-dialog__close {
+	position: absolute;
+	right: 8px;
+	top: 8px;
+
+	cursor: pointer;
+
+	@include break-mobile {
+		right: 24px;
+		top: 24px;
+	}
+}
+
+.licensing-prompt-dialog .licensing-prompt-dialog__instructions {
+	font-size: $font-body;
+}
+
+.licensing-prompt-dialog__actions {
+	display: flex;
+	flex-direction: column;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+}
+
+.licensing-prompt-dialog__btn.is-primary {
+	--color-accent: var( --studio-jetpack-green-40 );
+	--color-primary: var( --studio-jetpack-green-40 );
+
+	@include break-mobile {
+		margin-right: 16px;
+	}
+}
+
+.licensing-prompt-dialog__btn {
+	border-radius: 4px;
+}

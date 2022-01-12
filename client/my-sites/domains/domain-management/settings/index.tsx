@@ -236,13 +236,10 @@ const Settings = ( {
 			return null;
 		}
 
-		const getPlaceholderAccordion = () => (
-			<Accordion
-				title="Contact information"
-				subtitle="Contact information"
-				isPlaceholder
-			></Accordion>
-		);
+		const getPlaceholderAccordion = () => {
+			const label = translate( 'Contact information', { textOnly: true } );
+			return <Accordion title={ label } subtitle={ label } isPlaceholder></Accordion>;
+		};
 
 		if ( ! domain || ! domains ) return getPlaceholderAccordion();
 
@@ -257,13 +254,14 @@ const Settings = ( {
 		const contactInformation = findRegistrantWhois( whoisData );
 
 		const { privateDomain } = domain;
+		const titleLabel = translate( 'Contact information', { textOnly: true } );
 		const privacyProtectionLabel = privateDomain
 			? translate( 'Privacy protection on', { textOnly: true } )
 			: translate( 'Privacy protection off', { textOnly: true } );
 
 		if ( ! domain.currentUserCanManage ) {
 			return (
-				<Accordion title="Contact information" subtitle={ `${ privacyProtectionLabel }` }>
+				<Accordion title={ titleLabel } subtitle={ `${ privacyProtectionLabel }` }>
 					{ getContactsPrivacyInfo() }
 				</Accordion>
 			);
@@ -278,7 +276,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title="Contact information"
+				title={ titleLabel }
 				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }` }
 			>
 				{ getContactsPrivacyInfo() }

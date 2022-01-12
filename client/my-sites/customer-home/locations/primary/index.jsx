@@ -15,6 +15,7 @@ import {
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
 	TASK_PODCASTING,
+	TASK_MARKETPLACE,
 	TASK_RENEW_EXPIRED_PLAN,
 	TASK_RENEW_EXPIRING_PLAN,
 	TASK_SITE_SETUP_CHECKLIST,
@@ -32,6 +33,7 @@ import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
+import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
@@ -52,6 +54,7 @@ const cardComponents = {
 	[ TASK_FIND_DOMAIN ]: FindDomain,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
+	[ TASK_MARKETPLACE ]: Marketplace,
 	[ TASK_PODCASTING ]: Podcasting,
 	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
 	[ TASK_RENEW_EXPIRING_PLAN ]: Renew,

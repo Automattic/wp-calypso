@@ -88,7 +88,7 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 			<Main wideLayout={ true }>
 				<DocumentHead title={ translate( 'Add New Email Forwards' ) } />
 
-				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+				<EmailHeader />
 
 				<HeaderCake onClick={ goToEmail }>
 					{ translate( 'Email Forwarding' ) + ': ' + selectedDomainName }

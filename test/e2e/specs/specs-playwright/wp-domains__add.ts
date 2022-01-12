@@ -12,6 +12,7 @@ import {
 	CartCheckoutPage,
 	IndividualPurchasePage,
 	NavbarComponent,
+	NavbarCartComponent,
 	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
@@ -21,6 +22,7 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 	let sidebarComponent: SidebarComponent;
 	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
+	let navbarCartComponent: NavbarCartComponent;
 	let selectedDomain: string;
 	let domainsPage: DomainsPage;
 
@@ -44,10 +46,11 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 
 		it( 'If required, clear the cart', async function () {
 			domainsPage = new DomainsPage( page );
-			const cartOpened = await domainsPage.openCart();
+			navbarCartComponent = new NavbarCartComponent( page );
+			const cartOpened = await navbarCartComponent.openCart();
 			// The cart popover existing implies there are some items that need to be removed.
 			if ( cartOpened ) {
-				await domainsPage.emptyCart();
+				await navbarCartComponent.emptyCart();
 			}
 		} );
 

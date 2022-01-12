@@ -30,6 +30,7 @@ const VideosUi = ( {
 	);
 
 	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
+	const [ isPreloadAnimationState, setisPreloadAnimationState ] = useState( true );
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
 	const currentVideo = course?.videos?.[ currentVideoKey || 0 ];
@@ -59,6 +60,7 @@ const VideosUi = ( {
 
 		setCurrentVideoKey( initialVideoSlug );
 		setSelectedChapterIndex( videoSlugs.indexOf( initialVideoSlug ) );
+		setisPreloadAnimationState( false );
 	}, [ course, videoSlugs, completedVideoSlugs, currentVideoKey ] );
 
 	const isChapterSelected = ( idx ) => {
@@ -158,7 +160,10 @@ const VideosUi = ( {
 								return (
 									<div
 										key={ i }
-										className={ `${ isChapterSelected( i ) ? 'selected ' : '' }videos-ui__chapter` }
+										className={ classNames( 'videos-ui__chapter', {
+											selected: isChapterSelected( i ),
+											preload: isPreloadAnimationState,
+										} ) }
 									>
 										<button
 											type="button"

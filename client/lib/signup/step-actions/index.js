@@ -26,7 +26,6 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
-import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import {
@@ -131,7 +130,6 @@ function getNewSiteParams( {
 	const siteVerticalName = getSiteVerticalName( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
-	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 	const selectedDesign = get( signupDependencies, 'selectedDesign', false );
@@ -162,7 +160,6 @@ function getNewSiteParams( {
 			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			default_annotation_as_primary_fallback: shouldUseDefaultAnnotationAsFallback,
 			siteGoals: siteGoals || undefined,
-			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
 			site_vertical_name: siteVerticalName || undefined,

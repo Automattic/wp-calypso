@@ -1,4 +1,5 @@
 import { useSelect, useDispatch } from '@wordpress/data';
+import classnames from 'classnames';
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import { isE2ETest } from 'calypso/lib/e2e';
@@ -32,6 +33,8 @@ import type { BlockEditProps } from '@wordpress/blocks';
 
 import './colors.scss';
 import './style.scss';
+
+const WIDE_LAYOUT_STEPS: StepType[] = [ Step.DesignSelection ];
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const {
@@ -206,7 +209,11 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	}
 
 	return (
-		<div className="onboarding-block">
+		<div
+			className={ classnames( 'onboarding-block', {
+				'onboarding-block--is-wide': WIDE_LAYOUT_STEPS.includes( step ),
+			} ) }
+		>
 			{ isCreatingSite && (
 				<Redirect
 					push={ shouldTriggerCreate ? undefined : true }

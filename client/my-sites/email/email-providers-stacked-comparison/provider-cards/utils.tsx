@@ -7,11 +7,6 @@ import type {
 	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
 
-export enum IntervalLength {
-	ANNUALLY = 'annually',
-	MONTHLY = 'monthly',
-}
-
 export const addToCartAndCheckout = (
 	shoppingCartManager: ShoppingCartManagerActions,
 	cartItem: RequestCartProduct | MinimalRequestCartProduct,

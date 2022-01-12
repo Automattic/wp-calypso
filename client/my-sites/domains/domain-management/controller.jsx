@@ -111,11 +111,15 @@ export default {
 	},
 
 	domainManagementTransferIn( pageContext, next ) {
+		let component = DomainManagement.TransferIn;
+		if ( config.isEnabled( 'domains/settings-page-redesign' ) ) {
+			component = DomainManagement.Settings;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferIn( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.TransferIn }
+				component={ component }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains

@@ -9,9 +9,9 @@ import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { isRequestingSiteSettings, getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import JetpackSearchDetails from './details';
+import JetpackSearchUpsell from './jetpack-search-upsell';
 import JetpackSearchPlaceholder from './placeholder';
 import { hasJetpackSearchPurchaseOrPlan } from './purchases';
-import JetpackSearchUpsell from './upsell';
 
 interface Props {
 	siteId: number;
