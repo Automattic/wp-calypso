@@ -42,15 +42,6 @@
 		justify-content: flex-start;
 	}
 
-	// Variant when the date range picker is used
-	&--with-date-range-picker {
-		.backup-date-picker__search-link {
-			@include breakpoint-deprecated( '>660px' ) {
-				margin-left: auto;
-			}
-		}
-	}
-
 	// Variant when the calendar date picker is used
 	&--with-date-calendar-picker {
 		.backup-date-picker__select-date--previous,
@@ -245,6 +236,11 @@
 	.DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--today .date-picker__day,
 	.DayPicker-Day--is-selected .date-picker__day {
 		background-color: var( --studio-jetpack-green-50 );
+	}
+
+	// Style Sundays the same as the other days
+	.DayPicker-Day--sunday:not( .DayPicker-Day--today ):not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) .date-picker__day {
+		color: var( --color-neutral-70 );
 	}
 
 	// Show a small dot on the days that should have a backup available.
