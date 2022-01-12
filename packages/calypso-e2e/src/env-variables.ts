@@ -56,7 +56,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 };
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
-	let output: EnvVariableValue;
+	let output: EnvVariableValue = value;
 
 	switch ( defaultEnvVariables[ name ].constructor.name ) {
 		case 'Number': {
@@ -67,7 +67,12 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 			break;
 		}
 		case 'Boolean': {
-			output = { true: true, false: false }[ value ] || '';
+			if ( value === 'true' ) {
+				output = true;
+			}
+			if ( value === 'false' ) {
+				output = false;
+			}
 			if ( typeof output !== 'boolean' ) {
 				throw new Error( `Incorrect type of the ${ name } variable - expecting boolean` );
 			}
@@ -76,9 +81,6 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 		case 'Array': {
 			output = value.split( ',' );
 			break;
-		}
-		default: {
-			output = value;
 		}
 	}
 
