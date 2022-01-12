@@ -225,9 +225,11 @@ describe( 'I18N: Editor', function () {
 				await dialog.accept();
 			}
 		} );
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+
 		const testAccount = new TestAccount( 'i18nUser' );
 		await testAccount.authenticate( page );
+
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {

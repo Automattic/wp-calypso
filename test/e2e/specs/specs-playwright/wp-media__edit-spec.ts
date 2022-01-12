@@ -20,10 +20,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	let page: Page;
 
 	beforeAll( async () => {
-		page = await browser.newPage();
-	} );
-
-	beforeAll( async () => {
 		testImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 	} );
 
@@ -35,8 +31,14 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		let mediaPage: MediaPage;
 
 		beforeAll( async () => {
+			page = await browser.newPage();
+
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await page.close();
 		} );
 
 		it( 'Navigate to Media', async function () {

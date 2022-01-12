@@ -21,10 +21,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let page: Page;
 
 	beforeAll( async () => {
-		page = await browser.newPage();
-	} );
-
-	beforeAll( async () => {
 		testFiles = {
 			image: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
 			audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
@@ -42,8 +38,14 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		let testAccount: TestAccount;
 
 		beforeAll( async () => {
+			page = await browser.newPage();
+
 			testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await page.close();
 		} );
 
 		it( 'Navigate to Media', async function () {

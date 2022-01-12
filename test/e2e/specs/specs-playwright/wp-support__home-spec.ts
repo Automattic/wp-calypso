@@ -9,11 +9,6 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 	let page: Page;
-	let testAccount: TestAccount;
-
-	beforeAll( async () => {
-		page = await browser.newPage();
-	} );
 
 	describe.each( [
 		{ siteType: 'Simple', accountName: 'defaultUser' },
@@ -22,8 +17,14 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		let supportComponent: SupportComponent;
 
 		beforeAll( async () => {
-			testAccount = new TestAccount( accountName );
+			page = await browser.newPage();
+
+			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await page.close();
 		} );
 
 		it( 'Displays default entries', async function () {
