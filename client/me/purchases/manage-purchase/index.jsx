@@ -942,7 +942,7 @@ export default connect( ( state, props ) => {
 			: null;
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteId = selectedSiteId || ( purchase ? purchase.siteId : null );
-	const purchases = getSitePurchases( state, siteId );
+	const purchases = purchase && getSitePurchases( state, purchase.siteId );
 	const userId = getCurrentUserId( state );
 	const isProductOwner = purchase && purchase.userId === userId;
 	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
