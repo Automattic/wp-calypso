@@ -30,7 +30,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
@@ -68,7 +68,6 @@ class AllDomains extends Component {
 		domainsList: PropTypes.array.isRequired,
 		filteredDomainsList: PropTypes.array.isRequired,
 		sites: PropTypes.object.isRequired,
-		addDomainClick: PropTypes.func.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
 	};
@@ -673,12 +672,6 @@ class AllDomains extends Component {
 	}
 }
 
-const addDomainClick = () =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in ListAll' ),
-		recordTracksEvent( 'calypso_domain_management_list_all_add_domain_click' )
-	);
-
 const saveContactEmailClick = () =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -753,10 +746,7 @@ export default connect(
 		};
 	},
 	{
-		addDomainClick,
 		saveContactEmailClick,
-		successNotice,
-		errorNotice,
 		infoNotice,
 	}
 )( localize( AllDomains ) );
