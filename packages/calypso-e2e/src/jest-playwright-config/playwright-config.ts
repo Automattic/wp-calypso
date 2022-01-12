@@ -1,19 +1,6 @@
-import fs from 'fs/promises';
 import os from 'os';
-import path from 'path';
 import { LaunchOptions, BrowserContextOptions, devices } from 'playwright';
 import envVariables from '../env-variables';
-
-const createLogger = () => {
-	const logFilePath = path.join( envVariables.ARTIFACTS_PATH, `playwright-${ Date.now() }.log` );
-
-	return async ( name: string, severity: string, message: string ) => {
-		await fs.appendFile(
-			logFilePath,
-			`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
-		);
-	};
-};
 
 const getTargetDeviceOptions = () => {
 	const viewportName = envVariables.VIEWPORT_NAME;
@@ -53,10 +40,6 @@ const contextOptions: BrowserContextOptions = {
 	...targetDeviceOptions,
 	userAgent: `${ targetDeviceOptions.userAgent } wp-e2e-tests`,
 	recordVideo: { dir: os.tmpdir() },
-	logger: {
-		log: createLogger(),
-		isEnabled: ( name ) => name === 'api',
-	},
 };
 
 export default Object.freeze( {

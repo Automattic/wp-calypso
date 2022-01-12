@@ -14,6 +14,7 @@ const sanitizeString = ( text: string ) => {
 
 class JestEnvironmentPlaywright extends JestEnvironmentNode {
 	private testFilename: string;
+	private testArtifactsPath: string;
 	private failure?: {
 		type: 'hook' | 'test';
 		name: string;
@@ -23,6 +24,7 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 		super( config );
 
 		this.testFilename = path.parse( context.testPath ).name;
+		this.testArtifactsPath = '';
 	}
 
 	/**
@@ -31,8 +33,27 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 	async setup() {
 		await super.setup();
 
+		// Create folders for test artefacts.
+		await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
+		this.testArtifactsPath = await fs.mkdtemp(
+			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ Date.now() }-` )
+		);
+
+		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
+
 		// Start the browser.
-		const browser = await chromium.launch( config.launchOptions );
+		const browser = await chromium.launch( {
+			...config.launchOptions,
+			logger: {
+				log: async ( name: string, severity: string, message: string ) => {
+					await fs.appendFile(
+						logFilePath,
+						`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
+					);
+				},
+				isEnabled: ( name ) => name === 'api',
+			},
+		} );
 
 		// Proxy our E2E browser to bind our custom default context options.
 		// We need to it this way because we're not using the first-party Playwright
@@ -48,7 +69,10 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 
 				if ( prop === 'newContext' ) {
 					return async function ( options: BrowserContextOptions ): Promise< BrowserContext > {
-						const context = await target.newContext( { ...config.contextOptions, ...options } );
+						const context = await target.newContext( {
+							...config.contextOptions,
+							...options,
+						} );
 
 						await context.tracing.start( {
 							screenshots: true,
@@ -61,7 +85,11 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 
 				if ( prop === 'newPage' ) {
 					return async function ( options: BrowserContextOptions ): Promise< Page > {
-						const page = await target.newPage( { ...config.contextOptions, ...options } );
+						const page = await target.newPage( {
+							...config.contextOptions,
+							...options,
+						} );
+
 						const context = page.context();
 
 						await context.tracing.start( {
@@ -95,7 +123,7 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 				// Handling is different compared to test steps because Jest treats
 				// failed hooks differently from tests.
 				if ( this.failure?.type === 'hook' ) {
-					// event.test.mode = 'fail'; // THIS TYPE DOESNT EXIST
+					// event.test.mode = 'fail'; // THIS TYPE DOESN'T EXIST (TS ERROR)
 				}
 				break;
 			}
@@ -114,14 +142,6 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 				const contexts = this.global.browser.contexts();
 
 				if ( this.failure ) {
-					// Create folders for failed test artefacts.
-					await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
-					const subfolderPath = await fs.mkdtemp(
-						path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ Date.now() }-` )
-					);
-					const mediaPath = path.join( subfolderPath, 'screenshots' );
-					await fs.mkdir( mediaPath );
-
 					const artefactFilename = `${ this.testFilename }__${ sanitizeString(
 						this.failure.name
 					) }`;
@@ -131,22 +151,22 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 
 					// Save trace, screenshot and video for every open context/page.
 					for await ( const context of contexts ) {
-						const traceFilepath = path.join(
-							subfolderPath,
+						const traceFilePath = path.join(
+							this.testArtifactsPath,
 							`${ artefactFilename }__${ contextIndex }.zip`
 						);
 
-						await context.tracing.stop( { path: traceFilepath } );
+						await context.tracing.stop( { path: traceFilePath } );
 
 						for await ( const page of context.pages() ) {
-							const mediaFilepath = path.join(
-								mediaPath,
+							const mediaFilePath = path.join(
+								this.testArtifactsPath,
 								`${ artefactFilename }__${ contextIndex }-${ pageIndex }`
 							);
 
-							await page.screenshot( { path: `${ mediaFilepath }.png` } );
+							await page.screenshot( { path: `${ mediaFilePath }.png` } );
 							await page.close(); // Needed before saving video.
-							await page.video()?.saveAs( `${ mediaFilepath }.webm` );
+							await page.video()?.saveAs( `${ mediaFilePath }.webm` );
 
 							pageIndex++;
 						}
