@@ -236,6 +236,82 @@
 			"features": []
 		},
 		{
+			"title": "Geologist Blue",
+			"slug": "geologist-blue",
+			"template": "geologist",
+			"theme": "geologist-blue",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist Blue",
+			"slug": "geologist-blue",
+			"template": "geologist",
+			"theme": "geologist-blue",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist Cream",
+			"slug": "geologist-cream",
+			"template": "geologist",
+			"theme": "geologist-cream",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist Cream",
+			"slug": "geologist-cream",
+			"template": "geologist",
+			"theme": "geologist-cream",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist Slate",
+			"slug": "geologist-slate",
+			"template": "geologist",
+			"theme": "geologist-slate",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist Slate",
+			"slug": "geologist-slate",
+			"template": "geologist",
+			"theme": "geologist-slate",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist Yellow",
+			"slug": "geologist-yellow",
+			"template": "geologist",
+			"theme": "geologist-yellow",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist Yellow",
+			"slug": "geologist-yellow",
+			"template": "geologist",
+			"theme": "geologist-yellow",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
 			"title": "Zoologist",
 			"slug": "zoologist",
 			"template": "zoologist",
