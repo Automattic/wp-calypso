@@ -12,7 +12,6 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 
 	describe.each`
 		siteType      | accountName
-		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
 	`( 'View Insights ($siteType)', function ( { accountName } ) {
 		beforeAll( async () => {

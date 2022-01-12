@@ -8,7 +8,6 @@ import {
 	SidebarComponent,
 	InvitePeoplePage,
 	PeoplePage,
-	BrowserManager,
 	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
@@ -76,11 +75,13 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		await peoplePage.revokeInvite();
 	} );
 
-	it( `Ensure invite link is no longer valid`, async function () {
-		const testContext = await BrowserManager.newBrowserContext();
-		const testPage = await BrowserManager.newPage( { context: testContext } );
-		await testPage.goto( adjustedInviteLink );
+	it( 'Close current page', async () => {
+		await page.close();
+	} );
 
-		await testPage.waitForSelector( `:text("Oops, that invite is not valid")` );
+	it( `Ensure invite link is no longer valid`, async function () {
+		page = await browser.newPage();
+		await page.goto( adjustedInviteLink );
+		await page.waitForSelector( `:text("Oops, that invite is not valid")` );
 	} );
 } );
