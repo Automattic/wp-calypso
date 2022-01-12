@@ -1,5 +1,6 @@
 /* eslint-disable require-jsdoc */
 import fs from 'fs/promises';
+import os from 'os';
 import path from 'path';
 import { Context } from 'vm';
 import JestEnvironmentNode from 'jest-environment-node';
@@ -70,8 +71,9 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 				if ( prop === 'newContext' ) {
 					return async function ( options: BrowserContextOptions ): Promise< BrowserContext > {
 						const context = await target.newContext( {
-							...config.contextOptions,
 							...options,
+							...config.contextOptions,
+							recordVideo: { dir: os.tmpdir() },
 						} );
 
 						await context.tracing.start( {
@@ -86,8 +88,9 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 				if ( prop === 'newPage' ) {
 					return async function ( options: BrowserContextOptions ): Promise< Page > {
 						const page = await target.newPage( {
-							...config.contextOptions,
 							...options,
+							...config.contextOptions,
+							recordVideo: { dir: os.tmpdir() },
 						} );
 
 						const context = page.context();

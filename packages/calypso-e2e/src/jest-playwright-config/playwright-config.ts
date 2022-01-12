@@ -1,4 +1,3 @@
-import os from 'os';
 import { LaunchOptions, BrowserContextOptions, devices } from 'playwright';
 import envVariables from '../env-variables';
 
@@ -39,7 +38,6 @@ const launchOptions: LaunchOptions = {
 const contextOptions: BrowserContextOptions = {
 	...targetDeviceOptions,
 	userAgent: `${ targetDeviceOptions.userAgent } wp-e2e-tests`,
-	recordVideo: { dir: os.tmpdir() },
 };
 
 export default Object.freeze( {
