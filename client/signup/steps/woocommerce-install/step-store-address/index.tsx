@@ -57,17 +57,20 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 	// @todo: Add a general hook to get and update multi-option data like the profile.
 	function updateProfileEmail( email: string ) {
-		const profile_data = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
+		const onboardingProfile = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
 
-		profile_data[ 'store_email' ] = email;
+		const updatedOnboardingProfile = {
+			...onboardingProfile,
+			store_email: email,
+		};
 
-		update( WOOCOMMERCE_ONBOARDING_PROFILE, profile_data );
+		update( WOOCOMMERCE_ONBOARDING_PROFILE, updatedOnboardingProfile );
 	}
 
 	function getProfileEmail() {
-		const profile_data = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
+		const onboardingProfile = get( WOOCOMMERCE_ONBOARDING_PROFILE );
 
-		return profile_data[ 'store_email' ] || '';
+		return onboardingProfile[ 'store_email' ] || '';
 	}
 
 	function getContent() {

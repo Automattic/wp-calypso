@@ -25,9 +25,7 @@ type optionNameType =
 	| typeof WOOCOMMERCE_STORE_POSTCODE
 	| typeof WOOCOMMERCE_ONBOARDING_PROFILE;
 
-type OptionObjectType = Record< string, unknown >;
-
-type OptionValueType = string | number | Array< string | number > | OptionObjectType | undefined;
+type OptionValueType = Record< string, unknown > | string;
 
 /**
  * Simple react custom hook to deal with site settings.
@@ -56,12 +54,12 @@ export function useSiteSettings( siteId: number ) {
 	}, [ dispatch, siteId ] );
 
 	// Simple getter helper.
-	function get( option: optionNameType ): OptionValueType {
+	function get( option: optionNameType ) {
 		if ( ! settings || Object.keys( settings ).length === 0 ) {
 			return '';
 		}
 
-		return settings[ option ];
+		return settings[ option ] || '';
 	}
 
 	/*
