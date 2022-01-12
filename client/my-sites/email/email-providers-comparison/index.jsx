@@ -563,7 +563,6 @@ class EmailProvidersComparison extends Component {
 				{ ! titanIsMonthly && (
 					<span className="email-providers-comparison__discount-with-renewal">
 						<span>
-							{ ' ' }
 							{ translate(
 								'%(firstRenewalPrice)s/mailbox billed in 3 months, renews at %(standardPrice)s/mailbox',
 								{
