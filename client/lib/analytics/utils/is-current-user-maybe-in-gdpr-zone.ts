@@ -42,7 +42,7 @@ const GDPR_COUNTRIES = [
  *
  * @returns {boolean} Whether the current user could be in the GDPR zone
  */
-export default function isCurrentUserMaybeInGdprZone() {
+export default function isCurrentUserMaybeInGdprZone(): boolean {
 	const cookies = cookie.parse( document.cookie );
 	const countryCode = cookies.country_code;
 
