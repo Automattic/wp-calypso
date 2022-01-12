@@ -400,7 +400,7 @@ export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
 				return;
 			}
 			siteSlug = result.siteSlug;
-			setDesignOnSite( setDesignOnSiteCallback, providedDependencies );
+			setDesignOnSite( setDesignOnSiteCallback, { ...providedDependencies, siteSlug } );
 		};
 
 		createSiteWithCart( createSiteWithCartCallback, providedDependencies, step, reduxStore );
