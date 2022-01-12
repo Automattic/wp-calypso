@@ -11,36 +11,37 @@ const getEmailForwardingFeatures = () => {
 };
 
 const getGoogleAppLogos = () => {
+	const options = { textOnly: true };
 	return [
 		{
 			image: gmailIcon,
-			imageAltText: translate( 'Gmail icon' ),
-			title: translate( 'Gmail' ),
+			imageAltText: translate( 'Gmail icon', options ),
+			title: translate( 'Gmail', options ),
 		},
 		{
 			image: googleCalendarIcon,
-			imageAltText: translate( 'Google Calendar icon' ),
-			title: translate( 'Google Calendar' ),
+			imageAltText: translate( 'Google Calendar icon', options ),
+			title: translate( 'Google Calendar', options ),
 		},
 		{
 			image: googleDriveIcon,
-			imageAltText: translate( 'Google Drive icon' ),
-			title: translate( 'Google Drive' ),
+			imageAltText: translate( 'Google Drive icon', options ),
+			title: translate( 'Google Drive', options ),
 		},
 		{
 			image: googleDocsIcon,
-			imageAltText: translate( 'Google Docs icon' ),
-			title: translate( 'Google Docs' ),
+			imageAltText: translate( 'Google Docs icon', options ),
+			title: translate( 'Google Docs', options ),
 		},
 		{
 			image: googleSheetsIcon,
-			imageAltText: translate( 'Google Sheets icon' ),
-			title: translate( 'Google Sheets' ),
+			imageAltText: translate( 'Google Sheets icon', options ),
+			title: translate( 'Google Sheets', options ),
 		},
 		{
 			image: googleSlidesIcon,
-			imageAltText: translate( 'Google Slides icon' ),
-			title: translate( 'Google Slides' ),
+			imageAltText: translate( 'Google Slides icon', options ),
+			title: translate( 'Google Slides', options ),
 		},
 	];
 };
