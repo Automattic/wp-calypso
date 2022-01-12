@@ -7,6 +7,8 @@ import {
 	isDomainProduct,
 	isDomainTransfer,
 	isDIFMProduct,
+	isWpComPersonalPlan,
+	isWpComPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -82,23 +84,7 @@ export default function WPCheckoutOrderSummary( {
 				) }
 			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryFeatures>
-					<CheckoutSummaryFeaturesTitle>
-						{ translate( 'Included with an annual plan' ) }
-					</CheckoutSummaryFeaturesTitle>
-					<CheckoutSummaryFeaturesListWrapper>
-						<CheckoutSummaryFeaturesListItem isSupported={ false }>
-							<WPCheckoutCheckIcon id={ 'annual-domain-credit' } />
-							{ translate( 'Free domain for one year' ) }
-						</CheckoutSummaryFeaturesListItem>
-						{ /* Only on Premium and up */ }
-						<CheckoutSummaryFeaturesListItem isSupported={ false }>
-							<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
-							{ translate( 'Live chat support' ) }
-						</CheckoutSummaryFeaturesListItem>
-						<SwitchToAnnualPlan plan={ plan } onChangePlanLength={ onChangePlanLength } />
-					</CheckoutSummaryFeaturesListWrapper>
-				</CheckoutSummaryFeatures>
+				<CheckoutSummaryAnnualUpsell plan={ plan } onChangePlanLength={ onChangePlanLength } />
 			) }
 			<CheckoutSummaryAmountWrapper>
 				{ couponLineItem && (
@@ -151,7 +137,7 @@ function SwitchToAnnualPlan( {
 
 	return (
 		<SwitchToAnnualPlanButton onClick={ handleClick }>
-			{ translate( 'Switch to annual plan and save!' ) }
+			{ translate( 'Switch to an annual plan and save!' ) }
 		</SwitchToAnnualPlanButton>
 	);
 }
@@ -320,6 +306,39 @@ function CheckoutSummaryPlanFeatures( props: {
 				);
 			} ) }
 		</>
+	);
+}
+
+function CheckoutSummaryAnnualUpsell( props: {
+	plan: ResponseCartProduct;
+	onChangePlanLength: ( uuid: string, productSlug: string, productId: number ) => void;
+} ) {
+	const translate = useTranslate();
+	const productSlug = props.plan?.product_slug;
+
+	if ( ! productSlug || ! isWpComPlan( productSlug ) ) {
+		return null;
+	}
+
+	return (
+		<CheckoutSummaryFeatures>
+			<CheckoutSummaryFeaturesTitle>
+				{ translate( 'Included with an annual plan' ) }
+			</CheckoutSummaryFeaturesTitle>
+			<CheckoutSummaryFeaturesListWrapper>
+				<CheckoutSummaryFeaturesListItem isSupported={ false }>
+					<WPCheckoutCheckIcon id={ 'annual-domain-credit' } />
+					{ translate( 'Free domain for one year' ) }
+				</CheckoutSummaryFeaturesListItem>
+				{ ! isWpComPersonalPlan( productSlug ) && (
+					<CheckoutSummaryFeaturesListItem isSupported={ false }>
+						<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
+						{ translate( 'Live chat support' ) }
+					</CheckoutSummaryFeaturesListItem>
+				) }
+				<SwitchToAnnualPlan plan={ props.plan } onChangePlanLength={ props.onChangePlanLength } />
+			</CheckoutSummaryFeaturesListWrapper>
+		</CheckoutSummaryFeatures>
 	);
 }
 
