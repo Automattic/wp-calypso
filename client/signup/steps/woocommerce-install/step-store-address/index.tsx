@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
 import { TextControl, ComboboxControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
@@ -18,6 +19,7 @@ import {
 	WOOCOMMERCE_DEFAULT_COUNTRY,
 	WOOCOMMERCE_STORE_POSTCODE,
 	WOOCOMMERCE_ONBOARDING_PROFILE,
+	optionNameType,
 } from '../hooks/use-site-settings';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
@@ -43,19 +45,17 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	}, [ dispatch ] );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
+
 	const countriesList = useSelector( ( state ) => getCountries( state, 'woocommerce' ) ) || [];
-
-	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
-
-	const { get, save, update } = useSiteSettings( siteId );
-
 	const countriesAsOptions = Object.entries( countriesList ).map( ( [ key, value ] ) => {
 		return { value: key, label: value };
 	} );
 
-	const handleCountryChange = ( value: string | null ) => {
-		update( WOOCOMMERCE_DEFAULT_COUNTRY, value || '' );
-	};
+	const { get, save, update } = useSiteSettings( siteId );
+
+	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
+
+	const { validate, clearError, getError } = useAddressFormValidation( siteId );
 
 	// @todo: Add a general hook to get and update multi-option data like the profile.
 	function updateProfileEmail( email: string ) {
@@ -80,62 +80,87 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 			<>
 				<div className="step-store-address__info-section" />
 				<div className="step-store-address__instructions-container">
-					<form
-						onSubmit={ () => {
-							save();
-							goToStep( 'confirm' );
+					<TextControl
+						label={ __( 'Address line 1' ) }
+						value={ get( WOOCOMMERCE_STORE_ADDRESS_1 ) }
+						onChange={ ( value ) => {
+							update( WOOCOMMERCE_STORE_ADDRESS_1, value );
+							clearError( WOOCOMMERCE_STORE_ADDRESS_1 );
 						} }
-					>
-						<TextControl
-							label={ __( 'Address line 1' ) }
-							value={ get( WOOCOMMERCE_STORE_ADDRESS_1 ) }
-							onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_1, value ) }
-							required={ true }
-						/>
+					/>
+					<ControlError error={ getError( WOOCOMMERCE_STORE_ADDRESS_1 ) } />
 
-						<TextControl
-							label={ __( 'Address line 2' ) }
-							value={ get( WOOCOMMERCE_STORE_ADDRESS_2 ) }
-							onChange={ ( value ) => update( WOOCOMMERCE_STORE_ADDRESS_2, value ) }
-						/>
+					<TextControl
+						label={ __( 'Address line 2' ) }
+						value={ get( WOOCOMMERCE_STORE_ADDRESS_2 ) }
+						onChange={ ( value ) => {
+							update( WOOCOMMERCE_STORE_ADDRESS_2, value );
+							clearError( WOOCOMMERCE_STORE_ADDRESS_2 );
+						} }
+					/>
+					<ControlError error={ getError( WOOCOMMERCE_STORE_ADDRESS_2 ) } />
 
-						<ComboboxControl
-							label={ __( 'Country / Region' ) }
-							value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) as string }
-							onChange={ handleCountryChange }
-							options={ countriesAsOptions }
-							allowReset={ false }
-							required={ true }
-						/>
+					<ComboboxControl
+						label={ __( 'Country / Region' ) }
+						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
+						allowReset={ false }
+						onChange={ ( value: string | null ) => {
+							update( WOOCOMMERCE_DEFAULT_COUNTRY, value || '' );
+							clearError( WOOCOMMERCE_DEFAULT_COUNTRY );
+						} }
+						options={ countriesAsOptions }
+					/>
+					<ControlError error={ getError( WOOCOMMERCE_DEFAULT_COUNTRY ) } />
 
-						<CityZipRow>
+					<CityZipRow>
+						<div>
 							<TextControl
 								label={ __( 'City' ) }
 								value={ get( WOOCOMMERCE_STORE_CITY ) }
-								onChange={ ( value ) => update( WOOCOMMERCE_STORE_CITY, value ) }
-								required={ true }
+								onChange={ ( value ) => {
+									update( WOOCOMMERCE_STORE_CITY, value );
+									clearError( WOOCOMMERCE_STORE_CITY );
+								} }
 							/>
+							<ControlError error={ getError( WOOCOMMERCE_STORE_CITY ) } />
+						</div>
 
+						<div>
 							<TextControl
 								label={ __( 'Postcode' ) }
 								value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
-								onChange={ ( value ) => update( WOOCOMMERCE_STORE_POSTCODE, value ) }
-								required={ true }
+								onChange={ ( value ) => {
+									update( WOOCOMMERCE_STORE_POSTCODE, value );
+									clearError( WOOCOMMERCE_STORE_POSTCODE );
+								} }
 							/>
-						</CityZipRow>
+							<ControlError error={ getError( WOOCOMMERCE_STORE_POSTCODE ) } />
+						</div>
+					</CityZipRow>
 
-						<TextControl
-							label={ __( 'Email address' ) }
-							value={ getProfileEmail() }
-							onChange={ updateProfileEmail }
-							required={ true }
-						/>
+					<TextControl
+						label={ __( 'Email address' ) }
+						value={ getProfileEmail() }
+						onChange={ () => {
+							updateProfileEmail;
+							clearError( WOOCOMMERCE_ONBOARDING_PROFILE );
+						} }
+						required={ true }
+					/>
 
-						<ActionSection>
-							<SupportCard />
-							<StyledNextButton type="submit">{ __( 'Continue' ) }</StyledNextButton>
-						</ActionSection>
-					</form>
+					<ActionSection>
+						<SupportCard />
+						<StyledNextButton
+							onClick={ () => {
+								if ( validate() ) {
+									save();
+									goToStep( 'confirm' );
+								}
+							} }
+						>
+							{ __( 'Continue' ) }
+						</StyledNextButton>
+					</ActionSection>
 				</div>
 			</>
 		);
@@ -166,4 +191,52 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 			{ ...props }
 		/>
 	);
+}
+
+function ControlError( props: { error: string } ): ReactElement | null {
+	const { error } = props;
+	if ( error ) {
+		return <FormInputValidation isError={ true } isValid={ false } text={ error } />;
+	}
+	return null;
+}
+
+function useAddressFormValidation( siteId: number ) {
+	const { get } = useSiteSettings( siteId );
+	const { __ } = useI18n();
+
+	const [ errors, setErrors ] = useState( {} as Record< optionNameType, string > );
+
+	const validate = () => {
+		errors[ WOOCOMMERCE_STORE_ADDRESS_1 ] = ! get( WOOCOMMERCE_STORE_ADDRESS_1 )
+			? __( 'Address line is required.' )
+			: '';
+		errors[ WOOCOMMERCE_STORE_ADDRESS_2 ] = ''; // Optional field
+		errors[ WOOCOMMERCE_DEFAULT_COUNTRY ] = ! get( WOOCOMMERCE_DEFAULT_COUNTRY )
+			? __( 'Country / Region is required.' )
+			: '';
+		errors[ WOOCOMMERCE_STORE_CITY ] = ! get( WOOCOMMERCE_STORE_CITY )
+			? __( 'City is required.' )
+			: '';
+		errors[ WOOCOMMERCE_STORE_POSTCODE ] = ! get( WOOCOMMERCE_STORE_POSTCODE )
+			? __( 'Postcode is required.' )
+			: '';
+
+		setErrors( errors );
+
+		return Object.values( errors ).filter( Boolean ).length === 0;
+	};
+
+	const clearError = ( field: optionNameType ) => {
+		errors[ field ] = '';
+		setErrors( errors );
+	};
+
+	const getError = ( field: optionNameType ) => errors[ field ] || '';
+
+	return {
+		validate,
+		clearError,
+		getError,
+	};
 }
