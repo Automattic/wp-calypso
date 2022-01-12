@@ -1,4 +1,5 @@
+import { jest } from '@jest/globals';
 import config from 'config';
 
-// Default timeout
+// Set the default timeout value
 jest.setTimeout( config.get( 'jestTimeoutMS' ) );

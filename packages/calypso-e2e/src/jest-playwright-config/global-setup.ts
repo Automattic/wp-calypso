@@ -6,7 +6,7 @@ import pwConfig from './playwright-config';
 
 const DEFAULT_COOKIES_PATH = path.join( __dirname, '../../', 'cookies' );
 
-export default async function globalSetup(): Promise< void > {
+export default async (): Promise< void > => {
 	const { SAVE_AUTH_COOKIES, COOKIES_PATH } = process.env;
 
 	if ( SAVE_AUTH_COOKIES && SAVE_AUTH_COOKIES !== 'false' ) {
@@ -50,4 +50,4 @@ export default async function globalSetup(): Promise< void > {
 
 		await browser.close();
 	}
-}
+};

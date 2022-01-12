@@ -95,7 +95,7 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 				// Handling is different compared to test steps because Jest treats
 				// failed hooks differently from tests.
 				if ( this.failure?.type === 'hook' ) {
-					// event.test.mode = 'fail';
+					// event.test.mode = 'fail'; // THIS TYPE DOESNT EXIST
 				}
 				break;
 			}
