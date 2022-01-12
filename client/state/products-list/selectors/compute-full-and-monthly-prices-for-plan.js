@@ -1,7 +1,6 @@
 import { GROUP_WPCOM } from '@automattic/calypso-products';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-// import { isIntroductoryOfferAppliedToPlanPrice } from 'calypso/state/sites/plans/selectors';
-import getIntroOffer from 'calypso/state/selectors/get-intro-offer';
+import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getPlanPrice } from './get-plan-price';
 import { getProductCost } from './get-product-cost';
 
@@ -32,7 +31,7 @@ export const computeFullAndMonthlyPricesForPlan = (
 		? getProductCost( state, planObject.getStoreSlug() )
 		: getPlanPrice( state, siteId, planObject, false );
 
-	const introductoryOfferPrice = getIntroOffer( state, siteId, planObject.getProductId() );
+	const introductoryOfferPrice = getIntroOfferPrice( state, siteId, planObject.getProductId() );
 
 	return {
 		priceFull: planOrProductPrice,

@@ -8,10 +8,12 @@ Render the component, passing in the properties below. It does not accept any ch
 
 ```jsx
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
-import getIntroOffer from 'calypso/state/selectors/get-intro-offer';
+import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 
 export default function listProductPrice( { siteId, productId, productPrice } ) {
-	const introOfferPrice = useSelector( ( state ) => getIntroOffer( state, siteId, productId ) );
+	const introOfferPrice = useSelector( ( state ) =>
+		getIntroOfferPrice( state, siteId, productId )
+	);
 
 	return (
 		<div>

@@ -7,8 +7,31 @@ import {
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { IntroOffer } from 'calypso/state/sites/intro-offers/types';
 
-const getIntroOffers = ( action: { siteId: number } ) => {
+interface ResponseIntroOffer {
+	product_id: number;
+	product_slug: string;
+	currency_code: string;
+	formatted_price: string;
+	raw_price: number;
+}
+
+const mapResponse = ( {
+	product_id,
+	product_slug,
+	currency_code,
+	formatted_price,
+	raw_price,
+}: ResponseIntroOffer ): IntroOffer => ( {
+	productId: product_id,
+	productSlug: product_slug,
+	currencyCode: currency_code,
+	formattedPrice: formatted_price,
+	rawPrice: raw_price,
+} );
+
+const fetchIntroOffers = ( action: { siteId: number } ) => {
 	return http(
 		{
 			method: 'GET',
@@ -19,7 +42,7 @@ const getIntroOffers = ( action: { siteId: number } ) => {
 	);
 };
 
-const onUpdateSuccess = ( action: { siteId: number }, response ) => {
+const onUpdateSuccess = ( action: { siteId: number }, response: ResponseIntroOffer[] ) => {
 	return [
 		{
 			type: SITE_INTRO_OFFER_REQUEST_SUCCESS,
@@ -28,12 +51,12 @@ const onUpdateSuccess = ( action: { siteId: number }, response ) => {
 		{
 			type: SITE_INTRO_OFFER_RECEIVE,
 			siteId: action.siteId,
-			payload: response,
+			introOffers: response.map( mapResponse ),
 		},
 	];
 };
 
-const onUpdateError = ( response ) => {
+const onUpdateError = () => {
 	return [
 		{
 			type: SITE_INTRO_OFFER_REQUEST_FAILURE,
@@ -44,7 +67,7 @@ const onUpdateError = ( response ) => {
 registerHandlers( 'state/data-layer/wpcom/sites/intro-offers/index.js', {
 	[ SITE_INTRO_OFFER_REQUEST ]: [
 		dispatchRequest( {
-			fetch: getIntroOffers,
+			fetch: fetchIntroOffers,
 			onSuccess: onUpdateSuccess,
 			onError: onUpdateError,
 		} ),

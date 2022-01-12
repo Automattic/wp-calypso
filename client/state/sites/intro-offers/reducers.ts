@@ -1,19 +1,21 @@
+import { keyBy } from 'lodash';
 import {
 	SITE_INTRO_OFFER_RECEIVE,
 	SITE_INTRO_OFFER_REQUEST,
 	SITE_INTRO_OFFER_REQUEST_FAILURE,
 	SITE_INTRO_OFFER_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers } from 'calypso/state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { IntroOffer } from './types';
 import type { Action } from 'redux';
 
 export enum RequestStatus {
-	Pending,
-	Success,
-	Failed,
+	Pending = 'pending',
+	Success = 'success',
+	Failed = 'failed',
 }
 
-export const requestStatus = ( state = {}, { type }: Action ) => {
+export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	switch ( type ) {
 		case SITE_INTRO_OFFER_REQUEST:
 			return RequestStatus.Pending;
@@ -26,47 +28,23 @@ export const requestStatus = ( state = {}, { type }: Action ) => {
 	}
 
 	return state;
-};
+} );
 
-interface PayloadIntroOffer {
-	currency_code: string;
-	formatted_price: string;
-	raw_price: number;
+interface IntroOfferReceiveAction extends Action {
+	introOffers: IntroOffer[];
 }
 
-// interface IntroOffer {
-// 	currencyCode: string;
-// 	formattedPrice: string;
-// 	rawPrice: number;
-// }
+export const items = keyedReducer< string | undefined, IntroOfferReceiveAction >(
+	'siteId',
+	( state, { type, introOffers }: IntroOfferReceiveAction ) => {
+		switch ( type ) {
+			case SITE_INTRO_OFFER_RECEIVE:
+				return keyBy( introOffers, 'productId' );
+		}
 
-// const mapPayloadToIntroOffer = ( payload: PayloadIntroOffer ): IntroOffer => ( {
-// 	currencyCode: payload.currency_code,
-// 	formattedPrice: payload.formatted_price,
-// 	rawPrice: payload.raw_price,
-// } );
-
-interface IntroOffersReceiveAction extends Action {
-	siteId: number;
-	payload: {
-		[ productId: number ]: PayloadIntroOffer;
-	};
-}
-
-// interface IntroOffersState {
-// 	[ productId: number ]: PayloadIntroOffer;
-// }
-
-export const items = ( state = {}, { type, payload, siteId }: IntroOffersReceiveAction ) => {
-	switch ( type ) {
-		case SITE_INTRO_OFFER_RECEIVE:
-			return Object.assign( {}, state, {
-				[ siteId ]: payload,
-			} );
+		return state;
 	}
-
-	return state;
-};
+);
 
 export default combineReducers( {
 	requestStatus,
