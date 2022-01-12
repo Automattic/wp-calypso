@@ -41,6 +41,7 @@ describe( 'reducer', () => {
 			'blogStickers',
 			'hasAllSitesList',
 			'features',
+			'introOffers',
 		] );
 	} );
 
