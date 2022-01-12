@@ -79,8 +79,6 @@ class AllDomains extends Component {
 		contactInfoSaveResults: {},
 	};
 
-	renderedQuerySiteDomains = {};
-
 	componentDidUpdate() {
 		if ( this.props.isContactEmailEditContext && ! this.isLoadingDomainDetails() ) {
 			this.setSelectedDomains();
