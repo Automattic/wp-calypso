@@ -164,6 +164,7 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 						for await ( const page of context.pages() ) {
 							const mediaFilePath = path.join(
 								this.testArtifactsPath,
+								'screenshots', // TODO: Remove / I don't think this subfolder is necessary?
 								`${ artefactFilename }__${ contextIndex }-${ pageIndex }`
 							);
 
