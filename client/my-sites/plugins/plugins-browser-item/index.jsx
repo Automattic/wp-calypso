@@ -14,6 +14,7 @@ import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
@@ -42,6 +43,9 @@ const PluginsBrowserListElement = ( props ) => {
 		isJetpack && currentSites
 			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
 			: []
+	);
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug || '' )
 	);
 
 	const dateFromNow = useMemo(
@@ -150,7 +154,7 @@ const PluginsBrowserListElement = ( props ) => {
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
-						{ !! plugin.rating && (
+						{ !! plugin.rating && ! isMarketplaceProduct && (
 							<div className="plugins-browser-item__ratings">
 								<PluginRatings
 									rating={ plugin.rating }
