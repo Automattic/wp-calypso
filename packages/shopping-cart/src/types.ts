@@ -367,6 +367,7 @@ export interface ResponseCartProductExtra {
 	privacy?: boolean;
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
+	is_marketplace_product?: boolean;
 }
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {

@@ -310,10 +310,15 @@ function returnModalCopyForProduct(
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
 	hasDomainsInCart: boolean,
+	hasMarketplaceProductsInCart: boolean,
 	createUserAndSiteBeforeTransaction: boolean,
 	isPwpoUser: boolean
 ): ModalCopy {
-	const productType = getProductTypeForModalCopy( product, hasDomainsInCart );
+	const productType = getProductTypeForModalCopy(
+		product,
+		hasDomainsInCart,
+		hasMarketplaceProductsInCart
+	);
 	const isRenewal = isWpComProductRenewal( product );
 	return returnModalCopy(
 		productType,
@@ -326,9 +331,13 @@ function returnModalCopyForProduct(
 
 function getProductTypeForModalCopy(
 	product: ResponseCartProduct,
-	hasDomainsInCart: boolean
+	hasDomainsInCart: boolean,
+	hasMarketplaceProductsInCart: boolean
 ): string {
-	if ( isPlan( product ) ) {
+	if ( isWpComPlan( product.product_slug ) ) {
+		if ( hasMarketplaceProductsInCart ) {
+			return 'plan with marketplace dependencies';
+		}
 		if ( hasDomainsInCart ) {
 			return 'plan with dependencies';
 		}
@@ -350,6 +359,26 @@ function returnModalCopy(
 	isRenewal = false
 ): ModalCopy {
 	switch ( productType ) {
+		case 'plan with marketplace dependencies':
+			if ( isRenewal ) {
+				return {
+					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
+					description: String(
+						translate(
+							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. If any of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
+						)
+					),
+				};
+			}
+
+			return {
+				title: String( translate( 'You are about to remove your plan from the cart' ) ),
+				description: String(
+					translate(
+						'When you press Continue, we will remove your plan from the cart. If any of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
+					)
+				),
+			};
 		case 'plan with dependencies': {
 			if ( isRenewal ) {
 				return {
@@ -377,7 +406,7 @@ function returnModalCopy(
 								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
 						  )
 						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
+								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
 						  )
 				);
 			}
@@ -771,6 +800,9 @@ function WPLineItem( {
 	const hasDomainsInCart = responseCart.products.some(
 		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
 	);
+	const hasMarketplaceProductsInCart = responseCart.products.some(
+		( product ) => product.extra.is_marketplace_product === true
+	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
@@ -778,6 +810,7 @@ function WPLineItem( {
 		product,
 		translate,
 		hasDomainsInCart,
+		hasMarketplaceProductsInCart,
 		createUserAndSiteBeforeTransaction || false,
 		isPwpoUser || false
 	);
