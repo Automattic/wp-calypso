@@ -28,11 +28,6 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 	const { fromSite, fromSiteAnalyzedData, siteItem, siteSlug, startImport } = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 
-	// Temporarily hardcoded fields (testing purposes)
-	fromSiteAnalyzedData.name = 'Jurassic Ninja – Launch all the freedom';
-	fromSiteAnalyzedData.favicon =
-		'https://i0.wp.com/jurassic.ninja/wp-content/uploads/2018/05/jurassicninja-transparent.png?fit=192%2C160&ssl=1';
-
 	return (
 		<>
 			<div className={ classnames( 'import__import-everything' ) }>
@@ -47,13 +42,13 @@ export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
 
 							<div
 								className={ classnames( 'import_site-mapper-name', {
-									'with-favicon': fromSiteAnalyzedData?.favicon,
+									'with-favicon': fromSiteAnalyzedData?.meta.favicon,
 								} ) }
 							>
-								{ fromSiteAnalyzedData?.favicon && (
-									<img alt={ 'Icon' } src={ fromSiteAnalyzedData?.favicon } />
+								{ fromSiteAnalyzedData?.meta.favicon && (
+									<img alt={ 'Icon' } src={ fromSiteAnalyzedData?.meta.favicon } />
 								) }
-								<span>{ fromSiteAnalyzedData?.name }</span>
+								<span>{ fromSiteAnalyzedData?.meta.title }</span>
 								<small>{ convertToFriendlyWebsiteName( fromSite ) }</small>
 							</div>
 						</div>
