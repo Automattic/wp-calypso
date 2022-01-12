@@ -2,7 +2,7 @@
 	cursor: pointer;
 	position: relative;
 	height: 180px;
-	margin-bottom: 1.5em;
+	margin-bottom: 40px;
 
 	background-color: transparent;
 	border: 2px dashed var( --studio-gray-10 );
@@ -62,6 +62,10 @@
 	right: 0;
 	text-align: center;
 	transform: translateY( -50% );
+
+	p {
+		color: var( --studio-gray-80 );
+	}
 
 	&.importer-upload-success {
 		color: var( --color-success );

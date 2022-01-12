@@ -3,11 +3,19 @@
 		border-radius: 4px;
 	}
 
+	.importer-header {
+		margin-bottom: 40px;
+	}
+
 	.importer-header__service-info {
 		color: var( --studio-gray-40 );
 
 		.importer-header__service-title {
 			color: var( --studio-gray-100 );
+		}
+
+		p {
+			size: 14px;
 		}
 	}
 
