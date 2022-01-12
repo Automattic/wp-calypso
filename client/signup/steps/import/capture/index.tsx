@@ -122,6 +122,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 								placeholder={ __( 'Enter your site address' ) }
 								onChange={ onInputChange }
 								value={ urlValue }
+								dir="ltr"
 							/>
 							{ showSubmitButton && (
 								<NextButton type={ 'submit' }>
