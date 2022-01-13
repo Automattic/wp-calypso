@@ -23,7 +23,7 @@ const EmailProviderStackedFeature = ( {
 	);
 };
 
-export interface LogoFeature {
+export interface AppLogo {
 	image: string;
 	imageAltText: string;
 	title: string;
@@ -31,7 +31,7 @@ export interface LogoFeature {
 
 export interface EmailProviderStackedFeaturesProps {
 	features: TranslateResult[];
-	appLogos: LogoFeature[];
+	appLogos: AppLogo[];
 }
 
 export const EmailProviderStackedFeatures = ( {

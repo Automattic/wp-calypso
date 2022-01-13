@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import type { LogoFeature } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
+import type { AppLogo } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
 import type { Site } from 'calypso/my-sites/scan/types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -18,7 +18,7 @@ export interface ProviderCard {
 	footerBadge?: ReactElement | null;
 	formFields?: ReactElement;
 	logo?: ReactElement | { path: string; className?: string };
-	appLogos?: LogoFeature[];
+	appLogos?: AppLogo[];
 	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
 	priceBadge?: ReactElement | TranslateResult | null;
 	productName: TranslateResult;
