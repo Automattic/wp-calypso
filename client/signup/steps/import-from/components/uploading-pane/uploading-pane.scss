@@ -10,7 +10,7 @@
 	transition: all 200ms ease-out, color 100ms ease-out;
 	fill: var( --color-neutral-20 );
 	font-size: $font-body;
-	color: var( --studio-gray-80 );
+	color: var( --studio-gray-50 );
 	text-align: center;
 
 	input {
@@ -23,6 +23,13 @@
 
 	&:hover {
 		border-color: var( --color-neutral-70 );
+		color: var( --studio-gray-80 );
+
+		svg {
+			path {
+				stroke: #2c3338;
+			}
+		}
 	}
 
 	p {
@@ -83,7 +90,6 @@
 	}
 
 	p {
-		color: var( --studio-gray-80 );
 		margin: 0;
 	}
 

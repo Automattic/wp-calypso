@@ -5,6 +5,7 @@
 
 	.importer-header {
 		margin-bottom: 40px;
+		padding-bottom: 20px;
 	}
 
 	.importer-header__service-info {
@@ -15,23 +16,8 @@
 		}
 
 		p {
-			size: 14px;
+			font-size: $font-body-small;
+			margin: 0;
 		}
-	}
-
-	.importer__uploading-pane {
-		border-color: var( --studio-gray-10 );
-		background-color: transparent;
-		border-radius: 4px;
-		color: var( --studio-gray-80 );
-		margin-bottom: 0;
-	}
-
-	.importer__mapping-relation {
-		display: none;
-	}
-
-	.importer__mapping-description {
-		color: var( --studio-gray-50 );
 	}
 }
