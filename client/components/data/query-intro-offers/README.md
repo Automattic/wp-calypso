@@ -10,7 +10,7 @@ Render the component, passing in the properties below. It does not accept any ch
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 
-const listProductPrice: React.FC = ( { siteId, productId, productPrice } ) =>  {
+const listProductPrice: React.FC = ( { siteId, productId, productPrice } ) => {
 	const introOfferPrice = useSelector( ( state ) =>
 		getIntroOfferPrice( state, productId, siteId )
 	);
@@ -18,10 +18,10 @@ const listProductPrice: React.FC = ( { siteId, productId, productPrice } ) =>  {
 	return (
 		<div>
 			<QueryIntroOffers siteId={ siteId } />
-			<span>{ introOfferPrice ?? productPrice } ></span>
+			<span>{ introOfferPrice ?? productPrice }</span>
 		</div>
 	);
-}
+};
 ```
 
 ## Props
