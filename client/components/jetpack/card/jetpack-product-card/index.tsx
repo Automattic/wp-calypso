@@ -92,24 +92,25 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	const showDiscountLabel =
 		! hideSavingLabel &&
 		discount &&
+		discount > 0 &&
 		! isFree &&
 		! isDisabled &&
 		! isOwned &&
 		! isDeprecated &&
 		! isIncludedInPlan;
 
-	const discountElt =
-		showDiscountLabel &&
-		translate( '%(percent)d%% off {{sup}}*{{/sup}}', {
-			args: {
-				percent: discount,
-			},
-			comment:
-				'Should be as concise as possible. * refers to a clause describing the displayed price adjustment. The {{sup}} tag displays it as superscript.',
-			components: {
-				sup: <sup />,
-			},
-		} );
+	const discountElt = showDiscountLabel
+		? translate( '%(percent)d%% off {{sup}}*{{/sup}}', {
+				args: {
+					percent: discount,
+				},
+				comment:
+					'Should be as concise as possible. * refers to a clause describing the displayed price adjustment. The {{sup}} tag displays it as superscript.',
+				components: {
+					sup: <sup />,
+				},
+		  } )
+		: null;
 
 	useEffect( () => {
 		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
