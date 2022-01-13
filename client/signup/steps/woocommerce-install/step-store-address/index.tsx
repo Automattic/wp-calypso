@@ -56,7 +56,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
 
-	const { validate, clearError, getError } = useAddressFormValidation( siteId );
+	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 
 	// @todo: Add a general hook to get and update multi-option data like the profile.
 	function updateProfileEmail( email: string ) {
@@ -106,7 +106,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 					<ControlError error={ address1Error } />
 
 					<TextControl
-						label={ __( 'Address line 2' ) }
+						label={ __( 'Address line 2 (optional)' ) }
 						value={ get( WOOCOMMERCE_STORE_ADDRESS_2 ) }
 						onChange={ ( value ) => {
 							update( WOOCOMMERCE_STORE_ADDRESS_2, value );
@@ -177,6 +177,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 									goToStep( 'confirm' );
 								}
 							} }
+							disabled={ Object.values( errors ).filter( Boolean ).length > 0 }
 						>
 							{ __( 'Continue' ) }
 						</StyledNextButton>
@@ -263,5 +264,6 @@ function useAddressFormValidation( siteId: number ) {
 		validate,
 		clearError,
 		getError,
+		errors,
 	};
 }
