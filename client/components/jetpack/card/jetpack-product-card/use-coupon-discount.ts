@@ -20,11 +20,6 @@ export default function useCouponDiscount(
 		return {};
 	}
 
-	// // add the intro discount and any Jetpack sale together
-	// const couponDiscountRatio =
-	// 	( billingTerm === TERM_ANNUALLY ? INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 : 0 ) +
-	// 	jetpackSaleDiscountRatio;
-
 	const finalPrice =
 		Math.floor(
 			( originalPrice ?? discountedPrice ) *
