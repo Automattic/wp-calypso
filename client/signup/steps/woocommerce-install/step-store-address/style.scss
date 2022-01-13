@@ -5,8 +5,16 @@
 .components-combobox-control__suggestions-container {
 	// Remove `width: 100%;` https://github.com/WordPress/gutenberg/blob/0135921bcb72ceec629fa8f9e755891afab747b9/packages/components/src/combobox-control/style.scss#L32
 	width: unset;
+
+	// Remove margin from component to match text controls
+	margin-bottom: unset;
 }
 
 .components-form-token-field__suggestions-list {
 	width: min-content;
+}
+
+.components-combobox-control__reset.components-button {
+	// Height of 22 ensures combobox input matches height of text controls
+	height: 22px;
 }
