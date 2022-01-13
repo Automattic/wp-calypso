@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
