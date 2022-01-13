@@ -1,4 +1,3 @@
-import { Dictionary, keyBy } from 'lodash';
 import {
 	SITE_INTRO_OFFER_RECEIVE,
 	SITE_INTRO_OFFER_REQUEST,
@@ -9,7 +8,15 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { IntroOffer, ResponseIntroOffer, RequestStatus } from './types';
 import type { Action } from 'redux';
 
-const mapResponse = ( {
+interface IntroOfferReceiveAction extends Action {
+	payload?: ResponseIntroOffer[];
+}
+
+interface IntroOfferItemsState {
+	[ productId: number ]: IntroOffer;
+}
+
+const mapResponseObject = ( {
 	product_id,
 	product_slug,
 	currency_code,
@@ -24,6 +31,19 @@ const mapResponse = ( {
 	rawPrice: raw_price,
 	ineligibleReason: ineligible_reason,
 } );
+
+const createIntroOfferMap = ( payload: ResponseIntroOffer[] ) => {
+	const map: {
+		[ productId: number ]: IntroOffer;
+	} = {};
+
+	payload.forEach( ( payloadIntroOffer ) => {
+		map[ payloadIntroOffer.product_id ] = mapResponseObject( payloadIntroOffer );
+	} );
+
+	return map;
+};
+
 export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	switch ( type ) {
 		case SITE_INTRO_OFFER_REQUEST:
@@ -39,16 +59,12 @@ export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	return state;
 } );
 
-interface IntroOfferReceiveAction extends Action {
-	payload?: ResponseIntroOffer[];
-}
-
-export const items = keyedReducer< Dictionary< IntroOffer > | undefined, IntroOfferReceiveAction >(
+export const items = keyedReducer< IntroOfferItemsState | undefined, IntroOfferReceiveAction >(
 	'siteId',
 	( state, { type, payload }: IntroOfferReceiveAction ) => {
 		switch ( type ) {
 			case SITE_INTRO_OFFER_RECEIVE:
-				return payload ? keyBy( payload.map( mapResponse ), 'productId' ) : undefined;
+				return payload ? createIntroOfferMap( payload ) : undefined;
 		}
 
 		return state;
