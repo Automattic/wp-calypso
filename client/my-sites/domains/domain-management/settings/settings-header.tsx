@@ -107,12 +107,12 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	};
 
 	const renderNotices = () => {
-		const { domain, purchase, site } = props;
-		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
+		const { domain, site } = props;
+		const { noticeText, statusClass } = resolveDomainStatus( domain, null, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
 			email: null,
-		} );
+		} as any );
 
 		if ( noticeText && statusClass )
 			return (

@@ -52,7 +52,6 @@ export type SettingsPageConnectedDispatchProps = {
 export type SettingsHeaderProps = {
 	domain: ResponseDomain;
 	site: SiteData;
-	purchase: Purchase | null;
 };
 
 export type SettingsPageProps = SettingsPagePassedProps &
