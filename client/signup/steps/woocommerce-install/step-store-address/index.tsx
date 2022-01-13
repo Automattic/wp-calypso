@@ -114,17 +114,6 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 					/>
 					<ControlError error={ address2Error } />
 
-					<ComboboxControl
-						label={ __( 'Country / Region' ) }
-						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
-						onChange={ ( value: string | null ) => {
-							update( WOOCOMMERCE_DEFAULT_COUNTRY, value || '' );
-							clearError( WOOCOMMERCE_DEFAULT_COUNTRY );
-						} }
-						options={ countriesAsOptions }
-					/>
-					<ControlError error={ countryError } />
-
 					<CityZipRow>
 						<div>
 							<TextControl
@@ -150,6 +139,17 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 							<ControlError error={ postcodeError } />
 						</div>
 					</CityZipRow>
+
+					<ComboboxControl
+						label={ __( 'Country / Region' ) }
+						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
+						onChange={ ( value: string | null ) => {
+							update( WOOCOMMERCE_DEFAULT_COUNTRY, value || '' );
+							clearError( WOOCOMMERCE_DEFAULT_COUNTRY );
+						} }
+						options={ countriesAsOptions }
+					/>
+					<ControlError error={ countryError } />
 
 					<TextControl
 						label={ __( 'Email address' ) }
