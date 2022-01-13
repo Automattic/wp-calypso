@@ -16,7 +16,6 @@ type OwnProps = {
 	belowPriceText?: TranslateResult;
 	billingTerm: Duration;
 	currencyCode?: string | null;
-	discountedPrice?: number;
 	displayFrom?: boolean;
 	expiryDate?: Moment;
 	hideSavingLabel?: boolean;
@@ -25,7 +24,7 @@ type OwnProps = {
 	isIncludedInPlan?: boolean;
 	isOwned?: boolean;
 	showAbovePriceText?: boolean;
-	originalPrice?: number;
+	originalPrice: number;
 	productName: TranslateResult;
 	tooltipText?: TranslateResult | ReactNode;
 };
@@ -34,7 +33,6 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	belowPriceText,
 	billingTerm,
 	currencyCode,
-	discountedPrice,
 	displayFrom,
 	expiryDate,
 	isDeprecated,
@@ -71,7 +69,6 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 
 	return (
 		<Paid
-			discountedPrice={ discountedPrice }
 			originalPrice={ originalPrice }
 			billingTerm={ billingTerm }
 			currencyCode={ currencyCode }

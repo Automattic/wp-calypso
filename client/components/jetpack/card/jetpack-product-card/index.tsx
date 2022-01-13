@@ -21,8 +21,7 @@ type OwnProps = {
 	// Disallow h6, so it can be used for a sub-header if needed
 	headerLevel: 1 | 2 | 3 | 4 | 5;
 	description?: ReactNode;
-	originalPrice?: number;
-	discountedPrice?: number;
+	originalPrice: number;
 	hidePrice?: boolean;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
@@ -60,7 +59,6 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	headerLevel,
 	description,
 	originalPrice,
-	discountedPrice,
 	hidePrice,
 	buttonLabel,
 	buttonPrimary,
@@ -88,28 +86,23 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 
 	const translate = useTranslate();
 	const anchorRef = useRef< HTMLDivElement >( null );
-	const { discount } = useCouponDiscount( billingTerm, originalPrice, discountedPrice );
-	const showDiscountLabel =
-		! hideSavingLabel &&
-		discount &&
-		! isFree &&
-		! isDisabled &&
-		! isOwned &&
-		! isDeprecated &&
-		! isIncludedInPlan;
+	const { discount } = useCouponDiscount( billingTerm, originalPrice );
 
-	const discountElt =
-		showDiscountLabel &&
-		translate( '%(percent)d%% off {{sup}}*{{/sup}}', {
-			args: {
-				percent: discount,
-			},
-			comment:
-				'Should be as concise as possible. * refers to a clause describing the displayed price adjustment. The {{sup}} tag displays it as superscript.',
-			components: {
-				sup: <sup />,
-			},
-		} );
+	const showDiscountLabel = ! hideSavingLabel && discount !== undefined && discount > 0;
+	! isFree && ! isDisabled && ! isOwned && ! isDeprecated && ! isIncludedInPlan;
+
+	const discountElt = showDiscountLabel
+		? translate( '%(percent)d%% off {{sup}}*{{/sup}}', {
+				args: {
+					percent: discount,
+				},
+				comment:
+					'Should be as concise as possible. * refers to a clause describing the displayed price adjustment. The {{sup}} tag displays it as superscript.',
+				components: {
+					sup: <sup />,
+				},
+		  } )
+		: null;
 
 	useEffect( () => {
 		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
@@ -160,7 +153,6 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						isOwned={ isOwned }
 						isIncludedInPlan={ isIncludedInPlan }
 						isFree={ item.isFree }
-						discountedPrice={ discountedPrice }
 						currencyCode={ item.displayCurrency }
 						originalPrice={ originalPrice ?? 0 }
 						displayFrom={ displayFrom }

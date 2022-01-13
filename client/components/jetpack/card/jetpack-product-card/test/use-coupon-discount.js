@@ -55,21 +55,4 @@ describe( 'useCouponDiscount', () => {
 			discount: couponPercentage,
 		} );
 	} );
-
-	test( 'should take into account initial discounted price when computing total discount', () => {
-		const originalPrice = 100;
-		const discountedPrice = 50;
-		const couponPercentage = 50;
-		const { result } = renderHook(
-			() => useCouponDiscount( TERM_ANNUALLY, originalPrice, discountedPrice ),
-			{
-				wrapper: wrapper( couponPercentage ),
-			}
-		);
-
-		expect( result.current ).toEqual( {
-			price: 25,
-			discount: 75,
-		} );
-	} );
 } );

@@ -1,4 +1,3 @@
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { TranslateResult } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -9,7 +8,6 @@ import type { Moment } from 'moment';
 import type { ReactNode } from 'react';
 
 type OwnProps = {
-	discountedPrice?: number;
 	originalPrice?: number;
 	billingTerm: Duration;
 	currencyCode?: string | null;
@@ -19,7 +17,6 @@ type OwnProps = {
 };
 
 const Paid: React.FC< OwnProps > = ( {
-	discountedPrice,
 	originalPrice,
 	billingTerm,
 	currencyCode,
@@ -27,7 +24,7 @@ const Paid: React.FC< OwnProps > = ( {
 	tooltipText,
 	expiryDate,
 } ) => {
-	const { price: finalPrice } = useCouponDiscount( billingTerm, originalPrice, discountedPrice );
+	const { price: finalPrice } = useCouponDiscount( billingTerm, originalPrice );
 
 	if ( ! currencyCode || ! originalPrice ) {
 		return (
@@ -37,8 +34,6 @@ const Paid: React.FC< OwnProps > = ( {
 			</>
 		);
 	}
-
-	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
 
 	const renderDiscountedPrice = () => {
 		return (
@@ -53,9 +48,7 @@ const Paid: React.FC< OwnProps > = ( {
 					<PlanPrice
 						original
 						className="display-price__original-price"
-						rawPrice={
-							( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
-						}
+						rawPrice={ originalPrice as number }
 						currencyCode={ currencyCode }
 					/>
 				</span>
@@ -68,18 +61,12 @@ const Paid: React.FC< OwnProps > = ( {
 
 	const renderNonDiscountedPrice = () => (
 		<span dir="ltr">
-			<PlanPrice
-				discounted
-				rawPrice={
-					( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
-				}
-				currencyCode={ currencyCode }
-			/>
+			<PlanPrice discounted rawPrice={ originalPrice as number } currencyCode={ currencyCode } />
 		</span>
 	);
 
 	const renderPrice = () =>
-		billingTerm === TERM_ANNUALLY ? renderDiscountedPrice() : renderNonDiscountedPrice();
+		finalPrice !== originalPrice ? renderDiscountedPrice() : renderNonDiscountedPrice();
 
 	return (
 		<>
