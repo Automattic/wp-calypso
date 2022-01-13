@@ -6,27 +6,28 @@ import {
 	BrowserHelper,
 	DataHelper,
 	GutenbergEditorPage,
-	NewPostFlow,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-let user: string;
-if ( BrowserHelper.targetGutenbergEdge() ) {
-	user = 'gutenbergSimpleSiteEdgeUser';
-} else {
-	user = 'gutenbergSimpleSiteUser';
-}
+const accountName = BrowserHelper.targetGutenbergEdge()
+	? 'gutenbergSimpleSiteEdgeUser'
+	: 'gutenbergSimpleSiteUser';
 
 describe( DataHelper.createSuiteTitle( 'Blocks: Jetpack Earn/Grow' ), function () {
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
+
+		const testAccount = new TestAccount( accountName );
+		await testAccount.authenticate( page );
 	} );
 
-	beforeAll( async function () {
-		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
+	it( 'Go to the new post page', async function () {
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+		await gutenbergEditorPage.visit( 'post' );
 		await gutenbergEditorPage.openBlockInserter();
 	} );
 
