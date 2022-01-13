@@ -11,6 +11,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description-new';
 import type { Threat } from 'calypso/components/jetpack/threat-item-new/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 interface Props {
@@ -68,7 +69,7 @@ const ThreatItem: React.FC< Props > = ( {
 		[ isFixing, onFixThreat, threat ]
 	);
 
-	const getFix = React.useCallback( (): i18nCalypso.TranslateResult | undefined => {
+	const getFix = React.useCallback( (): TranslateResult | undefined => {
 		if ( threat.status === 'fixed' ) {
 			return;
 		}

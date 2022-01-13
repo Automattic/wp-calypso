@@ -37,8 +37,9 @@ const ProviderWrappedLoggedOutLayout = ( {
 	primary,
 	secondary,
 	redirectUri,
+	i18n,
 } ) => (
-	<CalypsoI18nProvider>
+	<CalypsoI18nProvider i18n={ i18n }>
 		<RouteProvider
 			currentSection={ currentSection }
 			currentRoute={ currentRoute }

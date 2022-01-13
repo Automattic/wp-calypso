@@ -26,7 +26,7 @@ export function addLocaleQueryParam( params ) {
 	}
 
 	return Object.assign( params, {
-		query: stringify( Object.assign( query, localeQueryParam ) ),
+		query: stringify( Object.assign( localeQueryParam, query ) ),
 	} );
 }
 

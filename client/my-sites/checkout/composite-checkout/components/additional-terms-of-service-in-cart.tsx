@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
-import i18nCalypso, { useTranslate, TranslateResult } from 'i18n-calypso';
+import i18n, { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { EDIT_PAYMENT_DETAILS } from 'calypso/lib/url/support';
@@ -67,7 +67,7 @@ function getMessageForTermsOfServiceRecord(
 			}
 			if (
 				( locale === 'en' ||
-					i18nCalypso.hasTranslation(
+					i18n.hasTranslation(
 						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription {{/manageSubscriptionLink}} at any time.'
 					) ) &&
 				args.subscription_start_date &&
@@ -77,7 +77,7 @@ function getMessageForTermsOfServiceRecord(
 				if (
 					args.is_renewal_price_prorated &&
 					( locale === 'en' ||
-						i18nCalypso.hasTranslation(
+						i18n.hasTranslation(
 							'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will charge your payment method (PAYPAL %(email)s) for %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.'
 						) )
 				) {
@@ -163,7 +163,7 @@ function getMessageForTermsOfServiceRecord(
 			}
 			if (
 				( locale === 'en' ||
-					i18nCalypso.hasTranslation(
+					i18n.hasTranslation(
 						'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.'
 					) ) &&
 				args.subscription_start_date &&
@@ -173,7 +173,7 @@ function getMessageForTermsOfServiceRecord(
 				if (
 					args.is_renewal_price_prorated &&
 					( locale === 'en' ||
-						i18nCalypso.hasTranslation(
+						i18n.hasTranslation(
 							'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will charge your payment method (%(cardType)s ****%(cardLast4)s) for %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.'
 						) )
 				) {
