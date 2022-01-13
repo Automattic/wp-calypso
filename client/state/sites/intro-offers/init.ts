@@ -1,4 +1,4 @@
 import { registerReducer } from 'calypso/state/redux-store';
-import introOffersReducers from './reducers';
+import introOffersReducers from './reducer';
 
 registerReducer( [ 'introOffers' ], introOffersReducers );
