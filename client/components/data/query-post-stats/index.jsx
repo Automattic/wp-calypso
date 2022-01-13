@@ -8,60 +8,39 @@ import { isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 class QueryPostStats extends Component {
 	static defaultProps = {
 		requestPostStats: () => {},
-		heartbeat: 0,
 	};
 
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		fields: PropTypes.array,
+		// connected props
 		requestingPostStats: PropTypes.bool,
 		requestPostStats: PropTypes.func,
-		heartbeat: PropTypes.number,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		const { requestingPostStats, siteId, postId } = this.props;
-		if ( ! requestingPostStats && siteId && typeof postId !== 'undefined' ) {
-			this.requestPostStats( this.props );
-		}
+	componentDidMount() {
+		this.requestPostStats();
 	}
 
-	componentWillUnmount() {
-		this.clearInterval();
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { siteId, postId, fields, heartbeat } = this.props;
+	componentDidUpdate( prevProps ) {
+		const { siteId, postId, fields } = this.props;
 		if (
-			! ( siteId && typeof postId !== 'undefined' ) ||
-			( siteId === nextProps.siteId &&
-				postId === nextProps.postId &&
-				isEqual( fields, nextProps.fields ) &&
-				heartbeat === nextProps.heartbeat )
+			siteId === prevProps.siteId &&
+			postId === prevProps.postId &&
+			isEqual( fields, prevProps.fields )
 		) {
 			return;
 		}
 
-		this.requestPostStats( nextProps );
+		this.requestPostStats();
 	}
 
-	requestPostStats( props ) {
-		const { siteId, postId, fields, heartbeat } = props;
-		props.requestPostStats( siteId, postId, fields );
-		this.clearInterval();
-		if ( heartbeat ) {
-			this.interval = setInterval( () => {
-				props.requestPostStats( siteId, postId, fields );
-			}, heartbeat );
-		}
-	}
+	requestPostStats() {
+		const { siteId, postId, fields, requestingPostStats } = this.props;
 
-	clearInterval() {
-		if ( this.interval ) {
-			clearInterval( this.interval );
+		if ( ! requestingPostStats && siteId && typeof postId !== 'undefined' ) {
+			this.props.requestPostStats( siteId, postId, fields );
 		}
 	}
 
