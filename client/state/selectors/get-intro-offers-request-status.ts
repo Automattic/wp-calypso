@@ -11,7 +11,9 @@ import type { AppState } from 'calypso/types';
  */
 export default function getIntroOfferRequestStatus(
 	state: AppState,
-	siteId?: number
+	siteId: number | 'none' = 'none'
 ): RequestStatus | null {
-	return state.sites?.introOffers?.requestStatus?.[ siteId ?? 'none' ] ?? null;
+	const siteIdKey = siteId && typeof siteId === 'number' && siteId > 0 ? siteId : 'none';
+
+	return state.sites?.introOffers?.requestStatus?.[ siteIdKey ] ?? null;
 }

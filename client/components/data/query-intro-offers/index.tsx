@@ -4,20 +4,22 @@ import getIntroOfferRequestStatus from 'calypso/state/selectors/get-intro-offers
 import { fetchIntroOffers } from 'calypso/state/sites/intro-offers/actions';
 
 interface OwnProps {
-	siteId?: number;
+	siteId?: number | 'none';
 }
 
 const QueryIntroOffers: React.FC< OwnProps > = ( { siteId } ) => {
 	const dispatch = useDispatch();
+	const siteIdKey = siteId && typeof siteId === 'number' && siteId > 0 ? siteId : 'none';
+
 	const introOfferRequestStatus = useSelector( ( state ) =>
-		siteId ? getIntroOfferRequestStatus( state, siteId ) : null
+		getIntroOfferRequestStatus( state, siteIdKey )
 	);
 
 	useEffect( () => {
-		if ( introOfferRequestStatus === null && siteId !== undefined ) {
-			dispatch( fetchIntroOffers( siteId ) );
+		if ( introOfferRequestStatus === null && siteIdKey !== undefined ) {
+			dispatch( fetchIntroOffers( siteIdKey ) );
 		}
-	}, [ dispatch, introOfferRequestStatus, siteId ] );
+	}, [ dispatch, introOfferRequestStatus, siteIdKey ] );
 
 	return null;
 };

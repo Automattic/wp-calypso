@@ -9,7 +9,9 @@ import type { AppState } from 'calypso/types';
 export default function getIntroOfferPrice(
 	state: AppState,
 	productId: number,
-	siteId: number | 'none' = 'none'
+	siteId: number | 'none'
 ): number | null {
-	return state.sites?.introOffers?.items?.[ siteId ?? 'none' ]?.[ productId ]?.rawPrice ?? null;
+	const siteIdKey = siteId && typeof siteId === 'number' && siteId > 0 ? siteId : 'none';
+
+	return state.sites?.introOffers?.items?.[ siteIdKey ]?.[ productId ]?.rawPrice ?? null;
 }
