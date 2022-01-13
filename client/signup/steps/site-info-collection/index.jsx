@@ -35,6 +35,7 @@ function SiteInformationCollection( {
 		selectedSiteCategory,
 		selectedDesign,
 		newOrExistingSiteChoice,
+		isLetUsChooseSelected,
 	} = useSelector( getSignupDependencyStore );
 	const dispatch = useDispatch();
 	const loggedInUsername = useSelector( getCurrentUserName );
@@ -48,6 +49,7 @@ function SiteInformationCollection( {
 			difm_lite_site_category: selectedSiteCategory,
 			difm_lite_typeform_response_id: typeformSubmissionId,
 			difm_lite_new_or_existing_site_choice: newOrExistingSiteChoice,
+			difm_lite_let_us_choose_selected: !! isLetUsChooseSelected,
 		};
 		const cartItem = { product_slug: WPCOM_DIFM_LITE, extra };
 		const step = {

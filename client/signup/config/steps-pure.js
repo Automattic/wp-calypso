@@ -746,14 +746,15 @@ export function generateSteps( {
 			apiRequestFunction: setDesignIfNewSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory', 'isLetUsChooseSelected' ],
+			optionalDependencies: [ 'selectedDesign', 'isLetUsChooseSelected' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
 				showDesignPickerCategoriesAllFilter: false,
+				showLetUsChoose: true,
 			},
 		},
 		'site-info-collection': {
