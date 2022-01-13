@@ -29,7 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	describe( `Leave a comment as ${ commentingUser }`, function () {
 		let testAccount: TestAccount;
 
-		beforeAll( async function() {
+		beforeAll( async function () {
 			testAccount = new TestAccount( commentingUser );
 			await testAccount.authenticate( page );
 		} );
@@ -45,7 +45,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	} );
 
 	describe( `Trash comment as ${ notificationsUser }`, function () {
-		beforeAll( async function() {
+		beforeAll( async function () {
 			const testAccount = new TestAccount( notificationsUser );
 			await testAccount.authenticate( page );
 		} );
