@@ -334,6 +334,7 @@ function getDIFMLiteCartItemFromDependencies( dependencies ) {
 		newOrExistingSiteChoice,
 		selectedDesign,
 		selectedSiteCategory,
+		isLetUsChooseSelected,
 		siteTitle,
 		siteDescription,
 		twitterUrl,
@@ -348,6 +349,7 @@ function getDIFMLiteCartItemFromDependencies( dependencies ) {
 		difm_lite_selected_design: selectedDesign?.theme,
 		difm_lite_site_category: selectedSiteCategory,
 		difm_lite_new_or_existing_site_choice: newOrExistingSiteChoice,
+		difm_lite_let_us_choose_selected: isLetUsChooseSelected,
 		difm_lite_site_title: siteTitle,
 		difm_lite_site_description: siteDescription,
 		difm_lite_twitter_url: twitterUrl,
@@ -363,9 +365,15 @@ function getDIFMLiteCartItemFromDependencies( dependencies ) {
 }
 
 function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
-	const { selectedDesign, selectedSiteCategory, siteSlug } = dependencies;
+	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
 	const cartItem = getDIFMLiteCartItemFromDependencies( dependencies );
-	const providedDependencies = { selectedDesign, selectedSiteCategory, siteSlug, cartItem };
+	const providedDependencies = {
+		selectedDesign,
+		selectedSiteCategory,
+		isLetUsChooseSelected,
+		siteSlug,
+		cartItem,
+	};
 	const newCartItems = [ cartItem ];
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
