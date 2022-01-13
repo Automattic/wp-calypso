@@ -1208,15 +1208,21 @@ class CancelPurchaseForm extends Component {
 	};
 
 	fetchPurchaseExtendedStatus = async ( purchaseId ) => {
-		const res = await wpcom.req.get( {
-			path: `/purchases/${ purchaseId }/has-extended`,
-			apiNamespace: 'wpcom/v2',
-		} );
-
 		const newState = {
 			...this.state,
-			purchaseIsAlreadyExtended: res.has_extended,
 		};
+
+		try {
+			const res = await wpcom.req.get( {
+				path: `/purchases/${ purchaseId }/has-extendedd`,
+				apiNamespace: 'wpcom/v2',
+			} );
+
+			newState.purchaseIsAlreadyExtended = res.has_extended;
+		} catch {
+			// When the request fails, set the flag to true so the extra options don't show up to users.
+			newState.purchaseIsAlreadyExtended = true;
+		}
 
 		if ( newState.purchaseIsAlreadyExtended && newState.upsell === 'free-month-offer' ) {
 			newState.upsell = '';
