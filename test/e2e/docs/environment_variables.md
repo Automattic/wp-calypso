@@ -6,21 +6,20 @@ Environment Variables are values that are defined at the system level to serve a
 
 ## Required
 
-| Name            | Description                                         | Example   | Required | Can store in config file? |
-| --------------- | --------------------------------------------------- | --------- | -------- | ------------------------- |
-| CONFIG_KEY      | Secrets decryption key obtained from a8c key store. | hunter2   | No       | **NO**                    |
-| NODE_CONFIG_ENV | Name of decrypted secrets file.                     | decrypted | No       | **NO**                    |
+| Name            | Description                                         |
+| --------------- | --------------------------------------------------- |
+| CONFIG_KEY      | Secrets decryption key obtained from a8c key store. |
+| NODE_CONFIG_ENV | Name of decrypted secrets file.                     |
 
 ## Framework
 
-| Name              | Description                                          | Example  | Required | Can store in config file? |
-| ----------------- | ---------------------------------------------------- | -------- | -------- | ------------------------- |
-| COOKIES_PATH      | Path on disk to the saved authenticated cookies.     | cookies/ | No       | **NO**                    |
-| COOKIES_PATH      | Path on disk to the saved authenticated cookies.     | cookies/ | No       | **NO**                    |
-| HEADLESS          | Configure browser headless/headful mode.             | true     | No       | YES                       |
-| LOCALE            | Specify the target browser locale.                   | en       | No       | YES                       |
-| SAVE_AUTH_COOKIES | Whether to save authenticated cookies for later use. | true     | No       | YES                       |
-| TARGET_DEVICE     | Specify the device type to be used.                  | desktop  | No       | YES                       |
+| Name                  | Description                                         | Default                                                          |
+| --------------------- | --------------------------------------------------- | ---------------------------------------------------------------- |
+| HEADLESS              | Configure browser headless/headful mode.            | false                                                            |
+| SLOW_MO               | Slow down the execution by given milliseconds.      | 0                                                                |
+| AUTHENTICATE_ACCOUNTS | List of accounts to pre-authenticate for later use. | [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ] |
+| COOKIES_PATH          | Path on disk to the saved authenticated cookies.    | ./cookies/                                                       |
+| VIEWPORT_NAME         | Specify the viewport to be used.                    | desktop                                                          |
 
 ## CI
 

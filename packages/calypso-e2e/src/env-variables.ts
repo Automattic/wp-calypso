@@ -37,7 +37,7 @@ interface SupportedEnvVariables extends EnvVariables {
 	COBLOCKS_EDGE: boolean;
 	TEST_LOCALES: TestLocales;
 	COOKIES_PATH: string;
-	SAVE_AUTH_COOKIES: boolean | string;
+	AUTHENTICATE_ACCOUNTS: string[];
 	ARTIFACTS_PATH: string;
 	HEADLESS: boolean;
 	SLOW_MO: number;
@@ -50,8 +50,8 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	SLOW_MO: 0,
 	GUTENBERG_EDGE: false,
 	COBLOCKS_EDGE: false,
+	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ],
 	COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
-	SAVE_AUTH_COOKIES: false,
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 };
 

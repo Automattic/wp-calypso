@@ -847,9 +847,9 @@ object P2E2ETests : BuildType({
 
 	params {
 		checkbox(
-			name = "env.SAVE_AUTH_COOKIES",
-			value = "false",
-			label = "Save authentication cookies",
+			name = "env.AUTHENTICATE_ACCOUNTS",
+			value = "simpleSitePersonalPlanUser,eCommerceUser,defaultUser",
+			label = "List of accounts to pre-authenticate",
 			description = "Login once and reuse auth cookies for all specs",
 			checked = "true",
 			unchecked = "false"
