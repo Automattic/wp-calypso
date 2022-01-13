@@ -1,4 +1,3 @@
-import { createHigherOrderComponent } from '@wordpress/compose';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { createTransientMediaId } from 'calypso/lib/media/utils';
@@ -37,11 +36,3 @@ export const useUploadSiteIcon = () => {
 
 	return uploadSiteIcon;
 };
-
-export const withUploadSiteIcon = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const uploadSiteIcon = useUploadSiteIcon();
-		return <Wrapped { ...props } uploadSiteIcon={ uploadSiteIcon } />;
-	},
-	'withUploadSiteIcon'
-);

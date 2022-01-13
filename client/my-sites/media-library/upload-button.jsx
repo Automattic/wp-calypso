@@ -3,7 +3,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import { withAddMedia } from 'calypso/data/media/use-add-media';
+import { withAddMedia } from 'calypso/data/media/with-add-media';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { VideoPressFileTypes } from 'calypso/lib/media/constants';
 import {

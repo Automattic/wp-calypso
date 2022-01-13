@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import StickyPanel from 'calypso/components/sticky-panel';
-import { withAddExternalMedia } from 'calypso/data/media/use-add-external-media';
+import { withAddExternalMedia } from 'calypso/data/media/with-add-external-media';
 import { changeMediaSource } from 'calypso/state/media/actions';
 import { fetchNextMediaPage } from 'calypso/state/media/thunks';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';

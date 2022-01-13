@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { withAddMedia } from 'calypso/data/media/use-add-media';
+import { withAddMedia } from 'calypso/data/media/with-add-media';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { clearMediaItemErrors } from 'calypso/state/media/actions';

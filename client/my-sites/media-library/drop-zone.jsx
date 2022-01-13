@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
-import { withAddMedia } from 'calypso/data/media/use-add-media';
+import { withAddMedia } from 'calypso/data/media/with-add-media';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { userCan } from 'calypso/lib/site/utils';
 import { getEditorPostId } from 'calypso/state/editor/selectors';

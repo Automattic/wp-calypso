@@ -9,7 +9,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import InfoPopover from 'calypso/components/info-popover';
-import { withUploadSiteIcon } from 'calypso/data/media/use-upload-site-icon';
+import { withUploadSiteIcon } from 'calypso/data/media/with-upload-site-icon';
 import accept from 'calypso/lib/accept';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

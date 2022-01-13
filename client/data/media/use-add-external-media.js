@@ -1,4 +1,3 @@
-import { createHigherOrderComponent } from '@wordpress/compose';
 import { useCallback } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useUploadMediaMutation } from './use-upload-media-mutation';
@@ -21,11 +20,3 @@ export const useAddExternalMedia = () => {
 		[ uploadMediaAsync ]
 	);
 };
-
-export const withAddExternalMedia = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const addExternalMedia = useAddExternalMedia();
-		return <Wrapped { ...props } addExternalMedia={ addExternalMedia } />;
-	},
-	'WithAddExternalMedia'
-);
