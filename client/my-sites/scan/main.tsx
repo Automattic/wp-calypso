@@ -31,6 +31,7 @@ import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpa
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ScanNavigation from './navigation';
+import type { TranslateResult } from 'i18n-calypso';
 import type { utc } from 'moment';
 
 import './style.scss';
@@ -73,7 +74,7 @@ class ScanPage extends Component< Props > {
 		);
 	}
 
-	renderHeader( text: i18nCalypso.TranslateResult ) {
+	renderHeader( text: TranslateResult ) {
 		return <h1 className="scan__header">{ text }</h1>;
 	}
 

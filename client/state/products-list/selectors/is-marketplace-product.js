@@ -4,5 +4,5 @@ import { getProductsList } from '../selectors/get-products-list';
 
 export const isMarketplaceProduct = ( state, productSlug ) => {
 	const productsList = getProductsList( state );
-	return hasMarketplaceProduct( productsList, productSlug );
+	return productsList ? hasMarketplaceProduct( productsList, productSlug ) : false;
 };

@@ -14,6 +14,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
 import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -292,7 +293,13 @@ function setUpLoggedInRoute( req, res, next ) {
 				// Setting user in the state is safe as long as we don't cache it
 				req.context.store.dispatch( setCurrentUser( data ) );
 
-				if ( data.localeSlug ) {
+				if (
+					data.localeSlug &&
+					! (
+						data.use_fallback_for_incomplete_languages &&
+						isTranslatedIncompletely( data.localeVariant || data.localeSlug )
+					)
+				) {
 					req.context.lang = data.localeSlug;
 					req.context.store.dispatch( {
 						type: LOCALE_SET,

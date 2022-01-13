@@ -1570,7 +1570,7 @@ describe( 'themes selectors', () => {
 				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
 			} );
 
-			test( 'given a premium theme, should return the specific theme forum URL', () => {
+			test( 'given a premium theme, should return the general themes forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1587,7 +1587,7 @@ describe( 'themes selectors', () => {
 					'mood'
 				);
 
-				expect( forumUrl ).to.equal( '//premium-themes.forums.wordpress.com/forum/mood' );
+				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
 			} );
 		} );
 

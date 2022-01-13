@@ -184,7 +184,7 @@ class SiteMockups extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	( state ) => {
 		const siteType = getSiteType( state );
 		const themeSlug = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
@@ -199,9 +199,6 @@ export default connect(
 			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
 			siteVerticalName: getSiteVerticalName( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
-			shouldShowHelpTip:
-				'site-topic-with-preview' === ownProps.stepName ||
-				'site-title-with-preview' === ownProps.stepName,
 			themeSlug: themeSlug,
 			fontUrl: defaultFontUri,
 			shouldFetchVerticalData,

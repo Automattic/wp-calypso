@@ -38,6 +38,7 @@ import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-in
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
+import TransferredDomainDetails from './cards/transferred-domain-details';
 import DnsRecords from './dns';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
@@ -135,6 +136,22 @@ const Settings = ( {
 					expanded
 				>
 					<ConnectedDomainDetails
+						domain={ domain }
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				</Accordion>
+			);
+		} else if ( domain.type === domainTypes.TRANSFER ) {
+			return (
+				<Accordion
+					title={ translate( 'Details', { textOnly: true } ) }
+					subtitle={ translate( 'Transfer details', { textOnly: true } ) }
+					key="main"
+					expanded
+				>
+					<TransferredDomainDetails
 						domain={ domain }
 						selectedSite={ selectedSite }
 						purchase={ purchase }

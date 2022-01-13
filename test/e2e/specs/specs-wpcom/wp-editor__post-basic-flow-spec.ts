@@ -1,6 +1,4 @@
 /**
- * @group calypso-pr
- * @group calypso-release
  * @group gutenberg
  */
 
@@ -68,7 +66,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Patterns', function () {
-		const patternName = 'About Me';
+		const patternName = 'Heading';
 
 		it( `Add ${ patternName }`, async function () {
 			await gutenbergEditorPage.addPattern( patternName );
@@ -115,7 +113,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		} );
 
-		it.skip( 'Close preview', async function () {
+		skipItIf( targetDevice === 'desktop' )( 'Close preview', async function () {
 			// Mobile path.
 			if ( previewPage ) {
 				await previewPage.close();

@@ -1,9 +1,10 @@
 import { translate } from 'i18n-calypso';
 import { Threat, ThreatFix, ThreatType } from './types';
+import type { TranslateResult } from 'i18n-calypso';
 
 // This should be temporary since this data should be coming from the api
 // and not something that we should change to accommodate the results.
-export const getThreatMessage = ( threat: Threat ): string | i18nCalypso.TranslateResult => {
+export const getThreatMessage = ( threat: Threat ): string | TranslateResult => {
 	const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
 	const basename = filename ? filename.replace( /.*\//, '' ) : '';
 
@@ -84,7 +85,7 @@ export function getThreatType( threat: Threat ): ThreatType {
 	return 'none';
 }
 
-export const getThreatVulnerability = ( threat: Threat ): string | i18nCalypso.TranslateResult => {
+export const getThreatVulnerability = ( threat: Threat ): string | TranslateResult => {
 	switch ( getThreatType( threat ) ) {
 		case 'core':
 			return translate( 'Vulnerability found in WordPress' );
@@ -111,7 +112,7 @@ export const getThreatVulnerability = ( threat: Threat ): string | i18nCalypso.T
 	}
 };
 
-export const getThreatFix = ( fixable: ThreatFix ): i18nCalypso.TranslateResult => {
+export const getThreatFix = ( fixable: ThreatFix ): TranslateResult => {
 	switch ( fixable.fixer ) {
 		case 'replace':
 			return translate( 'Jetpack Scan will replace the affected file or directory.' );

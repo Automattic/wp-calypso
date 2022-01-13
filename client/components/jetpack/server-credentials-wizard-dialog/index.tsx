@@ -7,6 +7,7 @@ import ExternalLink from 'calypso/components/external-link';
 import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
@@ -19,7 +20,7 @@ interface Props {
 	children: ReactNode;
 	buttons?: ReactElement[];
 	baseDialogClassName?: string;
-	title: i18nCalypso.TranslateResult;
+	title: TranslateResult;
 	titleClassName?: string;
 }
 

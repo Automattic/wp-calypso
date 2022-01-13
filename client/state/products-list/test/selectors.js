@@ -336,21 +336,21 @@ describe( 'selectors', () => {
 		test( 'should return null when the products list has not been fetched', () => {
 			const state = deepFreeze( { productsList: { items: {} } } );
 
-			expect( getProductDisplayCost( state, 'guided_transfer' ) ).toBe( null );
+			expect( getProductDisplayCost( state, 'business-bundle' ) ).toBe( null );
 		} );
 
 		test( 'should return the display cost', () => {
 			const state = deepFreeze( {
 				productsList: {
 					items: {
-						guided_transfer: {
+						'business-bundle': {
 							cost_display: 'A$169.00',
 						},
 					},
 				},
 			} );
 
-			expect( getProductDisplayCost( state, 'guided_transfer' ) ).toBe( 'A$169.00' );
+			expect( getProductDisplayCost( state, 'business-bundle' ) ).toBe( 'A$169.00' );
 		} );
 	} );
 

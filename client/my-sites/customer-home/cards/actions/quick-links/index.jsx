@@ -1,4 +1,4 @@
-import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
@@ -191,7 +191,7 @@ export const QuickLinks = ( {
 						label={
 							getLocaleSlug() === 'en' ||
 							getLocaleSlug() === 'en-gb' ||
-							i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
+							i18n.hasTranslation( 'Create a logo with Fiverr' )
 								? translate( 'Create a logo with Fiverr' )
 								: translate( 'Create a logo' )
 						}

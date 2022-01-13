@@ -1,13 +1,11 @@
+import I18NContext from './context';
+import i18n from './default-i18n';
 import I18N from './i18n';
-import localizeFactory from './localize';
-import rtlFactory from './rtl';
-import translateHookFactory from './use-translate';
+import localize from './localize';
+import { useRtl, withRtl } from './rtl';
+import useTranslate from './use-translate';
 
-// Export the `I18N` class
-export { I18N };
-
-// Create a default instance of `I18N` and make it the module default export
-const i18n = new I18N();
+export { I18N, I18NContext, localize, useRtl, withRtl, useTranslate };
 export default i18n;
 
 // Export the default instance's properties and bound methods for convenience
@@ -29,9 +27,3 @@ export const stateObserver = i18n.stateObserver;
 export const on = i18n.on.bind( i18n );
 export const off = i18n.off.bind( i18n );
 export const emit = i18n.emit.bind( i18n );
-
-// Export the React helpers bound to the default `i18n` instance
-export const localize = localizeFactory( i18n );
-export const useTranslate = translateHookFactory( i18n );
-const { useRtl, withRtl } = rtlFactory( i18n );
-export { useRtl, withRtl };

@@ -43,7 +43,7 @@
 			@include placeholder();
 		}
 
-		& .button {
+		& .button:not( .is-primary ) {
 			color: var( --studio-gray-80 );
 		}
 		& .button:not( :first-child ) {

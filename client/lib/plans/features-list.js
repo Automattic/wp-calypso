@@ -302,10 +302,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
+		getTitle: () => i18n.translate( 'Premium themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 			),
 	},
 

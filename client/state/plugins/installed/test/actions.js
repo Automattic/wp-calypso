@@ -500,9 +500,9 @@ describe( 'actions', () => {
 		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2916284/plugins/jetpack/install' )
+				.post( '/rest/v1.1/sites/2916284/plugins/install', { slug: 'jetpack' } )
 				.reply( 200, jetpackUpdated )
-				.post( '/rest/v1.1/sites/2916284/plugins/fake/install' )
+				.post( '/rest/v1.1/sites/2916284/plugins/install', { slug: 'fake' } )
 				.reply( 400, {
 					error: 'unknown_plugin',
 					message: 'Plugin file does not exist.',

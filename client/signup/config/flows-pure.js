@@ -86,21 +86,6 @@ export function generateFlows( {
 			lastModified: '2019-06-20',
 		},
 		{
-			name: 'onboarding-with-preview',
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getSignupDestination,
-			description: 'The improved onboarding flow.',
-			lastModified: '2020-03-03',
-			showRecaptcha: true,
-		},
-		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]

@@ -559,13 +559,6 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
-		/* Improved Onboarding */
-		'site-type': {
-			stepName: 'site-type',
-			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTypeFulfilled,
-		},
-
 		'site-type-with-theme': {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType' ],
@@ -583,45 +576,6 @@ export function generateSteps( {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
-		// Steps with preview
-		// These can be removed once we make the preview the default
-		'site-topic-with-preview': {
-			stepName: 'site-topic-with-preview',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'domains-with-preview': {
-			stepName: 'domains-with-preview',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
-			props: {
-				showSiteMockups: true,
-				isDomainOnly: false,
-			},
-			dependencies: [ 'themeSlugWithRepo' ],
-			delayApiRequestUntilComplete: true,
-		},
-
-		'site-title-with-preview': {
-			stepName: 'site-title-with-preview',
-			providesDependencies: [ 'siteTitle' ],
-			props: {
-				showSiteMockups: true,
-			},
 		},
 
 		launch: {
@@ -746,14 +700,15 @@ export function generateSteps( {
 			apiRequestFunction: setDesignIfNewSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory', 'isLetUsChooseSelected' ],
+			optionalDependencies: [ 'selectedDesign', 'isLetUsChooseSelected' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
 				showDesignPickerCategoriesAllFilter: false,
+				showLetUsChoose: true,
 			},
 		},
 		'site-info-collection': {

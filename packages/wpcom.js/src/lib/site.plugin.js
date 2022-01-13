@@ -71,7 +71,10 @@ class SitePlugin {
 	 * @returns {Promise} Promise
 	 */
 	install( query, fn ) {
-		return this.wpcom.req.put( `${ this.pluginPath }/install`, query, fn );
+		const body = {
+			slug: this._slug,
+		};
+		return this.wpcom.req.post( `${ root }/${ this._sid }/plugins/install`, query, body, fn );
 	}
 
 	/**
