@@ -220,22 +220,22 @@ function useAddressFormValidation( siteId: number ) {
 
 	const validate = () => {
 		errors[ WOOCOMMERCE_STORE_ADDRESS_1 ] = ! get( WOOCOMMERCE_STORE_ADDRESS_1 )
-			? __( 'Address line is required.' )
+			? __( 'Please add an address' )
 			: '';
 		errors[ WOOCOMMERCE_STORE_ADDRESS_2 ] = ''; // Optional field
 		errors[ WOOCOMMERCE_DEFAULT_COUNTRY ] = ! get( WOOCOMMERCE_DEFAULT_COUNTRY )
-			? __( 'Country / Region is required.' )
+			? __( 'Please select a country / region' )
 			: '';
 		errors[ WOOCOMMERCE_STORE_CITY ] = ! get( WOOCOMMERCE_STORE_CITY )
-			? __( 'City is required.' )
+			? __( 'Please add a city' )
 			: '';
 		errors[ WOOCOMMERCE_STORE_POSTCODE ] = ! get( WOOCOMMERCE_STORE_POSTCODE )
-			? __( 'Postcode is required.' )
+			? __( 'Please add a postcode' )
 			: '';
-		errors[ WOOCOMMERCE_ONBOARDING_PROFILE ] = ! get( WOOCOMMERCE_ONBOARDING_PROFILE )[
+		errors[ WOOCOMMERCE_ONBOARDING_PROFILE ] = ! get( WOOCOMMERCE_ONBOARDING_PROFILE )?.[
 			'store_email'
 		]
-			? __( 'Email address is required.' )
+			? __( 'A valid email address is required' )
 			: '';
 
 		setErrors( errors );
