@@ -2,7 +2,6 @@ import { ReactElement, useState } from 'react';
 import { useSelector } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InstallPlugins from './install-plugins';
 import TransferSite from './transfer-site';
@@ -19,7 +18,6 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 		signupDependencies: { siteConfirmed },
 	} = props;
 
-	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const [ hasFailed, setHasFailed ] = useState( false );
 
 	if ( siteConfirmed !== siteId ) {
@@ -36,7 +34,6 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 			hideSkip={ true }
 			hideFormattedHeader={ true }
 			isWideLayout={ props.isReskinned }
-			backUrl={ `/woocommerce-installation/${ domain }` }
 			stepContent={
 				<>
 					{ isAtomic && <InstallPlugins onFailure={ () => setHasFailed( true ) } /> }

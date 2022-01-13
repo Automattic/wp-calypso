@@ -746,7 +746,6 @@ export function generateSteps( {
 				),
 			},
 			dependencies: [ 'site' ],
-			providesDependencies: [ 'siteConfirmed' ],
 		},
 		confirm: {
 			stepName: 'confirm',

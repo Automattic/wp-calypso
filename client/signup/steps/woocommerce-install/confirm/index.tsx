@@ -47,7 +47,7 @@ export const StyledNextButton = styled( NextButton )`
 `;
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned, headerTitle, headerDescription } = props;
+	const { goToNextStep, isReskinned, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -69,9 +69,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		// Automatically start the transfer process when it's ready.
 		if ( isReadyToStart ) {
 			dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
-			goToStep( 'transfer' );
+			goToNextStep();
 		}
-	}, [ dispatch, goToStep, siteId, isDataReady, isReadyToStart ] );
+	}, [ dispatch, goToNextStep, siteId, isDataReady, isReadyToStart ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
@@ -134,7 +134,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 									page( siteUpgrading.checkoutUrl );
 									return;
 								}
-								goToStep( 'transfer' );
+								goToNextStep();
 							} }
 						>
 							{ __( 'Sounds good' ) }
@@ -158,7 +158,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			flowName="woocommerce-install"
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
-			allowBackFirstStep={ true }
+			allowBackFirstStep={ ! isEnabled( 'woop' ) }
 			backUrl={ isEnabled( 'woop' ) ? null : `/woocommerce-installation/${ wpcomDomain }` }
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
