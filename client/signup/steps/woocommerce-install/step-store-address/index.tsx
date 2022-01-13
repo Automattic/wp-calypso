@@ -10,7 +10,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import { ActionSection, StyledNextButton } from '../confirm';
@@ -54,7 +53,6 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	} );
 
 	const { get, save, update } = useSiteSettings( siteId );
-	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 
