@@ -66,7 +66,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 				<div className="step-business-info__info-section" />
 				<div className="step-business-info__instructions-container">
 					<SelectControl
-						label={ __( 'What type of products will be listed?', 'woocommerce-admin' ) }
+						label={ __( 'What type of products will be listed? (optional)', 'woocommerce-admin' ) }
 						value={ getProfileValue( 'product_types' ) }
 						options={ [
 							{ value: '', label: '' },
@@ -78,7 +78,10 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 					/>
 
 					<SelectControl
-						label={ __( 'How many products do you plan to display?', 'woocommerce-admin' ) }
+						label={ __(
+							'How many products do you plan to display? (optional)',
+							'woocommerce-admin'
+						) }
 						value={ getProfileValue( 'product_count' ) }
 						options={ [
 							{ value: '', label: '' },
@@ -92,7 +95,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 					/>
 
 					<SelectControl
-						label={ __( 'Currently selling elsewhere?', 'woocommerce-admin' ) }
+						label={ __( 'Currently selling elsewhere? (optional)', 'woocommerce-admin' ) }
 						value={ getProfileValue( 'selling_venues' ) }
 						options={ [
 							{ value: '', label: '' },
@@ -123,7 +126,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 					{ [ 'other', 'brick-mortar-other' ].includes( getProfileValue( 'selling_venues' ) ) && (
 						<>
 							<SelectControl
-								label={ __( 'Which platform is the store using?', 'woocommerce-admin' ) }
+								label={ __( 'Which platform is the store using? (optional)', 'woocommerce-admin' ) }
 								value={ getProfileValue( 'other_platform' ) }
 								options={ [
 									{ value: '', label: '' },
@@ -170,7 +173,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 							{ getProfileValue( 'other_platform' ) === 'other' && (
 								<TextControl
-									label={ __( 'What is the platform name?', 'woocommerce-admin' ) }
+									label={ __( 'What is the platform name? (optional)', 'woocommerce-admin' ) }
 									onChange={ updateOtherPlatformName }
 									value={ getProfileValue( 'other_platform_name' ) }
 								/>
@@ -207,6 +210,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	return (
 		<StepWrapper
 			flowName="woocommerce-install"
+			hideSkip={ true }
 			allowBackFirstStep={ true }
 			backUrl={ `/woocommerce-installation/${ siteDomain }` }
 			headerText={ __( 'Tell us a bit about your business' ) }
