@@ -5,12 +5,12 @@
 import {
 	DataHelper,
 	EmailClient,
-	LoginPage,
 	SidebarComponent,
 	InvitePeoplePage,
 	PeoplePage,
 	BrowserManager,
 	setupHooks,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -28,13 +28,11 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	let peoplePage: PeoplePage;
 	let page: Page;
 
-	setupHooks( ( args: { page: Page } ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
-	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'defaultUser' } );
+		const testAccount = new TestAccount( 'defaultUser' );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Navigate to Users > All Users', async function () {

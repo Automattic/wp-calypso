@@ -1,3 +1,5 @@
+export { TestAccount } from './test-account';
+
 export * from './pages';
 export * from './flows';
 export * from './components';

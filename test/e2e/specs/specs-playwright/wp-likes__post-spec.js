@@ -2,15 +2,12 @@
  * @group gutenberg
  */
 
-import assert from 'assert';
 import {
 	DataHelper,
-	BrowserManager,
-	LoginPage,
-	NewPostFlow,
 	GutenbergEditorPage,
 	PublishedPostPage,
 	setupHooks,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 
 /**
@@ -20,31 +17,31 @@ const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
-	let page;
 	const postingUser = 'simpleSitePersonalPlanUser';
 	const likeUser = 'defaultUser';
+	let page;
+	let publishedURL;
+	let publishedPostPage;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
-	describe( 'Like a new post', function () {
-		let publishedPostPage;
+	describe( 'As the posting user', function () {
+		let testAccount;
 		let gutenbergEditorPage;
-		let publishedURL;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: postingUser } );
+		beforeAll( async () => {
+			gutenbergEditorPage = new GutenbergEditorPage( page );
+			testAccount = new TestAccount( postingUser );
+			await testAccount.authenticate( page );
 		} );
 
-		it( 'Start new post', async function () {
-			const newPostFlow = new NewPostFlow( page );
-			await newPostFlow.newPostFromNavbar();
+		it( 'Go to the new post page', async function () {
+			await gutenbergEditorPage.visit( 'post' );
 		} );
 
 		it( 'Enter post title', async function () {
-			gutenbergEditorPage = new GutenbergEditorPage( page );
 			const title = DataHelper.getRandomPhrase();
 			await gutenbergEditorPage.enterTitle( title );
 		} );
@@ -55,7 +52,6 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		it( 'Publish and visit post', async function () {
 			publishedURL = await gutenbergEditorPage.publish( { visit: true } );
-			assert.strictEqual( publishedURL, await page.url() );
 		} );
 
 		it( 'Like post', async function () {
@@ -66,26 +62,21 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		it( 'Unlike post', async function () {
 			await publishedPostPage.unlikePost();
 		} );
+	} );
 
-		it( 'Clear cookies', async function () {
-			await BrowserManager.clearAuthenticationState( page );
+	describe( 'As the liking user', () => {
+		beforeAll( async () => {
+			const testAccount = new TestAccount( likeUser );
+			await testAccount.authenticate( page );
+		} );
+
+		it( 'Go to the published post page', async () => {
+			await page.goto( publishedURL );
 		} );
 
 		it( `Like post as ${ likeUser }`, async function () {
 			publishedPostPage = new PublishedPostPage( page );
-
-			// Clicking the Like button will bring up a new popup.
-			// Observe for the new popup in the Promise. Once the Page object
-			// is obtained, execute login steps there and wait for the
-			// popup to close.
-			await Promise.all( [
-				page.on( 'popup', async ( popup ) => {
-					const loginPage = new LoginPage( popup );
-					await loginPage.loginFromPopup( { account: likeUser } );
-					await popup.waitForEvent( 'close' );
-				} ),
-				publishedPostPage.likePost(),
-			] );
+			await publishedPostPage.likePost();
 		} );
 	} );
 } );

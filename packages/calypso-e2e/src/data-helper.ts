@@ -105,7 +105,7 @@ export function getCalypsoURL(
  * @returns {string[]} Username and password found in the secrets file for the given account type.
  * @throws {Error} If accountType does not correspond to a valid entry in the file.
  */
-export function getAccountCredential( accountType: string ): string[] {
+export function getAccountCredential( accountType: string ): [ string, string ] {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
 	if ( ! Object.keys( testAccounts ).includes( accountType ) ) {
 		throw new Error(

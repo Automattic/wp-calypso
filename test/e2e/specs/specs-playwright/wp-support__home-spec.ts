@@ -2,25 +2,26 @@
  * @group calypso-pr
  */
 
-import { DataHelper, LoginPage, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 	let page: Page;
+	let testAccount: TestAccount;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
 	describe.each( [
-		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'eCommerceUser' },
-	] )( 'Search from Support Card ($siteType)', function ( { user } ) {
+		{ siteType: 'Simple', accountName: 'defaultUser' },
+		{ siteType: 'Atomic', accountName: 'eCommerceUser' },
+	] )( 'Search from Support Card ($siteType)', function ( { accountName } ) {
 		let supportComponent: SupportComponent;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+		beforeAll( async () => {
+			testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
 		} );
 
 		it( 'Displays default entries', async function () {
