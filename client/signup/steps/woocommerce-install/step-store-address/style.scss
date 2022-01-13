@@ -39,5 +39,10 @@
 			border-color: var( --color-error );
 			box-shadow: 0 0 0 0 var( --color-error );
 		}
+
+		.components-base-control__field {
+			// Remove margin-bottom on error so errors are positioned closer to the corresponding field
+			margin-bottom: unset;
+		}
 	}
 }
