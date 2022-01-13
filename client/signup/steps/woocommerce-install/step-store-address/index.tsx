@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { TextControl, ComboboxControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import emailValidator from 'email-validator';
 import { ReactElement, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -234,9 +235,9 @@ function useAddressFormValidation( siteId: number ) {
 		errors[ WOOCOMMERCE_STORE_POSTCODE ] = ! get( WOOCOMMERCE_STORE_POSTCODE )
 			? __( 'Please add a postcode' )
 			: '';
-		errors[ WOOCOMMERCE_ONBOARDING_PROFILE ] = ! get( WOOCOMMERCE_ONBOARDING_PROFILE )?.[
-			'store_email'
-		]
+		errors[ WOOCOMMERCE_ONBOARDING_PROFILE ] = ! emailValidator.validate(
+			get( WOOCOMMERCE_ONBOARDING_PROFILE )?.[ 'store_email' ]
+		)
 			? __( 'A valid email address is required' )
 			: '';
 
