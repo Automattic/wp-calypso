@@ -113,7 +113,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		} );
 
-		skipItIf( targetDevice === 'desktop' )( 'Close preview', async function () {
+		skipItIf( envVariables.VIEWPORT_NAME === 'desktop' )( 'Close preview', async function () {
 			// Mobile path.
 			if ( previewPage ) {
 				await previewPage.close();
