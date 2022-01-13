@@ -68,20 +68,6 @@ const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action
 	return state;
 };
 
-const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) => {
-	if ( action.type === 'TOGGLE_PAGE_LAYOUT' ) {
-		const layout = action.pageLayout;
-		if ( state.includes( layout.slug ) ) {
-			return state.filter( ( item ) => item !== layout.slug );
-		}
-		return [ ...state, layout.slug ];
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return [];
-	}
-	return state;
-};
-
 const planProductId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_PLAN_PRODUCT_ID' ) {
 		return action.planProductId;
@@ -222,7 +208,6 @@ const reducer = combineReducers( {
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
-	pageLayouts,
 	selectedFeatures,
 	selectedFonts,
 	selectedDesign,

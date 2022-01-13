@@ -23,7 +23,6 @@ registerStore< State >( STORE_KEY, {
 		'hasUsedDomainsStep',
 		'hasUsedPlansStep',
 		'lastLocation',
-		'pageLayouts',
 		'planProductId',
 		'randomizedDesigns',
 		'selectedDesign',

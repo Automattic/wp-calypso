@@ -1,9 +1,4 @@
-import {
-	DomainSuggestions,
-	Site,
-	VerticalsTemplates,
-	WPCOMFeatures,
-} from '@automattic/data-stores';
+import { DomainSuggestions, Site, WPCOMFeatures } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
@@ -16,7 +11,6 @@ import type { Design, FontPair } from '@automattic/design-picker';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-type Template = VerticalsTemplates.Template;
 type Language = {
 	value: number;
 };
@@ -188,11 +182,6 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
-export const togglePageLayout = ( pageLayout: Template ) => ( {
-	type: 'TOGGLE_PAGE_LAYOUT' as const,
-	pageLayout,
-} );
-
 export function updatePlan( planProductId: number ) {
 	// keep updatePlan for backwards compat
 	return setPlanProductId( planProductId );
@@ -226,7 +215,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
-	| typeof togglePageLayout
 	| typeof startOnboarding
 	| typeof enrollInFseBeta
 >;
