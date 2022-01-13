@@ -7,6 +7,7 @@
 Render the component, passing in the properties below. It does not accept any children, nor does it render any elements to the page.
 
 ```tsx
+/* eslint-disable */
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 
