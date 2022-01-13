@@ -91,7 +91,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		return false;
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 	// Calculate the product price.
-	const { originalPrice, priceTierList } = useItemPrice(
+	const { originalPrice, discountedPrice, priceTierList } = useItemPrice(
 		siteId,
 		item,
 		item?.monthlyProductSlug || ''
@@ -192,6 +192,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			headerLevel={ 3 }
 			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
 			originalPrice={ originalPrice }
+			discountedPrice={ discountedPrice }
 			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature || isSuperseded ) }
 			onButtonClick={ () => {

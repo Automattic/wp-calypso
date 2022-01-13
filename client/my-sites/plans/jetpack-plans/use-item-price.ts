@@ -18,6 +18,7 @@ import type { PriceTierEntry } from '@automattic/calypso-products';
 interface ItemPrices {
 	isFetching: boolean | null;
 	originalPrice: number;
+	discountedPrice?: number;
 	priceTierList: PriceTierEntry[];
 }
 
@@ -105,21 +106,26 @@ const useItemPrice = (
 	}
 
 	let originalPrice = 0;
+	let discountedPrice = undefined;
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
 			originalPrice = monthlyItemCost;
+			// we are now displaying the discount WITHOUT the additionally monthly changes
+			discountedPrice = monthlyItemCost;
 		}
 	}
 
 	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
 	if ( item && [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( item.productSlug ) ) {
+		discountedPrice = item.displayPrice || -1;
 		originalPrice = item.displayPrice || -1;
 	}
 
 	return {
 		isFetching,
 		originalPrice,
+		discountedPrice,
 		priceTierList,
 	};
 };
