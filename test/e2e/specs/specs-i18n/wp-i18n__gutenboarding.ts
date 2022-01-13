@@ -20,7 +20,7 @@ describe( 'I18N: Gutenboarding', function () {
 		page = await browser.newPage();
 	} );
 
-	describe.each( envVariables.TEST_LOCALE as ReadonlyArray< string > )(
+	describe.each( envVariables.TEST_LOCALES as ReadonlyArray< string > )(
 		'Locale: %s',
 		function ( locale ) {
 			it( 'Navigate to /new', async function () {
