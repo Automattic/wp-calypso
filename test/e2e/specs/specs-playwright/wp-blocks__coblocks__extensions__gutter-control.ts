@@ -3,7 +3,7 @@
  * @group coblocks
  */
 import {
-	BrowserHelper,
+	envVariables,
 	DataHelper,
 	GutenbergEditorPage,
 	PricingTableBlock,
@@ -12,9 +12,9 @@ import {
 import { Page, Browser } from 'playwright';
 
 let accountName: string;
-if ( BrowserHelper.targetCoBlocksEdge() ) {
+if ( envVariables.COBLOCKS_EDGE ) {
 	accountName = 'coBlocksSimpleSiteEdgeUser';
-} else if ( BrowserHelper.targetGutenbergEdge() ) {
+} else if ( envVariables.GUTENBERG_EDGE ) {
 	accountName = 'gutenbergSimpleSiteEdgeUser';
 } else {
 	accountName = 'gutenbergSimpleSiteUser';

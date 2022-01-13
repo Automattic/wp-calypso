@@ -3,7 +3,7 @@
  * @group coblocks
  */
 import {
-	BrowserHelper,
+	envVariables,
 	DataHelper,
 	MediaHelper,
 	GutenbergEditorPage,
@@ -19,9 +19,9 @@ import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
 let accountName: string;
-if ( BrowserHelper.targetCoBlocksEdge() ) {
+if ( envVariables.COBLOCKS_EDGE ) {
 	accountName = 'coBlocksSimpleSiteEdgeUser';
-} else if ( BrowserHelper.targetGutenbergEdge() ) {
+} else if ( envVariables.GUTENBERG_EDGE ) {
 	accountName = 'gutenbergSimpleSiteEdgeUser';
 } else {
 	accountName = 'gutenbergSimpleSiteUser';
