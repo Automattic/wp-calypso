@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import type { RequestStatus } from 'calypso/state/sites/intro-offers/types';
 import type { AppState } from 'calypso/types';
 
@@ -14,5 +13,5 @@ export default function getIntroOfferRequestStatus(
 	state: AppState,
 	siteId?: number
 ): RequestStatus | null {
-	return get( state.sites.introOffers, `${ siteId ?? 'none' }.requestStatus`, null );
+	return state.sites.introOffers.requestStatus?.[ siteId ?? 'none' ] ?? null;
 }
