@@ -11,5 +11,5 @@ export default function getIntroOfferPrice(
 	productId: number,
 	siteId: number | 'none' = 'none'
 ): number | null {
-	return state.sites.introOffers.items?.[ siteId ?? 'none' ]?.[ productId ]?.rawPrice ?? null;
+	return state.sites?.introOffers?.items?.[ siteId ?? 'none' ]?.[ productId ]?.rawPrice ?? null;
 }

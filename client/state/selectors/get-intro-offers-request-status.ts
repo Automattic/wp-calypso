@@ -13,5 +13,5 @@ export default function getIntroOfferRequestStatus(
 	state: AppState,
 	siteId?: number
 ): RequestStatus | null {
-	return state.sites.introOffers.requestStatus?.[ siteId ?? 'none' ] ?? null;
+	return state.sites?.introOffers?.requestStatus?.[ siteId ?? 'none' ] ?? null;
 }
