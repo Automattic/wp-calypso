@@ -29,6 +29,15 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 		return `${ course.cta.url }/${ selectedSite.domain }`;
 	};
 
+	const getCTADescription = () => {
+		if ( ! course?.cta?.description || course.cta.description === '' ) {
+			return translate(
+				"You did it! Now it's time to put your skills to work and draft your first post."
+			);
+		}
+		return course.cta.description;
+	};
+
 	return (
 		<div className="videos-ui__footer-bar">
 			<div
@@ -40,13 +49,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 					<Gridicon icon="chevron-left" size={ 24 } />
 					<span>{ translate( 'Back' ) }</span>
 				</a>
-				{ isCourseComplete && (
-					<p>
-						{ translate(
-							"You did it! Now it's time to put your skills to work and draft your first post."
-						) }
-					</p>
-				) }
+				{ isCourseComplete && <p>{ getCTADescription() }</p> }
 
 				{ isCourseComplete && (
 					<Button
