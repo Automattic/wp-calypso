@@ -82,9 +82,11 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const cityError = getError( WOOCOMMERCE_STORE_CITY );
 	const postcodeError = getError( WOOCOMMERCE_STORE_POSTCODE );
 	const emailError = getError( WOOCOMMERCE_ONBOARDING_PROFILE );
+
+	const [ submitted, setSubmitted ] = useState( 0 );
 	useEffect( () => {
 		return;
-	}, [ address1Error, address2Error, countryError, cityError, postcodeError, emailError ] );
+	}, [ submitted ] );
 
 	function getContent() {
 		return (
@@ -163,6 +165,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 						<SupportCard />
 						<StyledNextButton
 							onClick={ () => {
+								setSubmitted( submitted + 1 );
 								if ( validate() ) {
 									save();
 									goToStep( 'confirm' );
