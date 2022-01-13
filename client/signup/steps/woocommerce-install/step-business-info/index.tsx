@@ -72,8 +72,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	}
 
 	function getContent() {
-		const profile_data = get( WOOCOMMERCE_ONBOARDING_PROFILE );
-
 		return (
 			<>
 				<div className="step-business-info__info-section" />
@@ -211,7 +209,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 								save();
 								goToNextStep();
 							} }
-							disabled={ ! profile_data }
 						>
 							{ __( 'Continue' ) }
 						</StyledNextButton>
