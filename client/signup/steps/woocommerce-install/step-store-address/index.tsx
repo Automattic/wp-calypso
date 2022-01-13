@@ -9,6 +9,8 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import { ActionSection, StyledNextButton } from '../confirm';
@@ -22,7 +24,6 @@ import {
 	WOOCOMMERCE_ONBOARDING_PROFILE,
 	optionNameType,
 } from '../hooks/use-site-settings';
-import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '..';
 import './style.scss';
 
@@ -37,7 +38,7 @@ const CityZipRow = styled.div`
 `;
 
 export default function StepStoreAddress( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned, headerTitle, headerDescription } = props;
+	const { goToNextStep, isReskinned, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -53,8 +54,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	} );
 
 	const { get, save, update } = useSiteSettings( siteId );
-
-	const { wpcomDomain } = useWooCommerceOnPlansEligibility( siteId );
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
 	const { validate, clearError, getError } = useAddressFormValidation( siteId );
 
@@ -174,7 +174,8 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 								setSubmitted( submitted + 1 );
 								if ( validate() ) {
 									save();
-									goToStep( 'confirm' );
+									dispatch( submitSignupStep( { stepName: 'store-address' } ) );
+									goToNextStep();
 								}
 							} }
 						>
@@ -198,9 +199,8 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 		<StepWrapper
 			flowName="woocommerce-install"
 			hideSkip={ true }
-			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ wpcomDomain }` }
+			backUrl={ `/woocommerce-installation/${ domain }` }
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }
