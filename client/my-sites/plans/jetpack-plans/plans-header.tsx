@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import FormattedHeader from 'calypso/components/formatted-header';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
-import IntroPricingBannerV2 from 'calypso/components/jetpack/intro-pricing-banner-v2';
 import Notice from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
@@ -121,11 +120,8 @@ export default function setJetpackHeader( context: PageJS.Context ): void {
 				context={ context }
 				shouldShowPlanRecommendation={ shouldShowPlanRecommendation }
 			/>
-			{ ! shouldShowPlanRecommendation && config.isEnabled( 'jetpack/pricing-page-v2-banner' ) ? (
-				<IntroPricingBannerV2 />
-			) : (
-				<IntroPricingBanner />
-			) }
+			{ ! shouldShowPlanRecommendation &&
+				! config.isEnabled( 'jetpack/pricing-page-v2-banner' ) && <IntroPricingBanner /> }
 		</>
 	);
 }

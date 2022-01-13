@@ -7,7 +7,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
-import IntroPricingBannerV2 from 'calypso/components/jetpack/intro-pricing-banner-v2';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
@@ -16,8 +15,8 @@ import './style.scss';
 
 export default function StoreHeader(): React.ReactElement {
 	const translate = useTranslate();
-	const partnerSlug = useSelector( ( state ) => getPartnerSlugFromQuery( state ) );
-	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
+	const partnerSlug = useSelector( getPartnerSlugFromQuery );
+	const currentRoute = useSelector( getCurrentRoute );
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 
 	const isStoreLanding =
@@ -29,13 +28,6 @@ export default function StoreHeader(): React.ReactElement {
 	} );
 
 	const useV2Banner = config.isEnabled( 'jetpack/pricing-page-v2-banner' );
-
-	const renderBanner = () => {
-		if ( useV2Banner ) {
-			return <IntroPricingBannerV2 jetpackSaleCoupon={ jetpackSaleCoupon } />;
-		}
-		return jetpackSaleCoupon !== null ? null : <IntroPricingBanner />;
-	};
 
 	return (
 		<>
@@ -55,7 +47,7 @@ export default function StoreHeader(): React.ReactElement {
 					brandFont
 				/>
 			) }
-			{ renderBanner() }
+			{ useV2Banner || jetpackSaleCoupon !== null ? null : <IntroPricingBanner /> }
 		</>
 	);
 }
