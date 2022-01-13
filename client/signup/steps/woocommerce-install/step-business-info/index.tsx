@@ -1,10 +1,11 @@
 import { SelectControl, TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
@@ -19,9 +20,10 @@ import type { WooCommerceInstallProps } from '..';
 import './style.scss';
 
 export default function StepBusinessInfo( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned } = props;
+	const { goToNextStep, isReskinned } = props;
 	const { __ } = useI18n();
 
+	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) as string;
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
@@ -204,9 +206,10 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 						<SupportCard />
 						<StyledNextButton
 							onClick={ () => {
+								dispatch( submitSignupStep( { stepName: 'business-info' } ) );
 								updateOnboardingProfile( 'completed', true );
 								save();
-								goToStep( 'store-address' );
+								goToNextStep();
 							} }
 							disabled={ ! profile_data }
 						>
@@ -229,8 +232,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	return (
 		<StepWrapper
 			flowName="woocommerce-install"
-			hideSkip={ true }
-			nextLabelText={ __( 'Continue' ) }
 			allowBackFirstStep={ true }
 			backUrl={ `/woocommerce-installation/${ siteDomain }` }
 			headerText={ __( 'Tell us a bit about your business' ) }
