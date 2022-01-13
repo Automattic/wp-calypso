@@ -12,7 +12,7 @@ import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 
 export default function listProductPrice( { siteId, productId, productPrice } ) {
 	const introOfferPrice = useSelector( ( state ) =>
-		getIntroOfferPrice( state, siteId, productId )
+		getIntroOfferPrice( state, productId, siteId )
 	);
 
 	return (
