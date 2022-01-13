@@ -33,6 +33,8 @@ export class BlockWidgetEditorComponent {
 	 * 	- Welcome Tour
 	 */
 	async dismissModals(): Promise< void > {
+		await this.page.waitForLoadState( 'networkidle' );
+
 		const locators = [
 			this.page.locator( selectors.welcomeModalDismissButton ),
 			this.page.locator( selectors.welcomeTourDismissButton ),
@@ -40,6 +42,11 @@ export class BlockWidgetEditorComponent {
 
 		for await ( const locator of locators ) {
 			try {
+				// Whether Welcome Tour appears is not deterministic.
+				// If it is not present, exit early.
+				if ( ( await locator.count() ) === 0 ) {
+					return;
+				}
 				await locator.click( { timeout: 10 * 1000 } );
 			} catch {
 				//noop
