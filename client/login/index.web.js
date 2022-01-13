@@ -35,7 +35,7 @@ const ReduxWrappedLayout = ( {
 	primary,
 	secondary,
 	redirectUri,
-	requestCookies,
+	shouldRenderGdprBannerOnServer,
 } ) => {
 	return (
 		<RouteProvider
@@ -48,7 +48,7 @@ const ReduxWrappedLayout = ( {
 					primary={ primary }
 					secondary={ secondary }
 					redirectUri={ redirectUri }
-					requestCookies={ requestCookies }
+					shouldRenderGdprBannerOnServer={ shouldRenderGdprBannerOnServer }
 				/>
 			</ReduxProvider>
 		</RouteProvider>

@@ -13,6 +13,7 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import { getCountryCodeFromCookies, shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -93,7 +94,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, entrypoint = 'entry-main' ) {
+function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
@@ -116,6 +117,13 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 
 	const reduxStore = createReduxStore( initialServerState );
 	setStore( reduxStore );
+
+	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
+	const shouldRenderGdprBannerOnServer = shouldSeeGdprBanner( request.cookies, geoIPCountryCode );
+
+	if ( ! getCountryCodeFromCookies( request.cookies ) && geoIPCountryCode ) {
+		response.cookie( 'country_code', geoIPCountryCode );
+	}
 
 	const flags = ( request.query.flags || '' ).split( ',' );
 	const context = Object.assign( {}, request.context, {
@@ -142,7 +150,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
-		requestCookies: request.cookies,
+		shouldRenderGdprBannerOnServer,
 	} );
 
 	context.app = {
@@ -196,7 +204,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 }
 
 const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
-	req.context = getDefaultContext( req, entrypoint );
+	req.context = getDefaultContext( req, res, entrypoint );
 	next();
 };
 

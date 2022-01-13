@@ -5,10 +5,13 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { isCurrentUserMaybeInGdprZone } from 'calypso/lib/analytics/utils';
+import {
+	getCountryCodeFromCookies,
+	refreshCountryCodeCookieGdpr,
+	shouldSeeGdprBanner,
+} from 'calypso/lib/analytics/utils';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
@@ -21,27 +24,32 @@ const STATUS = {
 	HIDING: 'hiding', // Only used when the user clicks to accept.
 };
 
-const hasDocument = typeof document !== 'undefined';
-
-function shouldShowBanner( requestCookies ) {
-	const cookies = hasDocument ? cookie.parse( document.cookie ) : requestCookies;
-	if ( cookies.sensitive_pixel_option === 'yes' || cookies.sensitive_pixel_option === 'no' ) {
-		return false;
-	}
-	if ( isWpMobileApp() ) {
-		return false;
-	}
-	if ( isCurrentUserMaybeInGdprZone( cookies ) ) {
-		return true;
-	}
-	return false;
-}
+const isServer = typeof document === 'undefined';
 
 function GdprBanner( props ) {
-	const { recordCookieBannerOk, recordCookieBannerView, requestCookies } = props;
+	const { recordCookieBannerOk, recordCookieBannerView, shouldRenderGdprBannerOnServer } = props;
+	let country;
+	let cookies;
 
-	const shouldShow = shouldShowBanner( requestCookies );
+	if ( ! isServer ) {
+		cookies = cookie.parse( document.cookie );
+		country = getCountryCodeFromCookies( cookies );
+	}
+
+	const shouldShow = isServer ? shouldRenderGdprBannerOnServer : shouldSeeGdprBanner( cookies );
 	const [ bannerStatus, setBannerStatus ] = useState( shouldShow ? STATUS.VISIBLE : STATUS.HIDDEN );
+
+	const [ waitingForCountry, setWaitingForCountry ] = useState( ! isServer && ! country );
+	useEffect( () => {
+		if ( waitingForCountry ) {
+			refreshCountryCodeCookieGdpr().then( () => {
+				cookies = cookie.parse( document.cookie );
+				setBannerStatus( shouldSeeGdprBanner( cookies ) ? STATUS.VISIBLE : STATUS.HIDDEN );
+				setWaitingForCountry( false );
+			} );
+		}
+	}, [ waitingForCountry ] );
+
 	const translate = useTranslate();
 
 	const acknowledgeClicked = () => {
@@ -56,6 +64,10 @@ function GdprBanner( props ) {
 	useEffect( () => {
 		bannerStatus === STATUS.VISIBLE && recordCookieBannerView();
 	}, [ bannerStatus, recordCookieBannerView ] );
+
+	if ( waitingForCountry ) {
+		return null;
+	}
 
 	const copy = translate(
 		'Our websites and dashboards use cookies. By continuing, you agree to their use. ' +

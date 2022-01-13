@@ -36,14 +36,12 @@ const GDPR_COUNTRIES = [
 ];
 
 /**
- * Returns a boolean telling whether the current user could be in the GDPR zone.
+ * Returns a boolean telling whether a country is in the GDPR zone.
  *
- * @param cookies The cookies to read user data from.
+ * @param countryCode The country code to look for.
  *
- * @returns Whether the current user could be in the GDPR zone
+ * @returns Whether the country is in the GDPR zone
  */
-export default function isCurrentUserMaybeInGdprZone( cookies: Record< string, string > ): boolean {
-	const countryCode = ( cookies || {} ).country_code;
-
-	return ! countryCode || 'unknown' === countryCode || GDPR_COUNTRIES.includes( countryCode );
+export default function isCountryInGdprZone( countryCode: string | undefined ): boolean {
+	return countryCode !== undefined && GDPR_COUNTRIES.includes( countryCode );
 }

@@ -1,9 +1,12 @@
 import cookie from 'cookie';
 import debug from './debug';
-import isCurrentUserMaybeInGdprZone from './is-current-user-maybe-in-gdpr-zone';
+import getCountryCodeFromCookies from './get-country-code-from-cookies';
+import isCountryInGdprZone from './is-country-in-gdpr-zone';
 
 /**
  * Returns a boolean telling whether we may track the current user.
+ *
+ * WARNING: this function only works on the client side.
  *
  * @returns Whether we may track the current user
  */
@@ -15,7 +18,8 @@ export default function mayWeTrackCurrentUserGdpr(): boolean {
 	} else if ( cookies.sensitive_pixel_option === 'no' ) {
 		result = false;
 	} else {
-		result = ! isCurrentUserMaybeInGdprZone( cookies );
+		const countryCode = getCountryCodeFromCookies( cookies );
+		result = countryCode !== undefined && ! isCountryInGdprZone( countryCode );
 	}
 	debug( `mayWeTrackCurrentUserGdpr: ${ result }` );
 	return result;
