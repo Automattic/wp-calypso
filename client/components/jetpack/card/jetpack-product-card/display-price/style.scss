@@ -197,18 +197,17 @@
 
 .jetpack-product-card__heading {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
-	height: 64px;
-	margin: 0.75rem 0 1.25rem;
+	margin: 0.75rem 0 0.75rem;
 }
 
 .jetpack-product-card__discount-label {
 	display: inline-block;
 
 	padding: 0.125rem 0.5rem;
-	margin: 0.5rem 0;
+	margin: 0.25rem 0;
 
 	background-color: var( --studio-yellow-10 );
 	border-radius: 4px;

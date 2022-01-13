@@ -19,15 +19,15 @@ describe( 'useCouponDiscount', () => {
 		expect( result.current ).toEqual( {} );
 	} );
 
-	test( 'should apply the default discount for a monthly term', () => {
+	test( 'should not apply the default discount for a monthly term', () => {
 		const originalPrice = 100;
 		const { result } = renderHook( () => useCouponDiscount( TERM_MONTHLY, originalPrice ), {
 			wrapper: wrapper(),
 		} );
 
 		expect( result.current ).toEqual( {
-			price: originalPrice * ( 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 ),
-			discount: INTRO_PRICING_DISCOUNT_PERCENTAGE,
+			price: originalPrice,
+			discount: 0,
 		} );
 	} );
 
@@ -40,19 +40,6 @@ describe( 'useCouponDiscount', () => {
 		expect( result.current ).toEqual( {
 			price: originalPrice * ( 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 ),
 			discount: INTRO_PRICING_DISCOUNT_PERCENTAGE,
-		} );
-	} );
-
-	test( 'should apply the coupon', () => {
-		const originalPrice = 100;
-		const couponPercentage = 50;
-		const { result } = renderHook( () => useCouponDiscount( TERM_ANNUALLY, originalPrice ), {
-			wrapper: wrapper( couponPercentage ),
-		} );
-
-		expect( result.current ).toEqual( {
-			price: originalPrice * ( 1 - couponPercentage / 100 ),
-			discount: couponPercentage,
 		} );
 	} );
 

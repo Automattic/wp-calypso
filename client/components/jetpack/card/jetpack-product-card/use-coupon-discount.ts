@@ -13,28 +13,32 @@ export default function useCouponDiscount(
 	discount?: number;
 } {
 	const jetpackSaleDiscountRatio = useSelector( getJetpackSaleCouponDiscountRatio );
+	const introDiscountRatio =
+		billingTerm === TERM_ANNUALLY ? INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 : 0;
 
 	if ( ! originalPrice ) {
 		return {};
 	}
 
-	// add the intro discount and any Jetpack sale together
-	const couponDiscountRatio =
-		( billingTerm === TERM_ANNUALLY ? INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 : 0 ) +
-		jetpackSaleDiscountRatio;
+	// // add the intro discount and any Jetpack sale together
+	// const couponDiscountRatio =
+	// 	( billingTerm === TERM_ANNUALLY ? INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 : 0 ) +
+	// 	jetpackSaleDiscountRatio;
 
 	const finalPrice =
-		couponDiscountRatio > 0
-			? Math.floor( ( originalPrice ?? discountedPrice ) * ( 1 - couponDiscountRatio ) * 100 ) / 100
-			: originalPrice ?? discountedPrice;
+		Math.floor(
+			( originalPrice ?? discountedPrice ) *
+				( 1 - jetpackSaleDiscountRatio ) *
+				( 1 - introDiscountRatio ) *
+				100
+		) / 100;
 
-	const finalDiscount =
-		couponDiscountRatio > 0
-			? Math.floor( ( ( originalPrice - finalPrice ) / originalPrice ) * 100 )
-			: 0;
+	const finalDiscount = Math.floor( ( ( originalPrice - finalPrice ) / originalPrice ) * 100 );
+
+	const hasDiscount = jetpackSaleDiscountRatio > 0 || introDiscountRatio > 0;
 
 	return {
-		price: finalPrice,
-		discount: finalDiscount,
+		price: hasDiscount ? finalPrice : originalPrice ?? discountedPrice,
+		discount: hasDiscount ? finalDiscount : 0,
 	};
 }
