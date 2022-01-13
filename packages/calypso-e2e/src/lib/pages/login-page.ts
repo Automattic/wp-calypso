@@ -45,7 +45,7 @@ export class LoginPage {
 	 * Fills the username input.
 	 */
 	async fillUsername( value: string ): Promise< Locator > {
-		const locator = await this.page.locator( 'input#usernameOrEmail' );
+		const locator = await this.page.locator( 'input[name="usernameOrEmail"]' );
 		await locator.fill( value );
 
 		return locator;
