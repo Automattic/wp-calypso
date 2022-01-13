@@ -185,7 +185,7 @@ export function ContactInformation( {
 		<FlexContainer>
 			<TextInputField
 				{ ...displayEmailProps }
-				label={ translate( 'E-mail address' ) }
+				label={ translate( 'Email address' ) }
 				placeholder="name@example.com"
 				onChange={ onChange }
 			/>
