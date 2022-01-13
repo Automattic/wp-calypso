@@ -23,7 +23,6 @@ export type EmailProviderFeatures = {
 	storage: TranslateResult;
 	importing: TranslateResult;
 	support: TranslateResult;
-	selectCallback: () => void;
 };
 
 export type EmailProvidersInDepthComparisonProps = {

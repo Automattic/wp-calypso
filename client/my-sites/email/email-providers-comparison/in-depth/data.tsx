@@ -7,9 +7,6 @@ import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getTitanProductName } from 'calypso/lib/titan';
 import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
 export const professionalEmailFeatures: EmailProviderFeatures = {
 	slug: 'professional-email',
 	name: getTitanProductName(),
@@ -18,7 +15,6 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 	storage: translate( '30GB storage' ),
 	importing: translate( 'One-click import of existing emails and contacts' ),
 	support: translate( '24/7 support via email' ),
-	selectCallback: noop,
 };
 
 export const googleWorkspaceFeatures: EmailProviderFeatures = {
@@ -35,5 +31,4 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	storage: translate( '30GB storage' ),
 	importing: translate( 'Easy to import your existing emails and contacts' ),
 	support: translate( '24/7 support via email' ),
-	selectCallback: noop,
 };
