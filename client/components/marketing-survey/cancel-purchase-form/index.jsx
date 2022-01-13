@@ -1214,7 +1214,7 @@ class CancelPurchaseForm extends Component {
 
 		try {
 			const res = await wpcom.req.get( {
-				path: `/purchases/${ purchaseId }/has-extendedd`,
+				path: `/purchases/${ purchaseId }/has-extended`,
 				apiNamespace: 'wpcom/v2',
 			} );
 
