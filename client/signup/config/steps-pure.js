@@ -740,7 +740,6 @@ export function generateSteps( {
 		'business-info': {
 			stepName: 'business-info',
 			dependencies: [ 'site' ],
-			providesDependencies: [ 'businessInfoComplete' ],
 		},
 		'store-address': {
 			stepName: 'store-address',
