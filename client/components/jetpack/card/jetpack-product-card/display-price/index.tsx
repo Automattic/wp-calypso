@@ -25,7 +25,7 @@ type OwnProps = {
 	isIncludedInPlan?: boolean;
 	isOwned?: boolean;
 	showAbovePriceText?: boolean;
-	originalPrice: number;
+	originalPrice?: number;
 	productName: TranslateResult;
 	tooltipText?: TranslateResult | ReactNode;
 };
@@ -78,7 +78,6 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 			displayFrom={ displayFrom }
 			tooltipText={ tooltipText }
 			expiryDate={ expiryDate }
-			hideSavingLabel={ hideSavingLabel }
 		/>
 	);
 };
