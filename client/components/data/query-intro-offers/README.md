@@ -6,11 +6,11 @@
 
 Render the component, passing in the properties below. It does not accept any children, nor does it render any elements to the page.
 
-```jsx
+```tsx
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 
-export default function listProductPrice( { siteId, productId, productPrice } ) {
+const listProductPrice: React.FC = ( { siteId, productId, productPrice } ) =>  {
 	const introOfferPrice = useSelector( ( state ) =>
 		getIntroOfferPrice( state, productId, siteId )
 	);
