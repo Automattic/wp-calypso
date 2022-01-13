@@ -53,8 +53,8 @@ export const MarketPlaceSubscriptionsDialog = ( {
 				</FormSectionHeading>
 				<p>
 					{ translate(
+						'The following subscription depends on your plan:',
 						'The following subscriptions depend on your plan:',
-						'When you downgrade your plan, the following subscriptions will remain active:',
 						{ count: activeSubscriptions.length }
 					) }
 				</p>
