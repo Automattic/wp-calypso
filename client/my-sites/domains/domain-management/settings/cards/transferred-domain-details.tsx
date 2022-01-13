@@ -42,12 +42,15 @@ const TransferredDomainDetails = ( {
 		if ( transferStatus.PENDING_START === domain.transferStatus ) {
 			return currentUserIsOwner
 				? translate(
-						'We need you to complete a couple of steps before we can transfer %(domain)s from your ' +
+						'We need you to complete a couple of steps before we can transfer {{strong}}%(domain)s{{/strong}} from your ' +
 							'current domain provider to WordPress.com. Your domain will stay at your current provider ' +
 							'until the transfer is completed.',
 						{
 							args: {
 								domain: name,
+							},
+							components: {
+								strong: <strong />,
 							},
 						}
 				  )
