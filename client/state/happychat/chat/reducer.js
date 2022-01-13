@@ -93,7 +93,7 @@ const timelineEvent = ( state = {}, action ) => {
 
 const getEventTimestamp = ( event ) => parseInt( event.timestamp, 10 );
 const timelineSortCmp = ( a, b ) => getEventTimestamp( a ) - getEventTimestamp( b );
-const sortTimeline = ( timeline ) => timeline.concat().sort( timelineSortCmp );
+const sortTimeline = ( timeline ) => timeline.slice().sort( timelineSortCmp );
 
 /**
  * Adds timeline events for happychat
@@ -107,7 +107,7 @@ const timelineReducer = ( state = [], action ) => {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC: {
 			// if meta.forOperator is set, skip so won't show to user
-			if ( action.message.meta?.forOperator ?? false ) {
+			if ( action.message.meta?.forOperator ) {
 				return state;
 			}
 			const event = timelineEvent( {}, action );
@@ -138,7 +138,7 @@ const timelineReducer = ( state = [], action ) => {
 					}
 
 					// if meta.forOperator is set, skip so won't show to user
-					if ( message.meta?.forOperator ?? false ) {
+					if ( message.meta?.forOperator ) {
 						return false;
 					}
 
