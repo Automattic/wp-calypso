@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import { ActionSection, StyledNextButton } from '../confirm';
@@ -23,11 +24,12 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) as string;
+	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
 
 	const { get, save, update } = useSiteSettings( siteId );
 
 	function updateProductTypes( type: string ) {
-		updateOnboardingProfile( 'product_type', type );
+		updateOnboardingProfile( 'product_types', type );
 	}
 
 	function updateProductCount( count: string ) {
@@ -36,6 +38,10 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	function updateSellingVenues( venue: string ) {
 		updateOnboardingProfile( 'selling_venues', venue );
+	}
+
+	function updateRevenue( venue: string ) {
+		updateOnboardingProfile( 'revenue', venue );
 	}
 
 	function updateOtherPlatform( platform: string ) {
@@ -47,11 +53,20 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	}
 
 	function updateOnboardingProfile( key: string, value: string | boolean ) {
-		const profile_data = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
+		const onboardingProfile = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
 
-		profile_data[ key ] = value;
+		const updatedOnboardingProfile = {
+			...onboardingProfile,
+			[ key ]: value,
+		};
 
-		update( WOOCOMMERCE_ONBOARDING_PROFILE, profile_data );
+		update( WOOCOMMERCE_ONBOARDING_PROFILE, updatedOnboardingProfile );
+	}
+
+	function getProfileValue( key: string ) {
+		const onboardingProfile = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
+
+		return onboardingProfile[ key ] || '';
 	}
 
 	function getContent() {
@@ -63,7 +78,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 				<div className="step-business-info__instructions-container">
 					<SelectControl
 						label={ __( 'What type of products will be listed?', 'woocommerce-admin' ) }
-						value={ profile_data?.product_types?.shift() }
+						value={ getProfileValue( 'product_types' ) }
 						options={ [
 							{ value: '', label: '' },
 							{ value: 'physical', label: __( 'Physical Products', 'woocommerce-admin' ) },
@@ -75,7 +90,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 					<SelectControl
 						label={ __( 'How many products do you plan to display?', 'woocommerce-admin' ) }
-						value={ '' }
+						value={ getProfileValue( 'product_count' ) }
 						options={ [
 							{ value: '', label: '' },
 							{ value: '0', label: __( "I don't have any products yet.", 'woocommerce-admin' ) },
@@ -89,7 +104,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 					<SelectControl
 						label={ __( 'Currently selling elsewhere?', 'woocommerce-admin' ) }
-						value={ '' }
+						value={ getProfileValue( 'selling_venues' ) }
 						options={ [
 							{ value: '', label: '' },
 							{ value: 'no', label: __( 'No', 'woocommerce-admin' ) },
@@ -117,21 +132,23 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 					/>
 
 					{ [ 'other', 'brick-mortar', 'brick-mortar-other', 'other-woocommerce' ].includes(
-						profile_data?.selling_venues
+						getProfileValue( 'selling_venues' )
 					) && (
 						<SelectControl
 							label={ __( "What's your current annual revenue?", 'woocommerce-admin' ) }
-							value={ '' }
+							value={ getProfileValue( 'revenue' ) }
 							options={ getRevenueOptions( currencyCode, get( WOOCOMMERCE_DEFAULT_COUNTRY ) ) }
-							onChange={ updateSellingVenues }
+							onChange={ updateRevenue }
 						/>
 					) }
 
-					{ [ 'other', 'brick-mortar-other' ].includes( profile_data?.selling_venues ) && (
+					{ [ 'other', 'brick-mortar-other' ].includes( getProfileValue( 'selling_venues' ) ) && (
 						<>
 							<SelectControl
 								label={ __( 'Which platform is the store using?', 'woocommerce-admin' ) }
+								value={ getProfileValue( 'other_platform' ) }
 								options={ [
+									{ value: '', label: '' },
 									{
 										value: 'shopify',
 										label: __( 'Shopify', 'woocommerce-admin' ),
@@ -173,11 +190,11 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 								required
 							/>
 
-							{ profile_data?.other_platform === 'other' && (
+							{ getProfileValue( 'other_platform' ) === 'other' && (
 								<TextControl
 									label={ __( 'What is the platform name?', 'woocommerce-admin' ) }
 									onChange={ updateOtherPlatformName }
-									value=""
+									value={ getProfileValue( 'other_platform_name' ) }
 								/>
 							) }
 						</>
@@ -215,11 +232,11 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 			hideSkip={ true }
 			nextLabelText={ __( 'Continue' ) }
 			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ wpcomDomain }` }
+			backUrl={ `/woocommerce-installation/${ siteDomain }` }
 			headerText={ __( 'Tell us a bit about your business' ) }
 			fallbackHeaderText={ __( 'Tell us a bit about your business' ) }
-			subHeaderText={ __( 'We will guide to get started based on your responses.' ) }
-			fallbackSubHeaderText={ __( 'We will guide to get started based on your responses.' ) }
+			subHeaderText={ __( 'We will guide you to get started based on your responses.' ) }
+			fallbackSubHeaderText={ __( 'We will guide you to get started based on your responses.' ) }
 			align={ isReskinned ? 'left' : 'center' }
 			stepContent={ getContent() }
 			isWideLayout={ isReskinned }

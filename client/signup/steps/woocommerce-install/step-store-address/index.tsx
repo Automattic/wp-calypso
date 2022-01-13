@@ -48,7 +48,6 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-<<<<<<< HEAD
 	const countriesList = useSelector( ( state ) => getCountries( state, 'woocommerce' ) ) || [];
 	const countriesAsOptions = Object.entries( countriesList ).map( ( [ key, value ] ) => {
 		return { value: key, label: value };
@@ -56,9 +55,6 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 	const { get, save, update } = useSiteSettings( siteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-=======
-	const { get, save, update, countriesList } = useSiteSettings( siteId );
->>>>>>> 9e3ed4ed9e (Update with more dropdowns and improved navigation)
 
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 
