@@ -142,7 +142,7 @@ object BuildDockerImage : BuildType({
 			scriptContent = """
 				#!/usr/bin/env bash
 
-				# This step is ALWAYS run, so we can know if build succeeded or failed.
+				# This step is ALWAYS run, so we know if the build succeeded or failed.
 
 				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
 					exit 0
