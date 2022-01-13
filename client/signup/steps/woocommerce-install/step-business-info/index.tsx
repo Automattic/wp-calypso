@@ -26,6 +26,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) as string;
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
 
 	const { get, save, update } = useSiteSettings( siteId );
@@ -46,6 +47,10 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	function updateSellingVenues( venue: string ) {
 		updateOnboardingProfile( 'selling_venues', venue );
+	}
+
+	function updateRevenue( venue: string ) {
+		updateOnboardingProfile( 'revenue', venue );
 	}
 
 	function updateOtherPlatform( platform: string ) {
@@ -136,6 +141,17 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 						] }
 						onChange={ updateSellingVenues }
 					/>
+
+					{ [ 'other', 'brick-mortar', 'brick-mortar-other', 'other-woocommerce' ].includes(
+						getProfileValue( 'selling_venues' )
+					) && (
+						<SelectControl
+							label={ __( "What's your current annual revenue?", 'woocommerce-admin' ) }
+							value={ getProfileValue( 'revenue' ) }
+							options={ getRevenueOptions( currencyCode, get( WOOCOMMERCE_DEFAULT_COUNTRY ) ) }
+							onChange={ updateRevenue }
+						/>
+					) }
 
 					{ [ 'other', 'brick-mortar-other' ].includes( getProfileValue( 'selling_venues' ) ) && (
 						<>
