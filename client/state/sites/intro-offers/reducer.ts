@@ -8,7 +8,7 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { IntroOffer, ResponseIntroOffer, RequestStatus } from './types';
 import type { Action } from 'redux';
 
-interface IntroOfferReceiveAction extends Action {
+export interface IntroOfferReceiveAction extends Action {
 	payload?: ResponseIntroOffer[];
 }
 
