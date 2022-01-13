@@ -1,10 +1,11 @@
-import { Gridicon, ProgressBar } from '@automattic/components';
+import { ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
 import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
 import { UploadingPane as UploadingPaneBase } from 'calypso/my-sites/importer/uploading-pane';
+import { upload } from 'calypso/signup/icons';
 import { startMappingAuthors, startUpload } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
@@ -21,7 +22,7 @@ export class UploadingPane extends UploadingPaneBase {
 		// Override base component only where we are uploading something
 		if ( importerState === appStates.UPLOAD_PROCESSING || importerState === appStates.UPLOADING ) {
 			const uploadPercent = percentComplete;
-			const progressClasses = classNames( 'uploading-plane__upload-progress', {
+			const progressClasses = classNames( {
 				'is-complete': uploadPercent > 95,
 			} );
 			const uploaderPrompt =
@@ -70,8 +71,7 @@ export class UploadingPane extends UploadingPaneBase {
 					onKeyPress={ isReadyForImport ? this.handleKeyPress : undefined }
 				>
 					<div className={ importerStatusClasses }>
-						<Gridicon size={ 48 } className="uploading-pane__upload-icon" icon={ 'cloud-upload' } />
-						{ this.getUploadMessage() }
+						{ upload } { this.getUploadMessage() }
 					</div>
 					{ isReadyForImport && (
 						<input
@@ -81,7 +81,10 @@ export class UploadingPane extends UploadingPaneBase {
 							onChange={ this.initiateFromForm }
 						/>
 					) }
-					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
+					<DropZone
+						onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop }
+						icon={ upload }
+					/>
 				</div>
 				<p className="uploading-pane__description">{ this.props.description }</p>
 			</div>
