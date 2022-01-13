@@ -18,7 +18,7 @@ export interface ProviderCard {
 	footerBadge?: ReactElement | null;
 	formFields?: ReactElement;
 	logo?: ReactElement | { path: string; className?: string };
-	logoFeatures?: LogoFeature[];
+	appLogos?: LogoFeature[];
 	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
 	priceBadge?: ReactElement | TranslateResult | null;
 	productName: TranslateResult;

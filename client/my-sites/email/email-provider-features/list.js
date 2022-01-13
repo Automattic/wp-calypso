@@ -11,37 +11,38 @@ const getEmailForwardingFeatures = () => {
 };
 
 const getGoogleAppLogos = () => {
-	const options = { textOnly: true };
+	const translateOptions = { textOnly: true };
+
 	return [
 		{
 			image: gmailIcon,
-			imageAltText: translate( 'Gmail icon', options ),
-			title: translate( 'Gmail', options ),
+			imageAltText: translate( 'Gmail icon', translateOptions ),
+			title: translate( 'Gmail', translateOptions ),
 		},
 		{
 			image: googleCalendarIcon,
-			imageAltText: translate( 'Google Calendar icon', options ),
-			title: translate( 'Google Calendar', options ),
+			imageAltText: translate( 'Google Calendar icon', translateOptions ),
+			title: translate( 'Google Calendar', translateOptions ),
 		},
 		{
 			image: googleDriveIcon,
-			imageAltText: translate( 'Google Drive icon', options ),
-			title: translate( 'Google Drive', options ),
+			imageAltText: translate( 'Google Drive icon', translateOptions ),
+			title: translate( 'Google Drive', translateOptions ),
 		},
 		{
 			image: googleDocsIcon,
-			imageAltText: translate( 'Google Docs icon', options ),
-			title: translate( 'Google Docs', options ),
+			imageAltText: translate( 'Google Docs icon', translateOptions ),
+			title: translate( 'Google Docs', translateOptions ),
 		},
 		{
 			image: googleSheetsIcon,
-			imageAltText: translate( 'Google Sheets icon', options ),
-			title: translate( 'Google Sheets', options ),
+			imageAltText: translate( 'Google Sheets icon', translateOptions ),
+			title: translate( 'Google Sheets', translateOptions ),
 		},
 		{
 			image: googleSlidesIcon,
-			imageAltText: translate( 'Google Slides icon', options ),
-			title: translate( 'Google Slides', options ),
+			imageAltText: translate( 'Google Slides icon', translateOptions ),
+			title: translate( 'Google Slides', translateOptions ),
 		},
 	];
 };

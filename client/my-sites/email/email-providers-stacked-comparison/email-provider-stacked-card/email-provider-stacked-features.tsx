@@ -31,12 +31,12 @@ export interface LogoFeature {
 
 export interface EmailProviderStackedFeaturesProps {
 	features: TranslateResult[];
-	logoFeatures: LogoFeature[];
+	appLogos: LogoFeature[];
 }
 
 export const EmailProviderStackedFeatures = ( {
 	features,
-	logoFeatures,
+	appLogos,
 }: EmailProviderStackedFeaturesProps ): ReactElement | null => {
 	const translate = useTranslate();
 
@@ -49,12 +49,14 @@ export const EmailProviderStackedFeatures = ( {
 			<span className={ 'email-provider-stacked-features__whats-included' }>
 				{ translate( "What's included:" ) }
 			</span>
+
 			{ features.map( ( feature, index ) => (
 				<EmailProviderStackedFeature key={ index } title={ feature } />
 			) ) }
-			{ logoFeatures && (
+
+			{ appLogos && (
 				<div className="email-provider-stacked-features__logos">
-					{ logoFeatures.map( ( { image, imageAltText, title }, index ) => (
+					{ appLogos.map( ( { image, imageAltText, title }, index ) => (
 						<img alt={ imageAltText } key={ index } src={ image } title={ title } />
 					) ) }
 				</div>

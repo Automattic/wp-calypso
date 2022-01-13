@@ -74,7 +74,7 @@ const googleWorkspaceCardInformation: ProviderCard = {
 		'Professional email integrated with Google Meet and other productivity tools from Google.'
 	),
 	logo: { path: googleWorkspaceIcon, className: 'google-workspace-icon' },
-	logoFeatures: getGoogleAppLogos(),
+	appLogos: getGoogleAppLogos(),
 	productName: getGoogleMailServiceFamily(),
 	features: getGoogleFeatures(),
 };
