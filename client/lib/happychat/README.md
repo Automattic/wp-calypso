@@ -66,6 +66,5 @@ Any `request` action uses the `connection.request` method. Its creator name conv
   payload: ... // contents to be sent, can be anything: object, string, etc
   timeout: timeout,
   callback: receiveTranscript,
-  callbackTimeout: receiveTranscriptTimeout,
 }
 ```

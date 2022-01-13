@@ -4,7 +4,6 @@ import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
-	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 } from 'calypso/state/action-types';
 import {
@@ -126,9 +125,6 @@ const timelineReducer = ( state = [], action ) => {
 			return index === -1
 				? state
 				: [ ...state.slice( 0, index ), timelineEvent( {}, action ), ...state.slice( index + 1 ) ];
-		}
-		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT: {
-			return state;
 		}
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE: {
 			const messages =
