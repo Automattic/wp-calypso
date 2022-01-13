@@ -10,16 +10,22 @@ import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-provide
 export const professionalEmailFeatures: EmailProviderFeatures = {
 	slug: 'professional-email',
 	name: getTitanProductName(),
+	description: translate( 'Integrated email solution for your WordPress.com site.' ),
 	logo: <Gridicon className="professional-email-logo" icon="my-sites" />,
-	tools: translate( 'Integrated email management, Inbox, calendar and contacts' ),
-	storage: translate( '30GB storage' ),
-	importing: translate( 'One-click import of existing emails and contacts' ),
-	support: translate( '24/7 support via email' ),
+	list: {
+		importing: translate( 'One-click import of existing emails and contacts' ),
+		storage: translate( '30GB storage' ),
+		support: translate( '24/7 support via email' ),
+		tools: translate( 'Integrated email management, Inbox, Calendar and Contacts' ),
+	},
 };
 
 export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	slug: 'google-workspace',
 	name: getGoogleMailServiceFamily(),
+	description: translate(
+		'Professional email integrated with Google Meet and other productivity tools from Google.'
+	),
 	logo: (
 		<img
 			alt={ translate( 'Google Workspace icon', { textOnly: true } ) }
@@ -27,8 +33,10 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 			src={ googleWorkspaceIcon }
 		/>
 	),
-	tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Slides and more' ),
-	storage: translate( '30GB storage' ),
-	importing: translate( 'Easy to import your existing emails and contacts' ),
-	support: translate( '24/7 support via email' ),
+	list: {
+		importing: translate( 'Easy to import your existing emails and contacts' ),
+		storage: translate( '30GB storage' ),
+		support: translate( '24/7 support via email' ),
+		tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Slides and more' ),
+	},
 };
