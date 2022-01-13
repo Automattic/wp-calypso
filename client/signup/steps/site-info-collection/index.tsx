@@ -213,7 +213,7 @@ function SiteInformationCollection( {
 	};
 
 	return (
-		<div>
+		<>
 			{ sections.map( ( section, index ) => (
 				<SectionWrapper
 					key={ `${ index }` }
@@ -227,7 +227,7 @@ function SiteInformationCollection( {
 					onOpen={ () => onOpen( index ) }
 				/>
 			) ) }
-		</div>
+		</>
 	);
 }
 

@@ -133,7 +133,7 @@ export function SocialMediaProfiles( {
 		</SocialMediaLabel>
 	);
 	return (
-		<div>
+		<>
 			<Label>
 				{ translate( 'Please enter the following Social Media profile links if you have any.' ) }
 			</Label>
@@ -163,7 +163,7 @@ export function SocialMediaProfiles( {
 					onChange={ onChange }
 				/>
 			</FlexContainer>
-		</div>
+		</>
 	);
 }
 
