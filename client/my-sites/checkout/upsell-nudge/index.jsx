@@ -429,10 +429,12 @@ export class UpsellNudge extends Component {
 		// as we need to handle validation failures before redirecting to checkout.
 		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType ) {
 			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).then( () => {
-				const { errors } = this.props?.cart?.messages;
-				if ( errors && errors.length ) {
-					// Stay on the page to show the relevant error(s)
-					return;
+				if ( this.props?.cart?.messages ) {
+					const { errors } = this.props.cart.messages;
+					if ( errors && errors.length ) {
+						// Stay on the page to show the relevant error(s)
+						return;
+					}
 				}
 				page( '/checkout/' + siteSlug );
 			} );
