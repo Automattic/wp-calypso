@@ -4,18 +4,12 @@ import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import { ActionSection, StyledNextButton } from '../confirm';
-import {
-	useSiteSettings,
-	WOOCOMMERCE_DEFAULT_COUNTRY,
-	WOOCOMMERCE_ONBOARDING_PROFILE,
-} from '../hooks/use-site-settings';
-import { getRevenueOptions } from './revenue-options';
+import { useSiteSettings, WOOCOMMERCE_ONBOARDING_PROFILE } from '../hooks/use-site-settings';
 import type { WooCommerceInstallProps } from '..';
 import './style.scss';
 
@@ -25,7 +19,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const currencyCode = useSelector( getCurrentUserCurrencyCode ) as string;
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
 
 	const { get, save, update } = useSiteSettings( siteId );
@@ -40,10 +33,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	function updateSellingVenues( venue: string ) {
 		updateOnboardingProfile( 'selling_venues', venue );
-	}
-
-	function updateRevenue( venue: string ) {
-		updateOnboardingProfile( 'revenue', venue );
 	}
 
 	function updateOtherPlatform( platform: string ) {
@@ -130,17 +119,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 						] }
 						onChange={ updateSellingVenues }
 					/>
-
-					{ [ 'other', 'brick-mortar', 'brick-mortar-other', 'other-woocommerce' ].includes(
-						getProfileValue( 'selling_venues' )
-					) && (
-						<SelectControl
-							label={ __( "What's your current annual revenue?", 'woocommerce-admin' ) }
-							value={ getProfileValue( 'revenue' ) }
-							options={ getRevenueOptions( currencyCode, get( WOOCOMMERCE_DEFAULT_COUNTRY ) ) }
-							onChange={ updateRevenue }
-						/>
-					) }
 
 					{ [ 'other', 'brick-mortar-other' ].includes( getProfileValue( 'selling_venues' ) ) && (
 						<>
