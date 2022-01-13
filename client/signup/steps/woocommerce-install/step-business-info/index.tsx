@@ -28,6 +28,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) as string;
+	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
 
 	const { get, save, update } = useSiteSettings( siteId );
 
@@ -47,6 +48,10 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	function updateSellingVenues( venue: string ) {
 		updateOnboardingProfile( 'selling_venues', venue );
+	}
+
+	function updateRevenue( venue: string ) {
+		updateOnboardingProfile( 'revenue', venue );
 	}
 
 	function updateOtherPlatform( platform: string ) {

@@ -11,7 +11,6 @@ import {
 } from 'calypso/state/site-settings/selectors';
 
 // WooCommerce enable options.
-export const WOOCOMMERCE_ONBOARDING_PROFILE = 'woocommerce_onboarding_profile';
 export const WOOCOMMERCE_STORE_ADDRESS_1 = 'woocommerce_store_address';
 export const WOOCOMMERCE_STORE_ADDRESS_2 = 'woocommerce_store_address_2';
 export const WOOCOMMERCE_STORE_CITY = 'woocommerce_store_city';
@@ -21,7 +20,6 @@ export const WOOCOMMERCE_ONBOARDING_PROFILE = 'woocommerce_onboarding_profile';
 
 export type optionNameType =
 	| 'blog_public'
-	| typeof WOOCOMMERCE_ONBOARDING_PROFILE
 	| typeof WOOCOMMERCE_STORE_ADDRESS_1
 	| typeof WOOCOMMERCE_STORE_ADDRESS_2
 	| typeof WOOCOMMERCE_STORE_CITY
