@@ -15,18 +15,19 @@ const DEBOUNCE_TIME = 250;
 
 class MediaLibraryExternalHeader extends Component {
 	static propTypes = {
-		onMediaScaleChange: PropTypes.func,
-		site: PropTypes.object.isRequired,
-		visible: PropTypes.bool.isRequired,
+		addExternalMedia: PropTypes.function,
 		canCopy: PropTypes.bool,
-		postId: PropTypes.number,
-		selectedItems: PropTypes.array,
-		onSourceChange: PropTypes.func,
-		sticky: PropTypes.bool,
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
 		isFetchingNextPage: PropTypes.bool,
 		mediaScale: PropTypes.number,
+		onMediaScaleChange: PropTypes.func,
+		onSourceChange: PropTypes.func,
+		postId: PropTypes.number,
+		selectedItems: PropTypes.array,
+		site: PropTypes.object.isRequired,
+		sticky: PropTypes.bool,
+		visible: PropTypes.bool.isRequired,
 	};
 
 	constructor( props ) {
