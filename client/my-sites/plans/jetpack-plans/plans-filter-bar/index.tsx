@@ -5,10 +5,10 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
+import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
-import useDetectWindowBoundary from '../use-detect-window-boundary';
 import type { Duration, DurationChangeCallback } from '../types';
 
 import './style.scss';
