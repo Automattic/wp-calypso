@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -9,7 +8,6 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import parselyIcon from 'calypso/assets/images/icons/parsely-logo.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
-import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -173,7 +171,6 @@ class StatsSite extends Component {
 
 		return (
 			<>
-				{ config.isEnabled( 'privacy-policy' ) && <PrivacyPolicyBanner /> }
 				<SidebarNavigation />
 				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<FormattedHeader

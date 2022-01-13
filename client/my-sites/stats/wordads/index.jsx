@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize, translate, numberFormat } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
@@ -7,7 +6,6 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
@@ -137,7 +135,6 @@ class WordAds extends Component {
 					path={ `/stats/ads/${ period }/:site` }
 					title={ `WordAds > ${ titlecase( period ) }` }
 				/>
-				{ config.isEnabled( 'privacy-policy' ) && <PrivacyPolicyBanner /> }
 				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
