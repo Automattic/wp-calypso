@@ -54,7 +54,7 @@ const LetUsChoose = ( { flowName, designs, onSelect }: Props ) => {
 		<LetUsChooseContainer>
 			<div>
 				{ translate(
-					"Can't decide? " + 'No problem, our experts can choose the perfect design for your site!'
+					"Can't decide? No problem, our experts can choose the perfect design for your site!"
 				) }
 			</div>
 			<LetUsChooseButton isSecondary onClick={ onClick }>

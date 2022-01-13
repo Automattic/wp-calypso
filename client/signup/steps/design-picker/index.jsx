@@ -172,14 +172,14 @@ export default function DesignPickerStep( props ) {
 
 	function renderCategoriesFooter() {
 		return (
-			<div>
+			<>
 				{ useFeaturedPicksButtons && (
 					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
 				) }
 				{ showLetUsChoose && (
 					<LetUsChoose flowName={ props.flowName } designs={ designs } onSelect={ pickDesign } />
 				) }
-			</div>
+			</>
 		);
 	}
 
