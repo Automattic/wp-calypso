@@ -101,6 +101,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 							update( WOOCOMMERCE_STORE_ADDRESS_1, value );
 							clearError( WOOCOMMERCE_STORE_ADDRESS_1 );
 						} }
+						className={ address1Error ? 'is-error' : '' }
 					/>
 					<ControlError error={ address1Error } />
 
@@ -111,6 +112,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 							update( WOOCOMMERCE_STORE_ADDRESS_2, value );
 							clearError( WOOCOMMERCE_STORE_ADDRESS_2 );
 						} }
+						className={ address2Error ? 'is-error' : '' }
 					/>
 					<ControlError error={ address2Error } />
 
@@ -123,6 +125,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 									update( WOOCOMMERCE_STORE_CITY, value );
 									clearError( WOOCOMMERCE_STORE_CITY );
 								} }
+								className={ cityError ? 'is-error' : '' }
 							/>
 							<ControlError error={ cityError } />
 						</div>
@@ -135,6 +138,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 									update( WOOCOMMERCE_STORE_POSTCODE, value );
 									clearError( WOOCOMMERCE_STORE_POSTCODE );
 								} }
+								className={ postcodeError ? 'is-error' : '' }
 							/>
 							<ControlError error={ postcodeError } />
 						</div>
@@ -148,6 +152,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 							clearError( WOOCOMMERCE_DEFAULT_COUNTRY );
 						} }
 						options={ countriesAsOptions }
+						className={ countryError ? 'is-error' : '' }
 					/>
 					<ControlError error={ countryError } />
 
@@ -158,6 +163,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 							updateProfileEmail( value );
 							clearError( WOOCOMMERCE_ONBOARDING_PROFILE );
 						} }
+						className={ emailError ? 'is-error' : '' }
 					/>
 					<ControlError error={ emailError } />
 
