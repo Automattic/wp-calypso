@@ -8,7 +8,6 @@ import {
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
-	SIGNUP_STEPS_SITE_TYPE_SET,
 	SIGNUP_PROGRESS_REMOVE_STEP,
 	SIGNUP_PROGRESS_ADD_STEP,
 } from 'calypso/state/action-types';
@@ -130,9 +129,6 @@ export default withSchemaValidation( schema, ( state = {}, action ) => {
 			return saveStep( state, action );
 		case SIGNUP_PROGRESS_SUBMIT_STEP:
 			return submitStep( state, action );
-		case SIGNUP_STEPS_SITE_TYPE_SET:
-			delete state[ 'domains-with-preview' ];
-			return state;
 		case SIGNUP_PROGRESS_REMOVE_STEP:
 			return removeStep( state, action );
 	}

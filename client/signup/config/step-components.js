@@ -43,7 +43,6 @@ const stepNameToModuleName = {
 	'site-options': 'site-options',
 	'site-topic': 'site-topic',
 	'site-topic-with-theme': 'site-topic',
-	'site-type': 'site-type',
 	'site-type-with-theme': 'site-type',
 	'starting-point': 'starting-point',
 	survey: 'survey',
@@ -58,10 +57,6 @@ const stepNameToModuleName = {
 	'oauth2-name': 'user',
 	displayname: 'user',
 	'reader-landing': 'reader-landing',
-	// Steps with preview
-	'site-topic-with-preview': 'site-topic',
-	'domains-with-preview': 'domains',
-	'site-title-with-preview': 'site-title',
 	passwordless: 'passwordless',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
