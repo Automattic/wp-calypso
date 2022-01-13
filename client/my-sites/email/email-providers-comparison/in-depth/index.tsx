@@ -3,6 +3,7 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import ComparisonTable from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-table';
 import {
@@ -45,6 +46,8 @@ const EmailProvidersInDepthComparison = ( {
 
 	return (
 		<>
+			<QueryProductsList />
+
 			<h1 className="email-providers-in-depth-comparison__header">
 				{ translate( 'Choose the right plan for you' ) }
 			</h1>
