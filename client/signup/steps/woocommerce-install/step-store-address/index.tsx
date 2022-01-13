@@ -244,7 +244,7 @@ function useAddressFormValidation( siteId: number ) {
 		errors[ WOOCOMMERCE_ONBOARDING_PROFILE ] = ! emailValidator.validate(
 			get( WOOCOMMERCE_ONBOARDING_PROFILE )?.[ 'store_email' ]
 		)
-			? __( 'Please add a store email' )
+			? __( 'Please add a valid email address' )
 			: '';
 
 		setErrors( errors );
