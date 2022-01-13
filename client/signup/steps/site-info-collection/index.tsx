@@ -58,7 +58,10 @@ function SiteInformationCollection( {
 
 	const sections: SectionProps[] = [
 		{
-			title: translate( '1. Name of your business' ),
+			title: translate( '%d. Name of your business', {
+				args: [ 1 ],
+				comment: 'This is the serial number: 1',
+			} ),
 			component: (
 				<TextInputField
 					label={ translate(
@@ -83,7 +86,10 @@ function SiteInformationCollection( {
 			},
 		},
 		{
-			title: translate( '2. Site Description' ),
+			title: translate( '%d. Site Description', {
+				args: [ 2 ],
+				comment: 'This is the serial number: 2',
+			} ),
 			component: (
 				<TextInputField
 					label={ translate( 'A short description for your website.' ) }
@@ -96,7 +102,10 @@ function SiteInformationCollection( {
 			summary: formValues.siteDescription,
 		},
 		{
-			title: translate( '3. Social Media Profiles' ),
+			title: translate( '%d. Social Media Profiles', {
+				args: [ 3 ],
+				comment: 'This is the serial number: 3',
+			} ),
 			component: (
 				<SocialMediaProfiles
 					facebookProps={ {
@@ -122,7 +131,10 @@ function SiteInformationCollection( {
 			summary: undefined,
 		},
 		{
-			title: translate( '4. Contact Information' ),
+			title: translate( '%d. Contact Information', {
+				args: [ 4 ],
+				comment: 'This is the serial number: 4',
+			} ),
 			component: (
 				<ContactInformation
 					displayEmailProps={ {
