@@ -118,4 +118,5 @@ supportedEnvVariableNames.forEach( ( name ) => {
 	}
 } );
 
+// TODO: Add proxy trap to return process.env values as well
 export default Object.freeze( currentEnvVariables );
