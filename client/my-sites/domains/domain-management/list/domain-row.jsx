@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, home, moreVertical, redo, plus } from '@wordpress/icons';
+import { Icon, home, info, moreVertical, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -454,9 +454,13 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, isManagingAllSites, showCheckbox, translate } = this.props;
+		const { domain, isManagingAllSites, site, showCheckbox, purchase, translate } = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
+		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
+			siteSlug: site?.slug,
+			getMappingErrors: true,
+		} );
 
 		return (
 			<div className="domain-row">
@@ -477,6 +481,20 @@ class DomainRow extends PureComponent {
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 				</div>
+				{ noticeText && (
+					<div className="domain-row__domain-notice">
+						<Icon
+							icon={ info }
+							size={ 18 }
+							className={ classnames( 'domain-row__domain-notice-icon gridicon', {
+								'gridicon--error': 'status-success' !== statusClass,
+								'gridicon--success': 'status-success' === statusClass,
+							} ) }
+							viewBox="2 2 20 20"
+						/>
+						<div className="domain-row__domain-notice-message">{ noticeText }</div>
+					</div>
+				) }
 				{ this.renderOverlay() }
 			</div>
 		);
