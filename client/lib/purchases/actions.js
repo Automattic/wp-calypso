@@ -60,3 +60,10 @@ export function enableAutoRenew( purchaseId, onComplete ) {
 		onComplete( success );
 	} );
 }
+
+export function extendPurchaseWithFreeMonth( purchaseId ) {
+	return wpcom.req.post( {
+		path: `/purchases/${ purchaseId }/extend`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
