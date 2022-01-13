@@ -63,7 +63,6 @@
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": false,
 		"mailchimp": false,
-		"manage/export/guided-transfer": true,
 		"marketplace-test": false,
 		"marketplace-v1": true,
 		"marketplace": false,

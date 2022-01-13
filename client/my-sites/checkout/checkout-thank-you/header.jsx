@@ -5,7 +5,6 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isGuidedTransfer,
 	isPlan,
 	isSiteRedirect,
 	isTitanMail,
@@ -226,27 +225,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( isTitanMail( primaryPurchase ) ) {
 			return preventWidows(
 				translate( 'You will receive an email confirmation shortly for your purchase.' )
-			);
-		}
-
-		if ( isGuidedTransfer( primaryPurchase ) ) {
-			if ( typeof primaryPurchase.meta === 'string' ) {
-				return translate(
-					'The guided transfer for {{strong}}%(siteName)s{{/strong}} ' +
-						'will begin very soon. We will be in touch with you via email.',
-					{
-						args: { siteName: primaryPurchase.meta },
-						components: { strong: <strong /> },
-					}
-				);
-			}
-
-			return translate(
-				'The guided transfer for your site will ' +
-					'begin very soon. We will be in touch with you via email.',
-				{
-					components: { strong: <strong /> },
-				}
 			);
 		}
 
