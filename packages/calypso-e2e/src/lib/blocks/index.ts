@@ -10,3 +10,4 @@ export * from './logos-block';
 export * from './schemas';
 export * from './jetpack-extended';
 export * from './paragraph-block';
+export * from './pay-with-paypal-block';
