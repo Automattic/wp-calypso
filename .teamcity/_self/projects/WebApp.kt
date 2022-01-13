@@ -150,8 +150,6 @@ object BuildDockerImage : BuildType({
 				FAILURES=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c "FAILURE")
 				if [ ${'$'}FAILURES -ne 0 ]; then
 					ACTION="fail"
-				#else
-				#	docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
 				fi
 
 				payload=${'$'}(jq -n \
