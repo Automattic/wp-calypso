@@ -124,7 +124,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			verticalData || {
 				isUserInputVertical: true,
 				parent: '',
-				preview: get( this.props.defaultVertical, 'preview', '' ),
 				verticalId: '',
 				verticalName: trimmedValue,
 				verticalSlug: trimmedValue,
