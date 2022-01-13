@@ -345,7 +345,7 @@ class RemovePurchase extends Component {
 	shouldHandleMarketplaceSubscriptions() {
 		const { activeSubscriptions } = this.props;
 
-		return activeSubscriptions.length > 0;
+		return activeSubscriptions?.length > 0;
 	}
 
 	renderMarketplaceSubscriptionsDialog() {
