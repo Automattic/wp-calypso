@@ -15,7 +15,7 @@ const fetchIntroOffers = ( action: { siteId: number | 'none' } ) => {
 			path: `/introductory-offers`,
 			apiNamespace: 'wpcom/v2',
 			query:
-				action.siteId !== 'none'
+				typeof action.siteId === 'number' && action.siteId > 0
 					? {
 							site: action.siteId,
 					  }
