@@ -79,7 +79,6 @@
 		"seller-experience": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
-		"settings/theme-setup": false,
 		"sign-in-with-apple": false,
 		"signup/professional-email-step": false,
 		"signup/reskin": true,
