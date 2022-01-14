@@ -62,8 +62,8 @@
 	.site__badge {
 		background-color: var( --color-surface );
 
-		&.site__badge-p2,
-		&.site__badge-p2-workspace {
+		&.is-p2,
+		&.is-p2-workspace {
 			background: var( --p2-color-link-dark );
 			color: var( --p2-color-white );
 		}
@@ -93,8 +93,8 @@
 		background: var( --color-sidebar-background );
 		color: var( --color-sidebar-text );
 
-		&.site__badge-p2,
-		&.site__badge-p2-workspace {
+		&.is-p2,
+		&.is-p2-workspace {
 			background: var( --p2-color-link-dark );
 			color: var( --p2-color-white );
 		}
@@ -123,8 +123,8 @@
 	background: var( --color-sidebar-menu-hover-background );
 	color: var( --color-sidebar-menu-hover-text );
 
-	&.site__badge-p2,
-	&.site__badge-p2-workspace {
+	&.is-p2,
+	&.is-p2-workspace {
 		background: var( --p2-color-link );
 		color: var( --p2-color-white );
 	}

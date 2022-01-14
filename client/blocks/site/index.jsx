@@ -166,10 +166,10 @@ class Site extends Component {
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.isSiteP2 && ! this.props.isP2Hub && (
-							<span className="site__badge site__badge-p2">P2</span>
+							<span className="site__badge is-p2">P2</span>
 						) }
 						{ this.props.isP2Hub && (
-							<span className="site__badge site__badge-p2-workspace">P2 Workspace</span>
+							<span className="site__badge is-p2-workspace">P2 Workspace</span>
 						) }
 						{ this.props.site.is_private && (
 							<span className="site__badge site__badge-private">
