@@ -43,8 +43,8 @@ import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-b
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { AppState } from 'calypso/types';
 import type { TransferPageProps } from './types';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
@@ -326,7 +326,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			return null;
 		}
 
-		if ( isSupportSession ) {
+		if ( isSupportSession || true ) {
 			return (
 				<Notice
 					text={ __(
