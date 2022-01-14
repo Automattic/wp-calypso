@@ -133,7 +133,7 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		country_code: oldCountryCode = '',
 		postal_code: oldPostalCode = '',
 		subdivision_code: oldSubdivisionCode = '',
-	} = cart.tax?.location;
+	} = cart.tax?.location ?? {};
 
 	if ( location.countryCode !== undefined && newCountryCode !== oldCountryCode ) {
 		return true;
