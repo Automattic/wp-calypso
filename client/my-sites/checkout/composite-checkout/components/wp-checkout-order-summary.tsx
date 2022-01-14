@@ -123,9 +123,11 @@ function LoadingCheckoutSummaryFeaturesList() {
 function SwitchToAnnualPlan( {
 	plan,
 	onChangePlanLength,
+	linkText,
 }: {
 	plan: ResponseCartProduct;
 	onChangePlanLength: ( uuid: string, productSlug: string, productId: number ) => void;
+	linkText?: React.ReactNode;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const handleClick = () => {
@@ -134,12 +136,9 @@ function SwitchToAnnualPlan( {
 			onChangePlanLength?.( plan.uuid, annualPlan.getStoreSlug(), annualPlan.getProductId() );
 		}
 	};
+	const text = linkText ?? translate( 'Switch to an annual plan and save!' );
 
-	return (
-		<SwitchToAnnualPlanButton onClick={ handleClick }>
-			{ translate( 'Switch to an annual plan and save!' ) }
-		</SwitchToAnnualPlanButton>
-	);
+	return <SwitchToAnnualPlanButton onClick={ handleClick }>{ text }</SwitchToAnnualPlanButton>;
 }
 
 function CheckoutSummaryFeaturesList( props: {
@@ -321,9 +320,13 @@ function CheckoutSummaryAnnualUpsell( props: {
 	}
 
 	return (
-		<CheckoutSummaryFeatures>
+		<CheckoutSummaryFeaturesUpsell>
 			<CheckoutSummaryFeaturesTitle>
-				{ translate( 'Included with an annual plan' ) }
+				<SwitchToAnnualPlan
+					plan={ props.plan }
+					onChangePlanLength={ props.onChangePlanLength }
+					linkText={ translate( 'Included with an annual plan' ) }
+				/>
 			</CheckoutSummaryFeaturesTitle>
 			<CheckoutSummaryFeaturesListWrapper>
 				<CheckoutSummaryFeaturesListItem isSupported={ false }>
@@ -336,9 +339,9 @@ function CheckoutSummaryAnnualUpsell( props: {
 						{ translate( 'Live chat support' ) }
 					</CheckoutSummaryFeaturesListItem>
 				) }
-				<SwitchToAnnualPlan plan={ props.plan } onChangePlanLength={ props.onChangePlanLength } />
 			</CheckoutSummaryFeaturesListWrapper>
-		</CheckoutSummaryFeatures>
+			<SwitchToAnnualPlan plan={ props.plan } onChangePlanLength={ props.onChangePlanLength } />
+		</CheckoutSummaryFeaturesUpsell>
 	);
 }
 
@@ -355,17 +358,35 @@ const CheckoutSummaryCard = styled( CheckoutSummaryCardUnstyled )`
 `;
 
 const CheckoutSummaryFeatures = styled.div`
-	padding: 20px 20px 0;
+	padding: 24px 24px 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 20px;
+		padding: 24px;
+	}
+`;
+
+const CheckoutSummaryFeaturesUpsell = styled( CheckoutSummaryFeatures )`
+	padding: 12px 24px 0;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		padding: 0 24px 24px;
+	}
+
+	& svg {
+		opacity: 50%;
 	}
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
-	font-size: 16px;
-	font-weight: ${ ( props ) => props.theme.weights.normal };
+	font-size: 14px;
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	margin-bottom: 6px;
+
+	& button {
+		font-size: 14px;
+		font-weight: ${ ( props ) => props.theme.weights.bold };
+		text-decoration: none;
+	}
 `;
 
 const CheckoutSummaryFeaturesListWrapper = styled.ul`
@@ -410,7 +431,7 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 	padding-left: 24px;
 	position: relative;
 	overflow-wrap: break-word;
-	color: ${ ( props ) => ( props.isSupported ? 'inherit' : 'var( --color-neutral-30 )' ) };
+	color: ${ ( props ) => ( props.isSupported ? 'inherit' : 'var( --color-neutral-40 )' ) };
 
 	.rtl & {
 		padding-right: 24px;
@@ -422,7 +443,7 @@ CheckoutSummaryFeaturesListItem.defaultProps = {
 };
 
 const CheckoutSummaryAmountWrapper = styled.div`
-	padding: 20px;
+	padding: 24px;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -479,7 +500,6 @@ const LoadingCopy = styled.p`
 `;
 
 const SwitchToAnnualPlanButton = styled.button`
-	margin-top: 16px;
 	text-align: left;
 	text-decoration: underline;
 	color: var( --color-link );
