@@ -99,7 +99,7 @@ export default function useAddProductsFromUrl( {
 		if ( couponCodeFromUrl ) {
 			cartPromises.push( applyCoupon( couponCodeFromUrl ) );
 		}
-		Promise.allSettled( cartPromises ).finally( () => {
+		Promise.allSettled( cartPromises ).then( () => {
 			debug( 'initial cart requests have completed' );
 			isMounted.current && setIsLoading( false );
 		} );
