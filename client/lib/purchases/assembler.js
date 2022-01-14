@@ -24,6 +24,7 @@ function createPurchaseObject( purchase ) {
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
 		expiryStatus: camelCase( purchase.expiry_status ),
+		iapPurchaseManagementLink: purchase.iap_purchase_management_link,
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
 		introductoryOffer: purchase.introductory_offer

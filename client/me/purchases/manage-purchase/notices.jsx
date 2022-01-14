@@ -990,14 +990,19 @@ class PurchaseNotice extends Component {
 	}
 
 	renderInAppPurchaseNotice() {
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		return (
 			<Notice
 				showDismiss={ false }
 				status="is-info"
 				text={ translate(
-					'This product is an in-app purchase. You can manage it from within the app store.'
+					'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
+					{
+						components: {
+							managePurchase: <a href={ purchase.iapPurchaseManagementLink } />,
+						},
+					}
 				) }
 			></Notice>
 		);
