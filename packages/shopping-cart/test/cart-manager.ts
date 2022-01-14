@@ -24,14 +24,14 @@ describe( 'ShoppingCartManager', () => {
 			expect( responseCart.cart_key ).toBe( mainCartKey );
 		} );
 
-		it( 'returns the same responseCart for a site slug that has already been cached by ID', async () => {
+		it( 'returns the same responseCart for a site ID that has already been cached by slug', async () => {
 			const cartManagerClient = createShoppingCartManagerClient( {
 				getCart,
 				setCart,
 			} );
-			const manager1 = cartManagerClient.forCartKey( mainCartKey );
-			const manager2 = cartManagerClient.forCartKey( mainSiteSlug );
+			const manager1 = cartManagerClient.forCartKey( mainSiteSlug );
 			await manager1.actions.addProductsToCart( [ planOne ] );
+			const manager2 = cartManagerClient.forCartKey( mainCartKey );
 			const { responseCart } = manager2.getState();
 			expect( responseCart.products.length ).toBe( 1 );
 			expect( responseCart.products[ 0 ].product_slug ).toBe( planOne.product_slug );
