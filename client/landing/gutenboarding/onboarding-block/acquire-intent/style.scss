@@ -50,6 +50,10 @@
 	position: relative;
 	flex: 1;
 
+	&.has-overflowing-placeholder {
+		flex-basis: 100%;
+	}
+
 	@include break-small {
 		min-width: 300px;
 		max-width: 400px;
