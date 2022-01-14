@@ -68,7 +68,7 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 			}
 
 			await cartManagerClient
-				.forCartKey( selectedSite.ID.toString() )
+				.forCartKey( selectedSite.ID )
 				.actions.addProductsToCart( [ transfer ] );
 			return page( '/checkout/' + selectedSite.slug );
 		};

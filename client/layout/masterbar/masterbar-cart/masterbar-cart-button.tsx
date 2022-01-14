@@ -12,7 +12,7 @@ import './masterbar-cart-button-style.scss';
 
 export type MasterbarCartButtonProps = {
 	selectedSiteSlug: string | undefined;
-	selectedSiteId: string | number | undefined;
+	selectedSiteId: number | undefined;
 	goToCheckout: ( siteSlug: string ) => void;
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
@@ -26,7 +26,7 @@ export function MasterbarCartButton( {
 	onRemoveCoupon,
 }: MasterbarCartButtonProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart(
-		selectedSiteId ? String( selectedSiteId ) : undefined
+		selectedSiteId ? selectedSiteId : undefined
 	);
 	const cartButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );

@@ -1,4 +1,5 @@
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { CartKey } from '@automattic/shopping-cart';
 
 export default function getCartKey( {
 	selectedSite,
@@ -8,18 +9,15 @@ export default function getCartKey( {
 	selectedSite: SiteData | undefined | null;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-} ): string | undefined {
+} ): CartKey | undefined {
 	if ( ! selectedSite?.slug && ( isLoggedOutCart || isNoSiteCart ) ) {
 		return 'no-user';
 	}
 	if ( ! selectedSite?.slug && ! isLoggedOutCart && ! isNoSiteCart ) {
 		return 'no-site';
 	}
-	if ( selectedSite?.slug && ( isLoggedOutCart || isNoSiteCart ) ) {
-		return selectedSite.slug;
-	}
 	if ( selectedSite?.ID ) {
-		return String( selectedSite.ID );
+		return selectedSite.ID;
 	}
 	return 'no-site';
 }
