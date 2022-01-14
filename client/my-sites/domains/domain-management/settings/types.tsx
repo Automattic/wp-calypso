@@ -51,6 +51,7 @@ export type SettingsPageConnectedDispatchProps = {
 
 export type SettingsHeaderProps = {
 	domain: ResponseDomain;
+	site: SiteData;
 };
 
 export type SettingsPageProps = SettingsPagePassedProps &
