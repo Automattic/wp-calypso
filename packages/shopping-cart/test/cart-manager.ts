@@ -1,5 +1,12 @@
 import { createShoppingCartManagerClient, getEmptyResponseCart } from '../src/index';
-import { getCart, setCart, mainCartKey, planOne, planTwo } from './utils/mock-cart-api';
+import {
+	getCart,
+	setCart,
+	mainCartKey,
+	planOne,
+	planTwo,
+	mainSiteSlug,
+} from './utils/mock-cart-api';
 
 /* eslint-disable jest/no-done-callback, jest/no-conditional-expect */
 
@@ -15,6 +22,19 @@ describe( 'ShoppingCartManager', () => {
 			const { responseCart } = manager.getState();
 			expect( responseCart.products.length ).toBe( 0 );
 			expect( responseCart.cart_key ).toBe( mainCartKey );
+		} );
+
+		it( 'returns the same responseCart for a site slug that has already been cached by ID', async () => {
+			const cartManagerClient = createShoppingCartManagerClient( {
+				getCart,
+				setCart,
+			} );
+			const manager1 = cartManagerClient.forCartKey( mainCartKey );
+			const manager2 = cartManagerClient.forCartKey( mainSiteSlug );
+			await manager1.actions.addProductsToCart( [ planOne ] );
+			const { responseCart } = manager2.getState();
+			expect( responseCart.products.length ).toBe( 1 );
+			expect( responseCart.products[ 0 ].product_slug ).toBe( planOne.product_slug );
 		} );
 
 		it( 'returns an empty cart if fetchInitialCart has not been called', async () => {

@@ -7,6 +7,7 @@ import type {
 } from '../../src/types';
 
 export const mainCartKey = '1';
+export const mainSiteSlug = 'mysite';
 
 const emptyResponseCart = getEmptyResponseCart();
 
@@ -95,6 +96,9 @@ export const renewalTwo: ResponseCartProduct = {
 };
 
 export async function getCart( cartKey: string ): Promise< ResponseCart > {
+	if ( cartKey === mainSiteSlug ) {
+		cartKey = mainCartKey;
+	}
 	if ( cartKey === mainCartKey ) {
 		return {
 			...emptyResponseCart,
@@ -115,6 +119,9 @@ function createProduct( productProps: RequestCartProduct ): ResponseCartProduct 
 }
 
 export async function setCart( cartKey: string, newCart: RequestCart ): Promise< ResponseCart > {
+	if ( cartKey === mainSiteSlug ) {
+		cartKey = mainCartKey;
+	}
 	if ( [ 'no-site', 'no-user', mainCartKey ].includes( cartKey ) ) {
 		// Mock the shopping-cart endpoint response here
 		return {
