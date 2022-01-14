@@ -266,8 +266,7 @@ export class JetpackAuthorize extends Component {
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber' ||
 			this.isJetpackUpgradeFlow() ||
-			this.isFromJetpackConnectionManager() ||
-			this.isFromJetpackBackupPlugin()
+			this.isFromJetpackConnectionManager()
 		) {
 			debug(
 				'Going back to WP Admin.',
