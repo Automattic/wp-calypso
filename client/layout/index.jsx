@@ -274,7 +274,7 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/lib/keyboard-shortcuts/menu" placeholder={ null } />
 				) }
 				{ this.renderMasterbar() }
-				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+				<SupportUser />
 				<LayoutLoader />
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />

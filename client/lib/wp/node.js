@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import wpcomXhrRequest from 'wpcom-xhr-request';
 import wpSupportWrapper from 'calypso/lib/wp/support';
 import wpcomOAuthWrapper from 'calypso/lib/wpcom-oauth-wrapper';
@@ -6,9 +5,7 @@ import { injectLocalization } from './localization';
 
 let wpcom = wpcomOAuthWrapper( wpcomXhrRequest );
 
-if ( config.isEnabled( 'support-user' ) ) {
-	wpcom = wpSupportWrapper( wpcom );
-}
+wpcom = wpSupportWrapper( wpcom );
 
 // Inject localization helpers to `wpcom` instance
 wpcom = injectLocalization( wpcom );
