@@ -360,7 +360,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
+							"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your plan in the cart, and your plan will keep its current expiry date."
 						)
 					),
 				};
@@ -370,7 +370,7 @@ function returnModalCopy(
 				title: String( translate( 'You are about to remove your plan from the cart' ) ),
 				description: String(
 					translate(
-						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
+						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
 					)
 				),
 			};
@@ -397,7 +397,7 @@ function returnModalCopy(
 			} else {
 				description = String(
 					translate(
-						'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart.'
+						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
 					)
 				);
 			}
